@@ -1,0 +1,149 @@
+*** Choice
+  IN: <robin --> bird>. %1.00;0.90% {0 : 1} 
+10
+  IN: <swan --> bird>. %1.00;0.80% {10 : 2} 
+  IN: <penguin --> bird>. %0.80;0.95% {10 : 3} 
+5
+  IN: <?1 --> bird>?  {15 : 4} 
+448
+ OUT: <(|,robin,(&,penguin,swan)) --> bird>. %1.00;0.68% {338 : 3;1;2} 
+ OUT: <penguin --> bird>. %0.80;0.95% {10 : 3} 
+291
+ OUT: <swan --> bird>. %1.00;0.80% {10 : 2} 
+46
+ OUT: <robin --> bird>. %1.00;0.90% {0 : 1} 
+*** Contradiction
+  IN: <coffee --> beverage>. %1.00;0.90% {0 : 1} 
+  IN: <Java --> coffee>. %1.00;0.90% {0 : 2} 
+  IN: (--,<Java --> coffee>). %1.00;0.90% {0 : 3} 
+10
+  IN: <Java --> coffee>?  {10 : 4} 
+1
+ OUT: <Java --> coffee>. %0.50;0.95% {5 : 2;3} 
+9
+  IN: <tea --> beverage>?  {20 : 5} 
+10
+  IN: <coffee --> beverage>?  {30 : 6} 
+1
+ OUT: <coffee --> beverage>. %1.00;0.90% {0 : 1} 
+*** Confidence and revision
+  IN: <{Willy} --> swimmer>. %1.00;0.90% {0 : 1} 
+  IN: <fish --> swimmer>. %1.00;0.90% {0 : 2} 
+  IN: <{Willy} --> fish>?  {0 : 3} 
+2
+ OUT: <{Willy} --> fish>. %1.00;0.45% {1 : 2;1} 
+18
+  IN: <{Willy} --> whale>. %1.00;0.90% {20 : 4} 
+  IN: <whale --> [black]>. %1.00;0.90% {20 : 5} 
+  IN: <{Willy} --> [black]>?  {20 : 6} 
+26
+ OUT: <{Willy} --> [black]>. %1.00;0.81% {45 : 5;4} 
+5
+  IN: <{Willy} --> [black]>. %0.00;0.90% {51 : 7} 
+  IN: <{Willy} --> fish>. %0.00;0.90% {51 : 8} 
+1
+ OUT: <{Willy} --> [black]>. %0.00;0.90% {51 : 7} 
+ OUT: <{Willy} --> fish>. %0.00;0.90% {51 : 8} 
+1
+ OUT: <{Willy} --> [black]>. %0.32;0.93% {52 : 5;7;4} 
+ OUT: <{Willy} --> fish>. %0.08;0.91% {52 : 2;8;1} 
+*** Deduction chain
+  IN: <{Tweety} --> robin>. %1.00;0.90% {0 : 1} 
+  IN: <robin --> bird>. %1.00;0.90% {0 : 2} 
+  IN: <bird --> animal>. %1.00;0.90% {0 : 3} 
+30
+  IN: <{Tweety} --> bird>?  {30 : 4} 
+1
+ OUT: <{Tweety} --> bird>. %1.00;0.81% {1 : 2;1} 
+9
+  IN: <{Tweety} --> animal>?  {40 : 5} 
+1
+ OUT: <{Tweety} --> animal>. %1.00;0.73% {20 : 3;1;2} 
+*** Resemblance chain
+  IN: <cat <-> dog>. %0.90;0.90% {0 : 1} 
+  IN: <cat <-> tiger>. %0.90;0.90% {0 : 2} 
+  IN: <lion <-> tiger>. %0.90;0.90% {0 : 3} 
+  IN: <dog <-> lion>?  {0 : 4} 
+26
+ OUT: <dog <-> lion>. %0.73;0.71% {25 : 3;1;2} 
+*** Induction and revision
+  IN: <bird --> swimmer>?  {0 : 1} 
+  IN: <swimmer --> bird>?  {0 : 2} 
+10
+  IN: <swan --> bird>. %1.00;0.90% {10 : 3} 
+  IN: <swan --> swimmer>. %1.00;0.90% {10 : 4} 
+8
+ OUT: <swimmer --> bird>. %1.00;0.45% {17 : 4;3} 
+ OUT: <bird --> swimmer>. %1.00;0.45% {17 : 4;3} 
+2
+  IN: <gull --> bird>. %1.00;0.90% {20 : 5} 
+  IN: <gull --> swimmer>. %1.00;0.90% {20 : 6} 
+34
+ OUT: <swimmer --> bird>. %1.00;0.62% {53 : 4;6;3;5} 
+ OUT: <bird --> swimmer>. %1.00;0.62% {53 : 4;6;3;5} 
+6
+  IN: <crow --> bird>. %1.00;0.90% {60 : 7} 
+  IN: (--,<crow --> swimmer>). %1.00;0.90% {60 : 8} 
+45
+ OUT: <bird --> swimmer>. %0.67;0.71% {104 : 4;8;6;7;3;5} 
+*** Mixed inference
+  IN: <swan --> bird>. %1.00;0.90% {0 : 1} 
+  IN: <swan --> swimmer>. %1.00;0.90% {0 : 2} 
+5
+  IN: <bird --> swimmer>?  {5 : 3} 
+7
+ OUT: <bird --> swimmer>. %1.00;0.45% {5 : 2;1} 
+1
+  IN: <gull --> bird>. %1.00;0.90% {13 : 4} 
+  IN: <gull --> swimmer>. %1.00;0.90% {13 : 5} 
+11
+ OUT: <bird --> swimmer>. %1.00;0.62% {23 : 2;5;1;4} 
+20
+  IN: <bird --> [feathered]>. %1.00;0.90% {44 : 6} 
+  IN: <robin --> [feathered]>. %1.00;0.90% {44 : 7} 
+20
+  IN: <robin --> bird>?  {64 : 8} 
+10
+ OUT: <robin --> bird>. %1.00;0.45% {73 : 7;6} 
+1
+  IN: <robin --> swimmer>?  {75 : 9} 
+154
+ OUT: <robin --> swimmer>. %1.00;0.28% {228 : 2;7;5;6;1;4} 
+*** Semi-compositionality
+  IN: <(&,light,[red]) --> traffic_signal>?  {0 : 1} 
+5
+  IN: <light --> traffic_signal>. %0.10;0.90% {5 : 2} 
+  IN: <[red] --> traffic_signal>. %0.10;0.90% {5 : 3} 
+4
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.08% {8 : 3} 
+7
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.15% {15 : 3;2} 
+154
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.19;0.81% {169 : 3;2} 
+31
+  IN: <{light_1} --> (&,light,[red])>. %1.00;0.90% {201 : 4} 
+  IN: <{light_1} --> traffic_signal>. %1.00;0.90% {201 : 5} 
+27
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.32;0.84% {227 : 3;4;2;5} 
+23
+  IN: <{light_2} --> (&,light,[red])>. %1.00;0.90% {251 : 6} 
+  IN: <{light_2} --> traffic_signal>. %1.00;0.90% {251 : 7} 
+30
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.41;0.85% {280 : 3;6;4;7;2;5} 
+*** Fuzzy concepts
+  IN: <{John} --> boy>. %1.00;0.90% {0 : 1} 
+  IN: <{John} --> (/,taller_than,{Tom},_)>. %1.00;0.90% {0 : 2} 
+5
+  IN: <{Tom} --> (/,taller_than,_,boy)>?  {5 : 3} 
+246
+ OUT: <{Tom} --> (/,taller_than,_,boy)>. %1.00;0.45% {250 : 2;1} 
+5
+  IN: <{David} --> boy>. %1.00;0.90% {256 : 4} 
+  IN: (--,<{David} --> (/,taller_than,{Tom},_)>). %1.00;0.90% {256 : 5} 
+113
+ OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.50;0.62% {368 : 2;5;1;4} 
+22
+  IN: <{Karl} --> boy>. %1.00;0.90% {391 : 6} 
+  IN: <{Karl} --> (/,taller_than,{Tom},_)>. %1.00;0.90% {391 : 7} 
+141
+ OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.67;0.71% {531 : 2;7;5;6;1;4} 

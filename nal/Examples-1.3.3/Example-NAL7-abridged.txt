@@ -1,0 +1,109 @@
+
+********** temporal deduction/explification
+  IN: <<(*, #x, room_101) --> enter> =\> <(*, #x, door_101) --> open>>. %0.9%
+  IN: <<(*, #y, door_101) --> open> =\> <(*, #y, key_101) --> hold>>. %0.8%
+14
+ OUT: <<(*,#1,room_101) --> enter> =\> <(*,#1,key_101) --> hold>>. %0.72;0.58%
+ OUT: <<(*,#1,key_101) --> hold> =\> <(*,#1,room_101) --> enter>>. %1.00;0.37%
+
+********** temporal induction/comparison
+  IN: <<(*, #x, door_101) --> open> =/> <(*, #x, room_101) --> enter>>. %0.9% 
+  IN: <<(*, #y, door_101) --> open> =\> <(*, #y, key_101) --> hold>>. %0.8%
+14
+ OUT: <<(*,#1,key_101) --> hold> =/> <(*,#1,room_101) --> enter>>. %0.90;0.39%
+ OUT: <<(*,#1,room_101) --> enter> =/> <(*,#1,key_101) --> hold>>. %0.80;0.42%
+ OUT: <<(*,#1,room_101) --> enter> <=> <(*,#1,key_101) --> hold>>. %0.73;0.44% 
+
+********** temporal analogy
+  IN: <<(*, #x, door_101) --> open> =/> <(*, #x, room_101) --> enter>>. %0.95%
+  IN: <<(*, #x, room_101) --> enter> <=> <(*, #x, corridor_100) --> leave>>.
+13
+ OUT: <<(*,#1,door_101) --> open> =/> <(*,#1,corridor_100) --> leave>>. %0.95;0.81%
+
+********** inference on tense
+  IN: <<(*, #x, key_101) --> hold> =/> <(*, #x, room_101) --> enter>>.
+  IN: <(*, John, key_101) --> hold>. :/:
+20
+
+ OUT: <(*,John,room_101) --> enter>. :\: %1.00;0.81% 
+
+********** inference on tense
+  IN: <<(*,#x,key_101) --> hold> =/> <(*,#x,room_101) --> enter>>.
+
+  IN: <(*,John,room_101) --> enter>. :|:
+19
+ OUT: <(*,John,key_101) --> hold>. :\: %1.00;0.45%
+ 
+
+********** inference on tense
+  IN: <<(*,John,key_101) --> hold> =/> <(*,John,room_101) --> enter>>. 
+
+  IN: <(*,John,key_101) --> hold>. :|:
+2
+ OUT: <(*,John,room_101) --> enter>. :\: %1.00;0.81%
+
+********** inference on tense
+  IN: <<(*,John,key_101) --> hold> =/> <(*,John,room_101) --> enter>>. %1.00;0.90%
+
+  IN: <(*,John,room_101) --> enter>. :\: %1.00;0.90% 
+2
+ OUT: <(*,John,key_101) --> hold>. :\: %1.00;0.45%
+
+********** induction on events
+  IN: <(*,John,door_101) --> open>. :|:
+1
+
+  IN: <(*,John,room_101) --> enter>. :|:
+1
+
+ OUT: <<(*,John,room_101) --> enter>=\><(*,John,door_101) --> open>>. :\: %1.00;0.45% 
+ OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. :\: %1.00;0.45%  
+ OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. :\: %1.00;0.45%  
+ OUT: <<(*,John,room_101) --> enter>=\><(*,John,door_101) --> open>>. %1.00;0.45%  
+ OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. %1.00;0.45%  
+ OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. %1.00;0.45%  
+ 
+********** induction on events
+  IN: <(*,John,door_101) --> open>. :|:
+1
+
+  IN: <(*,John,room_101) --> enter>. :|: %0%
+
+1
+
+ OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. :\: %0.00;0.45% 
+ OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. :\: %0.00;0.45% 
+ OUT: <<(*,John,door_101) --> open>=/><(*,John,room_101) --> enter>>. %0.00;0.45% 
+ OUT: <<(*,John,door_101) --> open></><(*,John,room_101) --> enter>>. %0.00;0.45% 
+
+********** induction on events
+  IN: <John --> (/,open,_,door_101)>. :|:
+1
+
+  IN: <John --> (/,enter,_,room_101)>. :|:
+1
+
+ OUT: <<#1 --> (/,enter,_,room_101)>=\><#1 --> (/,open,_,door_101)>>. :\: %1.00;0.45%  
+ OUT: <<#1 --> (/,open,_,door_101)>=/><#1 --> (/,enter,_,room_101)>>. :\: %1.00;0.45%  
+ OUT: <<#1 --> (/,open,_,door_101)></><#1 --> (/,enter,_,room_101)>>. :\: %1.00;0.45%  
+ OUT: <<#1 --> (/,enter,_,room_101)>=\><#1 --> (/,open,_,door_101)>>. %1.00;0.45%  
+ OUT: <<#1 --> (/,open,_,door_101)>=/><#1 --> (/,enter,_,room_101)>>. %1.00;0.45%  
+ OUT: <<#1 --> (/,open,_,door_101)></><#1 --> (/,enter,_,room_101)>>. %1.00;0.45% 
+
+********** induction on events
+  IN: <(*,John,key_101) --> hold>. :|:
+1
+  IN: <<(*,John,door_101) --> open> =/> <(*,John,room_101) --> enter>>. :|:
+1
+
+ OUT: <(&/,<(*,John,key_101) --> hold>,<(*,John,door_101) --> open>)=/><(*,John,room_101) --> enter>>. :\: %1.00;0.45% 
+ OUT: <(&/,<(*,John,key_101) --> hold>,<(*,John,door_101) --> open>)=/><(*,John,room_101) --> enter>>. %1.00;0.45% 
+
+********** updating and revision
+  IN: <(*,John,key_101) --> hold>. :|:
+1
+  IN: <(*,John,key_101) --> hold>. :|: %0%
+1
+  IN: <(*,John,key_101) --> hold>? :|:
+1
+ OUT: <(*,John,key_101) --> hold>. :\: %0.09;0.48%
