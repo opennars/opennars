@@ -5,8 +5,8 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>open-nars</name>
             <source-roots>
-                <root id="src.dir"/>
                 <root id="nars_gui.dir"/>
+                <root id="src.nars_java.dir"/>
             </source-roots>
             <test-roots/>
         </data>

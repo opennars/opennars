@@ -1,0 +1,8 @@
+<{r1} --> [red]>.
+<{b1} --> [blue]>.
+// The third statement is the derived result from Case #1
+<(*,{r1},{b1}) --> pattern1>.
+
+// NARS is then asked if the remaining initial statement from Case 1 is true
+<(&&, <$r --> [red]>,<$b --> [blue]>) ==> <(*,$r,$b) --> pattern1>>?
+300
