@@ -128,7 +128,6 @@ public class ExperienceReader implements InputChannel {
                 reasoner.output("i/o error: " + ex.getMessage());
             }
             
-            line = line.trim();
             parse(line);
         }
         return true;
@@ -136,15 +135,16 @@ public class ExperienceReader implements InputChannel {
     
     public void parse(String line) {
         // read NARS language or an integer
-        if (line.length() > 0) {
+        if (line.trim().length() > 0) {
             try {
                 timer = Integer.parseInt(line);
+                reasoner.output("Thinking... (" + timer + " cycles)");
                 reasoner.walk(timer);
             } catch (NumberFormatException e) {
                 try {
                     reasoner.textInputLine(line);
                 }
-                catch (Exception ep) {
+                catch (StringParser.InvalidInputException ep) {
                     reasoner.output("Parse Error: " + ep.toString() + "\n" + Arrays.asList(ep.getStackTrace()) );
                 }
             }

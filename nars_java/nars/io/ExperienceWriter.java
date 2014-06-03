@@ -43,7 +43,7 @@ public class ExperienceWriter implements OutputChannel {
         public void println(String s);
     }
     
-    public LineOutput outExp2;
+    private LineOutput outExp2;
     
     /**
      * Default constructor

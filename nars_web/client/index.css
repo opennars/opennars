@@ -1,12 +1,29 @@
-#notebook {  
+body {
+    margin: 1em;
+    font-size: 100%;
+    font-family: Arial, sans;
+}
+#io {  
     margin-left: 2%;
     margin-right: 2%;
     width: 94%;
     height: 95%;
     
-    zoom: 150%;
+    zoom: 120%;
 }
-body {
-    margin: 0;
-    font-size: 150%;
+#io .section {
+    width: 100%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+#io .section textarea {
+    width: 94%;
+    height: 4em;    
+}
+#io .section .output{
+    margin-left: 1em;
+    margin-top: 1em;
+}
+#io .section button {
+    float: right;
 }
