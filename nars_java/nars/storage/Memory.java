@@ -37,7 +37,7 @@ import nars.inference.BudgetFunctions;
 import nars.io.IInferenceRecorder;
 import nars.language.Term;
 import nars.main_nogui.Parameters;
-import nars.main_nogui.ReasonerBatch;
+import nars.main_nogui.NAR;
 
 /**
  * The memory of the system.
@@ -47,7 +47,7 @@ public class Memory {
     /**
      * Backward pointer to the reasoner
      */
-    private final ReasonerBatch reasoner;
+    private final NAR reasoner;
 
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**
@@ -117,7 +117,7 @@ public class Memory {
      *
      * @param reasoner
      */
-    public Memory(ReasonerBatch reasoner) {
+    public Memory(NAR reasoner) {
         this.reasoner = reasoner;
         recorder = new NullInferenceRecorder();
         concepts = new ConceptBag(this);
@@ -517,7 +517,7 @@ public class Memory {
      * @param input whether the task is input
      */
     public void report(Sentence sentence, boolean input) {
-        if (ReasonerBatch.DEBUG) {
+        if (NAR.DEBUG) {
             System.out.println("// report( clock " + reasoner.getTime()
                     + ", input " + input
                     + ", timer " + reasoner.getTimer()

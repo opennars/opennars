@@ -32,13 +32,13 @@ import javax.swing.JTextArea;
 
 import nars.io.ExperienceReader;
 import nars.io.InputChannel;
-import nars.main_nogui.ReasonerBatch;
+import nars.main_nogui.NAR;
 
 /**
  * Input window, accepting user tasks
  */
 public class InputWindow extends NarsFrame implements ActionListener, InputChannel {
-    private ReasonerBatch reasoner;
+    private NAR reasoner;
     /** Control buttons */
     private JButton okButton, holdButton, clearButton, closeButton;
     /** Input area */
@@ -53,7 +53,7 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
      * @param reasoner The reasoner
      * @param title The title of the window
      */
-    public InputWindow(ReasonerBatch reasoner, String title) {
+    public InputWindow(NAR reasoner, String title) {
         super(title + " - Input Window");
         getContentPane().setBackground(SINGLE_WINDOW_COLOR);
         GridBagLayout gridbag = new GridBagLayout();

@@ -12,7 +12,12 @@ import nars.io.StringParser;
 import nars.io.Symbols;
 import nars.storage.Memory;
 
-public class ReasonerBatch {
+/**
+ * Non-Axiomatic Reasoner (core class)
+ * <p>
+ * An instantation of a NARS logic processor, useful for batch functionality; 
+*/
+public class NAR {
 
     /**
      * global DEBUG print switch
@@ -58,7 +63,7 @@ public class ReasonerBatch {
     private long timer;
     private AtomicInteger silenceValue = new AtomicInteger(Parameters.SILENT_LEVEL);
 
-    public ReasonerBatch() {
+    public NAR() {
         memory = new Memory(this);
         inputChannels = new ArrayList<>();
         outputChannels = new ArrayList<>();

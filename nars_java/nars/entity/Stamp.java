@@ -24,7 +24,7 @@ import java.util.*;
 
 import nars.io.Symbols;
 import nars.main_nogui.Parameters;
-import nars.main_nogui.ReasonerBatch;
+import nars.main_nogui.NAR;
 
 /**
  * Each Sentence has a time stamp, consisting the following components:
@@ -35,9 +35,9 @@ import nars.main_nogui.ReasonerBatch;
  */
 public class Stamp implements Cloneable {
 
-    /** serial number, for the whole system 
+    /** *  serial number, for the whole system 
      * TODO : should it really be static?
-     * or a Stamp be a field in {@link ReasonerBatch} ? */
+     * or a Stamp be a field in {@link NAR} ? */
     private static long currentSerial = 0;
     /** serial numbers */
     private long[] evidentialBase;

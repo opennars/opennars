@@ -28,7 +28,7 @@ import nars.inference.RuleTables;
 import nars.inference.UtilityFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.main_nogui.NARSBatch;
+import nars.main_nogui.NARRun;
 import nars.main_nogui.Parameters;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
@@ -361,7 +361,7 @@ public final class Concept extends Item {
      */
     @Override
     public String toString() {  // called from concept bag
-        if (NARSBatch.isStandAlone()) {
+        if (NARRun.isStandAlone()) {
             return (super.toStringBrief() + " " + key);
         } else {
             return key;
@@ -369,7 +369,7 @@ public final class Concept extends Item {
     }
 
     /**
-     * called from {@link NARSBatch}
+     * called from {@link NARRun}
      */
     @Override
     public String toStringLong() {

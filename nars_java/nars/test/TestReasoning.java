@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
-import nars.main_nogui.NARSBatch;
+import nars.main_nogui.NARRun;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class TestReasoning {
      */
     private boolean checkReasoning(File file) {
         try {
-            NARSBatch nars = new NARSBatch();
+            NARRun nars = new NARRun();
             File resultFile = new File(tmpDir, file.getName().replace(INPUT_FILE_SUFFIX, OUTPUT_FILE_SUFFIX));
             nars.setPrintStream(new PrintStream(resultFile));
             nars.runInference(new String[]{file.getAbsolutePath()});

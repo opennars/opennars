@@ -47,7 +47,7 @@ import nars.io.OutputChannel;
 import nars.main.NARS;
 import nars.main.Reasoner;
 import nars.main_nogui.Parameters;
-import nars.main_nogui.ReasonerBatch;
+import nars.main_nogui.NAR;
 import nars.storage.Memory;
 
 /**
@@ -58,7 +58,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     /**
      * Reference to the reasoner
      */
-    private final ReasonerBatch reasoner;
+    private final NAR reasoner;
     /**
      * Reference to the memory
      */
