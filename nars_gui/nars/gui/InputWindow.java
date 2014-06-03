@@ -19,12 +19,15 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.gui;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -32,24 +35,36 @@ import javax.swing.JTextArea;
 
 import nars.io.ExperienceReader;
 import nars.io.InputChannel;
+import nars.io.StringParser;
 import nars.main_nogui.NAR;
 
 /**
  * Input window, accepting user tasks
  */
 public class InputWindow extends NarsFrame implements ActionListener, InputChannel {
+
     private NAR reasoner;
-    /** Control buttons */
+    /**
+     * Control buttons
+     */
     private JButton okButton, holdButton, clearButton, closeButton;
-    /** Input area */
+    /**
+     * Input area
+     */
     private JTextArea inputText;
-    /** Whether the window is ready to accept new input (in fact whether the Reasoner will read the content of {@link #inputText} ) */
+    /**
+     * Whether the window is ready to accept new input (in fact whether the
+     * Reasoner will read the content of {@link #inputText} )
+     */
     private boolean ready;
-    /** number of cycles between experience lines */
+    /**
+     * number of cycles between experience lines
+     */
     private int timer;
 
     /**
      * Constructor
+     *
      * @param reasoner The reasoner
      * @param title The title of the window
      */
@@ -70,7 +85,7 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
         JScrollPane scrollPane = new JScrollPane(inputText);
 //        gridbag.setConstraints(inputText, c);
         gridbag.setConstraints(scrollPane, c);
-		add(scrollPane);
+        add(scrollPane);
 //        add(inputText);
         c.weighty = 0.0;
         c.gridwidth = 1;
@@ -106,6 +121,7 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
 
     /**
      * Handling button click
+     *
      * @param e The ActionEvent
      */
     public void actionPerformed(ActionEvent e) {
@@ -131,8 +147,9 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
     }
 
     /**
-     * Accept text input in a tick, which can be multiple lines
-     * TODO some duplicated code with {@link ExperienceReader#nextInput()}
+     * Accept text input in a tick, which can be multiple lines TODO some
+     * duplicated code with {@link ExperienceReader#nextInput()}
+     *
      * @return Whether to check this channel again
      */
     public boolean nextInput() {
@@ -148,32 +165,34 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
         int endOfLine;
         // The process steps at a number or no more text
         while ((text.length() > 0) && (timer == 0)) {
-        	endOfLine = text.indexOf('\n');
-        	if (endOfLine < 0) {	// this code is reached at end of text
-        		line = text;
-        		text = "";
-        	} else {	// this code is reached for ordinary lines
-        		line = text.substring(0, endOfLine).trim();
-        		text = text.substring(endOfLine + 1);	// text becomes rest of text
-        	}
+            endOfLine = text.indexOf('\n');
+            if (endOfLine < 0) {	// this code is reached at end of text
+                line = text;
+                text = "";
+            } else {	// this code is reached for ordinary lines
+                line = text.substring(0, endOfLine).trim();
+                text = text.substring(endOfLine + 1);	// text becomes rest of text
+            }
 
-        	try { 	// read NARS language or an integer
-        		timer = Integer.parseInt(line);
-        		reasoner.walk(timer);
-        	} catch (NumberFormatException e) {
-        		try {
-					reasoner.textInputLine(line);
-				} catch (NullPointerException e1) {
-					System.out.println("InputWindow.nextInput() - NullPointerException: please correct the input" );
+            try { 	// read NARS language or an integer
+                timer = Integer.parseInt(line);
+                reasoner.walk(timer);
+            } catch (NumberFormatException e) {
+                try {
+                    reasoner.textInputLine(line);
+                } catch (NullPointerException e1) {
+                    System.out.println("InputWindow.nextInput() - NullPointerException: please correct the input");
 //					throw new RuntimeException( "Uncorrect line: please correct the input", e1 );
-					ready = false;
-					return false;
-				}
-        	}
-        	inputText.setText(text);	// update input Text widget to rest of text
-        	if (text.isEmpty()) {
-        		ready = false;
-        	}
+                    ready = false;
+                    return false;
+                } catch (StringParser.InvalidInputException ex) {
+                    System.out.println("InputWindow.nextInput() - " + ex.toString());
+                }
+            }
+            inputText.setText(text);	// update input Text widget to rest of text
+            if (text.isEmpty()) {
+                ready = false;
+            }
         }
         return ((text.length() > 0) || (timer > 0));
     }

@@ -39,7 +39,7 @@ public abstract class StringParser extends Symbols {
     /**
      * All kinds of invalid input lines
      */
-    private static class InvalidInputException extends Exception {
+    public static class InvalidInputException extends Exception {
 
         /**
          * An invalid input line.
@@ -61,7 +61,7 @@ public abstract class StringParser extends Symbols {
      * @param time The current time
      * @return An experienced task
      */
-    public static Task parseExperience(StringBuffer buffer, Memory memory, long time) {
+    public static Task parseExperience(StringBuffer buffer, Memory memory, long time) throws InvalidInputException {
         int i = buffer.indexOf(PREFIX_MARK + "");
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
@@ -90,10 +90,10 @@ public abstract class StringParser extends Symbols {
      * @param time The current time
      * @return An experienced task
      */
-    public static Task parseTask(String s, Memory memory, long time) {
+    public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
         StringBuffer buffer = new StringBuffer(s);
-        Task task = null;
         try {
+            Task task = null;
             String budgetString = getBudgetString(buffer);
             String truthString = getTruthString(buffer);
             String str = buffer.toString().trim();
@@ -102,18 +102,19 @@ public abstract class StringParser extends Symbols {
             Stamp stamp = new Stamp(time);
             TruthValue truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last), memory);
+            if (content == null) throw new InvalidInputException("Content term missing");
             Sentence sentence = new Sentence(content, punc, truth, stamp);
             if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
                 sentence.setRevisible(false);
             }
             BudgetValue budget = parseBudget(budgetString, punc, truth);
             task = new Task(sentence, budget);
-        } catch (InvalidInputException e) {
-            String message = " !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage();
-            System.out.println(message);
-//            showWarning(message);
+            return task;
         }
-        return task;
+        catch (InvalidInputException e) {
+            throw new InvalidInputException(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());
+        }
+
     }
 
     /* ---------- parse values ---------- */
@@ -243,7 +244,7 @@ public abstract class StringParser extends Symbols {
      * @param memory Reference to the memory
      * @return the Term generated from the String
      */
-    public static Term parseTerm(String s0, Memory memory) {
+    public static Term parseTerm(String s0, Memory memory) throws InvalidInputException {
         String s = s0.trim();
         try {
             if (s.length() == 0) {
@@ -284,12 +285,11 @@ public abstract class StringParser extends Symbols {
                 default:
                     return parseAtomicTerm(s);
             }
+            
         } catch (InvalidInputException e) {
-            String message = " !!! INVALID INPUT: parseTerm: " + s + " --- " + e.getMessage();
-            System.out.println(message);
-//            showWarning(message);
+            throw new InvalidInputException(" !!! INVALID INPUT: parseTerm: " + s + " --- " + e.getMessage());
         }
-        return null;
+
     }
 
 //    private static void showWarning(String message) {
