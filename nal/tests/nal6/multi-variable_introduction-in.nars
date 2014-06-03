@@ -1,0 +1,11 @@
+// Table 8.6: Sample Multi-Variable Introduction Rules
+// {(#x → P ) ⇒ (M → (⊥ R #x <>)), M → S} |-
+// ((#y → S) ∧ (#x → P )) ⇒ (#y → (⊥ R #x <>)) Find
+
+// fails !!!
+< <#x --> P > ==> <M --> (/,R, #x, _ ) > >.
+< M --> S>.
+<(&&, <#y --> S>, <#x --> P> ) ==> <#y --> (/, R, #x, _ )> > ?
+// induction
+
+

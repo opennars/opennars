@@ -1,0 +1,37 @@
+* Comparison
+<M -->P>.
+<M -->S>.
+<S <-> P >?
+6
+* Analogy
+<M -->P>.
+<S<->M>.
+<S --> P >?
+6
+
+* Comparison
+<P -->M>.
+<S -->M>.
+<S <-> P >?
+6
+* Analogy
+<P -->M>.
+<S<->M>.
+<P --> S>?
+6
+
+* Analogy
+<M <->P>.
+<S -->M>.
+<S --> P >?
+6
+* Analogy
+<M <->P>.
+<M -->S>.
+<P --> S >?
+6
+* Resemblance
+<M <->P>.
+<S<->M>.
+<S <-> P>?
+6

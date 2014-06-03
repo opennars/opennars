@@ -1,0 +1,146 @@
+********** variable unification
+  IN: <<$1 --> bird> ==> <$1 --> flyer>>. %1.00;0.90% {0 : 1} 
+  IN: <<$1 --> bird> ==> <$1 --> flyer>>. %0.00;0.70% {0 : 2} 
+1
+ OUT: <<$1 --> bird> ==> <$1 --> flyer>>. %0.79;0.92% {1 : 1;2} 
+********** variable unification
+  IN: <<$1 --> bird> ==> <$1 --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<$1 --> robin> ==> <$1 --> bird>>. %1.00;0.90% {0 : 2} 
+5
+ OUT: <<$1 --> robin> ==> <$1 --> animal>>. %1.00;0.81% {5 : 2;1} 
+ OUT: <<$1 --> animal> ==> <$1 --> robin>>. %1.00;0.45% {5 : 2;1} 
+********** variable unification
+  IN: <<$1 --> swan> ==> <$1 --> bird>>. %1.00;0.80% {0 : 1} 
+  IN: <<$1 --> swan> ==> <$1 --> swimmer>>. %0.80;0.90% {0 : 2} 
+5
+ OUT: <<$1 --> swan> ==> (||,<$1 --> bird>,<$1 --> swimmer>)>. %1.00;0.72% {5 : 2;1} 
+ OUT: <<$1 --> swan> ==> (&&,<$1 --> bird>,<$1 --> swimmer>)>. %0.80;0.72% {5 : 2;1} 
+ OUT: <<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.37% {5 : 2;1} 
+ OUT: <<$1 --> bird> ==> <$1 --> swimmer>>. %0.80;0.42% {5 : 2;1} 
+ OUT: <<$1 --> bird> <=> <$1 --> swimmer>>. %0.80;0.42% {5 : 2;1} 
+********** variable unification
+  IN: <<bird --> $1> ==> <robin --> $1>>. %1.00;0.90% {0 : 1} 
+  IN: <<swimmer --> $1> ==> <robin --> $1>>. %0.70;0.90% {0 : 2} 
+5
+ OUT: <(&&,<bird --> $1>,<swimmer --> $1>) ==> <robin --> $1>>. %1.00;0.81% {5 : 2;1} 
+ OUT: <(||,<bird --> $1>,<swimmer --> $1>) ==> <robin --> $1>>. %0.70;0.81% {5 : 2;1} 
+ OUT: <<bird --> $1> ==> <swimmer --> $1>>. %1.00;0.36% {5 : 2;1} 
+ OUT: <<swimmer --> $1> ==> <bird --> $1>>. %0.70;0.45% {5 : 2;1} 
+ OUT: <<bird --> $1> <=> <swimmer --> $1>>. %0.70;0.45% {5 : 2;1} 
+********** variable unification
+  IN: <(&&,<$1 --> flyer>,<$1 --> [chirping]>) ==> <$1 --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <<$1 --> [with-wings]> ==> <$1 --> flyer>>. %1.00;0.90% {0 : 2} 
+1
+ OUT: <(&&,<$1 --> [chirping]>,<$1 --> [with-wings]>) ==> <$1 --> bird>>. %1.00;0.81% {1 : 2;1} 
+********** variable unification
+  IN: <(&&,<$1 --> flyer>,<$1 --> [chirping]>,<(*,$1,worms) --> food>) ==> <$1 --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <(&&,<$1 --> [chirping]>,<$1 --> [with-wings]>) ==> <$1 --> bird>>. %1.00;0.90% {0 : 2} 
+4
+ OUT: <(&&,<$1 --> flyer>,<(*,$1,worms) --> food>) ==> <$1 --> [with-wings]>>. %1.00;0.45% {4 : 1;2} 
+ OUT: <<$1 --> [with-wings]> ==> (&&,<$1 --> flyer>,<(*,$1,worms) --> food>)>. %1.00;0.45% {4 : 1;2} 
+********** variable unification
+  IN: <(&&,<$1 --> flyer>,<(*,$1,worms) --> food>) ==> <$1 --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <<$1 --> flyer> ==> <$1 --> [with-wings]>>. %1.00;0.90% {0 : 2} 
+4
+ OUT: <(&&,<$1 --> [with-wings]>,<(*,$1,worms) --> food>) ==> <$1 --> bird>>. %1.00;0.45% {4 : 1;2} 
+****** variable elimination
+  IN: <<$1 --> bird> ==> <$1 --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <robin --> bird>. %1.00;0.90% {0 : 2} 
+5
+ OUT: <robin --> animal>. %1.00;0.81% {5 : 2;1} 
+********** variable elimination
+  IN: <<$1 --> bird> ==> <$1 --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <tiger --> animal>. %1.00;0.90% {0 : 2} 
+5
+ OUT: <tiger --> bird>. %1.00;0.45% {5 : 2;1} 
+********** variable elimination
+  IN: <<$1 --> animal> <=> <$1 --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <robin --> bird>. %1.00;0.90% {0 : 2} 
+5
+ OUT: <robin --> animal>. %1.00;0.81% {5 : 2;1} 
+********** variable elimination
+  IN: (&&,<#1 --> bird>,<#1 --> swimmer>). %1.00;0.90% {0 : 1} 
+  IN: <swan --> bird>. %0.90;0.90% {0 : 2} 
+5
+ OUT: <swan --> swimmer>. %0.90;0.43% {5 : 2;1} 
+********** variable elimination
+  IN: <{Tweety} --> [with-wings]>. %1.00;0.90% {0 : 1} 
+  IN: <(&&,<$1 --> [chirping]>,<$1 --> [with-wings]>) ==> <$1 --> bird>>. %1.00;0.90% {0 : 2} 
+18
+ OUT: <<{Tweety} --> [chirping]> ==> <{Tweety} --> bird>>. %1.00;0.81% {18 : 2;1} 
+********** variable elimination
+  IN: <(&&,<$1 --> flyer>,<$1 --> [chirping]>,<(*,$1,worms) --> food>) ==> <$1 --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <{Tweety} --> flyer>. %1.00;0.90% {0 : 2} 
+3
+ OUT: <(&&,<{Tweety} --> [chirping]>,<(*,{Tweety},worms) --> food>) ==> <{Tweety} --> bird>>. %1.00;0.81% {3 : 1;2} 
+********** multiple variable elimination
+  IN: <(&&,<$1 --> key>,<$2 --> lock>) ==> <$2 --> (/,open,$1,_)>>. %1.00;0.90% {0 : 1} 
+  IN: <{lock1} --> lock>. %1.00;0.90% {0 : 2} 
+8
+ OUT: <<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.81% {8 : 1;2} 
+********** multiple variable elimination
+  IN: <<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.90% {0 : 1} 
+  IN: <{lock1} --> lock>. %1.00;0.90% {0 : 2} 
+3
+ OUT: (&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.81% {3 : 2;1} 
+********** multiple variable elimination
+  IN: (&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>). %1.00;0.90% {0 : 1} 
+  IN: <{lock1} --> lock>. %1.00;0.90% {0 : 2} 
+3
+ OUT: <<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.43% {3 : 2;1} 
+********** multiple variable elimination
+  IN: (&&,<#1 --> lock>,<#1 --> (/,open,#2,_)>,<#2 --> key>). %1.00;0.90% {0 : 1} 
+  IN: <{lock1} --> lock>. %1.00;0.90% {0 : 2} 
+1
+ OUT: (&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.43% {1 : 2;1} 
+********** variable introduction
+  IN: <swan --> bird>. %1.00;0.90% {0 : 1} 
+  IN: <swan --> swimmer>. %0.80;0.90% {0 : 2} 
+5
+ OUT: <swan --> (|,bird,swimmer)>. %1.00;0.81% {5 : 2;1} 
+ OUT: <swan --> (&,bird,swimmer)>. %0.80;0.81% {5 : 2;1} 
+ OUT: <<$1 --> bird> ==> <$1 --> swimmer>>. %0.80;0.45% {5 : 2;1} 
+ OUT: <<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.39% {5 : 2;1} 
+ OUT: <<$1 --> bird> <=> <$1 --> swimmer>>. %0.80;0.45% {5 : 2;1} 
+ OUT: (&&,<#1 --> bird>,<#1 --> swimmer>). %0.80;0.81% {5 : 2;1} 
+ OUT: <swimmer --> bird>. %1.00;0.39% {5 : 2;1} 
+ OUT: <bird --> swimmer>. %0.80;0.45% {5 : 2;1} 
+ OUT: <bird <-> swimmer>. %0.80;0.45% {5 : 2;1} 
+********** variable introduction
+  IN: <gull --> swimmer>. %1.00;0.90% {0 : 1} 
+  IN: <swan --> swimmer>. %0.80;0.90% {0 : 2} 
+5
+ OUT: <(&,gull,swan) --> swimmer>. %1.00;0.81% {5 : 2;1} 
+ OUT: <(|,gull,swan) --> swimmer>. %0.80;0.81% {5 : 2;1} 
+ OUT: <<gull --> $1> ==> <swan --> $1>>. %0.80;0.45% {5 : 2;1} 
+ OUT: <<swan --> $1> ==> <gull --> $1>>. %1.00;0.39% {5 : 2;1} 
+ OUT: <<gull --> $1> <=> <swan --> $1>>. %0.80;0.45% {5 : 2;1} 
+ OUT: (&&,<gull --> #1>,<swan --> #1>). %0.80;0.81% {5 : 2;1} 
+ OUT: <gull --> swan>. %1.00;0.39% {5 : 2;1} 
+ OUT: <swan --> gull>. %0.80;0.45% {5 : 2;1} 
+ OUT: <gull <-> swan>. %0.80;0.45% {5 : 2;1} 
+********** variables introduction
+  IN: <{key1} --> (/,open,_,{lock1})>. %1.00;0.90% {0 : 1} 
+  IN: <{key1} --> key>. %1.00;0.90% {0 : 2} 
+3
+ OUT: <{key1} --> (|,key,(/,open,_,{lock1}))>. %1.00;0.81% {3 : 1;2} 
+ OUT: <{key1} --> (&,key,(/,open,_,{lock1}))>. %1.00;0.81% {3 : 1;2} 
+ OUT: <<$1 --> key> ==> <$1 --> (/,open,_,{lock1})>>. %1.00;0.45% {3 : 1;2} 
+ OUT: <<$1 --> (/,open,_,{lock1})> ==> <$1 --> key>>. %1.00;0.45% {3 : 1;2} 
+ OUT: <<$1 --> key> <=> <$1 --> (/,open,_,{lock1})>>. %1.00;0.45% {3 : 1;2} 
+ OUT: (&&,<#1 --> key>,<#1 --> (/,open,_,{lock1})>). %1.00;0.81% {3 : 1;2} 
+ OUT: <(/,open,_,{lock1}) --> key>. %1.00;0.45% {3 : 1;2} 
+ OUT: <key --> (/,open,_,{lock1})>. %1.00;0.45% {3 : 1;2} 
+ OUT: <key <-> (/,open,_,{lock1})>. %1.00;0.45% {3 : 1;2} 
+********** multiple variables introduction
+  IN: <<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.90% {0 : 1} 
+  IN: <{lock1} --> lock>. %1.00;0.90% {0 : 2} 
+1
+ OUT: (&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>). %1.00;0.81% {1 : 2;1} 
+ OUT: <(&&,<$1 --> key>,<$2 --> lock>) ==> <$2 --> (/,open,$1,_)>>. %1.00;0.45% {1 : 2;1} 
+********** multiple variables introduction
+  IN: (&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.90% {0 : 1} 
+  IN: <{lock1} --> lock>. %1.00;0.90% {0 : 2} 
+1
+ OUT: (&&,<#1 --> key>,<#2 --> lock>,<#2 --> (/,open,#1,_)>). %1.00;0.81% {1 : 2;1} 
+ OUT: <<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.45% {1 : 2;1} 

@@ -1,0 +1,191 @@
+********** revision
+  IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> [flying]> ==> <robin --> bird>>. %0.00;0.60% {0 : 2} 
+1
+ OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.86;0.91% {1 : 1;2} 
+********** deduction
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {0 : 2} 
+1
+ OUT: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> animal> ==> <robin --> [flying]>>. %1.00;0.45% {1 : 2;1} 
+********** exemplification
+  IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 2} 
+1
+ OUT: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> animal> ==> <robin --> [flying]>>. %1.00;0.45% {1 : 2;1} 
+********** induction
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.80;0.90% {0 : 2} 
+1
+ OUT: <<robin --> bird> ==> (||,<robin --> animal>,<robin --> [flying]>)>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>. %0.80;0.81% {1 : 2;1} 
+ OUT: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.39% {1 : 2;1} 
+ OUT: <<robin --> animal> ==> <robin --> [flying]>>. %0.80;0.45% {1 : 2;1} 
+ OUT: <<robin --> animal> <=> <robin --> [flying]>>. %0.80;0.45% {1 : 2;1} 
+********** abduction
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> [flying]> ==> <robin --> animal>>. %0.80;0.90% {0 : 2} 
+1
+ OUT: <(||,<robin --> bird>,<robin --> [flying]>) ==> <robin --> animal>>. %0.80;0.81% {1 : 2;1} 
+ OUT: <(&&,<robin --> bird>,<robin --> [flying]>) ==> <robin --> animal>>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> bird> ==> <robin --> [flying]>>. %1.00;0.39% {1 : 2;1} 
+ OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.80;0.45% {1 : 2;1} 
+ OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.80;0.45% {1 : 2;1} 
+********** detachment
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <robin --> bird>. %1.00;0.90% {0 : 2} 
+1
+ OUT: <robin --> animal>. %1.00;0.81% {1 : 1;2} 
+********** detachment
+  IN: <<robin --> bird> ==> <robin --> animal>>. %0.70;0.90% {0 : 1} 
+  IN: <robin --> animal>. %1.00;0.90% {0 : 2} 
+1
+ OUT: <robin --> bird>. %1.00;0.36% {1 : 1;2} 
+********** comparison
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.80;0.90% {0 : 2} 
+1
+ OUT: <<robin --> bird> ==> (||,<robin --> animal>,<robin --> [flying]>)>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>. %0.80;0.81% {1 : 2;1} 
+ OUT: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.39% {1 : 2;1} 
+ OUT: <<robin --> animal> ==> <robin --> [flying]>>. %0.80;0.45% {1 : 2;1} 
+ OUT: <<robin --> animal> <=> <robin --> [flying]>>. %0.80;0.45% {1 : 2;1} 
+********** comparison
+  IN: <<robin --> bird> ==> <robin --> animal>>. %0.70;0.90% {0 : 1} 
+  IN: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.90% {0 : 2} 
+1
+ OUT: <(||,<robin --> bird>,<robin --> [flying]>) ==> <robin --> animal>>. %0.70;0.81% {1 : 2;1} 
+ OUT: <(&&,<robin --> bird>,<robin --> [flying]>) ==> <robin --> animal>>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> bird> ==> <robin --> [flying]>>. %0.70;0.45% {1 : 2;1} 
+ OUT: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.36% {1 : 2;1} 
+ OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.70;0.45% {1 : 2;1} 
+********** analogy
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> <=> <robin --> [flying]>>. %0.80;0.90% {0 : 2} 
+1
+ OUT: <<robin --> [flying]> ==> <robin --> animal>>. %0.80;0.65% {1 : 2;1} 
+********** analogy
+  IN: <robin --> bird>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> <=> <robin --> [flying]>>. %0.80;0.90% {0 : 2} 
+1
+ OUT: <robin --> [flying]>. %0.80;0.65% {1 : 1;2} 
+********** resemblance
+  IN: <<robin --> animal> <=> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> <=> <robin --> [flying]>>. %0.90;0.90% {0 : 2} 
+1
+ OUT: <<robin --> animal> <=> <robin --> [flying]>>. %0.90;0.81% {1 : 2;1} 
+********** conversions between Implication and Equivalence
+  IN: <<robin --> [flying]> ==> <robin --> bird>>. %0.90;0.90% {0 : 1} 
+  IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.90;0.90% {0 : 2} 
+1
+ OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.81;0.81% {1 : 2;1} 
+********** compound composition, two premises
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.90;0.90% {0 : 2} 
+1
+ OUT: <<robin --> bird> ==> (||,<robin --> animal>,<robin --> [flying]>)>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>. %0.90;0.81% {1 : 2;1} 
+ OUT: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.42% {1 : 2;1} 
+ OUT: <<robin --> animal> ==> <robin --> [flying]>>. %0.90;0.45% {1 : 2;1} 
+ OUT: <<robin --> animal> <=> <robin --> [flying]>>. %0.90;0.45% {1 : 2;1} 
+********** compound composition, two premises
+  IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> [flying]> ==> <robin --> animal>>. %0.90;0.90% {0 : 2} 
+1
+ OUT: <(||,<robin --> bird>,<robin --> [flying]>) ==> <robin --> animal>>. %0.90;0.81% {1 : 2;1} 
+ OUT: <(&&,<robin --> bird>,<robin --> [flying]>) ==> <robin --> animal>>. %1.00;0.81% {1 : 2;1} 
+ OUT: <<robin --> bird> ==> <robin --> [flying]>>. %1.00;0.42% {1 : 2;1} 
+ OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.90;0.45% {1 : 2;1} 
+ OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.90;0.45% {1 : 2;1} 
+********** compound decomposition, two premises
+  IN: <<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>. %0.00;0.90% {0 : 1} 
+  IN: <<robin --> bird> ==> <robin --> [flying]>>. %1.00;0.90% {0 : 2} 
+1
+ OUT: <<robin --> bird> ==> <robin --> animal>>. %0.00;0.81% {1 : 2;1} 
+********** compound decomposition, two premises
+  IN: (&&,<robin --> swimmer>,<robin --> [flying]>). %0.00;0.90% {0 : 1} 
+  IN: <robin --> [flying]>. %1.00;0.90% {0 : 2} 
+2
+ OUT: <robin --> swimmer>. %0.00;0.00% {2 : 1;2} 
+1
+ OUT: <robin --> swimmer>. %0.00;0.00% {3 : 1} 
+1
+ OUT: <robin --> swimmer>. %0.00;0.81% {4 : 1;2} 
+********** compound decomposition, two premises
+  IN: (||,<robin --> swimmer>,<robin --> [flying]>). %1.00;0.90% {0 : 1} 
+  IN: <robin --> swimmer>. %0.00;0.90% {0 : 2} 
+1
+ OUT: <robin --> [flying]>. %1.00;0.81% {1 : 1;2} 
+********** compound composition, one premises
+  IN: <robin --> [flying]>. %1.00;0.90% {0 : 1} 
+  IN: (||,<robin --> swimmer>,<robin --> [flying]>)?  {0 : 2} 
+1
+ OUT: <robin --> swimmer>?  {1 : 2} 
+3
+ OUT: <[flying] --> swimmer>?  {4 : 1;2} 
+ OUT: <swimmer --> [flying]>?  {4 : 1;2} 
+ OUT: <swimmer <-> [flying]>?  {4 : 1;2} 
+1
+ OUT: (||,<robin --> swimmer>,<robin --> [flying]>). %1.00;0.81% {5 : 1} 
+********** compound decomposition, one premises
+  IN: (&&,<robin --> swimmer>,<robin --> [flying]>). %0.90;0.90% {0 : 1} 
+2
+ OUT: <robin --> swimmer>. %0.90;0.73% {2 : 1} 
+6
+ OUT: <robin --> [flying]>. %0.90;0.73% {8 : 1} 
+********** negation
+  IN: (--,<robin --> [flying]>). %0.10;0.90% {0 : 1} 
+1
+ OUT: <robin --> [flying]>. %0.90;0.90% {1 : 1} 
+********** negation
+  IN: <robin --> [flying]>. %0.90;0.90% {0 : 1} 
+  IN: (--,<robin --> [flying]>)?  {0 : 2} 
+1
+ OUT: (--,<robin --> [flying]>). %0.10;0.90% {1 : 1} 
+********** contraposition
+  IN: <(--,<robin --> bird>) ==> <robin --> [flying]>>. %0.10;0.90% {0 : 1} 
+  IN: <(--,<robin --> [flying]>) ==> <robin --> bird>>?  {0 : 2} 
+7
+ OUT: <(--,<robin --> bird>) ==> <robin --> [flying]>>?  {7 : 2} 
+ OUT: <(--,<robin --> bird>) ==> <robin --> [flying]>>?  {7 : 2} 
+ OUT: <(--,<robin --> bird>) ==> <robin --> [flying]>>?  {7 : 2} 
+11
+ OUT: <(--,<robin --> [flying]>) ==> <robin --> bird>>. %0.00;0.45% {18 : 1} 
+********** conditional deduction
+  IN: <(&&,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <robin --> [flying]>. %1.00;0.90% {0 : 2} 
+3
+ OUT: <<robin --> [with-wings]> ==> <robin --> bird>>. %1.00;0.81% {3 : 2;1} 
+********** conditional deduction
+  IN: <(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <robin --> [flying]>. %1.00;0.90% {0 : 2} 
+5
+ OUT: <(&&,<robin --> [chirping]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.81% {5 : 1;2} 
+********** conditional deduction
+  IN: <(&&,<robin --> bird>,<robin --> [living]>) ==> <robin --> animal>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {0 : 2} 
+14
+ OUT: <(&&,<robin --> [flying]>,<robin --> [living]>) ==> <robin --> animal>>. %1.00;0.81% {14 : 2;1} 
+********** conditional abduction
+  IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>. %1.00;0.90% {0 : 2} 
+15
+ OUT: <robin --> swimmer>. %1.00;0.45% {15 : 1;2} 
+********** conditional abduction
+  IN: <(&&,<robin --> [chirping]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {0 : 2} 
+8
+ OUT: <robin --> [flying]>. %1.00;0.45% {8 : 1;2} 
+********** conditional abduction
+  IN: <(&&,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> [living]>>. %0.90;0.90% {0 : 1} 
+  IN: <(&&,<robin --> bird>,<robin --> [flying]>) ==> <robin --> [living]>>. %1.00;0.90% {0 : 2} 
+8
+ OUT: <<robin --> bird> ==> <robin --> [with-wings]>>. %1.00;0.42% {8 : 2;1} 
+ OUT: <<robin --> [with-wings]> ==> <robin --> bird>>. %0.90;0.45% {8 : 2;1} 
+********** conditional induction
+  IN: <(&&,<robin --> [chirping]>,<robin --> [flying]>) ==> <robin --> bird>>. %1.00;0.90% {0 : 1} 
+  IN: <<robin --> [flying]> ==> <robin --> [with-beak]>>. %0.90;0.90% {0 : 2} 
+11
+ OUT: <(&&,<robin --> [chirping]>,<robin --> [with-beak]>) ==> <robin --> bird>>. %1.00;0.42% {11 : 1;2} 

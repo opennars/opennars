@@ -1,0 +1,100 @@
+
+*** [input sentences]
+*** <(*, cat, CAT) --> REPRESENT>.
+*** <(*, fish, FISH) --> REPRESENT>.
+*** <(*, dog, DOG) --> REPRESENT>.
+*** <(*, meat, MEAT) --> REPRESENT>.
+*** <(*,(*,cat,eat,fish),<(*,CAT,FISH) --> FOOD>) --> REPRESENT>.
+*** <(*,(*,dog,eat,fish),?x) --> REPRESENT>?
+*** <(*,?x,<(*,DOG,FISH) --> FOOD>) --> REPRESENT>?
+*** <?x --> (/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>)>?
+*** <(*,dog,eat,meat) --> (/,REPRESENT,_,?x)>? 
+
+***1 [transformation]
+<(*,cat,CAT) --> REPRESENT>.
+6
+ OUT: <cat --> (/,REPRESENT,_,CAT)>. %1.00;0.90%
+
+***2 [transformation]
+<(*,(*,cat,eat,fish),<(*,CAT,FISH) --> FOOD>) --> REPRESENT>.
+7
+ OUT: <(*,cat,eat,fish) --> (/,REPRESENT,_,<(*,CAT,FISH) --> FOOD>)>. %1.00;0.90%
+
+***3 [transformation]
+ IN: <(*,cat,eat,fish) --> (/,REPRESENT,_,<(*,CAT,FISH) --> FOOD>)>.
+7
+ OUT: <cat --> (/,(/,REPRESENT,_,<(*,CAT,FISH) --> FOOD>),_,eat,fish)>. %1.00;0.90%
+
+***4 [induction]
+<cat --> (/,REPRESENT,_,CAT)>.
+<cat --> (/,(/,REPRESENT,_,<(*,CAT,FISH) --> FOOD>),_,eat,fish)>.
+3
+ OUT: <<$1 --> (/,REPRESENT,_,$2)> ==> <$1 --> (/,(/,REPRESENT,_,<(*,$2,FISH) --> FOOD>),_,eat,fish)>>. %1.00;0.45%
+
+***5 [deduction]
+<<$1 --> (/,REPRESENT,_,$2)> ==> <$1 --> (/,(/,REPRESENT,_,<(*,$2,FISH) --> FOOD>),_,eat,fish)>>.
+<dog --> (/,REPRESENT,_,DOG)>. %1.00;0.90% {0 : 2} 
+102
+ OUT: <dog --> (/,(/,REPRESENT,_,<(*,DOG,FISH) --> FOOD>),_,eat,fish)>. %1.00;0.81%
+
+***6 [transformation]
+<dog --> (/,(/,REPRESENT,_,<(*,DOG,FISH) --> FOOD>),_,eat,fish)>.
+8
+ OUT: <(*,dog,eat,fish) --> (/,REPRESENT,_,<(*,DOG,FISH) --> FOOD>)>. %1.00;0.90%
+
+***7 [question answering]
+<(*,dog,eat,fish) --> (/,REPRESENT,_,<(*,DOG,FISH) --> FOOD>)>.
+<(*,(*,dog,eat,fish),?x) --> REPRESENT>?
+79
+ OUT: <(*,(*,dog,eat,fish),<(*,DOG,FISH) --> FOOD>) --> REPRESENT>. %1.00;0.90%
+
+***8 [question answering]
+<(*,dog,eat,fish) --> (/,REPRESENT,_,<(*,DOG,FISH) --> FOOD>)>.
+<(*,?x,<(*,DOG,FISH) --> FOOD>) --> REPRESENT>? 
+25
+ OUT: <(*,(*,dog,eat,fish),<(*,DOG,FISH) --> FOOD>) --> REPRESENT>. %1.00;0.90% 
+
+***9 [transformation]
+<<$x --> (/,REPRESENT,_,$y)> ==> <$x --> (/,(/,REPRESENT,_,<(*,$y,FISH) --> FOOD>),_,eat,fish)>>.
+5
+ OUT: <<(*,$1,$2) --> REPRESENT> ==> <$1 --> (/,(/,REPRESENT,_,<(*,$2,FISH) --> FOOD>),_,eat,fish)>>. %1.00;0.90%
+
+***10 [transformation]
+<<(*,$1,$2) --> REPRESENT> ==> <$1 --> (/,(/,REPRESENT,_,<(*,$2,FISH) --> FOOD>),_,eat,fish)>>.
+8
+ OUT: <<(*,$1,$2) --> REPRESENT> ==> <fish --> (/,(/,REPRESENT,_,<(*,$2,FISH) --> FOOD>),$1,eat,_)>>. %1.00;0.90%
+
+***11 [induction]
+<<(*,$1,$2) --> REPRESENT> ==> <fish --> (/,(/,REPRESENT,_,<(*,$2,FISH) --> FOOD>),$1,eat,_)>>.
+<fish --> (/,REPRESENT,_,FISH)>. 
+3
+ OUT: <(&&,<$1 --> (/,REPRESENT,_,$2)>,<(*,$3,$4) --> REPRESENT>) ==> <$1 --> (/,(/,REPRESENT,_,<(*,$4,$2) --> FOOD>),$3,eat,_)>>. %1.00;0.45%
+
+***12 [deduction]
+<(&&,<$1 --> (/,REPRESENT,_,$2)>,<(*,$3,$4) --> REPRESENT>) ==> <$1 --> (/,(/,REPRESENT,_,<(*,$4,$2) --> FOOD>),$3,eat,_)>>.
+<dog --> (/,REPRESENT,_,DOG)>.
+152
+ OUT: <<$1 --> (/,REPRESENT,_,$2)> ==> <eat --> (/,(/,REPRESENT,_,<(*,DOG,$2) --> FOOD>),dog,_,$1)>>. %1.00;0.81%
+
+***13 [deduction]
+<meat --> (/,REPRESENT,_,MEAT)>.
+<<$1 --> (/,REPRESENT,_,$2)> ==> <eat --> (/,(/,REPRESENT,_,<(*,DOG,$2) --> FOOD>),dog,_,$1)>>.
+162
+ OUT: <dog --> (/,(/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>),_,eat,meat)>. %1.00;0.81%
+
+***14 [transformation]
+<dog --> (/,(/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>),_,eat,meat)>.
+8
+ OUT: <(*,dog,eat,meat) --> (/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>)>. %1.00;0.90%
+
+***15 [question answering]
+<(*,dog,eat,meat) --> (/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>)>.
+<?x --> (/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>)>? 
+19
+ OUT: <(*,dog,eat,meat) --> (/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>)>. %1.00;0.90%
+
+***16 [question answering]
+<(*,dog,eat,meat) --> (/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>)>.
+<(*,dog,eat,meat) --> (/,REPRESENT,_,?x)>? 
+16
+ OUT: <(*,dog,eat,meat) --> (/,REPRESENT,_,<(*,DOG,MEAT) --> FOOD>)>. %1.00;0.90%
