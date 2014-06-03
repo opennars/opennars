@@ -55,6 +55,8 @@ import nars.storage.Memory;
  */
 public class MainWindow extends NarsFrame implements ActionListener, OutputChannel {
 
+    final int TICKS_PER_TIMER_LABEL_UPDATE = 1024; //set to zero for max speed, or a large number to reduce GUI updates
+
     /**
      * Reference to the reasoner
      */
@@ -99,8 +101,6 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
      * Whether the experience is saving into a file
      */
     private boolean savingExp = false;
-
-    private boolean updateExperienceOutput = false;
 
     /**
      * Input experience window
@@ -261,13 +261,18 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
      */
     public void initTimer() {
         timer = 0;
-        timerText.setText(memory.getTime() + " :: " + timer);
+        if (reasoner.isRunning()) {
+            if (TICKS_PER_TIMER_LABEL_UPDATE == 0)
+                return;
+            if (memory.getTime() % TICKS_PER_TIMER_LABEL_UPDATE != 0)
+                return;
+        }
+        SwingUtilities.invokeLater(updateTimer);
     }
 
     /**
      * Update timer and its display
      */
-    final int TICKS_PER_TIMER_LABEL_UPDATE = 16;
     final Runnable updateTimer = new Runnable() {
         @Override
         public void run() {
@@ -279,9 +284,10 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     public void tickTimer() {
         timer++;
         if (reasoner.isRunning()) {
-            if (timer % TICKS_PER_TIMER_LABEL_UPDATE != 0) {
+            if (TICKS_PER_TIMER_LABEL_UPDATE == 0)
                 return;
-            }
+            if (memory.getTime() % TICKS_PER_TIMER_LABEL_UPDATE != 0)
+                return;
         }
         SwingUtilities.invokeLater(updateTimer);
     }
@@ -297,6 +303,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         if (obj instanceof JButton) {
             if (obj == runButton) {
                 nextOutput(null);
+                timerLabel.setText("Running..");
                 reasoner.start(0);
             } else if (obj == stopButton) {
                 nextOutput(null);
@@ -401,7 +408,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
                 undisplayedExperience.append(line).append("\n");
             }
         }
-        if (updateExperienceOutput || (lines == null) || _firstOutput) {
+        if ((lines == null) || _firstOutput) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
