@@ -17,39 +17,68 @@
             
     </head>
     <body>
-        <div id="notebook"></div>
+        <div id="io">
+            
+        </div>
         
         <script type="text/javascript">
+            var ws = new WebSocket('ws://localhost:8887');
+            
+            var prevOutput = null, currentOutput = null;
+            
+            function addIO(message) {
+                var d = $('<div/>').addClass('section');
 
-            jQuery(function($, undefined) {
-
-                var ws = new WebSocket('ws://localhost:8887');
-                
-                var t = $('#notebook').terminal(function(command, term) {
-                    if (command !== '') {
+                prevOutput = currentOutput;
+        
+                if (message && typeof message == "string") {
+                    d.append(message + '<br/>'); 
+                    currentOutput = d;
+                }
+                else{
+                    var input = $('<textarea/>');                
+                    var outputDiv = $('<div/>').addClass('output');
+                    var sendButton = $('<button/>').html('&gt;').click(function() {
                         try {                            
-                            ws.send(command);
+                            ws.send(input.val());
+                            input.attr('editable', 'false');
+                            addIO();
                         } catch (e) {
-                            term.error(new String(e));
+                            output('Error: ' + e);
                         }
-                    } else {
-                        term.echo('');
-                    }
-                }, {
-                    greetings: 'OpenNARS',
-                    name: 'opennars',
-                    height: "95%",
-                    prompt: 'n> '});
 
+                    });
+
+
+                    d.append(input);
+                    d.append(sendButton);
+                    d.append(outputDiv);                    
+                    currentOutput = outputDiv;
+                }
+                $('#io').append(d);
+                scrollbottom();
+            }
+            function scrollbottom() {                    
+                $('body').scrollTop($('body').prop('scrollHeight'));
+            }
+            function output(m) {
+                if (!prevOutput)
+                    prevOutput = currentOutput;
+                prevOutput.append(m + '<br/>');                
+                scrollbottom();
+            }
+            $(document).ready(function() {
+                addIO("<b>OpenNARS</b>");
+                
                 ws.onopen = function() {
-                    t.echo('Connected.')
+                    output("Connected.");
+                    addIO();
                 };
                 ws.onmessage = function(e) {
-                    t.echo(e.data);
+                    output(e.data);
                 };
                 ws.onclose = function() {
-                    t.echo('Disconnected.');
-                    t.disable();
+                    output("Disconnected.");
                 };
     
             });

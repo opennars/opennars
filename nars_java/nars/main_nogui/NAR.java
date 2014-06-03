@@ -149,9 +149,7 @@ public class NAR {
     public void output(final String o) {
         final ArrayList<String> l = new ArrayList();
         l.add(o);
-        
-        for (final OutputChannel channelOut : outputChannels)
-            channelOut.nextOutput( l );
+        output(l);
     }
 
     public void doTick() {
