@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package nars.main;
+package nars.web;
 
 import nars.io.ExperienceReader;
 import nars.io.ExperienceWriter;
