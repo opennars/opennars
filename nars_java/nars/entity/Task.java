@@ -108,7 +108,7 @@ public class Task extends Item {
      * @return The creation time of the sentence
      */
     public long getCreationTime() {
-        return sentence.getStamp().getCreationTime();
+        return sentence.getStamp().creationTime;
     }
 
     /**

@@ -150,21 +150,14 @@ public class Stamp implements Cloneable {
     }
 
 
-    /**
-     * DEPRECATED use public field, for faster access
-     * Get the evidentialBase, called in this class only
-     * @return The evidentialBase of numbers
-     */
-    @Deprecated private long[] getBase() {
-        return evidentialBase;
-    }
+
 
     /**
      * Convert the evidentialBase into a set
      * @return The TreeSet representation of the evidential base
      */
     private TreeSet<Long> toSet() {
-        final TreeSet<Long> set = new TreeSet<>();
+        final TreeSet<Long> set = new TreeSet<>();        
         for (int i = 0; i < baseLength; i++) {
             set.add(evidentialBase[i]);
         }
@@ -181,8 +174,14 @@ public class Stamp implements Cloneable {
         if (!(that instanceof Stamp)) {
             return false;
         }
+        
+        final Stamp sthat = ((Stamp)that);
+        
+        //if (sthat.baseLength!=baseLength) //early exit before needing to allocate TreeSet below
+        //    return false;
+        
         final TreeSet<Long> set1 = toSet();
-        final TreeSet<Long> set2 = ((Stamp) that).toSet();
+        final TreeSet<Long> set2 = sthat.toSet();
         return (set1.containsAll(set2) && set2.containsAll(set1));
     }
 
@@ -195,16 +194,9 @@ public class Stamp implements Cloneable {
         return toString().hashCode();
     }
 
-    /**
-     * DEPRECATED use public field
-     * Get the creationTime of the truth-value
-     * @return The creation time
-     */
-    @Deprecated public long getCreationTime() {
-        return creationTime;
-    }
 
-    StringBuilder stringBuffer;
+    StringBuffer stringBuffer; //holds pre-allocated string for toString()
+    
     /**
      * Get a String form of the Stamp for display
      * Format: {creationTime [: eventTime] : evidentialBase}
@@ -217,9 +209,11 @@ public class Stamp implements Cloneable {
   
     @Override
     public String toString() {
-        if (stringBuffer == null) {
-            stringBuffer = new StringBuilder(8+baseLength*2 /* TODO properly estimate this */);
-        }
+        if (stringBuffer == null)
+            stringBuffer = new StringBuffer(8+baseLength*5 /* TODO properly estimate this */);
+        else
+            stringBuffer.setLength(0);
+        
         stringBuffer.append(stampOpenerSpace).append(creationTime)
                 .append(spaceStampStarterSpace);
         
