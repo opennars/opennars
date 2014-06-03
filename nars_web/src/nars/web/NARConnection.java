@@ -20,7 +20,8 @@ abstract public class NARConnection implements LineOutput, Runnable {
     private final ExperienceReader reader;
     private final ExperienceWriter writer;
     private Thread thread;
-
+    int cycleIntervalMS = 50;
+        
     public NARConnection(NAR nar) {
         this.nar = nar;
         
@@ -73,13 +74,15 @@ abstract public class NARConnection implements LineOutput, Runnable {
                     + " step " + nar.getTime()
                     + " " + nar.isFinishedInputs());*/
             
-            if (nar.isFinishedInputs() || nar.getTime() == 1000) {
+            if (nar.isFinishedInputs()) {
                 break;
             }
-            
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {            }
+    
+            if (cycleIntervalMS > 0) {
+                try {
+                    Thread.sleep(cycleIntervalMS);
+                } catch (InterruptedException ex) {            }            
+            }
         }
         running = false;
         thread = null;
