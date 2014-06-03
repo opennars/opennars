@@ -82,7 +82,7 @@ public abstract class StringParser extends Symbols {
      * @param time The current time
      * @return An experienced task
      */
-    public static Task parseTask(String s, Memory memory, long time) {
+    public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
         StringBuffer buffer = new StringBuffer(s);
         Task task = null;
         try {
@@ -109,7 +109,7 @@ public abstract class StringParser extends Symbols {
             BudgetValue budget = parseBudget(budgetString, punc, truth);
             task = new Task(sentence, budget);
         } catch (InvalidInputException e) {
-            System.out.println(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());
+            throw new InvalidInputException(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());
         }
         return task;
     }
@@ -235,7 +235,7 @@ public abstract class StringParser extends Symbols {
      * @param memory Reference to the memory
      * @return the Term generated from the String
      */
-    public static Term parseTerm(String s0, Memory memory) {
+    public static Term parseTerm(String s0, Memory memory) throws InvalidInputException {
         String s = s0.trim();
         try {
             if (s.length() == 0) {
@@ -277,9 +277,8 @@ public abstract class StringParser extends Symbols {
                     return parseAtomicTerm(s);
             }
         } catch (InvalidInputException e) {
-            System.out.println(" !!! INVALID INPUT: parseTerm: " + s + " --- " + e.getMessage());
+            throw new InvalidInputException(" !!! INVALID INPUT: parseTerm: " + s + " --- " + e.getMessage());
         }
-        return null;
     }
 
     /**

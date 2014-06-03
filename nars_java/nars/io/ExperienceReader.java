@@ -24,6 +24,7 @@ import java.awt.FileDialog;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 
 import nars.main_nogui.NAR;
 
@@ -124,19 +125,29 @@ public class ExperienceReader implements InputChannel {
                     return false;
                 }
             } catch (IOException ex) {
-                System.out.println("i/o error: " + ex.getMessage());
+                reasoner.output("i/o error: " + ex.getMessage());
             }
+            
             line = line.trim();
-            // read NARS language or an integer
-            if (line.length() > 0) {
-                try {
-                    timer = Integer.parseInt(line);
-                    reasoner.walk(timer);
-                } catch (NumberFormatException e) {
-                    reasoner.textInputLine(line);
-                }
-            }
+            parse(line);
         }
         return true;
+    }
+    
+    public void parse(String line) {
+        // read NARS language or an integer
+        if (line.length() > 0) {
+            try {
+                timer = Integer.parseInt(line);
+                reasoner.walk(timer);
+            } catch (NumberFormatException e) {
+                try {
+                    reasoner.textInputLine(line);
+                }
+                catch (Exception ep) {
+                    reasoner.output("Parse Error: " + ep.toString() + "\n" + Arrays.asList(ep.getStackTrace()) );
+                }
+            }
+        }       
     }
 }

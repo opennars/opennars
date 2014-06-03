@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nars.web;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -14,8 +10,11 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Map;
+import java.util.WeakHashMap;
 import nars.io.ExperienceReader;
 import nars.io.ExperienceWriter;
+import nars.main.NARConnection;
 import nars.main_nogui.NAR;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
@@ -27,6 +26,7 @@ public class NARServer extends WebSocketServer {
     NAR reasoner;
     private boolean logging;
     private PrintStream out = System.out;
+    private Map<WebSocket, NARConnection> socketSession = new WeakHashMap();
 
     public NARServer(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
@@ -35,23 +35,40 @@ public class NARServer extends WebSocketServer {
     public NARServer(InetSocketAddress address) {
         super(address);
     }
-
+    
     @Override
-    public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        this.sendToAll("new connection: " + handshake.getResourceDescriptor());
-        System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+    public void onOpen(final WebSocket conn, ClientHandshake handshake) {
+        //this.sendToAll("new connection: " + handshake.getResourceDescriptor());
+        
+        System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
+
+        final NARConnection n = new NARConnection(new NAR()) {
+            @Override public void println(String output) {
+                conn.send(output);
+            }
+        };
+        socketSession.put(conn, n);        
+        
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        this.sendToAll(conn + " has left the room!");
-        System.out.println(conn + " has left the room!");
+        System.out.println(conn + " disconnected");
+               
+        NARConnection n = socketSession.get(conn);
+        if (n!=null) {
+            n.nar.stop();
+            socketSession.remove(conn);
+        }
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        this.sendToAll(message);
-        System.out.println(conn + ": " + message);
+        
+        NARConnection n = socketSession.get(conn);
+        if (n!=null) {
+            n.read(message);
+        }
     }
 
 
@@ -64,7 +81,8 @@ public class NARServer extends WebSocketServer {
         }
         NARServer s = new NARServer(port);
         s.start();
-        System.out.println("ChatServer started on port: " + s.getPort());
+        System.out.println("NARS WebSockets ready on port: " + s.getPort());
+        System.out.println("Open " + new File("nars_web/client/index.html").getAbsolutePath() + " in a web browser.");
 
         BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
@@ -80,12 +98,6 @@ public class NARServer extends WebSocketServer {
             }
         }
     
-        /*
-        NARRun nars = new NARRun();
-        CommandLineParameters.decode(args, nars.getReasoner());
-        nars.runInference(args);
-        init();
-        */    
     }
 
     @Override

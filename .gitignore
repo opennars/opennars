@@ -3,3 +3,4 @@ build/
 nars-dist/
 nbproject/private/
 
+/dist/

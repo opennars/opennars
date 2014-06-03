@@ -1,0 +1,62 @@
+<!-- Import JavaScript Libraries. -->
+<html>
+    <head>
+        <script type="text/javascript" src="web_socket.js"></script>
+        <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.terminal/js/jquery.terminal-min.js"></script>
+        <script type="text/javascript" src="lib/lodash/dist/lodash.min.js"></script>
+        <style type="text/css">
+            @import url("lib/jquery-ui/themes/dot-luv/jquery-ui.min.css");
+            @import url("lib/jquery-ui/themes/dot-luv/jquery.ui.theme.css");
+            @import url("lib/jquery.terminal/css/jquery.terminal.css");
+            @import url("index.css");
+        </style>
+        <style>
+        </style>
+            
+    </head>
+    <body>
+        <div id="notebook"></div>
+        
+        <script type="text/javascript">
+
+            jQuery(function($, undefined) {
+
+                var ws = new WebSocket('ws://localhost:8887');
+                
+                var t = $('#notebook').terminal(function(command, term) {
+                    if (command !== '') {
+                        try {                            
+                            ws.send(command);
+                        } catch (e) {
+                            term.error(new String(e));
+                        }
+                    } else {
+                        term.echo('');
+                    }
+                }, {
+                    greetings: 'OpenNARS',
+                    name: 'opennars',
+                    height: "95%",
+                    prompt: 'n> '});
+
+                ws.onopen = function() {
+                    t.echo('Connected.')
+                };
+                ws.onmessage = function(e) {
+                    t.echo(e.data);
+                };
+                ws.onclose = function() {
+                    t.echo('Disconnected.');
+                    t.disable();
+                };
+    
+            });
+                
+
+
+
+        </script>
+    </body>
+</html>

@@ -141,6 +141,18 @@ public class NAR {
     public void tick() {
         doTick();
     }
+    
+    public void output(final ArrayList<String> output) {
+        for (final OutputChannel channelOut : outputChannels)
+            channelOut.nextOutput(output);
+    }
+    public void output(final String o) {
+        final ArrayList<String> l = new ArrayList();
+        l.add(o);
+        
+        for (final OutputChannel channelOut : outputChannels)
+            channelOut.nextOutput( l );
+    }
 
     public void doTick() {
         if (DEBUG) {
@@ -164,9 +176,7 @@ public class NAR {
         // forward to output Channels
         ArrayList<String> output = memory.getExportStrings();
         if (!output.isEmpty()) {
-            for (OutputChannel channelOut : outputChannels) {
-                channelOut.nextOutput(output);
-            }
+            output(output);
             output.clear();	// this will trigger display the current value of timer in Memory.report()
         }
         if (running || walkingSteps > 0) {
@@ -191,7 +201,7 @@ public class NAR {
      *
      * @param text
      */
-    public void textInputLine(String text) {
+    public void textInputLine(String text) throws StringParser.InvalidInputException  {
         if (text.isEmpty()) {
             return;
         }

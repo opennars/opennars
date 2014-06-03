@@ -37,7 +37,14 @@ public class ExperienceWriter implements OutputChannel {
      * Input experience from a file
      */
     private PrintWriter outExp;
+    
 
+    public interface LineOutput {
+        public void println(String s);
+    }
+    
+    public LineOutput outExp2;
+    
     /**
      * Default constructor
      *
@@ -45,6 +52,10 @@ public class ExperienceWriter implements OutputChannel {
      */
     public ExperienceWriter(NAR reasoner) {
         this.reasoner = reasoner;
+    }
+    public ExperienceWriter(NAR reasoner, LineOutput outExp2) {
+        this.reasoner = reasoner;
+        this.outExp2 = outExp2;
     }
 
     public ExperienceWriter(NAR reasoner, PrintWriter outExp) {
@@ -87,6 +98,11 @@ public class ExperienceWriter implements OutputChannel {
             for (Object line : lines) {
                 outExp.println(line.toString());
             }
+        }
+        if (outExp2 != null) {
+            for (Object line : lines) {
+                outExp2.println(line.toString());
+            }            
         }
     }
 
