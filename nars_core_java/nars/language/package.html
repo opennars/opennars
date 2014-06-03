@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<body>
+
+Term hierarchy in Narsese
+
+<h2>Package Specification</h2>
+
+Open-NARS implements the following formal language, Narsese.
+<pre>
+           &lt;sentence&gt; ::= &lt;judgment&gt;
+                        | &lt;question&gt;
+           &lt;judgment&gt; ::= &lt;statement&gt; &lt;truth-value&gt;
+           &lt;question&gt; ::= &lt;statement&gt; 
+          &lt;statement&gt; ::= &lt;&lt;term&gt; &lt;relation&gt; &lt;term&gt;&gt;
+                        | &lt;compound-statement&gt;
+                        | &lt;term&gt;
+               &lt;term&gt; ::= &lt;word&gt;
+                        | &lt;variable&gt;
+                        | &lt;compound-term&gt;
+                        | &lt;statement&gt;
+           &lt;relation&gt; ::= -->    // Inheritance
+                        | <->    // Similarity
+                        | {--    // Instance
+                        | --]    // Property
+                        | {-]    // InstanceProperty
+                        | ==>    // Implication
+                        | <=>    // Equivalence
+ &lt;compound-statement&gt; ::= (-- &lt;statement&gt;)                 // Negation
+                        | (|| &lt;statement&gt; &lt;statement&gt;<sup>+</sup>)    // Disjunction
+                        | (&& &lt;statement&gt; &lt;statement&gt;<sup>+</sup>)    // Conjunction
+      &lt;compound-term&gt; ::= {&lt;term&gt;<sup>+</sup>}    // SetExt
+                        | [&lt;term&gt;<sup>+</sup>]    // SetInt
+                        | (& &lt;term&gt; &lt;term&gt;<sup>+</sup>)    // IntersectionExt
+                        | (| &lt;term&gt; &lt;term&gt;<sup>+</sup>)    // IntersectionInt
+                        | (- &lt;term&gt; &lt;term&gt;)     // DifferenceExt
+                        | (~ &lt;term&gt; &lt;term&gt;)     // DifferenceInt
+                        | (* &lt;term&gt; &lt;term&gt;<sup>+</sup>)    // Product
+                        | (/ &lt;term&gt;<sup>+</sup> _ &lt;term&gt;<sup>*</sup>)    // ImageExt
+                        | (\ &lt;term&gt;<sup>+</sup> _ &lt;term&gt;<sup>*</sup>)    // ImageInt
+           &lt;variable&gt; ::= &lt;independent-var&gt;
+                        | &lt;dependent-var&gt;
+                        | &lt;query-var&gt;
+    &lt;independent-var&gt; ::= $[&lt;word&gt;]
+      &lt;dependent-var&gt; ::= #&lt;word&gt;
+          &lt;query-var&gt; ::= ?[&lt;word&gt;]
+               &lt;word&gt; : string in an alphabet
+        &lt;truth-value&gt; : a pair of real numbers in [0, 1] x (0, 1)
+</pre>
+
+Major methods in the Term classes:
+<ul>
+<li>constructors</li>
+<li>get and set</li>
+<li>clone, compare, and unify</li>
+<li>create and access corresponding concept</li>
+<li>structural operation in compound</li>
+</ul>
+
+</body>
+</html>

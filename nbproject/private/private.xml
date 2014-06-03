@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/me/share/nars/nars_core_java/nars/language/Conjunction.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/entity/Item.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/storage/Bag.java</file>
+            <file>file:/home/me/share/nars/nars_gui/nars/gui/MainWindow.java</file>
+            <file>file:/home/me/share/nars/nars_gui/nars/gui/ConceptWindow.java</file>
+            <file>file:/home/me/share/nars/nars_gui/nars/gui/NarsFrame.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/io/OutputChannel.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/entity/ShortFloat.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/storage/Memory.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/inference/BudgetFunctions.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/inference/StructuralRules.java</file>
+            <file>file:/home/me/share/nars/nars_core_java/nars/entity/BudgetValue.java</file>
+            <file>file:/home/me/share/nars/nars_gui/nars/main/NARS.java</file>
+        </group>
+    </open-files>
+</project-private>
