@@ -6,6 +6,7 @@
             <name>open-nars</name>
             <source-roots>
                 <root id="nars_gui.dir"/>
+                <root id="src.src.dir"/>
                 <root id="src.nars_java.dir"/>
             </source-roots>
             <test-roots/>

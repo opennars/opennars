@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
-import nars.main_nogui.NARSBatch;
+import nars.main_nogui.NARRun;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class TestReasoning0 {
      */
     private boolean checkReasoning(File file) {
         try {
-            NARSBatch nars = new NARSBatch();
+            NARRun nars = new NARRun();
             File resultFile = new File(tmpDir, file.getName().replace(IN_TXT, OUT_TXT));
             nars.setPrintStream(new PrintStream(resultFile));
             if (file.getName().startsWith("MultiStep")) {

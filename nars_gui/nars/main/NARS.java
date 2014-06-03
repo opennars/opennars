@@ -22,8 +22,8 @@ package nars.main;
 
 import nars.io.ExperienceReader;
 import nars.main_nogui.CommandLineParameters;
-import nars.main_nogui.NARSBatch;
-import nars.main_nogui.ReasonerBatch;
+import nars.main_nogui.NAR;
+import nars.main_nogui.NARRun;
 
 /**
  * The main class of the open-nars project.
@@ -49,7 +49,7 @@ public class NARS implements Runnable {
     /**
      * The reasoner
      */
-    ReasonerBatch reasoner;
+    NAR reasoner;
 
     /**
      * The entry point of the standalone application.
@@ -60,7 +60,7 @@ public class NARS implements Runnable {
      * --silence <integer>
      */
     public static void main(String args[]) {
-        NARSBatch.setStandAlone(true);
+        NARRun.setStandAlone(true);
         NARS nars = new NARS();
         nars.init(args);
         nars.start();

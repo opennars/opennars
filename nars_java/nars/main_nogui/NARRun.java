@@ -29,19 +29,19 @@ import nars.io.ExperienceWriter;
 ;
 
 /**
- * The main class of the project.
+ * Run Reasoner
  * <p>
- * Define an application with batch functionality; TODO check duplicated code
- * with {@link nars.main.NARS}
+ * Runs a NAR with input. useful for command line or batch functionality; 
+ * TODO check duplicated code with {@link nars.main.NARS}
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
-public class NARSBatch {
+public class NARRun {
 
     /**
      * The reasoner
      */
-    ReasonerBatch reasoner;
+    NAR reasoner;
     private boolean logging;
     private PrintStream out = System.out;
     private boolean dumpLastState = true;
@@ -59,7 +59,7 @@ public class NARSBatch {
      * @param args optional argument used : one input file
      */
     public static void main(String args[]) {
-        NARSBatch nars = new NARSBatch();
+        NARRun nars = new NARRun();
         setStandAlone(true);
         CommandLineParameters.decode(args, nars.getReasoner());
         nars.runInference(args);
@@ -70,7 +70,7 @@ public class NARSBatch {
         }
     }
 
-    public NARSBatch() {
+    public NARRun() {
         init();
     }
 
@@ -116,7 +116,7 @@ public class NARSBatch {
      * Can instantiate multiple reasoners
      */
     public final void init() {
-        reasoner = new ReasonerBatch();
+        reasoner = new NAR();
     }
 
     /**
@@ -150,7 +150,7 @@ public class NARSBatch {
         }
     }
 
-    public ReasonerBatch getReasoner() {
+    public NAR getReasoner() {
         return reasoner;
     }
 
@@ -164,6 +164,6 @@ public class NARSBatch {
     }
 
     public static void setStandAlone(boolean standAlone) {
-        NARSBatch.standAlone = standAlone;
+        NARRun.standAlone = standAlone;
     }
 }

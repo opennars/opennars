@@ -11,7 +11,7 @@ public class CommandLineParameters {
      * @param args Given arguments
      * @param r The corresponding reasoner
      */
-    public static void decode(String[] args, ReasonerBatch r) {
+    public static void decode(String[] args, NAR r) {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if ("--silence".equals(arg)) {
