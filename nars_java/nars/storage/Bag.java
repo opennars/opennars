@@ -230,13 +230,13 @@ public abstract class Bag<E extends Item> {
         if (nameTable.isEmpty()) { // empty bag
             return null;
         }
-        if (emptyLevel(currentLevel) || (currentCounter == 0)) { // done with the current level
+        if (itemTable[currentLevel].isEmpty() || (currentCounter == 0)) { // done with the current level
             currentLevel = DISTRIBUTOR.order[levelIndex];
 
             levelIndex = (levelIndex + 1) % DISTRIBUTOR.capacity;
             //levelIndex = DISTRIBUTOR.next(levelIndex); //the above line replaces this old method
 
-            while (emptyLevel(currentLevel)) {          // look for a non-empty level
+            while (itemTable[currentLevel].isEmpty()) {          // look for a non-empty level
                 currentLevel = DISTRIBUTOR.order[levelIndex];
 
                 levelIndex = (levelIndex + 1) % DISTRIBUTOR.capacity;
@@ -276,16 +276,9 @@ public abstract class Bag<E extends Item> {
      * @param n The level index
      * @return Whether that level is empty
      */
-    protected boolean emptyLevel(final int n) {
+    /*protected boolean emptyLevel(final int n) {
         return itemTable[n].isEmpty();
-        /*
-        final ArrayList<E> a = itemTable[n];
-        if (a == null) {
-            return true;
-        }
-        return a.isEmpty();
-        */
-    }
+    }*/
 
     /**
      * Decide the put-in level according to priority
@@ -310,7 +303,7 @@ public abstract class Bag<E extends Item> {
         int inLevel = getLevel(newItem);
         if (size() > capacity) {      // the bag is full
             int outLevel = 0;
-            while (emptyLevel(outLevel)) {
+            while (itemTable[outLevel].isEmpty()) {
                 outLevel++;
             }
             if (outLevel > inLevel) {           // ignore the item and exit
@@ -395,7 +388,7 @@ public abstract class Bag<E extends Item> {
     public String toString() {
         StringBuffer buf = new StringBuffer(" ");
         for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
-            if (!emptyLevel(i - 1)) {
+            if (!itemTable[i-1].isEmpty()) {
                 buf = buf.append("\n --- Level ").append(i).append(":\n ");
                 for (int j = 0; j < itemTable[i - 1].size(); j++) {
                     buf = buf.append(itemTable[i - 1].get(j).toStringBrief()).append("\n ");
@@ -412,7 +405,7 @@ public abstract class Bag<E extends Item> {
         StringBuffer buf = new StringBuffer(" BAG " + getClass().getSimpleName());
         buf.append(" ").append(showSizes());
         for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
-            if (!emptyLevel(i - 1)) {
+            if (!itemTable[i-1].isEmpty()) {
                 buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");
                 for (int j = 0; j < itemTable[i - 1].size(); j++) {
                     buf = buf.append(itemTable[i - 1].get(j).toStringLong()).append("\n ");
