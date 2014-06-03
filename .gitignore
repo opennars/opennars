@@ -4,3 +4,4 @@ nars-dist/
 nbproject/private/
 
 /dist/
+/nars_web/client/lib/jquery-ui/themes/
