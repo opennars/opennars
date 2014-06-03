@@ -39,12 +39,13 @@ public class Stamp implements Cloneable {
      * TODO : should it really be static?
      * or a Stamp be a field in {@link NAR} ? */
     private static long currentSerial = 0;
+    
     /** serial numbers */
-    private long[] evidentialBase;
+    public final long[] evidentialBase;
     /** evidentialBase baseLength */
-    private int baseLength;
+    public final int baseLength;
     /** creation time of the stamp */
-    private long creationTime;
+    public final long creationTime;
 
     /**
      * Generate a new stamp, with a new serial number, for a new Task
@@ -63,9 +64,9 @@ public class Stamp implements Cloneable {
      * @param old The stamp to be cloned
      */
     private Stamp(Stamp old) {
-        baseLength = old.length();
-        evidentialBase = old.getBase();
-        creationTime = old.getCreationTime();
+        baseLength = old.baseLength;
+        evidentialBase = old.evidentialBase;
+        creationTime = old.creationTime;
     }
 
     /**
@@ -75,9 +76,9 @@ public class Stamp implements Cloneable {
      * @param old The stamp of the single premise
      * @param time The current time
      */
-    public Stamp(Stamp old, long time) {
-        baseLength = old.length();
-        evidentialBase = old.getBase();
+    public Stamp(final Stamp old, final long time) {
+        baseLength = old.baseLength;
+        evidentialBase = old.evidentialBase;
         creationTime = time;
     }
 
@@ -87,21 +88,21 @@ public class Stamp implements Cloneable {
      * @param first The first Stamp
      * @param second The second Stamp
      */
-    private Stamp(Stamp first, Stamp second, long time) {
+    private Stamp(final Stamp first, final Stamp second, final long time) {
         int i1, i2, j;
         i1 = i2 = j = 0;
-        baseLength = Math.min(first.length() + second.length(), Parameters.MAXIMUM_STAMP_LENGTH);
+        baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_STAMP_LENGTH);
         evidentialBase = new long[baseLength];
-        while (i2 < second.length() && j < baseLength) {
-            evidentialBase[j] = first.get(i1);
+        while (i2 < second.baseLength && j < baseLength) {
+            evidentialBase[j] = first.evidentialBase[i1];
             i1++;
             j++;
-            evidentialBase[j] = second.get(i2);
+            evidentialBase[j] = second.evidentialBase[i2];
             i2++;
             j++;
         }
-        while (i1 < first.length() && j < baseLength) {
-            evidentialBase[j] = first.get(i1);
+        while (i1 < first.baseLength && j < baseLength) {
+            evidentialBase[j] = first.evidentialBase[i1];
             i1++;
             j++;
         }
@@ -117,15 +118,15 @@ public class Stamp implements Cloneable {
      * @param time The new creation time
      * @return The merged Stamp, or null
      */
-    public static Stamp make(Stamp first, Stamp second, long time) {
-        for (int i = 0; i < first.length(); i++) {
-            for (int j = 0; j < second.length(); j++) {
-                if (first.get(i) == second.get(j)) {
+    public static Stamp make(final Stamp first, final Stamp second, final long time) {
+        for (int i = 0; i < first.baseLength; i++) {
+            for (int j = 0; j < second.baseLength; j++) {
+                if (first.evidentialBase[i] == second.evidentialBase[j]) {
                     return null;
                 }
             }
         }
-        if (first.length() > second.length()) {
+        if (first.baseLength > second.baseLength) {
             return new Stamp(first, second, time);
         } else {
             return new Stamp(second, first, time);
@@ -148,28 +149,13 @@ public class Stamp implements Cloneable {
         currentSerial = 0;
     }
 
-    /**
-     * Return the baseLength of the evidentialBase
-     * @return Length of the Stamp
-     */
-    public int length() {
-        return baseLength;
-    }
 
     /**
-     * Get a number from the evidentialBase by index, called in this class only
-     * @param i The index
-     * @return The number at the index
-     */
-    long get(int i) {
-        return evidentialBase[i];
-    }
-
-    /**
+     * DEPRECATED use public field, for faster access
      * Get the evidentialBase, called in this class only
      * @return The evidentialBase of numbers
      */
-    private long[] getBase() {
+    @Deprecated private long[] getBase() {
         return evidentialBase;
     }
 
@@ -178,7 +164,7 @@ public class Stamp implements Cloneable {
      * @return The TreeSet representation of the evidential base
      */
     private TreeSet<Long> toSet() {
-        TreeSet<Long> set = new TreeSet<>();
+        final TreeSet<Long> set = new TreeSet<>();
         for (int i = 0; i < baseLength; i++) {
             set.add(evidentialBase[i]);
         }
@@ -191,12 +177,12 @@ public class Stamp implements Cloneable {
      * @return Whether the two have contain the same elements
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (!(that instanceof Stamp)) {
             return false;
         }
-        TreeSet<Long> set1 = toSet();
-        TreeSet<Long> set2 = ((Stamp) that).toSet();
+        final TreeSet<Long> set1 = toSet();
+        final TreeSet<Long> set2 = ((Stamp) that).toSet();
         return (set1.containsAll(set2) && set2.containsAll(set1));
     }
 
@@ -210,30 +196,41 @@ public class Stamp implements Cloneable {
     }
 
     /**
+     * DEPRECATED use public field
      * Get the creationTime of the truth-value
      * @return The creation time
      */
-    public long getCreationTime() {
+    @Deprecated public long getCreationTime() {
         return creationTime;
     }
 
+    StringBuilder stringBuffer;
     /**
      * Get a String form of the Stamp for display
      * Format: {creationTime [: eventTime] : evidentialBase}
      * @return The Stamp as a String
      */
+    
+    final static String stampOpenerSpace = " " + Symbols.STAMP_OPENER;
+    final static String spaceStampStarterSpace = " " + Symbols.STAMP_STARTER + " ";
+    final static String stampCloserSpace = Symbols.STAMP_CLOSER + " ";
+  
     @Override
     public String toString() {
-        StringBuilder buffer = new StringBuilder(" " + Symbols.STAMP_OPENER + creationTime);
-        buffer.append(" ").append(Symbols.STAMP_STARTER).append(" ");
+        if (stringBuffer == null) {
+            stringBuffer = new StringBuilder(8+baseLength*2 /* TODO properly estimate this */);
+        }
+        stringBuffer.append(stampOpenerSpace).append(creationTime)
+                .append(spaceStampStarterSpace);
+        
         for (int i = 0; i < baseLength; i++) {
-            buffer.append(Long.toString(evidentialBase[i]));
+            stringBuffer.append(Long.toString(evidentialBase[i]));
             if (i < (baseLength - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
+                stringBuffer.append(Symbols.STAMP_SEPARATOR);
             } else {
-                buffer.append(Symbols.STAMP_CLOSER).append(" ");
+                stringBuffer.append(stampCloserSpace);
             }
         }
-        return buffer.toString();
+        return stringBuffer.toString();
     }
 }
