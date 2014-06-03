@@ -278,7 +278,9 @@ public abstract class Bag<E extends Item> {
      * @return Whether that level is empty
      */
     protected boolean emptyLevel(final int n) {
-        return ((itemTable.get(n) == null) || itemTable.get(n).isEmpty());
+        final ArrayList<E> a = itemTable.get(n);
+        if (a == null) return true;
+        return a.isEmpty();
     }
 
     /**

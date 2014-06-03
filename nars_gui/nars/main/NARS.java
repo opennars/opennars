@@ -30,7 +30,7 @@ import nars.main_nogui.NARRun;
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
-public class NARS implements Runnable {
+public class NARS  {
 
     /**
      * The information about the version and date of the project.
@@ -42,13 +42,7 @@ public class NARS implements Runnable {
     public static final String WEBSITE =
             " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/";
-    /**
-     * The internal working thread of the system.
-     */
-    Thread narsThread = null;
-    /**
-     * The reasoner
-     */
+
     NAR reasoner;
 
     /**
@@ -63,7 +57,7 @@ public class NARS implements Runnable {
         NARRun.setStandAlone(true);
         NARS nars = new NARS();
         nars.init(args);
-        nars.start();
+        nars.start(0);
     }
 
     /**
@@ -83,34 +77,10 @@ public class NARS implements Runnable {
      * Start the thread if necessary, called when the page containing the applet
      * first appears on the screen.
      */
-    public void start() {
-        if (narsThread == null) {
-            narsThread = new Thread(this, "Inference");
-            narsThread.start();
-        }
+    public void start(long minTickPeriodMS) {
+        reasoner.start(minTickPeriodMS);
     }
 
-    /* Implementing the Runnable Interface */
-    /**
-     * Repeatedly execute NARS working cycle. This method is called when the
-     * Runnable's thread is started.
-     */
-    static long sleepIntervalMS = 1;
-    @Override
-    public void run() {
-        Thread thisThread = Thread.currentThread();
-        while (narsThread == thisThread) {
-            try {
-                Thread.sleep(sleepIntervalMS);
-            } catch (InterruptedException e) {
-            }
-            try {
-                // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
-                reasoner.tick();
-            } catch (Exception e) {
-                System.err.println(e);
-            }
-            //Thread.yield();
-        }
-    }
+    
+    
 }

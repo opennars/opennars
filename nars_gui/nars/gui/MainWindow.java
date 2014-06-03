@@ -99,9 +99,9 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
      * Whether the experience is saving into a file
      */
     private boolean savingExp = false;
-    
+
     private boolean updateExperienceOutput = false;
-    
+
     /**
      * Input experience window
      */
@@ -267,10 +267,23 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     /**
      * Update timer and its display
      */
+    final int TICKS_PER_TIMER_LABEL_UPDATE = 16;
+    final Runnable updateTimer = new Runnable() {
+        @Override
+        public void run() {
+            timerText.setText(memory.getTime() + " :: " + timer);
+        }
+    };
+
     @Override
     public void tickTimer() {
         timer++;
-        timerText.setText(memory.getTime() + " :: " + timer);
+        if (reasoner.isRunning()) {
+            if (timer % TICKS_PER_TIMER_LABEL_UPDATE != 0) {
+                return;
+            }
+        }
+        SwingUtilities.invokeLater(updateTimer);
     }
 
     /**
@@ -283,15 +296,17 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         Object obj = e.getSource();
         if (obj instanceof JButton) {
             if (obj == runButton) {
-                nextOutput(null);            
-                reasoner.run();
+                nextOutput(null);
+                reasoner.start(0);
             } else if (obj == stopButton) {
-                nextOutput(null);            
+                nextOutput(null);
                 reasoner.stop();
+                SwingUtilities.invokeLater(updateTimer);
             } else if (obj == walkButton) {
-                nextOutput(null);            
+                nextOutput(null);
                 reasoner.walk(1);
-                nextOutput(null);            
+                nextOutput(null);
+                SwingUtilities.invokeLater(updateTimer);
             } else if (obj == exitButton) {
                 close();
             }
@@ -321,9 +336,9 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
                 memory.getExportStrings().add("*****RESET*****");
             } else if (label.equals("Concepts")) {
                 /* see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} */
-				memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");
+                memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");
             } else if (label.equals("Buffered Tasks")) {
-				memory.taskBuffersStartPlay(new BagWindow<Task>(), "Buffered Tasks");
+                memory.taskBuffersStartPlay(new BagWindow<Task>(), "Buffered Tasks");
             } else if (label.equals("Concept Content")) {
                 conceptWin.setVisible(true);
             } else if (label.equals("Inference Log")) {
@@ -341,13 +356,13 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
                 silentW.setVisible(true);
             } else if (label.equals("Related Information")) {
 //                MessageDialog web = 
-                		new MessageDialog(this, NARS.WEBSITE);
+                new MessageDialog(this, NARS.WEBSITE);
             } else if (label.equals("About NARS")) {
 //                MessageDialog info = 
-                		new MessageDialog(this, NARS.INFO);
+                new MessageDialog(this, NARS.INFO);
             } else {
 //                MessageDialog ua = 
-                		new MessageDialog(this, UNAVAILABLE);
+                new MessageDialog(this, UNAVAILABLE);
             }
         }
     }
@@ -370,31 +385,34 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
      *
      * @param lines The text lines to be displayed
      */
-    
     private StringBuffer undisplayedExperience = new StringBuffer();
 
     private boolean _firstOutput = true;
+
     /**
-     * 
-     * @param lines  if null, forces output when updateExperienceOutput is false
+     *
+     * @param lines if null, forces output when updateExperienceOutput is false
      */
     @Override
     public void nextOutput(final ArrayList<String> lines) {
-        
-        if (lines!=null)
+
+        if (lines != null) {
             for (Object line : lines) {
                 undisplayedExperience.append(line).append("\n");
             }
-        if (updateExperienceOutput || (lines==null) || _firstOutput) {
-            SwingUtilities.invokeLater( new Runnable() {
-             @Override public void run() {
-                     ioText.append(undisplayedExperience.toString());
-                     undisplayedExperience = new StringBuffer();
-             }});
         }
-        
-       _firstOutput = false;
-        
+        if (updateExperienceOutput || (lines == null) || _firstOutput) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    ioText.append(undisplayedExperience.toString());
+                    undisplayedExperience = new StringBuffer();
+                }
+            });
+        }
+
+        _firstOutput = false;
+
     }
 
     /**
@@ -408,7 +426,9 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         return i;
     }
 
-    /** @return System clock : number of cycles since last output */
+    /**
+     * @return System clock : number of cycles since last output
+     */
     public long getTimer() {
         return timer;
     }

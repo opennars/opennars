@@ -17,8 +17,11 @@ import nars.storage.Memory;
  * <p>
  * An instantation of a NARS logic processor, useful for batch functionality; 
 */
-public class NAR {
+public class NAR implements Runnable {
 
+    private Thread narsThread = null;
+    long minTickPeriodMS;
+    
     /**
      * global DEBUG print switch
      */
@@ -111,12 +114,6 @@ public class NAR {
         return clock;
     }
 
-    /**
-     * Start the inference process
-     */
-    public void run() {
-        running = true;
-    }
 
     /**
      * Will carry the inference process for a certain number of steps
@@ -127,12 +124,53 @@ public class NAR {
         walkingSteps = n;
     }
 
+    
+    /**
+     * Repeatedly execute NARS working cycle. This method is called when the
+     * Runnable's thread is started.
+     */
+    
+    public void start(long minTickPeriodMS) {
+        if (narsThread == null) {
+            this.minTickPeriodMS = minTickPeriodMS;
+            narsThread = new Thread(this, "Inference");
+            narsThread.start();
+            running = true;
+        }
+        
+    }
+    
     /**
      * Will stop the inference process
      */
     public void stop() {
+        if (narsThread!=null) {
+            narsThread.interrupt();
+            narsThread = null;
+        }
         running = false;
+    }    
+    
+    @Override public void run() {
+        final Thread thisThread = Thread.currentThread();
+        
+        while ((narsThread == thisThread) && (running)) {
+            try {
+                // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
+                tick();
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+            if (minTickPeriodMS > 0) {
+                try {
+                    Thread.sleep(minTickPeriodMS);
+                } catch (InterruptedException e) {            }
+            }
+            Thread.yield();
+        }
     }
+    
+    
 
     /**
      * A clock tick. Run one working workCycle or read input. Called from NARS
@@ -270,4 +308,9 @@ public class NAR {
     private void setTimer(long timer) {
         this.timer = timer;
     }
+
+    public boolean isRunning() {
+        return running;
+    }    
+    
 }
