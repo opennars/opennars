@@ -57,7 +57,8 @@ public class NARS  {
         NARRun.setStandAlone(true);
         NARS nars = new NARS();
         nars.init(args);
-        nars.start(0);
+        if (args.length > 1)
+            nars.start(0);
     }
 
     /**
