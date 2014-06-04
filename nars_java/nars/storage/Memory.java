@@ -424,7 +424,6 @@ public class Memory {
         
         int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
         while (counter-- > 0) {
-            //if (newTasks.isEmpty()) continue;
             final Task task = newTasks.remove(0);
             if (task.isInput() || (termToConcept(task.getContent()) != null)) { // new input or existing concept
                 immediateProcess(task);

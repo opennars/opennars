@@ -4,10 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -44,13 +43,13 @@ public class NAR implements Runnable {
     /**
      * The input channels of the reasoner
      */
-    protected ArrayList<InputChannel> inputChannels;
-    //private LinkedList<InputChannel> closedInputChannels = new LinkedList();
+    protected List<InputChannel> inputChannels;
+    private List<InputChannel> closedInputChannels;
 
     /**
      * The output channels of the reasoner
      */
-    protected ArrayList<OutputChannel> outputChannels;
+    protected List<OutputChannel> outputChannels;
     /**
      * System clock, relatively defined to guarantee the repeatability of
      * behaviors
@@ -77,8 +76,11 @@ public class NAR implements Runnable {
 
     public NAR() {
         memory = new Memory(this);
-        inputChannels = new ArrayList<>();
-        outputChannels = new ArrayList<>();
+        
+        //needs to be concurrent in case NARS makes changes to the channels while running
+        inputChannels = new CopyOnWriteArrayList<>();
+        outputChannels = new CopyOnWriteArrayList<>();
+        closedInputChannels = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -172,7 +174,13 @@ public class NAR implements Runnable {
             try {
                 // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
                 tick();
-            } catch (Exception e) {
+            } catch (RuntimeException re) {
+                String errorMsg = "ERROR: " + re;
+                output(errorMsg);
+                System.err.println(errorMsg);
+                //re.printStackTrace();
+            }
+            catch (Exception e) {
                 System.err.println("run: " + e);
                 e.printStackTrace();
             }
@@ -206,16 +214,16 @@ public class NAR implements Runnable {
         if (walkingSteps == 0) {
             boolean reasonerShouldRun = false;
 
-            /*for (InputChannel c : closedInputChannels) {
+            for (InputChannel c : closedInputChannels) {
                 inputChannels.remove(c);
             }
-            closedInputChannels.clear();*/
+            closedInputChannels.clear();
 
 
             for (InputChannel channelIn : inputChannels) {
                 reasonerShouldRun = reasonerShouldRun || channelIn.nextInput();  
-                /*if (channelIn.isClosed())
-                    closedInputChannels.add(channelIn);*/
+                if (channelIn.isClosed())
+                    closedInputChannels.add(channelIn);
             }
             finishedInputs = !reasonerShouldRun;
         }

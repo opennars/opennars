@@ -26,6 +26,15 @@
             
             var prevOutput = null, currentOutput = null;
             
+            function getLineClass(m) {
+                if ((m[0] == '\"') && (m[m.length-1] == '\"'))
+                    return 'comment';
+                if (m.trim().indexOf('IN:') == 0)
+                    return 'in';
+                if (m.trim().indexOf('OUT') == 0)
+                    return 'out';
+                return null;
+            }
             function addIO(message) {
                 var d = $('<div/>').addClass('section');
 
@@ -37,7 +46,7 @@
                 }
                 else{
                     var input = $('<textarea/>');                
-                    var outputDiv = $('<pre/>').addClass('output');
+                    var outputDiv = $('<div/>').addClass('output');
                     var sendButton = $('<button/>').html('&gt;').click(function() {
                         try {                            
                             ws.send(input.val());
@@ -61,21 +70,29 @@
             function scrollbottom() {                    
                 $('body').scrollTop($('body').prop('scrollHeight'));
             }
-            function output(m) {
+            function output(m, monospace) {
                 if (!prevOutput)
                     prevOutput = currentOutput;
-                prevOutput.text(prevOutput.text() + m + '\n');                
+                if (monospace) {
+                    var l = $("<pre>" + m + '</pre>\n');
+                    var lc = getLineClass(m);
+                    if (lc)
+                        l.addClass(lc);
+                    prevOutput.append(l);
+                }
+                else 
+                    prevOutput.append("<span>" + m + '</span>\n');
                 scrollbottom();
             }
             $(document).ready(function() {
-                addIO("<b>OpenNARS</b>");
+                addIO("<b>OpenNARS: </b><br/>");
                 
                 ws.onopen = function() {
                     output("Connected.");
                     addIO();
                 };
                 ws.onmessage = function(e) {
-                    output(e.data);
+                    e.data.split("\n").forEach(function(l) { output(l, true); } )
                 };
                 ws.onclose = function() {
                     output("Disconnected.");

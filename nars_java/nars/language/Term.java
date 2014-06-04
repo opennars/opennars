@@ -38,7 +38,7 @@ public class Term implements Cloneable, Comparable<Term> {
     /**
      * Default constructor that build an internal Term
      */
-    protected Term() {
+    protected Term() {        
     }
 
     /**
@@ -46,7 +46,7 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @param name A String as the name of the Term
      */
-    public Term(String name) {
+    public Term(final String name) {
         this.name = name;
     }
 
@@ -77,7 +77,7 @@ public class Term implements Cloneable, Comparable<Term> {
      * @param that The Term to be compared with the current Term
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         return (that instanceof Term) && name.equals(((Term) that).getName());
     }
 
@@ -121,7 +121,7 @@ public class Term implements Cloneable, Comparable<Term> {
      * @return The same as compareTo as defined on Strings
      */
     @Override
-    public int compareTo(Term that) {
+    public int compareTo(final Term that) {
         if (that instanceof CompoundTerm) {
             return -1;
         } else if (that instanceof Variable) {
@@ -137,7 +137,7 @@ public class Term implements Cloneable, Comparable<Term> {
      * @param target The term to be searched
      * @return Whether the two have the same content
      */
-    public boolean containTerm(Term target) {
+    public boolean containTerm(final Term target) {
         return equals(target);
     }
 
