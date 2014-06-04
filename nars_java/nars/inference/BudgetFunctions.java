@@ -52,7 +52,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public static float rankBelief(final Sentence judg) {
         final float confidence = judg.getTruth().getConfidence();
-        final float originality = 1.0f / (judg.getStamp().baseLength + 1);
+        final float originality = 1.0f / (judg.getStamp().evidentialBase.size() + 1);
         return or(confidence, originality);
     }
 

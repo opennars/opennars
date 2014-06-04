@@ -32,6 +32,8 @@ import nars.main_nogui.NAR;
  * (2) A evidentialBase of serial numbers of sentence, from which the sentence is derived.
  * Each input sentence gets a unique serial number, though the creation time may be not unique.
  * The derived sentences inherits serial numbers from its parents, cut at the baseLength limit.
+ *
+ * We assume that the order of the evidentialBase entries does not matter
  */
 public class Stamp implements Cloneable {
 
@@ -41,9 +43,10 @@ public class Stamp implements Cloneable {
     private static long currentSerial = 0;
     
     /** serial numbers */
-    public final long[] evidentialBase;
-    /** evidentialBase baseLength */
-    public final int baseLength;
+    //public final long[] evidentialBase;
+    public final TreeSet<Long> evidentialBase;
+        
+    
     /** creation time of the stamp */
     public final long creationTime;
 
@@ -51,11 +54,10 @@ public class Stamp implements Cloneable {
      * Generate a new stamp, with a new serial number, for a new Task
      * @param time Creation time of the stamp
      */
-    public Stamp(long time) {
+    public Stamp(final long time) {
         currentSerial++;
-        baseLength = 1;
-        evidentialBase = new long[baseLength];
-        evidentialBase[0] = currentSerial;
+        evidentialBase = new TreeSet();
+        evidentialBase.add(currentSerial);
         creationTime = time;
     }
 
@@ -63,8 +65,7 @@ public class Stamp implements Cloneable {
      * Generate a new stamp identical with a given one
      * @param old The stamp to be cloned
      */
-    private Stamp(Stamp old) {
-        baseLength = old.baseLength;
+    private Stamp(final Stamp old) {
         evidentialBase = old.evidentialBase;
         creationTime = old.creationTime;
     }
@@ -77,7 +78,6 @@ public class Stamp implements Cloneable {
      * @param time The current time
      */
     public Stamp(final Stamp old, final long time) {
-        baseLength = old.baseLength;
         evidentialBase = old.evidentialBase;
         creationTime = time;
     }
@@ -89,23 +89,10 @@ public class Stamp implements Cloneable {
      * @param second The second Stamp
      */
     private Stamp(final Stamp first, final Stamp second, final long time) {
-        int i1, i2, j;
-        i1 = i2 = j = 0;
-        baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_STAMP_LENGTH);
-        evidentialBase = new long[baseLength];
-        while (i2 < second.baseLength && j < baseLength) {
-            evidentialBase[j] = first.evidentialBase[i1];
-            i1++;
-            j++;
-            evidentialBase[j] = second.evidentialBase[i2];
-            i2++;
-            j++;
-        }
-        while (i1 < first.baseLength && j < baseLength) {
-            evidentialBase[j] = first.evidentialBase[i1];
-            i1++;
-            j++;
-        }
+                        
+        evidentialBase = new TreeSet(first.evidentialBase);
+        evidentialBase.addAll(second.evidentialBase);        
+                
         creationTime = time;
     }
 
@@ -119,18 +106,16 @@ public class Stamp implements Cloneable {
      * @return The merged Stamp, or null
      */
     public static Stamp make(final Stamp first, final Stamp second, final long time) {
-        for (int i = 0; i < first.baseLength; i++) {
-            for (int j = 0; j < second.baseLength; j++) {
-                if (first.evidentialBase[i] == second.evidentialBase[j]) {
-                    return null;
-                }
-            }
-        }
-        if (first.baseLength > second.baseLength) {
+        for (final long l : first.evidentialBase)
+            if (second.evidentialBase.contains(l))
+                return null;
+ 
+        /*if (first.baseLength > second.baseLength) {
             return new Stamp(first, second, time);
         } else {
             return new Stamp(second, first, time);
-        }
+        }*/
+        return new Stamp(first, second, time);
     }
 
     /**
@@ -216,14 +201,16 @@ public class Stamp implements Cloneable {
     @Override
     public String toString() {
         if (toStringCache == null) {
-            final StringBuffer b = new StringBuffer(8+baseLength*5 /* TODO properly estimate this */);
+            int numBases = evidentialBase.size();
+            final StringBuffer b = new StringBuffer(8+numBases*5 /* TODO properly estimate this */);
         
             b.append(stampOpenerSpace).append(creationTime)
                     .append(spaceStampStarterSpace);
-
-            for (int i = 0; i < baseLength; i++) {
-                b.append(Long.toString(evidentialBase[i]));
-                if (i < (baseLength - 1)) {
+            
+            int i = 0;
+            for (long eb : evidentialBase) {  
+                b.append(Long.toString(eb));
+                if (i++ < (numBases - 1)) {
                     b.append(Symbols.STAMP_SEPARATOR);
                 } else {
                     b.append(stampCloserSpace);

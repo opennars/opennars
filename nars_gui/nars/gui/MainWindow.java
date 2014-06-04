@@ -236,6 +236,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         setVisible(true);
 
         initTimer();
+        nextOutput(null);
     }
 
     /**
@@ -254,6 +255,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     public void init() {
         initTimer();
         ioText.setText("");
+        nextOutput(null);
     }
 
     /**
@@ -402,25 +404,28 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
      */
     @Override
     public void nextOutput(final ArrayList<String> lines) {
-
+        
         if (lines != null) {
             for (Object line : lines) {
                 undisplayedExperience.append(line).append("\n");
             }
         }
         if ((lines == null) || _firstOutput) {
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(nextOutputRunnable);
+        }
+    }
+    
+    private Runnable nextOutputRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    ioText.append(undisplayedExperience.toString());
-                    undisplayedExperience = new StringBuffer();
+                    if (undisplayedExperience.length() > 0) {
+                        _firstOutput = false;
+                        ioText.append(undisplayedExperience.toString());
+                        undisplayedExperience.setLength(0);
+                    }
                 }
-            });
-        }
-
-        _firstOutput = false;
-
-    }
+            };
+    
 
     /**
      * To get the timer value and then to reset it
