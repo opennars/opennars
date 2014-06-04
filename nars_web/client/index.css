@@ -29,3 +29,15 @@ body {
 #io .section button {
     float: right;
 }
+
+pre { margin: 0; }
+
+.in {
+    color: purple;
+}
+.out {
+    color: blue;
+}
+.comment {
+    color: black;
+}

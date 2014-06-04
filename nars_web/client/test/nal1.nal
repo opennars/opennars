@@ -30,7 +30,6 @@
 !Robin is a type of animal.
 !EXPECT: <robin --> animal>. %1.00;0.81%
 
-2
-
+5
 
 *

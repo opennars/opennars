@@ -5,7 +5,7 @@ mkdir classes
 SRC=src/main/java
 SRC=""
 javac -d classes -Xlint:unchecked nars_gui/$SRC/*/*/*.java \
-	nars_java/$SRC/*/*/*.java -cp "./dist/lib/junit-4.11.jar"
+	nars_java/$SRC/*/*/*.java -cp "build/junit-4.11.jar"
 
 # javac -d classes -Xlint:unchecked nars/*/*.java
 echo 'Main-Class: nars.main.NARS' > manifest.txt

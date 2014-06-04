@@ -426,7 +426,7 @@ public final class StructuralRules {
             for (short i = 0; i < product.size(); i++) {
                 newSubj = product.componentAt(i);
                 newPred = ImageExt.make(product, predicate, i, memory);
-                inheritance = Inheritance.make(newSubj, newPred, memory);
+                inheritance = Inheritance.make(newSubj, newPred, memory);                
                 if (truth == null) {
                     budget = BudgetFunctions.compoundBackward(inheritance, memory);
                 } else {

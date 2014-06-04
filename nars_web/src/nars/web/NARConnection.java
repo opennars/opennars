@@ -52,27 +52,5 @@ abstract public class NARConnection implements LineOutput {
         nar.stop();
     }
     
-    /*public void run() {
-        while (running) {
-            
-            //nar.tick();
-            
-            
-            
-            if (cycleIntervalMS > 0) {
-                try {
-                    Thread.sleep(cycleIntervalMS);
-                } catch (InterruptedException ex) {            }            
-            }
-            
-            if (nar.isFinishedInputs()) {
-                break;
-            }
-                
-        }
-        running = false;
-        thread = null;
-    }*/
-
     
 }
