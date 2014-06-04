@@ -162,11 +162,13 @@ public class Stamp implements Cloneable {
 
         final Stamp sthat = ((Stamp)that);
 
+        return evidentialBase.equals(sthat.evidentialBase);
+
         //EXPERIMENTAL
         //just compare the hashes then strings which should already be cached
-        if (sthat.hashCode() != hashCode())
+        /*if (sthat.hashCode() != hashCode())
             return false;
-        return (sthat.toString().equals(toString()));               
+        return (sthat.toString().equals(toString()));               */
         
         //if (sthat.baseLength!=baseLength) //early exit before needing to allocate TreeSet below
         //    return false;
@@ -182,7 +184,8 @@ public class Stamp implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        //return toString().hashCode();
+        return evidentialBase.hashCode();
     }
 
 

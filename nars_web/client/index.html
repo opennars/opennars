@@ -37,7 +37,7 @@
                 }
                 else{
                     var input = $('<textarea/>');                
-                    var outputDiv = $('<div/>').addClass('output');
+                    var outputDiv = $('<pre/>').addClass('output');
                     var sendButton = $('<button/>').html('&gt;').click(function() {
                         try {                            
                             ws.send(input.val());
@@ -64,7 +64,7 @@
             function output(m) {
                 if (!prevOutput)
                     prevOutput = currentOutput;
-                prevOutput.append(m + '<br/>');                
+                prevOutput.text(prevOutput.text() + m + '\n');                
                 scrollbottom();
             }
             $(document).ready(function() {
