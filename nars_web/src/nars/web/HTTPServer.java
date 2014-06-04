@@ -290,9 +290,12 @@ public class HTTPServer {
                     return;
                 }
                 BufferedReader in = new BufferedReader(new InputStreamReader(is));
-
+                String rline = in.readLine();
+                if (rline==null)
+                    return;
+                
                 // Read the request line
-                StringTokenizer st = new StringTokenizer(in.readLine());
+                StringTokenizer st = new StringTokenizer(rline);
                 if (!st.hasMoreTokens()) {
                     sendError(HTTP_BADREQUEST, "BAD REQUEST: Syntax error. Usage: GET /example/file.html");
                 }
@@ -660,6 +663,7 @@ public class HTTPServer {
 
     static {
         StringTokenizer st = new StringTokenizer("htm    text/html " + "html   text/html "
+                + "nal    text/plain " 
                 + "txt    text/plain " + "asc    text/plain " + "gif    image/gif " + "jpg    image/jpeg "
                 + "jpeg   image/jpeg " + "png    image/png " + "mp3    audio/mpeg "
                 + "m3u    audio/mpeg-url " + "pdf    application/pdf " + "doc    application/msword "

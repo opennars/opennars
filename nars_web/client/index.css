@@ -23,6 +23,8 @@ body {
 #io .section .output{
     margin-left: 1em;
     margin-top: 1em;
+    max-width: 95%;
+    overflow: auto;
 }
 #io .section button {
     float: right;

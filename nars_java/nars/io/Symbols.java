@@ -82,6 +82,8 @@ public class Symbols {
     public static final char PREFIX_MARK = ':';
     public static final char RESET_MARK = '*';
     public static final char COMMENT_MARK = '/';
+    public static final char URL_INCLUDE_MARK = '`';
+    public static final char ECHO_MARK = '!';
 
     /* Stamp, display only */
     public static final char STAMP_OPENER = '{';

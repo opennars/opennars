@@ -59,10 +59,6 @@ public class Reasoner extends NAR {
         mainWindow.setVisible(true);
     }
 
-    @Override
-    public void tick() {
-        doTick();
-    }
 
     public MainWindow getMainWindow() {
         return mainWindow;

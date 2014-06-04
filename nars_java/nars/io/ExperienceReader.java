@@ -55,7 +55,10 @@ public class ExperienceReader implements InputChannel {
         this.reasoner = reasoner;
         inExp = null;
     }
-
+    public ExperienceReader(NAR reasoner, BufferedReader input) {
+        this(reasoner);
+        setBufferedReader(input);       
+    }
     /**
      * Open an input experience file with a FileDialog
      */
@@ -125,29 +128,39 @@ public class ExperienceReader implements InputChannel {
                     return false;
                 }
             } catch (IOException ex) {
-                reasoner.output("i/o error: " + ex.getMessage());
+                reasoner.output("i/o error: " + ex.getMessage());                
+                inExp = null;
             }
             
-            parse(line);
+            if (!parse(line))
+                break;
         }
         return true;
     }
     
-    public void parse(String line) {
+    public boolean parse(String line) {
+        boolean result = true;
         // read NARS language or an integer
         if (line.trim().length() > 0) {
             try {
                 timer = Integer.parseInt(line);
-                reasoner.output("Thinking... (" + timer + " cycles)");
                 reasoner.walk(timer);
             } catch (NumberFormatException e) {
                 try {
-                    reasoner.textInputLine(line);
+                    result = reasoner.textInputLine(line);
                 }
                 catch (StringParser.InvalidInputException ep) {
                     reasoner.output("Parse Error: " + ep.toString() + "\n" + Arrays.asList(ep.getStackTrace()) );
                 }
             }
-        }       
+        }    
+
+        return result;
+    }
+    
+
+    @Override
+    public boolean isClosed() {
+        return inExp==null;
     }
 }

@@ -196,4 +196,9 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
         }
         return ((text.length() > 0) || (timer > 0));
     }
+
+    @Override
+    public boolean isClosed() {
+        return false;
+    }
 }

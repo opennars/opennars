@@ -24,6 +24,7 @@ package nars.io;
  * to get the input for the next moment from an input channel
  */
 public interface InputChannel {
-	/** @return value indicating whether the reasoner should run */
-	public boolean nextInput();
+    public boolean nextInput();
+
+    public boolean isClosed();
 }
