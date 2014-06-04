@@ -234,7 +234,7 @@ public abstract class CompoundTerm extends Term {
      * @return if the given String is an operator symbol
      * @param s The String to be checked
      */
-    public static boolean isOperator(String s) {
+    public static boolean isOperator(final String s) {
         if (s.length() == 1) {
             return (s.equals(Symbols.INTERSECTION_EXT_OPERATOR)
                     || s.equals(Symbols.INTERSECTION_INT_OPERATOR)
@@ -259,8 +259,8 @@ public abstract class CompoundTerm extends Term {
      * @param t2 the second component
      * @return the component list
      */
-    protected static ArrayList<Term> argumentsToList(Term t1, Term t2) {
-        ArrayList<Term> list = new ArrayList<>(2);
+    protected static ArrayList<Term> argumentsToList(final Term t1, final Term t2) {
+        final ArrayList<Term> list = new ArrayList<>(2);
         list.add(t1);
         list.add(t2);
         return list;
@@ -284,11 +284,11 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of components
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(String op, ArrayList<Term> arg) {
-        StringBuilder name = new StringBuilder();
+    protected static String makeCompoundName(final String op, final ArrayList<Term> arg) {
+        final StringBuilder name = new StringBuilder();
         name.append(Symbols.COMPOUND_TERM_OPENER);
         name.append(op);
-        for (Term t : arg) {
+        for (final Term t : arg) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
                 ((CompoundTerm) t).setName(((CompoundTerm) t).makeName());
@@ -433,11 +433,11 @@ public abstract class CompoundTerm extends Term {
      * @param original The original component list
      * @return an identical and separate copy of the list
      */
-    public static ArrayList<Term> cloneList(ArrayList<Term> original) {
+    public static ArrayList<Term> cloneList(final ArrayList<Term> original) {
         if (original == null) {
             return null;
         }
-        ArrayList<Term> arr = new ArrayList<>(original.size());
+        final ArrayList<Term> arr = new ArrayList<>(original.size());
         for (int i = 0; i < original.size(); i++) {
             arr.add((Term) ((Term) original.get(i)).clone());
         }
@@ -450,7 +450,7 @@ public abstract class CompoundTerm extends Term {
      * @param t The component to be checked
      * @return Whether the component is in the compound
      */
-    public boolean containComponent(Term t) {
+    public boolean containComponent(final Term t) {
         return components.contains(t);
     }
 
@@ -461,8 +461,8 @@ public abstract class CompoundTerm extends Term {
      * @return Whether the target is in the current term
      */
     @Override
-    public boolean containTerm(Term target) {
-        for (Term term : components) {
+    public boolean containTerm(final Term target) {
+        for (final Term term : components) {
             if (term.containTerm(target)) {
                 return true;
             }
@@ -477,7 +477,7 @@ public abstract class CompoundTerm extends Term {
      * @param t The other term
      * @return Whether the components are all in the compound
      */
-    public boolean containAllComponents(Term t) {
+    public boolean containAllComponents(final Term t) {
         if (getClass() == t.getClass()) {
             return components.containsAll(((CompoundTerm) t).getComponents());
         } else {
@@ -493,12 +493,12 @@ public abstract class CompoundTerm extends Term {
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term addComponents(CompoundTerm t1, Term t2, Memory memory) {
+    public static Term addComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
         if (t2 == null) {
             return t1;
         }
         boolean success;
-        ArrayList<Term> list = t1.cloneComponents();
+        final ArrayList<Term> list = t1.cloneComponents();
         if (t1.getClass() == t2.getClass()) {
             success = list.addAll(((CompoundTerm) t2).getComponents());
         } else {

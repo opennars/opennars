@@ -44,12 +44,18 @@ public class InferenceRecorder implements IInferenceRecorder {
     }
 
     @Override
-	public void show() {
+    public void show() {
         window.setVisible(true);
     }
 
     @Override
-	public void play() {
+    public boolean isActive() {
+        return (isReporting || (logFile!=null));
+    }
+       
+
+    @Override
+    public void play() {
         isReporting = true;
     }
 
@@ -59,7 +65,7 @@ public class InferenceRecorder implements IInferenceRecorder {
     }
 
     @Override
-	public void append(String s) {
+    public void append(String s) {
         if (isReporting) {
             window.append(s);
         }

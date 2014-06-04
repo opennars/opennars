@@ -110,11 +110,21 @@ public class ShortFloat implements Cloneable {
         if (value >= 10000) {
             return "1.0000";
         } else {
-            String s = String.valueOf(value);
+            final String s = String.valueOf(value);
+            
+            /*
             while (s.length() < 4) {
                 s = "0" + s;
             }
-            return "0." + s;
+            return "0." + s;*/
+            
+            final int sl = s.length();
+            if (sl == 4)           return "0." + s;
+            else if (sl == 3)      return "0.0" + s;
+            else if (sl == 2)      return "0.00" + s;
+            else if (sl == 1)      return "0.000" + s;
+            else return null;
+            //else if (sl == 0)      return "0.0" + s;
         }
     }
 

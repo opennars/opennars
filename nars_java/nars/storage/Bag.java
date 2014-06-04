@@ -59,6 +59,10 @@ public abstract class Bag<E extends Item> {
      * hashtable load factor
      */
     private static final float LOAD_FACTOR = Parameters.LOAD_FACTOR;       //
+    
+    //how many items to preallocate in each level
+    final int INITIAL_LEVEL_CAPACITY = 0;
+    
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
@@ -115,7 +119,7 @@ public abstract class Bag<E extends Item> {
 
     public void init() {
         for (int i = 0; i < TOTAL_LEVEL; i++) {
-            itemTable[i] = new ArrayList<E>();
+            itemTable[i] = new ArrayList<E>(INITIAL_LEVEL_CAPACITY);
         }
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         currentLevel = TOTAL_LEVEL - 1;
@@ -234,13 +238,11 @@ public abstract class Bag<E extends Item> {
             currentLevel = DISTRIBUTOR.order[levelIndex];
 
             levelIndex = (levelIndex + 1) % DISTRIBUTOR.capacity;
-            //levelIndex = DISTRIBUTOR.next(levelIndex); //the above line replaces this old method
 
             while (itemTable[currentLevel].isEmpty()) {          // look for a non-empty level
                 currentLevel = DISTRIBUTOR.order[levelIndex];
 
                 levelIndex = (levelIndex + 1) % DISTRIBUTOR.capacity;
-                //levelIndex = DISTRIBUTOR.next(levelIndex); //the above line replaces this old method                
             }
             if (currentLevel < THRESHOLD) { // for dormant levels, take one item
                 currentCounter = 1;

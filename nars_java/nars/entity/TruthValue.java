@@ -191,12 +191,26 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The String
      */
     public String toStringBrief() {
-        String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
+        /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
             return s1 + "0.99" + DELIMITER;
         } else {
             return s1 + s2 + DELIMITER;
+        }*/
+        
+        StringBuffer sb = 
+                new StringBuffer(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);                    
+        
+        String s2 = confidence.toStringBrief();
+        if (s2.equals("1.00")) {
+            sb.append("0.99");
+        } else {
+            sb.append(s2);
         }
+        
+        sb.append(DELIMITER);
+        
+        return sb.toString();        
     }
 }

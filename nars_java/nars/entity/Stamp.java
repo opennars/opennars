@@ -156,13 +156,13 @@ public class Stamp implements Cloneable {
      * Convert the evidentialBase into a set
      * @return The TreeSet representation of the evidential base
      */
-    private TreeSet<Long> toSet() {
+    /*private TreeSet<Long> toSet() {
         final TreeSet<Long> set = new TreeSet<>();        
         for (int i = 0; i < baseLength; i++) {
             set.add(evidentialBase[i]);
         }
         return set;
-    }
+    }*/
 
     /**
      * Check if two stamps contains the same content
@@ -174,15 +174,21 @@ public class Stamp implements Cloneable {
         if (!(that instanceof Stamp)) {
             return false;
         }
-        
+
         final Stamp sthat = ((Stamp)that);
+
+        //EXPERIMENTAL
+        //just compare the hashes then strings which should already be cached
+        if (sthat.hashCode() != hashCode())
+            return false;
+        return (sthat.toString().equals(toString()));               
         
         //if (sthat.baseLength!=baseLength) //early exit before needing to allocate TreeSet below
         //    return false;
         
-        final TreeSet<Long> set1 = toSet();
+        /*final TreeSet<Long> set1 = toSet();
         final TreeSet<Long> set2 = sthat.toSet();
-        return (set1.containsAll(set2) && set2.containsAll(set1));
+        return (set1.containsAll(set2) && set2.containsAll(set1));*/
     }
 
     /**
@@ -195,7 +201,7 @@ public class Stamp implements Cloneable {
     }
 
 
-    StringBuffer stringBuffer; //holds pre-allocated string for toString()
+    String toStringCache = null; //holds pre-allocated string for toString()
     
     /**
      * Get a String form of the Stamp for display
@@ -209,22 +215,22 @@ public class Stamp implements Cloneable {
   
     @Override
     public String toString() {
-        if (stringBuffer == null)
-            stringBuffer = new StringBuffer(8+baseLength*5 /* TODO properly estimate this */);
-        else
-            stringBuffer.setLength(0);
+        if (toStringCache == null) {
+            final StringBuffer b = new StringBuffer(8+baseLength*5 /* TODO properly estimate this */);
         
-        stringBuffer.append(stampOpenerSpace).append(creationTime)
-                .append(spaceStampStarterSpace);
-        
-        for (int i = 0; i < baseLength; i++) {
-            stringBuffer.append(Long.toString(evidentialBase[i]));
-            if (i < (baseLength - 1)) {
-                stringBuffer.append(Symbols.STAMP_SEPARATOR);
-            } else {
-                stringBuffer.append(stampCloserSpace);
+            b.append(stampOpenerSpace).append(creationTime)
+                    .append(spaceStampStarterSpace);
+
+            for (int i = 0; i < baseLength; i++) {
+                b.append(Long.toString(evidentialBase[i]));
+                if (i < (baseLength - 1)) {
+                    b.append(Symbols.STAMP_SEPARATOR);
+                } else {
+                    b.append(stampCloserSpace);
+                }
             }
+            toStringCache = b.toString();
         }
-        return stringBuffer.toString();
+        return toStringCache;
     }
 }

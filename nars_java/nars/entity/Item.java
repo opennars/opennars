@@ -42,7 +42,7 @@ public abstract class Item {
      * Constructor with default budget
      * @param key The key value
      */
-    protected Item(String key) {
+    protected Item(final String key) {
         this.key = key;
         this.budget = new BudgetValue();
      }
@@ -52,7 +52,7 @@ public abstract class Item {
      * @param key The key value
      * @param budget The initial budget
      */
-    protected Item(String key, BudgetValue budget) {
+    protected Item(final String key, final BudgetValue budget) {
         this.key = key;
         this.budget = new BudgetValue(budget);  // clone, not assignment
     }
@@ -61,7 +61,7 @@ public abstract class Item {
      * Constructor with initial budget
      * @param budget The initial budget
      */
-    protected void setBudget(BudgetValue budget) {
+    protected void setBudget(final BudgetValue budget) {
         this.budget = budget;
     }
 
@@ -93,7 +93,7 @@ public abstract class Item {
      * Set priority value
      * @param v Set a new priority value
      */
-    public void setPriority(float v) {
+    public void setPriority(final float v) {
         budget.setPriority(v);
     }
 
@@ -101,7 +101,7 @@ public abstract class Item {
      * Increase priority value
      * @param v The amount of increase
      */
-    public void incPriority(float v) {
+    public void incPriority(final float v) {
         budget.incPriority(v);
     }
 
@@ -109,7 +109,7 @@ public abstract class Item {
      * Decrease priority value
      * @param v The amount of decrease
      */
-    public void decPriority(float v) {
+    public void decPriority(final float v) {
         budget.decPriority(v);
     }
 
@@ -125,7 +125,7 @@ public abstract class Item {
      * Set durability value
      * @param v The new durability value
      */
-    public void setDurability(float v) {
+    public void setDurability(final float v) {
         budget.setDurability(v);
     }
 
@@ -133,7 +133,7 @@ public abstract class Item {
      * Increase durability value
      * @param v The amount of increase
      */
-    public void incDurability(float v) {
+    public void incDurability(final float v) {
         budget.incDurability(v);
     }
 
@@ -141,7 +141,7 @@ public abstract class Item {
      * Decrease durability value
      * @param v The amount of decrease
      */
-    public void decDurability(float v) {
+    public void decDurability(final float v) {
         budget.decDurability(v);
     }
 
@@ -157,7 +157,7 @@ public abstract class Item {
      * Set quality value
      * @param v The new quality value
      */
-    public void setQuality(float v) {
+    public void setQuality(final float v) {
         budget.setQuality(v);
     }
 
@@ -165,7 +165,7 @@ public abstract class Item {
      * Merge with another Item with identical key
      * @param that The Item to be merged
      */
-    public void merge(Item that) {
+    public void merge(final Item that) {
         budget.merge(that.getBudget());
     }
 
