@@ -6,6 +6,8 @@
 
 package nars.web;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import nars.io.ExperienceReader;
 import nars.io.ExperienceWriter;
 import nars.io.ExperienceWriter.LineOutput;
@@ -15,28 +17,21 @@ import nars.main_nogui.NAR;
  * An instance of a web socket session to a NAR
  * @author me
  */
-abstract public class NARConnection implements LineOutput, Runnable {
+abstract public class NARConnection implements LineOutput {
     public final NAR nar;
-    private final ExperienceReader reader;
     private final ExperienceWriter writer;
-    private Thread thread;
     int cycleIntervalMS = 50;
         
     public NARConnection(NAR nar) {
         this.nar = nar;
         
-        this.reader = new ExperienceReader(nar);
-        
-        
         this.writer = new ExperienceWriter(nar, this);
-        nar.addOutputChannel(writer);
-        
+        nar.addOutputChannel(writer);        
     }
 
     public void read(final String message) {
-        String[] lines = message.split("\n");
-        for (String s : lines)
-            this.reader.parse(s);
+        new ExperienceReader(nar, new BufferedReader( new StringReader(message)) );
+        
         if (!running)
             resume();
     }
@@ -49,44 +44,35 @@ abstract public class NARConnection implements LineOutput, Runnable {
     public void resume() {
         if (!running) {        
             running = true;
-            thread = new Thread(this);
-            thread.start();        
+            nar.start(0);
         }
     }
     public void stop() {
         running = false;
-        if (thread!=null) {
-            thread.interrupt();
-        }
         nar.stop();
-        thread = null;
     }
     
-    public void run() {
+    /*public void run() {
         while (running) {
-            /*println("NARSBatch.run():"
-                    + " step " + nar.getTime()
-                    + " " + nar.isFinishedInputs());*/
             
-            nar.tick();
+            //nar.tick();
             
-            /*println("NARSBatch.run(): after tick"
-                    + " step " + nar.getTime()
-                    + " " + nar.isFinishedInputs());*/
             
-            if (nar.isFinishedInputs()) {
-                break;
-            }
-    
+            
             if (cycleIntervalMS > 0) {
                 try {
                     Thread.sleep(cycleIntervalMS);
                 } catch (InterruptedException ex) {            }            
             }
+            
+            if (nar.isFinishedInputs()) {
+                break;
+            }
+                
         }
         running = false;
         thread = null;
-    }
+    }*/
 
     
 }

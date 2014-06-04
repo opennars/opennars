@@ -1,0 +1,36 @@
+!Revision ------
+
+!Bird is a type of swimmer.
+
+<bird --> swimmer>.
+
+!Bird is probably not a type of swimmer.
+
+<bird --> swimmer>. %0.10;0.60%
+
+!Bird is very likely to be a type of swimmer.
+!EXPECT: <bird --> swimmer>. %0.87;0.91%
+
+1
+
+!
+*
+!
+
+!Deduction ------
+
+!Bird is a type of animal.
+
+<bird --> animal>.
+
+!Robin is a type of bird.
+
+<robin --> bird>.
+
+!Robin is a type of animal.
+!EXPECT: <robin --> animal>. %1.00;0.81%
+
+2
+
+
+*

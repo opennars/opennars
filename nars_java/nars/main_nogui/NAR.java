@@ -1,11 +1,18 @@
 package nars.main_nogui;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.gui.MainWindow;
+import nars.io.ExperienceReader;
 import nars.io.InputChannel;
 import nars.io.OutputChannel;
 import nars.io.StringParser;
@@ -38,6 +45,8 @@ public class NAR implements Runnable {
      * The input channels of the reasoner
      */
     protected ArrayList<InputChannel> inputChannels;
+    //private LinkedList<InputChannel> closedInputChannels = new LinkedList();
+
     /**
      * The output channels of the reasoner
      */
@@ -50,7 +59,7 @@ public class NAR implements Runnable {
     /**
      * Flag for running continuously
      */
-    private boolean running;
+    private boolean running = false;
     /**
      * The remaining number of steps to be carried out (walk mode)
      */
@@ -76,13 +85,17 @@ public class NAR implements Runnable {
      * Reset the system with an empty memory and reset clock. Called locally and
      * from {@link MainWindow}.
      */
+    final String resetMessage = " OUT: reset";
+    
     public void reset() {
-        running = false;
+            
         walkingSteps = 0;
         clock = 0;
         memory.init();
         Stamp.init();
-//	    timer = 0;
+        
+        output(resetMessage);
+                
     }
 
     public Memory getMemory() {
@@ -121,6 +134,7 @@ public class NAR implements Runnable {
      * @param n The number of inference steps to be carried
      */
     public void walk(int n) {
+        output(" OUT: thinking " + n + (n > 1 ? " cycles" : " cycle"));
         walkingSteps = n;
     }
 
@@ -159,7 +173,8 @@ public class NAR implements Runnable {
                 // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
                 tick();
             } catch (Exception e) {
-                System.err.println(e);
+                System.err.println("run: " + e);
+                e.printStackTrace();
             }
             if (minTickPeriodMS > 0) {
                 try {
@@ -177,20 +192,6 @@ public class NAR implements Runnable {
      * only.
      */
     public void tick() {
-        doTick();
-    }
-    
-    public void output(final ArrayList<String> output) {
-        for (final OutputChannel channelOut : outputChannels)
-            channelOut.nextOutput(output);
-    }
-    public void output(final String o) {
-        final ArrayList<String> l = new ArrayList();
-        l.add(o);
-        output(l);
-    }
-
-    public void doTick() {
         if (DEBUG) {
             if (running || walkingSteps > 0 || !finishedInputs) {
                 System.out.println("// doTick: "
@@ -201,20 +202,31 @@ public class NAR implements Runnable {
                 System.out.flush();
             }
         }
+                
         if (walkingSteps == 0) {
             boolean reasonerShouldRun = false;
+
+            /*for (InputChannel c : closedInputChannels) {
+                inputChannels.remove(c);
+            }
+            closedInputChannels.clear();*/
+
+
             for (InputChannel channelIn : inputChannels) {
-                reasonerShouldRun = reasonerShouldRun
-                        || channelIn.nextInput();
+                reasonerShouldRun = reasonerShouldRun || channelIn.nextInput();  
+                /*if (channelIn.isClosed())
+                    closedInputChannels.add(channelIn);*/
             }
             finishedInputs = !reasonerShouldRun;
         }
+                
         // forward to output Channels
-        ArrayList<String> output = memory.getExportStrings();
+        final ArrayList<String> output = memory.getExportStrings();
         if (!output.isEmpty()) {
             output(output);
             output.clear();	// this will trigger display the current value of timer in Memory.report()
         }
+
         if (running || walkingSteps > 0) {
             clock++;
             tickTimer();
@@ -223,7 +235,20 @@ public class NAR implements Runnable {
                 walkingSteps--;
             }
         }
+
+                
     }
+    
+    public void output(final ArrayList<String> output) {
+        for (final OutputChannel channelOut : outputChannels)
+            channelOut.nextOutput(output);
+    }
+    public void output(final String o) {       
+        final ArrayList<String> l = new ArrayList();
+        l.add(o);
+        output(l);
+    }
+
 
     /**
      * determines the end of {@link NARSBatch} program
@@ -236,16 +261,25 @@ public class NAR implements Runnable {
      * To process a line of input text
      *
      * @param text
+     * @return whether to continue processing in this input batch, or interrupt (false)
      */
-    public void textInputLine(String text) throws StringParser.InvalidInputException  {
+    public boolean textInputLine(String text) throws StringParser.InvalidInputException  {
         if (text.isEmpty()) {
-            return;
+            return true;
         }
         char c = text.charAt(0);
         if (c == Symbols.RESET_MARK) {
             reset();
-            memory.getExportStrings().add(text);
-        } else if (c != Symbols.COMMENT_MARK) {
+            return false;
+        }
+        else if (c == Symbols.URL_INCLUDE_MARK) {            
+            includeURL(text.substring(1));
+        }
+        else if (c == Symbols.ECHO_MARK) {
+            String echoString = text.substring(1);
+            output('\"' + echoString + '\"');
+        }
+        else if (c != Symbols.COMMENT_MARK) {
             // read NARS language or an integer : TODO duplicated code
             try {
                 int i = Integer.parseInt(text);
@@ -253,10 +287,12 @@ public class NAR implements Runnable {
             } catch (NumberFormatException e) {
                 Task task = StringParser.parseExperience(new StringBuffer(text), memory, clock);
                 if (task != null) {
+                    memory.report(task.getSentence(), true);    // report input
                     memory.inputTask(task);
                 }
             }
         }
+        return true;
     }
 
     @Override
@@ -312,5 +348,16 @@ public class NAR implements Runnable {
     public boolean isRunning() {
         return running;
     }    
+
+    public void includeURL(final String url) {
+        try {
+            URL u = new URL(url);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(u.openStream()));            
+            addInputChannel(new ExperienceReader(this, in));
+        } catch (Exception ex) {
+            output("includeURL: " + ex.toString());
+        }
+    }
     
 }
