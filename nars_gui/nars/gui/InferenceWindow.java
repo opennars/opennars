@@ -190,6 +190,11 @@ public class InferenceWindow extends NarsFrame implements ActionListener, ItemLi
     class NullInferenceRecorder implements IInferenceRecorder {
 
         @Override
+        public boolean isActive() {
+            return false;
+        }
+
+        @Override
         public void init() {
         }
 

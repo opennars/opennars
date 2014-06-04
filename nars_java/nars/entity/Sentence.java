@@ -262,7 +262,7 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toKey() {
-        StringBuilder s = new StringBuilder();
+        final StringBuilder s = new StringBuilder();
         s.append(content.toString());
         s.append(punctuation).append(" ");
         if (truth != null) {

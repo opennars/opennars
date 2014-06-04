@@ -115,7 +115,8 @@ public class TermLink extends Item {
     /**
      * Set the key of the link
      */
-    protected final void setKey() {
+    /*
+    @Deprecated protected final void setKeyOLD() {
         String at1, at2;
         if ((type % 2) == 1) {  // to component
             at1 = Symbols.TO_COMPONENT_1;
@@ -135,7 +136,36 @@ public class TermLink extends Item {
             key += target;
         }
     }
-
+    */
+    
+    /**
+     * Set the key of the link
+     */    
+    protected final void setKey() {
+        final String at1, at2;
+        if ((type % 2) == 1) {  // to component
+            at1 = Symbols.TO_COMPONENT_1;
+            at2 = Symbols.TO_COMPONENT_2;
+        } else {                // to compound
+            at1 = Symbols.TO_COMPOUND_1;
+            at2 = Symbols.TO_COMPOUND_2;
+        }
+        
+        final StringBuffer sb = new StringBuffer(at1).append("T").append(type);
+        if (index != null) {
+            for (int i = 0; i < index.length; i++) {
+                sb.append("-" + (index[i] + 1));
+            }
+        }
+        sb.append(at2);
+        
+        if (target != null) {
+            sb.append(target);
+        }
+        key = sb.toString();
+    }
+    
+    
     /**
      * Get the target of the link
      * @return The Term pointed by the link

@@ -21,6 +21,8 @@ public interface IInferenceRecorder {
      * Stop the display
      */
     public abstract void stop();
+    
+    public boolean isActive();
 
     /**
      * Add new text to display

@@ -132,7 +132,8 @@ public class Memory {
         newTasks.clear();
         exportStrings.clear();
         reasoner.initTimer();
-        recorder.append("\n-----RESET-----\n");
+        if (recorder.isActive())
+            recorder.append("\n-----RESET-----\n");
     }
 
     /* ---------- access utilities ---------- */
@@ -260,11 +261,13 @@ public class Memory {
      */
     public void inputTask(Task task) {
         if (task.getBudget().aboveThreshold()) {
-            recorder.append("!!! Perceived: " + task + "\n");
+            if (recorder.isActive())
+                recorder.append("!!! Perceived: " + task + "\n");
             report(task.getSentence(), true);    // report input
             newTasks.add(task);       // wait to be processed in the next workCycle
         } else {
-            recorder.append("!!! Neglected: " + task + "\n");
+            if (recorder.isActive())
+                recorder.append("!!! Neglected: " + task + "\n");
         }
     }
 
@@ -279,7 +282,8 @@ public class Memory {
      */
     public void activatedTask(BudgetValue budget, Sentence sentence, Sentence candidateBelief) {
         Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
-        recorder.append("!!! Activated: " + task.toString() + "\n");
+        if (recorder.isActive())
+            recorder.append("!!! Activated: " + task.toString() + "\n");
         if (sentence.isQuestion()) {
             float s = task.getBudget().summary();
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
@@ -298,7 +302,8 @@ public class Memory {
      */
     private void derivedTask(Task task) {
         if (task.getBudget().aboveThreshold()) {
-            recorder.append("!!! Derived: " + task + "\n");
+            if (recorder.isActive())
+                recorder.append("!!! Derived: " + task + "\n");
             float budget = task.getBudget().summary();
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
             float minSilent = reasoner.getSilenceValue().get() / 100.0f;
@@ -307,7 +312,8 @@ public class Memory {
             }
             newTasks.add(task);
         } else {
-            recorder.append("!!! Ignored: " + task + "\n");
+            if (recorder.isActive())
+                recorder.append("!!! Ignored: " + task + "\n");
         }
     }
 
@@ -397,7 +403,8 @@ public class Memory {
      * @param clock The current time to be displayed
      */
     public void workCycle(long clock) {
-        recorder.append(" --- " + clock + " ---\n");
+        if (recorder.isActive())
+            recorder.append(" --- " + clock + " ---\n");
         processNewTask();
         if (noResult()) {       // necessary?
             processNovelTask();
@@ -427,7 +434,8 @@ public class Memory {
                     if (d > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         novelTasks.putIn(task);    // new concept formation
                     } else {
-                        recorder.append("!!! Neglected: " + task + "\n");
+                        if (recorder.isActive())
+                            recorder.append("!!! Neglected: " + task + "\n");
                     }
                 }
             }
@@ -451,7 +459,8 @@ public class Memory {
         currentConcept = concepts.takeOut();
         if (currentConcept != null) {
             currentTerm = currentConcept.getTerm();
-            recorder.append(" * Selected Concept: " + currentTerm + "\n");
+            if (recorder.isActive())
+                recorder.append(" * Selected Concept: " + currentTerm + "\n");
             concepts.putBack(currentConcept);   // current Concept remains in the bag all the time
             currentConcept.fire();              // a working workCycle
         }
@@ -466,7 +475,8 @@ public class Memory {
      */
     private void immediateProcess(Task task) {
         currentTask = task; // one of the two places where this variable is set
-        recorder.append("!!! Insert: " + task + "\n");
+        if (recorder.isActive())
+            recorder.append("!!! Insert: " + task + "\n");
         currentTerm = task.getContent();
         currentConcept = getConcept(currentTerm);
         if (currentConcept != null) {
@@ -580,6 +590,12 @@ public class Memory {
 
     class NullInferenceRecorder implements IInferenceRecorder {
 
+        @Override
+        public boolean isActive() {
+            return false;
+        }
+
+        
         @Override
         public void init() {
         }

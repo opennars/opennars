@@ -426,7 +426,8 @@ public final class Concept extends Item {
         Sentence belief;
         for (int i = 0; i < beliefs.size(); i++) {
             belief = beliefs.get(i);
-            memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
+            if (memory.getRecorder().isActive())
+                memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
             memory.newStamp = Stamp.make(taskSentence.getStamp(), belief.getStamp(), memory.getTime());
             if (memory.newStamp != null) {
                 Sentence belief2 = (Sentence) belief.clone();   // will this mess up priority adjustment?
@@ -447,7 +448,8 @@ public final class Concept extends Item {
         }
         memory.currentTaskLink = currentTaskLink;
         memory.currentBeliefLink = null;
-        memory.getRecorder().append(" * Selected TaskLink: " + currentTaskLink + "\n");
+        if (memory.getRecorder().isActive())
+            memory.getRecorder().append(" * Selected TaskLink: " + currentTaskLink + "\n");
         Task task = currentTaskLink.getTargetTask();
         memory.currentTask = task;  // one of the two places where this variable is set
 //      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
@@ -460,7 +462,8 @@ public final class Concept extends Item {
             while (termLinkCount > 0) {
                 TermLink termLink = termLinks.takeOut(currentTaskLink, memory.getTime());
                 if (termLink != null) {
-                    memory.getRecorder().append(" * Selected TermLink: " + termLink + "\n");
+                    if (memory.getRecorder().isActive())
+                        memory.getRecorder().append(" * Selected TermLink: " + termLink + "\n");
                     memory.currentBeliefLink = termLink;
                     RuleTables.reason(currentTaskLink, termLink, memory);
                     termLinks.putBack(termLink);

@@ -152,9 +152,9 @@ public class NAR implements Runnable {
     }    
     
     @Override public void run() {
-        final Thread thisThread = Thread.currentThread();
+        //final Thread thisThread = Thread.currentThread();
         
-        while ((narsThread == thisThread) && (running)) {
+        while (/*(narsThread == thisThread) && */ running) {
             try {
                 // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
                 tick();
@@ -165,8 +165,8 @@ public class NAR implements Runnable {
                 try {
                     Thread.sleep(minTickPeriodMS);
                 } catch (InterruptedException e) {            }
+                Thread.yield();
             }
-            Thread.yield();
         }
     }
     

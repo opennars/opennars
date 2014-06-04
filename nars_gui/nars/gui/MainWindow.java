@@ -55,7 +55,7 @@ import nars.storage.Memory;
  */
 public class MainWindow extends NarsFrame implements ActionListener, OutputChannel {
 
-    final int TICKS_PER_TIMER_LABEL_UPDATE = 1024; //set to zero for max speed, or a large number to reduce GUI updates
+    final int TICKS_PER_TIMER_LABEL_UPDATE = 4*1024; //set to zero for max speed, or a large number to reduce GUI updates
 
     /**
      * Reference to the reasoner

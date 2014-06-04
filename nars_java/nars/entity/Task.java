@@ -186,7 +186,7 @@ public class Task extends Item {
      */
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        final StringBuilder s = new StringBuilder();
         s.append(super.toString()).append(" ");
         s.append(getSentence().getStamp());
         if (parentTask != null) {

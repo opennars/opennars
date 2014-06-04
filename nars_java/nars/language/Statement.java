@@ -52,7 +52,7 @@ public abstract class Statement extends CompoundTerm {
      * @param con Constant indicator
      * @param i Syntactic complexity of the compound
      */
-    protected Statement(String n, ArrayList<Term> cs, boolean con, short i) {
+    protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
@@ -64,7 +64,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement make(String relation, Term subject, Term predicate, Memory memory) {
+    public static Statement make(final String relation, final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
@@ -100,7 +100,7 @@ public abstract class Statement extends CompoundTerm {
      * @param statement A sample statement providing the class type
      * @param memory Reference to the memory
      */
-    public static Statement make(Statement statement, Term subj, Term pred, Memory memory) {
+    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
         if (statement instanceof Inheritance) {
             return Inheritance.make(subj, pred, memory);
         }
@@ -124,7 +124,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement makeSym(Statement statement, Term subj, Term pred, Memory memory) {
+    public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final Memory memory) {
         if (statement instanceof Inheritance) {
             return Similarity.make(subj, pred, memory);
         }
@@ -139,8 +139,8 @@ public abstract class Statement extends CompoundTerm {
      * @param s0 The String to be checked
      * @return if the given String is a relation symbol
      */
-    public static boolean isRelation(String s0) {
-        String s = s0.trim();
+    public static boolean isRelation(final String s0) {
+        final String s = s0.trim();
         if (s.length() != 3) {
             return false;
         }
@@ -169,7 +169,7 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(Term subject, String relation, Term predicate) {
+    protected static String makeStatementName(final Term subject, final String relation, final Term predicate) {
         StringBuilder nameStr = new StringBuilder();
         nameStr.append(Symbols.STATEMENT_OPENER);
         nameStr.append(subject.getName());
@@ -187,7 +187,7 @@ public abstract class Statement extends CompoundTerm {
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
-    public static boolean invalidStatement(Term subject, Term predicate) {
+    public static boolean invalidStatement(final Term subject, final Term predicate) {
         if (subject.equals(predicate)) {
             return true;
         }
@@ -198,12 +198,12 @@ public abstract class Statement extends CompoundTerm {
             return true;
         }
         if ((subject instanceof Statement) && (predicate instanceof Statement)) {
-            Statement s1 = (Statement) subject;
-            Statement s2 = (Statement) predicate;
-            Term t11 = s1.getSubject();
-            Term t12 = s1.getPredicate();
-            Term t21 = s2.getSubject();
-            Term t22 = s2.getPredicate();
+            final Statement s1 = (Statement) subject;
+            final Statement s2 = (Statement) predicate;
+            final Term t11 = s1.getSubject();
+            final Term t12 = s1.getPredicate();
+            final Term t21 = s2.getSubject();
+            final Term t22 = s2.getPredicate();
             if (t11.equals(t22) && t12.equals(t21)) {
                 return true;
             }
