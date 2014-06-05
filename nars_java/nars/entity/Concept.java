@@ -74,7 +74,7 @@ public final class Concept extends Item {
     /**
      * Reference to the memory
      */
-    Memory memory;
+    final Memory memory;
     /**
      * The display window
      */
@@ -88,7 +88,7 @@ public final class Concept extends Item {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(Term tm, Memory memory) {
+    public Concept(final Term tm, final Memory memory) {
         super(tm.getName());
         term = tm;
         this.memory = memory;
@@ -111,7 +111,7 @@ public final class Concept extends Item {
      *
      * @param task The task to be processed
      */
-    public void directProcess(Task task) {
+    public void directProcess(final Task task) {
         if (task.getSentence().isJudgment()) {
             processJudgment(task);
         } else {
@@ -131,12 +131,12 @@ public final class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    private void processJudgment(Task task) {
-        Sentence judg = task.getSentence();
-        Sentence oldBelief = evaluation(judg, beliefs);
+    private void processJudgment(final Task task) {
+        final Sentence judg = task.getSentence();
+        final Sentence oldBelief = evaluation(judg, beliefs);
         if (oldBelief != null) {
-            Stamp newStamp = judg.getStamp();
-            Stamp oldStamp = oldBelief.getStamp();
+            final Stamp newStamp = judg.getStamp();
+            final Stamp oldStamp = oldBelief.getStamp();
             if (newStamp.equals(oldStamp)) {
                 if (task.getParentTask().getSentence().isJudgment()) {
                     task.getBudget().decPriority(0);    // duplicated task
@@ -151,7 +151,7 @@ public final class Concept extends Item {
             }
         }
         if (task.getBudget().aboveThreshold()) {
-            for (Task ques : questions) {
+            for (final Task ques : questions) {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 LocalRules.trySolution(judg, ques, memory);
             }
@@ -169,8 +169,8 @@ public final class Concept extends Item {
         Sentence ques = task.getSentence();
         boolean newQuestion = true;
         if (questions != null) {
-            for (Task t : questions) {
-                Sentence q = t.getSentence();
+            for (final Task t : questions) {
+                final Sentence q = t.getSentence();
                 if (q.getContent().equals(ques.getContent())) {
                     ques = q;
                     newQuestion = false;
@@ -184,7 +184,7 @@ public final class Concept extends Item {
         if (questions.size() > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
             questions.remove(0);    // FIFO
         }
-        Sentence newAnswer = evaluation(ques, beliefs);
+        final Sentence newAnswer = evaluation(ques, beliefs);
         if (newAnswer != null) {
 //            LocalRules.trySolution(ques, newAnswer, task, memory);
             LocalRules.trySolution(newAnswer, task, memory);
@@ -203,8 +203,8 @@ public final class Concept extends Item {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    private void linkToTask(Task task) {
-        BudgetValue taskBudget = task.getBudget();
+    private void linkToTask(final Task task) {
+        final BudgetValue taskBudget = task.getBudget();
         TaskLink taskLink = new TaskLink(task, null, taskBudget);   // link type: SELF
         insertTaskLink(taskLink);
         if (term instanceof CompoundTerm) {
@@ -421,8 +421,8 @@ public final class Concept extends Item {
      * @param task The selected task
      * @return The selected isBelief
      */
-    public Sentence getBelief(Task task) {
-        Sentence taskSentence = task.getSentence();
+    public Sentence getBelief(final Task task) {
+        final Sentence taskSentence = task.getSentence();
         Sentence belief;
         for (int i = 0; i < beliefs.size(); i++) {
             belief = beliefs.get(i);
@@ -430,7 +430,7 @@ public final class Concept extends Item {
                 memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
             memory.newStamp = Stamp.make(taskSentence.getStamp(), belief.getStamp(), memory.getTime());
             if (memory.newStamp != null) {
-                Sentence belief2 = (Sentence) belief.clone();   // will this mess up priority adjustment?
+                final Sentence belief2 = (Sentence) belief.clone();   // will this mess up priority adjustment?
                 return belief2;
             }
         }
@@ -442,7 +442,7 @@ public final class Concept extends Item {
      * An atomic step in a concept, only called in {@link Memory#processConcept}
      */
     public void fire() {
-        TaskLink currentTaskLink = taskLinks.takeOut();
+        final TaskLink currentTaskLink = taskLinks.takeOut();
         if (currentTaskLink == null) {
             return;
         }
@@ -450,7 +450,7 @@ public final class Concept extends Item {
         memory.currentBeliefLink = null;
         if (memory.getRecorder().isActive())
             memory.getRecorder().append(" * Selected TaskLink: " + currentTaskLink + "\n");
-        Task task = currentTaskLink.getTargetTask();
+        final Task task = currentTaskLink.getTargetTask();
         memory.currentTask = task;  // one of the two places where this variable is set
 //      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
         if (currentTaskLink.getType() == TermLink.TRANSFORM) {
@@ -460,7 +460,7 @@ public final class Concept extends Item {
             int termLinkCount = Parameters.MAX_REASONED_TERM_LINK;
 //        while (memory.noResult() && (termLinkCount > 0)) {
             while (termLinkCount > 0) {
-                TermLink termLink = termLinks.takeOut(currentTaskLink, memory.getTime());
+                final TermLink termLink = termLinks.takeOut(currentTaskLink, memory.getTime());
                 if (termLink != null) {
                     if (memory.getRecorder().isActive())
                         memory.getRecorder().append(" * Selected TermLink: " + termLink + "\n");
@@ -520,7 +520,7 @@ public final class Concept extends Item {
      * @return String representation of direct content
      */
     public String displayContent() {
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         buffer.append("\n  Beliefs:\n");
         if (beliefs.size() > 0) {
             for (Sentence s : beliefs) {
@@ -543,8 +543,8 @@ public final class Concept extends Item {
         }
 
         @Override
-		public BagObserver<TermLink> createBagObserver() {
-			return new NullBagObserver<TermLink>();
+	public BagObserver<TermLink> createBagObserver() {
+            return new NullBagObserver<TermLink>();
         }
 
         @Override

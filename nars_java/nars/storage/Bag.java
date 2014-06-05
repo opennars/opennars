@@ -41,7 +41,7 @@ import nars.main_nogui.Parameters;
  *
  * @param <E> The type of the Item in the Bag
  */
-public abstract class Bag<E extends Item> {
+public abstract class Bag<E extends Item>  {
 
     /**
      * priority levels
@@ -67,6 +67,8 @@ public abstract class Bag<E extends Item> {
      * shared DISTRIBUTOR that produce the probability distribution
      */
     private static final Distributor DISTRIBUTOR = new Distributor(TOTAL_LEVEL); //
+    
+    
     /**
      * mapping from key to item
      */
@@ -75,6 +77,12 @@ public abstract class Bag<E extends Item> {
      * array of lists of items, for items on different level
      */
     private final ArrayList<E>[] itemTable = new ArrayList[TOTAL_LEVEL];
+    
+    //this is a cache holding whether itemTable[i] is empty. 
+    //it avoids needing to call itemTable.isEmpty() which may improve performance
+    //it is maintained each time an item is added or removed from one of the itemTable ArrayLists
+    private final boolean[] itemTableEmpty = new boolean[TOTAL_LEVEL];
+    
     /**
      * defined in different bags
      */
@@ -99,7 +107,9 @@ public abstract class Bag<E extends Item> {
      * reference to memory
      */
     protected final Memory memory;
-    private BagObserver<E> bagObserver = new NullBagObserver<E>();
+    
+    private BagObserver<E> bagObserver = null;
+    
     /**
      * The display level; initialized at lowest
      */
@@ -112,14 +122,19 @@ public abstract class Bag<E extends Item> {
      */
     protected Bag(Memory memory) {
         this.memory = memory;
-//        showing = false;
         capacity = capacity();
         init();
+        
+//        showing = false;
     }
 
     public void init() {
         for (int i = 0; i < TOTAL_LEVEL; i++) {
-            itemTable[i] = new ArrayList<E>(INITIAL_LEVEL_CAPACITY);
+            if (INITIAL_LEVEL_CAPACITY > 0)
+                itemTable[i] = new ArrayList<E>(INITIAL_LEVEL_CAPACITY);
+            else
+                itemTable[i] = new ArrayList<E>(); //uses shared empty array when empty
+            itemTableEmpty[i] = true;
         }
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         currentLevel = TOTAL_LEVEL - 1;
@@ -234,23 +249,21 @@ public abstract class Bag<E extends Item> {
         if (nameTable.isEmpty()) { // empty bag
             return null;
         }
-        if (itemTable[currentLevel].isEmpty() || (currentCounter == 0)) { // done with the current level
-            currentLevel = DISTRIBUTOR.order[levelIndex];
-
-            levelIndex = (levelIndex + 1) % DISTRIBUTOR.capacity;
-
-            while (itemTable[currentLevel].isEmpty()) {          // look for a non-empty level
+        if (itemTableEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
+            
+            // look for a non-empty level
+            do {
                 currentLevel = DISTRIBUTOR.order[levelIndex];
-
                 levelIndex = (levelIndex + 1) % DISTRIBUTOR.capacity;
-            }
+            } while (itemTableEmpty[currentLevel]);
+            
             if (currentLevel < THRESHOLD) { // for dormant levels, take one item
                 currentCounter = 1;
             } else {                  // for active levels, take all current items
                 currentCounter = itemTable[currentLevel].size();
             }
         }
-        E selected = takeOutFirst(currentLevel); // take out the first item in the level
+        final E selected = takeOutFirst(currentLevel); // take out the first item in the level
         currentCounter--;
         nameTable.remove(selected.getKey());
         refresh();
@@ -305,7 +318,8 @@ public abstract class Bag<E extends Item> {
         int inLevel = getLevel(newItem);
         if (size() > capacity) {      // the bag is full
             int outLevel = 0;
-            while (itemTable[outLevel].isEmpty()) {
+            //while (itemTable[outLevel].isEmpty()) {
+            while (itemTableEmpty[outLevel]) {
                 outLevel++;
             }
             if (outLevel > inLevel) {           // ignore the item and exit
@@ -315,6 +329,7 @@ public abstract class Bag<E extends Item> {
             }
         }
         itemTable[inLevel].add(newItem);        // FIFO
+        itemTableEmpty[inLevel] = false;
         mass += (inLevel + 1);                  // increase total mass
         refresh();                              // refresh the window
         return oldItem;		// TODO return null is a bad smell
@@ -329,6 +344,8 @@ public abstract class Bag<E extends Item> {
     private E takeOutFirst(final int level) {
         final E selected = itemTable[level].get(0);
         itemTable[level].remove(0);
+        if (itemTable[level].isEmpty())
+            itemTableEmpty[level] = true;
         mass -= (level + 1);
         refresh();
         return selected;
@@ -342,6 +359,8 @@ public abstract class Bag<E extends Item> {
     protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
         itemTable[level].remove(oldItem);
+        if (itemTable[level].isEmpty())
+            itemTableEmpty[level] = true;
         mass -= (level + 1);
         refresh();
     }
@@ -364,23 +383,26 @@ public abstract class Bag<E extends Item> {
      * Resume display
      */
     public void play() {
-        bagObserver.post(toString());
+        if (bagObserver!=null)
+            bagObserver.post(toString());
     }
 
     /**
      * Stop display
      */
     public void stop() {
-        bagObserver.stop();
+        if (bagObserver!=null)        
+            bagObserver.stop();
     }
 
     /**
      * Refresh display
      */
     public void refresh() {
-        if (bagObserver.isActive()) {
-            bagObserver.refresh(toString());
-        }
+        if (bagObserver!=null)       
+            if (bagObserver.isActive()) {
+                bagObserver.refresh(toString());
+            }
     }
 
     /**
