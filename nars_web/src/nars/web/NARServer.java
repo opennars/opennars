@@ -86,16 +86,17 @@ public class NARServer  {
 
     public static void main(String[] args) throws InterruptedException, IOException {
                 
-        int port = 9090;
+        int httpPort = 9999;
+        int wsPort = 10000;
         /*try {
             port = Integer.parseInt(args[ 0]);
         } catch (Exception ex) {        }*/
         
                 
      
-        NARServer s = new NARServer(port, 8887);
+        NARServer s = new NARServer(httpPort, wsPort);
         
-        System.out.println("NARS Web Server ready on port: " + port);
+        System.out.println("NARS Web Server ready on port: " + httpPort);
         //System.out.println("Open " + new File("nars_web/client/index.html").getAbsolutePath() + " in a web browser.");    
     }
 

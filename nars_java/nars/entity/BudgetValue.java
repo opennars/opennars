@@ -34,16 +34,16 @@ public class BudgetValue implements Cloneable {
     /** The character that separates the factors in a budget value */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
     /** The relative share of time resource to be allocated */
-    protected ShortFloat priority;
+    final protected ShortFloat priority;
 	/**
 	 * The percent of priority to be kept in a constant period; All priority
 	 * values “decay” over time, though at different rates. Each item is given a
 	 * “durability” factor in (0, 1) to specify the percentage of priority level
 	 * left after each reevaluation
 	 */
-    protected ShortFloat durability;
+    final protected ShortFloat durability;
     /** The overall (context-independent) evaluation */
-    protected ShortFloat quality;
+    final protected ShortFloat quality;
 
     /** 
      * Default constructor
@@ -96,7 +96,7 @@ public class BudgetValue implements Cloneable {
      * Change priority value
      * @param v The new priority
      */
-    public void setPriority(float v) {
+    public void setPriority(final float v) {
         priority.setValue(v);
     }
 
@@ -104,7 +104,7 @@ public class BudgetValue implements Cloneable {
      * Increase priority value by a percentage of the remaining range
      * @param v The increasing percent
      */
-    public void incPriority(float v) {
+    public void incPriority(final float v) {
         priority.setValue(UtilityFunctions.or(priority.getValue(), v));
     }
 
@@ -112,7 +112,7 @@ public class BudgetValue implements Cloneable {
      * Decrease priority value by a percentage of the remaining range
      * @param v The decreasing percent
      */
-    public void decPriority(float v) {
+    public void decPriority(final float v) {
         priority.setValue(UtilityFunctions.and(priority.getValue(), v));
     }
 
@@ -128,7 +128,7 @@ public class BudgetValue implements Cloneable {
      * Change durability value
      * @param v The new durability
      */
-    public void setDurability(float v) {
+    public void setDurability(final float v) {
         durability.setValue(v);
     }
 
@@ -136,7 +136,7 @@ public class BudgetValue implements Cloneable {
      * Increase durability value by a percentage of the remaining range
      * @param v The increasing percent
      */
-    public void incDurability(float v) {
+    public void incDurability(final float v) {
         durability.setValue(UtilityFunctions.or(durability.getValue(), v));
     }
 
@@ -144,7 +144,7 @@ public class BudgetValue implements Cloneable {
      * Decrease durability value by a percentage of the remaining range
      * @param v The decreasing percent
      */
-    public void decDurability(float v) {
+    public void decDurability(final float v) {
         durability.setValue(UtilityFunctions.and(durability.getValue(), v));
     }
 
@@ -160,7 +160,7 @@ public class BudgetValue implements Cloneable {
      * Change quality value
      * @param v The new quality
      */
-    public void setQuality(float v) {
+    public void setQuality(final float v) {
         quality.setValue(v);
     }
 
@@ -168,7 +168,7 @@ public class BudgetValue implements Cloneable {
      * Increase quality value by a percentage of the remaining range
      * @param v The increasing percent
      */
-    public void incQuality(float v) {
+    public void incQuality(final float v) {
         quality.setValue(UtilityFunctions.or(quality.getValue(), v));
     }
 
@@ -176,7 +176,7 @@ public class BudgetValue implements Cloneable {
      * Decrease quality value by a percentage of the remaining range
      * @param v The decreasing percent
      */
-    public void decQuality(float v) {
+    public void decQuality(final float v) {
         quality.setValue(UtilityFunctions.and(quality.getValue(), v));
     }
 
@@ -184,7 +184,7 @@ public class BudgetValue implements Cloneable {
      * Merge one BudgetValue into another
      * @param that The other Budget
      */
-    public void merge(BudgetValue that) {
+    public void merge(final BudgetValue that) {
         BudgetFunctions.merge(this, that);
     }
 

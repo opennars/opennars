@@ -44,7 +44,7 @@ abstract public class NARConnection implements LineOutput {
     public void resume() {
         if (!running) {        
             running = true;
-            nar.start(0);
+            nar.start(cycleIntervalMS);
         }
     }
     public void stop() {

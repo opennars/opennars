@@ -23,7 +23,7 @@ package nars.storage;
 /**
  * A pseudo-random number generator, used in Bag.
  */
-class Distributor {
+public final class Distributor {
 
     /** Shuffled sequence of index numbers */
     public final int order[];

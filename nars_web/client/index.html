@@ -22,7 +22,7 @@
         </div>
         
         <script type="text/javascript">
-            var ws = new WebSocket('ws://localhost:8887');
+            var ws = new WebSocket('ws://24.131.65.218:10000');
             
             var prevOutput = null, currentOutput = null;
             
@@ -74,7 +74,8 @@
                 if (!prevOutput)
                     prevOutput = currentOutput;
                 if (monospace) {
-                    var l = $("<pre>" + m + '</pre>\n');
+                    var l = $("<pre/>");
+                    l.text(m);
                     var lc = getLineClass(m);
                     if (lc)
                         l.addClass(lc);
