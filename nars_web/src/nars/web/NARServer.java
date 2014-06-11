@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import nars.main_nogui.NAR;
+import nars.nlp.NLPInputParser;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
@@ -15,7 +16,11 @@ import org.java_websocket.server.WebSocketServer;
 
 public class NARServer  {
 
+    private static final int DEFAULT_WEBSOCKET_PORT = 10000;
     static final boolean WEBSOCKET_DEBUG = false;
+    
+    private static NLPInputParser nlp = null;
+    private static int cycleIntervalMS = 50;
     
     class NARSWebSocketServer extends WebSocketServer  {
 
@@ -31,7 +36,7 @@ public class NARServer  {
 
             if (WEBSOCKET_DEBUG) System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
 
-            final NARConnection n = new NARConnection(new NAR()) {
+            final NARConnection n = new NARConnection(new NAR(), nlp, cycleIntervalMS) {
                 @Override public void println(String output) {
                     conn.send(output);
                 }
@@ -84,17 +89,42 @@ public class NARServer  {
 
 
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws Exception {
                 
-        int httpPort = 9999;
-        int wsPort = 10000;
-        /*try {
-            port = Integer.parseInt(args[ 0]);
-        } catch (Exception ex) {        }*/
-             
+        int httpPort;
+        int wsPort = DEFAULT_WEBSOCKET_PORT;
+        
+        String nlpHost = null;
+        int nlpPort = 0;
+        
+        if (args.length < 1) {
+            System.out.println("Usage: NARServer <httpPort> [nlpHost nlpPort] [cycleIntervalMS]");
+            
+            return;
+        }
+        else {
+            httpPort = Integer.parseInt(args[0]);
+            
+            if (args.length >= 3) {
+                nlpHost = args[1];
+                if (args[2]!="null") {
+                    nlpPort = Integer.parseInt(args[2]);
+                    nlp = new NLPInputParser(nlpHost, nlpPort);
+                }
+            }
+            if (args.length >= 4) {
+                cycleIntervalMS = Integer.parseInt(args[3]);
+            }
+        }
+                
         NARServer s = new NARServer(httpPort, wsPort);
         
         System.out.println("NARS Web Server ready. port: " + httpPort + ", websockets port: " + wsPort);
+        System.out.println("  Cycle interval (ms): " + cycleIntervalMS);
+        if (nlp!=null) {
+            System.out.println("  NLP enabled, using: " + nlpHost + ":" + nlpPort);            
+        }
+
     }
 
 

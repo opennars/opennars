@@ -530,7 +530,7 @@ public class Memory {
         /*if (NAR.DEBUG) {
             System.out.println("// report( clock " + reasoner.getTime()
                     + ", input " + input
-                    + ", timer " + reasoner.getTimer()
+                    + ", timer " + reasoner.getSystemClock()
                     + ", Sentence " + sentence
                     + ", exportStrings " + exportStrings);
             System.out.flush();

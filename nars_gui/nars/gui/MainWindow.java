@@ -20,14 +20,18 @@
  */
 package nars.gui;
 
+import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -37,7 +41,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.io.ExperienceReader;
@@ -46,8 +49,8 @@ import nars.io.IInferenceRecorder;
 import nars.io.OutputChannel;
 import nars.main.NARS;
 import nars.main.Reasoner;
-import nars.main_nogui.Parameters;
 import nars.main_nogui.NAR;
+import nars.main_nogui.Parameters;
 import nars.storage.Memory;
 
 /**
@@ -249,6 +252,33 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         menuItem.addActionListener(this);
     }
 
+        /**
+     * Open an input experience file with a FileDialog
+     */
+    public void openLoadFile() {
+        FileDialog dialog = new FileDialog((FileDialog) null, "Load experience", FileDialog.LOAD);
+        dialog.setVisible(true);
+        String directoryName = dialog.getDirectory();
+        String fileName = dialog.getFile();
+        String filePath = directoryName + fileName;
+        
+        try {
+            loadFile(filePath);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void loadFile(String filePath) throws IOException, FileNotFoundException {        
+        BufferedReader r = new BufferedReader(new FileReader(filePath));
+        String s;
+
+        while ((s = r.readLine())!=null) {
+            ioText.append(s + "\n");            
+            new ExperienceReader(reasoner, s); //TODO use a stream to avoid reallocate experiencereader
+        }
+    }
+    
     /**
      * Initialize the system for a new run
      */
@@ -323,7 +353,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
             String label = e.getActionCommand();
             if (label.equals("Load Experience")) {
                 experienceReader = new ExperienceReader(reasoner);
-                experienceReader.openLoadFile();
+                openLoadFile();
             } else if (label.equals("Save Experience")) {
                 if (savingExp) {
                     ioText.setBackground(DISPLAY_BACKGROUND_COLOR);

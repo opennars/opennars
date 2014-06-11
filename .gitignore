@@ -7,5 +7,7 @@ nbproject/private/
 /nars_web/client/lib/jquery-ui/themes/
 /nars_web/client/lib/jquery/src/
 
+lib/cache_dir
+
 NARS.jar
 

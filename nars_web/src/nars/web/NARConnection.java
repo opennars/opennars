@@ -12,6 +12,7 @@ import nars.io.ExperienceReader;
 import nars.io.ExperienceWriter;
 import nars.io.ExperienceWriter.LineOutput;
 import nars.main_nogui.NAR;
+import nars.nlp.NLPInputParser;
 
 /**
  * An instance of a web socket session to a NAR
@@ -20,18 +21,22 @@ import nars.main_nogui.NAR;
 abstract public class NARConnection implements LineOutput {
     public final NAR nar;
     private final ExperienceWriter writer;
-    int cycleIntervalMS = 50;
+    int cycleIntervalMS;
+    private final NLPInputParser nlp;
         
-    public NARConnection(NAR nar) {
+    public NARConnection(NAR nar, NLPInputParser nlp, int cycleIntervalMS) {
         this.nar = nar;
+        this.nlp = nlp;
+        this.cycleIntervalMS = cycleIntervalMS;
+     
         
         this.writer = new ExperienceWriter(nar, this);
         nar.addOutputChannel(writer);        
     }
 
     public void read(final String message) {
-        new ExperienceReader(nar, new BufferedReader( new StringReader(message)) );
-        
+        ExperienceReader e = new ExperienceReader(nar, new BufferedReader( new StringReader(message)), nlp);
+                
         if (!running)
             resume();
     }

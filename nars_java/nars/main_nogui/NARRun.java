@@ -89,7 +89,7 @@ public class NARRun {
     public void init(String[] args) {
         if (args.length > 0) {
             ExperienceReader experienceReader = new ExperienceReader(reasoner);
-            experienceReader.openLoadFile(args[0]);
+            experienceReader.includeFile(args[0]);
         }
         reasoner.addOutputChannel(new ExperienceWriter(reasoner,
                 new PrintWriter(out, true)));

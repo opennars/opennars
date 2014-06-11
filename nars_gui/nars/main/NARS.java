@@ -20,9 +20,10 @@
  */
 package nars.main;
 
-import nars.io.ExperienceReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.main_nogui.CommandLineParameters;
-import nars.main_nogui.NAR;
 import nars.main_nogui.NARRun;
 
 /**
@@ -43,7 +44,7 @@ public class NARS  {
             " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/";
 
-    NAR reasoner;
+    private Reasoner reasoner;
 
     /**
      * The entry point of the standalone application.
@@ -68,8 +69,12 @@ public class NARS  {
         reasoner = new Reasoner("NARS Reasoner");
         if (args.length > 0
                 && CommandLineParameters.isReallyFile(args[0])) {
-            ExperienceReader experienceReader = new ExperienceReader(reasoner);
-            experienceReader.openLoadFile(args[0]);
+
+            try {
+                reasoner.mainWindow.loadFile(args[0]);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
         CommandLineParameters.decode(args, reasoner);
     }

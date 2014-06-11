@@ -1,8 +1,5 @@
 package nars.main_nogui;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import nars.entity.Stamp;
 import nars.gui.MainWindow;
-import nars.io.ExperienceReader;
 import nars.io.InputChannel;
 import nars.io.OutputChannel;
 import nars.storage.Memory;
@@ -70,6 +66,7 @@ public class NAR implements Runnable {
      */
     private long timer;
     private AtomicInteger silenceValue = new AtomicInteger(Parameters.SILENT_LEVEL);
+    private boolean paused;
 
     public NAR() {
         memory = new Memory(this);
@@ -149,8 +146,16 @@ public class NAR implements Runnable {
             narsThread = new Thread(this, "Inference");
             narsThread.start();
             running = true;
-        }
-        
+            paused = false;
+        }        
+    }
+    
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
     }
     
     /**
@@ -165,9 +170,8 @@ public class NAR implements Runnable {
     }    
     
     @Override public void run() {
-        //final Thread thisThread = Thread.currentThread();
         
-        while (/*(narsThread == thisThread) && */ running) {
+        while (/*(narsThread == thisThread) && */ running) {            
             try {
                 // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
                 tick();
@@ -181,6 +185,7 @@ public class NAR implements Runnable {
                 System.err.println("run: " + e);
                 e.printStackTrace();
             }
+            
             if (minTickPeriodMS > 0) {
                 try {
                     Thread.sleep(minTickPeriodMS);
@@ -202,12 +207,12 @@ public class NAR implements Runnable {
                 System.out.println("// doTick: "
                         + "walkingSteps " + walkingSteps
                         + ", clock " + clock
-                        + ", getTimer " + getTimer()
+                        + ", getTimer " + getSystemClock()
                         + "\n//    memory.getExportStrings() " + memory.getExportStrings());
                 System.out.flush();
             }
         }
-                
+        
         if (walkingSteps == 0) {
             boolean reasonerShouldRun = false;
 
@@ -232,7 +237,7 @@ public class NAR implements Runnable {
             output.clear();	// this will trigger display the current value of timer in Memory.report()
         }
 
-        if (running || walkingSteps > 0) {
+        if (((running || walkingSteps > 0)) && (!paused)) {
             clock++;
             tickTimer();
             memory.workCycle(clock);
@@ -283,7 +288,7 @@ public class NAR implements Runnable {
      * @return The previous timer value
      */
     public long updateTimer() {
-        long i = getTimer();
+        long i = getSystemClock();
         initTimer();
         return i;
     }
@@ -300,11 +305,11 @@ public class NAR implements Runnable {
      * Update timer
      */
     public void tickTimer() {
-        setTimer(getTimer() + 1);
+        setTimer(getSystemClock() + 1);
     }
 
     /** @return System clock : number of cycles since last output */
-    public long getTimer() {
+    public long getSystemClock() {
         return timer;
     }
 
@@ -316,6 +321,10 @@ public class NAR implements Runnable {
     public boolean isRunning() {
         return running;
     }    
+
+    public boolean isPaused() {
+        return paused;
+    }
 
     
     

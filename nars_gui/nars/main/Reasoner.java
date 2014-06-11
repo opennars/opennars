@@ -38,7 +38,7 @@ public class Reasoner extends NAR {
     /**
      * The unique main window
      */
-    MainWindow mainWindow;
+    public final MainWindow mainWindow;
     /**
      * Input experience from a window
      */
@@ -53,8 +53,7 @@ public class Reasoner extends NAR {
         super();
         this.name = name;
         inputWindow = new InputWindow(this, name);
-        mainWindow = new MainWindow(this, name);
-        inputChannels.add(inputWindow);
+        mainWindow = new MainWindow(this, name);        
         outputChannels.add(mainWindow);
         mainWindow.setVisible(true);
     }
@@ -84,7 +83,7 @@ public class Reasoner extends NAR {
     }
 
     @Override
-    public long getTimer() {
+    public long getSystemClock() {
         return mainWindow.getTimer();
     }
 }

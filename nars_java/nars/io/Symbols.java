@@ -80,11 +80,17 @@ public class Symbols {
     public static final String INPUT_LINE = "IN";
     public static final String OUTPUT_LINE = "OUT";
     public static final char PREFIX_MARK = ':';
-    public static final char RESET_MARK = '*';
     public static final char COMMENT_MARK = '/';
     public static final char URL_INCLUDE_MARK = '`';
     public static final char ECHO_MARK = '!';
+    public static final char NATURAL_LANGUAGE_MARK = '\"';
 
+    /* control commands */
+    public static final String RESET_COMMAND = "*reset";
+    public static final String STOP_COMMAND = "*stop";
+    public static final String START_COMMAND = "*start";
+    
+    
     /* Stamp, display only */
     public static final char STAMP_OPENER = '{';
     public static final char STAMP_CLOSER = '}';

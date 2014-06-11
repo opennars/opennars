@@ -20,11 +20,11 @@
  */
 package nars.io;
 
-import java.awt.FileDialog;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -85,7 +85,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
     private int timer;
 
     
-    private List<InputParser> parsers = new LinkedList();
+    public final List<InputParser> parsers = new LinkedList();
         
     /**
      * Default constructor
@@ -96,30 +96,24 @@ public class ExperienceReader extends Symbols implements InputChannel {
         this.nar = reasoner;
         inExp = null;
     }
-    public ExperienceReader(NAR reasoner, BufferedReader input) {
+    public ExperienceReader(NAR reasoner, String input, InputParser... additionalParsers) {
+        this(reasoner, new BufferedReader(new StringReader(input)), additionalParsers);
+    }
+    
+    public ExperienceReader(NAR reasoner, BufferedReader input, InputParser... additionalParsers) {
         this(reasoner);
         setBufferedReader(input);
         
-        initDefaultParsers();
+        initDefaultParsers(additionalParsers);
     }
-    /**
-     * Open an input experience file with a FileDialog
-     */
-    public void openLoadFile() {
-        FileDialog dialog = new FileDialog((FileDialog) null, "Load experience", FileDialog.LOAD);
-        dialog.setVisible(true);
-        String directoryName = dialog.getDirectory();
-        String fileName = dialog.getFile();
-        String filePath = directoryName + fileName;
-        openLoadFile(filePath);
-    }
+
 
     /**
      * Open an input experience file from given file Path
      *
      * @param filePath File to be read as experience
      */
-    public void openLoadFile(String filePath) {
+    public void includeFile(String filePath) {
         try {
             inExp = new BufferedReader(new FileReader(filePath));
         } catch (IOException ex) {
@@ -131,14 +125,14 @@ public class ExperienceReader extends Symbols implements InputChannel {
     /**
      * Close an input experience file (close the reader in fact)
      */
-    public void closeLoadFile() {
+    /*public void closeLoadFile() {
         try {
             inExp.close();
         } catch (IOException ex) {
             System.out.println("i/o error: " + ex.getMessage());
         }
         nar.removeInputChannel(this);
-    }
+    }*/
 
     public void setBufferedReader(BufferedReader inExp) {
         this.inExp = inExp;
@@ -184,13 +178,13 @@ public class ExperienceReader extends Symbols implements InputChannel {
     }
     
 
-    protected void initDefaultParsers() {
+    protected void initDefaultParsers(InputParser... additionalParsers) {
         //integer, # of cycles to walk
         parsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {
                 try {
-                    int timer = Integer.parseUnsignedInt(input);
+                    int timer = Integer.parseInt(input);
                     nar.walk(timer);
                     return true;
                 }
@@ -203,11 +197,40 @@ public class ExperienceReader extends Symbols implements InputChannel {
         //reset
         parsers.add(new InputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {
-                char c = input.charAt(0);
-                if (c == Symbols.RESET_MARK) {
+            public boolean parse(NAR nar, String input, InputParser lastHandler) {                
+                if (input.equals(Symbols.RESET_COMMAND)) {
                     nar.reset();
                     return true;
+                }
+                return false;
+            }
+        });
+        
+        //stop
+        parsers.add(new InputParser() {
+            @Override
+            public boolean parse(NAR nar, String input, InputParser lastHandler) {
+                if (!nar.isPaused())  {
+                    if (input.equals(Symbols.STOP_COMMAND)) {
+                        nar.output("stopping.");
+                        nar.pause();
+                        return true;
+                    }
+                }
+                return false;                
+            }
+        });    
+        
+        //start
+        parsers.add(new InputParser() {
+            @Override
+            public boolean parse(NAR nar, String input, InputParser lastHandler) {                
+                if (nar.isPaused()) {
+                    if (input.equals(Symbols.START_COMMAND)) {
+                        nar.resume();
+                        nar.output("starting.");
+                        return true;
+                    }
                 }
                 return false;                
             }
@@ -244,6 +267,9 @@ public class ExperienceReader extends Symbols implements InputChannel {
         parsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {
+                if (lastHandler != null)
+                    return false;
+
                 char c = input.charAt(0);
                 if (c != Symbols.COMMENT_MARK) {
                     try {
@@ -261,11 +287,16 @@ public class ExperienceReader extends Symbols implements InputChannel {
             }
         });             
         
+        for (InputParser i : additionalParsers) {
+            if (i!=null)
+                parsers.add(i);
+        }
                    
     }
     
     /** parse should only be called as a result of the buffered input's readline */
     protected void parse(String line) {
+        
         line = line.trim();
         if (line.isEmpty()) return;
         
@@ -274,7 +305,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
             
             boolean result = p.parse(nar, line, lastHandled);
             
-            System.out.println(line + " parser " + p + " " + result);
+            //System.out.println(line + " parser " + p + " " + result);
             
             if (result)
                 lastHandled = p;
