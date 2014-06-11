@@ -29,7 +29,7 @@ public class NARServer  {
 
             WebSocketImpl.DEBUG = WebSocket.DEBUG = WEBSOCKET_DEBUG;
 
-            System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
+            if (WEBSOCKET_DEBUG) System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
 
             final NARConnection n = new NARConnection(new NAR()) {
                 @Override public void println(String output) {
@@ -42,7 +42,7 @@ public class NARServer  {
 
         @Override
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-            System.out.println(conn + " disconnected");
+            if (WEBSOCKET_DEBUG) System.out.println(conn + " disconnected");
 
             NARConnection n = socketSession.get(conn);
             if (n!=null) {
