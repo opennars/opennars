@@ -2,7 +2,7 @@ def parse(lines):
     argument1=lambda expr: expr.split("(")[1].split("-")[0].replace(" ","")
     argument2=lambda expr: expr.split(",")[1].split("-")[0].replace(" ","")
     prep=lambda expr: expr.split("_")[1].split("(")[0]
-    M=[x for x in lines.split("\n") if x!="" and not x.replace(" ","").startswith("(")]
+    M=[x for x in lines.split("|") if x!="" and not x.replace(" ","").startswith("(")]
     
     def check_Negation(arg):
         for z in M: #negation
@@ -58,4 +58,6 @@ def parse(lines):
                         if z.startswith("prep"):
                             if argument1(z)==argument1(x):
                                 sentences+=[negate(neg,"<(*,"+arg(subj,argument2(x))+","+arg(subj,argument2(y))+","+prep(z)+","+argument2(z)+") --> "+arg(subj,argument1(y))+">")]
-    return [(s,narsese_to_sentence(s)) for s in sentences]
+
+    return sentences
+    #return [(s,narsese_to_sentence(s)) for s in sentences]
