@@ -22,7 +22,9 @@
         </div>
         
         <script type="text/javascript">
-            var ws = new WebSocket('ws://24.131.65.218:10000');
+            
+            int websocketPort = 10000;
+            var ws = new WebSocket('ws://' + window.location.host + ':' + websocketPort');
             
             var prevOutput = null, currentOutput = null;
             
@@ -57,7 +59,6 @@
                         }
 
                     });
-
 
                     d.append(input);
                     d.append(sendButton);
@@ -100,8 +101,6 @@
                 };
     
             });
-                
-
 
 
         </script>

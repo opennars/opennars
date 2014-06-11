@@ -91,13 +91,10 @@ public class NARServer  {
         /*try {
             port = Integer.parseInt(args[ 0]);
         } catch (Exception ex) {        }*/
-        
-                
-     
+             
         NARServer s = new NARServer(httpPort, wsPort);
         
-        System.out.println("NARS Web Server ready on port: " + httpPort);
-        //System.out.println("Open " + new File("nars_web/client/index.html").getAbsolutePath() + " in a web browser.");    
+        System.out.println("NARS Web Server ready. port: " + httpPort + ", websockets port: " + wsPort);
     }
 
 
