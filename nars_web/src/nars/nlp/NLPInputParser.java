@@ -18,7 +18,14 @@ public class NLPInputParser implements InputParser {
     
     final static PythonInterpreter python = new PythonInterpreter();
     static {
-        python.execfile(NLPInputParser.class.getResourceAsStream("corenlp/stanford_to_narsese.py"));        
+        try {
+            python.execfile(NLPInputParser.class.getResourceAsStream("corenlp/stanford_to_narsese.py"));        
+        }
+        catch (Exception e) {
+            //attempt to load from relative path, ex: if it was not included in .jar
+            String path = "nars_web/src/nars/nlp/corenlp/";
+            python.execfile(path + "stanford_to_narsese.py");
+        }
     }
     
     private final String host;
