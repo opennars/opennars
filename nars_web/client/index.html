@@ -13,10 +13,31 @@
             @import url("index.css");
         </style>
         <style>
+            #menu {
+                position: fixed;
+                left: 0;
+                top: 0;
+                background-color: rgba(225,225,225,0.9);
+                width: 100%;
+                padding: 5px;
+                font-size: 150%;
+            }
+            #menu button {
+                vertical-align:top;
+            }
+            #io {
+                padding-top: 1.8em;
+            }
         </style>
             
     </head>
     <body>
+        <div id="menu">
+            OpenNARS
+            <button id="pauseButton">|| Pause</button>
+            <button id="playButton">|&gt; Run</button>
+        </div>
+        
         <div id="io">
             
         </div>
@@ -47,7 +68,8 @@
                     currentOutput = d;
                 }
                 else{
-                    var input = $('<textarea/>');                
+                    var input = $('<textarea/>'); 
+   
                     var outputDiv = $('<div/>').addClass('output');
                     var sendButton = $('<button/>').html('&gt;').click(function() {
                         try {                            
@@ -59,7 +81,11 @@
                         }
 
                     });
-
+                    input.keydown(function (e) {
+                        if (e.ctrlKey && e.keyCode == 13) {
+                            sendButton.click();
+                        }
+                    });
                     d.append(input);
                     d.append(sendButton);
                     d.append(outputDiv);                    
@@ -86,11 +112,11 @@
                     prevOutput.append("<span>" + m + '</span>\n');
                 scrollbottom();
             }
-            $(document).ready(function() {
-                addIO("<b>OpenNARS: </b><br/>");
-                
+            //addIO("Starting...");
+            
+            $(document).ready(function() {                
                 ws.onopen = function() {
-                    output("Connected.");
+                    addIO("Connected.");
                     addIO();
                 };
                 ws.onmessage = function(e) {
@@ -101,6 +127,14 @@
                 };
     
             });
+            
+            $('#pauseButton').click(function() {
+                ws.send('*stop');
+            });
+            $('#playButton').click(function() {
+                ws.send('*start');
+            });
+            
 
 
         </script>

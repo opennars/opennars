@@ -1,4 +1,4 @@
-def parse(lines):
+def parse(lines,bQuestion):
     argument1=lambda expr: expr.split("(")[1].split("-")[0].replace(" ","")
     argument2=lambda expr: expr.split(",")[1].split("-")[0].replace(" ","")
     prep=lambda expr: expr.split("_")[1].split("(")[0]
@@ -58,6 +58,13 @@ def parse(lines):
                         if z.startswith("prep"):
                             if argument1(z)==argument1(x):
                                 sentences+=[negate(neg,"<(*,"+arg(subj,argument2(x))+","+arg(subj,argument2(y))+","+prep(z)+","+argument2(z)+") --> "+arg(subj,argument1(y))+">")]
-
-    return sentences
-    #return [(s,narsese_to_sentence(s)) for s in sentences]
+    if bQuestion:
+        ret="(&&"
+        for x in sentences:
+            ret+=","+x
+        ret+=")?"
+    else:
+        ret=""
+        for x in sentences:
+            ret+=x+".\n"
+    return ret

@@ -26,22 +26,18 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import nars.io.ExperienceReader;
-import nars.io.InputChannel;
-import nars.io.StringParser;
 import nars.main_nogui.NAR;
 
 /**
  * Input window, accepting user tasks
  */
-public class InputWindow extends NarsFrame implements ActionListener, InputChannel {
+public class InputWindow extends NarsFrame implements ActionListener {
 
     private NAR reasoner;
     /**
@@ -173,22 +169,9 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
                 line = text.substring(0, endOfLine).trim();
                 text = text.substring(endOfLine + 1);	// text becomes rest of text
             }
-
-            try { 	// read NARS language or an integer
-                timer = Integer.parseInt(line);
-                reasoner.walk(timer);
-            } catch (NumberFormatException e) {
-                try {
-                    reasoner.textInputLine(line);
-                } catch (NullPointerException e1) {
-                    System.out.println("InputWindow.nextInput() - NullPointerException: please correct the input");
-//					throw new RuntimeException( "Uncorrect line: please correct the input", e1 );
-                    ready = false;
-                    return false;
-                } catch (StringParser.InvalidInputException ex) {
-                    System.out.println("InputWindow.nextInput() - " + ex.toString());
-                }
-            }
+            
+            new ExperienceReader(reasoner, line);
+            
             inputText.setText(text);	// update input Text widget to rest of text
             if (text.isEmpty()) {
                 ready = false;
@@ -196,9 +179,5 @@ public class InputWindow extends NarsFrame implements ActionListener, InputChann
         }
         return ((text.length() > 0) || (timer > 0));
     }
-
-    @Override
-    public boolean isClosed() {
-        return false;
-    }
+  
 }
