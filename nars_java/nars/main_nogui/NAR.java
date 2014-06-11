@@ -9,13 +9,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import nars.entity.Stamp;
-import nars.entity.Task;
 import nars.gui.MainWindow;
 import nars.io.ExperienceReader;
 import nars.io.InputChannel;
 import nars.io.OutputChannel;
-import nars.io.StringParser;
-import nars.io.Symbols;
 import nars.storage.Memory;
 
 /**
@@ -39,7 +36,7 @@ public class NAR implements Runnable {
     /**
      * The memory of the reasoner
      */
-    protected Memory memory;
+    public final Memory memory;
     /**
      * The input channels of the reasoner
      */
@@ -265,43 +262,6 @@ public class NAR implements Runnable {
         return finishedInputs;
     }
 
-    /**
-     * To process a line of input text
-     *
-     * @param text
-     * @return whether to continue processing in this input batch, or interrupt (false)
-     */
-    public boolean textInputLine(String text) throws StringParser.InvalidInputException  {
-        if (text.isEmpty()) {
-            return true;
-        }
-        char c = text.charAt(0);
-        if (c == Symbols.RESET_MARK) {
-            reset();
-            return false;
-        }
-        else if (c == Symbols.URL_INCLUDE_MARK) {            
-            includeURL(text.substring(1));
-        }
-        else if (c == Symbols.ECHO_MARK) {
-            String echoString = text.substring(1);
-            output('\"' + echoString + '\"');
-        }
-        else if (c != Symbols.COMMENT_MARK) {
-            // read NARS language or an integer : TODO duplicated code
-            try {
-                int i = Integer.parseInt(text);
-                walk(i);
-            } catch (NumberFormatException e) {
-                Task task = StringParser.parseExperience(new StringBuffer(text), memory, clock);
-                if (task != null) {
-                    memory.report(task.getSentence(), true);    // report input
-                    memory.inputTask(task);
-                }
-            }
-        }
-        return true;
-    }
 
     @Override
     public String toString() {
@@ -357,15 +317,6 @@ public class NAR implements Runnable {
         return running;
     }    
 
-    public void includeURL(final String url) {
-        try {
-            URL u = new URL(url);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(u.openStream()));            
-            addInputChannel(new ExperienceReader(this, in));
-        } catch (Exception ex) {
-            output("includeURL: " + ex.toString());
-        }
-    }
+    
     
 }

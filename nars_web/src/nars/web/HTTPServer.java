@@ -97,6 +97,7 @@ public class HTTPServer {
   // 
     // API parts
     // 
+    boolean debug = false;
 
     /**
      * Override this to customize the server.
@@ -113,17 +114,17 @@ public class HTTPServer {
      * @return HTTP response, see class Response for details
      */
     public Response serve(String uri, String method, Properties header, Properties parms) {
-        System.out.println(method + " '" + uri + "' ");
+        if (debug) System.out.println(method + " '" + uri + "' ");
 
         Enumeration e = header.propertyNames();
         while (e.hasMoreElements()) {
             String value = (String) e.nextElement();
-            System.out.println("  HDR: '" + value + "' = '" + header.getProperty(value) + "'");
+            if (debug) System.out.println("  HDR: '" + value + "' = '" + header.getProperty(value) + "'");
         }
         e = parms.propertyNames();
         while (e.hasMoreElements()) {
             String value = (String) e.nextElement();
-            System.out.println("  PRM: '" + value + "' = '" + parms.getProperty(value) + "'");
+            if (debug) System.out.println("  PRM: '" + value + "' = '" + parms.getProperty(value) + "'");
         }
 
         return serveFile(uri, header, staticFilePath, true);
@@ -232,7 +233,7 @@ public class HTTPServer {
      * Starts as a standalone file server and waits for Enter.
      */
     /*public static void main(String[] args) {
-     System.out.println("NanoHTTPD 1.1 (C) 2001,2005-2007 Jarno Elonen\n"
+     if (debug) System.out.println("NanoHTTPD 1.1 (C) 2001,2005-2007 Jarno Elonen\n"
      + "(Command line options: [port] [--licence])\n");
 
      // Show licence if requested
@@ -240,7 +241,7 @@ public class HTTPServer {
      for (int i = 0; i < args.length; ++i)
      if (args[i].toLowerCase().endsWith("licence")) {
      lopt = i;
-     System.out.println(LICENCE + "\n");
+     if (debug) System.out.println(LICENCE + "\n");
      }
 
      // Change port if requested
@@ -249,7 +250,7 @@ public class HTTPServer {
      port = Integer.parseInt(args[0]);
 
      if (args.length > 1 && args[1].toLowerCase().endsWith("licence"))
-     System.out.println(LICENCE + "\n");
+     if (debug) System.out.println(LICENCE + "\n");
 
      NanoHTTPD nh = null;
      try {
@@ -260,9 +261,9 @@ public class HTTPServer {
      }
      nh.staticFilePath = new File("");
 
-     System.out.println("Now serving files in port " + port + " from \""
+     if (debug) System.out.println("Now serving files in port " + port + " from \""
      + new File("").getAbsolutePath() + "\"");
-     System.out.println("Hit Enter to stop.\n");
+     if (debug) System.out.println("Hit Enter to stop.\n");
 
      try {
      System.in.read();

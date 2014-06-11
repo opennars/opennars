@@ -23,8 +23,8 @@
         
         <script type="text/javascript">
             
-            int websocketPort = 10000;
-            var ws = new WebSocket('ws://' + window.location.host + ':' + websocketPort');
+            var websocketPort = 10000;
+            var ws = new WebSocket('ws://' + window.location.hostname + ':' + websocketPort);
             
             var prevOutput = null, currentOutput = null;
             
