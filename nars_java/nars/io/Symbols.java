@@ -67,14 +67,24 @@ public class Symbols {
     public static final String DISJUNCTION_OPERATOR = "||";
     public static final String CONJUNCTION_OPERATOR = "&&";
 
+    public enum Relation {
+        INHERITANCE { @Override public String toString() { return "-->"; } },
+        SIMILARITY { @Override public String toString() { return "<->"; } },
+        INSTANCE { @Override public String toString() { return "{--"; } },
+        PROPERTY { @Override public String toString() { return "--]"; } },
+        INSTANCE_PROPERTY { @Override public String toString() { return "{-]"; } },
+        IMPLICATION { @Override public String toString() { return "==>"; } },
+        EQUIVALENCE { @Override public String toString() { return "<=>"; } }
+    }
+    
     /* built-in relations, length = 3 */
-    public static final String INHERITANCE_RELATION = "-->";
-    public static final String SIMILARITY_RELATION = "<->";
+    /*private static final String INHERITANCE_RELATION = "-->";
+    private static final String SIMILARITY_RELATION = "<->";
     public static final String INSTANCE_RELATION = "{--";
     public static final String PROPERTY_RELATION = "--]";
     public static final String INSTANCE_PROPERTY_RELATION = "{-]";
     public static final String IMPLICATION_RELATION = "==>";
-    public static final String EQUIVALENCE_RELATION = "<=>";
+    public static final String EQUIVALENCE_RELATION = "<=>";*/
 
     /* experience line prefix */
     public static final String INPUT_LINE = "IN";

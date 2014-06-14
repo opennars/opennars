@@ -77,7 +77,7 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        String name = makeStatementName(subject, Symbols.IMPLICATION_RELATION, predicate);
+        String name = makeStatementName(subject, Symbols.Relation.IMPLICATION.toString(), predicate);
         Term t = memory.nameToListedTerm(name);
         if (t != null) {
             return (Implication) t;
@@ -100,6 +100,6 @@ public class Implication extends Statement {
      * @return the operator of the term
      */
     public String operator() {
-        return Symbols.IMPLICATION_RELATION;
+        return Symbols.Relation.IMPLICATION.toString();
     }
 }

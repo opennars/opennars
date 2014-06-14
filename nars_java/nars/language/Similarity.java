@@ -73,7 +73,7 @@ public class Similarity extends Statement {
         if (subject.compareTo(predicate) > 0) {
             return make(predicate, subject, memory);
         }
-        String name = makeStatementName(subject, Symbols.SIMILARITY_RELATION, predicate);
+        String name = makeStatementName(subject, Symbols.Relation.SIMILARITY.toString(), predicate);
         Term t = memory.nameToListedTerm(name);
         if (t != null) {
             return (Similarity) t;
@@ -88,7 +88,7 @@ public class Similarity extends Statement {
      */
     @Override
     public String operator() {
-        return Symbols.SIMILARITY_RELATION;
+        return Symbols.Relation.SIMILARITY.toString();
     }
 
     /**

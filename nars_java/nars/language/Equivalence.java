@@ -80,7 +80,7 @@ public class Equivalence extends Statement {
             subject = predicate;
             predicate = interm;
         }
-        String name = makeStatementName(subject, Symbols.EQUIVALENCE_RELATION, predicate);
+        String name = makeStatementName(subject, Symbols.Relation.IMPLICATION.toString(), predicate);
         Term t = memory.nameToListedTerm(name);
         if (t != null) {
             return (Equivalence) t;
@@ -95,7 +95,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public String operator() {
-        return Symbols.EQUIVALENCE_RELATION;
+        return Symbols.Relation.IMPLICATION.toString();
     }
 
     /**
