@@ -53,6 +53,24 @@ public class Symbols {
     public static final char ARGUMENT_SEPARATOR = ',';
     public static final char IMAGE_PLACE_HOLDER = '_';
 
+    
+    public static enum Operator {
+        /* CompountTerm operators, length = 1 */
+        INTERSECTION_EXT { @Override public String toString() { return "&"; } },
+        INTERSECTION_INT { @Override public String toString() { return "|"; } },
+        DIFFERENCE_EXT { @Override public String toString() { return "-"; } },
+        DIFFERENCE_INT { @Override public String toString() { return "~"; } },
+        PRODUCT { @Override public String toString() { return "*"; } },
+        IMAGE_EXT { @Override public String toString() { return "/"; } },
+        IMAGE_INT { @Override public String toString() { return "\\"; } },
+
+        /* CompoundStatement operators, length = 2 */        
+        NEGATION { @Override public String toString() { return "--"; } },
+        DISJUNCTION { @Override public String toString() { return "||"; } },
+        CONJUNCTION { @Override public String toString() { return "&&"; } }    
+        
+    }
+    
     /* CompountTerm operators, length = 1 */
     public static final String INTERSECTION_EXT_OPERATOR = "&";
     public static final String INTERSECTION_INT_OPERATOR = "|";
@@ -67,7 +85,7 @@ public class Symbols {
     public static final String DISJUNCTION_OPERATOR = "||";
     public static final String CONJUNCTION_OPERATOR = "&&";
 
-    public enum Relation {
+    public static enum Relation {
         INHERITANCE { @Override public String toString() { return "-->"; } },
         SIMILARITY { @Override public String toString() { return "<->"; } },
         INSTANCE { @Override public String toString() { return "{--"; } },
