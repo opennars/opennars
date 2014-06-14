@@ -23,6 +23,7 @@ package nars.language;
 import java.util.ArrayList;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Relation;
 import nars.storage.Memory;
 
 /**
@@ -64,29 +65,29 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement make(final String relation, final Term subject, final Term predicate, final Memory memory) {
+    public static Statement make(final Relation relation, final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        if (relation.equals(Symbols.INHERITANCE_RELATION)) {
+        if (relation == Relation.INHERITANCE) {
             return Inheritance.make(subject, predicate, memory);
         }
-        if (relation.equals(Symbols.SIMILARITY_RELATION)) {
+        if (relation == Relation.SIMILARITY) {
             return Similarity.make(subject, predicate, memory);
         }
-        if (relation.equals(Symbols.INSTANCE_RELATION)) {
+        if (relation == Relation.INSTANCE) {
             return Instance.make(subject, predicate, memory);
         }
-        if (relation.equals(Symbols.PROPERTY_RELATION)) {
+        if (relation == Relation.PROPERTY) {
             return Property.make(subject, predicate, memory);
         }
-        if (relation.equals(Symbols.INSTANCE_PROPERTY_RELATION)) {
+        if (relation == Relation.INSTANCE_PROPERTY) {
             return InstanceProperty.make(subject, predicate, memory);
         }
-        if (relation.equals(Symbols.IMPLICATION_RELATION)) {
+        if (relation == Relation.IMPLICATION) {
             return Implication.make(subject, predicate, memory);
         }
-        if (relation.equals(Symbols.EQUIVALENCE_RELATION)) {
+        if (relation == Relation.EQUIVALENCE) {
             return Equivalence.make(subject, predicate, memory);
         }
         return null;
@@ -144,13 +145,34 @@ public abstract class Statement extends CompoundTerm {
         if (s.length() != 3) {
             return false;
         }
-        return (s.equals(Symbols.INHERITANCE_RELATION) ||
-                s.equals(Symbols.SIMILARITY_RELATION) ||
-                s.equals(Symbols.INSTANCE_RELATION) ||
-                s.equals(Symbols.PROPERTY_RELATION) ||
-                s.equals(Symbols.INSTANCE_PROPERTY_RELATION) ||
-                s.equals(Symbols.IMPLICATION_RELATION) ||
-                s.equals(Symbols.EQUIVALENCE_RELATION));
+        
+        //TODO use a regexp which may be faster than repeated string comparisons
+        
+        return (s.equals(Relation.INHERITANCE.toString())) ||
+                s.equals(Relation.SIMILARITY.toString()) ||
+                s.equals(Relation.INSTANCE.toString()) ||
+                s.equals(Relation.PROPERTY.toString()) ||
+                s.equals(Relation.INSTANCE_PROPERTY.toString()) ||
+                s.equals(Relation.IMPLICATION.toString()) ||
+                s.equals(Relation.EQUIVALENCE.toString());
+    }
+    
+    public static Relation getRelation(String s) {
+        if (s.equals(Relation.INHERITANCE.toString()))
+            return Relation.INHERITANCE;
+        if (s.equals(Relation.SIMILARITY.toString()))
+            return Relation.SIMILARITY;
+        if (s.equals(Relation.INSTANCE.toString()))
+            return Relation.INSTANCE;
+        if (s.equals(Relation.PROPERTY.toString()))
+            return Relation.PROPERTY;
+        if (s.equals(Relation.INSTANCE_PROPERTY.toString()))
+            return Relation.INSTANCE_PROPERTY;
+        if (s.equals(Relation.IMPLICATION.toString()))
+            return Relation.IMPLICATION;
+        if (s.equals(Relation.EQUIVALENCE.toString()))
+            return Relation.EQUIVALENCE;        
+        return null;
     }
 
     /**

@@ -23,6 +23,7 @@ package nars.language;
 import java.util.ArrayList;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Relation;
 import nars.storage.Memory;
 
 /**
@@ -69,7 +70,7 @@ public class Inheritance extends Statement {
         if (invalidStatement(subject, predicate)) {
             throw new RuntimeException("Invalid statement: subj=" + subject + "   pred=" + predicate);
         }
-        String name = makeStatementName(subject, Symbols.INHERITANCE_RELATION, predicate);
+        String name = makeStatementName(subject, Relation.INHERITANCE.toString(), predicate);
         Term t = memory.nameToListedTerm(name);
         if (t != null) {
             return (Inheritance) t;
@@ -83,7 +84,7 @@ public class Inheritance extends Statement {
      * @return the operator of the term
      */
     public String operator() {
-        return Symbols.INHERITANCE_RELATION;
+        return Symbols.Relation.INHERITANCE.toString();
     }
 
 }
