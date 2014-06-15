@@ -1,0 +1,40 @@
+Core
+
+    Make sure that *reset occurs at the right time while invoked in a script
+
+    See what can be enum'd
+
+    Profile performance again
+
+    Develop more efficient Distributor policy
+
+    Fix remaining issues in Swing GUI
+    
+
+Web Interface
+
+    Volume slider
+
+    Merge Patrick's English<->Narsese changes
+
+    Pixel array input/output
+
+
+NLP
+
+    Make server.js into full HTTP server (using express.js)
+
+    Add Wordnet interface
+
+    Auto-install script
+
+    Port the Jython scripts to Java and remove Jython dependency
+
+
+Database
+
+
+
+LibGDX GUI
+
+    ..
