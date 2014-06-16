@@ -28,8 +28,8 @@ import nars.inference.RuleTables;
 import nars.inference.UtilityFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.main_nogui.NARRun;
-import nars.main_nogui.Parameters;
+import nars.core.NARRun;
+import nars.core.Parameters;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
 import nars.storage.NullBagObserver;
@@ -120,7 +120,8 @@ public final class Concept extends Item {
         if (task.getBudget().aboveThreshold()) {    // still need to be processed
             linkToTask(task);
         }
-        entityObserver.refresh(displayContent());
+        if (entityObserver.isActive())
+            entityObserver.refresh(displayContent());
     }
 
     /**
@@ -537,6 +538,11 @@ public final class Concept extends Item {
     }
 
     class NullEntityObserver implements EntityObserver {
+
+        @Override
+        public boolean isActive() {
+            return false;
+        }
 
         @Override
         public void post(String str) {

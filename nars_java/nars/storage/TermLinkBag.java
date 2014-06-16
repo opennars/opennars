@@ -21,7 +21,7 @@
 package nars.storage;
 
 import nars.entity.*;
-import nars.main_nogui.Parameters;
+import nars.core.Parameters;
 
 /**
  * Contains TermLinks to relevant (compound or component) Terms.

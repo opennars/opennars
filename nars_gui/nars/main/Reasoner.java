@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 
 import nars.gui.InputWindow;
 import nars.gui.MainWindow;
-import nars.main_nogui.NAR;
+import nars.core.NAR;
 
 /**
  * A NARS Reasoner has its memory, I/O channels, and internal clock.

@@ -62,8 +62,8 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
 
-import nars.main_nogui.NAR;
-import nars.main_nogui.Parameters;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.storage.Memory;
 
 /**
@@ -85,17 +85,30 @@ public class ExperienceReader extends Symbols implements InputChannel {
     private int timer;
 
     
-    public final List<InputParser> parsers = new LinkedList();
-        
+    public static final List<InputParser> defaultParsers = new LinkedList();
+    static {
+        initDefaultParsers(); //shared by all ExperienceReaders
+    }
+    
+    public final List<InputParser> parsers;
+       
+    
     /**
      * Default constructor
      *
      * @param reasoner Backward link to the reasoner
-     */
+     */    
     public ExperienceReader(NAR reasoner) {
-        this.nar = reasoner;
-        inExp = null;
+        this(reasoner, new LinkedList(defaultParsers));
     }
+    
+    public ExperienceReader(NAR reasoner, List<InputParser> parsers) {
+        super();
+        this.nar = reasoner;
+        this.inExp = null;
+        this.parsers = parsers;
+    }
+    
     public ExperienceReader(NAR reasoner, String input, InputParser... additionalParsers) {
         this(reasoner, new BufferedReader(new StringReader(input)), additionalParsers);
     }
@@ -104,7 +117,8 @@ public class ExperienceReader extends Symbols implements InputChannel {
         this(reasoner);
         setBufferedReader(input);
         
-        initDefaultParsers(additionalParsers);
+        for (InputParser i : additionalParsers)
+            parsers.add(i);
     }
 
 
@@ -178,9 +192,9 @@ public class ExperienceReader extends Symbols implements InputChannel {
     }
     
 
-    protected void initDefaultParsers(InputParser... additionalParsers) {
+    private static void initDefaultParsers() {
         //integer, # of cycles to walk
-        parsers.add(new InputParser() {
+        defaultParsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {
                 try {
@@ -195,7 +209,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
         });
         
         //reset
-        parsers.add(new InputParser() {
+        defaultParsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {                
                 if (input.equals(Symbols.RESET_COMMAND)) {
@@ -207,7 +221,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
         });
         
         //stop
-        parsers.add(new InputParser() {
+        defaultParsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {
                 if (!nar.isPaused())  {
@@ -222,7 +236,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
         });    
         
         //start
-        parsers.add(new InputParser() {
+        defaultParsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {                
                 if (nar.isPaused()) {
@@ -237,12 +251,12 @@ public class ExperienceReader extends Symbols implements InputChannel {
         });
         
         //URL include
-        parsers.add(new InputParser() {
+        defaultParsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {
                 char c = input.charAt(0);
                 if (c == Symbols.URL_INCLUDE_MARK) {            
-                    includeURL(input.substring(1));
+                    readURL(nar, input.substring(1));
                     return true;
                 }
                 return false;                
@@ -250,7 +264,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
         });        
 
         //echo
-        parsers.add(new InputParser() {
+        defaultParsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {
                 char c = input.charAt(0);
@@ -264,7 +278,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
         });
         
         //narsese
-        parsers.add(new InputParser() {
+        defaultParsers.add(new InputParser() {
             @Override
             public boolean parse(NAR nar, String input, InputParser lastHandler) {
                 if (lastHandler != null)
@@ -286,11 +300,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
                 return false;                
             }
         });             
-        
-        for (InputParser i : additionalParsers) {
-            if (i!=null)
-                parsers.add(i);
-        }
+
                    
     }
     
@@ -314,7 +324,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
     
 
 
-    protected void includeURL(final String url) {
+    public static void readURL(NAR nar, final String url) {
         try {
             URL u = new URL(url);
             BufferedReader in = new BufferedReader(

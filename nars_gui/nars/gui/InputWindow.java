@@ -32,7 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import nars.io.ExperienceReader;
-import nars.main_nogui.NAR;
+import nars.core.NAR;
 
 /**
  * Input window, accepting user tasks

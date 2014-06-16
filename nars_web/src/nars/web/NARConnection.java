@@ -11,7 +11,7 @@ import java.io.StringReader;
 import nars.io.ExperienceReader;
 import nars.io.ExperienceWriter;
 import nars.io.ExperienceWriter.LineOutput;
-import nars.main_nogui.NAR;
+import nars.core.NAR;
 import nars.nlp.NLPInputParser;
 
 /**
@@ -31,7 +31,6 @@ abstract public class NARConnection implements LineOutput {
      
         
         this.writer = new ExperienceWriter(nar, this);
-        nar.addOutputChannel(writer);        
     }
 
     public void read(final String message) {

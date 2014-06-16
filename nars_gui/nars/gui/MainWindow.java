@@ -49,8 +49,8 @@ import nars.io.IInferenceRecorder;
 import nars.io.OutputChannel;
 import nars.main.NARS;
 import nars.main.Reasoner;
-import nars.main_nogui.NAR;
-import nars.main_nogui.Parameters;
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.storage.Memory;
 
 /**

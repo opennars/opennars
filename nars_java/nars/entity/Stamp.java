@@ -23,8 +23,8 @@ package nars.entity;
 import java.util.*;
 
 import nars.io.Symbols;
-import nars.main_nogui.Parameters;
-import nars.main_nogui.NAR;
+import nars.core.Parameters;
+import nars.core.NAR;
 
 /**
  * Each Sentence has a time stamp, consisting the following components:

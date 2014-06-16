@@ -22,7 +22,7 @@ package nars.entity;
 
 import nars.inference.*;
 import nars.io.Symbols;
-import nars.main_nogui.Parameters;
+import nars.core.Parameters;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
