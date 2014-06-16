@@ -110,7 +110,7 @@ public class Symbols {
     public static final char PREFIX_MARK = ':';
     public static final char COMMENT_MARK = '/';
     public static final char URL_INCLUDE_MARK = '`';
-    public static final char ECHO_MARK = '!';
+    public static final char ECHO_MARK = '\'';
     public static final char NATURAL_LANGUAGE_MARK = '\"';
 
     /* control commands */

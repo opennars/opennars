@@ -20,7 +20,7 @@
  */
 package nars.inference;
 
-import nars.main_nogui.Parameters;
+import nars.core.Parameters;
 
 /**
  * Common functions on real numbers, mostly in [0,1].

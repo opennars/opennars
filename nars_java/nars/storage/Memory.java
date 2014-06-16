@@ -36,8 +36,8 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.IInferenceRecorder;
 import nars.language.Term;
-import nars.main_nogui.Parameters;
-import nars.main_nogui.NAR;
+import nars.core.Parameters;
+import nars.core.NAR;
 
 /**
  * The memory of the system.

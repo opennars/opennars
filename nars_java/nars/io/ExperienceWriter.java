@@ -25,7 +25,7 @@ import java.awt.FileDialog;
 import java.io.*;
 import java.util.*;
 
-import nars.main_nogui.NAR;
+import nars.core.NAR;
 
 /**
  * To read and write experience as Task streams
@@ -52,9 +52,10 @@ public class ExperienceWriter implements OutputChannel {
      */
     public ExperienceWriter(NAR reasoner) {
         this.reasoner = reasoner;
+        reasoner.addOutputChannel(this);
     }
     public ExperienceWriter(NAR reasoner, LineOutput outExp2) {
-        this.reasoner = reasoner;
+        this(reasoner);
         this.outExp2 = outExp2;
     }
 
@@ -76,7 +77,6 @@ public class ExperienceWriter implements OutputChannel {
         } catch (IOException ex) {
             System.out.println("i/o error: " + ex.getMessage());
         }
-        reasoner.addOutputChannel(this);
     }
 
     /**
@@ -98,6 +98,7 @@ public class ExperienceWriter implements OutputChannel {
             for (Object line : lines) {
                 outExp.println(line.toString());
             }
+            outExp.flush();
         }
         if (outExp2 != null) {
             for (Object line : lines) {

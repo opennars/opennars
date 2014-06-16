@@ -23,8 +23,8 @@ package nars.main;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nars.main_nogui.CommandLineParameters;
-import nars.main_nogui.NARRun;
+import nars.core.CommandLineParameters;
+import nars.core.NARRun;
 
 /**
  * The main class of the open-nars project.

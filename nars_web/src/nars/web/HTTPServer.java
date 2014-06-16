@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLEncoder;
@@ -45,6 +46,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
@@ -497,7 +500,7 @@ public class HTTPServer {
      * URL-encodes everything between "/"-characters. Encodes spaces as '%20'
      * instead of '+'.
      */
-    private String encodeUri(String uri) {
+    private String encodeUri(String uri) throws UnsupportedEncodingException {
         String newUri = "";
         StringTokenizer st = new StringTokenizer(uri, "/ ", true);
         while (st.hasMoreTokens()) {
@@ -507,7 +510,7 @@ public class HTTPServer {
             } else if (tok.equals(" ")) {
                 newUri += "%20";
             } else {
-                newUri += URLEncoder.encode(tok);
+                newUri += URLEncoder.encode(tok,"UTF-8");
         // For Java 1.4 you'll want to use this instead:
                 // try { newUri += URLEncoder.encode( tok, "UTF-8" ); } catch (
                 // UnsupportedEncodingException uee )
@@ -590,7 +593,11 @@ public class HTTPServer {
                         files[i] += "/";
                     }
 
-                    msg += "<a href=\"" + encodeUri(uri + files[i]) + "\">" + files[i] + "</a>";
+                    try {
+                        msg += "<a href=\"" + encodeUri(uri + files[i]) + "\">" + files[i] + "</a>";
+                    } catch (UnsupportedEncodingException ex) {
+                        msg += "<a>" + files[i] + "</a>";
+                    }
 
                     // Show file size
                     if (curFile.isFile()) {

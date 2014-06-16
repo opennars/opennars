@@ -39,7 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import nars.entity.Item;
-import nars.main_nogui.Parameters;
+import nars.core.Parameters;
 import nars.storage.Bag;
 import nars.storage.BagObserver;
 

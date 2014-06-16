@@ -1,6 +1,6 @@
 package nars.io;
 
-import nars.main_nogui.NAR;
+import nars.core.NAR;
 
 
 public interface InputParser {

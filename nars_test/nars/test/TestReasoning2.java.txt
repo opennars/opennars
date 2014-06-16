@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
-import nars.main_nogui.NARRun;
+import nars.core.NARRun;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -21,14 +21,14 @@ import org.junit.Test;
  * </pre>
  *
  */
-public class TestReasoning0 {
+public class TestReasoning2 {
 
     private static final String IN_TXT = "-in.txt";
     private static final String OUT_TXT = "-out.txt";
     private File tmpDir;
 
     public static void main(String args[]) {
-        TestReasoning0 testReasoning = new TestReasoning0();
+        TestReasoning2 testReasoning = new TestReasoning2();
         if (args.length == 1) {
             testReasoning.checkReasoning(new File(args[0]));
         } else {
@@ -36,7 +36,7 @@ public class TestReasoning0 {
         }
     }
 
-    public TestReasoning0() {
+    public TestReasoning2() {
         String tmpDir_ = System.getProperty("java.io.tmpdir");
         tmpDir = new File(tmpDir_, "nars_test");
         tmpDir.mkdir();

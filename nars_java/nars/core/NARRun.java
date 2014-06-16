@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.main_nogui;
+package nars.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -91,8 +91,8 @@ public class NARRun {
             ExperienceReader experienceReader = new ExperienceReader(reasoner);
             experienceReader.includeFile(args[0]);
         }
-        reasoner.addOutputChannel(new ExperienceWriter(reasoner,
-                new PrintWriter(out, true)));
+        new ExperienceWriter(reasoner,
+                new PrintWriter(out, true));
     }
 
     /**

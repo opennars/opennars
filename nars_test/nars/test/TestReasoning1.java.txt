@@ -5,9 +5,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
-import nars.main_nogui.NARRun;
+import nars.core.NARRun;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -22,7 +21,7 @@ import org.junit.Test;
  * </pre>
  *
  */
-public class TestReasoning {
+public class TestReasoning1 {
 
     private static final String INPUT_FILE_SUFFIX
             = "-unedited.txt";
@@ -33,7 +32,7 @@ public class TestReasoning {
     private final File tmpDir;
 
     public static void main(String args[]) {
-        TestReasoning testReasoning = new TestReasoning();
+        TestReasoning1 testReasoning = new TestReasoning1();
         if (args.length == 1) {
             testReasoning.checkReasoning(new File(args[0]));
         } else {
@@ -41,7 +40,7 @@ public class TestReasoning {
         }
     }
 
-    public TestReasoning() {
+    public TestReasoning1() {
         String tmpDir_ = System.getProperty("java.io.tmpdir");
         tmpDir = new File(tmpDir_, "nars_test");
         tmpDir.mkdir();

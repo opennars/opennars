@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import nars.main_nogui.NAR;
+import nars.core.NAR;
 import nars.nlp.NLPInputParser;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;

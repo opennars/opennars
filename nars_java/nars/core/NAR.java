@@ -1,9 +1,10 @@
-package nars.main_nogui;
+package nars.core;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
 
 import nars.entity.Stamp;
 import nars.gui.MainWindow;
@@ -18,13 +19,14 @@ import nars.storage.Memory;
 */
 public class NAR implements Runnable {
 
-    private Thread narsThread = null;
+    
+    private Thread thread = null;
     long minTickPeriodMS;
     
     /**
      * global DEBUG print switch
      */
-    public static final boolean DEBUG = false;
+    public static boolean DEBUG = false;
     /**
      * The name of the reasoner
      */
@@ -68,6 +70,10 @@ public class NAR implements Runnable {
     private AtomicInteger silenceValue = new AtomicInteger(Parameters.SILENT_LEVEL);
     private boolean paused;
 
+    /**arbitrary data associated with this particular NAR instance can be stored here */
+    public final HashMap data = new HashMap();
+
+    
     public NAR() {
         memory = new Memory(this);
         
@@ -130,7 +136,8 @@ public class NAR implements Runnable {
      * @param n The number of inference steps to be carried
      */
     public void walk(int n) {
-        output(" OUT: thinking " + n + (n > 1 ? " cycles" : " cycle"));
+        if (DEBUG)
+            output(" OUT: thinking " + n + (n > 1 ? " cycles" : " cycle"));
         walkingSteps = n;
     }
 
@@ -141,10 +148,10 @@ public class NAR implements Runnable {
      */
     
     public void start(long minTickPeriodMS) {
-        if (narsThread == null) {
+        if (thread == null) {
             this.minTickPeriodMS = minTickPeriodMS;
-            narsThread = new Thread(this, "Inference");
-            narsThread.start();
+            thread = new Thread(this, "Inference");
+            thread.start();
             running = true;
             paused = false;
         }        
@@ -162,12 +169,25 @@ public class NAR implements Runnable {
      * Will stop the inference process
      */
     public void stop() {
-        if (narsThread!=null) {
-            narsThread.interrupt();
-            narsThread = null;
+        if (thread!=null) {
+            thread.interrupt();
+            thread = null;
         }
         running = false;
     }    
+    
+    public void run(int minCycles, boolean debug) {
+        DEBUG = debug; 
+        running = true;
+        paused = false;
+        tick();
+        for (int i = 0; i < minCycles-1; i++)
+            tick();
+        for (int i = 0; i < walkingSteps; i++)
+            tick();
+        running = false;
+        paused = true;
+    }
     
     @Override public void run() {
         

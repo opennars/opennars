@@ -22,7 +22,7 @@
 package nars.storage;
 
 import nars.entity.Concept;
-import nars.main_nogui.Parameters;
+import nars.core.Parameters;
 
 /**
  * Contains Concepts.

@@ -13,7 +13,9 @@
                 <root id="src.src.dir"/>
                 <root id="src.nars_java.dir"/>
             </source-roots>
-            <test-roots/>
+            <test-roots>
+                <root id="test.nars_test.dir"/>
+            </test-roots>
         </data>
     </configuration>
 </project>

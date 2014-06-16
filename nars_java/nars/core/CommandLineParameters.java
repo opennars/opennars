@@ -1,4 +1,4 @@
-package nars.main_nogui;
+package nars.core;
 
 /**
  * The parameters used when the system is invoked from command line

@@ -1,0 +1,15 @@
+'Revision ------
+
+'Bird is a type of swimmer.
+
+<bird --> swimmer>.
+
+'Bird is probably not a type of swimmer.
+
+<bird --> swimmer>. %0.10;0.60%
+
+'Bird is very likely to be a type of swimmer.
+
+5
+
+''out[0].indexOf('<bird --> swimmer>. %0.87;0.91%')==0
