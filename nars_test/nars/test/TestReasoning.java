@@ -157,5 +157,8 @@ public class TestReasoning  {
         
     }
 
+    public static void main(String[] args) {
+        org.junit.runner.JUnitCore.runClasses(TestReasoning.class);
+    }
 
 }
