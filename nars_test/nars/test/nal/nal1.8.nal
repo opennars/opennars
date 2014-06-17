@@ -1,0 +1,10 @@
+' ********** backward inference
+<bird --> swimmer>. %1.00;0.80%
+' Bird is a type of swimmer.
+<?x --> swimmer>?  
+' What is a type of swimmer?
+4
+' OUT: <?1 --> bird>?
+' What is a type of bird?
+' OUT: <bird --> ?1>?
+' What is the type of bird?

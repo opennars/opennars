@@ -273,10 +273,11 @@ public class NAR implements Runnable {
         for (final OutputChannel channelOut : outputChannels)
             channelOut.nextOutput(output);
     }
+    final private ArrayList<String> _l = new ArrayList(1);
     public void output(final String o) {       
-        final ArrayList<String> l = new ArrayList();
-        l.add(o);
-        output(l);
+        _l.clear();
+        _l.add(o);
+        output(_l);
     }
 
 

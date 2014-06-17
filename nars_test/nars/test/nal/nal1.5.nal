@@ -1,0 +1,9 @@
+' ********** conversion
+<bird --> swimmer>.
+' Bird is a type of swimmer. 
+<swimmer --> bird>? 
+' Is swimmer a type of bird?
+4
+' OUT: <swimmer --> bird>. %1.00;0.47% 
+' I guess swimmer is a type of bird.
+

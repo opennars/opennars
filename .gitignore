@@ -11,5 +11,6 @@ lib/cache_dir/
 lib/cachedir/
 
 NARS.jar
-.gradle
+
+.jacocoverage/
 

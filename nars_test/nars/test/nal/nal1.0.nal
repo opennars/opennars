@@ -13,3 +13,4 @@
 5
 
 ''out[0].indexOf('<bird --> swimmer>. %0.87;0.91%')==0
+'TODO: test.parseOutput(out[0])

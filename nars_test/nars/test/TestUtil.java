@@ -1,50 +1,57 @@
+/*
+ * Copyright (C) 2014 me
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package nars.test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import nars.core.NAR;
+import nars.entity.Sentence;
 import nars.io.ExperienceReader;
 import nars.io.ExperienceWriter;
 import nars.io.Symbols;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
 /**
- * Unit Test Reasoning, using input and output files from nal/Examples ;
- * <pre>
- * To create a new test input, add the NARS input as XX-in.txt in nal/Examples ,
- *  run the test suite, and move resulting file in temporary directory
- * /tmp/nars_test/XX-out.txt
- * into nal/Example
- * </pre>
  *
+ * @author me
  */
-public class TestReasoning  {
+public class TestUtil {
+    private final int performanceIterations = 16;
 
-    private ScriptEngineManager engineManager = new ScriptEngineManager();
-    private ScriptEngine js = engineManager.getEngineByName("nashorn");
+    protected ScriptEngineManager engineManager = new ScriptEngineManager();
+    protected ScriptEngine js = engineManager.getEngineByName("nashorn");
 
-    private Map<String, String> exCache = new HashMap(); //path -> script data
+    protected Map<String, String> exCache = new HashMap(); //path -> script data
+    private final boolean testPerformance;
     
-    @Test
-    public void testExample1_0() { 
-        testNAL("nal1.0.nal");    
-        perfNAL("nal1.0.nal", 0, 25, 1);
+    public TestUtil(boolean testPerformance) {
+        this.testPerformance = testPerformance;        
     }
-        
-    @Test
-    public void testExample1_1() { 
-        testNAL("nal1.1.nal");    
-        perfNAL("nal1.1.nal", 0, 25, 1);
-    }
+    
     
     public String getExample(String path)  {
         try {
@@ -74,7 +81,11 @@ public class TestReasoning  {
             return true;
         return false;
     }
-        
+
+    public Sentence parseOutput(String o) {
+        //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
+        return ExperienceReader.parseOutput(o);
+    }
     
     protected void testNAL(String path) {
         int extraCycles = 0;
@@ -83,7 +94,8 @@ public class TestReasoning  {
         final LinkedList<String> out = new LinkedList();
         final LinkedList<String> expressions = new LinkedList();
 
-        ////new ExperienceWriter(n, new PrintWriter(System.out));
+        new ExperienceReader(n, getExample(path));
+        //new ExperienceWriter(n, new PrintWriter(System.out));
         new ExperienceWriter(n) {
             @Override
             public void nextOutput(ArrayList<String> lines) {
@@ -125,6 +137,9 @@ public class TestReasoning  {
             }            
         }
         
+        if (testPerformance) {
+            perfNAL(path, 0, performanceIterations, 1);            
+        }
     }
     
     protected void perfNAL(String path, int extraCycles, int repeats, int warmups) {
@@ -152,13 +167,9 @@ public class TestReasoning  {
             else
                 warmups--;
         }
-        System.err.print(path + ": " + ((double)totalTime)/((double)repeats)/1000000.0 + "ms per iteration, ");
-        System.err.println(((double)totalMemory)/((double)repeats)/1024.0 + " kb per iteration");
+        System.out.print(path + ": " + ((double)totalTime)/((double)repeats)/1000000.0 + "ms per iteration, ");
+        System.out.println(((double)totalMemory)/((double)repeats)/1024.0 + " kb per iteration");
         
     }
-
-    public static void main(String[] args) {
-        org.junit.runner.JUnitCore.runClasses(TestReasoning.class);
-    }
-
+    
 }

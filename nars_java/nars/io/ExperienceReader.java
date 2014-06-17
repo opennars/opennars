@@ -385,6 +385,32 @@ public class ExperienceReader extends Symbols implements InputChannel {
         return parseTask(buffer.toString().trim(), memory, time);
     }
 
+
+    public static Sentence parseOutput(String s) {
+        Term content = null;
+        char punc = 0;
+        TruthValue truth = null;
+        
+        try {
+            StringBuffer buffer = new StringBuffer(s);
+            String budgetString = getBudgetString(buffer);
+            String truthString = getTruthString(buffer);
+            String str = buffer.toString().trim();
+            int last = str.length() - 1;
+            punc = str.charAt(last);
+            //Stamp stamp = new Stamp(time);
+            truth = parseTruth(truthString, punc);
+
+
+            /*Term content = parseTerm(str.substring(0, last), memory);
+            if (content == null) throw new InvalidInputException("Content term missing");*/
+        }
+        catch (InvalidInputException e) {
+            System.err.println(s + " : " + e.toString());
+        }
+        return new Sentence(content, punc, truth, null);        
+    }
+    
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
      * locally.
@@ -393,7 +419,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
      * @param memory Reference to the memory
      * @param time The current time
      * @return An experienced task
-     */
+     */    
     public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
         StringBuffer buffer = new StringBuffer(s);
         try {
@@ -454,16 +480,16 @@ public class ExperienceReader extends Symbols implements InputChannel {
      * @throws nars.io.StringParser.InvalidInputException if the input cannot be
      * parsed into a TruthValue
      */
-    private static String getTruthString(StringBuffer s) throws InvalidInputException {
-        int last = s.length() - 1;
+    private static String getTruthString(final StringBuffer s) throws InvalidInputException {
+        final int last = s.length() - 1;
         if (s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;
         }
-        int first = s.indexOf(TRUTH_VALUE_MARK + "");    // looking for the beginning
+        final int first = s.indexOf(TRUTH_VALUE_MARK + "");    // looking for the beginning
         if (first == last) { // no matching closer
             throw new InvalidInputException("missing truth mark");
         }
-        String truthString = s.substring(first + 1, last).trim();
+        final String truthString = s.substring(first + 1, last).trim();
         if (truthString.length() == 0) {                // empty usage
             throw new InvalidInputException("empty truth");
         }

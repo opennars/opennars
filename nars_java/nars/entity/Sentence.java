@@ -34,23 +34,27 @@ public class Sentence implements Cloneable {
     /**
      * The content of a Sentence is a Term
      */
-    private Term content;
+    final public Term content;
     /**
      * The punctuation also indicates the type of the Sentence: Judgment,
      * Question, or Goal
      */
-    private char punctuation;
+    final public char punctuation;
     /**
      * The truth value of Judgment
      */
-    private TruthValue truth;
+    final public TruthValue truth;
     /**
      * Partial record of the derivation path
      */
-    private Stamp stamp;
+    final public Stamp stamp;
     /**
      * Whether the sentence can be revised
      */
+    private final String key;
+    private final String briefString;
+    private final String string;
+
     private boolean revisible;
 
     /**
@@ -63,12 +67,7 @@ public class Sentence implements Cloneable {
      * base
      */
     public Sentence(Term content, char punctuation, TruthValue truth, Stamp stamp) {
-        this.content = content;
-        this.content.renameVariables();
-        this.punctuation = punctuation;
-        this.truth = truth;
-        this.stamp = stamp;
-        this.revisible = true;
+        this(content, punctuation, truth, stamp, true);
     }
 
     /**
@@ -88,6 +87,28 @@ public class Sentence implements Cloneable {
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = revisible;
+        
+        
+        final String contentToString = content.toString();
+        final String truthString = truth!=null ? truth.toStringBrief() : null;
+        final String stampString = stamp.toString();
+        
+        int stringLength = contentToString.length() + 1 + 1 + stampString.length();
+        if (truth!=null)
+            stringLength += truthString.length();
+                
+        final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
+            .append(punctuation).append(" ");
+        if (truth != null) {
+            k.append(truthString);
+        }
+        
+        key = k.toString();        
+                
+        string = k.append(stampString).toString();
+                
+        briefString = toKey() + stampString;
+                
     }
 
     /**
@@ -173,14 +194,6 @@ public class Sentence implements Cloneable {
         return (Term) content.clone();
     }
 
-    /**
-     * Set the content Term of the Sentence
-     *
-     * @param t The new content
-     */
-    public void setContent(Term t) {
-        content = t;
-    }
 
     /**
      * Get the truth value of the sentence
@@ -237,14 +250,7 @@ public class Sentence implements Cloneable {
      */
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(content.toString());
-        s.append(punctuation).append(" ");
-        if (truth != null) {
-            s.append(truth.toString());
-        }
-        s.append(stamp.toString());
-        return s.toString();
+        return string;
     }
 
     /**
@@ -253,7 +259,7 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toStringBrief() {
-        return toKey() + stamp.toString();
+        return briefString;
     }
 
     /**
@@ -262,12 +268,6 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toKey() {
-        final StringBuilder s = new StringBuilder();
-        s.append(content.toString());
-        s.append(punctuation).append(" ");
-        if (truth != null) {
-            s.append(truth.toStringBrief());
-        }
-        return s.toString();
+        return key;
     }
 }
