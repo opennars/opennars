@@ -1,0 +1,8 @@
+' ********** exemplification
+<robin --> bird>.
+' Robin is a type of bird.
+<bird --> animal>.
+' A bird is a type of animal.
+5
+' OUT: <animal --> robin>. %1.00;0.45%
+' I guess animal is a type of robin. 

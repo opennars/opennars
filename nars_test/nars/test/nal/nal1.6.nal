@@ -1,0 +1,8 @@
+' ********** "y/n" question
+<bird --> swimmer>.
+' Bird is a type of swimmer.
+<bird --> swimmer>? 
+' Is bird a type of swimmer?
+1
+' OUT: <bird --> swimmer>. %1.00;0.90% 
+' Bird is a type of swimmer.
