@@ -3,11 +3,12 @@
 ' Sport is a type of competition.
 <chess --> competition>. %0.90%
 ' Chess is a type of competition.
-5
+15
 ' OUT: <sport --> chess>. %1.00;0.42% 
+
+'//'out[0].indexOf('<sport --> chess>. %1.00;0.42%')==0
 ' I guess sport is a type of chess.
 ' OUT: <chess --> sport>. %0.90;0.45% 
 ' I guess chess is a type of sport.
 
 
-'//out[0].indexOf('<bird --> swimmer>. %0.87;0.91%')==0
