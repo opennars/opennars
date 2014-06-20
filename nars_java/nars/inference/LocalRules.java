@@ -85,7 +85,7 @@ public class LocalRules {
         TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
         BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, memory);
         Term content = newBelief.getContent();
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTaskRevised(content, truth, budget);
     }
 
     /**

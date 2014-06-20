@@ -105,9 +105,9 @@ public class Sentence implements Cloneable {
         
         key = k.toString();        
                 
-        string = k.append(stampString).toString();
+        briefString = string = k.append(stampString).toString();
                 
-        briefString = toKey() + stampString;
+        //briefString = toKey() + stampString;
                 
     }
 
