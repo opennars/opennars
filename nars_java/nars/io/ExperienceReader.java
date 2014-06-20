@@ -117,8 +117,10 @@ public class ExperienceReader extends Symbols implements InputChannel {
         this(reasoner);
         setBufferedReader(input);
         
-        for (InputParser i : additionalParsers)
-            parsers.add(i);
+        for (InputParser i : additionalParsers) {
+            if (i != null)
+                parsers.add(i);
+        }
     }
 
 
@@ -320,6 +322,11 @@ public class ExperienceReader extends Symbols implements InputChannel {
             if (result)
                 lastHandled = p;
         }        
+        
+        //not handled, so respond with some signal
+        if (lastHandled == null) {
+            nar.output("?");
+        }
     }
     
 
