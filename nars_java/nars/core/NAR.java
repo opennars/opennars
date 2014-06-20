@@ -1,6 +1,7 @@
 package nars.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -196,8 +197,8 @@ public class NAR implements Runnable {
                 // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
                 tick();
             } catch (RuntimeException re) {
-                String errorMsg = "ERROR: " + re;
-                output(errorMsg);
+                String errorMsg = "OUT: " + re;
+                output(errorMsg + " " + Arrays.asList(re.getStackTrace()).toString());
                 System.err.println(errorMsg);
                 //re.printStackTrace();
             }

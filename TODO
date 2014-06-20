@@ -1,21 +1,18 @@
 Core
 
-    Make sure that *reset occurs at the right time while invoked in a script
-
-    See what can be enum'd
-
-    Profile performance again
-
-    Develop more efficient Distributor policy
-
     Fix remaining issues in Swing GUI
+
+    Determine what can safely be enum'd on String.intern()
+
+    Develop more efficient Distributor policy & other find any other bottlenecks
+
+    Unit testing API for easily pattern matching output statements
     
+    Complete NAL1 unit tests pass/fail conditions
 
 Web Interface
 
     Volume slider
-
-    Merge Patrick's English<->Narsese changes
 
     Pixel array input/output
 

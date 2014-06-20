@@ -1,15 +1,14 @@
 body {
-    margin: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
     font-size: 100%;
     font-family: Arial, sans;
 }
 #io {  
-    margin-left: 2%;
-    margin-right: 2%;
-    width: 94%;
+    padding-top: 1.8em;
+
+    width: 100%;
     height: 95%;
-    
-    zoom: 120%;
 }
 #io .section {
     width: 100%;
@@ -17,7 +16,7 @@ body {
     margin-bottom: 1em;
 }
 #io .section textarea {
-    width: 94%;
+    width: 100%;
     height: 4em;    
 }
 #io .section .output{
@@ -27,7 +26,10 @@ body {
     overflow: auto;
 }
 #io .section button {
-    float: right;
+    width: 1.5em;
+    position: absolute;
+    right: 2em;    
+    padding: 0;
 }
 
 pre { margin: 0; }
@@ -40,4 +42,30 @@ pre { margin: 0; }
 }
 .comment {
     color: black;
+}
+.previousInput {
+    opacity: 0.85;    
+}
+#menu {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(225,225,225,0.9);
+    width: 100%;
+    padding: 5px;
+    font-size: 150%;
+    z-index: 5;
+}
+#menu button {
+    vertical-align:top;
+}
+#title {
+    opacity: 0.25;
+    letter-spacing: -5px;    
+    cursor: pointer;
+}
+#title:hover {
+    opacity: 1.0;
+    letter-spacing: -5px;    
+    
 }
