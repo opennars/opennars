@@ -1,5 +1,5 @@
 /*
- * TextReadingExperience.java
+ * TextInput.java
  *
  * Copyright (C) 2008  Pei Wang
  *
@@ -69,12 +69,12 @@ import nars.storage.Memory;
 /**
  * To read and write experience as Task streams
  */
-public class TextReadingExperience extends Symbols implements InputChannel {
+public class TextInput extends Symbols implements InputChannel {
 
     /**
      * Reference to the reasoner
      */
-    private NAR nar;
+    private final NAR nar;
     /**
      * Input experience from a file
      */
@@ -85,39 +85,45 @@ public class TextReadingExperience extends Symbols implements InputChannel {
     private int timer;
 
     
-    public static final List<InputParser> defaultParsers = new LinkedList();
+    public static final List<TextInputParser> defaultParsers = new LinkedList();
     static {
         initDefaultParsers(); //shared by all ExperienceReaders
     }
     
-    public final List<InputParser> parsers;
+    public final List<TextInputParser> parsers;
        
     
     /**
      * Default constructor
      *
-     * @param reasoner Backward link to the reasoner
+     * @param reasoner reasoner to input to
      */    
-    public TextReadingExperience(NAR reasoner) {
+    public TextInput(NAR reasoner) {
         this(reasoner, new LinkedList(defaultParsers));
     }
     
-    public TextReadingExperience(NAR reasoner, List<InputParser> parsers) {
+    /**
+     * Default constructor
+     *
+     * @param reasoner reasoner to input to
+     * @param parsers additional parsers to add to the input parsing sequence
+     */        
+    public TextInput(NAR reasoner, List<TextInputParser> parsers) {
         super();
         this.nar = reasoner;
         this.inExp = null;
         this.parsers = parsers;
     }
     
-    public TextReadingExperience(NAR reasoner, String input, InputParser... additionalParsers) {
+    public TextInput(NAR reasoner, String input, TextInputParser... additionalParsers) {
         this(reasoner, new BufferedReader(new StringReader(input)), additionalParsers);
     }
     
-    public TextReadingExperience(NAR reasoner, BufferedReader input, InputParser... additionalParsers) {
+    public TextInput(NAR reasoner, BufferedReader input, TextInputParser... additionalParsers) {
         this(reasoner);
         setBufferedReader(input);
         
-        for (InputParser i : additionalParsers) {
+        for (TextInputParser i : additionalParsers) {
             if (i != null)
                 parsers.add(i);
         }
@@ -150,7 +156,7 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         nar.removeInputChannel(this);
     }*/
 
-    public void setBufferedReader(BufferedReader inExp) {
+    private void setBufferedReader(BufferedReader inExp) {
         this.inExp = inExp;
         nar.addInputChannel(this);
     }
@@ -196,9 +202,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
 
     private static void initDefaultParsers() {
         //integer, # of cycles to walk
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 try {
                     int timer = Integer.parseInt(input);
                     nar.walk(timer);
@@ -211,9 +217,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         });
         
         //reset
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {                
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
                 if (input.equals(Symbols.RESET_COMMAND)) {
                     nar.reset();
                     return true;
@@ -223,9 +229,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         });
         
         //stop
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 if (!nar.isPaused())  {
                     if (input.equals(Symbols.STOP_COMMAND)) {
                         nar.output("stopping.");
@@ -238,9 +244,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         });    
         
         //start
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {                
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
                 if (nar.isPaused()) {
                     if (input.equals(Symbols.START_COMMAND)) {
                         nar.resume();
@@ -253,9 +259,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         });
         
         //silence
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {                
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
 
                 if (input.indexOf(Symbols.SILENCE_COMMAND)==0) {
                     String[] p = input.split("=");
@@ -273,9 +279,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         });
         
         //URL include
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 char c = input.charAt(0);
                 if (c == Symbols.URL_INCLUDE_MARK) {            
                     readURL(nar, input.substring(1));
@@ -286,9 +292,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         });        
 
         //echo
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 char c = input.charAt(0);
                 if (c == Symbols.ECHO_MARK) {            
                     String echoString = input.substring(1);
@@ -300,9 +306,9 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         });
         
         //narsese
-        defaultParsers.add(new InputParser() {
+        defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, InputParser lastHandler) {
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 if (lastHandler != null)
                     return false;
 
@@ -332,8 +338,8 @@ public class TextReadingExperience extends Symbols implements InputChannel {
         line = line.trim();
         if (line.isEmpty()) return;
         
-        InputParser lastHandled = null;
-        for (InputParser p : parsers) {            
+        TextInputParser lastHandled = null;
+        for (TextInputParser p : parsers) {            
             
             boolean result = p.parse(nar, line, lastHandled);
             
@@ -356,7 +362,7 @@ public class TextReadingExperience extends Symbols implements InputChannel {
             URL u = new URL(url);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(u.openStream()));            
-            nar.addInputChannel(new TextReadingExperience(nar, in));
+            nar.addInputChannel(new TextInput(nar, in));
         } catch (Exception ex) {
             nar.output("includeURL: " + ex.toString());
         }

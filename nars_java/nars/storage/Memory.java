@@ -34,7 +34,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.io.IInferenceRecorder;
+import nars.inference.InferenceRecorder;
 import nars.language.Term;
 import nars.core.Parameters;
 import nars.core.NAR;
@@ -61,7 +61,7 @@ public class Memory {
     /**
      * Inference record text to be written into a log file
      */
-    private IInferenceRecorder recorder;
+    private InferenceRecorder recorder;
     private final AtomicInteger beliefForgettingRate = new AtomicInteger(Parameters.TERM_LINK_FORGETTING_CYCLE);
     private final AtomicInteger taskForgettingRate = new AtomicInteger(Parameters.TASK_LINK_FORGETTING_CYCLE);
     private final AtomicInteger conceptForgettingRate = new AtomicInteger(Parameters.CONCEPT_FORGETTING_CYCLE);
@@ -144,11 +144,11 @@ public class Memory {
         return exportStrings;
     }
 
-    public IInferenceRecorder getRecorder() {
+    public InferenceRecorder getRecorder() {
         return recorder;
     }
 
-    public void setRecorder(IInferenceRecorder recorder) {
+    public void setRecorder(InferenceRecorder recorder) {
         this.recorder = recorder;
     }
 
@@ -655,7 +655,7 @@ public class Memory {
         return conceptForgettingRate;
     }
 
-    private class NullInferenceRecorder implements IInferenceRecorder {
+    private class NullInferenceRecorder implements InferenceRecorder {
 
         @Override
         public boolean isActive() {

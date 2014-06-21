@@ -20,11 +20,16 @@
 package nars.io;
 
 /**
- * An interface to be implemented in all input channels 
- * to get the input for the next moment from an input channel
+ * 
+ * Provides input for the next moment from an input channel that delivers input asynchronously
  */
 public interface InputChannel {
+    /**
+     * Get next input and process it
+     * @return false if no more input is available, true otherwise
+     */
     public boolean nextInput();
 
+    
     public boolean isClosed();
 }

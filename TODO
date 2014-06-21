@@ -1,6 +1,5 @@
 Core
 
-    Fix remaining issues in Swing GUI
 
     Determine what can safely be enum'd on String.intern()
 
@@ -10,8 +9,15 @@ Core
     
     Complete NAL1 unit tests pass/fail conditions
 
+    Number1DInput
 
 
+GUI
+
+    shows step number while running
+    
+    
+    
 Web Interface
 
     Pixel array input/output

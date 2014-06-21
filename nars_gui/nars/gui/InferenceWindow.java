@@ -24,8 +24,8 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import nars.inference.InferenceRecorder;
 
-import nars.io.*;
 //import nars.term.Term;
 
 /**
@@ -56,14 +56,14 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
     /**
      * Inference recorder
      */
-    private IInferenceRecorder recorder = new NullInferenceRecorder();
+    private InferenceRecorder recorder = new NullInferenceRecorder();
 
     /**
      * Constructor
      *
      * @param recorder The inference recorder
      */
-    public InferenceWindow(IInferenceRecorder recorder) {
+    public InferenceWindow(InferenceLogger recorder) {
         super("Inference log");
         this.recorder = recorder;
 
@@ -187,7 +187,7 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
         text.setBackground(DISPLAY_BACKGROUND_COLOR);
     }
 
-    class NullInferenceRecorder implements IInferenceRecorder {
+    public static class NullInferenceRecorder implements InferenceRecorder {
 
         @Override
         public boolean isActive() {

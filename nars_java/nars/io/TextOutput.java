@@ -30,7 +30,7 @@ import nars.core.NAR;
 /**
  * To read and write experience as Task streams
  */
-public class ExperienceWriter implements OutputChannel {
+public class TextOutput implements OutputChannel {
 
     private final NAR reasoner;
     /**
@@ -50,18 +50,21 @@ public class ExperienceWriter implements OutputChannel {
      *
      * @param reasoner
      */
-    public ExperienceWriter(NAR reasoner) {
+    public TextOutput(NAR reasoner) {
         this.reasoner = reasoner;
         reasoner.addOutputChannel(this);
     }
-    public ExperienceWriter(NAR reasoner, LineOutput outExp2) {
+    public TextOutput(NAR reasoner, LineOutput outExp2) {
         this(reasoner);
         this.outExp2 = outExp2;
     }
 
-    public ExperienceWriter(NAR reasoner, PrintWriter outExp) {
+    public TextOutput(NAR reasoner, PrintWriter outExp) {
         this(reasoner);
         this.outExp = outExp;
+    }
+    public TextOutput(NAR reasoner, PrintStream ps) {
+        this(reasoner, new PrintWriter(ps));
     }
 
     /**

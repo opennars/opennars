@@ -24,7 +24,7 @@ import java.io.IOException;
 import nars.core.CommandLineParameters;
 import nars.core.NAR;
 import nars.core.NARRun;
-import nars.io.TextReadingExperience;
+import nars.io.TextInput;
 
 /**
  * The main class of the open-nars project.
@@ -98,7 +98,7 @@ public class NARSwing extends NAR  {
     }
 
     void evaluate(String input) {
-        new TextReadingExperience(this, input);
+        new TextInput(this, input);
         run(0, false);
     }
 

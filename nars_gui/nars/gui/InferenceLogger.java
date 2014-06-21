@@ -1,5 +1,5 @@
 /*
- * InferenceRecorder.java
+ * InferenceLogger.java
  *
  * Copyright (C) 2008  Pei Wang
  *
@@ -23,13 +23,12 @@ package nars.gui;
 import java.awt.FileDialog;
 import java.io.*;
 
-import nars.io.IInferenceRecorder;
 
 /**
  * Inference log, which record input/output of each inference step
  * interface with 1 implementation: GUI ( batch not implemented )
  */
-public class InferenceRecorder implements IInferenceRecorder {
+public class InferenceLogger implements nars.inference.InferenceRecorder {
 
     /** the display window */
     private InferenceWindow window = new InferenceWindow(this);

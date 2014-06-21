@@ -196,6 +196,10 @@ public class NAR implements Runnable {
         running = false;
     }    
     
+    public void run(int minCycles) {
+        run(minCycles, false);
+    }
+    
     public void run(int minCycles, boolean debug) {
         DEBUG = debug; 
         running = true;
@@ -256,18 +260,28 @@ public class NAR implements Runnable {
         if (walkingSteps == 0) {
             boolean reasonerShouldRun = false;
 
+
+
+            for (InputChannel channelIn : inputChannels) {
+                if (DEBUG) {
+                    System.out.println("Input: " + channelIn);
+                }
+
+                if (!channelIn.isClosed()) {
+                    boolean b = channelIn.nextInput();  
+                    if (b)
+                        reasonerShouldRun = true;
+                }
+                else                
+                    closedInputChannels.add(channelIn);
+            }
+            finishedInputs = !reasonerShouldRun;
+
             for (InputChannel c : closedInputChannels) {
                 inputChannels.remove(c);
             }
             closedInputChannels.clear();
-
-
-            for (InputChannel channelIn : inputChannels) {
-                reasonerShouldRun = reasonerShouldRun || channelIn.nextInput();  
-                if (channelIn.isClosed())
-                    closedInputChannels.add(channelIn);
-            }
-            finishedInputs = !reasonerShouldRun;
+        
         }
                 
         // forward to output Channels

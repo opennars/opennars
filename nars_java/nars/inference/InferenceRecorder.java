@@ -1,6 +1,6 @@
-package nars.io;
+package nars.inference;
 
-public interface IInferenceRecorder {
+public interface InferenceRecorder {
 
     /**
      * Initialize the window and the file
