@@ -20,8 +20,12 @@
  */
 package nars.gui;
 
+import static com.sun.org.apache.xerces.internal.xinclude.XIncludeHandler.BUFFER_SIZE;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,13 +37,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.io.TextInput;
@@ -52,7 +66,7 @@ import nars.storage.Memory;
 /**
  * Main window of NARSwing GUI
  */
-public class NARWindow extends Window implements ActionListener, OutputChannel {
+public class NARWindow extends Window implements ActionListener, OutputChannel, Runnable {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4*1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -84,16 +98,8 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
     /**
      * Control buttons
      */
-    private final JButton stopButton, walkButton, runButton;
-    /**
-     * Clock display field
-     */
-    private final JTextArea timerText;
+    private final JButton stopButton, walkButton;
 
-    /**
-     * System clock - number of cycles since last output
-     */
-    private long timer;
     /**
      * Whether the experience is saving into a file
      */
@@ -110,8 +116,20 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
     /**
      * Windows for run-time parameter adjustment
      */
-    public ParameterWindow forgetTW, forgetBW, forgetCW, silentW;
+    public ParameterWindow forgetTW, forgetBW, forgetCW;
 
+    /**
+     * To process the next chunk of output data
+     *
+     * @param lines The text lines to be displayed
+     */
+    private StringBuffer nextOutput = new StringBuffer();
+    private JSlider speedSlider;
+    private double currentSpeed = -1;
+
+    private final int GUIUpdatePeriodMS = 768;
+    int maxIOTextSize = (int)8E6;
+    
     /**
      * Constructor
      *
@@ -128,7 +146,7 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
         forgetTW = new ParameterWindow("Task Forgetting Rate", Parameters.TASK_LINK_FORGETTING_CYCLE, memory.getTaskForgettingRate());
         forgetBW = new ParameterWindow("Belief Forgetting Rate", Parameters.TERM_LINK_FORGETTING_CYCLE, memory.getBeliefForgettingRate());
         forgetCW = new ParameterWindow("Concept Forgetting Rate", Parameters.CONCEPT_FORGETTING_CYCLE, memory.getConceptForgettingRate());
-        silentW = new ParameterWindow("Report Silence Level", Parameters.SILENT_LEVEL, reasoner.getSilenceValue());
+        /*silentW = new ParameterWindow("Report Silence Level", Parameters.SILENT_LEVEL, reasoner.getSilenceValue());*/
 
         record = new InferenceLogger();
         memory.setRecorder(record);
@@ -162,8 +180,6 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
         addJMenuItem(m, "Concept Forgetting Rate");
         addJMenuItem(m, "Task Forgetting Rate");
         addJMenuItem(m, "Belief Forgetting Rate");
-        m.addSeparator();
-        addJMenuItem(m, "Report Silence Level");
         m.addActionListener(this);
         menuBar.add(m);
 
@@ -175,66 +191,69 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
 
         setJMenuBar(menuBar);
 
-        GridBagLayout gridbag = new GridBagLayout();
+        setLayout(new BorderLayout());
+
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.ipadx = 2;
-        c.ipady = 2;
-        c.insets = new Insets(4, 4, 4, 4);
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-
-        ioText = new JTextArea("");
+        ioText = new JTextArea("");       
         ioText.setBackground(DISPLAY_BACKGROUND_COLOR);
         ioText.setEditable(false);        
         JScrollPane scrollPane = new JScrollPane(ioText);
-        gridbag.setConstraints(scrollPane, c);
-        add(scrollPane);
+        add(scrollPane, BorderLayout.CENTER);
+
+        
+        JPanel menu = new JPanel(new GridBagLayout());                        
+        menu.setOpaque(false);
+        add(menu, BorderLayout.SOUTH);
+
+        c.ipadx = 2;
+        c.ipady = 2;
+        c.insets = new Insets(2, 2, 2, 2);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+
+        c.gridheight = 10;
+        
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.fill = GridBagConstraints.VERTICAL;        
+
+        c.gridheight = GridBagConstraints.REMAINDER;
+        c.weightx = 0.0;        
+        c.weighty = 0.0;        
+        c.fill = GridBagConstraints.BOTH;        
+        
+        c.weightx = 0.1;
+        menu.add(newVolumeSlider(), c);
 
         c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.VERTICAL;
-
-        runButton = new JButton("Run");
-        gridbag.setConstraints(runButton, c);
-        runButton.addActionListener(this);
-        add(runButton);
         walkButton = new JButton("Walk");
-        gridbag.setConstraints(walkButton, c);
         walkButton.addActionListener(this);
-        add(walkButton);
-        stopButton = new JButton("Stop");
-        gridbag.setConstraints(stopButton, c);
-        stopButton.addActionListener(this);
-        add(stopButton);
+        menu.add(walkButton, c);
+                
         
-
+        stopButton = new JButton("Stop");
+        stopButton.addActionListener(this);
+        menu.add(stopButton, c);
+        
+        c.weightx = 0.1;
+        menu.add(newSpeedSlider(), c);
+        
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 0.1;
-        
-        timerText = new JTextArea("");        
-        timerText.setToolTipText("Clock");
-        timerText.setRows(2);
-        timerText.setBackground(DISPLAY_BACKGROUND_COLOR);
-        timerText.setMaximumSize(new Dimension(100, 10));
-        timerText.setEditable(false);
-        add(timerText, c);
 
-        c.weightx = 1.0;
+
+        c.weightx = 0.4;
         c.gridwidth = GridBagConstraints.REMAINDER;
  
         inputWindow = new InputPanel(reasoner);
-        add(inputWindow, c);
+        menu.add(inputWindow, c);
         
-        setBounds(0, 200, 600, 560);
+        setBounds(0, 200, 810, 600);
         setVisible(true);
 
-        initTimer();
-        nextOutput(null);
+        init();
+        
+        new Thread(this).start();
     }
 
     /**
@@ -278,45 +297,26 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
      * Initialize the system for a new run
      */
     public void init() {
-        initTimer();
+        setSpeed(0);
+        updateTimer();
         ioText.setText("");
         nextOutput(null);
     }
 
-    /**
-     * Reset timer and its display
-     */
-    public void initTimer() {
-        timer = 0;
-        if (reasoner.isRunning()) {
-            if (TICKS_PER_TIMER_LABEL_UPDATE == 0)
-                return;
-            if (memory.getTime() % TICKS_PER_TIMER_LABEL_UPDATE != 0)
-                return;
-        }
-        SwingUtilities.invokeLater(updateTimer);
-    }
+
 
     /**
      * Update timer and its display
      */
-    final Runnable updateTimer = new Runnable() {
+    final Runnable _updateTimer = new Runnable() {
         @Override
         public void run() {
-            timerText.setText(memory.getTime() + "\n" + timer);            
+            speedSlider.repaint();
         }
     };
-
-    @Override
-    public void tickTimer() {
-        timer++;
-        if (reasoner.isRunning()) {
-            if (TICKS_PER_TIMER_LABEL_UPDATE == 0)
-                return;
-            if (memory.getTime() % TICKS_PER_TIMER_LABEL_UPDATE != 0)
-                return;
-        }
-        SwingUtilities.invokeLater(updateTimer);
+    
+    protected void updateTimer() {
+        SwingUtilities.invokeLater(_updateTimer);        
     }
 
     /**
@@ -328,17 +328,12 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
         if (obj instanceof JButton) {
-            if (obj == runButton) {
-                //timerLabel.setText("Running..");
-                runButton.setEnabled(false);
-                reasoner.start(0);
-            } else if (obj == stopButton) {
-                runButton.setEnabled(true);
-                reasoner.stop();
-                SwingUtilities.invokeLater(updateTimer);
+            if (obj == stopButton) {
+                setSpeed(0);
+                updateTimer();
             } else if (obj == walkButton) {
-                reasoner.run(0, false);
-                SwingUtilities.invokeLater(updateTimer);
+                reasoner.walk(1, true);
+                updateTimer();
             }
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
@@ -381,8 +376,6 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
                 forgetBW.setVisible(true);
             } else if (label.equals("Concept Forgetting Rate")) {
                 forgetCW.setVisible(true);
-            } else if (label.equals("Report Silence Level")) {
-                silentW.setVisible(true);
             } else if (label.equals("Related Information")) {
 //                MessageDialog web = 
                 new MessageDialog(this, NARSwing.WEBSITE);
@@ -409,14 +402,7 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
         close();
     }
 
-    /**
-     * To process the next chunk of output data
-     *
-     * @param lines The text lines to be displayed
-     */
-    private StringBuffer undisplayedExperience = new StringBuffer();
 
-    private boolean _firstOutput = true;
 
     /**
      *
@@ -424,44 +410,157 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
      */
     @Override
     public void nextOutput(final ArrayList<String> lines) {
-        
+            
         if (lines != null) {
             for (Object line : lines) {
-                undisplayedExperience.append(line).append("\n");
+                nextOutput.append(line).append("\n");
             }
         }
-        //if ((lines == null) || _firstOutput) {
-            SwingUtilities.invokeLater(nextOutputRunnable);
-        //}
+        
+        SwingUtilities.invokeLater(nextOutputRunnable);
     }
-    
+    void limitBuffer(int incomingDataSize)    {
+       Document doc = ioText.getDocument();
+       int overLength = doc.getLength() + incomingDataSize - maxIOTextSize;
+
+       if (overLength > 0)       {
+           try {
+               doc.remove(0, overLength);
+           } catch (BadLocationException ex) {
+           }
+       }
+    }    
+
     private Runnable nextOutputRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (undisplayedExperience.length() > 0) {
-                        _firstOutput = false;
-                        ioText.append(undisplayedExperience.toString());
-                        undisplayedExperience.setLength(0);
+                    if (nextOutput.length() > 0) {
+                        
+                        limitBuffer(nextOutput.length());                        
+                        ioText.append(nextOutput.toString());
+                        nextOutput.setLength(0);
                     }
                 }
             };
     
 
-    /**
-     * To get the timer value and then to reset it
-     *
-     * @return The previous timer value
-     */
-    public long updateTimer() {
-        long i = timer;
-        initTimer();
-        return i;
+
+
+    private JSlider newSpeedSlider() {
+        //Create the slider
+        final double RANGE = 100.0;
+        final JSlider s = new JSlider(JSlider.HORIZONTAL, 0, (int)100, 0) {
+
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+                g.setColor(Color.BLACK);
+                String s = "@" + memory.getTime();
+                if (currentSpeed == 0)
+                    s += " - pause";
+                else if (currentSpeed == 1.0)
+                    s += " - run max speed";
+                else
+                    s += " - run " + reasoner.getMinTickPeriodMS() + " ms / tick";
+                g.drawString(s, 4, 14);
+
+            }
+          
+        };
+        s.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                double speed = ((double)s.getValue())/RANGE;
+                setSpeed(speed);
+            }
+            
+        });
+
+        s.setMajorTickSpacing((int)(RANGE/4));
+        s.setPaintTicks(true);
+        
+        //Create the label table
+        
+        Hashtable labelTable = new Hashtable();
+        labelTable.put( new Integer( 0 ), new JLabel("Paused") );
+        labelTable.put( new Integer( 100 ), new JLabel("Fast") );
+        s.setLabelTable( labelTable );
+        
+
+        s.setPaintLabels(true);
+        
+        this.speedSlider = s;
+        
+        return s;
+    }
+    
+    private JSlider newVolumeSlider() {
+        final JSlider s = new JSlider(JSlider.HORIZONTAL, 0, 100, 100);
+        s.setMajorTickSpacing(25);        
+        s.setSize(new Dimension(50, 50));
+
+        Hashtable labelTable = new Hashtable();
+        labelTable.put( new Integer( 0 ), new JLabel("Silent") );
+        labelTable.put( new Integer( 100 ), new JLabel("Loud") );
+        s.setLabelTable( labelTable );
+        
+        s.setPaintTicks(true);
+
+        s.setPaintLabels(true);
+        s.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int level = 100 - s.getValue();
+                reasoner.setSilenceValue(level);
+            }
+            
+        });
+           
+        return s;
+    }
+    
+    public void setSpeed(final double s) {
+        final double maxPeriodMS = 256.0;
+        
+        if (currentSpeed == s)
+            return;
+        
+        currentSpeed = s;
+        
+        
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                if (s == 0) {
+                    reasoner.stop();
+                    speedSlider.setValue(0);
+                    stopButton.setEnabled(false);
+                }
+                else {
+                    stopButton.setEnabled(true);
+                    int ms = (int)((1.0 - (s)) * maxPeriodMS);
+                    if (ms < 1) ms = 0;
+                    reasoner.start(ms);
+                }
+                
+                speedSlider.repaint();
+            }
+
+        });
+        
     }
 
-    /**
-     * @return System clock : number of cycles since last output
-     */
-    public long getTimer() {
-        return timer;
+    @Override
+    public void run() {
+        while (true) {
+            speedSlider.repaint();
+            
+            try {
+                Thread.sleep(GUIUpdatePeriodMS);
+            } catch (InterruptedException ex) {            }
+        }
     }
 }

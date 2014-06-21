@@ -149,8 +149,9 @@ public class NAR implements Runnable {
     
     public void walk(final int steps, final boolean immediate) {
         if (immediate) {
-            running = true;
+            stop();
             paused = false;
+            running = true;
             tick();
         }
         
@@ -158,23 +159,21 @@ public class NAR implements Runnable {
         
         if (immediate) {
             running = false;
-            paused = true;            
         }
     }
     
     /**
      * Repeatedly execute NARS working cycle. This method is called when the
      * Runnable's thread is started.
-     */
-    
+     */    
     public void start(long minTickPeriodMS) {
         if (thread == null) {
-            this.minTickPeriodMS = minTickPeriodMS;
             thread = new Thread(this, "Inference");
             thread.start();
-            running = true;
-            paused = false;
         }        
+        this.minTickPeriodMS = minTickPeriodMS;
+        running = true;
+        paused = false;
     }
     
     public void pause() {
@@ -381,6 +380,9 @@ public class NAR implements Runnable {
         return paused;
     }
 
-    
+    public long getMinTickPeriodMS() {
+        return minTickPeriodMS;
+    }
+
     
 }
