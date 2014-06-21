@@ -11,6 +11,7 @@ import nars.entity.Stamp;
 import nars.gui.NARWindow;
 import nars.io.InputChannel;
 import nars.io.OutputChannel;
+import nars.io.Symbols;
 import nars.storage.Memory;
 
 /**
@@ -219,10 +220,11 @@ public class NAR implements Runnable {
                 // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
                 tick();
             } catch (RuntimeException re) {
-                String errorMsg = "OUT: " + re;
+                
+                String errorMsg = " " + Symbols.ERROR_LINE + ": " + re;
                 output(errorMsg + " " + Arrays.asList(re.getStackTrace()).toString());
                 System.err.println(errorMsg);
-                //re.printStackTrace();
+                re.printStackTrace();
             }
             catch (Exception e) {
                 System.err.println("run: " + e);

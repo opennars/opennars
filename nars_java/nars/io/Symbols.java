@@ -107,6 +107,8 @@ public class Symbols {
     /* experience line prefix */
     public static final String INPUT_LINE = "IN";
     public static final String OUTPUT_LINE = "OUT";
+    public static final String ERROR_LINE = "ERR"; 
+
     public static final char PREFIX_MARK = ':';
     public static final char COMMENT_MARK = '/';
     public static final char URL_INCLUDE_MARK = '`';

@@ -20,12 +20,10 @@
  */
 package nars.gui;
 
-import static com.sun.org.apache.xerces.internal.xinclude.XIncludeHandler.BUFFER_SIZE;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.Graphics;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -37,21 +35,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import nars.entity.Concept;
@@ -62,6 +54,7 @@ import nars.io.OutputChannel;
 import nars.core.Parameters;
 import nars.inference.InferenceRecorder;
 import nars.storage.Memory;
+import org.python.google.common.util.concurrent.AtomicDouble;
 
 /**
  * Main window of NARSwing GUI
@@ -124,7 +117,7 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
      * @param lines The text lines to be displayed
      */
     private StringBuffer nextOutput = new StringBuffer();
-    private JSlider speedSlider;
+    private NSlider speedSlider;
     private double currentSpeed = -1;
 
     private final int GUIUpdatePeriodMS = 768;
@@ -222,21 +215,21 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
         c.weighty = 0.0;        
         c.fill = GridBagConstraints.BOTH;        
         
-        c.weightx = 0.1;
-        menu.add(newVolumeSlider(), c);
-
         c.weightx = 0.0;
         walkButton = new JButton("Walk");
         walkButton.addActionListener(this);
         menu.add(walkButton, c);
-                
         
+        c.weightx = 0.2;        
+        JScrollPane jp = new JScrollPane(newParameterPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jp.setPreferredSize(new Dimension(175,120));
+        menu.add(jp, c);
+                       
+        c.weightx = 0.0;
         stopButton = new JButton("Stop");
         stopButton.addActionListener(this);
         menu.add(stopButton, c);
         
-        c.weightx = 0.1;
-        menu.add(newSpeedSlider(), c);
         
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 0.1;
@@ -446,78 +439,74 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
 
 
 
-    private JSlider newSpeedSlider() {
-        //Create the slider
-        final double RANGE = 100.0;
-        final JSlider s = new JSlider(JSlider.HORIZONTAL, 0, (int)100, 0) {
+    private NSlider newSpeedSlider() {
+        final NSlider s = new NSlider(0, 0, 1.0) {
 
             @Override
-            public void paint(Graphics g) {
-                super.paint(g);
-                g.setColor(Color.BLACK);
+            public String getText() {
+                if (value == null)
+                    return "";
+                
+                double v = value();
+                
                 String s = "@" + memory.getTime();
+                
                 if (currentSpeed == 0)
                     s += " - pause";
                 else if (currentSpeed == 1.0)
                     s += " - run max speed";
                 else
                     s += " - run " + reasoner.getMinTickPeriodMS() + " ms / tick";
-                g.drawString(s, 4, 14);
+                return s;
+            }
 
+            @Override
+            public void onChange(double v) {
+                setSpeed(v);
             }
           
-        };
-        s.addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                double speed = ((double)s.getValue())/RANGE;
-                setSpeed(speed);
-            }
             
-        });
-
-        s.setMajorTickSpacing((int)(RANGE/4));
-        s.setPaintTicks(true);
-        
-        //Create the label table
-        
-        Hashtable labelTable = new Hashtable();
-        labelTable.put( new Integer( 0 ), new JLabel("Paused") );
-        labelTable.put( new Integer( 100 ), new JLabel("Fast") );
-        s.setLabelTable( labelTable );
-        
-
-        s.setPaintLabels(true);
-        
+        };
         this.speedSlider = s;
-        
-        return s;
+
+        return s;        
     }
     
-    private JSlider newVolumeSlider() {
-        final JSlider s = new JSlider(JSlider.HORIZONTAL, 0, 100, 100);
-        s.setMajorTickSpacing(25);        
-        s.setSize(new Dimension(50, 50));
 
-        Hashtable labelTable = new Hashtable();
-        labelTable.put( new Integer( 0 ), new JLabel("Silent") );
-        labelTable.put( new Integer( 100 ), new JLabel("Loud") );
-        s.setLabelTable( labelTable );
-        
-        s.setPaintTicks(true);
-
-        s.setPaintLabels(true);
-        s.addChangeListener(new ChangeListener() {
+    private NSlider newVolumeSlider() {
+        final NSlider s = new NSlider(100, 0, 100) {
 
             @Override
-            public void stateChanged(ChangeEvent e) {
-                int level = 100 - s.getValue();
-                reasoner.setSilenceValue(level);
+            public String getText() {
+                if (value == null)
+                    return "";
+                
+                double v = value();
+                String s = "Volume: " + super.getText() + " (";
+                
+                if (v == 0) s += "Silent";
+                else if (v < 25) s += "Quiet";
+                else if (v < 75) s += "Normal";
+                else s += "Loud";
+                
+                s += ")";
+                return s;
+            }
+
+            @Override
+            public void setValue(double v) {
+                super.setValue(Math.round(v)); 
             }
             
-        });
-           
+            @Override
+            public void onChange(double v) {
+                int level = 100 - (int)v;
+                reasoner.setSilenceValue(level);
+            }
+          
+            
+        };
+
         return s;
     }
     
@@ -563,4 +552,57 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
             } catch (InterruptedException ex) {            }
         }
     }
+
+    private JPanel newParameterPanel() {
+        JPanel p = new JPanel();
+        
+        
+        p.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.ipady = 16;
+        
+        NSlider vs = newVolumeSlider();
+        vs.setFont(vs.getFont().deriveFont(Font.BOLD));
+        p.add(vs, c);        
+        
+        NSlider ss = newSpeedSlider();
+        ss.setFont(vs.getFont());
+        p.add(ss, c);
+
+        c.ipady = 4;
+        
+        p.add(newIntSlider(memory.getTaskForgettingRate(), "Task Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.getBeliefForgettingRate(), "Belief Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.getConceptForgettingRate(), "Concept Forgetting Rate", 1, 99), c);
+                
+        return p;
+    }
+
+    private NSlider newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {
+          final NSlider s = new NSlider(new AtomicDouble(x.intValue()), min, max) {
+
+            @Override
+            public String getText() {
+                return prefix + ": " + super.getText();                          
+            }
+
+            @Override
+            public void setValue(double v) {
+                int i = (int)Math.round(v);
+                super.setValue(i); 
+                x.set(i);
+            }
+            
+            @Override
+            public void onChange(double v) {
+            }                      
+        };
+
+        return s;       
+    }
+    
+
 }
