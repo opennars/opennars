@@ -17,7 +17,6 @@
 
 package nars.test;
 
-import static javax.swing.text.html.HTML.Attribute.N;
 import nars.core.NAR;
 import nars.io.Number1DInput;
 import nars.io.TextOutput;
@@ -48,14 +47,15 @@ public class Number1DInputTest {
         
         NAR n = new NAR();
         
-        //new TextOutput(n, System.out);
+        new TextOutput(n, System.out);
         
         new Number1DInput(n, "x", x);
-        n.run(10);
         new Number1DInput(n, "y", y);
-        n.run(2000);
+        n.run(5000);
         Assert.assertTrue(true);        
     }
     
-    
+    public static void main(String[] args) {
+        new Number1DInputTest().test1();
+    }
 }
