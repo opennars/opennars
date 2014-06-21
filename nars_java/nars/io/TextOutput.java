@@ -110,7 +110,4 @@ public class TextOutput implements OutputChannel {
         }
     }
 
-    @Override
-    public void tickTimer() {
-    }
 }

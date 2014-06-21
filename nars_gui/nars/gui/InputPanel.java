@@ -70,20 +70,16 @@ public class InputPanel extends JPanel implements ActionListener {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-        c.ipadx = 3;
-        c.ipady = 3;
-        c.insets = new Insets(5, 5, 5, 5);
+        c.ipadx = 2;
+        c.ipady = 2;
+        c.insets = new Insets(2, 2, 2, 2);
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 1.0;
         c.weighty = 1.0;
         inputText = new JTextArea("");
-        inputText.setRows(2);
-        JScrollPane scrollPane = new JScrollPane(inputText);
-//        gridbag.setConstraints(inputText, c);
-        gridbag.setConstraints(scrollPane, c);
-        add(scrollPane);
-//        add(inputText);
+        inputText.setRows(3);        
+        add(new JScrollPane(inputText), c);
         c.weighty = 0.0;
         c.gridwidth = 1;
         okButton = new JButton("Eval");
@@ -102,7 +98,6 @@ public class InputPanel extends JPanel implements ActionListener {
         closeButton.addActionListener(this);
         gridbag.setConstraints(closeButton, c);
         //add(closeButton);
-        setBounds(0, 0, 600, 200);
         setVisible(true);
 
         this.reasoner = reasoner;
