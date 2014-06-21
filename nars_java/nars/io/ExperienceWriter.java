@@ -32,7 +32,7 @@ import nars.core.NAR;
  */
 public class ExperienceWriter implements OutputChannel {
 
-    private NAR reasoner;
+    private final NAR reasoner;
     /**
      * Input experience from a file
      */

@@ -23,7 +23,7 @@ import java.io.BufferedWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import nars.io.ExperienceReader;
+import nars.io.TextReadingExperience;
 import nars.io.ExperienceWriter;
 
 ;
@@ -88,7 +88,7 @@ public class NARRun {
      */
     public void init(String[] args) {
         if (args.length > 0) {
-            ExperienceReader experienceReader = new ExperienceReader(reasoner);
+            TextReadingExperience experienceReader = new TextReadingExperience(reasoner);
             experienceReader.includeFile(args[0]);
         }
         new ExperienceWriter(reasoner,
@@ -105,7 +105,7 @@ public class NARRun {
     }
 
     private void init(BufferedReader r, BufferedWriter w) {
-        ExperienceReader experienceReader = new ExperienceReader(reasoner);
+        TextReadingExperience experienceReader = new TextReadingExperience(reasoner);
         experienceReader.setBufferedReader(r);
         reasoner.addOutputChannel(new ExperienceWriter(reasoner,
                 new PrintWriter(w, true)));

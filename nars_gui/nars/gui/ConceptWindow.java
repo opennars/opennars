@@ -41,7 +41,7 @@ import nars.storage.BagObserver;
  * JWindow displaying the content of a Concept, such as beliefs, goals, and
  * questions
  */
-public class ConceptWindow extends NarsFrame implements ActionListener, EntityObserver {
+public class ConceptWindow extends Window implements ActionListener, EntityObserver {
 
     /**
      * Control buttons

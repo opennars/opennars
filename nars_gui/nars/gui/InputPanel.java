@@ -1,5 +1,5 @@
 /*
- * InputWindow.java
+ * InputPanel.java
  *
  * Copyright (C) 2008  Pei Wang
  *
@@ -25,21 +25,21 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import nars.io.ExperienceReader;
-import nars.core.NAR;
+import nars.io.TextReadingExperience;
+import static nars.gui.Window.SINGLE_WINDOW_COLOR;
 
 /**
  * Input window, accepting user tasks
  */
-public class InputWindow extends NarsFrame implements ActionListener {
+public class InputPanel extends JPanel implements ActionListener {
 
-    private NAR reasoner;
+    private NARSwing reasoner;
     /**
      * Control buttons
      */
@@ -64,9 +64,9 @@ public class InputWindow extends NarsFrame implements ActionListener {
      * @param reasoner The reasoner
      * @param title The title of the window
      */
-    public InputWindow(NAR reasoner, String title) {
-        super(title + " - Input Window");
-        getContentPane().setBackground(SINGLE_WINDOW_COLOR);
+    public InputPanel(NARSwing reasoner) {
+        super();
+        setBackground(SINGLE_WINDOW_COLOR);
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
@@ -78,6 +78,7 @@ public class InputWindow extends NarsFrame implements ActionListener {
         c.weightx = 1.0;
         c.weighty = 1.0;
         inputText = new JTextArea("");
+        inputText.setRows(2);
         JScrollPane scrollPane = new JScrollPane(inputText);
 //        gridbag.setConstraints(inputText, c);
         gridbag.setConstraints(scrollPane, c);
@@ -85,9 +86,9 @@ public class InputWindow extends NarsFrame implements ActionListener {
 //        add(inputText);
         c.weighty = 0.0;
         c.gridwidth = 1;
-        okButton = new JButton("OK");
+        okButton = new JButton("Eval");
         okButton.addActionListener(this);
-        gridbag.setConstraints(okButton, c);
+        gridbag.setConstraints(okButton, c);        
         add(okButton);
         holdButton = new JButton("Hold");
         holdButton.addActionListener(this);
@@ -100,7 +101,7 @@ public class InputWindow extends NarsFrame implements ActionListener {
         closeButton = new JButton("Hide");
         closeButton.addActionListener(this);
         gridbag.setConstraints(closeButton, c);
-        add(closeButton);
+        //add(closeButton);
         setBounds(0, 0, 600, 200);
         setVisible(true);
 
@@ -124,6 +125,8 @@ public class InputWindow extends NarsFrame implements ActionListener {
         JButton b = (JButton) e.getSource();
         if (b == okButton) {
             ready = true;
+            reasoner.evaluate(inputText.getText());
+            inputText.setText("");
         } else if (b == holdButton) {
             ready = false;
         } else if (b == clearButton) {
@@ -137,10 +140,7 @@ public class InputWindow extends NarsFrame implements ActionListener {
         setVisible(false);
     }
 
-    @Override
-    public void windowClosing(WindowEvent arg0) {
-        close();
-    }
+    
 
     /**
      * Accept text input in a tick, which can be multiple lines TODO some
@@ -170,7 +170,7 @@ public class InputWindow extends NarsFrame implements ActionListener {
                 text = text.substring(endOfLine + 1);	// text becomes rest of text
             }
             
-            new ExperienceReader(reasoner, line);
+            new TextReadingExperience(reasoner, line);
             
             inputText.setText(text);	// update input Text widget to rest of text
             if (text.isEmpty()) {

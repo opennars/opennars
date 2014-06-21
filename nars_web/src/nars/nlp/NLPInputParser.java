@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.Socket;
-import nars.io.ExperienceReader;
+import nars.io.TextReadingExperience;
 import nars.io.InputParser;
 import nars.io.Symbols;
 import nars.core.NAR;
@@ -140,7 +140,7 @@ python.execfile(NLPInputParser.class.getResourceAsStream("corenlp/stanford_to_na
             System.out.println(r);
             
             if (r.length() > 0) {
-                new ExperienceReader(nar, new BufferedReader( new StringReader(r)));            
+                new TextReadingExperience(nar, new BufferedReader( new StringReader(r)));            
                 return true;
             }
         }

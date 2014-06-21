@@ -33,7 +33,7 @@ import nars.storage.Memory;
 /**
  * JWindow accept a Term, then display the content of the corresponding Concept
  */
-public class TermWindow extends NarsFrame implements ActionListener {
+public class TermWindow extends Window implements ActionListener {
 
     /**
      * Display label

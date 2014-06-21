@@ -1,12 +1,12 @@
 body {
     padding-left: 2em;
+    padding-top: 0.25em;
     padding-right: 2em;
     font-size: 100%;
     font-family: Arial, sans;
 }
 #io {  
     padding-top: 1.8em;
-
     width: 100%;
     height: 95%;
 }
@@ -50,11 +50,11 @@ pre { margin: 0; }
     position: fixed;
     left: 0;
     top: 0;
-    background-color: rgba(225,225,225,0.9);
+    background-color: rgba(225,225,225,0.95);
     width: 100%;
-    padding: 5px;
     font-size: 150%;
     z-index: 5;
+    padding: 4px;
 }
 #menu button {
     vertical-align:top;
@@ -63,9 +63,31 @@ pre { margin: 0; }
     opacity: 0.25;
     letter-spacing: -5px;    
     cursor: pointer;
+    float: right;
+    padding-right: 0.4em;
 }
 #title:hover {
     opacity: 1.0;
     letter-spacing: -5px;    
     
+}
+#menubuttons {
+    float: left;    
+}
+#menubuttons button {
+    margin: 0;
+    font-size: 100%;
+    color: #777;
+}
+
+
+.active {
+    color: #000 !important;
+}
+#volume {
+    background-color: white;
+    float: left;
+    clear:none;
+    height: 2em;
+    margin-top: 0.5em;
 }

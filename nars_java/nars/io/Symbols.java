@@ -117,6 +117,7 @@ public class Symbols {
     public static final String RESET_COMMAND = "*reset";
     public static final String STOP_COMMAND = "*stop";
     public static final String START_COMMAND = "*start";
+    public static final String SILENCE_COMMAND = "*silence";
     
     
     /* Stamp, display only */
