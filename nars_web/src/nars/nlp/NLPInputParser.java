@@ -150,4 +150,10 @@ python.execfile(NLPInputParser.class.getResourceAsStream("corenlp/stanford_to_na
         return false;
     }
     
+    /*
+    public static void main(String[] args) {
+        NAR n = new NAR();
+        new NLPInputParser("host", 9100).parse(n, "This is a sentence.", null);
+    }
+    */
 }
