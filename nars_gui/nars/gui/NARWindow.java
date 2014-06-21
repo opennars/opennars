@@ -1,25 +1,26 @@
 /*
- * MainWindow.java
+ * NARWindow.java
  *
  * Copyright (C) 2008  Pei Wang
  *
- * This file is part of Open-NARS.
+ * This file is part of Open-NARSwing.
  *
- * Open-NARS is free software; you can redistribute it and/or modify
+ * Open-NARSwing is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
- * Open-NARS is distributed in the hope that it will be useful,
+ * Open-NARSwing is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Open-NARSwing.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.gui;
 
+import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,7 +34,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -43,27 +43,25 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.io.ExperienceReader;
+import nars.io.TextReadingExperience;
 import nars.io.ExperienceWriter;
 import nars.io.IInferenceRecorder;
 import nars.io.OutputChannel;
-import nars.main.NARS;
-import nars.main.Reasoner;
-import nars.core.NAR;
 import nars.core.Parameters;
 import nars.storage.Memory;
 
 /**
- * Main window of NARS GUI
+ * Main window of NARSwing GUI
  */
-public class MainWindow extends NarsFrame implements ActionListener, OutputChannel {
+public class NARWindow extends Window implements ActionListener, OutputChannel {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4*1024; //set to zero for max speed, or a large number to reduce GUI updates
 
     /**
      * Reference to the reasoner
      */
-    private final NAR reasoner;
+    private final NARSwing reasoner;
+    
     /**
      * Reference to the memory
      */
@@ -75,7 +73,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     /**
      * Reference to the experience reader
      */
-    private ExperienceReader experienceReader;
+    private TextReadingExperience experienceReader;
     /**
      * Reference to the experience writer
      */
@@ -87,15 +85,12 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     /**
      * Control buttons
      */
-    private final JButton stopButton, walkButton, runButton, exitButton;
+    private final JButton stopButton, walkButton, runButton;
     /**
      * Clock display field
      */
-    private final JTextField timerText;
-    /**
-     * JLabel of the clock
-     */
-    private final JLabel timerLabel;
+    private final JTextArea timerText;
+
     /**
      * System clock - number of cycles since last output
      */
@@ -108,7 +103,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     /**
      * Input experience window
      */
-    public InputWindow inputWindow;
+    public InputPanel inputWindow;
     /**
      * JWindow to accept a Term to be looked into
      */
@@ -124,13 +119,12 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
      * @param reasoner
      * @param title
      */
-    public MainWindow(Reasoner reasoner, String title) {
+    public NARWindow(NARSwing reasoner, String title) {
         super(title);
         this.reasoner = reasoner;
         memory = reasoner.getMemory();
         record = memory.getRecorder();
         experienceWriter = new ExperienceWriter(reasoner);
-        inputWindow = reasoner.getInputWindow();
         conceptWin = new TermWindow(memory);
         forgetTW = new ParameterWindow("Task Forgetting Rate", Parameters.TASK_LINK_FORGETTING_CYCLE, memory.getTaskForgettingRate());
         forgetBW = new ParameterWindow("Belief Forgetting Rate", Parameters.TERM_LINK_FORGETTING_CYCLE, memory.getBeliefForgettingRate());
@@ -186,9 +180,9 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
 
-        c.ipadx = 3;
-        c.ipady = 3;
-        c.insets = new Insets(5, 5, 5, 5);
+        c.ipadx = 2;
+        c.ipady = 2;
+        c.insets = new Insets(4, 4, 4, 4);
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 1.0;
@@ -196,7 +190,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
 
         ioText = new JTextArea("");
         ioText.setBackground(DISPLAY_BACKGROUND_COLOR);
-        ioText.setEditable(true);
+        ioText.setEditable(false);        
         JScrollPane scrollPane = new JScrollPane(ioText);
         gridbag.setConstraints(scrollPane, c);
         add(scrollPane);
@@ -204,37 +198,39 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
+        c.fill = GridBagConstraints.VERTICAL;
 
-        runButton = new JButton(" Run ");
+        runButton = new JButton("Run");
         gridbag.setConstraints(runButton, c);
         runButton.addActionListener(this);
         add(runButton);
-        walkButton = new JButton(" Walk ");
+        walkButton = new JButton("Walk");
         gridbag.setConstraints(walkButton, c);
         walkButton.addActionListener(this);
         add(walkButton);
-        stopButton = new JButton(" Stop ");
+        stopButton = new JButton("Stop");
         gridbag.setConstraints(stopButton, c);
         stopButton.addActionListener(this);
         add(stopButton);
-        timerLabel = new JLabel("Clock:", JLabel.RIGHT);
-        timerLabel.setBackground(MAIN_WINDOW_COLOR);
-        gridbag.setConstraints(timerLabel, c);
-        add(timerLabel);
+        
+
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 0.1;
+        
+        timerText = new JTextArea("");        
+        timerText.setToolTipText("Clock");
+        timerText.setRows(2);
+        timerText.setBackground(DISPLAY_BACKGROUND_COLOR);
+        timerText.setMaximumSize(new Dimension(100, 10));
+        timerText.setEditable(false);
+        add(timerText, c);
 
         c.weightx = 1.0;
-        timerText = new JTextField("");
-        timerText.setBackground(DISPLAY_BACKGROUND_COLOR);
-        timerText.setEditable(false);
-        gridbag.setConstraints(timerText, c);
-        add(timerText);
-
-        c.weightx = 0.0;
-        exitButton = new JButton(" Exit ");
-        gridbag.setConstraints(exitButton, c);
-        exitButton.addActionListener(this);
-        add(exitButton);
-
+        c.gridwidth = GridBagConstraints.REMAINDER;
+ 
+        inputWindow = new InputPanel(reasoner);
+        add(inputWindow, c);
+        
         setBounds(0, 200, 600, 560);
         setVisible(true);
 
@@ -275,7 +271,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
 
         while ((s = r.readLine())!=null) {
             ioText.append(s + "\n");            
-            new ExperienceReader(reasoner, s); //TODO use a stream to avoid reallocate experiencereader
+            new TextReadingExperience(reasoner, s); //TODO use a stream to avoid reallocate experiencereader
         }
     }
     
@@ -308,7 +304,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
     final Runnable updateTimer = new Runnable() {
         @Override
         public void run() {
-            timerText.setText(memory.getTime() + " :: " + timer);
+            timerText.setText(memory.getTime() + "\n" + timer);            
         }
     };
 
@@ -334,25 +330,21 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
         Object obj = e.getSource();
         if (obj instanceof JButton) {
             if (obj == runButton) {
-                nextOutput(null);
-                timerLabel.setText("Running..");
+                //timerLabel.setText("Running..");
+                runButton.setEnabled(false);
                 reasoner.start(0);
             } else if (obj == stopButton) {
-                nextOutput(null);
+                runButton.setEnabled(true);
                 reasoner.stop();
                 SwingUtilities.invokeLater(updateTimer);
             } else if (obj == walkButton) {
-                nextOutput(null);
-                reasoner.walk(1);
-                nextOutput(null);
+                reasoner.run(0, false);
                 SwingUtilities.invokeLater(updateTimer);
-            } else if (obj == exitButton) {
-                close();
             }
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
             if (label.equals("Load Experience")) {
-                experienceReader = new ExperienceReader(reasoner);
+                experienceReader = new TextReadingExperience(reasoner);
                 openLoadFile();
             } else if (label.equals("Save Experience")) {
                 if (savingExp) {
@@ -383,7 +375,7 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
                 record.show();
                 record.play();
             } else if (label.equals("Input Window")) {
-                inputWindow.setVisible(true);
+                inputWindow.setVisible(!inputWindow.isVisible());
             } else if (label.equals("Task Forgetting Rate")) {
                 forgetTW.setVisible(true);
             } else if (label.equals("Belief Forgetting Rate")) {
@@ -394,10 +386,10 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
                 silentW.setVisible(true);
             } else if (label.equals("Related Information")) {
 //                MessageDialog web = 
-                new MessageDialog(this, NARS.WEBSITE);
+                new MessageDialog(this, NARSwing.WEBSITE);
             } else if (label.equals("About NARS")) {
 //                MessageDialog info = 
-                new MessageDialog(this, NARS.INFO);
+                new MessageDialog(this, NARSwing.INFO);
             } else {
 //                MessageDialog ua = 
                 new MessageDialog(this, UNAVAILABLE);
@@ -439,9 +431,9 @@ public class MainWindow extends NarsFrame implements ActionListener, OutputChann
                 undisplayedExperience.append(line).append("\n");
             }
         }
-        if ((lines == null) || _firstOutput) {
+        //if ((lines == null) || _firstOutput) {
             SwingUtilities.invokeLater(nextOutputRunnable);
-        }
+        //}
     }
     
     private Runnable nextOutputRunnable = new Runnable() {

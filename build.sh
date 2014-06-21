@@ -11,7 +11,7 @@ javac -d classes -Xlint:unchecked \
         -cp "lib/junit-4.11.jar:lib/java_websocket.jar:lib/gson-2.2.4.jar:lib/jython-2.7-b2.jar"
 
 # javac -d classes -Xlint:unchecked nars/*/*.java
-echo 'Main-Class: nars.main.NARS' > manifest.txt
+echo 'Main-Class: nars.gui.NARSwing' > manifest.txt
 echo 'Class-Path: lib/java_websocket.jar:lib/gson-2.2.4.jar:lib/jython-2.7-b2.jar' >> manifest.txt
 
 jar cvfm NARS.jar manifest.txt -C classes . 

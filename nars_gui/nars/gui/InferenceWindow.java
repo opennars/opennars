@@ -31,7 +31,7 @@ import nars.io.*;
 /**
  * JWindow displaying inference log
  */
-public class InferenceWindow extends NarsFrame implements ActionListener, ItemListener {
+public class InferenceWindow extends Window implements ActionListener, ItemListener {
 
     /**
      * Control buttons

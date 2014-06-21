@@ -1,5 +1,5 @@
 /*
- * NarsFrame.java
+ * Window.java
  *
  * Copyright (C) 2008  Pei Wang
  *
@@ -28,33 +28,37 @@ import java.awt.event.*;
 /**
  * Specify shared properties of NARS windows
  */
-public abstract class NarsFrame extends JFrame implements WindowListener {
-
+public abstract class Window extends JFrame implements WindowListener {
+    //http://paletton.com/#uid=70u0u0kllllaFw0g0qFqFg0w0aF
+    
     /**
      * Color for the background of the main window
      */
-    static final Color MAIN_WINDOW_COLOR = new Color(150, 150, 255);
+    static final Color MAIN_WINDOW_COLOR = new Color( 172,170,194);
     /**
      * Color for the background of the windows with unique instantiation
      */
-    static final Color SINGLE_WINDOW_COLOR = new Color(200, 110, 245);
+    static final Color SINGLE_WINDOW_COLOR = new Color(213,212,223);
     /**
      * Color for the background of the windows with multiple instantiations
      */
-    static final Color MULTIPLE_WINDOW_COLOR = new Color(155, 245, 155);
+    static final Color MULTIPLE_WINDOW_COLOR = new Color(34,102,102);
     /**
      * Color for the background of the text components that are read-only
      */
-    static final Color DISPLAY_BACKGROUND_COLOR = new Color(230, 255, 230);
+    static final Color DISPLAY_BACKGROUND_COLOR = new Color(240,240,240);
     /**
      * Color for the background of the text components that are being saved into
      * a file
      */
-    static final Color SAVING_BACKGROUND_COLOR = new Color(255, 255, 205);
+    static final Color SAVING_BACKGROUND_COLOR = new Color(230,230,230);
+    
     /**
      * Font for NARS GUI
      */
-    static final Font NarsFont = new Font("Helvetica", Font.PLAIN, 11);
+    static final Font NarsFont = new Font("Arial", Font.PLAIN, 13);
+    
+    
     /**
      * Message for unimplemented functions
      */
@@ -65,9 +69,8 @@ public abstract class NarsFrame extends JFrame implements WindowListener {
     /**
      * Default constructor
      */
-    NarsFrame() {
-        super();
-        addWindowListener(this);
+    Window() {
+        this(" ");
     }
 
     /**
@@ -75,7 +78,7 @@ public abstract class NarsFrame extends JFrame implements WindowListener {
      *
      * @param title The title displayed by the window
      */
-    NarsFrame(String title) {
+    Window(String title) {
         super(" " + title);
         setFont(NarsFont);
         addWindowListener(this);

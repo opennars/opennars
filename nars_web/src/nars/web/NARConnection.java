@@ -8,7 +8,7 @@ package nars.web;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import nars.io.ExperienceReader;
+import nars.io.TextReadingExperience;
 import nars.io.ExperienceWriter;
 import nars.io.ExperienceWriter.LineOutput;
 import nars.core.NAR;
@@ -34,7 +34,7 @@ abstract public class NARConnection implements LineOutput {
     }
 
     public void read(final String message) {
-        ExperienceReader e = new ExperienceReader(nar, new BufferedReader( new StringReader(message)), nlp);
+        TextReadingExperience e = new TextReadingExperience(nar, new BufferedReader( new StringReader(message)), nlp);
                 
         if (!running)
             resume();

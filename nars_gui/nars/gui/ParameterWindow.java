@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * JWindow displaying a system parameter that can be adjusted in run time
  */
-public class ParameterWindow extends NarsFrame implements ActionListener, AdjustmentListener, WindowFocusListener {
+public class ParameterWindow extends Window implements ActionListener, AdjustmentListener, WindowFocusListener {
 
     /** Display label */
     private JLabel valueLabel;

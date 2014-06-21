@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.HashMap;
 
 import nars.entity.Stamp;
-import nars.gui.MainWindow;
+import nars.gui.NARWindow;
 import nars.io.InputChannel;
 import nars.io.OutputChannel;
 import nars.storage.Memory;
@@ -86,9 +86,14 @@ public class NAR implements Runnable {
 
     /**
      * Reset the system with an empty memory and reset clock. Called locally and
-     * from {@link MainWindow}.
+     * from {@link NARWindow}.
      */
     final String resetMessage = " OUT: reset";
+
+    public void setSilenceValue(int s) {
+        this.silenceValue.set(s);
+    }
+    
     
     public void reset() {
             
@@ -141,7 +146,21 @@ public class NAR implements Runnable {
             output(" OUT: thinking " + n + (n > 1 ? " cycles" : " cycle"));
         walkingSteps = n;
     }
-
+    
+    public void walk(final int steps, final boolean immediate) {
+        if (immediate) {
+            running = true;
+            paused = false;
+            tick();
+        }
+        
+        walk(steps);
+        
+        if (immediate) {
+            running = false;
+            paused = true;            
+        }
+    }
     
     /**
      * Repeatedly execute NARS working cycle. This method is called when the

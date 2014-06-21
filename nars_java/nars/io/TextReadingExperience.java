@@ -1,5 +1,5 @@
 /*
- * ExperienceReader.java
+ * TextReadingExperience.java
  *
  * Copyright (C) 2008  Pei Wang
  *
@@ -69,7 +69,7 @@ import nars.storage.Memory;
 /**
  * To read and write experience as Task streams
  */
-public class ExperienceReader extends Symbols implements InputChannel {
+public class TextReadingExperience extends Symbols implements InputChannel {
 
     /**
      * Reference to the reasoner
@@ -98,22 +98,22 @@ public class ExperienceReader extends Symbols implements InputChannel {
      *
      * @param reasoner Backward link to the reasoner
      */    
-    public ExperienceReader(NAR reasoner) {
+    public TextReadingExperience(NAR reasoner) {
         this(reasoner, new LinkedList(defaultParsers));
     }
     
-    public ExperienceReader(NAR reasoner, List<InputParser> parsers) {
+    public TextReadingExperience(NAR reasoner, List<InputParser> parsers) {
         super();
         this.nar = reasoner;
         this.inExp = null;
         this.parsers = parsers;
     }
     
-    public ExperienceReader(NAR reasoner, String input, InputParser... additionalParsers) {
+    public TextReadingExperience(NAR reasoner, String input, InputParser... additionalParsers) {
         this(reasoner, new BufferedReader(new StringReader(input)), additionalParsers);
     }
     
-    public ExperienceReader(NAR reasoner, BufferedReader input, InputParser... additionalParsers) {
+    public TextReadingExperience(NAR reasoner, BufferedReader input, InputParser... additionalParsers) {
         this(reasoner);
         setBufferedReader(input);
         
@@ -252,6 +252,26 @@ public class ExperienceReader extends Symbols implements InputChannel {
             }
         });
         
+        //silence
+        defaultParsers.add(new InputParser() {
+            @Override
+            public boolean parse(NAR nar, String input, InputParser lastHandler) {                
+
+                if (input.indexOf(Symbols.SILENCE_COMMAND)==0) {
+                    String[] p = input.split("=");
+                    if (p.length == 2) {
+                        int silenceLevel = Integer.parseInt(p[1]);
+                        nar.setSilenceValue(silenceLevel);
+                        nar.output("Silence level: " + silenceLevel);
+                    }
+                    
+                    return true;
+                }
+
+                return false;                
+            }
+        });
+        
         //URL include
         defaultParsers.add(new InputParser() {
             @Override
@@ -336,7 +356,7 @@ public class ExperienceReader extends Symbols implements InputChannel {
             URL u = new URL(url);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(u.openStream()));            
-            nar.addInputChannel(new ExperienceReader(nar, in));
+            nar.addInputChannel(new TextReadingExperience(nar, in));
         } catch (Exception ex) {
             nar.output("includeURL: " + ex.toString());
         }

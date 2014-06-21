@@ -46,7 +46,7 @@ import nars.storage.BagObserver;
 /**
  * JWindow display the priority distribution of items within a given bag
  */
-public class BagWindow<BagType extends Item> extends NarsFrame implements ActionListener, AdjustmentListener,
+public class BagWindow<BagType extends Item> extends Window implements ActionListener, AdjustmentListener,
 		BagObserver<BagType> {
 
     /**
@@ -91,9 +91,9 @@ public class BagWindow<BagType extends Item> extends NarsFrame implements Action
         valueLabel = new JLabel( "00", JLabel.RIGHT);
         valueBar = new JScrollBar(Scrollbar.HORIZONTAL, showLevel, 0, 1, Parameters.BAG_LEVEL);
         valueBar.addAdjustmentListener(this);
-        stopButton = new JButton(NarsFrame.OFF_LABEL);
+        stopButton = new JButton(Window.OFF_LABEL);
         stopButton.addActionListener(this);
-        playButton = new JButton(NarsFrame.ON_LABEL);
+        playButton = new JButton(Window.ON_LABEL);
         playButton.addActionListener(this);
         closeButton = new JButton("Close");
         closeButton.addActionListener(this);
