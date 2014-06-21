@@ -6,15 +6,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.Socket;
-import nars.io.TextReadingExperience;
-import nars.io.InputParser;
+import nars.io.TextInput;
+import nars.io.TextInputParser;
 import nars.io.Symbols;
 import nars.core.NAR;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
 
-public class NLPInputParser implements InputParser {
+public class NLPInputParser implements TextInputParser {
     
     final static PythonInterpreter python = new PythonInterpreter();
     static {
@@ -60,7 +60,7 @@ python.execfile(NLPInputParser.class.getResourceAsStream("corenlp/stanford_to_na
     }
     
     @Override
-    public boolean parse(NAR nar, String input, InputParser lastHandler) {
+    public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
         try {
             boolean explicit = true;
             char c = input.charAt(0);
@@ -140,7 +140,7 @@ python.execfile(NLPInputParser.class.getResourceAsStream("corenlp/stanford_to_na
             System.out.println(r);
             
             if (r.length() > 0) {
-                new TextReadingExperience(nar, new BufferedReader( new StringReader(r)));            
+                new TextInput(nar, new BufferedReader( new StringReader(r)));            
                 return true;
             }
         }

@@ -30,8 +30,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import nars.core.NAR;
 import nars.entity.Sentence;
-import nars.io.TextReadingExperience;
-import nars.io.ExperienceWriter;
+import nars.io.TextInput;
+import nars.io.TextOutput;
 import nars.io.Symbols;
 import static org.junit.Assert.assertTrue;
 
@@ -84,7 +84,7 @@ public class TestUtil {
 
     public Sentence parseOutput(String o) {
         //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
-        return TextReadingExperience.parseOutput(o);
+        return TextInput.parseOutput(o);
     }
     
     protected void testNAL(String path) {
@@ -94,9 +94,9 @@ public class TestUtil {
         final LinkedList<String> out = new LinkedList();
         final LinkedList<String> expressions = new LinkedList();
 
-        new TextReadingExperience(n, getExample(path));
-        //new ExperienceWriter(n, new PrintWriter(System.out));
-        new ExperienceWriter(n) {
+        new TextInput(n, getExample(path));
+        //new TextOutput(n, new PrintWriter(System.out));
+        new TextOutput(n) {
             @Override
             public void nextOutput(ArrayList<String> lines) {
                 for (String s : lines) {
@@ -157,7 +157,7 @@ public class TestUtil {
             long freeMemStart = Runtime.getRuntime().freeMemory();
 
             n.reset();
-            new TextReadingExperience(n, getExample(path));
+            new TextInput(n, getExample(path));
             n.run(extraCycles, false);
 
             if (warmups == 0) {

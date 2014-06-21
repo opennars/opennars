@@ -39,15 +39,14 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.io.TextReadingExperience;
-import nars.io.ExperienceWriter;
-import nars.io.IInferenceRecorder;
+import nars.io.TextInput;
+import nars.io.TextOutput;
 import nars.io.OutputChannel;
 import nars.core.Parameters;
+import nars.inference.InferenceRecorder;
 import nars.storage.Memory;
 
 /**
@@ -69,15 +68,15 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
     /**
      * Reference to the inference recorder
      */
-    private IInferenceRecorder record;
+    private InferenceRecorder record;
     /**
      * Reference to the experience reader
      */
-    private TextReadingExperience experienceReader;
+    private TextInput experienceReader;
     /**
      * Reference to the experience writer
      */
-    private final ExperienceWriter experienceWriter;
+    private final TextOutput experienceWriter;
     /**
      * Experience display area
      */
@@ -124,14 +123,14 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
         this.reasoner = reasoner;
         memory = reasoner.getMemory();
         record = memory.getRecorder();
-        experienceWriter = new ExperienceWriter(reasoner);
+        experienceWriter = new TextOutput(reasoner);
         conceptWin = new TermWindow(memory);
         forgetTW = new ParameterWindow("Task Forgetting Rate", Parameters.TASK_LINK_FORGETTING_CYCLE, memory.getTaskForgettingRate());
         forgetBW = new ParameterWindow("Belief Forgetting Rate", Parameters.TERM_LINK_FORGETTING_CYCLE, memory.getBeliefForgettingRate());
         forgetCW = new ParameterWindow("Concept Forgetting Rate", Parameters.CONCEPT_FORGETTING_CYCLE, memory.getConceptForgettingRate());
         silentW = new ParameterWindow("Report Silence Level", Parameters.SILENT_LEVEL, reasoner.getSilenceValue());
 
-        record = new InferenceRecorder();
+        record = new InferenceLogger();
         memory.setRecorder(record);
 
         getContentPane().setBackground(MAIN_WINDOW_COLOR);
@@ -271,7 +270,7 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
 
         while ((s = r.readLine())!=null) {
             ioText.append(s + "\n");            
-            new TextReadingExperience(reasoner, s); //TODO use a stream to avoid reallocate experiencereader
+            new TextInput(reasoner, s); //TODO use a stream to avoid reallocate experiencereader
         }
     }
     
@@ -344,7 +343,7 @@ public class NARWindow extends Window implements ActionListener, OutputChannel {
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
             if (label.equals("Load Experience")) {
-                experienceReader = new TextReadingExperience(reasoner);
+                experienceReader = new TextInput(reasoner);
                 openLoadFile();
             } else if (label.equals("Save Experience")) {
                 if (savingExp) {

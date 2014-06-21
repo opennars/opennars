@@ -51,9 +51,8 @@ public class Sentence implements Cloneable {
     /**
      * Whether the sentence can be revised
      */
-    private final String key;
-    private final String briefString;
-    private final String string;
+    private String key;
+
 
     private boolean revisible;
 
@@ -87,27 +86,7 @@ public class Sentence implements Cloneable {
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = revisible;
-        
-        
-        final String contentToString = content.toString();
-        final String truthString = truth!=null ? truth.toStringBrief() : null;
-        final String stampString = stamp.toString();
-        
-        int stringLength = contentToString.length() + 1 + 1 + stampString.length();
-        if (truth!=null)
-            stringLength += truthString.length();
-                
-        final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
-            .append(punctuation).append(" ");
-        if (truth != null) {
-            k.append(truthString);
-        }
-        
-        key = k.toString();        
-                
-        briefString = string = k.append(stampString).toString();
-                
-        //briefString = toKey() + stampString;
+  
                 
     }
 
@@ -250,7 +229,7 @@ public class Sentence implements Cloneable {
      */
     @Override
     public String toString() {
-        return string;
+        return toStringBrief();
     }
 
     /**
@@ -259,7 +238,7 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toStringBrief() {
-        return briefString;
+        return toKey() + stamp.toString();
     }
 
     /**
@@ -268,6 +247,24 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toKey() {
+        if (key == null) {
+            final String contentToString = content.toString();
+            final String truthString = truth!=null ? truth.toStringBrief() : null;
+            final String stampString = stamp.toString();
+
+            int stringLength = contentToString.length() + 1 + 1 + stampString.length();
+            if (truth!=null)
+                stringLength += truthString.length();
+
+            final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
+                .append(punctuation).append(" ");
+            if (truth != null) {
+                k.append(truthString);
+            }
+
+            key = k.toString();        
+            
+        }
         return key;
     }
 }

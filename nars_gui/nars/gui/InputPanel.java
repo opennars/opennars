@@ -31,7 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import nars.io.TextReadingExperience;
+import nars.io.TextInput;
 import static nars.gui.Window.SINGLE_WINDOW_COLOR;
 
 /**
@@ -170,7 +170,7 @@ public class InputPanel extends JPanel implements ActionListener {
                 text = text.substring(endOfLine + 1);	// text becomes rest of text
             }
             
-            new TextReadingExperience(reasoner, line);
+            new TextInput(reasoner, line);
             
             inputText.setText(text);	// update input Text widget to rest of text
             if (text.isEmpty()) {

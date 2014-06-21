@@ -8,9 +8,9 @@ package nars.web;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import nars.io.TextReadingExperience;
-import nars.io.ExperienceWriter;
-import nars.io.ExperienceWriter.LineOutput;
+import nars.io.TextInput;
+import nars.io.TextOutput;
+import nars.io.TextOutput.LineOutput;
 import nars.core.NAR;
 import nars.nlp.NLPInputParser;
 
@@ -20,7 +20,7 @@ import nars.nlp.NLPInputParser;
  */
 abstract public class NARConnection implements LineOutput {
     public final NAR nar;
-    private final ExperienceWriter writer;
+    private final TextOutput writer;
     int cycleIntervalMS;
     private final NLPInputParser nlp;
         
@@ -30,11 +30,11 @@ abstract public class NARConnection implements LineOutput {
         this.cycleIntervalMS = cycleIntervalMS;
      
         
-        this.writer = new ExperienceWriter(nar, this);
+        this.writer = new TextOutput(nar, this);
     }
 
     public void read(final String message) {
-        TextReadingExperience e = new TextReadingExperience(nar, new BufferedReader( new StringReader(message)), nlp);
+        TextInput e = new TextInput(nar, new BufferedReader( new StringReader(message)), nlp);
                 
         if (!running)
             resume();
