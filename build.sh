@@ -26,3 +26,14 @@ echo or
 echo 'java -cp NARS.jar nars.main_nogui.NARSBatch nars-dist/Examples/Example-NAL1-edited.txt'
 echo or
 echo 'java -cp "NARS.jar:lib/*" nars.web.NARServer'
+
+echo ''
+echo 'Set look & feel: -Dswing.defaultlaf=...'
+echo '  com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
+echo '  com.sun.java.swing.plaf.windows.WindowsLookAndFeel'
+echo '  javax.swing.plaf.metal.MetalLookAndFeel'
+echo '  com.sun.java.swing.plaf.motif.MotifLookAndFeel'
+
+
+
+

@@ -21,6 +21,7 @@
 package nars.gui;
 
 import java.io.IOException;
+import javax.swing.UIManager;
 import nars.core.CommandLineParameters;
 import nars.core.NAR;
 import nars.core.NARRun;
@@ -44,6 +45,8 @@ public class NARSwing extends NAR  {
             " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/";
 
+
+    
     /**
      * The unique main window
      */

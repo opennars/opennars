@@ -1,6 +1,5 @@
 package nars.core;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,7 +9,7 @@ import java.util.HashMap;
 import nars.entity.Stamp;
 import nars.gui.NARWindow;
 import nars.io.InputChannel;
-import nars.io.OutputChannel;
+import nars.io.Output;
 import nars.io.Symbols;
 import nars.storage.Memory;
 
@@ -19,7 +18,7 @@ import nars.storage.Memory;
  * <p>
  * An instantation of a NARS logic processor, useful for batch functionality; 
 */
-public class NAR implements Runnable {
+public class NAR implements Runnable, Output {
 
     
     private Thread thread = null;
@@ -46,7 +45,7 @@ public class NAR implements Runnable {
     /**
      * The output channels of the reasoner
      */
-    protected List<OutputChannel> outputChannels;
+    protected List<Output> outputChannels;
     /**
      * System clock, relatively defined to guarantee the repeatability of
      * behaviors
@@ -103,7 +102,7 @@ public class NAR implements Runnable {
         memory.init();
         Stamp.init();
         
-        output(resetMessage);
+        output(Channel.OUT, resetMessage);
                 
     }
 
@@ -119,11 +118,11 @@ public class NAR implements Runnable {
         inputChannels.remove(channel);
     }
 
-    public void addOutputChannel(OutputChannel channel) {
+    public void addOutputChannel(Output channel) {
         outputChannels.add(channel);
     }
 
-    public void removeOutputChannel(OutputChannel channel) {
+    public void removeOutputChannel(Output channel) {
         outputChannels.remove(channel);
     }
 
@@ -144,7 +143,7 @@ public class NAR implements Runnable {
      */
     public void walk(int n) {
         if (DEBUG)
-            output(" OUT: thinking " + n + (n > 1 ? " cycles" : " cycle"));
+            output(Channel.OUT, "thinking " + n + (n > 1 ? " cycles" : " cycle"));
         walkingSteps = n;
     }
     
@@ -215,19 +214,18 @@ public class NAR implements Runnable {
     
     @Override public void run() {
         
-        while (/*(narsThread == thisThread) && */ running) {            
+        while (running) {            
             try {
-                // NOTE: try/catch not necessary for input errors , but may be useful for other troubles
                 tick();
-            } catch (RuntimeException re) {
-                
-                String errorMsg = " " + Symbols.ERROR_LINE + ": " + re;
-                output(errorMsg + " " + Arrays.asList(re.getStackTrace()).toString());
-                System.err.println(errorMsg);
-                re.printStackTrace();
+            } catch (RuntimeException re) {                
+                output(Channel.ERR, re + " " + Arrays.asList(re.getStackTrace()));
+                if (DEBUG) {
+                    System.err.println(re);                
+                    re.printStackTrace();
+                }
             }
             catch (Exception e) {
-                System.err.println("run: " + e);
+                System.err.println(e);
                 e.printStackTrace();
             }
             
@@ -252,8 +250,8 @@ public class NAR implements Runnable {
                 System.out.println("// doTick: "
                         + "walkingSteps " + walkingSteps
                         + ", clock " + clock
-                        + ", getTimer " + getSystemClock()
-                        + "\n//    memory.getExportStrings() " + memory.getExportStrings());
+                        + ", getTimer " + getSystemClock());
+
                 System.out.flush();
             }
         }
@@ -263,7 +261,7 @@ public class NAR implements Runnable {
 
 
 
-            for (InputChannel channelIn : inputChannels) {
+            for (final InputChannel channelIn : inputChannels) {
                 if (DEBUG) {
                     System.out.println("Input: " + channelIn);
                 }
@@ -278,19 +276,14 @@ public class NAR implements Runnable {
             }
             finishedInputs = !reasonerShouldRun;
 
-            for (InputChannel c : closedInputChannels) {
+            for (final InputChannel c : closedInputChannels) {
                 inputChannels.remove(c);
             }
             closedInputChannels.clear();
         
         }
                 
-        // forward to output Channels
-        final ArrayList<String> output = memory.getExportStrings();
-        if (!output.isEmpty()) {
-            output(output);
-            output.clear();	// this will trigger display the current value of timer in Memory.report()
-        }
+
 
         if (((running || walkingSteps > 0)) && (!paused)) {
             clock++;
@@ -304,15 +297,10 @@ public class NAR implements Runnable {
                 
     }
     
-    public void output(final ArrayList<String> output) {
-        for (final OutputChannel channelOut : outputChannels)
-            channelOut.nextOutput(output);
-    }
-    final private ArrayList<String> _l = new ArrayList(1);
-    public void output(final String o) {       
-        _l.clear();
-        _l.add(o);
-        output(_l);
+    @Override
+    public void output(final Channel channel, final Object o) {       
+        for (final Output channelOut : outputChannels)
+            channelOut.output(channel, o);
     }
 
 

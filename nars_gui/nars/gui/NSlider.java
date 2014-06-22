@@ -18,22 +18,23 @@
 package nars.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.text.NumberFormat;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JLabel;
 import javax.swing.plaf.basic.BasicBorders;
-import org.python.google.common.util.concurrent.AtomicDouble;
+
+
 
 /**
  *
  * @author me
  */
 public class NSlider extends JLabel implements MouseListener, MouseMotionListener {
-    final AtomicDouble value;
+    final AtomicReference<Double> value;
     private final double min;
     private final double max;
     private Color barColor = null;
@@ -41,10 +42,10 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     NumberFormat nf = NumberFormat.getInstance();
      
     public NSlider(double initialValue, double min, double max) {
-        this(new AtomicDouble(initialValue), min, max);
+        this(new AtomicReference<Double>(initialValue), min, max);
     }
     
-    public NSlider(AtomicDouble value, double min, double max) {
+    public NSlider(AtomicReference<Double> value, double min, double max) {
         super();
         
         nf.setMaximumFractionDigits(3);
@@ -59,7 +60,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         
     }
 
-    public double value() { return value.doubleValue(); }
+    public double value() { return value.get().doubleValue(); }
         
     @Override
     public void paint(Graphics g) {
@@ -67,9 +68,12 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         int h = getHeight();
         g.clearRect(0, 0, w, h);
 
-        double p = (value.doubleValue() - min) / (max-min);
+        double p = (value.get().doubleValue() - min) / (max-min);
         if (barColor == null) {
-            g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.5f, 0.9f));
+            //Green->Yellow->Red
+            //g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.9f));
+             g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.1f, 0.8f + 0.15f * (1f - (float)p)));
+            
         }
         else {
             g.setColor(barColor);
@@ -88,7 +92,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     @Override
     public String getText() {
         if (value!=null)
-            return nf.format(value.doubleValue());
+            return nf.format(value.get().doubleValue());
         return "";
     }
     
@@ -119,7 +123,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     }
     
     public void setValue(double v) {
-        if (v != value.doubleValue()) {
+        if (v != value.get().doubleValue()) {
             value.set( v );     
             onChange(v);
         }
