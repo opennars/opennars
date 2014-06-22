@@ -23,7 +23,6 @@ package nars.io;
 
 import java.awt.FileDialog;
 import java.io.*;
-import java.util.*;
 
 import nars.core.NAR;
 
@@ -96,15 +95,18 @@ public class TextOutput implements Output {
      * @param lines The text to be displayed
      */
     @Override
-    public void output(Channel c, Object o) {
-        String s = o.toString();
+    public void output(final Channel c, final Object o) {
+        final String s = process(c, o);
         if (outExp != null) {
-            outExp.println(c.toString() + ": " + o.toString());
+            outExp.println(s);
             outExp.flush();
         }
         if (outExp2 != null) {
-            outExp2.println(c.toString() + ": " + o.toString());          
+            outExp2.println(s);          
         }
     }
 
+    public String process(final Channel c, final Object o) {
+        return c.toString() + ": " + o.toString();
+    }
 }
