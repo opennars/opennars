@@ -64,6 +64,7 @@ import nars.language.Variable;
 
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.io.Output.Channel;
 import nars.storage.Memory;
 
 /**
@@ -187,7 +188,7 @@ public class TextInput extends Symbols implements InputChannel {
                     return false;
                 }
             } catch (IOException ex) {
-                nar.output("i/o error: " + ex.getMessage());                
+                nar.output(Channel.ERR, ex);
                 inExp = null;
             }
             
@@ -234,7 +235,7 @@ public class TextInput extends Symbols implements InputChannel {
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 if (!nar.isPaused())  {
                     if (input.equals(Symbols.STOP_COMMAND)) {
-                        nar.output("stopping.");
+                        nar.output(Channel.OUT, "stopping.");
                         nar.pause();
                         return true;
                     }
@@ -250,7 +251,7 @@ public class TextInput extends Symbols implements InputChannel {
                 if (nar.isPaused()) {
                     if (input.equals(Symbols.START_COMMAND)) {
                         nar.resume();
-                        nar.output("starting.");
+                        nar.output(Channel.OUT, "starting.");
                         return true;
                     }
                 }
@@ -268,7 +269,7 @@ public class TextInput extends Symbols implements InputChannel {
                     if (p.length == 2) {
                         int silenceLevel = Integer.parseInt(p[1]);
                         nar.setSilenceValue(silenceLevel);
-                        nar.output("Silence level: " + silenceLevel);
+                        nar.output(Channel.OUT, "Silence level: " + silenceLevel);
                     }
                     
                     return true;
@@ -298,7 +299,7 @@ public class TextInput extends Symbols implements InputChannel {
                 char c = input.charAt(0);
                 if (c == Symbols.ECHO_MARK) {            
                     String echoString = input.substring(1);
-                    nar.output('\"' + echoString + '\"');
+                    nar.output(Output.Channel.ECHO, '\"' + echoString + '\"');
                     return true;
                 }
                 return false;                
@@ -317,7 +318,7 @@ public class TextInput extends Symbols implements InputChannel {
                     try {
                         Task task = parseNarsese(new StringBuffer(input), nar.memory, nar.getTime());
                         if (task != null) {
-                            nar.memory.report(task.getSentence(), true);    // report input
+                            nar.output(Channel.IN, task.getSentence());    // report input
                             nar.memory.inputTask(task);
                             return true;
                         }
@@ -351,7 +352,7 @@ public class TextInput extends Symbols implements InputChannel {
         
         //not handled, so respond with some signal
         if (lastHandled == null) {
-            nar.output("?");
+            nar.output(Channel.OUT, "?");
         }
     }
     
@@ -364,7 +365,7 @@ public class TextInput extends Symbols implements InputChannel {
                     new InputStreamReader(u.openStream()));            
             nar.addInputChannel(new TextInput(nar, in));
         } catch (Exception ex) {
-            nar.output("includeURL: " + ex.toString());
+            nar.output(Channel.ERR, ex);
         }
     }
     
@@ -426,7 +427,7 @@ public class TextInput extends Symbols implements InputChannel {
         
         try {
             StringBuffer buffer = new StringBuffer(s);
-            String budgetString = getBudgetString(buffer);
+            //String budgetString = getBudgetString(buffer);
             String truthString = getTruthString(buffer);
             String str = buffer.toString().trim();
             int last = str.length() - 1;
@@ -439,7 +440,7 @@ public class TextInput extends Symbols implements InputChannel {
             if (content == null) throw new InvalidInputException("Content term missing");*/
         }
         catch (InvalidInputException e) {
-            System.err.println(s + " : " + e.toString());
+            System.err.println("TextInput.parseOutput: " + s + " : " + e.toString());
         }
         return new Sentence(content, punc, truth, null);        
     }

@@ -21,11 +21,13 @@
 package nars.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,9 +36,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -46,20 +48,19 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.inference.InferenceRecorder;
+import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.io.OutputChannel;
-import nars.core.Parameters;
-import nars.inference.InferenceRecorder;
 import nars.storage.Memory;
-import org.python.google.common.util.concurrent.AtomicDouble;
 
 /**
  * Main window of NARSwing GUI
  */
-public class NARWindow extends Window implements ActionListener, OutputChannel, Runnable {
+public class NARWindow extends Window implements ActionListener, Output, Runnable {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4*1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -91,7 +92,7 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
     /**
      * Control buttons
      */
-    private final JButton stopButton, walkButton;
+    private JButton stopButton, walkButton;
 
     /**
      * Whether the experience is saving into a file
@@ -118,10 +119,15 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
      */
     private StringBuffer nextOutput = new StringBuffer();
     private NSlider speedSlider;
-    private double currentSpeed = -1;
-
+    private double currentSpeed = 0;
+    private double lastSpeed = 0;
+    private double defaultSpeed = 0.5;
+    
     private final int GUIUpdatePeriodMS = 768;
     int maxIOTextSize = (int)8E6;
+    private NSlider volumeSlider;
+    private boolean showErrors = false;
+    
     
     /**
      * Constructor
@@ -216,19 +222,16 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
         c.fill = GridBagConstraints.BOTH;        
         
         c.weightx = 0.0;
-        walkButton = new JButton("Walk");
-        walkButton.addActionListener(this);
-        menu.add(walkButton, c);
+                
+        menu.add(newControlPanel(), c);
+        
         
         c.weightx = 0.2;        
         JScrollPane jp = new JScrollPane(newParameterPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         jp.setPreferredSize(new Dimension(175,120));
         menu.add(jp, c);
                        
-        c.weightx = 0.0;
-        stopButton = new JButton("Stop");
-        stopButton.addActionListener(this);
-        menu.add(stopButton, c);
+        
         
         
         c.fill = GridBagConstraints.BOTH;
@@ -290,10 +293,9 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
      * Initialize the system for a new run
      */
     public void init() {
-        setSpeed(0);
+        setSpeed(0);        setSpeed(0);        //call twice to make it start as paused
         updateTimer();
         ioText.setText("");
-        nextOutput(null);
     }
 
 
@@ -402,16 +404,18 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
      * @param lines if null, forces output when updateExperienceOutput is false
      */
     @Override
-    public void nextOutput(final ArrayList<String> lines) {
+    public void output(final Channel c, final Object o) {
+    
+        if ((!showErrors) && (c == Channel.ERR))
+            return;
             
-        if (lines != null) {
-            for (Object line : lines) {
-                nextOutput.append(line).append("\n");
-            }
-        }
+        final String line = c.toString() + ": " + o.toString() + "\n";
+        
+        nextOutput.append(line);        
         
         SwingUtilities.invokeLater(nextOutputRunnable);
     }
+    
     void limitBuffer(int incomingDataSize)    {
        Document doc = ioText.getDocument();
        int overLength = doc.getLength() + incomingDataSize - maxIOTextSize;
@@ -474,7 +478,7 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
     
 
     private NSlider newVolumeSlider() {
-        final NSlider s = new NSlider(100, 0, 100) {
+        final NSlider s = this.volumeSlider = new NSlider(100, 0, 100) {
 
             @Override
             public String getText() {
@@ -510,36 +514,39 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
         return s;
     }
     
-    public void setSpeed(final double s) {
+    public void setSpeed(double nextSpeed) {
         final double maxPeriodMS = 256.0;
         
-        if (currentSpeed == s)
-            return;
-        
-        currentSpeed = s;
-        
-        
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                if (s == 0) {
-                    reasoner.stop();
-                    speedSlider.setValue(0);
-                    stopButton.setEnabled(false);
-                }
-                else {
-                    stopButton.setEnabled(true);
-                    int ms = (int)((1.0 - (s)) * maxPeriodMS);
-                    if (ms < 1) ms = 0;
-                    reasoner.start(ms);
-                }
-                
-                speedSlider.repaint();
+        if (nextSpeed == 0) {
+            if (currentSpeed == 0) {
+                if (lastSpeed == 0)
+                    lastSpeed = defaultSpeed;
+                nextSpeed = lastSpeed;
             }
-
-        });
+            else {
+            }
+            
+        }
+        lastSpeed = currentSpeed;
+        speedSlider.repaint();
+        stopButton.setText("Resume");        
         
+        /*if (currentSpeed == s)
+            return;*/
+        
+        speedSlider.setValue(nextSpeed);
+        currentSpeed = nextSpeed;
+        
+        if (nextSpeed > 0) {
+            int ms = (int)((1.0 - (nextSpeed)) * maxPeriodMS);
+            if (ms < 1) ms = 0;
+            stopButton.setText("Stop");
+            reasoner.start(ms);        
+        }
+        else {
+            stopButton.setText("Resume");
+            reasoner.stop();            
+        }
     }
 
     @Override
@@ -578,11 +585,20 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
         p.add(newIntSlider(memory.getBeliefForgettingRate(), "Belief Forgetting Rate", 1, 99), c);
         p.add(newIntSlider(memory.getConceptForgettingRate(), "Concept Forgetting Rate", 1, 99), c);
                 
+        final JCheckBox showErrorBox = new JCheckBox("Show Errors");
+        showErrorBox.addActionListener(new ActionListener() {
+
+            @Override public void actionPerformed(ActionEvent e) {
+                showErrors = showErrorBox.isSelected();
+            }
+            
+        });
+        p.add(showErrorBox, c);
         return p;
     }
 
     private NSlider newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {
-          final NSlider s = new NSlider(new AtomicDouble(x.intValue()), min, max) {
+          final NSlider s = new NSlider(x.intValue(), min, max) {
 
             @Override
             public String getText() {
@@ -602,6 +618,35 @@ public class NARWindow extends Window implements ActionListener, OutputChannel, 
         };
 
         return s;       
+    }
+    
+
+    private Component newControlPanel() {
+        JPanel p = new JPanel();
+                
+        p.setLayout(new GridLayout(0,1));
+                
+        stopButton = new JButton("Stop");
+        stopButton.addActionListener(this);
+        p.add(stopButton);
+
+        walkButton = new JButton("Walk");
+        walkButton.addActionListener(this);
+        p.add(walkButton);
+        
+        JButton focusButton = new JButton("Focus");
+        focusButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setSpeed(1.0);
+                volumeSlider.setValue(20);
+            }
+            
+        });
+        p.add(focusButton);
+        
+        return p;
     }
     
 

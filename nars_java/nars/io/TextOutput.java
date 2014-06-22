@@ -30,7 +30,7 @@ import nars.core.NAR;
 /**
  * To read and write experience as Task streams
  */
-public class TextOutput implements OutputChannel {
+public class TextOutput implements Output {
 
     private final NAR reasoner;
     /**
@@ -96,17 +96,14 @@ public class TextOutput implements OutputChannel {
      * @param lines The text to be displayed
      */
     @Override
-    public void nextOutput(ArrayList<String> lines) {
+    public void output(Channel c, Object o) {
+        String s = o.toString();
         if (outExp != null) {
-            for (Object line : lines) {
-                outExp.println(line.toString());
-            }
+            outExp.println(c.toString() + ": " + o.toString());
             outExp.flush();
         }
         if (outExp2 != null) {
-            for (Object line : lines) {
-                outExp2.println(line.toString());
-            }            
+            outExp2.println(c.toString() + ": " + o.toString());          
         }
     }
 

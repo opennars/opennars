@@ -38,6 +38,7 @@ import nars.inference.InferenceRecorder;
 import nars.language.Term;
 import nars.core.Parameters;
 import nars.core.NAR;
+import nars.io.Output.Channel;
 
 /**
  * The memory of the system.
@@ -47,7 +48,7 @@ public class Memory {
     /**
      * Backward pointer to the reasoner
      */
-    private final NAR reasoner;
+    public final NAR reasoner;
 
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**
@@ -72,10 +73,7 @@ public class Memory {
      * cycle
      */
     private final ArrayList<Task> newTasks;
-    /**
-     * List of Strings or Tasks to be sent to the output channels
-     */
-    private final ArrayList<String> exportStrings;
+
     /**
      * The selected Term
      */
@@ -125,23 +123,16 @@ public class Memory {
         concepts = new ConceptBag(this);
         novelTasks = new NovelTaskBag(this);
         newTasks = new ArrayList<>();
-        exportStrings = new ArrayList<>();
     }
 
     public void init() {
         concepts.init();
         novelTasks.init();
         newTasks.clear();
-        exportStrings.clear();
         reasoner.initTimer();
         if (getRecorder().isActive()) {
             getRecorder().append("--reset--");
         }
-    }
-
-    /* ---------- access utilities ---------- */
-    public ArrayList<String> getExportStrings() {
-        return exportStrings;
     }
 
     public InferenceRecorder getRecorder() {
@@ -156,9 +147,7 @@ public class Memory {
         return reasoner.getTime();
     }
 
-//    public MainWindow getMainWindow() {
-//        return reasoner.getMainWindow();
-//    }
+
     /**
      * Actually means that there are no new Tasks
      */
@@ -297,7 +286,7 @@ public class Memory {
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
             final float minSilent = reasoner.getSilenceValue().get() / 100.0f;
             if (s > minSilent) {  // only report significant derived Tasks
-                report(task.getSentence(), false);
+                reasoner.output(Channel.OUT, task.getSentence());
             }
         }
         newTasks.add(task);
@@ -356,7 +345,7 @@ public class Memory {
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
             float minSilent = reasoner.getSilenceValue().get() / 100.0f;
             if (budget > minSilent) {  // only report significant derived Tasks
-                report(task.getSentence(), false);
+                reasoner.output(Channel.OUT, task.getSentence());
             }
             newTasks.add(task);
         } else {
@@ -585,36 +574,7 @@ public class Memory {
         novelTasks.addBagObserver(bagObserver, s);
     }
 
-    /**
-     * Display input/output sentence in the output channels. The only place to
-     * add Objects into exportStrings. Currently only Strings are added, though
-     * in the future there can be outgoing Tasks; also if exportStrings is empty
-     * display the current value of timer ( exportStrings is emptied in
-     * {@link ReasonerBatch#doTick()} - TODO fragile mechanism)
-     *
-     * @param sentence the sentence to be displayed
-     * @param input whether the task is input
-     */
-    public void report(final Sentence sentence, final boolean input) {
-        /*if (NAR.DEBUG) {
-         System.out.println("// report( clock " + reasoner.getTime()
-         + ", input " + input
-         + ", timer " + reasoner.getSystemClock()
-         + ", Sentence " + sentence
-         + ", exportStrings " + exportStrings);
-         System.out.flush();
-         }*/
 
-        if (exportStrings.isEmpty()) {
-            final long timer = reasoner.updateTimer();
-            if (timer > 0) {
-                //reasoner.output(String.valueOf(timer));
-            }
-        }
-        reasoner.output(((input) ? "  IN: "
-                : " OUT: ")
-                + sentence.toStringBrief());
-    }
 
     @Override
     public String toString() {

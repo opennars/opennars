@@ -22,6 +22,7 @@ package nars.inference;
 
 import nars.storage.Memory;
 import nars.entity.*;
+import nars.io.Output.Channel;
 import nars.language.*;
 import nars.io.Symbols;
 
@@ -95,21 +96,21 @@ public class LocalRules {
      * @param task The task to be processed
      * @param memory Reference to the memory
      */
-    public static void trySolution(Sentence belief, Task task, Memory memory) {
-        Sentence problem = task.getSentence();
-        Sentence oldBest = task.getBestSolution();
-        float newQ = solutionQuality(problem, belief);
+    public static void trySolution(final Sentence belief, final Task task, final Memory memory) {
+        final Sentence problem = task.getSentence();
+        final Sentence oldBest = task.getBestSolution();
+        final float newQ = solutionQuality(problem, belief);
         if (oldBest != null) {
-            float oldQ = solutionQuality(problem, oldBest);
+            final float oldQ = solutionQuality(problem, oldBest);
             if (oldQ >= newQ) {
                 return;
             }
         }
         task.setBestSolution(belief);
         if (task.isInput()) {    // moved from Sentence
-            memory.report(belief, false);
+            memory.reasoner.output(Channel.OUT, belief);
         }
-        BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
+        final BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
         if ((budget != null) && budget.aboveThreshold()) {
             memory.activatedTask(budget, belief, task.getParentBelief());
         }
