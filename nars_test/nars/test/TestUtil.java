@@ -98,8 +98,9 @@ public class TestUtil {
         //new TextOutput(n, new PrintWriter(System.out));
         new TextOutput(n) {
             @Override
-            public void nextOutput(ArrayList<String> lines) {
-                for (String s : lines) {
+            public void output(Channel c, Object line) {
+                if (line instanceof String) {
+                    String s = (String)line;
                     s = s.trim();
                     String OUT_PREFIX = Symbols.OUTPUT_LINE + ": ";
 
@@ -111,7 +112,7 @@ public class TestUtil {
                         String expression = s.substring(2, s.length()-1);
                         expressions.add(expression);
                     }
-                }                
+                }
             }            
         };            
 

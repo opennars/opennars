@@ -66,11 +66,11 @@ public final class Concept extends Item {
     /**
      * Question directly asked about the term
      */
-    private final ArrayList<Task> questions;
+    public final ArrayList<Task> questions;
     /**
      * Sentences directly made about the term, with non-future tense
      */
-    private final ArrayList<Sentence> beliefs;
+    public final ArrayList<Sentence> beliefs;
     /**
      * Reference to the memory
      */
@@ -397,7 +397,7 @@ public final class Concept extends Item {
      */
     @Override
     public float getQuality() {
-        float linkPriority = termLinks.averagePriority();
+        float linkPriority = termLinks.getAveragePriority();
         float termComplexityFactor = 1.0f / term.getComplexity();
         return UtilityFunctions.or(linkPriority, termComplexityFactor);
     }

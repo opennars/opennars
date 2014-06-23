@@ -46,19 +46,19 @@ public abstract class Bag<E extends Item>  {
     /**
      * priority levels
      */
-    private static final int TOTAL_LEVEL = Parameters.BAG_LEVEL;
+    public static final int TOTAL_LEVEL = Parameters.BAG_LEVEL;
     /**
      * firing threshold
      */
-    private static final int THRESHOLD = Parameters.BAG_THRESHOLD;
+    public static final int THRESHOLD = Parameters.BAG_THRESHOLD;
     /**
      * relative threshold, only calculate once
      */
-    private static final float RELATIVE_THRESHOLD = (float) THRESHOLD / (float) TOTAL_LEVEL;
+    public static final float RELATIVE_THRESHOLD = (float) THRESHOLD / (float) TOTAL_LEVEL;
     /**
      * hashtable load factor
      */
-    private static final float LOAD_FACTOR = Parameters.LOAD_FACTOR;       //
+    public static final float LOAD_FACTOR = Parameters.LOAD_FACTOR;       //
     
     //how many items to preallocate in each level
     final int INITIAL_LEVEL_CAPACITY = 0;
@@ -66,7 +66,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
-    private static final Distributor DISTRIBUTOR = new Distributor(TOTAL_LEVEL); //
+    public static final Distributor DISTRIBUTOR = new Distributor(TOTAL_LEVEL); //
     
     
     /**
@@ -76,12 +76,12 @@ public abstract class Bag<E extends Item>  {
     /**
      * array of lists of items, for items on different level
      */
-    private final ArrayList<E>[] itemTable = new ArrayList[TOTAL_LEVEL];
+    public final ArrayList<E>[] itemTable = new ArrayList[TOTAL_LEVEL];
     
     //this is a cache holding whether itemTable[i] is empty. 
     //it avoids needing to call itemTable.isEmpty() which may improve performance
     //it is maintained each time an item is added or removed from one of the itemTable ArrayLists
-    private final boolean[] itemTableEmpty = new boolean[TOTAL_LEVEL];
+    public final boolean[] itemTableEmpty = new boolean[TOTAL_LEVEL];
     
     /**
      * defined in different bags
@@ -172,7 +172,7 @@ public abstract class Bag<E extends Item>  {
      *
      * @return The average priority of Items in the bag
      */
-    public float averagePriority() {
+    public float getAveragePriority() {
         if (size() == 0) {
             return 0.01f;
         }
@@ -291,9 +291,9 @@ public abstract class Bag<E extends Item>  {
      * @param n The level index
      * @return Whether that level is empty
      */
-    /*protected boolean emptyLevel(final int n) {
+    public boolean emptyLevel(final int n) {
         return itemTable[n].isEmpty();
-    }*/
+    }
 
     /**
      * Decide the put-in level according to priority
@@ -461,4 +461,9 @@ public abstract class Bag<E extends Item>  {
     public void setShowLevel(int showLevel) {
         this.showLevel = showLevel;
     }
+
+    public int getMass() {
+        return mass;
+    }
+    
 }
