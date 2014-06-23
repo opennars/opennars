@@ -22,6 +22,8 @@ package nars.storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import nars.entity.BudgetValue;
@@ -54,15 +56,16 @@ public class Memory {
     /**
      * Concept bag. Containing all Concepts of the system
      */
-    private final ConceptBag concepts;
+    public final ConceptBag concepts;
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    private final NovelTaskBag novelTasks;
+    public final NovelTaskBag novelTasks;
     /**
      * Inference record text to be written into a log file
      */
     private InferenceRecorder recorder;
+    
     public final AtomicInteger beliefForgettingRate = new AtomicInteger(Parameters.TERM_LINK_FORGETTING_CYCLE);
     public final AtomicInteger taskForgettingRate = new AtomicInteger(Parameters.TASK_LINK_FORGETTING_CYCLE);
     public final AtomicInteger conceptForgettingRate = new AtomicInteger(Parameters.CONCEPT_FORGETTING_CYCLE);
@@ -72,7 +75,7 @@ public class Memory {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    private final ArrayList<Task> newTasks;
+    public final List<Task> newTasks;
 
     /**
      * The selected Term
@@ -122,7 +125,7 @@ public class Memory {
         recorder = new NullInferenceRecorder();
         concepts = new ConceptBag(this);
         novelTasks = new NovelTaskBag(this);
-        newTasks = new ArrayList<>();
+        newTasks = new LinkedList<>();
     }
 
     public void init() {
