@@ -5,6 +5,8 @@ import nars.language.*;
 import processing.core.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import nars.core.NAR;
@@ -26,6 +28,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
     Hnav hnav = new Hnav();
 //Object
     float selection_distance = 10;
+    public float maxNodeSize = 50f;
 
     Hsim hsim = new Hsim();
 
@@ -39,7 +42,9 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
     public Button fetchMemory;
     Memory mem = null;
 
-    boolean showBeliefs = true;
+    public int mode = 0;
+    
+    boolean showBeliefs = false;
     
     float sx = 800;
     float sy = 800;
@@ -52,7 +57,9 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
     long lasttime = -1;
 
     boolean autofetch = true;
-    private int MAX_UNSELECTED_LABEL_LENGTH = 16;
+    private int MAX_UNSELECTED_LABEL_LENGTH = 32;
+    private boolean updateNext;
+    float nodeSize = 10;
 
     public void mouseScrolled() {
         hamlib.mouseScrolled();
@@ -111,7 +118,6 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
     @Override
     public void setup() {  
         //size((int) sx, (int) sy);
-
         
         hsim.obj = new ArrayList<Obj>();
         E = new ArrayList<link>();
@@ -141,13 +147,15 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         stroke(13, 13, 4);
         strokeWeight(linkWeight);
         
+        final float sizzfloat = (float) E2.size();
+        
         for (int i = 0; i < E2.size(); i++) {
-            float sizzfloat = (float) E2.size();
             float sizzi = (float) i;
 
             final link lin = E2.get(i);
             final Obj elem1 = V.get(lin.from);
             final Obj elem2 = V.get(lin.to);
+            
             fill(225, 225, 225, 50); //transparent
 
             float mul = 0f;
@@ -170,8 +178,9 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
                 }
             } catch (Exception ex) {
             }
-            float addi = (128.0f + 64.0f) * mul;
-            stroke(255.0f - sizzi / sizzfloat * 255.0f, 64 + addi - sizzi / sizzfloat * 255.0f, 255.0f - sizzi / sizzfloat * 255.0f, lin.alpha);
+            /*float addi = (128.0f + 64.0f) * mul;
+            stroke(255.0f - sizzi / sizzfloat * 255.0f, 64 + addi - sizzi / sizzfloat * 255.0f, 255.0f - sizzi / sizzfloat * 255.0f, lin.alpha);*/
+            stroke(200, 200, 200, lin.alpha);
 
             //ellipse(elem1.x,elem1.y,10,10);
             line(elem1.x, elem1.y, elem2.x, elem2.y);
@@ -185,11 +194,11 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             final Obj elem1 = V.get(lin.from);
             final Obj elem2 = V.get(lin.to);
             //ellipse(elem1.x,elem1.y,10,10);
-            stroke(255, 255, 255, lin.alpha);
+            stroke(255, 255, 127, 127 + lin.alpha/2);
             line(elem1.x, elem1.y, elem2.x, elem2.y);
         }
         
-        stroke(255, 255, 255, 127);
+        stroke(127, 255, 255, 127);
 
         for (int i = 0; i < Sent_s.size(); i++) {
             final ArrayList<Term> deriv = Sent_s.get(i).getStamp().getChain();
@@ -216,14 +225,14 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             Obj elem = V.get(i);
             String suffix = ".";
             
-            float rad = elem.name.getComplexity() * 20;
+            float rad = elem.name.getComplexity() * nodeSize;
             float age = elem.creationTime!=-1 ? currentTime - elem.creationTime : -1;
             
                     
             float ageFactor = age == -1? 0 : (1f/(age/100.0f+1.0f));
             int ai = (int)(100.0 * ageFactor);
             
-            if (elem.mode == 0) {
+            if (elem.type == 0) {
                 fill( 155 + ai, 155 + ai, 155 + ai, 155+ai );
             } else {
                 suffix = "?";
@@ -248,11 +257,12 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             
         }
     }
+    
     private static final float linkWeight = 4.0f;
 
-
     public void take_from_mem() {
-        if (mem.getTime() != lasttime) {
+        if ((mem.getTime() != lasttime) || (updateNext)) {
+            updateNext = false;
             lasttime = mem.getTime();
             
             hsim.obj.clear();
@@ -261,8 +271,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             Sent_s.clear(); //derivation chain
             Sent_i.clear(); //derivation chain
             
-            float y = 0;
-            float x = 0;
+            int x = 0;
             int cnt = 0;
             ConceptBag bag = mem.concepts;
             for (int i = bag.TOTAL_LEVEL; i >= 1; i--) {
@@ -271,7 +280,9 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
                         final Concept c = bag.itemTable[i - 1].get(j);
                                                 
                         final Term name = c.getTerm();
-                        hsim.obj.add(new Obj(x, y, name, 0));
+
+                        
+                        hsim.obj.add(new Obj(x++, i, name, 0));
                         cnt++;
                         
                         float xsave = x;
@@ -282,42 +293,45 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
                             for (int k = 0; k < c.beliefs.size(); k++) {
                                 Sentence kb = c.beliefs.get(k);
                                 Term name2 = kb.getContent();
-                                x += sx / 2.0;
-                                hsim.obj.add(new Obj(x, y, name2, 0, kb.getStamp().creationTime));
+                                
+                                hsim.obj.add(new Obj(x++, i, name2, 0, kb.getStamp().creationTime));
                                 E.add(new link(bufcnt, cnt, kb.truth.getConfidence()));
                                 Sent_s.add(kb);
                                 Sent_i.add(cnt);
                                 cnt++;
-                                y += sy / (float) 10.0 * k; //new concept
+                                
                             }
                         }
                         
-                        float xneu = x;
-                        x = xsave;
                         for (int k = 0; k < c.questions.size(); k++) {
                             Task q = c.questions.get(k);
                             Term name2 = q.getContent();                            
-                            x -= sx / 2.0;
-                            hsim.obj.add(new Obj(x, y, name2, 1));
+                            hsim.obj.add(new Obj(x++, i, name2, 1));
                             E.add(new link(bufcnt, cnt, q.getPriority()));
                             cnt++;
-                            y += sy / (float) 10.0 * k; //new concept
+                            
                         }
-                        x = xneu;
-                        x += sx / 2.0;
-                        //y += sy / (float) 10.0; //new concept
+                        
+                        
                     }
                 }
-                x = 0;
-                y += sy / (float) 20.0; //new layer
+                
+                if (mode == 1)
+                    x = 0;
 
             }
             for (int i = 0; i < hsim.obj.size(); i++) {
-                final Object ho = hsim.obj.get(i);
+                final Obj ho = (Obj)hsim.obj.get(i);
+                
                 for (int j = 0; j < hsim.obj.size(); j++) {
+                    Obj target = (Obj) hsim.obj.get(j);
                     try {
-                        if (((Obj) ho).name.containTerm(((Obj) hsim.obj.get(j)).name)) {
-                            E2.add(new link(i, j, 150));
+                        if ((ho).name.containTerm((target.name))) {
+                            int alpha = (ho.name.getComplexity() + target.name.getComplexity())/2;
+                            alpha = alpha * 10;
+                            alpha += 75;
+                            if (alpha > 255) alpha = 255;
+                            E2.add(new link(i, j, alpha));
                         }
                     } catch (Exception ex) {
                     }
@@ -333,6 +347,10 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             autofetch = true;
             return;
         }
+    }
+
+    void setUpdateNext() {
+        updateNext = true;
     }
 
     class ProcessingJs {
@@ -452,22 +470,38 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
 
         public float x;
         public float y;
-        public final int mode;
+        public final int type;
         public final Term name;
         private final long creationTime;
 
-        public Obj(float X, float Y, Term Name, int Mode) {
-            this(X, Y, Name, Mode, -1);
+        public Obj(int index, int level, Term Name, int Mode) {
+            this(index, level, Name, Mode, -1);
         }
 
-        public Obj(float x, float y, Term term, int mode, long creationTime) {
-            this.x = x;
-            this.y = y;
+        private int rowHeight = (int)(maxNodeSize);
+        private int colWidth = (int)(maxNodeSize);
+        
+        public Obj(int index, int level, Term term, int type, long creationTime) {
+            
+            if (mode == 1) {
+                this.y = -200 - (index * rowHeight);
+                this.x = 2600 - (level * colWidth);
+            }
+            else if (mode == 0) {
+                float LEVELRAD = maxNodeSize;
+
+                double radius = ((mem.concepts.TOTAL_LEVEL - level)+1);
+                float angle = index; //TEMPORARY
+                this.x = (float)(Math.cos(angle/3.0) * radius) * LEVELRAD;
+                this.y = (float)(Math.sin(angle/3.0) * radius) * LEVELRAD;
+            }
+            
             this.name = term;
-            this.mode = mode;
+            this.type = type;
             this.creationTime = creationTime;
         }
     }
+    
 ////Object management - dragging etc.
 
     class Hsim {
@@ -589,7 +623,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         }
         public link(final int from, final int to, float alpha) {
             this(from, to, (int)(255.0 * alpha));
-        }        
+        }
     }
 }
 
@@ -612,28 +646,51 @@ public class MemoryView extends JFrame {
         app = new applet();
         app.init();
         app.mem = mem;
-        app.getBack = new Button("Back");
-        app.conceptsView = new Button("Concepts - 1 node per concept, link between if common subterm in a belief");
-        app.memoryView = new Button("Entire Graph - All beliefs, link between if common subterm");
-        app.fetchMemory = new Button("Fetch");
-
-        //app.getBack.addActionListener(app);
-        app.memoryView.addActionListener(app);
-        app.conceptsView.addActionListener(app);
-        app.fetchMemory.addActionListener(app);
-
-        this.setSize(1000, 860);//add the size of the window
+        
+        this.setSize(1000, 860);//initial size of the window
         this.setVisible(true);
 
         Container content = getContentPane();
         content.setLayout(new BorderLayout());
 
-        JPanel menu = new JPanel(new FlowLayout());
+        JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        final JComboBox modeSelect = new JComboBox();
+        modeSelect.addItem("Circle");
+        modeSelect.addItem("Grid");
+        modeSelect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (modeSelect.getSelectedIndex() == 0) {
+                    app.mode = 0;
+                }
+                else {
+                    app.mode = 1;
+                }
+                app.setUpdateNext();
+            }            
+        });
 
-        menu.add(app.getBack);
-        menu.add(app.conceptsView);
-        menu.add(app.memoryView);
-        menu.add(app.fetchMemory);
+        menu.add(modeSelect);
+        
+        final JCheckBox beliefsEnable = new JCheckBox("Beliefs");
+        beliefsEnable.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                app.showBeliefs = (beliefsEnable.isSelected());        
+                app.setUpdateNext();
+            }
+        });
+        menu.add(beliefsEnable);
+        
+        NSlider nodeSize = new NSlider(app.nodeSize, 1, app.maxNodeSize) {
+            @Override
+            public void onChange(double v) {
+                app.nodeSize = (float)v;
+            }          
+        };
+        nodeSize.setPrefix("Node Size: ");
+        nodeSize.setPreferredSize(new Dimension(125, 25));
+        menu.add(nodeSize);
 
         content.add(menu, BorderLayout.NORTH);
         content.add(app, BorderLayout.CENTER);

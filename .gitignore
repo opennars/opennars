@@ -1,16 +1,15 @@
-classes/
-build/
-nars-dist/
-nbproject/private/
+/classes/
+/build/
+/nars-dist/
+/nbproject/private/
 
 /dist/
 /nars_web/client/lib/jquery-ui/themes/
 /nars_web/client/lib/jquery/src/
 
-lib/cache_dir/
-lib/cachedir/
+/lib/cache_dir/
+/lib/cachedir/
 
-NARS.jar
 
 .jacocoverage/
 
