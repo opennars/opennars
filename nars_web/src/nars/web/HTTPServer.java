@@ -28,8 +28,6 @@ package nars.web;
  */
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,8 +44,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
@@ -96,7 +92,7 @@ import java.util.logging.Logger;
  * See the end of the source file for distribution license (Modified BSD
  * licence)
  */
-public class HTTPServer {
+abstract public class HTTPServer {
   // 
     // API parts
     // 
@@ -116,7 +112,9 @@ public class HTTPServer {
      * @parm header Header entries, percent decoded
      * @return HTTP response, see class Response for details
      */
-    public Response serve(String uri, String method, Properties header, Properties parms) {
+    abstract public Response serve(String uri, String method, Properties header, Properties parms);
+    
+    /*{
         if (debug) System.out.println(method + " '" + uri + "' ");
 
         Enumeration e = header.propertyNames();
@@ -131,7 +129,7 @@ public class HTTPServer {
         }
 
         return serveFile(uri, header, staticFilePath, true);
-    }
+    }*/
 
     /**
      * HTTP response. Return one of these from serve().
@@ -213,9 +211,8 @@ public class HTTPServer {
      * <p>
      * Throws an IOException if the socket is already in use
      */
-    public HTTPServer(int port, File filePath) throws IOException {
-        myTcpPort = port;
-        staticFilePath = filePath;
+    public HTTPServer(int port) throws IOException {
+        myTcpPort = port;        
 
         final ServerSocket ss = new ServerSocket(myTcpPort);
         Thread t = new Thread(new Runnable() {
@@ -278,7 +275,7 @@ public class HTTPServer {
      * Handles one session, i.e. parses the HTTP request and returns the
      * response.
      */
-    private class HTTPSession implements Runnable {
+    public class HTTPSession implements Runnable {
 
         public HTTPSession(Socket s) {
             mySocket = s;
@@ -355,8 +352,8 @@ public class HTTPServer {
                             read = in.read(buf);
                         }
                     }
-                    postLine = postLine.trim();
-                    decodeParms(postLine, parms);
+                    postLine = postLine.trim();                                        
+                    parms.setProperty("content", decodePercent(postLine));
                 }
 
                 // Ok, now do the serve()
@@ -436,6 +433,7 @@ public class HTTPServer {
             throw new InterruptedException();
         }
 
+
         /**
          * Sends given response to the socket.
          */
@@ -500,7 +498,7 @@ public class HTTPServer {
      * URL-encodes everything between "/"-characters. Encodes spaces as '%20'
      * instead of '+'.
      */
-    private String encodeUri(String uri) throws UnsupportedEncodingException {
+    public static String encodeUri(String uri) throws UnsupportedEncodingException {
         String newUri = "";
         StringTokenizer st = new StringTokenizer(uri, "/ ", true);
         while (st.hasMoreTokens()) {
@@ -521,153 +519,12 @@ public class HTTPServer {
 
     private int myTcpPort;
 
-    File staticFilePath;
 
-  // 
-    // File server code
-    // 
-    /**
-     * Serves file from homeDir and its' subdirectories (only). Uses only URI,
-     * ignores all headers and HTTP parameters.
-     */
-    public Response serveFile(String uri, Properties header, File homeDir,
-            boolean allowDirectoryListing) {
-        // Make sure we won't die of an exception later
-        if (!homeDir.isDirectory()) {
-            return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT,
-                    "INTERNAL ERRROR: serveFile(): given homeDir is not a directory.");
-        }
-
-        // Remove URL arguments
-        uri = uri.trim().replace(File.separatorChar, '/');
-        if (uri.indexOf('?') >= 0) {
-            uri = uri.substring(0, uri.indexOf('?'));
-        }
-
-        // Prohibit getting out of current directory
-        if (uri.startsWith("..") || uri.endsWith("..") || uri.indexOf("../") >= 0) {
-            return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT,
-                    "FORBIDDEN: Won't serve ../ for security reasons.");
-        }
-
-        File f = new File(homeDir, uri);
-        if (!f.exists()) {
-            return new Response(HTTP_NOTFOUND, MIME_PLAINTEXT, "Error 404, file not found.");
-        }
-
-        // List the directory, if necessary
-        if (f.isDirectory()) {
-      // Browsers get confused without '/' after the
-            // directory, send a redirect.
-            if (!uri.endsWith("/")) {
-                uri += "/";
-                Response r = new Response(HTTP_REDIRECT, MIME_HTML, "<html><body>Redirected: <a href=\""
-                        + uri + "\">" + uri + "</a></body></html>");
-                r.addHeader("Location", uri);
-                return r;
-            }
-
-            // First try index.html and index.htm
-            if (new File(f, "index.html").exists()) {
-                f = new File(homeDir, uri + "/index.html");
-            } else if (new File(f, "index.htm").exists()) {
-                f = new File(homeDir, uri + "/index.htm");
-            } // No index file, list the directory
-            else if (allowDirectoryListing) {
-                String[] files = f.list();
-                String msg = "<html><body><h1>Directory " + uri + "</h1><br/>";
-
-                if (uri.length() > 1) {
-                    String u = uri.substring(0, uri.length() - 1);
-                    int slash = u.lastIndexOf('/');
-                    if (slash >= 0 && slash < u.length()) {
-                        msg += "<b><a href=\"" + uri.substring(0, slash + 1) + "\">..</a></b><br/>";
-                    }
-                }
-
-                for (int i = 0; i < files.length; ++i) {
-                    File curFile = new File(f, files[i]);
-                    boolean dir = curFile.isDirectory();
-                    if (dir) {
-                        msg += "<b>";
-                        files[i] += "/";
-                    }
-
-                    try {
-                        msg += "<a href=\"" + encodeUri(uri + files[i]) + "\">" + files[i] + "</a>";
-                    } catch (UnsupportedEncodingException ex) {
-                        msg += "<a>" + files[i] + "</a>";
-                    }
-
-                    // Show file size
-                    if (curFile.isFile()) {
-                        long len = curFile.length();
-                        msg += " &nbsp;<font size=2>(";
-                        if (len < 1024) {
-                            msg += curFile.length() + " bytes";
-                        } else if (len < 1024 * 1024) {
-                            msg += curFile.length() / 1024 + "." + (curFile.length() % 1024 / 10 % 100) + " KB";
-                        } else {
-                            msg += curFile.length() / (1024 * 1024) + "." + curFile.length() % (1024 * 1024) / 10
-                                    % 100 + " MB";
-                        }
-
-                        msg += ")</font>";
-                    }
-                    msg += "<br/>";
-                    if (dir) {
-                        msg += "</b>";
-                    }
-                }
-                return new Response(HTTP_OK, MIME_HTML, msg);
-            } else {
-                return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "FORBIDDEN: No directory listing.");
-            }
-        }
-
-        try {
-            // Get MIME type from file name extension, if possible
-            String mime = null;
-            int dot = f.getCanonicalPath().lastIndexOf('.');
-            if (dot >= 0) {
-                mime = (String) theMimeTypes.get(f.getCanonicalPath().substring(dot + 1).toLowerCase());
-            }
-            if (mime == null) {
-                mime = MIME_DEFAULT_BINARY;
-            }
-
-            // Support (simple) skipping:
-            long startFrom = 0;
-            String range = header.getProperty("Range");
-            if (range != null) {
-                if (range.startsWith("bytes=")) {
-                    range = range.substring("bytes=".length());
-                    int minus = range.indexOf('-');
-                    if (minus > 0) {
-                        range = range.substring(0, minus);
-                    }
-                    try {
-                        startFrom = Long.parseLong(range);
-                    } catch (NumberFormatException nfe) {
-                    }
-                }
-            }
-
-            FileInputStream fis = new FileInputStream(f);
-            fis.skip(startFrom);
-            Response r = new Response(HTTP_OK, mime, fis);
-            r.addHeader("Content-length", "" + (f.length() - startFrom));
-            r.addHeader("Content-range", "" + startFrom + "-" + (f.length() - 1) + "/" + f.length());
-            return r;
-        } catch (IOException ioe) {
-            return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "FORBIDDEN: Reading file failed.");
-        }
-    }
 
     /**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
      */
-    private static Hashtable theMimeTypes = new Hashtable();
+    public static final Hashtable theMimeTypes = new Hashtable();
 
     static {
         StringTokenizer st = new StringTokenizer("htm    text/html " + "html   text/html "
