@@ -40,23 +40,9 @@ python.execfile(NLPInputParser.class.getResourceAsStream("corenlp/stanford_to_na
     }
 
     
-    String get_response(String input) throws IOException
-    {
-        Socket s = new Socket(host, port);
-        s.setSoLinger(true, 1);
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-
-        PrintWriter out = new PrintWriter(s.getOutputStream(), false);        
-        out.write(input + "\n");
-        out.flush();        
-
-        String x = null;
-        StringBuffer response = new StringBuffer();
-        while ((x = in.readLine()) != null) {            
-            response.append( x + "|");
-        }
-        return response.toString();
+    protected String get_response(String input) throws IOException    {
+        CoreNLPClient c = new CoreNLPClient(host, port);
+        return c.parse(input);        
     }
     
     @Override
