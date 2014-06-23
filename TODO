@@ -9,12 +9,6 @@ Core
     
     Complete NAL1 unit tests pass/fail conditions
 
-    Number1DInput
-
-
-GUI
-
-    shows step number while running
     
     
     
@@ -38,6 +32,4 @@ Database
 
 
 
-LibGDX GUI
 
-    ..
