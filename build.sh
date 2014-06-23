@@ -1,3 +1,4 @@
+ant jar
 ant fulljar
 
 echo ''

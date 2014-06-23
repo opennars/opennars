@@ -83,7 +83,7 @@ public class NARServer  {
         websockets = new NARSWebSocketServer(new InetSocketAddress(webSocketsPort));
         websockets.start();
         
-        new HTTPServer(httpPort, new File("nars_web/client"));
+        new HTTPServeFiles(httpPort, new File("nars_web/client"));
         
     }
 
