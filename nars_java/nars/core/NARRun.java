@@ -20,6 +20,7 @@ package nars.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -39,9 +40,9 @@ import nars.io.TextOutput;
 public class NARRun {
 
     /**
-     * The reasoner
+     * The nar
      */
-    NAR reasoner;
+    NAR nar;
     private boolean logging;
     private PrintStream out = System.out;
     private boolean dumpLastState = true;
@@ -66,7 +67,7 @@ public class NARRun {
         // TODO only if single run ( no reset in between )
         if (nars.dumpLastState) {
             System.out.println("\n==== Dump Last State ====\n"
-                    + nars.reasoner.toString());
+                    + nars.nar.toString());
         }
     }
 
@@ -88,11 +89,13 @@ public class NARRun {
      */
     public void init(String[] args) {
         if (args.length > 0) {
-            TextInput experienceReader = new TextInput(reasoner);
-            experienceReader.includeFile(args[0]);
+            TextInput fileInput = new TextInput(nar);
+            fileInput.includeFile(args[0]);
         }
-        new TextOutput(reasoner,
-                new PrintWriter(out, true));
+        else {
+            new TextInput(nar, new BufferedReader(new InputStreamReader(System.in)));
+        }
+        new TextOutput(nar, new PrintWriter(out, true));
     }
 
     /**
@@ -105,8 +108,8 @@ public class NARRun {
     }
 
     private void init(BufferedReader r, BufferedWriter w) {
-        TextInput experienceReader = new TextInput(reasoner, r);
-        reasoner.addOutputChannel(new TextOutput(reasoner,
+        TextInput experienceReader = new TextInput(nar, r);
+        nar.addOutputChannel(new TextOutput(nar,
                 new PrintWriter(w, true)));
     }
 
@@ -115,7 +118,7 @@ public class NARRun {
      * Can instantiate multiple reasoners
      */
     public final void init() {
-        reasoner = new NAR();
+        nar = new NAR();
     }
 
     /**
@@ -126,14 +129,14 @@ public class NARRun {
     public void run() {
         while (true) {
             log("NARSBatch.run():"
-                    + " step " + reasoner.getTime()
-                    + " " + reasoner.isFinishedInputs());
-            reasoner.tick();
+                    + " step " + nar.getTime()
+                    + " " + nar.isFinishedInputs());
+            nar.tick();
             log("NARSBatch.run(): after tick"
-                    + " step " + reasoner.getTime()
-                    + " " + reasoner.isFinishedInputs());
-            if (reasoner.isFinishedInputs()
-                    || reasoner.getTime() == 1000) {
+                    + " step " + nar.getTime()
+                    + " " + nar.isFinishedInputs());
+            if (nar.isFinishedInputs()
+                    || nar.getTime() == 1000) {
                 break;
             }
         }
@@ -150,7 +153,7 @@ public class NARRun {
     }
 
     public NAR getReasoner() {
-        return reasoner;
+        return nar;
     }
 
     /**
