@@ -40,6 +40,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     private Color barColor = null;
     private boolean dragging;
     NumberFormat nf = NumberFormat.getInstance();
+    private String prefix = "";
      
     public NSlider(double initialValue, double min, double max) {
         this(new AtomicReference<Double>(initialValue), min, max);
@@ -89,10 +90,14 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         setText(getText());
     }
 
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+    
     @Override
     public String getText() {
         if (value!=null)
-            return nf.format(value.get().doubleValue());
+            return prefix + nf.format(value.get().doubleValue());
         return "";
     }
     

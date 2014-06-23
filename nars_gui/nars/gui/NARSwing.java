@@ -75,10 +75,7 @@ public class NARSwing extends NAR  {
         nars.init(args);
         if (args.length > 1)
             nars.start(0);
-        
-        
-        //temporary
-        new MemoryView(nars);
+                
     }
 
     /**
