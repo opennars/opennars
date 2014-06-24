@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -57,6 +59,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import nars.core.NARState;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.inference.InferenceRecorder;
@@ -131,6 +134,8 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
     int maxIOTextSize = (int) 8E6;
     private NSlider volumeSlider;
     private boolean showErrors = false;
+    
+    private List<ChartPanel> charts = new ArrayList();
 
     /**
      * Constructor
@@ -290,22 +295,24 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
     public void init() {
         setSpeed(0);
         setSpeed(0);        //call twice to make it start as paused
-        updateTimer();
+        updateGUI();
         ioText.setText("");
     }
 
     /**
      * Update timer and its display
      */
-    final Runnable _updateTimer = new Runnable() {
+    final Runnable _updateGUI = new Runnable() {
         @Override
         public void run() {
             speedSlider.repaint();
+            for (ChartPanel c : charts)
+                c.update(new NARState(nar));            
         }
     };
     
-    protected void updateTimer() {
-        SwingUtilities.invokeLater(_updateTimer);        
+    protected void updateGUI() {
+        SwingUtilities.invokeLater(_updateGUI);
     }
 
     /**
@@ -319,10 +326,10 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
         if (obj instanceof JButton) {
             if (obj == stopButton) {
                 setSpeed(0);
-                updateTimer();
+                updateGUI();
             } else if (obj == walkButton) {
                 nar.walk(1, true);
-                updateTimer();
+                updateGUI();
             }
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
@@ -539,13 +546,25 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
     
     @Override
     public void run() {
+        long lastTime = nar.getTime();
+        
+        updateGUI();
+        
         while (true) {
-            speedSlider.repaint();
-            
             try {
                 Thread.sleep(GUIUpdatePeriodMS);
             } catch (InterruptedException ex) {
             }
+
+            long nowTime = nar.getTime();
+            
+            if (lastTime == nowTime) {
+                continue;
+            }
+            lastTime = nowTime;
+                
+            updateGUI();
+            
         }
     }
     
@@ -611,6 +630,18 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
         p.add(showErrorBox, c);
         
 
+        ChartPanel chart1 = new ChartPanel("concepts.Mass","concepts.Total");
+        chart1.setPreferredSize(new Dimension(200, 250));
+        charts.add(chart1);
+        p.add(chart1, c);
+        
+        
+        ChartPanel chart2 = new ChartPanel("concepts.AveragePriority");
+        chart2.setPreferredSize(new Dimension(200, 200));        
+        charts.add(chart2);
+        p.add(chart2, c);        
+        
+        
         c.fill = c.BOTH;
         c.weighty = 1.0;
         p.add(Box.createVerticalBox(), c);
