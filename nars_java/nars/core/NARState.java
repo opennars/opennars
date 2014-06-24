@@ -17,6 +17,7 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
     public NARState(NAR n) {
         this.nar = n;
         
+        measure();        
     }
     
     protected static HashMap<String,Object> newData() {
@@ -24,7 +25,7 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
     }
     
     public HashMap<String,Object> measure(/*...which measurements to record */) {
-        long now = new Date().getTime();
+        long now = nar.getTime();
         HashMap<String, Object> data = newData();
         
         ConceptBag concepts = nar.getMemory().concepts;
