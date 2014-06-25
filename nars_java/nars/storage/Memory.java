@@ -383,10 +383,10 @@ public class Memory {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void doublePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
+    public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         if (newContent != null) {
-            Sentence newSentence = new Sentence(newContent, currentTask.getSentence().getPunctuation(), newTruth, newStamp);
-            Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
+            final Sentence newSentence = new Sentence(newContent, currentTask.getSentence().getPunctuation(), newTruth, newStamp);
+            final Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
             derivedTask(newTask, false, false);
         }
     }

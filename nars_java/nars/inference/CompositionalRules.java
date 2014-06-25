@@ -44,13 +44,13 @@ public final class CompositionalRules {
      * @param index The location of the shared term
      * @param memory Reference to the memory
      */
-    static void composeCompound(Statement taskContent, Statement beliefContent, int index, Memory memory) {
+    static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final Memory memory) {
         if ((!memory.currentTask.getSentence().isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
             return;
         }
-        Term componentT = taskContent.componentAt(1 - index);
-        Term componentB = beliefContent.componentAt(1 - index);
-        Term componentCommon = taskContent.componentAt(index);
+        final Term componentT = taskContent.componentAt(1 - index);
+        final Term componentB = beliefContent.componentAt(1 - index);
+        final Term componentCommon = taskContent.componentAt(index);
         if ((componentT instanceof CompoundTerm) && ((CompoundTerm) componentT).containAllComponents(componentB)) {
             decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, memory);
             return;
@@ -58,10 +58,10 @@ public final class CompositionalRules {
             decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, memory);
             return;
         }
-        TruthValue truthT = memory.currentTask.getSentence().getTruth();
-        TruthValue truthB = memory.currentBelief.getTruth();
-        TruthValue truthOr = TruthFunctions.union(truthT, truthB);
-        TruthValue truthAnd = TruthFunctions.intersection(truthT, truthB);
+        final TruthValue truthT = memory.currentTask.getSentence().getTruth();
+        final TruthValue truthB = memory.currentBelief.getTruth();
+        final TruthValue truthOr = TruthFunctions.union(truthT, truthB);
+        final TruthValue truthAnd = TruthFunctions.intersection(truthT, truthB);
         TruthValue truthDif = null;
         Term termOr = null;
         Term termAnd = null;

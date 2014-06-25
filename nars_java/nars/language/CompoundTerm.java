@@ -74,7 +74,7 @@ public abstract class CompoundTerm extends Term {
      * @param isConstant Whether the term refers to a concept
      * @param complexity Complexity of the compound term
      */
-    protected CompoundTerm(String name, ArrayList<Term> components, boolean isConstant, short complexity) {
+    protected CompoundTerm(final String name, final ArrayList<Term> components, final boolean isConstant, final short complexity) {
         super(name);
         this.components = components;
         this.isConstant = isConstant;
@@ -92,7 +92,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @param components Component list
      */
-    protected CompoundTerm(ArrayList<Term> components) {
+    protected CompoundTerm(final ArrayList<Term> components) {
         this.components = components;
         calcComplexity();
         name = makeName();
@@ -105,7 +105,7 @@ public abstract class CompoundTerm extends Term {
      * @param name Name of the compound
      * @param components Component list
      */
-    protected CompoundTerm(String name, ArrayList<Term> components) {
+    protected CompoundTerm(final String name, final ArrayList<Term> components) {
         super(name);
         isConstant = !Variable.containVar(name);
         this.components = components;
@@ -139,17 +139,26 @@ public abstract class CompoundTerm extends Term {
      * as compareTo as defined on Strings
      */
     @Override
-    public int compareTo(Term that) {
+    public int compareTo(final Term that) {
         if (that instanceof CompoundTerm) {
-            CompoundTerm t = (CompoundTerm) that;
+            final CompoundTerm t = (CompoundTerm) that;
             int minSize = Math.min(size(), t.size());
-            for (int i = 0; i < minSize; i++) {
-                int diff = componentAt(i).compareTo(t.componentAt(i));
-                if (diff != 0) {
-                    return diff;
+            if (size() == t.size()) {
+                int opDiff = this.operator().compareTo(t.operator());
+                if (opDiff!=0)
+                    return opDiff;
+                
+                for (int i = 0; i < minSize; i++) {
+                    int diff = componentAt(i).compareTo(t.componentAt(i));
+                    if (diff != 0) {
+                        return diff;
+                    }
                 }
+                
+                return 0;
             }
-            return size() - t.size();
+            else
+                return size() - t.size();
         } else {
             return 1;
         }

@@ -101,7 +101,7 @@ public class TermLink extends Item {
      * @param template TermLink template previously prepared
      * @param v Budget value of the link
      */
-    public TermLink(Term t, TermLink template, BudgetValue v) {
+    public TermLink(final Term t, final TermLink template, final BudgetValue v) {
         super(t.getName(), v);
         target = t;
         type = template.getType();

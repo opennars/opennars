@@ -89,7 +89,7 @@ public class Conjunction extends CompoundTerm {
      * @param argList the list of arguments
      * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
+    public static Term make(ArrayList<Term> argList, final Memory memory) {
         
         //SETH asks: why is a term in the argList null
         /*argList.removeIf(new Predicate<Term>() {
@@ -97,11 +97,11 @@ public class Conjunction extends CompoundTerm {
                 return t==null;
             }            
         });*/
-         for (Iterator<Term> itr = argList.iterator(); itr.hasNext();) {
+         for (final Iterator<Term> itr = argList.iterator(); itr.hasNext();) {
             if (itr.next() == null) { itr.remove(); }
         }
         
-        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
+        final TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
         return make(set, memory);
     }
 
@@ -113,16 +113,16 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    private static Term make(TreeSet<Term> set, Memory memory) {
+    private static Term make(final TreeSet<Term> set, final Memory memory) {
         if (set.isEmpty()) {
             return null;
         }                         // special case: single component
         if (set.size() == 1) {
             return set.first();
         }                         // special case: single component
-        ArrayList<Term> argument = new ArrayList<>(set);
-        String name = makeCompoundName(Symbols.CONJUNCTION_OPERATOR, argument);
-        Term t = memory.nameToListedTerm(name);
+        final ArrayList<Term> argument = new ArrayList<>(set);
+        final String name = makeCompoundName(Symbols.CONJUNCTION_OPERATOR, argument);
+        final Term t = memory.nameToListedTerm(name);
         return (t != null) ? t : new Conjunction(argument);
     }
 
@@ -136,8 +136,8 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term term1, Term term2, Memory memory) {
-        TreeSet<Term> set;
+    public static Term make(final Term term1, final Term term2, final Memory memory) {
+        final TreeSet<Term> set;
         if (term1 instanceof Conjunction) {
             set = new TreeSet<>(((CompoundTerm) term1).cloneComponents());
             if (term2 instanceof Conjunction) {

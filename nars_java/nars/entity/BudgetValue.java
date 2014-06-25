@@ -60,7 +60,7 @@ public class BudgetValue implements Cloneable {
      * @param d Initial durability
      * @param q Initial quality
      */
-    public BudgetValue(float p, float d, float q) {
+    public BudgetValue(final float p, final float d, final float q) {
         priority = new ShortFloat(p);
         durability = new ShortFloat(d);
         quality = new ShortFloat(q);
@@ -70,7 +70,7 @@ public class BudgetValue implements Cloneable {
      * Cloning constructor
      * @param v Budget value to be cloned
      */
-    public BudgetValue(BudgetValue v) {
+    public BudgetValue(final BudgetValue v) {
         priority = new ShortFloat(v.getPriority());
         durability = new ShortFloat(v.getDurability());
         quality = new ShortFloat(v.getQuality());

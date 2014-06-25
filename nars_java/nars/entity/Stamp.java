@@ -70,7 +70,7 @@ public class Stamp implements Cloneable {
      * Generate a new stamp identical with a given one
      * @param old The stamp to be cloned
      */
-    private Stamp(Stamp old) {
+    private Stamp(final Stamp old) {
         baseLength = old.length();
         evidentialBase = old.getBase();
         creationTime = old.getCreationTime();
@@ -84,7 +84,7 @@ public class Stamp implements Cloneable {
      * @param old The stamp of the single premise
      * @param time The current time
      */
-    public Stamp(Stamp old, long time) {
+    public Stamp(final Stamp old, final long time) {
         baseLength = old.length();
         evidentialBase = old.getBase();
         creationTime = time;
@@ -97,7 +97,7 @@ public class Stamp implements Cloneable {
      * @param first The first Stamp
      * @param second The second Stamp
      */
-    private Stamp(Stamp first, Stamp second, long time) {
+    private Stamp(final Stamp first, final Stamp second, final long time) {
         int i1, i2, j;
         i1 = i2 = j = 0;
         baseLength = Math.min(first.length() + second.length(), Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
@@ -150,7 +150,7 @@ public class Stamp implements Cloneable {
      * @param time The new creation time
      * @return The merged Stamp, or null
      */
-    public static Stamp make(Stamp first, Stamp second, long time) {
+    public static Stamp make(final Stamp first, final Stamp second, final long time) {
         if (first.length() > second.length()) {
             return new Stamp(first, second, time);
         } else {
@@ -211,7 +211,7 @@ public class Stamp implements Cloneable {
      * Add element to the chain
      * @return The evidentialBase of numbers
      */
-    public void addToChain(Term T) {
+    public void addToChain(final Term T) {
         derivationChain.add(T);
         if(derivationChain.size()>Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
             derivationChain.remove(0);
@@ -224,7 +224,7 @@ public class Stamp implements Cloneable {
      * @return The TreeSet representation of the evidential base
      */
     private TreeSet<Long> toSet() {
-        TreeSet<Long> set = new TreeSet<>();
+        final TreeSet<Long> set = new TreeSet<>();
         for (int i = 0; i < baseLength; i++) {
             set.add(evidentialBase[i]);
         }
@@ -237,13 +237,13 @@ public class Stamp implements Cloneable {
      * @return Whether the two have contain the same elements
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (!(that instanceof Stamp)) {
             return false;
         }
 
-        TreeSet<Long> set1 = toSet();
-        TreeSet<Long> set2 = ((Stamp) that).toSet();
+        final TreeSet<Long> set1 = toSet();
+        final TreeSet<Long> set2 = ((Stamp) that).toSet();
         return (set1.containsAll(set2) && set2.containsAll(set1));
     }
 
@@ -303,7 +303,9 @@ public class Stamp implements Cloneable {
 
    @Override
     public String toString() {
-        StringBuilder buffer = new StringBuilder(" " + Symbols.STAMP_OPENER + creationTime);
+        final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
+        
+        StringBuilder buffer = new StringBuilder(estimatedInitialSize).append(" " + Symbols.STAMP_OPENER + creationTime);
         buffer.append(" ").append(Symbols.STAMP_STARTER).append(" ");
         for (int i = 0; i < baseLength; i++) {
             buffer.append(Long.toString(evidentialBase[i]));
@@ -322,6 +324,11 @@ public class Stamp implements Cloneable {
             }
         }
         buffer.append(Symbols.STAMP_CLOSER).append(" ");
+        
+        
+        //this is for estimating an initial size of the stringbuffer
+        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.length());
+        
         return buffer.toString();
     }
 
