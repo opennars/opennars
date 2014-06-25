@@ -46,6 +46,7 @@ public class NARRun {
     private boolean logging;
     private PrintStream out = System.out;
     private boolean dumpLastState = true;
+    int maxTime = 0;
     /**
      * Flag to distinguish the two running modes of the project.
      */
@@ -131,13 +132,23 @@ public class NARRun {
             log("NARSBatch.run():"
                     + " step " + nar.getTime()
                     + " " + nar.isFinishedInputs());
-            nar.tick();
+            
+            try {
+                nar.tick();
+            }
+            catch (Exception e) {
+                //System.err.println(e);
+            }
+            
             log("NARSBatch.run(): after tick"
                     + " step " + nar.getTime()
                     + " " + nar.isFinishedInputs());
-            if (nar.isFinishedInputs()
-                    || nar.getTime() == 1000) {
-                break;
+            
+            if (maxTime > 0) {
+                if (nar.isFinishedInputs()
+                        || nar.getTime() == maxTime) {
+                    break;
+                }
             }
         }
     }

@@ -209,16 +209,16 @@ public abstract class Bag<E extends Item>  {
      * @param newItem The new Item
      * @return Whether the new Item is added into the Bag
      */
-    public boolean putIn(E newItem) {
-        String newKey = newItem.getKey();
-        E oldItem = nameTable.put(newKey, newItem);
+    public boolean putIn(final E newItem) {
+        final String newKey = newItem.getKey();
+        final E oldItem = nameTable.put(newKey, newItem);
         if (oldItem != null) {                  // merge duplications
             outOfBase(oldItem);
             newItem.merge(oldItem);
         }
-        E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
+        final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
-            String overflowKey = overflowItem.getKey();
+            final String overflowKey = overflowItem.getKey();
             nameTable.remove(overflowKey);
             return (overflowItem != newItem);
         } else {

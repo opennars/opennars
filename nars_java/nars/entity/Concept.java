@@ -424,9 +424,9 @@ public final class Concept extends Item {
      */
     public Sentence getBelief(final Task task) {
         final Sentence taskSentence = task.getSentence();
-        Sentence belief;
+        
         for (int i = 0; i < beliefs.size(); i++) {
-            belief = beliefs.get(i);
+            final Sentence belief = beliefs.get(i);
             if (memory.getRecorder().isActive())
                 memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
             memory.newStamp = Stamp.make(taskSentence.getStamp(), belief.getStamp(), memory.getTime());

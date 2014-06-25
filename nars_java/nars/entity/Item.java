@@ -182,7 +182,7 @@ public abstract class Item {
      * Return a String representation of the Item after simplification
      * @return A simplified String representation of the content
      */
-    public String toStringBrief() {
+    public String toStringBrief() {        
         return budget.toStringBrief() + " " + key ;
     }
     

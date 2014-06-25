@@ -38,11 +38,11 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     /**
      * The frequency factor of the truth value
      */
-    private ShortFloat frequency;
+    private final ShortFloat frequency;
     /**
      * The confidence factor of the truth value
      */
-    private ShortFloat confidence;
+    private final ShortFloat confidence;
     /**
      * Whether the truth value is derived from a definition
      */
@@ -55,8 +55,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @param c The confidence value
      */
     public TruthValue(float f, float c) {
-        frequency = new ShortFloat(f);
-        confidence = (c < 1) ? new ShortFloat(c) : new ShortFloat(0.9999f);
+        this(f, c, false);
     }
 
     /**
@@ -200,7 +199,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         }*/
         
         StringBuffer sb = 
-                new StringBuffer(DELIMITER + "").append(frequency.toStringBrief()).append(SEPARATOR);                    
+                new StringBuffer(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);                    
         
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
