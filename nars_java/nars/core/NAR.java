@@ -10,7 +10,6 @@ import nars.entity.Stamp;
 import nars.gui.NARWindow;
 import nars.io.InputChannel;
 import nars.io.Output;
-import nars.io.Symbols;
 import nars.storage.Memory;
 
 /**
@@ -102,7 +101,7 @@ public class NAR implements Runnable, Output {
         memory.init();
         Stamp.init();
         
-        output(Channel.OUT, resetMessage);
+        output(OUT.class, resetMessage);
                 
     }
 
@@ -143,7 +142,7 @@ public class NAR implements Runnable, Output {
      */
     public void walk(int n) {
         if (DEBUG)
-            output(Channel.OUT, "thinking " + n + (n > 1 ? " cycles" : " cycle"));
+            output(OUT.class, "thinking " + n + (n > 1 ? " cycles" : " cycle"));
         walkingSteps = n;
     }
     
@@ -218,7 +217,7 @@ public class NAR implements Runnable, Output {
             try {
                 tick();
             } catch (RuntimeException re) {                
-                output(Channel.ERR, re + " " + Arrays.asList(re.getStackTrace()));
+                output(ERR.class, re + " " + Arrays.asList(re.getStackTrace()));
                 if (DEBUG) {
                     System.err.println(re);                
                     re.printStackTrace();
@@ -298,7 +297,7 @@ public class NAR implements Runnable, Output {
     }
     
     @Override
-    public void output(final Channel channel, final Object o) {       
+    public void output(final Class channel, final Object o) {       
         for (final Output channelOut : outputChannels)
             channelOut.output(channel, o);
     }

@@ -22,7 +22,7 @@ package nars.inference;
 
 import nars.storage.Memory;
 import nars.entity.*;
-import nars.io.Output.Channel;
+import nars.io.Output.OUT;
 import nars.language.*;
 import nars.io.Symbols;
 
@@ -108,7 +108,7 @@ public class LocalRules {
         }
         task.setBestSolution(belief);
         if (task.isInput()) {    // moved from Sentence
-            memory.reasoner.output(Channel.OUT, belief);
+            memory.reasoner.output(OUT.class, belief);
         }
         final BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
         if ((budget != null) && budget.aboveThreshold()) {

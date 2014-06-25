@@ -64,7 +64,10 @@ import nars.language.Variable;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.io.Output.Channel;
+import nars.io.Output.ECHO;
+import nars.io.Output.ERR;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
 import nars.storage.Memory;
 
 /**
@@ -188,7 +191,7 @@ public class TextInput extends Symbols implements InputChannel {
                     return false;
                 }
             } catch (IOException ex) {
-                nar.output(Channel.ERR, ex);
+                nar.output(ERR.class, ex);
                 inExp = null;
             }
             
@@ -235,7 +238,7 @@ public class TextInput extends Symbols implements InputChannel {
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 if (!nar.isPaused())  {
                     if (input.equals(Symbols.STOP_COMMAND)) {
-                        nar.output(Channel.OUT, "stopping.");
+                        nar.output(OUT.class, "stopping.");
                         nar.pause();
                         return true;
                     }
@@ -251,7 +254,7 @@ public class TextInput extends Symbols implements InputChannel {
                 if (nar.isPaused()) {
                     if (input.equals(Symbols.START_COMMAND)) {
                         nar.resume();
-                        nar.output(Channel.OUT, "starting.");
+                        nar.output(OUT.class, "starting.");
                         return true;
                     }
                 }
@@ -269,7 +272,7 @@ public class TextInput extends Symbols implements InputChannel {
                     if (p.length == 2) {
                         int silenceLevel = Integer.parseInt(p[1]);
                         nar.setSilenceValue(silenceLevel);
-                        nar.output(Channel.OUT, "Silence level: " + silenceLevel);
+                        nar.output(OUT.class, "Silence level: " + silenceLevel);
                     }
                     
                     return true;
@@ -299,7 +302,7 @@ public class TextInput extends Symbols implements InputChannel {
                 char c = input.charAt(0);
                 if (c == Symbols.ECHO_MARK) {            
                     String echoString = input.substring(1);
-                    nar.output(Output.Channel.ECHO, '\"' + echoString + '\"');
+                    nar.output(ECHO.class, '\"' + echoString + '\"');
                     return true;
                 }
                 return false;                
@@ -318,7 +321,7 @@ public class TextInput extends Symbols implements InputChannel {
                     try {
                         Task task = parseNarsese(new StringBuffer(input), nar.memory, nar.getTime());
                         if (task != null) {
-                            nar.output(Channel.IN, task.getSentence());    // report input
+                            nar.output(IN.class, task.getSentence());    // report input
                             nar.memory.inputTask(task);
                             return true;
                         }
@@ -352,7 +355,7 @@ public class TextInput extends Symbols implements InputChannel {
         
         //not handled, so respond with some signal
         if (lastHandled == null) {
-            nar.output(Channel.OUT, "?");
+            nar.output(OUT.class, "?");
         }
     }
     
@@ -365,7 +368,7 @@ public class TextInput extends Symbols implements InputChannel {
                     new InputStreamReader(u.openStream()));            
             nar.addInputChannel(new TextInput(nar, in));
         } catch (Exception ex) {
-            nar.output(Channel.ERR, ex);
+            nar.output(ERR.class, ex);
         }
     }
     

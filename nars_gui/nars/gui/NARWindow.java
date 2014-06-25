@@ -396,13 +396,13 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
      * @param lines if null, forces output when updateExperienceOutput is false
      */
     @Override
-    public void output(final Channel c, final Object o) {
+    public void output(final Class c, final Object o) {
         
-        if ((!showErrors) && (c == Channel.ERR)) {
+        if ((!showErrors) && (c == ERR.class)) {
             return;
         }
         
-        final String line = c.toString() + ": " + o.toString() + "\n";
+        final String line = c.getSimpleName() + ": " + o.toString() + "\n";
         
         nextOutput.append(line);        
         
@@ -630,12 +630,16 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
         p.add(showErrorBox, c);
         
 
-        ChartPanel chart1 = new ChartPanel("concepts.Mass","concepts.Total");
-        chart1.setPreferredSize(new Dimension(200, 250));
+        ChartPanel chart0 = new ChartPanel("concepts.Total");
+        chart0.setPreferredSize(new Dimension(200, 150));
+        charts.add(chart0);
+        p.add(chart0, c);
+        
+        ChartPanel chart1 = new ChartPanel("concepts.Mass");
+        chart1.setPreferredSize(new Dimension(200, 200));
         charts.add(chart1);
         p.add(chart1, c);
-        
-        
+                
         ChartPanel chart2 = new ChartPanel("concepts.AveragePriority");
         chart2.setPreferredSize(new Dimension(200, 200));        
         charts.add(chart2);

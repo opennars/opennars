@@ -27,6 +27,8 @@ import nars.core.Parameters;
  */
 public class UtilityFunctions {
 
+    
+    
     /**
      * A function where the output is conjunctively determined by the inputs
      * @param arr The inputs, each in [0, 1]
@@ -39,7 +41,13 @@ public class UtilityFunctions {
         }
         return product;
     }
+    
+    //may be more efficient than the for-loop version above, for 2 params
+    public final static float and(final float a, final float b) {
+        return a*b;
+    }
 
+    
     /**
      * A function where the output is disjunctively determined by the inputs
      * @param arr The inputs, each in [0, 1]
@@ -52,7 +60,12 @@ public class UtilityFunctions {
         }
         return 1 - product;
     }
-
+    
+    //may be more efficient than the for-loop version above, for 2 params
+    public final static float or(final float a, final float b) {
+        return 1f-((1f-a)*(1f-b));
+    }
+    
     /**
      * A function where the output is the arithmetic average the inputs
      * @param arr The inputs, each in [0, 1]
@@ -64,6 +77,11 @@ public class UtilityFunctions {
             sum += f;
         }
         return sum / arr.length;
+    }
+    
+    //may be more efficient than the for-loop version above, for 2 params
+    public final static float aveAri(final float a, final float b) {
+        return (a + b)/2f;
     }
 
     /**
@@ -79,6 +97,16 @@ public class UtilityFunctions {
         return (float) Math.pow(product, 1.00 / arr.length);
     }
 
+    //may be more efficient than the for-loop version above, for 2 params
+    public final static float aveGeo(final float a, final float b) {
+        return (float)Math.sqrt(a*b);
+    }
+    
+    //may be more efficient than the for-loop version above, for 3 params
+    public final static float aveGeo(final float a, final float b, final float c) {
+        return (float)Math.pow(a*b*c, 1.0/3.0);
+    }    
+    
     /**
      * A function to convert weight to confidence
      * @param w Weight of evidence, a non-negative real number

@@ -33,7 +33,7 @@ public class ShortFloat implements Cloneable {
      * Constructor
      * @param v The initial value
      */
-    public ShortFloat(short v) {
+    public ShortFloat(final short v) {
         value = v;
     }
 
@@ -41,7 +41,7 @@ public class ShortFloat implements Cloneable {
      * Constructor
      * @param v The initial value in float
      */
-    public ShortFloat(float v) {
+    public ShortFloat(final float v) {
         setValue(v);
     }
 
@@ -65,11 +65,11 @@ public class ShortFloat implements Cloneable {
      * Set new value, rounded, with validity checking
      * @param v The new value
      */
-    public final void setValue(float v) {
+    public final void setValue(final float v) {
         if ((v < 0) || (v > 1)) {
             throw new ArithmeticException("Invalid value: " + v);
         } else {
-            value = (short) (v * 10000.0 + 0.5);
+            value = (short) (v * 10000.0f + 0.5f);
         }
     }
 
