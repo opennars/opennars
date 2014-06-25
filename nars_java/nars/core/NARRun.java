@@ -137,7 +137,7 @@ public class NARRun {
                 nar.tick();
             }
             catch (Exception e) {
-                //System.err.println(e);
+                System.err.println(e);
             }
             
             log("NARSBatch.run(): after tick"

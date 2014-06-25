@@ -10,31 +10,15 @@ package nars.io;
  */
 public interface Output {
     
-    public static enum Channel {
-        IN("IN"),
-        OUT("OUT"),
-        ERR("ERR"), 
-        ECHO("ECHO");
+    public static interface Channel {   }
+    public static interface IN extends Channel { }
+    public static interface OUT extends Channel { }
+    public static interface ERR extends Channel { }
+    public static interface ECHO extends Channel { }
         
-        public final String id;
-        
-        Channel(String id) {
-            this.id = id;
-        }
-
-        @Override
-        public String toString() {
-            return id;
-        }
-                
-    };
-    
     /**
      * 
-     * @param sentence  sentence object
-     * @param input     true if the sentence originated from input, false if NARS generated for output
      */
-    public void output(Channel c, Object o);
-
+    public void output(Class channel, Object o);
 
 }

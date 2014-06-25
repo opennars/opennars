@@ -131,6 +131,8 @@ public abstract class CompoundTerm extends Term {
         }
     }
 
+
+    
     /**
      * Orders among terms: variable < atomic < compound @p
      *

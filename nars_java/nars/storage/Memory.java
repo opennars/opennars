@@ -40,7 +40,7 @@ import nars.inference.InferenceRecorder;
 import nars.language.Term;
 import nars.core.Parameters;
 import nars.core.NAR;
-import nars.io.Output.Channel;
+import nars.io.Output.OUT;
 
 /**
  * The memory of the system.
@@ -289,7 +289,7 @@ public class Memory {
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
             final float minSilent = reasoner.getSilenceValue().get() / 100.0f;
             if (s > minSilent) {  // only report significant derived Tasks
-                reasoner.output(Channel.OUT, task.getSentence());
+                reasoner.output(OUT.class, task.getSentence());
             }
         }
         newTasks.add(task);
@@ -348,7 +348,7 @@ public class Memory {
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
             float minSilent = reasoner.getSilenceValue().get() / 100.0f;
             if (budget > minSilent) {  // only report significant derived Tasks
-                reasoner.output(Channel.OUT, task.getSentence());
+                reasoner.output(OUT.class, task.getSentence());
             }
             newTasks.add(task);
         } else {

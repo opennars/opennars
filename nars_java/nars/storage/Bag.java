@@ -301,9 +301,9 @@ public abstract class Bag<E extends Item>  {
      * @param item The Item to put in
      * @return The put-in level
      */
-    private int getLevel(E item) {
-        float fl = item.getPriority() * TOTAL_LEVEL;
-        int level = (int) Math.ceil(fl) - 1;
+    private int getLevel(final E item) {
+        final float fl = item.getPriority() * TOTAL_LEVEL;
+        final int level = (int) Math.ceil(fl) - 1;
         return (level < 0) ? 0 : level;     // cannot be -1
     }
 

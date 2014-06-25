@@ -98,7 +98,7 @@ public class TestUtil {
         //new TextOutput(n, new PrintWriter(System.out));
         new TextOutput(n) {
             @Override
-            public void output(Channel c, Object line) {
+            public void output(Class c, Object line) {
                 if (line instanceof String) {
                     String s = (String)line;
                     s = s.trim();

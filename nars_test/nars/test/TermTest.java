@@ -35,8 +35,7 @@ public class TermTest {
     public void testConjunctionTreeSet() {
         NAR n = new NAR();
         
-        try {
-            
+        try {           
             
             String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
             Term term1 = TextInput.parseTerm(term1String, n.memory);
@@ -57,7 +56,9 @@ public class TermTest {
             */
             
             assertTrue(term1.equals(term1.clone()));
+            assertTrue(term1.compareTo((Term)term1.clone())==0);            
             assertTrue(term2.equals(term2.clone()));
+            assertTrue(term2.compareTo((Term)term2.clone())==0);
             
             boolean t1e2 = term1.equals(term2);
             int t1c2 = term1.compareTo(term2);

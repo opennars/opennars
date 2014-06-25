@@ -95,8 +95,8 @@ public class TextOutput implements Output {
      * @param lines The text to be displayed
      */
     @Override
-    public void output(final Channel c, final Object o) {
-        final String s = process(c, o);
+    public void output(final Class channel, final Object o) {
+        final String s = process(channel, o);
         if (outExp != null) {
             outExp.println(s);
             outExp.flush();
@@ -106,7 +106,7 @@ public class TextOutput implements Output {
         }
     }
 
-    public String process(final Channel c, final Object o) {
-        return c.toString() + ": " + o.toString();
+    public String process(final Class c, final Object o) {
+        return c.getSimpleName() + ": " + o.toString();
     }
 }
