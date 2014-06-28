@@ -1,9 +1,14 @@
 ' ********** "wh" question
+
+' Bird is a type of swimmer.
 <bird --> swimmer>. %1.00;0.80%
-' Bird is a type of swimmer.
-<?x --> swimmer>?  
+
 ' What is a type of swimmer?
-4
-' OUT: <bird --> swimmer>. %1.00;0.80%
+<?x --> swimmer>?  
+
+16
+
 ' Bird is a type of swimmer.
+' OUT: <bird --> swimmer>. %1.00;0.80%
+''test.outputContains('<bird --> swimmer>. %1.00;0.80%')
 

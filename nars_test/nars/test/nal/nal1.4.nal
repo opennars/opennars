@@ -1,8 +1,13 @@
 ' ********** exemplification
-<robin --> bird>.
+
 ' Robin is a type of bird.
-<bird --> animal>.
+<robin --> bird>.
+
 ' A bird is a type of animal.
-5
-' OUT: <animal --> robin>. %1.00;0.45%
+<bird --> animal>.
+
+16
+
 ' I guess animal is a type of robin. 
+' OUT: <animal --> robin>. %1.00;0.45%
+''test.outputContains('<animal --> robin>. %1.00;0.45%')

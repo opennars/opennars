@@ -1,17 +1,15 @@
 'Deduction ------
 
 'Bird is a type of animal.
-
 <bird --> animal>.
 
 'Robin is a type of bird.
-
 <robin --> bird>.
 
-'Robin is a type of animal.
 
 15
 
+'Robin is a type of animal.
 ''out[0].indexOf('<robin --> animal>. %1.00;0.81%')==0
 
 

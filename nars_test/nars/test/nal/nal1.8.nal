@@ -1,10 +1,17 @@
 ' ********** backward inference
-<bird --> swimmer>. %1.00;0.80%
+
 ' Bird is a type of swimmer.
-<?x --> swimmer>?  
+<bird --> swimmer>. %1.00;0.80%
+
 ' What is a type of swimmer?
-4
-' OUT: <?1 --> bird>?
+<?x --> swimmer>?  
+
+16
+
 ' What is a type of bird?
-' OUT: <bird --> ?1>?
+' OUT: <?1 --> bird>?
+''test.outputContains('<?1 --> bird>?')
+
 ' What is the type of bird?
+' OUT: <bird --> ?1>?
+''test.outputContains('<bird --> ?1>?')
