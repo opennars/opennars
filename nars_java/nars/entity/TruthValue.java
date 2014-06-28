@@ -199,7 +199,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         }*/
         
         StringBuffer sb = 
-                new StringBuffer(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);                    
+                new StringBuffer(12).append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);                    
         
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {

@@ -30,10 +30,20 @@ import nars.core.NAR;
  */
 public class JSONOutput extends TextOutput {
 
-    final Gson gson;
+    Gson gson;
 
+    public JSONOutput(NAR reasoner, boolean pretty) {
+        super(reasoner);
+        init(pretty);
+    }
+    
     public JSONOutput(NAR reasoner, PrintStream ps, boolean pretty) {
         super(reasoner, ps);
+        
+        init(pretty);
+    }
+    
+    protected void init(boolean pretty) {
         GsonBuilder builder = new GsonBuilder()
                 .addSerializationExclusionStrategy(new ExclusionStrategy() {
 
@@ -65,6 +75,7 @@ public class JSONOutput extends TextOutput {
             builder.setPrettyPrinting();
         }
         gson = builder.create();
+        
     }
 
     @Override

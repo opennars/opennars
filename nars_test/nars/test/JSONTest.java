@@ -21,7 +21,7 @@ import nars.core.NAR;
 import nars.io.JSONOutput;
 import nars.io.Number1DInput;
 import static nars.test.Number1DInputTest.randomArray;
-import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
@@ -29,18 +29,20 @@ import org.junit.Assert;
  */
 public class JSONTest {
  
-    public static void main(String[] args) {
+    @Test
+    public void testJSON() {
         int N = 2;
         
         double[] x = randomArray(N, 1.0, 0);
         
         NAR n = new NAR();
         
-        new JSONOutput(n, System.out, true);
+        new JSONOutput(n, true);
         
         new Number1DInput(n, "x", x);
         n.run(16);
- 
-        System.out.println(n);
+         
+        //System.out.println(n);        
     }
+    
 }

@@ -102,7 +102,7 @@ public class TextOutput implements Output {
             outExp.flush();
         }
         if (outExp2 != null) {
-            outExp2.println(s);          
+            outExp2.println(s);            
         }
     }
 

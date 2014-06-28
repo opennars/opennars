@@ -47,11 +47,11 @@ public class Number1DInputTest {
         
         NAR n = new NAR();
         
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out);
         
         new Number1DInput(n, "x", x);
         new Number1DInput(n, "y", y);
-        n.run(5000);
+        n.run(1);
         Assert.assertTrue(true);        
     }
     
