@@ -211,6 +211,8 @@ public abstract class Bag<E extends Item>  {
      */
     public boolean putIn(final E newItem) {
         final String newKey = newItem.getKey();
+                
+        
         final E oldItem = nameTable.put(newKey, newItem);
         if (oldItem != null) {                  // merge duplications
             outOfBase(oldItem);

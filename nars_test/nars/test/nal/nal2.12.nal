@@ -1,0 +1,10 @@
+
+********** conversions between inheritance and similarity
+<bird <-> swan>. %0.90%  
+// a bird is similar to a swan. 
+<swan --> bird>?  
+// Is swan a type of bird?
+4
+ OUT: <swan --> bird>. %0.90;0.81%
+// A swan is a type of bird. 
+

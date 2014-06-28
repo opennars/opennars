@@ -1,0 +1,10 @@
+
+********** analogy
+<gull --> swimmer>. 
+// Gull is a type of swimmer. 
+<gull <-> swan>.  
+// Gull is similar to a swan. 
+5
+ OUT: <swan --> swimmer>. %1.00;0.81% 
+// I believe a swan is a type of swimmer. 
+

@@ -1,0 +1,7 @@
+********** set definition
+<[smart] --> [bright]>. 
+// Smart thing is a type of bright thing. 
+5
+ OUT: <[bright] <-> [smart]>. %1.00;0.90%
+// Bright thing is similar to smart thing. 
+ 

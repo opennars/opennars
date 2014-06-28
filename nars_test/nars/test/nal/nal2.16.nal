@@ -1,0 +1,7 @@
+********** set definition
+<{Tweety} --> {Birdie}>. 
+// Tweety is Birdie. 
+7
+ OUT: <{Birdie} <-> {Tweety}>. %1.00;0.90%
+// Birdie is similar to Tweety. 
+

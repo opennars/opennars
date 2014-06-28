@@ -1,0 +1,8 @@
+********** resemblance
+<robin <-> swan>. 
+// Robin is similar to swan. 
+<gull <-> swan>. 
+// Gull is similar to swan. 
+5
+ OUT: <gull <-> robin>. %1.00;0.81% 
+// Gull is similar to robin.

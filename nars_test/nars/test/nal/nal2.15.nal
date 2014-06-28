@@ -1,0 +1,6 @@
+********** translating instance-property into inheritance
+<Tweety {-] yellow>.
+// Tweety is yellow.
+  IN: <{Tweety} --> [yellow]>. %1.00;0.90%
+// Tweety is yellow.
+

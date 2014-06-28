@@ -1,0 +1,8 @@
+<Birdie <-> Tweety>. %0.90%  
+// Birdie is similar to Tweety
+<{Birdie} <-> {Tweety}>?  
+// Is Birdie similar to Tweety?
+2
+ OUT: <{Birdie} <-> {Tweety}>. %0.90;0.90%
+// Birdie is similar to Tweety. 
+
