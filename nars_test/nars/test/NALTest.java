@@ -1,37 +1,41 @@
 package nars.test;
 
-
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-/**
- * Unit Test Reasoning, using input and output files from nal/Examples ;
- * <pre>
- * To create a new test input, add the NARS input as XX-in.txt in nal/Examples ,
- *  run the test suite, and move resulting file in temporary directory
- * /tmp/nars_test/XX-out.txt
- * into nal/Example
- * </pre>
- *
- */
+
+@RunWith(Parameterized.class)
 public class NALTest extends TestUtil {
 
-    public NALTest() {
-        super(true);
+    @Parameterized.Parameters
+    public static Collection params() {
+        List l = new LinkedList();
+        
+        //NAL1
+        for (int i = 0; i <= 8; i++)
+            l.add(new Object[]{"nal1." + i + ".nal"});
+        
+        return l;
     }
-    
-    @Test public void testExample1_0() { testNAL("nal1.0.nal");  }
-    @Test public void testExample1_1() { testNAL("nal1.1.nal");  }
-    @Test public void testExample1_2() { testNAL("nal1.2.nal");  }
-    @Test public void testExample1_3() { testNAL("nal1.3.nal");  }
-    @Test public void testExample1_4() { testNAL("nal1.4.nal");  }
-    @Test public void testExample1_5() { testNAL("nal1.5.nal");  }
-    @Test public void testExample1_6() { testNAL("nal1.6.nal");  }
-    @Test public void testExample1_7() { testNAL("nal1.7.nal");  }
-    @Test public void testExample1_8() { testNAL("nal1.8.nal");  }
+
+    private final String scriptPath;
+
+    public NALTest(String scriptPath) {
+        super(true);
+        this.scriptPath = scriptPath;
+    }
+
+    @Test
+    public void test() {
+        testNAL(scriptPath);
+    }
 
     public static void main(String[] args) {
         org.junit.runner.JUnitCore.runClasses(NALTest.class);
     }
-
 
 }

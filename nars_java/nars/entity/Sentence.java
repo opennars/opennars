@@ -48,13 +48,15 @@ public class Sentence implements Cloneable {
      * Partial record of the derivation path
      */
     final public Stamp stamp;
+
+
     /**
      * Whether the sentence can be revised
      */
-    private String key;
-
-
     private boolean revisible;
+
+    //caches the 'getKey()' result
+    private String key;
 
     /**
      * Create a Sentence with the given fields
