@@ -157,7 +157,7 @@ public abstract class Statement extends CompoundTerm {
                 s.equals(Relation.EQUIVALENCE.toString());
     }
     
-    public static Relation getRelation(String s) {
+    public static Relation getRelation(final String s) {
         if (s.equals(Relation.INHERITANCE.toString()))
             return Relation.INHERITANCE;
         if (s.equals(Relation.SIMILARITY.toString()))

@@ -20,9 +20,6 @@ package nars.test;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -32,7 +29,6 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.io.Symbols;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -81,6 +77,18 @@ public class TestUtil {
             return true;
         return false;
     }
+    
+    
+    final LinkedList<String> out = new LinkedList();
+
+    public boolean outputContains(String s) {        
+        for (String o : out) {
+            if (o.indexOf(s)!=-1)
+                return true;
+        }
+        return false;
+    }
+    
 
     public Sentence parseOutput(String o) {
         //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
@@ -91,27 +99,29 @@ public class TestUtil {
         int extraCycles = 0;
         final NAR n = new NAR();        
         
-        final LinkedList<String> out = new LinkedList();
+        
         final LinkedList<String> expressions = new LinkedList();
-
+        out.clear();
+        
         new TextInput(n, getExample(path));
         //new TextOutput(n, new PrintWriter(System.out));
         new TextOutput(n) {
             @Override
-            public void output(Class c, Object line) {
-                if (line instanceof String) {
-                    String s = (String)line;
-                    s = s.trim();
-                    String OUT_PREFIX = Symbols.OUTPUT_LINE + ": ";
+            public void output(Class c, Object line) {                
+                String s = line.toString();
+                s = s.trim();
 
-                    if (s.startsWith(OUT_PREFIX)) {
-                        out.add(s.substring(OUT_PREFIX.length()));
-                    }
-                    else if (s.startsWith("\"\'")) {      
+                if (c == ECHO.class) {
+                    if (s.startsWith("\"\'")) {      
                         //remove begining "' and trailing "
                         String expression = s.substring(2, s.length()-1);
                         expressions.add(expression);
-                    }
+                        return;
+                    }                        
+                }
+
+                if (c == OUT.class) {
+                    out.add(s);
                 }
             }            
         };            
@@ -131,7 +141,7 @@ public class TestUtil {
                 }
             }
             catch (Exception x) {
-                assertTrue(path + ": " + e + " --> " + x.toString() , false);
+                assertTrue(x.toString() + "<-" + path + ": " + e, false);
                 System.err.println(e);
                 System.err.println(x);
                 x.printStackTrace();

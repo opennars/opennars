@@ -22,6 +22,7 @@ import nars.core.NAR;
 import nars.core.NARState;
 import nars.io.Number1DInput;
 import static nars.test.Number1DInputTest.randomArray;
+import org.junit.Test;
 
 /**
  *
@@ -29,7 +30,8 @@ import static nars.test.Number1DInputTest.randomArray;
  */
 public class NARStateTest {
  
-    public static void main(String[] args) {
+    @Test
+    public void testNARState() {
         int N = 2;
         
         double[] x = randomArray(N, 1.0, 0);
@@ -41,7 +43,9 @@ public class NARStateTest {
         
         
         HashMap<String, Object> d = new NARState(n).measure();
+
+        assert(d.keySet().size() > 0);
         
-        System.out.println(d);
-    }    
+    }
+    
 }

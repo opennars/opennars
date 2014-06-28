@@ -64,10 +64,7 @@ public class Implication extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Implication make(Term subject, Term predicate, Memory memory) {
-        if ((subject == null) || (predicate == null)) {
-            return null;
-        }
+    public static Implication make(final Term subject, final Term predicate, final Memory memory) {
         if ((subject == null) || (predicate == null)) {
             return null;
         }
@@ -77,20 +74,20 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        String name = makeStatementName(subject, Symbols.Relation.IMPLICATION.toString(), predicate);
-        Term t = memory.nameToListedTerm(name);
+        final String name = makeStatementName(subject, Symbols.Relation.IMPLICATION.toString(), predicate);
+        final Term t = memory.nameToListedTerm(name);
         if (t != null) {
             return (Implication) t;
         }
         if (predicate instanceof Implication) {
-            Term oldCondition = ((Implication) predicate).getSubject();
+            final Term oldCondition = ((Implication) predicate).getSubject();
             if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containComponent(subject)) {
                 return null;
             }
-            Term newCondition = Conjunction.make(subject, oldCondition, memory);
+            final Term newCondition = Conjunction.make(subject, oldCondition, memory);
             return make(newCondition, ((Implication) predicate).getPredicate(), memory);
         } else {
-            ArrayList<Term> argument = argumentsToList(subject, predicate);
+            final ArrayList<Term> argument = argumentsToList(subject, predicate);
             return new Implication(argument);
         }
     }
