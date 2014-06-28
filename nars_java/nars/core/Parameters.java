@@ -77,7 +77,7 @@ public class Parameters {
     /** Hashtable load factor in Bag */
     public static final float LOAD_FACTOR = (float) 0.5;
     /** Size of ConceptBag */
-    public static final int CONCEPT_BAG_SIZE = 1000;
+    public static final int CONCEPT_BAG_SIZE = 64000;
     /** Size of TaskLinkBag */
     public static final int TASK_LINK_BAG_SIZE = 20;
     /** Size of TermLinkBag */

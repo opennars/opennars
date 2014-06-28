@@ -1,0 +1,9 @@
+
+********** comparison
+<sport --> competition>. 
+// Sport is a type of competition. 
+<chess --> competition>. %0.90% 
+// Chess is a type of competition. 
+5
+ OUT: <chess <-> sport>. %0.90;0.45% 
+// I guess chess is similar to sport.

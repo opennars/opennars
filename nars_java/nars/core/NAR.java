@@ -287,7 +287,14 @@ public class NAR implements Runnable, Output {
         if (((running || walkingSteps > 0)) && (!paused)) {
             clock++;
             tickTimer();
-            memory.workCycle(clock);
+            try {
+                memory.workCycle(clock);
+            }
+            catch (RuntimeException e) {
+                output(ERR.class, e.toString());
+                if (DEBUG)
+                    e.printStackTrace();
+            }
             if (walkingSteps > 0) {
                 walkingSteps--;
             }

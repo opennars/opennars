@@ -1,0 +1,11 @@
+********** structure transformation
+
+********** structure transformation
+<bright <-> smart>. %0.90% 
+// Bright is similar to smart. 
+<[bright] --> [smart]>?  
+// Is bright thing a type of smart thing?
+2
+ OUT: <[bright] --> [smart]>. %0.90;0.81%
+// Bright thing is a type of smart thing. 
+

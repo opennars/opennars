@@ -15,6 +15,10 @@ public class NALTest extends TestUtil {
     public static Collection params() {
         List l = new LinkedList();
         
+        //NAL2
+        for (int i = 0; i <= 19; i++)
+            l.add(new Object[]{"nal2." + i + ".nal"});
+
         //NAL1
         for (int i = 0; i <= 8; i++)
             l.add(new Object[]{"nal1." + i + ".nal"});
