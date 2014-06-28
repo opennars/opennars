@@ -1,14 +1,17 @@
 ' ********** abduction
-<sport --> competition>.
+
 ' Sport is a type of competition.
-<chess --> competition>. %0.90%
+<sport --> competition>.
+
 ' Chess is a type of competition.
+<chess --> competition>. %0.90%
+
 15
-' OUT: <sport --> chess>. %1.00;0.42% 
 
-'//'out[0].indexOf('<sport --> chess>. %1.00;0.42%')==0
 ' I guess sport is a type of chess.
-' OUT: <chess --> sport>. %0.90;0.45% 
+''//OUT: <sport --> chess>. %1.00;0.42% 
+''test.outputContains('<sport --> chess>. %1.00;0.42%')
+
 ' I guess chess is a type of sport.
-
-
+''//OUT: <chess --> sport>. %0.90;0.45% 
+''test.outputContains('<chess --> sport>. %0.90;0.45%')

@@ -1,8 +1,13 @@
 ' ********** "y/n" question
+
+' Bird is a type of swimmer.
 <bird --> swimmer>.
-' Bird is a type of swimmer.
-<bird --> swimmer>? 
+
 ' Is bird a type of swimmer?
-1
-' OUT: <bird --> swimmer>. %1.00;0.90% 
+<bird --> swimmer>? 
+
+16
+
 ' Bird is a type of swimmer.
+' OUT: <bird --> swimmer>. %1.00;0.90% 
+''test.outputContains('<bird --> swimmer>. %1.00;0.90%')
