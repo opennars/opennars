@@ -146,11 +146,11 @@ public abstract class CompoundTerm extends Term {
     }
 
     /**
-     * Orders among terms: variable < atomic < compound @p
+     * Orders among terms: variable < atomic < compound
      *
-     *
-     * aram that The Term to be compared with the current Term @return The same
-     * as compareTo as defined on Strings
+     * @param that The Term to be compared with the current Term
+     * @return The same as compareTo as defined on Strings
+     * @return The order of the two terms
      */
     @Override
     public int compareTo(final Term that) {

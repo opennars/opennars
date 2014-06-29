@@ -145,9 +145,11 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, Memory memory) {
-        if (compound instanceof Statement) {
-            return;
+
+        if ((compound instanceof Statement) || (compound instanceof ImageExt) ||(compound instanceof ImageInt)){
+            return;    
         }
+
         Term term2 = CompoundTerm.reduceComponents(compound, component, memory);
         if (term2 == null) {
             return;
