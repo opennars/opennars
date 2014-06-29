@@ -256,11 +256,11 @@ public abstract class Statement extends CompoundTerm {
      * @param t2 The second term
      * @return Whether they cannot be related in a statement
      */
-    private static boolean invalidReflexive(Term t1, Term t2) {
+    private static boolean invalidReflexive(final Term t1, final Term t2) {
         if (!(t1 instanceof CompoundTerm)) {
             return false;
         }
-        CompoundTerm com = (CompoundTerm) t1;
+        final CompoundTerm com = (CompoundTerm) t1;
         if ((com instanceof ImageExt) || (com instanceof ImageInt)) {
             return false;
         }

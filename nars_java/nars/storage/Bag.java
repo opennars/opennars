@@ -72,7 +72,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * mapping from key to item
      */
-    private HashMap<String, E> nameTable;
+    protected HashMap<String, E> nameTable;
     /**
      * array of lists of items, for items on different level
      */

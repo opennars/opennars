@@ -291,7 +291,7 @@ public class NAR implements Runnable, Output {
                 memory.workCycle(clock);
             }
             catch (RuntimeException e) {
-                output(ERR.class, e.toString());
+                output(ERR.class, e);
                 if (DEBUG)
                     e.printStackTrace();
             }
