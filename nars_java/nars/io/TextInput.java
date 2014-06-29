@@ -701,14 +701,14 @@ public class TextInput extends Symbols implements InputChannel {
         String s = s0.trim();
         int i = topRelation(s);
         if (i < 0) {
-            throw new InvalidInputException("invalid statement");
+            throw new InvalidInputException("invalid statement: topRelation(s) < 0");
         }
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i), memory);
         Term predicate = parseTerm(s.substring(i + 3), memory);
         Statement t = Statement.make(Statement.getRelation(relation), subject, predicate, memory);
         if (t == null) {
-            throw new InvalidInputException("invalid statement");
+            throw new InvalidInputException("invalid statement: statement unable to create: " + Statement.getRelation(relation) + " " + subject + " " + predicate);
         }
         return t;
     }

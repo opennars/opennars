@@ -23,6 +23,7 @@ package nars.io;
 
 import java.awt.FileDialog;
 import java.io.*;
+import java.util.Arrays;
 
 import nars.core.NAR;
 
@@ -37,6 +38,8 @@ public class TextOutput implements Output {
      */
     private PrintWriter outExp;
     private boolean errors = true;
+    private boolean errorStack;
+
     
 
     public interface LineOutput {
@@ -111,11 +114,21 @@ public class TextOutput implements Output {
     }
 
     public String process(final Class c, final Object o) {
-        return c.getSimpleName() + ": " + o.toString();
+        String result = c.getSimpleName() + ": " + o.toString();
+        if (errorStack && (c == ERR.class)) {
+            if (o instanceof Exception) {
+                Exception e = (Exception)o;
+                result += " " + Arrays.asList(e.getStackTrace());
+            }
+        }
+        return result;
     }
 
     public void setErrors(boolean errors) {
         this.errors = errors;
     }    
     
+    public void setErrorStackTrace(boolean b) {
+        this.errorStack = true;
+    }
 }

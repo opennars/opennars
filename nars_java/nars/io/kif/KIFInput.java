@@ -29,6 +29,7 @@ import nars.io.TextInput;
 
 /**
  * http://sigmakee.cvs.sourceforge.net/viewvc/sigmakee/sigma/suo-kif.pdf
+ * http://sigma-01.cim3.net:8080/sigma/Browse.jsp?kb=SUMO&lang=EnglishLanguage&flang=SUO-KIF&term=subclass
  * @author me
  */
 public class KIFInput implements InputChannel {
@@ -50,6 +51,11 @@ public class KIFInput implements InputChannel {
 
     Map<String, Integer> knownOperators = new HashMap();
     Map<String, Integer> unknownOperators = new HashMap();
+    
+    protected void emit(final String statement) {
+        new TextInput(nar, statement);
+        //System.out.println(statement);
+    }
     
     @Override
     public boolean nextInput() {
@@ -73,7 +79,7 @@ public class KIFInput implements InputChannel {
                 System.err.println("subclass expects 2 arguments");
             }
             else {
-                new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.");
+                emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
  
             }
         } else if (root.equals("instance")) {
@@ -81,7 +87,7 @@ public class KIFInput implements InputChannel {
                 System.err.println("instance expects 2 arguments");
             }    
             else {
-                new TextInput(nar, "<" + a.get(0) + " {-- " + a.get(1) + ">.");
+                emit("<" + a.get(0) + " {-- " + a.get(1) + ">.");
             }
         }
         else if (root.equals("relatedInternalConcept")) {
@@ -91,15 +97,14 @@ public class KIFInput implements InputChannel {
                 System.err.println("relatedInternalConcept expects 2 arguments");
             }    
             else {
-                new TextInput(nar, "<" + a.get(0) + " <-> " + a.get(1) + ">.");
+                emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
             }            
         }
-        else if (root.equals("domain")) {
-            /*
-            (domain domain 1 Relation)
-            (domain domain 2 PositiveInteger)
-            (domain domain 3 SetOrClass)
-            */
+        /*else if (root.equals("domain")) {
+            
+            //(domain domain 1 Relation)
+            //(domain domain 2 PositiveInteger)
+            //(domain domain 3 SetOrClass)            
                         
             if (a == null) {
                 
@@ -117,17 +122,18 @@ public class KIFInput implements InputChannel {
             //there may be other ways of expressing this more clearly
             new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.");
         }
+        */
         else if (root.equals("disjoint")) {
              //"(||," <term> {","<term>} ")"      // disjunction
-            new TextInput(nar, "<(||," + a.get(0) + ","+ a.get(1) +")>.");
+            emit("<(||," + a.get(0) + ","+ a.get(1) +")>.");
         }
         else if (root.equals("disjointRelation")) {            
-            new TextInput(nar, "<(||," + a.get(0) + ","+ a.get(1) +")>.");            
+            emit("<(||," + a.get(0) + ","+ a.get(1) +")>.");            
         }
         else if (root.equals("subrelation")) {            
             //for now, use similarity+inheritance but more clear expression is possible
-            new TextInput(nar, "<" + a.get(0) + " <-> " + a.get(1) + ">.");
-            new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.");
+            emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
+            emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
         }
         else {
             /*System.out.println("??" + f);

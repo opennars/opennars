@@ -21,7 +21,6 @@
 package nars.language;
 
 import java.util.*;
-import nars.io.Output.ERR;
 
 import nars.io.Symbols;
 import nars.storage.Memory;
@@ -78,8 +77,8 @@ public class Implication extends Statement {
         final String name = makeStatementName(subject, Symbols.Relation.IMPLICATION.toString(), predicate);
         final Term t = memory.nameToListedTerm(name);
         if (t != null) {            
-            if (t.getClass()!=Implication.class) {
-                throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() );
+            if (t.getClass()!=Implication.class) {                
+                throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() + " = " + t.toString() );
             }
             return (Implication) t;
         }

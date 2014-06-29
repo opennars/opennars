@@ -31,6 +31,7 @@ import org.junit.Test;
  */
 public class TermTest {
 
+    
     @Test
     public void testConjunctionTreeSet() {
         NAR n = new NAR();

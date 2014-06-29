@@ -46,7 +46,8 @@ public class KIFExample {
         System.err.println(new NARState(n).measure());
 
         TextOutput t = new TextOutput(n, System.out);
-        t.setErrors(false);
+        t.setErrors(true);
+        t.setErrorStackTrace(true);
 
         n.run(100000);
 

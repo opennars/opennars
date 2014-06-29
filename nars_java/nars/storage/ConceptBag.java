@@ -23,6 +23,7 @@ package nars.storage;
 
 import nars.entity.Concept;
 import nars.core.Parameters;
+import nars.language.Term;
 
 /**
  * Contains Concepts.
@@ -51,5 +52,12 @@ public class ConceptBag extends Bag<Concept> {
     @Override
     protected int forgetRate() {
     	return memory.getConceptForgettingRate().get();
+    }
+    
+    public void printAll() {
+        for (String k : this.nameTable.keySet()) {
+            Term v = nameTable.get(k).getTerm();
+            System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
+        }
     }
 }
