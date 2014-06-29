@@ -27,13 +27,14 @@ import nars.io.Symbols.Relation;
 import nars.storage.Memory;
 
 /**
- * A statement is a compound term, consisting of a subject, a predicate,
- * and a relation symbol in between. It can be of either first-order or higher-order.
+ * A statement is a compound term, consisting of a subject, a predicate, and a
+ * relation symbol in between. It can be of either first-order or higher-order.
  */
 public abstract class Statement extends CompoundTerm {
 
     /**
      * Constructor with partial values, called by make
+     *
      * @param arg The component list of the term
      */
     protected Statement(ArrayList<Term> arg) {
@@ -48,6 +49,7 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * Constructor with full values, called by clone
+     *
      * @param n The nameStr of the term
      * @param cs Component list
      * @param con Constant indicator
@@ -59,6 +61,7 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * Make a Statement from String, called by StringParser
+     *
      * @param relation The relation String
      * @param subject The first component
      * @param predicate The second component
@@ -95,6 +98,7 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * Make a Statement from given components, called by the rules
+     *
      * @return The Statement built
      * @param subj The first component
      * @param pred The second component
@@ -118,7 +122,9 @@ public abstract class Statement extends CompoundTerm {
     }
 
     /**
-     * Make a symmetric Statement from given components and temporal information, called by the rules
+     * Make a symmetric Statement from given components and temporal
+     * information, called by the rules
+     *
      * @param statement A sample asymmetric statement providing the class type
      * @param subj The first component
      * @param pred The second component
@@ -137,6 +143,7 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * Check Statement relation symbol, called in StringPaser
+     *
      * @param s0 The String to be checked
      * @return if the given String is a relation symbol
      */
@@ -145,38 +152,46 @@ public abstract class Statement extends CompoundTerm {
         if (s.length() != 3) {
             return false;
         }
-        
+
         //TODO use a regexp which may be faster than repeated string comparisons
-        
-        return (s.equals(Relation.INHERITANCE.toString())) ||
-                s.equals(Relation.SIMILARITY.toString()) ||
-                s.equals(Relation.INSTANCE.toString()) ||
-                s.equals(Relation.PROPERTY.toString()) ||
-                s.equals(Relation.INSTANCE_PROPERTY.toString()) ||
-                s.equals(Relation.IMPLICATION.toString()) ||
-                s.equals(Relation.EQUIVALENCE.toString());
+        return (s.equals(Relation.INHERITANCE.toString()))
+                || s.equals(Relation.SIMILARITY.toString())
+                || s.equals(Relation.INSTANCE.toString())
+                || s.equals(Relation.PROPERTY.toString())
+                || s.equals(Relation.INSTANCE_PROPERTY.toString())
+                || s.equals(Relation.IMPLICATION.toString())
+                || s.equals(Relation.EQUIVALENCE.toString());
     }
-    
+
     public static Relation getRelation(final String s) {
-        if (s.equals(Relation.INHERITANCE.toString()))
+        if (s.equals(Relation.INHERITANCE.toString())) {
             return Relation.INHERITANCE;
-        if (s.equals(Relation.SIMILARITY.toString()))
+        }
+        if (s.equals(Relation.SIMILARITY.toString())) {
             return Relation.SIMILARITY;
-        if (s.equals(Relation.INSTANCE.toString()))
+        }
+        if (s.equals(Relation.INSTANCE.toString())) {
             return Relation.INSTANCE;
-        if (s.equals(Relation.PROPERTY.toString()))
+        }
+        if (s.equals(Relation.PROPERTY.toString())) {
             return Relation.PROPERTY;
-        if (s.equals(Relation.INSTANCE_PROPERTY.toString()))
+        }
+        if (s.equals(Relation.INSTANCE_PROPERTY.toString())) {
             return Relation.INSTANCE_PROPERTY;
-        if (s.equals(Relation.IMPLICATION.toString()))
+        }
+        if (s.equals(Relation.IMPLICATION.toString())) {
             return Relation.IMPLICATION;
-        if (s.equals(Relation.EQUIVALENCE.toString()))
-            return Relation.EQUIVALENCE;        
+        }
+        if (s.equals(Relation.EQUIVALENCE.toString())) {
+            return Relation.EQUIVALENCE;
+        }
         return null;
     }
 
     /**
-     * Override the default in making the nameStr of the current term from existing fields
+     * Override the default in making the nameStr of the current term from
+     * existing fields
+     *
      * @return the nameStr of the term
      */
     @Override
@@ -186,6 +201,7 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * Default method to make the nameStr of an image term from given fields
+     *
      * @param subject The first component
      * @param predicate The second component
      * @param relation The relation operator
@@ -204,7 +220,6 @@ public abstract class Statement extends CompoundTerm {
     /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>
-     * Minimum requirement: the two terms cannot be the same, or containing each other as component
      * @param subject The first component
      * @param predicate The second component
      * @return Whether The Statement is invalid
@@ -213,10 +228,10 @@ public abstract class Statement extends CompoundTerm {
         if (subject.equals(predicate)) {
             return true;
         }
-        if ((subject instanceof CompoundTerm) && ((CompoundTerm) subject).containComponent(predicate)) {
+        if (invalidReflexive(subject, predicate)) {
             return true;
         }
-        if ((predicate instanceof CompoundTerm) && ((CompoundTerm) predicate).containComponent(subject)) {
+        if (invalidReflexive(predicate, subject)) {
             return true;
         }
         if ((subject instanceof Statement) && (predicate instanceof Statement)) {
@@ -234,9 +249,30 @@ public abstract class Statement extends CompoundTerm {
     }
 
     /**
+     * Check if one term is identical to or included in another one, except in a
+     * reflexive relation
+     * <p>
+     * @param t1 The first term
+     * @param t2 The second term
+     * @return Whether they cannot be related in a statement
+     */
+    private static boolean invalidReflexive(Term t1, Term t2) {
+        if (!(t1 instanceof CompoundTerm)) {
+            return false;
+        }
+        CompoundTerm com = (CompoundTerm) t1;
+        if ((com instanceof ImageExt) || (com instanceof ImageInt)) {
+            return false;
+        }
+        return com.containComponent(t2);
+    }
+
+    /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>
-     * Minimum requirement: the two terms cannot be the same, or containing each other as component
+     * Minimum requirement: the two terms cannot be the same, or containing each
+     * other as component
+     *
      * @return Whether The Statement is invalid
      */
     public boolean invalid() {
@@ -245,6 +281,7 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * Return the first component of the statement
+     *
      * @return The first component
      */
     public Term getSubject() {
@@ -253,6 +290,7 @@ public abstract class Statement extends CompoundTerm {
 
     /**
      * Return the second component of the statement
+     *
      * @return The second component
      */
     public Term getPredicate() {

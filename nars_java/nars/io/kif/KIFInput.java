@@ -16,6 +16,9 @@
  */
 package nars.io.kif;
 
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +45,7 @@ public class KIFInput implements InputChannel {
         n.addInputChannel(this);
         
         this.nar = n;
-        
+                
     }
 
     Map<String, Integer> knownOperators = new HashMap();
@@ -70,7 +73,7 @@ public class KIFInput implements InputChannel {
                 System.err.println("subclass expects 2 arguments");
             }
             else {
-                new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.\n");
+                new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.");
  
             }
         } else if (root.equals("instance")) {
@@ -78,24 +81,64 @@ public class KIFInput implements InputChannel {
                 System.err.println("instance expects 2 arguments");
             }    
             else {
-                new TextInput(nar, "<" + a.get(0) + " {-- " + a.get(1) + ">.\n");
+                new TextInput(nar, "<" + a.get(0) + " {-- " + a.get(1) + ">.");
             }
         }
         else if (root.equals("relatedInternalConcept")) {
+            /*(documentation relatedInternalConcept EnglishLanguage "Means that the two arguments are related concepts within the SUMO, i.e. there is a significant similarity of meaning between them. To indicate a meaning relation between a SUMO concept and a concept from another source, use the Predicate relatedExternalConcept.")            */
+
             if (a.size()!=2) {
                 System.err.println("relatedInternalConcept expects 2 arguments");
             }    
             else {
-                new TextInput(nar, "<" + a.get(0) + " <-> " + a.get(1) + ">.\n");
+                new TextInput(nar, "<" + a.get(0) + " <-> " + a.get(1) + ">.");
             }            
         }
+        else if (root.equals("domain")) {
+            /*
+            (domain domain 1 Relation)
+            (domain domain 2 PositiveInteger)
+            (domain domain 3 SetOrClass)
+            */
+                        
+            if (a == null) {
+                
+            }
+            else if (a.size() != 3) {
+                System.err.println("domain expects 3 arguments, got: " + a);
+            }
+            else {
+                new TextInput(nar, "<" + a.get(2) + " --] " + a.get(0) + ">.");
+            }
+        }
+        else if (root.equals("range")) {
+            
+            //for now, consider Range as the function inheriting from the result type
+            //there may be other ways of expressing this more clearly
+            new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.");
+        }
+        else if (root.equals("disjoint")) {
+             //"(||," <term> {","<term>} ")"      // disjunction
+            new TextInput(nar, "<(||," + a.get(0) + ","+ a.get(1) +")>.");
+        }
+        else if (root.equals("disjointRelation")) {            
+            new TextInput(nar, "<(||," + a.get(0) + ","+ a.get(1) +")>.");            
+        }
+        else if (root.equals("subrelation")) {            
+            //for now, use similarity+inheritance but more clear expression is possible
+            new TextInput(nar, "<" + a.get(0) + " <-> " + a.get(1) + ">.");
+            new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.");
+        }
         else {
+            /*System.out.println("??" + f);
+            System.out.println();*/
             if (unknownOperators.containsKey(root))
                 unknownOperators.put(root, unknownOperators.get(root)+1);
             else
                 unknownOperators.put(root, 1);
             return true;
         }
+        
         if (knownOperators.containsKey(root))
             knownOperators.put(root, knownOperators.get(root)+1);
         else
@@ -103,6 +146,7 @@ public class KIFInput implements InputChannel {
 
         
         //  => Implies
+        //  <=> Equivalance
         
 /*Unknown operators: {=>=466, rangeSubclass=5, inverse=1, relatedInternalConcept=7, documentation=128, range=29, exhaustiveAttribute=1, trichotomizingOn=4, subrelation=22, not=2, partition=12, contraryAttribute=1, subAttribute=2, disjoint=5, domain=102, disjointDecomposition=2, domainSubclass=9, <=>=70}*/
 

@@ -449,6 +449,9 @@ public final class SyllogisticRules {
      */
     static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
         Term content = CompoundTerm.reduceComponents(compound, component, memory);
+        if (content == null)
+            return;
+        
         Task task = memory.currentTask;
         Sentence sentence = task.getSentence();
         Sentence belief = memory.currentBelief;

@@ -36,6 +36,7 @@ public class TextOutput implements Output {
      * Input experience from a file
      */
     private PrintWriter outExp;
+    private boolean errors = true;
     
 
     public interface LineOutput {
@@ -96,6 +97,9 @@ public class TextOutput implements Output {
      */
     @Override
     public void output(final Class channel, final Object o) {
+        if ((!errors) && (channel == ERR.class))
+            return;
+        
         final String s = process(channel, o);
         if (outExp != null) {
             outExp.println(s);
@@ -109,4 +113,9 @@ public class TextOutput implements Output {
     public String process(final Class c, final Object o) {
         return c.getSimpleName() + ": " + o.toString();
     }
+
+    public void setErrors(boolean errors) {
+        this.errors = errors;
+    }    
+    
 }
