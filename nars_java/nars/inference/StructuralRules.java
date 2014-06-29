@@ -303,6 +303,8 @@ public final class StructuralRules {
                 content = Inheritance.make(sub, pre, memory);
             }
         }
+        if (content == null) return;
+        
         Task task = memory.currentTask;
         Sentence sentence = task.getSentence();
         TruthValue truth = sentence.getTruth();

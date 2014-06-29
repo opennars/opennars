@@ -19,6 +19,7 @@ package nars.test;
 
 import nars.core.NAR;
 import nars.core.NARState;
+import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.kif.KIFInput;
 
@@ -31,7 +32,7 @@ public class KIFExample {
  
     public static void main(String[] args) throws Exception {
         NAR n = new NAR();
-        n.setSilenceValue(5);
+        n.setSilenceValue(99);
         
         KIFInput k = new KIFInput(n, "/home/me/sigma/KBs/Merge.kif");
         
@@ -44,9 +45,17 @@ public class KIFExample {
 
         System.err.println(new NARState(n).measure());
 
-        new TextOutput(n, System.out);
-        n.run(50000);
+        TextOutput t = new TextOutput(n, System.out);
+        t.setErrors(false);
 
+        n.run(100000);
+
+        /*
+        new TextInput(n, "$0.99;0.99$ <Human --> ?x>?");
+        new TextInput(n, "$0.99;0.99$ <Human--> {?x}>?");
+        new TextInput(n, "$0.99;0.99$ <?x --> Human>?");*/
+
+        
         System.err.println(new NARState(n).measure());
     }
 }

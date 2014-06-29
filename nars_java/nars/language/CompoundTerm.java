@@ -25,6 +25,8 @@ import java.util.*;
 import nars.entity.*;
 import nars.storage.*;
 import nars.io.Symbols;
+import static nars.language.CompoundTerm.make;
+import static nars.language.CompoundTerm.makeCompoundName;
 
 /**
  * A CompoundTerm is a Term with internal (syntactic) structure
@@ -131,7 +133,17 @@ public abstract class CompoundTerm extends Term {
         }
     }
 
+    @Override
+    public boolean equals(Object that) {
+        return (that instanceof Term) && (compareTo((Term) that) == 0);
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 43 * hash + Objects.hashCode(this.components);
+        return hash;
+    }
     
     /**
      * Orders among terms: variable < atomic < compound @p
@@ -144,23 +156,23 @@ public abstract class CompoundTerm extends Term {
     public int compareTo(final Term that) {
         if (that instanceof CompoundTerm) {
             final CompoundTerm t = (CompoundTerm) that;
-            int minSize = Math.min(size(), t.size());
+            int minSize = Math.min(size(), t.size());              
             if (size() == t.size()) {
                 int opDiff = this.operator().compareTo(t.operator());
                 if (opDiff!=0)
                     return opDiff;
                 
-                for (int i = 0; i < minSize; i++) {
-                    int diff = componentAt(i).compareTo(t.componentAt(i));
-                    if (diff != 0) {
-                        return diff;
-                    }
+            for (int i = 0; i < minSize; i++) {
+                int diff = componentAt(i).compareTo(t.componentAt(i));
+                if (diff != 0) {
+                    return diff;
                 }
+            }
                 
                 return 0;
             }
             else
-                return size() - t.size();
+            return size() - t.size();
         } else {
             return 1;
         }
@@ -449,8 +461,8 @@ public abstract class CompoundTerm extends Term {
             return null;
         }
         final ArrayList<Term> arr = new ArrayList<>(original.size());
-        for (int i = 0; i < original.size(); i++) {
-            arr.add((Term) ((Term) original.get(i)).clone());
+        for (final Term original1 : original) {
+           arr.add((Term) ((Term) original1).clone());
         }
         return arr;
     }

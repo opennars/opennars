@@ -332,6 +332,8 @@ public final class CompositionalRules {
         Statement state1 = Inheritance.make(term11, term12, memory);
         Statement state2 = Inheritance.make(term21, term22, memory);
         Term content = Implication.make(state1, state2, memory);
+        if (content == null) return;
+        
         TruthValue truth = TruthFunctions.induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
