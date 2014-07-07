@@ -31,12 +31,14 @@ public abstract class Item {
     /** The key of the Item, unique in a Bag */
     protected String key;
     /** The budget of the Item, consisting of 3 numbers */
-    protected BudgetValue budget;
+    protected final BudgetValue budget;
 
     /**
      * The default constructor
      */
-    protected Item() {}
+    protected Item() {
+        budget = null;
+    }
 
     /**
      * Constructor with default budget
@@ -57,13 +59,6 @@ public abstract class Item {
         this.budget = new BudgetValue(budget);  // clone, not assignment
     }
 
-    /**
-     * Constructor with initial budget
-     * @param budget The initial budget
-     */
-    protected void setBudget(final BudgetValue budget) {
-        this.budget = budget;
-    }
 
     /**
      * Get the current key

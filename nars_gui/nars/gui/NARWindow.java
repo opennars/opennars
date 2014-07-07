@@ -33,13 +33,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.Box;
@@ -381,26 +381,26 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
     /**
      * Close the whole system
      */
-    private void close() {
+    @Override
+    protected void close() {
         setVisible(false);
         System.exit(0);
     }
-    
-    @Override
-    public void windowClosing(WindowEvent arg0) {
-        close();
-    }
+
 
     /**
      *
      * @param lines if null, forces output when updateExperienceOutput is false
      */
     @Override
-    public void output(final Class c, final Object o) {
+    public void output(final Class c, Object o) {
         
         if ((!showErrors) && (c == ERR.class)) {
             return;
         }
+        
+        if (o instanceof Exception)
+            o = (o.toString() + " @ " + Arrays.asList( ((Exception)o).getStackTrace() ));
         
         final String line = c.getSimpleName() + ": " + o.toString() + "\n";
         

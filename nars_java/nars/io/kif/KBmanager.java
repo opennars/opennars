@@ -125,71 +125,6 @@ public class KBmanager {
         return;
     }
 
-    /** ***************************************************************
-     */
-    private String fromXML(SimpleElement configuration) {
-
-        StringBuffer result = new StringBuffer();
-        if (!configuration.getTagName().equals("configuration")) 
-            System.out.println("Error in KBmanager.fromXML(): Bad tag: " + configuration.getTagName());
-        else {
-            for (int i = 0; i < configuration.getChildElements().size(); i++) {
-                SimpleElement element = (SimpleElement) configuration.getChildElements().get(i);
-                if (element.getTagName().equals("preference")) {
-                    String name = (String) element.getAttribute("name");
-                    String value = (String) element.getAttribute("value");
-                    preferences.put(name,value);
-                }
-                else {
-                    if (element.getTagName().equals("kb")) {
-                        String kbName = (String) element.getAttribute("name");
-                        addKB(kbName);
-                        KB kb = getKB(kbName);
-                        List constituentsToAdd = new ArrayList();
-                        boolean useCacheFile = KBmanager.getMgr().getPref("cache").equalsIgnoreCase("yes");
-                        for (int j = 0; j < element.getChildElements().size(); j++) {
-                            SimpleElement kbConst = (SimpleElement) element.getChildElements().get(j);
-                            if (!kbConst.getTagName().equals("constituent")) 
-                                System.out.println("Error in KBmanager.fromXML(): Bad tag: " + kbConst.getTagName());
-                            String filename = (String) kbConst.getAttribute("filename");
-                            if ( Formula.isNonEmptyString(filename) ) {
-                                if ( filename.endsWith(KB._cacheFileSuffix) ) {
-                                    if ( useCacheFile ) {
-                                        constituentsToAdd.add( filename );
-                                    }
-                                }
-                                else {
-                                    constituentsToAdd.add( filename );
-                                }
-                            }
-                        }
-                        if ( !(constituentsToAdd.isEmpty()) ) {
-                            Iterator it = constituentsToAdd.iterator();
-                            while ( it.hasNext() ) {
-                                String filename = (String) it.next();
-                                try {                            
-                                    result.append(kb.addConstituent(filename, false, false)); 
-                                } 
-                                catch (Exception e1) {
-                                    System.out.println("ERROR in KBmanager.fromXML()");
-                                    System.out.println("  " + e1.getMessage());
-                                }
-                            }
-                            kb.buildRelationCaches();
-                            if ( useCacheFile ) {
-                                result.append( kb.cache() );
-                            }
-                            kb.loadVampire();
-                        }
-                    }
-                    else {
-                        System.out.println("Error in KBmanager.fromXML(): Bad tag: " + element.getTagName());
-                    }
-                }
-            }
-        }
-        return result.toString();
-    }
 
     /** ***************************************************************
      * Read an XML-formatted configuration file. The method initializeOnce()
@@ -198,7 +133,7 @@ public class KBmanager {
      * called "configuration".  It also creates the KBs directory and an empty
      * configuration file if none exists.
      */
-    private SimpleElement readConfiguration() throws IOException {
+    /*private SimpleElement readConfiguration() throws IOException {
 
         SimpleElement configuration = null;
         System.out.println("INFO in KBmanager.readConfiguration()"); 
@@ -239,33 +174,8 @@ public class KBmanager {
         }
         return configuration;
     }
-
-    /** ***************************************************************
-     * Read in any KBs defined in the configuration.
-     */
-    public void initializeOnce() throws IOException {
-        if (!initialized) {
-            System.out.println("INFO in KBmanager.initializeOnce() ");
-            setDefaultAttributes();
-            try {
-                SimpleElement configuration = readConfiguration();
-                // System.out.println( "configuration == " + configuration );
-                String result = fromXML(configuration);
-                if ( Formula.isNonEmptyString(result) ) {
-                    error = result;
-                }
-                System.out.println("INFO in KBmanager.initializeOnce()");
-                System.out.println("  kbDir == " + preferences.get("kbDir"));
-                LanguageFormatter.readKeywordMap((String) preferences.get("kbDir"));
-            }
-            catch (IOException ioe) {
-                System.out.println("Error in KBmanager.initializeOnce(): Configuration file not read.");
-                System.out.println(ioe.getMessage());
-            }
-            initialized = true;
-            // System.out.println( "inferenceEngine == " + KBmanager.getMgr().getPref("inferenceEngine") );
-        }
-    }
+    */
+    
 
     /** ***************************************************************
      * Double the backslash in a filename so that it can be saved to a text
@@ -495,28 +405,4 @@ public class KBmanager {
         return;
     }
 
-    /** ***************************************************************
-     * A test method.
-     */
-    public static void main(String[] args) {
-
-        try {
-
-            KBmanager.getMgr().initializeOnce();
-        } catch (IOException ioe ) {
-            System.out.println(ioe.getMessage());
-        }
-
-        KB kb = KBmanager.getMgr().getKB("SUMO");
-
-        Formula f = new Formula();
-        f.read("(=> (and (wears ?A ?C) (part ?P ?C)) (wears ?A ?P))");
-        System.out.println(f.preProcess(false,kb));
-
-        //System.out.println(KBmanager.getMgr().getKBnames());
-        //System.out.println(kb.name);
-        //System.out.println(LanguageFormatter.htmlParaphrase("", "(or (instance ?X0 Relation) (not (instance ?X0 TotalValuedRelation)))", 
-        //                                              kb.getFormatMap("en"), kb.getTermFormatMap("en"), "en"));
-
-    }
 }

@@ -158,15 +158,12 @@ public class ConceptWindow extends Window implements ActionListener, EntityObser
         }
     }
 
-    private void close() {
+    @Override
+    protected void close() {
         concept.stop();
         dispose();
     }
 
-    @Override
-    public void windowClosing(WindowEvent e) {
-        close();
-    }
 
     @Override
 	public BagObserver<Concept> createBagObserver() {

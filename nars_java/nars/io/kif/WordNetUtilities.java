@@ -729,22 +729,5 @@ public class WordNetUtilities {
         updateWNversionProcess(fileName,pattern,posNum);
     }
 
-    /** ***************************************************************
-    *  A main method, used only for testing.  It should not be called
-    *  during normal operation.
-    */
-    public static void main (String[] args) {
-
-       try {
-            KBmanager.getMgr().initializeOnce();
-            WordNet.initOnce();
-            WordNetUtilities wnu = new WordNetUtilities();
-            wnu.updateWNversion();
-        }
-        catch (IOException ioe) {
-            System.out.println("Error in WordNet.main(): IOException: " + ioe.getMessage());
-        } 
-
-    }
 }
 

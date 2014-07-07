@@ -728,7 +728,7 @@ public class LanguageFormatter {
 	}
       
 	// System.out.println("str: " + strFormat);
-	return strFormat.toString();
+	return strFormat;
     }
 
     /** ***************************************************************

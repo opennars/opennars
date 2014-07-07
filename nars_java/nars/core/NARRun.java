@@ -62,7 +62,6 @@ public class NARRun {
      */
     public static void main(String args[]) {
         NARRun nars = new NARRun();
-        setStandAlone(true);
         CommandLineParameters.decode(args, nars.getReasoner());
         nars.runInference(args);
         // TODO only if single run ( no reset in between )
@@ -166,17 +165,18 @@ public class NARRun {
     public NAR getReasoner() {
         return nar;
     }
+    
 
-    /**
-     * Whether the project running as an application.
-     *
-     * @return true for application; false for applet.
-     */
-    public static boolean isStandAlone() {
-        return standAlone;
-    }
-
-    public static void setStandAlone(boolean standAlone) {
-        NARRun.standAlone = standAlone;
-    }
+//    /**
+//     * Whether the project running as an application.
+//     *
+//     * @return true for application; false for applet.
+//     */
+//    public static boolean isStandAlone() {
+//        return standAlone;
+//    }
+//
+//    public static void setStandAlone(boolean standAlone) {
+//        NARRun.standAlone = standAlone;
+//    }
 }

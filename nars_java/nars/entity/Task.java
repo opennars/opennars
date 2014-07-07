@@ -50,7 +50,7 @@ public class Task extends Item {
      * @param s The sentence
      * @param b The budget
      */
-    public Task(Sentence s, BudgetValue b) {
+    public Task(final Sentence s, final BudgetValue b) {
         super(s.toKey(), b); // change to toKey()
         sentence = s;
         key = sentence.toKey();
@@ -64,7 +64,7 @@ public class Task extends Item {
      * @param parentTask The task from which this new task is derived
      * @param parentBelief The belief from which this new task is derived
      */
-    public Task(Sentence s, BudgetValue b, Task parentTask, Sentence parentBelief) {
+    public Task(final Sentence s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
         this(s, b);
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
@@ -79,7 +79,7 @@ public class Task extends Item {
      * @param parentBelief The belief from which this new task is derived
      * @param solution The belief to be used in future inference
      */
-    public Task(Sentence s, BudgetValue b, Task parentTask, Sentence parentBelief, Sentence solution) {
+    public Task(final Sentence s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(s, b, parentTask, parentBelief);
         this.bestSolution = solution;
     }
@@ -134,7 +134,7 @@ public class Task extends Item {
      * @param that The other Task
      */
     @Override
-    public void merge(Item that) {
+    public void merge(final Item that) {
         if (getCreationTime() >= ((Task) that).getCreationTime()) {
             super.merge(that);
         } else {
@@ -157,7 +157,7 @@ public class Task extends Item {
      *
      * @param judg The solution to be remembered
      */
-    public void setBestSolution(Sentence judg) {
+    public void setBestSolution(final Sentence judg) {
         bestSolution = judg;
     }
 
@@ -187,8 +187,7 @@ public class Task extends Item {
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
-        s.append(super.toString()).append(" ");
-        s.append(getSentence().getStamp());
+        s.append(super.toString()).append(' ').append(getSentence().getStamp());
         if (parentTask != null) {
             s.append("  \n from task: ").append(parentTask.toStringBrief());
             if (parentBelief != null) {

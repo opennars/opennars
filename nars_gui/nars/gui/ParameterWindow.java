@@ -114,15 +114,13 @@ public class ParameterWindow extends Window implements ActionListener, Adjustmen
         }
     }
 
-    private void close() {
+    @Override
+    protected void close() {
         previousValue = currentValue.get();
         setVisible(false);
     }
 
-    @Override
-    public void windowClosing(WindowEvent arg0) {
-        close();
-    }
+
 
     /**
      * Handling scrollbar movement

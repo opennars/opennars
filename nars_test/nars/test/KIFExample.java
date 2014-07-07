@@ -19,7 +19,6 @@ package nars.test;
 
 import nars.core.NAR;
 import nars.core.NARState;
-import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.kif.KIFInput;
 

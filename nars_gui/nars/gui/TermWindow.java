@@ -47,6 +47,7 @@ public class TermWindow extends Window implements ActionListener {
      * Control buttons
      */
     private JButton playButton, hideButton;
+    
     /**
      * Reference to the memory
      */
@@ -114,12 +115,9 @@ public class TermWindow extends Window implements ActionListener {
         }
     }
 
-    private void close() {
+    protected void close() {
         setVisible(false);
     }
 
-    @Override
-    public void windowClosing(WindowEvent arg0) {
-        close();
-    }
+
 }

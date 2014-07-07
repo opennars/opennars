@@ -1,6 +1,5 @@
 package nars.core;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
 import nars.storage.ConceptBag;
@@ -14,7 +13,7 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
     
     public final NAR nar;   
     
-    public NARState(NAR n) {
+    public NARState(final NAR n) {
         this.nar = n;
         
         measure();        

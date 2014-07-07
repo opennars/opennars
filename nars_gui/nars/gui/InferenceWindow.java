@@ -162,16 +162,13 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
             watched = request;
         }
     }
-
-    private void close() {
+    
+    @Override
+    protected void close() {
         recorder.stop();
         dispose();
     }
 
-    @Override
-    public void windowClosing(WindowEvent arg0) {
-        close();
-    }
 
     /**
      * Change background color to remind the on-going file saving
