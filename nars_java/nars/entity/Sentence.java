@@ -130,7 +130,7 @@ public class Sentence implements Cloneable {
      * @param that The other judgment
      * @return Whether the two are equivalent
      */
-    public boolean equivalentTo(Sentence that) {
+    public boolean equivalentTo(final Sentence that) {
         assert content.equals(that.getContent()) && punctuation == that.getPunctuation();
         return (truth.equals(that.getTruth()) && stamp.equals(that.getStamp()));
     }

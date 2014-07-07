@@ -20,7 +20,7 @@ import nars.nlp.NLPInputParser;
  */
 abstract public class NARConnection implements LineOutput {
     public final NAR nar;
-    private final TextOutput writer;
+    protected final TextOutput writer;
     int cycleIntervalMS;
     private final NLPInputParser nlp;
         

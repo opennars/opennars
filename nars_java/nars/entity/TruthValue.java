@@ -54,7 +54,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @param f The frequency value
      * @param c The confidence value
      */
-    public TruthValue(float f, float c) {
+    public TruthValue(final float f, final float c) {
         this(f, c, false);
     }
 
@@ -65,7 +65,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @param c The confidence value
      *
      */
-    public TruthValue(float f, float c, boolean b) {
+    public TruthValue(final float f, final float c, final boolean b) {
         frequency = new ShortFloat(f);
         confidence = (c < 1) ? new ShortFloat(c) : new ShortFloat(0.9999f);
         isAnalytic = b;
@@ -76,7 +76,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      *
      * @param v The truth value to be cloned
      */
-    public TruthValue(TruthValue v) {
+    public TruthValue(final TruthValue v) {
         frequency = new ShortFloat(v.getFrequency());
         confidence = new ShortFloat(v.getConfidence());
         isAnalytic = v.getAnalytic();
@@ -132,7 +132,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @param t The given value
      * @return The absolute difference
      */
-    public float getExpDifAbs(TruthValue t) {
+    public float getExpDifAbs(final TruthValue t) {
         return Math.abs(getExpectation() - t.getExpectation());
     }
 
@@ -152,7 +152,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return Whether the two are equivalent
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         return ((that instanceof TruthValue)
                 && (getFrequency() == ((TruthValue) that).getFrequency())
                 && (getConfidence() == ((TruthValue) that).getConfidence()));

@@ -79,7 +79,7 @@ public class ShortFloat implements Cloneable {
      * @return Whether the two have the same value
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         return ((that instanceof ShortFloat) && (value == ((ShortFloat) that).getShortValue()));
     }
 
@@ -134,7 +134,7 @@ public class ShortFloat implements Cloneable {
      */
     public String toStringBrief() {
         value += 50;
-        String s = toString();
+        final String s = toString();
         value -= 50;
         if (s.length() > 4) {
             return s.substring(0, 4);

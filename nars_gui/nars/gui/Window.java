@@ -28,7 +28,7 @@ import java.awt.event.*;
 /**
  * Specify shared properties of NARS windows
  */
-public abstract class Window extends JFrame implements WindowListener {
+public abstract class Window extends JFrame {
     //http://paletton.com/#uid=70u0u0kllllaFw0g0qFqFg0w0aF
     
     /**
@@ -81,34 +81,15 @@ public abstract class Window extends JFrame implements WindowListener {
     Window(String title) {
         super(" " + title);
         setFont(NarsFont);
-        addWindowListener(this);
+        
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                close();
+            }                        
+        });
     }
+    
+    abstract protected void close();
 
-    @Override
-    public void windowActivated(WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowClosed(WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowClosing(WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowIconified(WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowOpened(WindowEvent arg0) {
-    }
 }

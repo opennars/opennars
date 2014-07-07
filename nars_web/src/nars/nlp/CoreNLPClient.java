@@ -24,7 +24,7 @@ public class CoreNLPClient {
     public String parse(String text) throws IOException {
         
         String type = "application/x-www-form-urlencoded";
-        String encodedData = URLEncoder.encode( text ); 
+        String encodedData = URLEncoder.encode( text, "UTF8" ); 
         
         URL u = new URL("http://" + host + ":" + port + "/parse");
         

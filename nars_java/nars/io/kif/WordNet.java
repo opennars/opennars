@@ -14,7 +14,6 @@ August 9, Acapulco, Mexico.  See also http://sigmakee.sourceforge.net
 package nars.io.kif;
 
 import java.io.*;
-import java.lang.reflect.Member;
 import java.util.*;
 import java.util.regex.*;
 
@@ -1885,115 +1884,6 @@ public class WordNet {
         return buf.toString();
     }
 
-    /** ***************************************************************
-     */
-    private String fromXML(SimpleElement configuration) {
-
-        StringBuffer result = new StringBuffer();
-        if (!configuration.getTagName().equals("wordnet")) 
-            System.out.println("Error in KBmanager.fromXML(): Bad tag: " + configuration.getTagName());
-        else {
-        }
-        return "";
-    }
-
-    /** ***************************************************************
-     */
-    private SimpleElement toXML() {
-
-        SimpleElement top = new SimpleElement("wordnet");
-        Iterator it = synsetsToWords.keySet().iterator();
-        while (it.hasNext()) {
-            String synset = (String) it.next();
-            String gloss = "";
-            String name = "";
-            String SUMO = "";
-            switch (synset.charAt(0)) {
-            case '1': gloss = (String) nounDocumentationHash.get(synset.substring(1)); 
-                SUMO = (String) nounSUMOHash.get(synset.substring(1));
-                break;
-            case '2': gloss = (String) verbDocumentationHash.get(synset.substring(1)); 
-                SUMO = (String) verbSUMOHash.get(synset.substring(1));
-                break;
-            case '3': gloss = (String) adjectiveDocumentationHash.get(synset.substring(1)); 
-                SUMO = (String) adjectiveSUMOHash.get(synset.substring(1));
-                break;
-            case '4': gloss = (String) adverbDocumentationHash.get(synset.substring(1)); 
-                SUMO = (String) adverbSUMOHash.get(synset.substring(1));
-                break;
-            } 
-            if (gloss != null) 
-                gloss = gloss.replaceAll("\"","&quote;");
-            ArrayList al2 = (ArrayList) synsetsToWords.get(synset);
-            Iterator itts = al2.iterator();
-            if (itts.hasNext()) 
-                name = (String) itts.next();
-            SimpleElement item = new SimpleElement("item");
-            item.setAttribute("id",synset);
-            item.setAttribute("offset",synset);
-            item.setAttribute("type","synset");
-            item.setAttribute("name",name);
-            item.setAttribute("source","WordNet 2.0");
-            item.setAttribute("gloss",gloss);
-            top.addChildElement(item);
-            ArrayList al = (ArrayList) relations.get(synset);
-            if (SUMO != "") { 
-                String bareTerm = WordNetUtilities.getBareSUMOTerm(SUMO);
-                char mapping = WordNetUtilities.getSUMOMappingSuffix(SUMO);
-                SimpleElement link = new SimpleElement("link");
-                link.setAttribute("id1",synset);
-                link.setAttribute("id2",bareTerm);
-                String mapName = WordNetUtilities.mappingCharToName(mapping);
-                link.setAttribute("type",mapName);
-                top.addChildElement(link);
-            }
-            if (al != null) {
-                Iterator it2 = al.iterator();
-                while (it2.hasNext()) {
-                    SimpleElement link = new SimpleElement("link");
-                    AVPair avp = (AVPair) it2.next();
-                    link.setAttribute("type",avp.attribute);
-                    link.setAttribute("id1",synset);
-                    link.setAttribute("id2",avp.value);
-                    top.addChildElement(link);                  
-                }
-            }
-        }
-        return top;
-    }
-
-    /** ***************************************************************
-     */
-    public void writeXML() {
-
-        FileWriter fw = null;
-        PrintWriter pw = null; 
-        String dir = WordNet.baseDir;
-        String fname = "WordNet.xml";
-
-        try {
-            fw = new FileWriter(dir + File.separator + fname);
-            pw = new PrintWriter(fw);
-            SimpleElement se = toXML();
-            pw.println(se.toFileString());
-        }
-        catch (Exception e) {
-            System.out.println("Error writing file " + dir + File.separator + fname + "\n" + e.getMessage());
-            e.printStackTrace();
-        }
-        finally {
-            try {
-                if (pw != null) {
-                    pw.close();
-                }
-                if (fw != null) {
-                    fw.close();
-                }
-            }
-            catch (Exception ex) {
-            }
-        }
-    }
 
     /** *************************************************************
      */

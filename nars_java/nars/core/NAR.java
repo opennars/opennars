@@ -38,8 +38,8 @@ public class NAR implements Runnable, Output {
     /**
      * The input channels of the reasoner
      */
-    protected List<InputChannel> inputChannels;
-    private List<InputChannel> closedInputChannels;
+    protected final List<InputChannel> inputChannels;
+    private final List<InputChannel> closedInputChannels;
 
     /**
      * The output channels of the reasoner
@@ -87,7 +87,6 @@ public class NAR implements Runnable, Output {
      * Reset the system with an empty memory and reset clock. Called locally and
      * from {@link NARWindow}.
      */
-    final String resetMessage = " OUT: reset";
 
     public void setSilenceValue(int s) {
         this.silenceValue.set(s);
@@ -101,7 +100,7 @@ public class NAR implements Runnable, Output {
         memory.init();
         Stamp.init();
         
-        output(OUT.class, resetMessage);
+        output(OUT.class, "reset");
                 
     }
 
@@ -140,7 +139,7 @@ public class NAR implements Runnable, Output {
      *
      * @param n The number of inference steps to be carried
      */
-    public void walk(int n) {
+    public void walk(final int n) {
         if (DEBUG)
             output(OUT.class, "thinking " + n + (n > 1 ? " cycles" : " cycle"));
         walkingSteps = n;
@@ -165,7 +164,7 @@ public class NAR implements Runnable, Output {
      * Repeatedly execute NARS working cycle. This method is called when the
      * Runnable's thread is started.
      */    
-    public void start(long minTickPeriodMS) {
+    public void start(final long minTickPeriodMS) {
         if (thread == null) {
             thread = new Thread(this, "Inference");
             thread.start();
@@ -194,7 +193,7 @@ public class NAR implements Runnable, Output {
         running = false;
     }    
     
-    public void run(int minCycles) {
+    public void run(final int minCycles) {
         run(minCycles, false);
     }
     
@@ -238,23 +237,18 @@ public class NAR implements Runnable, Output {
     }
     
     
+    private void debugTime() {
+        if (running || walkingSteps > 0 || !finishedInputs) {
+            System.out.println("// doTick: "
+                    + "walkingSteps " + walkingSteps
+                    + ", clock " + clock
+                    + ", getTimer " + getSystemClock());
 
-    /**
-     * A clock tick. Run one working workCycle or read input. Called from NARS
-     * only.
-     */
-    public void tick() {
-        if (DEBUG) {
-            if (running || walkingSteps > 0 || !finishedInputs) {
-                System.out.println("// doTick: "
-                        + "walkingSteps " + walkingSteps
-                        + ", clock " + clock
-                        + ", getTimer " + getSystemClock());
-
-                System.out.flush();
-            }
+            System.out.flush();
         }
-        
+    }
+
+    private void processInput() {
         if (walkingSteps == 0) {
             boolean reasonerShouldRun = false;
 
@@ -265,13 +259,13 @@ public class NAR implements Runnable, Output {
                     System.out.println("Input: " + channelIn);
                 }
 
-                if (!channelIn.isClosed()) {
-                    boolean b = channelIn.nextInput();  
-                    if (b)
+                if (channelIn.isClosed()) {
+                    closedInputChannels.add(channelIn);
+                }
+                else {
+                    if (channelIn.nextInput())
                         reasonerShouldRun = true;
                 }
-                else                
-                    closedInputChannels.add(channelIn);
             }
             finishedInputs = !reasonerShouldRun;
 
@@ -280,10 +274,10 @@ public class NAR implements Runnable, Output {
             }
             closedInputChannels.clear();
         
-        }
-                
-
-
+        }    
+    }
+    
+    private void workCycle() {
         if (((running || walkingSteps > 0)) && (!paused)) {
             clock++;
             tickTimer();
@@ -298,9 +292,20 @@ public class NAR implements Runnable, Output {
             if (walkingSteps > 0) {
                 walkingSteps--;
             }
-        }
+        }        
+    }
 
-                
+    /**
+     * A clock tick. Run one working workCycle or read input. Called from NARS
+     * only.
+     */
+    public void tick() {
+        if (DEBUG) {
+            debugTime();            
+        }
+        
+        processInput();
+        workCycle();                
     }
     
     @Override

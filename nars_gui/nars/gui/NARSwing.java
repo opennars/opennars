@@ -70,7 +70,6 @@ public class NARSwing extends NAR  {
      * --silence <integer>
      */
     public static void main(String args[]) {
-        NARRun.setStandAlone(true);
         NARSwing nars = new NARSwing();
         nars.init(args);
         if (args.length > 1)

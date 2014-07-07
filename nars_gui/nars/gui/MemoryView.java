@@ -303,8 +303,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
                             }
                         }
                         
-                        for (int k = 0; k < c.questions.size(); k++) {
-                            Task q = c.questions.get(k);
+                        for (Task q : c.getQuestions()) {
                             Term name2 = q.getContent();                            
                             hsim.obj.add(new Obj(x++, i, name2, 1));
                             E.add(new link(bufcnt, cnt, q.getPriority()));

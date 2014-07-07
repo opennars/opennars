@@ -21,6 +21,8 @@
 package nars.entity;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import nars.inference.BudgetFunctions;
 import nars.inference.LocalRules;
@@ -66,7 +68,7 @@ public final class Concept extends Item {
     /**
      * Question directly asked about the term
      */
-    public final ArrayList<Task> questions;
+    public final LinkedList<Task> questions;
     /**
      * Sentences directly made about the term, with non-future tense
      */
@@ -92,7 +94,7 @@ public final class Concept extends Item {
         super(tm.getName());
         term = tm;
         this.memory = memory;
-        questions = new ArrayList<>();
+        questions = new LinkedList();
         beliefs = new ArrayList<>();
         taskLinks = new TaskLinkBag(memory);
         termLinks = new TermLinkBag(memory);
@@ -166,25 +168,28 @@ public final class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public float processQuestion(Task task) {
+    public float processQuestion(final Task task) {
+
+        
         Sentence ques = task.getSentence();
         boolean newQuestion = true;
-        if (questions != null) {
-            for (final Task t : questions) {
-                final Sentence q = t.getSentence();
-                if (q.getContent().equals(ques.getContent())) {
-                    ques = q;
-                    newQuestion = false;
-                    break;
-                }
+        for (final Task t : questions) {
+            final Sentence q = t.getSentence();
+            if (q.getContent().equals(ques.getContent())) {
+                ques = q;
+                newQuestion = false;
+                break;
             }
         }
+
         if (newQuestion) {
             questions.add(task);
         }
+        
         if (questions.size() > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
-            questions.remove(0);    // FIFO
+            questions.removeFirst();    // FIFO
         }
+        
         final Sentence newAnswer = evaluation(ques, beliefs);
         if (newAnswer != null) {
 //            LocalRules.trySolution(ques, newAnswer, task, memory);
@@ -206,21 +211,18 @@ public final class Concept extends Item {
      */
     private void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.getBudget();
-        TaskLink taskLink = new TaskLink(task, null, taskBudget);   // link type: SELF
-        insertTaskLink(taskLink);
+        insertTaskLink(new TaskLink(task, null, taskBudget));  // link type: SELF
         if (term instanceof CompoundTerm) {
-            if (termLinkTemplates.size() > 0) {
-                BudgetValue subBudget = BudgetFunctions.distributeAmongLinks(taskBudget, termLinkTemplates.size());
+            if (!termLinkTemplates.isEmpty()) {
+                final BudgetValue subBudget = BudgetFunctions.distributeAmongLinks(taskBudget, termLinkTemplates.size());
                 if (subBudget.aboveThreshold()) {
-                    Term componentTerm;
-                    Concept componentConcept;
-                    for (TermLink termLink : termLinkTemplates) {
+                    
+                    for (final TermLink termLink : termLinkTemplates) {
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
-                        taskLink = new TaskLink(task, termLink, subBudget);
-                        componentTerm = termLink.getTarget();
-                        componentConcept = memory.getConcept(componentTerm);
+                        Term componentTerm = termLink.getTarget();
+                        Concept componentConcept = memory.getConcept(componentTerm);
                         if (componentConcept != null) {
-                            componentConcept.insertTaskLink(taskLink);
+                            componentConcept.insertTaskLink(new TaskLink(task, termLink, subBudget));
                         }
 //                        }
                     }
@@ -238,13 +240,11 @@ public final class Concept extends Item {
      * @param table The table to be revised
      * @param capacity The capacity of the table
      */
-    private void addToTable(Sentence newSentence, ArrayList<Sentence> table, int capacity) {
-        float rank1 = BudgetFunctions.rankBelief(newSentence);    // for the new isBelief
-        Sentence judgment2;
+    private void addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
+        final float rank1 = BudgetFunctions.rankBelief(newSentence);    // for the new isBelief
         float rank2;
-        int i;
-        for (i = 0; i < table.size(); i++) {
-            judgment2 = table.get(i);
+        int i = 0;
+        for (final Sentence judgment2 : table) {
             rank2 = BudgetFunctions.rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
@@ -253,10 +253,11 @@ public final class Concept extends Item {
                 table.add(i, newSentence);
                 break;
             }
+            i++;
         }
         if (table.size() >= capacity) {
             while (table.size() > capacity) {
-                table.remove(table.size() - 1);
+                table.remove(table.size() - 1);                
             }
         } else if (i == table.size()) {
             table.add(newSentence);
@@ -270,14 +271,14 @@ public final class Concept extends Item {
      * @param list The list of beliefs to be used
      * @return The best candidate belief selected
      */
-    private Sentence evaluation(Sentence query, ArrayList<Sentence> list) {
+    private Sentence evaluation(final Sentence query, final List<Sentence> list) {
         if (list == null) {
             return null;
         }
         float currentBest = 0;
         float beliefQuality;
         Sentence candidate = null;
-        for (Sentence judg : list) {
+        for (final Sentence judg : list) {
             beliefQuality = LocalRules.solutionQuality(query, judg);
             if (beliefQuality > currentBest) {
                 currentBest = beliefQuality;
@@ -295,8 +296,8 @@ public final class Concept extends Item {
      *
      * @param taskLink The termLink to be inserted
      */
-    public void insertTaskLink(TaskLink taskLink) {
-        BudgetValue taskBudget = taskLink.getBudget();
+    public void insertTaskLink(final TaskLink taskLink) {
+        final BudgetValue taskBudget = taskLink.getBudget();
         taskLinks.putIn(taskLink);
         memory.activateConcept(this, taskBudget);
     }
@@ -308,21 +309,18 @@ public final class Concept extends Item {
      *
      * @param taskBudget The BudgetValue of the task
      */
-    public void buildTermLinks(BudgetValue taskBudget) {
-        Term t;
-        Concept concept;
-        TermLink termLink1, termLink2;
+    public void buildTermLinks(final BudgetValue taskBudget) {
         if (termLinkTemplates.size() > 0) {
             BudgetValue subBudget = BudgetFunctions.distributeAmongLinks(taskBudget, termLinkTemplates.size());
             if (subBudget.aboveThreshold()) {
-                for (TermLink template : termLinkTemplates) {
+                for (final TermLink template : termLinkTemplates) {
                     if (template.getType() != TermLink.TRANSFORM) {
-                        t = template.getTarget();
-                        concept = memory.getConcept(t);
+                        Term t = template.getTarget();
+                        final Concept concept = memory.getConcept(t);
                         if (concept != null) {
-                            termLink1 = new TermLink(t, template, subBudget);
+                            TermLink termLink1 = new TermLink(t, template, subBudget);
                             insertTermLink(termLink1);   // this termLink to that
-                            termLink2 = new TermLink(term, template, subBudget);
+                            TermLink termLink2 = new TermLink(term, template, subBudget);
                             concept.insertTermLink(termLink2);   // that termLink to this
                             if (t instanceof CompoundTerm) {
                                 concept.buildTermLinks(subBudget);
@@ -341,7 +339,7 @@ public final class Concept extends Item {
      *
      * @param termLink The termLink to be inserted
      */
-    public void insertTermLink(TermLink termLink) {
+    public void insertTermLink(final TermLink termLink) {
         termLinks.putIn(termLink);
     }
 
@@ -362,11 +360,7 @@ public final class Concept extends Item {
      */
     @Override
     public String toString() {  // called from concept bag
-        if (NARRun.isStandAlone()) {
-            return (super.toStringBrief() + " " + key);
-        } else {
-            return key;
-        }
+        return (super.toStringBrief() + " " + key);
     }
 
     /**
@@ -385,8 +379,13 @@ public final class Concept extends Item {
         return res;
     }
 
-    private String toStringIfNotNull(Object item, String title) {
-        return item == null ? "" : "\n " + title + ":" + item.toString();
+    private String toStringIfNotNull(final Object item, final String title) {
+        if (item == null) return "";
+        
+        final String itemString = item.toString();
+        
+        return new StringBuilder(2+title.length()+itemString.length()+1).
+                append("\n ").append(title).append(':').append(itemString).toString();
     }
 
     /**
@@ -408,7 +407,7 @@ public final class Concept extends Item {
      *
      * @return The template get
      */
-    public ArrayList<TermLink> getTermLinkTemplates() {
+    public List<TermLink> getTermLinkTemplates() {
         return termLinkTemplates;
     }
 
@@ -425,8 +424,7 @@ public final class Concept extends Item {
     public Sentence getBelief(final Task task) {
         final Sentence taskSentence = task.getSentence();
         
-        for (int i = 0; i < beliefs.size(); i++) {
-            final Sentence belief = beliefs.get(i);
+        for (final Sentence belief : beliefs)  {
             if (memory.getRecorder().isActive())
                 memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
             memory.newStamp = Stamp.make(taskSentence.getStamp(), belief.getStamp(), memory.getTime());
@@ -523,21 +521,21 @@ public final class Concept extends Item {
     public String displayContent() {
         final StringBuilder buffer = new StringBuilder();
         buffer.append("\n  Beliefs:\n");
-        if (beliefs.size() > 0) {
+        if (!beliefs.isEmpty()) {
             for (Sentence s : beliefs) {
-                buffer.append(s).append("\n");
+                buffer.append(s).append('\n');
             }
         }
-        buffer.append("\n  Question:\n");
-        if (questions.size() > 0) {
+        if (!questions.isEmpty()) {
+            buffer.append("\n  Question:\n");
             for (Task t : questions) {
-                buffer.append(t).append("\n");
+                buffer.append(t).append('\n');
             }
         }
         return buffer.toString();
     }
 
-    class NullEntityObserver implements EntityObserver {
+    final class NullEntityObserver implements EntityObserver {
 
         @Override
         public boolean isActive() {
@@ -565,4 +563,10 @@ public final class Concept extends Item {
         public void refresh(String message) {
         }
     }
+
+    public List<Task> getQuestions() {
+        return questions;
+    }
+    
+    
 }

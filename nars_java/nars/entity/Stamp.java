@@ -43,9 +43,9 @@ public class Stamp implements Cloneable {
     private static long currentSerial = 0;
     
     /** serial numbers */
-    private long[] evidentialBase;    
+    private final long[] evidentialBase;    
     
-    private int baseLength;
+    private final int baseLength;
     
     public final long creationTime;
         
@@ -102,25 +102,26 @@ public class Stamp implements Cloneable {
         i1 = i2 = j = 0;
         baseLength = Math.min(first.length() + second.length(), Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
         evidentialBase = new long[baseLength];
+        
+        final long[] firstBase = first.getBase();
+        final long[] secondBase = second.getBase();
+        
         while (i2 < second.length() && j < baseLength) {
-            evidentialBase[j] = first.get(i1);
-            i1++;
-            j++;
-            evidentialBase[j] = second.get(i2);
-            i2++;
-            j++;
+            evidentialBase[j++] = firstBase[i1++];
+            evidentialBase[j++] = secondBase[i2++];
         }
         while (i1 < first.length() && j < baseLength) {
-            evidentialBase[j] = first.get(i1);
-            i1++;
-            j++;
+            evidentialBase[j++] = firstBase[i1++];
         }
-        List<Term> chain1=first.getChain();
-        List<Term> chain2=second.getChain();
+        
+        final List<Term> chain1=first.getChain();
+        final List<Term> chain2=second.getChain();
         i1=chain1.size()-1;
         i2=chain2.size()-1;
+        
+        derivationChain=new ArrayList<Term>(baseLength); //take as long till the chain is full or all elements were taken out of chain1 and chain2:
+
         j=0;
-        derivationChain=new ArrayList<Term>(); //take as long till the chain is full or all elements were taken out of chain1 and chain2:
         while(j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1>=0 || i2>=0)) { 
             if(j%2==0) {//one time take from first, then from second, last ones are more important
                 if(i1>=0) {
@@ -187,7 +188,7 @@ public class Stamp implements Cloneable {
      * @param i The index
      * @return The number at the index
      */
-    long get(int i) {
+    long get(final int i) {
         return evidentialBase[i];
     }
 
@@ -225,9 +226,8 @@ public class Stamp implements Cloneable {
      */
     private TreeSet<Long> toSet() {
         final TreeSet<Long> set = new TreeSet<>();
-        for (int i = 0; i < baseLength; i++) {
-            set.add(evidentialBase[i]);
-        }
+        for (Long l : evidentialBase)
+            set.add(l);
         return set;
     }
 
@@ -305,15 +305,15 @@ public class Stamp implements Cloneable {
     public String toString() {
         final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
         
-        StringBuilder buffer = new StringBuilder(estimatedInitialSize).append(" " + Symbols.STAMP_OPENER + creationTime);
-        buffer.append(" ").append(Symbols.STAMP_STARTER).append(" ");
+        final StringBuilder buffer = new StringBuilder(estimatedInitialSize).append(" " + Symbols.STAMP_OPENER + creationTime);
+        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
         for (int i = 0; i < baseLength; i++) {
             buffer.append(Long.toString(evidentialBase[i]));
             if (i < (baseLength - 1)) {
                 buffer.append(Symbols.STAMP_SEPARATOR);
             } else {
-                if(derivationChain.size() > 0) {
-                    buffer.append(" ").append(Symbols.STAMP_STARTER).append(" ");
+                if(derivationChain.isEmpty()) {
+                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
                 }
             }
         }
@@ -323,7 +323,7 @@ public class Stamp implements Cloneable {
                 buffer.append(Symbols.STAMP_SEPARATOR);
             }
         }
-        buffer.append(Symbols.STAMP_CLOSER).append(" ");
+        buffer.append(Symbols.STAMP_CLOSER).append(' ');
         
         
         //this is for estimating an initial size of the stringbuffer

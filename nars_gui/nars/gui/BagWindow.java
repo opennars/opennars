@@ -106,7 +106,7 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
         setVisible(true);
     }
 
-	private void applyBorderLayout(JScrollPane textScrollPane) {
+    private void applyBorderLayout(JScrollPane textScrollPane) {
 		setLayout(new BorderLayout());
         add(textScrollPane, BorderLayout.CENTER );
         JPanel bottomPanel = new JPanel();
@@ -153,16 +153,14 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
     /**
      * Close the window
      */
-    private void close() {
+    @Override
+    protected void close() {
         bag.stop();
         dispose();
         counter--;
     }
 
-    @Override
-    public void windowClosing(WindowEvent arg0) {
-        close();
-    }
+
 
     /**
      * Handling scrollbar movement
