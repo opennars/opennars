@@ -434,7 +434,7 @@ public class RuleTables {
         }
 
         if (component2 != null) {
-            finalboolean unifiable = Variable.unify(Symbols.VAR_INDEPENDENT, component, component2, conditional, statement);
+            boolean unifiable = Variable.unify(Symbols.VAR_INDEPENDENT, component, component2, conditional, statement);
             if (!unifiable) {
                 unifiable = Variable.unify(Symbols.VAR_DEPENDENT, component, component2, conditional, statement);
             }

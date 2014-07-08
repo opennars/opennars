@@ -330,7 +330,12 @@ public final class SyllogisticRules {
         } else {
             commonComponent = premise2;
         }
-        Conjunction oldCondition = (Conjunction) premise1.getSubject();
+        
+        Term tm = premise1.getSubject();
+        if (!(tm instanceof Conjunction))
+            return;
+        Conjunction oldCondition = (Conjunction) tm;
+
         boolean match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.componentAt(index), commonComponent, premise1, premise2);
         if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
             match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.componentAt(index), ((CompoundTerm) commonComponent).componentAt(index), premise1, premise2);
