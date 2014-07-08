@@ -32,8 +32,8 @@ public class NovelTaskBag extends Bag<Task> {
     /** Constructor
      * @param memory The reference of memory
      */
-    public NovelTaskBag(Memory memory) {
-        super(memory);
+    public NovelTaskBag() {
+        super();
     }
     /**
      * Get the (constant) capacity of NovelTaskBag

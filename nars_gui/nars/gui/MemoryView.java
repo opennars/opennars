@@ -276,42 +276,43 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             ConceptBag bag = mem.concepts;
             for (int i = bag.TOTAL_LEVEL; i >= 1; i--) {
                 if (!bag.emptyLevel(i - 1)) {
-                    for (final Concept c : bag.itemTable[i-1]) {
-                                                
-                        final Term name = c.getTerm();
+                    if (!bag.emptyLevel(i-1))                        
+                        for (final Concept c : bag.getLevel(i-1)) {
 
-                        
-                        hsim.obj.add(new Obj(x++, i, name, 0));
-                        cnt++;
-                        
-                        float xsave = x;
+                            final Term name = c.getTerm();
 
-                        int bufcnt = cnt;
-                        
-                        if (showBeliefs) {
-                            for (int k = 0; k < c.beliefs.size(); k++) {
-                                Sentence kb = c.beliefs.get(k);
-                                Term name2 = kb.getContent();
-                                
-                                hsim.obj.add(new Obj(x++, i, name2, 0, kb.getStamp().creationTime));
-                                E.add(new link(bufcnt, cnt, kb.truth.getConfidence()));
-                                Sent_s.add(kb);
-                                Sent_i.add(cnt);
-                                cnt++;
-                                
-                            }
-                        }
-                        
-                        for (Task q : c.getQuestions()) {
-                            Term name2 = q.getContent();                            
-                            hsim.obj.add(new Obj(x++, i, name2, 1));
-                            E.add(new link(bufcnt, cnt, q.getPriority()));
+
+                            hsim.obj.add(new Obj(x++, i, name, 0));
                             cnt++;
-                            
+
+                            float xsave = x;
+
+                            int bufcnt = cnt;
+
+                            if (showBeliefs) {
+                                for (int k = 0; k < c.beliefs.size(); k++) {
+                                    Sentence kb = c.beliefs.get(k);
+                                    Term name2 = kb.getContent();
+
+                                    hsim.obj.add(new Obj(x++, i, name2, 0, kb.getStamp().creationTime));
+                                    E.add(new link(bufcnt, cnt, kb.truth.getConfidence()));
+                                    Sent_s.add(kb);
+                                    Sent_i.add(cnt);
+                                    cnt++;
+
+                                }
+                            }
+
+                            for (Task q : c.getQuestions()) {
+                                Term name2 = q.getContent();                            
+                                hsim.obj.add(new Obj(x++, i, name2, 1));
+                                E.add(new link(bufcnt, cnt, q.getPriority()));
+                                cnt++;
+
+                            }
+
+
                         }
-                        
-                        
-                    }
                 }
                 
                 if (mode == 1)

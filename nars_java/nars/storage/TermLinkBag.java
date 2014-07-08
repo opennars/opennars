@@ -20,6 +20,7 @@
  */
 package nars.storage;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.*;
 import nars.core.Parameters;
 
@@ -27,12 +28,14 @@ import nars.core.Parameters;
  * Contains TermLinks to relevant (compound or component) Terms.
  */
 public class TermLinkBag extends Bag<TermLink> {
+    private final AtomicInteger beliefForgettingRate;
 
     /** Constructor
      * @param memory The reference of memory
      */
-    public TermLinkBag(final Memory memory) {
-        super(memory);
+    public TermLinkBag(AtomicInteger beliefForgettingRate) {
+        super();
+        this.beliefForgettingRate = beliefForgettingRate;
     }
 
     /**
@@ -48,7 +51,7 @@ public class TermLinkBag extends Bag<TermLink> {
      * @return The forget rate of TermLinkBag
      */
     protected int forgetRate() {
-        return memory.getBeliefForgettingRate().get();  
+        return beliefForgettingRate.get();  
     }
 
     /**

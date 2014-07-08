@@ -72,7 +72,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * mapping from key to item
      */
-    protected HashMap<String, E> nameTable;
+    protected final HashMap<String, E> nameTable;
     /**
      * array of lists of items, for items on different level
      */
@@ -103,10 +103,7 @@ public abstract class Bag<E extends Item>  {
      * maximum number of items to be taken out at current level
      */
     private int currentCounter;
-    /**
-     * reference to memory
-     */
-    protected final Memory memory;
+
     
     private BagObserver<E> bagObserver = null;
     
@@ -120,9 +117,9 @@ public abstract class Bag<E extends Item>  {
      *
      * @param memory The reference to memory
      */
-    protected Bag(Memory memory) {
-        this.memory = memory;
+    protected Bag() {
         capacity = capacity();
+        nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         init();
         
 //        showing = false;
@@ -130,10 +127,11 @@ public abstract class Bag<E extends Item>  {
 
     public void init() {
         for (int i = 0; i < TOTAL_LEVEL; i++) {
-            itemTable[i] = new LinkedList<E>();
             itemTableEmpty[i] = true;
+            if (itemTable[i]!=null)
+                itemTable[i].clear();
         }
-        nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
+        nameTable.clear();
         currentLevel = TOTAL_LEVEL - 1;
         levelIndex = capacity % TOTAL_LEVEL; // so that different bags start at different point
         mass = 0;
@@ -259,7 +257,7 @@ public abstract class Bag<E extends Item>  {
             if (currentLevel < THRESHOLD) { // for dormant levels, take one item
                 currentCounter = 1;
             } else {                  // for active levels, take all current items
-                currentCounter = itemTable[currentLevel].size();
+                currentCounter = getLevelSize(currentLevel);
             }
         }
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
@@ -269,6 +267,11 @@ public abstract class Bag<E extends Item>  {
         return selected;
     }
 
+    public int getLevelSize(final int level) {
+        final LinkedList<E> itcl = itemTable[level];
+        return (itcl == null) ? 0 : itemTable[level].size();
+    }
+    
     /**
      * Pick an item by key, then remove it from the bag
      *
@@ -291,7 +294,7 @@ public abstract class Bag<E extends Item>  {
      * @return Whether that level is empty
      */
     public boolean emptyLevel(final int n) {
-        return itemTable[n].isEmpty();
+        return itemTableEmpty[n];
     }
 
     /**
@@ -327,6 +330,7 @@ public abstract class Bag<E extends Item>  {
                 oldItem = takeOutFirst(outLevel);
             }        
         }
+        ensureLevelExists(inLevel);
         itemTable[inLevel].add(newItem);        // FIFO
         itemTableEmpty[inLevel] = false;
         mass += (inLevel + 1);                  // increase total mass
@@ -334,6 +338,11 @@ public abstract class Bag<E extends Item>  {
         return oldItem;		// TODO return null is a bad smell
     }
 
+    protected void ensureLevelExists(int level) {
+        if (itemTable[level]==null)
+            itemTable[level] = new LinkedList();       
+    }
+    
     /**
      * Take out the first or last E in a level from the itemTable
      *
@@ -444,9 +453,9 @@ public abstract class Bag<E extends Item>  {
         StringBuilder buf = new StringBuilder(" ");
         int levels = 0;
         for (List<E> items : itemTable) {
-            if ((items != null) && !items.isEmpty()) {
+            if ((items != null) && (!items.isEmpty())) {
                 levels++;
-                buf.append(items.size()).append(" ");
+                buf.append(items.size()).append(' ');
             }
         }
         return "Levels: " + Integer.toString(levels) + ", sizes: " + buf;

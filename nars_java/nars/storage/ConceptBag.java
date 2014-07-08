@@ -21,6 +21,9 @@
 
 package nars.storage;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Concept;
 import nars.core.Parameters;
 import nars.language.Term;
@@ -29,11 +32,14 @@ import nars.language.Term;
  * Contains Concepts.
  */
 public class ConceptBag extends Bag<Concept> {
+    private final AtomicInteger forgettingRate;
+    
     /** Constructor
      * @param memory The reference of memory
      */
-    public ConceptBag (Memory memory) {
-        super(memory);
+    public ConceptBag (AtomicInteger forgettingRate) {
+        super();
+        this.forgettingRate = forgettingRate;
     }
     /**
      *
@@ -51,7 +57,7 @@ public class ConceptBag extends Bag<Concept> {
      */
     @Override
     protected int forgetRate() {
-    	return memory.getConceptForgettingRate().get();
+    	return forgettingRate.get();
     }
     
     public void printAll() {
@@ -59,5 +65,9 @@ public class ConceptBag extends Bag<Concept> {
             Term v = nameTable.get(k).getTerm();
             System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
         }
+    }
+
+    public List<Concept> getLevel(int i) {
+        return itemTable[i];
     }
 }
