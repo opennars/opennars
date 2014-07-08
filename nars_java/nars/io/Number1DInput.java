@@ -56,6 +56,7 @@ public class Number1DInput implements Input {
         set(data);
         
         nar.addInputChannel(this);
+        
     }
     
     public static void initPredicates(NAR N, int n) {
@@ -79,6 +80,8 @@ public class Number1DInput implements Input {
         String in = nf.format( 1.0 / ((double)n) );
         s.append("<(*,ELEMENT_FIRST,ELEMENT_LAST) --> NEXT>. %" + in + ";0.99%\n");
         
+        s.append("<ZERO <=> ONE>. %0.00;0.99%\n"); //ONE and ZERO are inequal
+        s.append("<ELEMENT_FIRST <=> ELEMENT_LAST>. %0.00;0.99%\n"); //first and last are inequal
         
         new TextInput(N, s.toString());
     }
@@ -104,9 +107,20 @@ public class Number1DInput implements Input {
     
     public String getStatements() {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer();        
+
+        String product = "<(*,";
         for (int i = 0; i < data.length; i++) {
-            //<(*, id_i, id) --> array_value_i>. %1.00;0.79%                    
+            
+            product += id + "_" + i;
+            if (i < data.length-1)
+                product += ",";
+        }
+        product += ") --> " + id + ">. %0.99;0.99%\n";
+        sb.append(product);
+        
+        
+        for (int i = 0; i < data.length; i++) {
             String[] s = getStatementsInheritsMinMaxProportionally(i, data[i]);
             for (String t : s)
                 sb.append(t + "\n");
@@ -115,8 +129,9 @@ public class Number1DInput implements Input {
         return sb.toString();
     }
     
-    public String[] getStatementsFrequencyEncoded(int i, double value) {
+    @Deprecated public String[] getStatementsFrequencyEncoded(int i, double value) {
         String freq = nf.format(value);
+            //<(*, id_i, id) --> array_value_i>. %1.00;0.79%                    
         String s = "<(*," + id + "_" + i + "," + id + ") --> ELEMENT_" + i + ">. %" + freq + ";" + cert + "%";
         return new String[] { s };
     }
@@ -125,7 +140,8 @@ public class Number1DInput implements Input {
         double zp = value;
         double op = 1.0 - value;
         return new String[] { 
-            "<(*," + id + "_" + i + "," + id + ") --> ELEMENT_" + i + ">. %0.99;" + cert + "%",
+            //"<(*," + id + "_" + i + ",ELEMENT_" + id + ") --> ELEMENT>. %0.99;" + cert + "%",
+            "<" + id + "_" + i + " --> ELEMENT_" + i + ">. %0.99;" + cert + "%",
             "<" + id + "_" + i + " --> ZERO>. %" + zp + ";" + cert + "%",
             "<" + id + "_" + i + " --> ONE>. %" + op + ";" + cert + "%",
         };

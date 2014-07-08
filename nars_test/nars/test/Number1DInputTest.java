@@ -40,18 +40,17 @@ public class Number1DInputTest {
     
     @Test
     public void test1() {
-        int N = 8;
+        int N = 3;
         
         double[] x = randomArray(N, 1.0, 0);
         double[] y = randomArray(N, 1.0, 0);
         
         NAR n = new NAR();
         
-        //new TextOutput(n, System.out);
+        new TextOutput(n, System.out);
         
         new Number1DInput(n, "x", x);
-        new Number1DInput(n, "y", y);
-        n.run(1);
+        n.run(25512);
         Assert.assertTrue(true);        
     }
     

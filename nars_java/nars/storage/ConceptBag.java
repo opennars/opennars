@@ -21,7 +21,6 @@
 
 package nars.storage;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Concept;
@@ -58,7 +57,4 @@ public class ConceptBag extends Bag<Concept> {
         }
     }
 
-    public List<Concept> getLevel(int i) {
-        return itemTable[i];
-    }
 }
