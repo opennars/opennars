@@ -39,8 +39,8 @@ public class RuleTables {
      * @param bLink The selected TermLink, which may provide a belief
      * @param memory Reference to the memory
      */
-    public static void reason(TaskLink tLink, TermLink bLink, Memory memory) {
-        Task task = memory.currentTask;
+    public static void reason(final TaskLink tLink, final TermLink bLink, final Memory memory) {
+        final Task task = memory.currentTask;
         Sentence taskSentence = task.getSentence();
         Term taskTerm = (Term) taskSentence.getContent().clone();         // cloning for substitution
         Term beliefTerm = (Term) bLink.getTarget().clone();       // cloning for substitution

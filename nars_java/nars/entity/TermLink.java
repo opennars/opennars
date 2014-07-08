@@ -151,10 +151,10 @@ public class TermLink extends Item {
             at2 = Symbols.TO_COMPOUND_2;
         }
         
-        final StringBuffer sb = new StringBuffer(at1).append("T").append(type);
+        final StringBuffer sb = new StringBuffer(16).append(at1).append('T').append(type);
         if (index != null) {
             for (int i = 0; i < index.length; i++) {
-                sb.append("-" + (index[i] + 1));
+                sb.append('-').append((index[i] + 1));
             }
         }
         sb.append(at2);
@@ -195,7 +195,7 @@ public class TermLink extends Item {
      * @param i The index level
      * @return The index value
      */
-    public short getIndex(int i) {
+    public short getIndex(final int i) {
         if ((index != null) && (i < index.length)) {
             return index[i];
         } else {

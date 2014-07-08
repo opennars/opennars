@@ -211,46 +211,41 @@ public abstract class CompoundTerm extends Term {
     public static Term make(final String op, final ArrayList<Term> arg, final Memory memory) {
         final int length = op.length();
         if (length == 1) {
-            if (op.charAt(0) == Symbols.SET_EXT_OPENER) {
-                return SetExt.make(arg, memory);
-            }
-            if (op.charAt(0) == Symbols.SET_INT_OPENER) {
-                return SetInt.make(arg, memory);
-            }
-            if (op.equals(Symbols.INTERSECTION_EXT_OPERATOR)) {
-                return IntersectionExt.make(arg, memory);
-            }
-            if (op.equals(Symbols.INTERSECTION_INT_OPERATOR)) {
-                return IntersectionInt.make(arg, memory);
-            }
-            if (op.equals(Symbols.DIFFERENCE_EXT_OPERATOR)) {
-                return DifferenceExt.make(arg, memory);
-            }
-            if (op.equals(Symbols.DIFFERENCE_INT_OPERATOR)) {
-                return DifferenceInt.make(arg, memory);
-            }
-            if (op.equals(Symbols.PRODUCT_OPERATOR)) {
-                return Product.make(arg, memory);
-            }
-            if (op.equals(Symbols.IMAGE_EXT_OPERATOR)) {
-                return ImageExt.make(arg, memory);
-            }
-            if (op.equals(Symbols.IMAGE_INT_OPERATOR)) {
-                return ImageInt.make(arg, memory);
-            }
+            final char c = op.charAt(0);
+            switch (c) {
+                case Symbols.SET_EXT_OPENER: 
+                    return SetExt.make(arg, memory);
+                case Symbols.SET_INT_OPENER: 
+                    return SetInt.make(arg, memory);
+                case Symbols.INTERSECTION_EXT_OPERATORc: 
+                    return IntersectionExt.make(arg, memory);
+                case Symbols.INTERSECTION_INT_OPERATORc:
+                    return IntersectionInt.make(arg, memory);
+                case Symbols.DIFFERENCE_EXT_OPERATORc:
+                    return DifferenceExt.make(arg, memory);
+                case Symbols.DIFFERENCE_INT_OPERATORc:
+                    return DifferenceInt.make(arg, memory);
+                case Symbols.PRODUCT_OPERATORc:
+                    return Product.make(arg, memory);
+                case Symbols.IMAGE_EXT_OPERATORc:
+                    return ImageExt.make(arg, memory);
+                case Symbols.IMAGE_INT_OPERATORc:
+                    return ImageInt.make(arg, memory);                    
+            }            
         }
         else if (length == 2) {
-            if (op.equals(Symbols.NEGATION_OPERATOR)) {
-                return Negation.make(arg, memory);
-            }
-            if (op.equals(Symbols.DISJUNCTION_OPERATOR)) {
-                return Disjunction.make(arg, memory);
-            }
-            if (op.equals(Symbols.CONJUNCTION_OPERATOR)) {
-                return Conjunction.make(arg, memory);
-            }
+            //since these symbols are the same character repeated, we only need to compare the first character
+            final char c = op.charAt(0);
+            switch (c) {
+                case Symbols.NEGATION_OPERATORc:
+                    return Negation.make(arg, memory);            
+                case Symbols.DISJUNCTION_OPERATORc:
+                    return Disjunction.make(arg, memory);            
+                case Symbols.CONJUNCTION_OPERATORc:
+                    return Conjunction.make(arg, memory);
+            }            
         }
-        return null;
+        throw new RuntimeException("Unknown Term operator: " + op);
     }
 
     /**
@@ -311,7 +306,7 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeCompoundName(final String op, final ArrayList<Term> arg) {
-        final StringBuilder name = new StringBuilder();
+        final StringBuilder name = new StringBuilder(16  /* estimate */);
         name.append(Symbols.COMPOUND_TERM_OPENER);
         name.append(op);
         for (final Term t : arg) {
@@ -334,7 +329,7 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeSetName(final char opener, final ArrayList<Term> arg, final char closer) {
-        StringBuilder name = new StringBuilder(16);
+        StringBuilder name = new StringBuilder(16 /* estimate */);
         name.append(opener);
         name.append(arg.get(0).getName());
         for (int i = 1; i < arg.size(); i++) {
@@ -354,7 +349,7 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeImageName(String op, ArrayList<Term> arg, int relationIndex) {
-        StringBuilder name = new StringBuilder(16);
+        StringBuilder name = new StringBuilder(16 /* estimate */);
         name.append(Symbols.COMPOUND_TERM_OPENER);
         name.append(op);
         name.append(Symbols.ARGUMENT_SEPARATOR);
@@ -635,20 +630,19 @@ public abstract class CompoundTerm extends Term {
      *
      * @param subs
      */
-    public void applySubstitute(HashMap<Term, Term> subs) {
-        Term t1, t2;
+    public void applySubstitute(HashMap<Term, Term> subs) {        
         for (int i = 0; i < size(); i++) {
-            t1 = componentAt(i);
-            t2 = subs.get(t1);
+            final Term t1 = componentAt(i);
+            final Term t2 = subs.get(t1);
             if (t2 != null) {
                 components.set(i, (Term) t2.clone());
             } else if (t1 instanceof CompoundTerm) {
                 ((CompoundTerm) t1).applySubstitute(subs);
             }
         }
-        if (this.isCommutative()) {         // re-order
-            TreeSet<Term> s = new TreeSet<>(components);
-            components = new ArrayList<>(s);
+        if (this.isCommutative()) {         
+            // re-order
+            components = new ArrayList<>( new TreeSet<>(components) );
         }
         name = makeName();
     }

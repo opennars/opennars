@@ -48,7 +48,7 @@ public class LocalRules {
      * @param belief The belief
      * @param memory Reference to the memory
      */
-    public static void match(Task task, Sentence belief, Memory memory) {
+    public static void match(final Task task, final Sentence belief, final Memory memory) {
         Sentence sentence = (Sentence) task.getSentence().clone();
         if (sentence.isJudgment()) {
             if (revisible(sentence, belief)) {
@@ -66,7 +66,7 @@ public class LocalRules {
      * @param s2 The second sentence
      * @return If revision is possible between the two sentences
      */
-    public static boolean revisible(Sentence s1, Sentence s2) {
+    public static boolean revisible(final Sentence s1, final Sentence s2) {
         return (s1.getContent().equals(s2.getContent()) && s1.getRevisible());
     }
 
@@ -123,11 +123,11 @@ public class LocalRules {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(Sentence problem, Sentence solution) {
+    public static float solutionQuality(final Sentence problem, final Sentence solution) {
         if (problem == null) {
             return solution.getTruth().getExpectation();
         }
-        TruthValue truth = solution.getTruth();
+        final TruthValue truth = solution.getTruth();
         if (problem.containQueryVar()) {   // "yes/no" question
             return truth.getExpectation() / solution.getContent().getComplexity();
         } else {                                    // "what" question or goal
@@ -141,7 +141,7 @@ public class LocalRules {
      *
      * @param memory Reference to the memory
      */
-    public static void matchReverse(Memory memory) {
+    public static void matchReverse(final Memory memory) {
         Task task = memory.currentTask;
         Sentence belief = memory.currentBelief;
         Sentence sentence = task.getSentence();
@@ -160,7 +160,7 @@ public class LocalRules {
      * @param figure location of the shared term
      * @param memory Reference to the memory
      */
-    public static void matchAsymSym(Sentence asym, Sentence sym, int figure, Memory memory) {
+    public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final Memory memory) {
         if (memory.currentTask.getSentence().isJudgment()) {
             inferToAsym((Sentence) asym, (Sentence) sym, memory);
         } else {
@@ -219,7 +219,7 @@ public class LocalRules {
      *
      * @param memory Reference to the memory
      */
-    private static void conversion(Memory memory) {
+    private static void conversion(final Memory memory) {
         TruthValue truth = TruthFunctions.conversion(memory.currentBelief.getTruth());
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
         convertedJudgment(truth, budget, memory);
@@ -231,7 +231,7 @@ public class LocalRules {
      *
      * @param memory Reference to the memory
      */
-    private static void convertRelation(Memory memory) {
+    private static void convertRelation(final Memory memory) {
         TruthValue truth = memory.currentBelief.getTruth();
         if (((Statement) memory.currentTask.getContent()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
@@ -251,13 +251,13 @@ public class LocalRules {
      * @param truth The truth value of the new task
      * @param memory Reference to the memory
      */
-    private static void convertedJudgment(TruthValue newTruth, BudgetValue newBudget, Memory memory) {
+    private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final Memory memory) {
         Statement content = (Statement) memory.currentTask.getContent();
         Statement beliefContent = (Statement) memory.currentBelief.getContent();
-        Term subjT = content.getSubject();
-        Term predT = content.getPredicate();
-        Term subjB = beliefContent.getSubject();
-        Term predB = beliefContent.getPredicate();
+        final Term subjT = content.getSubject();
+        final Term predT = content.getPredicate();
+        final Term subjB = beliefContent.getSubject();
+        final Term predB = beliefContent.getPredicate();
         Term otherTerm;
         if (Variable.containVarQuery(subjT.getName())) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;

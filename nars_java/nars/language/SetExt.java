@@ -35,7 +35,7 @@ public class SetExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetExt(ArrayList<Term> arg) {
+    private SetExt(final ArrayList<Term> arg) {
         super(arg);
     }
 
@@ -46,7 +46,7 @@ public class SetExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetExt(String n, ArrayList<Term> cs, boolean con, short i) {
+    private SetExt(final String n, final ArrayList<Term> cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
@@ -64,8 +64,8 @@ public class SetExt extends CompoundTerm {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term t, Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>();
+    public static Term make(final Term t, final Memory memory) {
+        final TreeSet<Term> set = new TreeSet<Term>();
         set.add(t);
         return make(set, memory);
     }
@@ -76,7 +76,7 @@ public class SetExt extends CompoundTerm {
      * @param argList The list of components
      * @param memory Reference to the memeory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
+    public static Term make(final ArrayList<Term> argList, final Memory memory) {
         TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
         return make(set, memory);
     }
@@ -87,13 +87,13 @@ public class SetExt extends CompoundTerm {
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set, Memory memory) {
+    public static Term make(final TreeSet<Term> set, final Memory memory) {
         if (set.isEmpty()) {
             return null;
         }
-        ArrayList<Term> argument = new ArrayList<Term>(set);
-        String name = makeSetName(Symbols.SET_EXT_OPENER, argument, Symbols.SET_EXT_CLOSER);
-        Term t = memory.nameToListedTerm(name);
+        final ArrayList<Term> argument = new ArrayList<Term>(set);
+        final String name = makeSetName(Symbols.SET_EXT_OPENER, argument, Symbols.SET_EXT_CLOSER);
+        final Term t = memory.nameToListedTerm(name);
         return (t != null) ? t : new SetExt(argument);
     }
 
@@ -102,7 +102,7 @@ public class SetExt extends CompoundTerm {
      * @return the operator of the term
      */
     public String operator() {
-        return "" + Symbols.SET_EXT_OPENER;
+        return Character.toString(Symbols.SET_EXT_OPENER);
     }
 
     /**

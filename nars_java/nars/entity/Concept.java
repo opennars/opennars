@@ -490,8 +490,8 @@ public final class Concept extends Item {
      * plurality of observers)
      * @param showLinks Whether to display the task links
      */
-	@SuppressWarnings("unchecked")
-	public void startPlay( EntityObserver entityObserver, boolean showLinks ) {
+    @SuppressWarnings("unchecked")
+    public void startPlay( EntityObserver entityObserver, boolean showLinks ) {
         this.entityObserver = entityObserver;
         entityObserver.startPlay(this, showLinks);
         entityObserver.post(displayContent());

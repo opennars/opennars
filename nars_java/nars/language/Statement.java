@@ -21,6 +21,8 @@
 package nars.language;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import nars.io.Symbols;
 import nars.io.Symbols.Relation;
@@ -37,7 +39,7 @@ public abstract class Statement extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Statement(ArrayList<Term> arg) {
+    protected Statement(final ArrayList<Term> arg) {
         super(arg);
     }
 
@@ -141,6 +143,7 @@ public abstract class Statement extends CompoundTerm {
         return null;
     }
 
+    
     /**
      * Check Statement relation symbol, called in StringPaser
      *
@@ -153,39 +156,11 @@ public abstract class Statement extends CompoundTerm {
             return false;
         }
 
-        //TODO use a regexp which may be faster than repeated string comparisons
-        return (s.equals(Relation.INHERITANCE.toString()))
-                || s.equals(Relation.SIMILARITY.toString())
-                || s.equals(Relation.INSTANCE.toString())
-                || s.equals(Relation.PROPERTY.toString())
-                || s.equals(Relation.INSTANCE_PROPERTY.toString())
-                || s.equals(Relation.IMPLICATION.toString())
-                || s.equals(Relation.EQUIVALENCE.toString());
+        return Symbols.getRelation(s)!=null;
     }
-
+    
     public static Relation getRelation(final String s) {
-        if (s.equals(Relation.INHERITANCE.toString())) {
-            return Relation.INHERITANCE;
-        }
-        if (s.equals(Relation.SIMILARITY.toString())) {
-            return Relation.SIMILARITY;
-        }
-        if (s.equals(Relation.INSTANCE.toString())) {
-            return Relation.INSTANCE;
-        }
-        if (s.equals(Relation.PROPERTY.toString())) {
-            return Relation.PROPERTY;
-        }
-        if (s.equals(Relation.INSTANCE_PROPERTY.toString())) {
-            return Relation.INSTANCE_PROPERTY;
-        }
-        if (s.equals(Relation.IMPLICATION.toString())) {
-            return Relation.IMPLICATION;
-        }
-        if (s.equals(Relation.EQUIVALENCE.toString())) {
-            return Relation.EQUIVALENCE;
-        }
-        return null;
+        return Symbols.getRelation(s);
     }
 
     /**
@@ -208,11 +183,15 @@ public abstract class Statement extends CompoundTerm {
      * @return The nameStr of the term
      */
     protected static String makeStatementName(final Term subject, final String relation, final Term predicate) {
-        StringBuilder nameStr = new StringBuilder();
+        final String subjectName = subject.getName();
+        final String predicateName = predicate.getName();
+        int length = subjectName.length() + predicateName.length() + relation.length() + 4;
+        
+        final StringBuilder nameStr = new StringBuilder(length);
         nameStr.append(Symbols.STATEMENT_OPENER);
-        nameStr.append(subject.getName());
+        nameStr.append(subjectName);
         nameStr.append(' ').append(relation).append(' ');
-        nameStr.append(predicate.getName());
+        nameStr.append(predicateName);
         nameStr.append(Symbols.STATEMENT_CLOSER);
         return nameStr.toString();
     }

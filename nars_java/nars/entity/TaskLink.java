@@ -34,15 +34,15 @@ public class TaskLink extends TermLink {
     /**
      * The Task linked. The "target" field in TermLink is not used here.
      */
-    private Task targetTask;
+    private final Task targetTask;
     /**
      * Remember the TermLinks that has been used recently with this TaskLink
      */
-    private String recordedLinks[];
+    private final String recordedLinks[];
     /**
      * Remember the time when each TermLink is used with this TaskLink
      */
-    private long recordingTime[];
+    private final long recordingTime[];
     /**
      * The number of TermLinks remembered
      */
@@ -57,7 +57,7 @@ public class TaskLink extends TermLink {
      * @param template The TermLink template
      * @param v The budget
      */
-    public TaskLink(Task t, TermLink template, BudgetValue v) {
+    public TaskLink(final Task t, final TermLink template, final BudgetValue v) {
         super("", v);
         targetTask = t;
         if (template == null) {
@@ -93,8 +93,8 @@ public class TaskLink extends TermLink {
      * @param currentTime The current time
      * @return Whether they are novel to each other
      */
-    public boolean novel(TermLink termLink, long currentTime) {
-        Term bTerm = termLink.getTarget();
+    public boolean novel(final TermLink termLink, final long currentTime) {
+        final Term bTerm = termLink.getTarget();
         if (bTerm.equals(targetTask.getSentence().getContent())) {
             return false;
         }
