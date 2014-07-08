@@ -168,9 +168,12 @@ public class Stamp implements Cloneable {
      */
     public static Stamp make(final Stamp first, final Stamp second, final long time) {
 
+        //temporarily removed
+        /*
         if (equalBases(first.getBase(), second.getBase())) {
             return null;  // do not merge identical bases
         }
+        */
 
         if (first.length() > second.length()) {
             return new Stamp(first, second, time);
@@ -179,6 +182,7 @@ public class Stamp implements Cloneable {
         }
     }
 
+    /*
     private static boolean equalBases(long[] base1, long[] base2) {
         if (base1.length != base2.length) {
             return false;
@@ -196,6 +200,7 @@ public class Stamp implements Cloneable {
         }
         return true;
     }
+    */
 
     /**
      * Clone a stamp
