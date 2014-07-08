@@ -69,11 +69,11 @@ public class Negation extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term t, Memory memory) {
+    public static Term make(final Term t, final Memory memory) {
         if (t instanceof Negation) {
             return ((CompoundTerm) t).cloneComponents().get(0);
         }         // (--,(--,P)) = P
-        ArrayList<Term> argument = new ArrayList<>();
+        final ArrayList<Term> argument = new ArrayList<>(1);
         argument.add(t);
         return make(argument, memory);
     }
@@ -85,12 +85,12 @@ public class Negation extends CompoundTerm {
      * @param argument The list of components
      * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argument, Memory memory) {
+    public static Term make(final ArrayList<Term> argument, final Memory memory) {
         if (argument.size() != 1) {
             return null;
         }
-        String name = makeCompoundName(Symbols.NEGATION_OPERATOR, argument);
-        Term t = memory.nameToListedTerm(name);
+        final String name = makeCompoundName(Symbols.NEGATION_OPERATOR, argument);
+        final Term t = memory.nameToListedTerm(name);
         return (t != null) ? t : new Negation(argument);
     }
 

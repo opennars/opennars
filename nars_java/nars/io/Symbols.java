@@ -20,6 +20,9 @@
  */
 package nars.io;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * The ASCII symbols used in I/O.
  */
@@ -53,6 +56,7 @@ public class Symbols {
     public static final char ARGUMENT_SEPARATOR = ',';
     public static final char IMAGE_PLACE_HOLDER = '_';
 
+
     
     public static enum Operator {
         /* CompountTerm operators, length = 1 */
@@ -73,17 +77,27 @@ public class Symbols {
     
     /* CompountTerm operators, length = 1 */
     public static final String INTERSECTION_EXT_OPERATOR = "&";
+    public static final char INTERSECTION_EXT_OPERATORc = '&';
     public static final String INTERSECTION_INT_OPERATOR = "|";
+    public static final char INTERSECTION_INT_OPERATORc = '|';
     public static final String DIFFERENCE_EXT_OPERATOR = "-";
+    public static final char DIFFERENCE_EXT_OPERATORc = '-';
     public static final String DIFFERENCE_INT_OPERATOR = "~";
+    public static final char DIFFERENCE_INT_OPERATORc = '~';
     public static final String PRODUCT_OPERATOR = "*";
-    public static final String IMAGE_EXT_OPERATOR = "/";
+    public static final char PRODUCT_OPERATORc = '*';
+    public static final String IMAGE_EXT_OPERATOR = "/";        
+    public static final char IMAGE_EXT_OPERATORc = '/';
     public static final String IMAGE_INT_OPERATOR = "\\";
+    public static final char IMAGE_INT_OPERATORc = '\\';
 
     /* CompoundStatement operators, length = 2 */
     public static final String NEGATION_OPERATOR = "--";
+    public static final char NEGATION_OPERATORc = '-';    
     public static final String DISJUNCTION_OPERATOR = "||";
+    public static final char DISJUNCTION_OPERATORc = '|';
     public static final String CONJUNCTION_OPERATOR = "&&";
+    public static final char CONJUNCTION_OPERATORc = '&';
 
     public static enum Relation {
         INHERITANCE { @Override public String toString() { return "-->"; } },
@@ -95,14 +109,18 @@ public class Symbols {
         EQUIVALENCE { @Override public String toString() { return "<=>"; } }
     }
     
-    /* built-in relations, length = 3 */
-    /*private static final String INHERITANCE_RELATION = "-->";
-    private static final String SIMILARITY_RELATION = "<->";
-    public static final String INSTANCE_RELATION = "{--";
-    public static final String PROPERTY_RELATION = "--]";
-    public static final String INSTANCE_PROPERTY_RELATION = "{-]";
-    public static final String IMPLICATION_RELATION = "==>";
-    public static final String EQUIVALENCE_RELATION = "<=>";*/
+
+    protected static final Map<String,Relation> stringToRelation = new TreeMap();    
+    static {
+        for (final Relation r : Relation.values())
+            stringToRelation.put(r.toString(), r);
+    }
+    
+    public static Relation getRelation(String s) {
+        return stringToRelation.get(s);
+    }
+    
+    
 
     /* experience line prefix */
     public static final String INPUT_LINE = "IN";

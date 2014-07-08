@@ -66,7 +66,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
-    public static final Distributor DISTRIBUTOR = new Distributor(TOTAL_LEVEL); //
+    public static final int[] DISTRIBUTOR = new Distributor(TOTAL_LEVEL).order; //
     
     
     /**
@@ -231,7 +231,7 @@ public abstract class Bag<E extends Item>  {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */
-    public boolean putBack(E oldItem) {
+    public boolean putBack(final E oldItem) {
         BudgetFunctions.forget(oldItem.getBudget(), forgetRate(), RELATIVE_THRESHOLD);
         return putIn(oldItem);
     }
@@ -250,8 +250,8 @@ public abstract class Bag<E extends Item>  {
             
             // look for a non-empty level
             do {
-                currentLevel = DISTRIBUTOR.order[levelIndex];
-                levelIndex = (levelIndex + 1) % DISTRIBUTOR.capacity;
+                currentLevel = DISTRIBUTOR[levelIndex];
+                levelIndex = (levelIndex + 1) % DISTRIBUTOR.length;
             } while (itemTableEmpty[currentLevel]);
             
             if (currentLevel < THRESHOLD) { // for dormant levels, take one item
@@ -267,9 +267,8 @@ public abstract class Bag<E extends Item>  {
         return selected;
     }
 
-    public int getLevelSize(final int level) {
-        final LinkedList<E> itcl = itemTable[level];
-        return (itcl == null) ? 0 : itemTable[level].size();
+    public int getLevelSize(final int level) {        
+        return (itemTableEmpty[level]) ? 0 : itemTable[level].size();
     }
     
     /**
@@ -278,8 +277,8 @@ public abstract class Bag<E extends Item>  {
      * @param key The given key
      * @return The Item with the key
      */
-    public E pickOut(String key) {
-        E picked = nameTable.get(key);
+    public E pickOut(final String key) {
+        final E picked = nameTable.get(key);
         if (picked != null) {
             outOfBase(picked);
             nameTable.remove(key);
@@ -415,12 +414,12 @@ public abstract class Bag<E extends Item>  {
      */
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer(" ");
+        final StringBuffer buf = new StringBuffer(" ");
         for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
             if (!itemTable[i-1].isEmpty()) {
-                buf = buf.append("\n --- Level ").append(i).append(":\n");
+                buf.append("\n --- Level ").append(i).append(":\n");
                 for (final E e : itemTable[i-1]) {
-                    buf = buf.append(e.toStringBrief()).append('\n');
+                    buf.append(e.toStringBrief()).append('\n');
                 }
             }
         }
@@ -434,7 +433,7 @@ public abstract class Bag<E extends Item>  {
         StringBuffer buf = new StringBuffer(" BAG " + getClass().getSimpleName());
         buf.append(" ").append(showSizes());
         for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
-            if (!itemTable[i-1].isEmpty()) {
+            if (!itemTableEmpty[i-1]) {
                 buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");
                 for (final E e : itemTable[i-1]) {
                     buf = buf.append(e.toStringLong()).append('\n');
