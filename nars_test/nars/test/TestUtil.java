@@ -153,34 +153,29 @@ public class TestUtil {
         }
     }
     
-    protected void perfNAL(String path, int extraCycles, int repeats, int warmups) {
+    
+    protected void perfNAL(final String path, int extraCycles, int repeats, int warmups) {
         
-        final NAR n = new NAR();        
         
-        long totalTime = 0;
-        long totalMemory = 0;
+        new Performance(path, repeats, warmups) {
+            private NAR n;
 
-        for (int r = 0; r < repeats; r++) {
-            long start = System.nanoTime();
-
-            System.gc();
-
-            long freeMemStart = Runtime.getRuntime().freeMemory();
-
-            n.reset();
-            new TextInput(n, getExample(path));
-            n.run(extraCycles, false);
-
-            if (warmups == 0) {
-                totalTime += System.nanoTime() - start;
-                totalMemory += freeMemStart - Runtime.getRuntime().freeMemory();
+            @Override
+            public void init() {
+                n = new NAR();
             }
-            else
-                warmups--;
-        }
-        System.out.print(path + ": " + ((double)totalTime)/((double)repeats)/1000000.0 + "ms per iteration, ");
-        System.out.println(((double)totalMemory)/((double)repeats)/1024.0 + " kb per iteration");
+
+            @Override
+            public void run(boolean warmup) {
+                n.reset();
+                new TextInput(n, getExample(path));
+                n.run(extraCycles, false);
+            }
+
+
+        }.print();
         
+           
     }
     
 }

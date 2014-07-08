@@ -34,17 +34,10 @@ public class TermLinkBag extends Bag<TermLink> {
      * @param memory The reference of memory
      */
     public TermLinkBag(AtomicInteger beliefForgettingRate) {
-        super();
+        super(Parameters.TERM_LINK_BAG_SIZE);
         this.beliefForgettingRate = beliefForgettingRate;
     }
 
-    /**
-     * Get the (constant) capacity of TermLinkBag
-     * @return The capacity of TermLinkBag
-     */
-    protected int capacity() {
-        return Parameters.TERM_LINK_BAG_SIZE;
-    }
 
     /**
      * Get the (adjustable) forget rate of TermLinkBag
