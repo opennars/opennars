@@ -17,8 +17,8 @@
 
 package nars.test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+import java.util.LinkedList;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.Bag;
@@ -30,12 +30,12 @@ import nars.storage.DefaultBag;
  */
 public class BagPerf {
     
-    int repeats = 32;
+    int repeats = 16;
     int warmups = 2;
-    int capacity = 10000;
+    int capacity = 100;
     int forgetRate = 10;
-    int randomAccesses = capacity*4;
-    double insertRatio = 0.5;
+    int randomAccesses = capacity*256;
+    double insertRatio = 0.9;
     
     public BagPerf() {
         
@@ -66,10 +66,10 @@ public class BagPerf {
                 DefaultBag<Item> b = new DefaultBag<Item>(levels, capacity, forgetRate) {
 
                     @Override
-                    protected List<Item> newLevel() {
-                        if (arraylist)
-                            return new ArrayList<Item>();                        
-                        return super.newLevel();
+                    protected Deque<Item> newLevel() {
+                        if (arraylist)                                                    
+                            return super.newLevel();
+                        return new LinkedList<Item>();
                     }
                     
                 };
@@ -90,7 +90,7 @@ public class BagPerf {
         //items per lvel max
         //avg prioirty
         //avg norm mass
-        System.out.print((totalMinItemsPerLevel/p.repeats) + ",");
+        //System.out.print((totalMinItemsPerLevel/p.repeats) + ",");
         System.out.print((totalMaxItemsPerLevel/p.repeats) + ",");
         System.out.print(totalPriority/p.repeats + ",");
         System.out.print(totalMass/repeats/((float)levels) + ",");

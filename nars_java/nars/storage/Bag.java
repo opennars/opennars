@@ -20,9 +20,10 @@
  */
 package nars.storage;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import nars.entity.Item;
 import nars.inference.BudgetFunctions;
@@ -76,7 +77,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * array of lists of items, for items on different level
      */
-    public final List<E>[] itemTable;
+    public final Deque<E>[] itemTable;
     
     //this is a cache holding whether itemTable[i] is empty. 
     //it avoids needing to call itemTable.isEmpty() which may improve performance
@@ -119,7 +120,7 @@ public abstract class Bag<E extends Item>  {
         this.capacity = capacity;
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         itemTableEmpty = new boolean[this.levels];
-        itemTable = new List[this.levels];
+        itemTable = new Deque[this.levels];
         DISTRIBUTOR = Distributor.get(this.levels).order;
         clear();
         //showing = false;        
@@ -346,8 +347,9 @@ public abstract class Bag<E extends Item>  {
             itemTable[level] = newLevel();
     }
     
-    protected List<E> newLevel() {
-        return new LinkedList<E>();
+    protected Deque<E> newLevel() {
+        //return new LinkedList<E>();
+        return new ArrayDeque<E>(1+capacity/levels);
     }
     
     /**
@@ -357,7 +359,7 @@ public abstract class Bag<E extends Item>  {
      * @return The first Item
      */
     private E takeOutFirst(final int level) {
-        final E selected = itemTable[level].remove(0);
+        final E selected = itemTable[level].removeFirst();
         itemTableEmpty[level] = itemTable[level].isEmpty();
         mass -= (level + 1);
         refresh();
@@ -459,7 +461,7 @@ public abstract class Bag<E extends Item>  {
     public String showSizes() {
         StringBuilder buf = new StringBuilder(" ");
         int l = 0;
-        for (List<E> items : itemTable) {
+        for (Collection<E> items : itemTable) {
             if ((items != null) && (!items.isEmpty())) {
                 l++;
                 buf.append(items.size()).append(' ');
@@ -503,6 +505,8 @@ public abstract class Bag<E extends Item>  {
         return capacity;
     }
 
-    
-    
+    public Deque<E> getLevel(final int i) {
+        return itemTable[i];
+    }
+        
 }

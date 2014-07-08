@@ -25,8 +25,8 @@ public abstract class Performance {
     public final int repeats;
     private final int warmups;
     private final String name;
-    private int totalTime;
-    private int totalMemory;
+    private long totalTime;
+    private long totalMemory;
 
     public Performance(String name, int repeats, int warmups) {
         this.repeats = repeats;        
@@ -63,7 +63,7 @@ public abstract class Performance {
     }
     public Performance printCSV() {
         System.out.print(name + "," + ((double)totalTime)/((double)repeats)/1000000.0 +",");
-        System.out.print(((double)totalMemory)/((double)repeats)/1024.0);
+        System.out.print(((double)totalMemory)/((double)repeats)/1024.0+",");
         return this;
     }    
             

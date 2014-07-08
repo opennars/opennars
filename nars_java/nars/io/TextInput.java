@@ -355,7 +355,7 @@ public class TextInput extends Symbols implements Input {
         
         //not handled, so respond with some signal
         if (lastHandled == null) {
-            nar.output(OUT.class, "?");
+            nar.output(OUT.class, "??? " + line);
         }
     }
     
