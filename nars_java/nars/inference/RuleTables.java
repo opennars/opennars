@@ -432,8 +432,15 @@ public class RuleTables {
         } else if (statement instanceof Implication) {
             component2 = statement.componentAt(side);
         }
-        if ((component2 != null) && Variable.unify(Symbols.VAR_INDEPENDENT, component, component2, conditional, statement)) {
-            SyllogisticRules.conditionalDedInd(conditional, index, statement, side, memory);
+
+        if (component2 != null) {
+            finalboolean unifiable = Variable.unify(Symbols.VAR_INDEPENDENT, component, component2, conditional, statement);
+            if (!unifiable) {
+                unifiable = Variable.unify(Symbols.VAR_DEPENDENT, component, component2, conditional, statement);
+            }
+            if (unifiable) {
+                SyllogisticRules.conditionalDedInd(conditional, index, statement, side, memory);
+            }
         }
     }
 
