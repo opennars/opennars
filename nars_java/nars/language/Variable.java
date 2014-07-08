@@ -190,7 +190,8 @@ public class Variable extends Term {
                         map1.put(var1, term2);  // elimination
                     }
                 } else {    // different type
-                    map1.put(var1, new Variable(var1.getName() + "-1"));  // rename             
+                    //map1.put(var1, new Variable(var1.getName() + "-1"));  // rename             
+                    return false;
                 }
                 return true;
             }
@@ -204,7 +205,8 @@ public class Variable extends Term {
                 if (var2.getType() == type) {
                     map2.put(var2, term2);  // unify
                 } else {
-                    map2.put(var2, new Variable(var2.getName() + "-2"));  // rename             
+                    //map2.put(var2, new Variable(var2.getName() + "-2"));  // rename             
+                    return false;
                 }
                 return true;
             }
