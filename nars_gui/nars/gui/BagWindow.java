@@ -80,8 +80,11 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
     private boolean showing;
 
     public BagWindow() {
-        /* The lowest level displayed */
-        int showLevel = Parameters.BAG_THRESHOLD;
+        
+        /* The lowest level displayed -- will need adjusted for variable bag sizes*/
+        int showLevel = (int)(Parameters.BAG_THRESHOLD * Parameters.BAG_LEVEL);
+        
+        
         getContentPane().setBackground(MULTIPLE_WINDOW_COLOR);
 
         text = new JTextArea("");

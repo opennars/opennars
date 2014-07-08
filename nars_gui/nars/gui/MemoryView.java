@@ -274,7 +274,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             int x = 0;
             int cnt = 0;
             ConceptBag bag = mem.concepts;
-            for (int i = bag.TOTAL_LEVEL; i >= 1; i--) {
+            for (int i = bag.levels; i >= 1; i--) {
                 if (!bag.emptyLevel(i - 1)) {
                     if (!bag.emptyLevel(i-1))                        
                         for (final Concept c : bag.getLevel(i-1)) {
@@ -489,7 +489,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             else if (mode == 0) {
                 float LEVELRAD = maxNodeSize;
 
-                double radius = ((mem.concepts.TOTAL_LEVEL - level)+1);
+                double radius = ((mem.concepts.levels - level)+1);
                 float angle = index; //TEMPORARY
                 this.x = (float)(Math.cos(angle/3.0) * radius) * LEVELRAD;
                 this.y = (float)(Math.sin(angle/3.0) * radius) * LEVELRAD;

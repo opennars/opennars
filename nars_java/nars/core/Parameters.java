@@ -73,7 +73,7 @@ public class Parameters {
     /** Level granularity in Bag, two digits */
     public static final int BAG_LEVEL = 100;
     /** Level separation in Bag, one digit, for display (run-time adjustable) and management (fixed) */
-    public static final int BAG_THRESHOLD = 10;
+    public static final float BAG_THRESHOLD = 0.1f;
     /** Hashtable load factor in Bag */
     public static final float LOAD_FACTOR = (float) 0.5;
     /** Size of ConceptBag */
