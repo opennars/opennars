@@ -460,13 +460,17 @@ public class Memory {
         if (recorder.isActive()) {
             recorder.append(" --- " + clock + " ---\n");
         }
+        
         processNewTask();
+        
         if (noResult()) {       // necessary?
             processNovelTask();
         }
+        
         if (noResult()) {       // necessary?
             processConcept();
         }
+        
         novelTasks.refresh();
     }
 
@@ -503,7 +507,7 @@ public class Memory {
      * Select a novel task to process.
      */
     private void processNovelTask() {
-        Task task = novelTasks.takeOut();       // select a task from novelTasks
+        final Task task = novelTasks.takeOut();       // select a task from novelTasks
         if (task != null) {
             immediateProcess(task);
         }
@@ -516,10 +520,13 @@ public class Memory {
         currentConcept = concepts.takeOut();
         if (currentConcept != null) {
             currentTerm = currentConcept.getTerm();
+            
             if (recorder.isActive()) {
                 recorder.append(" * Selected Concept: " + currentTerm + "\n");
             }
+            
             concepts.putBack(currentConcept);   // current Concept remains in the bag all the time
+            
             currentConcept.fire();              // a working workCycle
         }
     }

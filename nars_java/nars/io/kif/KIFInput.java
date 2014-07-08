@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import nars.core.NAR;
-import nars.io.InputChannel;
+import nars.io.Input;
 import nars.io.TextInput;
 
 /**
@@ -32,7 +32,7 @@ import nars.io.TextInput;
  * http://sigma-01.cim3.net:8080/sigma/Browse.jsp?kb=SUMO&lang=EnglishLanguage&flang=SUO-KIF&term=subclass
  * @author me
  */
-public class KIFInput implements InputChannel {
+public class KIFInput implements Input {
 
     private final KIF kif;
     private final Iterator<Formula> formulaIterator;

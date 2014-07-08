@@ -73,7 +73,7 @@ import nars.storage.Memory;
 /**
  * To read and write experience as Task streams
  */
-public class TextInput extends Symbols implements InputChannel {
+public class TextInput extends Symbols implements Input {
 
     /**
      * Reference to the reasoner

@@ -23,7 +23,7 @@ package nars.io;
  * 
  * Provides input for the next moment from an input channel that delivers input asynchronously
  */
-public interface InputChannel {
+public interface Input {
     /**
      * Get next input and process it
      * @return false if no more input is available, true otherwise

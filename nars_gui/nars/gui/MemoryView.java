@@ -276,8 +276,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             ConceptBag bag = mem.concepts;
             for (int i = bag.TOTAL_LEVEL; i >= 1; i--) {
                 if (!bag.emptyLevel(i - 1)) {
-                    for (int j = 0; j < bag.itemTable[i - 1].size(); j++) {
-                        final Concept c = bag.itemTable[i - 1].get(j);
+                    for (final Concept c : bag.itemTable[i-1]) {
                                                 
                         final Term name = c.getTerm();
 
