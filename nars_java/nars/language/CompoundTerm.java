@@ -128,13 +128,13 @@ public abstract class CompoundTerm extends Term {
      */
     private void calcComplexity() {
         complexity = 1;
-        for (Term t : components) {
+        for (final Term t : components) {
             complexity += t.getComplexity();
         }
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         return (that instanceof Term) && (compareTo((Term) that) == 0);
     }
 
@@ -662,8 +662,8 @@ public abstract class CompoundTerm extends Term {
      *
      * @return A list of TermLink templates
      */
-    public ArrayList<TermLink> prepareComponentLinks() {
-        ArrayList<TermLink> componentLinks = new ArrayList<>();
+    public List<TermLink> prepareComponentLinks() {
+        List<TermLink> componentLinks = new LinkedList<>();
         short type = (this instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         prepareComponentLinks(componentLinks, type, this);
         return componentLinks;
@@ -678,7 +678,7 @@ public abstract class CompoundTerm extends Term {
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
      */
-    private void prepareComponentLinks(ArrayList<TermLink> componentLinks, short type, CompoundTerm term) {
+    private void prepareComponentLinks(List<TermLink> componentLinks, short type, CompoundTerm term) {
         Term t1, t2, t3;                    // components at different levels
         for (int i = 0; i < term.size(); i++) {     // first level components
             t1 = term.componentAt(i);

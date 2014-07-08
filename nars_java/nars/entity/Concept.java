@@ -64,7 +64,7 @@ public final class Concept extends Item {
      * Link templates of TermLink, only in concepts with CompoundTerm jmv TODO
      * explain more
      */
-    private ArrayList<TermLink> termLinkTemplates;
+    private List<TermLink> termLinkTemplates;
     /**
      * Question directly asked about the term
      */
@@ -80,7 +80,9 @@ public final class Concept extends Item {
     /**
      * The display window
      */
-    private EntityObserver entityObserver = new NullEntityObserver();
+    
+    private final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
+    private EntityObserver entityObserver = defaultNullEntityObserver;
 
 
     /* ---------- constructor and initialization ---------- */
@@ -96,8 +98,8 @@ public final class Concept extends Item {
         this.memory = memory;
         questions = new LinkedList();
         beliefs = new ArrayList<>();
-        taskLinks = new TaskLinkBag(memory);
-        termLinks = new TermLinkBag(memory);
+        taskLinks = new TaskLinkBag(memory.taskForgettingRate);
+        termLinks = new TermLinkBag(memory.beliefForgettingRate);
         if (tm instanceof CompoundTerm) {
             termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         }

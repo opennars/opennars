@@ -23,7 +23,6 @@ package nars.storage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import nars.entity.BudgetValue;
@@ -75,7 +74,7 @@ public class Memory {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    public final List<Task> newTasks;
+    public final LinkedList<Task> newTasks;
 
     /**
      * The selected Term
@@ -123,8 +122,8 @@ public class Memory {
     public Memory(NAR reasoner) {
         this.reasoner = reasoner;
         recorder = new NullInferenceRecorder();
-        concepts = new ConceptBag(this);
-        novelTasks = new NovelTaskBag(this);
+        concepts = new ConceptBag(conceptForgettingRate);
+        novelTasks = new NovelTaskBag();
         newTasks = new LinkedList<>();
     }
 
@@ -480,18 +479,19 @@ public class Memory {
      * buffer.
      */
     private void processNewTask() {
-
-        Task task;
-        int counter = newTasks.size();  // don't include new tasks produced in the current workCycle
+                
+        // don't include new tasks produced in the current workCycle
+        int counter = newTasks.size();  
         while (counter-- > 0) {
-            task = newTasks.remove(0);
-            if (task.isInput() || (termToConcept(task.getContent()) != null)) { // new input or existing concept
+            final Task task = newTasks.removeFirst();
+            if (task.isInput() || (termToConcept(task.getContent()) != null)) { 
+                // new input or existing concept
                 immediateProcess(task);
             } else {
-                Sentence s = task.getSentence();
+                final Sentence s = task.getSentence();
                 if (s.isJudgment()) {
-                    double d = s.getTruth().getExpectation();
-                    if (d > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                    final double exp = s.getTruth().getExpectation();
+                    if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         novelTasks.putIn(task);    // new concept formation
                     } else {
                         if (recorder.isActive()) {
@@ -540,11 +540,14 @@ public class Memory {
      */
     private void immediateProcess(final Task task) {
         currentTask = task; // one of the two places where this variable is set
+        
         if (recorder.isActive()) {
             recorder.append("!!! Insert: " + task + "\n");
         }
+        
         currentTerm = task.getContent();
         currentConcept = getConcept(currentTerm);
+        
         if (currentConcept != null) {
             activateConcept(currentConcept, task.getBudget());
             currentConcept.directProcess(task);

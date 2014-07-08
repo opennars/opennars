@@ -21,6 +21,7 @@
 
 package nars.storage;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.TaskLink;
 import nars.core.Parameters;
 
@@ -28,12 +29,14 @@ import nars.core.Parameters;
  * TaskLinkBag contains links to tasks.
  */
 public class TaskLinkBag extends Bag<TaskLink> {
+    private final AtomicInteger taskForgettingRate;
 
     /** Constructor
      * @param memory The reference of memory
      */
-    public TaskLinkBag (Memory memory) {
-        super(memory);
+    public TaskLinkBag (AtomicInteger taskForgettingRAte) {
+        super();
+        this.taskForgettingRate = taskForgettingRAte;        
     }
 
     /**
@@ -49,7 +52,7 @@ public class TaskLinkBag extends Bag<TaskLink> {
      * @return The forget rate of TaskLinkBag
      */
     protected int forgetRate() {
-        return memory.getTaskForgettingRate().get();
+        return taskForgettingRate.get();
     }
 }
 
