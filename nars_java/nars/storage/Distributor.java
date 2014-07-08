@@ -21,6 +21,8 @@
 package nars.storage;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A pseudo-random number generator, used in Bag.
@@ -32,11 +34,21 @@ public final class Distributor {
     /** Capacity of the array */
     public final int capacity;
 
+    private final static Map<Integer,Distributor> distributors = new HashMap(8);
+    public static Distributor get(int range) {
+        Distributor d = distributors.get(range);
+        if (d==null) {
+            d = new Distributor(range);
+            distributors.put(range, d);
+        }
+        return d;
+    }
+    
     /**
      * For any number N < range, there is N+1 copies of it in the array, distributed as evenly as possible
      * @param range Range of valid numbers
      */
-    public Distributor(final int range) {
+    protected Distributor(final int range) {
         int index, rank, time;
         capacity = (range * (range + 1)) / 2;
         order = new int[capacity];

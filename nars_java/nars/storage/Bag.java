@@ -47,15 +47,15 @@ public abstract class Bag<E extends Item>  {
     /**
      * priority levels
      */
-    public static final int TOTAL_LEVEL = Parameters.BAG_LEVEL;
+    public final int levels;
     /**
      * firing threshold
      */
-    public static final int THRESHOLD = Parameters.BAG_THRESHOLD;
+    public final int THRESHOLD;
     /**
      * relative threshold, only calculate once
      */
-    public static final float RELATIVE_THRESHOLD = (float) THRESHOLD / (float) TOTAL_LEVEL;
+    private float RELATIVE_THRESHOLD;
     /**
      * hashtable load factor
      */
@@ -66,7 +66,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
-    public static final int[] DISTRIBUTOR = new Distributor(TOTAL_LEVEL).order; //
+    private final int[] DISTRIBUTOR;
     
     
     /**
@@ -76,17 +76,17 @@ public abstract class Bag<E extends Item>  {
     /**
      * array of lists of items, for items on different level
      */
-    public final LinkedList<E>[] itemTable = new LinkedList[TOTAL_LEVEL];
+    public final LinkedList<E>[] itemTable;
     
     //this is a cache holding whether itemTable[i] is empty. 
     //it avoids needing to call itemTable.isEmpty() which may improve performance
     //it is maintained each time an item is added or removed from one of the itemTable ArrayLists
-    public final boolean[] itemTableEmpty = new boolean[TOTAL_LEVEL];
+    public final boolean[] itemTableEmpty;
     
     /**
      * defined in different bags
      */
-    private final int capacity;
+    final int capacity;
     /**
      * current sum of occupied level
      */
@@ -110,30 +110,39 @@ public abstract class Bag<E extends Item>  {
     /**
      * The display level; initialized at lowest
      */
-    private int showLevel = Parameters.BAG_THRESHOLD;
+    private int showLevel;
 
+    protected Bag(int levels) {
+        this.levels = levels;
+        THRESHOLD = showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
+        RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
+        capacity = capacity();
+        nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
+        itemTableEmpty = new boolean[this.levels];
+        itemTable = new LinkedList[this.levels];
+        DISTRIBUTOR = Distributor.get(this.levels).order;
+        init();
+        //showing = false;        
+    }
+    
     /**
      * constructor, called from subclasses
      *
      * @param memory The reference to memory
      */
     protected Bag() {
-        capacity = capacity();
-        nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
-        init();
-        
-//        showing = false;
+        this(Parameters.BAG_LEVEL);
     }
 
     public void init() {
-        for (int i = 0; i < TOTAL_LEVEL; i++) {
+        for (int i = 0; i < levels; i++) {
             itemTableEmpty[i] = true;
             if (itemTable[i]!=null)
                 itemTable[i].clear();
         }
         nameTable.clear();
-        currentLevel = TOTAL_LEVEL - 1;
-        levelIndex = capacity % TOTAL_LEVEL; // so that different bags start at different point
+        currentLevel = levels - 1;
+        levelIndex = capacity % levels; // so that different bags start at different point
         mass = 0;
         currentCounter = 0;
     }
@@ -171,7 +180,7 @@ public abstract class Bag<E extends Item>  {
         if (size() == 0) {
             return 0.01f;
         }
-        float f = (float) mass / (size() * TOTAL_LEVEL);
+        float f = (float) mass / (size() * levels);
         if (f > 1) {
             return 1.0f;
         }
@@ -184,7 +193,7 @@ public abstract class Bag<E extends Item>  {
      * @param it An item
      * @return Whether the Item is in the Bag
      */
-    public boolean contains(E it) {
+    public boolean contains(final E it) {
         return nameTable.containsValue(it);
     }
 
@@ -194,7 +203,7 @@ public abstract class Bag<E extends Item>  {
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    public E get(String key) {
+    public E get(final String key) {
         return nameTable.get(key);
     }
 
@@ -303,7 +312,7 @@ public abstract class Bag<E extends Item>  {
      * @return The put-in level
      */
     private int getLevel(final E item) {
-        final float fl = item.getPriority() * TOTAL_LEVEL;
+        final float fl = item.getPriority() * levels;
         final int level = (int) Math.ceil(fl) - 1;
         return (level < 0) ? 0 : level;     // cannot be -1
     }
@@ -415,7 +424,7 @@ public abstract class Bag<E extends Item>  {
     @Override
     public String toString() {
         final StringBuffer buf = new StringBuffer(" ");
-        for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
+        for (int i = levels; i >= showLevel; i--) {
             if (!itemTable[i-1].isEmpty()) {
                 buf.append("\n --- Level ").append(i).append(":\n");
                 for (final E e : itemTable[i-1]) {
@@ -432,7 +441,7 @@ public abstract class Bag<E extends Item>  {
     public String toStringLong() {
         StringBuffer buf = new StringBuffer(" BAG " + getClass().getSimpleName());
         buf.append(" ").append(showSizes());
-        for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
+        for (int i = levels; i >= showLevel; i--) {
             if (!itemTableEmpty[i-1]) {
                 buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");
                 for (final E e : itemTable[i-1]) {
