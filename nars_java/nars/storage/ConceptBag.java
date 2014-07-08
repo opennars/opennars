@@ -38,17 +38,8 @@ public class ConceptBag extends Bag<Concept> {
      * @param memory The reference of memory
      */
     public ConceptBag (AtomicInteger forgettingRate) {
-        super();
+        super(Parameters.CONCEPT_BAG_SIZE);
         this.forgettingRate = forgettingRate;
-    }
-    /**
-     *
-     * Get the (constant) capacity of ConceptBag
-     * @return The capacity of ConceptBag
-     */
-    @Override
-    protected int capacity() {
-        return Parameters.CONCEPT_BAG_SIZE;
     }
     
     /**

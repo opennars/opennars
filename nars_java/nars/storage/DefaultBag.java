@@ -25,7 +25,6 @@ import nars.entity.Item;
  * @author me
  */
 public class DefaultBag<E extends Item> extends Bag<E> {
-    private final int _capacity;
     private final AtomicInteger forgetRate;
 
     public DefaultBag(int levels, int capacity, int forgetRate) {
@@ -33,15 +32,10 @@ public class DefaultBag<E extends Item> extends Bag<E> {
     }
     
     public DefaultBag(int levels, int capacity, AtomicInteger forgetRate) {
-        super(levels);
-        this._capacity = capacity;
+        super(levels, capacity);
         this.forgetRate = forgetRate;
     }
-    
-    @Override
-    protected int capacity() {
-        return _capacity;
-    }
+
 
     @Override
     protected int forgetRate() {

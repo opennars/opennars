@@ -33,15 +33,9 @@ public class NovelTaskBag extends Bag<Task> {
      * @param memory The reference of memory
      */
     public NovelTaskBag() {
-        super();
+        super(Parameters.TASK_BUFFER_SIZE);
     }
-    /**
-     * Get the (constant) capacity of NovelTaskBag
-     * @return The capacity of NovelTaskBag
-     */
-    protected int capacity() {
-        return Parameters.TASK_BUFFER_SIZE;
-    }
+
 
     /**
      * Get the (constant) forget rate in NovelTaskBag

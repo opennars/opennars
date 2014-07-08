@@ -76,7 +76,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * array of lists of items, for items on different level
      */
-    public final LinkedList<E>[] itemTable;
+    public final List<E>[] itemTable;
     
     //this is a cache holding whether itemTable[i] is empty. 
     //it avoids needing to call itemTable.isEmpty() which may improve performance
@@ -112,16 +112,16 @@ public abstract class Bag<E extends Item>  {
      */
     private int showLevel;
 
-    protected Bag(int levels) {
+    protected Bag(int levels, int capacity) {
         this.levels = levels;
         THRESHOLD = showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
         RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
-        capacity = capacity();
+        this.capacity = capacity;
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         itemTableEmpty = new boolean[this.levels];
-        itemTable = new LinkedList[this.levels];
+        itemTable = new List[this.levels];
         DISTRIBUTOR = Distributor.get(this.levels).order;
-        init();
+        clear();
         //showing = false;        
     }
     
@@ -130,11 +130,11 @@ public abstract class Bag<E extends Item>  {
      *
      * @param memory The reference to memory
      */
-    protected Bag() {
-        this(Parameters.BAG_LEVEL);
+    protected Bag(int capacity) {
+        this(Parameters.BAG_LEVEL, capacity);
     }
 
-    public void init() {
+    public void clear() {
         for (int i = 0; i < levels; i++) {
             itemTableEmpty[i] = true;
             if (itemTable[i]!=null)
@@ -147,12 +147,7 @@ public abstract class Bag<E extends Item>  {
         currentCounter = 0;
     }
 
-    /**
-     * To get the capacity of the concrete subclass
-     *
-     * @return Bag capacity, in number of Items allowed
-     */
-    protected abstract int capacity();
+
 
     /**
      * Get the item decay rate, which differs in difference subclass, and can be
@@ -348,7 +343,11 @@ public abstract class Bag<E extends Item>  {
 
     protected void ensureLevelExists(int level) {
         if (itemTable[level]==null)
-            itemTable[level] = new LinkedList();       
+            itemTable[level] = newLevel();
+    }
+    
+    protected List<E> newLevel() {
+        return new LinkedList<E>();
     }
     
     /**
@@ -358,7 +357,7 @@ public abstract class Bag<E extends Item>  {
      * @return The first Item
      */
     private E takeOutFirst(final int level) {
-        final E selected = itemTable[level].removeFirst();
+        final E selected = itemTable[level].remove(0);
         itemTableEmpty[level] = itemTable[level].isEmpty();
         mass -= (level + 1);
         refresh();
@@ -459,14 +458,14 @@ public abstract class Bag<E extends Item>  {
      */
     public String showSizes() {
         StringBuilder buf = new StringBuilder(" ");
-        int levels = 0;
+        int l = 0;
         for (List<E> items : itemTable) {
             if ((items != null) && (!items.isEmpty())) {
-                levels++;
+                l++;
                 buf.append(items.size()).append(' ');
             }
         }
-        return "Levels: " + Integer.toString(levels) + ", sizes: " + buf;
+        return "Levels: " + Integer.toString(l) + ", sizes: " + buf;
     }
 
     /**
@@ -476,8 +475,34 @@ public abstract class Bag<E extends Item>  {
         this.showLevel = showLevel;
     }
 
-    public int getMass() {
+    public float getMass() {
         return mass;
     }
+    
+    public float getAverageItemsPerLevel() {
+        return ((float)capacity)/((float)levels);
+    }
+    public float getMaxItemsPerLevel() {
+        int max = getLevelSize(0);
+        for (int i = 1; i < levels; i++) {
+            int s = getLevelSize(i);
+            if (s > max) max = s;
+        }
+        return max;
+    }
+    public float getMinItemsPerLevel() {
+        int min = getLevelSize(0);
+        for (int i = 1; i < levels; i++) {
+            int s = getLevelSize(i);
+            if (s < min) min = s;
+        }
+        return min;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    
     
 }

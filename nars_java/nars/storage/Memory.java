@@ -128,8 +128,8 @@ public class Memory {
     }
 
     public void init() {
-        concepts.init();
-        novelTasks.init();
+        concepts.clear();
+        novelTasks.clear();
         newTasks.clear();
         reasoner.initTimer();
         if (getRecorder().isActive()) {

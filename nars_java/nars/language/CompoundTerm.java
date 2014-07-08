@@ -235,15 +235,18 @@ public abstract class CompoundTerm extends Term {
         }
         else if (length == 2) {
             //since these symbols are the same character repeated, we only need to compare the first character
-            final char c = op.charAt(0);
-            switch (c) {
-                case Symbols.NEGATION_OPERATORc:
-                    return Negation.make(arg, memory);            
-                case Symbols.DISJUNCTION_OPERATORc:
-                    return Disjunction.make(arg, memory);            
-                case Symbols.CONJUNCTION_OPERATORc:
-                    return Conjunction.make(arg, memory);
-            }            
+            final char c1 = op.charAt(0);
+            final char c2 = op.charAt(1);
+            if (c1 == c2) {
+                switch (c1) {
+                    case Symbols.NEGATION_OPERATORc:
+                        return Negation.make(arg, memory);            
+                    case Symbols.DISJUNCTION_OPERATORc:
+                        return Disjunction.make(arg, memory);            
+                    case Symbols.CONJUNCTION_OPERATORc:
+                        return Conjunction.make(arg, memory);
+                }            
+            }
         }
         throw new RuntimeException("Unknown Term operator: " + op);
     }
