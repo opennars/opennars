@@ -20,8 +20,9 @@
  */
 package nars.storage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import nars.entity.Item;
 import nars.inference.BudgetFunctions;
@@ -60,8 +61,7 @@ public abstract class Bag<E extends Item>  {
      */
     public static final float LOAD_FACTOR = Parameters.LOAD_FACTOR;       //
     
-    //how many items to preallocate in each level
-    final int INITIAL_LEVEL_CAPACITY = 0;
+
     
     /**
      * shared DISTRIBUTOR that produce the probability distribution
@@ -76,7 +76,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * array of lists of items, for items on different level
      */
-    public final ArrayList<E>[] itemTable = new ArrayList[TOTAL_LEVEL];
+    public final LinkedList<E>[] itemTable = new LinkedList[TOTAL_LEVEL];
     
     //this is a cache holding whether itemTable[i] is empty. 
     //it avoids needing to call itemTable.isEmpty() which may improve performance
@@ -130,10 +130,7 @@ public abstract class Bag<E extends Item>  {
 
     public void init() {
         for (int i = 0; i < TOTAL_LEVEL; i++) {
-            if (INITIAL_LEVEL_CAPACITY > 0)
-                itemTable[i] = new ArrayList<E>(INITIAL_LEVEL_CAPACITY);
-            else
-                itemTable[i] = new ArrayList<E>(); //uses shared empty array when empty
+            itemTable[i] = new LinkedList<E>();
             itemTableEmpty[i] = true;
         }
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
@@ -328,7 +325,7 @@ public abstract class Bag<E extends Item>  {
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
                 oldItem = takeOutFirst(outLevel);
-            }
+            }        
         }
         itemTable[inLevel].add(newItem);        // FIFO
         itemTableEmpty[inLevel] = false;
@@ -344,10 +341,8 @@ public abstract class Bag<E extends Item>  {
      * @return The first Item
      */
     private E takeOutFirst(final int level) {
-        final E selected = itemTable[level].get(0);
-        itemTable[level].remove(0);
-        if (itemTable[level].isEmpty())
-            itemTableEmpty[level] = true;
+        final E selected = itemTable[level].removeFirst();
+        itemTableEmpty[level] = itemTable[level].isEmpty();
         mass -= (level + 1);
         refresh();
         return selected;
@@ -361,8 +356,7 @@ public abstract class Bag<E extends Item>  {
     protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
         itemTable[level].remove(oldItem);
-        if (itemTable[level].isEmpty())
-            itemTableEmpty[level] = true;
+        itemTableEmpty[level] = itemTable[level].isEmpty();
         mass -= (level + 1);
         refresh();
     }
@@ -400,7 +394,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * Refresh display
      */
-    public void refresh() {
+    protected void refresh() {
         if (bagObserver!=null)       
             if (bagObserver.isActive()) {
                 bagObserver.refresh(toString());
@@ -415,9 +409,9 @@ public abstract class Bag<E extends Item>  {
         StringBuffer buf = new StringBuffer(" ");
         for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
             if (!itemTable[i-1].isEmpty()) {
-                buf = buf.append("\n --- Level ").append(i).append(":\n ");
-                for (int j = 0; j < itemTable[i - 1].size(); j++) {
-                    buf = buf.append(itemTable[i - 1].get(j).toStringBrief()).append("\n ");
+                buf = buf.append("\n --- Level ").append(i).append(":\n");
+                for (final E e : itemTable[i-1]) {
+                    buf = buf.append(e.toStringBrief()).append('\n');
                 }
             }
         }
@@ -433,9 +427,10 @@ public abstract class Bag<E extends Item>  {
         for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
             if (!itemTable[i-1].isEmpty()) {
                 buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");
-                for (int j = 0; j < itemTable[i - 1].size(); j++) {
-                    buf = buf.append(itemTable[i - 1].get(j).toStringLong()).append("\n ");
+                for (final E e : itemTable[i-1]) {
+                    buf = buf.append(e.toStringLong()).append('\n');
                 }
+                
             }
         }
         buf.append(">>>> end of Bag").append(getClass().getSimpleName());
@@ -445,10 +440,10 @@ public abstract class Bag<E extends Item>  {
     /**
      * show item Table Sizes
      */
-    String showSizes() {
+    public String showSizes() {
         StringBuilder buf = new StringBuilder(" ");
         int levels = 0;
-        for (ArrayList<E> items : itemTable) {
+        for (List<E> items : itemTable) {
             if ((items != null) && !items.isEmpty()) {
                 levels++;
                 buf.append(items.size()).append(" ");

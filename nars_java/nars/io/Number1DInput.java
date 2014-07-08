@@ -20,7 +20,7 @@ package nars.io;
 import nars.core.NAR;
 import org.python.icu.text.NumberFormat;
 
-public class Number1DInput implements InputChannel {
+public class Number1DInput implements Input {
     /*
     
     %%%%%%%%%%%%%%%%%%%% Understanding rational numbers if needed %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

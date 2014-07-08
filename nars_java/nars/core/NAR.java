@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import nars.entity.Stamp;
 import nars.gui.NARWindow;
-import nars.io.InputChannel;
+import nars.io.Input;
 import nars.io.Output;
 import nars.storage.Memory;
 
@@ -38,8 +38,8 @@ public class NAR implements Runnable, Output {
     /**
      * The input channels of the reasoner
      */
-    protected final List<InputChannel> inputChannels;
-    private final List<InputChannel> closedInputChannels;
+    protected final List<Input> inputChannels;
+    private final List<Input> closedInputChannels;
 
     /**
      * The output channels of the reasoner
@@ -108,11 +108,11 @@ public class NAR implements Runnable, Output {
         return memory;
     }
 
-    public void addInputChannel(InputChannel channel) {
+    public void addInputChannel(Input channel) {
         inputChannels.add(channel);
     }
 
-    public void removeInputChannel(InputChannel channel) {
+    public void removeInputChannel(Input channel) {
         inputChannels.remove(channel);
     }
 
@@ -124,14 +124,6 @@ public class NAR implements Runnable, Output {
         outputChannels.remove(channel);
     }
 
-    /**
-     * Get the current time from the clock Called in {@link nars.entity.Stamp}
-     *
-     * @return The current time
-     */
-    public long getTime() {
-        return clock;
-    }
 
 
     /**
@@ -216,7 +208,7 @@ public class NAR implements Runnable, Output {
             try {
                 tick();
             } catch (RuntimeException re) {                
-                output(ERR.class, re + " " + Arrays.asList(re.getStackTrace()));
+                output(ERR.class, re);
                 if (DEBUG) {
                     System.err.println(re);                
                     re.printStackTrace();
@@ -254,7 +246,7 @@ public class NAR implements Runnable, Output {
 
 
 
-            for (final InputChannel channelIn : inputChannels) {
+            for (final Input channelIn : inputChannels) {
                 if (DEBUG) {
                     System.out.println("Input: " + channelIn);
                 }
@@ -269,7 +261,7 @@ public class NAR implements Runnable, Output {
             }
             finishedInputs = !reasonerShouldRun;
 
-            for (final InputChannel c : closedInputChannels) {
+            for (final Input c : closedInputChannels) {
                 inputChannels.remove(c);
             }
             closedInputChannels.clear();
@@ -360,13 +352,22 @@ public class NAR implements Runnable, Output {
      * Update timer
      */
     public void tickTimer() {
-        setTimer(getSystemClock() + 1);
+        timer++;
+    }
+
+     /**
+     * Get the current time from the clock Called in {@link nars.entity.Stamp}
+     *
+     * @return The current time
+     */
+    public long getTime() {
+        return clock;
     }
 
     /** @return System clock : number of cycles since last output */
     public long getSystemClock() {
         return timer;
-    }
+    }        
 
     /** set System clock : number of cycles since last output */
     private void setTimer(long timer) {
