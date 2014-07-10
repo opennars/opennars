@@ -111,15 +111,15 @@ public final class SyllogisticRules {
     /**
      * {<S ==> P>, <M <=> P>} |- <S ==> P>
      *
-     * @param term1 Subject of the new task
-     * @param term2 Predicate of the new task
+     * @param subj Subject of the new task
+     * @param pred Predicate of the new task
      * @param asym The asymmetric premise
      * @param sym The symmetric premise
      * @param figure Locations of the shared term in premises
      * @param memory Reference to the memory
      */
-    static void analogy(Term term1, Term term2, Sentence asym, Sentence sym, int figure, Memory memory) {
-        if (Statement.invalidStatement(term1, term2)) {
+    static void analogy(Term subj, Term pred, Sentence asym, Sentence sym, int figure, Memory memory) {
+        if (Statement.invalidStatement(subj, pred)) {
             return;
         }
         Statement st = (Statement) asym.getContent();
@@ -137,7 +137,7 @@ public final class SyllogisticRules {
             truth = TruthFunctions.analogy(asym.getTruth(), sym.getTruth());
             budget = BudgetFunctions.forward(truth, memory);
         }
-        Term content = Statement.make(st, term1, term2, memory);
+        Term content = Statement.make(st, subj, pred, memory);
         memory.doublePremiseTask(content, truth, budget);
     }
 

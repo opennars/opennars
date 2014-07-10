@@ -71,6 +71,12 @@ public class DifferenceExt extends CompoundTerm {
         if (argList.size() != 2) {
             return null;
         }
+        if ((argList.get(0) instanceof SetExt) && (argList.get(1) instanceof SetExt)) {
+            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) argList.get(0)).cloneComponents());
+            set.removeAll(((CompoundTerm) argList.get(1)).cloneComponents());           // set difference
+            return SetExt.make(set, memory);
+        }
+        
         String name = makeCompoundName(Symbols.DIFFERENCE_EXT_OPERATOR, argList);
         Term t = memory.nameToListedTerm(name);
         return (t != null) ? t : new DifferenceExt(argList);
@@ -78,19 +84,14 @@ public class DifferenceExt extends CompoundTerm {
 
     /**
      * Try to make a new compound from two components. Called by the inference rules.
-     * @param t1 The first compoment
-     * @param t2 The second compoment
+     * @param t1 The first component
+     * @param t2 The second component
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(Term t1, Term t2, Memory memory) {
         if (t1.equals(t2)) {
             return null;
-        }
-        if ((t1 instanceof SetExt) && (t2 instanceof SetExt)) {
-            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) t1).cloneComponents());
-            set.removeAll(((CompoundTerm) t2).cloneComponents());           // set difference
-            return SetExt.make(set, memory);
         }
         ArrayList<Term> list = argumentsToList(t1, t2);
         return make(list, memory);
