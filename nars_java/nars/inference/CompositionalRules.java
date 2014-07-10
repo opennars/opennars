@@ -320,7 +320,7 @@ public final class CompositionalRules {
                 commonTerm = ((ImageInt) term11).getTheOtherComponent();
                 if ((commonTerm == null) || !((ImageInt) term21).containTerm(commonTerm)) {
                     commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                    if ((commonTerm == null) || !((ImageExt) term11).containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !((ImageInt) term11).containTerm(commonTerm)) {
                         commonTerm = null;
                     }
                 }
