@@ -113,7 +113,7 @@ public class RuleTables {
             case TermLink.COMPOUND_STATEMENT:
                 switch (bLink.getType()) {
                     case TermLink.COMPONENT:
-                        componentAndStatement((CompoundTerm) memory.currentTerm, bIndex, (Statement) taskTerm, tIndex, memory);
+                        componentAndStatement((CompoundTerm) memory.currentTerm, (short)0, (Statement) taskTerm, tIndex, memory);
                         break;
                     case TermLink.COMPOUND:
                         compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, memory);
@@ -139,12 +139,22 @@ public class RuleTables {
                         if (belief != null) {
                             if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
                             {
-                                conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, memory);
-                            }
+                                Term subj = ((Implication) taskTerm).getSubject();
+                                if (subj instanceof Negation) {
+                                    if (task.getSentence().isJudgment()) {
+                                    componentAndStatement((CompoundTerm) subj, (short) 0, (Statement) taskTerm, tIndex, memory);
+                                    } else {
+                                    componentAndStatement((CompoundTerm) subj, (short) 1, (Statement) beliefTerm, bIndex, memory);
+                                    }
+                                    } else {
+                                    conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, memory);
+                                    }
+                                }
+                                break;
+                            
                         }
                         break;
                 }
-                break;
         }
     }
 
@@ -548,7 +558,12 @@ public class RuleTables {
                 StructuralRules.transformSetRelation(compound, statement, side, memory);
             }
         } else if ((statement instanceof Implication) && (compound instanceof Negation)) {
-            StructuralRules.contraposition(statement, memory);
+            if (index == 0) {
+                StructuralRules.contraposition(statement, memory.currentTask.getSentence(), memory);
+            } else {
+                StructuralRules.contraposition(statement, memory.currentBelief, memory);
+            }
+        
         }
 //        }
     }

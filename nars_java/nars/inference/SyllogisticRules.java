@@ -256,7 +256,13 @@ public final class SyllogisticRules {
         } else {
             commonComponent = premise2;
         }
-        Conjunction oldCondition = (Conjunction) premise1.getSubject();
+        Term subj = premise1.getSubject();
+        
+        if (!(subj instanceof Conjunction)) {
+            return;
+        }
+        Conjunction oldCondition = (Conjunction) subj;
+
         int index2 = oldCondition.getComponents().indexOf(commonComponent);
         if (index2 >= 0) {
             index = (short) index2;
