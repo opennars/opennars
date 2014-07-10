@@ -243,36 +243,58 @@ public final class CompositionalRules {
     static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
         Task task = memory.currentTask;
         Sentence sentence = task.getSentence();
-        if (sentence.isQuestion()) {
-            return;
-        }
+
         Sentence belief = memory.currentBelief;
         Term content = CompoundTerm.reduceComponents(compound, component, memory);
         if (content == null) {
             return;
         }
-        TruthValue v1, v2;
-        if (compoundTask) {
-            v1 = sentence.getTruth();
-            v2 = belief.getTruth();
-        } else {
-            v1 = belief.getTruth();
-            v2 = sentence.getTruth();
-        }
         TruthValue truth = null;
-        if (compound instanceof Conjunction) {
-            if (sentence instanceof Sentence) {
-                truth = TruthFunctions.reduceConjunction(v1, v2);
-            }
-        } else if (compound instanceof Disjunction) {
-            if (sentence instanceof Sentence) {
-                truth = TruthFunctions.reduceDisjunction(v1, v2);
-            }
+        BudgetValue budget;
+        if (sentence.isQuestion()) {
+            budget = BudgetFunctions.compoundBackward(content, memory);
+            memory.doublePremiseTask(content, truth, budget);
+            // special inference to answer conjunctive questions with query variables
+            if (Variable.containVarQuery(sentence.getContent().getName())) {
+                Concept contentConcept = memory.termToConcept(content);
+                if (contentConcept == null) {
+                    return;
+                }
+                Sentence contentBelief = contentConcept.getBelief(task);
+                if (contentBelief == null) {
+                    return;
+                }
+                Task contentTask = new Task(contentBelief, task.getBudget());
+                memory.currentTask = contentTask;
+                Term conj = Conjunction.make(component, content, memory);
+                truth = TruthFunctions.intersection(contentBelief.getTruth(), belief.getTruth());
+                budget = BudgetFunctions.compoundForward(truth, conj, memory);
+                memory.doublePremiseTask(conj, truth, budget);
+            }        
         } else {
-            return;
+            TruthValue v1, v2;
+            if (compoundTask) {
+                v1 = sentence.getTruth();
+                v2 = belief.getTruth();
+            } else {
+                v1 = belief.getTruth();
+                v2 = sentence.getTruth();
+            }
+            if (compound instanceof Conjunction) {
+                if (sentence instanceof Sentence) {
+                    truth = TruthFunctions.reduceConjunction(v1, v2);
+                }
+                } else if (compound instanceof Disjunction) {
+                    if (sentence instanceof Sentence) {
+                        truth = TruthFunctions.reduceDisjunction(v1, v2);
+                    }
+                } else {
+                return;
+            }
+            budget = BudgetFunctions.compoundForward(truth, content, memory);
+            memory.doublePremiseTask(content, truth, budget);
         }
-        BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
-        memory.doublePremiseTask(content, truth, budget);
+
     }
 
     /* --------------- rules used for variable introduction --------------- */
@@ -334,7 +356,9 @@ public final class CompositionalRules {
         Statement state1 = Inheritance.make(term11, term12, memory);
         Statement state2 = Inheritance.make(term21, term22, memory);
         Term content = Implication.make(state1, state2, memory);
-        if (content == null) return;
+        if (content == null) {
+            return;
+        }
         
         TruthValue truth = TruthFunctions.induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
