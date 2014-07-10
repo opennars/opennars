@@ -65,23 +65,24 @@ public class Number1DInput implements Input {
         
         //relative sequence
         for (int i = 1; i < n; i++) {
-            s.append("<(*,ELEMENT_" + (i-1) + ",ELEMENT_" + (i) +") --> NEXT>. %1.00;0.99%\n");
+            s.append("<(*,ELEMENT_" + (i-1) + ",ELEMENT_" + (i) +") --> NEXT>. %1.00;1.00%\n");
         }
         
         //absolute position inheriting proportionally from ELEMENT_FIRST and ELEMENT_LAST
         for (int i = 0; i < n; i++) {
             double di = (double)i;
-            String fp = nf.format( di / ((double)n) );
-            String lp = nf.format( 1.0 - (di / ((double)n)) );
-            s.append("<ELEMENT_" + i + " --> ELEMENT_FIRST>. %" + fp + ";0.99%\n");
-            s.append("<ELEMENT_" + i + " --> ELEMENT_LAST>. %" + lp + ";0.99%\n");
+            String fp = nf.format( di / ((double)n-1) );
+            String lp = nf.format( 1.0 - (di / ((double)n-1)) );
+            s.append("<ELEMENT_" + i + " --> ELEMENT_FIRST>. %" + lp + ";1.00%\n");
+            s.append("<ELEMENT_" + i + " --> ELEMENT_LAST>. %" + fp + ";1.00%\n");
         }
         
         String in = nf.format( 1.0 / ((double)n) );
-        s.append("<(*,ELEMENT_FIRST,ELEMENT_LAST) --> NEXT>. %" + in + ";0.99%\n");
+        s.append("<(*,ELEMENT_FIRST,ELEMENT_LAST) --> NEXT>. %" + in + ";1.00%\n");
         
-        s.append("<ZERO <=> ONE>. %0.00;0.99%\n"); //ONE and ZERO are inequal
-        s.append("<ELEMENT_FIRST <=> ELEMENT_LAST>. %0.00;0.99%\n"); //first and last are inequal
+        s.append("<ZERO <-> ONE>. %0.00;1.00%\n"); //ONE and ZERO are inequal
+        s.append("<(*,ZERO,ONE) --> DISTINCT_INTEGERS>. %0.00;1.00%\n");
+        s.append("<ELEMENT_FIRST <-> ELEMENT_LAST>. %0.00;1.00%\n"); //first and last are inequal
         
         new TextInput(N, s.toString());
     }
@@ -103,7 +104,7 @@ public class Number1DInput implements Input {
         return true;
     }
     
-    final String cert = "0.99"; //default certainty
+    final String cert = "1.00"; //default certainty
     
     public String getStatements() {
 
@@ -116,7 +117,7 @@ public class Number1DInput implements Input {
             if (i < data.length-1)
                 product += ",";
         }
-        product += ") --> " + id + ">. %0.99;0.99%\n";
+        product += ") --> " + id + ">. %0.99;" + cert + "%\n";
         sb.append(product);
         
         
