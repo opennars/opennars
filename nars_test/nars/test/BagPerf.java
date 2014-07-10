@@ -30,21 +30,21 @@ import nars.storage.DefaultBag;
  */
 public class BagPerf {
     
-    int repeats = 16;
-    int warmups = 2;
-    int capacity = 100;
+    int repeats = 8;
+    int warmups = 1;
     int forgetRate = 10;
-    int randomAccesses = capacity*256;
+    int randomAccesses;
     double insertRatio = 0.9;
     
     public BagPerf() {
         
         
-        for (int i = 5; i < 200; i+=5) {
-            testBag(false, i, capacity, forgetRate);
-        }
-        for (int i = 5; i < 200; i+=5) {
-            testBag(true, i, capacity, forgetRate);
+        for (int capacity = 8; capacity < 40000; capacity*=capacity) {
+            randomAccesses = capacity*64;
+            for (int i = 5; i < 200; i+=5) {
+                testBag(false, i, capacity, forgetRate);
+                testBag(true, i, capacity, forgetRate);
+            }
         }
         
     }
@@ -57,7 +57,7 @@ public class BagPerf {
         totalMass = 0;
         totalMaxItemsPerLevel = totalMinItemsPerLevel = 0;
         
-        Performance p = new Performance(""+levels+(arraylist ? "_A" : "_L"), repeats, warmups) {
+        Performance p = new Performance((arraylist ? "DequeArray" : "LinkedList")+","+levels+","+ capacity, repeats, warmups) {
 
             @Override public void init() { }
 
