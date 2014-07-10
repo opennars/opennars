@@ -203,7 +203,7 @@ public class Variable extends Term {
                 return findSubstitute(type, term1, t, map1, map2);
             } else {            // not mapped yet
                 if (var2.getType() == type) {
-                    map2.put(var2, term2);  // unify
+                    map2.put(var2, term1);  // elimination
                 } else {
                     //map2.put(var2, new Variable(var2.getName() + "-2"));  // rename             
                     return false;
@@ -217,6 +217,13 @@ public class Variable extends Term {
             if (cTerm1.size() != (cTerm2).size()) {
                 return false;
             }
+            if ((cTerm1 instanceof ImageExt) && (((ImageExt)cTerm1).getRelationIndex() !=  ((ImageExt)cTerm2).getRelationIndex())) {
+                return false;
+            }
+            if ((cTerm1 instanceof ImageInt) && (((ImageInt)cTerm1).getRelationIndex() !=  ((ImageInt)cTerm2).getRelationIndex())) {
+                return false;
+            }
+            
             for (int i = 0; i < cTerm1.size(); i++) {   // assuming matching order, to be refined in the future
                 Term t1 = cTerm1.componentAt(i);
                 Term t2 = cTerm2.componentAt(i);

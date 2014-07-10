@@ -682,11 +682,9 @@ public abstract class CompoundTerm extends Term {
             if (t1.isConstant()) {
                 componentLinks.add(new TermLink(t1, type, i));
             }
-           
-            if ((this instanceof Equivalence) || ((this instanceof Implication) && (i == 0))) { // in a condition
-                if ((t1 instanceof Conjunction) || (t1 instanceof Negation)) {
-                    ((CompoundTerm) t1).prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
-                }
+            if (((this instanceof Equivalence) || ((this instanceof Implication) && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
+                
+                ((CompoundTerm) t1).prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
 
             } else if (t1 instanceof CompoundTerm) {
                 for (int j = 0; j < ((CompoundTerm) t1).size(); j++) {  // second level components
