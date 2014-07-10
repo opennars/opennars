@@ -228,10 +228,11 @@ public final class StructuralRules {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
         if (compound.equals(subj)) {
-            if (compound instanceof IntersectionExt) {
-            } else if (compound instanceof IntersectionInt) {
+            if (compound instanceof IntersectionInt) {
                 structuralStatement(component, pred, truthDed, memory);
-            } else if ((compound instanceof DifferenceExt) && (index == 0)) {
+            } else if (compound instanceof SetExt) {
+                structuralStatement(SetExt.make(component, memory), pred, truthDed, memory);
+//            } else if ((compound instanceof DifferenceExt) && (index == 0)) {
             } else if (compound instanceof DifferenceInt) {
                 if (index == 0) {
                     structuralStatement(component, pred, truthDed, memory);
@@ -242,7 +243,9 @@ public final class StructuralRules {
         } else if (compound.equals(pred)) {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(subj, component, truthDed, memory);
-            } else if (compound instanceof IntersectionInt) {
+            } else if (compound instanceof SetInt) {
+                structuralStatement(subj, SetInt.make(component, memory), truthDed, memory);
+            //} else if (compound instanceof IntersectionInt) {
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
                     structuralStatement(subj, component, truthDed, memory);

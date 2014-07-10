@@ -119,7 +119,7 @@ public class RuleTables {
             case TermLink.COMPOUND_STATEMENT:
                 switch (bLink.getType()) {
                     case TermLink.COMPONENT:
-                        componentAndStatement((CompoundTerm) memory.currentTerm, (short)0, (Statement) taskTerm, tIndex, memory);
+                        componentAndStatement((CompoundTerm) memory.currentTerm, bIndex, (Statement) taskTerm, tIndex, memory);
                         break;
                     case TermLink.COMPOUND:
                         compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, memory);
@@ -154,9 +154,9 @@ public class RuleTables {
                                 Term subj = ((Implication) taskTerm).getSubject();
                                 if (subj instanceof Negation) {
                                     if (task.getSentence().isJudgment()) {
-                                    componentAndStatement((CompoundTerm) subj, (short) 0, (Statement) taskTerm, tIndex, memory);
+                                    componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, memory);
                                     } else {
-                                    componentAndStatement((CompoundTerm) subj, (short) 1, (Statement) beliefTerm, bIndex, memory);
+                                    componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, memory);
                                     }
                                     } else {
                                     conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, memory);
