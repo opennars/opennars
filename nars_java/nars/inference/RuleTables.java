@@ -528,6 +528,8 @@ public class RuleTables {
                     SyllogisticRules.elimiVarDep(compound, component, statement.equals(beliefTerm), memory);
                 } else if (task.getSentence().isJudgment()) { // && !compound.containComponent(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, memory);
+                } else if (Variable.unify(Symbols.VAR_QUERY, component, statement, compound, statement)) {
+                    CompositionalRules.decomposeStatement(compound, component, true, memory);                    
                 }
             }
         } else {
