@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import nars.entity.*;
 import nars.language.*;
 import nars.core.Parameters;
+import nars.io.Symbols;
 
 /**
  * Single-premise inference rules involving compound terms. Input are one
@@ -570,11 +571,10 @@ public final class StructuralRules {
      * @param statement The premise
      * @param memory Reference to the memory
      */
-    static void contraposition(Statement statement, Memory memory) {
+    static void contraposition(Statement statement, Sentence sentence, Memory memory) {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
-        Task task = memory.currentTask;
-        Sentence sentence = task.getSentence();
+
         Term content = Statement.make(statement, Negation.make(pred, memory), Negation.make(subj, memory), memory);
         TruthValue truth = sentence.getTruth();
         BudgetValue budget;
@@ -584,12 +584,13 @@ public final class StructuralRules {
             } else {
                 budget = BudgetFunctions.compoundBackward(content, memory);
             }
+        memory.singlePremiseTask(content, Symbols.QUESTION_MARK, truth, budget);            
         } else {
             if (content instanceof Implication) {
                 truth = TruthFunctions.contraposition(truth);
             }
             budget = BudgetFunctions.compoundForward(truth, content, memory);
+            memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);
         }
-        memory.singlePremiseTask(content, truth, budget);
     }
 }
