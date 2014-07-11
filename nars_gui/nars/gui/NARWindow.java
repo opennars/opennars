@@ -463,7 +463,7 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
         }
     }
 
-    protected void print(Color c, float size, String text) {
+    protected void print(Color c, float size, String text, boolean bold) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
 
         MutableAttributeSet aset = ioText.getInputAttributes();
@@ -472,6 +472,7 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
         Font f = ioText.getFont();
         StyleConstants.setForeground(aset, c);
         StyleConstants.setFontSize(aset, (int)(f.getSize()*size));
+        StyleConstants.setBold(aset, bold);
         
         try {
             doc.insertString(doc.getLength(), text, null);
@@ -493,7 +494,7 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
 
                 for (Object o : nextOutput) {
                     if ((o instanceof String) || (o instanceof Character))
-                        print(Color.BLACK, 1.0f, o.toString());
+                        print(Color.BLACK, 1.0f, o.toString(), false);
                     else if (o instanceof Sentence) {
                         Sentence s = (Sentence)o;
                         
@@ -503,24 +504,22 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
                             freq = s.getTruth().getFrequency();                            
                         }
                         
-                        float contentSize = 1.0f+conf/2f;
+                        float contentSize = 0.75f+conf;
                         
-                        //Color contentColor = Color.getHSBColor(0.5f + (freq-0.5f)/2f, 0.5f, 0.05f + 0.25f - conf/4f);
                         Color contentColor = Color.getHSBColor(0.5f + (freq-0.5f)/2f, 1.0f, 0.05f + 0.5f - conf/4f);                        
-                        
-                        print(contentColor, contentSize, s.getContent().toString() + s.getPunctuation());
+                        print(contentColor, contentSize, s.getContent().toString() + s.getPunctuation(), s.isQuestion());
                         
                         if (s.getTruth()!=null) {
                             Color truthColor = Color.getHSBColor(freq, 0, 0.25f - conf/4f);
-                            print(truthColor, contentSize, s.getTruth().toString());
+                            print(truthColor, contentSize, s.getTruth().toString(), false);
                         }
                         if (s.getStamp()!=null) {
                             Color stampColor = Color.GRAY;
-                            print(stampColor, contentSize, s.getStamp().toString());
+                            print(stampColor, contentSize, s.getStamp().toString(), false);
                         }
                     }
                     else {
-                        print(Color.BLACK, 1.0f, o.toString());                    
+                        print(Color.BLACK, 1.0f, o.toString(), false);
                     }
                 }
 
