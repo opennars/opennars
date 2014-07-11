@@ -1,6 +1,10 @@
-********** translating instance-property into inheritance
-<Tweety {-] yellow>.
-// Tweety is yellow.
-  IN: <{Tweety} --> [yellow]>. %1.00;0.90%
-// Tweety is yellow.
+'********** translating instance-property into inheritance
 
+'Tweety is yellow.
+<Tweety {-] yellow>.
+
+16
+
+'Tweety is yellow.
+''test.outputContains('<{Tweety} --> [yellow]>. %1.00;0.81%');
+''//<{Tweety} --> [yellow]>. %1.00;0.90% //original test

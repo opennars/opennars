@@ -57,7 +57,7 @@ public class TestUtil {
             
             StringBuffer  sb  = new StringBuffer();
             String line;
-            File fp = new File(getClass().getResource("nal/" + path).toURI());
+            File fp = new File(path);
             BufferedReader br = new BufferedReader(new FileReader(fp));
             while ((line = br.readLine())!=null) {
                 sb.append(line + "\n");

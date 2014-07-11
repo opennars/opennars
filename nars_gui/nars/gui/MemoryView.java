@@ -1,5 +1,6 @@
 package nars.gui;
 
+import java.util.List;
 import java.util.ArrayList;
 import nars.language.*;
 import processing.core.*;
@@ -201,7 +202,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         stroke(127, 255, 255, 127);
 
         for (int i = 0; i < Sent_s.size(); i++) {
-            final ArrayList<Term> deriv = Sent_s.get(i).getStamp().getChain();
+            final List<Term> deriv = Sent_s.get(i).getStamp().getChain();
             final Obj elem1 = V.get(Sent_i.get(i));
             
             for (int j = 0; j < Sent_s.size(); j++) {

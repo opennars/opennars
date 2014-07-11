@@ -1,8 +1,12 @@
-********** resemblance
+'********** resemblance
+
+'Robin is similar to swan. 
 <robin <-> swan>. 
-// Robin is similar to swan. 
+
+'Gull is similar to swan. 
 <gull <-> swan>. 
-// Gull is similar to swan. 
-5
- OUT: <gull <-> robin>. %1.00;0.81% 
-// Gull is similar to robin.
+
+16
+
+'Gull is similar to robin.
+''test.outputContains('<gull <-> robin>. %1.00;0.81%')

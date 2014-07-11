@@ -1,10 +1,13 @@
+'********** conversions between inheritance and similarity
 
-********** conversions between inheritance and similarity
+'a bird is similar to a swan. 
 <bird <-> swan>. %0.90%  
-// a bird is similar to a swan. 
+
+'Is swan a type of bird?
 <swan --> bird>?  
-// Is swan a type of bird?
-4
- OUT: <swan --> bird>. %0.90;0.81%
-// A swan is a type of bird. 
+
+16
+
+'A swan is a type of bird. 
+''test.outputContains('<swan --> bird>. %0.90;0.81%')
 

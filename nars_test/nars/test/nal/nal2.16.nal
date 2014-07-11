@@ -1,7 +1,9 @@
-********** set definition
-<{Tweety} --> {Birdie}>. 
-// Tweety is Birdie. 
-7
- OUT: <{Birdie} <-> {Tweety}>. %1.00;0.90%
-// Birdie is similar to Tweety. 
+'********** set definition
 
+'Tweety is Birdie. 
+<{Tweety} --> {Birdie}>. 
+
+16
+
+'Birdie is similar to Tweety. 
+''test.outputContains('<{Birdie} <-> {Tweety}>. %1.00;0.90%');

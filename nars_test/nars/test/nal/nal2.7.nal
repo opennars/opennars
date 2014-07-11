@@ -1,8 +1,14 @@
-********** conversions between inheritance and similarity
+'********** conversions between inheritance and similarity
+
+'Swan is a type of bird. 
 <swan --> bird>. 
-// Swan is a type of bird. 
+
+'Bird is not a type of swan. 
 <bird --> swan>. %0.10% 
-// Bird is not a type of swan. 
-3
- OUT: <bird <-> swan>. %0.10;0.89% 
-// Bird is different from swan.  
+
+16
+
+'Bird is different from swan.  
+''test.outputContains('<bird <-> swan>.');
+''test.outputContains('<bird <-> swan>. %0.10;0.81%');
+''//test.outputContains('<bird <-> swan>. %0.10;0.89%');  //original result

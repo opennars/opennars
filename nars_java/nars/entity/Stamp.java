@@ -61,7 +61,7 @@ public class Stamp implements Cloneable {
      * derivation chain containing the used premises and conclusions which made
      * deriving the conclusion c possible *
      */
-    public final ArrayList<Term> derivationChain;
+    public final List<Term> derivationChain;
 
     /**
      * Generate a new stamp, with a new serial number, for a new Task
@@ -113,6 +113,7 @@ public class Stamp implements Cloneable {
      * @param second The second Stamp
      */
     private Stamp(final Stamp first, final Stamp second, final long time) {
+        //TODO use iterators instead of repeated first and second .get's
         int i1, i2, j;
         i1 = i2 = j = 0;
         baseLength = Math.min(first.length() + second.length(), Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
@@ -252,7 +253,7 @@ public class Stamp implements Cloneable {
      *
      * @return The evidentialBase of numbers
      */
-    public ArrayList<Term> getChain() {
+    public List<Term> getChain() {
         return derivationChain;
     }
 

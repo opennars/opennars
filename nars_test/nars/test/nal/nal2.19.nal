@@ -1,9 +1,12 @@
-********** set definition
-<[bright] <-> [smart]>. 
-// Bright thing is similar to smart thing. 
-5
- OUT: <bright <-> smart>. %1.00;0.90%
-// Bright is similar to smart. 
- OUT: <[bright] --> [smart]>. %1.00;0.90%
-// Bright thing is a type of smart thing. 
+'********** set definition
 
+'Bright thing is similar to smart thing. 
+<[bright] <-> [smart]>. 
+
+16
+
+'Bright is similar to smart. 
+''test.outputContains('<bright <-> smart>. %1.00;0.90%');
+
+'Bright thing is a type of smart thing. 
+''test.outputContains('<[bright] --> [smart]>. %1.00;0.90%');
