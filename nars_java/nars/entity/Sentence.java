@@ -252,9 +252,9 @@ public class Sentence implements Cloneable {
         if (key == null) {
             final String contentToString = content.toString();
             final String truthString = truth!=null ? truth.toStringBrief() : null;
-            final String stampString = stamp.toString();
+            //final String stampString = stamp.toString();
 
-            int stringLength = contentToString.length() + 1 + 1 + stampString.length();
+            int stringLength = contentToString.length() + 1 + 1/* + stampString.length()*/;
             if (truth!=null)
                 stringLength += truthString.length();
 
