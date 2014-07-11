@@ -1,0 +1,10 @@
+********** compound composition, two premises
+<sport --> competition>. %0.90% 
+// Sport is a type of competition. 
+<chess --> competition>. %0.80%  
+// Chess is a type of competition. 
+5
+ OUT: <(|,chess,sport) --> competition>. %0.72;0.81% 
+// If something is either chess or sport, then it is a competition.
+ OUT: <(&,chess,sport) --> competition>. %0.98;0.81% 
+// If something is both chess and sport, then it is a competition.
