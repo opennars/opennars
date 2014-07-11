@@ -1,0 +1,8 @@
+********** compound decomposition, two premises
+<robin --> (|,bird,swimmer)>.  
+// Robin is a type of bird or a type of swimmer. 
+<robin --> swimmer>. %0.00% 
+// Robin is not a type of swimmer. 
+3
+ OUT: <robin --> bird>. %1.00;0.81% 
+// Robin is a type of bird. 

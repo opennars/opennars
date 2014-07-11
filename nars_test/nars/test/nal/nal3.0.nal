@@ -1,0 +1,11 @@
+********** compound composition, two premises
+<swan --> swimmer>. %0.90% 
+// Swan is a type of swimmer.
+<swan --> bird>. %0.80% 
+// Swan is a type of bird.
+5
+ OUT: <swan --> (|,bird,swimmer)>. %0.98;0.81% 
+// Swan is a type of bird or a type of swimmer. 
+ OUT: <swan --> (&,bird,swimmer)>. %0.72;0.81% 
+// Swan is a type of swimming bird. 
+
