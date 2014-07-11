@@ -1,6 +1,11 @@
-********** translating property into inheritance
+'********** translating property into inheritance
+
+'Ravens are black. 
 <raven --] black>.
-// Ravens are black. 
-  IN: <raven --> [black]>. %1.00;0.90%
-// Ravens are black. 
+
+16
+
+'Ravens are black. 
+''test.outputContains('<raven --> [black]>. %1.00;0.81%'); 
+''//test.outputContains('<raven --> [black]>. %1.00;0.90%'); //original test
 

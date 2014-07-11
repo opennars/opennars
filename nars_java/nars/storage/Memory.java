@@ -20,9 +20,9 @@
  */
 package nars.storage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import nars.entity.BudgetValue;
@@ -313,7 +313,7 @@ public class Memory {
                 }
             }
             Stamp stamp = task.getSentence().getStamp();
-            ArrayList<Term> chain = stamp.getChain();
+            List<Term> chain = stamp.getChain();
             if(lastClock != reasoner.getTime()) { //only add to derivation chain once
                 lastClock = reasoner.getTime();
                 if (currentBelief != null) {

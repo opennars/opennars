@@ -1,5 +1,10 @@
-********** translating instance into inheritance
+'********** translating instance into inheritance
+
+'Tweety is a bird.
 <Tweety {-- bird>.
-// Tweety is a bird.
-  IN: <{Tweety} --> bird>. %1.00;0.90%
-// Tweety is a bird.
+
+16
+
+'Tweety is a bird.
+''test.outputContains('<{Tweety} --> bird>. %1.00;0.81%');
+''//Original test: IN: <{Tweety} --> bird>. %1.00;0.90%
