@@ -2,18 +2,15 @@
 
 *** Choice
 <robin --> bird>.
-10
+2
 <swan --> bird>. %1.00;0.80%
+3
 <penguin --> bird>. %0.80;0.95%
 5
 <?1 --> bird>?
-448
- OUT: <(|,robin,(&,penguin,swan)) --> bird>. %1.00;0.68%
- OUT: <penguin --> bird>. %0.80;0.95%
-291
- OUT: <swan --> bird>. %1.00;0.80%
-46
- OUT: <robin --> bird>. %1.00;0.90%
+5
+ OUT: <swan --> bird>. %1.00;0.80%  
+ OUT: <robin --> bird>.
 
 *** Contradiction
 <coffee --> beverage>.
@@ -28,21 +25,21 @@
 10
 <coffee --> beverage>? 
 1
- OUT: <coffee --> beverage>. %1.00;0.90%
+ OUT: <coffee --> beverage>.
 
 *** Confidence and revision
 <{Willy} --> swimmer>.
 <fish --> swimmer>.
 <{Willy} --> fish>?
-2
- OUT: <{Willy} --> fish>. %1.00;0.45% 
 18
+ OUT: <{Willy} --> fish>. %1.00;0.45% 
+12
 <{Willy} --> whale>.
 <whale --> [black]>. 
 <{Willy} --> [black]>? 
-26
+40
  OUT: <{Willy} --> [black]>. %1.00;0.81%
-5
+10
 <{Willy} --> [black]>. %0% 
 <{Willy} --> fish>. %0% 
 1
@@ -53,24 +50,26 @@
  OUT: <{Willy} --> fish>. %0.08;0.91% 
 
 *** Deduction chain
-<{Tweety} --> robin>.
 <robin --> bird>.
-<bird --> animal>.
-30
-<{Tweety} --> bird>?
+5
+<bird --> animal>. 
+5
+<robin --> animal>?  
+3
+ OUT: <robin --> animal>. %1.00;0.81% 
+2
+<{Tweety} --> robin>. 
+5
+<{Tweety} --> animal>? 
 1
- OUT: <{Tweety} --> bird>. %1.00;0.81%
-9
-<{Tweety} --> animal>?
-1
- OUT: <{Tweety} --> animal>. %1.00;0.73%
+ OUT: <{Tweety} --> animal>. %1.00;0.73% 
 
 *** Resemblance chain
 <cat <-> dog>. %0.9% 
 <cat <-> tiger>. %0.9%
 <lion <-> tiger>. %0.9%
 <dog <-> lion>?
-26
+15
  OUT: <dog <-> lion>. %0.73;0.71%
 
 *** Induction and revision
@@ -85,13 +84,13 @@
 2
 <gull --> bird>.
 <gull --> swimmer>.
-34
+25
  OUT: <swimmer --> bird>. %1.00;0.62%
  OUT: <bird --> swimmer>. %1.00;0.62%
-6
+5
 <crow --> bird>.
 (--,<crow --> swimmer>).
-45
+18
  OUT: <bird --> swimmer>. %0.67;0.71% 
 
 *** Mixed inference
@@ -99,23 +98,25 @@
 <swan --> swimmer>.
 5
 <bird --> swimmer>?
-7
- OUT: <bird --> swimmer>.
-1
+5
+ OUT: <bird --> swimmer>. %1.00;0.45% 
+5
 <gull --> bird>.
 <gull --> swimmer>.
-11
+25
  OUT: <bird --> swimmer>. %1.00;0.62%
-20
+16
 <bird --> [feathered]>.
 <robin --> [feathered]>.
 20
 <robin --> bird>?
-10
- OUT: <robin --> bird>. %1.00;0.45%
 1
+ OUT: <robin --> bird>. %1.00;0.45%
+39
 <robin --> swimmer>?
-154
+253
+ OUT: <robin --> swimmer>. %1.00;0.20%
+275
  OUT: <robin --> swimmer>. %1.00;0.28%
 
 *** Semi-compositionality
@@ -123,21 +124,19 @@
 5
 <light --> traffic_signal>. %0.1%  
 <[red] --> traffic_signal>. %0.1%
-4
+2
  OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.08%
-7
- OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.15%
-154
+3
  OUT: <(&,light,[red]) --> traffic_signal>. %0.19;0.81%
-31
+5
 <{light_1} --> (&,light,[red])>. 
 <{light_1} --> traffic_signal>.
-27
+5
  OUT: <(&,light,[red]) --> traffic_signal>. %0.32;0.84%
-23
+5
 <{light_2} --> (&,light,[red])>. 
 <{light_2} --> traffic_signal>. 
-30
+9
  OUT: <(&,light,[red]) --> traffic_signal>. %0.41;0.85% 
 
 *** Fuzzy concepts
@@ -145,15 +144,15 @@
 <{John} --> (/,taller_than,{Tom},_)>.
 5
 <{Tom} --> (/,taller_than,_,boy)>? 
-246
+254
  OUT: <{Tom} --> (/,taller_than,_,boy)>. %1.00;0.45% 
-5
+6
 <{David} --> boy>. 
 (--,<{David} --> (/,taller_than,{Tom},_)>).
-113
+399
  OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.50;0.62% 
-22
+1
 <{Karl} --> boy>. 
 <{Karl} --> (/,taller_than,{Tom},_)>.
-141
+166
  OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.67;0.71% 
