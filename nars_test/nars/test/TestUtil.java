@@ -139,8 +139,12 @@ public class TestUtil {
                 if (result instanceof Boolean) {
                     boolean r = (Boolean)result;
                     if (!r) {
-                        System.out.println(path + " failed");
-                        System.out.println(out);
+                        System.out.println();
+                        System.out.println(path + " FAILED");
+                        for (Object x : out)
+                            System.out.println(x);                        
+                        System.out.println();
+                        System.out.println();
                     }
                     assertTrue(path + ": " + e, r);
                 }

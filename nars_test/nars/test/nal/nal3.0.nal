@@ -1,11 +1,19 @@
-********** compound composition, two premises
+'********** compound composition, two premises
+
+'Swan is a type of swimmer.
 <swan --> swimmer>. %0.90% 
-// Swan is a type of swimmer.
+
+'Swan is a type of bird.
 <swan --> bird>. %0.80% 
-// Swan is a type of bird.
-5
- OUT: <swan --> (|,bird,swimmer)>. %0.98;0.81% 
-// Swan is a type of bird or a type of swimmer. 
- OUT: <swan --> (&,bird,swimmer)>. %0.72;0.81% 
-// Swan is a type of swimming bird. 
+
+16
+
+'Swan is a type of bird or a type of swimmer. 
+''test.outputContains('<swan --> (|,bird,swimmer)>. %0.98;0.81%')
+
+
+'Swan is a type of swimming bird. 
+''test.outputContains('<swan --> (&,bird,swimmer)>. %0.72;0.81%')
+ 
+
 
