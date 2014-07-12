@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class TestUtil {
-    private final int performanceIterations = 2;
+    private final int performanceIterations = 1;
 
     protected ScriptEngineManager engineManager = new ScriptEngineManager();
     protected ScriptEngine js = engineManager.getEngineByName("nashorn");
@@ -137,7 +137,12 @@ public class TestUtil {
             try {
                 Object result = js.eval(e);
                 if (result instanceof Boolean) {
-                    assertTrue(path + ": " + e, (Boolean)result);
+                    boolean r = (Boolean)result;
+                    if (!r) {
+                        System.out.println(path + " failed");
+                        System.out.println(out);
+                    }
+                    assertTrue(path + ": " + e, r);
                 }
             }
             catch (Exception x) {

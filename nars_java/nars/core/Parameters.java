@@ -37,7 +37,7 @@ public class Parameters {
 
     /* ---------- time management ---------- */
     /** Task decay rate in TaskBuffer, in [1, 99]. */
-    public static final int NEW_TASK_FORGETTING_CYCLE = 1;
+    public static final int NEW_TASK_FORGETTING_CYCLE = 10;
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public static final int MAX_MATCHED_TERM_LINK = 10;
     /** Maximum TermLinks used in reasoning for each Task in Concept */
@@ -63,7 +63,7 @@ public class Parameters {
     /** Default priority of input judgment */
     public static final float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
     /** Default durability of input judgment */
-    public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.8;
+    public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5;
     /** Default priority of input question */
     public static final float DEFAULT_QUESTION_PRIORITY = (float) 0.9;
     /** Default durability of input question */
