@@ -6,7 +6,7 @@
 'What is a swimmer?
 <{?x} --> swimmer>?   
 
-16
+5
 
 'What is a bird?
 ''test.outputContains('<{?1} --> bird>?')

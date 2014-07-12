@@ -6,12 +6,10 @@
 ' What is a type of swimmer?
 <?x --> swimmer>?  
 
-16
+5
 
 ' What is a type of bird?
-' OUT: <?1 --> bird>?
 ''test.outputContains('<?1 --> bird>?')
 
 ' What is the type of bird?
-' OUT: <bird --> ?1>?
 ''test.outputContains('<bird --> ?1>?')

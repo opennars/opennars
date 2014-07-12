@@ -3,8 +3,6 @@
 'Tweety is a bird.
 <Tweety {-- bird>.
 
-16
+1
 
-'Tweety is a bird.
-''!test.outputContains('<{Tweety} --> bird>. %1.00;0.81%');
-''//Original test: IN: <{Tweety} --> bird>. %1.00;0.90%
+

@@ -6,7 +6,7 @@
 'Gull is similar to a swan. 
 <gull <-> swan>.  
 
-16
+3
 
 'I believe a swan is a type of swimmer. 
 ''test.outputContains('<swan --> swimmer>. %1.00;0.81%')

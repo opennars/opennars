@@ -3,7 +3,7 @@
 'Smart thing is a type of bright thing. 
 <[smart] --> [bright]>. 
 
-16
+1
 
 'Bright thing is similar to smart thing. 
 ''test.outputContains('<[bright] <-> [smart]>. %1.00;0.90%');

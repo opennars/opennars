@@ -37,7 +37,7 @@
 <{Willy} --> whale>.
 <whale --> [black]>. 
 <{Willy} --> [black]>? 
-40
+84
  OUT: <{Willy} --> [black]>. %1.00;0.81%
 10
 <{Willy} --> [black]>. %0% 
@@ -114,9 +114,9 @@
  OUT: <robin --> bird>. %1.00;0.45%
 39
 <robin --> swimmer>?
-253
+99
  OUT: <robin --> swimmer>. %1.00;0.20%
-275
+729
  OUT: <robin --> swimmer>. %1.00;0.28%
 
 *** Semi-compositionality
@@ -125,18 +125,20 @@
 <light --> traffic_signal>. %0.1%  
 <[red] --> traffic_signal>. %0.1%
 2
- OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.08%
-3
- OUT: <(&,light,[red]) --> traffic_signal>. %0.19;0.81%
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.08% {6 : 2} 
+15
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.15% {21 : 2;3 : <(&,light,[red]) --> traffic_signal>;<(&,light,[red]) --> traffic_signal>} 
+132
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.19;0.81% {153 : 3;2 : <[red] --> traffic_signal>;<light --> traffic_signal>} 
 5
 <{light_1} --> (&,light,[red])>. 
 <{light_1} --> traffic_signal>.
-5
+7
  OUT: <(&,light,[red]) --> traffic_signal>. %0.32;0.84%
 5
 <{light_2} --> (&,light,[red])>. 
 <{light_2} --> traffic_signal>. 
-9
+8
  OUT: <(&,light,[red]) --> traffic_signal>. %0.41;0.85% 
 
 *** Fuzzy concepts
@@ -144,15 +146,15 @@
 <{John} --> (/,taller_than,{Tom},_)>.
 5
 <{Tom} --> (/,taller_than,_,boy)>? 
-254
+450
  OUT: <{Tom} --> (/,taller_than,_,boy)>. %1.00;0.45% 
 6
 <{David} --> boy>. 
 (--,<{David} --> (/,taller_than,{Tom},_)>).
-399
+217
  OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.50;0.62% 
 1
 <{Karl} --> boy>. 
 <{Karl} --> (/,taller_than,{Tom},_)>.
-166
+323
  OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.67;0.71% 

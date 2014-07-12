@@ -1,6 +1,5 @@
 package nars.core;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -193,11 +192,20 @@ public class NAR implements Runnable, Output {
         DEBUG = debug; 
         running = true;
         paused = false;
-        tick();
         for (int i = 0; i < minCycles-1; i++)
             tick();
         for (int i = 0; i < walkingSteps; i++)
             tick();
+        running = false;
+        paused = true;
+    }
+    
+    public void finish() {
+        running = true;
+        paused = false;
+        while ((walkingSteps!=0) && (!inputChannels.isEmpty())) {
+            tick();
+        }
         running = false;
         paused = true;
     }
@@ -240,10 +248,10 @@ public class NAR implements Runnable, Output {
         }
     }
 
-    private void processInput() {
+    public boolean processInput() {
+        boolean reasonerShouldRun = false;
+        
         if (walkingSteps == 0) {
-            boolean reasonerShouldRun = false;
-
 
 
             for (final Input channelIn : inputChannels) {
@@ -261,13 +269,16 @@ public class NAR implements Runnable, Output {
             }
             finishedInputs = !reasonerShouldRun;
 
-            for (final Input c : closedInputChannels) {
-                inputChannels.remove(c);
-            }
+            inputChannels.removeAll(closedInputChannels);
             closedInputChannels.clear();
-        
+                    
         }    
+        return reasonerShouldRun;
     }
+    
+    public void bufferInput() {
+        while (processInput()) { }
+    }    
     
     private void workCycle() {
         if (((running || walkingSteps > 0)) && (!paused)) {
@@ -299,6 +310,7 @@ public class NAR implements Runnable, Output {
         processInput();
         workCycle();                
     }
+    
     
     @Override
     public void output(final Class channel, final Object o) {       
@@ -386,5 +398,10 @@ public class NAR implements Runnable, Output {
         return minTickPeriodMS;
     }
 
+    public int getWalkingSteps() {
+        return walkingSteps;
+    }
+
+    
     
 }

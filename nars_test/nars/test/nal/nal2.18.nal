@@ -3,7 +3,7 @@
 'Birdie is similar to Tweety. 
 <{Birdie} <-> {Tweety}>. 
 
-16
+1
 
 'Birdie is similar to Tweety. 
 ''test.outputContains('<Birdie <-> Tweety>. %1.00;0.90%')

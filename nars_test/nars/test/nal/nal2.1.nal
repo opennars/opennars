@@ -6,7 +6,7 @@
 'Swan is a type of bird. 
 <swan --> bird>.  
 
-16
+3
 
 'I guess that bird is similar to swimmer.
 ''test.outputContains('<bird <-> swimmer>. %0.90;0.45%')

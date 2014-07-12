@@ -3,7 +3,7 @@
 'Bright thing is similar to smart thing. 
 <[bright] <-> [smart]>. 
 
-16
+1
 
 'Bright is similar to smart. 
 ''test.outputContains('<bright <-> smart>. %1.00;0.90%');

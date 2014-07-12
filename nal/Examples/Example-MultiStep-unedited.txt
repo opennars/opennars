@@ -33,7 +33,7 @@
   IN: <{Willy} --> whale>. %1.00;0.90% {30 : 4} 
   IN: <whale --> [black]>. %1.00;0.90% {30 : 5} 
   IN: <{Willy} --> [black]>?  {30 : 6} 
-40
+84
  OUT: <{Willy} --> [black]>. %1.00;0.81% {69 : 5;4 : <whale --> [black]>;<{Willy} --> whale>} 
 10
   IN: <{Willy} --> [black]>. %0.00;0.90% {80 : 7} 
@@ -106,9 +106,9 @@
  OUT: <robin --> bird>. %1.00;0.45% {70 : 6;7 : <bird --> [feathered]>;<robin --> [feathered]>} 
 39
   IN: <robin --> swimmer>?  {116 : 9} 
-253
+99
  OUT: <robin --> swimmer>. %1.00;0.20% {368 : 6;4;7;5 : <gull --> bird>;<bird --> [feathered]>;<gull --> swimmer>;<robin --> [feathered]>;<robin --> bird>;(&&,<#1 --> bird>,<#1 --> swimmer>)} 
-275
+729
  OUT: <robin --> swimmer>. %1.00;0.28% {643 : 2;6;5;7;1;4 : <gull --> swimmer>;<swan --> swimmer>;<bird --> [feathered]>;<gull --> bird>;<robin --> [feathered]>;<swan --> bird>;<bird <-> swimmer>;<robin --> bird>} 
 *** Semi-compositionality
   IN: <(&,light,[red]) --> traffic_signal>?  {0 : 1} 
@@ -117,32 +117,34 @@
   IN: <[red] --> traffic_signal>. %0.10;0.90% {5 : 3} 
 2
  OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.08% {6 : 2} 
-3
- OUT: <(&,light,[red]) --> traffic_signal>. %0.19;0.81% {9 : 2;3 : <light --> traffic_signal>;<[red] --> traffic_signal>} 
+15
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.10;0.15% {21 : 2;3 : <(&,light,[red]) --> traffic_signal>;<(&,light,[red]) --> traffic_signal>} 
+132
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.19;0.81% {153 : 3;2 : <[red] --> traffic_signal>;<light --> traffic_signal>} 
 5
-  IN: <{light_1} --> (&,light,[red])>. %1.00;0.90% {15 : 4} 
-  IN: <{light_1} --> traffic_signal>. %1.00;0.90% {15 : 5} 
+  IN: <{light_1} --> (&,light,[red])>. %1.00;0.90% {159 : 4} 
+  IN: <{light_1} --> traffic_signal>. %1.00;0.90% {159 : 5} 
+7
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.32;0.84% {165 : 3;4;2;5 : <{light_1} --> (&,light,[red])>;<[red] --> traffic_signal>;<{light_1} --> traffic_signal>;<light --> traffic_signal>;<(&,light,[red]) --> traffic_signal>;<(&,light,[red]) --> traffic_signal>} 
 5
- OUT: <(&,light,[red]) --> traffic_signal>. %0.32;0.84% {19 : 2;4;3;5 : <{light_1} --> (&,light,[red])>;<light --> traffic_signal>;<{light_1} --> traffic_signal>;<[red] --> traffic_signal>;<(&,light,[red]) --> traffic_signal>;<(&,light,[red]) --> traffic_signal>} 
-5
-  IN: <{light_2} --> (&,light,[red])>. %1.00;0.90% {25 : 6} 
-  IN: <{light_2} --> traffic_signal>. %1.00;0.90% {25 : 7} 
-9
- OUT: <(&,light,[red]) --> traffic_signal>. %0.41;0.85% {33 : 2;6;4;7;3;5 : <light --> traffic_signal>;<{light_1} --> traffic_signal>;<[red] --> traffic_signal>;<(&,light,[red]) --> traffic_signal>;<(&,light,[red]) --> traffic_signal>} 
+  IN: <{light_2} --> (&,light,[red])>. %1.00;0.90% {171 : 6} 
+  IN: <{light_2} --> traffic_signal>. %1.00;0.90% {171 : 7} 
+8
+ OUT: <(&,light,[red]) --> traffic_signal>. %0.41;0.85% {178 : 3;6;4;7;2;5 : <[red] --> traffic_signal>;<{light_1} --> traffic_signal>;<light --> traffic_signal>;<{light_2} --> (&,light,[red])>;<(&,light,[red]) --> traffic_signal>;<{light_2} --> traffic_signal>;<(&,light,[red]) --> traffic_signal>} 
 *** Fuzzy concepts
   IN: <{John} --> boy>. %1.00;0.90% {0 : 1} 
   IN: <{John} --> (/,taller_than,{Tom},_)>. %1.00;0.90% {0 : 2} 
 5
   IN: <{Tom} --> (/,taller_than,_,boy)>?  {5 : 3} 
-254
- OUT: <{Tom} --> (/,taller_than,_,boy)>. %1.00;0.45% {258 : 2;1 : <{John} --> (/,taller_than,{Tom},_)>;<{John} --> boy>;<boy --> (/,taller_than,{Tom},_)>} 
+450
+ OUT: <{Tom} --> (/,taller_than,_,boy)>. %1.00;0.45% {454 : 2;1 : <{John} --> (/,taller_than,{Tom},_)>;<{John} --> boy>} 
 6
-  IN: <{David} --> boy>. %1.00;0.90% {265 : 4} 
-  IN: (--,<{David} --> (/,taller_than,{Tom},_)>). %1.00;0.90% {265 : 5} 
-399
- OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.50;0.62% {663 : 2;5;1;4 : <{David} --> (/,taller_than,{Tom},_)>;<{John} --> (/,taller_than,{Tom},_)>;<{David} --> (/,taller_than,{Tom},_)>;<{John} --> boy>;<{David} --> boy>;<boy --> (/,taller_than,{Tom},_)>;<{Tom} --> (/,taller_than,_,boy)>;<{Tom} --> (/,taller_than,_,boy)>} 
+  IN: <{David} --> boy>. %1.00;0.90% {461 : 4} 
+  IN: (--,<{David} --> (/,taller_than,{Tom},_)>). %1.00;0.90% {461 : 5} 
+217
+ OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.50;0.62% {677 : 2;5;1;4 : <{David} --> (/,taller_than,{Tom},_)>;<{David} --> (/,taller_than,{Tom},_)>;<{John} --> (/,taller_than,{Tom},_)>;<{David} --> boy>;<{John} --> boy>;<{Tom} --> (/,taller_than,_,boy)>;<{Tom} --> (/,taller_than,_,boy)>} 
 1
-  IN: <{Karl} --> boy>. %1.00;0.90% {665 : 6} 
-  IN: <{Karl} --> (/,taller_than,{Tom},_)>. %1.00;0.90% {665 : 7} 
-166
- OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.67;0.71% {830 : 2;7;5;6;1;4 : <{John} --> boy>;<{David} --> boy>;<boy --> (/,taller_than,{Tom},_)>;<{Karl} --> (/,taller_than,{Tom},_)>;<{Tom} --> (/,taller_than,_,boy)>;<{Karl} --> boy>;<{Tom} --> (/,taller_than,_,boy)>;<{Tom} --> (/,taller_than,_,boy)>;<{Tom} --> (/,taller_than,_,boy)>} 
+  IN: <{Karl} --> boy>. %1.00;0.90% {679 : 6} 
+  IN: <{Karl} --> (/,taller_than,{Tom},_)>. %1.00;0.90% {679 : 7} 
+323
+ OUT: <{Tom} --> (/,taller_than,_,boy)>. %0.67;0.71% {1001 : 2;7;5;6;1;4 : <{David} --> (/,taller_than,{Tom},_)>;<{John} --> (/,taller_than,{Tom},_)>;<{Karl} --> (/,taller_than,{Tom},_)>;<{David} --> boy>;<{Karl} --> boy>;<{John} --> boy>} 

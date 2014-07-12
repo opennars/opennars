@@ -3,8 +3,5 @@
 'Tweety is yellow.
 <Tweety {-] yellow>.
 
-16
+1
 
-'Tweety is yellow.
-''!test.outputContains('<{Tweety} --> [yellow]>. %1.00;0.81%');
-''//<{Tweety} --> [yellow]>. %1.00;0.90% //original test

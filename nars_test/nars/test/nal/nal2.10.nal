@@ -1,10 +1,12 @@
+'********** structure transformation
+
 'Birdie is similar to Tweety
 <Birdie <-> Tweety>. %0.90%
 
 'Is Birdie similar to Tweety?
 <{Birdie} <-> {Tweety}>?  
 
-16
+6
 
 'Birdie is similar to Tweety. 
 ''test.outputContains('<{Birdie} <-> {Tweety}>. %0.90;0.90%')
