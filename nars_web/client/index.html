@@ -14,7 +14,7 @@
         </style>
         <style>
         </style>
-            
+
     </head>
     <body>
         <div id="menu">
@@ -24,21 +24,21 @@
             <input id="volume" type="number" name="Volume" min="0" max="100" value="100" title="Volume"/>
             <a id="title">NARS</a>
         </div>
-        
+
         <div id="io">
-            
+
         </div>
-        
+
         <script type="text/javascript">
-            
-            var nlp=1;
+
+            var nlp = 1;
             var websocketPort = 10000;
             var ws = new WebSocket('ws://' + window.location.hostname + ':' + websocketPort);
-            
+
             var prevOutput = null, currentOutput = null;
-            
+
             function getLineClass(m) {
-                if ((m[0] == '\"') && (m[m.length-1] == '\"'))
+                if ((m[0] == '\"') && (m[m.length - 1] == '\"'))
                     return 'comment';
                 if (m.trim().indexOf('IN:') == 0)
                     return 'in';
@@ -46,31 +46,31 @@
                     return 'out';
                 return null;
             }
-            var begin='you are nars. \nnars is intelligent of course, and it is fine. \nfine is a feeling.';
+            var begin = 'you are nars. \nnars is intelligent of course, and it is fine. \nfine is a feeling.';
             function addIO(message) {
                 var d = $('<div/>').addClass('section');
 
                 prevOutput = currentOutput;
-        
+
                 if (message && typeof message == "string") {
-                    d.append(message + '<br/>'); 
+                    d.append(message + '<br/>');
                     currentOutput = d;
                 }
-                else{
-                    var input = $('<textarea/>').html(begin); 
-                    
-                    
-                    begin='';
-   
+                else {
+                    var input = $('<textarea/>').html(begin);
+
+
+                    begin = '';
+
                     var outputDiv = $('<div/>').addClass('output');
                     var sendButton = $('<button/>').html('&ldsh;').click(function() {
-                        arri=[]
-                        try {      
-                            var se=input.val()
-                            while(se.indexOf("why")!=-1 || se.indexOf("when")!=-1 || se.indexOf("who")!=-1 || se.indexOf("what")!=-1 || se.indexOf("where")!=-1)
-                                se=se.replace("why","wqhy").replace("when","wqhen").replace("who","wqho").replace("what","wqhat").replace("where","wqhere")
-                            while(se.indexOf("Why")!=-1 || se.indexOf("When")!=-1 || se.indexOf("Who")!=-1 || se.indexOf("What")!=-1 || se.indexOf("Where")!=-1)
-                                se=se.replace("Why","wqhy").replace("When","wqhen").replace("Who","wqho").replace("What","wqhat").replace("Where","wqhere")
+                        arri = []
+                        try {
+                            var se = input.val()
+                            while (se.indexOf("why") != - 1 || se.indexOf("when") != - 1 || se.indexOf("who") != - 1 || se.indexOf("what") != - 1 || se.indexOf("where") != - 1)
+                                se = se.replace("why", "wqhy").replace("when", "wqhen").replace("who", "wqho").replace("what", "wqhat").replace("where", "wqhere")
+                            while (se.indexOf("Why") != - 1 || se.indexOf("When") != - 1 || se.indexOf("Who") != - 1 || se.indexOf("What") != - 1 || se.indexOf("Where") != - 1)
+                                se = se.replace("Why", "wqhy").replace("When", "wqhen").replace("Who", "wqho").replace("What", "wqhat").replace("Where", "wqhere")
                             ws.send(se);
                             input.attr('readonly', 'true');
                             input.addClass('previousInput');
@@ -81,94 +81,97 @@
                         }
 
                     });
-                    input.keydown(function (e) {
+                    input.keydown(function(e) {
                         if (e.ctrlKey && e.keyCode == 13) {
                             sendButton.click();
                         }
                     });
                     d.append(input);
                     d.append(sendButton);
-                    d.append(outputDiv);                    
+                    d.append(outputDiv);
                     currentOutput = outputDiv;
                     setTimeout(function() {
                         input.focus();
-                    },0);
+                    }, 0);
                 }
                 $('#io').append(d);
                 scrollbottom();
             }
-            function scrollbottom() {                    
+            
+            function scrollbottom() {
                 $('body').scrollTop($('body').prop('scrollHeight'));
             }
-            var cnt=0;
-            var arri=[];
+            
+            var cnt = 0;
+            var arri = [];
+            
             function output(m, monospace) {
                 if (!prevOutput)
                     prevOutput = currentOutput;
                 if (monospace) {
-                    if (m.indexOf("ERROR:")==-1) {
+                    if (m.indexOf("ERROR:") == -1) {
                         var line = null;
-                       
-                       
-                        if(nlp==0)
+
+
+                        if (nlp == 0)
                             line = m;
                         else
                         {
-                            if(m.indexOf("/")!=-1 || m.indexOf("\\")!=-1 || m.indexOf("|")!=-1 || m.indexOf("&")!=-1 || m.indexOf("~")!=-1)
-                               "nope"
+                            if (m.indexOf("/") != -1 || m.indexOf("\\") != -1 || m.indexOf("|") != -1 || m.indexOf("&") != -1 || m.indexOf("~") != -1)
+                                "nope"
                             else
                             {
-                                res=m
-                                var i=100
-                                while(i>0 && (m.indexOf("*")!=-1 || m.indexOf("-")!=-1 || m.indexOf("<")!=-1 || m.indexOf(">")!=-1 || m.indexOf("(")!=-1 || m.indexOf(")")!=-1))
+                                res = m
+                                var i = 100
+                                while (i > 0 && (m.indexOf("*") != -1 || m.indexOf("-") != -1 || m.indexOf("<") != -1 || m.indexOf(">") != -1 || m.indexOf("(") != -1 || m.indexOf(")") != -1))
                                 {
-                                    res=res.replace("<->","is similar to").replace("-->","is").replace("<","").replace(">","").replace(","," ").replace("(","\"").replace(")","\"").replace("* ","")
-                                    i=i-1
+                                    res = res.replace("<->", "is similar to").replace("-->", "is").replace("<", "").replace(">", "").replace(",", " ").replace("(", "\"").replace(")", "\"").replace("* ", "")
+                                    i = i - 1
                                 }
-                                
-                                while(res.indexOf(",")!=-1)
-                                    res=res.replace(","," ")
+
+                                while (res.indexOf(",") != - 1)
+                                    res = res.replace(",", " ")
                                 //
-                                var potential=res.replace(" is "," is ").replace("somewhat similar","similar").replace("?1","what").replace("?2","what").replace("$1","what").replace("$2","what");
-                                var addit=1
-                                if(potential.indexOf("IN:")==-1)//if(res.indexOf("%")==-1) //question
+                                var potential = res.replace(" is ", " is ").replace("somewhat similar", "similar").replace("?1", "what").replace("?2", "what").replace("$1", "what").replace("$2", "what");
+                                var addit = 1
+                                if (potential.indexOf("IN:") == -1)//if(res.indexOf("%")==-1) //question
                                 {
-                                    for(var i=0;i<cnt;i++)
+                                    for (var i = 0; i < cnt; i++)
                                     {
-                                        if(arri[i]==potential.split("{")[0] && potential.indexOf("IN:")==-1)
-                                            addit=0;
+                                        if (arri[i] == potential.split("{")[0] && potential.indexOf("IN:") == -1)
+                                            addit = 0;
                                     }
-                                    if(addit==1)
+                                    if (addit == 1)
                                     {
-                                        cnt+=1;
+                                        cnt += 1;
                                         arri.push(potential.split("{")[0]);
                                     }
                                 }
-                                if(addit)
-                                    if(potential.indexOf("%")==-1 || parseFloat(potential.split(";")[1].split("%")[0])>=0.5)
+                                if (addit)
+                                    if (potential.indexOf("%") == -1 || parseFloat(potential.split(";")[1].split("%")[0]) >= 0.5)
                                     {
-                                        if(potential.indexOf("OUT:")!=-1)
+                                        if (potential.indexOf("OUT:") != -1)
                                         { //you and i handling
-                                           while(potential.indexOf(" i?")!=-1 || potential.indexOf(" i!")!=-1 || potential.indexOf(" i.")!=-1 || potential.indexOf(" i ")!=-1)
-                                                potential=potential.replace(" i?"," Dyou?").replace(" i!"," Dyou!").replace(" i."," Dyou.").replace(" i "," Dyou ")
-                                           while(potential.indexOf(" you?")!=-1 || potential.indexOf(" you!")!=-1 || potential.indexOf(" you.")!=-1 || potential.indexOf(" you ")!=-1)
-                                               potential=potential.replace(" you?"," i?").replace(" you!"," i!").replace(" you."," i.").replace(" you "," i ")
-                                           while(potential.indexOf(" Dyou?")!=-1 || potential.indexOf(" Dyou!")!=-1 || potential.indexOf(" Dyou.")!=-1 || potential.indexOf(" Dyou ")!=-1)
-                                               potential=potential.replace(" Dyou?"," you?").replace(" Dyou!"," you!").replace(" Dyou."," you.").replace(" Dyou "," you ")
+                                            while (potential.indexOf(" i?") != - 1 || potential.indexOf(" i!") != - 1 || potential.indexOf(" i.") != - 1 || potential.indexOf(" i ") != - 1)
+                                                potential = potential.replace(" i?", " Dyou?").replace(" i!", " Dyou!").replace(" i.", " Dyou.").replace(" i ", " Dyou ")
+                                            while (potential.indexOf(" you?") != - 1 || potential.indexOf(" you!") != - 1 || potential.indexOf(" you.") != - 1 || potential.indexOf(" you ") != - 1)
+                                                potential = potential.replace(" you?", " i?").replace(" you!", " i!").replace(" you.", " i.").replace(" you ", " i ")
+                                            while (potential.indexOf(" Dyou?") != - 1 || potential.indexOf(" Dyou!") != - 1 || potential.indexOf(" Dyou.") != - 1 || potential.indexOf(" Dyou ") != - 1)
+                                                potential = potential.replace(" Dyou?", " you?").replace(" Dyou!", " you!").replace(" Dyou.", " you.").replace(" Dyou ", " you ")
                                         }
-                                        while(potential.indexOf("is has")!=-1 || potential.indexOf("is have")!=-1 || potential.indexOf("#1")!=-1 || potential.indexOf("#2")!=-1 || potential.indexOf(" i is ")!=-1 || potential.indexOf(" you is ")!=-1)
-                                            potential=potential.replace("is has","has").replace("is have","have").replace("#1","something").replace("#2","something").replace(" i is "," i am ").replace(" you is "," you are ")
-                                        while(potential.indexOf("--")!=-1)
-                                            potential=potential.replace("--","not")
-                                        if(potential.indexOf("==")!=-1)
-                                            potential=potential.replace("IN: ","IN: if ")
-                                        line = (potential.replace("==","then").replace("\" not","\" is").replace("wqhat","it").replace("wqho","it").replace("wqhere","it").replace("wqhat","it").replace("wqhy","it").replace("wqho","it").replace("wqhen","it"))
+                                        while (potential.indexOf("is has") != - 1 || potential.indexOf("is have") != - 1 || potential.indexOf("#1") != - 1 || potential.indexOf("#2") != - 1 || potential.indexOf(" i is ") != - 1 || potential.indexOf(" you is ") != - 1)
+                                            potential = potential.replace("is has", "has").replace("is have", "have").replace("#1", "something").replace("#2", "something").replace(" i is ", " i am ").replace(" you is ", " you are ")
+                                        while (potential.indexOf("--") != - 1)
+                                            potential = potential.replace("--", "not")
+                                        if (potential.indexOf("==") != -1)
+                                            potential = potential.replace("IN: ", "IN: if ")
+                                        line = (potential.replace("==", "then").replace("\" not", "\" is").replace("wqhat", "it").replace("wqho", "it").replace("wqhere", "it").replace("wqhat", "it").replace("wqhy", "it").replace("wqho", "it").replace("wqhen", "it"))
                                     }
                             }
                         }
                     }
                     if (line && (line.length > 0)) {
-                        var l = $("<pre/>");     
+                        var l = $("<pre/>");
                         l.text(line);
                         var lc = getLineClass(m);
                         if (lc)
@@ -177,30 +180,34 @@
                         scrollbottom();
                     }
                 }
-                else  {
+                else {
                     prevOutput.append("<span>" + m + '</span>\n');
                     scrollbottom();
                 }
             }
-            //addIO("Starting...");
-            
-            $(document).ready(function() {                
+
+
+            $(document).ready(function() {
+
                 ws.onopen = function() {
                     addIO("Connected.");
                     addIO();
                 };
                 ws.onmessage = function(e) {
-                    e.data.split("\n").forEach(function(l) { output(l, true); } )
+                    e.data.split("\n").forEach(function(l) {
+                        output(l, true);
+                    });
                 };
                 ws.onclose = function() {
                     addIO("Disconnected.");
                 };
-    
+
+
             });
-            
+
             $('#volume').change(function() {
-               var volume = $('#volume').val();
-               ws.send('*silence=' + volume);
+                var volume = $('#volume').val();
+                ws.send('*silence=' + volume);
             });
             $('#pauseButton').click(function() {
                 ws.send('*stop');
@@ -212,9 +219,9 @@
                 $('#playButton').addClass('active');
                 $('#pauseButton').removeClass('active');
             });
-            
+
             $('#languageToggle').click(function() {
-                nlp=!nlp;
+                nlp = !nlp;
                 if (nlp) {
                     $('#languageToggle').addClass('active');
                 }
@@ -222,7 +229,7 @@
                     $('#languageToggle').removeClass('active');
                 }
             });
-            
+
             $('#title').click(function() {
                 alert('Non Axiomatic Reasoning System, Stanfords NLP Parser, Patricks Stanford to Narsese and Narsese to English Converter, SeHs HTML5 web interface, have fun. Highly experimental prototype. What makes NARS special: Besides the fact that it is the first successful AGI: It has a unified theory of intelligence, and a theory about uncertainty which makes it possible for NARS to handle contradictions like we humans can, and which makes it possible to evaluate the trustworthiness of different sources. Also similar like we do, it handles intension (properties) and extension (instances) symmetrically, NARS way to think is very similar to ours. The right question or information at the right time, will change the flow of its thoughts very similar to how we human observe them. NARS pays special attention to your questions, but it, as a active system, will also think and recognize things without any questions. It may forget information it did not consider being important, reconsider own answers and so on. However, always keep in mind, that intelligence and knowledge are not the same, this version is initialized without any prior knowledge about anything. Everything it will know, it gets from you. Also the system has no idea of human communication. However, the internal language of thought, namely Narsese the system uses has many similarities to simple language, which makes this possible. It is this high-level way of thinking NARS tries to represent and which is characteristic for the abstract way we are able to think. This abstract way of thinking and optimally organizing the own thought processes according to current goals and the things we currently consider altough our thinking (time, memory) is always insufficient to consider absolutely everything, is the ultimative essence of intelligence. Or to cite Pei: NARS is adaptive to its experience, and therefore is situated and embodied. Its beliefs summarize the systems experience (rather than describe the world as it is), and its concepts represent patterns in the experience (rather than denote the objects in the world). Its inference rules are valid, because each conclusion is supported by the evidence provided by the premises (rather than because they derive absolute truth from absolute truth). The system is rational, because its conclusions are the best the system can find under the current knowledge and resources restriction (rather than because they are always absolutely correct or optimal).');
             });
