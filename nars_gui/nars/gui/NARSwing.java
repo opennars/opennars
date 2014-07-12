@@ -23,7 +23,6 @@ package nars.gui;
 import java.io.IOException;
 import nars.core.CommandLineParameters;
 import nars.core.NAR;
-import nars.core.NARRun;
 import nars.io.TextInput;
 
 /**
@@ -57,6 +56,11 @@ public class NARSwing extends NAR  {
         mainWindow = new NARWindow(this, INFO);        
         outputChannels.add(mainWindow);
         mainWindow.setVisible(true);
+    }
+    
+    public NARSwing(String... args) {
+        this();
+        init(args);
     }
 
     
@@ -101,7 +105,9 @@ public class NARSwing extends NAR  {
 
     void evaluate(String input) {
         new TextInput(this, input);
+        tick();
         run(0, false);
+        
     }
 
 
