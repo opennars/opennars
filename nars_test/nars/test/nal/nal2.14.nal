@@ -6,6 +6,6 @@
 16
 
 'Ravens are black. 
-''test.outputContains('<raven --> [black]>. %1.00;0.81%'); 
+''!test.outputContains('<raven --> [black]>. %1.00;0.81%'); 
 ''//test.outputContains('<raven --> [black]>. %1.00;0.90%'); //original test
 
