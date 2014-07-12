@@ -1,13 +1,12 @@
-' ********** conversion
+'********** conversion
 
-' Bird is a type of swimmer. 
+'Bird is a type of swimmer. 
 <bird --> swimmer>.
 
-' Is swimmer a type of bird?
+'Is swimmer a type of bird?
 <swimmer --> bird>? 
 
-16
+6
 
-' I guess swimmer is a type of bird.
-' OUT: <swimmer --> bird>. %1.00;0.47%
+'I guess swimmer is a type of bird.
 ''test.outputContains('<swimmer --> bird>. %1.00;0.47%')

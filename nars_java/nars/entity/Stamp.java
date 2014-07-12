@@ -141,12 +141,20 @@ public class Stamp implements Cloneable {
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
-                    derivationChain.add(chain1.get(i1));
+                    if (!derivationChain.contains(chain1.get(i1))) {
+                        derivationChain.add(chain1.get(i1));
+                    } else {
+                        j--; //was double, so we can add one more now
+                    }
                     i1--;
                 }
             } else {
                 if (i2 >= 0) {
-                    derivationChain.add(chain2.get(i2));
+                    if (!derivationChain.contains(chain2.get(i2))) {
+                        derivationChain.add(chain2.get(i2));
+                    } else {
+                       j--; //was double, so we can add one more now
+                    }
                     i2--;
                 }
             }
@@ -171,11 +179,10 @@ public class Stamp implements Cloneable {
 
         //temporarily removed
         /*
-        if (equalBases(first.getBase(), second.getBase())) {
-            return null;  // do not merge identical bases
-        }
-        */
-
+         if (equalBases(first.getBase(), second.getBase())) {
+         return null;  // do not merge identical bases
+         }
+         */
         if (first.length() > second.length()) {
             return new Stamp(first, second, time);
         } else {
@@ -184,25 +191,24 @@ public class Stamp implements Cloneable {
     }
 
     /*
-    private static boolean equalBases(long[] base1, long[] base2) {
-        if (base1.length != base2.length) {
-            return false;
-        }
-        for (long n1 : base1) {
-            boolean found = false;
-            for (long n2 : base2) {
-                if (n1 == n2) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                return false;
-            }
-        }
-        return true;
-    }
-    */
-
+     private static boolean equalBases(long[] base1, long[] base2) {
+     if (base1.length != base2.length) {
+     return false;
+     }
+     for (long n1 : base1) {
+     boolean found = false;
+     for (long n2 : base2) {
+     if (n1 == n2) {
+     found = true;
+     }
+     }
+     if (!found) {
+     return false;
+     }
+     }
+     return true;
+     }
+     */
     /**
      * Clone a stamp
      *
@@ -310,7 +316,6 @@ public class Stamp implements Cloneable {
     }
 
     //return toString().hashCode();
-
     /**
      * Get the creationTime of the truth-value
      *

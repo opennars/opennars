@@ -6,13 +6,8 @@
 'Robin is a type of bird.
 <robin --> bird>.
 
-
-15
+3
 
 'Robin is a type of animal.
-''out[0].indexOf('<robin --> animal>. %1.00;0.81%')==0
-
-
-
-
+''test.outputContains('<robin --> animal>. %1.00;0.81%')
 

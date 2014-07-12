@@ -102,8 +102,8 @@ public class TestUtil {
         
         final LinkedList<String> expressions = new LinkedList();
         out.clear();
+
         
-        new TextInput(n, getExample(path));
         //new TextOutput(n, new PrintWriter(System.out));
         new TextOutput(n) {
             @Override
@@ -124,14 +124,16 @@ public class TestUtil {
                     out.add(s);
                 }
             }            
-        };            
+        };           
+        new TextInput(n, getExample(path));
 
-        n.run(extraCycles, false);
+        n.bufferInput();
+        if (extraCycles > 0)
+            n.run(extraCycles, false);
+        n.finish();
 
         js.put("test", this);
         js.put("out", out);
-
-        //System.err.println("'" + path + "' output=" + Arrays.asList(out));
 
         for (String e : expressions) {
             try {
@@ -140,7 +142,7 @@ public class TestUtil {
                     boolean r = (Boolean)result;
                     if (!r) {
                         System.out.println();
-                        System.out.println(path + " FAILED");
+                        System.out.println(path + " FAILED @ " + n.getTime() + ", walkingSteps=" + n.getWalkingSteps());
                         for (Object x : out)
                             System.out.println(x);                        
                         System.out.println();

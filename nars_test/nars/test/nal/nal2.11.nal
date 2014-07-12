@@ -7,7 +7,8 @@
 'Is bird similar to swan?
 <bird <-> swan>?
 
-16
+6
  
 'I guess that bird is similar to swan. 
 ''test.outputContains('<bird <-> swan>. %0.90;0.47%')
+

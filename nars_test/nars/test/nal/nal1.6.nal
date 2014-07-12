@@ -6,8 +6,7 @@
 ' Is bird a type of swimmer?
 <bird --> swimmer>? 
 
-16
+1
 
 ' Bird is a type of swimmer.
-' OUT: <bird --> swimmer>. %1.00;0.90% 
 ''test.outputContains('<bird --> swimmer>. %1.00;0.90%')

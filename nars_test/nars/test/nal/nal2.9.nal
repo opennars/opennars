@@ -6,8 +6,8 @@
 'Bird is different from swan. 
 <bird <-> swan>. %0.10% 
 
-16
+1
 
 'Bird is probably not a type of swan. 
 ''test.outputContains('<bird --> swan>. %0.10;0.73%')
-''//test.outputContains('<bird --> swan>. %0.10;0.74%') //original test
+

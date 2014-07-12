@@ -110,7 +110,6 @@ public class Memory {
      */
     protected HashMap<Term, Term> substitute;
     
-    private long lastClock=0;    
 
 
     /* ---------- Constructor ---------- */
@@ -314,14 +313,11 @@ public class Memory {
             }
             Stamp stamp = task.getSentence().getStamp();
             List<Term> chain = stamp.getChain();
-            if(lastClock != reasoner.getTime()) { //only add to derivation chain once
-                lastClock = reasoner.getTime();
-                if (currentBelief != null) {
-                    stamp.addToChain(currentBelief.getContent());
-                }
-                if (currentTask != null && !single) {
-                    stamp.addToChain(currentTask.getContent());
-                }
+            if (currentBelief != null && !chain.contains(currentBelief.getContent())) {
+                stamp.addToChain(currentBelief.getContent());
+            }
+            if (currentTask != null && !single && !chain.contains(currentTask.getContent())) {
+                stamp.addToChain(currentTask.getContent());
             }
             if (!revised) { //its revision, of course its cyclic, dont apply new stamp policy     
                 for (int i = 0; i < chain.size(); i++) {

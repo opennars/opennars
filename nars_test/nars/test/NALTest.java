@@ -12,6 +12,8 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest extends TestUtil {
 
+    static final boolean testPerformance = true;
+    
     @Parameterized.Parameters
     public static Collection params() {
         List l = new LinkedList();
@@ -28,7 +30,7 @@ public class NALTest extends TestUtil {
     private final String scriptPath;
 
     public NALTest(String scriptPath) {
-        super(true);
+        super(testPerformance);
         this.scriptPath = scriptPath;
     }
 

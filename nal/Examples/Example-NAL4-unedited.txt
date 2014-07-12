@@ -1,43 +1,43 @@
 ********** structural transformation
   IN: <(*,acid,base) --> reaction>. %1.00;0.90% {0 : 1} 
-6
+2
  OUT: <acid --> (/,reaction,_,base)>. %1.00;0.90% {6 : 1} 
  OUT: <base --> (/,reaction,acid,_)>. %1.00;0.90% {6 : 1} 
 ********** structural transformation
   IN: <acid --> (/,reaction,_,base)>. %1.00;0.90% {0 : 1} 
-7
+3
  OUT: <(*,acid,base) --> reaction>. %1.00;0.90% {7 : 1} 
  OUT: <base --> (/,reaction,acid,_)>. %1.00;0.90% {7 : 1} 
 ********** structural transformation
   IN: <base --> (/,reaction,acid,_)>. %1.00;0.90% {0 : 1} 
-7
+3
  OUT: <acid --> (/,reaction,_,base)>. %1.00;0.90% {7 : 1} 
  OUT: <(*,acid,base) --> reaction>. %1.00;0.90% {7 : 1} 
 ********** structural transformation
   IN: <neutralization --> (*,acid,base)>. %1.00;0.90% {0 : 1} 
-7
+3
  OUT: <(\,neutralization,_,base) --> acid>. %1.00;0.90% {7 : 1} 
  OUT: <(\,neutralization,acid,_) --> base>. %1.00;0.90% {7 : 1} 
 ********** structural transformation
   IN: <(\,neutralization,_,base) --> acid>. %1.00;0.90% {0 : 1} 
-6
+2
  OUT: <neutralization --> (*,acid,base)>. %1.00;0.90% {6 : 1} 
  OUT: <(\,neutralization,acid,_) --> base>. %1.00;0.90% {6 : 1} 
 ********** structural transformation
   IN: <(\,neutralization,acid,_) --> base>. %1.00;0.90% {0 : 1} 
-6
+2
  OUT: <(\,neutralization,_,base) --> acid>. %1.00;0.90% {6 : 1} 
  OUT: <neutralization --> (*,acid,base)>. %1.00;0.90% {6 : 1} 
 ********** composition on both sides of a statement
   IN: <bird --> animal>. %1.00;0.90% {0 : 1} 
   IN: <(*,bird,plant) --> ?1>?  {0 : 2} 
-3
+1
  OUT: <bird --> (/,?1,_,plant)>?  {3 : 2} 
  OUT: <plant --> (/,?1,bird,_)>?  {3 : 2} 
 4
  OUT: <bird --> (/,?1,_,plant)>?  {7 : 2} 
  OUT: <plant --> (/,?1,bird,_)>?  {7 : 2} 
-10
+1
  OUT: <(*,bird,plant) --> (*,animal,plant)>. %1.00;0.81% {17 : 1} 
 ********** composition on both sides of a statement
   IN: <neutralization --> reaction>. %1.00;0.90% {0 : 1} 

@@ -1,17 +1,13 @@
 'Revision ------
 
 'Bird is a type of swimmer.
-
 <bird --> swimmer>.
 
 'Bird is probably not a type of swimmer.
-
 <bird --> swimmer>. %0.10;0.60%
 
+1
+
 'Bird is very likely to be a type of swimmer.
+''test.outputContains('<bird --> swimmer>. %0.87;0.91%');
 
-4
-
-''var y = '<bird --> swimmer>. %0.87;0.91%';
-''out[0].indexOf(y)!=-1;
-''test.outputContains(y); //test any of the outputs, but there should only be 1
