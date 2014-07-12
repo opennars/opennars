@@ -504,7 +504,7 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
                             freq = s.getTruth().getFrequency();                            
                         }
                         
-                        float contentSize = 0.75f+conf;
+                        float contentSize = 1f; //0.75f+conf;
                         
                         Color contentColor = Color.getHSBColor(0.5f + (freq-0.5f)/2f, 1.0f, 0.05f + 0.5f - conf/4f);                        
                         print(contentColor, contentSize, s.getContent().toString() + s.getPunctuation(), s.isQuestion());
