@@ -1,6 +1,6 @@
-OpenNARS Home-Page: http://code.google.com/p/open-nars/
-User Manual (HTML): http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
-Discussion Group: https://groups.google.com/forum/?fromgroups#!forum/open-nars
+ * OpenNARS Home-Page: http://code.google.com/p/open-nars/
+ * User Manual (HTML): http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
+ * Discussion Group: https://groups.google.com/forum/?fromgroups#!forum/open-nars
 
 
 Contents
@@ -17,8 +17,8 @@ In nars_java/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is
 
 Requirements
 ------------
-Java 8
-ant
+ * Java 8
+ * ant
 
 
 Build
