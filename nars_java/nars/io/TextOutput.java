@@ -45,7 +45,8 @@ public class TextOutput implements Output {
     public interface LineOutput {
         public void println(String s);
     }
-    
+
+    private String prefix = "";
     private LineOutput outExp2;
     
     /**
@@ -69,7 +70,9 @@ public class TextOutput implements Output {
     public TextOutput(NAR reasoner, PrintStream ps) {
         this(reasoner, new PrintWriter(ps));
     }
-
+    public TextOutput(NAR reasoner, StringWriter s) {
+        this(reasoner, new PrintWriter(s));
+    }
     /**
      * Open an output experience file
      */
@@ -105,11 +108,11 @@ public class TextOutput implements Output {
         
         final String s = process(channel, o);
         if (outExp != null) {
-            outExp.println(s);
+            outExp.println(prefix + s);
             outExp.flush();
         }
         if (outExp2 != null) {
-            outExp2.println(s);            
+            outExp2.println(prefix + s);            
         }
     }
 
@@ -124,11 +127,19 @@ public class TextOutput implements Output {
         return result;
     }
 
-    public void setErrors(boolean errors) {
+    public TextOutput setErrors(boolean errors) {
         this.errors = errors;
+        return this;
     }    
     
-    public void setErrorStackTrace(boolean b) {
+    public TextOutput setErrorStackTrace(boolean b) {
         this.errorStack = true;
+        return this;
     }
+
+    public TextOutput setLinePrefix(String prefix) {
+        this.prefix = prefix;
+        return this;
+    }    
+    
 }
