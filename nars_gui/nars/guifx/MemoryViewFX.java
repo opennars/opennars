@@ -18,6 +18,7 @@ package nars.guifx;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javafx.animation.Animation;
@@ -33,9 +34,12 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
+import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Shape3D;
+import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -56,9 +60,10 @@ import nars.storage.Memory;
  */
 public class MemoryViewFX extends Application {
 
-    private static final int CIRCLE_SIZE = 15; // default circle size
+    final int fps = 30;
+    
     private NARSwing nar;
-    private ArrayList<Obj> obj;
+    private ArrayList<TermVertex> obj;
 
     final PerspectiveCamera camera = new PerspectiveCamera(true);
 
@@ -71,12 +76,16 @@ public class MemoryViewFX extends Application {
     private PhongMaterial sentenceMaterial;
     private PhongMaterial questionMaterial;
     private Group memoryDisplay;
+    private HashSet<Edge> nextE;
+    private Material termBeliefMaterial;
+    private Material taskQuestionsMaterial;
+    private Material termContainedMaterial;
+    private Material termDerivedMaterial;
 
     @Override
     public void start(Stage stage) {
         nar = new NARSwing("nal/Examples/Example-MultiStep-edited.txt");
-        nar.tick();
-        nar.tick();
+
 
         camera.setNearClip(CAMERA_NEAR_CLIP);
         camera.setFarClip(CAMERA_FAR_CLIP);
@@ -88,9 +97,15 @@ public class MemoryViewFX extends Application {
         scene.setFill(Color.color(0.2, 0.2, 0.2, 1.0));
 
         blueMaterial = new PhongMaterial(Color.color(0.5, 0.5, 1.0));
-        sentenceMaterial = new PhongMaterial(Color.color(0.2, 1.0, 0.5));
+        sentenceMaterial = new PhongMaterial(Color.color(0.2, 0.5, 1.0));
         questionMaterial = new PhongMaterial(Color.color(1.0, 0.2, 0.5));
-
+        
+        termBeliefMaterial = new PhongMaterial(Color.ORANGE);
+        taskQuestionsMaterial = new PhongMaterial(Color.PURPLE);
+        termContainedMaterial = new PhongMaterial(Color.DARKGREEN);
+        termDerivedMaterial = new PhongMaterial(Color.YELLOW);
+        
+        
         /*PhongMaterial phongMaterial = new PhongMaterial(Color.color(1.0, 0.7, 0.8));
          Cylinder cylinder1 = new Cylinder(100, 200);
          cylinder1.setMaterial(phongMaterial);
@@ -98,6 +113,7 @@ public class MemoryViewFX extends Application {
          cylinder2.setMaterial(phongMaterial);
          */
         memoryDisplay = new Group();
+        
 
         /*
          Slider slider = new Slider(0, 360, 0);
@@ -108,7 +124,7 @@ public class MemoryViewFX extends Application {
          cylinder2.rotateProperty().bind(slider.valueProperty());
          root.getChildren().addAll(slider);
          */
-        root.getChildren().addAll(camera, memoryDisplay);
+        root.getChildren().addAll( memoryDisplay);
 
         scene.setCamera(camera);
 
@@ -118,14 +134,13 @@ public class MemoryViewFX extends Application {
         handleMouse(scene, root);
         setup();
 
-        final Duration oneFrameAmt = Duration.millis(1000 / 60);
+        final Duration oneFrameAmt = Duration.millis(1000 / fps);
         final KeyFrame oneFrame = new KeyFrame(oneFrameAmt,
                 new EventHandler() {
 
                     @Override
                     public void handle(Event t) {
                         update(memoryDisplay);
-                        nar.tick();
 
                     }
                 }); // oneFrame
@@ -143,9 +158,9 @@ public class MemoryViewFX extends Application {
     int mouseScroll = 0;
 
     float selection_distance = 10;
-    public float maxNodeSize = 50f;
+    public float maxNodeSize = 80f;
 
-    Obj lastclicked = null;
+    TermVertex lastclicked = null;
 
     /*public Button getBack;
      public Button conceptsView;
@@ -155,14 +170,14 @@ public class MemoryViewFX extends Application {
 
     public int mode = 0;
 
-    boolean showBeliefs = false;
+    boolean showBeliefs = true;
 
     float sx = 800;
     float sy = 800;
 
-    ArrayList<link> E = new ArrayList<link>();
-    ArrayList<link> E2 = new ArrayList<link>();
-    ArrayList<link> E3 = new ArrayList<link>(); //derivation chain
+    HashSet<Edge> E = new HashSet<Edge>();
+    HashSet<Edge> E2 = new HashSet<Edge>();
+    ArrayList<Edge> E3 = new ArrayList<Edge>(); //derivation chain
     ArrayList<Sentence> Sent_s = new ArrayList<Sentence>(); //derivation chain
     ArrayList<Integer> Sent_i = new ArrayList<Integer>(); //derivation chain
     long lasttime = -1;
@@ -170,14 +185,19 @@ public class MemoryViewFX extends Application {
     boolean autofetch = true;
     private int MAX_UNSELECTED_LABEL_LENGTH = 32;
     private boolean updateNext;
-    float nodeSize = 10;
+    float nodeSize = 0.5f;
+    float nodeSpeed = 0.05f;
+    
+    float lineDZ = 10f; //offset the line layers
 
     public void setup() {
         //size((int) sx, (int) sy);
 
-        obj = new ArrayList<Obj>();
-        E = new ArrayList<link>();
-        E2 = new ArrayList<link>();
+        obj = new ArrayList<TermVertex>();
+        E = new HashSet<Edge>();
+        E2 = new HashSet<Edge>();
+        nextE = new HashSet<Edge>();
+
         Sent_s = new ArrayList<Sentence>(); //derivation chain
         Sent_i = new ArrayList<Integer>(); //derivation chain
 
@@ -191,10 +211,10 @@ public class MemoryViewFX extends Application {
             lasttime = mem.getTime();
 
             obj.clear();
-            E.clear();
-            E2.clear();
+            //E.clear();
             Sent_s.clear(); //derivation chain
             Sent_i.clear(); //derivation chain
+            nextE.clear();
 
             int x = 0;
             int cnt = 0;
@@ -206,7 +226,7 @@ public class MemoryViewFX extends Application {
 
                             final Term name = c.getTerm();
 
-                            obj.add(new Obj(x++, i, name, 0));
+                            obj.add(new TermVertex(x++, i, name, 0));
                             cnt++;
 
                             float xsave = x;
@@ -218,8 +238,9 @@ public class MemoryViewFX extends Application {
                                     Sentence kb = c.beliefs.get(k);
                                     Term name2 = kb.getContent();
 
-                                    obj.add(new Obj(x++, i, name2, 0, kb.getStamp().creationTime));
-                                    E.add(new link(bufcnt, cnt, kb.truth.getConfidence()));
+                                    obj.add(new TermVertex(x++, i, name2, 0, kb.getStamp().creationTime));
+                                    if (bufcnt!=cnt)
+                                        nextE.add(new Edge(bufcnt, cnt, kb.truth.getConfidence(), termBeliefMaterial));
                                     Sent_s.add(kb);
                                     Sent_i.add(cnt);
                                     cnt++;
@@ -229,8 +250,9 @@ public class MemoryViewFX extends Application {
 
                             for (Task q : c.getQuestions()) {
                                 Term name2 = q.getContent();
-                                obj.add(new Obj(x++, i, name2, 1));
-                                E.add(new link(bufcnt, cnt, q.getPriority()));
+                                obj.add(new TermVertex(x++, i, name2, 1));
+                                if (bufcnt!=cnt)
+                                   nextE.add(new Edge(bufcnt, cnt, q.getPriority(), taskQuestionsMaterial));
                                 cnt++;
 
                             }
@@ -245,19 +267,22 @@ public class MemoryViewFX extends Application {
 
             }
             for (int i = 0; i < obj.size(); i++) {
-                final Obj ho = (Obj) obj.get(i);
+                final TermVertex ho = (TermVertex) obj.get(i);
 
                 for (int j = 0; j < obj.size(); j++) {
-                    Obj target = (Obj) obj.get(j);
+                    if (i == j) continue;
+                    
+                    TermVertex target = (TermVertex) obj.get(j);
                     try {
-                        if ((ho).name.containTerm((target.name))) {
-                            int alpha = (ho.name.getComplexity() + target.name.getComplexity()) / 2;
+                        if ((ho).term.containTerm((target.term))) {
+                            int alpha = (ho.term.getComplexity() + target.term.getComplexity()) / 2;
                             alpha = alpha * 10;
                             alpha += 75;
                             if (alpha > 255) {
                                 alpha = 255;
                             }
-                            E2.add(new link(i, j, alpha));
+                            
+                            nextE.add(new Edge(i, j, alpha, termContainedMaterial));
                         }
                     } catch (Exception ex) {
                     }
@@ -268,103 +293,90 @@ public class MemoryViewFX extends Application {
 
         long currentTime = mem.getTime();
 
-        final ArrayList<Obj> V = obj;
+        final ArrayList<TermVertex> V = obj;
 
         //stroke(13, 13, 4);
         //strokeWeight(linkWeight);
-        final float sizzfloat = (float) E2.size();
+        //final float sizzfloat = (float) E2.size();
 
+        /*
         for (int i = 0; i < E2.size(); i++) {
             float sizzi = (float) i;
 
-            final link lin = E2.get(i);
-            final Obj elem1 = V.get(lin.from);
-            final Obj elem2 = V.get(lin.to);
+            final Edge lin = E2.get(i);
+            final TermVertex elem1 = V.get(lin.from);
+            final TermVertex elem2 = V.get(lin.to);
 
             //fill(225, 225, 225, 50); //transparent
             float mul = 0f;
             try {
-                if (mem.currentBelief != null && (elem1.name.containTerm(mem.currentBelief.getContent()) || mem.currentBelief.getContent().containTerm(elem1.name))) {
+                if (mem.currentBelief != null && (elem1.term.containTerm(mem.currentBelief.getContent()) || mem.currentBelief.getContent().containTerm(elem1.term))) {
                     //ellipse(elem2.x, elem2.y, 100, 100);
 
                     mul = 1.0f;
                 }
-                if (mem.currentBelief != null && (elem1.name.equals(mem.currentBelief.getContent()) || mem.currentBelief.getContent().equals(elem1.name))) {
+                if (mem.currentBelief != null && (elem1.term.equals(mem.currentBelief.getContent()) || mem.currentBelief.getContent().equals(elem1.term))) {
                     //ellipse(elem2.x, elem2.y, 200, 200);
                     mul = 1.0f;
                 }
-                if (mem.currentTask != null && (elem2.name.containTerm(mem.currentTask.getContent()) || mem.currentTask.getContent().containTerm(elem2.name))) {
+                if (mem.currentTask != null && (elem2.term.containTerm(mem.currentTask.getContent()) || mem.currentTask.getContent().containTerm(elem2.term))) {
                     //ellipse(elem2.x, elem2.y, 100, 100);
                     mul = 1.0f;
                 }
-                if (mem.currentTask != null && (elem2.name.equals(mem.currentTask.getContent()) || mem.currentTask.getContent().equals(elem2.name))) {
+                if (mem.currentTask != null && (elem2.term.equals(mem.currentTask.getContent()) || mem.currentTask.getContent().equals(elem2.term))) {
                     //ellipse(elem2.x, elem2.y, 200, 200);
                     mul = 1.0f;
                 }
             } catch (Exception ex) {
             }
-            /*float addi = (128.0f + 64.0f) * mul;
-             //stroke(255.0f - sizzi / sizzfloat * 255.0f, 64 + addi - sizzi / sizzfloat * 255.0f, 255.0f - sizzi / sizzfloat * 255.0f, lin.alpha);*/
+            ///float addi = (128.0f + 64.0f) * mul;
+             //stroke(255.0f - sizzi / sizzfloat * 255.0f, 64 + addi - sizzi / sizzfloat * 255.0f, 255.0f - sizzi / sizzfloat * 255.0f, lin.alpha);
             //stroke(200, 200, 200, lin.alpha);
 
             ////ellipse(elem1.x,elem1.y,10,10);
             //line(elem1.x, elem1.y, elem2.x, elem2.y);
         }
+        */
 
-        //fill(255);
-        for (int i = 0; i < E.size(); i++) {
-            link lin = E.get(i);
-            final Obj elem1 = V.get(lin.from);
-            final Obj elem2 = V.get(lin.to);
-            ////ellipse(elem1.x,elem1.y,10,10);
-            //stroke(255, 255, 127, 127 + lin.alpha/2);
-            //line(elem1.x, elem1.y, elem2.x, elem2.y);
-        }
+
 
         //stroke(127, 255, 255, 127);
         for (int i = 0; i < Sent_s.size(); i++) {
             final List<Term> deriv = Sent_s.get(i).getStamp().getChain();
-            final Obj elem1 = V.get(Sent_i.get(i));
+            //final TermVertex elem1 = V.get(Sent_i.get(i));
 
             for (int j = 0; j < Sent_s.size(); j++) {
 
-                final Obj elem2 = V.get(Sent_i.get(j));
+                //final TermVertex elem2 = V.get(Sent_i.get(j));
 
                 for (int k = 0; k < deriv.size(); k++) {
                     if (i != j && deriv.get(k) == Sent_s.get(j).getContent()) {
 
                         //line(elem1.x, elem1.y, elem2.x, elem2.y);
+                        nextE.add(new Edge(i, j, 0.5f, termDerivedMaterial));
                         break;
                     }
                 }
             }
         }
 
-        //strokeWeight(0);
-        //textSize(16);
-        for (int i = 0; i < V.size(); i++) {
-            Obj elem = V.get(i);
+        
+        //update vertices
+        for (TermVertex elem : V) {
             String suffix = ".";
 
-            float rad = elem.name.getComplexity() * nodeSize;
+            float rad = elem.term.getComplexity() * nodeSize;
             float age = elem.creationTime != -1 ? currentTime - elem.creationTime : -1;
 
-            float ageFactor = age == -1 ? 0 : (1f / (age / 100.0f + 1.0f));
-            int ai = (int) (100.0 * ageFactor);
-
+            double ageFactor = age == -1 ? 0.5f : 0.5 * (1f / (age / 1000.0f + 1.0f));
+            ageFactor += 0.1f;
             
-            Shape3D s = existsVertex(elem.name, g);
-            if (suffix.equals("?")) {
-                //ellipse(elem.x, elem.y, rad, rad);
-            } else {
-                //ellipse(elem.x, elem.y, rad, rad);
-            }
-            s.setScaleX(rad / 100.0);
-            s.setScaleY(rad / 100.0);
-            s.setScaleZ(rad / 100.0);
-            s.setTranslateX(elem.x / 10.0);
-            s.setTranslateY(elem.y / 10.0);
-            s.setTranslateZ(0);
+            Shape3D s = exists(elem.term, g);
+
+            s.setScaleX(rad);
+            s.setScaleY(rad);
+            s.setScaleZ(rad);
+            lerp(s, elem.x/10.0, elem.y/10.0, 0);
 
             if (elem.type == 0) {
                 s.setMaterial(sentenceMaterial);
@@ -372,8 +384,11 @@ public class MemoryViewFX extends Application {
                 suffix = "?";
                 s.setMaterial(questionMaterial);
             }
+            //s.setOpacity(ageFactor);
+            //s.setBlendMode(BlendMode.ADD);
+            
 
-            String label = elem.name.toString() + suffix;
+            String label = elem.term.toString() + suffix;
             if (elem != lastclicked) {
                 if (label.length() > MAX_UNSELECTED_LABEL_LENGTH) {
                     label = label.substring(0, MAX_UNSELECTED_LABEL_LENGTH - 3) + "...";
@@ -383,19 +398,42 @@ public class MemoryViewFX extends Application {
             //text(label, elem.x, elem.y);
 
         }
+        
+        
+        //UPDATE EDGES
+        for (Edge lin : E) {            
+            if (!nextE.contains(lin)) {
+                g.getChildren().remove(lin.shape);
+            }
+            else {
+                exists(lin, g);
+            }
+        }
+        
+        E.retainAll(nextE);
+        
+        for (Edge lin : nextE) {        
+            if (!E.contains(lin)) {
+                exists(lin, g);
+                E.add(lin);
+            }
+        }
+        
+        
+ 
     }
 
-    Map<Object, Shape3D> objShapes = new HashMap();
+    Map<Term, Shape3D> objShapes = new HashMap();
 
     
-    public Shape3D existsVertex(Term e, Group g) {
+    public Shape3D exists(Term e, Group g) {
         
         Shape3D existing = objShapes.get(e);
         if (existing != null) {
             return existing;
         }
 
-        Cylinder s = new Cylinder(5, 100);
+        Cylinder s = new Cylinder(5, 5, 6);
         s.setRotationAxis(Rotate.X_AXIS);
         s.setRotate(90.0);
 
@@ -404,25 +442,88 @@ public class MemoryViewFX extends Application {
 
         return s;
     }
+    
+    public MeshView exists(Edge l, Group g) {
+        MeshView existing = l.shape;
+        if (existing != null) {
+            updateLine(l, existing);
+            return existing;
+        }        
+        
+        final MeshView m = new MeshView();
+        m.setMaterial(l.material);
+        //m.setRotationAxis(Rotate.Y_AXIS);
+// try commenting this line out to see what it's effect is . . .
+        //m.setCullFace(CullFace.NONE);
+        g.getChildren().add(m);        
+        updateLine(l, m);
+        
+        l.shape = m;
+        
+        return m;
+    }
 
+    
+    
     private static final float linkWeight = 4.0f;
 
-    public class Obj {
+    private void lerp(Shape3D s, double tx, double ty, double tz) {
+        double speed = nodeSpeed;
+        double ex = s.getTranslateX();
+        double ey = s.getTranslateY();
+        double ez = s.getTranslateZ();
+        s.setTranslateX( ex * (1.0 - speed) + tx * (speed) );
+        s.setTranslateY( ey * (1.0 - speed) + ty * (speed) );
+        s.setTranslateZ( ez * (1.0 - speed) + tz * (speed) );
+    }
+
+    private void updateLine(Edge l, MeshView line) {
+        
+        Shape3D v1 = objShapes.get(obj.get(l.from).term);
+        Shape3D v2 = objShapes.get(obj.get(l.to).term);
+        if ((v1!=null) && (v2!=null)) {
+
+            
+            /*float[] points = {
+            -Width/2,  Height/2, 0, // idx p0
+            -Width/2, -Height/2, 0, // idx p1
+            Width/2,  Height/2, 0, // idx p2
+            Width/2, -Height/2, 0  // idx p3
+            };
+             */
+            float r = l.alpha/16f; //nodeSize*8f;
+            FlatPolygon p = new FlatPolygon();
+            p.update3(new float[] {
+                (float)v1.getTranslateX()-r, (float)v1.getTranslateY()-r, lineDZ,
+                (float)v1.getTranslateX()+r, (float)v1.getTranslateY()+r, lineDZ,
+                (float)v2.getTranslateX(), (float)v2.getTranslateY(), lineDZ,
+   
+            });
+            line.setMesh(p);
+            line.computeAreaInScreen();
+            
+
+
+        }
+        
+    }
+
+    public class TermVertex {
 
         public float x;
         public float y;
         public final int type;
-        public final Term name;
+        public final Term term;
         private final long creationTime;
 
-        public Obj(int index, int level, Term Name, int Mode) {
+        public TermVertex(int index, int level, Term Name, int Mode) {
             this(index, level, Name, Mode, -1);
         }
 
         private int rowHeight = (int) (maxNodeSize);
         private int colWidth = (int) (maxNodeSize);
 
-        public Obj(int index, int level, Term term, int type, long creationTime) {
+        public TermVertex(int index, int level, Term term, int type, long creationTime) {
 
             if (mode == 1) {
                 this.y = -200 - (index * rowHeight);
@@ -436,47 +537,57 @@ public class MemoryViewFX extends Application {
                 this.y = (float) (Math.sin(angle / 3.0) * radius) * LEVELRAD;
             }
 
-            this.name = term;
+            this.term = term;
             this.type = type;
             this.creationTime = creationTime;
         }
 
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
 
-        @Override
-        public boolean equals(Object obj) {
-            return name.equals(obj);
-            
-        }
 
         @Override
         public String toString() {
-            return "obj:" + name;
-        }
-        
-        
+            return "obj:" + term;
+        }        
         
         
     }
 
-    public class link {
+    public class Edge {
 
         public final int from;
         public final int to;
         public final int alpha;
+        public MeshView shape;
+        private final Material material;
 
-        public link(final int from, final int to, int alpha) {
+        public Edge(final int from, final int to, int alpha, Material m) {
             this.from = from;
             this.to = to;
             this.alpha = alpha;
+            shape = null;
+            this.material = m;
         }
 
-        public link(final int from, final int to, float alpha) {
-            this(from, to, (int) (255.0 * alpha));
+        public Edge(final int from, final int to, float alpha, Material m) {
+            this(from, to, (int) (255.0 * alpha), m);            
         }
+
+        @Override
+        public int hashCode() {
+            return from + to * 9999 + material.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Edge) {
+                Edge e = (Edge)obj;
+                return e.from == from && e.to == to && material == e.material;
+            }
+            return false;
+        }
+
+        
+        
     }
 
     /**
@@ -591,3 +702,116 @@ public class MemoryViewFX extends Application {
         launch(args);
     }
 }
+
+class FlatPolygon extends TriangleMesh {
+
+        public FlatPolygon() {
+            super();
+            
+        }
+        public void update3(float[] points) {
+            
+            float[] texCoords = {
+                    1, 1, // idx t0
+                    1, 0, // idx t1
+                    0, 1 // idx t2
+            };
+            /**
+             * points:
+             * 1      3
+             *  -------   texture:
+             *  |\    |  1,1    1,0
+             *  | \   |    -------
+             *  |  \  |    |     |
+             *  |   \ |    |     |
+             *  |    \|    -------
+             *  -------  0,1    0,0
+             * 0      2
+             *
+             * texture[3] 0,0 maps to vertex 2
+             * texture[2] 0,1 maps to vertex 0
+             * texture[0] 1,1 maps to vertex 1
+             * texture[1] 1,0 maps to vertex 3
+             *
+             * Two triangles define rectangular faces:
+             * p0, t0, p1, t1, p2, t2 // First triangle of a textured rectangle
+             * p0, t0, p2, t2, p3, t3 // Second triangle of a textured rectangle
+             */
+
+// if you use the co-ordinates as defined in the above comment, it will be all messed up
+//            int[] faces = {
+//                    0, 0, 1, 1, 2, 2,
+//                    0, 0, 2, 2, 3, 3
+//            };
+
+// try defining faces in a counter-clockwise order to see what the difference is.
+//            int[] faces = {
+//                    2, 2, 1, 1, 0, 0,
+//                    2, 2, 3, 3, 1, 1
+//            };
+
+// try defining faces in a clockwise order to see what the difference is.
+            int[] faces = {
+                    2, 1, 0, 2, 1, 0
+            };
+
+            this.getPoints().setAll(points);
+            this.getTexCoords().setAll(texCoords);
+            this.getFaces().setAll(faces);
+            
+        }
+
+        public void update4(float[] points) {
+            
+            float[] texCoords = {
+                    1, 1, // idx t0
+                    1, 0, // idx t1
+                    0, 1, // idx t2
+                    0, 0  // idx t3
+            };
+            /**
+             * points:
+             * 1      3
+             *  -------   texture:
+             *  |\    |  1,1    1,0
+             *  | \   |    -------
+             *  |  \  |    |     |
+             *  |   \ |    |     |
+             *  |    \|    -------
+             *  -------  0,1    0,0
+             * 0      2
+             *
+             * texture[3] 0,0 maps to vertex 2
+             * texture[2] 0,1 maps to vertex 0
+             * texture[0] 1,1 maps to vertex 1
+             * texture[1] 1,0 maps to vertex 3
+             *
+             * Two triangles define rectangular faces:
+             * p0, t0, p1, t1, p2, t2 // First triangle of a textured rectangle
+             * p0, t0, p2, t2, p3, t3 // Second triangle of a textured rectangle
+             */
+
+// if you use the co-ordinates as defined in the above comment, it will be all messed up
+//            int[] faces = {
+//                    0, 0, 1, 1, 2, 2,
+//                    0, 0, 2, 2, 3, 3
+//            };
+
+// try defining faces in a counter-clockwise order to see what the difference is.
+//            int[] faces = {
+//                    2, 2, 1, 1, 0, 0,
+//                    2, 2, 3, 3, 1, 1
+//            };
+
+// try defining faces in a clockwise order to see what the difference is.
+            int[] faces = {
+                    2, 3, 0, 2, 1, 0,
+                    2, 3, 1, 0, 3, 1
+            };
+
+            this.getPoints().setAll(points);
+            this.getTexCoords().setAll(texCoords);
+            this.getFaces().setAll(faces);
+            
+        }
+    }
