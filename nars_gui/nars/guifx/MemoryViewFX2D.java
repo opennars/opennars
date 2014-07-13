@@ -19,14 +19,19 @@ package nars.guifx;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.CacheHint;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -60,9 +65,9 @@ public class MemoryViewFX2D extends Application {
     final int fps = 30;
     public int mode = 0;
     boolean showBeliefs = true;
+    boolean derivations = false;
     
-    int minBagLevel = 60;
-    double scale = 1.0;
+    int minBagLevel = 50;
     
     private NARSwing nar;
     private HashSet<TermVertex> obj;
@@ -77,6 +82,8 @@ public class MemoryViewFX2D extends Application {
     private Paint termDerivedMaterial;
     private Color textMaterial;
     private HashSet<TermVertex> nextObj;
+    Map<Term, Node> objShapes = new HashMap();
+    Map<Edge, Polygon> edgePolygons = new HashMap();
 
     Scale scaling = new Scale();
     Translate translation = new Translate(0, 0);
@@ -86,6 +93,7 @@ public class MemoryViewFX2D extends Application {
     @Override
     public void start(Stage stage) {
         nar = new NARSwing("nal/Examples/Example-MultiStep-edited.txt");
+        //nar = new NARSwing("nal/Examples-1.3.3/Example_Recursion.txt");
 
        vertexDisplay = new Group();
         edgeDisplay = new Group();
@@ -154,14 +162,10 @@ public class MemoryViewFX2D extends Application {
     Memory mem = null;
 
 
-    float sx = 800;
-    float sy = 800;
-
-    HashSet<Edge> E = new HashSet<Edge>();
-    HashSet<Edge> E2 = new HashSet<Edge>();
-    ArrayList<Edge> E3 = new ArrayList<Edge>(); //derivation chain
-    ArrayList<Sentence> Sent_s = new ArrayList<Sentence>(); //derivation chain
-    ArrayList<Integer> Sent_i = new ArrayList<Integer>(); //derivation chain
+    HashSet<Edge> E;
+    HashSet<Edge> E2;
+    //ArrayList<Edge> E3 = new ArrayList<Edge>(); //derivation chain
+    HashMap<Sentence,TermVertex> Sent_s; //derivation chain
     long lasttime = -1;
 
     boolean autofetch = true;
@@ -180,20 +184,22 @@ public class MemoryViewFX2D extends Application {
         nextE = new HashSet<Edge>();
         nextObj = new HashSet<TermVertex>();
 
-        Sent_s = new ArrayList<Sentence>(); //derivation chain
+        Sent_s = new HashMap(); //derivation chain
 
         mem = nar.memory;
 
     }
 
+    ArrayList<Concept> cb = new ArrayList();
+    
     public void update() {
         if ((mem.getTime() != lasttime) || (updateNext)) {
             updateNext = false;
             lasttime = mem.getTime();
 
             Sent_s.clear(); //derivation chain
-            nextE.clear();
-            nextObj.clear();
+            nextE = new HashSet();
+            nextObj = new HashSet();
 
             float x = 0;
             int cnt = 0;
@@ -203,7 +209,8 @@ public class MemoryViewFX2D extends Application {
                     if (!bag.emptyLevel(i - 1)) {
                         
                         //copy the array to avoid concurrentmodification exception
-                        ArrayList<Concept> cb = new ArrayList(bag.getLevel(i - 1));
+                        cb.clear();
+                        cb.addAll(bag.getLevel(i - 1));
                         
                         for (final Concept c : cb) {
 
@@ -232,7 +239,7 @@ public class MemoryViewFX2D extends Application {
                                     
                                     nextE.add(new Edge(a, b, kb.truth.getConfidence(),
                                             Color.hsb(255*hue, 1.0, 0.9)));
-                                    Sent_s.add(kb);
+                                    Sent_s.put(kb, b);
                                     cnt++;
 
                                 }
@@ -260,12 +267,12 @@ public class MemoryViewFX2D extends Application {
                 }
 
             }
-            for (TermVertex ho : obj) {
+            for (final TermVertex ho : obj) {
 
-                for (TermVertex target : obj) {
+                for (final TermVertex target : obj) {
                     if (ho == target) continue;
                     
-                    if ((ho).term.containTerm((target.term))) {
+                    if (ho.term.containTerm((target.term))) {
                         nextE.add(new Edge(ho, target, 0.25f, termContainedMaterial));
                     }
                 }
@@ -321,27 +328,26 @@ public class MemoryViewFX2D extends Application {
 
 
 
-        //stroke(127, 255, 255, 127);
-        /*
-        for (int i = 0; i < Sent_s.size(); i++) {
-            final List<Term> deriv = Sent_s.get(i).getStamp().getChain();
-            final TermVertex elem1 = V.get(Sent_i.get(i));
+        
+        if (derivations) {
+            for (Entry<Sentence,TermVertex> s : Sent_s.entrySet()) {
+                final List<Term> deriv = s.getKey().getStamp().getChain();
+                final TermVertex elem1 = s.getValue();
 
-            for (int j = 0; j < Sent_s.size(); j++) {
+                for (Entry<Sentence,TermVertex> t : Sent_s.entrySet()) {
+                    if (s == t) continue;
 
-                final TermVertex elem2 = V.get(Sent_i.get(j));
+                    final Sentence ts = t.getKey();
+                    final TermVertex elem2 = t.getValue();
 
-                for (int k = 0; k < deriv.size(); k++) {
-                    if (i != j && deriv.get(k) == Sent_s.get(j).getContent()) {
-
-                        //line(elem1.x, elem1.y, elem2.x, elem2.y);
-                        nextE.add(new Edge(i, j, 0.5f, termDerivedMaterial));
-                        break;
+                    if (deriv.contains(ts.getContent())) {
+                        nextE.add(new Edge(elem1, elem2, 0.5f, termDerivedMaterial)); 
                     }
+
                 }
             }
         }
-        */
+        
 
         
         //System.out.println("obj " + obj.size() + " " + objShapes.size() + " " + edgePolygons.size());
@@ -361,8 +367,7 @@ public class MemoryViewFX2D extends Application {
                 exists(elem, vertexDisplay);
             }
         }        
-        obj.clear();
-        obj.addAll(nextObj);
+        obj = nextObj;
         
 
         
@@ -383,10 +388,8 @@ public class MemoryViewFX2D extends Application {
             if (!E.contains(lin)) {
                 exists(lin, edgeDisplay);
             }
-        }
-        
-        E.clear();
-        E.addAll(nextE);
+        }        
+        E = nextE;
         
 
         
@@ -394,8 +397,6 @@ public class MemoryViewFX2D extends Application {
  
     }
 
-    Map<Term, Node> objShapes = new HashMap();
-    Map<Edge, Polygon> edgePolygons = new HashMap();
 
 
     static double[] hexagonPoints = new double[2*6];
@@ -407,7 +408,7 @@ public class MemoryViewFX2D extends Application {
             hexagonPoints[i+1] = Math.sin(a);
             a += Math.PI*2.0/6.0;
         }        
-        a = Math.PI*2.0/6.0;        
+        a = Math.PI*2.0/12.0;        
         for (int i = 0; i < 6; i+=2) {
             trianglePoints[i] = Math.cos(a);
             trianglePoints[i+1] = Math.sin(a);
@@ -416,10 +417,9 @@ public class MemoryViewFX2D extends Application {
         
     }
     
-    public Node updateTermVertex(TermVertex e, Group existing) {
-        boolean active = false;
-
+    public Node updateTermVertex(final TermVertex e, final Group existing) {
         /*
+        boolean active = false;
         if (mem.currentBelief != null) {
             if (e.term.containTerm(mem.currentBelief.getContent()) || mem.currentBelief.getContent().containTerm(e.term)) {
                 e.active+=1.0;
@@ -438,7 +438,7 @@ public class MemoryViewFX2D extends Application {
         return existing;
     }
     
-    public Node exists(TermVertex e, Group g) {        
+    public Node exists(final TermVertex e, final Group g) {        
         double size = e.getSize();
         //float age = e.creationTime != -1 ? currentTime - elem.creationTime : -1;
         //double ageFactor = age == -1 ? 0.5f : 0.5 * (1f / (age / 1000.0f + 1.0f));
@@ -447,10 +447,8 @@ public class MemoryViewFX2D extends Application {
         
         Node existing = objShapes.get(e.term);
         if (existing != null) {
-            lerp(existing, e.x*scale, e.y*scale);            
-            //return updateTermVertex(e, existing);
-            return updateTermVertex(e, (Group)existing);
-            
+            lerp(existing, e.x, e.y);            
+            return updateTermVertex(e, (Group)existing);            
         }
 
         Group rs = new Group();
@@ -460,7 +458,6 @@ public class MemoryViewFX2D extends Application {
         //s.setStroke(Color.rgb(255, 255,255,0.5f));
         s.setScaleX(size);
         s.setScaleY(size);
-        rs.getChildren().add(s);
                
         String suffix = "";
         if (e.type == 0) {
@@ -482,11 +479,12 @@ public class MemoryViewFX2D extends Application {
         t.setX(-size/2);
         t.setY(fontSize-size/2);
         t.setFont(new Font(fontSize));
-        t.setFill(textMaterial);
-        
-        rs.getChildren().add(t);
+        t.setFill(textMaterial);        
         
         
+        rs.getChildren().addAll(s, t);                        
+        rs.setCache(true);
+        rs.setCacheHint(CacheHint.DEFAULT);
         
         g.getChildren().add(rs);
         
@@ -546,7 +544,7 @@ public class MemoryViewFX2D extends Application {
             double normAngle = Math.atan2(dy,dx)+Math.PI/2;
             double ox1 = Math.cos(normAngle)*r;
             double oy1 = Math.sin(normAngle)*r;
-            
+                        
             line.getPoints().clear();
             line.getPoints().addAll(
                     v1x+ox1,
@@ -573,21 +571,18 @@ public class MemoryViewFX2D extends Application {
             this(index, level, Name, Mode, -1);
         }
 
-        private int rowHeight = (int) (maxNodeSize);
-        private int colWidth = (int) (maxNodeSize);
+
 
         public TermVertex(float index, int level, Term term, int type, long creationTime) {
-
-            
             
             if (mode == 1) {
+                final float rowHeight = maxNodeSize;
+                final float colWidth = maxNodeSize;                
                 this.y = (index * rowHeight);
                 this.x = (level * colWidth);
             } else if (mode == 0) {
-                float LEVELRAD = maxNodeSize;
-
-                double radius = ((mem.concepts.levels - level) + 1)*LEVELRAD + (LEVELRAD*8);
-                float angle = index; 
+                final double radius = ((mem.concepts.levels - level) + 1)*maxNodeSize + (maxNodeSize*8);
+                final float angle = index; 
                 this.x = (float) (Math.cos(angle / 3.0) * radius);
                 this.y = (float) (Math.sin(angle / 3.0) * radius);
             }
@@ -599,7 +594,7 @@ public class MemoryViewFX2D extends Application {
 
         @Override
         public int hashCode() {
-            return term.hashCode()+type;
+            return (17+term.hashCode())* 31 + type;
         }
 
         @Override
@@ -637,7 +632,10 @@ public class MemoryViewFX2D extends Application {
 
         @Override
         public int hashCode() {
-            return from.hashCode() * (to.hashCode() ^ 348327);
+            int hash = 17;
+            hash = hash * 31 + from.hashCode();
+            hash = hash * 31 + to.hashCode();
+            return hash;
         }
 
         @Override

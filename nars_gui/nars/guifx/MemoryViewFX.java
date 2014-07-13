@@ -175,11 +175,10 @@ public class MemoryViewFX extends Application {
     float sx = 800;
     float sy = 800;
 
-    HashSet<Edge> E = new HashSet<Edge>();
-    HashSet<Edge> E2 = new HashSet<Edge>();
-    ArrayList<Edge> E3 = new ArrayList<Edge>(); //derivation chain
-    ArrayList<Sentence> Sent_s = new ArrayList<Sentence>(); //derivation chain
-    ArrayList<Integer> Sent_i = new ArrayList<Integer>(); //derivation chain
+    HashSet<Edge> E ;
+    HashSet<Edge> E2;
+    //ArrayList<Edge> E3 = new ArrayList<Edge>(); //derivation chain
+    HashMap<Sentence,Term> Sent_s; //derivation chain
     long lasttime = -1;
 
     boolean autofetch = true;
@@ -198,8 +197,7 @@ public class MemoryViewFX extends Application {
         E2 = new HashSet<Edge>();
         nextE = new HashSet<Edge>();
 
-        Sent_s = new ArrayList<Sentence>(); //derivation chain
-        Sent_i = new ArrayList<Integer>(); //derivation chain
+        Sent_s = new HashMap(); //derivation chain
 
         mem = nar.memory;
 
@@ -213,7 +211,6 @@ public class MemoryViewFX extends Application {
             obj.clear();
             //E.clear();
             Sent_s.clear(); //derivation chain
-            Sent_i.clear(); //derivation chain
             nextE.clear();
 
             int x = 0;
@@ -241,8 +238,7 @@ public class MemoryViewFX extends Application {
                                     obj.add(new TermVertex(x++, i, name2, 0, kb.getStamp().creationTime));
                                     if (bufcnt!=cnt)
                                         nextE.add(new Edge(bufcnt, cnt, kb.truth.getConfidence(), termBeliefMaterial));
-                                    Sent_s.add(kb);
-                                    Sent_i.add(cnt);
+                                    Sent_s.put(kb, name2);
                                     cnt++;
 
                                 }
@@ -339,7 +335,7 @@ public class MemoryViewFX extends Application {
         */
 
 
-
+/*
         //stroke(127, 255, 255, 127);
         for (int i = 0; i < Sent_s.size(); i++) {
             final List<Term> deriv = Sent_s.get(i).getStamp().getChain();
@@ -359,7 +355,7 @@ public class MemoryViewFX extends Application {
                 }
             }
         }
-
+*/
         
         //update vertices
         for (TermVertex elem : V) {
