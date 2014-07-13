@@ -51,7 +51,7 @@ public class BagPerf {
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
-    public void testBag(final boolean arraylist, int levels, int capacity, int forgetRate) {
+    public void testBag(final boolean arraylist, final int levels, final int capacity, final int forgetRate) {
         
         totalPriority = 0;
         totalMass = 0;
