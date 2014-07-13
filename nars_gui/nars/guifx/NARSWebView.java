@@ -1,5 +1,6 @@
-import java.util.logging.Level;
-import java.util.logging.Logger;
+package nars.guifx;
+
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
