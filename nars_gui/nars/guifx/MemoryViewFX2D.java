@@ -19,7 +19,6 @@ package nars.guifx;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -35,8 +34,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import nars.entity.Concept;
@@ -58,68 +59,59 @@ public class MemoryViewFX2D extends Application {
 
     final int fps = 30;
     public int mode = 0;
-    boolean showBeliefs = false;
+    boolean showBeliefs = true;
     
-    int minBagLevel = 50;
+    int minBagLevel = 60;
     double scale = 1.0;
     
     private NARSwing nar;
-    private ArrayList<TermVertex> obj;
+    private HashSet<TermVertex> obj;
 
 
-    private Paint blueMaterial;
     private Paint sentenceMaterial;
     private Paint questionMaterial;
-    private Group memoryDisplay;
     private HashSet<Edge> nextE;
     private Paint termBeliefMaterial;
     private Paint taskQuestionsMaterial;
     private Paint termContainedMaterial;
     private Paint termDerivedMaterial;
     private Color textMaterial;
+    private HashSet<TermVertex> nextObj;
 
+    Scale scaling = new Scale();
+    Translate translation = new Translate(0, 0);
+    private Group vertexDisplay;
+    private Group edgeDisplay;
+        
     @Override
     public void start(Stage stage) {
         nar = new NARSwing("nal/Examples/Example-MultiStep-edited.txt");
 
-
-        Group root = new Group();
+       vertexDisplay = new Group();
+        edgeDisplay = new Group();
+        
+        Group root = new Group(edgeDisplay, vertexDisplay);
 
         Scene scene = new Scene(root, 1000, 800);
         scene.setFill(Color.color(0.1, 0.1, 0.1, 1.0));
+        
+        
 
-        blueMaterial = (Color.color(0.5, 0.5, 1.0));
         sentenceMaterial = (Color.color(0.2, 0.5, 1.0));
         questionMaterial = (Color.color(1.0, 0.2, 0.5));
         
         termBeliefMaterial = (Color.ORANGE);
         taskQuestionsMaterial = (Color.PURPLE);
-        termContainedMaterial = (Color.DARKGREEN);
+        termContainedMaterial = (Color.GRAY);
         termDerivedMaterial = (Color.YELLOW);
         
         textMaterial = (Color.WHITE);
 
-        /*PhongMaterial phongMaterial = new PhongMaterial(Color.color(1.0, 0.7, 0.8));
-         Cylinder cylinder1 = new Cylinder(100, 200);
-         cylinder1.setMaterial(phongMaterial);
-         Cylinder cylinder2 = new Cylinder(500, 500);
-         cylinder2.setMaterial(phongMaterial);
-         */
-        memoryDisplay = root;
         
-
-        /*
-         Slider slider = new Slider(0, 360, 0);
-         slider.setBlockIncrement(1);
-         slider.setTranslateX(425);
-         slider.setTranslateY(625);
-         cylinder1.rotateProperty().bind(slider.valueProperty());
-         cylinder2.rotateProperty().bind(slider.valueProperty());
-         root.getChildren().addAll(slider);
-         */
-        //root.getChildren().addAll( memoryDisplay);
-
-        root.setAutoSizeChildren(true);
+ 
+        
+        root.getTransforms().addAll(scaling, translation);
+        
 
         stage.setScene(scene);
         stage.show();
@@ -133,7 +125,7 @@ public class MemoryViewFX2D extends Application {
 
                     @Override
                     public void handle(Event t) {
-                        update(memoryDisplay);
+                        update();
 
                     }
                 }); // oneFrame
@@ -151,7 +143,7 @@ public class MemoryViewFX2D extends Application {
     int mouseScroll = 0;
 
     float selection_distance = 10;
-    public float maxNodeSize = 80f;
+    public float maxNodeSize = 170f;
 
     TermVertex lastclicked = null;
 
@@ -175,47 +167,51 @@ public class MemoryViewFX2D extends Application {
     boolean autofetch = true;
     private int MAX_UNSELECTED_LABEL_LENGTH = 32;
     private boolean updateNext;
-    float nodeSize = 0.5f;
+    float nodeSize = 25f;
     float nodeSpeed = 0.05f;
     
 
     public void setup() {
         //size((int) sx, (int) sy);
 
-        obj = new ArrayList<TermVertex>();
+        obj = new HashSet<TermVertex>();
         E = new HashSet<Edge>();
         E2 = new HashSet<Edge>();
         nextE = new HashSet<Edge>();
+        nextObj = new HashSet<TermVertex>();
 
         Sent_s = new ArrayList<Sentence>(); //derivation chain
-        Sent_i = new ArrayList<Integer>(); //derivation chain
 
         mem = nar.memory;
 
     }
 
-    public void update(Group g) {
+    public void update() {
         if ((mem.getTime() != lasttime) || (updateNext)) {
             updateNext = false;
             lasttime = mem.getTime();
 
-            obj.clear();
-            //E.clear();
             Sent_s.clear(); //derivation chain
-            Sent_i.clear(); //derivation chain
             nextE.clear();
+            nextObj.clear();
 
-            int x = 0;
+            float x = 0;
             int cnt = 0;
             ConceptBag bag = mem.concepts;
             for (int i = bag.levels; i >= minBagLevel; i--) {
-                if (!bag.emptyLevel(i - 1)) {
+                {
                     if (!bag.emptyLevel(i - 1)) {
-                        for (final Concept c : bag.getLevel(i - 1)) {
+                        
+                        //copy the array to avoid concurrentmodification exception
+                        ArrayList<Concept> cb = new ArrayList(bag.getLevel(i - 1));
+                        
+                        for (final Concept c : cb) {
 
                             final Term name = c.getTerm();
 
-                            obj.add(new TermVertex(x++, i, name, 0));
+                            x = x + 1;
+                            TermVertex a = new TermVertex(x, i, name, 0);
+                            nextObj.add(a);
                             cnt++;
 
                             float xsave = x;
@@ -225,23 +221,32 @@ public class MemoryViewFX2D extends Application {
                             if (showBeliefs) {
                                 for (int k = 0; k < c.beliefs.size(); k++) {
                                     Sentence kb = c.beliefs.get(k);
-                                    Term name2 = kb.getContent();
+                                    Term name2 = new Term(kb.toKey()); //kb.getContent();
 
-                                    obj.add(new TermVertex(x++, i, name2, 0, kb.getStamp().creationTime));
-                                    if (bufcnt!=cnt)
-                                        nextE.add(new Edge(bufcnt, cnt, kb.truth.getConfidence(), termBeliefMaterial));
+                                    x = x + 0.25f;
+                                    TermVertex b = new TermVertex(x, i, name2, 0, kb.getStamp().creationTime);
+                                    nextObj.add(b);
+                                    
+                                    
+                                    double hue = 0.25 + (0.25 * (kb.truth.getFrequency()-0.5));
+                                    
+                                    nextE.add(new Edge(a, b, kb.truth.getConfidence(),
+                                            Color.hsb(255*hue, 1.0, 0.9)));
                                     Sent_s.add(kb);
-                                    Sent_i.add(cnt);
                                     cnt++;
 
                                 }
                             }
 
                             for (Task q : c.getQuestions()) {
-                                Term name2 = q.getContent();
-                                obj.add(new TermVertex(x++, i, name2, 1));
-                                if (bufcnt!=cnt)
-                                   nextE.add(new Edge(bufcnt, cnt, q.getPriority(), taskQuestionsMaterial));
+                                //Term name2 = q.getContent();
+                                Term name2 = new Term(q.getKey());
+                                
+                                x = x + 0.25f;
+                                TermVertex b = new TermVertex(x, i, name2, 1);
+                                nextObj.add(b);
+                                
+                                nextE.add(new Edge(a, b, q.getPriority(), taskQuestionsMaterial));
                                 cnt++;
 
                             }
@@ -255,25 +260,13 @@ public class MemoryViewFX2D extends Application {
                 }
 
             }
-            for (int i = 0; i < obj.size(); i++) {
-                final TermVertex ho = (TermVertex) obj.get(i);
+            for (TermVertex ho : obj) {
 
-                for (int j = 0; j < obj.size(); j++) {
-                    if (i == j) continue;
+                for (TermVertex target : obj) {
+                    if (ho == target) continue;
                     
-                    TermVertex target = (TermVertex) obj.get(j);
-                    try {
-                        if ((ho).term.containTerm((target.term))) {
-                            int alpha = (ho.term.getComplexity() + target.term.getComplexity()) / 2;
-                            alpha = alpha * 10;
-                            alpha += 75;
-                            if (alpha > 255) {
-                                alpha = 255;
-                            }
-                            
-                            nextE.add(new Edge(i, j, alpha, termContainedMaterial));
-                        }
-                    } catch (Exception ex) {
+                    if ((ho).term.containTerm((target.term))) {
+                        nextE.add(new Edge(ho, target, 0.25f, termContainedMaterial));
                     }
                 }
             }
@@ -282,7 +275,6 @@ public class MemoryViewFX2D extends Application {
 
         long currentTime = mem.getTime();
 
-        final ArrayList<TermVertex> V = obj;
 
         //stroke(13, 13, 4);
         //strokeWeight(linkWeight);
@@ -330,13 +322,14 @@ public class MemoryViewFX2D extends Application {
 
 
         //stroke(127, 255, 255, 127);
+        /*
         for (int i = 0; i < Sent_s.size(); i++) {
             final List<Term> deriv = Sent_s.get(i).getStamp().getChain();
-            //final TermVertex elem1 = V.get(Sent_i.get(i));
+            final TermVertex elem1 = V.get(Sent_i.get(i));
 
             for (int j = 0; j < Sent_s.size(); j++) {
 
-                //final TermVertex elem2 = V.get(Sent_i.get(j));
+                final TermVertex elem2 = V.get(Sent_i.get(j));
 
                 for (int k = 0; k < deriv.size(); k++) {
                     if (i != j && deriv.get(k) == Sent_s.get(j).getContent()) {
@@ -348,50 +341,52 @@ public class MemoryViewFX2D extends Application {
                 }
             }
         }
+        */
 
+        
+        //System.out.println("obj " + obj.size() + " " + objShapes.size() + " " + edgePolygons.size());
         
         //update vertices
-        for (TermVertex elem : V) {
-            String suffix = ".";
-
-            float rad = elem.term.getComplexity() * nodeSize;
-            float age = elem.creationTime != -1 ? currentTime - elem.creationTime : -1;
-
-            double ageFactor = age == -1 ? 0.5f : 0.5 * (1f / (age / 1000.0f + 1.0f));
-            ageFactor += 0.1f;
-            
-            Node s = exists(elem, g, rad*6);
-            lerp(s, elem.x*scale, elem.y*scale);
-
-            
-            //s.setOpacity(ageFactor);
-            //s.setBlendMode(BlendMode.ADD);
-            
-
-            
-            //text(label, elem.x, elem.y);
-
-        }
-        
-        
-        //UPDATE EDGES
-        for (Edge lin : E) {            
-            if (!nextE.contains(lin)) {
-                g.getChildren().remove(lin.shape);
+        for (TermVertex elem : obj) {
+            if (!nextObj.contains(elem)) {
+                vertexDisplay.getChildren().remove(objShapes.get(elem.term));
+                objShapes.remove(elem.term);
             }
             else {
-                exists(lin, g);
+                exists(elem, vertexDisplay);
+            }            
+        }
+        for (TermVertex elem : nextObj) {        
+            if (!obj.contains(elem)) {
+                exists(elem, vertexDisplay);
+            }
+        }        
+        obj.clear();
+        obj.addAll(nextObj);
+        
+
+        
+        
+                        
+        //UPDATE EDGES
+        for (Edge lin : E) {            
+            if (!nextE.contains(lin)) {                
+                edgeDisplay.getChildren().remove(edgePolygons.get(lin));
+                edgePolygons.remove(lin);
+            }
+            else {
+                exists(lin, edgeDisplay);
             }
         }
         
         for (Edge lin : nextE) {        
             if (!E.contains(lin)) {
-                exists(lin, g);
-                E.add(lin);
+                exists(lin, edgeDisplay);
             }
         }
         
-        E.retainAll(nextE);
+        E.clear();
+        E.addAll(nextE);
         
 
         
@@ -400,40 +395,95 @@ public class MemoryViewFX2D extends Application {
     }
 
     Map<Term, Node> objShapes = new HashMap();
+    Map<Edge, Polygon> edgePolygons = new HashMap();
 
+
+    static double[] hexagonPoints = new double[2*6];
+    static double[] trianglePoints = new double[2*3];
+    static {        
+        double a = 0;
+        for (int i = 0; i < 12; i+=2) {
+            hexagonPoints[i] = Math.cos(a);
+            hexagonPoints[i+1] = Math.sin(a);
+            a += Math.PI*2.0/6.0;
+        }        
+        a = Math.PI*2.0/6.0;        
+        for (int i = 0; i < 6; i+=2) {
+            trianglePoints[i] = Math.cos(a);
+            trianglePoints[i+1] = Math.sin(a);
+            a += Math.PI*2.0/3.0;
+        } 
+        
+    }
     
-    public Node exists(TermVertex e, Group g, double size) {
+    public Node updateTermVertex(TermVertex e, Group existing) {
+        boolean active = false;
+
+        /*
+        if (mem.currentBelief != null) {
+            if (e.term.containTerm(mem.currentBelief.getContent()) || mem.currentBelief.getContent().containTerm(e.term)) {
+                e.active+=1.0;
+            }
+        }        
+        e.active *= 0.99;
+        
+        for (Node n : existing.getChildren()) {
+            if (n instanceof Polygon) {
+                Polygon p = (Polygon)n;                
+                p.setStrokeWidth(e.active*1.5);
+            }
+        } 
+        */
+        
+        return existing;
+    }
+    
+    public Node exists(TermVertex e, Group g) {        
+        double size = e.getSize();
+        //float age = e.creationTime != -1 ? currentTime - elem.creationTime : -1;
+        //double ageFactor = age == -1 ? 0.5f : 0.5 * (1f / (age / 1000.0f + 1.0f));
+        //ageFactor += 0.1f;
+
         
         Node existing = objShapes.get(e.term);
         if (existing != null) {
-            return existing;
+            lerp(existing, e.x*scale, e.y*scale);            
+            //return updateTermVertex(e, existing);
+            return updateTermVertex(e, (Group)existing);
+            
         }
 
         Group rs = new Group();
         
-        Rectangle s = new Rectangle(size, size);        
-        s.setTranslateX(-size/2.0);
-        s.setTranslateY(-size/2.0);
-        rs.getChildren().add(s);
 
+        Polygon s = new Polygon(e.type == 0 ? hexagonPoints : trianglePoints);
+        //s.setStroke(Color.rgb(255, 255,255,0.5f));
+        s.setScaleX(size);
+        s.setScaleY(size);
+        rs.getChildren().add(s);
+               
         String suffix = "";
         if (e.type == 0) {
-            s.setFill(sentenceMaterial);
         } else {
-            s.setFill(questionMaterial);
             suffix = "?";
         }
+        
+        String termtype = e.term.getClass().getSimpleName();
+        double hue = (((double)termtype.hashCode()) / Integer.MAX_VALUE);
+        s.setFill(Color.hsb(255*hue,0.5,0.5));
         
         String label = e.term.toString() + suffix;
         if (label.length() > MAX_UNSELECTED_LABEL_LENGTH) {
             label = label.substring(0, MAX_UNSELECTED_LABEL_LENGTH - 3) + "...";
         }
 
-        Text t = new Text(label);
-        t.setScaleX(size/20.0);
-        t.setScaleY(size/20.0);
+        double fontSize = size * 0.5;
+        Text t = new Text(label);        
+        t.setX(-size/2);
+        t.setY(fontSize-size/2);
+        t.setFont(new Font(fontSize));
         t.setFill(textMaterial);
-        //t.setFont(new Font(20));        
+        
         rs.getChildren().add(t);
         
         
@@ -442,22 +492,24 @@ public class MemoryViewFX2D extends Application {
         
         objShapes.put(e.term, rs);
 
-        return s;
+        return updateTermVertex(e, rs);
     }
     
     public Polygon exists(Edge l, Group g) {
-        Polygon existing = l.shape;
+        
+        
+        Polygon existing = edgePolygons.get(l);
         if (existing != null) {
             updateLine(l, existing);
             return existing;
         }        
         
         Polygon m = new Polygon();
-        m.setOpacity(0.25);
+        m.setOpacity(0.5);
         m.setFill(l.material);
         updateLine(l, m);
         
-        l.shape = m;
+        edgePolygons.put(l, m);
         g.getChildren().add(m);      
         
         return m;
@@ -475,22 +527,35 @@ public class MemoryViewFX2D extends Application {
         s.setTranslateY( ey * (1.0 - speed) + ty * (speed) );
     }
 
-    private void updateLine(Edge l, Polygon line) {
+    private void updateLine(final Edge l, final Polygon line) {
         
-        Node v1 = objShapes.get(obj.get(l.from).term);
-        Node v2 = objShapes.get(obj.get(l.to).term);
+        Node v1 = objShapes.get(l.from.term);
+        Node v2 = objShapes.get(l.to.term);
         if ((v1!=null) && (v2!=null)) {
 
-            double r = l.alpha/16;
-
+            final double v1x = v1.getTranslateX();
+            final double v1y = v1.getTranslateY();
+            final double v2x = v2.getTranslateX();
+            final double v2y = v2.getTranslateY();
+            
+            line.setOpacity(l.alpha);
+            
+            double r = (l.from.getSize()+l.to.getSize())/2.0/2.0;
+            double dx = v2x - v1x;
+            double dy = v2y - v1y;
+            double normAngle = Math.atan2(dy,dx)+Math.PI/2;
+            double ox1 = Math.cos(normAngle)*r;
+            double oy1 = Math.sin(normAngle)*r;
+            
             line.getPoints().clear();
             line.getPoints().addAll(
-                    v1.getTranslateX()-r,
-                    v1.getTranslateY()-r,
-                    v1.getTranslateX()+r,
-                    v1.getTranslateY()+r,
-                    v2.getTranslateX(),
-                    v2.getTranslateY() );
+                    v1x+ox1,
+                    v1y+oy1,
+                    v1x-ox1,
+                    v1y-oy1,
+                    v2x,
+                    v2y );
+            
         }
         
     }
@@ -502,26 +567,29 @@ public class MemoryViewFX2D extends Application {
         public final int type;
         public final Term term;
         private final long creationTime;
+        public double active = 0;
 
-        public TermVertex(int index, int level, Term Name, int Mode) {
+        public TermVertex(float index, int level, Term Name, int Mode) {
             this(index, level, Name, Mode, -1);
         }
 
         private int rowHeight = (int) (maxNodeSize);
         private int colWidth = (int) (maxNodeSize);
 
-        public TermVertex(int index, int level, Term term, int type, long creationTime) {
+        public TermVertex(float index, int level, Term term, int type, long creationTime) {
 
+            
+            
             if (mode == 1) {
-                this.y = -200 - (index * rowHeight);
-                this.x = 2600 - (level * colWidth);
+                this.y = (index * rowHeight);
+                this.x = (level * colWidth);
             } else if (mode == 0) {
                 float LEVELRAD = maxNodeSize;
 
-                double radius = ((mem.concepts.levels - level) + 1);
-                float angle = index; //TEMPORARY
-                this.x = (float) (Math.cos(angle / 3.0) * radius) * LEVELRAD;
-                this.y = (float) (Math.sin(angle / 3.0) * radius) * LEVELRAD;
+                double radius = ((mem.concepts.levels - level) + 1)*LEVELRAD + (LEVELRAD*8);
+                float angle = index; 
+                this.x = (float) (Math.cos(angle / 3.0) * radius);
+                this.y = (float) (Math.sin(angle / 3.0) * radius);
             }
 
             this.term = term;
@@ -529,40 +597,54 @@ public class MemoryViewFX2D extends Application {
             this.creationTime = creationTime;
         }
 
+        @Override
+        public int hashCode() {
+            return term.hashCode()+type;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof TermVertex) {
+                TermVertex tv = (TermVertex)obj;
+                return term.equals(tv.term) && tv.type==type;
+                
+            }
+            return false;
+        }
+
+        private double getSize() {
+            return (1+term.getComplexity()) * nodeSize;
+        }
+        
 
         
     }
 
     public class Edge {
 
-        public final int from;
-        public final int to;
-        public final int alpha;
-        public Polygon shape;
+        public final TermVertex from;
+        public final TermVertex to;
+        public final float alpha;
         private final Paint material;
 
-        public Edge(final int from, final int to, int alpha, Paint m) {
+        public Edge(final TermVertex from, final TermVertex to, float alpha, Paint m) {
             this.from = from;
             this.to = to;
             this.alpha = alpha;
-            shape = null;
             this.material = m;
         }
 
-        public Edge(final int from, final int to, float alpha, Paint m) {
-            this(from, to, (int) (255.0 * alpha), m);            
-        }
 
         @Override
         public int hashCode() {
-            return from * (to ^ 348327);
+            return from.hashCode() * (to.hashCode() ^ 348327);
         }
 
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof Edge) {
                 Edge e = (Edge)obj;
-                return (e.from == from) && (e.to == to);
+                return (e.from.equals(from)) && (e.to.equals(to));
             }
             return false;
         }
@@ -571,53 +653,6 @@ public class MemoryViewFX2D extends Application {
         
     }
 
-    /**
-     * Render a graph to a particular Group
-     *
-     * @param graph
-     * @param layout
-     * @param viz
-     */
-    /*
-     private void renderGraph(Graph graph, Layout layout, Group viz) {
-     // draw the vertices in the graph
-     for (String v : graph.getVertices()) {
-     // Get the position of the vertex
-     Point2D p = layout.transform(v);
-            
-     // draw the vertex as a circle
-     Circle circle = CircleBuilder.create()
-     .centerX(p.getX())
-     .centerY(p.getY())
-     .radius(CIRCLE_SIZE)
-     .build();
-            
-     // add it to the group, so it is shown on screen
-     viz.getChildren().add(circle);
-     }
-
-     // draw the edges
-     for (Number n : graph.getEdges()) {
-     // get the end points of the edge
-     Pair endpoints = graph.getEndpoints(n);
-            
-     // Get the end points as Point2D objects so we can use them in the 
-     // builder
-     Point2D pStart = layout.transform(endpoints.getFirst());
-     Point2D pEnd = layout.transform(endpoints.getSecond());
-            
-     // Draw the line
-     Line line = LineBuilder.create()
-     .startX(pStart.getX())
-     .startY(pStart.getY())
-     .endX(pEnd.getX())
-     .endY(pEnd.getY())
-     .build();
-     // add the edges to the screen
-     viz.getChildren().add(line);
-     }
-     }
-     */
     private static final double CONTROL_MULTIPLIER = 0.1;
     private static final double SHIFT_MULTIPLIER = 10.0;
     private static final double MOUSE_SPEED = 1.0;
@@ -664,24 +699,25 @@ public class MemoryViewFX2D extends Application {
                 
                 if (me.isPrimaryButtonDown()) {
 
-                    memoryDisplay.setTranslateX(memoryDisplay.getTranslateX()
-                            + mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);
-                    memoryDisplay.setTranslateY(memoryDisplay.getTranslateY()
-                            + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
+                    translation.setX(translation.getX()
+                            + mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED / scaling.getX());
+                    translation.setY(translation.getY()
+                            + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED / scaling.getX());
+                    
                 } else if (me.isSecondaryButtonDown()) {
-                    //double z = memoryDisplay.getScaleX();
-                    double z = scale;
-                    double newZ = z * 1.0 + (mouseDeltaX * MOUSE_SPEED * modifier / 150.0);
-                    newZ = Math.max(0.1, newZ);
+                    double z = scaling.getX();
+                    double newZ = z * 1.0 + (mouseDeltaX * MOUSE_SPEED * modifier / 2500.0);
+                    newZ = Math.max(0.01, newZ);
                     newZ = Math.min(3.5, newZ);
-                    scale = newZ;
-//                    memoryDisplay.setScaleX(newZ);
-//                    memoryDisplay.setScaleY(newZ);
+                    
+                    scaling.setX(newZ);
+                    scaling.setY(newZ);
                     
 
                 } else if (me.isMiddleButtonDown()) {
 
                 }
+             
                 
             }
         }); // setOnMouseDragged
