@@ -165,7 +165,7 @@ public class TestUtil {
     }
     
     
-    protected void perfNAL(final String path, int extraCycles, int repeats, int warmups) {
+    protected void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
         
         
         new Performance(path, repeats, warmups) {
