@@ -313,10 +313,16 @@ public class Memory {
             }
             Stamp stamp = task.getSentence().getStamp();
             List<Term> chain = stamp.getChain();
-            if (currentBelief != null && !chain.contains(currentBelief.getContent())) {
+	    if (currentBelief != null) {
+                if(chain.contains(currentBelief.getContent())) {
+                    chain.remove(currentBelief.getContent());
+                }
                 stamp.addToChain(currentBelief.getContent());
             }
-            if (currentTask != null && !single && !chain.contains(currentTask.getContent())) {
+            if (currentTask != null && !single) {
+                if(chain.contains(currentTask.getContent())) {
+                    chain.remove(currentTask.getContent());
+                }
                 stamp.addToChain(currentTask.getContent());
             }
             if (!revised) { //its revision, of course its cyclic, dont apply new stamp policy     
