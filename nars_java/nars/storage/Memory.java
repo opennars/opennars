@@ -313,11 +313,12 @@ public class Memory {
             }
             Stamp stamp = task.getSentence().getStamp();
             List<Term> chain = stamp.getChain();
+            
 	    if (currentBelief != null) {
-                if(chain.contains(currentBelief.getContent())) {
-                    chain.remove(currentBelief.getContent());
+                if(chain.contains(currentBelief.content)) {
+                    chain.remove(currentBelief.content);
                 }
-                stamp.addToChain(currentBelief.getContent());
+                stamp.addToChain(currentBelief.content);
             }
             if (currentTask != null && !single) {
                 if(chain.contains(currentTask.getContent())) {
@@ -325,17 +326,16 @@ public class Memory {
                 }
                 stamp.addToChain(currentTask.getContent());
             }
-            if (!revised) { //its revision, of course its cyclic, dont apply new stamp policy     
-                for (int i = 0; i < chain.size(); i++) {
-                    if (task.getContent() == chain.get(i)) {
+            if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
+                for (final Term chain1 : chain) {
+                    if (task.getContent() == chain1) {
                         if (recorder.isActive()) {
                             recorder.append("!!! Cyclic Reasoning detected: " + task + "\n");
                         }
                         return;
                     }
                 }
-            } else //apply new stamp policy
-            {
+            } else { //its revision, of course its cyclic, apply evidental base policy
                 for (int i = 0; i < stamp.length(); i++) {
                     for (int j = 0; j < stamp.length(); j++) {
                         if (i != j && stamp.getBase()[i] == stamp.getBase()[j]) {
