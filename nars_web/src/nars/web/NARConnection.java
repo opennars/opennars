@@ -12,7 +12,7 @@ import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextOutput.LineOutput;
 import nars.core.NAR;
-import nars.nlp.NLPInputParser;
+import nars.io.TextInputParser;
 
 /**
  * An instance of a web socket session to a NAR
@@ -22,11 +22,15 @@ abstract public class NARConnection implements LineOutput {
     public final NAR nar;
     protected final TextOutput writer;
     int cycleIntervalMS;
-    private final NLPInputParser nlp;
+    private final TextInputParser extraParser;
         
-    public NARConnection(NAR nar, NLPInputParser nlp, int cycleIntervalMS) {
+    public NARConnection(NAR nar, int cycleIntervalMS) {
+        this(nar, cycleIntervalMS, null);
+    }
+    
+    public NARConnection(NAR nar, int cycleIntervalMS, TextInputParser extraParser) {
         this.nar = nar;
-        this.nlp = nlp;
+        this.extraParser = extraParser;
         this.cycleIntervalMS = cycleIntervalMS;
      
         
@@ -34,7 +38,7 @@ abstract public class NARConnection implements LineOutput {
     }
 
     public void read(final String message) {
-        TextInput e = new TextInput(nar, new BufferedReader( new StringReader(message)), nlp);
+        TextInput e = new TextInput(nar, new BufferedReader( new StringReader(message)), extraParser);
                 
         if (!running)
             resume();
