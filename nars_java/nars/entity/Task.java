@@ -99,7 +99,7 @@ public class Task extends Item {
      * @return The content of the sentence
      */
     public Term getContent() {
-        return sentence.getContent();
+        return sentence.content;
     }
 
     /**
