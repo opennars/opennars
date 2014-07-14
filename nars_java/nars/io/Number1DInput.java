@@ -17,8 +17,8 @@
 
 package nars.io;
 
+import java.text.NumberFormat;
 import nars.core.NAR;
-import org.python.icu.text.NumberFormat;
 
 public class Number1DInput implements Input {
     /*
