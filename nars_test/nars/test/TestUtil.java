@@ -36,10 +36,11 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class TestUtil {
-    private final int performanceIterations = 1;
+    private final int performanceIterations = 3;
 
-    protected ScriptEngineManager engineManager = new ScriptEngineManager();
-    protected ScriptEngine js = engineManager.getEngineByName("nashorn");
+    ScriptEngineManager factory = new ScriptEngineManager();
+    ScriptEngine js = factory.getEngineByName("JavaScript");
+      
 
     protected Map<String, String> exCache = new HashMap(); //path -> script data
     private final boolean testPerformance;
