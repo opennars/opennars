@@ -65,7 +65,7 @@ public class MemoryViewFX2D extends Application {
     final int fps = 30;
     public int mode = 0;
     boolean showBeliefs = true;
-    boolean derivations = true;
+    boolean derivations = false;
     
     int minBagLevel = 10;
     
