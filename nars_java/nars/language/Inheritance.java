@@ -68,8 +68,8 @@ public class Inheritance extends Statement {
      */
     public static Inheritance make(Term subject, Term predicate, Memory memory) {
         if (invalidStatement(subject, predicate)) {
-            throw new RuntimeException("Inheritance.make: Invalid Inheritance statement: subj=" + subject + ", pred=" + predicate);
-            //return null;
+            //throw new RuntimeException("Inheritance.make: Invalid Inheritance statement: subj=" + subject + ", pred=" + predicate);
+            return null;
         }
         String name = makeStatementName(subject, Relation.INHERITANCE.toString(), predicate);
         Term t = memory.nameToListedTerm(name);

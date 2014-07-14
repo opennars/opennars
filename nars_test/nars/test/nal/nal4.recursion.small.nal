@@ -4,7 +4,6 @@
 
 <(*,(*,(*,0))) --> num>?  {0 : 3} 
 
-371
+600
 
-''test.outputContains('<(*,(*,(*,0))) --> num>.')
-''test.outputContains('<(*,(*,(*,0))) --> num>. %1.00;0.66%')
+''test.outputContains('<(*,(*,(*,0))) --> num>. %1.00;0.32%')

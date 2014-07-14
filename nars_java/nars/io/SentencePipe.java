@@ -53,6 +53,7 @@ public class SentencePipe implements Input, Output {
                 Sentence s = (Sentence)o;
                 s = (Sentence)s.clone();
                 s = process(s);
+                //TODO: <statement_from_other_nars --> narsinput>.
                 if (s!=null)
                     new TextInput(target, s.toString());
             }
