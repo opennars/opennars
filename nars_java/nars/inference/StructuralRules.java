@@ -445,12 +445,14 @@ public final class StructuralRules {
                     newPred = image.componentAt(i);
                 }
                 inheritance = Inheritance.make(newSubj, newPred, memory);
-                if (truth == null) {
-                    budget = BudgetFunctions.compoundBackward(inheritance, memory);
-                } else {
-                    budget = BudgetFunctions.compoundForward(truth, inheritance, memory);
+                if (inheritance!=null) {
+                    if (truth == null) {
+                        budget = BudgetFunctions.compoundBackward(inheritance, memory);
+                    } else {
+                        budget = BudgetFunctions.compoundForward(truth, inheritance, memory);
+                    }
+                    memory.singlePremiseTask(inheritance, truth, budget);
                 }
-                memory.singlePremiseTask(inheritance, truth, budget);
             }
         }
     }

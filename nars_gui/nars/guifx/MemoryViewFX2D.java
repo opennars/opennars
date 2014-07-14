@@ -65,9 +65,9 @@ public class MemoryViewFX2D extends Application {
     final int fps = 30;
     public int mode = 0;
     boolean showBeliefs = true;
-    boolean derivations = false;
+    boolean derivations = true;
     
-    int minBagLevel = 50;
+    int minBagLevel = 10;
     
     private NARSwing nar;
     private HashSet<TermVertex> obj;
