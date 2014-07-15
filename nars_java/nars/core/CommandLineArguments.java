@@ -3,7 +3,7 @@ package nars.core;
 /**
  * The parameters used when the system is invoked from command line
  */
-public class CommandLineParameters {
+public class CommandLineArguments {
 
     /**
      * Decode the silence level
@@ -16,7 +16,7 @@ public class CommandLineParameters {
             String arg = args[i];
             if ("--silence".equals(arg)) {
                 arg = args[++i];
-                r.getSilenceValue().set(Integer.parseInt(arg));
+                r.param.setSilenceLevel(Integer.parseInt(arg));
             }
         }
     }

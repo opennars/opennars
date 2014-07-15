@@ -31,7 +31,7 @@ public class KIFExample {
  
     public static void main(String[] args) throws Exception {
         NAR n = new NAR();
-        n.setSilenceValue(99);
+        n.param.setSilenceLevel(99);
         
         KIFInput k = new KIFInput(n, "/home/me/sigma/KBs/Merge.kif");
         

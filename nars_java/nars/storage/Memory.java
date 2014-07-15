@@ -287,7 +287,7 @@ public class Memory {
         if (sentence.isQuestion()) {
             final float s = task.getBudget().summary();
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
-            final float minSilent = reasoner.getSilenceValue().get() / 100.0f;
+            final float minSilent = reasoner.param.getSilenceLevel() / 100.0f;
             if (s > minSilent) {  // only report significant derived Tasks
                 reasoner.output(OUT.class, task.getSentence());
             }
@@ -352,7 +352,7 @@ public class Memory {
             }
             float budget = task.getBudget().summary();
 //            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
-            float minSilent = reasoner.getSilenceValue().get() / 100.0f;
+            float minSilent = reasoner.param.getSilenceLevel() / 100.0f;
             if (budget > minSilent) {  // only report significant derived Tasks
                 reasoner.output(OUT.class, task.getSentence());
             }

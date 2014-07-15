@@ -1,7 +1,11 @@
 package nars.graph;
 
 import com.sun.javafx.geom.Edge;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import nars.core.NAR;
 import nars.entity.Concept;
@@ -76,7 +80,7 @@ public class NARGraph extends DirectedMultigraph {
     }
 
     public enum NAREdge {
-        Belief, QuestionTask, TermContent
+        TermBelief, TermQuestion, TermContent, TermDerivation
     }
     
     public NARGraph() {
@@ -115,16 +119,24 @@ public class NARGraph extends DirectedMultigraph {
         private final boolean includeBeliefs;
         private final boolean includeQuestions;
 
+
         private Set<Term> terms = new HashSet();
+        private Map<Sentence,Term> sentenceTerms = new HashMap();
         
-        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeContains) {
+        private final boolean includeTermContent;
+        private final boolean includeDerivations;
+        
+        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent) {
             this.includeBeliefs = includeBeliefs;
             this.includeQuestions = includeQuestions;
+            this.includeTermContent = includeTermContent;
+            this.includeDerivations = includeDerivations;
         }
         
         @Override
         public void onTime(NARGraph g, long time) {
             terms.clear();
+            sentenceTerms.clear();
         }
 
         @Override
@@ -133,8 +145,8 @@ public class NARGraph extends DirectedMultigraph {
         }
 
         protected void addTerm(NARGraph g, Term t) {
-            terms.add(t);
-            g.addVertex(t);
+            if (terms.add(t))
+                g.addVertex(t);
         }
         
         @Override
@@ -145,11 +157,12 @@ public class NARGraph extends DirectedMultigraph {
 
             if (includeBeliefs) {
                 for (final Sentence kb : c.beliefs) {
+                    sentenceTerms.put(kb, term);
                     //TODO check if kb.getContent() is never distinct from c.getTerm()
                     addTerm(g, kb.getContent());
                     
                     g.addVertex(kb);
-                    g.addEdge(term, kb, NAREdge.Belief);
+                    g.addEdge(term, kb, NAREdge.TermBelief);
                 }
             }
             
@@ -162,24 +175,47 @@ public class NARGraph extends DirectedMultigraph {
                     
                             
                     g.addVertex(q);                    
-                    g.addEdge(term, q, NAREdge.QuestionTask);                   
+                    g.addEdge(term, q, NAREdge.TermQuestion);                   
                 }
             }
             
         }
         
         public void onFinish(NARGraph g) {
-          for (final Term a : terms) {
+            if (includeTermContent) {
+                for (final Term a : terms) {
 
-                for (final Term b : terms) {
-                    if (a == b) continue;
-                    
-                    if (a.containTerm(b)) {
-                        g.addEdge(a, b, NAREdge.TermContent);
-                    }
-                }
-            }            
+                      for (final Term b : terms) {
+                          if (a == b) continue;
+
+                          if (a.containTerm(b)) {
+                              g.addEdge(a, b, NAREdge.TermContent);
+                          }
+                      }
+                  }            
+
+            }
             
+            if (includeDerivations && includeBeliefs) {
+                for (final Entry<Sentence,Term> s : sentenceTerms.entrySet()) {
+                    
+                    final List<Term> deriv = s.getKey().getStamp().getChain();
+                    final Term elem1 = s.getValue();
+
+                    for (final Entry<Sentence,Term> t : sentenceTerms.entrySet()) {
+                        if (s == t) continue;
+
+                        final Sentence ts = t.getKey();
+                        final Term elem2 = t.getValue();
+
+                        if (deriv.contains(ts.getContent())) {
+                            g.addEdge(elem1, elem2, NAREdge.TermDerivation); 
+                        }
+
+                    }
+                }                
+            }
         }
+        
     }
 }

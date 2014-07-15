@@ -62,7 +62,7 @@ public class NARRun {
      */
     public static void main(String args[]) {
         NARRun nars = new NARRun();
-        CommandLineParameters.decode(args, nars.getReasoner());
+        CommandLineArguments.decode(args, nars.getReasoner());
         nars.runInference(args);
         // TODO only if single run ( no reset in between )
         if (nars.dumpLastState) {

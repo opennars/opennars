@@ -21,7 +21,7 @@
 package nars.gui;
 
 import java.io.IOException;
-import nars.core.CommandLineParameters;
+import nars.core.CommandLineArguments;
 import nars.core.NAR;
 import nars.io.TextInput;
 
@@ -87,7 +87,7 @@ public class NARSwing extends NAR  {
     public void init(String[] args) {
         
         if (args.length > 0
-                && CommandLineParameters.isReallyFile(args[0])) {
+                && CommandLineArguments.isReallyFile(args[0])) {
 
             try {
                 mainWindow.loadFile(args[0]);
@@ -95,7 +95,7 @@ public class NARSwing extends NAR  {
                 ex.printStackTrace();
             }
         }
-        CommandLineParameters.decode(args, this);
+        CommandLineArguments.decode(args, this);
     }
 
 
