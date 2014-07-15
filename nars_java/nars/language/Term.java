@@ -20,6 +20,8 @@
  */
 package nars.language;
 
+import nars.core.Parameters;
+
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.
  * <p>
@@ -47,7 +49,7 @@ public class Term implements Cloneable, Comparable<Term> {
      * @param name A String as the name of the Term
      */
     public Term(final String name) {
-        this.name = name;
+        setName(name);
     }
 
     /**
@@ -115,6 +117,15 @@ public class Term implements Cloneable, Comparable<Term> {
         return 1;
     }
 
+    protected void setName(final String name) {
+        if (getComplexity() <= Parameters.TERM_NAME_STRING_INTERN_MAX_COMPLEXITY) {
+            this.name = name.intern();
+        }
+        else {
+            this.name = name;
+        }
+    }
+    
     /**
      * Orders among terms: variable < atomic < compound
      * @param that The Term to be compared with the current Term
