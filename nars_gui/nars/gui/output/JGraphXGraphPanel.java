@@ -1,4 +1,4 @@
-package nars.gui.graph;
+package nars.gui.output;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;

@@ -1,4 +1,4 @@
-package nars.gui;
+package nars.gui.output;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -6,6 +6,8 @@ import nars.language.*;
 import processing.core.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -16,6 +18,8 @@ import nars.storage.ConceptBag;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.gui.NSlider;
+
 
 class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
 {
@@ -277,43 +281,46 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             ConceptBag bag = mem.concepts;
             for (int i = bag.levels; i >= 1; i--) {
                 if (!bag.emptyLevel(i - 1)) {
-                    if (!bag.emptyLevel(i-1))                        
-                        for (final Concept c : bag.getLevel(i-1)) {
+                    if (!bag.emptyLevel(i-1)) {
+                        try {
+                            for (final Concept c : Collections.unmodifiableCollection(bag.getLevel(i-1))) {
 
-                            final Term name = c.getTerm();
+                                final Term name = c.getTerm();
 
 
-                            hsim.obj.add(new Obj(x++, i, name, 0));
-                            cnt++;
+                                hsim.obj.add(new Obj(x++, i, name, 0));
+                                cnt++;
 
-                            float xsave = x;
+                                float xsave = x;
 
-                            int bufcnt = cnt;
+                                int bufcnt = cnt;
 
-                            if (showBeliefs) {
-                                for (int k = 0; k < c.beliefs.size(); k++) {
-                                    Sentence kb = c.beliefs.get(k);
-                                    Term name2 = kb.getContent();
+                                if (showBeliefs) {
+                                    for (int k = 0; k < c.beliefs.size(); k++) {
+                                        Sentence kb = c.beliefs.get(k);
+                                        Term name2 = kb.getContent();
 
-                                    hsim.obj.add(new Obj(x++, i, name2, 0, kb.getStamp().creationTime));
-                                    E.add(new link(bufcnt, cnt, kb.truth.getConfidence()));
-                                    Sent_s.add(kb);
-                                    Sent_i.add(cnt);
+                                        hsim.obj.add(new Obj(x++, i, name2, 0, kb.getStamp().creationTime));
+                                        E.add(new link(bufcnt, cnt, kb.truth.getConfidence()));
+                                        Sent_s.add(kb);
+                                        Sent_i.add(cnt);
+                                        cnt++;
+
+                                    }
+                                }
+
+                                for (Task q : c.getQuestions()) {
+                                    Term name2 = q.getContent();                            
+                                    hsim.obj.add(new Obj(x++, i, name2, 1));
+                                    E.add(new link(bufcnt, cnt, q.getPriority()));
                                     cnt++;
 
                                 }
                             }
-
-                            for (Task q : c.getQuestions()) {
-                                Term name2 = q.getContent();                            
-                                hsim.obj.add(new Obj(x++, i, name2, 1));
-                                E.add(new link(bufcnt, cnt, q.getPriority()));
-                                cnt++;
-
-                            }
-
-
                         }
+                        catch (ConcurrentModificationException e) { }
+
+                    }
                 }
                 
                 if (mode == 1)
@@ -630,7 +637,6 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
 public class MemoryView extends JFrame {
 
     applet app = null;
-    static boolean had = false; //init already
 
     public MemoryView(NAR n) {
         this(n.memory);
@@ -638,10 +644,7 @@ public class MemoryView extends JFrame {
 
     public MemoryView(Memory mem) {
         super("NARS Concept Graph");
-        if (had) {
-            return;
-        }
-        had = true;
+
 
         app = new applet();
         app.init();

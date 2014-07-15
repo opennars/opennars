@@ -20,9 +20,14 @@
  */
 package nars.gui;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import nars.core.CommandLineArguments;
 import nars.core.NAR;
+import nars.gui.input.InputPanel;
+import nars.gui.output.OutputLogPanel;
 import nars.io.TextInput;
 
 /**
@@ -45,17 +50,29 @@ public class NARSwing extends NAR  {
 
 
     
-    /**
-     * The unique main window
-     */
-    public final NARWindow mainWindow;
-
 
     public NARSwing() {
         super();
-        mainWindow = new NARWindow(this, INFO);        
-        outputChannels.add(mainWindow);
+        
+        NARWindow mainWindow = new NARWindow(this, INFO);        
+        mainWindow.setBounds(10, 10, 270, 600);
         mainWindow.setVisible(true);
+        mainWindow.setVisible(true);
+        
+        
+        OutputLogPanel outputLog = new OutputLogPanel(this);
+        Window outputWindow = new Window("Output Log", outputLog);        
+        outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
+        outputWindow.setVisible(true);
+        
+        
+        InputPanel inputPanel = new InputPanel(this);
+        Window inputWindow = new Window("Text Input", inputPanel);
+        inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
+        inputWindow.setSize(800, 200);
+        inputWindow.setVisible(true);
+                
+        
     }
     
     public NARSwing(String... args) {
@@ -90,7 +107,7 @@ public class NARSwing extends NAR  {
                 && CommandLineArguments.isReallyFile(args[0])) {
 
             try {
-                mainWindow.loadFile(args[0]);
+                loadFile(args[0]);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -99,17 +116,22 @@ public class NARSwing extends NAR  {
     }
 
 
-    public NARWindow getMainWindow() {
-        return mainWindow;
-    }
 
-    void evaluate(String input) {
+    public void evaluate(String input) {
         new TextInput(this, input);
         tick();
         run(0);
         
     }
 
+    public void loadFile(String filePath) throws IOException, FileNotFoundException {
+        BufferedReader r = new BufferedReader(new FileReader(filePath));
+        String s;
+
+        while ((s = r.readLine()) != null) {
+            new TextInput(this, s); //TODO use a stream to avoid reallocate experiencereader
+        }
+    }
 
 
 
