@@ -11,19 +11,16 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import static javafx.scene.transform.Transform.scale;
+import java.util.ConcurrentModificationException;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.graph.NARGraph;
+import nars.graph.NARGraph.Filter;
 import static nars.graph.NARGraph.IncludeEverything;
 import nars.gui.NSlider;
-import nars.gui.output.applet.Hamlib;
-import nars.gui.output.applet.Hnav;
-import nars.gui.output.applet.Hsim;
-import nars.gui.output.applet.ProcessingJs;
 import nars.io.TextInput;
 import nars.language.Term;
 import nars.storage.Memory;
@@ -50,7 +47,6 @@ class papplet extends PApplet implements ActionListener
 //Object
     float selection_distance = 10;
     public float maxNodeSize = 200f;
-    float edgeDistance = 100;
 
     Hsim hsim = new Hsim();
 
@@ -67,9 +63,6 @@ class papplet extends PApplet implements ActionListener
     
     boolean showBeliefs = false;
     
-    float sx = 800;
-    float sy = 800;
-
     long lasttime = -1;
 
     boolean autofetch = true;
@@ -79,6 +72,7 @@ class papplet extends PApplet implements ActionListener
     
     NARGraph graph;
     JGraphXAdapter layout;
+    public boolean updating;
 
     public void mouseScrolled() {
         hamlib.mouseScrolled();
@@ -124,34 +118,6 @@ class papplet extends PApplet implements ActionListener
     @Override
     public void setup() {  
         
-        
-        /*
-        mxCompactTreeLayout layout2 = 
-                new mxCompactTreeLayout(jgxAdapter);                
-        layout2.setUseBoundingBox(false);
-        layout2.setResizeParent(true);
-        layout2.setLevelDistance(30);
-        layout2.setNodeDistance(50);
-        layout2.execute(jgxAdapter.getDefaultParent());
-        */
-        
-        
-        mxFastOrganicLayout l = 
-                //new mxCompactTreeLayout(jgxAdapter);
-                new mxFastOrganicLayout(layout);
-                //new mxCircleLayout(jgxAdapter);        
-        l.setForceConstant(edgeDistance*10f);
-        l.execute(layout.getDefaultParent());
-        
-        
-
-        /*
-        mxOrganicLayout layout = 
-                //new mxCompactTreeLayout(jgxAdapter);
-                new mxOrganicLayout(jgxAdapter);
-                //new mxCircleLayout(jgxAdapter);        
-        layout.setEdgeLengthCostFactor(0.001);*/
-        
         try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
@@ -188,58 +154,65 @@ class papplet extends PApplet implements ActionListener
     
     public void drawit() {
         
+        if (updating)
+            return;
         
         background(0, 0, 0);
 
 
-        
-        //  line(elem1.x, elem1.y, elem2.x, elem2.y);
-        for (Object edge : graph.edgeSet()) {
-                  
-            int rgb = getColor(edge.getClass().getSimpleName());
-            stroke(rgb, 230f);            
-            strokeWeight(linkWeight);                
-            
-            
-            
-            Object sourceVertex = graph.getEdgeSource(edge);
-            mxGeometry sourcePoint = layout.getCellGeometry(layout.getVertexToCellMap().get(sourceVertex));
-            
-            Object targetVertex = graph.getEdgeTarget(edge);                          mxGeometry targetPoint = layout.getCellGeometry(layout.getVertexToCellMap().get(targetVertex));
+        try {
+            //  line(elem1.x, elem1.y, elem2.x, elem2.y);
+            for (Object edge : graph.edgeSet()) {
 
-            float x1 = (float)sourcePoint.getCenterX();
-            float y1 = (float)sourcePoint.getCenterY();
-            float x2 = (float)targetPoint.getCenterX();
-            float y2 = (float)targetPoint.getCenterY();
-            float cx = (x1 + x2) / 2.0f;
-            float cy = (y1 + y2) / 2.0f;
-            drawArrow(x1, y1, x2, y2);
-            text(edge.toString(), cx, cy);            
-        }
+                int rgb = getColor(edge.getClass().getSimpleName());
+                stroke(rgb, 230f);            
+                strokeWeight(linkWeight);                
 
-        strokeWeight(0);        
-        for (Object vertex : graph.vertexSet()) {            
-            Object cell = layout.getVertexToCellMap().get(vertex);
-            mxGeometry b = layout.getCellGeometry(cell);            
-            if (b == null) continue;
-            
-            int rgb = getColor(vertex.getClass().getSimpleName());
-            float vertexAlpha = getVertexAlpha(vertex);
-            fill(rgb, vertexAlpha*255/2);
-            
-            float x = (float)b.getCenterX();
-            float y = (float)b.getCenterY();
-            double w = b.getWidth();
-            double h = b.getHeight();
-            
-            float size = getVertexSize(vertex);
-            ellipse(x, y, size, size);            
-            
-            fill(255,255,255);        
-            textSize(size/4.0f);
-            text(vertex.toString(), x, y);
+
+
+                Object sourceVertex = graph.getEdgeSource(edge);
+                mxGeometry sourcePoint = layout.getCellGeometry(layout.getVertexToCellMap().get(sourceVertex));
+
+                Object targetVertex = graph.getEdgeTarget(edge);                          
+                mxGeometry targetPoint = layout.getCellGeometry(layout.getVertexToCellMap().get(targetVertex));
+
+                if ((sourcePoint == null) || (targetPoint == null))
+                    continue;
+
+                float x1 = (float)sourcePoint.getCenterX();
+                float y1 = (float)sourcePoint.getCenterY();
+                float x2 = (float)targetPoint.getCenterX();
+                float y2 = (float)targetPoint.getCenterY();
+                float cx = (x1 + x2) / 2.0f;
+                float cy = (y1 + y2) / 2.0f;
+                drawArrow(x1, y1, x2, y2);
+                text(edge.toString(), cx, cy);            
+            }
+
+            strokeWeight(0);        
+            for (Object vertex : graph.vertexSet()) {            
+                Object cell = layout.getVertexToCellMap().get(vertex);
+                mxGeometry b = layout.getCellGeometry(cell);            
+                if (b == null) continue;
+
+                int rgb = getColor(vertex.getClass().getSimpleName());
+                float vertexAlpha = getVertexAlpha(vertex);
+                fill(rgb, vertexAlpha*255/2);
+
+                float x = (float)b.getCenterX();
+                float y = (float)b.getCenterY();
+                double w = b.getWidth();
+                double h = b.getHeight();
+
+                float size = getVertexSize(vertex);
+                ellipse(x, y, size, size);            
+
+                fill(255,255,255);        
+                textSize(size/4.0f);
+                text(vertex.toString(), x, y);
+            }
         }
-                    
+        catch (ConcurrentModificationException e) { }                    
     }
 
     
@@ -367,8 +340,8 @@ class papplet extends PApplet implements ActionListener
         }
 
         void Init() {
-            difx = -width / 2;
-            dify = -height / 2;
+            difx = width / 2;
+            dify = height / 2;
         }
 
         void mouseScrolled() {
@@ -502,36 +475,24 @@ class papplet extends PApplet implements ActionListener
 public class ProcessingGraphPanel extends JFrame {
 
     papplet app = null;
-    static boolean had = false; //init already
+    private final NAR nar;
+    private final Filter filter;
+    float edgeDistance = 10;
+    private boolean showSyntax;
 
-    public ProcessingGraphPanel(NARGraph g) {
+    public ProcessingGraphPanel(NAR n) {
+        this(n, IncludeEverything);        
+    }
+    
+    public ProcessingGraphPanel(NAR n, Filter filter) {
         super("NARS Graph");
-        if (had)
-            return;                     
-        had = true;
         
-        
-        
-
-        // create a visualization using JGraph, via an adapter
-        JGraphXAdapter jgxAdapter = new JGraphXAdapter(g) {           
-            
-        };
-
-
-        
-        
-        
-        
-
-        
-        
-        
-        
+        this.nar = n;
+        this.filter = filter;
 
         app = new papplet();
-        app.graph = g;
-        app.layout = jgxAdapter;
+        
+
         app.init();
         
         this.setSize(1000, 860);//initial size of the window
@@ -543,11 +504,11 @@ public class ProcessingGraphPanel extends JFrame {
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
        
         
-        final JCheckBox beliefsEnable = new JCheckBox("Beliefs");
+        final JCheckBox beliefsEnable = new JCheckBox("Syntax");
         beliefsEnable.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                app.showBeliefs = (beliefsEnable.isSelected());        
-                app.setUpdateNext();
+                showSyntax = beliefsEnable.isSelected();
+                ProcessingGraphPanel.this.update();
             }
         });
         menu.add(beliefsEnable);
@@ -562,13 +523,76 @@ public class ProcessingGraphPanel extends JFrame {
         nodeSize.setPreferredSize(new Dimension(125, 25));
         menu.add(nodeSize);
 
+        NSlider edgeDist = new NSlider(edgeDistance, 1, 100) {
+            @Override
+            public void onChange(double v) {
+                edgeDistance = (float)v;
+                ProcessingGraphPanel.this.update();
+            }          
+        };
+        edgeDist.setPrefix("Separation: ");
+        edgeDist.setPreferredSize(new Dimension(125, 25));
+        menu.add(edgeDist);        
+        
         content.add(menu, BorderLayout.NORTH);
         content.add(app, BorderLayout.CENTER);
+
+        update();
+        
     }
     
     
 
 
+    public void update() {
+        app.updating = true;
+        
+        
+        NARGraph g = new NARGraph();
+        g.add(nar, filter, 
+                new NARGraph.DefaultGraphizer(true,true,false,false,showSyntax)
+        );                
+        app.graph = g;
+        
+
+        // create a visualization using JGraph, via an adapter
+        JGraphXAdapter layout = new JGraphXAdapter(g) {           
+            
+        };                
+        app.layout = layout;
+        
+       
+        /*
+        mxCompactTreeLayout layout2 = 
+                new mxCompactTreeLayout(jgxAdapter);                
+        layout2.setUseBoundingBox(false);
+        layout2.setResizeParent(true);
+        layout2.setLevelDistance(30);
+        layout2.setNodeDistance(50);
+        layout2.execute(jgxAdapter.getDefaultParent());
+        */
+        
+        
+        mxFastOrganicLayout l = 
+                //new mxCompactTreeLayout(jgxAdapter);
+                new mxFastOrganicLayout(layout);
+                //new mxCircleLayout(jgxAdapter);        
+        l.setForceConstant(edgeDistance*10f);
+        l.execute(layout.getDefaultParent());
+        
+        
+
+        /*
+        mxOrganicLayout layout = 
+                //new mxCompactTreeLayout(jgxAdapter);
+                new mxOrganicLayout(jgxAdapter);
+                //new mxCircleLayout(jgxAdapter);        
+        layout.setEdgeLengthCostFactor(0.001);*/
+
+        app.updating = false;
+                
+        
+    }
         
     
     public static void main(String[] args) throws Exception {
@@ -589,16 +613,6 @@ public class ProcessingGraphPanel extends JFrame {
        
         n.run(500);
         
-        NARGraph g = new NARGraph();
-        g.add(n, IncludeEverything, 
-//                new NARGraph.DefaultGraphizer(true,true,true,true,true)
-//                new NARGraph.DefaultGraphizer(false,false,false,false,true)
-                new NARGraph.DefaultGraphizer(true,true,false,false,false)
-        );        
-        //g.toGraphML("/tmp/nar.graphml");
-        
-        System.out.println("edges: " + g.edgeSet().size());
-        
-        new ProcessingGraphPanel(g);
+        new ProcessingGraphPanel(n);
     }
 }
