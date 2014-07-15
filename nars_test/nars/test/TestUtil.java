@@ -129,9 +129,8 @@ public class TestUtil {
         new TextInput(n, getExample(path));
 
         n.bufferInput();
-        if (extraCycles > 0)
-            n.run(extraCycles, false);
-        n.finish();
+        n.run(extraCycles);
+
 
         js.put("test", this);
         js.put("out", out);
@@ -181,7 +180,7 @@ public class TestUtil {
             public void run(boolean warmup) {
                 n.reset();
                 new TextInput(n, getExample(path));
-                n.run(extraCycles, false);
+                n.run(extraCycles);
             }
 
 

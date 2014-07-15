@@ -425,10 +425,10 @@ public abstract class Bag<E extends Item>  {
     @Override
     public String toString() {
         final StringBuffer buf = new StringBuffer(" ");
-        for (int i = levels; i >= showLevel; i--) {
-            if (!itemTable[i-1].isEmpty()) {
-                buf.append("\n --- Level ").append(i).append(":\n");
-                for (final E e : itemTable[i-1]) {
+        for (int i = levels-1; i >= showLevel; i--) {
+            if (itemTable[i]!=null && !itemTable[i].isEmpty()) {
+                buf.append("\n --- Level ").append((i+1)).append(":\n");
+                for (final E e : itemTable[i]) {
                     buf.append(e.toStringBrief()).append('\n');
                 }
             }

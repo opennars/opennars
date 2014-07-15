@@ -196,6 +196,7 @@ public class NAR implements Runnable, Output {
             tick();
         for (int i = 0; i < walkingSteps; i++)
             tick();
+        finish();
         running = false;
         paused = true;
     }
@@ -231,7 +232,6 @@ public class NAR implements Runnable, Output {
                 try {
                     Thread.sleep(minTickPeriodMS);
                 } catch (InterruptedException e) {            }
-                Thread.yield();
             }
         }
     }

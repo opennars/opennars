@@ -29,17 +29,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.WindowEvent;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import nars.entity.Item;
 import nars.core.Parameters;
+import nars.entity.Item;
 import nars.storage.Bag;
 import nars.storage.BagObserver;
 
