@@ -1,6 +1,5 @@
 package nars.graph;
 
-import com.sun.javafx.geom.Edge;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,8 +10,10 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.ConceptBag;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
 
 /**
@@ -79,13 +80,25 @@ public class NARGraph extends DirectedMultigraph {
         void onFinish(NARGraph g);
     }
 
-    public enum NAREdge {
-        TermBelief, TermQuestion, TermContent, TermDerivation
+    public static class TermBelief extends DefaultEdge  {
+        @Override public String toString() { return "belief"; }        
     }
+    public static class TermQuestion extends DefaultEdge  {
+        @Override public String toString() { return "question"; }        
+    }
+    public static class TermDerivation extends DefaultEdge  {
+        @Override public String toString() { return "derives"; }
+    }
+    public static class TermContent extends DefaultEdge  {
+        @Override public String toString() { return "has"; }        
+    }
+    public static class TermType extends DefaultEdge  {
+        @Override public String toString() { return "type"; }        
+    }
+        
     
     public NARGraph() {
-        super(Object.class);
-
+        super(DefaultEdge.class);
     }
 
     public void add(NAR n, Filter filter, Graphize graphize) {
@@ -125,12 +138,14 @@ public class NARGraph extends DirectedMultigraph {
         
         private final boolean includeTermContent;
         private final boolean includeDerivations;
+        private final boolean includeSyntax;
         
-        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent) {
+        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax) {
             this.includeBeliefs = includeBeliefs;
             this.includeQuestions = includeQuestions;
             this.includeTermContent = includeTermContent;
             this.includeDerivations = includeDerivations;
+            this.includeSyntax = includeSyntax;
         }
         
         @Override
@@ -162,7 +177,7 @@ public class NARGraph extends DirectedMultigraph {
                     addTerm(g, kb.getContent());
                     
                     g.addVertex(kb);
-                    g.addEdge(term, kb, NAREdge.TermBelief);
+                    g.addEdge(term, kb, new TermBelief());
                 }
             }
             
@@ -175,13 +190,29 @@ public class NARGraph extends DirectedMultigraph {
                     
                             
                     g.addVertex(q);                    
-                    g.addEdge(term, q, NAREdge.TermQuestion);                   
+                    g.addEdge(term, q, new TermQuestion());
                 }
             }
             
         }
         
         public void onFinish(NARGraph g) {
+            if (includeSyntax) {
+                for (final Term a : terms) {
+                    if (a instanceof CompoundTerm) {
+                        CompoundTerm c = (CompoundTerm)a;
+                        
+                        g.addVertex(c.operator());
+                        g.addEdge(c.operator(), c, new TermType());
+                        
+                        for (Term b : c.getComponents())
+                            g.addEdge(c, b, new TermContent());
+                        
+                    }
+                  }            
+
+            }
+                        
             if (includeTermContent) {
                 for (final Term a : terms) {
 
@@ -189,7 +220,7 @@ public class NARGraph extends DirectedMultigraph {
                           if (a == b) continue;
 
                           if (a.containTerm(b)) {
-                              g.addEdge(a, b, NAREdge.TermContent);
+                              g.addEdge(a, b, new TermContent());
                           }
                       }
                   }            
@@ -199,17 +230,17 @@ public class NARGraph extends DirectedMultigraph {
             if (includeDerivations && includeBeliefs) {
                 for (final Entry<Sentence,Term> s : sentenceTerms.entrySet()) {
                     
-                    final List<Term> deriv = s.getKey().getStamp().getChain();
-                    final Term elem1 = s.getValue();
+                    final List<Term> chain = s.getKey().getStamp().getChain();
+                    final Term derived = s.getValue();
 
                     for (final Entry<Sentence,Term> t : sentenceTerms.entrySet()) {
                         if (s == t) continue;
 
-                        final Sentence ts = t.getKey();
-                        final Term elem2 = t.getValue();
+                        final Sentence deriverSentence = t.getKey();
+                        final Term deriver = t.getValue();
 
-                        if (deriv.contains(ts.getContent())) {
-                            g.addEdge(elem1, elem2, NAREdge.TermDerivation); 
+                        if (chain.contains(deriverSentence.getContent())) {
+                            g.addEdge(deriver, derived, new TermDerivation());
                         }
 
                     }

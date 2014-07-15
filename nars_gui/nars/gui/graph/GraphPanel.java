@@ -1,9 +1,9 @@
 package nars.gui.graph;
 
-import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.layout.mxGraphLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import java.awt.BorderLayout;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nars.core.NAR;
@@ -27,10 +27,11 @@ public class GraphPanel extends JPanel {
 
         
         NARGraph g = new NARGraph();
-        g.add(n, IncludeEverything, new NARGraph.DefaultGraphizer(true,true,true,true));        
+        g.add(n, IncludeEverything, new NARGraph.DefaultGraphizer(false,false,false,true,true));        
 
         // create a visualization using JGraph, via an adapter
         jgxAdapter = new JGraphXAdapter(g);
+        
 
         mxGraphComponent mxc = new mxGraphComponent(jgxAdapter) {
             
@@ -45,32 +46,22 @@ public class GraphPanel extends JPanel {
         
         add(new JScrollPane(mxc), BorderLayout.CENTER);
 
+
         
-        String v1 = "v1";
-        String v2 = "v2";
-        String v3 = "v3";
-        String v4 = "v4";
-
-        // add some sample data (graph manipulated via JGraphX)
-        g.addVertex(v1);
-        g.addVertex(v2);
-        g.addVertex(v3);
-        g.addVertex(v4);
-
-        g.addEdge(v1, v2);
-        g.addEdge(v2, v3);
-        g.addEdge(v3, v1);
-        g.addEdge(v4, v3);
-
-        // positioning via jgraphx layouts
-        mxGraphLayout layout = 
+        /*
+        mxOrganicLayout layout = 
                 //new mxCompactTreeLayout(jgxAdapter);
-                new mxFastOrganicLayout(jgxAdapter);
-                //new mxCircleLayout(jgxAdapter);
+                new mxOrganicLayout(jgxAdapter);
+                //new mxCircleLayout(jgxAdapter);        
+        layout.setEdgeLengthCostFactor(0.001);*/
         
+        mxCompactTreeLayout layout = 
+                new mxCompactTreeLayout(jgxAdapter);
         
+        layout.setLevelDistance(40);
+        layout.setNodeDistance(50);
         layout.execute(jgxAdapter.getDefaultParent());
-
+        
         
         jgxAdapter.setConnectableEdges(false);
         jgxAdapter.setCellsDisconnectable(false);
@@ -83,18 +74,21 @@ public class GraphPanel extends JPanel {
         
         new TextInput(n, "<a --> b>.");
         new TextInput(n, "<b --> c>.");
-        new TextInput(n, "<a --> c>?");
+        new TextInput(n, "<d <-> c>. %0.75;0.90%");
+        new TextInput(n, "<a --> c>?");                
         
+        n.run(12);
         
-        n.run(6);
+        new TextInput(n, "<a --> d>?");
+
+        n.run(12);
         
         Window w = new Window("GraphPanel", new GraphPanel(n)) {
 
-            @Override
-            protected void close() {
-            }
+            @Override           protected void close() {            }
             
         };
+        w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         w.setSize(1200,900);
         w.setVisible(true);
     }
