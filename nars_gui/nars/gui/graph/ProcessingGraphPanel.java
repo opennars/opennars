@@ -1,6 +1,5 @@
 package nars.gui.graph;
 
-import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxGeometry;
 import java.awt.BorderLayout;
@@ -16,6 +15,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import nars.core.NAR;
+import nars.entity.Sentence;
 import nars.graph.NARGraph;
 import static nars.graph.NARGraph.IncludeEverything;
 import nars.gui.NSlider;
@@ -42,13 +42,13 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
     Hnav hnav = new Hnav();
 //Object
     float selection_distance = 10;
-    public float maxNodeSize = 50f;
+    public float maxNodeSize = 200f;
+    float edgeDistance = 100;
 
     Hsim hsim = new Hsim();
 
     Hamlib hamlib = new Hamlib();
 
-    Obj lastclicked = null;
 
     public Button getBack;
     public Button conceptsView;
@@ -68,7 +68,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
     boolean autofetch = true;
     private int MAX_UNSELECTED_LABEL_LENGTH = 32;
     private boolean updateNext;
-    float nodeSize = 10;
+    float nodeSize = 90;
     
     NARGraph graph;
     JGraphXAdapter layout;
@@ -102,13 +102,6 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         hamlib.Update(128, 138, 128);
     }
 
-    void hsim_ElemClicked(Obj i) {
-        lastclicked = i;
-    }
-
-    void hsim_ElemDragged(Obj i) {
-    }
-
     void hrend_DrawBegin() {
     }
 
@@ -117,15 +110,41 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         //text("Hamlib simulation system demonstration", 0, -5);
         //stroke(255, 255, 255);
         //noStroke();
-        if (lastclicked != null) {
-            fill(255, 0, 0);
-            ellipse(lastclicked.x, lastclicked.y, 10, 10);
-        }
+
     }
 
 
     @Override
     public void setup() {  
+        
+        
+        /*
+        mxCompactTreeLayout layout2 = 
+                new mxCompactTreeLayout(jgxAdapter);                
+        layout2.setUseBoundingBox(false);
+        layout2.setResizeParent(true);
+        layout2.setLevelDistance(30);
+        layout2.setNodeDistance(50);
+        layout2.execute(jgxAdapter.getDefaultParent());
+        */
+        
+        
+        mxFastOrganicLayout l = 
+                //new mxCompactTreeLayout(jgxAdapter);
+                new mxFastOrganicLayout(layout);
+                //new mxCircleLayout(jgxAdapter);        
+        l.setForceConstant(edgeDistance*10f);
+        l.execute(layout.getDefaultParent());
+        
+        
+
+        /*
+        mxOrganicLayout layout = 
+                //new mxCompactTreeLayout(jgxAdapter);
+                new mxOrganicLayout(jgxAdapter);
+                //new mxCircleLayout(jgxAdapter);        
+        layout.setEdgeLengthCostFactor(0.001);*/
+        
         try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
@@ -134,9 +153,6 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         
     }
 
-    public void hsim_Draw(Obj oi) {
-        text(oi.name.toString(), oi.x, oi.y);
-    }
 
     
     void drawArrowAngle(float cx, float cy, float len, float angle){
@@ -201,19 +217,44 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             if (b == null) continue;
             
             int rgb = getColor(vertex.getClass().getSimpleName());
-            fill(rgb, 130f);
+            float vertexAlpha = getVertexAlpha(vertex);
+            fill(rgb, vertexAlpha*255/2);
             
             float x = (float)b.getCenterX();
             float y = (float)b.getCenterY();
             double w = b.getWidth();
             double h = b.getHeight();
-            ellipse(x, y, 90, 90);            
             
-            fill(255,255,255);            
+            float size = getVertexSize(vertex);
+            ellipse(x, y, size, size);            
+            
+            fill(255,255,255);        
+            textSize(size/4.0f);
             text(vertex.toString(), x, y);
         }
                     
     }
+
+    
+    public float getVertexSize(Object o) {
+        if (o instanceof Sentence) {
+            Sentence s = (Sentence)o;
+            return (float)(nodeSize * (0.25 + 0.75 * s.getTruth().getConfidence()));
+        }
+        else if (o instanceof Term) {
+            Term t = (Term)o;
+            return (float)(Math.log(1+1 + t.getComplexity()) * nodeSize);
+        }
+        return nodeSize;
+    }
+    
+    public float getVertexAlpha(Object o) {
+        if (o instanceof Sentence) {
+            Sentence s = (Sentence)o;
+            return (float)((0.25 + 0.75 * s.getTruth().getConfidence()));
+        }        
+        return 1.0f;
+    }    
     
     private static final float linkWeight = 3.0f;
 
@@ -343,42 +384,6 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         }
     }
 
-    public class Obj {
-
-        public float x;
-        public float y;
-        public final int type;
-        public final Term name;
-        private final long creationTime;
-
-        public Obj(int index, int level, Term Name, int Mode) {
-            this(index, level, Name, Mode, -1);
-        }
-
-        private int rowHeight = (int)(maxNodeSize);
-        private int colWidth = (int)(maxNodeSize);
-        
-        public Obj(int index, int level, Term term, int type, long creationTime) {
-            
-            if (mode == 1) {
-                this.y = -200 - (index * rowHeight);
-                this.x = 2600 - (level * colWidth);
-            }
-            else if (mode == 0) {
-                float LEVELRAD = maxNodeSize;
-
-                double radius = ((mem.concepts.levels - level)+1);
-                float angle = index; //TEMPORARY
-                this.x = (float)(Math.cos(angle/3.0) * radius) * LEVELRAD;
-                this.y = (float)(Math.sin(angle/3.0) * radius) * LEVELRAD;
-            }
-            
-            this.name = term;
-            this.type = type;
-            this.creationTime = creationTime;
-        }
-    }
-    
 ////Object management - dragging etc.
 
     class Hsim {
@@ -405,32 +410,31 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
 
         void mouseReleased() {
             dragged = false;
-            selected = null;
+            //selected = null;
         }
-        Obj selected = null;
 
         void dragElems() {
-            if (dragged && selected != null) {
-                selected.x = hnav.MouseToWorldCoordX(mouseX);
-                selected.y = hnav.MouseToWorldCoordY(mouseY);
-                hsim_ElemDragged(selected);
-            }
+//            if (dragged && selected != null) {
+//                selected.x = hnav.MouseToWorldCoordX(mouseX);
+//                selected.y = hnav.MouseToWorldCoordY(mouseY);
+//                hsim_ElemDragged(selected);
+//            }
         }
 
         void checkSelect() {
             double selection_distanceSq = selection_distance*selection_distance;
-            if (selected == null) {
-                for (int i = 0; i < obj.size(); i++) {
-                    Obj oi = (Obj) obj.get(i);
-                    float dx = oi.x - hnav.MouseToWorldCoordX(mouseX);
-                    float dy = oi.y - hnav.MouseToWorldCoordY(mouseY);
-                    float distanceSq = (dx * dx + dy * dy);
-                    if (distanceSq < (selection_distanceSq)) {
-                        selected = oi;
-                        hsim_ElemClicked(oi);
-                        return;
-                    }
-                }
+            /*if (selected == null)*/ {
+//                for (int i = 0; i < obj.size(); i++) {
+//                    Obj oi = (Obj) obj.get(i);
+//                    float dx = oi.x - hnav.MouseToWorldCoordX(mouseX);
+//                    float dy = oi.y - hnav.MouseToWorldCoordY(mouseY);
+//                    float distanceSq = (dx * dx + dy * dy);
+//                    if (distanceSq < (selection_distanceSq)) {
+//                        selected = oi;
+//                        hsim_ElemClicked(oi);
+//                        return;
+//                    }
+//                }
             }
         }
     }
@@ -493,7 +497,7 @@ public class ProcessingGraphPanel extends JFrame {
     applet app = null;
     static boolean had = false; //init already
 
-    public ProcessingGraphPanel(NAR n) {
+    public ProcessingGraphPanel(NARGraph g) {
         super("NARS Graph");
         if (had)
             return;                     
@@ -501,38 +505,13 @@ public class ProcessingGraphPanel extends JFrame {
         
         
         
-        NARGraph g = new NARGraph();
-        g.add(n, IncludeEverything, new NARGraph.DefaultGraphizer(true,true,true,true,true));        
 
         // create a visualization using JGraph, via an adapter
         JGraphXAdapter jgxAdapter = new JGraphXAdapter(g) {           
             
         };
 
-        
-        mxCompactTreeLayout layout2 = 
-                new mxCompactTreeLayout(jgxAdapter);                
-        layout2.setUseBoundingBox(false);
-        layout2.setResizeParent(true);
-        layout2.setLevelDistance(30);
-        layout2.setNodeDistance(50);
-        layout2.execute(jgxAdapter.getDefaultParent());
-        
-        mxFastOrganicLayout layout = 
-                //new mxCompactTreeLayout(jgxAdapter);
-                new mxFastOrganicLayout(jgxAdapter);
-                //new mxCircleLayout(jgxAdapter);        
-        layout.setForceConstant(550);
-        layout.execute(jgxAdapter.getDefaultParent());
-        
-        
 
-        /*
-        mxOrganicLayout layout = 
-                //new mxCompactTreeLayout(jgxAdapter);
-                new mxOrganicLayout(jgxAdapter);
-                //new mxCircleLayout(jgxAdapter);        
-        layout.setEdgeLengthCostFactor(0.001);*/
         
         
         
@@ -585,7 +564,7 @@ public class ProcessingGraphPanel extends JFrame {
 
         
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         NAR n = new NAR();
         
         /*
@@ -601,9 +580,18 @@ public class ProcessingGraphPanel extends JFrame {
         new TextInput(n, "<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2}"); 
         new TextInput(n, "<(*,(*,(*,0))) --> num>?  {0 : 3}");
        
-        n.run(50);
+        n.run(500);
         
-
-        new ProcessingGraphPanel(n);
+        NARGraph g = new NARGraph();
+        g.add(n, IncludeEverything, 
+//                new NARGraph.DefaultGraphizer(true,true,true,true,true)
+//                new NARGraph.DefaultGraphizer(false,false,false,false,true)
+                new NARGraph.DefaultGraphizer(true,true,false,false,false)
+        );        
+        //g.toGraphML("/tmp/nar.graphml");
+        
+        System.out.println("edges: " + g.edgeSet().size());
+        
+        new ProcessingGraphPanel(g);
     }
 }

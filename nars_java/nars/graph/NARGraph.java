@@ -1,11 +1,15 @@
 package nars.graph;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.xml.transform.TransformerConfigurationException;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -13,8 +17,15 @@ import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.ConceptBag;
+import org.jgrapht.ext.GmlExporter;
+import org.jgrapht.ext.GraphMLExporter;
+import org.jgrapht.ext.IntegerEdgeNameProvider;
+import org.jgrapht.ext.IntegerNameProvider;
+import org.jgrapht.ext.StringEdgeNameProvider;
+import org.jgrapht.ext.StringNameProvider;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
+import org.xml.sax.SAXException;
 
 /**
  * Stores the contents of some, all, or of multiple NAR memory snapshots.
@@ -79,20 +90,28 @@ public class NARGraph extends DirectedMultigraph {
          */
         void onFinish(NARGraph g);
     }
-
-    public static class TermBelief extends DefaultEdge  {
-        @Override public String toString() { return "belief"; }        
+    
+    public static class NAREdge extends DefaultEdge {
+        
     }
-    public static class TermQuestion extends DefaultEdge  {
+            
+
+    public static class TermBelief extends NAREdge  {
+        @Override public String toString() { return "belief"; }        
+        
+        
+        
+    }
+    public static class TermQuestion extends NAREdge  {
         @Override public String toString() { return "question"; }        
     }
-    public static class TermDerivation extends DefaultEdge  {
+    public static class TermDerivation extends NAREdge  {
         @Override public String toString() { return "derives"; }
     }
-    public static class TermContent extends DefaultEdge  {
+    public static class TermContent extends NAREdge  {
         @Override public String toString() { return "has"; }        
     }
-    public static class TermType extends DefaultEdge  {
+    public static class TermType extends NAREdge  {
         @Override public String toString() { return "type"; }        
     }
         
@@ -127,6 +146,25 @@ public class NARGraph extends DirectedMultigraph {
         graphize.onFinish(this);
 
     }
+
+    public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e) {
+        return addEdge(sourceVertex,targetVertex,e,false);
+    }
+
+    public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e, boolean allowMultiple) {
+        if (!allowMultiple) {
+            Set existing = getAllEdges(sourceVertex, targetVertex);        
+            for (Object o : existing) {
+                if (o.getClass() == e.getClass()) {
+                    return false;
+                }
+            }
+        }
+        
+        return super.addEdge(sourceVertex, targetVertex, e);
+    }
+    
+    
 
     public static class DefaultGraphizer implements Graphize {
         private final boolean includeBeliefs;
@@ -253,4 +291,24 @@ public class NARGraph extends DirectedMultigraph {
         }
         
     }
+    
+    public void toGraphML(Writer writer) throws SAXException, TransformerConfigurationException {
+        GraphMLExporter gme = new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
+        gme.export(writer, this);
+    }
+    
+    public void toGraphML(String outputFile) throws SAXException, TransformerConfigurationException, IOException {
+        toGraphML(new FileWriter(outputFile, false));
+    }
+
+    public void toGML(Writer writer)  {
+        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
+        gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
+        gme.export(writer, this);
+    }
+    
+    public void toGML(String outputFile) throws IOException  {
+        toGML(new FileWriter(outputFile, false));
+    }    
+    
 }
