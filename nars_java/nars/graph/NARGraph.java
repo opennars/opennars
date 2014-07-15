@@ -205,8 +205,11 @@ public class NARGraph extends DirectedMultigraph {
                         g.addVertex(c.operator());
                         g.addEdge(c.operator(), c, new TermType());
                         
-                        for (Term b : c.getComponents())
+                        for (Term b : c.getComponents()) {
+                            if (!g.containsVertex(b))
+                                g.addVertex(b);
                             g.addEdge(c, b, new TermContent());
+                        }
                         
                     }
                   }            
@@ -240,7 +243,8 @@ public class NARGraph extends DirectedMultigraph {
                         final Term deriver = t.getValue();
 
                         if (chain.contains(deriverSentence.getContent())) {
-                            g.addEdge(deriver, derived, new TermDerivation());
+                            if (derived!=deriver) //avoid loops
+                                g.addEdge(deriver, derived, new TermDerivation());
                         }
 
                     }
