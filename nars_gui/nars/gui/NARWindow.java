@@ -97,10 +97,7 @@ public class NARWindow extends Window implements ActionListener, Runnable {
      */
     private boolean savingExp = false;
 
-    /**
-     * Input experience window
-     */
-    public InputPanel inputWindow;
+
     /**
      * JWindow to accept a Term to be looked into
      */
@@ -151,7 +148,7 @@ public class NARWindow extends Window implements ActionListener, Runnable {
         m.addActionListener(this);
         menuBar.add(m);
 
-        m = new JMenu("View");
+        m = new JMenu("Window");
         {
             JMenuItem mv = new JMenuItem("Memory View");
             mv.addActionListener(new ActionListener() {
@@ -179,7 +176,6 @@ public class NARWindow extends Window implements ActionListener, Runnable {
         addJMenuItem(m, "Buffered Tasks");
         addJMenuItem(m, "Concept Content");
         addJMenuItem(m, "Inference Log");
-        addJMenuItem(m, "Input Window");
         m.addActionListener(this);
         menuBar.add(m);
 

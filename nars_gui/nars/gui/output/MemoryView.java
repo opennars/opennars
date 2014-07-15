@@ -1,24 +1,25 @@
 package nars.gui.output;
 
-import java.util.List;
-import java.util.ArrayList;
-import nars.language.*;
-import processing.core.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.WeakHashMap;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import nars.core.NAR;
-import nars.storage.Memory;
-import nars.storage.ConceptBag;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.gui.NSlider;
+import nars.language.*;
+import nars.storage.ConceptBag;
+import nars.storage.Memory;
+import processing.core.*;
 
 
 class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
@@ -50,6 +51,8 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
     public int mode = 0;
     
     boolean showBeliefs = false;
+    
+    float nodeSpeed = 0.1f;
     
     float sx = 800;
     float sy = 800;
@@ -142,6 +145,18 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         text(oi.name.toString(), oi.x, oi.y);
     }
 
+    WeakHashMap<Obj,float[]> vertexPoints = new WeakHashMap();
+    
+    //returns the current vertex position (not the target)
+    public float[] vertexPosition(Obj e) {
+        float[] p = vertexPoints.get(e);
+        if (p == null) {
+            p = new float[2];
+            vertexPoints.put(e, p);
+        }
+        return p; 
+    }
+    
     public void drawit() {
         long currentTime = mem.getTime();
         
@@ -151,6 +166,14 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         
         stroke(13, 13, 4);
         strokeWeight(linkWeight);
+
+        
+        for (Obj elem : V) {
+            float[] p = vertexPosition(elem);
+            p[0] = ( p[0] * (1.0f - nodeSpeed) + elem.x * (nodeSpeed) );
+            p[1] = ( p[1] * (1.0f - nodeSpeed) + elem.y * (nodeSpeed) );
+        }
+        
         
         final float sizzfloat = (float) E2.size();
         
@@ -159,26 +182,28 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
 
             final link lin = E2.get(i);
             final Obj elem1 = V.get(lin.from);
+            float[] p1 = vertexPosition(elem1);
             final Obj elem2 = V.get(lin.to);
+            float[] p2 = vertexPosition(elem1);
             
             fill(225, 225, 225, 50); //transparent
 
             float mul = 0f;
             try {
                 if (mem.currentBelief != null && (elem1.name.containTerm(mem.currentBelief.getContent()) || mem.currentBelief.getContent().containTerm(elem1.name))) {
-                    ellipse(elem2.x, elem2.y, 100, 100);
+                    ellipse(p2[0], p2[1], 100, 100);
                     mul = 1.0f;
                 }
                 if (mem.currentBelief != null && (elem1.name.equals(mem.currentBelief.getContent()) || mem.currentBelief.getContent().equals(elem1.name))) {
-                    ellipse(elem2.x, elem2.y, 200, 200);
+                    ellipse(p2[0], p2[1], 200, 200);
                     mul = 1.0f;
                 }
                 if (mem.currentTask != null && (elem2.name.containTerm(mem.currentTask.getContent()) || mem.currentTask.getContent().containTerm(elem2.name))) {
-                    ellipse(elem2.x, elem2.y, 100, 100);
+                    ellipse(p2[0], p2[1], 100, 100);
                     mul = 1.0f;
                 }
                 if (mem.currentTask != null && (elem2.name.equals(mem.currentTask.getContent()) || mem.currentTask.getContent().equals(elem2.name))) {
-                    ellipse(elem2.x, elem2.y, 200, 200);
+                    ellipse(p2[0], p2[1], 200, 200);
                     mul = 1.0f;
                 }
             } catch (Exception ex) {
@@ -188,7 +213,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             stroke(200, 200, 200, lin.alpha);
 
             //ellipse(elem1.x,elem1.y,10,10);
-            line(elem1.x, elem1.y, elem2.x, elem2.y);
+            line(p1[0], p1[1], p2[0], p2[1]);
         }
         
         fill(255);
@@ -197,10 +222,13 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         for (int i = 0; i < E.size(); i++) {
             link lin = E.get(i);
             final Obj elem1 = V.get(lin.from);
+            float[] p1 = vertexPosition(elem1);            
             final Obj elem2 = V.get(lin.to);
+            float[] p2 = vertexPosition(elem2);
+
             //ellipse(elem1.x,elem1.y,10,10);
             stroke(255, 255, 127, 127 + lin.alpha/2);
-            line(elem1.x, elem1.y, elem2.x, elem2.y);
+            line(p1[0], p1[1], p2[0], p2[1]);
         }
         
         stroke(127, 255, 255, 127);
@@ -208,15 +236,17 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         for (int i = 0; i < Sent_s.size(); i++) {
             final List<Term> deriv = Sent_s.get(i).getStamp().getChain();
             final Obj elem1 = V.get(Sent_i.get(i));
+            float[] p1 = vertexPosition(elem1);            
             
             for (int j = 0; j < Sent_s.size(); j++) {
                 
                 final Obj elem2 = V.get(Sent_i.get(j));
+                float[] p2 = vertexPosition(elem2);
                 
                 for (int k = 0; k < deriv.size(); k++) {
                     if (i != j && deriv.get(k) == Sent_s.get(j).getContent()) {
                         
-                        line(elem1.x, elem1.y, elem2.x, elem2.y);
+                        line(p1[0], p1[1], p2[0], p2[1]);
                         break;
                     } 
                }
@@ -228,6 +258,8 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
         
         for (int i = 0; i < V.size(); i++) {
             Obj elem = V.get(i);
+            float[] p = vertexPosition(elem);            
+            
             String suffix = ".";
             
             float rad = elem.name.getComplexity() * nodeSize;
@@ -245,9 +277,9 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             }
             
             if (suffix.equals("?")) {
-                ellipse(elem.x, elem.y, rad, rad);
+                ellipse(p[0], p[1], rad, rad);
             } else {
-                ellipse(elem.x, elem.y, rad, rad);
+                ellipse(p[0], p[1], rad, rad);
             }
             
             fill(255, 255, 255);
@@ -258,7 +290,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
                     label = label.substring(0, MAX_UNSELECTED_LABEL_LENGTH-3) + "...";
                 
             }
-            text(label, elem.x, elem.y);
+            text(label, p[0], p[1]);
             
         }
     }
@@ -485,6 +517,22 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
             this(index, level, Name, Mode, -1);
         }
 
+        @Override
+        public int hashCode() {
+            return name.hashCode() + type;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Obj) {
+                Obj o = (Obj)obj;
+                return (o.type == type) && (o.name.equals(name));
+            }
+            return false;
+        }
+        
+
+        
         private int rowHeight = (int)(maxNodeSize);
         private int colWidth = (int)(maxNodeSize);
         

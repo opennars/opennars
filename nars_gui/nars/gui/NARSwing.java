@@ -28,6 +28,7 @@ import nars.core.CommandLineArguments;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
 import nars.gui.output.OutputLogPanel;
+import nars.gui.output.SentenceTablePanel;
 import nars.io.TextInput;
 
 /**
@@ -71,6 +72,10 @@ public class NARSwing extends NAR  {
         inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);
+        
+        Window sentenceWindow = new Window("Sentence Table", new SentenceTablePanel(this));
+        sentenceWindow.setSize(400,400);
+        sentenceWindow.setVisible(true);
                 
         
     }

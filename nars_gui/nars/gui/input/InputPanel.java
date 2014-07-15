@@ -111,7 +111,7 @@ public class InputPanel extends JPanel implements ActionListener {
         gridbag.setConstraints(clearButton, c);
         textInput.add(clearButton);
         
-        jt.addTab("Text", textInput);
+        jt.addTab("Edit", textInput);
         
 
         
