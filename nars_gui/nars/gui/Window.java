@@ -90,6 +90,11 @@ public abstract class Window extends JFrame {
         });
     }
     
+    public Window(String title, JComponent component) {
+        this(title);
+        getContentPane().add(component);
+    }
+    
     abstract protected void close();
 
 }
