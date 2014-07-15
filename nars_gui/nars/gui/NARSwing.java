@@ -106,7 +106,7 @@ public class NARSwing extends NAR  {
     void evaluate(String input) {
         new TextInput(this, input);
         tick();
-        run(0, false);
+        run(0);
         
     }
 

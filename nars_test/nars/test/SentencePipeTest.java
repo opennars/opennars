@@ -61,12 +61,10 @@ public class SentencePipeTest {
         assert(target.getMemory().concepts.size() == 0);
         
         source.run(2);
-        source.finish();
         
         assert(sentencesProcessed > 0);
         
         target.run(2);
-        target.finish();
         
         assert(target.getMemory().concepts.size() > 0);
         

@@ -17,7 +17,7 @@ In nars_java/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is
 
 Requirements
 ------------
- * Java 8
+ * Java 7+
  * ant
 
 
