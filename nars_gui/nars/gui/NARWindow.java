@@ -596,7 +596,7 @@ public class NARWindow extends Window implements ActionListener, Output, Runnabl
             @Override
             public void onChange(double v) {
                 int level = 100 - (int) v;
-                nar.setSilenceValue(level);
+                nar.param.setSilenceLevel(level);
             }
 
         };

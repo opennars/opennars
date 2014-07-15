@@ -21,10 +21,24 @@
 package nars.core;
 
 /**
- * Collected system parameters. To be modified before compiling.
+ * NAR operating parameters.
+ * All static values will be removed so that this is an entirely dynamic class.
  */
 public class Parameters {
+    
+    /** Silent threshold for task reporting, in [0, 100]. */
+    private int silenceLevel = 0;
+    public int getSilenceLevel() { return silenceLevel;    }
+    public void setSilenceLevel(int silenceLevel) { this.silenceLevel = silenceLevel;     }
 
+    
+    
+    
+    
+    //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //
+    //
+    
     /* ---------- initial values of run-time adjustable parameters ---------- */
     /** Concept decay rate in ConceptBag, in [1, 99]. */
     public static final int CONCEPT_FORGETTING_CYCLE = 10;
@@ -32,8 +46,8 @@ public class Parameters {
     public static final int TASK_LINK_FORGETTING_CYCLE = 20;
     /** TermLink decay rate in TermLinkBag, in [1, 99]. */
     public static final int TERM_LINK_FORGETTING_CYCLE = 50;
-    /** Silent threshold for task reporting, in [0, 100]. */
-    public static final int SILENT_LEVEL = 0;
+    
+    
 
     /* ---------- time management ---------- */
     /** Task decay rate in TaskBuffer, in [1, 99]. */

@@ -2,7 +2,6 @@ package nars.core;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.HashMap;
 
 import nars.entity.Stamp;
@@ -66,14 +65,18 @@ public class NAR implements Runnable, Output {
      * System clock - number of cycles since last output
      */
     private long timer;
-    private AtomicInteger silenceValue = new AtomicInteger(Parameters.SILENT_LEVEL);
     private boolean paused;
 
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
+    public final Parameters param;
 
-    
     public NAR() {
+        this(new DefaultParameters());
+    }
+    
+    public NAR(Parameters p) {
+        param = p;
         memory = new Memory(this);
         
         //needs to be concurrent in case NARS makes changes to the channels while running
@@ -85,13 +88,7 @@ public class NAR implements Runnable, Output {
     /**
      * Reset the system with an empty memory and reset clock. Called locally and
      * from {@link NARWindow}.
-     */
-
-    public void setSilenceValue(int s) {
-        this.silenceValue.set(s);
-    }
-    
-    
+     */     
     public void reset() {
             
         walkingSteps = 0;
@@ -332,12 +329,6 @@ public class NAR implements Runnable, Output {
         return memory.toString();
     }
 
-    /**
-     * Report Silence Level
-     */
-    public AtomicInteger getSilenceValue() {
-        return silenceValue;
-    }
 
     /**
      * To get the timer value and then to

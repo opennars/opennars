@@ -271,7 +271,7 @@ public class TextInput extends Symbols implements Input {
                     String[] p = input.split("=");
                     if (p.length == 2) {
                         int silenceLevel = Integer.parseInt(p[1]);
-                        nar.setSilenceValue(silenceLevel);
+                        nar.param.setSilenceLevel(silenceLevel);
                         nar.output(OUT.class, "Silence level: " + silenceLevel);
                     }
                     
