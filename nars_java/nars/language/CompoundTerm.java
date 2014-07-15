@@ -97,10 +97,11 @@ public abstract class CompoundTerm extends Term {
     protected CompoundTerm(final ArrayList<Term> components) {
         this.components = components;
         calcComplexity();
-        name = makeName();
+        setName(makeName());
         isConstant = !Variable.containVar(name);
     }
 
+    
     /**
      * Constructor called from subclasses constructors to initialize the fields
      *
@@ -108,10 +109,10 @@ public abstract class CompoundTerm extends Term {
      * @param components Component list
      */
     protected CompoundTerm(final String name, final ArrayList<Term> components) {
-        super(name);
-        isConstant = !Variable.containVar(name);
         this.components = components;
         calcComplexity();
+        setName(name);
+        isConstant = !Variable.containVar(name);
     }
 
     /**
@@ -257,22 +258,37 @@ public abstract class CompoundTerm extends Term {
      * @return if the given String is an operator symbol
      * @param s The String to be checked
      */
-    public static boolean isOperator(final String s) {
-        final int length = s.length();
+    public static boolean isOperator(final String op) {       
+        final int length = op.length();
         if (length == 1) {
-            return (s.equals(Symbols.INTERSECTION_EXT_OPERATOR)
-                    || s.equals(Symbols.INTERSECTION_INT_OPERATOR)
-                    || s.equals(Symbols.DIFFERENCE_EXT_OPERATOR)
-                    || s.equals(Symbols.DIFFERENCE_INT_OPERATOR)
-                    || s.equals(Symbols.PRODUCT_OPERATOR)
-                    || s.equals(Symbols.IMAGE_EXT_OPERATOR)
-                    || s.equals(Symbols.IMAGE_INT_OPERATOR));
+            final char c = op.charAt(0);
+            switch (c) {
+                case Symbols.SET_EXT_OPENER: 
+                case Symbols.SET_INT_OPENER: 
+                case Symbols.INTERSECTION_EXT_OPERATORc: 
+                case Symbols.INTERSECTION_INT_OPERATORc:
+                case Symbols.DIFFERENCE_EXT_OPERATORc:
+                case Symbols.DIFFERENCE_INT_OPERATORc:
+                case Symbols.PRODUCT_OPERATORc:
+                case Symbols.IMAGE_EXT_OPERATORc:
+                case Symbols.IMAGE_INT_OPERATORc:
+                    return true;
+            }            
         }
         else if (length == 2) {
-            return (s.equals(Symbols.NEGATION_OPERATOR)
-                    || s.equals(Symbols.DISJUNCTION_OPERATOR)
-                    || s.equals(Symbols.CONJUNCTION_OPERATOR));
-        }
+            //since these symbols are the same character repeated, we only need to compare the first character
+            final char c1 = op.charAt(0);
+            final char c2 = op.charAt(1);
+            if (c1 == c2) {
+                switch (c1) {
+                    case Symbols.NEGATION_OPERATORc:
+                    case Symbols.DISJUNCTION_OPERATORc:
+                    case Symbols.CONJUNCTION_OPERATORc:
+                        return true;                        
+                }            
+            }
+        }        
+        
         return false;
     }
 
@@ -309,9 +325,8 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeCompoundName(final String op, final ArrayList<Term> arg) {
-        final StringBuilder name = new StringBuilder(16  /* estimate */);
-        name.append(Symbols.COMPOUND_TERM_OPENER);
-        name.append(op);
+        final StringBuilder name = new StringBuilder(16  /* estimate */)
+            .append(Symbols.COMPOUND_TERM_OPENER).append(op);
         for (final Term t : arg) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
@@ -332,9 +347,8 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeSetName(final char opener, final ArrayList<Term> arg, final char closer) {
-        StringBuilder name = new StringBuilder(16 /* estimate */);
-        name.append(opener);
-        name.append(arg.get(0).getName());
+        StringBuilder name = new StringBuilder(16 /* estimate */)
+            .append(opener).append(arg.get(0).getName());
         for (int i = 1; i < arg.size(); i++) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             name.append(arg.get(i).getName());
@@ -352,11 +366,12 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeImageName(String op, ArrayList<Term> arg, int relationIndex) {
-        StringBuilder name = new StringBuilder(16 /* estimate */);
-        name.append(Symbols.COMPOUND_TERM_OPENER);
-        name.append(op);
-        name.append(Symbols.ARGUMENT_SEPARATOR);
-        name.append(arg.get(relationIndex).getName());
+        StringBuilder name = new StringBuilder(16 /* estimate */)
+        .append(Symbols.COMPOUND_TERM_OPENER)
+        .append(op)
+        .append(Symbols.ARGUMENT_SEPARATOR)
+        .append(arg.get(relationIndex).getName());
+        
         for (int i = 0; i < arg.size(); i++) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             if (i == relationIndex) {
@@ -461,6 +476,7 @@ public abstract class CompoundTerm extends Term {
         if (original == null) {
             return null;
         }
+        
         final ArrayList<Term> arr = new ArrayList<>(original.size());
         for (final Term original1 : original) {
             arr.add((Term) ((Term) original1).clone());
@@ -687,10 +703,10 @@ public abstract class CompoundTerm extends Term {
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
      */
-    private void prepareComponentLinks(List<TermLink> componentLinks, short type, CompoundTerm term) {
-        Term t1, t2, t3;                    // components at different levels
+    private void prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm term) {
+        //Term t1, t2, t3 are components at different levels
         for (int i = 0; i < term.size(); i++) {     // first level components
-            t1 = term.componentAt(i);
+           final Term t1 = term.componentAt(i);
             if (t1.isConstant()) {
                 componentLinks.add(new TermLink(t1, type, i));
             }
@@ -700,7 +716,7 @@ public abstract class CompoundTerm extends Term {
 
             } else if (t1 instanceof CompoundTerm) {
                 for (int j = 0; j < ((CompoundTerm) t1).size(); j++) {  // second level components
-                    t2 = ((CompoundTerm) t1).componentAt(j);
+                    final Term t2 = ((CompoundTerm) t1).componentAt(j);
                     if (t2.isConstant()) {
                         if ((t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt)) {
                             if (type == TermLink.COMPOUND_CONDITION) {
@@ -714,7 +730,7 @@ public abstract class CompoundTerm extends Term {
                     }
                     if ((t2 instanceof Product) || (t2 instanceof ImageExt) || (t2 instanceof ImageInt)) {
                         for (int k = 0; k < ((CompoundTerm) t2).size(); k++) {
-                            t3 = ((CompoundTerm) t2).componentAt(k);
+                            final Term t3 = ((CompoundTerm) t2).componentAt(k);
                             if (t3.isConstant()) {                           // third level
                                 if (type == TermLink.COMPOUND_CONDITION) {
                                     componentLinks.add(new TermLink(t3, TermLink.TRANSFORM, 0, i, j, k));
