@@ -28,7 +28,7 @@ import java.awt.event.*;
 /**
  * Specify shared properties of NARS windows
  */
-public abstract class Window extends JFrame {
+public class Window extends JFrame {
     //http://paletton.com/#uid=70u0u0kllllaFw0g0qFqFg0w0aF
     
     /**
@@ -95,6 +95,13 @@ public abstract class Window extends JFrame {
         getContentPane().add(component);
     }
     
-    abstract protected void close();
+    protected void close() {
+        
+    }
+    
+    public void show(int w, int h) {
+        setSize(w, h);
+        setVisible(true);
+    }
 
 }

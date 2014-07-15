@@ -1,4 +1,4 @@
-package nars.gui.graph;
+package nars.gui.output;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxGeometry;
@@ -11,6 +11,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import static javafx.scene.transform.Transform.scale;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,6 +20,10 @@ import nars.entity.Sentence;
 import nars.graph.NARGraph;
 import static nars.graph.NARGraph.IncludeEverything;
 import nars.gui.NSlider;
+import nars.gui.output.applet.Hamlib;
+import nars.gui.output.applet.Hnav;
+import nars.gui.output.applet.Hsim;
+import nars.gui.output.applet.ProcessingJs;
 import nars.io.TextInput;
 import nars.language.Term;
 import nars.storage.Memory;
@@ -30,9 +35,11 @@ import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.UP;
 
 
-class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
-{
 
+class papplet extends PApplet implements ActionListener 
+{
+//(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
+    
 ///////////////HAMLIB
 //processingjs compatibility layer
     int mouseScroll = 0;
@@ -494,7 +501,7 @@ class applet extends PApplet implements ActionListener //(^break,0_0)! //<0_0 --
 
 public class ProcessingGraphPanel extends JFrame {
 
-    applet app = null;
+    papplet app = null;
     static boolean had = false; //init already
 
     public ProcessingGraphPanel(NARGraph g) {
@@ -522,7 +529,7 @@ public class ProcessingGraphPanel extends JFrame {
         
         
 
-        app = new applet();
+        app = new papplet();
         app.graph = g;
         app.layout = jgxAdapter;
         app.init();
