@@ -46,7 +46,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
 import nars.core.NARState;
@@ -191,7 +190,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
 
         JComponent jp = newParameterPanel();
-        jp.setPreferredSize(new Dimension(250, 120));
         add(jp, BorderLayout.CENTER);
 
         init();
@@ -555,7 +553,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         c.weighty = 1.0;
         p.add(Box.createVerticalBox(), c);
 
-        return new JScrollPane(p);
+        return p;
     }
 
     private NSlider newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {
