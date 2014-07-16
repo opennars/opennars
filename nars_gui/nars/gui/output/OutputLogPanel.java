@@ -27,7 +27,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import nars.core.NAR;
 import nars.entity.Sentence;
-import nars.gui.NARWindow;
+import nars.gui.NARControls;
 import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.io.Output;
@@ -173,7 +173,7 @@ public class OutputLogPanel extends NPanel implements Output {
 
             ioText.getStyledDocument().setCharacterAttributes(doc.getLength() - text.length(), text.length(), aset, true);
         } catch (BadLocationException ex) {
-            Logger.getLogger(NARWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }    

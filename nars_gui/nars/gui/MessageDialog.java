@@ -37,8 +37,8 @@ public class MessageDialog extends JDialog implements ActionListener, WindowList
      * @param parent The parent Frame
      * @param message The text to be displayed
      */
-    public MessageDialog(Frame parent, String message) {
-        super(parent, "Message", false);
+    public MessageDialog(String message) {
+        super((JDialog)null, "Message", false);
         setLayout(new BorderLayout(5, 5));
         getContentPane().setBackground(Window.SINGLE_WINDOW_COLOR);
         text = new JTextArea(message);

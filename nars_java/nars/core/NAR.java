@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.HashMap;
 
 import nars.entity.Stamp;
-import nars.gui.NARWindow;
+import nars.gui.NARControls;
 import nars.io.Input;
 import nars.io.Output;
 import nars.storage.Memory;
@@ -87,7 +87,7 @@ public class NAR implements Runnable, Output {
 
     /**
      * Reset the system with an empty memory and reset clock. Called locally and
-     * from {@link NARWindow}.
+     * from {@link NARControls}.
      */     
     public void reset() {
             
