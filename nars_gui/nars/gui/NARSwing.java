@@ -20,9 +20,7 @@
  */
 package nars.gui;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
 import nars.core.CommandLineArguments;
 import nars.core.NAR;
@@ -36,7 +34,7 @@ import nars.io.TextInput;
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
-public class NARSwing extends NAR  {
+public class NARSwing  {
 
     /**
      * The information about the version and date of the project.
@@ -50,30 +48,30 @@ public class NARSwing extends NAR  {
             + "      NARS website:  http://sites.google.com/site/narswang/";
 
 
-    
+    public final NAR nar = new NAR();
 
     public NARSwing() {
         super();
         
-        NARWindow mainWindow = new NARWindow(this, INFO);        
+        NARWindow mainWindow = new NARWindow(nar, INFO);        
         mainWindow.setBounds(10, 10, 270, 600);
         mainWindow.setVisible(true);
         mainWindow.setVisible(true);
         
         
-        OutputLogPanel outputLog = new OutputLogPanel(this);
+        OutputLogPanel outputLog = new OutputLogPanel(nar);
         Window outputWindow = new Window("Output Log", outputLog);        
         outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
         outputWindow.setVisible(true);
         
         
-        InputPanel inputPanel = new InputPanel(this);
+        InputPanel inputPanel = new InputPanel(nar);
         Window inputWindow = new Window("Text Input", inputPanel);
         inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);
         
-        Window sentenceWindow = new Window("Sentence Table", new SentenceTablePanel(this));
+        Window sentenceWindow = new Window("Sentence Table", new SentenceTablePanel(nar));
         sentenceWindow.setSize(400,400);
         sentenceWindow.setVisible(true);
                 
@@ -96,10 +94,10 @@ public class NARSwing extends NAR  {
      * --silence <integer>
      */
     public static void main(String args[]) {
-        NARSwing nars = new NARSwing();
-        nars.init(args);
+        NARSwing swing = new NARSwing();
+        swing.init(args);
         if (args.length > 1)
-            nars.start(0);
+            swing.nar.start(0);
                 
     }
 
@@ -112,31 +110,18 @@ public class NARSwing extends NAR  {
                 && CommandLineArguments.isReallyFile(args[0])) {
 
             try {
-                loadFile(args[0]);
+                new TextInput(nar, new File(args[0]));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
-        CommandLineArguments.decode(args, this);
+        CommandLineArguments.decode(args, nar);
     }
 
 
 
-    public void evaluate(String input) {
-        new TextInput(this, input);
-        tick();
-        run(0);
-        
-    }
+ 
 
-    public void loadFile(String filePath) throws IOException, FileNotFoundException {
-        BufferedReader r = new BufferedReader(new FileReader(filePath));
-        String s;
-
-        while ((s = r.readLine()) != null) {
-            new TextInput(this, s); //TODO use a stream to avoid reallocate experiencereader
-        }
-    }
 
 
 

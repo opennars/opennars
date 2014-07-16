@@ -21,6 +21,8 @@
 package nars.io;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -123,31 +125,24 @@ public class TextInput extends Symbols implements Input {
         this(reasoner, new BufferedReader(new StringReader(input)), additionalParsers);
     }
     
+    public TextInput(NAR reasoner, File input, TextInputParser... additionalParsers) throws FileNotFoundException {
+        this(reasoner, new BufferedReader(new FileReader(input)), additionalParsers);            
+    }
+    
     public TextInput(NAR reasoner, BufferedReader input, TextInputParser... additionalParsers) {
         this(reasoner);
-        setBufferedReader(input);
         
         for (TextInputParser i : additionalParsers) {
             if (i != null)
                 parsers.add(i);
         }
+
+        setBufferedReader(input);
     }
 
 
-    /**
-     * Open an input experience file from given file Path
-     *
-     * @param filePath File to be read as experience
-     */
-    public void includeFile(String filePath) {
-        try {
-            inExp = new BufferedReader(new FileReader(filePath));
-        } catch (IOException ex) {
-            System.out.println("i/o error: " + ex.getMessage());
-        }
-        nar.addInputChannel(this);
-    }
-
+ 
+    
     /**
      * Close an input experience file (close the reader in fact)
      */

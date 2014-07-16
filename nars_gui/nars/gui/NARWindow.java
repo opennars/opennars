@@ -21,7 +21,6 @@
 package nars.gui;
 
 import nars.gui.output.MemoryView;
-import nars.gui.input.InputPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -32,6 +31,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -48,6 +48,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import nars.core.NAR;
 import nars.core.NARState;
 import nars.entity.Concept;
 import nars.entity.Task;
@@ -67,7 +68,7 @@ public class NARWindow extends Window implements ActionListener, Runnable {
     /**
      * Reference to the reasoner
      */
-    private final NARSwing nar;
+    private final NAR nar;
 
     /**
      * Reference to the memory
@@ -124,7 +125,7 @@ public class NARWindow extends Window implements ActionListener, Runnable {
      * @param nar
      * @param title
      */
-    public NARWindow(final NARSwing nar, String title) {
+    public NARWindow(final NAR nar, String title) {
         super(title);
         this.nar = nar;
         memory = nar.getMemory();
@@ -219,7 +220,7 @@ public class NARWindow extends Window implements ActionListener, Runnable {
         String filePath = directoryName + fileName;
 
         try {
-            nar.loadFile(filePath);
+            new TextInput(nar, new File(filePath));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
