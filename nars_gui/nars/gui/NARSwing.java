@@ -23,6 +23,7 @@ package nars.gui;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import nars.core.CommandLineArguments;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
@@ -55,7 +56,7 @@ public class NARSwing  {
         super();
         
         NARControls narControls = new NARControls(nar);        
-        Window mainWindow = new Window(INFO, narControls);
+        Window mainWindow = new Window(INFO, new JScrollPane(narControls));
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setBounds(10, 10, 270, 600);
         mainWindow.setVisible(true);
