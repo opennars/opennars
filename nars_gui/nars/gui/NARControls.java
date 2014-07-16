@@ -1,5 +1,5 @@
 /*
- * NARWindow.java
+ * NARControls.java
  *
  * Copyright (C) 2008  Pei Wang
  *
@@ -61,7 +61,7 @@ import nars.storage.Memory;
 /**
  * Main window of NARSwing GUI
  */
-public class NARWindow extends Window implements ActionListener, Runnable {
+public class NARControls extends JPanel implements ActionListener, Runnable {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -125,18 +125,19 @@ public class NARWindow extends Window implements ActionListener, Runnable {
      * @param nar
      * @param title
      */
-    public NARWindow(final NAR nar, String title) {
-        super(title);
+    public NARControls(final NAR nar) {
+        super(new BorderLayout());
+        
         this.nar = nar;
-        memory = nar.getMemory();
+        memory = nar.getMemory();        
         record = memory.getRecorder();
+        
         experienceWriter = new TextOutput(nar);
         conceptWin = new TermWindow(memory);
 
         record = new InferenceLogger();
         memory.setRecorder(record);
 
-        getContentPane().setBackground(MAIN_WINDOW_COLOR);
         JMenuBar menuBar = new JMenuBar();
 
         JMenu m = new JMenu("Memory");
@@ -186,9 +187,8 @@ public class NARWindow extends Window implements ActionListener, Runnable {
         m.addActionListener(this);
         menuBar.add(m);
 
-        setJMenuBar(menuBar);
+        add(menuBar, BorderLayout.NORTH);
 
-        setLayout(new BorderLayout());
 
         JComponent jp = newParameterPanel();
         jp.setPreferredSize(new Dimension(250, 120));
@@ -303,25 +303,15 @@ public class NARWindow extends Window implements ActionListener, Runnable {
                 record.play();
             } else if (label.equals("Related Information")) {
 //                MessageDialog web = 
-                new MessageDialog(this, NARSwing.WEBSITE);
+                new MessageDialog(NARSwing.WEBSITE);
             } else if (label.equals("About NARS")) {
 //                MessageDialog info = 
-                new MessageDialog(this, NARSwing.INFO);
-            } else {
-//                MessageDialog ua = 
-                new MessageDialog(this, UNAVAILABLE);
-            }
+                new MessageDialog(NARSwing.INFO);
+            } 
         }
     }
 
-    /**
-     * Close the whole system
-     */
-    @Override
-    protected void close() {
-        setVisible(false);
-        System.exit(0);
-    }
+
     
     private NSlider newSpeedSlider() {
         final NSlider s = new NSlider(0, 0, 1.0) {
@@ -470,9 +460,9 @@ public class NARWindow extends Window implements ActionListener, Runnable {
                 ttfBase = Font.createFont(Font.TRUETYPE_FONT, in);
                 ttfReal = ttfBase.deriveFont(Font.BOLD, 24);
             } catch (FontFormatException ex) {
-                Logger.getLogger(NARWindow.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(NARWindow.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
