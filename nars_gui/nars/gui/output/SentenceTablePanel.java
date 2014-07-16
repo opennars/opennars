@@ -13,11 +13,11 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.TruthValue;
 import nars.graph.NARGraph.Filter;
-import nars.gui.NARSwing;
 import nars.gui.NPanel;
 import nars.io.Output;
 import nars.language.Term;
@@ -29,13 +29,13 @@ import nars.language.Term;
 
 
 public class SentenceTablePanel extends NPanel implements Output {
-    private final NARSwing nar;
+    private final NAR nar;
     
     DefaultTableModel data;
     private final JButton graphButton;
     private final JTable t;
 
-    public SentenceTablePanel(NARSwing nar) {
+    public SentenceTablePanel(NAR nar) {
         super();
         this.nar = nar;
         

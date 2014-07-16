@@ -20,9 +20,13 @@ package nars.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -89,8 +93,11 @@ public class NARRun {
      */
     public void init(String[] args) {
         if (args.length > 0) {
-            TextInput fileInput = new TextInput(nar);
-            fileInput.includeFile(args[0]);
+            try {
+                TextInput fileInput = new TextInput(nar, new File(args[0]));
+            } catch (FileNotFoundException ex) {
+                System.err.println("NARRun.init: " + ex);
+            }
         }
         else {
             new TextInput(nar, new BufferedReader(new InputStreamReader(System.in)));

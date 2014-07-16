@@ -39,8 +39,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import nars.core.NAR;
 import nars.gui.FileTreeModel;
-import nars.gui.NARSwing;
 import nars.io.Output.OUT;
 
 import nars.io.TextInput;
@@ -50,7 +50,7 @@ import nars.io.TextInput;
  */
 public class InputPanel extends JPanel implements ActionListener {
 
-    private NARSwing reasoner;
+    private NAR reasoner;
     /**
      * Control buttons
      */
@@ -75,7 +75,7 @@ public class InputPanel extends JPanel implements ActionListener {
      * @param reasoner The reasoner
      * @param title The title of the window
      */
-    public InputPanel(final NARSwing reasoner) {
+    public InputPanel(final NAR reasoner) {
         super(new BorderLayout());
         
         JTabbedPane jt = new JTabbedPane();
@@ -129,7 +129,7 @@ public class InputPanel extends JPanel implements ActionListener {
 
                         if (!f.isDirectory()) {
                             try {
-                                reasoner.loadFile(f.getAbsolutePath());
+                                new TextInput(reasoner, f);
                                 reasoner.output(OUT.class, "Loaded file: " + f.getAbsolutePath());
                             } catch (IOException ex) {
                                 System.err.println(ex);
@@ -161,7 +161,7 @@ public class InputPanel extends JPanel implements ActionListener {
         JButton b = (JButton) e.getSource();
         if (b == okButton) {
             ready = true;
-            reasoner.evaluate(inputText.getText());
+            evaluate(inputText.getText());
             inputText.setText("");
         } else if (b == holdButton) {
             ready = false;
@@ -170,6 +170,12 @@ public class InputPanel extends JPanel implements ActionListener {
         }
     }
 
+    public void evaluate(String input) {
+        new TextInput(reasoner, input);
+        reasoner.tick();
+        reasoner.run(0);       
+    }    
+   
     private void close() {
         setVisible(false);
     }

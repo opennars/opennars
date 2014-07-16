@@ -25,8 +25,8 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import nars.core.NAR;
 import nars.entity.Sentence;
-import nars.gui.NARSwing;
 import nars.gui.NARWindow;
 import nars.gui.NPanel;
 import nars.gui.NSlider;
@@ -42,13 +42,13 @@ public class OutputLogPanel extends NPanel implements Output {
     private final DefaultStyledDocument doc;
     private final JTextPane ioText;
     private final Style mainStyle;
-    private final NARSwing nar;
+    private final NAR nar;
     int maxIOTextSize = (int) 8E6;
     private boolean showErrors = false;
 
     private Collection nextOutput = new ConcurrentLinkedQueue();
 
-    public OutputLogPanel(NARSwing s) {
+    public OutputLogPanel(NAR s) {
         super();
         setLayout(new BorderLayout());
         
