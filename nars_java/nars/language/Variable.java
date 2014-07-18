@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.storage.Memory;
 
 /**
  * A variable term, which does not correspond to a concept
@@ -213,18 +214,19 @@ public class Variable extends Term {
             if (cTerm1.size() != (cTerm2).size()) {
                 return false;
             }
-            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).getRelationIndex() != ((ImageExt) cTerm2).getRelationIndex())) {
+            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).getRelationIndex() != ((ImageExt) cTerm2).getRelationIndex())
+                || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).getRelationIndex() != ((ImageInt) cTerm2).getRelationIndex())) {
                 return false;
             }
-            if ((cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).getRelationIndex() != ((ImageInt) cTerm2).getRelationIndex())) {
-                return false;
+            ArrayList<Term> list = cTerm1.cloneComponents();
+            if (cTerm1.isCommutative()) {
+                Collections.shuffle(list, Memory.randomNumber);
             }
             
-            for (int i = 0; i < cTerm1.size(); i++) {   // assuming matching order, to be refined in the future
-                Term t1 = cTerm1.componentAt(i);
+            for (int i = 0; i < cTerm1.size(); i++) {   // assuming matching order
+                Term t1 = list.get(i);
                 Term t2 = cTerm2.componentAt(i);
-                final boolean haveSub = findSubstitute(type, t1, t2, map1, map2);
-                if (!haveSub) {
+                if (!findSubstitute(type, t1, t2, map1, map2)) {
                     return false;
                 }
             }

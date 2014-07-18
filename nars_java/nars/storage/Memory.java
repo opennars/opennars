@@ -23,6 +23,7 @@ package nars.storage;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import nars.entity.BudgetValue;
@@ -44,7 +45,8 @@ import nars.io.Output.OUT;
 /**
  * The memory of the system.
  */
-public class Memory {
+public class Memory {    
+    public static Random randomNumber = new Random(1);
 
     /**
      * Backward pointer to the reasoner
@@ -132,6 +134,7 @@ public class Memory {
         concepts.clear();
         novelTasks.clear();
         newTasks.clear();
+        randomNumber = new Random(1);
         reasoner.initTimer();
         if (getRecorder().isActive()) {
             getRecorder().append("--reset--");
