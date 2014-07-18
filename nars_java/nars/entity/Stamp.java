@@ -58,6 +58,16 @@ public class Stamp implements Cloneable {
     public final long creationTime;
 
     /**
+     * estimated occurrence time of the event
+     */
+    public final long occurrenceTime;
+
+    /**
+     * default for atemporal events, means "always"
+     */
+    public static long ETERNAL = Integer.MIN_VALUE;
+
+    /**
      * derivation chain containing the used premises and conclusions which made
      * deriving the conclusion c possible *
      */
@@ -68,13 +78,22 @@ public class Stamp implements Cloneable {
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time) {
+    public Stamp(final long time, final String tense) {
         currentSerial++;
         baseLength = 1;
         evidentialBase = new long[baseLength];
         evidentialBase[0] = currentSerial;
         creationTime = time;
-        derivationChain = new ArrayList<Term>();
+        if (tense.length() == 0) {
+            occurrenceTime = ETERNAL;
+        } else if (tense.equals(Symbols.TENSE_PAST)) {
+            occurrenceTime = time - 1;
+        } else if (tense.equals(Symbols.TENSE_FUTURE)) {
+            occurrenceTime = time + 1;
+        } else { // if (tense.equals(Symbols.TENSE_PRESENT)) 
+            occurrenceTime = time;
+        }
+        derivationChain = new ArrayList<>();
     }
 
     /**
@@ -86,6 +105,7 @@ public class Stamp implements Cloneable {
         baseLength = old.length();
         evidentialBase = old.getBase();
         creationTime = old.getCreationTime();
+        occurrenceTime = old.getOccurrenceTime();
         derivationChain = old.getChain();
     }
 
@@ -102,6 +122,7 @@ public class Stamp implements Cloneable {
         baseLength = old.length();
         evidentialBase = old.getBase();
         creationTime = time;
+        occurrenceTime = old.getOccurrenceTime();
         derivationChain = old.getChain();
     }
 
@@ -163,6 +184,7 @@ public class Stamp implements Cloneable {
         Collections.reverse(derivationChain); //if jvm implements that correctly this is O(1)
 
         creationTime = time;
+        occurrenceTime = -1;    // to be revised
     }
 
     /**
@@ -325,6 +347,28 @@ public class Stamp implements Cloneable {
         return creationTime;
     }
 
+    /**
+     * Get the occurrenceTime of the truth-value
+     *
+     * @return The occurrence time
+     */
+    public long getOccurrenceTime() {
+        return occurrenceTime;
+    }
+
+    /**
+     * Get the occurrenceTime of the truth-value
+     *
+     * @return The occurrence time
+     */
+    public String getOccurrenceTimeString() {
+        if (occurrenceTime == ETERNAL) {
+            return "";
+        } else {
+            return "[" + occurrenceTime + "]";
+        }
+    }
+
     //String toStringCache = null; //holds pre-allocated string for toString()
     /**
      * Get a String form of the Stamp for display Format: {creationTime [:
@@ -364,7 +408,11 @@ public class Stamp implements Cloneable {
     public String toString() {
         final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
-        final StringBuilder buffer = new StringBuilder(estimatedInitialSize).append(" " + Symbols.STAMP_OPENER + creationTime);
+        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        buffer.append(' ').append(Symbols.STAMP_OPENER).append(creationTime);
+        if (occurrenceTime != ETERNAL) {
+            buffer.append('|').append(occurrenceTime);
+        }
         buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
         for (int i = 0; i < baseLength; i++) {
             buffer.append(Long.toString(evidentialBase[i]));
