@@ -149,13 +149,15 @@ public class Variable extends Term {
         final HashMap<Term, Term> map2 = new HashMap<>();
         final boolean hasSubs = findSubstitute(type, t1, t2, map1, map2); // find substitution
         if (hasSubs) {
-            renameVar(map1, compound1, "-1");
-            renameVar(map2, compound2, "-2");
+            //renameVar(map1, compound1, "-1");
+            //renameVar(map2, compound2, "-2");
             if (!map1.isEmpty()) {
                 ((CompoundTerm) compound1).applySubstitute(map1);
+                ((CompoundTerm) compound1).renameVariables();
             }
             if (!map2.isEmpty()) {
                 ((CompoundTerm) compound2).applySubstitute(map2);
+                ((CompoundTerm) compound2).renameVariables();
             }
         }
         return hasSubs;
@@ -175,52 +177,46 @@ public class Variable extends Term {
     private static boolean findSubstitute(final char type, final Term term1, final Term term2,
             final HashMap<Term, Term> map1, final HashMap<Term, Term> map2) {
         Term t;
-        if (term1 instanceof Variable) {
+        if ((term1 instanceof Variable) && (((Variable) term1).getType() == type)) {
             final Variable var1 = (Variable) term1;
             t = map1.get(var1);
             if (t != null) {    // already mapped
                 return findSubstitute(type, t, term2, map1, map2);
             } else {            // not mapped yet
-                if (var1.getType() == type) {
-                    if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
-                        final Variable var = new Variable(var1.getName() + term2.getName());
-                        map1.put(var1, var);  // unify
-                        map2.put(term2, var);  // unify
-                    } else {
-                        map1.put(var1, term2);  // elimination
+                 if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
+                    Variable CommonVar = makeCommonVariable(term1, term2);
+                    map1.put(var1, CommonVar);  // unify
+                    map2.put(term2, CommonVar);  // unify
+                 } else {
+                    map1.put(var1, term2);  // elimination
+                    if (isCommonVariable(var1)) {
+                        map2.put(var1, term2);
                     }
-                } else {    // different type
-                    //map1.put(var1, new Variable(var1.getName() + "-1"));  // rename             
-                    return false;
                 }
                 return true;
             }
-        }
-        if (term2 instanceof Variable) {
+        } else if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
             final Variable var2 = (Variable) term2;
             t = map2.get(var2);
             if (t != null) {    // already mapped
                 return findSubstitute(type, term1, t, map1, map2);
             } else {            // not mapped yet
-                if (var2.getType() == type) {
-                    map2.put(var2, term1);  // elimination
-                } else {
-                    //map2.put(var2, new Variable(var2.getName() + "-2"));  // rename             
-                    return false;
+                map2.put(var2, term1);  // elimination
+                if (isCommonVariable(var2)) {
+                    map1.put(var2, term1);
                 }
                 return true;
             }
-        }
-        if ((term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
+         } else if ((term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
             final CompoundTerm cTerm1 = (CompoundTerm) term1;
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
             if (cTerm1.size() != (cTerm2).size()) {
                 return false;
             }
-            if ((cTerm1 instanceof ImageExt) && (((ImageExt)cTerm1).getRelationIndex() !=  ((ImageExt)cTerm2).getRelationIndex())) {
+            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).getRelationIndex() != ((ImageExt) cTerm2).getRelationIndex())) {
                 return false;
             }
-            if ((cTerm1 instanceof ImageInt) && (((ImageInt)cTerm1).getRelationIndex() !=  ((ImageInt)cTerm2).getRelationIndex())) {
+            if ((cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).getRelationIndex() != ((ImageInt) cTerm2).getRelationIndex())) {
                 return false;
             }
             
@@ -237,6 +233,14 @@ public class Variable extends Term {
         return term1.equals(term2); // for atomic constant terms
     }
 
+    private static Variable makeCommonVariable(Term v1, Term v2) {               return new Variable(v1.getName() + v2.getName() + '$');    
+    }
+    
+    private static boolean isCommonVariable(Variable v) {
+        String s = v.getName();
+        return s.charAt(s.length() - 1) == '$';
+    }
+
     /**
      * Check if two terms can be unified
      *
@@ -251,22 +255,24 @@ public class Variable extends Term {
 
     /**
      * Rename the variables to prepare for unification of two terms
+     * 
      * @param map The substitution so far
      * @param term The term to be processed 
-     * @param suffix The suffix that distinguish the variables in one premise from those from the other
+     * @param suffix The suffix that distinguish the variables in one premise
+     * from those from the other
      */
-    private static void renameVar(final HashMap<Term, Term> map, final Term term, final String suffix) {
-        if (term instanceof Variable) {
-            final Term t = map.get(term);
-            if (t == null) {    // new mapped yet
-                map.put(term, new Variable(term.getName() + suffix));  // rename             
-            }
-        } else if (term instanceof CompoundTerm) {
-            for (final Term t : ((CompoundTerm) term).components) {   // assuming matching order, to be refined in the future
-                renameVar(map, t, suffix);
-            }
-        }
-    }
+//    private static void renameVar(final HashMap<Term, Term> map, final Term term, final String suffix) {
+//        if (term instanceof Variable) {
+//            final Term t = map.get(term);
+//            if (t == null) {    // new mapped yet
+//                map.put(term, new Variable(term.getName() + suffix));  // rename             
+//            }
+//        } else if (term instanceof CompoundTerm) {
+//            for (final Term t : ((CompoundTerm) term).components) {   // assuming matching order, to be refined in the future
+//                renameVar(map, t, suffix);
+//            }
+//        }
+//    }
 
     /**
      * variable terms are listed first alphabetically
