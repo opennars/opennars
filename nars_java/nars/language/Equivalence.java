@@ -30,42 +30,54 @@ import nars.storage.Memory;
  */
 public class Equivalence extends Statement {
 
+    private int temporalOrder = CompoundTerm.ORDER_NONE;
     /**
      * Constructor with partial values, called by make
+     *
      * @param components The component list of the term
      */
-    protected Equivalence(ArrayList<Term> components) {
+    private Equivalence(ArrayList<Term> components, int order) {
         super(components);
+        temporalOrder = order;
     }
 
     /**
      * Constructor with full values, called by clone
+     *
      * @param n The name of the term
      * @param components Component list
      * @param constant Whether the statement contains open variable
      * @param complexity Syntactic complexity of the compound
      */
-    protected Equivalence(String n, ArrayList<Term> components, boolean constant, short complexity) {
+    private Equivalence(String n, ArrayList<Term> components, boolean constant, short complexity, int order) {
         super(n, components, constant, complexity);
+        temporalOrder = order;
     }
 
     /**
      * Clone an object
+     *
      * @return A new object
      */
     @Override
     public Object clone() {
-        return new Equivalence(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new Equivalence(name, cloneList(components), isConstant(), complexity, temporalOrder);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two components. Called by the inference
+     * rules.
+     *
      * @param subject The first component
      * @param predicate The second component
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Equivalence make(Term subject, Term predicate, Memory memory) {  // to be extended to check if subject is Conjunction
+        return make(subject, predicate, CompoundTerm.ORDER_NONE, memory);
+    }
+
+    public static Equivalence make(Term subject, Term predicate, int temporalOrder, Memory memory) {  // to be extended to check if subject is Conjunction
         if ((subject instanceof Implication) || (subject instanceof Equivalence)) {
             return null;
         }
@@ -75,35 +87,59 @@ public class Equivalence extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        if (subject.compareTo(predicate) > 0) {
+        if ((subject.compareTo(predicate) > 0) && (temporalOrder != CompoundTerm.ORDER_FORWARD)){
             Term interm = subject;
             subject = predicate;
             predicate = interm;
         }
-        String name = makeStatementName(subject, Symbols.Relation.EQUIVALENCE.toString(), predicate);
+        String copula;
+        switch (temporalOrder) {
+            case CompoundTerm.ORDER_FORWARD:
+                copula = Symbols.Relation.EQUIVALENCE_AFTER.toString();
+                break;
+            case CompoundTerm.ORDER_CONCURRENT:
+                copula = Symbols.Relation.EQUIVALENCE_WHEN.toString();
+                break;
+            default:
+                copula = Symbols.Relation.EQUIVALENCE.toString();
+        }                
+        String name = makeStatementName(subject, copula, predicate);
         Term t = memory.nameToListedTerm(name);
         if (t != null) {
             return (Equivalence) t;
         }
         ArrayList<Term> argument = argumentsToList(subject, predicate);
-        return new Equivalence(argument);
+        return new Equivalence(argument, temporalOrder);
     }
 
     /**
      * Get the operator of the term.
+     *
      * @return the operator of the term
      */
     @Override
     public String operator() {
+        switch (temporalOrder) {
+            case CompoundTerm.ORDER_FORWARD:
+                return Symbols.Relation.EQUIVALENCE_AFTER.toString();
+            case CompoundTerm.ORDER_CONCURRENT:
+                return Symbols.Relation.EQUIVALENCE_WHEN.toString();
+            default:
         return Symbols.Relation.EQUIVALENCE.toString();
+    	}
     }
 
     /**
      * Check if the compound is commutative.
+     *
      * @return true for commutative
      */
     @Override
     public boolean isCommutative() {
-        return true;
+        return (temporalOrder != CompoundTerm.ORDER_FORWARD);
+    }
+
+    public int getTemporalOrder() {
+        return temporalOrder;
     }
 }
