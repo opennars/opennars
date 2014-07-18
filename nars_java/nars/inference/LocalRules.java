@@ -89,28 +89,37 @@ public class LocalRules {
         memory.doublePremiseTaskRevised(content, truth, budget);
     }
 
-    /**
+/**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
      * @param belief The proposed answer
      * @param task The task to be processed
      * @param memory Reference to the memory
      */
-    public static void trySolution(final Sentence belief, final Task task, final Memory memory) {
-        final Sentence problem = task.getSentence();
-        final Sentence oldBest = task.getBestSolution();
-        final float newQ = solutionQuality(problem, belief);
+    public static void trySolution(Sentence belief, Task task, Memory memory) {
+        Sentence problem = task.getSentence();
+        Sentence oldBest = task.getBestSolution();
+        float newQ = solutionQuality(problem, belief);
         if (oldBest != null) {
-            final float oldQ = solutionQuality(problem, oldBest);
+            float oldQ = solutionQuality(problem, oldBest);
             if (oldQ >= newQ) {
                 return;
             }
+        }
+        Term content = belief.cloneContent();
+        if (Variable.containVarIndep(content.getName())) {
+            Variable.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
+            belief = (Sentence) belief.clone();
+            belief.setContent(content);
+            Stamp st = new Stamp(belief.getStamp(), memory.getTime());
+            st.addToChain(belief.getContent());
+            belief.setStamp(st);
         }
         task.setBestSolution(belief);
         if (task.isInput()) {    // moved from Sentence
             memory.reasoner.output(OUT.class, belief);
         }
-        final BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
+        BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
         if ((budget != null) && budget.aboveThreshold()) {
             memory.activatedTask(budget, belief, task.getParentBelief());
         }

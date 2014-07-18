@@ -315,10 +315,10 @@ public class Memory {
             List<Term> chain = stamp.getChain();
             
 	    if (currentBelief != null) {
-                if(chain.contains(currentBelief.content)) {
-                    chain.remove(currentBelief.content);
+                if(chain.contains(currentBelief.getContent())) {
+                    chain.remove(currentBelief.getContent());
                 }
-                stamp.addToChain(currentBelief.content);
+                stamp.addToChain(currentBelief.getContent());
             }
             if (currentTask != null && !single) {
                 if(chain.contains(currentTask.getContent())) {

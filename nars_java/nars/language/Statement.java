@@ -246,6 +246,16 @@ public abstract class Statement extends CompoundTerm {
         return com.containComponent(t2);
     }
 
+    
+    public static boolean invalidPair(final String s1, final String s2) {
+        if (Variable.containVarIndep(s1) && !Variable.containVarIndep(s2)) {
+            return true;
+        } else if (!Variable.containVarIndep(s1) && Variable.containVarIndep(s2)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>
@@ -257,7 +267,8 @@ public abstract class Statement extends CompoundTerm {
     public boolean invalid() {
         return invalidStatement(getSubject(), getPredicate());
     }
-
+    
+ 
     /**
      * Return the first component of the statement
      *

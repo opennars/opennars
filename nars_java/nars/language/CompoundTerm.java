@@ -134,6 +134,8 @@ public abstract class CompoundTerm extends Term {
         }
     }
 
+
+    
     @Override
     public boolean equals(final Object that) {
         return (that instanceof Term) && (compareTo((Term) that) == 0);
@@ -547,6 +549,7 @@ public abstract class CompoundTerm extends Term {
         return (success ? make(t1, list, memory) : null);
     }
 
+
     /**
      * Try to remove a component from a compound
      *
@@ -576,7 +579,7 @@ public abstract class CompoundTerm extends Term {
             }
         }
         return null;
-    }
+    }    
 
     /**
      * Try to replace a component in a compound at a given index by another one

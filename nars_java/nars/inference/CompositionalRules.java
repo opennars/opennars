@@ -145,11 +145,10 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, Memory memory) {
-
-        if ((compound instanceof Statement) || (compound instanceof ImageExt) ||(compound instanceof ImageInt)){
-            return;    
+        
+        if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
+            return;
         }
-
         Term term2 = CompoundTerm.reduceComponents(compound, component, memory);
         if (term2 == null) {
             return;
@@ -431,6 +430,8 @@ public final class CompositionalRules {
             substitute.put(commonTerm2, new Variable("$varInd2"));
         }
         content = Implication.make(premise1, oldCompound, memory);
+        if (content == null)
+            return;
         content.applySubstitute(substitute);
         if (premise1.equals(taskSentence.getContent())) {
             truth = TruthFunctions.induction(belief.getTruth(), taskSentence.getTruth());

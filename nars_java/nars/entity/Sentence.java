@@ -34,7 +34,7 @@ public class Sentence implements Cloneable {
     /**
      * The content of a Sentence is a Term
      */
-    final public Term content;
+    private Term content;
     /**
      * The punctuation also indicates the type of the Sentence: Judgment,
      * Question, or Goal
@@ -47,7 +47,7 @@ public class Sentence implements Cloneable {
     /**
      * Partial record of the derivation path
      */
-    final public Stamp stamp;
+    protected Stamp stamp;
 
 
     /**
@@ -156,6 +156,12 @@ public class Sentence implements Cloneable {
     public Term getContent() {
         return content;
     }
+    
+    public void setContent(Term t) {
+        content = t;
+        key = null;
+    }
+    
 
     /**
      * Get the punctuation of the sentence
@@ -249,6 +255,7 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toKey() {
+        //key must be invalidated if content or truth change
         if (key == null) {
             final String contentToString = content.toString();
             final String truthString = truth!=null ? truth.toStringBrief() : null;
@@ -269,4 +276,11 @@ public class Sentence implements Cloneable {
         }
         return key;
     }
+
+    public void setStamp(Stamp stamp) {
+        this.stamp = stamp;
+    }
+    
+    
+    
 }
