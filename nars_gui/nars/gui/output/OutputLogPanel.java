@@ -45,6 +45,8 @@ public class OutputLogPanel extends NPanel implements Output {
     private final NAR nar;
     int maxIOTextSize = (int) 8E6;
     private boolean showErrors = false;
+    private boolean showStamp = false;
+    
 
     private Collection nextOutput = new ConcurrentLinkedQueue();
 
@@ -90,6 +92,15 @@ public class OutputLogPanel extends NPanel implements Output {
             }
         });
         menu.add(showErrorBox);
+        
+        final JCheckBox showStampBox = new JCheckBox("Show Stamp");
+        showStampBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showStamp = showStampBox.isSelected();
+            }
+        });
+        menu.add(showStampBox);        
         
         final NSlider fontSlider = new NSlider(ioText.getFont().getSize(), 6, 40) {
 
@@ -207,7 +218,7 @@ public class OutputLogPanel extends NPanel implements Output {
                             Color truthColor = Color.getHSBColor(freq, 0, 0.25f - conf/4f);
                             print(truthColor, contentSize, s.getTruth().toString(), false);
                         }
-                        if (s.getStamp()!=null) {
+                        if ((showStamp) && (s.getStamp()!=null)) {
                             Color stampColor = Color.GRAY;
                             print(stampColor, contentSize, s.getStamp().toString(), false);
                         }
