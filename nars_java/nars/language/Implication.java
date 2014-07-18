@@ -26,16 +26,18 @@ import nars.io.Symbols;
 import nars.storage.Memory;
 
 /**
- * A Statement about an Inheritance relation.
+ * A Statement about an Inheritance copula.
  */
 public class Implication extends Statement {
+    private int temporalOrder = CompoundTerm.ORDER_NONE;
 
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    protected Implication(ArrayList<Term> arg) {
+    private Implication(ArrayList<Term> arg, int order) {
         super(arg);
+        temporalOrder = order;
     }
 
     /**
@@ -45,16 +47,18 @@ public class Implication extends Statement {
      * @param con Whether it is a constant term
      * @param i Syntactic complexity of the compound
      */
-    protected Implication(String n, ArrayList<Term> cs, boolean con, short i) {
+    private Implication(String n, ArrayList<Term> cs, boolean con, short i, int order) {
         super(n, cs, con, i);
+        temporalOrder = order;
     }
 
     /**
      * Clone an object
      * @return A new object
      */
+    @Override
     public Object clone() {
-        return new Implication(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new Implication(name, cloneList(components), isConstant(), complexity, temporalOrder);
     }
 
     /**
@@ -65,6 +69,10 @@ public class Implication extends Statement {
      * @return A compound generated or a term it reduced to
      */
     public static Implication make(final Term subject, final Term predicate, final Memory memory) {
+        return make(subject, predicate, CompoundTerm.ORDER_NONE, memory);
+    }
+    
+    public static Implication make(final Term subject, final Term predicate, int temporalOrder, final Memory memory) {
         if ((subject == null) || (predicate == null)) {
             return null;
         }
@@ -74,7 +82,21 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        final String name = makeStatementName(subject, Symbols.Relation.IMPLICATION.toString(), predicate);
+        String copula;
+        switch (temporalOrder) {
+            case CompoundTerm.ORDER_FORWARD:
+                copula = Symbols.Relation.IMPLICATION_AFTER.toString();
+                break;
+            case CompoundTerm.ORDER_CONCURRENT:
+                copula = Symbols.Relation.IMPLICATION_WHEN.toString();
+                break;
+            case CompoundTerm.ORDER_BACKWARD:
+                copula = Symbols.Relation.IMPLICATION_BEFORE.toString();
+                break;
+            default:
+                copula = Symbols.Relation.IMPLICATION.toString();
+        }                
+        final String name = makeStatementName(subject, copula, predicate);
         final Term t = memory.nameToListedTerm(name);
         if (t != null) {            
             if (t.getClass()!=Implication.class) {                
@@ -91,7 +113,7 @@ public class Implication extends Statement {
             return make(newCondition, ((Implication) predicate).getPredicate(), memory);
         } else {
             final ArrayList<Term> argument = argumentsToList(subject, predicate);
-            return new Implication(argument);
+            return new Implication(argument, temporalOrder);
         }
     }
 
@@ -99,7 +121,21 @@ public class Implication extends Statement {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public String operator() {
+        switch (temporalOrder) {
+            case CompoundTerm.ORDER_FORWARD:
+                return Symbols.Relation.IMPLICATION_AFTER.toString();
+            case CompoundTerm.ORDER_CONCURRENT:
+                return Symbols.Relation.IMPLICATION_WHEN.toString();
+            case CompoundTerm.ORDER_BACKWARD:
+                return Symbols.Relation.IMPLICATION_BEFORE.toString();
+            default:
         return Symbols.Relation.IMPLICATION.toString();
+        }
+    }
+    
+    public int getTemporalOrder() {
+        return temporalOrder;
     }
 }

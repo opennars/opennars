@@ -92,8 +92,23 @@ public abstract class Statement extends CompoundTerm {
         if (relation == Relation.IMPLICATION) {
             return Implication.make(subject, predicate, memory);
         }
+        if (relation == Relation.IMPLICATION_AFTER) {
+            return Implication.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
+        }
+        if (relation == Relation.IMPLICATION_BEFORE) {
+            return Implication.make(subject, predicate, CompoundTerm.ORDER_BACKWARD, memory);
+        }
+        if (relation == Relation.IMPLICATION_WHEN) {
+            return Implication.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);
+        }
         if (relation == Relation.EQUIVALENCE) {
             return Equivalence.make(subject, predicate, memory);
+        }
+        if (relation == Relation.EQUIVALENCE_AFTER) {
+            return Equivalence.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
+        }
+        if (relation == Relation.EQUIVALENCE_WHEN) {
+            return Equivalence.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);
         }
         return null;
     }
