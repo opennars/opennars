@@ -51,6 +51,10 @@ public abstract class CompoundTerm extends Term {
      */
     protected boolean isConstant = true;
 
+    public static final int ORDER_FORWARD = 1;
+    public static final int ORDER_BACKWARD = -1;
+    public static final int ORDER_CONCURRENT = 0;
+    public static final int ORDER_NONE = Integer.MIN_VALUE;
     /* ----- abstract methods to be implemented in subclasses ----- */
     /**
      * Abstract method to get the operator of the compound
@@ -249,6 +253,10 @@ public abstract class CompoundTerm extends Term {
                     case Symbols.CONJUNCTION_OPERATORc:
                         return Conjunction.make(arg, memory);
                 }            
+            } else if (op.equals(Symbols.SEQUENCE_OPERATOR)) {
+                return Conjunction.make(arg, ORDER_FORWARD, memory);
+            } else if (op.equals(Symbols.PARALLEL_OPERATOR)) {
+                return Conjunction.make(arg, ORDER_CONCURRENT, memory);
             }
         }
         throw new RuntimeException("Unknown Term operator: " + op);
@@ -288,6 +296,8 @@ public abstract class CompoundTerm extends Term {
                     case Symbols.CONJUNCTION_OPERATORc:
                         return true;                        
                 }            
+            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
+                return true;
             }
         }        
         
