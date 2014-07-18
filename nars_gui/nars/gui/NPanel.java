@@ -1,5 +1,6 @@
 package nars.gui;
 
+import java.awt.LayoutManager;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import javax.swing.JPanel;
@@ -10,6 +11,14 @@ import javax.swing.JPanel;
  */
 abstract public class NPanel extends JPanel implements HierarchyListener {
 
+    public NPanel() {
+        super();
+    }
+
+    public NPanel(LayoutManager l) {
+        super(l);
+    }
+    
     public void addNotify() {
         super.addNotify();
         addHierarchyListener(this);

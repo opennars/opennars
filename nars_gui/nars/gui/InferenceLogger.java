@@ -20,6 +20,7 @@
  */
 package nars.gui;
 
+import nars.gui.output.InferenceWindow;
 import java.awt.FileDialog;
 import java.io.*;
 

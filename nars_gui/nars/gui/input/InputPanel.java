@@ -26,11 +26,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,14 +42,14 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
+import nars.gui.NPanel;
 import nars.io.Output.OUT;
-
 import nars.io.TextInput;
 
 /**
  * Input window, accepting user tasks
  */
-public class InputPanel extends JPanel implements ActionListener {
+public class InputPanel extends NPanel implements ActionListener {
 
     private NAR reasoner;
     /**
@@ -95,10 +96,21 @@ public class InputPanel extends JPanel implements ActionListener {
         c.weighty = 1.0;
         inputText = new JTextArea("");
         inputText.setRows(3);        
+        inputText.addKeyListener(new KeyAdapter() {
+            @Override public void keyReleased(KeyEvent e) {
+                //control-enter evaluates
+                if (e.isControlDown())
+                    if (e.getKeyCode()==10) {
+                        okButton.doClick();
+                    }
+            }           
+        });
+        
         textInput.add(new JScrollPane(inputText), c);
         c.weighty = 0.0;
         c.gridwidth = 1;
         okButton = new JButton("Eval");
+        okButton.setToolTipText("Input the text.  Also available by ctl-enter while editing the text area.");
         okButton.addActionListener(this);
         gridbag.setConstraints(okButton, c);        
         textInput.add(okButton);
@@ -152,6 +164,16 @@ public class InputPanel extends JPanel implements ActionListener {
         inputText.setText("");
     }
 
+    @Override
+    protected void onShowing(boolean showing) {
+        if (showing) {
+            
+        }
+        else {
+        
+        }
+    }
+    
     /**
      * Handling button click
      *
@@ -219,5 +241,6 @@ public class InputPanel extends JPanel implements ActionListener {
         }
         return ((text.length() > 0) || (timer > 0));
     }
+
   
 }

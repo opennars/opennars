@@ -18,12 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.gui;
+package nars.gui.output;
 
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import nars.gui.InferenceLogger;
+import nars.gui.Window;
 import nars.inference.InferenceRecorder;
 
 //import nars.term.Term;
@@ -67,7 +69,6 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
         super("Inference log");
         this.recorder = recorder;
 
-        getContentPane().setBackground(SINGLE_WINDOW_COLOR);
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
@@ -80,7 +81,6 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
         c.weightx = 1.0;
         c.weighty = 1.0;
         text = new JTextArea("");
-        text.setBackground(DISPLAY_BACKGROUND_COLOR);
         text.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(text);
         gridbag.setConstraints(scrollPane, c);
@@ -174,14 +174,14 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
      * Change background color to remind the on-going file saving
      */
     public void switchBackground() {
-        text.setBackground(SAVING_BACKGROUND_COLOR);
+        //text.setBackground(SAVING_BACKGROUND_COLOR);
     }
 
     /**
      * Reset background color after file saving
      */
     public void resetBackground() {
-        text.setBackground(DISPLAY_BACKGROUND_COLOR);
+        //text.setBackground(DISPLAY_BACKGROUND_COLOR);
     }
 
     public static class NullInferenceRecorder implements InferenceRecorder {
