@@ -109,9 +109,9 @@ public class SentenceTablePanel extends NPanel implements Output {
                 
                 for (final Sentence s : selected) {                    
                     
-                    if (s.content == t)
+                    if (s.getContent() == t)
                         return true;
-                    if (s.content.containTerm(t))
+                    if (s.getContent().containTerm(t))
                         return true;
                     if (c.beliefs.contains(s))
                         return true;

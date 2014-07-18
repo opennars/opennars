@@ -513,7 +513,8 @@ public final class StructuralRules {
 
     /* --------------- Disjunction and Conjunction transform --------------- */
     /**
-     * {(&&, A, B), A@(&&, A, B)} |- A {(||, A, B), A@(||, A, B)} |- A
+  * {(&&, A, B), A@(&&, A, B)} |- A, or answer (&&, A, B)? using A {(||, A,
+     * B), A@(||, A, B)} |- A, or answer (||, A, B)? using A
      * @param compound The premise
      * @param component The recognized component in the premise
      * @param compoundTask Whether the compound comes from the task
@@ -528,6 +529,7 @@ public final class StructuralRules {
         
         Sentence sentence = task.getSentence();
         TruthValue truth = sentence.getTruth();
+        Sentence belief = memory.currentBelief;
         BudgetValue budget;
         if (sentence.isQuestion()) {
             budget = BudgetFunctions.compoundBackward(content, memory);
@@ -535,7 +537,10 @@ public final class StructuralRules {
             if ((sentence.isJudgment()) == (compoundTask == (compound instanceof Conjunction))) {
                 truth = TruthFunctions.deduction(truth, RELIANCE);
             } else {
-                return;
+                TruthValue v1, v2;
+                v1 = TruthFunctions.negation(truth);
+                v2 = TruthFunctions.deduction(v1, RELIANCE);
+                truth = TruthFunctions.negation(v2);
             }
             budget = BudgetFunctions.forward(truth, memory);
         }
