@@ -31,6 +31,14 @@ public class Symbols {
     /* sentence type and delimitors */
     public static final char JUDGMENT_MARK = '.';
     public static final char QUESTION_MARK = '?';
+    public static final char GOAL_MARK = '!';
+    public static final char QUEST_MARK = '@';
+
+    /* Tense markers */
+    public static final String TENSE_MARK = ":";
+    public static final String TENSE_PAST = ":\\:";
+    public static final String TENSE_PRESENT = ":|:";
+    public static final String TENSE_FUTURE = ":/:";
 
     /* variable type */
     public static final char VAR_INDEPENDENT = '$';
@@ -71,7 +79,9 @@ public class Symbols {
         /* CompoundStatement operators, length = 2 */        
         NEGATION { @Override public String toString() { return "--"; } },
         DISJUNCTION { @Override public String toString() { return "||"; } },
-        CONJUNCTION { @Override public String toString() { return "&&"; } }    
+        CONJUNCTION { @Override public String toString() { return "&&"; } },    
+        SEQUENCE { @Override public String toString() { return "&/"; } },    
+        PARALLEL { @Override public String toString() { return "&|"; } }    
         
     }
     
@@ -98,6 +108,8 @@ public class Symbols {
     public static final char DISJUNCTION_OPERATORc = '|';
     public static final String CONJUNCTION_OPERATOR = "&&";
     public static final char CONJUNCTION_OPERATORc = '&';
+    public static final String SEQUENCE_OPERATOR = "&/";
+    public static final String PARALLEL_OPERATOR = "&|";
 
     public static enum Relation {
         INHERITANCE { @Override public String toString() { return "-->"; } },
@@ -106,7 +118,12 @@ public class Symbols {
         PROPERTY { @Override public String toString() { return "--]"; } },
         INSTANCE_PROPERTY { @Override public String toString() { return "{-]"; } },
         IMPLICATION { @Override public String toString() { return "==>"; } },
-        EQUIVALENCE { @Override public String toString() { return "<=>"; } }
+        IMPLICATION_AFTER { @Override public String toString() { return "=/>"; } },
+        IMPLICATION_WHEN { @Override public String toString() { return "=|>"; } },
+        IMPLICATION_BEFORE { @Override public String toString() { return "=\\>"; } },
+        EQUIVALENCE { @Override public String toString() { return "<=>"; } },
+        EQUIVALENCE_AFTER { @Override public String toString() { return "</>"; } },
+        EQUIVALENCE_WHEN { @Override public String toString() { return "<|>"; } }
     }
     
 

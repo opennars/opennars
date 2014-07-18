@@ -458,17 +458,18 @@ public class TextInput extends Symbols implements Input {
             Task task = null;
             String budgetString = getBudgetString(buffer);
             String truthString = getTruthString(buffer);
+            String tense = parseTense(buffer);
             String str = buffer.toString().trim();
             int last = str.length() - 1;
             char punc = str.charAt(last);
-            Stamp stamp = new Stamp(time);
+            Stamp stamp = new Stamp(time, tense);
             TruthValue truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last), memory);
             if (content == null) throw new InvalidInputException("Content term missing");
             Sentence sentence = new Sentence(content, punc, truth, stamp);
-            if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
-                sentence.setRevisible(false);
-            }
+            //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
+            //    sentence.setRevisible(false);
+            //}
             BudgetValue budget = parseBudget(budgetString, punc, truth);
             task = new Task(sentence, budget);
             return task;
@@ -590,6 +591,21 @@ public class TextInput extends Symbols implements Input {
         }
         float quality = (truth == null) ? 1 : BudgetFunctions.truthToQuality(truth);
         return new BudgetValue(priority, durability, quality);
+    }
+
+    /**
+     * Recognize the tense of an input sentence
+     * @param s the input in a StringBuffer
+     * @return a tense value
+     */
+    private static String parseTense(StringBuffer s) {
+        int i = s.indexOf(Symbols.TENSE_MARK);
+        String t = "";
+        if (i > 0) {
+            t = s.substring(i).trim();
+            s.delete(i, s.length());
+        }
+        return t;
     }
 
     /* ---------- parse String into term ---------- */
