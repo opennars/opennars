@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.gui;
+package nars.gui.output;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,6 +33,7 @@ import javax.swing.JTextArea;
 
 import nars.entity.Concept;
 import nars.entity.EntityObserver;
+import nars.gui.Window;
 import nars.storage.BagObserver;
 //import java.beans.PropertyChangeEvent;
 //import java.beans.PropertyChangeListener;
@@ -72,7 +73,6 @@ public class ConceptWindow extends Window implements ActionListener, EntityObser
     public ConceptWindow(Concept concept) {
         super(concept.getKey());
         this.concept = concept;
-        getContentPane().setBackground(MULTIPLE_WINDOW_COLOR);
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
@@ -85,7 +85,6 @@ public class ConceptWindow extends Window implements ActionListener, EntityObser
         c.weightx = 1.0;
         c.weighty = 1.0;
         text = new JTextArea("");
-        text.setBackground(DISPLAY_BACKGROUND_COLOR);
         text.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(text);
         gridbag.setConstraints(scrollPane, c);

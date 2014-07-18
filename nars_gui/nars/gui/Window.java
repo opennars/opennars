@@ -56,20 +56,20 @@ public class Window extends JFrame {
     /**
      * Font for NARS GUI
      */
-    static final Font NarsFont = new Font("Arial", Font.PLAIN, 13);
+    //static final Font NarsFont = new Font("Arial", Font.PLAIN, 13);
     
     
     /**
      * Message for unimplemented functions
      */
-    static final String UNAVAILABLE = "\n Not implemented in this version.";
-    static final String ON_LABEL = "On";
-    static final String OFF_LABEL = "Off";
+    public static final String UNAVAILABLE = "\n Not implemented in this version.";
+    public static final String ON_LABEL = "On";
+    public static final String OFF_LABEL = "Off";
 
     /**
      * Default constructor
      */
-    Window() {
+    public Window() {
         this(" ");
     }
 
@@ -78,9 +78,9 @@ public class Window extends JFrame {
      *
      * @param title The title displayed by the window
      */
-    Window(String title) {
-        super(" " + title);
-        setFont(NarsFont);
+    public Window(String title) {
+        super(title);
+        //setFont(NarsFont);
         
         addWindowListener(new WindowAdapter() {
             @Override

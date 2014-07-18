@@ -20,6 +20,8 @@
  */
 package nars.gui;
 
+import nars.gui.output.BagWindow;
+import nars.gui.output.TermWindow;
 import nars.gui.output.MemoryView;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -46,11 +48,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
 import nars.core.NARState;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.gui.input.InputPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.inference.InferenceRecorder;
 import nars.io.TextInput;
@@ -149,9 +153,26 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         m.addActionListener(this);
         menuBar.add(m);
 
-        m = new JMenu("Window");
+        m = new JMenu("Input");
         {
-            JMenuItem mv = new JMenuItem("Memory View");
+            JMenuItem mv = new JMenuItem("+ Text Input");
+            mv.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    InputPanel inputPanel = new InputPanel(nar);
+                    Window inputWindow = new Window("Text Input", inputPanel);                    
+                    inputWindow.setSize(800, 200);
+                    inputWindow.setVisible(true);        
+                }
+            });
+            m.add(mv);
+            
+        }
+        menuBar.add(m);
+        
+        m = new JMenu("Output");
+        {
+            JMenuItem mv = new JMenuItem("+ Memory View");
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -160,7 +181,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             });
             m.add(mv);
             
-            JMenuItem st = new JMenuItem("Sentence Table");
+            JMenuItem st = new JMenuItem("+ Sentence Table");
             st.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -171,13 +192,46 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 }
             });
             m.add(st);
-        }
 
-        addJMenuItem(m, "Concepts");
-        addJMenuItem(m, "Buffered Tasks");
-        addJMenuItem(m, "Concept Content");
-        addJMenuItem(m, "Inference Log");
-        m.addActionListener(this);
+            JMenuItem ct = new JMenuItem("+ Concepts");
+            ct.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    /* see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} */
+                    memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");                    
+                }
+            });
+            m.add(ct);
+            
+            JMenuItem bt = new JMenuItem("+ Buffered Tasks");
+            bt.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    memory.taskBuffersStartPlay(new BagWindow<Task>(), "Buffered Tasks");
+                }
+            });
+            m.add(bt);
+            
+            JMenuItem cct = new JMenuItem("+ Concept Content");
+            cct.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    conceptWin.setVisible(true);                
+                }                
+            });
+            m.add(cct);
+            
+            JMenuItem it = new JMenuItem("+ Inference Log");
+            it.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    record.show();
+                    record.play();
+                }                
+            });
+            m.add(it);            
+        
+        }
         menuBar.add(m);
 
         m = new JMenu("Help");
@@ -289,16 +343,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             } else if (label.equals("Reset")) {
                 /// TODO mixture of modifier and reporting
                 nar.reset();
-            } else if (label.equals("Concepts")) {
-                /* see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} */
-                memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");
-            } else if (label.equals("Buffered Tasks")) {
-                memory.taskBuffersStartPlay(new BagWindow<Task>(), "Buffered Tasks");
-            } else if (label.equals("Concept Content")) {
-                conceptWin.setVisible(true);
-            } else if (label.equals("Inference Log")) {
-                record.show();
-                record.play();
             } else if (label.equals("Related Information")) {
 //                MessageDialog web = 
                 new MessageDialog(NARSwing.WEBSITE);
@@ -374,6 +418,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             @Override
             public void setValue(double v) {
                 super.setValue(Math.round(v));
+                repaint(); //needed to update when called from outside, as the 'focus' button does
             }
 
             @Override
@@ -502,6 +547,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             public void actionPerformed(ActionEvent e) {
                 setSpeed(1.0);
                 volumeSlider.setValue(20);
+                
             }
 
         });
@@ -534,24 +580,31 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         p.add(newIntSlider(memory.getConceptForgettingRate(), "Concept Forgetting Rate", 1, 99), c);
 
 
-        ChartPanel chart0 = new ChartPanel("concepts.Total");
-        chart0.setPreferredSize(new Dimension(200, 150));
-        charts.add(chart0);
-        p.add(chart0, c);
+        JPanel chartPanel = new JPanel(new GridLayout(0,1));
+        {
+            ChartPanel chart0 = new ChartPanel("concepts.Total");
+            chart0.setPreferredSize(new Dimension(200, 150));
+            charts.add(chart0);
+            chartPanel.add(chart0);
 
-        ChartPanel chart1 = new ChartPanel("concepts.Mass");
-        chart1.setPreferredSize(new Dimension(200, 200));
-        charts.add(chart1);
-        p.add(chart1, c);
+            ChartPanel chart1 = new ChartPanel("concepts.Mass");
+            chart1.setPreferredSize(new Dimension(200, 200));
+            charts.add(chart1);
+            chartPanel.add(chart1);
 
-        ChartPanel chart2 = new ChartPanel("concepts.AveragePriority");
-        chart2.setPreferredSize(new Dimension(200, 200));
-        charts.add(chart2);
-        p.add(chart2, c);
-
-        c.fill = c.BOTH;
+            ChartPanel chart2 = new ChartPanel("concepts.AveragePriority");
+            chart2.setPreferredSize(new Dimension(200, 200));
+            charts.add(chart2);
+            chartPanel.add(chart2);
+        }
+        
         c.weighty = 1.0;
-        p.add(Box.createVerticalBox(), c);
+        c.fill = GridBagConstraints.BOTH;        
+        p.add(new JScrollPane(chartPanel), c);
+
+        /*c.fill = c.BOTH;
+        p.add(Box.createVerticalBox(), c);*/
+        
 
         return p;
     }

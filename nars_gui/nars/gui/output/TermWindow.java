@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.gui;
+package nars.gui.output;
 
 import javax.swing.*;
 
@@ -27,6 +27,7 @@ import java.awt.event.*;
 
 import nars.entity.Concept;
 import nars.entity.EntityObserver;
+import nars.gui.Window;
 //import nars.io.StringParser;
 import nars.storage.Memory;
 
@@ -56,11 +57,10 @@ public class TermWindow extends Window implements ActionListener {
     /**
      * Constructor
      */
-    TermWindow(Memory memory) {
+    public TermWindow(Memory memory) {
         super("Term Window");
         this.memory = memory;
-
-        getContentPane().setBackground(SINGLE_WINDOW_COLOR);
+        
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
@@ -73,7 +73,6 @@ public class TermWindow extends Window implements ActionListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         termLabel = new JLabel("Term:", JLabel.RIGHT);
-        termLabel.setBackground(SINGLE_WINDOW_COLOR);
         gridbag.setConstraints(termLabel, c);
         add(termLabel);
 

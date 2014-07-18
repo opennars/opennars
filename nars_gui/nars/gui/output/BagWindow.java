@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.gui;
+package nars.gui.output;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -37,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import nars.core.Parameters;
 import nars.entity.Item;
+import nars.gui.Window;
 import nars.storage.Bag;
 import nars.storage.BagObserver;
 
@@ -77,15 +78,14 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
     private boolean showing;
 
     public BagWindow() {
+        super("Concepts");
         
         /* The lowest level displayed -- will need adjusted for variable bag sizes*/
         int showLevel = (int)(Parameters.BAG_THRESHOLD * Parameters.BAG_LEVEL);
         
         
-        getContentPane().setBackground(MULTIPLE_WINDOW_COLOR);
 
         text = new JTextArea("");
-        text.setBackground(DISPLAY_BACKGROUND_COLOR);
         text.setEditable(false);
         JScrollPane textScrollPane = new JScrollPane(text);
         valueLabel = new JLabel( "00", JLabel.RIGHT);
