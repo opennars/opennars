@@ -156,9 +156,9 @@ public class SentenceTablePanel extends NPanel implements Output {
     @Override
     protected void onShowing(boolean showing) {
         if (showing)
-            nar.addOutputChannel(this);        
+            nar.addOutput(this);        
         else
-            nar.removeOutputChannel(this);                
+            nar.removeOutput(this);                
     }
 
     private List<Sentence> getSelectedRows() {

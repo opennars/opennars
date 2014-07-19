@@ -81,10 +81,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
      * Reference to the inference recorder
      */
     private InferenceRecorder record;
-    /**
-     * Reference to the experience reader
-     */
-    private TextInput experienceReader;
+
     /**
      * Reference to the experience writer
      */
@@ -262,7 +259,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     }
 
     /**
-     * Open an input experience file with a FileDialog
+     * Open an addInput experience file with a FileDialog
      */
     public void openLoadFile() {
         FileDialog dialog = new FileDialog((FileDialog) null, "Load experience", FileDialog.LOAD);
@@ -325,7 +322,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
             if (label.equals("Load Experience")) {
-                experienceReader = new TextInput(nar);
                 openLoadFile();
             } else if (label.equals("Save Experience")) {
                 if (savingExp) {

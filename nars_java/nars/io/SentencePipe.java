@@ -17,6 +17,7 @@
 
 package nars.io;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import nars.core.NAR;
 import nars.entity.Sentence;
 
@@ -28,22 +29,22 @@ public class SentencePipe implements Input, Output {
     private final NAR source;
     private final NAR target;
     private boolean active;
-
+    private final ArrayBlockingQueue<Sentence> buffer;
+    int bufferSize = 2048;
+    
     public SentencePipe(NAR source, NAR target) {
         this.source = source;
         this.target = target;
         
-        source.addOutputChannel(this);
-        target.addInputChannel(this);
+        buffer = new ArrayBlockingQueue(bufferSize);
+        
+        source.addOutput(this);
+        target.addInput(this);
         
         active = true;
     }
 
     
-    @Override
-    public boolean nextInput() {
-        return active;
-    }
 
     @Override
     public void output(Class channel, Object o) {
@@ -55,13 +56,25 @@ public class SentencePipe implements Input, Output {
                 s = process(s);
                 //TODO: <statement_from_other_nars --> narsinput>.
                 if (s!=null)
-                    new TextInput(target, s.toString());
+                    buffer.add(s);
             }
         }
     }
     
+   @Override
+    public boolean finished(boolean stop) {
+        if (stop)
+            active = false;
+        return !active;
+    }    
+
+    @Override
+    public Object next() {
+        return buffer.remove();        
+    }
+    
     /**
-     * for filtering or processing each sentence after output by source and before input to target.
+     * for filtering or processing each sentence after output by source and before addInput to target.
      * @param s
      * @return the sentence, either as-is, modified, or null (will not transmit)
      */
@@ -69,13 +82,8 @@ public class SentencePipe implements Input, Output {
         return s;
     }
     
-    @Override
-    public boolean isClosed() {
-        return !active;
-    }    
+ 
     
-    public void close() {
-        active = false;
-    }
+    
     
 }

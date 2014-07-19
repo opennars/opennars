@@ -61,8 +61,8 @@ public class InputPanel extends NPanel implements ActionListener {
      */
     private JTextArea inputText;
     /**
-     * Whether the window is ready to accept new input (in fact whether the
-     * Reasoner will read the content of {@link #inputText} )
+     * Whether the window is ready to accept new addInput (in fact whether the
+ Reasoner will read the content of {@link #inputText} )
      */
     private boolean ready;
     /**
@@ -205,8 +205,8 @@ public class InputPanel extends NPanel implements ActionListener {
     
 
     /**
-     * Accept text input in a tick, which can be multiple lines TODO some
-     * duplicated code with {@link ExperienceReader#nextInput()}
+     * Accept text addInput in a tick, which can be multiple lines TODO some
+ duplicated code with {@link ExperienceReader#nextInput()}
      *
      * @return Whether to check this channel again
      */
@@ -234,7 +234,7 @@ public class InputPanel extends NPanel implements ActionListener {
             
             new TextInput(reasoner, line);
             
-            inputText.setText(text);	// update input Text widget to rest of text
+            inputText.setText(text);	// update addInput Text widget to rest of text
             if (text.isEmpty()) {
                 ready = false;
             }

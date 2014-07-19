@@ -20,6 +20,8 @@ package nars.io;
 import java.text.NumberFormat;
 import nars.core.NAR;
 
+
+//TODO do not create new TextInput's, instead buffer inputs and return them through next() only
 public class Number1DInput implements Input {
     /*
     
@@ -42,6 +44,8 @@ public class Number1DInput implements Input {
     private final String id;
     private final NAR nar;
     private static NumberFormat nf = NumberFormat.getInstance();
+    boolean finished = false;
+    
     /**
      * 
      * @param id (used for concept prefixes)
@@ -55,7 +59,7 @@ public class Number1DInput implements Input {
         initPredicates(n, data.length);
         set(data);
         
-        nar.addInputChannel(this);
+        nar.addInput(this);
         
     }
     
@@ -90,7 +94,7 @@ public class Number1DInput implements Input {
     
     
     @Override
-    public boolean nextInput() {
+    public Object next() {
         if (changed) {
             if (data==null) {
                 //erase existing statements?
@@ -101,7 +105,7 @@ public class Number1DInput implements Input {
             
             changed = false;
         }
-        return true;
+        return null;
     }
     
     final String cert = "1.00"; //default certainty
@@ -149,8 +153,10 @@ public class Number1DInput implements Input {
     }    
     
     @Override
-    public boolean isClosed() {
-        return false;
+    public boolean finished(boolean force) {
+        if (force)
+            finished = true;
+        return finished;
     }
 
     private void set(double[] data) {

@@ -255,10 +255,10 @@ public class Memory {
      Some of them are reported and/or logged. */
     /**
      * Input task processing. Invoked by the outside or inside environment.
-     * Outside: StringParser (input); Inside: Operator (feedback). Input tasks
-     * with low priority are ignored, and the others are put into task buffer.
+ Outside: StringParser (addInput); Inside: Operator (feedback). Input tasks
+ with low priority are ignored, and the others are put into task buffer.
      *
-     * @param task The input task
+     * @param task The addInput task
      */
     public void inputTask(final Task task) {
         if (task.getBudget().aboveThreshold()) {
@@ -484,9 +484,9 @@ public class Memory {
     }
 
     /**
-     * Process the newTasks accumulated in the previous workCycle, accept input
-     * ones and those that corresponding to existing concepts, plus one from the
-     * buffer.
+     * Process the newTasks accumulated in the previous workCycle, accept addInput
+ ones and those that corresponding to existing concepts, plus one from the
+ buffer.
      */
     private void processNewTask() {
                 
@@ -495,7 +495,7 @@ public class Memory {
         while (counter-- > 0) {
             final Task task = newTasks.removeFirst();
             if (task.isInput() || (termToConcept(task.getContent()) != null)) { 
-                // new input or existing concept
+                // new addInput or existing concept
                 immediateProcess(task);
             } else {
                 final Sentence s = task.getSentence();

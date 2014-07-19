@@ -16,9 +16,6 @@
  */
 package nars.io.kif;
 
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +40,7 @@ public class KIFInput implements Input {
         kif = new KIF(kifPath);
         formulaIterator = kif.getFormulas().iterator();
 
-        n.addInputChannel(this);
+        n.addInput(this);
         
         this.nar = n;
                 
@@ -51,23 +48,22 @@ public class KIFInput implements Input {
 
     Map<String, Integer> knownOperators = new HashMap();
     Map<String, Integer> unknownOperators = new HashMap();
-    
+        
     protected void emit(final String statement) {
         new TextInput(nar, statement);
-        //System.out.println(statement);
     }
     
     @Override
-    public boolean nextInput() {
+    public Object next() {
         if (!formulaIterator.hasNext()) {
             closed = true;
-            return false;
+            return null;
         }
         
         Formula f = formulaIterator.next();
         if (f == null) {
             closed = true;
-            return false;
+            return null;
         }
 
         String root = f.car(); //root operator
@@ -156,7 +152,7 @@ public class KIFInput implements Input {
         
 /*Unknown operators: {=>=466, rangeSubclass=5, inverse=1, relatedInternalConcept=7, documentation=128, range=29, exhaustiveAttribute=1, trichotomizingOn=4, subrelation=22, not=2, partition=12, contraryAttribute=1, subAttribute=2, disjoint=5, domain=102, disjointDecomposition=2, domainSubclass=9, <=>=70}*/
 
-        return true;
+        return null;
     }
 
     public Map<String, Integer> getKnownOperators() {
@@ -170,7 +166,9 @@ public class KIFInput implements Input {
     
 
     @Override
-    public boolean isClosed() {
+    public boolean finished(boolean force) {
+        if (force)
+            closed = true;
         return closed;
     }
 

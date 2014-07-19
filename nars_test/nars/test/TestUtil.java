@@ -29,6 +29,7 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.io.TextPerception;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -93,7 +94,7 @@ public class TestUtil {
 
     public Sentence parseOutput(String o) {
         //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
-        return TextInput.parseOutput(o);
+        return TextPerception.parseOutput(o);
     }
     
     protected void testNAL(String path) {
