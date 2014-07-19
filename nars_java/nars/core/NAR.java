@@ -262,7 +262,7 @@ public class NAR implements Runnable, Output {
      * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
     protected boolean processInput() {
-        boolean runReasoner = false;
+        boolean inputPerceived = false;
         
         if ((inputting) && (stepsQueued == 0) && (!inputChannels.isEmpty())) {
 
@@ -274,7 +274,7 @@ public class NAR implements Runnable, Output {
                     Object o = i.next();
                     if (o!=null) {
                         perceive(i, o);
-                        runReasoner = true;                        
+                        inputPerceived = true;                        
                     }
                 }
             }            
@@ -283,7 +283,7 @@ public class NAR implements Runnable, Output {
             deadInputs.clear();
                     
         }    
-        return runReasoner;
+        return inputPerceived;
     }
     
     /* Process all input until no more is available. */

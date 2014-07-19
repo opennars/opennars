@@ -2,18 +2,12 @@ package nars.gui.output;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxConstants;
 import java.awt.BorderLayout;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nars.core.NAR;
 import nars.graph.NARGraph;
 import static nars.graph.NARGraph.IncludeEverything;
-import nars.gui.Window;
-import nars.io.TextInput;
 import org.jgrapht.ext.JGraphXAdapter;
 
 /**

@@ -18,12 +18,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import nars.core.NAR;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.graph.NARGraph;
 import nars.graph.NARGraph.Filter;
 import static nars.graph.NARGraph.IncludeEverything;
 import nars.gui.NSlider;
-import nars.io.TextInput;
 import nars.language.Term;
 import nars.storage.Memory;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -149,7 +149,12 @@ class papplet extends PApplet implements ActionListener
         drawArrowAngle(x1, y1, len, a);
     }
     
-    public int getColor(String s) {            
+    public static int getColor(Object o) {
+        return getColor(o.getClass().getSimpleName());
+    }
+    
+
+    public static int getColor(String s) {            
         double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
         return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();        
     }
@@ -206,7 +211,7 @@ class papplet extends PApplet implements ActionListener
                 double w = b.getWidth();
                 double h = b.getHeight();
 
-                float size = getVertexSize(vertex);
+                float size = getVertexSize(vertex, nodeSize);
                 ellipse(x, y, size, size);            
 
                 fill(255,255,255);        
@@ -218,7 +223,7 @@ class papplet extends PApplet implements ActionListener
     }
 
     
-    public float getVertexSize(Object o) {
+    public static float getVertexSize(Object o, float nodeSize) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
             return (float)(nodeSize * (0.25 + 0.75 * s.getTruth().getConfidence()));
@@ -227,14 +232,18 @@ class papplet extends PApplet implements ActionListener
             Term t = (Term)o;
             return (float)(Math.log(1+1 + t.getComplexity()) * nodeSize);
         }
+        else if (o instanceof Concept) {
+            Term t = ((Concept)o).getTerm();
+            return (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
+        }
         return nodeSize;
     }
     
-    public float getVertexAlpha(Object o) {
+    public static float getVertexAlpha(Object o) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
             return (float)((0.25 + 0.75 * s.getTruth().getConfidence()));
-        }        
+        }
         return 1.0f;
     }    
     
