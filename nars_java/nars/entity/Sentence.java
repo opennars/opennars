@@ -243,6 +243,7 @@ public class Sentence implements Cloneable {
 
     public void setStamp(Stamp stamp) {
         this.stamp = stamp;
+        this.key = null;
     }
 
     /**
@@ -265,12 +266,14 @@ public class Sentence implements Cloneable {
 
             final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
                 .append(punctuation).append(' ');
-            if (occurrenceTimeString.length() > 0) {
-                k.append(occurrenceTimeString);
-            }
+            
             if (truth != null) {
                 k.append(truthString);
             }
+            if (occurrenceTimeString.length() > 0) {
+                k.append(occurrenceTimeString);
+            }
+            
 
             key = k.toString();        
             

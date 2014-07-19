@@ -59,7 +59,7 @@ public class NARRun {
     /**
      * The entry point of the standalone application.
      * <p>
-     * Create an instance of the class, then run the {@link #init(String[])} and
+ Create an instance of the class, then finish the {@link #init(String[])} and
      * {@link #run()} methods.
      *
      * @param args optional argument used : one addInput file
@@ -68,7 +68,7 @@ public class NARRun {
         NARRun nars = new NARRun();
         CommandLineArguments.decode(args, nars.getReasoner());
         nars.runInference(args);
-        // TODO only if single run ( no reset in between )
+        // TODO only if single finish ( no reset in between )
         if (nars.dumpLastState) {
             System.out.println("\n==== Dump Last State ====\n"
                     + nars.nar.toString());
@@ -80,7 +80,7 @@ public class NARRun {
     }
 
     /**
-     * non-static equivalent to {@link #main(String[])} : run to completion from
+     * non-static equivalent to {@link #main(String[])} : finish to completion from
  an addInput file
      */
     public void runInference(String args[]) {
@@ -106,8 +106,8 @@ public class NARRun {
     }
 
     /**
-     * non-static equivalent to {@link #main(String[])} : run to completion from
-     * a BufferedReader
+     * non-static equivalent to {@link #main(String[])} : finish to completion from
+ a BufferedReader
      */
     public void runInference(BufferedReader r, BufferedWriter w) {
         init(r, w);

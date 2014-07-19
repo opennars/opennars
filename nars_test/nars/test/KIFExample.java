@@ -45,7 +45,7 @@ public class KIFExample {
         t.setErrors(true);
         t.setErrorStackTrace(true);
 
-        n.run(100000);
+        n.finish(100000);
 
         /*
         new TextInput(n, "$0.99;0.99$ <Human --> ?x>?");

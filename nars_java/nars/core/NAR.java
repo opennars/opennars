@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.HashMap;
+import nars.entity.Sentence;
 
 import nars.entity.Stamp;
 import nars.gui.NARControls;
 import nars.io.Input;
 import nars.io.Output;
+import nars.io.TextInput;
 import nars.io.TextPerception;
 import nars.storage.Memory;
 
@@ -60,22 +62,22 @@ public class NAR implements Runnable, Output {
     /**
      * The remaining number of steps to be carried out (walk mode)
      */
-    private int walkingSteps;
+    private int stepsQueued;
+    
     /**
      * determines the end of {@link NARSBatch} program (set but not accessed in
      * this class)
      */
     private boolean finishedInputs;
-    /**
-     * System clock - number of cycles since last output
-     */
-    private long timer;
-    private boolean paused;
 
+    
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
     public final Parameters param;
     private final TextPerception textPerception;
+    
+    private boolean working = true;
+    private boolean inputting = true;
 
     public NAR() {
         this(new DefaultParameters());
@@ -102,7 +104,7 @@ public class NAR implements Runnable, Output {
         }
         inputChannels.clear();
         
-        walkingSteps = 0;
+        stepsQueued = 0;
         clock = 0;
         memory.init();
         Stamp.init();
@@ -111,58 +113,48 @@ public class NAR implements Runnable, Output {
                 
     }
 
-    public Memory getMemory() {
-        return memory;
+    /** Convenience method for creating a TextInput and adding as Input Channel */
+    public TextInput addInput(final String text) {
+        final TextInput i = new TextInput(this, text);
+        addInput(i);
+        return i;
     }
-
+    
+    /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
     public void addInput(Input channel) {
         inputChannels.add(channel);        
     }
 
+    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
     public void removeInput(Input channel) {
         inputChannels.remove(channel);
         channel.finished(true);
     }
 
+    /** Adds an output channel */
     public void addOutput(Output channel) {
         outputChannels.add(channel);
     }
 
+    /** Removes an output channel */
     public void removeOutput(Output channel) {
         outputChannels.remove(channel);
     }
 
-
-
     /**
-     * Will carry the inference process for a certain number of steps
+     * Queue additional tick()'s to the inference process.
      *
-     * @param n The number of inference steps to be carried
+     * @param cycles The number of inference steps
      */
-    public void walk(final int n) {
-        if (DEBUG)
-            output(OUT.class, "thinking " + n + (n > 1 ? " cycles" : " cycle"));
-        walkingSteps = n;
+    public void walk(final int cycles) {
+        stepsQueued += cycles;
     }
     
-    public void walk(final int steps, final boolean immediate) {
-        if (immediate) {
-            stop();
-            paused = false;
-            running = true;
-            tick();
-        }
-        
-        walk(steps);
-        
-        if (immediate) {
-            running = false;
-        }
-    }
     
     /**
-     * Repeatedly execute NARS working cycle. This method is called when the
-     * Runnable's thread is started.
+     * Repeatedly execute NARS working cycle in a new thread.
+     * 
+     * @param minTickPeriodMS minimum tick period (milliseconds).
      */    
     public void start(final long minTickPeriodMS) {
         if (thread == null) {
@@ -171,19 +163,22 @@ public class NAR implements Runnable, Output {
         }        
         this.minTickPeriodMS = minTickPeriodMS;
         running = true;
-        paused = false;
     }
     
-    public void pause() {
-        paused = true;
+    /** Can be used to pause/resume inference, without killing the running thread. */
+    public void setWorking(boolean b) {
+        this.working = b;
     }
 
-    public void resume() {
-        paused = false;
+    /** Can be used to pause/resume input */
+    public void setInputting(boolean inputEnabled) {
+        this.inputting = inputEnabled;
     }
+
+    
     
     /**
-     * Will stop the inference process
+     * Stop the inference process, killing its thread.
      */
     public void stop() {
         if (thread!=null) {
@@ -193,33 +188,37 @@ public class NAR implements Runnable, Output {
         running = false;
     }    
     
-    public void run(final int minCycles) {
-        run(minCycles, false);
-    }
-    
-    public void run(int minCycles, boolean debug) {
-        DEBUG = debug; 
+    /** Execute a fixed number of cycles. */
+    public void step(final int cycles) {
+        if (thread!=null) {
+            walk(cycles);
+            return;
+        }
         running = true;
-        paused = false;
-        for (int i = 0; i < minCycles-1; i++)
-            tick();
-        for (int i = 0; i < walkingSteps; i++)
-            tick();
-        finish();
-        running = false;
-        paused = true;
-    }
-    
-    public void finish() {
-        running = true;
-        paused = false;
-        while ((walkingSteps!=0) && (!inputChannels.isEmpty())) {
+        for (int i = 0; i < cycles; i++) {
             tick();
         }
         running = false;
-        paused = true;
     }
     
+    /** Execute a fixed number of cycles, then finish any remaining walking steps. */
+    public void finish(final int cycles) {
+        finish(cycles, false);
+    }
+    
+    /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
+    public void finish(final int cycles, final boolean debug) {
+        DEBUG = debug; 
+        step(cycles);
+        running = true;
+        while ((stepsQueued!=0) && (!inputChannels.isEmpty())) {
+            tick();
+        }
+        running = false;
+    }
+    
+
+    /** Main loop executed by the Thread.  Should not be called directly. */
     @Override public void run() {
         
         while (running) {            
@@ -233,6 +232,8 @@ public class NAR implements Runnable, Output {
                 }
             }
             catch (Exception e) {
+                output(ERR.class, e);
+                
                 System.err.println(e);
                 e.printStackTrace();
             }
@@ -240,30 +241,30 @@ public class NAR implements Runnable, Output {
             if (minTickPeriodMS > 0) {
                 try {
                     Thread.sleep(minTickPeriodMS);
-                } catch (InterruptedException e) {            }
+                } catch (InterruptedException e) { }
             }
         }
     }
     
     
     private void debugTime() {
-        if (running || walkingSteps > 0 || !finishedInputs) {
+        if (running || stepsQueued > 0 || !finishedInputs) {
             System.out.println("// doTick: "
-                    + "walkingSteps " + walkingSteps
-                    + ", clock " + clock
-                    + ", getTimer " + getSystemClock());
+                    + "walkingSteps " + stepsQueued
+                    + ", clock " + clock);
 
             System.out.flush();
         }
     }
 
     /**     
-     * @return whether to run the reasoner afterward
+     * Processes the next input from each input channel.  Removes channels that have finished.
+     * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
     protected boolean processInput() {
         boolean runReasoner = false;
         
-        if ((walkingSteps == 0) && (!inputChannels.isEmpty())) {
+        if ((inputting) && (stepsQueued == 0) && (!inputChannels.isEmpty())) {
 
             for (final Input i : inputChannels) {
                 if (i.finished(false)) {
@@ -285,21 +286,26 @@ public class NAR implements Runnable, Output {
         return runReasoner;
     }
     
+    /* Process all input until no more is available. */
     public void bufferInput() {
         while (processInput()) { }
     }    
 
-    
+    /* Perceive an input object by calling an appropriate perception system according to the object type. */
     protected void perceive(final Input i, final Object o) {
         if (o instanceof String) {
             textPerception.perceive(i, (String)o);
         }
+        else if (o instanceof Sentence) {
+            //TEMPORARY
+            textPerception.perceive(i, o.toString());
+        }
     }
     
-    private void workCycle() {
-        if (((running || walkingSteps > 0)) && (!paused)) {
+    /** Execute a workCycle */
+    protected void workCycle() {
+        if ((working) && ((running || (stepsQueued > 0)))) {
             clock++;
-            tickTimer();
             try {
                 memory.workCycle(clock);
             }
@@ -308,17 +314,16 @@ public class NAR implements Runnable, Output {
                 if (DEBUG)
                     e.printStackTrace();
             }
-            if (walkingSteps > 0) {
-                walkingSteps--;
+            if (stepsQueued > 0) {
+                stepsQueued--;
             }
         }        
     }
 
     /**
-     * A clock tick. Run one working workCycle or read addInput. Called from NARS
- only.
+     * A clock tick, consisting of 1) processing input, 2) one workCycle.
      */
-    public void tick() {
+    protected void tick() {
         if (DEBUG) {
             debugTime();            
         }
@@ -349,33 +354,7 @@ public class NAR implements Runnable, Output {
     }
 
 
-    /**
-     * To get the timer value and then to
-     * reset it by {@link #initTimer()};
-     * plays the same role as {@link nars.gui.MainWindow#updateTimer()} 
-     *
-     * @return The previous timer value
-     */
-    public long updateTimer() {
-        long i = getSystemClock();
-        initTimer();
-        return i;
-    }
 
-    /**
-     * Reset timer;
-     * plays the same role as {@link nars.gui.MainWindow#initTimer()} 
-     */
-    public void initTimer() {
-        setTimer(0);
-    }
-
-    /**
-     * Update timer
-     */
-    public void tickTimer() {
-        timer++;
-    }
 
      /**
      * Get the current time from the clock Called in {@link nars.entity.Stamp}
@@ -386,32 +365,18 @@ public class NAR implements Runnable, Output {
         return clock;
     }
 
-    /** @return System clock : number of cycles since last output */
-    public long getSystemClock() {
-        return timer;
-    }        
-
-    /** set System clock : number of cycles since last output */
-    private void setTimer(long timer) {
-        this.timer = timer;
-    }
-
     public boolean isRunning() {
         return running;
     }    
-
-    public boolean isPaused() {
-        return paused;
-    }
 
     public long getMinTickPeriodMS() {
         return minTickPeriodMS;
     }
 
-    public int getWalkingSteps() {
-        return walkingSteps;
+    public boolean isWorking() {
+        return working;
     }
 
-    
+
     
 }

@@ -39,7 +39,7 @@ public class NARStateTest {
         NAR n = new NAR();
                 
         new Number1DInput(n, "x", x);
-        n.run(16);
+        n.finish(16);
         
         
         HashMap<String, Object> d = new NARState(n).measure();

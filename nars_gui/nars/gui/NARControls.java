@@ -129,7 +129,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         super(new BorderLayout());
         
         this.nar = nar;
-        memory = nar.getMemory();        
+        memory = nar.memory;
         record = memory.getRecorder();
         
         experienceWriter = new TextOutput(nar);
@@ -277,7 +277,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
 
     /**
-     * Initialize the system for a new run
+     * Initialize the system for a new finish
      */
     public void init() {
         setSpeed(0);
@@ -316,7 +316,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 setSpeed(0);
                 updateGUI();
             } else if (obj == walkButton) {
-                nar.walk(1, true);
+                nar.stop();
+                nar.step(1);
                 updateGUI();
             }
         } else if (obj instanceof JMenuItem) {

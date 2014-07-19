@@ -27,10 +27,10 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
         long now = nar.getTime();
         HashMap<String, Object> data = newData();
         
-        ConceptBag concepts = nar.getMemory().concepts;
+        ConceptBag concepts = nar.memory.concepts;
         
         //..
-        data.put("concepts.AveragePriority", nar.getMemory().concepts.getAveragePriority());
+        data.put("concepts.AveragePriority", nar.memory.concepts.getAveragePriority());
         data.put("concepts.Total", concepts.size());
         data.put("concepts.Mass", concepts.getMass());
         

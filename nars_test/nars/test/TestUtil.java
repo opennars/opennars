@@ -126,11 +126,11 @@ public class TestUtil {
                     out.add(s);
                 }
             }            
-        };           
-        new TextInput(n, getExample(path));
-
+        };         
+        
+        n.addInput(getExample(path));
         n.bufferInput();
-        n.run(extraCycles);
+        n.finish(extraCycles);
 
 
         js.put("test", this);
@@ -143,7 +143,9 @@ public class TestUtil {
                     boolean r = (Boolean)result;
                     if (!r) {
                         System.out.println();
-                        System.out.println(path + " FAILED @ " + n.getTime() + ", walkingSteps=" + n.getWalkingSteps());
+                        System.out.println(path + " FAILED @ " + n.getTime());
+                        if (out.size() == 0)
+                            System.out.println("(output empty)");
                         for (Object x : out)
                             System.out.println(x);                        
                         System.out.println();
@@ -180,8 +182,8 @@ public class TestUtil {
             @Override
             public void run(boolean warmup) {
                 n.reset();
-                new TextInput(n, getExample(path));
-                n.run(extraCycles);
+                n.addInput(getExample(path));
+                n.finish(extraCycles);
             }
 
 
