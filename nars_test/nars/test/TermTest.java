@@ -18,8 +18,8 @@ package nars.test;
 
 import java.util.TreeSet;
 import nars.core.NAR;
-import nars.io.TextInput;
-import nars.io.TextInput.InvalidInputException;
+import nars.io.TextPerception;
+import nars.io.TextPerception.InvalidInputException;
 import nars.language.Inheritance;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
@@ -39,10 +39,10 @@ public class TermTest {
         try {           
             
             String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-            Term term1 = TextInput.parseTerm(term1String, n.memory);
+            Term term1 = TextPerception.parseTerm(term1String, n.memory);
 
             // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
-            Term term2 = TextInput.parseTerm("<#1 --> (|,boy,(/,taller_than,{Tom},_))>", n.memory);
+            Term term2 = TextPerception.parseTerm("<#1 --> (|,boy,(/,taller_than,{Tom},_))>", n.memory);
    
             assertTrue(term1.toString().equals(term1String));
             assertTrue(term1.getComplexity() > 1);

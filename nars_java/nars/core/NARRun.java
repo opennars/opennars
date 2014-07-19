@@ -36,8 +36,8 @@ import nars.io.TextOutput;
 /**
  * Run Reasoner
  * <p>
- * Runs a NAR with input. useful for command line or batch functionality; 
- * TODO check duplicated code with {@link nars.main.NARS}
+ Runs a NAR with addInput. useful for command line or batch functionality; 
+ TODO check duplicated code with {@link nars.main.NARS}
  * <p>
  * Manage the internal working thread. Communicate with Reasoner only.
  */
@@ -62,7 +62,7 @@ public class NARRun {
      * Create an instance of the class, then run the {@link #init(String[])} and
      * {@link #run()} methods.
      *
-     * @param args optional argument used : one input file
+     * @param args optional argument used : one addInput file
      */
     public static void main(String args[]) {
         NARRun nars = new NARRun();
@@ -81,7 +81,7 @@ public class NARRun {
 
     /**
      * non-static equivalent to {@link #main(String[])} : run to completion from
-     * an input file
+ an addInput file
      */
     public void runInference(String args[]) {
         init(args);
@@ -89,7 +89,7 @@ public class NARRun {
     }
 
     /**
-     * initialize from an input file
+     * initialize from an addInput file
      */
     public void init(String[] args) {
         if (args.length > 0) {
@@ -116,7 +116,7 @@ public class NARRun {
 
     private void init(BufferedReader r, BufferedWriter w) {
         TextInput experienceReader = new TextInput(nar, r);
-        nar.addOutputChannel(new TextOutput(nar,
+        nar.addOutput(new TextOutput(nar,
                 new PrintWriter(w, true)));
     }
 
@@ -137,7 +137,7 @@ public class NARRun {
         while (true) {
             log("NARSBatch.run():"
                     + " step " + nar.getTime()
-                    + " " + nar.isFinishedInputs());
+                    + " " + nar.inputChannels.size());
             
             try {
                 nar.tick();
@@ -148,10 +148,10 @@ public class NARRun {
             
             log("NARSBatch.run(): after tick"
                     + " step " + nar.getTime()
-                    + " " + nar.isFinishedInputs());
+                    + " " + nar.inputChannels.size());
             
             if (maxTime > 0) {
-                if (nar.isFinishedInputs()
+                if ((nar.inputChannels.size() == 0)
                         || nar.getTime() == maxTime) {
                     break;
                 }

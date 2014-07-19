@@ -34,10 +34,7 @@ public class KIFExample {
         n.param.setSilenceLevel(99);
         
         KIFInput k = new KIFInput(n, "/home/me/sigma/KBs/Merge.kif");
-        
-        while (!k.isClosed()) {
-            n.run(1);        
-        }
+        n.bufferInput();
         
         System.err.println("Processed operators: " + k.getKnownOperators());
         System.err.println("Unknown operators: " + k.getUnknownOperators());

@@ -107,8 +107,8 @@ public class OutputLogPanel extends NPanel implements Output {
             @Override
             public void onChange(double v) {
                 ioText.setFont(ioText.getFont().deriveFont((float)v));
-            }
-          
+            } 
+         
         };        
         fontSlider.setPrefix("Font size: ");
         menu.add(fontSlider);
@@ -132,9 +132,9 @@ public class OutputLogPanel extends NPanel implements Output {
     @Override
     protected void onShowing(boolean showing) {
         if (showing)
-            nar.addOutputChannel(this);        
+            nar.addOutput(this);        
         else
-            nar.removeOutputChannel(this);                
+            nar.removeOutput(this);                
     }
 
     

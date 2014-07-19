@@ -22,23 +22,18 @@ abstract public class NARConnection implements LineOutput {
     public final NAR nar;
     protected final TextOutput writer;
     int cycleIntervalMS;
-    private final TextInputParser extraParser;
+    //private final TextInputParser extraParser;
         
-    public NARConnection(NAR nar, int cycleIntervalMS) {
-        this(nar, cycleIntervalMS, null);
-    }
     
-    public NARConnection(NAR nar, int cycleIntervalMS, TextInputParser extraParser) {
+    public NARConnection(NAR nar, int cycleIntervalMS) {
         this.nar = nar;
-        this.extraParser = extraParser;
         this.cycleIntervalMS = cycleIntervalMS;
-     
-        
+             
         this.writer = new TextOutput(nar, this);
     }
 
     public void read(final String message) {
-        TextInput e = new TextInput(nar, new BufferedReader( new StringReader(message)), extraParser);
+        TextInput e = new TextInput(nar, new BufferedReader( new StringReader(message)));
                 
         if (!running)
             resume();

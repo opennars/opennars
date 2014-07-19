@@ -56,7 +56,7 @@ public class TextOutput implements Output {
      */
     public TextOutput(NAR reasoner) {
         this.reasoner = reasoner;
-        reasoner.addOutputChannel(this);
+        reasoner.addOutput(this);
     }
     public TextOutput(NAR reasoner, LineOutput outExp2) {
         this(reasoner);
@@ -93,7 +93,7 @@ public class TextOutput implements Output {
      */
     public void closeSaveFile() {
         outExp.close();
-        reasoner.removeOutputChannel(this);
+        reasoner.removeOutput(this);
     }
 
     /**

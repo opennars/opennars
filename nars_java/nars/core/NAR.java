@@ -1,5 +1,6 @@
 package nars.core;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import nars.entity.Stamp;
 import nars.gui.NARControls;
 import nars.io.Input;
 import nars.io.Output;
+import nars.io.TextPerception;
 import nars.storage.Memory;
 
 /**
@@ -34,15 +36,18 @@ public class NAR implements Runnable, Output {
      */
     public final Memory memory;
     /**
-     * The input channels of the reasoner
+     * The addInput channels of the reasoner
      */
     protected final List<Input> inputChannels;
-    private final List<Input> closedInputChannels;
+    
+    private final List<Input> deadInputs = new ArrayList();
 
     /**
      * The output channels of the reasoner
      */
     protected List<Output> outputChannels;
+    
+        
     /**
      * System clock, relatively defined to guarantee the repeatability of
      * behaviors
@@ -70,6 +75,7 @@ public class NAR implements Runnable, Output {
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
     public final Parameters param;
+    private final TextPerception textPerception;
 
     public NAR() {
         this(new DefaultParameters());
@@ -78,11 +84,11 @@ public class NAR implements Runnable, Output {
     public NAR(Parameters p) {
         param = p;
         memory = new Memory(this);
+        textPerception = new TextPerception(this);
         
         //needs to be concurrent in case NARS makes changes to the channels while running
         inputChannels = new CopyOnWriteArrayList<>();
         outputChannels = new CopyOnWriteArrayList<>();
-        closedInputChannels = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -91,6 +97,11 @@ public class NAR implements Runnable, Output {
      */     
     public void reset() {
             
+        for (Input i : inputChannels) {
+            i.finished(true);
+        }
+        inputChannels.clear();
+        
         walkingSteps = 0;
         clock = 0;
         memory.init();
@@ -104,19 +115,20 @@ public class NAR implements Runnable, Output {
         return memory;
     }
 
-    public void addInputChannel(Input channel) {
-        inputChannels.add(channel);
+    public void addInput(Input channel) {
+        inputChannels.add(channel);        
     }
 
-    public void removeInputChannel(Input channel) {
+    public void removeInput(Input channel) {
         inputChannels.remove(channel);
+        channel.finished(true);
     }
 
-    public void addOutputChannel(Output channel) {
+    public void addOutput(Output channel) {
         outputChannels.add(channel);
     }
 
-    public void removeOutputChannel(Output channel) {
+    public void removeOutput(Output channel) {
         outputChannels.remove(channel);
     }
 
@@ -245,37 +257,44 @@ public class NAR implements Runnable, Output {
         }
     }
 
-    public boolean processInput() {
-        boolean reasonerShouldRun = false;
+    /**     
+     * @return whether to run the reasoner afterward
+     */
+    protected boolean processInput() {
+        boolean runReasoner = false;
         
-        if (walkingSteps == 0) {
+        if ((walkingSteps == 0) && (!inputChannels.isEmpty())) {
 
-
-            for (final Input channelIn : inputChannels) {
-                if (DEBUG) {
-                    System.out.println("Input: " + channelIn);
-                }
-
-                if (channelIn.isClosed()) {
-                    closedInputChannels.add(channelIn);
+            for (final Input i : inputChannels) {
+                if (i.finished(false)) {
+                    deadInputs.add(i);
                 }
                 else {
-                    if (channelIn.nextInput())
-                        reasonerShouldRun = true;
+                    Object o = i.next();
+                    if (o!=null) {
+                        perceive(i, o);
+                        runReasoner = true;                        
+                    }
                 }
-            }
-            finishedInputs = !reasonerShouldRun;
-
-            inputChannels.removeAll(closedInputChannels);
-            closedInputChannels.clear();
+            }            
+            
+            inputChannels.removeAll(deadInputs);
+            deadInputs.clear();
                     
         }    
-        return reasonerShouldRun;
+        return runReasoner;
     }
     
     public void bufferInput() {
         while (processInput()) { }
     }    
+
+    
+    protected void perceive(final Input i, final Object o) {
+        if (o instanceof String) {
+            textPerception.perceive(i, (String)o);
+        }
+    }
     
     private void workCycle() {
         if (((running || walkingSteps > 0)) && (!paused)) {
@@ -296,8 +315,8 @@ public class NAR implements Runnable, Output {
     }
 
     /**
-     * A clock tick. Run one working workCycle or read input. Called from NARS
-     * only.
+     * A clock tick. Run one working workCycle or read addInput. Called from NARS
+ only.
      */
     public void tick() {
         if (DEBUG) {
@@ -309,20 +328,20 @@ public class NAR implements Runnable, Output {
     }
     
     
+    /**
+     * Outputs an object to the output channels, via a specific Channel that signifying 
+     * the mode of this output. (IN, OUT, ERR, etc..)
+     * 
+     * @param channel
+     * @param o 
+     */
     @Override
     public void output(final Class channel, final Object o) {       
         for (final Output channelOut : outputChannels)
             channelOut.output(channel, o);
     }
 
-
-    /**
-     * determines the end of {@link NARSBatch} program
-     */
-    public boolean isFinishedInputs() {
-        return finishedInputs;
-    }
-
+  
 
     @Override
     public String toString() {

@@ -90,8 +90,8 @@ public class NARSwing  {
      * <p>
      * Create an instance of the class
      *
-     * @param args optional argument used : one input file, possibly followed by
-     * --silence <integer>
+     * @param args optional argument used : one addInput file, possibly followed by
+ --silence <integer>
      */
     public static void main(String args[]) {
         NARSwing swing = new NARSwing();
