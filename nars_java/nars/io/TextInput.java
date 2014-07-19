@@ -111,7 +111,8 @@ public class TextInput extends Symbols implements Input {
                     break;
                 }
                 else {
-                    text.append(line).append('\n');                    
+                    if (line.length() > 0)
+                        text.append(line).append('\n');                    
                 }
             }
 

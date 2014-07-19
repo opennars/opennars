@@ -50,7 +50,7 @@ public class KIFInput implements Input {
     Map<String, Integer> unknownOperators = new HashMap();
         
     protected void emit(final String statement) {
-        new TextInput(nar, statement);
+        nar.addInput(statement);
     }
     
     @Override

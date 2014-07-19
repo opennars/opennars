@@ -55,18 +55,18 @@ public class SentencePipeTest {
         new TextOutput(source, sw).setLinePrefix(sourceLinePrefix);
         new TextOutput(target, sw).setLinePrefix("Target: ");
         
-        new TextInput(source, "<a --> b>.");
-        new TextInput(source, "<a --> b>?");
+        source.addInput("<a --> b>.");
+        source.addInput("<a --> b>?");
         
-        assert(target.getMemory().concepts.size() == 0);
+        assert(target.memory.concepts.size() == 0);
         
-        source.run(2);
+        source.finish(2);
         
         assert(sentencesProcessed > 0);
         
-        target.run(2);
+        target.finish(2);
         
-        assert(target.getMemory().concepts.size() > 0);
+        assert(target.memory.concepts.size() > 0);
         
         //test prefix output
         String swBuffer = sw.getBuffer().toString();

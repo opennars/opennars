@@ -21,9 +21,9 @@ public class TestNARGraph {
     
         NAR n = new NAR();
         
-        new TextInput(n, "<a --> b>.");
+        n.addInput("<a --> b>.");
         
-        n.run(2);
+        n.finish(2);
         
         //System.out.println(n);
 

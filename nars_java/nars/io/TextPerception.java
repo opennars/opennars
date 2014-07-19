@@ -99,8 +99,8 @@ public class TextPerception {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 try {
-                    int timer = Integer.parseInt(input);
-                    nar.walk(timer);
+                    int cycles = Integer.parseInt(input);
+                    nar.step(cycles);
                     return true;
                 }
                 catch (NumberFormatException e) {
@@ -125,10 +125,10 @@ public class TextPerception {
         defaultParsers.add(new TextInputParser() {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
-                if (!nar.isPaused())  {
+                if (!nar.isWorking())  {
                     if (input.equals(Symbols.STOP_COMMAND)) {
                         nar.output(Output.OUT.class, "stopping.");
-                        nar.pause();
+                        nar.setWorking(false);
                         return true;
                     }
                 }
@@ -140,9 +140,9 @@ public class TextPerception {
         defaultParsers.add(new TextInputParser() {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
-                if (nar.isPaused()) {
+                if (nar.isWorking()) {
                     if (input.equals(Symbols.START_COMMAND)) {
-                        nar.resume();
+                        nar.setWorking(true);
                         nar.output(Output.OUT.class, "starting.");
                         return true;
                     }

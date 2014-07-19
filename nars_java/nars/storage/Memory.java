@@ -135,7 +135,6 @@ public class Memory {
         novelTasks.clear();
         newTasks.clear();
         randomNumber = new Random(1);
-        reasoner.initTimer();
         if (getRecorder().isActive()) {
             getRecorder().append("--reset--");
         }

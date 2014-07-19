@@ -70,7 +70,9 @@ public class SentencePipe implements Input, Output {
 
     @Override
     public Object next() {
-        return buffer.remove();        
+        if (buffer.size() > 0)
+            return buffer.remove();
+        return null;
     }
     
     /**

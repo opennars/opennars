@@ -609,24 +609,24 @@ public class ProcessingGraphPanel extends JFrame {
     }
         
     
-    public static void main(String[] args) throws Exception {
-        NAR n = new NAR();
-        
-        /*
-        new TextInput(n, "<a --> b>.");
-        new TextInput(n, "<b --> c>.");
-        new TextInput(n, "<d <-> c>. %0.75;0.90%");
-        new TextInput(n, "<a --> c>?");      
-        new TextInput(n, "<a --> d>?");
-        n.run(12);
-        */
-        
-        new TextInput(n, "<0 --> num>. %1.00;0.90% {0 : 1}");
-        new TextInput(n, "<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2}"); 
-        new TextInput(n, "<(*,(*,(*,0))) --> num>?  {0 : 3}");
-       
-        n.run(500);
-        
-        new ProcessingGraphPanel(n);
-    }
+//    public static void main(String[] args) throws Exception {
+//        NAR n = new NAR();
+//        
+//        /*
+//        new TextInput(n, "<a --> b>.");
+//        new TextInput(n, "<b --> c>.");
+//        new TextInput(n, "<d <-> c>. %0.75;0.90%");
+//        new TextInput(n, "<a --> c>?");      
+//        new TextInput(n, "<a --> d>?");
+//        n.run(12);
+//        */
+//        
+//        n.addInput("<0 --> num>. %1.00;0.90% {0 : 1}");
+//        n.addInput("<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2}"); 
+//        n.addInput("<(*,(*,(*,0))) --> num>?  {0 : 3}");
+//       
+//        n.run(500);
+//        
+//        new ProcessingGraphPanel(n);
+//    }
 }

@@ -213,14 +213,17 @@ public class OutputLogPanel extends NPanel implements Output {
                         
                         Color contentColor = Color.getHSBColor(0.5f + (freq-0.5f)/2f, 1.0f, 0.05f + 0.5f - conf/4f);                        
                         print(contentColor, contentSize, s.getContent().toString() + s.getPunctuation(), s.isQuestion());
-                        
+                       
                         if (s.getTruth()!=null) {
                             Color truthColor = Color.getHSBColor(freq, 0, 0.25f - conf/4f);
-                            print(truthColor, contentSize, s.getTruth().toString(), false);
+                            print(truthColor, contentSize,  " " + s.getTruth().toString(), false);
                         }
+                       
                         if ((showStamp) && (s.getStamp()!=null)) {
                             Color stampColor = Color.GRAY;
-                            print(stampColor, contentSize, s.getStamp().toString(), false);
+                            print(stampColor, contentSize, 
+                                    " " + s.getStamp().getOccurrenceTimeString() + 
+                                    " " + s.getStamp().toString(), false);
                         }
                     }
                     else {

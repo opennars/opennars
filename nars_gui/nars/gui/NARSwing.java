@@ -23,7 +23,6 @@ package nars.gui;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import nars.core.CommandLineArguments;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
