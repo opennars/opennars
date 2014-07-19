@@ -173,7 +173,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new MemoryView(nar.memory);
+                    new MemoryView(nar);
                 }
             });
             m.add(mv);
@@ -430,7 +430,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     }
 
     public void setSpeed(double nextSpeed) {
-        final double maxPeriodMS = 256.0;
+        final double maxPeriodMS = 1024.0;
 
         if (nextSpeed == 0) {
             if (currentSpeed == 0) {

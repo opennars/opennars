@@ -3,6 +3,7 @@ package nars.graph;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -75,7 +76,14 @@ public class NARGraph extends DirectedMultigraph {
          * @param g
          * @param l 
          */
-        void onLevel(NARGraph g, int l);
+        void preLevel(NARGraph g, int l);
+        
+        /**
+         * called at end of each level
+         * @param g
+         * @param l 
+         */
+        void postLevel(NARGraph g, int l);
 
         /**
          * called per concept
@@ -120,6 +128,8 @@ public class NARGraph extends DirectedMultigraph {
         super(DefaultEdge.class);
     }
 
+    public List<Concept> currentLevel = new ArrayList();
+    
     public void add(NAR n, Filter filter, Graphize graphize) {
         graphize.onTime(this, n.getTime());
 
@@ -129,18 +139,25 @@ public class NARGraph extends DirectedMultigraph {
 
             if (!filter.includeLevel(level)) continue;
 
-            graphize.onLevel(this, level);
+            graphize.preLevel(this, level);
 
             if (!bag.emptyLevel(level)) {
 
-                for (final Concept c : bag.getLevel(level)) {
+                currentLevel.clear();
+                currentLevel.addAll(bag.getLevel(level));
+                
+                for (final Concept c : currentLevel) {
 
                     if (!filter.includeConcept(c)) continue;
                     
-                    graphize.onConcept(this, c);
+                    if (c!=null)
+                        graphize.onConcept(this, c);
                 }
 
             }
+            
+            graphize.postLevel(this, level);
+            
         }
         
         graphize.onFinish(this);
@@ -153,7 +170,7 @@ public class NARGraph extends DirectedMultigraph {
 
     public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e, boolean allowMultiple) {
         if (!allowMultiple) {
-            Set existing = getAllEdges(sourceVertex, targetVertex);        
+            Set existing = getAllEdges(sourceVertex, targetVertex);       
             for (Object o : existing) {
                 if (o.getClass() == e.getClass()) {
                     return false;
@@ -193,13 +210,31 @@ public class NARGraph extends DirectedMultigraph {
         }
 
         @Override
-        public void onLevel(NARGraph g, int l) {
-
+        public void preLevel(NARGraph g, int l) {
         }
 
+        @Override
+        public void postLevel(NARGraph g, int l) {
+        }
+        
+
         protected void addTerm(NARGraph g, Term t) {
-            if (terms.add(t))
+            if (terms.add(t)) {
                 g.addVertex(t);
+                onTerm(t);
+            }
+        }
+        
+        public void onTerm(Term t) {
+            
+        }
+        
+        public void onBelief(Sentence kb) {
+            
+        }
+
+        public void onQuestion(Task q) {
+            
         }
         
         @Override
@@ -210,17 +245,23 @@ public class NARGraph extends DirectedMultigraph {
 
             if (includeBeliefs) {
                 for (final Sentence kb : c.beliefs) {
+                    //TODO extract to onBelief
+                    
                     sentenceTerms.put(kb, term);
                     //TODO check if kb.getContent() is never distinct from c.getTerm()
                     addTerm(g, kb.getContent());
                     
                     g.addVertex(kb);
                     g.addEdge(term, kb, new TermBelief());
+                    
+                    onBelief(kb);
                 }
             }
             
             if (includeQuestions) {
                 for (final Task q : c.getQuestions()) {
+                    //TODO extract to onQuestion
+                    
                     addTerm(g, q.getContent());
                     
                     //TODO q.getParentBelief()
@@ -229,6 +270,8 @@ public class NARGraph extends DirectedMultigraph {
                             
                     g.addVertex(q);                    
                     g.addEdge(term, q, new TermQuestion());
+                    
+                    onQuestion(q);
                 }
             }
             
@@ -289,6 +332,7 @@ public class NARGraph extends DirectedMultigraph {
                 }                
             }
         }
+
         
     }
     
