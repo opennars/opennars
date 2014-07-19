@@ -265,13 +265,13 @@ public class Sentence implements Cloneable {
             }
 
             final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
-                .append(punctuation).append(' ');
+                .append(punctuation);
             
             if (truth != null) {
-                k.append(truthString);
+                k.append(' ').append(truthString);
             }
             if (occurrenceTimeString.length() > 0) {
-                k.append(occurrenceTimeString);
+                k.append(' ').append(occurrenceTimeString);
             }
             
 
