@@ -38,7 +38,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     Hnav hnav = new Hnav();
 //Object
     float selection_distance = 10;
-    public float maxNodeSize = 20f;
+    public float maxNodeSize = 40f;
     float FrameRate = 30f;
     float boostMomentum = 0.98f;
     float boostScale = 6.0f;
@@ -102,8 +102,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             x = y = 0;
             tx = x;
             ty = y;
-            color = papplet.getColor((Object)o);
-            radius = 1.0f;
+            radius = nodeSize;
             
             label = o.toString();
             if (label.length() > MAX_UNSELECTED_LABEL_LENGTH)
@@ -117,25 +116,40 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                      double hue = 0.25 + (0.25 * (kb.truth.getFrequency()-0.5));
                      color = Color.getHSBColor((float)hue, 0.9f, 0.9f).getRGB();
                  }
+                 else {
+                     alpha = 0.5f;
+                     color = Color.GRAY.getRGB();
+                 }
+                Term t = ((Sentence)o).getContent();
+                radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
              }
              else if (o instanceof Task) {
                 Task ta = (Task)o;
-                radius = ta.getPriority()*2.0f;
+                radius = 2.0f + ta.getPriority()*2.0f;
                 alpha = ta.getDurability();
+                color = papplet.getColor(o);
              }            
-             else {
-                radius = papplet.getVertexSize(o, 1.0f);
+             else if (o instanceof Concept) {
+                Term t = ((Concept)o).getTerm();
+                radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
                 alpha = papplet.getVertexAlpha(o);                             
+                color = papplet.getColor(o);                
+             }
+             else if (o instanceof Term) {
+                Term t = (Term)o;
+                radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
+                alpha = papplet.getVertexAlpha(o);                             
+                color = papplet.getColor(o);
              }
         }
         
         public void position(float level, float index) {
             if (mode == 1) {
-                ty = (index * maxNodeSize);
-                tx = (level * maxNodeSize);
+                ty = (index * maxNodeSize * 3.5f);
+                tx = -4500+(level * maxNodeSize * 3.5f);
             }
             else if (mode == 0) {
-                float LEVELRAD = maxNodeSize * 2f;
+                float LEVELRAD = maxNodeSize * 2.5f;
 
                 double radius = ((nar.memory.concepts.levels - level)+8);
                 float angle = index; //TEMPORARY
@@ -158,7 +172,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         public void draw() {
             update();
             
-            float r = (radius+boost*boostScale) * nodeSize * 2;
+            float r = (radius+boost*boostScale) * nodeSize / 2f;
             
             fill(color, alpha*255/2);
            
@@ -345,7 +359,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 
                 
                 });
-            } catch (Exception e)  { } 
+            } catch (Exception e)  { System.err.println(e); } 
                         
             for (Object v : deadVertices)
                 vertices.remove(v);
@@ -393,10 +407,11 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         
         //for speed:
         strokeCap(SQUARE);
-        strokeJoin(MITER);
+        strokeJoin(PROJECT);
         
             
-        strokeWeight(linkWeight);     
+        
+        
         for (final Object edge : graph.edgeSet()) {
 
             
@@ -406,7 +421,9 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             if ((elem1 == null) || (elem2 == null))
                 continue;
 
+            
             stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f/2f );
+            strokeWeight( (elem1.radius + elem2.radius)/2.0f / 3.8f );
 
             float x1 = elem1.x;
             float y1 = elem1.y;
@@ -414,7 +431,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             float y2 = elem2.y;
             float cx = (x1 + x2) / 2.0f;
             float cy = (y1 + y2) / 2.0f;
-            drawArrow(x1, y1, x2, y2);                
+            drawArrow(x1, y1, x2, y2);     
             //text(edge.toString(), cx, cy);
         }
 
@@ -433,8 +450,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
       translate(cx, cy);
       rotate(radians(angle));
       line(0,0,len, 0);
-      line(len, 0, len - 8, -8);
-      line(len, 0, len - 8, 8);
+      line(len, 0, len - 8*2, -8);
+      line(len, 0, len - 8*2, 8);
       popMatrix();
     }
 
@@ -817,6 +834,7 @@ public class MemoryView extends Window {
         });
         menu.add(beliefsEnable);
         
+        /*
         final JCheckBox syntaxEnable = new JCheckBox("Syntax");
         syntaxEnable.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -825,6 +843,7 @@ public class MemoryView extends Window {
             }
         });
         menu.add(syntaxEnable);        
+        */
         
         NSlider nodeSize = new NSlider(app.nodeSize, 1, app.maxNodeSize) {
             @Override
@@ -870,7 +889,6 @@ public class MemoryView extends Window {
     protected void close() {
         app.stop();
         app.destroy();
-        app.exit();
         getContentPane().removeAll();
         app = null;
     }

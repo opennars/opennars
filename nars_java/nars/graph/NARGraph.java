@@ -193,9 +193,13 @@ public class NARGraph extends DirectedMultigraph {
         
         private final boolean includeTermContent;
         private final boolean includeDerivations;
-        private final boolean includeSyntax;
+        private final int includeSyntax; //how many recursive levels to decompose per Term
         
         public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax) {
+            this(includeBeliefs, includeDerivations, includeQuestions, includeTermContent, includeSyntax ? 2 : 0);
+        }
+        
+        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax) {
             this.includeBeliefs = includeBeliefs;
             this.includeQuestions = includeQuestions;
             this.includeTermContent = includeTermContent;
@@ -277,21 +281,30 @@ public class NARGraph extends DirectedMultigraph {
             
         }
         
+        void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
+            g.addVertex(c.operator());
+            g.addEdge(c.operator(), c, new TermType());            
+
+            for (Term b : c.getComponents()) {
+                if (!g.containsVertex(b))
+                    g.addVertex(b);
+                
+                if (!includeTermContent)
+                    g.addEdge(c, b, new TermContent());
+
+                if ((level > 0) && (b instanceof CompoundTerm)) {                
+                    recurseTermComponents(g, (CompoundTerm)b, level-1);
+                }
+            }
+        }
+        
         public void onFinish(NARGraph g) {
-            if (includeSyntax) {
+            if (includeSyntax > 0) {
                 for (final Term a : terms) {
                     if (a instanceof CompoundTerm) {
                         CompoundTerm c = (CompoundTerm)a;
                         
-                        g.addVertex(c.operator());
-                        g.addEdge(c.operator(), c, new TermType());
-                        
-                        for (Term b : c.getComponents()) {
-                            if (!g.containsVertex(b))
-                                g.addVertex(b);
-                            g.addEdge(c, b, new TermContent());
-                        }
-                        
+                        recurseTermComponents(g, c, includeSyntax);
                     }
                   }            
 
