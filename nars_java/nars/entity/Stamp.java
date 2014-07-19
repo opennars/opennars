@@ -409,7 +409,7 @@ public class Stamp implements Cloneable {
         final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
         final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
-        buffer.append(' ').append(Symbols.STAMP_OPENER).append(creationTime);
+        buffer.append(Symbols.STAMP_OPENER).append(creationTime);
         if (occurrenceTime != ETERNAL) {
             buffer.append('|').append(occurrenceTime);
         }
