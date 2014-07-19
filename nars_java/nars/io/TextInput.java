@@ -28,45 +28,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions;
-import static nars.io.Symbols.ARGUMENT_SEPARATOR;
-import static nars.io.Symbols.BUDGET_VALUE_MARK;
-import static nars.io.Symbols.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.COMPOUND_TERM_OPENER;
-import static nars.io.Symbols.INPUT_LINE;
-import static nars.io.Symbols.JUDGMENT_MARK;
-import static nars.io.Symbols.OUTPUT_LINE;
-import static nars.io.Symbols.PREFIX_MARK;
-import static nars.io.Symbols.QUESTION_MARK;
-import static nars.io.Symbols.SET_EXT_CLOSER;
-import static nars.io.Symbols.SET_EXT_OPENER;
-import static nars.io.Symbols.SET_INT_CLOSER;
-import static nars.io.Symbols.SET_INT_OPENER;
-import static nars.io.Symbols.STAMP_CLOSER;
-import static nars.io.Symbols.STAMP_OPENER;
-import static nars.io.Symbols.STATEMENT_CLOSER;
-import static nars.io.Symbols.STATEMENT_OPENER;
-import static nars.io.Symbols.TRUTH_VALUE_MARK;
-import static nars.io.Symbols.VALUE_SEPARATOR;
-import nars.language.CompoundTerm;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Statement;
-import nars.language.Term;
-import nars.language.Variable;
 
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.io.Output.ERR;
-import nars.storage.Memory;
 
 /**
  * To read and write experience as Task streams
@@ -139,13 +103,15 @@ public class TextInput extends Symbols implements Input {
 
             for (int i = 0; i < linesPerCycle; i++) {
                 line = input.readLine();
-                text.append(line).append('\n');
 
                 if (line == null) {
                     input.close();
                     input = null;
                     finished = true;
                     break;
+                }
+                else {
+                    text.append(line).append('\n');                    
                 }
             }
 
