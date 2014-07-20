@@ -120,13 +120,13 @@ public class Memory {
      * <p>
      * Called in Reasoner.reset only
      *
-     * @param reasoner
+     * @param nar
      */
-    public Memory(NAR reasoner) {
-        this.reasoner = reasoner;
+    public Memory(NAR nar) {
+        this.reasoner = nar;
         recorder = new NullInferenceRecorder();
-        concepts = new ConceptBag(conceptForgettingRate);
-        novelTasks = new NovelTaskBag();
+        concepts = new ConceptBag(nar.param.getBagLevels(), nar.param.getConceptBagSize(), conceptForgettingRate);
+        novelTasks = new NovelTaskBag(nar.param.getBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new LinkedList<>();
     }
 

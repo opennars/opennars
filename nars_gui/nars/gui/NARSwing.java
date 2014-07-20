@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
 import nars.core.CommandLineArguments;
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
 import nars.gui.output.OutputLogPanel;
@@ -48,10 +49,15 @@ public class NARSwing  {
             + "      NARS website:  http://sites.google.com/site/narswang/";
 
 
-    public final NAR nar = new NAR();
+    public final NAR nar;
 
     public NARSwing() {
+        this(new DefaultNARBuilder().build());
+    }
+    
+    public NARSwing(NAR nar) {
         super();
+        this.nar = nar;
         
         NARControls narControls = new NARControls(nar);        
         Window mainWindow = new Window(INFO, narControls);

@@ -37,11 +37,11 @@ public class SentencePipe implements Input, Output {
         this.target = target;
         
         buffer = new ArrayBlockingQueue(bufferSize);
+        active = true;
         
         source.addOutput(this);
         target.addInput(this);
         
-        active = true;
     }
 
     

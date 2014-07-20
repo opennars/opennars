@@ -60,18 +60,19 @@ public class SentencePipeTest {
         
         assert(target.memory.concepts.size() == 0);
         
-        source.finish(2);
+        source.finish(8);
         
         assert(sentencesProcessed > 0);
         
-        target.finish(2);
+        target.finish(8);
         
-        assert(target.memory.concepts.size() > 0);
         
         //test prefix output
         String swBuffer = sw.getBuffer().toString();
         assert(swBuffer.length() > 0);
         assert(swBuffer.contains(sourceLinePrefix));
+
+        assert(target.memory.concepts.size() > 0);
         
     }
     

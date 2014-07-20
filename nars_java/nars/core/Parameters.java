@@ -20,28 +20,11 @@
  */
 package nars.core;
 
-import java.util.Random;
-
 /**
  * NAR operating parameters.
  * All static values will be removed so that this is an entirely dynamic class.
  */
 public class Parameters {
-    
-    /**
-     * max complexity of a Term that its name can be stored globally via String.intern().
-     * set to zero to disable this feature.
-     */
-    public static int TERM_NAME_STRING_INTERN_MAX_COMPLEXITY = 4;
-         
-    
-    /** Silent threshold for task reporting, in [0, 100]. */
-    private int silenceLevel = 0;
-    public int getSilenceLevel() { return silenceLevel;    }
-    public void setSilenceLevel(int silenceLevel) { this.silenceLevel = silenceLevel;     }
-
-    
-    
     
     
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,14 +76,14 @@ public class Parameters {
     public static final float DEFAULT_QUESTION_DURABILITY = (float) 0.9;
 
     /* ---------- space management ---------- */
-    /** Level granularity in Bag, two digits */
-    public static final int BAG_LEVEL = 100;
+    
     /** Level separation in Bag, one digit, for display (run-time adjustable) and management (fixed) */
     public static final float BAG_THRESHOLD = 0.1f;
     /** Hashtable load factor in Bag */
     public static final float LOAD_FACTOR = (float) 0.5;
-    /** Size of ConceptBag */
-    public static final int CONCEPT_BAG_SIZE = 1000;
+    
+
+    
     /** Size of TaskLinkBag */
     public static final int TASK_LINK_BAG_SIZE = 20;
     /** Size of TermLinkBag */
@@ -122,4 +105,13 @@ public class Parameters {
     public static final int MAXIMUM_BELIEF_LENGTH = 7;
     /** Maximum number of goals kept in a Concept */
     public static final int MAXIMUM_QUESTIONS_LENGTH = 5;
+
+    
+    /**
+     * max complexity of a Term that its name can be stored globally via String.intern().
+     * set to zero to disable this feature.
+     */
+    public static int TERM_NAME_STRING_INTERN_MAX_COMPLEXITY = 4;
+    
 }
+

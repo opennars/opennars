@@ -34,8 +34,8 @@ public class TaskLinkBag extends Bag<TaskLink> {
     /** Constructor
      * @param memory The reference of memory
      */
-    public TaskLinkBag (AtomicInteger taskForgettingRAte) {
-        super(Parameters.TASK_LINK_BAG_SIZE);
+    public TaskLinkBag(int levels, int capacity, AtomicInteger taskForgettingRAte) {
+        super(levels, capacity);
         this.taskForgettingRate = taskForgettingRAte;        
     }
 

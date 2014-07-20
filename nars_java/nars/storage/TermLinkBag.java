@@ -33,8 +33,8 @@ public class TermLinkBag extends Bag<TermLink> {
     /** Constructor
      * @param memory The reference of memory
      */
-    public TermLinkBag(AtomicInteger beliefForgettingRate) {
-        super(Parameters.TERM_LINK_BAG_SIZE);
+    public TermLinkBag(int levels, int capacity, AtomicInteger beliefForgettingRate) {
+        super(levels, capacity);
         this.beliefForgettingRate = beliefForgettingRate;
     }
 
