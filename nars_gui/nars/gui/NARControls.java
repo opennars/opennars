@@ -118,6 +118,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     private NSlider volumeSlider;
 
     private List<ChartPanel> charts = new ArrayList();
+        
+    private boolean allowFullSpeed = false;
 
     /**
      * Constructor
@@ -451,12 +453,17 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         speedSlider.setValue(nextSpeed);
         currentSpeed = nextSpeed;
 
+        double logScale = 50;
         if (nextSpeed > 0) {
-            int ms = (int) ((1.0 - (nextSpeed)) * maxPeriodMS);
+            int ms = (int) ((1.0 - Math.log(1+nextSpeed*logScale)/Math.log(1+logScale)) * maxPeriodMS);
             if (ms < 1) {
-                ms = 0;
+                if (allowFullSpeed)
+                    ms = 0;
+                else
+                    ms = 1;
             }
             stopButton.setText(String.valueOf(FA_StopCharacter));
+            nar.setThreadYield(true);
             nar.start(ms);
         } else {
             stopButton.setText(String.valueOf(FA_PlayCharacter));
@@ -629,6 +636,13 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         return s;
     }
 
+    /** if true, then the speed control allows NAR to run() each iteration with 0 delay.  
+     *  otherwise, the minimum delay is 1ms */
+    public void setAllowFullSpeed(boolean allowFullSpeed) {
+        this.allowFullSpeed = allowFullSpeed;
+    }
+
+    
 
 
 }

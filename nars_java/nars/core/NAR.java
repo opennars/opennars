@@ -78,6 +78,7 @@ public class NAR implements Runnable, Output {
     
     private boolean working = true;
     private boolean inputting = true;
+    private boolean threadYield;
 
     @Deprecated public NAR() {
         this(new DefaultNARBuilder());
@@ -243,6 +244,9 @@ public class NAR implements Runnable, Output {
                     Thread.sleep(minTickPeriodMS);
                 } catch (InterruptedException e) { }
             }
+            else if (threadYield) {
+                Thread.yield();
+            }
         }
     }
     
@@ -376,6 +380,13 @@ public class NAR implements Runnable, Output {
 
     public boolean isWorking() {
         return working;
+    }
+
+    /** When b is true, NAR will call Thread.yield each run() iteration that minTickPeriodMS==0 (no delay). 
+     *  This is for improving program responsiveness when NAR is run with no delay.
+     */
+    public void setThreadYield(boolean b) {
+        this.threadYield = b;
     }
 
 
