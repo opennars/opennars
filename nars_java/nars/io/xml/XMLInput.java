@@ -39,10 +39,10 @@ public class XMLInput extends PrintWriterInput {
                         setConceptBagSize(8192).
                         build();
         
-        //new TextOutput(n, System.out);
+        new TextOutput(n, System.out);
         
-        new NARSwing(n);
-        //n.start(1);
+        //new NARSwing(n);
+        n.start(0);
 
         
         //new XMLInput(n, "/home/me/Downloads/schemaorg.owl","");

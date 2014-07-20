@@ -148,21 +148,6 @@ public abstract class Statement extends CompoundTerm {
         return null;
     }
 
-    
-    /**
-     * Check Statement relation symbol, called in StringPaser
-     *
-     * @param s0 The String to be checked
-     * @return if the given String is a relation symbol
-     */
-    public static boolean isRelation(final String s0) {
-        final String s = s0.trim();
-        if (s.length() != 3) {
-            return false;
-        }
-
-        return Symbols.operator(s)!=null;
-    }
 
 
     /**

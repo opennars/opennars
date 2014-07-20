@@ -89,6 +89,7 @@ public class Product extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public Operator operator() {
         return Operator.PRODUCT;
     }
