@@ -73,7 +73,20 @@ public class NAR implements Runnable, Output {
     
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
-    public final NARBuilder param;
+    
+    
+    /**
+     *  Design parameters which do not change at runtime
+     */
+    public final NARBuilder config;
+    
+    /**
+     *  Parameters which can be changed at runtime
+    */
+    public final NARParams param;
+    
+    
+
     private final TextPerception textPerception;
     
     private boolean working = true;
@@ -85,7 +98,9 @@ public class NAR implements Runnable, Output {
     }
     
     protected NAR(NARBuilder p) {
-        param = p;
+        this.config = p;
+        this.param = p.newInitialParams();
+        
         memory = new Memory(this);
         textPerception = new TextPerception(this);
         
