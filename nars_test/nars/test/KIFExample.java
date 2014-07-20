@@ -17,8 +17,10 @@
 
 package nars.test;
 
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.core.NARState;
+import nars.gui.NARSwing;
 import nars.io.TextOutput;
 import nars.io.kif.KIFInput;
 
@@ -30,22 +32,25 @@ public class KIFExample {
     
  
     public static void main(String[] args) throws Exception {
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder()
+                .setConceptBagSize(2048)
+                .setBagLevels(512)
+                .build();
+        
+        
         n.param.setSilenceLevel(99);
         
         KIFInput k = new KIFInput(n, "/home/me/sigma/KBs/Merge.kif");
-        n.bufferInput();
+        k.setIncludeSubclass(true);
+        k.start();
         
-        System.err.println("Processed operators: " + k.getKnownOperators());
-        System.err.println("Unknown operators: " + k.getUnknownOperators());
-
-        System.err.println(new NARState(n).measure());
-
         TextOutput t = new TextOutput(n, System.out);
         t.setErrors(true);
         t.setErrorStackTrace(true);
 
-        n.finish(100000);
+        n.finish(16);
+        
+        new NARSwing(n);
 
         /*
         new TextInput(n, "$0.99;0.99$ <Human --> ?x>?");

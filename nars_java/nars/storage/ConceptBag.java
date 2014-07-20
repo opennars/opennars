@@ -21,10 +21,8 @@
 
 package nars.storage;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Concept;
-import nars.core.Parameters;
 import nars.language.Term;
 
 /**
@@ -36,8 +34,8 @@ public class ConceptBag extends Bag<Concept> {
     /** Constructor
      * @param memory The reference of memory
      */
-    public ConceptBag (AtomicInteger forgettingRate) {
-        super(Parameters.CONCEPT_BAG_SIZE);
+    public ConceptBag(int levels, int capacity, AtomicInteger forgettingRate) {
+        super(levels, capacity);
         this.forgettingRate = forgettingRate;
     }
     

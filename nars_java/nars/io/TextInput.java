@@ -49,10 +49,15 @@ public class TextInput extends Symbols implements Input {
     
     private boolean finished = false;
     
-    private StringBuffer text = new StringBuffer();
-    
+    private StringBuffer text = new StringBuffer();   
     
     private int linesPerCycle = 1024;
+    
+    public TextInput(NAR reasoner) { 
+        this.nar = reasoner;
+        nar.addInput(this);        
+    }
+    
 
     public TextInput(NAR reasoner, String input) {
         this(reasoner, new BufferedReader(new StringReader(input)));
@@ -67,9 +72,12 @@ public class TextInput extends Symbols implements Input {
     }
     
     public TextInput(NAR reasoner, BufferedReader input) {
-        this.nar = reasoner;
+        this(reasoner);
+        setInput(input);
+    }
+    
+    protected void setInput(BufferedReader input) {
         this.input = input;
-        nar.addInput(this);        
     }
 
     public void setLinesPerCycle(int linesPerCycle) {

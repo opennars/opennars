@@ -126,14 +126,6 @@ public abstract class Bag<E extends Item>  {
         //showing = false;        
     }
     
-    /**
-     * constructor, called from subclasses
-     *
-     * @param memory The reference to memory
-     */
-    protected Bag(int capacity) {
-        this(Parameters.BAG_LEVEL, capacity);
-    }
 
     public void clear() {
         for (int i = 0; i < levels; i++) {

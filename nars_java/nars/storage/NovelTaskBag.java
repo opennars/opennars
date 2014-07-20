@@ -32,8 +32,8 @@ public class NovelTaskBag extends Bag<Task> {
     /** Constructor
      * @param memory The reference of memory
      */
-    public NovelTaskBag() {
-        super(Parameters.TASK_BUFFER_SIZE);
+    public NovelTaskBag(int levels, int capacity) {
+        super(levels, capacity);
     }
 
 

@@ -129,7 +129,7 @@ public class TestUtil {
         };         
         
         n.addInput(getExample(path));
-        n.bufferInput();
+
         n.finish(extraCycles);
 
 

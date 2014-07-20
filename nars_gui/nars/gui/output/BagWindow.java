@@ -54,19 +54,19 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
     /**
      * Control buttons
      */
-    private final JButton playButton, stopButton, closeButton;
+    private JButton playButton, stopButton, closeButton;
     /**
      * Display area
      */
-    private final JTextArea text;
+    private JTextArea text;
     /**
      * Display label
      */
-    private final JLabel valueLabel;
+    private JLabel valueLabel;
     /**
      * Adjustable display level
      */
-    private final JScrollBar valueBar;
+    private JScrollBar valueBar;
     /**
      * The location of the display area, shifted according to the number of
      * windows opened
@@ -80,30 +80,7 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
     public BagWindow() {
         super("Concepts");
         
-        /* The lowest level displayed -- will need adjusted for variable bag sizes*/
-        int showLevel = (int)(Parameters.BAG_THRESHOLD * Parameters.BAG_LEVEL);
         
-        
-
-        text = new JTextArea("");
-        text.setEditable(false);
-        JScrollPane textScrollPane = new JScrollPane(text);
-        valueLabel = new JLabel( "00", JLabel.RIGHT);
-        valueBar = new JScrollBar(Scrollbar.HORIZONTAL, showLevel, 0, 1, Parameters.BAG_LEVEL);
-        valueBar.addAdjustmentListener(this);
-        stopButton = new JButton(Window.OFF_LABEL);
-        stopButton.addActionListener(this);
-        playButton = new JButton(Window.ON_LABEL);
-        playButton.addActionListener(this);
-        closeButton = new JButton("Close");
-        closeButton.addActionListener(this);
-        
-        applyBorderLayout(textScrollPane);
-
-        setBounds(600, 60 + counter * 40, 600, 300);
-        counter++;        
-        adjustLabelAndCursor(showLevel);
-        setVisible(true);
     }
 
     private void applyBorderLayout(JScrollPane textScrollPane) {
@@ -178,8 +155,35 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
     }
 
     @Override
-	public void setBag( Bag<BagType> bag ) {
+    public void setBag( Bag<BagType> bag ) {
         this.bag = bag;
+        
+        removeAll();
+        /* The lowest level displayed -- will need adjusted for variable bag sizes*/
+        int showLevel = (int)(Parameters.BAG_THRESHOLD * bag.levels);
+        
+        
+
+        text = new JTextArea("");
+        text.setEditable(false);
+        JScrollPane textScrollPane = new JScrollPane(text);
+        valueLabel = new JLabel( "00", JLabel.RIGHT);
+        valueBar = new JScrollBar(Scrollbar.HORIZONTAL, showLevel, 0, 1, bag.levels);
+        valueBar.addAdjustmentListener(this);
+        stopButton = new JButton(Window.OFF_LABEL);
+        stopButton.addActionListener(this);
+        playButton = new JButton(Window.ON_LABEL);
+        playButton.addActionListener(this);
+        closeButton = new JButton("Close");
+        closeButton.addActionListener(this);
+        
+        applyBorderLayout(textScrollPane);
+
+        setBounds(600, 60 + counter * 40, 600, 300);
+        counter++;        
+        adjustLabelAndCursor(showLevel);
+        setVisible(true);
+        
     }
 
     @Override

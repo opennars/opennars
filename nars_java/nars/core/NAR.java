@@ -73,17 +73,17 @@ public class NAR implements Runnable, Output {
     
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
-    public final Parameters param;
+    public final NARBuilder param;
     private final TextPerception textPerception;
     
     private boolean working = true;
     private boolean inputting = true;
 
-    public NAR() {
-        this(new DefaultParameters());
+    @Deprecated public NAR() {
+        this(new DefaultNARBuilder());
     }
     
-    public NAR(Parameters p) {
+    protected NAR(NARBuilder p) {
         param = p;
         memory = new Memory(this);
         textPerception = new TextPerception(this);
@@ -286,10 +286,7 @@ public class NAR implements Runnable, Output {
         return inputPerceived;
     }
     
-    /* Process all input until no more is available. */
-    public void bufferInput() {
-        while (processInput()) { }
-    }    
+
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
     protected void perceive(final Input i, final Object o) {
@@ -298,7 +295,11 @@ public class NAR implements Runnable, Output {
         }
         else if (o instanceof Sentence) {
             //TEMPORARY
-            textPerception.perceive(i, o.toString());
+            Sentence s = (Sentence)o;
+            textPerception.perceive(i, s.getContent().toString() + s.getPunctuation() + " " + s.getTruth().toString());
+        }
+        else {
+            output(ERR.class, "Unrecognized input (" + o.getClass() + "): " + o);
         }
     }
     
