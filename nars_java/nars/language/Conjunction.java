@@ -119,6 +119,12 @@ public class Conjunction extends CompoundTerm {
      * @return the Term generated from the arguments
      */
     public static Term make(ArrayList<Term> argList, int temporalOrder, final Memory memory) {
+        if (argList.isEmpty()) {
+            return null;
+        }                         // special case: single component
+        if (argList.size() == 1) {
+            return argList.get(0);
+        }                         // special case: single component
         if (temporalOrder == ORDER_FORWARD) {
             final String name = makeCompoundName(Symbols.SEQUENCE_OPERATOR, argList);
             final Term t = memory.nameToListedTerm(name);
@@ -138,12 +144,6 @@ public class Conjunction extends CompoundTerm {
      * @return the Term generated from the arguments
      */
     private static Term make(final TreeSet<Term> set, int temporalOrder, final Memory memory) {
-        if (set.isEmpty()) {
-            return null;
-        }                         // special case: single component
-        if (set.size() == 1) {
-            return set.first();
-        }                         // special case: single component
         final ArrayList<Term> argument = new ArrayList<>(set);
         final String name;
         if (temporalOrder == CompoundTerm.ORDER_NONE) {
