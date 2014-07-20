@@ -173,6 +173,7 @@ public abstract class CompoundTerm extends Term {
     public int hashCode() {
         int hash = 7;
         hash = 43 * hash + Objects.hashCode(this.components);
+        hash = 43 * hash + operator().hashCode();
         return hash;
     }
 
@@ -704,16 +705,16 @@ public abstract class CompoundTerm extends Term {
      */
     private void renameVariables(final HashMap<Variable, Variable> map) {
         if (containVar()) {
-            for (int i = 0; i < components.size(); i++) {
-                final Term term = componentAt(i);
+            int i = 0;
+            for (final Term term : components) {
                 if (term instanceof Variable) {
-                    Variable var;
+                    Variable var;                    
                     if (term.getName().length() == 1) { // anonymous variable from input
-                        var = new Variable(term.getName().charAt(0) + "" + (map.size() + 1));
+                        var = new Variable(term.getName().charAt(0) + String.valueOf(map.size() + 1));
                     } else {
                         var = (Variable) map.get((Variable) term);
                         if (var == null) {
-                            var = new Variable(term.getName().charAt(0) + "" + (map.size() + 1));
+                            var = new Variable(term.getName().charAt(0) + String.valueOf(map.size() + 1));
                         }
                     }
                     if (!term.equals(var)) {
@@ -721,9 +722,11 @@ public abstract class CompoundTerm extends Term {
                     }
                     map.put((Variable) term, var);
                 } else if (term instanceof CompoundTerm) {
-                    ((CompoundTerm) term).renameVariables(map);
-                    ((CompoundTerm) term).setName(((CompoundTerm) term).makeName());
+                    CompoundTerm ct = (CompoundTerm)term;
+                    ct.renameVariables(map);
+                    ct.setName(ct.makeName());
                 }
+                i++;
             }
         }
     }
@@ -733,11 +736,11 @@ public abstract class CompoundTerm extends Term {
      *
      * @param subs
      */
-    public void applySubstitute(HashMap<Term, Term> subs) {        
-        for (int i = 0; i < size(); i++) {
-            final Term t1 = componentAt(i);
-            if (subs.containsKey(t1)) {
-                Term t2 = subs.get(t1);
+    public void applySubstitute(final HashMap<Term, Term> subs) {        
+        int i = 0;
+        for (final Term t1 : components) {
+            Term t2 = subs.get(t1);
+            if (t2 != null) {
                 while (subs.containsKey(t2)) {
                     t2 = subs.get(t2);
                 }
@@ -745,6 +748,7 @@ public abstract class CompoundTerm extends Term {
             } else if (t1 instanceof CompoundTerm) {
                 ((CompoundTerm) t1).applySubstitute(subs);
             }
+            i++;
         }
         if (this.isCommutative()) {         
             // re-order
@@ -763,7 +767,7 @@ public abstract class CompoundTerm extends Term {
      * @return A list of TermLink templates
      */
     public List<TermLink> prepareComponentLinks() {
-        List<TermLink> componentLinks = new LinkedList<>();
+        List<TermLink> componentLinks = new ArrayList<>();
         short type = (this instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         prepareComponentLinks(componentLinks, type, this);
         return componentLinks;

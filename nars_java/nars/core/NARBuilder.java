@@ -13,16 +13,65 @@ abstract public class NARBuilder extends Parameters {
     public NARBuilder setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
     /** Level granularity in Bag, usually 100 (two digits) */    
-    private int bagLevels;
-    public int getBagLevels() { return bagLevels; }    
-    public NARBuilder setBagLevels(int bagLevels) { this.bagLevels = bagLevels; return this;  }
+    private int conceptBagLevels;
+    public int getConceptBagLevels() { return conceptBagLevels; }    
+    public NARBuilder setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
     
+    public int taskLinkBagLevels;
     
+    /** Size of TaskLinkBag */
+    public int taskLinkBagSize;
+    
+    public int termLinkBagLevels;
+    
+    /** Size of TermLinkBag */
+    public int termLinkBagSize;
+    
+  
     
     /** initial runtime parameters */
     abstract public NARParams newInitialParams();
     
     public NAR build() {
         return new NAR(this/*, newInitialParams()*/);
+    }
+
+    /**
+     * @return the taskLinkBagLevels
+     */
+    public int getTaskLinkBagLevels() {
+        return taskLinkBagLevels;
+    }
+
+    public NARBuilder setTaskLinkBagLevels(int taskLinkBagLevels) {
+        this.taskLinkBagLevels = taskLinkBagLevels;
+        return this;
+    }
+
+    public int getTaskLinkBagSize() {
+        return taskLinkBagSize;
+    }
+
+    public NARBuilder setTaskLinkBagSize(int taskLinkBagSize) {
+        this.taskLinkBagSize = taskLinkBagSize;
+        return this;
+    }
+
+    public int getTermLinkBagLevels() {
+        return termLinkBagLevels;
+    }
+
+    public NARBuilder setTermLinkBagLevels(int termLinkBagLevels) {
+        this.termLinkBagLevels = termLinkBagLevels;
+        return this;
+    }
+
+    public int getTermLinkBagSize() {
+        return termLinkBagSize;
+    }
+
+    public NARBuilder setTermLinkBagSize(int termLinkBagSize) {
+        this.termLinkBagSize = termLinkBagSize;
+        return this;
     }
 }

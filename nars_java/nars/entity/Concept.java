@@ -98,8 +98,8 @@ public final class Concept extends Item {
         this.memory = memory;
         questions = new LinkedList();
         beliefs = new ArrayList<>();
-        taskLinks = new TaskLinkBag(memory.nar.config.getBagLevels(), Parameters.TASK_LINK_BAG_SIZE, memory.taskForgettingRate);
-        termLinks = new TermLinkBag(memory.nar.config.getBagLevels(), Parameters.TERM_LINK_BAG_SIZE, memory.beliefForgettingRate);
+        taskLinks = new TaskLinkBag(memory.nar.config.getTaskLinkBagLevels(), memory.nar.config.getTaskLinkBagSize(), memory.taskForgettingRate);
+        termLinks = new TermLinkBag(memory.nar.config.getTermLinkBagLevels(), memory.nar.config.getTermLinkBagSize(), memory.beliefForgettingRate);
         if (tm instanceof CompoundTerm) {
             termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         }

@@ -6,11 +6,19 @@ package nars.core;
  */
 public class DefaultNARBuilder extends NARBuilder {
 
+    final static int DefaultLevels = 100;
+    
     public DefaultNARBuilder() {
         super();
         
-        setConceptBagSize(1000);
-        setBagLevels(100);
+        setConceptBagLevels(DefaultLevels);
+        setConceptBagSize(1000);        
+        
+        setTaskLinkBagLevels(DefaultLevels);        
+        setTaskLinkBagSize(20);
+
+        setTermLinkBagLevels(DefaultLevels);
+        setTermLinkBagSize(100);
     }
 
     @Override
