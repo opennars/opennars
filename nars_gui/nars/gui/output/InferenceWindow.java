@@ -27,6 +27,7 @@ import java.awt.event.*;
 import nars.gui.InferenceLogger;
 import nars.gui.Window;
 import nars.inference.InferenceRecorder;
+import nars.storage.Memory.NullInferenceRecorder;
 
 //import nars.term.Term;
 
@@ -58,8 +59,9 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
     /**
      * Inference recorder
      */
-    private InferenceRecorder recorder = new NullInferenceRecorder();
+    private InferenceRecorder recorder = NullInferenceRecorder.global;
 
+    
     /**
      * Constructor
      *
@@ -184,44 +186,4 @@ public class InferenceWindow extends Window implements ActionListener, ItemListe
         //text.setBackground(DISPLAY_BACKGROUND_COLOR);
     }
 
-    public static class NullInferenceRecorder implements InferenceRecorder {
-
-        @Override
-        public boolean isActive() {
-            return false;
-        }
-
-        @Override
-        public void init() {
-        }
-
-        @Override
-        public void show() {
-        }
-
-        @Override
-        public void play() {
-        }
-
-        @Override
-        public void stop() {
-        }
-
-        @Override
-        public void append(String s) {
-        }
-
-        @Override
-        public void openLogFile() {
-        }
-
-        @Override
-        public void closeLogFile() {
-        }
-
-        @Override
-        public boolean isLogging() {
-            return false;
-        }
-    }
 }

@@ -163,15 +163,16 @@ public abstract class CompoundTerm extends Term {
     public int compareTo(final Term that) {
         if (that instanceof CompoundTerm) {
             final CompoundTerm t = (CompoundTerm) that;
-            int minSize = Math.min(size(), t.size());
+            final int tsize = t.size();
             if (size() == t.size()) {
                 int opDiff = this.operator().compareTo(t.operator());
                 if (opDiff != 0) {
                     return opDiff;
                 }
 
-                for (int i = 0; i < minSize; i++) {
-                    int diff = componentAt(i).compareTo(t.componentAt(i));
+                int i = 0;
+                for (final Term c : components) {
+                    final int diff = c.compareTo(t.componentAt(i++));
                     if (diff != 0) {
                         return diff;
                     }

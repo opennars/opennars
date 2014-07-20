@@ -124,7 +124,7 @@ public class Memory {
      */
     public Memory(NAR nar) {
         this.reasoner = nar;
-        recorder = new NullInferenceRecorder();
+        recorder = NullInferenceRecorder.global;
         concepts = new ConceptBag(nar.param.getBagLevels(), nar.param.getConceptBagSize(), conceptForgettingRate);
         novelTasks = new NovelTaskBag(nar.param.getBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new LinkedList<>();
@@ -302,7 +302,7 @@ public class Memory {
      *
      * @param task the derived task
      */
-    private void derivedTask(Task task, boolean revised, boolean single) {
+    private void derivedTask(final Task task, final boolean revised, final boolean single) {
         if (task.getBudget().aboveThreshold()) {
             if (task.getSentence() != null && task.getSentence().getTruth() != null) {
                 float conf = task.getSentence().getTruth().getConfidence();
@@ -313,20 +313,22 @@ public class Memory {
                     return;
                 }
             }
-            Stamp stamp = task.getSentence().getStamp();
-            List<Term> chain = stamp.getChain();
+            final Stamp stamp = task.getSentence().getStamp();
+            final List<Term> chain = stamp.getChain();
             
 	    if (currentBelief != null) {
-                if(chain.contains(currentBelief.getContent())) {
-                    chain.remove(currentBelief.getContent());
+                final Term currentBeliefContent = currentBelief.getContent();
+                if(chain.contains(currentBeliefContent)) {
+                    chain.remove(currentBeliefContent);
                 }
-                stamp.addToChain(currentBelief.getContent());
+                stamp.addToChain(currentBeliefContent);
             }
             if (currentTask != null && !single) {
-                if(chain.contains(currentTask.getContent())) {
-                    chain.remove(currentTask.getContent());
+                final Term currentTaskContent = currentTask.getContent();
+                if(chain.contains(currentTaskContent)) {
+                    chain.remove(currentTaskContent);
                 }
-                stamp.addToChain(currentTask.getContent());
+                stamp.addToChain(currentTaskContent);
             }
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
                 for (final Term chain1 : chain) {
@@ -338,9 +340,12 @@ public class Memory {
                     }
                 }
             } else { //its revision, of course its cyclic, apply evidental base policy
-                for (int i = 0; i < stamp.length(); i++) {
-                    for (int j = 0; j < stamp.length(); j++) {
-                        if (i != j && stamp.getBase()[i] == stamp.getBase()[j]) {
+                final int stampLength = stamp.length();
+                for (int i = 0; i < stampLength; i++) {
+                    final long baseI = stamp.getBase()[i];
+                    
+                    for (int j = 0; j < stampLength; j++) {
+                        if ((i != j) && (baseI == stamp.getBase()[j])) {
                             if (recorder.isActive()) {
                                 recorder.append("!!! Overlapping Evidence on Revision detected: " + task + "\n");
                             }
@@ -353,7 +358,6 @@ public class Memory {
                 recorder.append("!!! Derived: " + task + "\n");
             }
             float budget = task.getBudget().summary();
-//            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
             float minSilent = reasoner.param.getSilenceLevel() / 100.0f;
             if (budget > minSilent) {  // only report significant derived Tasks
                 reasoner.output(OUT.class, task.getSentence());
@@ -637,8 +641,15 @@ public class Memory {
         return conceptForgettingRate;
     }
 
-    private class NullInferenceRecorder implements InferenceRecorder {
+    public static class NullInferenceRecorder implements InferenceRecorder {
 
+        public static final NullInferenceRecorder global = new NullInferenceRecorder();
+
+        
+        private NullInferenceRecorder() {
+            
+        }
+        
         @Override
         public boolean isActive() {
             return false;

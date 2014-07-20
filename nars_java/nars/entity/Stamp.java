@@ -162,8 +162,9 @@ public class Stamp implements Cloneable {
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
-                    if (!derivationChain.contains(chain1.get(i1))) {
-                        derivationChain.add(chain1.get(i1));
+                    final Term c1i1 = chain1.get(i1);
+                    if (!derivationChain.contains(c1i1)) {
+                        derivationChain.add(c1i1);
                     } else {
                         j--; //was double, so we can add one more now
                     }
@@ -171,8 +172,9 @@ public class Stamp implements Cloneable {
                 }
             } else {
                 if (i2 >= 0) {
-                    if (!derivationChain.contains(chain2.get(i2))) {
-                        derivationChain.add(chain2.get(i2));
+                    final Term c2i2 = chain2.get(i2);                    
+                    if (!derivationChain.contains(c2i2)) {
+                        derivationChain.add(c2i2);
                     } else {
                        j--; //was double, so we can add one more now
                     }
