@@ -81,37 +81,15 @@ public class Symbols {
         DISJUNCTION { @Override public String toString() { return "||"; } },
         CONJUNCTION { @Override public String toString() { return "&&"; } },    
         SEQUENCE { @Override public String toString() { return "&/"; } },    
-        PARALLEL { @Override public String toString() { return "&|"; } }    
+        PARALLEL { @Override public String toString() { return "&|"; } },
         
-    }
-    
-    /* CompountTerm operators, length = 1 */
-    public static final String INTERSECTION_EXT_OPERATOR = "&";
-    public static final char INTERSECTION_EXT_OPERATORc = '&';
-    public static final String INTERSECTION_INT_OPERATOR = "|";
-    public static final char INTERSECTION_INT_OPERATORc = '|';
-    public static final String DIFFERENCE_EXT_OPERATOR = "-";
-    public static final char DIFFERENCE_EXT_OPERATORc = '-';
-    public static final String DIFFERENCE_INT_OPERATOR = "~";
-    public static final char DIFFERENCE_INT_OPERATORc = '~';
-    public static final String PRODUCT_OPERATOR = "*";
-    public static final char PRODUCT_OPERATORc = '*';
-    public static final String IMAGE_EXT_OPERATOR = "/";        
-    public static final char IMAGE_EXT_OPERATORc = '/';
-    public static final String IMAGE_INT_OPERATOR = "\\";
-    public static final char IMAGE_INT_OPERATORc = '\\';
-
-    /* CompoundStatement operators, length = 2 */
-    public static final String NEGATION_OPERATOR = "--";
-    public static final char NEGATION_OPERATORc = '-';    
-    public static final String DISJUNCTION_OPERATOR = "||";
-    public static final char DISJUNCTION_OPERATORc = '|';
-    public static final String CONJUNCTION_OPERATOR = "&&";
-    public static final char CONJUNCTION_OPERATORc = '&';
-    public static final String SEQUENCE_OPERATOR = "&/";
-    public static final String PARALLEL_OPERATOR = "&|";
-
-    public static enum Relation {
+        /* Set Int/Ext Opener/Closer */
+        SET_INT_OPENER { @Override public String toString() { return "["; } },
+        SET_INT_CLOSER { @Override public String toString() { return "]"; } },
+        SET_EXT_OPENER { @Override public String toString() { return "{"; } },
+        SET_EXT_CLOSER { @Override public String toString() { return "}"; } },
+        
+        /* Relations */
         INHERITANCE { @Override public String toString() { return "-->"; } },
         SIMILARITY { @Override public String toString() { return "<->"; } },
         INSTANCE { @Override public String toString() { return "{--"; } },
@@ -124,17 +102,46 @@ public class Symbols {
         EQUIVALENCE { @Override public String toString() { return "<=>"; } },
         EQUIVALENCE_AFTER { @Override public String toString() { return "</>"; } },
         EQUIVALENCE_WHEN { @Override public String toString() { return "<|>"; } }
+        
     }
+    
+    /* CompountTerm operators, length = 1 */
+    @Deprecated public static final String INTERSECTION_EXT_OPERATOR = "&";
+    @Deprecated public static final char INTERSECTION_EXT_OPERATORc = '&';
+    @Deprecated public static final String INTERSECTION_INT_OPERATOR = "|";
+    @Deprecated public static final char INTERSECTION_INT_OPERATORc = '|';
+    @Deprecated public static final String DIFFERENCE_EXT_OPERATOR = "-";
+    @Deprecated public static final char DIFFERENCE_EXT_OPERATORc = '-';
+    @Deprecated public static final String DIFFERENCE_INT_OPERATOR = "~";
+    @Deprecated public static final char DIFFERENCE_INT_OPERATORc = '~';
+    @Deprecated public static final String PRODUCT_OPERATOR = "*";
+    @Deprecated public static final char PRODUCT_OPERATORc = '*';
+    @Deprecated public static final String IMAGE_EXT_OPERATOR = "/";        
+    @Deprecated public static final char IMAGE_EXT_OPERATORc = '/';
+    @Deprecated public static final String IMAGE_INT_OPERATOR = "\\";
+    @Deprecated public static final char IMAGE_INT_OPERATORc = '\\';
+
+    /* CompoundStatement operators, length = 2 */
+    @Deprecated public static final String NEGATION_OPERATOR = "--";
+    @Deprecated public static final char NEGATION_OPERATORc = '-';    
+    @Deprecated public static final String DISJUNCTION_OPERATOR = "||";
+    @Deprecated public static final char DISJUNCTION_OPERATORc = '|';
+    @Deprecated public static final String CONJUNCTION_OPERATOR = "&&";
+    @Deprecated public static final char CONJUNCTION_OPERATORc = '&';
+    @Deprecated public static final String SEQUENCE_OPERATOR = "&/";
+    @Deprecated public static final String PARALLEL_OPERATOR = "&|";
+
+
     
 
-    protected static final Map<String,Relation> stringToRelation = new TreeMap();    
+    protected static final Map<String,Operator> stringToOperator = new TreeMap();    
     static {
-        for (final Relation r : Relation.values())
-            stringToRelation.put(r.toString(), r);
+        for (final Operator r : Operator.values())
+            stringToOperator.put(r.toString(), r);
     }
     
-    public static Relation getRelation(String s) {
-        return stringToRelation.get(s);
+    public static Operator operator(final String s) {
+        return stringToOperator.get(s);
     }
     
     

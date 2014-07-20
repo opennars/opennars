@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -126,7 +127,7 @@ public class ImageInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(ImageInt oldImage, Term component, short index, Memory memory) {
+    public static Term make(final ImageInt oldImage, final Term component, final short index, final Memory memory) {
         ArrayList<Term> argList = oldImage.cloneComponents();
         int oldIndex = oldImage.getRelationIndex();
         Term relation = argList.get(oldIndex);
@@ -142,9 +143,9 @@ public class ImageInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(ArrayList<Term> argument, short index, Memory memory) {
-        String name = makeImageName(Symbols.IMAGE_INT_OPERATOR, argument, index);
-        Term t = memory.nameToListedTerm(name);
+    public static Term make(final ArrayList<Term> argument, final short index, final Memory memory) {
+        String name = makeImageName(Operator.IMAGE_INT, argument, index);
+        Term t = memory.nameToTerm(name);
         return (t != null) ? t : new ImageInt(name, argument, index);
     }
 
@@ -181,14 +182,14 @@ public class ImageInt extends CompoundTerm {
      */
     @Override
     public String makeName() {
-        return makeImageName(Symbols.IMAGE_INT_OPERATOR, components, relationIndex);
+        return makeImageName(Operator.IMAGE_INT, components, relationIndex);
     }
 
     /**
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Symbols.IMAGE_INT_OPERATOR;
+    public Operator operator() {
+        return Operator.IMAGE_INT;
     }
 }

@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class TestUtil {
-    private final int performanceIterations = 3;
+    private final int performanceIterations = 1;
 
     ScriptEngineManager factory = new ScriptEngineManager();
     ScriptEngine js = factory.getEngineByName("JavaScript");

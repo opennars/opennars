@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -140,8 +141,8 @@ public class ImageExt extends CompoundTerm {
      * @return the Term generated from the arguments
      */
     public static Term make(ArrayList<Term> argument, short index, Memory memory) {
-        String name = makeImageName(Symbols.IMAGE_EXT_OPERATOR, argument, index);
-        Term t = memory.nameToListedTerm(name);
+        String name = makeImageName(Operator.IMAGE_EXT, argument, index);
+        Term t = memory.nameToTerm(name);
         return (t != null) ? t : new ImageExt(name, argument, index);
     }
 
@@ -178,14 +179,14 @@ public class ImageExt extends CompoundTerm {
      */
     @Override
     public String makeName() {
-        return makeImageName(Symbols.IMAGE_EXT_OPERATOR, components, relationIndex);
+        return makeImageName(Operator.IMAGE_EXT, components, relationIndex);
     }
 
     /**
      * get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Symbols.IMAGE_EXT_OPERATOR;
+    public Operator operator() {
+        return Operator.IMAGE_EXT;
     }
 }

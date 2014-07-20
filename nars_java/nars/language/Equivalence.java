@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -92,19 +93,19 @@ public class Equivalence extends Statement {
             subject = predicate;
             predicate = interm;
         }
-        String copula;
+        Operator copula;
         switch (temporalOrder) {
             case CompoundTerm.ORDER_FORWARD:
-                copula = Symbols.Relation.EQUIVALENCE_AFTER.toString();
+                copula = Operator.EQUIVALENCE_AFTER;
                 break;
             case CompoundTerm.ORDER_CONCURRENT:
-                copula = Symbols.Relation.EQUIVALENCE_WHEN.toString();
+                copula = Operator.EQUIVALENCE_WHEN;
                 break;
             default:
-                copula = Symbols.Relation.EQUIVALENCE.toString();
+                copula = Operator.EQUIVALENCE;
         }                
         String name = makeStatementName(subject, copula, predicate);
-        Term t = memory.nameToListedTerm(name);
+        Term t = memory.nameToTerm(name);
         if (t != null) {
             return (Equivalence) t;
         }
@@ -118,15 +119,14 @@ public class Equivalence extends Statement {
      * @return the operator of the term
      */
     @Override
-    public String operator() {
+    public Operator operator() {
         switch (temporalOrder) {
             case CompoundTerm.ORDER_FORWARD:
-                return Symbols.Relation.EQUIVALENCE_AFTER.toString();
+                return Operator.EQUIVALENCE_AFTER;
             case CompoundTerm.ORDER_CONCURRENT:
-                return Symbols.Relation.EQUIVALENCE_WHEN.toString();
-            default:
-        return Symbols.Relation.EQUIVALENCE.toString();
+                return Operator.EQUIVALENCE_WHEN;
     	}
+        return Operator.EQUIVALENCE;
     }
 
     /**

@@ -472,7 +472,7 @@ public class TextPerception {
             if (s.length() == 0) {
                 throw new InvalidInputException("missing content");
             }
-            Term t = memory.nameToListedTerm(s);    // existing constant or operator
+            Term t = memory.nameToTerm(s);    // existing constant or operator
             if (t != null) {
                 return t;
             }                           // existing Term
@@ -561,9 +561,9 @@ public class TextPerception {
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i), memory);
         Term predicate = parseTerm(s.substring(i + 3), memory);
-        Statement t = Statement.make(Statement.getRelation(relation), subject, predicate, memory);
+        Statement t = Statement.make(Symbols.operator(relation), subject, predicate, memory);
         if (t == null) {
-            throw new InvalidInputException("invalid statement: statement unable to create: " + Statement.getRelation(relation) + " " + subject + " " + predicate);
+            throw new InvalidInputException("invalid statement: statement unable to create: " + Symbols.operator(relation) + " " + subject + " " + predicate);
         }
         return t;
     }

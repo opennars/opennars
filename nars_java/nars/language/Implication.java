@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -82,22 +83,22 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        String copula;
+        Operator copula;
         switch (temporalOrder) {
             case CompoundTerm.ORDER_FORWARD:
-                copula = Symbols.Relation.IMPLICATION_AFTER.toString();
+                copula = Operator.IMPLICATION_AFTER;
                 break;
             case CompoundTerm.ORDER_CONCURRENT:
-                copula = Symbols.Relation.IMPLICATION_WHEN.toString();
+                copula = Operator.IMPLICATION_WHEN;
                 break;
             case CompoundTerm.ORDER_BACKWARD:
-                copula = Symbols.Relation.IMPLICATION_BEFORE.toString();
+                copula = Operator.IMPLICATION_BEFORE;
                 break;
             default:
-                copula = Symbols.Relation.IMPLICATION.toString();
+                copula = Operator.IMPLICATION;
         }                
         final String name = makeStatementName(subject, copula, predicate);
-        final Term t = memory.nameToListedTerm(name);
+        final Term t = memory.nameToTerm(name);
         if (t != null) {            
             if (t.getClass()!=Implication.class) {                
                 throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() + " = " + t.toString() );
@@ -122,17 +123,16 @@ public class Implication extends Statement {
      * @return the operator of the term
      */
     @Override
-    public String operator() {
+    public Operator operator() {
         switch (temporalOrder) {
             case CompoundTerm.ORDER_FORWARD:
-                return Symbols.Relation.IMPLICATION_AFTER.toString();
+                return Operator.IMPLICATION_AFTER;
             case CompoundTerm.ORDER_CONCURRENT:
-                return Symbols.Relation.IMPLICATION_WHEN.toString();
+                return Operator.IMPLICATION_WHEN;
             case CompoundTerm.ORDER_BACKWARD:
-                return Symbols.Relation.IMPLICATION_BEFORE.toString();
-            default:
-        return Symbols.Relation.IMPLICATION.toString();
+                return Operator.IMPLICATION_BEFORE;
         }
+        return Operator.IMPLICATION;
     }
     
     public int getTemporalOrder() {
