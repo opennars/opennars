@@ -75,13 +75,7 @@ public class Sentence implements Cloneable {
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
-        if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
-            this.revisible = false;
-        } else {
-            this.revisible = true;
-        }
-  
-                
+        this.revisible = !((content instanceof Conjunction) && Variable.containVarDep(content.getName()));                 
     }
 
     /**
@@ -91,9 +85,9 @@ public class Sentence implements Cloneable {
      * @return Whether the two sentences have the same content
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (that instanceof Sentence) {
-            Sentence t = (Sentence) that;
+            final Sentence t = (Sentence) that;
             return content.equals(t.getContent()) && punctuation == t.getPunctuation() && truth.equals(t.getTruth()) && stamp.equals(t.getStamp());
         }
         return false;
@@ -149,7 +143,7 @@ public class Sentence implements Cloneable {
         return content;
     }
     
-    public void setContent(Term t) {
+    public void setContent(final Term t) {
         content = t;
         key = null;
     }
@@ -218,7 +212,7 @@ public class Sentence implements Cloneable {
         return revisible;
     }
 
-    public void setRevisible(boolean b) {
+    public void setRevisible(final boolean b) {
         revisible = b;
     }
 

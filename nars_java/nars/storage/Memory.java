@@ -363,10 +363,10 @@ public class Memory {
                 reasoner.output(OUT.class, task.getSentence());
             }
             newTasks.add(task);
-        } else {
+        } else {            
             if (recorder.isActive()) {
                 recorder.append("!!! Ignored: " + task + "\n");
-            }
+            }            
         }
     }
 
@@ -641,7 +641,7 @@ public class Memory {
         return conceptForgettingRate;
     }
 
-    public static class NullInferenceRecorder implements InferenceRecorder {
+    public static final class NullInferenceRecorder implements InferenceRecorder {
 
         public static final NullInferenceRecorder global = new NullInferenceRecorder();
 

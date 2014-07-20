@@ -118,7 +118,7 @@ public class Term implements Cloneable, Comparable<Term> {
     }
 
     protected void setName(final String name) {
-        if (getComplexity() <= Parameters.TERM_NAME_STRING_INTERN_MAX_COMPLEXITY) {
+        if (name.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
             this.name = name.intern();
         }
         else {

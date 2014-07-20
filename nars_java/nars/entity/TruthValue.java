@@ -180,7 +180,11 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     @Override
     public String toString() {
-        return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
+        //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
+        
+        //1 + 6 + 1 + 6 + 1
+        return new StringBuffer(15).append(DELIMITER).append(frequency.toString())
+                     .append(SEPARATOR).append(confidence.toString()).append(DELIMITER).toString();
     }
 
     /**
@@ -198,8 +202,9 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             return s1 + s2 + DELIMITER;
         }*/
         
+        //1 + 4 + 1 + 4 + 1
         StringBuffer sb = 
-                new StringBuffer(12).append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);                    
+                new StringBuffer(11).append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);
         
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {

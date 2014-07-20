@@ -33,6 +33,8 @@ public class BudgetValue implements Cloneable {
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
     /** The character that separates the factors in a budget value */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
+   
+    
     /** The relative share of time resource to be allocated */
     final protected ShortFloat priority;
 	/**
