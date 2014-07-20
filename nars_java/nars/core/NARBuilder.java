@@ -23,7 +23,16 @@ abstract public class NARBuilder extends Parameters {
     public int getBagLevels() { return bagLevels; }    
     public NARBuilder setBagLevels(int bagLevels) { this.bagLevels = bagLevels; return this;  }
     
+    public static class NARParams {
+        
+    }
+    
+    /** initial runtime parameters */
+    public NARParams newInitialParams() {
+        return null;
+    }
+    
     public NAR build() {
-        return new NAR(this);
+        return new NAR(this/*, newInitialParams()*/);
     }
 }

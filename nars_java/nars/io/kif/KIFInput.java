@@ -49,8 +49,7 @@ public class KIFInput extends TextInput implements Runnable {
         super(n);
         
         PipedWriter output = new PipedWriter();
-        setInput(new BufferedReader(new PipedReader(output)));
-        
+        setInput(new BufferedReader(new PipedReader(output)));        
         outprint = new PrintWriter(output);
         
         kif = new KIF(kifPath);

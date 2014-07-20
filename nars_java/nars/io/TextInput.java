@@ -105,6 +105,9 @@ public class TextInput extends Symbols implements Input {
     public Object next() {
         String line = null;
         
+        if (input==null)
+            return null;
+        
         text.setLength(0);
         
         try {
@@ -126,7 +129,6 @@ public class TextInput extends Symbols implements Input {
 
         } catch (IOException ex) {
             nar.output(ERR.class, ex);
-            input = null;
         }        
 
         return process(text.toString());
