@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -78,8 +79,8 @@ public class DifferenceInt extends CompoundTerm {
             return SetInt.make(set, memory);
         }
         
-        String name = makeCompoundName(Symbols.DIFFERENCE_INT_OPERATOR, argList);
-        Term t = memory.nameToListedTerm(name);
+        String name = makeCompoundName(Operator.DIFFERENCE_INT, argList);
+        Term t = memory.nameToTerm(name);
         return (t != null) ? t : new DifferenceInt(argList);
     }
 
@@ -103,8 +104,8 @@ public class DifferenceInt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Symbols.DIFFERENCE_INT_OPERATOR;
+    public Operator operator() {
+        return Operator.DIFFERENCE_INT;
     }
 }
 

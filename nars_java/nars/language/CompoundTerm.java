@@ -25,6 +25,7 @@ import java.util.*;
 import nars.entity.*;
 import nars.storage.*;
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import static nars.language.CompoundTerm.make;
 import static nars.language.CompoundTerm.makeCompoundName;
 
@@ -56,12 +57,11 @@ public abstract class CompoundTerm extends Term {
     public static final int ORDER_CONCURRENT = 0;
     public static final int ORDER_NONE = Integer.MIN_VALUE;
     /* ----- abstract methods to be implemented in subclasses ----- */
+
     /**
      * Abstract method to get the operator of the compound
-     *
-     * @return The operator in a String
      */
-    public abstract String operator();
+    public abstract Operator operator();
 
     /**
      * Abstract clone method
@@ -238,7 +238,7 @@ public abstract class CompoundTerm extends Term {
      * @param arg Component list
      * @param memory Reference to the memory
      * @return A compound term or null
-     */
+     */    
     public static Term make(final String op, final ArrayList<Term> arg, final Memory memory) {
         final int length = op.length();
         if (length == 1) {
@@ -285,6 +285,41 @@ public abstract class CompoundTerm extends Term {
         }
         throw new RuntimeException("Unknown Term operator: " + op);
     }
+    
+    public static Term make(final Operator op, final ArrayList<Term> arg, final Memory memory) {
+        switch (op) {
+            case SET_EXT_OPENER: 
+                return SetExt.make(arg, memory);
+            case SET_INT_OPENER: 
+                return SetInt.make(arg, memory);
+            case INTERSECTION_EXT: 
+                return IntersectionExt.make(arg, memory);
+            case INTERSECTION_INT:
+                return IntersectionInt.make(arg, memory);
+            case DIFFERENCE_EXT:
+                return DifferenceExt.make(arg, memory);
+            case DIFFERENCE_INT:
+                return DifferenceInt.make(arg, memory);
+            case PRODUCT:
+                return Product.make(arg, memory);
+            case IMAGE_EXT:
+                return ImageExt.make(arg, memory);
+            case IMAGE_INT:
+                return ImageInt.make(arg, memory);                    
+            case NEGATION:
+                return Negation.make(arg, memory);            
+            case DISJUNCTION:
+                return Disjunction.make(arg, memory);            
+            case CONJUNCTION:
+                return Conjunction.make(arg, memory);
+            case SEQUENCE:
+                return Conjunction.make(arg, ORDER_FORWARD, memory);
+            case PARALLEL:
+                return Conjunction.make(arg, ORDER_CONCURRENT, memory);
+            default:
+                throw new RuntimeException("Unknown Term operator: " + op);
+        }
+    }    
 
     /**
      * Check CompoundTerm operator symbol
@@ -360,9 +395,9 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of components
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final String op, final ArrayList<Term> arg) {
+    protected static String makeCompoundName(final Operator op, final ArrayList<Term> arg) {
         final StringBuilder name = new StringBuilder(16  /* estimate */)
-            .append(Symbols.COMPOUND_TERM_OPENER).append(op);
+            .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
         for (final Term t : arg) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
@@ -401,7 +436,7 @@ public abstract class CompoundTerm extends Term {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(String op, ArrayList<Term> arg, int relationIndex) {
+    protected static String makeImageName(Operator op, ArrayList<Term> arg, int relationIndex) {
         StringBuilder name = new StringBuilder(16 /* estimate */)
         .append(Symbols.COMPOUND_TERM_OPENER)
         .append(op)

@@ -181,7 +181,7 @@ public class Memory {
      * @param name the name of a concept or operator
      * @return a Term or null (if no Concept/Operator has this name)
      */
-    public Term nameToListedTerm(final String name) {
+    public Term nameToTerm(final String name) {
         final Concept concept = concepts.get(name);
         if (concept != null) {
             return concept.getTerm();

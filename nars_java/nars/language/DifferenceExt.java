@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -77,8 +78,8 @@ public class DifferenceExt extends CompoundTerm {
             return SetExt.make(set, memory);
         }
         
-        String name = makeCompoundName(Symbols.DIFFERENCE_EXT_OPERATOR, argList);
-        Term t = memory.nameToListedTerm(name);
+        String name = makeCompoundName(Operator.DIFFERENCE_EXT, argList);
+        Term t = memory.nameToTerm(name);
         return (t != null) ? t : new DifferenceExt(argList);
     }
 
@@ -101,7 +102,7 @@ public class DifferenceExt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Symbols.DIFFERENCE_EXT_OPERATOR;
+    public Operator operator() {
+        return Operator.DIFFERENCE_EXT;
     }
 }

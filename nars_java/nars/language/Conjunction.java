@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -71,14 +72,14 @@ public class Conjunction extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public String operator() {
+    public Operator operator() {
         switch (temporalOrder) {
             case CompoundTerm.ORDER_FORWARD:
-                return Symbols.SEQUENCE_OPERATOR;
+                return Operator.SEQUENCE;
             case CompoundTerm.ORDER_CONCURRENT:
-                return Symbols.PARALLEL_OPERATOR;
+                return Operator.PARALLEL;
             default:
-        return Symbols.CONJUNCTION_OPERATOR;
+        return Operator.CONJUNCTION;
     	}
     }
 
@@ -126,8 +127,8 @@ public class Conjunction extends CompoundTerm {
             return argList.get(0);
         }                         // special case: single component
         if (temporalOrder == ORDER_FORWARD) {
-            final String name = makeCompoundName(Symbols.SEQUENCE_OPERATOR, argList);
-            final Term t = memory.nameToListedTerm(name);
+            final String name = makeCompoundName(Operator.SEQUENCE, argList);
+            final Term t = memory.nameToTerm(name);
             return (t != null) ? t : new Conjunction(argList, temporalOrder);
         } else {
         final TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
@@ -147,11 +148,11 @@ public class Conjunction extends CompoundTerm {
         final ArrayList<Term> argument = new ArrayList<>(set);
         final String name;
         if (temporalOrder == CompoundTerm.ORDER_NONE) {
-            name = makeCompoundName(Symbols.CONJUNCTION_OPERATOR, argument);
+            name = makeCompoundName(Operator.CONJUNCTION, argument);
         } else {
-            name = makeCompoundName(Symbols.PARALLEL_OPERATOR, argument);
+            name = makeCompoundName(Operator.PARALLEL, argument);
         }
-        final Term t = memory.nameToListedTerm(name);
+        final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Conjunction(argument, temporalOrder);
     }
 

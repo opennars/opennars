@@ -23,6 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -93,7 +94,7 @@ public class SetExt extends CompoundTerm {
         }
         final ArrayList<Term> argument = new ArrayList<Term>(set);
         final String name = makeSetName(Symbols.SET_EXT_OPENER, argument, Symbols.SET_EXT_CLOSER);
-        final Term t = memory.nameToListedTerm(name);
+        final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new SetExt(argument);
     }
 
@@ -101,8 +102,8 @@ public class SetExt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Character.toString(Symbols.SET_EXT_OPENER);
+    public Operator operator() {
+        return Operator.SET_EXT_OPENER;
     }
 
     /**

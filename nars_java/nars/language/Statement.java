@@ -21,11 +21,9 @@
 package nars.language;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
 
 import nars.io.Symbols;
-import nars.io.Symbols.Relation;
+import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
@@ -64,52 +62,44 @@ public abstract class Statement extends CompoundTerm {
     /**
      * Make a Statement from String, called by StringParser
      *
-     * @param relation The relation String
+     * @param o The relation String
      * @param subject The first component
      * @param predicate The second component
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement make(final Relation relation, final Term subject, final Term predicate, final Memory memory) {
+    public static Statement make(final Operator o, final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        if (relation == Relation.INHERITANCE) {
-            return Inheritance.make(subject, predicate, memory);
+        
+        switch (o) {
+            case INHERITANCE:
+                return Inheritance.make(subject, predicate, memory);
+            case SIMILARITY:
+                return Similarity.make(subject, predicate, memory);
+            case INSTANCE:
+                return Instance.make(subject, predicate, memory);
+            case PROPERTY:
+                return Property.make(subject, predicate, memory);
+            case INSTANCE_PROPERTY:
+                return InstanceProperty.make(subject, predicate, memory);
+            case IMPLICATION:
+                return Implication.make(subject, predicate, memory);
+            case IMPLICATION_AFTER:
+                return Implication.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
+            case IMPLICATION_BEFORE:
+                return Implication.make(subject, predicate, CompoundTerm.ORDER_BACKWARD, memory);
+            case IMPLICATION_WHEN:
+                return Implication.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);
+            case EQUIVALENCE:
+                return Equivalence.make(subject, predicate, memory);
+            case EQUIVALENCE_AFTER:
+                return Equivalence.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
+            case EQUIVALENCE_WHEN:
+                return Equivalence.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);            
         }
-        if (relation == Relation.SIMILARITY) {
-            return Similarity.make(subject, predicate, memory);
-        }
-        if (relation == Relation.INSTANCE) {
-            return Instance.make(subject, predicate, memory);
-        }
-        if (relation == Relation.PROPERTY) {
-            return Property.make(subject, predicate, memory);
-        }
-        if (relation == Relation.INSTANCE_PROPERTY) {
-            return InstanceProperty.make(subject, predicate, memory);
-        }
-        if (relation == Relation.IMPLICATION) {
-            return Implication.make(subject, predicate, memory);
-        }
-        if (relation == Relation.IMPLICATION_AFTER) {
-            return Implication.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
-        }
-        if (relation == Relation.IMPLICATION_BEFORE) {
-            return Implication.make(subject, predicate, CompoundTerm.ORDER_BACKWARD, memory);
-        }
-        if (relation == Relation.IMPLICATION_WHEN) {
-            return Implication.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);
-        }
-        if (relation == Relation.EQUIVALENCE) {
-            return Equivalence.make(subject, predicate, memory);
-        }
-        if (relation == Relation.EQUIVALENCE_AFTER) {
-            return Equivalence.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
-        }
-        if (relation == Relation.EQUIVALENCE_WHEN) {
-            return Equivalence.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);
-        }
+        
         return null;
     }
 
@@ -171,12 +161,9 @@ public abstract class Statement extends CompoundTerm {
             return false;
         }
 
-        return Symbols.getRelation(s)!=null;
+        return Symbols.operator(s)!=null;
     }
-    
-    public static Relation getRelation(final String s) {
-        return Symbols.getRelation(s);
-    }
+
 
     /**
      * Override the default in making the nameStr of the current term from
@@ -197,10 +184,10 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final String relation, final Term predicate) {
+    protected static String makeStatementName(final Term subject, final Operator relation, final Term predicate) {
         final String subjectName = subject.getName();
         final String predicateName = predicate.getName();
-        int length = subjectName.length() + predicateName.length() + relation.length() + 4;
+        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
         final StringBuilder nameStr = new StringBuilder(length);
         nameStr.append(Symbols.STATEMENT_OPENER);
