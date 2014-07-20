@@ -219,6 +219,8 @@ public class TextPerception {
                             return true;
                         }
                     } catch (InvalidInputException ex) {
+                        /*System.err.println(ex.toString());
+                        ex.printStackTrace();*/
                         return false;
                     }
                 }
@@ -255,7 +257,7 @@ public class TextPerception {
         }
         char c = buffer.charAt(buffer.length() - 1);
         if (c == STAMP_CLOSER) {
-            int j = buffer.lastIndexOf(STAMP_OPENER + "");
+            int j = buffer.lastIndexOf(String.valueOf(STAMP_OPENER));
             buffer.delete(j - 1, buffer.length());
         }
         return parseTask(buffer.toString().trim(), memory, time);
@@ -319,7 +321,7 @@ public class TextPerception {
             return task;
         }
         catch (InvalidInputException e) {
-            throw new InvalidInputException(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());
+            throw new InvalidInputException(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());         
         }
 
     }
@@ -561,7 +563,7 @@ public class TextPerception {
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i), memory);
         Term predicate = parseTerm(s.substring(i + 3), memory);
-        Statement t = Statement.make(Symbols.operator(relation), subject, predicate, memory);
+        Statement t = Statement.make(Symbols.relation(relation), subject, predicate, memory);
         if (t == null) {
             throw new InvalidInputException("invalid statement: statement unable to create: " + Symbols.operator(relation) + " " + subject + " " + predicate);
         }
@@ -649,11 +651,11 @@ public class TextPerception {
      * @return the index of the top-level relation
      * @param s The String to be parsed
      */
-    private static int topRelation(String s) {      // need efficiency improvement
+    private static int topRelation(final String s) {      // need efficiency improvement
         int levelCounter = 0;
         int i = 0;
         while (i < s.length() - 3) {    // don't need to check the last 3 characters
-            if ((levelCounter == 0) && (Statement.isRelation(s.substring(i, i + 3)))) {
+            if ((levelCounter == 0) && (Symbols.isRelation(s.substring(i, i + 3)))) {
                 return i;
             }
             if (isOpener(s, i)) {
@@ -674,7 +676,7 @@ public class TextPerception {
      * @param s The String to be checked
      * @param i The starting index
      */
-    private static boolean isOpener(String s, int i) {
+    private static boolean isOpener(final String s, final int i) {
         char c = s.charAt(i);
         boolean b = (c == COMPOUND_TERM_OPENER)
                 || (c == SET_EXT_OPENER)
@@ -683,7 +685,7 @@ public class TextPerception {
         if (!b) {
             return false;
         }
-        if (i + 3 <= s.length() && Statement.isRelation(s.substring(i, i + 3))) {
+        if (i + 3 <= s.length() && Symbols.isRelation(s.substring(i, i + 3))) {
             return false;
         }
         return true;
@@ -705,7 +707,7 @@ public class TextPerception {
         if (!b) {
             return false;
         }
-        if (i >= 2 && Statement.isRelation(s.substring(i - 2, i + 1))) {
+        if (i >= 2 && Symbols.isRelation(s.substring(i - 2, i + 1))) {
             return false;
         }
         return true;

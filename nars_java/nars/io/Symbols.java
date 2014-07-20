@@ -65,6 +65,7 @@ public class Symbols {
     public static final char IMAGE_PLACE_HOLDER = '_';
 
 
+
     
     public static enum Operator {
         /* CompountTerm operators, length = 1 */
@@ -88,6 +89,12 @@ public class Symbols {
         SET_INT_CLOSER { @Override public String toString() { return "]"; } },
         SET_EXT_OPENER { @Override public String toString() { return "{"; } },
         SET_EXT_CLOSER { @Override public String toString() { return "}"; } },
+        
+        COMPOUND_TERM_OPENER { @Override public String toString() { return "("; } },
+        COMPOUND_TERM_CLOSER { @Override public String toString() { return ")"; } },
+        STATEMENT_OPENER { @Override public String toString() { return "<"; } },
+        STATEMENT_CLOSER { @Override public String toString() { return ">"; } },
+        
         
         /* Relations */
         INHERITANCE { @Override public String toString() { return "-->"; } },
@@ -141,7 +148,22 @@ public class Symbols {
     }
     
     public static Operator operator(final String s) {
-        return stringToOperator.get(s);
+        return stringToOperator.get(s.trim());
+    }
+    static Operator relation(String r) {
+        r = r.trim();
+        if (r.length()!=3) return null;
+        return stringToOperator.get(r);
+    }
+    
+    /**
+     * Check Statement relation symbol, called in StringPaser
+     *
+     * @param s0 The String to be checked
+     * @return if the given String is a relation symbol
+     */
+    public static boolean isRelation(final String s) {
+        return relation(s)!=null;
     }
     
     
