@@ -41,8 +41,8 @@ public class XMLInput extends PrintWriterInput {
         
         //new TextOutput(n, System.out);
         
-        //new NARSwing(n);
-        n.start(1);
+        new NARSwing(n);
+        //n.start(1);
 
         
         //new XMLInput(n, "/home/me/Downloads/schemaorg.owl","");

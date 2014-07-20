@@ -117,7 +117,7 @@ public class LocalRules {
         }
         task.setBestSolution(belief);
         if (task.isInput()) {    // moved from Sentence
-            memory.reasoner.output(OUT.class, belief);
+            memory.nar.output(OUT.class, belief);
         }
         BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
         if ((budget != null) && budget.aboveThreshold()) {

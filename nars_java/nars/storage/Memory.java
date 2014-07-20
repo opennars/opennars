@@ -49,9 +49,9 @@ public class Memory {
     public static Random randomNumber = new Random(1);
 
     /**
-     * Backward pointer to the reasoner
+     * Backward pointer to the nar
      */
-    public final NAR reasoner;
+    public final NAR nar;
 
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**
@@ -123,10 +123,10 @@ public class Memory {
      * @param nar
      */
     public Memory(NAR nar) {
-        this.reasoner = nar;
+        this.nar = nar;
         recorder = NullInferenceRecorder.global;
-        concepts = new ConceptBag(nar.param.getBagLevels(), nar.param.getConceptBagSize(), conceptForgettingRate);
-        novelTasks = new NovelTaskBag(nar.param.getBagLevels(), Parameters.TASK_BUFFER_SIZE);
+        concepts = new ConceptBag(nar.config.getBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
+        novelTasks = new NovelTaskBag(nar.config.getBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new LinkedList<>();
     }
 
@@ -149,7 +149,7 @@ public class Memory {
     }
 
     public long getTime() {
-        return reasoner.getTime();
+        return nar.getTime();
     }
 
 
@@ -288,10 +288,10 @@ public class Memory {
         }
         if (sentence.isQuestion()) {
             final float s = task.getBudget().summary();
-//            float minSilent = reasoner.getMainWindow().silentW.value() / 100.0f;
-            final float minSilent = reasoner.param.getSilenceLevel() / 100.0f;
+//            float minSilent = nar.getMainWindow().silentW.value() / 100.0f;
+            final float minSilent = nar.param.getSilenceLevel() / 100.0f;
             if (s > minSilent) {  // only report significant derived Tasks
-                reasoner.output(OUT.class, task.getSentence());
+                nar.output(OUT.class, task.getSentence());
             }
         }
         newTasks.add(task);
@@ -358,9 +358,9 @@ public class Memory {
                 recorder.append("!!! Derived: " + task + "\n");
             }
             float budget = task.getBudget().summary();
-            float minSilent = reasoner.param.getSilenceLevel() / 100.0f;
+            float minSilent = nar.param.getSilenceLevel() / 100.0f;
             if (budget > minSilent) {  // only report significant derived Tasks
-                reasoner.output(OUT.class, task.getSentence());
+                nar.output(OUT.class, task.getSentence());
             }
             newTasks.add(task);
         } else {            
