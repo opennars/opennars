@@ -154,10 +154,10 @@ public abstract class CompoundTerm extends Term {
         
         final CompoundTerm t = (CompoundTerm)that;    
                 
-        if (size() != t.size())
+        if (operator() != t.operator())
             return false;
         
-        if (!operator().equals(t.operator()))
+        if (size() != t.size())
             return false;
         
         int i = 0;
@@ -188,7 +188,7 @@ public abstract class CompoundTerm extends Term {
         if (that instanceof CompoundTerm) {
             final CompoundTerm t = (CompoundTerm) that;
             if (size() == t.size()) {
-                int opDiff = this.operator().compareTo(t.operator());
+                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
                 if (opDiff != 0) {
                     return opDiff;
                 }
