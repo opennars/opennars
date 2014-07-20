@@ -111,7 +111,7 @@ public class Parameters {
      * max complexity of a Term that its name can be stored globally via String.intern().
      * set to zero to disable this feature.
      */
-    public static int TERM_NAME_STRING_INTERN_MAX_COMPLEXITY = 4;
+    public static int INTERNED_TERM_NAME_MAXLEN = 6;
     
 }
 

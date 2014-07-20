@@ -124,6 +124,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @param s The new oldName
      */
+    @Override
     protected void setName(String s) {
         name = s;
     }
@@ -137,12 +138,35 @@ public abstract class CompoundTerm extends Term {
             complexity += t.getComplexity();
         }
     }
-
-
-    
+ 
+    /*
     @Override
     public boolean equals(final Object that) {
         return (that instanceof Term) && (compareTo((Term) that) == 0);
+    }
+    */
+    
+    //slightly faster version of equals() that works like compare but only needs to return true/false
+    @Override
+    public boolean equals(final Object that) {
+        if (!(that instanceof CompoundTerm))
+            return false;
+        
+        final CompoundTerm t = (CompoundTerm)that;    
+                
+        if (size() != t.size())
+            return false;
+        
+        if (!operator().equals(t.operator()))
+            return false;
+        
+        int i = 0;
+        for (final Term c : components) {
+            if (!c.equals(t.componentAt(i++)))
+                return false;
+        }
+        
+        return true;
     }
 
     @Override
@@ -163,7 +187,6 @@ public abstract class CompoundTerm extends Term {
     public int compareTo(final Term that) {
         if (that instanceof CompoundTerm) {
             final CompoundTerm t = (CompoundTerm) that;
-            final int tsize = t.size();
             if (size() == t.size()) {
                 int opDiff = this.operator().compareTo(t.operator());
                 if (opDiff != 0) {

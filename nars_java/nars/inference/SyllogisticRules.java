@@ -77,7 +77,7 @@ public final class SyllogisticRules {
      * @param figure Locations of the shared term in premises
      * @param memory Reference to the memory
      */
-    static void abdIndCom(Term term1, Term term2, Sentence taskSentence, Sentence belief, int figure, Memory memory) {
+    static void abdIndCom(final Term term1, final Term term2, final Sentence taskSentence, final Sentence belief, final int figure, final Memory memory) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1.getName(), term2.getName())) {
             return;
         }
