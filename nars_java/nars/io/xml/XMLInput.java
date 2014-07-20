@@ -32,14 +32,16 @@ public class XMLInput extends PrintWriterInput {
     private final Map<Node, String> nodes = new HashMap();
     private final Set<String> elementTypes = new HashSet();
 
-    final int maxWords = 8;
+    final int maxWords = 4;
     
     public static void main(String[] args) throws Exception {
         NAR n = new DefaultNARBuilder().
                         setConceptBagSize(8192).
+                        setTermLinkBagLevels(8).
+                        setTaskLinkBagLevels(8).
                         build();
         
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out);
         
         //new NARSwing(n);
         n.start(0);

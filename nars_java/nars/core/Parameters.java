@@ -84,10 +84,7 @@ public class Parameters {
     
 
     
-    /** Size of TaskLinkBag */
-    public static final int TASK_LINK_BAG_SIZE = 20;
-    /** Size of TermLinkBag */
-    public static final int TERM_LINK_BAG_SIZE = 100;
+
     /** Size of TaskBuffer */
     public static final int TASK_BUFFER_SIZE = 10;
     

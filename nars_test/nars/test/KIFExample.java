@@ -34,7 +34,7 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
         NAR n = new DefaultNARBuilder()
                 .setConceptBagSize(2048)
-                .setBagLevels(512)
+                .setConceptBagLevels(512)
                 .build();
                 
         n.param.setSilenceLevel(99);

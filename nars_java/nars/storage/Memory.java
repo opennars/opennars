@@ -125,8 +125,8 @@ public class Memory {
     public Memory(NAR nar) {
         this.nar = nar;
         recorder = NullInferenceRecorder.global;
-        concepts = new ConceptBag(nar.config.getBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
-        novelTasks = new NovelTaskBag(nar.config.getBagLevels(), Parameters.TASK_BUFFER_SIZE);
+        concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
+        novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new LinkedList<>();
     }
 
@@ -321,14 +321,14 @@ public class Memory {
                 if(chain.contains(currentBeliefContent)) {
                     chain.remove(currentBeliefContent);
                 }
-                stamp.addToChain(currentBeliefContent);
+                stamp.addToChain(currentBeliefContent, task.getSentence());
             }
             if (currentTask != null && !single) {
                 final Term currentTaskContent = currentTask.getContent();
                 if(chain.contains(currentTaskContent)) {
                     chain.remove(currentTaskContent);
                 }
-                stamp.addToChain(currentTaskContent);
+                stamp.addToChain(currentTaskContent, task.getSentence());
             }
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
                 for (final Term chain1 : chain) {

@@ -288,15 +288,18 @@ public class Stamp implements Cloneable {
     }
 
     /**
-     * Add element to the chain
+     * Add element to the chain.
      *
      * @return The evidentialBase of numbers
      */
-    public void addToChain(final Term T) {
+    public void addToChain(final Term T, Sentence owner) {
         derivationChain.add(T);
         if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
             derivationChain.remove(0);
         }
+        
+        //The Sentence this belongs to should have its setStamp() method called afterward to invalidate any cached strings.
+        owner.setStamp(this);
     }
 
     /**
