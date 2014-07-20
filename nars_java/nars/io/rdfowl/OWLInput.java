@@ -17,6 +17,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import nars.core.NAR;
 import nars.gui.NARSwing;
+import nars.io.PrintWriterInput;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -30,7 +31,7 @@ import nars.io.TextOutput;
  *
  * @author me
  */
-public class OWLInput extends TextInput {
+public class OWLInput extends PrintWriterInput {
 
     private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
@@ -38,16 +39,9 @@ public class OWLInput extends TextInput {
     private static String parentTagName = null;
     
     private Map<String, Entity> entities = new HashMap();
-    private final PrintWriter outprint;
 
     public OWLInput(NAR n, String owlFileLocation) throws Exception {
         super(n);
-        
-        PipedWriter output = new PipedWriter();
-        setInput(new BufferedReader(new PipedReader(output)));        
-        outprint = new PrintWriter(output);
-
-        n.addInput(this);
         
         parseAndLoadData(new File(owlFileLocation));
     }
@@ -110,7 +104,7 @@ public class OWLInput extends TextInput {
         for (;;) {
             int event = parser.next();
             if (event == XMLStreamConstants.END_DOCUMENT) {
-                outprint.close();
+                close();
                 break;
             }
             switch (event) {
@@ -331,7 +325,7 @@ public class OWLInput extends TextInput {
         //entities.put(entity.getName(), entity);
         
         String className = getClassName(entity.getName());
-        outprint.println("<" + className + " --> class>.");
+        out.println("<" + className + " --> class>.");
         
         //System.out.println("Save: " + entity.getName());
 //        // if entity already exists, don't save
@@ -405,7 +399,7 @@ public class OWLInput extends TextInput {
         
         if ((subject==null) || (object==null)) return;
         if (predicate.equals("parentOf")) {
-            outprint.println("<" + getClassName(subject) + " --> " + getClassName(object) + ">.");
+            out.println("<" + getClassName(subject) + " --> " + getClassName(object) + ">.");
         }
         
 //        // get the entity ids for source and target

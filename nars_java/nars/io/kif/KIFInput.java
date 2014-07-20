@@ -25,20 +25,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import nars.core.NAR;
-import nars.io.TextInput;
+import nars.io.PrintWriterInput;
 
 /**
  * http://sigmakee.cvs.sourceforge.net/viewvc/sigmakee/sigma/suo-kif.pdf
  * http://sigma-01.cim3.net:8080/sigma/Browse.jsp?kb=SUMO&lang=EnglishLanguage&flang=SUO-KIF&term=subclass
  * @author me
  */
-public class KIFInput extends TextInput implements Runnable {
+public class KIFInput extends PrintWriterInput implements Runnable {
 
     private final KIF kif;
     private final Iterator<Formula> formulaIterator;
     boolean closed = false;
     private final NAR nar;
-    private final PrintWriter outprint;
     private boolean includeSubclass;
     private boolean includeInstance;
     private boolean includeRelatedInternalConcept;
@@ -48,17 +47,10 @@ public class KIFInput extends TextInput implements Runnable {
     public KIFInput(NAR n, String kifPath) throws Exception {
         super(n);
         
-        PipedWriter output = new PipedWriter();
-        setInput(new BufferedReader(new PipedReader(output)));        
-        outprint = new PrintWriter(output);
-        
         kif = new KIF(kifPath);
         formulaIterator = kif.getFormulas().iterator();
-
-        n.addInput(this);
         
-        this.nar = n;
-                
+        this.nar = n;                
     }
 
     public void setIncludeDisjoint(boolean includeDisjoint) {
@@ -92,7 +84,7 @@ public class KIFInput extends TextInput implements Runnable {
     Map<String, Integer> unknownOperators = new HashMap();
         
     protected void emit(final String statement) {
-        outprint.write(statement + "\n");
+        out.write(statement + "\n");
     }
     
     @Override
@@ -203,8 +195,8 @@ public class KIFInput extends TextInput implements Runnable {
 
     /*Unknown operators: {=>=466, rangeSubclass=5, inverse=1, relatedInternalConcept=7, documentation=128, range=29, exhaustiveAttribute=1, trichotomizingOn=4, subrelation=22, not=2, partition=12, contraryAttribute=1, subAttribute=2, disjoint=5, domain=102, disjointDecomposition=2, domainSubclass=9, <=>=70}*/
         }
-        outprint.flush();
-        outprint.close();
+        out.flush();
+        out.close();
         
         
     }
