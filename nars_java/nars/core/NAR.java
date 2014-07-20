@@ -60,7 +60,7 @@ public class NAR implements Runnable, Output {
      */
     private boolean running = false;
     /**
-     * The remaining number of steps to be carried out (walk mode)
+     * The remaining number of steps to be carried out (stepLater mode)
      */
     private int stepsQueued;
     
@@ -146,7 +146,7 @@ public class NAR implements Runnable, Output {
      *
      * @param cycles The number of inference steps
      */
-    public void walk(final int cycles) {
+    public void stepLater(final int cycles) {
         stepsQueued += cycles;
     }
     
@@ -191,7 +191,7 @@ public class NAR implements Runnable, Output {
     /** Execute a fixed number of cycles. */
     public void step(final int cycles) {
         if (thread!=null) {
-            walk(cycles);
+            stepLater(cycles);
             return;
         }
         running = true;

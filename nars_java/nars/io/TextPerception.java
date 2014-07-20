@@ -94,7 +94,7 @@ public class TextPerception {
     
     
     private static void initDefaultParsers() {
-        //integer, # of cycles to walk
+        //integer, # of cycles to stepLater
         defaultParsers.add(new TextInputParser() {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
