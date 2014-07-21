@@ -1,5 +1,8 @@
 package nars.inference;
 
+import nars.entity.Concept;
+import nars.entity.Task;
+
 public interface InferenceRecorder {
 
     /**
@@ -29,22 +32,20 @@ public interface InferenceRecorder {
      *
      * @param s The line to be displayed
      */
-    public abstract void append(String s);
+    public void append(String s);
 
-    /**
-     * Open the log file
-     */
-    public abstract void openLogFile();
+    /** when a concept is instantiated */
+    public void onConceptNew(Concept concept);
 
-    /**
-     * Close the log file
-     */
-    public abstract void closeLogFile();
+    /** called at the beginning of each inference clock cycle */
+    public void preCycle(long clock);
 
-    /**
-     * Check file logging
-     *
-     * @return If the file logging is going on
-     */
-    public abstract boolean isLogging();
+    public void postCycle(long clock);
+
+    /** Added task */
+    public void onTaskAdd(Task task, String reason);
+
+    /** Neglected task */
+    public void onTaskRemove(Task task, String reason);
+
 }

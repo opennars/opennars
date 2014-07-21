@@ -767,7 +767,10 @@ public abstract class CompoundTerm extends Term {
      * @return A list of TermLink templates
      */
     public List<TermLink> prepareComponentLinks() {
-        List<TermLink> componentLinks = new ArrayList<>();
+        //complexity seems like an upper bound for the resulting number of componentLinks. 
+        //so use it as an initial size for the array list
+        final List<TermLink> componentLinks = new ArrayList<>( getComplexity() );
+        
         short type = (this instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         prepareComponentLinks(componentLinks, type, this);
         return componentLinks;

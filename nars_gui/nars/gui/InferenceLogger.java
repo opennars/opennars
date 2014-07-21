@@ -23,23 +23,30 @@ package nars.gui;
 import nars.gui.output.InferenceWindow;
 import java.awt.FileDialog;
 import java.io.*;
-
+import nars.entity.Concept;
+import nars.entity.Task;
 
 /**
- * Inference log, which record input/output of each inference step
- * interface with 1 implementation: GUI ( batch not implemented )
+ * Inference log, which record input/output of each inference step interface
+ * with 1 implementation: GUI ( batch not implemented )
  */
 public class InferenceLogger implements nars.inference.InferenceRecorder {
 
-    /** the display window */
+    /**
+     * the display window
+     */
     private InferenceWindow window = new InferenceWindow(this);
-    /** whether to display */
+    /**
+     * whether to display
+     */
     private boolean isReporting = false;
-    /** the log file */
+    /**
+     * the log file
+     */
     private PrintWriter logFile = null;
 
     @Override
-	public void init() {
+    public void init() {
         window.clear();
     }
 
@@ -50,9 +57,8 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
 
     @Override
     public boolean isActive() {
-        return (isReporting || (logFile!=null));
+        return (isReporting || (logFile != null));
     }
-       
 
     @Override
     public void play() {
@@ -60,7 +66,7 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
     }
 
     @Override
-	public void stop() {
+    public void stop() {
         isReporting = false;
     }
 
@@ -69,13 +75,12 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
         if (isReporting) {
             window.append(s);
         }
-        if (logFile != null) {
+        if (isLogging()) {
             logFile.println(s);
         }
     }
 
-    @Override
-	public void openLogFile() {
+    public void openLogFile() {
         FileDialog dialog = new FileDialog((FileDialog) null, "Inference Log", FileDialog.SAVE);
         dialog.setVisible(true);
         String directoryName = dialog.getDirectory();
@@ -89,16 +94,42 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
         window.setVisible(true);
     }
 
-    @Override
-	public void closeLogFile() {
+    public void closeLogFile() {
         logFile.close();
         logFile = null;
         window.resetBackground();
     }
 
-    @Override
-	public boolean isLogging() {
+    public boolean isLogging() {
         return (logFile != null);
     }
-}
 
+    
+
+    @Override
+    public void preCycle(long clock) {
+        append("\n --- " + clock + " ---\n");
+    }
+
+    @Override
+    public void postCycle(long clock) {
+        append("\n");
+    }
+
+    @Override
+    public void onTaskAdd(Task task, String reason) {
+        append("Task Added (" + reason + "): " + task + "\n");
+    }
+
+    @Override
+    public void onTaskRemove(Task task, String reason) {
+        append("Task Removed (" + reason + "): " + task + "\n");
+    }
+    
+    @Override
+    public void onConceptNew(Concept concept) {
+        append("Concept Created: " + concept + "\n");
+    }    
+    
+    
+}

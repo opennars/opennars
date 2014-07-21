@@ -20,8 +20,8 @@
  */
 package nars.storage;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -76,7 +76,7 @@ public class Memory {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    public final LinkedList<Task> newTasks;
+    public final ArrayDeque<Task> newTasks;
 
     /**
      * The selected Term
@@ -127,7 +127,7 @@ public class Memory {
         recorder = NullInferenceRecorder.global;
         concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
         novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
-        newTasks = new LinkedList<>();
+        newTasks = new ArrayDeque<>();
     }
 
     public void init() {
@@ -212,10 +212,17 @@ public class Memory {
         final String n = term.getName();
         Concept concept = concepts.get(n);
         if (concept == null) {
-            concept = new Concept(term, this); // the only place to make a new Concept
+            // The only part of NARS that instantiates new Concepts
+            concept = new Concept(term, this); 
+            
             final boolean created = concepts.putIn(concept);
             if (!created) {
                 return null;
+            }
+            else {
+                if (recorder.isActive()) {
+                    recorder.onConceptNew(concept);
+                }
             }
         }
         return concept;
@@ -249,6 +256,14 @@ public class Memory {
 
     /* ---------- new task entries ---------- */
 
+    /** add new task that waits to be processed in the next workCycle */
+    protected void addNewTask(final Task t, final String reason) {
+        newTasks.add(t);
+        if (recorder.isActive()) {
+            recorder.onTaskAdd(t, reason);
+        }
+    }
+    
     /* There are several types of new tasks, all added into the
      newTasks list, to be processed in the next workCycle.
      Some of them are reported and/or logged. */
@@ -260,14 +275,11 @@ public class Memory {
      * @param task The addInput task
      */
     public void inputTask(final Task task) {
-        if (task.getBudget().aboveThreshold()) {
-            if (recorder.isActive()) {
-                recorder.append("!!! Perceived: " + task + "\n");
-            }
-            newTasks.add(task);       // wait to be processed in the next workCycle
+        if (task.getBudget().aboveThreshold()) {            
+            addNewTask(task, "Perceived");            
         } else {
             if (recorder.isActive()) {
-                recorder.append("!!! Neglected: " + task + "\n");
+                recorder.onTaskRemove(task, "Neglected");
             }
         }
     }
@@ -283,18 +295,16 @@ public class Memory {
      */
     public void activatedTask(final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
         final Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
-        if (recorder.isActive()) {
-            recorder.append("!!! Activated: " + task.toString() + "\n");
-        }
+        
         if (sentence.isQuestion()) {
             final float s = task.getBudget().summary();
-//            float minSilent = nar.getMainWindow().silentW.value() / 100.0f;
             final float minSilent = nar.param.getSilenceLevel() / 100.0f;
             if (s > minSilent) {  // only report significant derived Tasks
                 nar.output(OUT.class, task.getSentence());
             }
         }
-        newTasks.add(task);
+        
+        addNewTask(task, "Activated");        
     }
 
     /**
@@ -306,9 +316,10 @@ public class Memory {
         if (task.getBudget().aboveThreshold()) {
             if (task.getSentence() != null && task.getSentence().getTruth() != null) {
                 float conf = task.getSentence().getTruth().getConfidence();
-                if (conf == 0) { //no confidence - we can delete the wrongs out that way.
+                if (conf == 0) { 
+                    //no confidence - we can delete the wrongs out that way.
                     if (recorder.isActive()) {
-                        recorder.append("!!! Ignored (confidence): " + task + "\n");
+                        recorder.onTaskRemove(task, "Ignored");
                     }
                     return;
                 }
@@ -334,7 +345,7 @@ public class Memory {
                 for (final Term chain1 : chain) {
                     if (task.getContent() == chain1) {
                         if (recorder.isActive()) {
-                            recorder.append("!!! Cyclic Reasoning detected: " + task + "\n");
+                            recorder.onTaskRemove(task, "Cyclic Reasoning");
                         }
                         return;
                     }
@@ -346,26 +357,25 @@ public class Memory {
                     
                     for (int j = 0; j < stampLength; j++) {
                         if ((i != j) && (baseI == stamp.getBase()[j])) {
-                            if (recorder.isActive()) {
-                                recorder.append("!!! Overlapping Evidence on Revision detected: " + task + "\n");
+                            if (recorder.isActive()) {                                
+                                recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
                             }
                             return;
                         }
                     }
                 }
             }
-            if (recorder.isActive()) {
-                recorder.append("!!! Derived: " + task + "\n");
-            }
             float budget = task.getBudget().summary();
             float minSilent = nar.param.getSilenceLevel() / 100.0f;
             if (budget > minSilent) {  // only report significant derived Tasks
                 nar.output(OUT.class, task.getSentence());
             }
-            newTasks.add(task);
+            if (recorder.isActive()) {                
+                addNewTask(task, "Derived");
+            }
         } else {            
             if (recorder.isActive()) {
-                recorder.append("!!! Ignored: " + task + "\n");
+                recorder.onTaskRemove(task, "Ignored");
             }            
         }
     }
@@ -469,8 +479,8 @@ public class Memory {
      * @param clock The current time to be displayed
      */
     public void workCycle(final long clock) {
-        if (recorder.isActive()) {
-            recorder.append(" --- " + clock + " ---\n");
+        if (recorder.isActive()) {            
+            recorder.preCycle(clock);
         }
         
         processNewTask();
@@ -484,6 +494,10 @@ public class Memory {
         }
         
         novelTasks.refresh();
+        
+        if (recorder.isActive()) {            
+            recorder.postCycle(clock);
+        }        
     }
 
     /**
@@ -505,10 +519,11 @@ public class Memory {
                 if (s.isJudgment()) {
                     final double exp = s.getTruth().getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
-                        novelTasks.putIn(task);    // new concept formation
+                        // new concept formation
+                        novelTasks.putIn(task);    
                     } else {
                         if (recorder.isActive()) {
-                            recorder.append("!!! Neglected: " + task + "\n");
+                            recorder.onTaskRemove(task, "Neglected");
                         }
                     }
                 }
@@ -535,7 +550,7 @@ public class Memory {
             currentTerm = currentConcept.getTerm();
             
             if (recorder.isActive()) {
-                recorder.append(" * Selected Concept: " + currentTerm + "\n");
+                recorder.append("Concept Selected: " + currentTerm + "\n");
             }
             
             concepts.putBack(currentConcept);   // current Concept remains in the bag all the time
@@ -555,7 +570,7 @@ public class Memory {
         currentTask = task; // one of the two places where this variable is set
         
         if (recorder.isActive()) {
-            recorder.append("!!! Insert: " + task + "\n");
+            recorder.append("Task Immediately Processed: " + task + "\n");
         }
         
         currentTerm = task.getContent();
@@ -641,52 +656,38 @@ public class Memory {
         return conceptForgettingRate;
     }
 
+    private void onTaskAdd(Task t) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     public static final class NullInferenceRecorder implements InferenceRecorder {
 
         public static final NullInferenceRecorder global = new NullInferenceRecorder();
 
         
-        private NullInferenceRecorder() {
-            
-        }
+        private NullInferenceRecorder() {        }
         
-        @Override
-        public boolean isActive() {
-            return false;
-        }
+        @Override public boolean isActive() { return false;  }
 
-        @Override
-        public void init() {
-        }
+        @Override public void init() {        }
 
-        @Override
-        public void show() {
-        }
+        @Override public void show() {        }
 
-        @Override
-        public void play() {
-        }
+        @Override public void play() {        }
 
-        @Override
-        public void stop() {
-        }
+        @Override public void stop() {        }
 
-        @Override
-        public void append(String s) {
-        }
+        @Override public void append(String s) {        }
 
-        @Override
-        public void openLogFile() {
-        }
+        @Override public void preCycle(long clock) {        }
+        @Override public void postCycle(long clock) {        }
+                
+        @Override public void onConceptNew(Concept concept) {        }
 
-        @Override
-        public void closeLogFile() {
-        }
-
-        @Override
-        public boolean isLogging() {
-            return false;
-        }
+        @Override public void onTaskAdd(Task task, String reason) {        }        
+        @Override public void onTaskRemove(Task task, String reason) {        }
+        
+               
     }
     
 }

@@ -334,10 +334,13 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 }
                 savingExp = !savingExp;
             } else if (label.equals("Record Inference")) {
-                if (record.isLogging()) {
-                    record.closeLogFile();
-                } else {
-                    record.openLogFile();
+                if (record instanceof InferenceLogger) {
+                    InferenceLogger il = (InferenceLogger)record;
+                    if (record.isActive()) {
+                        il.closeLogFile();                    
+                    } else {
+                        il.openLogFile();
+                    }
                 }
             } else if (label.equals("Reset")) {
                 /// TODO mixture of modifier and reporting
