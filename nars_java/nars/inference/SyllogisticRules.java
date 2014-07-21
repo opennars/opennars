@@ -46,6 +46,12 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
+        int order1 = ((CompoundTerm) sentence.getContent()).getTemporalOrder();
+        int order2 = ((CompoundTerm) belief.getContent()).getTemporalOrder();
+        int order = TemporalRules.dedExeOrder(order1, order2);
+        if (order == TemporalRules.ORDER_INVALID) {
+            return;
+        }
         TruthValue value1 = sentence.getTruth();
         TruthValue value2 = belief.getTruth();
         TruthValue truth1 = null;
@@ -61,8 +67,8 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, memory);
         }
         Statement content = (Statement) sentence.getContent();
-        Statement content1 = Statement.make(content, term1, term2, memory);
-        Statement content2 = Statement.make(content, term2, term1, memory);
+        Statement content1 = Statement.make(content, term1, term2, order, memory);
+        Statement content2 = Statement.make(content, term2, term1, TemporalRules.reverseOrder(order), memory);
         memory.doublePremiseTask(content1, truth1, budget1);
         memory.doublePremiseTask(content2, truth2, budget2);
     }
@@ -79,6 +85,12 @@ public final class SyllogisticRules {
      */
     static void abdIndCom(final Term term1, final Term term2, final Sentence taskSentence, final Sentence belief, final int figure, final Memory memory) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1.getName(), term2.getName())) {
+            return;
+        }
+        int order1 = ((CompoundTerm) taskSentence.getContent()).getTemporalOrder();
+        int order2 = ((CompoundTerm) belief.getContent()).getTemporalOrder();
+        int order = TemporalRules.abdIndComOrder(order1, order2);
+        if (order == TemporalRules.ORDER_INVALID) {
             return;
         }
         Statement taskContent = (Statement) taskSentence.getContent();
@@ -100,8 +112,8 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, memory);
             budget3 = BudgetFunctions.forward(truth3, memory);
         }
-        Statement statement1 = Statement.make(taskContent, term1, term2, memory);
-        Statement statement2 = Statement.make(taskContent, term2, term1, memory);
+        Statement statement1 = Statement.make(taskContent, term1, term2, order, memory);
+        Statement statement2 = Statement.make(taskContent, term2, term1, TemporalRules.reverseOrder(order), memory);
         Statement statement3 = Statement.makeSym(taskContent, term1, term2, memory);
         memory.doublePremiseTask(statement1, truth1, budget1);
         memory.doublePremiseTask(statement2, truth2, budget2);
@@ -257,7 +269,7 @@ public final class SyllogisticRules {
             commonComponent = premise2;
         }
         Term subj = premise1.getSubject();
-        
+
         if (!(subj instanceof Conjunction)) {
             return;
         }
@@ -336,10 +348,11 @@ public final class SyllogisticRules {
         } else {
             commonComponent = premise2;
         }
-        
+
         Term tm = premise1.getSubject();
-        if (!(tm instanceof Conjunction))
+        if (!(tm instanceof Conjunction)) {
             return;
+        }
         Conjunction oldCondition = (Conjunction) tm;
 
         boolean match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.componentAt(index), commonComponent, premise1, premise2);
@@ -460,9 +473,9 @@ public final class SyllogisticRules {
      */
     static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
         Term content = CompoundTerm.reduceComponents(compound, component, memory);
-        if ((content == null) || ((content instanceof Statement) && ((Statement)content).invalid())) {
+        if ((content == null) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
-        }                
+        }
         Task task = memory.currentTask;
         Sentence sentence = task.getSentence();
         Sentence belief = memory.currentBelief;

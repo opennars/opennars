@@ -68,6 +68,11 @@ public class Stamp implements Cloneable {
     public static long ETERNAL = Integer.MIN_VALUE;
 
     /**
+     * used when the occurrence time cannot be estimated, means "unknown"
+     */
+    public static long UNKNOWN = Integer.MAX_VALUE;
+
+    /**
      * derivation chain containing the used premises and conclusions which made
      * deriving the conclusion c possible *
      */
@@ -87,9 +92,9 @@ public class Stamp implements Cloneable {
         if (tense.length() == 0) {
             occurrenceTime = ETERNAL;
         } else if (tense.equals(Symbols.TENSE_PAST)) {
-            occurrenceTime = time - 1;
+            occurrenceTime = time - Parameters.DURATION;
         } else if (tense.equals(Symbols.TENSE_FUTURE)) {
-            occurrenceTime = time + 1;
+            occurrenceTime = time + Parameters.DURATION;
         } else { // if (tense.equals(Symbols.TENSE_PRESENT)) 
             occurrenceTime = time;
         }

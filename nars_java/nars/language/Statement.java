@@ -21,6 +21,7 @@
 package nars.language;
 
 import java.util.ArrayList;
+import nars.inference.TemporalRules;
 
 import nars.io.Symbols;
 import nars.io.Symbols.Operator;
@@ -87,17 +88,17 @@ public abstract class Statement extends CompoundTerm {
             case IMPLICATION:
                 return Implication.make(subject, predicate, memory);
             case IMPLICATION_AFTER:
-                return Implication.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_FORWARD, memory);
             case IMPLICATION_BEFORE:
-                return Implication.make(subject, predicate, CompoundTerm.ORDER_BACKWARD, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_BACKWARD, memory);
             case IMPLICATION_WHEN:
-                return Implication.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_CONCURRENT, memory);
             case EQUIVALENCE:
                 return Equivalence.make(subject, predicate, memory);
             case EQUIVALENCE_AFTER:
-                return Equivalence.make(subject, predicate, CompoundTerm.ORDER_FORWARD, memory);
+                return Equivalence.make(subject, predicate, TemporalRules.ORDER_FORWARD, memory);
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(subject, predicate, CompoundTerm.ORDER_CONCURRENT, memory);            
+                return Equivalence.make(subject, predicate, TemporalRules.ORDER_CONCURRENT, memory);            
         }
         
         return null;
@@ -113,6 +114,11 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      */
     public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
+        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
+    }
+    
+    public static Statement make(final Statement statement, final Term subj, final Term pred, int order, final Memory memory) {
+
         if (statement instanceof Inheritance) {
             return Inheritance.make(subj, pred, memory);
         }
@@ -120,10 +126,10 @@ public abstract class Statement extends CompoundTerm {
             return Similarity.make(subj, pred, memory);
         }
         if (statement instanceof Implication) {
-            return Implication.make(subj, pred, memory);
+            return Implication.make(subj, pred, order, memory);
         }
         if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, memory);
+            return Equivalence.make(subj, pred, order, memory);
         }
         return null;
     }

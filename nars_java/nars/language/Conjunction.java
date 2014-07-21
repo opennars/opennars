@@ -25,6 +25,7 @@ import java.util.*;
 import nars.io.Symbols;
 import nars.io.Symbols.Operator;
 import nars.storage.Memory;
+import nars.inference.TemporalRules;
 
 /**
  * Conjunction of statements
@@ -74,9 +75,9 @@ public class Conjunction extends CompoundTerm {
     @Override
     public Operator operator() {
         switch (temporalOrder) {
-            case CompoundTerm.ORDER_FORWARD:
+            case TemporalRules.ORDER_FORWARD:
                 return Operator.SEQUENCE;
-            case CompoundTerm.ORDER_CONCURRENT:
+            case TemporalRules.ORDER_CONCURRENT:
                 return Operator.PARALLEL;
             default:
         return Operator.CONJUNCTION;
@@ -90,7 +91,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public boolean isCommutative() {
-        if (temporalOrder == CompoundTerm.ORDER_FORWARD) {
+        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             return false;
         } else {
         return true;
@@ -107,7 +108,7 @@ public class Conjunction extends CompoundTerm {
      */
     public static Term make(ArrayList<Term> argList, final Memory memory) {
 
-        return make(argList, CompoundTerm.ORDER_NONE, memory);
+        return make(argList, TemporalRules.ORDER_NONE, memory);
     }
         
     /**
@@ -126,7 +127,7 @@ public class Conjunction extends CompoundTerm {
         if (argList.size() == 1) {
             return argList.get(0);
         }                         // special case: single component
-        if (temporalOrder == ORDER_FORWARD) {
+        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final String name = makeCompoundName(Operator.SEQUENCE, argList);
             final Term t = memory.nameToTerm(name);
             return (t != null) ? t : new Conjunction(argList, temporalOrder);
@@ -147,7 +148,7 @@ public class Conjunction extends CompoundTerm {
     private static Term make(final TreeSet<Term> set, int temporalOrder, final Memory memory) {
         final ArrayList<Term> argument = new ArrayList<>(set);
         final String name;
-        if (temporalOrder == CompoundTerm.ORDER_NONE) {
+        if (temporalOrder == TemporalRules.ORDER_NONE) {
             name = makeCompoundName(Operator.CONJUNCTION, argument);
         } else {
             name = makeCompoundName(Operator.PARALLEL, argument);
@@ -167,21 +168,21 @@ public class Conjunction extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term term1, final Term term2, final Memory memory) {
-        return make(term1, term2, CompoundTerm.ORDER_NONE, memory);
+        return make(term1, term2, TemporalRules.ORDER_NONE, memory);
     }
 
     public static Term make(final Term term1, final Term term2, int temporalOrder, final Memory memory) {
-        if (temporalOrder == CompoundTerm.ORDER_FORWARD) {
+        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final ArrayList<Term> list;
-            if ((term1 instanceof Conjunction) && (((Conjunction) term1).getTemporalOrder() == CompoundTerm.ORDER_FORWARD)) {
+            if ((term1 instanceof Conjunction) && (((Conjunction) term1).getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 list = new ArrayList<>(((CompoundTerm) term1).cloneComponents());
-                if ((term2 instanceof Conjunction) && (((Conjunction) term2).getTemporalOrder() == CompoundTerm.ORDER_FORWARD)) {
+                if ((term2 instanceof Conjunction) && (((Conjunction) term2).getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                     list.addAll(((CompoundTerm) term2).cloneComponents());
                 } // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 else {
                     list.add((Term) term2.clone());
                 }                          // (&,(&,P,Q),R) = (&,P,Q,R)
-            } else if ((term2 instanceof Conjunction) && (((Conjunction) term2).getTemporalOrder() == CompoundTerm.ORDER_FORWARD)) {
+            } else if ((term2 instanceof Conjunction) && (((Conjunction) term2).getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 list = new ArrayList<>(((CompoundTerm) term2).size() + 1);
                 list.add((Term) term1.clone());
                 list.addAll(((CompoundTerm) term2).cloneComponents()); // (&,R,(&,P,Q)) = (&,P,Q,R)

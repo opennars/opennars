@@ -21,6 +21,7 @@
 package nars.language;
 
 import java.util.*;
+import nars.inference.TemporalRules;
 
 import nars.io.Symbols;
 import nars.io.Symbols.Operator;
@@ -31,7 +32,7 @@ import nars.storage.Memory;
  */
 public class Equivalence extends Statement {
 
-    private int temporalOrder = CompoundTerm.ORDER_NONE;
+    private int temporalOrder = TemporalRules.ORDER_NONE;
     /**
      * Constructor with partial values, called by make
      *
@@ -75,7 +76,7 @@ public class Equivalence extends Statement {
      * @return A compound generated or null
      */
     public static Equivalence make(Term subject, Term predicate, Memory memory) {  // to be extended to check if subject is Conjunction
-        return make(subject, predicate, CompoundTerm.ORDER_NONE, memory);
+        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder, Memory memory) {  // to be extended to check if subject is Conjunction
@@ -88,17 +89,17 @@ public class Equivalence extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        if ((subject.compareTo(predicate) > 0) && (temporalOrder != CompoundTerm.ORDER_FORWARD)){
+        if ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD)){
             Term interm = subject;
             subject = predicate;
             predicate = interm;
         }
         Operator copula;
         switch (temporalOrder) {
-            case CompoundTerm.ORDER_FORWARD:
+            case TemporalRules.ORDER_FORWARD:
                 copula = Operator.EQUIVALENCE_AFTER;
                 break;
-            case CompoundTerm.ORDER_CONCURRENT:
+            case TemporalRules.ORDER_CONCURRENT:
                 copula = Operator.EQUIVALENCE_WHEN;
                 break;
             default:
@@ -121,9 +122,9 @@ public class Equivalence extends Statement {
     @Override
     public Operator operator() {
         switch (temporalOrder) {
-            case CompoundTerm.ORDER_FORWARD:
+            case TemporalRules.ORDER_FORWARD:
                 return Operator.EQUIVALENCE_AFTER;
-            case CompoundTerm.ORDER_CONCURRENT:
+            case TemporalRules.ORDER_CONCURRENT:
                 return Operator.EQUIVALENCE_WHEN;
     	}
         return Operator.EQUIVALENCE;
@@ -136,7 +137,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public boolean isCommutative() {
-        return (temporalOrder != CompoundTerm.ORDER_FORWARD);
+        return (temporalOrder != TemporalRules.ORDER_FORWARD);
     }
 
     public int getTemporalOrder() {
