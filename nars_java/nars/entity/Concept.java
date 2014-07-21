@@ -23,6 +23,8 @@ package nars.entity;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import nars.core.NAR;
+import nars.core.NARParams;
 
 import nars.inference.BudgetFunctions;
 import nars.inference.LocalRules;
@@ -98,11 +100,17 @@ public final class Concept extends Item {
         this.memory = memory;
         questions = new LinkedList();
         beliefs = new ArrayList<>();
-        taskLinks = new TaskLinkBag(memory.nar.config.getTaskLinkBagLevels(), memory.nar.config.getTaskLinkBagSize(), memory.taskForgettingRate);
-        termLinks = new TermLinkBag(memory.nar.config.getTermLinkBagLevels(), memory.nar.config.getTermLinkBagSize(), memory.beliefForgettingRate);
+        
+        final NAR nar = memory.nar;
+        
+        taskLinks = new TaskLinkBag(nar.config.getTaskLinkBagLevels(), nar.config.getTaskLinkBagSize(), memory.taskForgettingRate);
+        termLinks = new TermLinkBag(nar.config.getTermLinkBagLevels(), nar.config.getTermLinkBagSize(), memory.beliefForgettingRate);
+        
         if (tm instanceof CompoundTerm) {
             termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         }
+        
+        
     }
 
     /* ---------- direct processing of tasks ---------- */
@@ -362,7 +370,8 @@ public final class Concept extends Item {
      */
     @Override
     public String toString() {  // called from concept bag
-        return (super.toStringBrief() + " " + key);
+        //return (super.toStringBrief() + " " + key);
+        return super.toStringBrief();
     }
 
     /**
