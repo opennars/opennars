@@ -25,12 +25,13 @@ import java.util.*;
 import nars.io.Symbols;
 import nars.io.Symbols.Operator;
 import nars.storage.Memory;
+import nars.inference.TemporalRules;
 
 /**
  * A Statement about an Inheritance copula.
  */
 public class Implication extends Statement {
-    private int temporalOrder = CompoundTerm.ORDER_NONE;
+    private int temporalOrder = TemporalRules.ORDER_NONE;
 
     /**
      * Constructor with partial values, called by make
@@ -70,7 +71,7 @@ public class Implication extends Statement {
      * @return A compound generated or a term it reduced to
      */
     public static Implication make(final Term subject, final Term predicate, final Memory memory) {
-        return make(subject, predicate, CompoundTerm.ORDER_NONE, memory);
+        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
     }
     
     public static Implication make(final Term subject, final Term predicate, int temporalOrder, final Memory memory) {
@@ -85,13 +86,13 @@ public class Implication extends Statement {
         }
         Operator copula;
         switch (temporalOrder) {
-            case CompoundTerm.ORDER_FORWARD:
+            case TemporalRules.ORDER_FORWARD:
                 copula = Operator.IMPLICATION_AFTER;
                 break;
-            case CompoundTerm.ORDER_CONCURRENT:
+            case TemporalRules.ORDER_CONCURRENT:
                 copula = Operator.IMPLICATION_WHEN;
                 break;
-            case CompoundTerm.ORDER_BACKWARD:
+            case TemporalRules.ORDER_BACKWARD:
                 copula = Operator.IMPLICATION_BEFORE;
                 break;
             default:
@@ -125,11 +126,11 @@ public class Implication extends Statement {
     @Override
     public Operator operator() {
         switch (temporalOrder) {
-            case CompoundTerm.ORDER_FORWARD:
+            case TemporalRules.ORDER_FORWARD:
                 return Operator.IMPLICATION_AFTER;
-            case CompoundTerm.ORDER_CONCURRENT:
+            case TemporalRules.ORDER_CONCURRENT:
                 return Operator.IMPLICATION_WHEN;
-            case CompoundTerm.ORDER_BACKWARD:
+            case TemporalRules.ORDER_BACKWARD:
                 return Operator.IMPLICATION_BEFORE;
         }
         return Operator.IMPLICATION;

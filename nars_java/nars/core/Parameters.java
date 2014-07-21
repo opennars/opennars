@@ -29,7 +29,11 @@ public class Parameters {
     
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
-    //
+    //Pei comments: parameters will be separated into a dynamic group and a static group
+    //              and the latter contains "personality parameters" that cannot be changed
+    //              in the lifetime of the system, though different systems may take different
+    //              values. For example, to change HORIZON dynamically will cause inconsistency 
+    //              in evidence evaluation.
     
     /* ---------- initial values of run-time adjustable parameters ---------- */
     /** Concept decay rate in ConceptBag, in [1, 99]. */
@@ -54,6 +58,8 @@ public class Parameters {
     public static final int HORIZON = 1;    // or 2, can be float
     /** Reliance factor, the empirical confidence of analytical truth. */
     public static final float RELIANCE = (float) 0.9;    // the same as default confidence
+    /** Tense usage convention, how far away "past" and "future" is from "now". */
+    public static final int DURATION = 5;    // a better word?
 
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted. */
