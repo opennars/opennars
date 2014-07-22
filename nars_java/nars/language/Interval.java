@@ -22,12 +22,12 @@ package nars.language;
  * @author peiwang
  */
 public class Interval extends Term {
-    private int magnitude;
+    private final int magnitude;
 
     // time is a positive integer
     public Interval(long time) {
-        name = "[" + magnitude + "]";
         magnitude = (int) Math.floor(Math.log(time));
+        name = "[" + magnitude + "]";
     }
     
     public long getTime() {

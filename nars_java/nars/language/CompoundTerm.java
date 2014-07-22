@@ -443,7 +443,7 @@ public abstract class CompoundTerm extends Term {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(Operator op, ArrayList<Term> arg, int relationIndex) {
+    protected static String makeImageName(final Operator op, final ArrayList<Term> arg, final int relationIndex) {
         StringBuilder name = new StringBuilder(16 /* estimate */)
         .append(Symbols.COMPOUND_TERM_OPENER)
         .append(op)
@@ -808,7 +808,7 @@ public abstract class CompoundTerm extends Term {
         for (int i = 0; i < term.size(); i++) {     // first level components
            final Term t1 = term.componentAt(i);
             if (t1.isConstant()) {
-                componentLinks.add(new TermLink(t1, type, i));
+                componentLinks.add(new TermLink(type, t1, i));
             }
             if (((this instanceof Equivalence) || ((this instanceof Implication) && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
                 
@@ -820,12 +820,12 @@ public abstract class CompoundTerm extends Term {
                     if (t2.isConstant()) {
                         if ((t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt)) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                componentLinks.add(new TermLink(t2, TermLink.TRANSFORM, 0, i, j));
+                                componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, 0, i, j));
                             } else {
-                                componentLinks.add(new TermLink(t2, TermLink.TRANSFORM, i, j));
+                                componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, i, j));
                             }
                         } else {
-                            componentLinks.add(new TermLink(t2, type, i, j));
+                            componentLinks.add(new TermLink(type, t2, i, j));
                         }
                     }
                     if ((t2 instanceof Product) || (t2 instanceof ImageExt) || (t2 instanceof ImageInt)) {
@@ -833,9 +833,9 @@ public abstract class CompoundTerm extends Term {
                             final Term t3 = ((CompoundTerm) t2).componentAt(k);
                             if (t3.isConstant()) {                           // third level
                                 if (type == TermLink.COMPOUND_CONDITION) {
-                                    componentLinks.add(new TermLink(t3, TermLink.TRANSFORM, 0, i, j, k));
+                                    componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k));
                                 } else {
-                                    componentLinks.add(new TermLink(t3, TermLink.TRANSFORM, i, j, k));
+                                    componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, i, j, k));
                                 }
                             }
                         }

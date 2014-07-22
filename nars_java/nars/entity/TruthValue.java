@@ -46,7 +46,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     /**
      * Whether the truth value is derived from a definition
      */
-    private boolean isAnalytic = false;
+    private boolean analytic = false;
 
     /**
      * Constructor with two ShortFloats
@@ -68,7 +68,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     public TruthValue(final float f, final float c, final boolean b) {
         frequency = new ShortFloat(f);
         confidence = (c < 1) ? new ShortFloat(c) : new ShortFloat(0.9999f);
-        isAnalytic = b;
+        analytic = b;
     }
 
     /**
@@ -79,7 +79,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     public TruthValue(final TruthValue v) {
         frequency = new ShortFloat(v.getFrequency());
         confidence = new ShortFloat(v.getConfidence());
-        isAnalytic = v.getAnalytic();
+        analytic = v.getAnalytic();
     }
 
     /**
@@ -106,14 +106,14 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The isAnalytic value
      */
     public boolean getAnalytic() {
-        return isAnalytic;
+        return analytic;
     }
 
     /**
      * Set the isAnalytic flag
      */
     public void setAnalytic() {
-        isAnalytic = true;
+        analytic = true;
     }
 
     /**
