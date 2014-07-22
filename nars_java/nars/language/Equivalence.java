@@ -33,6 +33,7 @@ import nars.storage.Memory;
 public class Equivalence extends Statement {
 
     private int temporalOrder = TemporalRules.ORDER_NONE;
+
     /**
      * Constructor with partial values, called by make
      *
@@ -80,22 +81,23 @@ public class Equivalence extends Statement {
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder, Memory memory) {  // to be extended to check if subject is Conjunction
-        if ((subject instanceof Implication) || (subject instanceof Equivalence)) {
-            return null;
-        }
-        if ((predicate instanceof Implication) || (predicate instanceof Equivalence)) {
-            return null;
-        }
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        if ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD)){
+        if ((subject instanceof Implication) || (subject instanceof Equivalence)
+                || (predicate instanceof Implication) || (predicate instanceof Equivalence)) {
+            return null;
+        }
+        if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
+                || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
             Term interm = subject;
             subject = predicate;
             predicate = interm;
         }
         Operator copula;
         switch (temporalOrder) {
+            case TemporalRules.ORDER_BACKWARD:
+                temporalOrder = TemporalRules.ORDER_FORWARD;
             case TemporalRules.ORDER_FORWARD:
                 copula = Operator.EQUIVALENCE_AFTER;
                 break;
@@ -104,7 +106,7 @@ public class Equivalence extends Statement {
                 break;
             default:
                 copula = Operator.EQUIVALENCE;
-        }                
+        }
         String name = makeStatementName(subject, copula, predicate);
         Term t = memory.nameToTerm(name);
         if (t != null) {
@@ -126,7 +128,7 @@ public class Equivalence extends Statement {
                 return Operator.EQUIVALENCE_AFTER;
             case TemporalRules.ORDER_CONCURRENT:
                 return Operator.EQUIVALENCE_WHEN;
-    	}
+        }
         return Operator.EQUIVALENCE;
     }
 
