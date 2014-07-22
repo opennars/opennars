@@ -78,29 +78,29 @@ public final class SyllogisticRules {
      *
      * @param term1 Subject of the first new task
      * @param term2 Predicate of the first new task
-     * @param taskSentence The first premise
-     * @param belief The second premise
-     * @param figure Locations of the shared term in premises
+     * @param sentence1 The first premise
+     * @param sentence2 The second premise
+     * @param figure Locations of the shared term in premises  --- can be removed?
      * @param memory Reference to the memory
      */
-    static void abdIndCom(final Term term1, final Term term2, final Sentence taskSentence, final Sentence belief, final int figure, final Memory memory) {
+    static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final Memory memory) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1.getName(), term2.getName())) {
             return;
         }
-        int order1 = ((CompoundTerm) taskSentence.getContent()).getTemporalOrder();
-        int order2 = ((CompoundTerm) belief.getContent()).getTemporalOrder();
+        int order1 = ((CompoundTerm) sentence1.getContent()).getTemporalOrder();
+        int order2 = ((CompoundTerm) sentence2.getContent()).getTemporalOrder();
         int order = TemporalRules.abdIndComOrder(order1, order2);
         if (order == TemporalRules.ORDER_INVALID) {
             return;
         }
-        Statement taskContent = (Statement) taskSentence.getContent();
+        Statement taskContent = (Statement) sentence1.getContent();
         TruthValue truth1 = null;
         TruthValue truth2 = null;
         TruthValue truth3 = null;
         BudgetValue budget1, budget2, budget3;
-        TruthValue value1 = taskSentence.getTruth();
-        TruthValue value2 = belief.getTruth();
-        if (taskSentence.isQuestion()) {
+        TruthValue value1 = sentence1.getTruth();
+        TruthValue value2 = sentence2.getTruth();
+        if (sentence1.isQuestion()) {
             budget1 = BudgetFunctions.backward(value2, memory);
             budget2 = BudgetFunctions.backwardWeak(value2, memory);
             budget3 = BudgetFunctions.backward(value2, memory);
@@ -114,7 +114,7 @@ public final class SyllogisticRules {
         }
         Statement statement1 = Statement.make(taskContent, term1, term2, order, memory);
         Statement statement2 = Statement.make(taskContent, term2, term1, TemporalRules.reverseOrder(order), memory);
-        Statement statement3 = Statement.makeSym(taskContent, term1, term2, memory);
+        Statement statement3 = Statement.makeSym(taskContent, term1, term2, order, memory);
         memory.doublePremiseTask(statement1, truth1, budget1);
         memory.doublePremiseTask(statement2, truth2, budget2);
         memory.doublePremiseTask(statement3, truth3, budget3);
