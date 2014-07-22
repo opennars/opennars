@@ -334,13 +334,27 @@ public class Memory {
                 }
                 stamp.addToChain(currentBeliefContent, task.getSentence());
             }
-            if (currentTask != null && !single) {
+            
+            if (currentTask!=null) {
                 final Term currentTaskContent = currentTask.getContent();
-                if(chain.contains(currentTaskContent)) {
-                    chain.remove(currentTaskContent);
+
+                //workaround for single premise task issue:           
+                if (single && (currentBelief == null)) {
+                    if (chain.contains(currentTaskContent)) {
+                        chain.remove(currentTaskContent);
+                    }
+                    stamp.addToChain(currentTaskContent, task.getSentence());
                 }
-                stamp.addToChain(currentTaskContent, task.getSentence());
+                //end workaround            
+
+                if (!single) {
+                    if(chain.contains(currentTaskContent)) {
+                        chain.remove(currentTaskContent);
+                    }
+                    stamp.addToChain(currentTaskContent, task.getSentence());
+                }
             }
+            
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
                 for (final Term chain1 : chain) {
                     if (task.getContent() == chain1) {
