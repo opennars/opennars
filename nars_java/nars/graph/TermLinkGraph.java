@@ -1,5 +1,9 @@
 package nars.graph;
 
+<<<<<<< HEAD
+=======
+import java.util.Set;
+>>>>>>> fccd1eda5d68839f31f374de63739193025f686c
 import nars.entity.Concept;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -16,6 +20,7 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
         super(TermLink.class);        
     }
     
+<<<<<<< HEAD
     public void add(Iterable<Concept> concepts, boolean includeTermLinks, boolean includeTaskLinks/*, boolean includeOtherReferencedConcepts*/) {
         
         for (final Concept c : concepts) {
@@ -44,6 +49,33 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
                         addEdge(source, target, t);                    
                     }            
                 }
+=======
+    public void add(Set<Concept> concepts, boolean includeTermLinks, boolean includeTaskLinks/*, boolean includeOtherReferencedConcepts*/) {
+        
+        for (Concept c : concepts) {
+            
+            final Term source = c.getTerm();
+            addVertex(source);
+            
+            if (includeTermLinks) {
+                for (TermLink t : c.termLinks.nameTable.values()) {
+                    Term target = t.getTarget();
+                    if (!containsVertex(target))  {
+                        addVertex(target);
+                    }
+                    addEdge(source, target, t);
+                }
+            }
+            
+            if (includeTaskLinks) {            
+                for (TaskLink t : c.taskLinks.nameTable.values()) {
+                    Term target = t.getTarget();
+                    if (!containsVertex(target))  {
+                        addVertex(target);
+                    }        
+                    addEdge(source, target, t);                    
+                }            
+>>>>>>> fccd1eda5d68839f31f374de63739193025f686c
             }
         }
         
