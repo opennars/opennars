@@ -31,6 +31,9 @@ public class JSONTest {
  
     @Test
     public void testJSON() {
+        //No need to run this until an assertion exists to test it
+        
+        /*
         int N = 2;
         
         double[] x = randomArray(N, 1.0, 0);
@@ -43,6 +46,8 @@ public class JSONTest {
         n.finish(1);
          
         //System.out.println(n);        
+                
+        */
     }
     
 }
