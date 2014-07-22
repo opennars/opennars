@@ -80,7 +80,8 @@ public final class SyllogisticRules {
      * @param term2 Predicate of the first new task
      * @param sentence1 The first premise
      * @param sentence2 The second premise
-     * @param figure Locations of the shared term in premises  --- can be removed?
+     * @param figure Locations of the shared term in premises --- can be
+     * removed?
      * @param memory Reference to the memory
      */
     static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final Memory memory) {
@@ -134,6 +135,14 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(subj, pred)) {
             return;
         }
+        int order1 = ((CompoundTerm) asym.getContent()).getTemporalOrder();
+        int order2 = ((CompoundTerm) sym.getContent()).getTemporalOrder();
+        int order = TemporalRules.analogyOrder(order1, order2, figure);
+        if (order == TemporalRules.ORDER_INVALID) {
+            return;
+        } else if (figure < 20) {
+            order = TemporalRules.reverseOrder(order);
+        }
         Statement st = (Statement) asym.getContent();
         TruthValue truth = null;
         BudgetValue budget;
@@ -149,7 +158,7 @@ public final class SyllogisticRules {
             truth = TruthFunctions.analogy(asym.getTruth(), sym.getTruth());
             budget = BudgetFunctions.forward(truth, memory);
         }
-        Term content = Statement.make(st, subj, pred, memory);
+        Term content = Statement.make(st, subj, pred, order, memory);
         memory.doublePremiseTask(content, truth, budget);
     }
 
