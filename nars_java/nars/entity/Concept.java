@@ -575,6 +575,10 @@ public final class Concept extends Item {
         }
     }
 
+    /**
+    * Return the questions, called in ComposionalRules
+    * in dedConjunctionByQuestion only
+    */
     public List<Task> getQuestions() {
         return questions;
     }
