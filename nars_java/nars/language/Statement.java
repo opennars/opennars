@@ -144,12 +144,12 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final Memory memory) {
+    public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order, final Memory memory) {
         if (statement instanceof Inheritance) {
             return Similarity.make(subj, pred, memory);
         }
         if (statement instanceof Implication) {
-            return Equivalence.make(subj, pred, memory);
+            return Equivalence.make(subj, pred, order, memory);
         }
         return null;
     }
