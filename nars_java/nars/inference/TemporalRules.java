@@ -80,4 +80,18 @@ public class TemporalRules {
         return order;
     }
 
+    public static int resemblanceOrder(int order1, int order2, int figure) {
+        int order = ORDER_INVALID;
+        if ((order2 == TemporalRules.ORDER_NONE)) {
+            order = (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
+        } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
+            order = (figure % 10 == 1) ? order2 : reverseOrder(order2); // switch when 12 or 22
+        } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
+            order = (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
+        } else if (order1 == order2) {
+            order = (figure == 21) ? order1 : -order1;
+        }
+        return order;
+    }
+
 }
