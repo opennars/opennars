@@ -69,7 +69,7 @@ public class Sentence implements Cloneable {
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(Term content, char punctuation, TruthValue truth, Stamp stamp) {
+    public Sentence(final Term content, final char punctuation, final TruthValue truth, final Stamp stamp) {
         this.content = content;
         this.content.renameVariables();
         this.punctuation = punctuation;

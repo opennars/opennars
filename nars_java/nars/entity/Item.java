@@ -169,8 +169,10 @@ public abstract class Item {
      * @return The String representation of the full content
      */
     @Override
-    public String toString() {
-        return budget + " " + key ;
+    public String toString() {        
+        //return budget + " " + key ;
+        String budgetStr = budget.toString();
+        return new StringBuilder(budgetStr.length()+key.length()+1).append(budgetStr).append(' ').append(key).toString();
     }
 
     /**
@@ -178,7 +180,9 @@ public abstract class Item {
      * @return A simplified String representation of the content
      */
     public String toStringBrief() {        
-        return budget.toStringBrief() + " " + key ;
+        //return budget.toStringBrief() + " " + key ;
+        final String briefBudget = budget.toStringBrief();
+        return new StringBuilder(briefBudget.length()+key.length()+1).append(briefBudget).append(' ').append(key).toString();
     }
     
     public String toStringLong() {
