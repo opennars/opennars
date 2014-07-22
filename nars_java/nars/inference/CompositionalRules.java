@@ -56,6 +56,9 @@ public final class CompositionalRules {
         
         for (final Deque<Concept> baglevel : bag) {
             
+            if (baglevel == null)
+                continue;
+            
             for (final Concept concept : baglevel) {
                 
                 for (final Task question : concept.getQuestions()) {
