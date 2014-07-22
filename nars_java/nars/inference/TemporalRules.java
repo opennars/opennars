@@ -94,4 +94,16 @@ public class TemporalRules {
         return order;
     }
 
+    public static int composeOrder(int order1, int order2) {
+        int order = ORDER_INVALID;
+        if (order2 == TemporalRules.ORDER_NONE) {
+            order = order1;
+        } else if (order1 == TemporalRules.ORDER_NONE) {
+            order = order2;
+        } else if (order1 == order2) {
+            order = order1;
+        }
+        return order;
+    }
+
 }

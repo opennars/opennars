@@ -154,11 +154,17 @@ public final class CompositionalRules {
         final Term componentT = taskContent.componentAt(1 - index);
         final Term componentB = beliefContent.componentAt(1 - index);
         final Term componentCommon = taskContent.componentAt(index);
+        int order1 = taskContent.getTemporalOrder();
+        int order2 = beliefContent.getTemporalOrder();
+        int order = TemporalRules.composeOrder(order1, order2);
+        if (order == TemporalRules.ORDER_INVALID) {
+            return;
+        }
         if ((componentT instanceof CompoundTerm) && ((CompoundTerm) componentT).containAllComponents(componentB)) {
-            decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, memory);
+            decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, order, memory);
             return;
         } else if ((componentB instanceof CompoundTerm) && ((CompoundTerm) componentB).containAllComponents(componentT)) {
-            decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, memory);
+            decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, memory);
             return;
         }
         final TruthValue truthT = memory.currentTask.getSentence().getTruth();
@@ -186,9 +192,9 @@ public final class CompositionalRules {
                 termOr = Disjunction.make(componentT, componentB, memory);
                 termAnd = Conjunction.make(componentT, componentB, memory);
             }
-            processComposed(taskContent, (Term) componentCommon.clone(), termOr, truthOr, memory);
-            processComposed(taskContent, (Term) componentCommon.clone(), termAnd, truthAnd, memory);
-            processComposed(taskContent, (Term) componentCommon.clone(), termDif, truthDif, memory);
+            processComposed(taskContent, (Term) componentCommon.clone(), termOr, order, truthOr, memory);
+            processComposed(taskContent, (Term) componentCommon.clone(), termAnd, order, truthAnd, memory);
+            processComposed(taskContent, (Term) componentCommon.clone(), termDif, order, truthDif, memory);
         } else {    // index == 1
             if (taskContent instanceof Inheritance) {
                 termOr = IntersectionExt.make(componentT, componentB, memory);
@@ -206,9 +212,9 @@ public final class CompositionalRules {
                 termOr = Conjunction.make(componentT, componentB, memory);
                 termAnd = Disjunction.make(componentT, componentB, memory);
             }
-            processComposed(taskContent, termOr, (Term) componentCommon.clone(), truthOr, memory);
-            processComposed(taskContent, termAnd, (Term) componentCommon.clone(), truthAnd, memory);
-            processComposed(taskContent, termDif, (Term) componentCommon.clone(), truthDif, memory);
+            processComposed(taskContent, termOr, (Term) componentCommon.clone(), order, truthOr, memory);
+            processComposed(taskContent, termAnd, (Term) componentCommon.clone(), order, truthAnd, memory);
+            processComposed(taskContent, termDif, (Term) componentCommon.clone(), order, truthDif, memory);
         }
         if (taskContent instanceof Inheritance) {
             introVarOuter(taskContent, beliefContent, index, memory);//            introVarImage(taskContent, beliefContent, index, memory);
@@ -224,11 +230,11 @@ public final class CompositionalRules {
      * @param truth TruthValue of the contentInd
      * @param memory Reference to the memory
      */
-    private static void processComposed(Statement statement, Term subject, Term predicate, TruthValue truth, Memory memory) {
+    private static void processComposed(Statement statement, Term subject, Term predicate, int order, TruthValue truth, Memory memory) {
         if ((subject == null) || (predicate == null)) {
             return;
         }
-        Term content = Statement.make(statement, subject, predicate, memory);
+        Term content = Statement.make(statement, subject, predicate, order, memory);
         if ((content == null) || content.equals(statement) || content.equals(memory.currentBelief.getContent())) {
             return;
         }
@@ -247,7 +253,7 @@ public final class CompositionalRules {
      * @param compoundTask Whether the implication comes from the task
      * @param memory Reference to the memory
      */
-    private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, Memory memory) {
+    private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, Memory memory) {
         
         if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
             return;
@@ -272,7 +278,7 @@ public final class CompositionalRules {
         TruthValue truth = null;
         Term content;
         if (index == 0) {
-            content = Statement.make(oldContent, term1, term2, memory);
+            content = Statement.make(oldContent, term1, term2, order, memory);
             if (content == null) {
                 return;
             }
@@ -300,7 +306,7 @@ public final class CompositionalRules {
                 }
             }
         } else {
-            content = Statement.make(oldContent, term2, term1, memory);
+            content = Statement.make(oldContent, term2, term1, order, memory);
             if (content == null) {
                 return;
             }
