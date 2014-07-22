@@ -62,4 +62,22 @@ public class TemporalRules {
         return order;
     }
 
+    public static int analogyOrder(int order1, int order2, int figure) {
+        int order = ORDER_INVALID;
+        if ((order2 == TemporalRules.ORDER_NONE) || (order2 == TemporalRules.ORDER_CONCURRENT)) {
+            order = order1;
+        } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
+            order = (figure < 20) ? order2 : reverseOrder(order2);
+        } else if (order1 == order2) {
+            if ((figure == 12) || (figure == 21)) {
+                order = order1;
+            }
+        } else if ((order1 == -order2)) {
+            if ((figure == 11) || (figure == 22)) {
+                order = order1;
+            }
+        }
+        return order;
+    }
+
 }
