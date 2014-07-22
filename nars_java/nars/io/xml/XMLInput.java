@@ -13,7 +13,6 @@ import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.gui.NARSwing;
 import nars.io.PrintWriterInput;
-import nars.io.TextOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -43,8 +42,8 @@ public class XMLInput extends PrintWriterInput {
         
         //new TextOutput(n, System.out);
         
-        //new NARSwing(n);
-        n.start(0);
+        new NARSwing(n);
+        //n.start(0);
 
         
         //new XMLInput(n, "/home/me/Downloads/schemaorg.owl","");

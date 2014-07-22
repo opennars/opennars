@@ -1,7 +1,9 @@
-
 '********** compound decomposition, one premise
-<(|, boy, girl) --> youth>. %0.90% 
+
 'Boys and girls are youth.
-5
-'OUT: <boy --> youth>. %0.90;0.73%
-' Boys are youth.
+<(|, boy, girl) --> youth>. %0.90% 
+
+32
+
+'Boys are youth.
+''test.outputContains('<boy --> youth>. %0.90;0.73%')

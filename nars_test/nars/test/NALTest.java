@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest extends TestUtil {
 
-    static final boolean testPerformance = true;
+    static final boolean testPerformance = false;
     
     @Parameterized.Parameters
     public static Collection params() {

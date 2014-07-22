@@ -757,8 +757,8 @@ public abstract class CompoundTerm extends Term {
     public void applySubstitute(final HashMap<Term, Term> subs) {        
         int i = 0;
         for (final Term t1 : components) {
-            Term t2 = subs.get(t1);
-            if (t2 != null) {
+            if (subs.containsKey(t1)) {
+                Term t2 = subs.get(t1);                            
                 while (subs.containsKey(t2)) {
                     t2 = subs.get(t2);
                 }
