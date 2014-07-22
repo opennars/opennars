@@ -244,66 +244,66 @@ public class RuleTables {
     /**
      * Syllogistic rules whose both premises are on the same asymmetric relation
      *
-     * @param sentence The taskSentence in the task
+     * @param taskSentence The taskSentence in the task
      * @param belief The judgment in the belief
      * @param figure The location of the shared term
      * @param memory Reference to the memory
      */
-    private static void asymmetricAsymmetric(Sentence sentence, Sentence belief, int figure, Memory memory) {
-        Statement s1 = (Statement) sentence.cloneContent();
-        Statement s2 = (Statement) belief.cloneContent();
+    private static void asymmetricAsymmetric(Sentence taskSentence, Sentence belief, int figure, Memory memory) {
+        Statement taskStatement = (Statement) taskSentence.cloneContent();
+        Statement beliefStatement = (Statement) belief.cloneContent();
         Term t1, t2;
         switch (figure) {
             case 11:    // induction
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getSubject(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (Variable.unify(Symbols.VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s2.getPredicate();
-                    t2 = s1.getPredicate();
-                    CompositionalRules.composeCompound(s1, s2, 0, memory);
-                    SyllogisticRules.abdIndCom(t1, t2, sentence, belief, figure, memory);
+                    t1 = beliefStatement.getPredicate();
+                    t2 = taskStatement.getPredicate();
+                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, memory);
+                    SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
                 }
 
                 break;
             case 12:    // deduction
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getPredicate(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (Variable.unify(Symbols.VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s2.getSubject();
-                    t2 = s1.getPredicate();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, s1, s2)) {
+                    t1 = beliefStatement.getSubject();
+                    t2 = taskStatement.getPredicate();
+                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
                         LocalRules.matchReverse(memory);
                     } else {
-                        SyllogisticRules.dedExe(t1, t2, sentence, belief, memory);
+                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, memory);
                     }
                 }
                 break;
             case 21:    // exemplification
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getSubject(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (Variable.unify(Symbols.VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s1.getSubject();
-                    t2 = s2.getPredicate();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, s1, s2)) {
+                    t1 = taskStatement.getSubject();
+                    t2 = beliefStatement.getPredicate();
+                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
                         LocalRules.matchReverse(memory);
                     } else {
-                        SyllogisticRules.dedExe(t1, t2, sentence, belief, memory);
+                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, memory);
                     }
                 }
                 break;
             case 22:    // abduction
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getPredicate(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (Variable.unify(Symbols.VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s1.getSubject();
-                    t2 = s2.getSubject();
-                    if (!SyllogisticRules.conditionalAbd(t1, t2, s1, s2, memory)) {         // if conditional abduction, skip the following
-                        CompositionalRules.composeCompound(s1, s2, 1, memory);
-                        SyllogisticRules.abdIndCom(t1, t2, sentence, belief, figure, memory);
+                    t1 = taskStatement.getSubject();
+                    t2 = beliefStatement.getSubject();
+                    if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, memory)) {         // if conditional abduction, skip the following
+                        CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, memory);
+                        SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
                     }
                 }
                 break;

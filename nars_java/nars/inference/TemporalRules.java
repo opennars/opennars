@@ -50,18 +50,13 @@ public class TemporalRules {
         return order;
     }
 
-    // to be revised -- some orders are wrong
     public static int abdIndComOrder(int order1, int order2) {
         int order = ORDER_INVALID;
         if (order2 == TemporalRules.ORDER_NONE) {
             order = order1;
         } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
             order = reverseOrder(order2);
-        } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
-            order = order1;
-        } else if ((order1 == TemporalRules.ORDER_BACKWARD) || (order2 == TemporalRules.ORDER_FORWARD)) {
-            order = order2;
-        } else if ((order2 == TemporalRules.ORDER_BACKWARD) || (order1 == TemporalRules.ORDER_FORWARD)) {
+        } else if ((order2 == TemporalRules.ORDER_CONCURRENT) || (order1 == -order2)) {
             order = order1;
         }
         return order;
