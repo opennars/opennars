@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class TestUtil {
-    private final int performanceIterations = 3;
+    private final int performanceIterations = 4;
 
     ScriptEngineManager factory = new ScriptEngineManager();
     ScriptEngine js = factory.getEngineByName("JavaScript");
@@ -67,8 +67,7 @@ public class TestUtil {
             exCache.put(path, existing);
             return existing;
         } catch (Exception ex) {
-            System.err.println(ex);
-            ex.printStackTrace();
+            assertTrue(path + ": " + ex.toString()  + ": ", false);
         }
         return "";
     }
@@ -96,8 +95,7 @@ public class TestUtil {
         return TextPerception.parseOutput(o);
     }
     
-    protected void testNAL(String path) {
-        int extraCycles = 0;
+    protected void testNAL(final String path) {
         final NAR n = new NAR();        
         
         
@@ -109,9 +107,8 @@ public class TestUtil {
         new TextOutput(n) {
             @Override
             public void output(Class c, Object line) {                
-                if (c == ERR.class) {
-                    System.err.println("ERR: " + line);
-                    assert(false);
+                if (c == ERR.class) {   
+                    assertTrue(path + " ERR: " + line, false);
                 }
                 
                 String s = line.toString();
@@ -133,37 +130,27 @@ public class TestUtil {
         };         
         
         n.addInput(getExample(path));
-        n.step(1);
 
-        n.finish(extraCycles);
+        n.finish(1);
 
 
         js.put("test", this);
         js.put("out", out);
 
+        if (expressions.isEmpty()) {
+            assertTrue(path + " contains no expressions to evaluate",  false);
+        }
+        
         for (String e : expressions) {
             try {
                 Object result = js.eval(e);
                 if (result instanceof Boolean) {
                     boolean r = (Boolean)result;
-                    if (!r) {
-                        System.out.println();
-                        System.out.println(path + " FAILED @ " + n.getTime());
-                        if (out.size() == 0)
-                            System.out.println("(output empty)");
-                        for (Object x : out)
-                            System.out.println(x);                        
-                        System.out.println();
-                        System.out.println();
-                    }
-                    assertTrue(path + ": " + e, r);
+                    assertTrue(path + ": " + e + " FAIL @ " + + n.getTime() + ", output lines=" + out.size(), r);
                 }
             }
             catch (Exception x) {
-                assertTrue(x.toString() + "<-" + path + ": " + e, false);
-                System.err.println(e);
-                System.err.println(x);
-                x.printStackTrace();
+                assertTrue(path + ": " + x.toString()  + ": ", false);                
             }            
         }
         
