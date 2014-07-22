@@ -1,0 +1,39 @@
+#summary A high-level overview of this NARS implementation
+#labels Phase-Design
+
+Open-NARS is the open-source version of [https://sites.google.com/site/narswang/home NARS], a general-purpose AI system, designed in the framework of a reasoning system.
+
+NARS works by processing tasks imposed by its environment (human users or other computer systems). Tasks can arrive at any time, and there is no restriction on their contents, as far as they can be expressed in Narsese, the I/O language of NARS (see InputOutputFormat for the Grammar of Narsese).
+
+There are several types of tasks:
+  * Judgment. To process it means to accept it as the system's belief, as well as to derive new beliefs and to revise old beliefs accordingly.
+  * Question.  To process it means to find the best answer to it according to current beliefs.
+  * Goal. To process it means to carry out some system operations to realize it. _This type of task is not implemented in the current version, 1.5.5, though it was tested before in 1.3.3 and 1.4.0._
+
+As a reasoning system, the [http://www.cis.temple.edu/~pwang/Implementation/NARS/architecture.pdf architecture of NARS] consists of a memory, an inference engine, and a control mechanism. 
+
+The memory contains a collection of concepts, a list of operators, and a buffer for new tasks. Each concept is identified by a term, and contains tasks and beliefs directly on the term, as well as links to related tasks and terms.
+
+The inference engine carries out various type of inference, according to a set of built-in rules. Each inference rule derives certain new tasks from a given task and a belief that are related to the same concept.
+
+Roughly speaking, the control mechanism repeatedly carries out the _working cycle_ of the system, consisting of the following steps:
+  # Select tasks in the buffer to insert into the corresponding concepts, which may include the creation of new concepts and beliefs, as well as direct processing on the tasks.
+  # Select a concept from the memory, then select a task and a belief from the concept.
+  # Feed the task and the belief to the inference engine to produce derived tasks.
+  # Add the derived tasks into the task buffer, and send report to the environment if a task provides a best-so-far answer to an input question, or indicates the realization of an input goal.
+  # Return the processed belief, task, and concept back to memory with feedback.
+
+All the _selections_ in steps 1 and 2 are _probabilistic_, in the sense that all the items (tasks, beliefs, or concepts) within the scope of the selection have priority values attached, and the probability for each of them to be selected at the current moment is proportional to its priority value. When an new item is produced, its priority value is determined according to its parent items, as well as the type of mechanism that produces it. At step 5, the priority values of all the involved items are adjusted, according to the immediate feedback of the current cycle.
+
+At the current time, the most comprehensive description of NARS are the books [http://www.springer.com/west/home/computer/artificial?SGWID=4-147-22-173659733-0 Rigid Flexibility: The Logic of Intelligence] and [http://www.worldscientific.com/worldscibooks/10.1142/8665 Non-Axiomatic Logic: A Model of Intelligent Reasoning]. Various aspects of the system are introduced and discussed in many papers, most of which are available  [http://www.cis.temple.edu/~pwang/papers.html here].
+
+Beginners can start at the following online materials:
+  *. The basic ideas behind the project: [http://sites.google.com/site/narswang/publications/wang.logic_intelligence.pdf The Logic of Intelligence]
+  *. The high-level engineering plan: [http://sites.google.com/site/narswang/publications/wang.roadmap.pdf From NARS to a Thinking Machine]
+  *. The core logic: [http://sites.google.com/site/narswang/publications/wang.inheritance_nal.pdf From Inheritance Relation to Non-Axiomatic Logic]
+  *. The semantics: [http://sites.google.com/site/narswang/publications/wang.semantics.pdf Experience-Grounded Semantics: A theory for intelligent systems]
+  *. The memory and control: [http://sites.google.com/site/narswang/publications/wang.computation.pdf Computation and Intelligence in Problem Solving]
+
+To test the current implementation:
+  * The demonstration programs under Downloads.
+  * The working examples explained in SingleStepTestingCases and MultiStepExamples.
