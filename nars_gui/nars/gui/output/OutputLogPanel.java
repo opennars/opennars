@@ -44,7 +44,7 @@ public class OutputLogPanel extends NPanel implements Output {
     private final Style mainStyle;
     private final NAR nar;
     int maxIOTextSize = (int) 8E6;
-    private boolean showErrors = false;
+    private boolean showErrors = true;
     private boolean showStamp = false;
     
 
@@ -85,6 +85,7 @@ public class OutputLogPanel extends NPanel implements Output {
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
         final JCheckBox showErrorBox = new JCheckBox("Show Errors");
+        showErrorBox.setSelected(showErrors);
         showErrorBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

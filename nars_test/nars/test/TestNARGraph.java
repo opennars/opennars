@@ -4,8 +4,6 @@ import nars.core.NAR;
 import nars.graph.NARGraph;
 import nars.graph.NARGraph.DefaultGraphizer;
 import static nars.graph.NARGraph.IncludeEverything;
-import nars.io.TextInput;
-import nars.io.TextOutput;
 import org.junit.Test;
 
 /**

@@ -1,8 +1,10 @@
-
 '********** compound decomposition, one premise
-<robin --> (-,bird,swimmer)>. %0.90% 
+
 'Robin is a type of nonswimming bird. 
-6
-'OUT: <robin --> bird>. %0.90;0.73% 
+<robin --> (-,bird,swimmer)>. %0.90% 
+
+32
+
 'Robin is a type of bird. 
+''test.outputContains('<robin --> bird>. %0.90;0.73%')
 

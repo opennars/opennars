@@ -50,7 +50,7 @@ public class Number1DInputTest {
         //new TextOutput(n, System.out);
         
         new Number1DInput(n, "x", x);
-        n.finish(2048);
+        n.finish(16);
         Assert.assertTrue(true);        
     }
     
