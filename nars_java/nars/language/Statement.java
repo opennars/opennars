@@ -141,6 +141,7 @@ public abstract class Statement extends CompoundTerm {
      * @param statement A sample asymmetric statement providing the class type
      * @param subj The first component
      * @param pred The second component
+     * @param order The temporal order
      * @param memory Reference to the memory
      * @return The Statement built
      */

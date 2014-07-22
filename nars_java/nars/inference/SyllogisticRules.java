@@ -176,6 +176,12 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
+        int order1 = ((CompoundTerm) belief.getContent()).getTemporalOrder();
+        int order2 = ((CompoundTerm) sentence.getContent()).getTemporalOrder();
+        int order = TemporalRules.resemblanceOrder(order1, order2, figure);
+        if (order == TemporalRules.ORDER_INVALID) {
+            return;
+        }
         Statement st = (Statement) belief.getContent();
         TruthValue truth = null;
         BudgetValue budget;
@@ -185,7 +191,7 @@ public final class SyllogisticRules {
             truth = TruthFunctions.resemblance(belief.getTruth(), sentence.getTruth());
             budget = BudgetFunctions.forward(truth, memory);
         }
-        Term statement = Statement.make(st, term1, term2, memory);
+        Term statement = Statement.make(st, term1, term2, order, memory);
         memory.doublePremiseTask(statement, truth, budget);
     }
 
