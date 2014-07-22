@@ -40,7 +40,7 @@ public class JSONTest {
         new JSONOutput(n, true);
         
         new Number1DInput(n, "x", x);
-        n.finish(16);
+        n.finish(1);
          
         //System.out.println(n);        
     }
