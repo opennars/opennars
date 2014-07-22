@@ -180,13 +180,13 @@ public abstract class Statement extends CompoundTerm {
         final String predicateName = predicate.getName();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
-        final StringBuilder nameStr = new StringBuilder(length);
-        nameStr.append(Symbols.STATEMENT_OPENER);
-        nameStr.append(subjectName);
-        nameStr.append(' ').append(relation).append(' ');
-        nameStr.append(predicateName);
-        nameStr.append(Symbols.STATEMENT_CLOSER);
-        return nameStr.toString();
+        return new StringBuilder(length)
+            .append(Symbols.STATEMENT_OPENER)
+            .append(subjectName)
+            .append(' ').append(relation).append(' ')
+            .append(predicateName)
+            .append(Symbols.STATEMENT_CLOSER)
+            .toString();
     }
 
     /**

@@ -56,7 +56,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * relative threshold, only calculate once
      */
-    private float RELATIVE_THRESHOLD;
+    private final float RELATIVE_THRESHOLD;
     /**
      * hashtable load factor
      */
@@ -127,7 +127,7 @@ public abstract class Bag<E extends Item>  {
     }
     
 
-    public void clear() {
+    public final void clear() {
         for (int i = 0; i < levels; i++) {
             itemTableEmpty[i] = true;
             if (itemTable[i]!=null)
@@ -432,8 +432,10 @@ public abstract class Bag<E extends Item>  {
      * TODO refactor : paste from preceding method
      */
     public String toStringLong() {
-        StringBuffer buf = new StringBuffer(" BAG " + getClass().getSimpleName());
-        buf.append(" ").append(showSizes());
+        StringBuffer buf = new StringBuffer(32)
+            .append(" BAG ").append(getClass().getSimpleName())
+            .append(" ").append(showSizes());
+        
         for (int i = levels; i >= showLevel; i--) {
             if (!itemTableEmpty[i-1]) {
                 buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");

@@ -530,7 +530,7 @@ public final class Concept extends Item {
      * @return String representation of direct content
      */
     public String displayContent() {
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(18);
         buffer.append("\n  Beliefs:\n");
         if (!beliefs.isEmpty()) {
             for (Sentence s : beliefs) {
