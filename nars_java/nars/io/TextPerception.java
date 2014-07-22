@@ -244,7 +244,7 @@ public class TextPerception {
      * @return An experienced task
      */
     public static Task parseNarsese(StringBuffer buffer, Memory memory, long time) throws InvalidInputException {
-        int i = buffer.indexOf(PREFIX_MARK + "");
+        int i = buffer.indexOf(String.valueOf(PREFIX_MARK));
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
             switch (prefix) {
@@ -339,7 +339,7 @@ public class TextPerception {
         if (s.charAt(0) != BUDGET_VALUE_MARK) {
             return null;
         }
-        int i = s.indexOf(BUDGET_VALUE_MARK + "", 1);    // looking for the end
+        int i = s.indexOf(String.valueOf(BUDGET_VALUE_MARK), 1);    // looking for the end
         if (i < 0) {
             throw new InvalidInputException("missing budget closer");
         }
@@ -364,7 +364,7 @@ public class TextPerception {
         if (s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;
         }
-        final int first = s.indexOf(TRUTH_VALUE_MARK + "");    // looking for the beginning
+        final int first = s.indexOf(String.valueOf(TRUTH_VALUE_MARK));    // looking for the beginning
         if (first == last) { // no matching closer
             throw new InvalidInputException("missing truth mark");
         }

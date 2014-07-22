@@ -65,7 +65,7 @@ public class Number1DInput implements Input {
     
     public static void initPredicates(NAR N, int n) {
         
-        StringBuffer s = new StringBuffer();
+        StringBuffer s = new StringBuffer(32);
         
         //relative sequence
         for (int i = 1; i < n; i++) {

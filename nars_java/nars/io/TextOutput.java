@@ -117,14 +117,16 @@ public class TextOutput implements Output {
     }
 
     public String process(final Class c, final Object o) {
-        String result = c.getSimpleName() + ": " + o.toString();
+        StringBuilder result = new StringBuilder(16 /* estimate */);
+        
+        result.append(c.getSimpleName()).append(": ").append(o.toString());
         if (errorStack && (c == ERR.class)) {
             if (o instanceof Exception) {
                 Exception e = (Exception)o;
-                result += " " + Arrays.asList(e.getStackTrace());
+                result.append(' ').append(Arrays.asList(e.getStackTrace()));
             }
         }
-        return result;
+        return result.toString();
     }
 
     public TextOutput setErrors(boolean errors) {

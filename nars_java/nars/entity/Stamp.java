@@ -314,7 +314,7 @@ public class Stamp implements Cloneable {
      */
     private TreeSet<Long> toSet() {
         final TreeSet<Long> set = new TreeSet<>();
-        for (Long l : evidentialBase) {
+        for (final Long l : evidentialBase) {
             set.add(l);
         }
         return set;
@@ -375,7 +375,8 @@ public class Stamp implements Cloneable {
         if (occurrenceTime == ETERNAL) {
             return "";
         } else {
-            return "[" + occurrenceTime + "]";
+            String ot = String.valueOf(occurrenceTime);
+            return new StringBuilder(ot.length()+2).append('[').append(ot).append(']').toString();
         }
     }
 
