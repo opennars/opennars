@@ -229,7 +229,7 @@ public class NAR implements Runnable, Output {
         running = true;
         while ((stepsQueued!=0) && (!inputChannels.isEmpty())) {
             tick();
-        }
+        } 
         running = false;
     }
     

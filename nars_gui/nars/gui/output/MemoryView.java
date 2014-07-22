@@ -792,7 +792,7 @@ public class MemoryView extends Window {
     mvo_applet app = null;
 
     public MemoryView(NAR n) {
-        super("\"NARS Concept Graph\"");
+        super("Memory View");
 
 
         app = new mvo_applet();

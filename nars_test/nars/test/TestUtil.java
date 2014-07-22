@@ -27,7 +27,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import nars.core.NAR;
 import nars.entity.Sentence;
-import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
 import static org.junit.Assert.assertTrue;
@@ -110,6 +109,11 @@ public class TestUtil {
         new TextOutput(n) {
             @Override
             public void output(Class c, Object line) {                
+                if (c == ERR.class) {
+                    System.err.println("ERR: " + line);
+                    assert(false);
+                }
+                
                 String s = line.toString();
                 s = s.trim();
 
@@ -129,6 +133,7 @@ public class TestUtil {
         };         
         
         n.addInput(getExample(path));
+        n.step(1);
 
         n.finish(extraCycles);
 
