@@ -5,16 +5,17 @@ package nars.core;
  * For runtime parameters, @see NARParams
  * @author me
  */
-abstract public class NARBuilder extends Parameters {
+abstract public class NARBuilder extends Parameters implements NARConfiguration {
     
     /** determines maximum number of concepts */
     private int conceptBagSize;
-    public int getConceptBagSize() { return conceptBagSize; }    
+    
+    @Override public int getConceptBagSize() { return conceptBagSize; }    
     public NARBuilder setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
     /** Level granularity in Bag, usually 100 (two digits) */    
     private int conceptBagLevels;
-    public int getConceptBagLevels() { return conceptBagLevels; }    
+    @Override public int getConceptBagLevels() { return conceptBagLevels; }    
     public NARBuilder setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
     
     public int taskLinkBagLevels;
@@ -39,6 +40,7 @@ abstract public class NARBuilder extends Parameters {
     /**
      * @return the taskLinkBagLevels
      */
+    @Override
     public int getTaskLinkBagLevels() {
         return taskLinkBagLevels;
     }
@@ -48,6 +50,7 @@ abstract public class NARBuilder extends Parameters {
         return this;
     }
 
+    @Override
     public int getTaskLinkBagSize() {
         return taskLinkBagSize;
     }
@@ -57,6 +60,7 @@ abstract public class NARBuilder extends Parameters {
         return this;
     }
 
+    @Override
     public int getTermLinkBagLevels() {
         return termLinkBagLevels;
     }
@@ -66,6 +70,7 @@ abstract public class NARBuilder extends Parameters {
         return this;
     }
 
+    @Override
     public int getTermLinkBagSize() {
         return termLinkBagSize;
     }

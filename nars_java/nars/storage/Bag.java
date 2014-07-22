@@ -73,7 +73,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * mapping from key to item
      */
-    protected final HashMap<String, E> nameTable;
+    public final HashMap<String, E> nameTable;
     /**
      * array of lists of items, for items on different level
      */
@@ -82,7 +82,7 @@ public abstract class Bag<E extends Item>  {
     //this is a cache holding whether itemTable[i] is empty. 
     //it avoids needing to call itemTable.isEmpty() which may improve performance
     //it is maintained each time an item is added or removed from one of the itemTable ArrayLists
-    public final boolean[] itemTableEmpty;
+    protected final boolean[] itemTableEmpty;
     
     /**
      * defined in different bags
