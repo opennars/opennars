@@ -106,9 +106,6 @@ public class NARGraph extends DirectedMultigraph {
 
     public static class TermBelief extends NAREdge  {
         @Override public String toString() { return "belief"; }        
-        
-        
-        
     }
     public static class TermQuestion extends NAREdge  {
         @Override public String toString() { return "question"; }        
@@ -121,6 +118,9 @@ public class NARGraph extends DirectedMultigraph {
     }
     public static class TermType extends NAREdge  {
         @Override public String toString() { return "type"; }        
+    }
+    public static class SentenceContent extends NAREdge  {
+        @Override public String toString() { return "sentence"; }
     }
         
     
@@ -171,11 +171,12 @@ public class NARGraph extends DirectedMultigraph {
     public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e, boolean allowMultiple) {
         if (!allowMultiple) {
             Set existing = getAllEdges(sourceVertex, targetVertex);       
-            for (Object o : existing) {
-                if (o.getClass() == e.getClass()) {
-                    return false;
+            if (existing != null)                
+                for (Object o : existing) {
+                    if (o.getClass() == e.getClass()) {
+                        return false;
+                    }
                 }
-            }
         }
         
         return super.addEdge(sourceVertex, targetVertex, e);
@@ -193,7 +194,7 @@ public class NARGraph extends DirectedMultigraph {
         
         private final boolean includeTermContent;
         private final boolean includeDerivations;
-        private final int includeSyntax; //how many recursive levels to decompose per Term
+        private int includeSyntax; //how many recursive levels to decompose per Term
         
         public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax) {
             this(includeBeliefs, includeDerivations, includeQuestions, includeTermContent, includeSyntax ? 2 : 0);
@@ -249,31 +250,37 @@ public class NARGraph extends DirectedMultigraph {
 
             if (includeBeliefs) {
                 for (final Sentence kb : c.beliefs) {
-                    //TODO extract to onBelief
-                    
-                    sentenceTerms.put(kb, term);
-                    //TODO check if kb.getContent() is never distinct from c.getTerm()
-                    addTerm(g, kb.getContent());
-                    
-                    g.addVertex(kb);
-                    g.addEdge(term, kb, new TermBelief());
-                    
                     onBelief(kb);
+
+                    sentenceTerms.put(kb, term);
+                    g.addVertex(kb);
+                    g.addEdge(kb, term, new SentenceContent());
+                    
+                    //TODO extract to onBelief                    
+
+                    
+                    //TODO check if kb.getContent() is never distinct from c.getTerm()
+                    if (term.equals(kb.getContent()))
+                        continue;
+                    
+                    addTerm(g, kb.getContent());                    
+                    g.addEdge(term, kb.getContent(), new TermBelief());                    
                 }
             }
             
             if (includeQuestions) {
                 for (final Task q : c.getQuestions()) {
+                    if (term.equals(q.getContent()))
+                        continue;
+                    
                     //TODO extract to onQuestion
                     
                     addTerm(g, q.getContent());
                     
                     //TODO q.getParentBelief()
-                    //TODO q.getParentTask()
-                    
+                    //TODO q.getParentTask()                    
                             
-                    g.addVertex(q);                    
-                    g.addEdge(term, q, new TermQuestion());
+                    g.addEdge(term, q.getContent(), new TermQuestion());
                     
                     onQuestion(q);
                 }
@@ -282,8 +289,6 @@ public class NARGraph extends DirectedMultigraph {
         }
         
         void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
-            g.addVertex(c.operator());
-            g.addEdge(c.operator(), c, new TermType());            
 
             for (Term b : c.getComponents()) {
                 if (!g.containsVertex(b))
@@ -292,7 +297,7 @@ public class NARGraph extends DirectedMultigraph {
                 if (!includeTermContent)
                     g.addEdge(c, b, new TermContent());
 
-                if ((level > 0) && (b instanceof CompoundTerm)) {                
+                if ((level > 1) && (b instanceof CompoundTerm)) {                
                     recurseTermComponents(g, (CompoundTerm)b, level-1);
                 }
             }
@@ -303,8 +308,11 @@ public class NARGraph extends DirectedMultigraph {
                 for (final Term a : terms) {
                     if (a instanceof CompoundTerm) {
                         CompoundTerm c = (CompoundTerm)a;
-                        
-                        recurseTermComponents(g, c, includeSyntax);
+                        g.addVertex(c.operator());
+                        g.addEdge(c.operator(), c, new TermType());            
+
+                        if (includeSyntax-1 > 0)
+                            recurseTermComponents(g, c, includeSyntax-1);
                     }
                   }            
 
@@ -316,8 +324,11 @@ public class NARGraph extends DirectedMultigraph {
                       for (final Term b : terms) {
                           if (a == b) continue;
 
-                          if (a.containTerm(b)) {
+                          if (a.containComponent(b)) {
                               g.addEdge(a, b, new TermContent());
+                          }
+                          if (b.containComponent(a)) {
+                              g.addEdge(b, a, new TermContent());
                           }
                       }
                   }            
@@ -327,23 +338,32 @@ public class NARGraph extends DirectedMultigraph {
             if (includeDerivations && includeBeliefs) {
                 for (final Entry<Sentence,Term> s : sentenceTerms.entrySet()) {
                     
-                    final List<Term> chain = s.getKey().getStamp().getChain();
+                    final List<Term> schain = s.getKey().getStamp().getChain();
                     final Term derived = s.getValue();
 
                     for (final Entry<Sentence,Term> t : sentenceTerms.entrySet()) {
                         if (s == t) continue;
 
-                        final Sentence deriverSentence = t.getKey();
                         final Term deriver = t.getValue();
+                        if (derived==deriver) //avoid loops
+                            continue;
 
-                        if (chain.contains(deriverSentence.getContent())) {
-                            if (derived!=deriver) //avoid loops
-                                g.addEdge(deriver, derived, new TermDerivation());
+                        final List<Term> tchain = s.getKey().getStamp().getChain();                        
+                        final Sentence deriverSentence = t.getKey();
+                        
+                        if (schain.contains(deriverSentence.getContent())) {
+                            g.addEdge(deriver, derived, new TermDerivation());
                         }
-
+                        if (tchain.contains(derived)) {
+                            g.addEdge(derived, deriver, new TermDerivation());
+                        }
                     }
                 }                
             }
+        }
+
+        public void setShowSyntax(boolean showSyntax) {
+            this.includeSyntax = showSyntax ? 1 : 0;
         }
 
         

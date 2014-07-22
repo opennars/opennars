@@ -534,6 +534,17 @@ public abstract class CompoundTerm extends Term {
     public ArrayList<Term> getComponents() {
         return components;
     }
+    
+    /** Gives a set of all contained components, recursively */
+    public Set<Term> getContainedTerms() {
+        Set<Term> s = new HashSet();
+        for (Term t : components) {
+            s.add(t);
+            if (t instanceof CompoundTerm)
+                s.addAll( ((CompoundTerm)t).getContainedTerms() );
+        }
+        return s;
+    }
 
     /**
      * Clone the component list
@@ -568,6 +579,7 @@ public abstract class CompoundTerm extends Term {
      * @param t The component to be checked
      * @return Whether the component is in the compound
      */
+    @Override
     public boolean containComponent(final Term t) {
         return components.contains(t);
     }

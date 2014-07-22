@@ -21,6 +21,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.graph.NARGraph;
+import nars.graph.NARGraph.DefaultGraphizer;
 import nars.graph.NARGraph.Filter;
 import static nars.graph.NARGraph.IncludeEverything;
 import nars.gui.NSlider;
@@ -242,12 +243,13 @@ class papplet extends PApplet implements ActionListener
     public static float getVertexAlpha(Object o) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
-            return (float)((0.25 + 0.75 * s.getTruth().getConfidence()));
+            if (s.getTruth()!=null)
+                return (float)((0.25 + 0.75 * s.getTruth().getConfidence()));            
         }
         return 1.0f;
     }    
     
-    private static final float linkWeight = 3.0f;
+    private static final float linkWeight = 6.0f;
 
 
     public void actionPerformed(ActionEvent e) {
@@ -490,16 +492,18 @@ public class ProcessingGraphPanel extends JFrame {
     private final Filter filter;
     float edgeDistance = 10;
     private boolean showSyntax;
+    private final DefaultGraphizer graphizer;
 
     public ProcessingGraphPanel(NAR n) {
-        this(n, IncludeEverything);        
+        this(n, new DefaultGraphizer(true,true,true,true,true), IncludeEverything);        
     }
     
-    public ProcessingGraphPanel(NAR n, Filter filter) {
+    public ProcessingGraphPanel(NAR n, DefaultGraphizer graphizer, Filter filter) {
         super("NARS Graph");
         
         this.nar = n;
         this.filter = filter;
+        this.graphizer = graphizer;
 
         app = new papplet();
         
@@ -570,11 +574,10 @@ public class ProcessingGraphPanel extends JFrame {
     public void update() {
         app.updating = true;
         
+        graphizer.setShowSyntax(showSyntax);
         
         NARGraph g = new NARGraph();
-        g.add(nar, filter, 
-                new NARGraph.DefaultGraphizer(true,true,false,false,showSyntax)
-        );                
+        g.add(nar, filter, graphizer);                
         app.graph = g;
         
 

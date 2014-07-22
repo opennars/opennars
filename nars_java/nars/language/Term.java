@@ -152,6 +152,11 @@ public class Term implements Cloneable, Comparable<Term> {
         return equals(target);
     }
 
+    /** whether this contains a term in its components. */
+    public boolean containComponent(final Term target) {
+        return equals(target);
+    }
+
     /**
      * The same as getName by default, used in display only.
      *
@@ -161,4 +166,5 @@ public class Term implements Cloneable, Comparable<Term> {
     public final String toString() {
         return name;
     }
+
 }
