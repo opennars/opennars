@@ -57,11 +57,11 @@ public final class Concept extends Item {
     /**
      * Task links for indirect processing
      */
-    private final TaskLinkBag taskLinks;
+    public final TaskLinkBag taskLinks;
     /**
      * Term links between the term and its components and compounds
      */
-    private final TermLinkBag termLinks;
+    public final TermLinkBag termLinks;
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm jmv TODO
      * explain more
@@ -340,8 +340,8 @@ public final class Concept extends Item {
                 }
             }
         }
-    }
-
+    }    
+    
     /**
      * Insert a TermLink into the TermLink bag
      * <p>
