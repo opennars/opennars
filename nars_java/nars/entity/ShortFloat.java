@@ -119,12 +119,14 @@ public class ShortFloat implements Cloneable {
             return "0." + s;*/
             
             final int sl = s.length();
-            if (sl == 4)           return "0." + s;
-            else if (sl == 3)      return "0.0" + s;
-            else if (sl == 2)      return "0.00" + s;
-            else if (sl == 1)      return "0.000" + s;
-            else return null;
-            //else if (sl == 0)      return "0.0" + s;
+            switch(sl) {
+                case 4: return "0." + s;
+                case 3: return "0.0" + s;
+                case 2: return "0.00" + s;
+                case 1: return "0.000" + s;
+            }
+            
+            return null;
         }
     }
 
@@ -132,6 +134,27 @@ public class ShortFloat implements Cloneable {
      * Round the value into a short String
      * @return The String representation, with 2 digits accuracy
      */
+    public String toStringBrief() {        
+        if ((value+50) >= 10000) {
+            return "1.00";
+        } else {
+            final String s = String.valueOf(value+50);
+            
+
+            final int sl = s.length();
+            switch(sl) {
+                case 4: return "0." + s.substring(0,2);
+                case 3: return "0.0" + s.charAt(0);
+                case 2: return "0.00";
+                case 1: return "0.00";
+            }
+            
+            return null;
+        }                
+    }
+    
+    /*
+    //ORIGINAL VERSION
     public String toStringBrief() {
         value += 50;
         final String s = toString();
@@ -142,4 +165,7 @@ public class ShortFloat implements Cloneable {
             return s;
         }
     }
+    */
+
+    
 }

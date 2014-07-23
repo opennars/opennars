@@ -237,7 +237,6 @@ public class Sentence implements Cloneable {
 
     public void setStamp(Stamp stamp) {
         this.stamp = stamp;
-        this.key = null;
     }
 
     /**

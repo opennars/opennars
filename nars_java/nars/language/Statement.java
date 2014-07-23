@@ -32,7 +32,9 @@ import nars.storage.Memory;
  * relation symbol in between. It can be of either first-order or higher-order.
  */
 public abstract class Statement extends CompoundTerm {
+    private StringBuilder nameBuilder;
 
+    
     /**
      * Constructor with partial values, called by make
      *
@@ -164,7 +166,9 @@ public abstract class Statement extends CompoundTerm {
      */
     @Override
     protected String makeName() {
-        return makeStatementName(getSubject(), operator(), getPredicate());
+        if (nameBuilder==null)
+            nameBuilder = new StringBuilder();
+        return makeStatementName(getSubject(), operator(), getPredicate(), nameBuilder);
     }
 
     /**
@@ -175,18 +179,28 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final Operator relation, final Term predicate) {
+    protected static String makeStatementName(final Term subject, final Operator relation, final Term predicate, StringBuilder nameBuilder) {
         final String subjectName = subject.getName();
         final String predicateName = predicate.getName();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
-        return new StringBuilder(length)
+        if (nameBuilder == null) {
+            nameBuilder = new StringBuilder();
+        }
+        
+        nameBuilder.ensureCapacity(length);
+        
+        return nameBuilder
             .append(Symbols.STATEMENT_OPENER)
             .append(subjectName)
             .append(' ').append(relation).append(' ')
             .append(predicateName)
             .append(Symbols.STATEMENT_CLOSER)
             .toString();
+    }
+    
+    protected static String makeStatementName(final Term subject, final Operator relation, final Term predicate) {
+        return makeStatementName(subject, relation, predicate, null);
     }
 
     /**

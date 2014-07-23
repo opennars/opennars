@@ -21,10 +21,8 @@
 package nars.entity;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import nars.core.NAR;
-import nars.core.NARParams;
 
 import nars.inference.BudgetFunctions;
 import nars.inference.LocalRules;
@@ -67,10 +65,15 @@ public final class Concept extends Item {
      * explain more
      */
     private List<TermLink> termLinkTemplates;
+    
     /**
      * Question directly asked about the term
+     * 
+     * Note: since this is iterated frequently, an array should be used.  
+     * To avoid iterator allocation, use .get(n) in a for-loop
      */
-    public final LinkedList<Task> questions;
+    public final ArrayList<Task> questions;
+    
     /**
      * Sentences directly made about the term, with non-future tense
      */
@@ -98,8 +101,8 @@ public final class Concept extends Item {
         super(tm.getName());
         term = tm;
         this.memory = memory;
-        questions = new LinkedList();
-        beliefs = new ArrayList<>();
+        questions = new ArrayList();
+        beliefs = new ArrayList();
         
         final NAR nar = memory.nar;
         
@@ -197,7 +200,7 @@ public final class Concept extends Item {
         }
         
         if (questions.size() > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
-            questions.removeFirst();    // FIFO
+            questions.remove(0);    // FIFO
         }
         
         final Sentence newAnswer = evaluation(ques, beliefs);
@@ -435,7 +438,8 @@ public final class Concept extends Item {
     public Sentence getBelief(final Task task) {
         final Sentence taskSentence = task.getSentence();
         
-        for (final Sentence belief : beliefs)  {
+        for (int i = 0; i < beliefs.size(); i++) {
+            final Sentence belief = beliefs.get(i);
             if (memory.getRecorder().isActive())
                 memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
             memory.newStamp = Stamp.make(taskSentence.getStamp(), belief.getStamp(), memory.getTime());

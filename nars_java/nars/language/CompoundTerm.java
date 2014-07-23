@@ -42,7 +42,7 @@ public abstract class CompoundTerm extends Term {
     /**
      * list of (direct) components
      */
-    protected ArrayList<Term> components;
+    public final ArrayList<Term> components;
     /**
      * syntactic complexity of the compound, the sum of those of its components
      * plus 1
@@ -92,6 +92,7 @@ public abstract class CompoundTerm extends Term {
      * Default constructor
      */
     protected CompoundTerm() {
+        this.components = null;
     }
 
     /**
@@ -135,8 +136,8 @@ public abstract class CompoundTerm extends Term {
      */
     private void calcComplexity() {
         complexity = 1;
-        for (final Term t : components) {
-            complexity += t.getComplexity();
+        for (int i = 0; i < components.size(); i++) {
+            complexity += components.get(i).getComplexity();
         }
     }
  
@@ -161,9 +162,9 @@ public abstract class CompoundTerm extends Term {
         if (size() != t.size())
             return false;
         
-        int i = 0;
-        for (final Term c : components) {
-            if (!c.equals(t.componentAt(i++)))
+        for (int i = 0; i < components.size(); i++) {
+            final Term c = components.get(i);
+            if (!c.equals(t.componentAt(i)))
                 return false;
         }
         
@@ -200,9 +201,9 @@ public abstract class CompoundTerm extends Term {
                     return opDiff;
                 }
 
-                int i = 0;
-                for (final Term c : components) {
-                    final int diff = c.compareTo(t.componentAt(i++));
+                for (int i = 0; i < components.size(); i++) {
+                    final Term c = components.get(i);
+                    final int diff = c.compareTo(t.componentAt(i));
                     if (diff != 0) {
                         return diff;
                     }
@@ -403,17 +404,17 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeCompoundName(final Operator op, final ArrayList<Term> arg) {
-        final StringBuilder name = new StringBuilder(16  /* estimate */)
+        final StringBuilder nameBuilder = new StringBuilder(16  /* estimate */)
             .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
         for (final Term t : arg) {
-            name.append(Symbols.ARGUMENT_SEPARATOR);
+            nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
                 ((CompoundTerm) t).setName(((CompoundTerm) t).makeName());
             }
-            name.append(t.getName());
+            nameBuilder.append(t.getName());
         }
-        name.append(Symbols.COMPOUND_TERM_CLOSER);
-        return name.toString();
+        nameBuilder.append(Symbols.COMPOUND_TERM_CLOSER);
+        return nameBuilder.toString();
     }
 
     /**
@@ -565,10 +566,12 @@ public abstract class CompoundTerm extends Term {
         if (original == null) {
             return null;
         }
+        final int osize = original.size();
         
-        final ArrayList<Term> arr = new ArrayList<>(original.size());
-        for (final Term original1 : original) {
-            arr.add((Term) ((Term) original1).clone());
+        final ArrayList<Term> arr = new ArrayList(osize);        
+        for (int i = 0; i < osize; i++) {
+            Term original1 = original.get(i);
+            arr.add((Term) (original1.clone()));
         }
         return arr;
     }
@@ -723,8 +726,8 @@ public abstract class CompoundTerm extends Term {
      */
     private void renameVariables(final HashMap<Variable, Variable> map) {
         if (containVar()) {
-            int i = 0;
-            for (final Term term : components) {
+            for (int i = 0; i < components.size(); i++) {
+                final Term term = components.get(i);
                 if (term instanceof Variable) {
                     Variable var;                    
                     if (term.getName().length() == 1) { // anonymous variable from input
@@ -744,7 +747,6 @@ public abstract class CompoundTerm extends Term {
                     ct.renameVariables(map);
                     ct.setName(ct.makeName());
                 }
-                i++;
             }
         }
     }
@@ -770,7 +772,8 @@ public abstract class CompoundTerm extends Term {
         }
         if (this.isCommutative()) {         
             // re-order
-            components = new ArrayList<>( new TreeSet<>(components) );
+            components.clear();
+            components.addAll(new TreeSet<>(components));
         }
         name = makeName();
     }

@@ -80,7 +80,7 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory Reference to the memory
      */
-    public static void revision(Sentence newBelief, Sentence oldBelief, boolean feedbackToLinks, Memory memory) {
+    public static void revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final Memory memory) {
         TruthValue newTruth = newBelief.getTruth();
         TruthValue oldTruth = oldBelief.getTruth();
         TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
@@ -96,7 +96,7 @@ public class LocalRules {
      * @param task The task to be processed
      * @param memory Reference to the memory
      */
-    public static void trySolution(Sentence belief, Task task, Memory memory) {
+    public static void trySolution(Sentence belief, final Task task, final Memory memory) {
         Sentence problem = task.getSentence();
         Sentence oldBest = task.getBestSolution();
         float newQ = solutionQuality(problem, belief);
