@@ -25,13 +25,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
-;
+
 
 /**
  * Run Reasoner

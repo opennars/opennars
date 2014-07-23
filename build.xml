@@ -71,32 +71,29 @@
 
     -->
     
-    <target name="fulljar" depends="jar">
+    <property name="store.dir" value="dist"/>
+    
+    <target name="fulljargui" depends="jar">
 
         <!-- Change the value of this property to be the name of your JAR,
              minus the .jar extension. It should not have spaces.
              <property name="store.jar.name" value="MyJarName"/>
         -->
-        <property name="store.jar.name" value="OpenNARS"/>
+        <property name="store.jar.name" value="OpenNARS_GUI"/>
 
-
-        <!-- don't edit below this line -->
-
-        <property name="store.dir" value="dist"/>
         <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
 
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
 
-        <!--<delete dir="${store.dir}"/>
-        <mkdir dir="${store.dir}"/>-->
-
-        <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
-            <zipgroupfileset dir="dist" includes="*.jar"/>
+        <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip" level="9">
+            <zipgroupfileset dir="dist" includes="opennars.jar"/>
             <zipgroupfileset dir="dist/lib" includes="*.jar"/>
+            
 
             <manifest>
-                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Main-Class" value="nars.gui.NARSwing"/>
             </manifest>
+            
         </jar>
 
         <zip destfile="${store.jar}">
@@ -107,5 +104,37 @@
         <delete file="${store.dir}/temp_final.jar"/>
 
     </target>    
-        
+    <target name="fulljar" depends="jar">
+
+        <!-- Change the value of this property to be the name of your JAR,
+             minus the .jar extension. It should not have spaces.
+             <property name="store.jar.name" value="MyJarName"/>
+        -->
+        <property name="store.jar.name" value="OpenNARS"/>
+
+        <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
+
+        <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
+
+        <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip" level="9">
+            <zipgroupfileset dir="dist" includes="opennars.jar"/>
+            <zipgroupfileset dir="dist/lib" includes="java_websocket.jar"/>
+            
+
+            <manifest>
+                <attribute name="Main-Class" value="nars.core.NARRun"/>
+            </manifest>
+            
+        </jar>
+
+        <zip destfile="${store.jar}">
+            <zipfileset src="${store.dir}/temp_final.jar"
+            excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
+        </zip>
+
+        <delete file="${store.dir}/temp_final.jar"/>
+
+    </target>    
+
+                
 </project>

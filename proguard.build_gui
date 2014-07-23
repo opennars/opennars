@@ -8,9 +8,9 @@
 
 -dontwarn
 
--injars  dist/OpenNARS.jar
+-injars  dist/OpenNARS_GUI.jar
 -libraryjars  lib/
--outjars dist/OpenNARS.min.jar
+-outjars dist/OpenNARS_GUI.min.jar
 -keep public class processing.core.*
 
 -libraryjars <java.home>/lib
