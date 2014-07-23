@@ -169,6 +169,7 @@ public abstract class Statement extends CompoundTerm {
     protected String makeName() {
         if (nameBuilder==null)
             nameBuilder = new StringBuilder();
+        
         return makeStatementName(getSubject(), operator(), getPredicate(), nameBuilder);
     }
 
@@ -188,7 +189,7 @@ public abstract class Statement extends CompoundTerm {
         if (nameBuilder == null) {
             nameBuilder = new StringBuilder();
         }
-        
+        nameBuilder.setLength(0);
         nameBuilder.ensureCapacity(length);
         
         return nameBuilder
