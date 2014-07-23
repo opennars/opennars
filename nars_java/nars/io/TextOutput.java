@@ -102,7 +102,7 @@ public class TextOutput implements Output {
      * @param lines The text to be displayed
      */
     @Override
-    public void output(final Class channel, final Object o) {
+    public synchronized void output(final Class channel, final Object o) {
         if ((!errors) && (channel == ERR.class))
             return;
         
@@ -116,9 +116,10 @@ public class TextOutput implements Output {
         }
     }
 
+    StringBuilder result = new StringBuilder(16 /* estimate */);
+    
     public String process(final Class c, final Object o) {
-        StringBuilder result = new StringBuilder(16 /* estimate */);
-        
+        result.setLength(0);
         result.append(c.getSimpleName()).append(": ").append(o.toString());
         if (errorStack && (c == ERR.class)) {
             if (o instanceof Exception) {

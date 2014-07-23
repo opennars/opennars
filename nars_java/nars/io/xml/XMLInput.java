@@ -11,8 +11,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
-import nars.gui.NARSwing;
 import nars.io.PrintWriterInput;
+import nars.io.TextOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -40,7 +40,7 @@ public class XMLInput extends PrintWriterInput {
                         setTaskLinkBagLevels(8).
                         build();
         
-        //new TextOutput(n, System.out);
+        new TextOutput(n, System.out);
         
         //new NARSwing(n);
         n.start(0);

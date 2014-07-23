@@ -427,7 +427,15 @@ public abstract class CompoundTerm extends Term {
      */
     protected static String makeSetName(final char opener, final ArrayList<Term> arg, final char closer) {
         StringBuilder name = new StringBuilder(16 /* estimate */)
-            .append(opener).append(arg.get(0).getName());
+            .append(opener);
+
+        if (arg.size() == 0) { 
+            //is empty arg valid?            
+            throw new RuntimeException("Empty arg list for makeSetName");
+        }
+        
+        name.append(arg.get(0).getName());
+        
         for (int i = 1; i < arg.size(); i++) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             name.append(arg.get(i).getName());
