@@ -8,7 +8,8 @@
 'Robin can swim. 
 ''outputMustContain('<robin --> swimmer>. %0.90;0.73%')
 
-3
+5
+''//+2 from original
 
 'Robin can fly. 
 ''outputMustContain('<robin --> [flying]>. %0.90;0.73%')
