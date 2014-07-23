@@ -166,6 +166,14 @@ public class OutputLogPanel extends NPanel implements Output {
         if ((!showErrors) && (c == ERR.class)) {
             return;
         }
+        if (o instanceof Sentence) {
+            Sentence s = (Sentence)o;
+
+            if (s.isQuestion() && !showQuestions)
+                return;
+            if (s.isJudgment() && !showStatements)
+                return;        
+        }
 
         if (o instanceof Exception) {
             o = (o.toString() + " @ " + Arrays.asList(((Exception) o).getStackTrace()));
