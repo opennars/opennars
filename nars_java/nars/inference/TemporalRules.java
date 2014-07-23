@@ -37,6 +37,10 @@ public class TemporalRules {
             return -order;
         }
     }
+    
+    public static boolean matchingOrder(int order1, int order2) {
+        return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
+    }
 
     public static int dedExeOrder(int order1, int order2) {
         int order = ORDER_INVALID;

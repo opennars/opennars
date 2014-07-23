@@ -178,11 +178,7 @@ public abstract class CompoundTerm extends Term {
         hash = 43 * hash + operator().hashCode();
         return hash;
     }
-    
-    public int getTemporalOrder() {
-        return TemporalRules.ORDER_NONE;
-    }
-    
+        
 
     /**
      * Orders among terms: variable < atomic < compound
