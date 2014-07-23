@@ -1,5 +1,17 @@
+#!/bin/bash
+
 ant jar
 ant fulljar
+ant fulljargui
+
+PROGUARD=~/proguard/bin/proguard.sh
+
+if [ -f $PROGUARD ];
+then
+    ~/proguard/bin/proguard.sh @proguard.build
+    ~/proguard/bin/proguard.sh @proguard.build_gui
+fi
+
 
 echo ''
 echo 'You can now run:'
