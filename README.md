@@ -1,3 +1,6 @@
+# NEW PROJECT LOCATION: 
+## https://github.com/opennars/opennars
+
  * OpenNARS Home-Page: http://code.google.com/p/open-nars/
  * User Manual (HTML): http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
  * Discussion Group: https://groups.google.com/forum/?fromgroups#!forum/open-nars
