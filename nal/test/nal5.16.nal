@@ -4,5 +4,5 @@
 <robin --> [flying]>. 
 'Robin can fly. 
 6
-''test.outputContains('<robin --> swimmer>. %0.00;0.81%
+''outputMustContain('<robin --> swimmer>. %0.00;0.81%
 'Robin cannot swim. 

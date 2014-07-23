@@ -9,4 +9,4 @@
 3
 
 'I guess animal is a type of robin. 
-''test.outputContains('<animal --> robin>. %1.00;0.45%')
+''outputMustContain('<animal --> robin>. %1.00;0.45%')

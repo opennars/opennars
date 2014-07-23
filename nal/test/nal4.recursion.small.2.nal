@@ -4,7 +4,7 @@
 
 27
 
-''test.outputContains('<(/,successor,0,_) --> number>.')
-''test.outputContains('<(/,successor,(/,successor,0,_),_) --> number>.')
-''test.outputContains('<(/,successor,(/,successor,0,_),_) --> number>. %1.00;0.73%')
+''outputMustContain('<(/,successor,0,_) --> number>.')
+''outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>.')
+''outputMustContain('<(/,successor,(/,successor,0,_),_) --> number>. %1.00;0.73%')
 

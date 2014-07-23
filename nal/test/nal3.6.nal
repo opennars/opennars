@@ -9,5 +9,5 @@
 32
 
 'A swimming bird is probably a type of swimming animal.
-''test.outputContains('<(&,bird,swimmer) --> (&,animal,swimmer)>. %0.90;0.73%')
+''outputMustContain('<(&,bird,swimmer) --> (&,animal,swimmer)>. %0.90;0.73%')
 

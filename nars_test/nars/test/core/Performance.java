@@ -23,14 +23,12 @@ package nars.test.core;
  */
 public abstract class Performance {
     public final int repeats;
-    private final int warmups;
     private final String name;
     private long totalTime;
     private long totalMemory;
 
     public Performance(String name, int repeats, int warmups) {
         this.repeats = repeats;        
-        this.warmups = warmups;
         this.name = name;
         
         init();

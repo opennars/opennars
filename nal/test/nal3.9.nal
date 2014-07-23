@@ -8,7 +8,7 @@
 32
 
 'Swimming swan is a type of bird.
-''test.outputContains('<(&,swan,swimmer) --> bird>. %0.90;0.73%')
+''outputMustContain('<(&,swan,swimmer) --> bird>. %0.90;0.73%')
 
 
 

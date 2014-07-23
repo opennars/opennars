@@ -6,4 +6,4 @@
 32
 
 'Boys are youth.
-''test.outputContains('<boy --> youth>. %0.90;0.73%')
+''outputMustContain('<boy --> youth>. %0.90;0.73%')

@@ -9,4 +9,4 @@
 6
 
 'What can neutraliz base can react with base. 
-''test.outputContains('<(/,neutralization,_,base) --> (/,neutralization,_,soda)>. %1.00;0.81%')
+''outputMustContain('<(/,neutralization,_,base) --> (/,neutralization,_,soda)>. %1.00;0.81%')

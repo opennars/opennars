@@ -9,4 +9,4 @@
 3
 
 'I guess chess is similar to sport.
-''test.outputContains('<chess <-> sport>. %0.90;0.45%')
+''outputMustContain('<chess <-> sport>. %0.90;0.45%')

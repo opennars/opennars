@@ -9,4 +9,4 @@
 3
 
 'Gull is similar to robin.
-''test.outputContains('<gull <-> robin>. %1.00;0.81%')
+''outputMustContain('<gull <-> robin>. %1.00;0.81%')

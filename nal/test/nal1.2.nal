@@ -9,7 +9,7 @@
 3
 
 'I guess sport is a type of chess.
-''test.outputContains('<sport --> chess>. %1.00;0.42%')
+''outputMustContain('<sport --> chess>. %1.00;0.42%')
 
 'I guess chess is a type of sport.
-''test.outputContains('<chess --> sport>. %0.90;0.45%')
+''outputMustContain('<chess --> sport>. %0.90;0.45%')

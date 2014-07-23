@@ -6,5 +6,5 @@
 32
 
 'Boys are strong.
-''test.outputContains('<boy --> [strong]>. %0.90;0.73%')
+''outputMustContain('<boy --> [strong]>. %0.90;0.73%')
 

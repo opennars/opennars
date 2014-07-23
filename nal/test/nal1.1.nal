@@ -9,5 +9,5 @@
 3
 
 'Robin is a type of animal.
-''test.outputContains('<robin --> animal>. %1.00;0.81%')
+''outputMustContain('<robin --> animal>. %1.00;0.81%')
 

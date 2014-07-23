@@ -9,5 +9,5 @@
 6
 
 'A swan is a type of bird. 
-''test.outputContains('<swan --> bird>. %0.90;0.81%')
+''outputMustContain('<swan --> bird>. %0.90;0.81%')
 

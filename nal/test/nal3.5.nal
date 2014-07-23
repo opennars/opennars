@@ -9,7 +9,7 @@
 32
 
 'PlanetX is Mars, Pluto, Saturn, or Venus. 
-''test.outputContains('<planetX --> {Mars,Pluto,Saturn,Venus}>. %0.91;0.81%');
+''outputMustContain('<planetX --> {Mars,Pluto,Saturn,Venus}>. %0.91;0.81%');
 
 'PlanetX is either Mars or Venus.
-''test.outputContains('<planetX --> {Mars,Venus}>. %0.81;0.81%');
+''outputMustContain('<planetX --> {Mars,Venus}>. %0.81;0.81%');

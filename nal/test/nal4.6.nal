@@ -9,4 +9,4 @@
 6
 
 'The relation between bird and plant is a type of relation between animal and plant.
-''test.outputContains('<(*,bird,plant) --> (*,animal,plant)>. %1.00;0.81%')
+''outputMustContain('<(*,bird,plant) --> (*,animal,plant)>. %1.00;0.81%')

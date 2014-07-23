@@ -10,5 +10,5 @@
 6
  
 'I guess that bird is similar to swan. 
-''test.outputContains('<bird <-> swan>. %0.90;0.47%')
+''outputMustContain('<bird <-> swan>. %0.90;0.47%')
 

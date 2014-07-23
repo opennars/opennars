@@ -9,5 +9,5 @@
 19
 
 'I guess if robin is a type of animal then robin can fly. 
-''test.outputContains('<<robin --> animal> ==> <robin --> [flying]>>. %1.00;0.45%')
+''outputMustContain('<<robin --> animal> ==> <robin --> [flying]>>. %1.00;0.45%')
 

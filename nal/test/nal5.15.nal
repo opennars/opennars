@@ -4,6 +4,6 @@
 <<robin --> bird> ==> <robin --> [flying]>>.
 'If robin is a type of bird then robin can fly. 
 8
-''test.outputContains('<<robin --> bird> ==> <robin --> animal>>. %0.00;0.81%
+''outputMustContain('<<robin --> bird> ==> <robin --> animal>>. %0.00;0.81%
 'It is unlikely that if a robin is a type of bird then robin is a type of animal. 
 

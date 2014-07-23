@@ -9,7 +9,7 @@
 3
 
 'I think gull is a type of swimmer.
-''test.outputContains('<gull --> swimmer>. %1.00;0.81%')
+''outputMustContain('<gull --> swimmer>. %1.00;0.81%')
 
 
 

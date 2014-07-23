@@ -4,5 +4,5 @@
 <(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>.
 'If robin both swims and flys then robin is a bird.
 7
-''test.outputContains('<robin --> swimmer>. %1.00;0.45% 
+''outputMustContain('<robin --> swimmer>. %1.00;0.45% 
 'I guess robin swims.

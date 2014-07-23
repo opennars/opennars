@@ -6,7 +6,7 @@
 2
 
 'Acid can react with base.
-''test.outputContains('<acid --> (/,reaction,_,base)>. %1.00;0.90%')
+''outputMustContain('<acid --> (/,reaction,_,base)>. %1.00;0.90%')
 
 'A base is something that has a reaction with an acid. 
-''test.outputContains('<base --> (/,reaction,acid,_)>. %1.00;0.90%')
+''outputMustContain('<base --> (/,reaction,acid,_)>. %1.00;0.90%')

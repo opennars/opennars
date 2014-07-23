@@ -9,4 +9,4 @@
 5
 
 'What is a bird?
-''test.outputContains('<{?1} --> bird>?')
+''outputMustContain('<{?1} --> bird>?')
