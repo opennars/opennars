@@ -216,6 +216,9 @@ public class Sentence implements Cloneable {
         revisible = b;
     }
 
+    public int getTemporalOrder() {
+        return content.getTemporalOrder();
+    }
     /**
      * Get a String representation of the sentence
      *
