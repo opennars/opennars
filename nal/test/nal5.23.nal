@@ -1,9 +1,13 @@
 '********** conditional deduction
-<(&&,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>.  
+
 'If robin can fly and has wings then robin is a bird.
-<robin --> [flying]>.  
+<(&&,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>.  
+
 'robin can fly.
+<robin --> [flying]>.  
+
 1
-''outputMustContain('<<robin --> [with-wings]> ==> <robin --> bird>>. %1.00;0.81%
+
 'If robin has wings then robin is a bird
+''outputMustContain('<<robin --> [with-wings]> ==> <robin --> bird>>. %1.00;0.81%')
 

@@ -1,9 +1,13 @@
 '********** analogy
-<robin --> bird>. 
+
 'Robin is a type of bird. 
-<<robin --> bird> <=> <robin --> [flying]>>. %0.80% 
+<robin --> bird>. 
+
 'Usually, robin is a type of bird if and only if robin can fly. 
+<<robin --> bird> <=> <robin --> [flying]>>. %0.80% 
+
 1
-''outputMustContain('<robin --> [flying]>. %0.80;0.65%
+
 'I guess usually robin can fly.
+''outputMustContain('<robin --> [flying]>. %0.80;0.65%')
 

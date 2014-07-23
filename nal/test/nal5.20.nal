@@ -1,6 +1,9 @@
 '********** negation
-(--,<robin --> [flying]>). %0.1% 
+
 'It is unlikely that robin cannot fly. 
+(--,<robin --> [flying]>). %0.1% 
+
 3
-''outputMustContain('<robin --> [flying]>. %0.90;0.90%
+
 'Robin can fly. 
+''outputMustContain('<robin --> [flying]>. %0.90;0.90%')

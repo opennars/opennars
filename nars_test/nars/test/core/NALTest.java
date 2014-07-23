@@ -3,6 +3,7 @@ package nars.test.core;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,10 +26,11 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest  {
 
-    static final boolean testPerformance = false;
-    
+    static final boolean testPerformance = false;    
     private final int performanceIterations = 4;
 
+    int maxSummaryOutputLines = 10;
+    
     ScriptEngineManager factory = new ScriptEngineManager();
     ScriptEngine js = factory.getEngineByName("JavaScript");
       
@@ -66,7 +68,7 @@ public class NALTest  {
     }
     
     
-    final LinkedList<String> out = new LinkedList();
+    final List<String> out = new ArrayList();
 
     public boolean outputContains(String s) {        
         for (String o : out) {
@@ -140,7 +142,17 @@ public class NALTest  {
                 Object result = js.eval(e);
                 if (result instanceof Boolean) {
                     boolean r = (Boolean)result;
-                    assertTrue(path + ": " + e + " FAIL @ " + + n.getTime() + ", output lines=" + out.size(), r);
+                    
+                    
+                    if (!r) {
+                        String failMsg = path + ": " + e + " FAIL @ " + + n.getTime() + ", output lines=" + out.size();
+                        System.out.println(failMsg);
+                        printOutputSummary();
+                        System.out.println();
+                        
+                        assertTrue(failMsg, r);
+                    }
+                    
                 }
             }
             catch (Exception x) {
@@ -153,6 +165,13 @@ public class NALTest  {
         }
     }
     
+    protected void printOutputSummary() {
+        int b = out.size();
+        int a = Math.max(0, b - maxSummaryOutputLines);
+        List<String> l = out.subList(a, b);
+        for (String s : l)
+            System.out.println((a++) + ": " + s);
+    }
     
     protected void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
         
@@ -185,6 +204,8 @@ public class NALTest  {
         File folder = new File("nal/test");
         
         for (final File file : folder.listFiles()) {
+            if (file.getName().equals("README.txt"))
+                continue;
             l.add(new Object[] { file.getAbsolutePath() } );
         }
                   
