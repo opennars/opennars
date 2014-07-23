@@ -51,7 +51,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
-import nars.core.NARState;
+import nars.util.NARState;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.input.InputPanel;
