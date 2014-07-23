@@ -190,10 +190,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     /**
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
-     *
-     * @return The String
      */
-    public String toStringBrief() {
+    public StringBuilder appendStringBrief(final StringBuilder sb) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -202,9 +200,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             return s1 + s2 + DELIMITER;
         }*/
         
-        //1 + 4 + 1 + 4 + 1
-        StringBuffer sb = 
-                new StringBuffer(11).append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);
+        
+        sb.append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);
         
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -213,8 +210,15 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             sb.append(s2);
         }
         
-        sb.append(DELIMITER);
-        
-        return sb.toString();        
+        sb.append(DELIMITER);        
+        return sb;
     }
+    
+    public String toStringBrief() {
+        //1 + 4 + 1 + 4 + 1
+        StringBuilder sb =  new StringBuilder(11);
+        return appendStringBrief(sb).toString();
+    }
+    
+    
 }

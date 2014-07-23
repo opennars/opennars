@@ -284,8 +284,10 @@ public class NAR implements Runnable, Output {
         boolean inputPerceived = false;
         
         if ((inputting) && (stepsQueued == 0) && (!inputChannels.isEmpty())) {
-
-            for (final Input i : inputChannels) {
+            
+            for (int j = 0; j < inputChannels.size(); j++) {                
+                final Input i = inputChannels.get(j);
+                
                 if (i.finished(false)) {
                     deadInputs.add(i);
                 }
@@ -362,8 +364,8 @@ public class NAR implements Runnable, Output {
      */
     @Override
     public void output(final Class channel, final Object o) {       
-        for (final Output channelOut : outputChannels)
-            channelOut.output(channel, o);
+        for (int i = 0; i < outputChannels.size(); i++)        
+            outputChannels.get(i).output(channel, o);
     }
 
   

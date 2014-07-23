@@ -235,10 +235,10 @@ public class Variable extends Term {
         return term1.equals(term2); // for atomic constant terms
     }
 
-    private static Variable makeCommonVariable(Term v1, Term v2) {               return new Variable(v1.getName() + v2.getName() + '$');    
+    private static Variable makeCommonVariable(final Term v1, final Term v2) {               return new Variable(v1.getName() + v2.getName() + '$');    
     }
     
-    private static boolean isCommonVariable(Variable v) {
+    private static boolean isCommonVariable(final Variable v) {
         String s = v.getName();
         return s.charAt(s.length() - 1) == '$';
     }

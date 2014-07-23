@@ -46,7 +46,8 @@ public class OutputLogPanel extends NPanel implements Output {
     int maxIOTextSize = (int) 8E6;
     private boolean showErrors = true;
     private boolean showStamp = false;
-    
+    private boolean showQuestions = true;
+    private boolean showStatements = true;
 
     private Collection nextOutput = new ConcurrentLinkedQueue();
 
@@ -84,7 +85,7 @@ public class OutputLogPanel extends NPanel implements Output {
         
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
-        final JCheckBox showErrorBox = new JCheckBox("Show Errors");
+        final JCheckBox showErrorBox = new JCheckBox("Errors");
         showErrorBox.setSelected(showErrors);
         showErrorBox.addActionListener(new ActionListener() {
             @Override
@@ -93,6 +94,26 @@ public class OutputLogPanel extends NPanel implements Output {
             }
         });
         menu.add(showErrorBox);
+        
+        final JCheckBox showStatementsBox = new JCheckBox("Statements");
+        showStatementsBox.setSelected(showStatements);
+        showStatementsBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showStatements = showStatementsBox.isSelected();
+            }
+        });
+        menu.add(showStatementsBox);
+        
+        final JCheckBox showQuestionsBox = new JCheckBox("Questions");
+        showQuestionsBox.setSelected(showQuestions);
+        showQuestionsBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showQuestions = showQuestionsBox.isSelected();
+            }
+        });
+        menu.add(showQuestionsBox);        
         
         final JCheckBox showStampBox = new JCheckBox("Show Stamp");
         showStampBox.addActionListener(new ActionListener() {
@@ -203,6 +224,11 @@ public class OutputLogPanel extends NPanel implements Output {
                         print(Color.BLACK, 1.0f, o.toString(), false);
                     else if (o instanceof Sentence) {
                         Sentence s = (Sentence)o;
+                        
+                        if (s.isQuestion() && !showQuestions)
+                            continue;
+                        if (s.isJudgment() && !showStatements)
+                            continue;
                         
                         float conf = 0.5f, freq = 0.5f;
                         if (s.getTruth() != null) {

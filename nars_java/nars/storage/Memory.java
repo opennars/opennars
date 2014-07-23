@@ -356,7 +356,8 @@ public class Memory {
             }
             
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
-                for (final Term chain1 : chain) {
+                for (int i = 0; i < chain.size(); i++) {
+                    final Term chain1 = chain.get(i);
                     if (task.getContent() == chain1) {
                         if (recorder.isActive()) {
                             recorder.onTaskRemove(task, "Cyclic Reasoning");

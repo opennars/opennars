@@ -61,7 +61,9 @@ public final class CompositionalRules {
             
             for (final Concept concept : baglevel) {
                 
-                for (final Task question : concept.getQuestions()) {
+                final List<Task> questions = concept.getQuestions();                
+                for (int i = 0; i < questions.size(); i++) {
+                    final Task question = questions.get(i);                                    
                     
                     if(question==null) {
                         continue;
