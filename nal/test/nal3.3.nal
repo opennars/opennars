@@ -9,4 +9,4 @@
 32
 
 'Robin is not a type of mammal.
-''test.outputContains('<robin --> mammal>. %0.00;0.81%')
+''outputMustContain('<robin --> mammal>. %0.00;0.81%')

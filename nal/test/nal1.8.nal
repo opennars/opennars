@@ -9,7 +9,7 @@
 5
 
 ' What is a type of bird?
-''test.outputContains('<?1 --> bird>?')
+''outputMustContain('<?1 --> bird>?')
 
 ' What is the type of bird?
-''test.outputContains('<bird --> ?1>?')
+''outputMustContain('<bird --> ?1>?')

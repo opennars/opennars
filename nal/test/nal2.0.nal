@@ -9,5 +9,5 @@
 1
 
 'Robin is probably similar to swan. 
-''test.outputContains('<robin <-> swan>. %0.87;0.91%')
+''outputMustContain('<robin <-> swan>. %0.87;0.91%')
 

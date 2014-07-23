@@ -9,4 +9,4 @@
 6
 
 'I guess swimmer is a type of bird.
-''test.outputContains('<swimmer --> bird>. %1.00;0.47%')
+''outputMustContain('<swimmer --> bird>. %1.00;0.47%')

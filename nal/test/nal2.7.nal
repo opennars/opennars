@@ -9,7 +9,7 @@
 1
 
 'Bird is different from swan.  
-''test.outputContains('<bird <-> swan>.');
-''test.outputContains('<bird <-> swan>. %0.10');
-''test.outputContains('<bird <-> swan>. %0.10;0.81%');
+''outputMustContain('<bird <-> swan>.');
+''outputMustContain('<bird <-> swan>. %0.10');
+''outputMustContain('<bird <-> swan>. %0.10;0.81%');
 

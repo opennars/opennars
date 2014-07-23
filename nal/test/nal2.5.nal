@@ -9,4 +9,4 @@
 3
 
 'I believe a swan is a type of swimmer. 
-''test.outputContains('<swan --> swimmer>. %1.00;0.81%')
+''outputMustContain('<swan --> swimmer>. %1.00;0.81%')

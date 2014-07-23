@@ -4,5 +4,5 @@
 <robin --> [flying]>. 
 'robin can fly.
 5
-''test.outputContains('<(&&,<robin --> [chirping]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.81%
+''outputMustContain('<(&&,<robin --> [chirping]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.81%
 'If robin has wings and chirps then robin is a bird.

@@ -9,5 +9,5 @@
 32
 
 'A swan is not a type of nonbird swimmer.
-''test.outputContains('<swan --> (-,swimmer,bird)>. %0.10;0.73%')
+''outputMustContain('<swan --> (-,swimmer,bird)>. %0.10;0.73%')
 

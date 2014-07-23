@@ -6,5 +6,5 @@
 32
 
 'Robin is a type of bird. 
-''test.outputContains('<robin --> bird>. %0.90;0.73%')
+''outputMustContain('<robin --> bird>. %0.90;0.73%')
 

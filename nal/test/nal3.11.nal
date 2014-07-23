@@ -9,4 +9,4 @@
 32
 
 'What differs swimmer from swan is not being bird.
-''test.outputContains('<(~,swimmer,swan) --> bird>. %0.10;0.73%')
+''outputMustContain('<(~,swimmer,swan) --> bird>. %0.10;0.73%')

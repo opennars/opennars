@@ -9,9 +9,9 @@
 19
 
 'I guess if robin is a type of bird then robin can fly. 
-''test.outputContains('<<robin --> bird> ==> <robin --> [flying]>>. %1.00;0.39%')
+''outputMustContain('<<robin --> bird> ==> <robin --> [flying]>>. %1.00;0.39%')
 
 'I guess if robin can fly then robin is a type of bird.
-''test.outputContains('<<robin --> [flying]> ==> <robin --> bird>>. %0.80;0.45%')
+''outputMustContain('<<robin --> [flying]> ==> <robin --> bird>>. %0.80;0.45%')
 
 

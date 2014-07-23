@@ -9,4 +9,4 @@
 6
 
 'Bright thing is a type of smart thing. 
-''test.outputContains('<[bright] <-> [smart]>. %0.90;0.90%')
+''outputMustContain('<[bright] <-> [smart]>. %0.90;0.90%')

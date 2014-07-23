@@ -9,4 +9,4 @@
 6
 
 'What can be neutralized by acid can react with acid. 
-''test.outputContains('<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>. %1.00;0.81%')
+''outputMustContain('<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>. %1.00;0.81%')

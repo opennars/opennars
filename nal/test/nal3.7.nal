@@ -9,5 +9,5 @@
 32
 
 'A nonanimal swimmer is probably a type of nonbird swimmer.
-''test.outputContains('<(-,swimmer,animal) --> (-,swimmer,bird)>. %0.90;0.73%')
+''outputMustContain('<(-,swimmer,animal) --> (-,swimmer,bird)>. %0.90;0.73%')
 
