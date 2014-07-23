@@ -6,7 +6,8 @@
 'If robin cannot fly then is robin a type of bird?
 <(--,<robin --> [flying]>) ==> <robin --> bird>>?
 
-29
+34
+''//+5 from original
 
 'I guess it is unlikely that if robin cannot fly then robin is a type of bird.
 ''outputMustContain('<(--,<robin --> [flying]>) ==> <robin --> bird>>. %0.00;0.45%')
