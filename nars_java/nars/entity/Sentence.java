@@ -232,7 +232,7 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toStringBrief() {
-        return toKey() + stamp.toString();
+        return toKey() + " " + stamp.toString();
     }
 
     public void setStamp(Stamp stamp) {

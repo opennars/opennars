@@ -1,9 +1,13 @@
 '********** compound decomposition, two premises
-(||,<robin --> [flying]>,<robin --> swimmer>).  
+
 'Robin can fly or swim. 
-<robin --> swimmer>. %0% 
+(||,<robin --> [flying]>,<robin --> swimmer>).  
+
 'Robin cannot swim.
+<robin --> swimmer>. %0% 
+
 2
-''outputMustContain('<robin --> [flying]>. %1.00;0.81%
+
  'Robin can fly. 
+''outputMustContain('<robin --> [flying]>. %1.00;0.81%')
 

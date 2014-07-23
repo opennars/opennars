@@ -1,8 +1,12 @@
 '********** detachment
-<<robin --> bird> ==> <robin --> animal>>. %0.70;0.90% 
+
 'Usually if robin is a type of bird then robin is a type of animal. 
-<robin --> animal>.
+<<robin --> bird> ==> <robin --> animal>>. %0.70;0.90% 
+
 'Robin is a type of animal. 
+<robin --> animal>.
+
 1
-''outputMustContain('<robin --> bird>. %1.00;0.36%
+
 'I guess robin is a type of bird. 
+''outputMustContain('<robin --> bird>. %1.00;0.36%')
