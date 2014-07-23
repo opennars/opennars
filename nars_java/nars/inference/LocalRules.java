@@ -50,12 +50,14 @@ public class LocalRules {
      */
     public static void match(final Task task, final Sentence belief, final Memory memory) {
         Sentence sentence = (Sentence) task.getSentence().clone();
-        if (sentence.isJudgment()) {
-            if (revisible(sentence, belief)) {
-                revision(sentence, belief, true, memory);
+        if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), belief.getTemporalOrder())) {
+            if (sentence.isJudgment()) {
+                if (revisible(sentence, belief)) {
+                    revision(sentence, belief, true, memory);
+                }
+            } else if (Variable.unify(Symbols.VAR_QUERY, sentence.getContent(), (Term) belief.getContent().clone())) {
+                trySolution(belief, task, memory);
             }
-        } else if (Variable.unify(Symbols.VAR_QUERY, sentence.getContent(), (Term) belief.getContent().clone())) {
-            trySolution(belief, task, memory);
         }
     }
 
@@ -67,7 +69,8 @@ public class LocalRules {
      * @return If revision is possible between the two sentences
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
-        return (s1.getContent().equals(s2.getContent()) && s1.getRevisible());
+        return (s1.getContent().equals(s2.getContent()) && s1.getRevisible()
+                && TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
     }
 
     /**
@@ -89,7 +92,7 @@ public class LocalRules {
         memory.doublePremiseTaskRevised(content, truth, budget);
     }
 
-/**
+    /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
      * @param belief The proposed answer
@@ -98,29 +101,31 @@ public class LocalRules {
      */
     public static void trySolution(Sentence belief, final Task task, final Memory memory) {
         Sentence problem = task.getSentence();
-        Sentence oldBest = task.getBestSolution();
-        float newQ = solutionQuality(problem, belief);
-        if (oldBest != null) {
-            float oldQ = solutionQuality(problem, oldBest);
-            if (oldQ >= newQ) {
-                return;
+        if (TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
+            Sentence oldBest = task.getBestSolution();
+            float newQ = solutionQuality(problem, belief);
+            if (oldBest != null) {
+                float oldQ = solutionQuality(problem, oldBest);
+                if (oldQ >= newQ) {
+                    return;
+                }
             }
-        }
-        Term content = belief.cloneContent();
-        if (Variable.containVarIndep(content.getName())) {
-            Variable.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
-            belief = (Sentence) belief.clone();
-            belief.setContent(content);
-            Stamp st = new Stamp(belief.getStamp(), memory.getTime());
-            st.addToChain(belief.getContent(), belief);
-        }
-        task.setBestSolution(belief);
-        if (task.isInput()) {    // moved from Sentence
-            memory.nar.output(OUT.class, belief);
-        }
-        BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
-        if ((budget != null) && budget.aboveThreshold()) {
-            memory.activatedTask(budget, belief, task.getParentBelief());
+            Term content = belief.cloneContent();
+            if (Variable.containVarIndep(content.getName())) {
+                Variable.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
+                belief = (Sentence) belief.clone();
+                belief.setContent(content);
+                Stamp st = new Stamp(belief.getStamp(), memory.getTime());
+                st.addToChain(belief.getContent(), belief);
+            }
+            task.setBestSolution(belief);
+            if (task.isInput()) {    // moved from Sentence
+                memory.nar.output(OUT.class, belief);
+            }
+            BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
+            if ((budget != null) && budget.aboveThreshold()) {
+                memory.activatedTask(budget, belief, task.getParentBelief());
+            }
         }
     }
 
@@ -134,6 +139,9 @@ public class LocalRules {
     public static float solutionQuality(final Sentence problem, final Sentence solution) {
         if (problem == null) {
             return solution.getTruth().getExpectation();
+        }
+        if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
+            return 0.0f;
         }
         final TruthValue truth = solution.getTruth();
         if (problem.containQueryVar()) {   // "yes/no" question
@@ -153,10 +161,13 @@ public class LocalRules {
         Task task = memory.currentTask;
         Sentence belief = memory.currentBelief;
         Sentence sentence = task.getSentence();
-        if (sentence.isJudgment()) {
-            inferToSym((Sentence) sentence, belief, memory);
-        } else {
-            conversion(memory);
+        if (TemporalRules.matchingOrder(sentence.getTemporalOrder(),
+                TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
+            if (sentence.isJudgment()) {
+                inferToSym(sentence, belief, memory);
+            } else {
+                conversion(memory);
+            }
         }
     }
 
@@ -193,7 +204,7 @@ public class LocalRules {
         if (s1 instanceof Inheritance) {
             content = Similarity.make(t1, t2, memory);
         } else {
-            content = Equivalence.make(t1, t2, memory);
+            content = Equivalence.make(t1, t2, s1.getTemporalOrder(), memory);
         }
         TruthValue value1 = judgment1.getTruth();
         TruthValue value2 = judgment2.getTruth();
@@ -214,7 +225,7 @@ public class LocalRules {
         Statement statement = (Statement) asym.getContent();
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
-        Statement content = Statement.make(statement, sub, pre, memory);
+        Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder(), memory);
         TruthValue truth = TruthFunctions.reduceConjunction(sym.getTruth(), asym.getTruth());
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
         memory.doublePremiseTask(content, truth, budget);
@@ -262,6 +273,7 @@ public class LocalRules {
     private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final Memory memory) {
         Statement content = (Statement) memory.currentTask.getContent();
         Statement beliefContent = (Statement) memory.currentBelief.getContent();
+        int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();
         final Term predT = content.getPredicate();
         final Term subjB = beliefContent.getSubject();
@@ -269,11 +281,11 @@ public class LocalRules {
         Term otherTerm;
         if (Variable.containVarQuery(subjT.getName())) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
-            content = Statement.make(content, otherTerm, predT, memory);
+            content = Statement.make(content, otherTerm, predT, order, memory);
         }
         if (Variable.containVarQuery(predT.getName())) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
-            content = Statement.make(content, subjT, otherTerm, memory);
+            content = Statement.make(content, subjT, otherTerm, order, memory);
         }
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
