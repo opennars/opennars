@@ -21,6 +21,7 @@
 package nars.language;
 
 import nars.core.Parameters;
+import nars.inference.TemporalRules;
 
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.
@@ -100,6 +101,10 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     public boolean isConstant() {
         return true;
+    }
+    
+    public int getTemporalOrder() {
+        return TemporalRules.ORDER_NONE;
     }
 
     /**
