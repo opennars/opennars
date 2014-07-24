@@ -46,8 +46,8 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
-        int order1 = ((CompoundTerm) sentence.getContent()).getTemporalOrder();
-        int order2 = ((CompoundTerm) belief.getContent()).getTemporalOrder();
+        int order1 = sentence.getContent().getTemporalOrder();
+        int order2 = belief.getContent().getTemporalOrder();
         int order = TemporalRules.dedExeOrder(order1, order2);
         if (order == TemporalRules.ORDER_INVALID) {
             return;
@@ -88,8 +88,8 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1.getName(), term2.getName())) {
             return;
         }
-        int order1 = ((CompoundTerm) sentence1.getContent()).getTemporalOrder();
-        int order2 = ((CompoundTerm) sentence2.getContent()).getTemporalOrder();
+        int order1 = sentence1.getContent().getTemporalOrder();
+        int order2 = sentence2.getContent().getTemporalOrder();
         int order = TemporalRules.abdIndComOrder(order1, order2);
         if (order == TemporalRules.ORDER_INVALID) {
             return;
@@ -135,8 +135,8 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(subj, pred)) {
             return;
         }
-        int order1 = ((CompoundTerm) asym.getContent()).getTemporalOrder();
-        int order2 = ((CompoundTerm) sym.getContent()).getTemporalOrder();
+        int order1 = asym.getContent().getTemporalOrder();
+        int order2 = sym.getContent().getTemporalOrder();
         int order = TemporalRules.analogyOrder(order1, order2, figure);
         if (order == TemporalRules.ORDER_INVALID) {
             return;
@@ -176,8 +176,8 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
-        int order1 = ((CompoundTerm) belief.getContent()).getTemporalOrder();
-        int order2 = ((CompoundTerm) sentence.getContent()).getTemporalOrder();
+        int order1 = belief.getContent().getTemporalOrder();
+        int order2 = sentence.getContent().getTemporalOrder();
         int order = TemporalRules.resemblanceOrder(order1, order2, figure);
         if (order == TemporalRules.ORDER_INVALID) {
             return;
@@ -310,7 +310,7 @@ public final class SyllogisticRules {
         }
         Term content;
         if (newCondition != null) {
-            content = Statement.make(premise1, newCondition, premise1.getPredicate(), memory);
+            content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
         } else {
             content = premise1.getPredicate();
         }
@@ -385,7 +385,7 @@ public final class SyllogisticRules {
         }
         Term content;
         if (newCondition != null) {
-            content = Statement.make(premise1, newCondition, premise1.getPredicate(), memory);
+            content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
         } else {
             content = premise1.getPredicate();
         }
@@ -430,11 +430,11 @@ public final class SyllogisticRules {
         Term term2 = null;
 //        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
         if (cond1 instanceof Conjunction) {
-            term1 = CompoundTerm.reduceComponents((Conjunction) cond1, cond2, memory);
+            term1 = CompoundTerm.reduceComponents((CompoundTerm) cond1, cond2, memory);
         }
 //        if ((cond2 instanceof Conjunction) && !Variable.containVarDep(cond2.getName())) {
         if (cond2 instanceof Conjunction) {
-            term2 = CompoundTerm.reduceComponents((Conjunction) cond2, cond1, memory);
+            term2 = CompoundTerm.reduceComponents((CompoundTerm) cond2, cond1, memory);
         }
         if ((term1 == null) && (term2 == null)) {
             return false;
@@ -449,7 +449,7 @@ public final class SyllogisticRules {
         BudgetValue budget;
         if (term1 != null) {
             if (term2 != null) {
-                content = Statement.make(st2, term2, term1, memory);
+                content = Statement.make(st2, term2, term1, st2.getTemporalOrder(), memory);
             } else {
                 content = term1;
             }
@@ -463,7 +463,7 @@ public final class SyllogisticRules {
         }
         if (term2 != null) {
             if (term1 != null) {
-                content = Statement.make(st1, term1, term2, memory);
+                content = Statement.make(st1, term1, term2, st1.getTemporalOrder(), memory);
             } else {
                 content = term2;
             }

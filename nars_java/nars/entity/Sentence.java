@@ -21,9 +21,8 @@
 package nars.entity;
 
 import nars.io.Symbols;
-import nars.language.Conjunction;
-import nars.language.Term;
-import nars.language.Variable;
+import nars.language.*;
+import nars.inference.TruthFunctions;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -51,7 +50,6 @@ public class Sentence implements Cloneable {
      */
     protected Stamp stamp;
 
-
     /**
      * Whether the sentence can be revised
      */
@@ -75,7 +73,7 @@ public class Sentence implements Cloneable {
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
-        this.revisible = !((content instanceof Conjunction) && Variable.containVarDep(content.getName()));                 
+        this.revisible = !((content instanceof Conjunction) && Variable.containVarDep(content.getName()));
     }
 
     /**
@@ -134,6 +132,22 @@ public class Sentence implements Cloneable {
         return new Sentence((Term) content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
     }
 
+    public Sentence projection(long targetTime, long currentTime) {
+        TruthValue newTruth = new TruthValue(truth);
+        if (stamp.getOccurrenceTime() != Stamp.ETERNAL) {
+            newTruth = TruthFunctions.eternalization(truth);
+            if (targetTime != Stamp.ETERNAL) {
+                long occurrenceTime = stamp.getOccurrenceTime();
+                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                float projectedConfidence = factor * truth.getConfidence();
+                if (projectedConfidence > newTruth.getConfidence()) {
+                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
+                }
+            }
+        }
+        return new Sentence((Term) content.clone(), punctuation, newTruth, (Stamp) stamp.clone());
+    }
+
     /**
      * Get the content of the sentence
      *
@@ -142,12 +156,11 @@ public class Sentence implements Cloneable {
     public Term getContent() {
         return content;
     }
-    
+
     public void setContent(final Term t) {
         content = t;
         key = null;
     }
-    
 
     /**
      * Get the punctuation of the sentence
@@ -166,7 +179,6 @@ public class Sentence implements Cloneable {
     public Term cloneContent() {
         return (Term) content.clone();
     }
-
 
     /**
      * Get the truth value of the sentence
@@ -219,6 +231,7 @@ public class Sentence implements Cloneable {
     public int getTemporalOrder() {
         return content.getTemporalOrder();
     }
+
     /**
      * Get a String representation of the sentence
      *
@@ -252,7 +265,7 @@ public class Sentence implements Cloneable {
         if (key == null) {
             final String contentToString = content.toString();
             final String occurrenceTimeString = stamp.getOccurrenceTimeString();
-            final String truthString = truth!=null ? truth.toStringBrief() : null;
+            final String truthString = truth != null ? truth.toStringBrief() : null;
             //final String stampString = stamp.toString();
 
             int stringLength = contentToString.length() + 1 + 1/* + stampString.length()*/;
@@ -261,18 +274,17 @@ public class Sentence implements Cloneable {
             }
 
             final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
-                .append(punctuation);
-            
+                    .append(punctuation);
+
             if (truth != null) {
                 k.append(' ').append(truthString);
             }
             if (occurrenceTimeString.length() > 0) {
                 k.append(' ').append(occurrenceTimeString);
             }
-            
 
-            key = k.toString();        
-            
+            key = k.toString();
+
         }
         return key;
     }
@@ -315,11 +327,4 @@ public class Sentence implements Cloneable {
         return buffer.toString();
     }
 
-
-
-
-
-    
-    
-    
 }

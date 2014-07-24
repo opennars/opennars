@@ -109,15 +109,16 @@ public abstract class Statement extends CompoundTerm {
     /**
      * Make a Statement from given components, called by the rules
      *
+     * @param order The temporal order of the statement
      * @return The Statement built
      * @param subj The first component
      * @param pred The second component
      * @param statement A sample statement providing the class type
      * @param memory Reference to the memory
      */
-    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
-        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
-    }
+//    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
+//        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
+//    }
     
     public static Statement make(final Statement statement, final Term subj, final Term pred, int order, final Memory memory) {
 
