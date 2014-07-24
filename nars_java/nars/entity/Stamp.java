@@ -60,7 +60,7 @@ public class Stamp implements Cloneable {
     /**
      * estimated occurrence time of the event
      */
-    public final long occurrenceTime;
+    public long occurrenceTime;
 
     /**
      * default for atemporal events, means "always"
@@ -378,6 +378,10 @@ public class Stamp implements Cloneable {
             String ot = String.valueOf(occurrenceTime);
             return new StringBuilder(ot.length()+2).append('[').append(ot).append(']').toString();
         }
+    }
+    
+    public void setEternal() {
+        occurrenceTime = ETERNAL;
     }
 
     //String toStringCache = null; //holds pre-allocated string for toString()

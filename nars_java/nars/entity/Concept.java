@@ -32,6 +32,7 @@ import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.core.NARRun;
 import nars.core.Parameters;
+import nars.io.Symbols;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
 import nars.storage.NullBagObserver;
@@ -161,8 +162,12 @@ public final class Concept extends Item {
             } else if (LocalRules.revisible(judg, oldBelief)) {
                 memory.newStamp = Stamp.make(newStamp, oldStamp, memory.getTime());
                 if (memory.newStamp != null) {
-                    memory.currentBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
-                    LocalRules.revision(judg, memory.currentBelief, false, memory);
+                    Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
+                    if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
+                        memory.singlePremiseTask(projectedBelief, task.getBudget());
+                    }
+                    memory.currentBelief = projectedBelief;
+                    LocalRules.revision(judg, projectedBelief, false, memory);
                 }
             }
         }
@@ -446,7 +451,11 @@ public final class Concept extends Item {
             }
             memory.newStamp = Stamp.make(taskStamp, belief.getStamp(), currentTime);
 //            if (memory.newStamp != null) {
-                return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
+            Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.getTime());
+            if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
+                memory.singlePremiseTask(projectedBelief, task.getBudget());
+            }
+            return projectedBelief;
 //            }
         }
         return null;
