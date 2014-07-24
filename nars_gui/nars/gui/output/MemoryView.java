@@ -79,7 +79,9 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     private int MAX_UNSELECTED_LABEL_LENGTH = 32;
     private boolean updateNext;
     float nodeSize = 10;
-    private static final float linkWeight = 4.0f;
+    
+            float lineAlpha = 0.75f;
+            float lineWidth = 3.8f;
     
     
     WeakHashMap<Object,VertexDisplay> vertices = new WeakHashMap();
@@ -91,6 +93,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
     //bounds of last positioned vertices
     float minX=0, minY=0, maxX=0, maxY=0;
+    float motionBlur = 0.0f;
 
     public class VertexDisplay {
         float x, y, tx, ty;
@@ -407,6 +410,15 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         
         drawn = true; //allow the vertices to invalidate again in drawit() callee
 
+        
+        if (motionBlur > 0) {
+            fill(0,0,0,255f*(1.0f - motionBlur));
+            rect(0,0,getWidth(),getHeight());
+        }
+        else {        
+            background(0,0,0, 0.001f);
+        }
+        
         //pushMatrix();
         hnav.Transform();
         hrend_DrawBegin();
@@ -440,13 +452,18 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     @Override
     public void setup() {  
         frameRate(FrameRate);
-       
+        
+        /*
+        size(500,500,"P3D");
+        if (isGL()) {
+            System.out.println("Processing.org enabled OpenGL");
+        }
+        */
+        
     }
 
 
     public void drawit() {
-        
-        background(0,0,0);
                         
         //for speed:
         strokeCap(SQUARE);
@@ -465,8 +482,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 continue;
 
             
-            stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f/3f );
-            strokeWeight( (elem1.radius + elem2.radius)/2.0f / 3.8f );
+            stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f*lineAlpha );
+            strokeWeight( (elem1.radius + elem2.radius)/2.0f / lineWidth );
 
             float x1 = elem1.x;
             float y1 = elem1.y;
@@ -484,8 +501,6 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             d.draw();
         
     }
-
-
 
     
     void drawArrowAngle(final float cx, final float cy, final float len, final float angle){
@@ -927,6 +942,17 @@ public class MemoryView extends Window {
         nodeSpeed.setPrefix("Node Speed: ");
         nodeSpeed.setPreferredSize(new Dimension(125, 25));
         menu.add(nodeSpeed);        
+        
+        NSlider blur = new NSlider(0, 0, 1.0) {
+            @Override
+            public void onChange(double v) {
+                app.motionBlur = (float)v;
+                app.drawn = false;
+            }          
+        };        
+        blur.setPrefix("Blur: ");
+        blur.setPreferredSize(new Dimension(85, 25));
+        menu.add(blur);        
         
         content.add(menu, BorderLayout.NORTH);
         content.add(app, BorderLayout.CENTER);
