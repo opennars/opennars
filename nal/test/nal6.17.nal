@@ -1,15 +1,15 @@
-********** variable introduction
+'********** variable introduction
 <swan --> bird>.  
-// A swan is a bird.
+'A swan is a bird.
 <swan --> swimmer>. %0.80% 
-// A swan is usually a swimmer.
+'A swan is usually a swimmer.
 3
- OUT: <<$1 --> bird> ==> <$1 --> swimmer>>. %0.80;0.45% 
-// I guess a bird is usually a swimmer.
- OUT: <<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.39% 
-// I guess a swimmer is a bird.
- OUT: <<$1 --> bird> <=> <$1 --> swimmer>>. %0.80;0.45% 
-// I guess a bird is usually a swimmer, and the other way around.
- OUT: (&&,<#1 --> bird>,<#1 --> swimmer>). %0.80;0.81% 
-// Some bird can swim.
+''outputMustContain('<<$1 --> bird> ==> <$1 --> swimmer>>. %0.80;0.45% 
+'I guess a bird is usually a swimmer.
+''outputMustContain('<<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.39% 
+'I guess a swimmer is a bird.
+''outputMustContain('<<$1 --> bird> <=> <$1 --> swimmer>>. %0.80;0.45% 
+'I guess a bird is usually a swimmer, and the other way around.
+''outputMustContain('(&&,<#1 --> bird>,<#1 --> swimmer>). %0.80;0.81% 
+'Some bird can swim.
 

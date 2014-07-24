@@ -52,14 +52,17 @@ public final class Concept extends Item {
      * The term is the unique ID of the concept
      */
     private final Term term;
+    
     /**
      * Task links for indirect processing
      */
     public final TaskLinkBag taskLinks;
+    
     /**
-     * Term links between the term and its components and compounds
+     * Term links between the term and its components and compounds; beliefs
      */
     public final TermLinkBag termLinks;
+    
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm jmv TODO
      * explain more

@@ -579,7 +579,13 @@ public class TextPerception {
      */
     private static Term parseCompoundTerm(final String s0, final Memory memory) throws InvalidInputException {
         String s = s0.trim();
+        if (s.isEmpty()) {
+            throw new InvalidInputException("empty compound term: " + s);
+        }
         int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
+        if (firstSeparator == -1) {
+            throw new InvalidInputException("invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
+        }
         String op = s.substring(0, firstSeparator).trim();
         if (!CompoundTerm.isOperator(op)) {
             throw new InvalidInputException("unknown operator: " + op);
