@@ -373,4 +373,20 @@ public final class TruthFunctions extends UtilityFunctions {
         final TruthValue v0 = new TruthValue(f1, w2c(c1));
         return analogy(v2, v0);
     }
+    
+    /**
+     * From one moment to eternal
+     * @param v1 Truth value of the premise
+     * @return Truth value of the conclusion
+     */
+    public static final TruthValue eternalization(final TruthValue v1) {
+        final float f1 = v1.getFrequency();
+        final float c1 = v1.getConfidence();
+        final float c = w2c(c1);
+        return new TruthValue(f1, c);
+    }
+    
+    public static final float temporalProjection(long sourceTime, long targetTime, long currentTime) {
+        return Math.abs(sourceTime - targetTime) / (Math.abs(sourceTime - currentTime) + Math.abs(targetTime - currentTime));
+    }
 }
