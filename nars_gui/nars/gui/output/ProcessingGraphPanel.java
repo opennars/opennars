@@ -71,6 +71,7 @@ class papplet extends PApplet implements ActionListener
     public Button fetchMemory;
     Memory mem = null;
 
+    float frameRateFPS = 15f;
     public int mode = 0;
     
     boolean showBeliefs = false;
@@ -85,6 +86,7 @@ class papplet extends PApplet implements ActionListener
     NARGraph graph;
     JGraphXAdapter layout;
     public boolean updating;
+    boolean drawn = false;
 
     public void mouseScrolled() {
         hamlib.mouseScrolled();
@@ -112,7 +114,7 @@ class papplet extends PApplet implements ActionListener
 
     @Override
     public void draw() {
-        hamlib.Update(128, 138, 128);
+        hamlib.Update(0, 0, 0);
     }
 
     void hrend_DrawBegin() {
@@ -134,7 +136,9 @@ class papplet extends PApplet implements ActionListener
             Thread.sleep(100);
         } catch (InterruptedException ex) {
         }
-        background(0);
+        
+        frameRate(this.frameRateFPS);
+        
         
     }
 
@@ -174,7 +178,6 @@ class papplet extends PApplet implements ActionListener
         if (updating)
             return;
         
-        background(0, 0, 0);
 
 
         try {
@@ -283,6 +286,7 @@ class papplet extends PApplet implements ActionListener
                 public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     mouseScroll = -evt.getWheelRotation();
                     mouseScrolled();
+                    drawn = false;
                 }
             }
             );
@@ -316,6 +320,7 @@ class papplet extends PApplet implements ActionListener
                 savepx = mouseX;
                 savepy = mouseY;
             }
+            drawn = false;            
         }
 
         void mouseReleased() {
@@ -329,6 +334,7 @@ class papplet extends PApplet implements ActionListener
                 savepx = mouseX;
                 savepy = mouseY;
             }
+            drawn = false;            
         }
         private float camspeed = 20.0f;
         private float scrollcammult = 0.92f;
@@ -362,6 +368,7 @@ class papplet extends PApplet implements ActionListener
                 difx = (difx) * (zoom / zoomBefore);
                 dify = (dify) * (zoom / zoomBefore);
             }
+            drawn = false;
         }
 
         void Init() {
@@ -484,14 +491,19 @@ class papplet extends PApplet implements ActionListener
         }
 
         void Update(int r, int g, int b) {
-            background(r, g, b);
-            pushMatrix();
-            Camera();
-            hrend_DrawBegin();
-            //hsim.Simulate();
-            drawit();
-            hrend_DrawEnd();
-            popMatrix();
+            if (!drawn) {
+
+                background(r, g, b);
+                //pushMatrix();
+                Camera();
+                hrend_DrawBegin();
+                //hsim.Simulate();
+                drawit();
+                hrend_DrawEnd();
+                //popMatrix();
+                
+                drawn = true;
+            }
         }
     }
 
@@ -674,6 +686,7 @@ public class ProcessingGraphPanel extends JFrame {
     }
 
     public void update() {
+        app.drawn = false;
         
         graphizer = new DefaultGraphizer(true,true,true,true,false) {
 

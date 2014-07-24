@@ -43,8 +43,10 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     float boostMomentum = 0.98f;
     float boostScale = 6.0f;
     
-    private boolean compressLevels = true;
+    float vertexTargetThreshold = 4;
     
+    private boolean compressLevels = true;
+    boolean drawn = false;
     
     Hsim hsim = new Hsim();
 
@@ -87,6 +89,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     NARGraph graph;
     boolean showSyntax;
 
+    //bounds of last positioned vertices
+    float minX=0, minY=0, maxX=0, maxY=0;
 
     public class VertexDisplay {
         float x, y, tx, ty;
@@ -145,8 +149,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         
         public void position(float level, float index) {
             if (mode == 1) {
-                ty = (index * maxNodeSize * 3.5f);
-                tx = -4500+(level * maxNodeSize * 3.5f);
+                tx = (index * maxNodeSize * 3.5f);
+                ty = -((nar.memory.concepts.levels - level) * maxNodeSize * 3.5f);
             }
             else if (mode == 0) {
                 float LEVELRAD = maxNodeSize * 2.5f;
@@ -184,15 +188,28 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 text(label, x, y);            
             }
         }
-        
+               
         protected void update() {            
             x = ( x * (1.0f - nodeSpeed) + tx * (nodeSpeed) );
             y = ( y * (1.0f - nodeSpeed) + ty * (nodeSpeed) );            
+            
+            if ((Math.abs(tx-x) + Math.abs(ty-y)) > vertexTargetThreshold) {
+                //keep animating if any vertex hasnt reached its target
+                drawn = false;
+            }
+            
             boost *= boostMomentum;
         }
 
  
     }
+
+    @Override
+    protected void resizeRenderer(int newWidth, int newHeight) {
+        super.resizeRenderer(newWidth, newHeight); //To change body of generated methods, choose Tools | Templates.
+        drawn = false;
+    }
+    
     
     public VertexDisplay displayVertex(Object o) {
         VertexDisplay v = vertices.get(o);
@@ -244,6 +261,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     @Override
     public void draw() {
         
+        
         final Memory mem = nar.memory;
         final Sentence currentBelief = mem.currentBelief;
         final Concept currentConcept = mem.currentConcept;
@@ -289,12 +307,29 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                             if (levelContents > 0)
                                 level--;
                         }                        
+
+                        
+                        //center vertices on (0,0)
+                        /*
+                        boolean first = true;
+                        for (VertexDisplay v : vertices.values()) {
+                            float vx = v.tx;
+                            float vy = v.ty;
+                            if (first) {
+                                minX = maxX = vx;
+                                minY = maxY = vy;
+                                first = false;
+                            }
+                            else {
+                                if (vx < minX) minX = vx;
+                                if (vy < minY) minY = vy;
+                                if (vx > maxX) maxX = vx;
+                                if (vy > maxY) maxY = vy;
+                            }
+                        }
+                        */
                         
                     }
-
-                    
-
-                    
                     
                     @Override
                     public void onConcept(NARGraph g, Concept c) {
@@ -363,9 +398,15 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         
             for (Object v : deadVertices)
                 vertices.remove(v);
+            
+            drawn = false;
         }
         
+        if (drawn)
+            return;
         
+        drawn = true; //allow the vertices to invalidate again in drawit() callee
+
         //pushMatrix();
         hnav.Transform();
         hrend_DrawBegin();
@@ -373,7 +414,9 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         hrend_DrawEnd();
         //popMatrix();
         
-        hrend_DrawGUI();         
+        hrend_DrawGUI();
+        
+        
     }
 
 
@@ -422,7 +465,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 continue;
 
             
-            stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f/2f );
+            stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f/3f );
             strokeWeight( (elem1.radius + elem2.radius)/2.0f / 3.8f );
 
             float x1 = elem1.x;
@@ -552,6 +595,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
     void setUpdateNext() {
         updateNext = true;
+        drawn = false;        
     }
 
     class ProcessingJs {
@@ -594,6 +638,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 savepx = mouseX;
                 savepy = mouseY;
             }
+            drawn = false;
         }
 
         void mouseReleased() {
@@ -607,6 +652,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 savepx = mouseX;
                 savepy = mouseY;
             }
+            drawn = false;
         }
         private float camspeed = 20.0f;
         private float scrollcammult = 0.92f;
@@ -640,6 +686,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 difx = (difx) * (zoom / zoomBefore);
                 dify = (dify) * (zoom / zoomBefore);
             }
+            drawn = false;
         }
 
         void Init() {
@@ -659,6 +706,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             }
             difx = (difx) * (zoom / zoomBefore);
             dify = (dify) * (zoom / zoomBefore);
+            drawn = false;
         }
 
         void Transform() {
@@ -849,6 +897,7 @@ public class MemoryView extends Window {
             @Override
             public void onChange(double v) {
                 app.nodeSize = (float)v;
+                app.drawn = false;
             }          
         };        
         nodeSize.setPrefix("Node Size: ");
@@ -872,6 +921,7 @@ public class MemoryView extends Window {
             @Override
             public void onChange(double v) {
                 app.nodeSpeed = (float)v;
+                app.drawn = false;
             }          
         };        
         nodeSpeed.setPrefix("Node Speed: ");
