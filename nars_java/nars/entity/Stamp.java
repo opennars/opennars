@@ -161,7 +161,7 @@ public class Stamp implements Cloneable {
         i1 = chain1.size() - 1;
         i2 = chain2.size() - 1;
 
-        derivationChain = new ArrayList<Term>(baseLength); //take as long till the chain is full or all elements were taken out of chain1 and chain2:
+        derivationChain = new ArrayList<>(baseLength); //take as long till the chain is full or all elements were taken out of chain1 and chain2:
 
         j = 0;
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
@@ -191,7 +191,7 @@ public class Stamp implements Cloneable {
         Collections.reverse(derivationChain); //if jvm implements that correctly this is O(1)
 
         creationTime = time;
-        occurrenceTime = -1;    // to be revised
+        occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
     }
 
     /**
@@ -212,11 +212,11 @@ public class Stamp implements Cloneable {
          return null;  // do not merge identical bases
          }
          */
-        if (first.length() > second.length()) {
-            return new Stamp(first, second, time);
-        } else {
-            return new Stamp(second, first, time);
-        }
+//        if (first.length() > second.length()) {
+            return new Stamp(first, second, time); // keep the order for projection
+//        } else {
+//            return new Stamp(second, first, time);
+//        }
     }
 
     /*
