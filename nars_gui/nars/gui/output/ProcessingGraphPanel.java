@@ -199,10 +199,10 @@ class papplet extends PApplet implements ActionListener
                 if ((sourcePoint == null) || (targetPoint == null))
                     continue;
 
-                float x1 = (float)sourcePoint.getCenterX();
-                float y1 = (float)sourcePoint.getCenterY();
-                float x2 = (float)targetPoint.getCenterX();
-                float y2 = (float)targetPoint.getCenterY();
+                float x1 = (float)sourcePoint.getCenterY();
+                float y1 = (float)sourcePoint.getCenterX();
+                float x2 = (float)targetPoint.getCenterY();
+                float y2 = (float)targetPoint.getCenterX();
                 float cx = (x1 + x2) / 2.0f;
                 float cy = (y1 + y2) / 2.0f;
                 drawArrow(x1, y1, x2, y2);
@@ -219,8 +219,8 @@ class papplet extends PApplet implements ActionListener
                 float vertexAlpha = getVertexAlpha(vertex);
                 fill(rgb, vertexAlpha*255/2);
 
-                float x = (float)b.getCenterX();
-                float y = (float)b.getCenterY();
+                float x = (float)b.getCenterY();
+                float y = (float)b.getCenterX();
                 double w = b.getWidth();
                 double h = b.getHeight();
 
@@ -229,7 +229,13 @@ class papplet extends PApplet implements ActionListener
 
                 fill(255,255,255);        
                 textSize(size/4.0f);
+                /*
+                pushMatrix();
+                translate(x, y);
+                rotate(radians(45));
+                */
                 text(vertex.toString(), x, y);
+                //popMatrix();
             }
         }
         catch (ConcurrentModificationException e) { }                    
@@ -548,6 +554,7 @@ public class ProcessingGraphPanel extends JFrame {
             @Override public void actionPerformed(ActionEvent e) {
                 layoutMode = layoutSelect.getSelectedItem().toString();
                 update();
+                app.drawn = false;
             }
         });
         layoutMode = layoutSelect.getSelectedItem().toString();
@@ -558,6 +565,7 @@ public class ProcessingGraphPanel extends JFrame {
             @Override public void actionPerformed(ActionEvent e) {
                 showSyntax = beliefsEnable.isSelected();
                 ProcessingGraphPanel.this.update();
+                app.drawn = false;                                
             }
         });
         menu.add(beliefsEnable);
@@ -566,6 +574,7 @@ public class ProcessingGraphPanel extends JFrame {
             @Override
             public void onChange(double v) {
                 app.nodeSize = (float)v;
+                app.drawn = false;                
             }          
         };
         nodeSize.setPrefix("Node Size: ");
@@ -701,7 +710,7 @@ public class ProcessingGraphPanel extends JFrame {
                     
                     Term t = s.getContent();
                     addTerm(g, t);
-                    g.addEdge(s.getContent(), s, new NARGraph.SentenceContent());
+                    g.addEdge(s, s.getContent(), new NARGraph.SentenceContent());
                     
                     if (t instanceof CompoundTerm) {
                         CompoundTerm ct = ((CompoundTerm)t);
@@ -763,8 +772,9 @@ public class ProcessingGraphPanel extends JFrame {
             mxCompactTreeLayout layout2 =  new mxCompactTreeLayout(layout);                
             layout2.setUseBoundingBox(true);
             layout2.setResizeParent(true);
-            layout2.setLevelDistance(50);
-            layout2.setNodeDistance(50);
+            layout2.setLevelDistance((int)(edgeDistance*1.5f));
+            layout2.setNodeDistance((int)(0.2f * edgeDistance*edgeDistance*2f));
+            layout2.setInvert(true);            
             layout2.execute(layout.getDefaultParent());
         
         }
