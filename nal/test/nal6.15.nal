@@ -1,9 +1,9 @@
-********** multiple variable elimination
+'********** multiple variable elimination
 (&&,<#x --> lock>,<<$y --> key> ==> <#x --> (/,open,$y,_)>>).  
-// There is a lock that can be opened by every key.
+'There is a lock that can be opened by every key.
 <{lock1} --> lock>.
-// Lock-1 is a lock.
+'Lock-1 is a lock.
 9
- OUT: <<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.43% 
-// I guess Lock-1 can be opened by every key.
+''outputMustContain('<<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.43% 
+'I guess Lock-1 can be opened by every key.
 

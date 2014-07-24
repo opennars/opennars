@@ -1,9 +1,9 @@
-********** variable elimination
+'********** variable elimination
 <<$x --> animal> <=> <$x --> bird>>. 
-// Something is a animal if and only if it is a bird.
+'Something is a animal if and only if it is a bird.
 <robin --> bird>.
-// A robin is a bird.
+'A robin is a bird.
 3
- OUT: <robin --> animal>. %1.00;0.81%  
-// A robin is a animal.
+''outputMustContain('<robin --> animal>. %1.00;0.81%  
+'A robin is a animal.
 
