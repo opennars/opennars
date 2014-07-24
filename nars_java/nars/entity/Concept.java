@@ -65,15 +65,15 @@ public final class Concept extends Item {
      * explain more
      */
     private List<TermLink> termLinkTemplates;
-    
+
     /**
      * Question directly asked about the term
-     * 
-     * Note: since this is iterated frequently, an array should be used.  
-     * To avoid iterator allocation, use .get(n) in a for-loop
+     *
+     * Note: since this is iterated frequently, an array should be used. To
+     * avoid iterator allocation, use .get(n) in a for-loop
      */
     public final ArrayList<Task> questions;
-    
+
     /**
      * Sentences directly made about the term, with non-future tense
      */
@@ -85,7 +85,7 @@ public final class Concept extends Item {
     /**
      * The display window
      */
-    
+
     private final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
     private EntityObserver entityObserver = defaultNullEntityObserver;
 
@@ -103,17 +103,16 @@ public final class Concept extends Item {
         this.memory = memory;
         questions = new ArrayList();
         beliefs = new ArrayList();
-        
+
         final NAR nar = memory.nar;
-        
+
         taskLinks = new TaskLinkBag(nar.config.getTaskLinkBagLevels(), nar.config.getTaskLinkBagSize(), memory.taskForgettingRate);
         termLinks = new TermLinkBag(nar.config.getTermLinkBagLevels(), nar.config.getTermLinkBagSize(), memory.beliefForgettingRate);
-        
+
         if (tm instanceof CompoundTerm) {
             termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         }
-        
-        
+
     }
 
     /* ---------- direct processing of tasks ---------- */
@@ -135,8 +134,9 @@ public final class Concept extends Item {
         if (task.getBudget().aboveThreshold()) {    // still need to be processed
             linkToTask(task);
         }
-        if (entityObserver.isActive())
+        if (entityObserver.isActive()) {
             entityObserver.refresh(displayContent());
+        }
     }
 
     /**
@@ -161,8 +161,8 @@ public final class Concept extends Item {
             } else if (LocalRules.revisible(judg, oldBelief)) {
                 memory.newStamp = Stamp.make(newStamp, oldStamp, memory.getTime());
                 if (memory.newStamp != null) {
-                    memory.currentBelief = oldBelief;
-                    LocalRules.revision(judg, oldBelief, false, memory);
+                    memory.currentBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
+                    LocalRules.revision(judg, memory.currentBelief, false, memory);
                 }
             }
         }
@@ -183,7 +183,6 @@ public final class Concept extends Item {
      */
     public float processQuestion(final Task task) {
 
-        
         Sentence ques = task.getSentence();
         boolean newQuestion = true;
         for (final Task t : questions) {
@@ -198,11 +197,11 @@ public final class Concept extends Item {
         if (newQuestion) {
             questions.add(task);
         }
-        
+
         if (questions.size() > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
             questions.remove(0);    // FIFO
         }
-        
+
         final Sentence newAnswer = evaluation(ques, beliefs);
         if (newAnswer != null) {
 //            LocalRules.trySolution(ques, newAnswer, task, memory);
@@ -229,7 +228,7 @@ public final class Concept extends Item {
             if (!termLinkTemplates.isEmpty()) {
                 final BudgetValue subBudget = BudgetFunctions.distributeAmongLinks(taskBudget, termLinkTemplates.size());
                 if (subBudget.aboveThreshold()) {
-                    
+
                     for (final TermLink termLink : termLinkTemplates) {
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                         Term componentTerm = termLink.getTarget();
@@ -270,7 +269,7 @@ public final class Concept extends Item {
         }
         if (table.size() >= capacity) {
             while (table.size() > capacity) {
-                table.remove(table.size() - 1);                
+                table.remove(table.size() - 1);
             }
         } else if (i == table.size()) {
             table.add(newSentence);
@@ -343,8 +342,8 @@ public final class Concept extends Item {
                 }
             }
         }
-    }    
-    
+    }
+
     /**
      * Insert a TermLink into the TermLink bag
      * <p>
@@ -394,11 +393,13 @@ public final class Concept extends Item {
     }
 
     private String toStringIfNotNull(final Object item, final String title) {
-        if (item == null) return "";
-        
+        if (item == null) {
+            return "";
+        }
+
         final String itemString = item.toString();
-        
-        return new StringBuilder(2+title.length()+itemString.length()+1).
+
+        return new StringBuilder(2 + title.length() + itemString.length() + 1).
                 append("\n ").append(title).append(':').append(itemString).toString();
     }
 
@@ -436,17 +437,17 @@ public final class Concept extends Item {
      * @return The selected isBelief
      */
     public Sentence getBelief(final Task task) {
-        final Sentence taskSentence = task.getSentence();
-        
-        for (int i = 0; i < beliefs.size(); i++) {
-            final Sentence belief = beliefs.get(i);
-            if (memory.getRecorder().isActive())
+        final Stamp taskStamp = task.getSentence().getStamp();
+        final long currentTime = memory.getTime();
+
+        for (Sentence belief : beliefs) {
+            if (memory.getRecorder().isActive()) {
                 memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
-            memory.newStamp = Stamp.make(taskSentence.getStamp(), belief.getStamp(), memory.getTime());
-            if (memory.newStamp != null) {
-                final Sentence belief2 = (Sentence) belief.clone();   // will this mess up priority adjustment?
-                return belief2;
             }
+            memory.newStamp = Stamp.make(taskStamp, belief.getStamp(), currentTime);
+//            if (memory.newStamp != null) {
+                return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
+//            }
         }
         return null;
     }
@@ -462,8 +463,9 @@ public final class Concept extends Item {
         }
         memory.currentTaskLink = currentTaskLink;
         memory.currentBeliefLink = null;
-        if (memory.getRecorder().isActive())
+        if (memory.getRecorder().isActive()) {
             memory.getRecorder().append(" * Selected TaskLink: " + currentTaskLink + "\n");
+        }
         final Task task = currentTaskLink.getTargetTask();
         memory.currentTask = task;  // one of the two places where this variable is set
 //      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
@@ -476,8 +478,9 @@ public final class Concept extends Item {
             while (termLinkCount > 0) {
                 final TermLink termLink = termLinks.takeOut(currentTaskLink, memory.getTime());
                 if (termLink != null) {
-                    if (memory.getRecorder().isActive())
+                    if (memory.getRecorder().isActive()) {
                         memory.getRecorder().append(" * Selected TermLink: " + termLink + "\n");
+                    }
                     memory.currentBeliefLink = termLink;
                     RuleTables.reason(currentTaskLink, termLink, memory);
                     termLinks.putBack(termLink);
@@ -495,16 +498,16 @@ public final class Concept extends Item {
      * Start displaying contents and links, called from ConceptWindow,
      * TermWindow or Memory.processTask only
      *
-     * same design as for {@link nars.storage.Bag} and {@link nars.gui.BagWindow}; see
+     * same design as for {@link nars.storage.Bag} and
+     * {@link nars.gui.BagWindow}; see
      * {@link nars.storage.Bag#addBagObserver(BagObserver, String)}
      *
-     * @param entityObserver {@link EntityObserver} to set;
-     * TODO make it a real observer pattern (i.e. with a
-     * plurality of observers)
+     * @param entityObserver {@link EntityObserver} to set; TODO make it a real
+     * observer pattern (i.e. with a plurality of observers)
      * @param showLinks Whether to display the task links
      */
     @SuppressWarnings("unchecked")
-    public void startPlay( EntityObserver entityObserver, boolean showLinks ) {
+    public void startPlay(EntityObserver entityObserver, boolean showLinks) {
         this.entityObserver = entityObserver;
         entityObserver.startPlay(this, showLinks);
         entityObserver.post(displayContent());
@@ -562,7 +565,7 @@ public final class Concept extends Item {
         }
 
         @Override
-	public BagObserver<TermLink> createBagObserver() {
+        public BagObserver<TermLink> createBagObserver() {
             return new NullBagObserver<TermLink>();
         }
 
@@ -580,12 +583,11 @@ public final class Concept extends Item {
     }
 
     /**
-    * Return the questions, called in ComposionalRules
-    * in dedConjunctionByQuestion only
-    */
+     * Return the questions, called in ComposionalRules in
+     * dedConjunctionByQuestion only
+     */
     public List<Task> getQuestions() {
         return questions;
     }
-    
-    
+
 }
