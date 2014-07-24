@@ -1,0 +1,9 @@
+
+********** multiple variable elimination
+<<$x --> lock> ==> (&&,<#y --> key>,<$x --> (/,open,#y,_)>)>.  
+// Every lock can be opened by some key.
+<{lock1} --> lock>. 
+// Lock-1 is a lock.
+9
+ OUT: (&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.81% 
+// Some key can open Lock-1.

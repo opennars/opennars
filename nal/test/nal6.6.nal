@@ -1,0 +1,9 @@
+********** variable unification
+<(&&,<$x --> flyer>,<(*,$x,worms) --> food>) ==> <$x --> bird>>.
+// If something can fly and eats worms, then it is a bird.
+<<$y --> flyer> ==> <$y --> [with-wings]>>.
+// If something can fly, then it has wings.
+4
+ OUT: <(&&,<$1 --> [with-wings]>,<worms --> (/,food,$1,_)>) ==> <$1 --> bird>>. %1.00;0.45% 
+// If something has wings and eats worms, then I guess it is a bird.
+

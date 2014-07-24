@@ -1,0 +1,10 @@
+********** recursion
+  IN: <0 --> num>. %1.00;0.90% {0 : 1} 
+// 0 is a number
+  IN: <<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2} 
+// If n is a number, n+1 is also a number
+  IN: <(*,(*,(*,0))) --> num>?  {0 : 3} 
+// 3 is a number?
+1029
+ OUT: <(*,(*,(*,0))) --> num>. %1.00;0.66%
+// I guess 3 is a number
