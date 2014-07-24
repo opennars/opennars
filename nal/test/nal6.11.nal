@@ -1,0 +1,9 @@
+********** variable elimination
+<{Tweety} --> [with-wings]>.
+// Tweety has wings.
+<(&&,<$x --> [chirping]>,<$x --> [with-wings]>) ==> <$x --> bird>>.
+// If something can chirp and has wings, then it is a bird.
+23
+ OUT: <<{Tweety} --> [chirping]> ==> <{Tweety} --> bird>>. %1.00;0.81%
+// If Tweety can chirp, then it is a bird.
+

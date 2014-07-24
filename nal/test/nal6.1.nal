@@ -1,0 +1,11 @@
+
+********** variable unification
+<<$x --> bird> ==> <$x --> animal>>. 
+// If something is a bird, then it is a animal. 
+<<$y --> robin> ==> <$y --> bird>>. 
+// If something is a robin, then it is a bird. 
+3
+ OUT: <<$1 --> robin> ==> <$1 --> animal>>. %1.00;0.81% 
+// If something is a robin, then it is a animal. 
+ OUT: <<$1 --> animal> ==> <$1 --> robin>>. %1.00;0.45% 
+ // I guess that if something is a animal, then it is a robin. 

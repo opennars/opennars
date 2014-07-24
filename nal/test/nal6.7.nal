@@ -1,0 +1,9 @@
+****** variable elimination
+<<$x --> bird> ==> <$x --> animal>>.
+// If something is a bird, then it is an animal.
+<robin --> bird>. 
+// A robin is a bird.
+3
+ OUT: <robin --> animal>. %1.00;0.81%  
+// A robin is an animal.
+

@@ -1,0 +1,10 @@
+
+********** variable elimination
+<(&&,<$x --> flyer>,<$x --> [chirping]>, <(*, $x, worms) --> food>) ==> <$x --> bird>>. 
+// If something can fly, chirp, and eats worms, then it is a bird.
+<{Tweety} --> flyer>.
+// Tweety can fly.
+7
+ OUT: <(&&,<(*,{Tweety},worms) --> food>,<{Tweety} --> [chirping]>) ==> <{Tweety} --> bird>>. %1.00;0.81%
+// If Tweety can chirp and eats worms, then it is a bird.
+
