@@ -27,7 +27,7 @@ import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
 /**
- * A Product is a sequence of terms.
+ * A Product is a sequence of 1 or more terms.
  */
 public class Product extends CompoundTerm {
     
@@ -50,6 +50,11 @@ public class Product extends CompoundTerm {
     private Product(final String n, final ArrayList<Term> cs, final boolean con, final short complexity) {
         super(n, cs, con, complexity);
     }
+    
+    @Override
+    public int getMinimumRequiredComponents() {
+        return 1;
+    }    
     
     /**
      * Clone a Product
