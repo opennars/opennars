@@ -86,7 +86,7 @@ public class NALTest  {
     
     protected void testNAL(final String path) {
         final NAR n = new NAR();        
-        
+        //NAR.DEBUG = true;
         
         final LinkedList<String> expressions = new LinkedList();
         out.clear();
@@ -96,7 +96,11 @@ public class NALTest  {
         new TextOutput(n) {
             @Override
             public void output(Class c, Object line) {                
-                if (c == Output.ERR.class) {   
+                if (c == Output.ERR.class) {                       
+                    if (line instanceof Exception) {
+                        ((Exception)line).printStackTrace();;
+                    }
+
                     assertTrue(path + " ERR: " + line, false);
                 }
                 
