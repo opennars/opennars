@@ -85,7 +85,10 @@ public class NALTest  {
     }
     
     protected void testNAL(final String path) {
-        final NAR n = new NAR();        
+        
+        NAR.resetStatics();
+        
+        final NAR n = new NAR();
         
         
         final LinkedList<String> expressions = new LinkedList();

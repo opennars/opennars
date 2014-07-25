@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import nars.entity.Sentence;
 
 import nars.entity.Stamp;
@@ -407,5 +408,9 @@ public class NAR implements Runnable, Output {
     }
 
 
+    public static void resetStatics() {
+        Memory.randomNumber = new Random(1);
+        Stamp.currentSerial = 0;
+    }
     
 }
