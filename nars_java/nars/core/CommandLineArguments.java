@@ -16,7 +16,8 @@ public class CommandLineArguments {
             String arg = args[i];
             if ("--silence".equals(arg)) {
                 arg = args[++i];
-                r.param.setSilenceLevel(Integer.parseInt(arg));
+                int sl = Integer.parseInt(arg);                
+                r.param.setSilenceLevel(sl);
             }
         }
     }

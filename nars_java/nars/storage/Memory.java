@@ -21,6 +21,7 @@
 package nars.storage;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -40,7 +41,6 @@ import nars.inference.InferenceRecorder;
 import nars.language.Term;
 import nars.core.Parameters;
 import nars.core.NAR;
-import nars.entity.ShortFloat;
 import nars.io.Output.OUT;
 
 /**
@@ -328,9 +328,12 @@ public class Memory {
             final Stamp stamp = task.getSentence().getStamp();
             final List<Term> chain = stamp.getChain();
             
+            final Term currentTaskContent = currentTask.getContent();
+            
 	    if (currentBelief != null) {
                 final Term currentBeliefContent = currentBelief.getContent();
                 if(chain.contains(currentBeliefContent)) {
+                //if(stamp.chainContainsInstance(currentBeliefContent)) {
                     chain.remove(currentBeliefContent);
                 }
                 stamp.addToChain(currentBeliefContent);
@@ -339,16 +342,16 @@ public class Memory {
             
             //workaround for single premise task issue:
             if(currentBelief == null && single && currentTask != null) {
-                final Term currentTaskContent = currentTask.getContent();
                 if(chain.contains(currentTaskContent)) {
+                //if(stamp.chainContainsInstance(currentTaskContent)) {
                     chain.remove(currentTaskContent);
                 }
                 stamp.addToChain(currentTaskContent);
             }
             //end workaround
             if (currentTask != null && !single) {
-                final Term currentTaskContent = currentTask.getContent();
-                if(chain.contains(currentTaskContent)) {
+                if(chain.contains(currentTaskContent)) {                
+                //if(stamp.chainContainsInstance(currentTaskContent)) {                    
                     chain.remove(currentTaskContent);
                 }
                 stamp.addToChain(currentTaskContent);
@@ -356,11 +359,12 @@ public class Memory {
                           
             
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
-                for (int i = 0; i < chain.size(); i++) {
-                    final Term chain1 = chain.get(i);
-                    if (task.getContent() == chain1) {
+                final Term taskContent = task.getContent();
+             
+                    final Term chainItem = chain.get(i);
+                    for (int i = 0; i < chain.size(); i++) {   if (taskContent == chainItem) {
                         if (recorder.isActive()) {
-                            recorder.onTaskRemove(task, "Cyclic Reasoning");
+                            recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
                         }
                         return;
                     }
@@ -677,6 +681,11 @@ public class Memory {
 
     private void onTaskAdd(Task t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /** returns a collection of all concepts */
+    public Collection<Concept> getConcepts() {
+        return concepts.nameTable.values();
     }
 
     public static final class NullInferenceRecorder implements InferenceRecorder {

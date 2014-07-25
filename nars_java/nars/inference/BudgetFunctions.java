@@ -21,6 +21,7 @@
 package nars.inference;
 
 import nars.entity.*;
+import nars.io.Output.ERR;
 import nars.language.*;
 import nars.storage.Memory;
 
@@ -116,9 +117,25 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.decDurability(1 - difB);
         }
         final float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
-        final float priority = or(dif, task.getPriority());
-        final float durability = aveAri(dif, task.getDurability());
-        final float quality = truthToQuality(truth);
+        float priority = or(dif, task.getPriority());
+        float durability = aveAri(dif, task.getDurability());
+        float quality = truthToQuality(truth);
+        
+        if (priority < 0) {
+            memory.nar.output(ERR.class, 
+                    new RuntimeException("BudgetValue.revise resulted in negative priority; set to 0"));
+            priority = 0;
+        }
+        if (durability < 0) {
+            memory.nar.output(ERR.class, 
+                    new RuntimeException("BudgetValue.revise resulted in negative durability; set to 0; aveAri(dif=" + dif + ", task.getDurability=" + task.getDurability() +") = " + durability));
+            durability = 0;
+        }
+        if (quality < 0) {
+            memory.nar.output(ERR.class, 
+                    new RuntimeException("BudgetValue.revise resulted in negative quality; set to 0"));
+            quality = 0;
+        }
         return new BudgetValue(priority, durability, quality);
     }
 
