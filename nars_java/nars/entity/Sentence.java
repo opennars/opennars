@@ -68,8 +68,10 @@ public class Sentence implements Cloneable {
      * base
      */
     public Sentence(final Term content, final char punctuation, final TruthValue truth, final Stamp stamp) {
-        this.content = content;
+        //clone the incoming content, since it will have an unmodifiable component list if it's CompoundTerm
+        this.content = content;        
         this.content.renameVariables();
+        
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;

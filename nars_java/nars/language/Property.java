@@ -27,7 +27,7 @@ import nars.storage.Memory;
  * A Statement about a Property relation, which is used only in Narsese for I/O, 
  * and translated into Inheritance for internal use.
  */
-public abstract class Property extends Statement {
+public abstract class Property /*extends Statement*/ {
     
     /**
      * Try to make a new compound from two components. Called by the inference rules.
