@@ -247,7 +247,7 @@ public class OutputLogPanel extends NPanel implements Output {
                         float contentSize = 1f; //0.75f+conf;
                         
                         Color contentColor = Color.getHSBColor(0.5f + (freq-0.5f)/2f, 1.0f, 0.05f + 0.5f - conf/4f);                        
-                        print(contentColor, contentSize, s.getContent().toString() + s.getPunctuation(), s.isQuestion());
+                        print(contentColor, contentSize, s.getContent().toString() + s.getPunctuation() + ' ' + s.getStamp().getTense(nar.memory.getTime()), s.isQuestion());
                        
                         if (s.getTruth()!=null) {
                             Color truthColor = Color.getHSBColor(freq, 0, 0.25f - conf/4f);
@@ -257,7 +257,7 @@ public class OutputLogPanel extends NPanel implements Output {
                         if ((showStamp) && (s.getStamp()!=null)) {
                             Color stampColor = Color.GRAY;
                             print(stampColor, contentSize, 
-                                    " " + s.getStamp().getOccurrenceTimeString() + 
+                                    " " + s.getStamp().getTense(nar.memory.getTime()) + 
                                     " " + s.getStamp().toString(), false);
                         }
                     }
@@ -265,7 +265,7 @@ public class OutputLogPanel extends NPanel implements Output {
                         print(Color.BLACK, 1.0f, o.toString(), false);
                     }
                 }
-
+                
                 nextOutput.clear();
             }
         }

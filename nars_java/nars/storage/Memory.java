@@ -491,6 +491,11 @@ public class Memory {
         derivedTask(newTask, false, true);
     }
 
+    public void singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
+        Task newTask = new Task(newSentence, newBudget, currentTask, null);
+        derivedTask(newTask, false, true);
+    }
+
     /* ---------- system working workCycle ---------- */
     /**
      * An atomic working cycle of the system: process new Tasks, then fire a

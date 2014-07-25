@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.Arrays;
 
 import nars.core.NAR;
+import nars.entity.Sentence;
 
 /**
  * To read and write experience as Task streams
@@ -120,7 +121,12 @@ public class TextOutput implements Output {
     
     public String process(final Class c, final Object o) {
         result.setLength(0);
-        result.append(c.getSimpleName()).append(": ").append(o.toString());
+        result.append(c.getSimpleName()).append(": ");
+        if (o instanceof Sentence) {
+            result.append(((Sentence) o).display(reasoner.memory.getTime()));
+        } else {
+            result.append(o.toString());
+        }
         if (errorStack && (c == ERR.class)) {
             if (o instanceof Exception) {
                 Exception e = (Exception)o;
