@@ -60,7 +60,7 @@ public class Stamp implements Cloneable {
     /**
      * estimated occurrence time of the event
      */
-    public final long occurrenceTime;
+    public long occurrenceTime;
 
     /**
      * default for atemporal events, means "always"
@@ -380,6 +380,27 @@ public class Stamp implements Cloneable {
             String ot = String.valueOf(occurrenceTime);
             return new StringBuilder(ot.length()+2).append('[').append(ot).append(']').toString();
         }
+    }
+
+    public String getTense(long currentTime) {
+        String tenseString = "";
+        if (occurrenceTime == Stamp.ETERNAL) {
+            return tenseString;
+        }
+        long timeDiff = occurrenceTime - currentTime;
+        if (timeDiff > Parameters.DURATION) {
+            tenseString = Symbols.TENSE_FUTURE;
+        } else if (timeDiff < -Parameters.DURATION) {
+            tenseString = Symbols.TENSE_PAST;
+        } else {
+            tenseString = Symbols.TENSE_PRESENT;
+        }
+        return new StringBuilder(tenseString.length() + 1).append(tenseString).append(' ').toString();
+    }
+
+
+    public void setOccurrenceTime(long time) {
+        occurrenceTime = time;
     }
 
     //String toStringCache = null; //holds pre-allocated string for toString()

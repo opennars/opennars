@@ -20,6 +20,8 @@
  */
 package nars.entity;
 
+import nars.core.Parameters;
+import static nars.entity.Stamp.ETERNAL;
 import nars.io.Symbols;
 import nars.language.*;
 import nars.inference.TruthFunctions;
@@ -135,18 +137,26 @@ public class Sentence implements Cloneable {
 
     public Sentence projection(long targetTime, long currentTime) {
         TruthValue newTruth = new TruthValue(truth);
+        Stamp newStamp = (Stamp) stamp.clone();
+        boolean eternalizing = false;
         if (stamp.getOccurrenceTime() != Stamp.ETERNAL) {
             newTruth = TruthFunctions.eternalization(truth);
+            eternalizing = true;
             if (targetTime != Stamp.ETERNAL) {
                 long occurrenceTime = stamp.getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
                     newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
+                    eternalizing = false;
                 }
             }
         }
-        return new Sentence((Term) content.clone(), punctuation, newTruth, (Stamp) stamp.clone());
+        if (eternalizing) {
+            newStamp.setOccurrenceTime(Stamp.ETERNAL);
+        }
+        Sentence newSentence = new Sentence((Term) content.clone(), punctuation, newTruth, newStamp);
+        return newSentence;
     }
 
     /**
@@ -232,7 +242,11 @@ public class Sentence implements Cloneable {
     public int getTemporalOrder() {
         return content.getTemporalOrder();
     }
-
+    
+    public long getOccurenceTime() {
+        return stamp.getOccurrenceTime();
+    }
+    
     /**
      * Get a String representation of the sentence
      *

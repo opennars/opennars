@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import nars.core.Parameters;
 import nars.entity.*;
 import nars.language.*;
 import nars.io.Symbols;
@@ -224,6 +225,16 @@ public final class SyllogisticRules {
         }
         if ((content instanceof Statement) && ((Statement) content).invalid()) {
             return;
+        }
+        int order = statement.getTemporalOrder();
+        if (order != Stamp.ETERNAL) {
+            long baseTime = subSentence.getOccurenceTime();
+            if (baseTime == Stamp.ETERNAL) {
+                baseTime = memory.getTime();
+            }
+            long inc = order * Parameters.DURATION;
+            long time = (side == 0) ? baseTime+inc : baseTime-inc;
+            memory.newStamp.setOccurrenceTime(time);
         }
         Sentence taskSentence = memory.currentTask.getSentence();
         Sentence beliefSentence = memory.currentBelief;
