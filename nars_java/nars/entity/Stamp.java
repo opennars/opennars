@@ -40,7 +40,7 @@ public class Stamp implements Cloneable {
      * serial number, for the whole system TODO : should it really be static? or
      * a Stamp be a field in {@link ReasonerBatch} ?
      */
-    private static long currentSerial = 0;
+    public static long currentSerial = 0;
 
     /**
      * serial numbers
@@ -65,12 +65,12 @@ public class Stamp implements Cloneable {
     /**
      * default for atemporal events, means "always"
      */
-    public static long ETERNAL = Integer.MIN_VALUE;
+    public static final long ETERNAL = Integer.MIN_VALUE;
 
     /**
      * used when the occurrence time cannot be estimated, means "unknown"
      */
-    public static long UNKNOWN = Integer.MAX_VALUE;
+    public static final long UNKNOWN = Integer.MAX_VALUE;
 
     /**
      * derivation chain containing the used premises and conclusions which made

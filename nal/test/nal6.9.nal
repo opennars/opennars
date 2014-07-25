@@ -1,9 +1,13 @@
 '********** variable elimination
-<<$x --> animal> <=> <$x --> bird>>. 
+
 'Something is a animal if and only if it is a bird.
-<robin --> bird>.
+<<$x --> animal> <=> <$x --> bird>>. 
+
 'A robin is a bird.
+<robin --> bird>.
+
 3
-''outputMustContain('<robin --> animal>. %1.00;0.81%  
+
 'A robin is a animal.
+''outputMustContain('<robin --> animal>. %1.00;0.81%')
 
