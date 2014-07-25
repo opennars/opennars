@@ -99,7 +99,11 @@ public class NALTest  {
         new TextOutput(n) {
             @Override
             public void output(Class c, Object line) {                
-                if (c == Output.ERR.class) {   
+                if (c == Output.ERR.class) {                       
+                    if (line instanceof Exception) {
+                        ((Exception)line).printStackTrace();;
+                    }
+
                     assertTrue(path + " ERR: " + line, false);
                 }
                 

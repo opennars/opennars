@@ -29,6 +29,8 @@ public class ShortFloat implements Cloneable {
     but used as float */
     private short value;
 
+    public static final float MIN_VALUE = 0.0001f;
+    
     /**
      * Constructor
      * @param v The initial value
