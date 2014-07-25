@@ -84,12 +84,17 @@ public class NARRun {
     public void runInference(String args[]) {
         init(args);
         run();
+        System.exit(0);
     }
 
     /**
      * initialize from an addInput file
      */
     public void init(String[] args) {
+        TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
+        output.setErrors(true);
+        output.setErrorStackTrace(true);
+        
         if (args.length > 0) {
             try {
                 TextInput fileInput = new TextInput(nar, new File(args[0]));
@@ -100,14 +105,13 @@ public class NARRun {
         else {
             new TextInput(nar, new BufferedReader(new InputStreamReader(System.in)));
         }
-        new TextOutput(nar, new PrintWriter(out, true));
     }
 
     /**
      * non-static equivalent to {@link #main(String[])} : finish to completion from
  a BufferedReader
      */
-    public void runInference(BufferedReader r, BufferedWriter w) {
+    /*public void runInference(BufferedReader r, BufferedWriter w) {
         init(r, w);
         run();
     }
@@ -117,6 +121,7 @@ public class NARRun {
         nar.addOutput(new TextOutput(nar,
                 new PrintWriter(w, true)));
     }
+    */
 
     /**
      * Initialize the system at the control center.<p>
@@ -133,24 +138,22 @@ public class NARRun {
      */
     public void run() {
         while (true) {
-            log("NARSBatch.run():"
-                    + " step " + nar.getTime()
-                    + " " + nar.inputChannels.size());
+            if (logging)
+                log("NARSBatch.run():"
+                        + " step " + nar.getTime()
+                        + " " + nar.inputChannels.size());
             
-            try {
-                nar.tick();
-            }
-            catch (Exception e) {
-                System.err.println(e);
-            }
+
+            nar.step(1);
             
-            log("NARSBatch.run(): after tick"
-                    + " step " + nar.getTime()
-                    + " " + nar.inputChannels.size());
+            
+            if (logging)
+                log("NARSBatch.run(): after tick"
+                        + " step " + nar.getTime()
+                        + " " + nar.inputChannels.size());
             
             if (maxTime > 0) {
-                if ((nar.inputChannels.size() == 0)
-                        || nar.getTime() == maxTime) {
+                if ((nar.inputChannels.size() == 0) || nar.getTime() == maxTime) {
                     break;
                 }
             }

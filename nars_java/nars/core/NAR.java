@@ -346,7 +346,7 @@ public class NAR implements Runnable, Output {
     /**
      * A clock tick, consisting of 1) processing input, 2) one workCycle.
      */
-    protected void tick() {
+    private void tick() {
         if (DEBUG) {
             debugTime();            
         }
