@@ -334,9 +334,16 @@ public class Stamp implements Cloneable {
             return false;
         }
 
+        Stamp s = (Stamp)that;
+        if (occurrenceTime!=s.occurrenceTime)
+            return false;
+        
+        //TODO see if there is a faster way than creating two treeset's
         final TreeSet<Long> set1 = toSet();
-        final TreeSet<Long> set2 = ((Stamp) that).toSet();
-        return (set1.containsAll(set2) && set2.containsAll(set1));
+        final TreeSet<Long> set2 = s.toSet();
+
+        //return (set1.containsAll(set2) && set2.containsAll(set1));
+        return set1.equals(set2);
     }
 
     /**
@@ -346,7 +353,7 @@ public class Stamp implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        throw new UnsupportedOperationException("Hashcode not used currently");
     }
 
     //return toString().hashCode();
