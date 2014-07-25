@@ -62,6 +62,11 @@ public class ImageInt extends CompoundTerm {
         relationIndex = index;
     }
 
+    @Override
+    public int getMinimumRequiredComponents() {
+        return 1;
+    }
+    
     /**
      * Clone an object
      * @return A new object, to be casted into an ImageInt
