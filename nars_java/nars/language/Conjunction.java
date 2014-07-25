@@ -43,6 +43,12 @@ public class Conjunction extends CompoundTerm {
         setName(makeName());
     }
 
+    @Override
+    public int getMinimumRequiredComponents() {
+        return 1;
+    }
+
+    
     /**
      * Constructor with full values, called by clone
      *
