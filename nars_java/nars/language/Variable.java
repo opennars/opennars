@@ -120,8 +120,25 @@ public class Variable extends Term {
      * @return Whether the name contains a variable
      */
     public static boolean containVar(final String n) {
-        return containVarIndep(n) || containVarDep(n) || containVarQuery(n);
+        //return containVarIndep(n) || containVarDep(n) || containVarQuery(n);
+        
+        //replaced with one iteration:
+        for (int i = 0; i < n.length(); i++) {
+            char c = n.charAt(i);
+            if ((c == Symbols.VAR_INDEPENDENT) || (c == Symbols.VAR_DEPENDENT) || (c == Symbols.VAR_QUERY))
+                return true;
+        }
+        return false;
     }
+    
+    public static boolean containDepOrIndepVar(final String n) {
+        for (int i = 0; i < n.length(); i++) {
+            char c = n.charAt(i);
+            if ((c == Symbols.VAR_INDEPENDENT) || (c == Symbols.VAR_DEPENDENT))
+                return true;
+        }
+        return false;
+    }    
 
     /**
      * To unify two terms

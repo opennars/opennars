@@ -161,8 +161,11 @@ public abstract class CompoundTerm extends Term {
         if (!(that instanceof CompoundTerm))
             return false;
         
-        final CompoundTerm t = (CompoundTerm)that;    
-                
+        final CompoundTerm t = (CompoundTerm)that;
+        
+        if (hashCode() != t.hashCode())
+            return false;
+        
         if (operator() != t.operator())
             return false;
         
@@ -180,10 +183,13 @@ public abstract class CompoundTerm extends Term {
 
     @Override
     public int hashCode() {
+        return name.hashCode();
+        /*
         int hash = 7;
         hash = 43 * hash + Objects.hashCode(this.components);
         hash = 43 * hash + operator().hashCode();
         return hash;
+        */
     }
         
 
