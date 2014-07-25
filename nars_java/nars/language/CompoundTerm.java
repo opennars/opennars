@@ -749,8 +749,7 @@ public abstract class CompoundTerm extends Term {
             components.addAll(ordered);*/
             
             Collections.sort(components);
-                                    
-            //ensureValidComponents(components); //additional test, not usually required, but here for future debugging
+
         }
         name = makeName();
     }
