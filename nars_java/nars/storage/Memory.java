@@ -40,7 +40,6 @@ import nars.inference.InferenceRecorder;
 import nars.language.Term;
 import nars.core.Parameters;
 import nars.core.NAR;
-import nars.entity.ShortFloat;
 import nars.io.Output.OUT;
 
 /**
@@ -316,7 +315,7 @@ public class Memory {
     private void derivedTask(final Task task, final boolean revised, final boolean single) {
         if (task.getBudget().aboveThreshold()) {
             if (task.getSentence() != null && task.getSentence().getTruth() != null) {
-                float conf = task.getSentence().getTruth().getConfidence();                
+                float conf = task.getSentence().getTruth().getConfidence();
                 if (conf == 0) { 
                     //no confidence - we can delete the wrongs out that way.
                     if (recorder.isActive()) {
@@ -333,27 +332,28 @@ public class Memory {
                 if(chain.contains(currentBeliefContent)) {
                     chain.remove(currentBeliefContent);
                 }
-                stamp.addToChain(currentBeliefContent);
+                stamp.addToChain(currentBeliefContent, task.getSentence());
             }
             
-            
-            //workaround for single premise task issue:
-            if(currentBelief == null && single && currentTask != null) {
+            if (currentTask!=null) {
                 final Term currentTaskContent = currentTask.getContent();
-                if(chain.contains(currentTaskContent)) {
-                    chain.remove(currentTaskContent);
+
+                //workaround for single premise task issue:           
+                if (single && (currentBelief == null)) {
+                    if (chain.contains(currentTaskContent)) {
+                        chain.remove(currentTaskContent);
+                    }
+                    stamp.addToChain(currentTaskContent, task.getSentence());
                 }
-                stamp.addToChain(currentTaskContent);
-            }
-            //end workaround
-            if (currentTask != null && !single) {
-                final Term currentTaskContent = currentTask.getContent();
-                if(chain.contains(currentTaskContent)) {
-                    chain.remove(currentTaskContent);
+                //end workaround            
+
+                if (!single) {
+                    if(chain.contains(currentTaskContent)) {
+                        chain.remove(currentTaskContent);
+                    }
+                    stamp.addToChain(currentTaskContent, task.getSentence());
                 }
-                stamp.addToChain(currentTaskContent);
             }
-                          
             
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
                 for (int i = 0; i < chain.size(); i++) {
@@ -382,16 +382,12 @@ public class Memory {
             }
             float budget = task.getBudget().summary();
             float minSilent = nar.param.getSilenceLevel() / 100.0f;
-            
-            
-            //Experiment:  if it has the budget (equal) then it  should be able to buy the output, so changing '>' to '>='           
-            if (budget >= minSilent) {  
-                // only report significant derived Tasks
+            if (budget > minSilent) {  // only report significant derived Tasks
                 nar.output(OUT.class, task.getSentence());
             }
-            
-            addNewTask(task, "Derived");
-            
+            if (recorder.isActive()) {                
+                addNewTask(task, "Derived");
+            }
         } else {            
             if (recorder.isActive()) {
                 recorder.onTaskRemove(task, "Ignored");

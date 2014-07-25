@@ -42,8 +42,7 @@ public abstract class CompoundTerm extends Term {
     /**
      * list of (direct) components
      */
-    public final List<Term> components;
-    
+    public final ArrayList<Term> components;
     /**
      * syntactic complexity of the compound, the sum of those of its components
      * plus 1
@@ -84,11 +83,17 @@ public abstract class CompoundTerm extends Term {
      */
     protected CompoundTerm(final String name, final ArrayList<Term> components, final boolean isConstant, final short complexity) {
         super(name);
-        this.components = ensureValidComponents(components);
+        this.components = components;
         this.isConstant = isConstant;
         this.complexity = complexity;
     }
 
+    /**
+     * Default constructor
+     */
+    protected CompoundTerm() {
+        this.components = null;
+    }
 
     /**
      * Constructor called from subclasses constructors to initialize the fields
@@ -96,24 +101,12 @@ public abstract class CompoundTerm extends Term {
      * @param components Component list
      */
     protected CompoundTerm(final ArrayList<Term> components) {
-        this.components = ensureValidComponents(components);
+        this.components = components;
         calcComplexity();
         setName(makeName());
         isConstant = !Variable.containVar(name);
     }
 
-    private List<Term> ensureValidComponents(final List<Term> components) {
-        if (components.size() < getMinimumRequiredComponents()) {
-            throw new RuntimeException(getClass().getSimpleName() + " requires >=" + getMinimumRequiredComponents() + " components, invalid argument:" + components);
-        }
-        
-        //return Collections.unmodifiableList( components );
-        return components;
-    }
-    
-    public int getMinimumRequiredComponents() {
-        return 2;
-    }
     
     /**
      * Constructor called from subclasses constructors to initialize the fields
@@ -122,7 +115,7 @@ public abstract class CompoundTerm extends Term {
      * @param components Component list
      */
     protected CompoundTerm(final String name, final ArrayList<Term> components) {
-        this.components = ensureValidComponents(components);
+        this.components = components;
         calcComplexity();
         setName(name);
         isConstant = !Variable.containVar(name);
@@ -359,7 +352,7 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of components
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final Operator op, final List<Term> arg) {
+    protected static String makeCompoundName(final Operator op, final ArrayList<Term> arg) {
         final StringBuilder nameBuilder = new StringBuilder(16  /* estimate */)
             .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
         for (final Term t : arg) {
@@ -381,24 +374,21 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of components
      * @return the oldName of the term
      */
-    protected static String makeSetName(final char opener, final List<Term> arg, final char closer) {
+    protected static String makeSetName(final char opener, final ArrayList<Term> arg, final char closer) {
         StringBuilder name = new StringBuilder(16 /* estimate */)
             .append(opener);
 
         if (arg.size() == 0) { 
             //is empty arg valid?            
-            //throw new RuntimeException("Empty arg list for makeSetName");            
-        }
-        else {
-        
-            name.append(arg.get(0).getName());
-
-            for (int i = 1; i < arg.size(); i++) {
-                name.append(Symbols.ARGUMENT_SEPARATOR);
-                name.append(arg.get(i).getName());
-            }
+            throw new RuntimeException("Empty arg list for makeSetName");
         }
         
+        name.append(arg.get(0).getName());
+        
+        for (int i = 1; i < arg.size(); i++) {
+            name.append(Symbols.ARGUMENT_SEPARATOR);
+            name.append(arg.get(i).getName());
+        }
         name.append(closer);
         return name.toString();
     }
@@ -411,7 +401,7 @@ public abstract class CompoundTerm extends Term {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(final Operator op, final List<Term> arg, final int relationIndex) {
+    protected static String makeImageName(final Operator op, final ArrayList<Term> arg, final int relationIndex) {
         StringBuilder name = new StringBuilder(16 /* estimate */)
         .append(Symbols.COMPOUND_TERM_OPENER)
         .append(op)
@@ -499,7 +489,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @return The component list
      */
-    public List<Term> getComponents() {
+    public ArrayList<Term> getComponents() {
         return components;
     }
     
@@ -529,7 +519,7 @@ public abstract class CompoundTerm extends Term {
      * @param original The original component list
      * @return an identical and separate copy of the list
      */
-    public static ArrayList<Term> cloneList(final List<Term> original) {
+    public static ArrayList<Term> cloneList(final ArrayList<Term> original) {
         if (original == null) {
             return null;
         }
@@ -680,11 +670,7 @@ public abstract class CompoundTerm extends Term {
     @Override
     public void renameVariables() {
         if (containVar()) {
-            int existingComponents = components.size();
             renameVariables(new HashMap<Variable, Variable>());
-            if (components.size() != existingComponents) {
-                throw new RuntimeException(this + " renameVariables() failed to maintain same number of components");
-            }
         }
         setConstant(true);
         setName(makeName());
@@ -742,13 +728,9 @@ public abstract class CompoundTerm extends Term {
             i++;
         }
         if (this.isCommutative()) {         
-            
-            // re-order            
-            final TreeSet<Term> ordered = new TreeSet<>(components);
-            components.clear();            
-            components.addAll(ordered);
-            
-            //ensureValidComponents(components); //additional test, not usually required, but here for future debugging
+            // re-order
+            components.clear();
+            components.addAll(new TreeSet<>(components));
         }
         name = makeName();
     }

@@ -139,26 +139,22 @@ public class Stamp implements Cloneable {
      * @param second The second Stamp
      */
     private Stamp(final Stamp first, final Stamp second, final long time) {
-        //TODO use iterators instead of repeated first and second .get's?
-        
+        //TODO use iterators instead of repeated first and second .get's
         int i1, i2, j;
         i1 = i2 = j = 0;
         baseLength = Math.min(first.length() + second.length(), Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
         evidentialBase = new long[baseLength];
 
         final long[] firstBase = first.getBase();
-        final long[] secondBase = second.getBase();        
-        int firstLength = firstBase.length;
-        int secondLength = secondBase.length;
-        
-        //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
-        while (i2 < secondLength && j < baseLength) {
+        final long[] secondBase = second.getBase();
+
+        while (i2 < second.length() && j < baseLength) {
+            evidentialBase[j++] = firstBase[i1++];
             evidentialBase[j++] = secondBase[i2++];
         }
-        while (i1 < firstLength && j < baseLength) {
+        while (i1 < first.length() && j < baseLength) {
             evidentialBase[j++] = firstBase[i1++];
         }
-        
 
         final List<Term> chain1 = first.getChain();
         final List<Term> chain2 = second.getChain();
@@ -171,7 +167,7 @@ public class Stamp implements Cloneable {
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
-                    final Term c1i1 = chain1.get(i1);                    
+                    final Term c1i1 = chain1.get(i1);
                     if (!derivationChain.contains(c1i1)) {
                         derivationChain.add(c1i1);
                     } else {
@@ -301,12 +297,14 @@ public class Stamp implements Cloneable {
      *
      * @return The evidentialBase of numbers
      */
-    public void addToChain(final Term T) {
+    public void addToChain(final Term T, Sentence owner) {
         derivationChain.add(T);
         if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
             derivationChain.remove(0);
         }
-
+        
+        //The Sentence this belongs to should have its setStamp() method called afterward to invalidate any cached strings.
+        owner.setStamp(this);
     }
 
     /**

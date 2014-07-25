@@ -61,11 +61,6 @@ public class ImageExt extends CompoundTerm {
         super(n, cs, con, complexity);
         relationIndex = index;
     }
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
 
     /**
      * Clone an object

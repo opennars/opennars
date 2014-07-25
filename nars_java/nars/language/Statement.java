@@ -44,7 +44,11 @@ public abstract class Statement extends CompoundTerm {
         super(arg);
     }
 
-    
+    /**
+     * Default constructor
+     */
+    protected Statement() {
+    }
 
     /**
      * Constructor with full values, called by clone

@@ -116,7 +116,7 @@ public class LocalRules {
                 belief = (Sentence) belief.clone();
                 belief.setContent(content);
                 Stamp st = new Stamp(belief.getStamp(), memory.getTime());
-                st.addToChain(belief.getContent());
+                st.addToChain(belief.getContent(), belief);
             }
             task.setBestSolution(belief);
             if (task.isInput()) {    // moved from Sentence
