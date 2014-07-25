@@ -38,9 +38,6 @@ public class Disjunction extends CompoundTerm {
      */
     private Disjunction(ArrayList<Term> arg) {
         super(arg);
-        if (arg.size()<2) {
-            throw new RuntimeException("Conjunction requires >=2 components");
-        }
     }
 
     /**
@@ -50,11 +47,8 @@ public class Disjunction extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Disjunction(String n, ArrayList<Term> arg, boolean con, short i) {
-        super(n, arg, con, i);
-        if (arg.size()<2) {
-            throw new RuntimeException("Conjunction requires >=2 components");
-        }        
+    private Disjunction(String n, ArrayList<Term> cs, boolean con, short i) {
+        super(n, cs, con, i);
     }
 
     /**

@@ -22,6 +22,7 @@ package nars.language;
 
 import java.util.*;
 
+import nars.io.Symbols;
 import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 import nars.inference.TemporalRules;
@@ -51,8 +52,8 @@ public class Conjunction extends CompoundTerm {
      * @param con Whether the term is a constant
      * @param i Syntactic complexity of the compound
      */
-    private Conjunction(String n, ArrayList<Term> arg, boolean con, short i, int order) {
-        super(n, arg, con, i);
+    private Conjunction(String n, ArrayList<Term> cs, boolean con, short i, int order) {
+        super(n, cs, con, i);
         temporalOrder = order;
     }
 

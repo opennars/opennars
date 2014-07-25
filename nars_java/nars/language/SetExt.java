@@ -51,11 +51,6 @@ public class SetExt extends CompoundTerm {
         super(n, cs, con, i);
     }
 
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }    
-    
     /**
      * Clone a SetExt
      * @return A new object, to be casted into a SetExt
