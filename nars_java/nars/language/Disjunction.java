@@ -57,6 +57,12 @@ public class Disjunction extends CompoundTerm {
         }        
     }
 
+    
+    @Override
+    public int getMinimumRequiredComponents() {
+        return 1;
+    }
+    
     /**
      * Clone an object
      * @return A new object

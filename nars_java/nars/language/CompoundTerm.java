@@ -744,10 +744,12 @@ public abstract class CompoundTerm extends Term {
         if (this.isCommutative()) {         
             
             // re-order            
-            final TreeSet<Term> ordered = new TreeSet<>(components);
+            /*final TreeSet<Term> ordered = new TreeSet<>(components);
             components.clear();            
-            components.addAll(ordered);
+            components.addAll(ordered);*/
             
+            Collections.sort(components);
+                                    
             //ensureValidComponents(components); //additional test, not usually required, but here for future debugging
         }
         name = makeName();

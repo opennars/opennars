@@ -1,8 +1,13 @@
 '********** variable elimination
-(&&,<#x --> bird>,<#x --> swimmer>). 
+
 'Some bird can swim.
-<swan --> bird>. %0.90%
+(&&,<#x --> bird>,<#x --> swimmer>). 
+
 'Swan is a type of bird.
+<swan --> bird>. %0.90%
+
 3
-''outputMustContain('<swan --> swimmer>. %0.90;0.43%  
+
 'I guess swan can swim.
+''outputMustContain('<swan --> swimmer>. %0.90;0.43%')
+
