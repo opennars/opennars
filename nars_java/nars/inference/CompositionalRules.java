@@ -52,7 +52,7 @@ public final class CompositionalRules {
         
         Term term1 = sentence.getContent();
         Term term2 = belief.getContent();
-        Deque<Concept>[] bag = memory.concepts.itemTable;
+        Deque<Concept>[] bag = memory.concepts.itemTable;        
         
         for (final Deque<Concept> baglevel : bag) {
             
@@ -77,7 +77,7 @@ public final class CompositionalRules {
                     
                     Term pcontent = qu.getContent();
                     final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
-                    if(pcontent==null || !(pcontent instanceof Conjunction) || (ctpcontent).containVar()) {
+                    if(pcontent==null || !(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
                         continue;
                     }
                     if(!(term1 instanceof Conjunction) && !(term2 instanceof Conjunction)) {
@@ -93,14 +93,8 @@ public final class CompositionalRules {
                             continue;
                         }
                         
-                        boolean contin=false;
-                        for(Term t : ((CompoundTerm)term1).getComponents()) {
-                            if(!(ctpcontent).containComponent(t)) {
-                                contin = true;
-                                break;
-                            }
-                        }
-                        if (contin) continue;
+                        if (!((CompoundTerm)term1).containAllComponents(ctpcontent))
+                            continue;
                     }
                     if(term2 instanceof Conjunction) {
                         if(!(term1 instanceof Conjunction) && !(ctpcontent).containComponent(term1)) {
@@ -109,20 +103,14 @@ public final class CompositionalRules {
                         if(((CompoundTerm)term2).containVar()) {
                             continue;
                         }
-                        boolean contin=false;
-                        for(Term t : ((CompoundTerm)term2).getComponents()) {
-                            if(!(ctpcontent).containComponent(t)) {
-                                contin = true;
-                                break;
-                            }
-                        }
-                        if (contin) continue;
+                        
+                        if (!((CompoundTerm)term2).containAllComponents(ctpcontent))
+                            continue;
                     }
                     Term conj = Conjunction.make(term1, term2, memory);
                     
-                    if(conj.toString().contains("#") || conj.toString().contains("$")) {
+                    if (Variable.containDepOrIndepVar(conj.toString()))
                         continue;
-                    }
                     
                     TruthValue truthT = memory.currentTask.getSentence().getTruth();
                     TruthValue truthB = memory.currentBelief.getTruth();
