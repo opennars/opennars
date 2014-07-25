@@ -20,6 +20,8 @@
  */
 package nars.entity;
 
+import nars.core.Parameters;
+import static nars.entity.Stamp.ETERNAL;
 import nars.io.Symbols;
 import nars.language.*;
 import nars.inference.TruthFunctions;
@@ -150,7 +152,7 @@ public class Sentence implements Cloneable {
             }
         }
         if (eternalizing) {
-            newStamp.setEternal();
+            newStamp.setOccurrenceTime(Stamp.ETERNAL);
         }
         Sentence newSentence = new Sentence((Term) content.clone(), punctuation, newTruth, newStamp);
         return newSentence;
@@ -311,18 +313,7 @@ public class Sentence implements Cloneable {
      */
     public String display(long currentTime) {
         final String contentToString = content.toString();
-        final long occurenceTime = stamp.getOccurrenceTime();
-        String tenseString = "";
-        if (occurenceTime != Stamp.ETERNAL) {
-            long timeDiff = occurenceTime - currentTime;
-            if (timeDiff > 0) {
-                tenseString = Symbols.TENSE_FUTURE;
-            } else if (timeDiff > 0) {
-                tenseString = Symbols.TENSE_PAST;
-            } else {
-                tenseString = Symbols.TENSE_PRESENT;
-            }
-        }
+        String tenseString = stamp.getTense(currentTime);
         final String truthString = truth != null ? truth.toStringBrief() : null;
         //final String stampString = stamp.toString();
 
@@ -334,7 +325,7 @@ public class Sentence implements Cloneable {
         final StringBuilder buffer = new StringBuilder(stringLength).append(contentToString)
                 .append(punctuation).append(" ").append(tenseString);
         if (truth != null) {
-            buffer.append(truthString);
+            buffer.append(" ").append(truthString);
         }
         return buffer.toString();
     }

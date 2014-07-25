@@ -177,11 +177,11 @@ public class Stamp implements Cloneable {
                 }
             } else {
                 if (i2 >= 0) {
-                    final Term c2i2 = chain2.get(i2);                    
+                    final Term c2i2 = chain2.get(i2);
                     if (!derivationChain.contains(c2i2)) {
                         derivationChain.add(c2i2);
                     } else {
-                       j--; //was double, so we can add one more now
+                        j--; //was double, so we can add one more now
                     }
                     i2--;
                 }
@@ -213,7 +213,7 @@ public class Stamp implements Cloneable {
          }
          */
 //        if (first.length() > second.length()) {
-            return new Stamp(first, second, time); // keep the order for projection
+        return new Stamp(first, second, time); // keep the order for projection
 //        } else {
 //            return new Stamp(second, first, time);
 //        }
@@ -302,7 +302,7 @@ public class Stamp implements Cloneable {
         if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
             derivationChain.remove(0);
         }
-        
+
         //The Sentence this belongs to should have its setStamp() method called afterward to invalidate any cached strings.
         owner.setStamp(this);
     }
@@ -376,12 +376,29 @@ public class Stamp implements Cloneable {
             return "";
         } else {
             String ot = String.valueOf(occurrenceTime);
-            return new StringBuilder(ot.length()+2).append('[').append(ot).append(']').toString();
+            return new StringBuilder(ot.length() + 2).append('[').append(ot).append(']').toString();
         }
     }
-    
-    public void setEternal() {
-        occurrenceTime = ETERNAL;
+
+    public String getTense(long currentTime) {
+        String tenseString = "";
+        if (occurrenceTime == Stamp.ETERNAL) {
+            return tenseString;
+        }
+        long timeDiff = occurrenceTime - currentTime;
+        if (timeDiff > Parameters.DURATION) {
+            tenseString = Symbols.TENSE_FUTURE;
+        } else if (timeDiff < -Parameters.DURATION) {
+            tenseString = Symbols.TENSE_PAST;
+        } else {
+            tenseString = Symbols.TENSE_PRESENT;
+        }
+        return new StringBuilder(tenseString.length() + 1).append(tenseString).append(' ').toString();
+    }
+
+
+public void setOccurrenceTime(long time) {
+        occurrenceTime = time;
     }
 
     //String toStringCache = null; //holds pre-allocated string for toString()
@@ -420,7 +437,7 @@ public class Stamp implements Cloneable {
      }
      */
     @Override
-    public String toString() {
+        public String toString() {
         final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
         final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
