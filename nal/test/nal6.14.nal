@@ -1,9 +1,12 @@
-
 '********** multiple variable elimination
-<<$x --> lock> ==> (&&,<#y --> key>,<$x --> (/,open,#y,_)>)>.  
+
 'Every lock can be opened by some key.
-<{lock1} --> lock>. 
+<<$x --> lock> ==> (&&,<#y --> key>,<$x --> (/,open,#y,_)>)>.  
+
 'Lock-1 is a lock.
+<{lock1} --> lock>. 
+
 9
-''outputMustContain('(&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.81% 
+
 'Some key can open Lock-1.
+''outputMustContain('(&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.81%')
