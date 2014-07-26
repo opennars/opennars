@@ -23,6 +23,7 @@ package nars.inference;
 import java.util.*;
 
 import nars.entity.*;
+import nars.io.Symbols;
 import nars.language.*;
 import nars.storage.Memory;
 
@@ -34,6 +35,129 @@ import nars.storage.Memory;
  */
 public final class CompositionalRules {
 
+    
+    static boolean dedSecondLayerVariableUnification(Task task, Memory memory)
+    {
+        Sentence taskSentence=task.getSentence();
+        if(taskSentence==null || taskSentence.isQuestion()) {
+            return false;
+        }
+        Term taskterm=taskSentence.getContent();
+        if(taskterm instanceof CompoundTerm && (taskterm instanceof Disjunction || taskterm instanceof Conjunction || taskterm instanceof Equivalence || taskterm instanceof Implication)) { //lets just allow conjunctions, implication and equivalence for now
+            if(!Variable.containVar(taskterm.toString())) {
+                return false;
+            }           
+            Concept second=memory.concepts.takeOut();
+            if(second==null) {
+                return false;
+            }
+            if (memory.getRecorder().isActive()) {
+                memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.getTerm() + "\n");
+            }            
+            memory.concepts.putBack(second);
+            
+            Term secterm=second.getTerm();
+            if(second.beliefs==null || second.beliefs.size()==0) {
+                return false;
+            }
+           
+            Sentence second_belief=second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
+            TruthValue truthSecond=second_belief.getTruth();
+            //we have to select a random belief
+            ArrayList<CompoundTerm> terms_dependent=new ArrayList<CompoundTerm>();
+            ArrayList<CompoundTerm> terms_independent=new ArrayList<CompoundTerm>();
+            
+            //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms components
+            //for two levels, and remember the terms which unify with second
+            List<Term> components_level1=((CompoundTerm)taskterm).getComponents();            
+            Term secterm_unwrap=(Term) CompoundTerm.unwrapNegation(secterm).clone();
+            for(Term T1 : components_level1) {
+                Term T1_unwrap=CompoundTerm.unwrapNegation(T1);
+                HashMap<Term, Term> Values = new HashMap<Term, Term>(); //we are only interested in first variables
+                if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,new HashMap<Term, Term>())) {
+                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                    taskterm_subs.applySubstitute(Values);
+                    taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                    if(taskterm_subs!=null) {
+                        terms_dependent.add(taskterm_subs);
+                    }
+                }
+                HashMap<Term, Term> Values2 = new HashMap<Term, Term>(); //we are only interested in first variables
+                if(Variable.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2,new HashMap<Term, Term>())) {
+                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                    taskterm_subs.applySubstitute(Values2);
+                    taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                    if(taskterm_subs!=null) {
+                        terms_independent.add(taskterm_subs);
+                    }
+                }
+                if(!((T1_unwrap instanceof Implication) || (T1_unwrap instanceof Equivalence) || (T1_unwrap instanceof Conjunction) || (T1_unwrap instanceof Disjunction))) {
+                    continue;
+                }
+                if(T1_unwrap instanceof CompoundTerm) {
+                    List<Term> components_level2 = ((CompoundTerm)T1_unwrap).getComponents();
+                    for(Term T2 : components_level2) {
+                        Term T2_unwrap=(Term) CompoundTerm.unwrapNegation(T2).clone(); 
+                        HashMap<Term, Term> Values3 = new HashMap<Term, Term>(); //we are only interested in first variables
+                        if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<Term, Term>())) {
+                            //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
+                            CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                            taskterm_subs.applySubstitute(Values3);
+                            taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                            if(taskterm_subs!=null) {
+                                terms_dependent.add(taskterm_subs);
+                            }
+                        }
+                        HashMap<Term, Term> Values4 = new HashMap<Term, Term>(); //we are only interested in first variables
+                        if(Variable.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4,new HashMap<Term, Term>())) {
+                            //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
+                            CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                            taskterm_subs.applySubstitute(Values4);
+                            taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                            if(taskterm_subs!=null) {
+                                terms_independent.add(taskterm_subs);
+                            }
+                        }
+                    }
+                }
+            }
+            Term result;
+            TruthValue truth;
+            for(int i=0;i<terms_dependent.size();i++) {
+                result=terms_dependent.get(i);
+                truth=TruthFunctions.anonymousAnalogy(taskSentence.getTruth(), truthSecond);
+               
+                Stamp useEvidentalBase=new Stamp(taskSentence.getStamp(),second_belief.getStamp(),memory.getTime());
+                Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, 
+                        new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );
+                                                
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.getContent(), memory);
+                Task newTask = new Task(newSentence, budget, task, null);
+                Task dummy = new Task(second_belief, budget, task, null);
+                memory.currentBelief=taskSentence;
+                memory.currentTask=dummy;
+                memory.derivedTask(newTask, false, false);
+            }
+            for(int i=0;i<terms_independent.size();i++) {
+                result=terms_independent.get(i);
+                truth=TruthFunctions.deduction(taskSentence.getTruth(), truthSecond);
+               
+                Stamp useEvidentalBase=new Stamp(taskSentence.getStamp(),second_belief.getStamp(),memory.getTime());
+                Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, 
+                        new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );                
+                
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.getContent(), memory);
+                Task newTask = new Task(newSentence, budget, task, null);
+                Task dummy = new Task(second_belief, budget, task, null);
+                memory.currentBelief=taskSentence;
+                memory.currentTask=dummy;
+                memory.derivedTask(newTask, false, false);
+            }
+            return true;
+        }
+        return true;
+    }
+        
     /* -------------------- questions which contain answers which are of no value for NARS but need to be answered -------------------- */
     /**
      * {(&&,A,B,...)?, A,B} |- {(&&,A,B)}
@@ -85,28 +209,25 @@ public final class CompositionalRules {
                             continue;
                         }
                     }
+                    
                     if(term1 instanceof Conjunction) {
-                        if(!(term2 instanceof Conjunction) && !(ctpcontent).containComponent(term2)) {
+                        if(!(term2 instanceof Conjunction) && !(ctpcontent).containComponent(term2))
                             continue;
-                        }
-                        if(((CompoundTerm)term1).containVar()) {
-                            continue;
-                        }
-                        
+                        if(((CompoundTerm)term1).containVar())
+                            continue;                        
                         if (!((CompoundTerm)term1).containAllComponents(ctpcontent))
                             continue;
                     }
+                    
                     if(term2 instanceof Conjunction) {
-                        if(!(term1 instanceof Conjunction) && !(ctpcontent).containComponent(term1)) {
+                        if(!(term1 instanceof Conjunction) && !(ctpcontent).containComponent(term1))
                             continue;
-                        }
-                        if(((CompoundTerm)term2).containVar()) {
+                        if(((CompoundTerm)term2).containVar())
                             continue;
-                        }
-                        
                         if (!((CompoundTerm)term2).containAllComponents(ctpcontent))
                             continue;
                     }
+                    
                     Term conj = Conjunction.make(term1, term2, memory);
                     
                     if (Variable.containDepOrIndepVar(conj.toString()))
@@ -120,7 +241,7 @@ public final class CompositionalRules {
                     TruthValue truthAnd = TruthFunctions.intersection(truthT, truthB);
                     BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, memory);
                     memory.doublePremiseTask(conj, truthAnd, budget);
-                    break;
+                    return;
                 }
             }
         }

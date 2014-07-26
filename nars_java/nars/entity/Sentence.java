@@ -50,7 +50,7 @@ public class Sentence implements Cloneable {
     /**
      * Partial record of the derivation path
      */
-    protected Stamp stamp;
+    public final Stamp stamp;
 
     /**
      * Whether the sentence can be revised
@@ -266,9 +266,11 @@ public class Sentence implements Cloneable {
         return toKey() + " " + stamp.toString();
     }
 
+    /*
     public void setStamp(Stamp stamp) {
         this.stamp = stamp;
     }
+    */
 
     /**
      * Get a String representation of the sentence for key of Task and TaskLink

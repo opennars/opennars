@@ -121,16 +121,24 @@ public class Stamp implements Cloneable {
      * For single-premise rules
      *
      * @param old The stamp of the single premise
-     * @param time The current time
+     * @param creationTim The current time
      */
-    public Stamp(final Stamp old, final long time) {
+    public Stamp(final Stamp old, final long creationTime) {
         baseLength = old.length();
         evidentialBase = old.getBase();
-        creationTime = time;
+        this.creationTime = creationTime;
         occurrenceTime = old.getOccurrenceTime();
         derivationChain = old.getChain();
     }
 
+    public Stamp(final Stamp old, final long creationTime, Stamp useEvidentialBase) {        
+        this.evidentialBase = useEvidentialBase.evidentialBase;
+        this.baseLength = useEvidentialBase.baseLength;
+        this.creationTime = creationTime;
+        occurrenceTime = old.getOccurrenceTime();
+        derivationChain = old.getChain();
+    }
+    
     /**
      * Generate a new stamp for derived sentence by merging the two from parents
      * the first one is no shorter than the second
@@ -138,7 +146,7 @@ public class Stamp implements Cloneable {
      * @param first The first Stamp
      * @param second The second Stamp
      */
-    private Stamp(final Stamp first, final Stamp second, final long time) {
+    public Stamp(final Stamp first, final Stamp second, final long time) {
         //TODO use iterators instead of repeated first and second .get's?
         
         int i1, i2, j;
@@ -339,6 +347,8 @@ public class Stamp implements Cloneable {
         Stamp s = (Stamp)that;
         if (occurrenceTime!=s.occurrenceTime)
             return false;
+        if (creationTime!=s.creationTime)
+            return false;
         
         //TODO see if there is a faster way than creating two treeset's
         final Set<Long> set1 = toSet();
@@ -355,7 +365,7 @@ public class Stamp implements Cloneable {
      */
     @Override
     public int hashCode() {        
-        return Objects.hash(toSet(), occurrenceTime);
+        return Objects.hash(toSet(), creationTime, occurrenceTime);
     }
 
     //return toString().hashCode();
@@ -482,5 +492,9 @@ public class Stamp implements Cloneable {
 
     public long[] getEvidentialBase() {
         return evidentialBase;
+    }
+
+    public Stamp cloneToTime(long newTime) {
+        return new Stamp(this, newTime);
     }
 }
