@@ -73,7 +73,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
         if (task == null) {                   // called in continued processing
-            task = memory.currentTask;
+            task = memory.getCurrentTask();
             feedbackToLinks = true;
         }
         boolean judgmentTask = task.getSentence().isJudgment();
@@ -86,9 +86,9 @@ public final class BudgetFunctions extends UtilityFunctions {
             task.setPriority(Math.min(1 - quality, taskPriority));
         }
         if (feedbackToLinks) {
-            TaskLink tLink = memory.currentTaskLink;
+            TaskLink tLink = memory.getCurrentTaskLink();
             tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = memory.currentBeliefLink;
+            TermLink bLink = memory.getCurrentBeliefLink();
             bLink.incPriority(quality);
         }
         return budget;
@@ -104,14 +104,14 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final Memory memory) {
         final float difT = truth.getExpDifAbs(tTruth);
-        final Task task = memory.currentTask;
+        final Task task = memory.getCurrentTask();
         task.decPriority(1 - difT);
         task.decDurability(1 - difT);
         if (feedbackToLinks) {
-            TaskLink tLink = memory.currentTaskLink;
+            TaskLink tLink = memory.getCurrentTaskLink();
             tLink.decPriority(1 - difT);
             tLink.decDurability(1 - difT);
-            TermLink bLink = memory.currentBeliefLink;
+            TermLink bLink = memory.getCurrentBeliefLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1 - difB);
             bLink.decDurability(1 - difB);
@@ -299,14 +299,14 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget of the conclusion task
      */
     private static BudgetValue budgetInference(final float qual, final int complexity, final Memory memory) {
-        Item t = memory.currentTaskLink;
+        Item t = memory.getCurrentTaskLink();
         if (t == null) {
-            t = memory.currentTask;
+            t = memory.getCurrentTask();
         }
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
-        final TermLink bLink = memory.currentBeliefLink;
+        final TermLink bLink = memory.getCurrentBeliefLink();
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());

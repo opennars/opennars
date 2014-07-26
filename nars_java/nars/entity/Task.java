@@ -30,7 +30,7 @@ public class Task extends Item {
     /**
      * The sentence of the Task
      */
-    private Sentence sentence;
+    private final Sentence sentence;
     /**
      * Task from which the Task is derived, or null if input
      */

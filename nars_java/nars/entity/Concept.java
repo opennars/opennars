@@ -162,10 +162,10 @@ public final class Concept extends Item {
                 }   // else: activated belief
                 return;
             } else if (LocalRules.revisible(judg, oldBelief)) {
-                memory.newStamp = Stamp.make(newStamp, oldStamp, memory.getTime());
-                if (memory.newStamp != null) {
-                    memory.currentBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
-                    LocalRules.revision(judg, memory.currentBelief, false, memory);
+                memory.setNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
+                if (memory.getNewStamp() != null) {
+                    memory.setCurrentBelief( oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime()) );
+                    LocalRules.revision(judg, memory.getCurrentBelief(), false, memory);
                 }
             }
         }
@@ -438,7 +438,7 @@ public final class Concept extends Item {
             if (memory.getRecorder().isActive()) {
                 memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
             }
-            memory.newStamp = Stamp.make(taskStamp, belief.stamp, currentTime);
+            memory.setNewStamp( Stamp.make(taskStamp, belief.stamp, currentTime) );
 //            if (memory.newStamp != null) {
                 return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 //            }
@@ -455,16 +455,16 @@ public final class Concept extends Item {
         if (currentTaskLink == null) {
             return;
         }
-        memory.currentTaskLink = currentTaskLink;
-        memory.currentBeliefLink = null;
+        memory.setCurrentTaskLink( currentTaskLink );
+        memory.setCurrentBeliefLink( null );
         if (memory.getRecorder().isActive()) {
             memory.getRecorder().append(" * Selected TaskLink: " + currentTaskLink + "\n");
         }
         final Task task = currentTaskLink.getTargetTask();
-        memory.currentTask = task;  // one of the two places where this variable is set
+        memory.setCurrentTask ( task );  // one of the two places where this variable is set
 //      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
         if (currentTaskLink.getType() == TermLink.TRANSFORM) {
-            memory.currentBelief = null;
+            memory.setCurrentBelief( null );
             RuleTables.transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
         } else {
             int termLinkCount = Parameters.MAX_REASONED_TERM_LINK;
@@ -475,7 +475,7 @@ public final class Concept extends Item {
                     if (memory.getRecorder().isActive()) {
                         memory.getRecorder().append(" * Selected TermLink: " + termLink + "\n");
                     }
-                    memory.currentBeliefLink = termLink;
+                    memory.setCurrentBeliefLink( termLink );
                     RuleTables.reason(currentTaskLink, termLink, memory);
                     termLinks.putBack(termLink);
                     termLinkCount--;

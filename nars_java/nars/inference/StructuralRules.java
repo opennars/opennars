@@ -83,7 +83,7 @@ public final class StructuralRules {
         if (content == null) {
             return;
         }
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
         TruthValue truth = sentence.truth;
         BudgetValue budget;
@@ -131,7 +131,7 @@ public final class StructuralRules {
         if (content == null) {
             return;
         }
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
         TruthValue truth = sentence.truth;
         BudgetValue budget;
@@ -169,11 +169,11 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     static void structuralCompose1(CompoundTerm compound, short index, Statement statement, Memory memory) {
-        if (!memory.currentTask.getSentence().isJudgment()) {
+        if (!memory.getCurrentTask().getSentence().isJudgment()) {
             return;
         }
         Term component = compound.componentAt(index);
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
         int order = sentence.getTemporalOrder();
         TruthValue truth = sentence.truth;
@@ -217,11 +217,11 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     static void structuralDecompose1(CompoundTerm compound, short index, Statement statement, Memory memory) {
-        if (!memory.currentTask.getSentence().isJudgment()) {
+        if (!memory.getCurrentTask().getSentence().isJudgment()) {
             return;
         }
         Term component = compound.componentAt(index);
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
         int order = sentence.getTemporalOrder();
         TruthValue truth = sentence.truth;
@@ -265,7 +265,7 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     private static void structuralStatement(Term subject, Term predicate, int order, TruthValue truth, Memory memory) {
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Term oldContent = task.getContent();
         if (oldContent instanceof Statement) {
             Term content = Statement.make((Statement) oldContent, subject, predicate, order, memory);
@@ -310,7 +310,7 @@ public final class StructuralRules {
             return;
         }
 
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
         TruthValue truth = sentence.truth;
         BudgetValue budget;
@@ -404,7 +404,7 @@ public final class StructuralRules {
         if (content == null) {
             return;
         }
-        Sentence sentence = memory.currentTask.getSentence();
+        Sentence sentence = memory.getCurrentTask().getSentence();
         TruthValue truth = sentence.truth;
         BudgetValue budget;
         if (sentence.isQuestion()) {
@@ -426,7 +426,7 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     private static void transformSubjectPI(CompoundTerm subject, Term predicate, Memory memory) {
-        TruthValue truth = memory.currentTask.getSentence().truth;
+        TruthValue truth = memory.getCurrentTask().getSentence().truth;
         BudgetValue budget;
         Inheritance inheritance;
         Term newSubj, newPred;
@@ -480,7 +480,7 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     private static void transformPredicatePI(Term subject, CompoundTerm predicate, Memory memory) {
-        TruthValue truth = memory.currentTask.getSentence().truth;
+        TruthValue truth = memory.getCurrentTask().getSentence().truth;
         BudgetValue budget;
         Inheritance inheritance;
         Term newSubj, newPred;
@@ -539,11 +539,11 @@ public final class StructuralRules {
             return;
         }
         Term content = (compoundTask ? component : compound);
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
 
         Sentence sentence = task.getSentence();
         TruthValue truth = sentence.truth;
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         BudgetValue budget;
         if (sentence.isQuestion()) {
             budget = BudgetFunctions.compoundBackward(content, memory);
@@ -569,7 +569,7 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     public static void transformNegation(Term content, Memory memory) {
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
         TruthValue truth = sentence.truth;
         if (sentence.isJudgment()) {
