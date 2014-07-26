@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import nars.core.NAR;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -38,15 +40,15 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
-import nars.language.Term;
-import nars.core.Parameters;
-import nars.core.NAR;
+import nars.inference.TemporalRules;
 import nars.io.Output.OUT;
+import nars.language.Term;
 
 /**
  * The memory of the system.
  */
-public class Memory {    
+public class Memory {
+
     public static Random randomNumber = new Random(1);
 
     /**
@@ -72,7 +74,7 @@ public class Memory {
     public final AtomicInteger taskForgettingRate = new AtomicInteger(Parameters.TASK_LINK_FORGETTING_CYCLE);
     public final AtomicInteger conceptForgettingRate = new AtomicInteger(Parameters.CONCEPT_FORGETTING_CYCLE);
 
-    /* ---------- Short-term workspace for a single cycle ---------- */
+    /* ---------- Short-term workspace for a single cycle ---	------- */
     /**
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
@@ -113,6 +115,13 @@ public class Memory {
      */
     protected HashMap<Term, Term> substitute;
     
+
+    // for temporal induction
+    Task lastEvent;
+
+    public BudgetValue getLastEventBudget() {
+        return lastEvent.getBudget();
+    }
 
 
     /* ---------- Constructor ---------- */
@@ -156,6 +165,8 @@ public class Memory {
 
     /**
      * Actually means that there are no new Tasks
+     *
+     * @return Whether the newTasks list is empty
      */
     public boolean noResult() {
         return newTasks.isEmpty();
@@ -214,13 +225,12 @@ public class Memory {
         Concept concept = concepts.get(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
-            concept = new Concept(term, this); 
-            
+            concept = new Concept(term, this);
+
             final boolean created = concepts.putIn(concept);
             if (!created) {
                 return null;
-            }
-            else {
+            } else {
                 if (recorder.isActive()) {
                     recorder.onConceptNew(concept);
                 }
@@ -256,8 +266,9 @@ public class Memory {
     }
 
     /* ---------- new task entries ---------- */
-
-    /** add new task that waits to be processed in the next workCycle */
+    /**
+     * add new task that waits to be processed in the next workCycle
+     */
     protected void addNewTask(final Task t, final String reason) {
         newTasks.add(t);
         if (recorder.isActive()) {
@@ -270,14 +281,15 @@ public class Memory {
      Some of them are reported and/or logged. */
     /**
      * Input task processing. Invoked by the outside or inside environment.
- Outside: StringParser (addInput); Inside: Operator (feedback). Input tasks
- with low priority are ignored, and the others are put into task buffer.
+     * Outside: StringParser (addInput); Inside: Operator (feedback). Input
+     * tasks with low priority are ignored, and the others are put into task
+     * buffer.
      *
      * @param task The addInput task
      */
     public void inputTask(final Task task) {
-        if (task.getBudget().aboveThreshold()) {            
-            addNewTask(task, "Perceived");            
+        if (task.getBudget().aboveThreshold()) {
+            addNewTask(task, "Perceived");
         } else {
             if (recorder.isActive()) {
                 recorder.onTaskRemove(task, "Neglected");
@@ -296,7 +308,7 @@ public class Memory {
      */
     public void activatedTask(final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
         final Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
-        
+
         if (sentence.isQuestion()) {
             final float s = task.getBudget().summary();
             final float minSilent = nar.param.getSilenceLevel() / 100.0f;
@@ -304,8 +316,8 @@ public class Memory {
                 nar.output(OUT.class, task.getSentence());
             }
         }
-        
-        addNewTask(task, "Activated");        
+
+        addNewTask(task, "Activated");
     }
 
     /**
@@ -330,7 +342,7 @@ public class Memory {
             
             final Term currentTaskContent = currentTask.getContent();
             
-	    if (currentBelief != null) {
+            if (currentBelief != null) {
                 final Term currentBeliefContent = currentBelief.getContent();
                 if(chain.contains(currentBeliefContent)) {
                 //if(stamp.chainContainsInstance(currentBeliefContent)) {
@@ -528,26 +540,34 @@ public class Memory {
     }
 
     /**
-     * Process the newTasks accumulated in the previous workCycle, accept addInput
- ones and those that corresponding to existing concepts, plus one from the
- buffer.
+     * Process the newTasks accumulated in the previous workCycle, accept
+     * addInput ones and those that corresponding to existing concepts, plus one
+     * from the buffer.
      */
     private void processNewTask() {
                 
         // don't include new tasks produced in the current workCycle
-        int counter = newTasks.size();  
+        int counter = newTasks.size();
+        Task newEvent = null;
         while (counter-- > 0) {
             final Task task = newTasks.removeFirst();
-            if (task.isInput() || (termToConcept(task.getContent()) != null)) { 
+            if (task.isInput() || (termToConcept(task.getContent()) != null)) {
                 // new addInput or existing concept
                 immediateProcess(task);
+                if (task.getSentence().getStamp().getOccurrenceTime() != Stamp.ETERNAL) {
+                    if ((newEvent == null)
+                            || (BudgetFunctions.rankBelief(newEvent.getSentence())
+                            < BudgetFunctions.rankBelief(task.getSentence()))) {
+                        newEvent = task;
+                    }
+                }
             } else {
                 final Sentence s = task.getSentence();
                 if (s.isJudgment()) {
                     final double exp = s.getTruth().getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         // new concept formation
-                        novelTasks.putIn(task);    
+                        novelTasks.putIn(task);
                     } else {
                         if (recorder.isActive()) {
                             recorder.onTaskRemove(task, "Neglected");
@@ -555,6 +575,17 @@ public class Memory {
                     }
                 }
             }
+        }
+        if (newEvent != null) {
+            if (lastEvent != null) {
+                newStamp = Stamp.make(newEvent.getSentence().getStamp(), lastEvent.getSentence().getStamp(), getTime());
+                if (newStamp != null) {
+                    currentTask = newEvent;
+                    currentBelief = lastEvent.getSentence();
+                    TemporalRules.temporalInduction(newEvent.getSentence(), currentBelief, this);
+                }
+            }
+            lastEvent = newEvent;
         }
     }
 

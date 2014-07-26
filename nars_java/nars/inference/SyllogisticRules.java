@@ -21,9 +21,20 @@
 package nars.inference;
 
 import nars.core.Parameters;
-import nars.entity.*;
-import nars.language.*;
+import nars.core.Parameters;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
+import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.io.Symbols;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.Equivalence;
+import nars.language.Implication;
+import nars.language.Statement;
+import nars.language.Term;
+import nars.language.Variable;
 import nars.storage.Memory;
 
 /**
@@ -313,6 +324,18 @@ public final class SyllogisticRules {
                 return;
             }
         }
+        int conjunctionOrder = subj.getTemporalOrder();
+        if (conjunctionOrder == TemporalRules.ORDER_FORWARD) {
+            if (index > 0) {
+                return;
+            }
+            if ((side == 0) && (premise2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+                return;
+            }
+            if ((side == 1) && (premise2.getTemporalOrder() == TemporalRules.ORDER_BACKWARD)) {
+                return;
+            }
+        }
         Term newCondition;
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
@@ -348,7 +371,9 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<(&&, S1, S2) <=> P>, (&&, S1, S2)} |- P
+     * {<(&&, S1, S2, S3) <=> P>, S1} |- <(&&, S2, S3) <=> P> {<(&&, S2, S3) <=>
+     * P>, <S1 ==> S2>} |- <(&&, S1, S3) <=> P> {<(&&, S1, S3) <=> P>, <S1 ==>
+     * S2>} |- <(&&, S2, S3) <=> P>
      *
      * @param premise1 The equivalence premise
      * @param index The location of the shared term in the condition of premise1
@@ -387,6 +412,18 @@ public final class SyllogisticRules {
         }
         if (!match) {
             return;
+        }
+        int conjunctionOrder = oldCondition.getTemporalOrder();
+        if (conjunctionOrder == TemporalRules.ORDER_FORWARD) {
+            if (index > 0) {
+                return;
+            }
+            if ((side == 0) && (premise2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+                return;
+            }
+            if ((side == 1) && (premise2.getTemporalOrder() == TemporalRules.ORDER_BACKWARD)) {
+                return;
+            }
         }
         Term newCondition;
         if (oldCondition.equals(commonComponent)) {
@@ -435,6 +472,11 @@ public final class SyllogisticRules {
             return false;
         }
         if (!(cond1 instanceof Conjunction) && !(cond2 instanceof Conjunction)) {
+            return false;
+        }
+        int order1 = st1.getTemporalOrder();
+        int order2 = st2.getTemporalOrder();
+        if (order1 != TemporalRules.reverseOrder(order2)) {
             return false;
         }
         Term term1 = null;
