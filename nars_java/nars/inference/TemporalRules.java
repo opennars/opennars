@@ -16,7 +16,11 @@
  */
 package nars.inference;
 
-import nars.language.CompoundTerm;
+
+import nars.core.Parameters;
+import nars.entity.*;
+import nars.language.*;
+import nars.storage.*;
 
 /**
  *
@@ -37,7 +41,7 @@ public class TemporalRules {
             return -order;
         }
     }
-    
+
     public static boolean matchingOrder(int order1, int order2) {
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
@@ -110,4 +114,40 @@ public class TemporalRules {
         return order;
     }
 
+    public static void temporalInduction(Sentence s1, Sentence s2, Memory memory) {
+        Term t1 = s1.cloneContent();
+        Term t2 = s2.cloneContent();
+        if (Statement.invalidStatement(t1, t2)) {
+            return;
+        }
+        long time1 = s1.getOccurenceTime();
+        long time2 = s2.getOccurenceTime();
+        long timeDiff = time2 - time1;
+        Interval interval = null;
+        if (Math.abs(timeDiff) > Parameters.DURATION) {
+            interval = new Interval(Math.abs(timeDiff));
+        }
+        int order;
+        if (timeDiff > Parameters.DURATION) {
+            order = TemporalRules.ORDER_FORWARD;
+        } else if (timeDiff < -Parameters.DURATION) {
+            order = TemporalRules.ORDER_BACKWARD;
+        } else {
+            order = TemporalRules.ORDER_CONCURRENT;
+        }
+        TruthValue givenTruth1 = s1.getTruth();
+        TruthValue givenTruth2 = s2.getTruth();
+        TruthValue truth1 = TruthFunctions.abduction(givenTruth1, givenTruth2);
+        TruthValue truth2 = TruthFunctions.abduction(givenTruth2, givenTruth1);
+        TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
+        BudgetValue budget1 = BudgetFunctions.forward(truth1, memory);
+        BudgetValue budget2 = BudgetFunctions.forward(truth2, memory);
+        BudgetValue budget3 = BudgetFunctions.forward(truth3, memory);
+        Statement statement1 = Implication.make(t1, t2, order, memory);
+        Statement statement2 = Implication.make(t2, t1, reverseOrder(order), memory);
+        Statement statement3 = Equivalence.make(t1, t2, order, memory);
+        memory.doublePremiseTask(statement1, truth1, budget1);
+        memory.doublePremiseTask(statement2, truth2, budget2);
+        memory.doublePremiseTask(statement3, truth3, budget3);
+    }
 }
