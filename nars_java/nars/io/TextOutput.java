@@ -108,6 +108,10 @@ public class TextOutput implements Output {
             return;
         
         final String s = process(channel, o);
+        outputString(s);
+    }
+    
+    protected void outputString(String s) {
         if (outExp != null) {
             outExp.println(prefix + s);
             outExp.flush();
@@ -115,6 +119,7 @@ public class TextOutput implements Output {
         if (outExp2 != null) {
             outExp2.println(prefix + s);            
         }
+        
     }
 
     StringBuilder result = new StringBuilder(16 /* estimate */);

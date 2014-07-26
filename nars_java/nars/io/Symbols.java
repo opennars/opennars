@@ -112,32 +112,33 @@ public class Symbols {
         
     }
     
-    /* CompountTerm operators, length = 1 */
-    @Deprecated public static final String INTERSECTION_EXT_OPERATOR = "&";
+    /* CompountTerm operators, length = 1 */     
+    //@Deprecated public static final String INTERSECTION_EXT_OPERATOR = "&";
     @Deprecated public static final char INTERSECTION_EXT_OPERATORc = '&';
-    @Deprecated public static final String INTERSECTION_INT_OPERATOR = "|";
+    //@Deprecated public static final String INTERSECTION_INT_OPERATOR = "|";
     @Deprecated public static final char INTERSECTION_INT_OPERATORc = '|';
-    @Deprecated public static final String DIFFERENCE_EXT_OPERATOR = "-";
+    //@Deprecated public static final String DIFFERENCE_EXT_OPERATOR = "-";
     @Deprecated public static final char DIFFERENCE_EXT_OPERATORc = '-';
-    @Deprecated public static final String DIFFERENCE_INT_OPERATOR = "~";
+    //@Deprecated public static final String DIFFERENCE_INT_OPERATOR = "~";
     @Deprecated public static final char DIFFERENCE_INT_OPERATORc = '~';
-    @Deprecated public static final String PRODUCT_OPERATOR = "*";
+    //@Deprecated public static final String PRODUCT_OPERATOR = "*";
     @Deprecated public static final char PRODUCT_OPERATORc = '*';
-    @Deprecated public static final String IMAGE_EXT_OPERATOR = "/";        
+    //@Deprecated public static final String IMAGE_EXT_OPERATOR = "/";        
     @Deprecated public static final char IMAGE_EXT_OPERATORc = '/';
-    @Deprecated public static final String IMAGE_INT_OPERATOR = "\\";
+    //@Deprecated public static final String IMAGE_INT_OPERATOR = "\\";
     @Deprecated public static final char IMAGE_INT_OPERATORc = '\\';
+    
 
     /* CompoundStatement operators, length = 2 */
-    @Deprecated public static final String NEGATION_OPERATOR = "--";
+    //@Deprecated public static final String NEGATION_OPERATOR = "--";
     @Deprecated public static final char NEGATION_OPERATORc = '-';    
-    @Deprecated public static final String DISJUNCTION_OPERATOR = "||";
+    //@Deprecated public static final String DISJUNCTION_OPERATOR = "||";
     @Deprecated public static final char DISJUNCTION_OPERATORc = '|';
-    @Deprecated public static final String CONJUNCTION_OPERATOR = "&&";
+    //@Deprecated public static final String CONJUNCTION_OPERATOR = "&&";
     @Deprecated public static final char CONJUNCTION_OPERATORc = '&';
     @Deprecated public static final String SEQUENCE_OPERATOR = "&/";
     @Deprecated public static final String PARALLEL_OPERATOR = "&|";
-
+    
 
     
 
