@@ -286,6 +286,10 @@ public abstract class CompoundTerm extends Term {
                 return Conjunction.make(arg, TemporalRules.ORDER_FORWARD, memory);
             case PARALLEL:
                 return Conjunction.make(arg, TemporalRules.ORDER_CONCURRENT, memory);
+            case IMPLICATION:
+                return Implication.make(arg.get(0), arg.get(1), memory);
+            case EQUIVALENCE:
+                return Equivalence.make(arg.get(0), arg.get(1), memory);
             default:
                 throw new RuntimeException("Unknown Term operator: " + op);
         }
@@ -830,6 +834,277 @@ public abstract class CompoundTerm extends Term {
         }
     }
 
+    
+    
+    static boolean EqualSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
+        if(a==null || b==null) {
+            return false;
+        }
+        if(!(a instanceof Statement) && !(b instanceof Statement))
+            return false;
+        if(a.equals(b)) {
+            return true;
+        }
+        Statement A=(Statement) a;
+        Statement B=(Statement) b;
+        if(A instanceof Similarity && B instanceof Similarity || A instanceof Inheritance && B instanceof Inheritance) {
+            Term subjA=A.getSubject();
+            Term predA=A.getPredicate();
+            Term subjB=B.getSubject();
+            Term predB=B.getPredicate();
+
+            //ok we know they are not equal, its time to determine how image structure could make them equal:
+            if(subjA instanceof Product) { //A is a product, so B must be a extensional image to make true
+                if(predB instanceof ImageExt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(predA);
+                    componentsB.add(subjB);
+                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+            
+            if(subjB instanceof Product) { //B is a product, so A must be a extensional image to make true
+                if(predA instanceof ImageExt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(subjA);
+                    componentsB.add(predB);
+                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+            
+            if(predA instanceof ImageExt) { //A is a extensional image, so B must be a extensional image to make true
+                if(predB instanceof ImageExt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(subjA);
+                    componentsB.add(subjB);
+                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+            
+            if(predA instanceof ImageExt) { //A is a extensional image, so B must be a extensional image to make true
+                if(predB instanceof ImageExt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(subjA);
+                    componentsB.add(subjB);
+                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+            
+            if(subjA instanceof ImageInt) { //A is a intensional image, so B must be a intensional image to make true
+                if(subjB instanceof ImageInt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(predA);
+                    componentsB.add(predB);
+                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+            
+            if(subjA instanceof ImageInt) { //A is a intensional image, so B must be a intensional image to make true
+                if(subjB instanceof ImageInt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(predA);
+                    componentsB.add(predB);
+                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+            
+            if(predA instanceof Product) { //A is a product, so B must be a intensional image to make true
+                if(subjB instanceof ImageInt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(subjA);
+                    componentsB.add(predB);
+                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+            
+            if(predB instanceof Product) { //A is a product, so B must be a intensional image to make true
+                if(subjA instanceof ImageInt) {
+                    //now the components of both statements need to be the same:
+                    ArrayList<Term> componentsA=new ArrayList<>();
+                    ArrayList<Term> componentsB=new ArrayList<>();
+                    componentsA.add(predA);
+                    componentsB.add(subjB);
+                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                        componentsA.add(t);
+                    }
+                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                        componentsB.add(t);
+                    }
+                    if(componentsA.containsAll(componentsB)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    public static boolean EqualSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
+        if(a==null || b==null) {
+            return false;
+        }
+        if(!((a instanceof CompoundTerm) && (b instanceof CompoundTerm))) {
+            return a.equals(b);
+        }
+        if(a instanceof Inheritance && b instanceof Inheritance) {
+            return EqualSubjectPredicateInRespectToImageAndProduct(a,b);
+        }
+        if(a instanceof Similarity && b instanceof Similarity) {
+            return EqualSubjectPredicateInRespectToImageAndProduct(a,b) || EqualSubjectPredicateInRespectToImageAndProduct(b,a);
+        }
+        List<Term> A=((CompoundTerm) a).getComponents();
+        List<Term> B=((CompoundTerm) b).getComponents();
+        if(A.size()!=B.size()) {
+            return false;
+        }
+        else {
+            for(int i=0;i<A.size();i++) {
+                Term x = A.get(i);
+                Term y = B.get(i);
+                if(!x.equals(y)) {
+                    if(x instanceof Inheritance && y instanceof Inheritance) {
+                        if(!EqualSubjectPredicateInRespectToImageAndProduct(x,y)) {
+                            return false;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    if(x instanceof Similarity && y instanceof Similarity) {
+                        if(!EqualSubjectPredicateInRespectToImageAndProduct(x,y) && !EqualSubjectPredicateInRespectToImageAndProduct(y,x)) {
+                            return false;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    //3 helper functions for dedSecondLayerVariableUnification:
+    public static Term unwrapNegation(Term T) //negation is not counting as depth
+    {
+        if(T!=null && T instanceof Negation)
+            return (Term) ((CompoundTerm)T).getComponents().get(0);
+        return T;
+    }
+    public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2, Memory memory) {
+        boolean success;
+        ArrayList<Term> list = t1.cloneComponents();
+        if (t1.getClass() == t2.getClass()) {
+            success = list.removeAll(((CompoundTerm) t2).getComponents());
+        } else {
+            success = list.remove(t2);
+        }
+        if (success) {
+            if (list.size() > 1) {
+                return make(t1, list, memory);
+            }
+            if (list.size() == 1) {
+                if (t1 instanceof CompoundTerm) {
+                    return list.get(0);
+                }
+            }
+        }
+        return t1;
+    }
+    public static CompoundTerm ReduceTillLayer2(CompoundTerm itself, Term replacement, Memory memory)
+    {
+       if(!(itself instanceof CompoundTerm)) {
+           return null;
+       }
+       itself=(CompoundTerm) reduceComponentOneLayer((CompoundTerm) itself, replacement, memory);
+       int j=0;
+       for(Term t : ((CompoundTerm) itself).getComponents()) {
+           Term t2 = unwrapNegation(t);
+            if(!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Conjunction) && !(t2 instanceof Disjunction)) {
+                j++;
+                continue;
+            }
+            Term ret2=reduceComponentOneLayer((CompoundTerm) t2,replacement,memory);
+            CompoundTerm replaced=(CompoundTerm) CompoundTerm.setComponent((CompoundTerm) itself, j, ret2, memory);
+            if(replaced!=null) {
+                itself=replaced;
+            }
+           j++;
+       }
+       return (CompoundTerm) itself;
+    }
+
+    
     /*
     @Deprecated public static Term make(final String op, final ArrayList<Term> arg, final Memory memory) {
         final int length = op.length();

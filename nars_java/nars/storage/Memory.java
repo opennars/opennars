@@ -325,7 +325,7 @@ public class Memory {
      *
      * @param task the derived task
      */
-    private void derivedTask(final Task task, final boolean revised, final boolean single) {
+    public void derivedTask(final Task task, final boolean revised, final boolean single) {
         if (task.getBudget().aboveThreshold()) {
             if (task.getSentence() != null && task.getSentence().getTruth() != null) {
                 float conf = task.getSentence().getTruth().getConfidence();                

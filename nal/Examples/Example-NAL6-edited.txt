@@ -234,7 +234,20 @@
  OUT: <<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.45% 
 // I guess every lock can be opened by some key.
 
-********** recursion
+***** second level unification
+  IN: <<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.90% {0 : 1} 
+  IN: <{key1} --> key>. %1.00;0.90% {0 : 2} 
+5
+ OUT: <<$1 --> lock> ==> <$1 --> (/,open,{key1},_)>>. %1.00;0.43% {5 : 2;1} 
+ 
+***** second level unification
+  IN: (&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>). %1.00;0.90% {0 : 1} 
+  IN: <{key1} --> key>. %1.00;0.90% {0 : 2} 
+5
+ OUT: (&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>). %1.00;0.81% {5 : 2;1} 
+
+
+********** recursion (multistep)
   IN: <0 --> num>. %1.00;0.90% {0 : 1} 
 // 0 is a number
   IN: <<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2} 

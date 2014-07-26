@@ -44,6 +44,11 @@ public class RuleTables {
         Sentence taskSentence = task.getSentence();
         Term taskTerm = (Term) taskSentence.getContent().clone();         // cloning for substitution
         Term beliefTerm = (Term) bLink.getTarget().clone();       // cloning for substitution
+        
+        if(CompoundTerm.EqualSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm)) {
+           return;
+        }
+        
         Concept beliefConcept = memory.termToConcept(beliefTerm);
         Sentence belief = null;
         if (beliefConcept != null) {
@@ -53,11 +58,18 @@ public class RuleTables {
         if (belief != null) {
             LocalRules.match(task, belief, memory);
         }
+        
+        Sentence buf1=memory.currentBelief;
+        Task buf2=memory.currentTask;
+        CompositionalRules.dedSecondLayerVariableUnification(task,memory);
+        memory.currentBelief=buf1;
+        memory.currentTask=buf2;
+        
         if (!memory.noResult() && task.getSentence().isJudgment()) {
             return;
         }
         
-        CompositionalRules.dedConjunctionByQuestion(task.getSentence(), belief, memory);
+        CompositionalRules.dedConjunctionByQuestion(taskSentence, belief, memory);
         
         short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
