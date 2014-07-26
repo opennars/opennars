@@ -117,7 +117,7 @@ public class Memory {
     
 
     // for temporal induction
-    Task lastEvent;
+    private Task lastEvent;
 
     public BudgetValue getLastEventBudget() {
         return lastEvent.budget;
