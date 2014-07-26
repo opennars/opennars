@@ -23,7 +23,7 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
         
         for (final Concept c : concepts) {
             
-            final Term source = c.getTerm();
+            final Term source = c.term;
             
             if (!containsVertex(source)) {
                 addVertex(source);

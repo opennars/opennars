@@ -64,8 +64,8 @@ public final class SyllogisticRules {
         if (order == TemporalRules.ORDER_INVALID) {
             return;
         }
-        TruthValue value1 = sentence.getTruth();
-        TruthValue value2 = belief.getTruth();
+        TruthValue value1 = sentence.truth;
+        TruthValue value2 = belief.truth;
         TruthValue truth1 = null;
         TruthValue truth2 = null;
         BudgetValue budget1, budget2;
@@ -111,8 +111,8 @@ public final class SyllogisticRules {
         TruthValue truth2 = null;
         TruthValue truth3 = null;
         BudgetValue budget1, budget2, budget3;
-        TruthValue value1 = sentence1.getTruth();
-        TruthValue value2 = sentence2.getTruth();
+        TruthValue value1 = sentence1.truth;
+        TruthValue value2 = sentence2.truth;
         if (sentence1.isQuestion()) {
             budget1 = BudgetFunctions.backward(value2, memory);
             budget2 = BudgetFunctions.backwardWeak(value2, memory);
@@ -162,12 +162,12 @@ public final class SyllogisticRules {
         CompoundTerm taskTerm = (CompoundTerm) sentence.getContent();
         if (sentence.isQuestion()) {
             if (taskTerm.isCommutative()) {
-                budget = BudgetFunctions.backwardWeak(asym.getTruth(), memory);
+                budget = BudgetFunctions.backwardWeak(asym.truth, memory);
             } else {
-                budget = BudgetFunctions.backward(sym.getTruth(), memory);
+                budget = BudgetFunctions.backward(sym.truth, memory);
             }
         } else {
-            truth = TruthFunctions.analogy(asym.getTruth(), sym.getTruth());
+            truth = TruthFunctions.analogy(asym.truth, sym.truth);
             budget = BudgetFunctions.forward(truth, memory);
         }
         Term content = Statement.make(st, subj, pred, order, memory);
@@ -198,9 +198,9 @@ public final class SyllogisticRules {
         TruthValue truth = null;
         BudgetValue budget;
         if (sentence.isQuestion()) {
-            budget = BudgetFunctions.backward(belief.getTruth(), memory);
+            budget = BudgetFunctions.backward(belief.truth, memory);
         } else {
-            truth = TruthFunctions.resemblance(belief.getTruth(), sentence.getTruth());
+            truth = TruthFunctions.resemblance(belief.truth, sentence.truth);
             budget = BudgetFunctions.forward(truth, memory);
         }
         Term statement = Statement.make(st, term1, term2, order, memory);
@@ -249,9 +249,9 @@ public final class SyllogisticRules {
         }
         Sentence taskSentence = memory.currentTask.getSentence();
         Sentence beliefSentence = memory.currentBelief;
-        TruthValue beliefTruth = beliefSentence.getTruth();
-        TruthValue truth1 = mainSentence.getTruth();
-        TruthValue truth2 = subSentence.getTruth();
+        TruthValue beliefTruth = beliefSentence.truth;
+        TruthValue truth1 = mainSentence.truth;
+        TruthValue truth2 = subSentence.truth;
         TruthValue truth = null;
         BudgetValue budget;
         if (taskSentence.isQuestion()) {
@@ -351,8 +351,8 @@ public final class SyllogisticRules {
         if (content == null) {
             return;
         }
-        TruthValue truth1 = taskSentence.getTruth();
-        TruthValue truth2 = belief.getTruth();
+        TruthValue truth1 = taskSentence.truth;
+        TruthValue truth2 = belief.truth;
         TruthValue truth = null;
         BudgetValue budget;
         if (taskSentence.isQuestion()) {
@@ -440,8 +440,8 @@ public final class SyllogisticRules {
         if (content == null) {
             return;
         }
-        TruthValue truth1 = taskSentence.getTruth();
-        TruthValue truth2 = belief.getTruth();
+        TruthValue truth1 = taskSentence.truth;
+        TruthValue truth2 = belief.truth;
         TruthValue truth = null;
         BudgetValue budget;
         if (taskSentence.isQuestion()) {
@@ -495,8 +495,8 @@ public final class SyllogisticRules {
         Task task = memory.currentTask;
         Sentence sentence = task.getSentence();
         Sentence belief = memory.currentBelief;
-        TruthValue value1 = sentence.getTruth();
-        TruthValue value2 = belief.getTruth();
+        TruthValue value1 = sentence.truth;
+        TruthValue value2 = belief.truth;
         Term content;
         TruthValue truth = null;
         BudgetValue budget;
@@ -547,8 +547,8 @@ public final class SyllogisticRules {
         Task task = memory.currentTask;
         Sentence sentence = task.getSentence();
         Sentence belief = memory.currentBelief;
-        TruthValue v1 = sentence.getTruth();
-        TruthValue v2 = belief.getTruth();
+        TruthValue v1 = sentence.truth;
+        TruthValue v2 = belief.truth;
         TruthValue truth = null;
         BudgetValue budget;
         if (sentence.isQuestion()) {

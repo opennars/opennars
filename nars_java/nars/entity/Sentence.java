@@ -20,8 +20,6 @@
  */
 package nars.entity;
 
-import nars.core.Parameters;
-import static nars.entity.Stamp.ETERNAL;
 import nars.io.Symbols;
 import nars.language.*;
 import nars.inference.TruthFunctions;
@@ -42,11 +40,11 @@ public class Sentence implements Cloneable {
      * The punctuation also indicates the type of the Sentence: Judgment,
      * Question, or Goal
      */
-    final public char punctuation;
+    public final char punctuation;
     /**
      * The truth value of Judgment
      */
-    final public TruthValue truth;
+    public final TruthValue truth;
     /**
      * Partial record of the derivation path
      */
@@ -89,7 +87,7 @@ public class Sentence implements Cloneable {
     public boolean equals(final Object that) {
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            return content.equals(t.getContent()) && punctuation == t.getPunctuation() && truth.equals(t.getTruth()) && stamp.equals(t.getStamp());
+            return content.equals(t.getContent()) && punctuation == punctuation && truth.equals(truth) && stamp.equals(stamp);
         }
         return false;
     }
@@ -118,8 +116,8 @@ public class Sentence implements Cloneable {
      * @return Whether the two are equivalent
      */
     public boolean equivalentTo(final Sentence that) {
-        assert content.equals(that.getContent()) && punctuation == that.getPunctuation();
-        return (truth.equals(that.getTruth()) && stamp.equals(that.getStamp()));
+        assert content.equals(that.getContent()) && punctuation == punctuation;
+        return (truth.equals(truth) && stamp.equals(stamp));
     }
 
     /**
@@ -137,7 +135,6 @@ public class Sentence implements Cloneable {
 
     public Sentence projection(long targetTime, long currentTime) {
         TruthValue newTruth = new TruthValue(truth);
-        Stamp newStamp = (Stamp) stamp.clone();
         boolean eternalizing = false;
         if (stamp.getOccurrenceTime() != Stamp.ETERNAL) {
             newTruth = TruthFunctions.eternalization(truth);
@@ -152,9 +149,11 @@ public class Sentence implements Cloneable {
                 }
             }
         }
+        Stamp newStamp = (Stamp) stamp.clone();
         if (eternalizing) {
             newStamp.setOccurrenceTime(Stamp.ETERNAL);
         }
+        
         Sentence newSentence = new Sentence((Term) content.clone(), punctuation, newTruth, newStamp);
         return newSentence;
     }
@@ -173,14 +172,6 @@ public class Sentence implements Cloneable {
         key = null;
     }
 
-    /**
-     * Get the punctuation of the sentence
-     *
-     * @return The character '.' or '?'
-     */
-    public char getPunctuation() {
-        return punctuation;
-    }
 
     /**
      * Clone the content of the sentence
@@ -191,23 +182,7 @@ public class Sentence implements Cloneable {
         return (Term) content.clone();
     }
 
-    /**
-     * Get the truth value of the sentence
-     *
-     * @return Truth value, null for question
-     */
-    public TruthValue getTruth() {
-        return truth;
-    }
 
-    /**
-     * Get the stamp of the sentence
-     *
-     * @return The stamp
-     */
-    public Stamp getStamp() {
-        return stamp;
-    }
 
     /**
      * Distinguish Judgment from Goal ("instanceof Judgment" doesn't work)
@@ -285,7 +260,7 @@ public class Sentence implements Cloneable {
             final String truthString = truth != null ? truth.toStringBrief() : null;
             //final String stampString = stamp.toString();
 
-            int stringLength = contentToString.length() + 1 + 1/* + stampString.length()*/;
+            int stringLength = contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
             if (truth != null) {
                 stringLength += occurrenceTimeString.length() + truthString.length();
             }
@@ -331,7 +306,7 @@ public class Sentence implements Cloneable {
         final String truthString = truth != null ? truth.toStringBrief() : null;
         //final String stampString = stamp.toString();
 
-        int stringLength = contentToString.length() + tenseString.length() + 1 + 1/* + stampString.length()*/;
+        int stringLength = contentToString.length() + tenseString.length() + 1 + 1/* + stampString.baseLength()*/;
         if (truth != null) {
             stringLength += truthString.length();
         }

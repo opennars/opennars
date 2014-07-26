@@ -232,7 +232,7 @@ class mvoapplet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 
         stroke(127, 255, 255, 127);
 
         for (int i = 0; i < Sent_s.size(); i++) {
-            final List<Term> deriv = Sent_s.get(i).getStamp().getChain();
+            final List<Term> deriv = Sent_s.get(i).stamp.getChain();
             final Vertex elem1 = V.get(Sent_i.get(i));
             float[] p1 = vertexPosition(elem1);            
             
@@ -316,7 +316,7 @@ class mvoapplet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 
                         try {
                             for (final Concept c : Collections.unmodifiableCollection(bag.getLevel(i-1))) {
 
-                                final Term name = c.getTerm();
+                                final Term name = c.term;
 
 
                                 hsim.obj.add(new Vertex(x++, i, name, 0));
@@ -331,7 +331,7 @@ class mvoapplet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 
                                         Sentence kb = c.beliefs.get(k);
                                         Term name2 = kb.getContent();
 
-                                        hsim.obj.add(new Vertex(x++, i, name2, 0, kb.getStamp().creationTime));
+                                        hsim.obj.add(new Vertex(x++, i, name2, 0, kb.stamp.creationTime));
                                         E.add(new Edge(bufcnt, cnt, kb.truth.getConfidence()));
                                         Sent_s.add(kb);
                                         Sent_i.add(cnt);

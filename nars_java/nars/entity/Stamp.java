@@ -38,12 +38,12 @@ public class Stamp implements Cloneable {
     /**
      * serial numbers
      */
-    private final long[] evidentialBase;
+    public final long[] evidentialBase;
 
     /**
      * evidentialBase baseLength
      */
-    private final int baseLength;
+    public final int baseLength;
 
     /**
      * creation time of the stamp
@@ -52,6 +52,7 @@ public class Stamp implements Cloneable {
 
     /**
      * estimated occurrence time of the event
+     * TODO: make this final
      */
     public long occurrenceTime;
 
@@ -107,9 +108,9 @@ public class Stamp implements Cloneable {
      * @param old The stamp to be cloned
      */
     private Stamp(final Stamp old) {
-        baseLength = old.length();
-        evidentialBase = old.getBase();
-        creationTime = old.getCreationTime();
+        baseLength = old.baseLength;
+        evidentialBase = old.evidentialBase;
+        creationTime = old.creationTime;
         occurrenceTime = old.getOccurrenceTime();
         derivationChain = old.getChain();
     }
@@ -124,8 +125,8 @@ public class Stamp implements Cloneable {
      * @param creationTim The current time
      */
     public Stamp(final Stamp old, final long creationTime) {
-        baseLength = old.length();
-        evidentialBase = old.getBase();
+        baseLength = old.baseLength;
+        evidentialBase = old.evidentialBase;
         this.creationTime = creationTime;
         occurrenceTime = old.getOccurrenceTime();
         derivationChain = old.getChain();
@@ -151,11 +152,11 @@ public class Stamp implements Cloneable {
         
         int i1, i2, j;
         i1 = i2 = j = 0;
-        baseLength = Math.min(first.length() + second.length(), Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
+        baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
         evidentialBase = new long[baseLength];
 
-        final long[] firstBase = first.getBase();
-        final long[] secondBase = second.getBase();        
+        final long[] firstBase = first.evidentialBase;
+        final long[] secondBase = second.evidentialBase;     
         int firstLength = firstBase.length;
         int secondLength = secondBase.length;
         
@@ -224,7 +225,7 @@ public class Stamp implements Cloneable {
          return null;  // do not merge identical bases
          }
          */
-//        if (first.length() > second.length()) {
+//        if (first.baseLength() > second.baseLength()) {
             return new Stamp(first, second, time); // keep the order for projection
 //        } else {
 //            return new Stamp(second, first, time);
@@ -233,7 +234,7 @@ public class Stamp implements Cloneable {
 
     /*
      private static boolean equalBases(long[] base1, long[] base2) {
-     if (base1.length != base2.length) {
+     if (base1.baseLength != base2.baseLength) {
      return false;
      }
      for (long n1 : base1) {
@@ -267,14 +268,6 @@ public class Stamp implements Cloneable {
         currentSerial = 0;
     }
 
-    /**
-     * Return the baseLength of the evidentialBase
-     *
-     * @return Length of the Stamp
-     */
-    public int length() {
-        return baseLength;
-    }
 
     /**
      * Get a number from the evidentialBase by index, called in this class only
@@ -286,14 +279,6 @@ public class Stamp implements Cloneable {
         return evidentialBase[i];
     }
 
-    /**
-     * Get the evidentialBase, called from derivedTask in Memory
-     *
-     * @return The evidentialBase of numbers
-     */
-    public long[] getBase() {
-        return evidentialBase;
-    }
 
     /**
      * Get the derivationChain, called from derivedTask in Memory
@@ -368,15 +353,6 @@ public class Stamp implements Cloneable {
         return Objects.hash(toSet(), creationTime, occurrenceTime);
     }
 
-    //return toString().hashCode();
-    /**
-     * Get the creationTime of the truth-value
-     *
-     * @return The creation time
-     */
-    public long getCreationTime() {
-        return creationTime;
-    }
 
     /**
      * Get the occurrenceTime of the truth-value
@@ -401,24 +377,24 @@ public class Stamp implements Cloneable {
         }
     }
 
-    public String getTense(long currentTime) {
-        String tenseString = "";
+    public String getTense(final long currentTime) {
+        
         if (occurrenceTime == Stamp.ETERNAL) {
-            return tenseString;
+            return "";
         }
+
         long timeDiff = occurrenceTime - currentTime;
         if (timeDiff > Parameters.DURATION) {
-            tenseString = Symbols.TENSE_FUTURE;
+            return Symbols.TENSE_FUTURE_space;
         } else if (timeDiff < -Parameters.DURATION) {
-            tenseString = Symbols.TENSE_PAST;
+            return  Symbols.TENSE_PAST_space;
         } else {
-            tenseString = Symbols.TENSE_PRESENT;
+            return Symbols.TENSE_PRESENT_space;
         }
-        return new StringBuilder(tenseString.length() + 1).append(tenseString).append(' ').toString();
     }
 
 
-    public void setOccurrenceTime(long time) {
+    public void setOccurrenceTime(final long time) {
         occurrenceTime = time;
     }
 
@@ -486,13 +462,10 @@ public class Stamp implements Cloneable {
         buffer.append(Symbols.STAMP_CLOSER).append(' ');
 
         //this is for estimating an initial size of the stringbuffer
-        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.length());
+        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
         return buffer.toString();
     }
 
-    public long[] getEvidentialBase() {
-        return evidentialBase;
-    }
 
     public Stamp cloneToTime(long newTime) {
         return new Stamp(this, newTime);

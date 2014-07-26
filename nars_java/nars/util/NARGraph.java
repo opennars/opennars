@@ -250,7 +250,7 @@ public class NARGraph extends DirectedMultigraph {
         @Override
         public void onConcept(NARGraph g, Concept c) {
 
-            final Term term = c.getTerm();
+            final Term term = c.term;
             addTerm(g, term);
 
             if (includeBeliefs) {
@@ -343,7 +343,7 @@ public class NARGraph extends DirectedMultigraph {
             if (includeDerivations && includeBeliefs) {
                 for (final Entry<Sentence,Term> s : sentenceTerms.entrySet()) {
                     
-                    final List<Term> schain = s.getKey().getStamp().getChain();
+                    final List<Term> schain = s.getKey().stamp.getChain();
                     final Term derived = s.getValue();
 
                     for (final Entry<Sentence,Term> t : sentenceTerms.entrySet()) {
@@ -353,7 +353,7 @@ public class NARGraph extends DirectedMultigraph {
                         if (derived==deriver) //avoid loops
                             continue;
 
-                        final List<Term> tchain = s.getKey().getStamp().getChain();                        
+                        final List<Term> tchain = s.getKey().stamp.getChain();                        
                         final Sentence deriverSentence = t.getKey();
                         
                         if (schain.contains(deriverSentence.getContent())) {

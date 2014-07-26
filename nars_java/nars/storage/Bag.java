@@ -229,7 +229,7 @@ public abstract class Bag<E extends Item>  {
      * @return Whether the new Item is added into the Bag
      */
     public boolean putBack(final E oldItem) {
-        BudgetFunctions.forget(oldItem.getBudget(), forgetRate(), RELATIVE_THRESHOLD);
+        BudgetFunctions.forget(oldItem.budget, forgetRate(), RELATIVE_THRESHOLD);
         return putIn(oldItem);
     }
 

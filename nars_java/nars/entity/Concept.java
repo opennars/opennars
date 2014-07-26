@@ -51,7 +51,7 @@ public final class Concept extends Item {
     /**
      * The term is the unique ID of the concept
      */
-    private final Term term;
+    public final Term term;
     
     /**
      * Task links for indirect processing
@@ -89,7 +89,7 @@ public final class Concept extends Item {
      * The display window
      */
 
-    private final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
+    private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
     private EntityObserver entityObserver = defaultNullEntityObserver;
 
 
@@ -134,7 +134,7 @@ public final class Concept extends Item {
         } else {
             processQuestion(task);
         }
-        if (task.getBudget().aboveThreshold()) {    // still need to be processed
+        if (task.budget.aboveThreshold()) {    // still need to be processed
             linkToTask(task);
         }
         if (entityObserver.isActive()) {
@@ -154,11 +154,11 @@ public final class Concept extends Item {
         final Sentence judg = task.getSentence();
         final Sentence oldBelief = evaluation(judg, beliefs);
         if (oldBelief != null) {
-            final Stamp newStamp = judg.getStamp();
-            final Stamp oldStamp = oldBelief.getStamp();
+            final Stamp newStamp = judg.stamp;
+            final Stamp oldStamp = oldBelief.stamp;
             if (newStamp.equals(oldStamp)) {
                 if (task.getParentTask().getSentence().isJudgment()) {
-                    task.getBudget().decPriority(0);    // duplicated task
+                    task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
                 return;
             } else if (LocalRules.revisible(judg, oldBelief)) {
@@ -169,7 +169,7 @@ public final class Concept extends Item {
                 }
             }
         }
-        if (task.getBudget().aboveThreshold()) {
+        if (task.budget.aboveThreshold()) {
             for (final Task ques : questions) {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 LocalRules.trySolution(judg, ques, memory);
@@ -209,7 +209,7 @@ public final class Concept extends Item {
         if (newAnswer != null) {
 //            LocalRules.trySolution(ques, newAnswer, task, memory);
             LocalRules.trySolution(newAnswer, task, memory);
-            return newAnswer.getTruth().getExpectation();
+            return newAnswer.truth.getExpectation();
         } else {
             return 0.5f;
         }
@@ -225,7 +225,7 @@ public final class Concept extends Item {
      * @param content The content of the task
      */
     private void linkToTask(final Task task) {
-        final BudgetValue taskBudget = task.getBudget();
+        final BudgetValue taskBudget = task.budget;
         insertTaskLink(new TaskLink(task, null, taskBudget));  // link type: SELF
         if (term instanceof CompoundTerm) {
             if (!termLinkTemplates.isEmpty()) {
@@ -312,7 +312,7 @@ public final class Concept extends Item {
      * @param taskLink The termLink to be inserted
      */
     public void insertTaskLink(final TaskLink taskLink) {
-        final BudgetValue taskBudget = taskLink.getBudget();
+        final BudgetValue taskBudget = taskLink.budget;
         taskLinks.putIn(taskLink);
         memory.activateConcept(this, taskBudget);
     }
@@ -358,15 +358,6 @@ public final class Concept extends Item {
         termLinks.putIn(termLink);
     }
 
-    /* ---------- access local information ---------- */
-    /**
-     * Return the associated term, called from Memory only
-     *
-     * @return The associated term
-     */
-    public Term getTerm() {
-        return term;
-    }
 
     /**
      * Return a string representation of the concept, called in ConceptBag only
@@ -440,14 +431,14 @@ public final class Concept extends Item {
      * @return The selected isBelief
      */
     public Sentence getBelief(final Task task) {
-        final Stamp taskStamp = task.getSentence().getStamp();
+        final Stamp taskStamp = task.getSentence().stamp;
         final long currentTime = memory.getTime();
 
         for (Sentence belief : beliefs) {
             if (memory.getRecorder().isActive()) {
                 memory.getRecorder().append(" * Selected Belief: " + belief + "\n");
             }
-            memory.newStamp = Stamp.make(taskStamp, belief.getStamp(), currentTime);
+            memory.newStamp = Stamp.make(taskStamp, belief.stamp, currentTime);
 //            if (memory.newStamp != null) {
                 return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 //            }
@@ -556,7 +547,7 @@ public final class Concept extends Item {
         return buffer.toString();
     }
 
-    final class NullEntityObserver implements EntityObserver {
+    static final class NullEntityObserver implements EntityObserver {
 
         @Override
         public boolean isActive() {
