@@ -116,8 +116,8 @@ public class Sentence implements Cloneable {
      * @return Whether the two are equivalent
      */
     public boolean equivalentTo(final Sentence that) {
-        assert content.equals(that.getContent()) && punctuation == punctuation;
-        return (truth.equals(truth) && stamp.equals(stamp));
+        assert content.equals(that.getContent()) && punctuation == that.punctuation;
+        return (truth.equals(that.truth) && stamp.equals(that.stamp));
     }
 
     /**

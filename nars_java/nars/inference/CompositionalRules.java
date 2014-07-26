@@ -27,12 +27,7 @@ import nars.io.Symbols;
 import nars.language.*;
 import nars.storage.Memory;
 
-/**
- * Compound term composition and decomposition rules, with two premises.
- * <p>
- * Forward inference only, except the last group (dependent variable
- * introduction) can also be used backward.
- */
+
 public final class CompositionalRules {
 
     
@@ -121,23 +116,14 @@ public final class CompositionalRules {
                     }
                 }
             }
+            
+            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
+            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_dependent, TruthFunctions.anonymousAnalogy(taskSentence.truth, truthSecond));
+            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_independent, TruthFunctions.deduction(taskSentence.truth, truthSecond));
+            
             Term result;
             TruthValue truth;
-            for(int i=0;i<terms_dependent.size();i++) {
-                result=terms_dependent.get(i);
-                truth=TruthFunctions.anonymousAnalogy(taskSentence.truth, truthSecond);
-               
-                Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
-                Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, 
-                        new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );
-                                                
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.getContent(), memory);
-                Task newTask = new Task(newSentence, budget, task, null);
-                Task dummy = new Task(second_belief, budget, task, null);
-                memory.currentBelief=taskSentence;
-                memory.currentTask=dummy;
-                memory.derivedTask(newTask, false, false);
-            }
+            
             for(int i=0;i<terms_independent.size();i++) {
                 result=terms_independent.get(i);
                 truth=TruthFunctions.deduction(taskSentence.truth, truthSecond);
@@ -694,5 +680,28 @@ public final class CompositionalRules {
             }
         }
         return commonTerm;
+    }
+
+    private static void dedSecondLayerVariableUnificationTerms(Memory memory, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth) {
+        
+            Sentence taskSentence = task.getSentence();
+            
+            Stamp sx = new Stamp(taskSentence.stamp, memory.getTime(), s);
+            
+            for(int i=0;i<terms_dependent.size();i++) {
+                final CompoundTerm result = terms_dependent.get(i);
+               
+                Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, sx);
+                                                
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.getContent(), memory);
+                
+                Task newTask = new Task(newSentence, budget, task, null);
+                Task dummy = new Task(second_belief, budget, task, null);
+                
+                memory.currentBelief=taskSentence;
+                memory.currentTask=dummy;
+                
+                memory.derivedTask(newTask, false, false);
+            }    
     }
 }
