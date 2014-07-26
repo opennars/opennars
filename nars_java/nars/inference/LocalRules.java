@@ -158,8 +158,8 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static void matchReverse(final Memory memory) {
-        Task task = memory.currentTask;
-        Sentence belief = memory.currentBelief;
+        Task task = memory.getCurrentTask();
+        Sentence belief = memory.getCurrentBelief();
         Sentence sentence = task.getSentence();
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(),
                 TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
@@ -180,7 +180,7 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final Memory memory) {
-        if (memory.currentTask.getSentence().isJudgment()) {
+        if (memory.getCurrentTask().getSentence().isJudgment()) {
             inferToAsym((Sentence) asym, (Sentence) sym, memory);
         } else {
             convertRelation(memory);
@@ -239,7 +239,7 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     private static void conversion(final Memory memory) {
-        TruthValue truth = TruthFunctions.conversion(memory.currentBelief.truth);
+        TruthValue truth = TruthFunctions.conversion(memory.getCurrentBelief().truth);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
         convertedJudgment(truth, budget, memory);
     }
@@ -251,8 +251,8 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     private static void convertRelation(final Memory memory) {
-        TruthValue truth = memory.currentBelief.truth;
-        if (((Statement) memory.currentTask.getContent()).isCommutative()) {
+        TruthValue truth = memory.getCurrentBelief().truth;
+        if (((Statement) memory.getCurrentTask().getContent()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(truth, 1.0f);
@@ -271,8 +271,8 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     private static void convertedJudgment(final TruthValue newTruth, final BudgetValue newBudget, final Memory memory) {
-        Statement content = (Statement) memory.currentTask.getContent();
-        Statement beliefContent = (Statement) memory.currentBelief.getContent();
+        Statement content = (Statement) memory.getCurrentTask().getContent();
+        Statement beliefContent = (Statement) memory.getCurrentBelief().getContent();
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();
         final Term predT = content.getPredicate();

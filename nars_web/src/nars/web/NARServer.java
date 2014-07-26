@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import nars.core.NAR;
+import nars.core.DefaultNARBuilder;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
@@ -34,7 +34,7 @@ public class NARServer  {
 
             if (WEBSOCKET_DEBUG) System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
 
-            final NARConnection n = new NARConnection(new NAR(), cycleIntervalMS) {
+            final NARConnection n = new NARConnection(new DefaultNARBuilder().build(), cycleIntervalMS) {
                 @Override public void println(String output) {
                     conn.send(output);
                 }

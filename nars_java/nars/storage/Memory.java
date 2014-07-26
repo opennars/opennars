@@ -44,9 +44,7 @@ import nars.inference.TemporalRules;
 import nars.io.Output.OUT;
 import nars.language.Term;
 
-/**
- * The memory of the system.
- */
+
 public class Memory {
 
     public static Random randomNumber = new Random(1);
@@ -81,34 +79,19 @@ public class Memory {
      */
     public final ArrayDeque<Task> newTasks;
 
-    /**
-     * The selected Term
-     */
     public Term currentTerm;
-    /**
-     * The selected Concept
-     */
+
     public Concept currentConcept;
-    /**
-     * The selected TaskLink
-     */
-    public TaskLink currentTaskLink;
-    /**
-     * The selected Task
-     */
-    public Task currentTask;
-    /**
-     * The selected TermLink
-     */
-    public TermLink currentBeliefLink;
-    /**
-     * The selected belief
-     */
-    public Sentence currentBelief;
-    /**
-     * The new Stamp
-     */
-    public Stamp newStamp;
+
+    private Task currentTask;
+
+    private TermLink currentBeliefLink;
+    private TaskLink currentTaskLink;
+
+    private Sentence currentBelief;
+
+    private Stamp newStamp;
+    
     /**
      * The substitution that unify the common term in the Task and the Belief
      * TODO unused
@@ -307,7 +290,7 @@ public class Memory {
      * forward/backward correspondence
      */
     public void activatedTask(final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
-        final Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
+        final Task task = new Task(sentence, budget, getCurrentTask(), sentence, candidateBelief);
 
         if (sentence.isQuestion()) {
             final float s = task.budget.summary();
@@ -340,10 +323,10 @@ public class Memory {
             final Stamp stamp = task.getSentence().stamp;
             final List<Term> chain = stamp.getChain();
             
-            final Term currentTaskContent = currentTask.getContent();
+            final Term currentTaskContent = getCurrentTask().getContent();
             
-            if (currentBelief != null) {
-                final Term currentBeliefContent = currentBelief.getContent();
+            if (getCurrentBelief() != null) {
+                final Term currentBeliefContent = getCurrentBelief().getContent();
                 if(chain.contains(currentBeliefContent)) {
                 //if(stamp.chainContainsInstance(currentBeliefContent)) {
                     chain.remove(currentBeliefContent);
@@ -353,7 +336,7 @@ public class Memory {
             
             
             //workaround for single premise task issue:
-            if(currentBelief == null && single && currentTask != null) {
+            if(getCurrentBelief() == null && single && getCurrentTask() != null) {
                 if(chain.contains(currentTaskContent)) {
                 //if(stamp.chainContainsInstance(currentTaskContent)) {
                     chain.remove(currentTaskContent);
@@ -361,7 +344,7 @@ public class Memory {
                 stamp.addToChain(currentTaskContent);
             }
             //end workaround
-            if (currentTask != null && !single) {
+            if (getCurrentTask() != null && !single) {
                 if(chain.contains(currentTaskContent)) {                
                 //if(stamp.chainContainsInstance(currentTaskContent)) {                    
                     chain.remove(currentTaskContent);
@@ -425,8 +408,8 @@ public class Memory {
      */
     public void doublePremiseTaskRevised(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
         if (newContent != null) {
-            Sentence newSentence = new Sentence(newContent, currentTask.getSentence().punctuation, newTruth, newStamp);
-            Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
+            Sentence newSentence = new Sentence(newContent, getCurrentTask().getSentence().punctuation, newTruth, getNewStamp());
+            Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
             derivedTask(newTask, true, false);
         }
     }
@@ -441,8 +424,8 @@ public class Memory {
      */
     public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         if (newContent != null) {
-            final Sentence newSentence = new Sentence(newContent, currentTask.getSentence().punctuation, newTruth, newStamp);
-            final Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
+            final Sentence newSentence = new Sentence(newContent, getCurrentTask().getSentence().punctuation, newTruth, getNewStamp());
+            final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
             derivedTask(newTask, false, false);
         }
     }
@@ -474,7 +457,7 @@ public class Memory {
      * @param newBudget The budget value in task
      */
     public void singlePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
-        singlePremiseTask(newContent, currentTask.getSentence().punctuation, newTruth, newBudget);
+        singlePremiseTask(newContent, getCurrentTask().getSentence().punctuation, newTruth, newBudget);
     }
 
     /**
@@ -487,24 +470,24 @@ public class Memory {
      * @param newBudget The budget value in task
      */
     public void singlePremiseTask(Term newContent, char punctuation, TruthValue newTruth, BudgetValue newBudget) {
-        Task parentTask = currentTask.getParentTask();
+        Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null && newContent.equals(parentTask.getContent())) { // circular structural inference
             return;
         }
-        Sentence taskSentence = currentTask.getSentence();
-        if (taskSentence.isJudgment() || currentBelief == null) {
-            newStamp = new Stamp(taskSentence.stamp, getTime());
+        Sentence taskSentence = getCurrentTask().getSentence();
+        if (taskSentence.isJudgment() || getCurrentBelief() == null) {
+            setNewStamp(new Stamp(taskSentence.stamp, getTime()));
         } else {    // to answer a question with negation in NAL-5 --- move to activated task?
-            newStamp = new Stamp(currentBelief.stamp, getTime());
+            setNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
 
-        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, newStamp);
-        Task newTask = new Task(newSentence, newBudget, currentTask, null);
+        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getNewStamp());
+        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
         derivedTask(newTask, false, true);
     }
 
     public void singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
-        Task newTask = new Task(newSentence, newBudget, currentTask, null);
+        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
         derivedTask(newTask, false, true);
     }
 
@@ -578,11 +561,11 @@ public class Memory {
         }
         if (newEvent != null) {
             if (lastEvent != null) {
-                newStamp = Stamp.make(newEvent.getSentence().stamp, lastEvent.getSentence().stamp, getTime());
-                if (newStamp != null) {
-                    currentTask = newEvent;
-                    currentBelief = lastEvent.getSentence();
-                    TemporalRules.temporalInduction(newEvent.getSentence(), currentBelief, this);
+                setNewStamp(Stamp.make(newEvent.getSentence().stamp, lastEvent.getSentence().stamp, getTime()));
+                if (getNewStamp() != null) {
+                    setCurrentTask(newEvent);
+                    setCurrentBelief(lastEvent.getSentence());
+                    TemporalRules.temporalInduction(newEvent.getSentence(), getCurrentBelief(), this);
                 }
             }
             lastEvent = newEvent;
@@ -604,16 +587,16 @@ public class Memory {
      */
     private void processConcept() {
         currentConcept = concepts.takeOut();
-        if (currentConcept != null) {
-            currentTerm = currentConcept.term;
+        if (getCurrentConcept() != null) {
+            setCurrentTerm(getCurrentConcept().term);
             
             if (recorder.isActive()) {
-                recorder.append("Concept Selected: " + currentTerm + "\n");
+                recorder.append("Concept Selected: " + getCurrentTerm() + "\n");
             }
             
-            concepts.putBack(currentConcept);   // current Concept remains in the bag all the time
+            concepts.putBack(getCurrentConcept());   // current Concept remains in the bag all the time
             
-            currentConcept.fire();              // a working workCycle
+            getCurrentConcept().fire();              // a working workCycle
         }
     }
 
@@ -625,18 +608,18 @@ public class Memory {
      * @param task the task to be accepted
      */
     private void immediateProcess(final Task task) {
-        currentTask = task; // one of the two places where this variable is set
+        setCurrentTask(task); // one of the two places where this variable is set
         
         if (recorder.isActive()) {
             recorder.append("Task Immediately Processed: " + task + "\n");
         }
         
-        currentTerm = task.getContent();
-        currentConcept = getConcept(currentTerm);
+        setCurrentTerm(task.getContent());
+        currentConcept = getConcept(getCurrentTerm());
         
-        if (currentConcept != null) {
-            activateConcept(currentConcept, task.budget);
-            currentConcept.directProcess(task);
+        if (getCurrentConcept() != null) {
+            activateConcept(getCurrentConcept(), task.budget);
+            getCurrentConcept().directProcess(task);
         }
     }
 
@@ -681,9 +664,9 @@ public class Memory {
         sb.append(toStringLongIfNotNull(concepts, "concepts"))
                 .append(toStringLongIfNotNull(novelTasks, "novelTasks"))
                 .append(toStringIfNotNull(newTasks, "newTasks"))
-                .append(toStringLongIfNotNull(currentTask, "currentTask"))
-                .append(toStringLongIfNotNull(currentBeliefLink, "currentBeliefLink"))
-                .append(toStringIfNotNull(currentBelief, "currentBelief"));
+                .append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
+                .append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
+                .append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
         return sb.toString();
     }
 
@@ -721,6 +704,97 @@ public class Memory {
     /** returns a collection of all concepts */
     public Collection<Concept> getConcepts() {
         return concepts.nameTable.values();
+    }
+
+    /**
+     * @return the currentTask
+     */
+    public Task getCurrentTask() {
+        return currentTask;
+    }
+
+    /**
+     * @param currentTask the currentTask to set
+     */
+    public void setCurrentTask(Task currentTask) {
+        this.currentTask = currentTask;
+    }
+
+    /**
+     * @return the newStamp
+     */
+    public Stamp getNewStamp() {
+        return newStamp;
+    }
+
+    /**
+     * @param newStamp the newStamp to set
+     */
+    public void setNewStamp(Stamp newStamp) {
+        this.newStamp = newStamp;
+    }
+
+    /**
+     * @return the currentBelief
+     */
+    public Sentence getCurrentBelief() {
+        return currentBelief;
+    }
+
+    /**
+     * @param currentBelief the currentBelief to set
+     */
+    public void setCurrentBelief(Sentence currentBelief) {
+        this.currentBelief = currentBelief;
+    }
+
+    /**
+     * @return the currentBeliefLink
+     */
+    public TermLink getCurrentBeliefLink() {
+        return currentBeliefLink;
+    }
+
+    /**
+     * @param currentBeliefLink the currentBeliefLink to set
+     */
+    public void setCurrentBeliefLink(TermLink currentBeliefLink) {
+        this.currentBeliefLink = currentBeliefLink;
+    }
+
+    /**
+     * @return the currentTaskLink
+     */
+    public TaskLink getCurrentTaskLink() {
+        return currentTaskLink;
+    }
+
+    /**
+     * @param currentTaskLink the currentTaskLink to set
+     */
+    public void setCurrentTaskLink(TaskLink currentTaskLink) {
+        this.currentTaskLink = currentTaskLink;
+    }
+
+    /**
+     * @return the currentTerm
+     */
+    public Term getCurrentTerm() {
+        return currentTerm;
+    }
+
+    /**
+     * @param currentTerm the currentTerm to set
+     */
+    public void setCurrentTerm(Term currentTerm) {
+        this.currentTerm = currentTerm;
+    }
+
+    /**
+     * @return the currentConcept
+     */
+    public Concept getCurrentConcept() {
+        return currentConcept;
     }
 
     public static final class NullInferenceRecorder implements InferenceRecorder {

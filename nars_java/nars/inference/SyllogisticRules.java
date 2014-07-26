@@ -158,7 +158,7 @@ public final class SyllogisticRules {
         Statement st = (Statement) asym.getContent();
         TruthValue truth = null;
         BudgetValue budget;
-        Sentence sentence = memory.currentTask.getSentence();
+        Sentence sentence = memory.getCurrentTask().getSentence();
         CompoundTerm taskTerm = (CompoundTerm) sentence.getContent();
         if (sentence.isQuestion()) {
             if (taskTerm.isCommutative()) {
@@ -245,10 +245,10 @@ public final class SyllogisticRules {
             }
             long inc = order * Parameters.DURATION;
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
-            memory.newStamp.setOccurrenceTime(time);
+            memory.getNewStamp().setOccurrenceTime(time);
         }
-        Sentence taskSentence = memory.currentTask.getSentence();
-        Sentence beliefSentence = memory.currentBelief;
+        Sentence taskSentence = memory.getCurrentTask().getSentence();
+        Sentence beliefSentence = memory.getCurrentBelief();
         TruthValue beliefTruth = beliefSentence.truth;
         TruthValue truth1 = mainSentence.truth;
         TruthValue truth2 = subSentence.truth;
@@ -289,9 +289,9 @@ public final class SyllogisticRules {
      * @param memory Reference to the memory
      */
     static void conditionalDedInd(Implication premise1, short index, Term premise2, int side, Memory memory) {
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence taskSentence = task.getSentence();
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         boolean deduction = (side != 0);
         boolean conditionalTask = Variable.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getContent());
         Term commonComponent;
@@ -384,9 +384,9 @@ public final class SyllogisticRules {
      * @param memory Reference to the memory
      */
     static void conditionalAna(Equivalence premise1, short index, Term premise2, int side, Memory memory) {
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence taskSentence = task.getSentence();
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         boolean conditionalTask = Variable.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getContent());
         Term commonComponent;
         Term newComponent = null;
@@ -492,9 +492,9 @@ public final class SyllogisticRules {
         if ((term1 == null) && (term2 == null)) {
             return false;
         }
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         TruthValue value1 = sentence.truth;
         TruthValue value2 = belief.truth;
         Term content;
@@ -544,9 +544,9 @@ public final class SyllogisticRules {
         if ((content == null) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
         }
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         TruthValue v1 = sentence.truth;
         TruthValue v2 = belief.truth;
         TruthValue truth = null;

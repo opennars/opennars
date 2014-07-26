@@ -20,7 +20,6 @@ import nars.util.NARGraph;
 import nars.util.NARGraph.ExcludeLevelsBelow;
 import nars.gui.NSlider;
 import nars.gui.Window;
-import nars.gui.output.mvoapplet.Vertex;
 import nars.language.Term;
 import nars.storage.Memory;
 import processing.core.*;
@@ -52,7 +51,6 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
     Hamlib hamlib = new Hamlib();
 
-    Vertex lastclicked = null;
 
     public Button getBack;
     public Button conceptsView;
@@ -266,9 +264,9 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         
         
         final Memory mem = nar.memory;
-        final Sentence currentBelief = mem.currentBelief;
-        final Concept currentConcept = mem.currentConcept;
-        final Task currentTask = mem.currentTask;
+        final Sentence currentBelief = mem.getCurrentBelief();
+        final Concept currentConcept = mem.getCurrentConcept();
+        final Task currentTask = mem.getCurrentTask();
         
         if ((nar.getTime() != lasttime) || (updateNext)) {
             updateNext = false;
@@ -440,10 +438,10 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         //text("Hamlib simulation system demonstration", 0, -5);
         //stroke(255, 255, 255);
         //noStroke();
-        if (lastclicked != null) {
+        /*if (lastclicked != null) {
             fill(255, 0, 0);
             ellipse(lastclicked.x, lastclicked.y, 10, 10);
-        }
+        }*/
     }
 
     public void hrend_DrawGUI() {

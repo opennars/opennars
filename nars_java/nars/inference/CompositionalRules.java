@@ -135,8 +135,8 @@ public final class CompositionalRules {
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.getContent(), memory);
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
-                memory.currentBelief=taskSentence;
-                memory.currentTask=dummy;
+                memory.setCurrentBelief(taskSentence);
+                memory.setCurrentTask(dummy);
                 memory.derivedTask(newTask, false, false);
             }
             return true;
@@ -219,8 +219,8 @@ public final class CompositionalRules {
                     if (Variable.containDepOrIndepVar(conj.toString()))
                         continue;
                     
-                    TruthValue truthT = memory.currentTask.getSentence().truth;
-                    TruthValue truthB = memory.currentBelief.truth;
+                    TruthValue truthT = memory.getCurrentTask().getSentence().truth;
+                    TruthValue truthB = memory.getCurrentBelief().truth;
                     if(truthT==null || truthB==null) {
                         return;
                     }
@@ -245,7 +245,7 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final Memory memory) {
-        if ((!memory.currentTask.getSentence().isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
+        if ((!memory.getCurrentTask().getSentence().isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
             return;
         }
         final Term componentT = taskContent.componentAt(1 - index);
@@ -264,8 +264,8 @@ public final class CompositionalRules {
             decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, memory);
             return;
         }
-        final TruthValue truthT = memory.currentTask.getSentence().truth;
-        final TruthValue truthB = memory.currentBelief.truth;
+        final TruthValue truthT = memory.getCurrentTask().getSentence().truth;
+        final TruthValue truthB = memory.getCurrentBelief().truth;
         final TruthValue truthOr = TruthFunctions.union(truthT, truthB);
         final TruthValue truthAnd = TruthFunctions.intersection(truthT, truthB);
         TruthValue truthDif = null;
@@ -332,7 +332,7 @@ public final class CompositionalRules {
             return;
         }
         Term content = Statement.make(statement, subject, predicate, order, memory);
-        if ((content == null) || content.equals(statement) || content.equals(memory.currentBelief.getContent())) {
+        if ((content == null) || content.equals(statement) || content.equals(memory.getCurrentBelief().getContent())) {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
@@ -359,9 +359,9 @@ public final class CompositionalRules {
         if (term2 == null) {
             return;
         }
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         Statement oldContent = (Statement) task.getContent();
         TruthValue v1,
                 v2;
@@ -446,10 +446,10 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence sentence = task.getSentence();
 
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         Term content = CompoundTerm.reduceComponents(compound, component, memory);
         if (content == null) {
             return;
@@ -470,7 +470,7 @@ public final class CompositionalRules {
                     return;
                 }
                 Task contentTask = new Task(contentBelief, task.budget);
-                memory.currentTask = contentTask;
+                memory.setCurrentTask(contentTask);
                 Term conj = Conjunction.make(component, content, memory);
                 truth = TruthFunctions.intersection(contentBelief.truth, belief.truth);
                 budget = BudgetFunctions.compoundForward(truth, conj, memory);
@@ -513,8 +513,8 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     private static void introVarOuter(Statement taskContent, Statement beliefContent, int index, Memory memory) {
-        TruthValue truthT = memory.currentTask.getSentence().truth;
-        TruthValue truthB = memory.currentBelief.truth;
+        TruthValue truthT = memory.getCurrentTask().getSentence().truth;
+        TruthValue truthB = memory.getCurrentBelief().truth;
         Variable varInd = new Variable("$varInd1");
         Variable varInd2 = new Variable("$varInd2");
         Term term11, term12, term21, term22, commonTerm;
@@ -603,7 +603,7 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     static void introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, Memory memory) {
-        Task task = memory.currentTask;
+        Task task = memory.getCurrentTask();
         Sentence taskSentence = task.getSentence();
         if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containComponent(premise1)) {
             return;
@@ -622,7 +622,7 @@ public final class CompositionalRules {
         } else {
             return;
         }
-        Sentence belief = memory.currentBelief;
+        Sentence belief = memory.getCurrentBelief();
         HashMap<Term, Term> substitute = new HashMap<>();
         substitute.put(commonTerm1, new Variable("#varDep2"));
         CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound, memory);
@@ -698,8 +698,8 @@ public final class CompositionalRules {
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
                 
-                memory.currentBelief=taskSentence;
-                memory.currentTask=dummy;
+                memory.setCurrentBelief(taskSentence);
+                memory.setCurrentTask(dummy);
                 
                 memory.derivedTask(newTask, false, false);
             }    
