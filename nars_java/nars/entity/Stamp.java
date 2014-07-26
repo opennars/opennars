@@ -26,14 +26,7 @@ import nars.io.Symbols;
 import nars.core.Parameters;
 import nars.language.Term;
 
-/**
- * Each Sentence has a time stamp, consisting the following components: (1) The
- * creation time of the sentence, (2) A evidentialBase of serial numbers of
- * sentence, from which the sentence is derived. Each input sentence gets a
- * unique serial number, though the creation time may be not unique. The derived
- * sentences inherits serial numbers from its parents, cut at the baseLength
- * limit.
- */
+
 public class Stamp implements Cloneable {
 
     /**
@@ -78,6 +71,13 @@ public class Stamp implements Cloneable {
      */
     public final List<Term> derivationChain;
 
+
+    /** caches hashcode value; only computed on-demand since stamp's hashcode does not seem used in inference (yet) */
+    private final Integer hashCode = null;
+    
+    /** caches evidentialBase as a set for comparisons and hashcode */
+    private Set<Long> evidentialSet; 
+    
     /**
      * Generate a new stamp, with a new serial number, for a new Task
      *
@@ -314,12 +314,14 @@ public class Stamp implements Cloneable {
      *
      * @return The TreeSet representation of the evidential base
      */
-    private TreeSet<Long> toSet() {
-        final TreeSet<Long> set = new TreeSet<>();
-        for (final Long l : evidentialBase) {
-            set.add(l);
+    private Set<Long> toSet() {
+        if (evidentialSet == null) {
+            evidentialSet = new TreeSet<>();
+            for (final Long l : evidentialBase)
+                evidentialSet.add(l);
+            evidentialSet = Collections.unmodifiableSet(evidentialSet);
         }
-        return set;
+        return evidentialSet;
     }
 
     /**
@@ -339,8 +341,8 @@ public class Stamp implements Cloneable {
             return false;
         
         //TODO see if there is a faster way than creating two treeset's
-        final TreeSet<Long> set1 = toSet();
-        final TreeSet<Long> set2 = s.toSet();
+        final Set<Long> set1 = toSet();
+        final Set<Long> set2 = s.toSet();
 
         //return (set1.containsAll(set2) && set2.containsAll(set1));
         return set1.equals(set2);
@@ -352,8 +354,8 @@ public class Stamp implements Cloneable {
      * @return The hash code
      */
     @Override
-    public int hashCode() {
-        throw new UnsupportedOperationException("Hashcode not used currently");
+    public int hashCode() {        
+        return Objects.hash(toSet(), occurrenceTime);
     }
 
     //return toString().hashCode();
