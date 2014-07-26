@@ -52,17 +52,17 @@ public final class CompositionalRules {
                 return false;
             }
             if (memory.getRecorder().isActive()) {
-                memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.getTerm() + "\n");
+                memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term + "\n");
             }            
             memory.concepts.putBack(second);
             
-            Term secterm=second.getTerm();
+            Term secterm=second.term;
             if(second.beliefs==null || second.beliefs.size()==0) {
                 return false;
             }
            
             Sentence second_belief=second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
-            TruthValue truthSecond=second_belief.getTruth();
+            TruthValue truthSecond=second_belief.truth;
             //we have to select a random belief
             ArrayList<CompoundTerm> terms_dependent=new ArrayList<CompoundTerm>();
             ArrayList<CompoundTerm> terms_independent=new ArrayList<CompoundTerm>();
@@ -125,9 +125,9 @@ public final class CompositionalRules {
             TruthValue truth;
             for(int i=0;i<terms_dependent.size();i++) {
                 result=terms_dependent.get(i);
-                truth=TruthFunctions.anonymousAnalogy(taskSentence.getTruth(), truthSecond);
+                truth=TruthFunctions.anonymousAnalogy(taskSentence.truth, truthSecond);
                
-                Stamp useEvidentalBase=new Stamp(taskSentence.getStamp(),second_belief.getStamp(),memory.getTime());
+                Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
                 Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, 
                         new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );
                                                 
@@ -140,9 +140,9 @@ public final class CompositionalRules {
             }
             for(int i=0;i<terms_independent.size();i++) {
                 result=terms_independent.get(i);
-                truth=TruthFunctions.deduction(taskSentence.getTruth(), truthSecond);
+                truth=TruthFunctions.deduction(taskSentence.truth, truthSecond);
                
-                Stamp useEvidentalBase=new Stamp(taskSentence.getStamp(),second_belief.getStamp(),memory.getTime());
+                Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
                 Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, 
                         new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );                
                 
@@ -233,8 +233,8 @@ public final class CompositionalRules {
                     if (Variable.containDepOrIndepVar(conj.toString()))
                         continue;
                     
-                    TruthValue truthT = memory.currentTask.getSentence().getTruth();
-                    TruthValue truthB = memory.currentBelief.getTruth();
+                    TruthValue truthT = memory.currentTask.getSentence().truth;
+                    TruthValue truthB = memory.currentBelief.truth;
                     if(truthT==null || truthB==null) {
                         return;
                     }
@@ -278,8 +278,8 @@ public final class CompositionalRules {
             decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, memory);
             return;
         }
-        final TruthValue truthT = memory.currentTask.getSentence().getTruth();
-        final TruthValue truthB = memory.currentBelief.getTruth();
+        final TruthValue truthT = memory.currentTask.getSentence().truth;
+        final TruthValue truthB = memory.currentBelief.truth;
         final TruthValue truthOr = TruthFunctions.union(truthT, truthB);
         final TruthValue truthAnd = TruthFunctions.intersection(truthT, truthB);
         TruthValue truthDif = null;
@@ -380,11 +380,11 @@ public final class CompositionalRules {
         TruthValue v1,
                 v2;
         if (compoundTask) {
-            v1 = sentence.getTruth();
-            v2 = belief.getTruth();
+            v1 = sentence.truth;
+            v2 = belief.truth;
         } else {
-            v1 = belief.getTruth();
-            v2 = sentence.getTruth();
+            v1 = belief.truth;
+            v2 = sentence.truth;
         }
         TruthValue truth = null;
         Term content;
@@ -483,21 +483,21 @@ public final class CompositionalRules {
                 if (contentBelief == null) {
                     return;
                 }
-                Task contentTask = new Task(contentBelief, task.getBudget());
+                Task contentTask = new Task(contentBelief, task.budget);
                 memory.currentTask = contentTask;
                 Term conj = Conjunction.make(component, content, memory);
-                truth = TruthFunctions.intersection(contentBelief.getTruth(), belief.getTruth());
+                truth = TruthFunctions.intersection(contentBelief.truth, belief.truth);
                 budget = BudgetFunctions.compoundForward(truth, conj, memory);
                 memory.doublePremiseTask(conj, truth, budget);
             }        
         } else {
             TruthValue v1, v2;
             if (compoundTask) {
-                v1 = sentence.getTruth();
-                v2 = belief.getTruth();
+                v1 = sentence.truth;
+                v2 = belief.truth;
             } else {
-                v1 = belief.getTruth();
-                v2 = sentence.getTruth();
+                v1 = belief.truth;
+                v2 = sentence.truth;
             }
             if (compound instanceof Conjunction) {
                 if (sentence instanceof Sentence) {
@@ -527,8 +527,8 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     private static void introVarOuter(Statement taskContent, Statement beliefContent, int index, Memory memory) {
-        TruthValue truthT = memory.currentTask.getSentence().getTruth();
-        TruthValue truthB = memory.currentBelief.getTruth();
+        TruthValue truthT = memory.currentTask.getSentence().truth;
+        TruthValue truthB = memory.currentBelief.truth;
         Variable varInd = new Variable("$varInd1");
         Variable varInd2 = new Variable("$varInd2");
         Term term11, term12, term21, term22, commonTerm;
@@ -641,7 +641,7 @@ public final class CompositionalRules {
         substitute.put(commonTerm1, new Variable("#varDep2"));
         CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound, memory);
         content.applySubstitute(substitute);
-        TruthValue truth = TruthFunctions.intersection(taskSentence.getTruth(), belief.getTruth());
+        TruthValue truth = TruthFunctions.intersection(taskSentence.truth, belief.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
         memory.doublePremiseTask(content, truth, budget);
         substitute.clear();
@@ -654,9 +654,9 @@ public final class CompositionalRules {
             return;
         content.applySubstitute(substitute);
         if (premise1.equals(taskSentence.getContent())) {
-            truth = TruthFunctions.induction(belief.getTruth(), taskSentence.getTruth());
+            truth = TruthFunctions.induction(belief.truth, taskSentence.truth);
         } else {
-            truth = TruthFunctions.induction(taskSentence.getTruth(), belief.getTruth());
+            truth = TruthFunctions.induction(taskSentence.truth, belief.truth);
         }
         budget = BudgetFunctions.forward(truth, memory);
         memory.doublePremiseTask(content, truth, budget);

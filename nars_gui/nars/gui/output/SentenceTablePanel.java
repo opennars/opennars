@@ -109,7 +109,7 @@ public class SentenceTablePanel extends NPanel implements Output {
             
             float freq = -1;
             float conf = -1;
-            TruthValue truth = s.getTruth();
+            TruthValue truth = s.truth;
             if (truth!=null) {
                 freq = truth.getFrequency();
                 conf = truth.getConfidence();
@@ -118,8 +118,7 @@ public class SentenceTablePanel extends NPanel implements Output {
             //TODO use table sort instead of formatting numbers with leading '0's
             data.addRow(new Object[] {
                 s,
-                String.format("%08d",  nar.getTime()),
-                s.getPunctuation(),
+                String.format("%08d",  nar.getTime()), s.punctuation,
                 freq == -1 ? "" : freq,
                 conf == -1 ? "" : conf,
                 String.format("%03d",  s.getContent().getComplexity())     

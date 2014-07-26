@@ -108,7 +108,7 @@ public class Task extends Item {
      * @return The creation time of the sentence
      */
     public long getCreationTime() {
-        return sentence.getStamp().creationTime;
+        return sentence.stamp.creationTime;
     }
 
     /**
@@ -187,7 +187,7 @@ public class Task extends Item {
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
-        s.append(super.toString()).append(' ').append(getSentence().getStamp());
+        s.append(super.toString()).append(' ').append(getSentence().stamp);
         if (parentTask != null) {
             s.append("  \n from task: ").append(parentTask.toStringBrief());
             if (parentBelief != null) {

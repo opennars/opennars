@@ -120,7 +120,7 @@ public class Memory {
     Task lastEvent;
 
     public BudgetValue getLastEventBudget() {
-        return lastEvent.getBudget();
+        return lastEvent.budget;
     }
 
 
@@ -196,7 +196,7 @@ public class Memory {
     public Term nameToTerm(final String name) {
         final Concept concept = concepts.get(name);
         if (concept != null) {
-            return concept.getTerm();
+            return concept.term;
         }
         return null;
     }
@@ -288,7 +288,7 @@ public class Memory {
      * @param task The addInput task
      */
     public void inputTask(final Task task) {
-        if (task.getBudget().aboveThreshold()) {
+        if (task.budget.aboveThreshold()) {
             addNewTask(task, "Perceived");
         } else {
             if (recorder.isActive()) {
@@ -310,7 +310,7 @@ public class Memory {
         final Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
 
         if (sentence.isQuestion()) {
-            final float s = task.getBudget().summary();
+            final float s = task.budget.summary();
             final float minSilent = nar.param.getSilenceLevel() / 100.0f;
             if (s > minSilent) {  // only report significant derived Tasks
                 nar.output(OUT.class, task.getSentence());
@@ -326,9 +326,9 @@ public class Memory {
      * @param task the derived task
      */
     public void derivedTask(final Task task, final boolean revised, final boolean single) {
-        if (task.getBudget().aboveThreshold()) {
-            if (task.getSentence() != null && task.getSentence().getTruth() != null) {
-                float conf = task.getSentence().getTruth().getConfidence();                
+        if (task.budget.aboveThreshold()) {
+            if (task.getSentence() != null && task.getSentence().truth != null) {
+                float conf = task.getSentence().truth.getConfidence();                
                 if (conf == 0) { 
                     //no confidence - we can delete the wrongs out that way.
                     if (recorder.isActive()) {
@@ -337,7 +337,7 @@ public class Memory {
                     return;
                 }
             }
-            final Stamp stamp = task.getSentence().getStamp();
+            final Stamp stamp = task.getSentence().stamp;
             final List<Term> chain = stamp.getChain();
             
             final Term currentTaskContent = currentTask.getContent();
@@ -381,12 +381,12 @@ public class Memory {
                     }
                 }
             } else { //its revision, of course its cyclic, apply evidental base policy
-                final int stampLength = stamp.length();
+                final int stampLength = stamp.baseLength;
                 for (int i = 0; i < stampLength; i++) {
-                    final long baseI = stamp.getBase()[i];
+                    final long baseI = stamp.evidentialBase[i];
                     
                     for (int j = 0; j < stampLength; j++) {
-                        if ((i != j) && (baseI == stamp.getBase()[j])) {
+                        if ((i != j) && (baseI == stamp.evidentialBase[j])) {
                             if (recorder.isActive()) {                                
                                 recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
                             }
@@ -395,7 +395,7 @@ public class Memory {
                     }
                 }
             }
-            float budget = task.getBudget().summary();
+            float budget = task.budget.summary();
             float minSilent = nar.param.getSilenceLevel() / 100.0f;
             
             
@@ -425,7 +425,7 @@ public class Memory {
      */
     public void doublePremiseTaskRevised(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
         if (newContent != null) {
-            Sentence newSentence = new Sentence(newContent, currentTask.getSentence().getPunctuation(), newTruth, newStamp);
+            Sentence newSentence = new Sentence(newContent, currentTask.getSentence().punctuation, newTruth, newStamp);
             Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
             derivedTask(newTask, true, false);
         }
@@ -441,7 +441,7 @@ public class Memory {
      */
     public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         if (newContent != null) {
-            final Sentence newSentence = new Sentence(newContent, currentTask.getSentence().getPunctuation(), newTruth, newStamp);
+            final Sentence newSentence = new Sentence(newContent, currentTask.getSentence().punctuation, newTruth, newStamp);
             final Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
             derivedTask(newTask, false, false);
         }
@@ -474,7 +474,7 @@ public class Memory {
      * @param newBudget The budget value in task
      */
     public void singlePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
-        singlePremiseTask(newContent, currentTask.getSentence().getPunctuation(), newTruth, newBudget);
+        singlePremiseTask(newContent, currentTask.getSentence().punctuation, newTruth, newBudget);
     }
 
     /**
@@ -493,9 +493,9 @@ public class Memory {
         }
         Sentence taskSentence = currentTask.getSentence();
         if (taskSentence.isJudgment() || currentBelief == null) {
-            newStamp = new Stamp(taskSentence.getStamp(), getTime());
+            newStamp = new Stamp(taskSentence.stamp, getTime());
         } else {    // to answer a question with negation in NAL-5 --- move to activated task?
-            newStamp = new Stamp(currentBelief.getStamp(), getTime());
+            newStamp = new Stamp(currentBelief.stamp, getTime());
         }
 
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, newStamp);
@@ -554,7 +554,7 @@ public class Memory {
             if (task.isInput() || (termToConcept(task.getContent()) != null)) {
                 // new addInput or existing concept
                 immediateProcess(task);
-                if (task.getSentence().getStamp().getOccurrenceTime() != Stamp.ETERNAL) {
+                if (task.getSentence().stamp.getOccurrenceTime() != Stamp.ETERNAL) {
                     if ((newEvent == null)
                             || (BudgetFunctions.rankBelief(newEvent.getSentence())
                             < BudgetFunctions.rankBelief(task.getSentence()))) {
@@ -564,7 +564,7 @@ public class Memory {
             } else {
                 final Sentence s = task.getSentence();
                 if (s.isJudgment()) {
-                    final double exp = s.getTruth().getExpectation();
+                    final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         // new concept formation
                         novelTasks.putIn(task);
@@ -578,7 +578,7 @@ public class Memory {
         }
         if (newEvent != null) {
             if (lastEvent != null) {
-                newStamp = Stamp.make(newEvent.getSentence().getStamp(), lastEvent.getSentence().getStamp(), getTime());
+                newStamp = Stamp.make(newEvent.getSentence().stamp, lastEvent.getSentence().stamp, getTime());
                 if (newStamp != null) {
                     currentTask = newEvent;
                     currentBelief = lastEvent.getSentence();
@@ -605,7 +605,7 @@ public class Memory {
     private void processConcept() {
         currentConcept = concepts.takeOut();
         if (currentConcept != null) {
-            currentTerm = currentConcept.getTerm();
+            currentTerm = currentConcept.term;
             
             if (recorder.isActive()) {
                 recorder.append("Concept Selected: " + currentTerm + "\n");
@@ -635,7 +635,7 @@ public class Memory {
         currentConcept = getConcept(currentTerm);
         
         if (currentConcept != null) {
-            activateConcept(currentConcept, task.getBudget());
+            activateConcept(currentConcept, task.budget);
             currentConcept.directProcess(task);
         }
     }

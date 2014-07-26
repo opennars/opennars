@@ -46,14 +46,14 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     /**
      * Determine the rank of a judgment by its quality and originality (stamp
-     * length), called from Concept
+ baseLength), called from Concept
      *
      * @param judg The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
      */
     public static float rankBelief(final Sentence judg) {
-        final float confidence = judg.getTruth().getConfidence();
-        final float originality = 1.0f / (judg.getStamp().getEvidentialBase().length + 1);
+        final float confidence = judg.truth.getConfidence();
+        final float originality = 1.0f / (judg.stamp.evidentialBase.length + 1);
         return or(confidence, originality);
     }
 
@@ -82,7 +82,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             task.incPriority(quality);
         } else {
             float taskPriority = task.getPriority();
-            budget = new BudgetValue(or(taskPriority, quality), task.getDurability(), truthToQuality(solution.getTruth()));
+            budget = new BudgetValue(or(taskPriority, quality), task.getDurability(), truthToQuality(solution.truth));
             task.setPriority(Math.min(1 - quality, taskPriority));
         }
         if (feedbackToLinks) {
@@ -147,7 +147,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget value of the updating task
      */
     static BudgetValue update(final Task task, final TruthValue bTruth) {
-        final TruthValue tTruth = task.getSentence().getTruth();
+        final TruthValue tTruth = task.getSentence().truth;
         final float dif = tTruth.getExpDifAbs(bTruth);
         final float priority = or(dif, task.getPriority());
         final float durability = aveAri(dif, task.getDurability());

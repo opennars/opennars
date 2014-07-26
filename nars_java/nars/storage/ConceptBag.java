@@ -50,7 +50,7 @@ public class ConceptBag extends Bag<Concept> {
     
     public void printAll() {
         for (String k : this.nameTable.keySet()) {
-            Term v = nameTable.get(k).getTerm();
+            Term v = nameTable.get(k).term;
             System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
         }
     }

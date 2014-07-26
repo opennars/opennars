@@ -245,8 +245,8 @@ class papplet extends PApplet implements ActionListener
     public static float getVertexSize(Object o, float nodeSize) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
-            if (s.getTruth()!=null)
-                return (float)(nodeSize * (0.25 + 0.75 * s.getTruth().getConfidence()));
+            if (s.truth!=null)
+                return (float)(nodeSize * (0.25 + 0.75 * s.truth.getConfidence()));
             else
                 return (float)(nodeSize * (0.5));
         }
@@ -255,7 +255,7 @@ class papplet extends PApplet implements ActionListener
             return (float)(Math.log(1+1 + t.getComplexity()) * nodeSize);
         }
         else if (o instanceof Concept) {
-            Term t = ((Concept)o).getTerm();
+            Term t = ((Concept) o).term;
             return (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
         }
         return nodeSize;
@@ -264,8 +264,8 @@ class papplet extends PApplet implements ActionListener
     public static float getVertexAlpha(Object o) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
-            if (s.getTruth()!=null)
-                return (float)((0.25 + 0.75 * s.getTruth().getConfidence()));            
+            if (s.truth!=null)
+                return (float)((0.25 + 0.75 * s.truth.getConfidence()));            
         }
         return 1.0f;
     }    
@@ -661,7 +661,7 @@ public class ProcessingGraphPanel extends JFrame {
             @Override
             public boolean includeConcept(final Concept c) {
                 
-                final Term t = c.getTerm();
+                final Term t = c.term;
                 if (include.contains(t))
                     return true;
                 

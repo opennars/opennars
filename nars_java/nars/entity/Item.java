@@ -31,7 +31,7 @@ public abstract class Item {
     /** The key of the Item, unique in a Bag */
     protected String key;
     /** The budget of the Item, consisting of 3 numbers */
-    protected final BudgetValue budget;
+    public final BudgetValue budget;
 
     /**
      * The default constructor
@@ -68,13 +68,6 @@ public abstract class Item {
         return key;
     }
 
-    /**
-     * Get BudgetValue
-     * @return Current BudgetValue
-     */
-    public BudgetValue getBudget() {
-        return budget;
-    }
 
     /**
      * Get priority value
@@ -161,7 +154,7 @@ public abstract class Item {
      * @param that The Item to be merged
      */
     public void merge(final Item that) {
-        budget.merge(that.getBudget());
+        budget.merge(budget);
     }
 
     /**

@@ -318,7 +318,7 @@ public class NAR implements Runnable, Output {
         else if (o instanceof Sentence) {
             //TEMPORARY
             Sentence s = (Sentence)o;
-            textPerception.perceive(i, s.getContent().toString() + s.getPunctuation() + " " + s.getTruth().toString());
+            textPerception.perceive(i, s.getContent().toString() + s.punctuation + " " + s.truth.toString());
         }
         else {
             output(ERR.class, "Unrecognized input (" + o.getClass() + "): " + o);

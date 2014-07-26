@@ -224,7 +224,7 @@ public class OutputLogPanel extends NPanel implements Output {
         public void run() {
             if (nextOutput.size() > 0) {
 
-                //limitBuffer(nextOutput.length());
+                //limitBuffer(nextOutput.baseLength());
                 limitBuffer(128);
 
                 for (Object o : nextOutput) {
@@ -239,26 +239,26 @@ public class OutputLogPanel extends NPanel implements Output {
                             continue;
                         
                         float conf = 0.5f, freq = 0.5f;
-                        if (s.getTruth() != null) {
-                            conf = s.getTruth().getConfidence();
-                            freq = s.getTruth().getFrequency();                            
+                        if (s.truth != null) {
+                            conf = s.truth.getConfidence();
+                            freq = s.truth.getFrequency();                            
                         }
                         
                         float contentSize = 1f; //0.75f+conf;
                         
                         Color contentColor = Color.getHSBColor(0.5f + (freq-0.5f)/2f, 1.0f, 0.05f + 0.5f - conf/4f);                        
-                        print(contentColor, contentSize, s.getContent().toString() + s.getPunctuation() + ' ' + s.getStamp().getTense(nar.memory.getTime()), s.isQuestion());
+                        print(contentColor, contentSize, s.getContent().toString() + s.punctuation + ' ' + s.stamp.getTense(nar.memory.getTime()), s.isQuestion());
                        
-                        if (s.getTruth()!=null) {
+                        if (s.truth!=null) {
                             Color truthColor = Color.getHSBColor(freq, 0, 0.25f - conf/4f);
-                            print(truthColor, contentSize,  " " + s.getTruth().toString(), false);
+                            print(truthColor, contentSize,  " " + s.truth.toString(), false);
                         }
                        
-                        if ((showStamp) && (s.getStamp()!=null)) {
+                        if ((showStamp) && (s.stamp!=null)) {
                             Color stampColor = Color.GRAY;
                             print(stampColor, contentSize, 
-                                    " " + s.getStamp().getTense(nar.memory.getTime()) + 
-                                    " " + s.getStamp().toString(), false);
+                                    " " + s.stamp.getTense(nar.memory.getTime()) + 
+                                    " " + s.stamp.toString(), false);
                         }
                     }
                     else {

@@ -117,7 +117,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             
             if (o instanceof Sentence) {
                  Sentence kb = (Sentence)o;
-                 TruthValue tr = kb.getTruth();
+                 TruthValue tr = kb.truth;
                  if (tr!=null) {
                      alpha = tr.getConfidence()*0.75f+0.25f;
                      double hue = 0.25 + (0.25 * (kb.truth.getFrequency()-0.5));
@@ -137,7 +137,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 color = papplet.getColor(o);
              }            
              else if (o instanceof Concept) {
-                Term t = ((Concept)o).getTerm();
+                Term t = ((Concept) o).term;
                 radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
                 alpha = papplet.getVertexAlpha(o);                             
                 color = papplet.getColor(o);                

@@ -122,6 +122,6 @@ public class TaskLink extends TermLink {
 
     @Override
     public String toString() {
-        return super.toString() + " " + getTargetTask().getSentence().getStamp();
+        return super.toString() + " " + getTargetTask().getSentence().stamp;
     }
 }

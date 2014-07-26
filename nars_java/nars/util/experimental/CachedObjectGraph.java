@@ -63,7 +63,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
     }
     
     public void addConceptTermLinks(Concept c) {
-            final Term source = c.getTerm();
+            final Term source = c.term;
             
             if (!containsVertex(c)) {
                 addVertex(c);

@@ -135,8 +135,8 @@ public class TemporalRules {
         } else {
             order = TemporalRules.ORDER_CONCURRENT;
         }
-        TruthValue givenTruth1 = s1.getTruth();
-        TruthValue givenTruth2 = s2.getTruth();
+        TruthValue givenTruth1 = s1.truth;
+        TruthValue givenTruth2 = s2.truth;
         TruthValue truth1 = TruthFunctions.abduction(givenTruth1, givenTruth2);
         TruthValue truth2 = TruthFunctions.abduction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
