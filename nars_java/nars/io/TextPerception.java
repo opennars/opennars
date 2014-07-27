@@ -13,6 +13,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Output.ERR;
+import nars.io.Output.IN;
 import static nars.io.Symbols.*;
 import nars.language.CompoundTerm;
 import nars.language.SetExt;
@@ -95,10 +96,20 @@ public class TextPerception {
     private static void initDefaultParsers() {
         //integer, # of cycles to stepLater
         defaultParsers.add(new TextReaction() {
+            final static String inputPrefix = Symbols.INPUT_LINE + ':';                    
+
             @Override
             public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 try {
+                    input = input.trim();
+                    
+                    if (input.startsWith(inputPrefix)) {
+                        input = input.substring(inputPrefix.length());
+                    }
+                    input = input.trim();
+                    
                     int cycles = Integer.parseInt(input);
+                    nar.output(IN.class, cycles);
                     nar.step(cycles);
                     return true;
                 }
