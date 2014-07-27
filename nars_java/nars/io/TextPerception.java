@@ -111,7 +111,7 @@ public class TextPerception {
                     
                     int cycles = Integer.parseInt(input);
                     nar.output(IN.class, cycles);
-                    nar.step(cycles);
+                    nar.finish(cycles);
                     return true;
                 }
                 catch (NumberFormatException e) {

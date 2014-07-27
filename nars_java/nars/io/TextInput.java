@@ -111,25 +111,33 @@ public class TextInput extends Symbols implements Input {
         text.setLength(0);
         
         try {
-
-            for (int i = 0; i < linesPerCycle; i++) {
+            
+            int i = linesPerCycle;
+            while (i > 0)  {
+                
                 line = input.readLine();
-
                 if (line == null) {
-                    input.close();
-                    input = null;
                     finished = true;
                     break;
                 }
                 else {
-                    if (line.length() > 0)
-                        text.append(line).append('\n');                    
+                    if (line.length() > 0) {
+                        text.append(line).append('\n');
+                        i--;
+                    }
                 }
             }
 
         } catch (IOException ex) {
             nar.output(ERR.class, ex);
+            finished = true;
         }        
+        
+        if (finished) {
+            try {
+                input.close();
+            } catch (IOException ex1) {            }
+        }
 
         return process(text.toString());
     }

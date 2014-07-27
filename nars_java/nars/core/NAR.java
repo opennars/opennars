@@ -228,8 +228,8 @@ public class NAR implements Runnable, Output {
     /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
     public void finish(final int cycles, final boolean debug) {
         DEBUG = debug; 
-        step(cycles);
         running = true;
+        step(cycles);
         while ((stepsQueued!=0) && (!inputChannels.isEmpty())) {
             tick();
         } 
