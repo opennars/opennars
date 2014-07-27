@@ -42,6 +42,7 @@ import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output.OUT;
+import nars.language.Negation;
 import nars.language.Term;
 
 
@@ -327,7 +328,7 @@ public class Memory {
             
             final Term currentTaskContent = getCurrentTask().getContent();
             
-            if (getCurrentBelief() != null) {
+            if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
                 final Term currentBeliefContent = getCurrentBelief().getContent();
                 if(chain.contains(currentBeliefContent)) {
                 //if(stamp.chainContainsInstance(currentBeliefContent)) {
@@ -338,7 +339,7 @@ public class Memory {
             
             
             //workaround for single premise task issue:
-            if(getCurrentBelief() == null && single && getCurrentTask() != null) {
+            if(currentBelief == null && single && currentTask != null && currentTask.getSentence().isJudgment()) {
                 if(chain.contains(currentTaskContent)) {
                 //if(stamp.chainContainsInstance(currentTaskContent)) {
                     chain.remove(currentTaskContent);
@@ -346,7 +347,8 @@ public class Memory {
                 stamp.addToChain(currentTaskContent);
             }
             //end workaround
-            if (getCurrentTask() != null && !single) {
+        
+            if (currentTask != null && !single && currentTask.getSentence().isJudgment()) {
                 if(chain.contains(currentTaskContent)) {                
                 //if(stamp.chainContainsInstance(currentTaskContent)) {                    
                     chain.remove(currentTaskContent);
@@ -358,12 +360,17 @@ public class Memory {
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
                 for (int i = 0; i < chain.size(); i++) {
                     final Term chain1 = chain.get(i);
-                    if (task.getContent() == chain1) {
+                    if (task.getSentence().isJudgment() && task.getContent().equals(chain1)) {
+                        if(task.getParentTask()==null || 
+                           (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
+                           !(task.getContent().equals(Negation.make(task.getParentTask().getContent(), this))))) {
                         if (recorder.isActive()) {
                             recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
                         }
                         return;
+                        }
                     }
+                    
                 }
             } else { //its revision, of course its cyclic, apply evidental base policy
                 final int stampLength = stamp.baseLength;
