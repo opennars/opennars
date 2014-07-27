@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.test.util.test;
+package nars.test.util;
 
 import java.io.StringWriter;
 import nars.core.NAR;

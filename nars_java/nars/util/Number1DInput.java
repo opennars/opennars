@@ -17,14 +17,13 @@
 
 package nars.util;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import nars.core.NAR;
-import nars.io.Input;
-import nars.io.TextInput;
+import nars.io.Termize;
 
 
-//TODO do not create new TextInput's, instead buffer inputs and return them through next() only
-public class Number1DInput implements Input {
+public class Number1DInput extends PrintWriterInput {
     /*
     
     %%%%%%%%%%%%%%%%%%%% Understanding rational numbers if needed %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,25 +45,60 @@ public class Number1DInput implements Input {
     private final String id;
     private final NAR nar;
     private static NumberFormat nf = NumberFormat.getInstance();
-    boolean finished = false;
+    private static NumberFormat intf = NumberFormat.getIntegerInstance();
     
-    /**
-     * 
-     * @param id (used for concept prefixes)
-     */
-    public Number1DInput(NAR n, String id, double[] data) {
+    boolean finished = false;
+    private final int resolution;
+    int iteration = 0;
+
+    public Number1DInput(NAR n, String id, double[] data, int resolution) throws IOException {
+        super(n);
         this.nar = n;
         this.id = id;
+        this.resolution = resolution;
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);        
+        intf.setMinimumIntegerDigits(2);
         
-        initPredicates(n, data.length);
+        initPredicates(n, resolution);
         set(data);
         
-        nar.addInput(this);
         
     }
     
+    
+    public static String getValueTerm(double v, int resolution) {
+        double dv = 1.0/resolution;
+        int i = (int)Math.round(v/dv);
+        double percent = (dv * i);
+        String ps = intf.format(i);        
+        return Termize.enterm("\u211d" + ps + "/" + resolution);
+    }
+    
+    public void initPredicates(NAR N, int resolution) {
+        assert(resolution >= 2);
+        double v = 0;
+        double dv = 1.0 / resolution;
+        
+        String prevT = null;
+        for (int i = 0; i < (resolution+1); i++) {
+            String t = getValueTerm(v, resolution);
+            if ((prevT!=null) && (t.equals(prevT)))
+                continue;
+            
+            out.write('<' + t + " --> " + "\u211d\u2359>. %1.00;1.00%\n" );
+            v += dv;
+            if (prevT!=null) {
+                out.write( "<(*," + prevT + "," + t + ") --> \u22E8>. %1.00;1.00%\n" );
+            }            
+            prevT = t;
+            
+        }
+        
+    }
+    
+    
+    /*
     public static void initPredicates(NAR N, int n) {
         
         StringBuffer s = new StringBuffer(32);
@@ -92,49 +126,46 @@ public class Number1DInput implements Input {
         
         new TextInput(N, s.toString());
     }
+    */
+    
+    public Number1DInput next(double[] newValues) {
+        assert(data.length == newValues.length);
+        data = newValues;
 
-    
-    
-    @Override
-    public Object next() {
-        if (changed) {
-            if (data==null) {
-                //erase existing statements?
-            }
-            else {                
-               new TextInput(nar, getStatements());
-            }
-            
-            changed = false;
-        }
-        return null;
-    }
-    
-    final String cert = "1.00"; //default certainty
-    
-    public String getStatements() {
-
-        StringBuffer sb = new StringBuffer();        
-
+        
         String product = "<(*,";
-        for (int i = 0; i < data.length; i++) {
-            
-            product += id + "_" + i;
+        
+        for (int i = 0; i < data.length; i++) {           
+            product += getValueTerm(data[i], resolution);
             if (i < data.length-1)
                 product += ",";
         }
-        product += ") --> " + id + ">. %0.99;" + cert + "%\n";
-        sb.append(product);
+        product += ") --> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n";
+        System.out.println(product);
+        out.write(product);
         
-        
-        for (int i = 0; i < data.length; i++) {
-            String[] s = getStatementsInheritsMinMaxProportionally(i, data[i]);
-            for (String t : s)
-                sb.append(t + "\n");
+        if (iteration>0) {
+            out.write("<" + getTermID(iteration-1) + " =\\> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n");
         }
         
-        return sb.toString();
+//        
+//        for (int i = 0; i < data.length; i++) {
+//            String[] s = getStatementsInheritsMinMaxProportionally(i, data[i]);
+//            for (String t : s)
+//                sb.append(t + "\n");
+//        }
+        
+        
+        iteration++;
+        return null;
     }
+    
+    public String getTermID(int iteration) {
+        // variable id "contains as member" iteration (number)
+        return id + "\u220D" + iteration;
+    }
+    
+    final String cert = "1.00"; //default certainty
     
     @Deprecated public String[] getStatementsFrequencyEncoded(int i, double value) {
         String freq = nf.format(value);

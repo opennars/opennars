@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.test.util.test;
+package nars.test.util;
 
 import nars.core.NAR;
 import nars.util.JSONOutput;
 import nars.util.Number1DInput;
-import static nars.test.util.test.Number1DInputTest.randomArray;
+import static nars.test.util.Number1DInputTest.randomArray;
 import org.junit.Test;
 
 /**

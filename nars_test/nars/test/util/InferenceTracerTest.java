@@ -1,4 +1,4 @@
-package nars.test.util.test;
+package nars.test.util;
 
 import nars.core.NAR;
 import nars.util.InferenceTracer;
