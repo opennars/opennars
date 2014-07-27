@@ -39,7 +39,7 @@ public class NARStateTest {
         
         NAR n = new NAR();
                 
-        new Number1DInput(n, "x", x, 2);
+        //new Number1DInput(n, "x", x, 2);
         n.finish(16);
         
         

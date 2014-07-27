@@ -37,7 +37,7 @@ public abstract class Item {
      * The default constructor
      */
     protected Item() {
-        budget = null;
+        this.budget = new BudgetValue();
     }
 
     /**
@@ -45,8 +45,8 @@ public abstract class Item {
      * @param key The key value
      */
     protected Item(final String key) {
+        this();
         this.key = key;
-        this.budget = new BudgetValue();
      }
 
     /**

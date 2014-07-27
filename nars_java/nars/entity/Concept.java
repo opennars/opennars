@@ -234,7 +234,7 @@ public final class Concept extends Item {
 
                     for (final TermLink termLink : termLinkTemplates) {
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
-                        Term componentTerm = termLink.getTarget();
+                        Term componentTerm = termLink.target;
                         Concept componentConcept = memory.getConcept(componentTerm);
                         if (componentConcept != null) {
                             componentConcept.insertTaskLink(new TaskLink(task, termLink, subBudget));
@@ -329,8 +329,8 @@ public final class Concept extends Item {
             BudgetValue subBudget = BudgetFunctions.distributeAmongLinks(taskBudget, termLinkTemplates.size());
             if (subBudget.aboveThreshold()) {
                 for (final TermLink template : termLinkTemplates) {
-                    if (template.getType() != TermLink.TRANSFORM) {
-                        Term t = template.getTarget();
+                    if (template.type != TermLink.TRANSFORM) {
+                        Term t = template.target;
                         final Concept concept = memory.getConcept(t);
                         if (concept != null) {
                             TermLink termLink1 = new TermLink(t, template, subBudget);
@@ -463,7 +463,7 @@ public final class Concept extends Item {
         final Task task = currentTaskLink.getTargetTask();
         memory.setCurrentTask ( task );  // one of the two places where this variable is set
 //      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
-        if (currentTaskLink.getType() == TermLink.TRANSFORM) {
+        if (currentTaskLink.type == TermLink.TRANSFORM) {
             memory.setCurrentBelief( null );
             RuleTables.transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
         } else {
