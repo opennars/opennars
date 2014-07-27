@@ -17,6 +17,12 @@
 
 package nars.language;
 
+import nars.io.Symbols;
+
+/**
+ *
+ * @author peiwang
+ */
 /**
  *
  * @author peiwang
@@ -26,16 +32,21 @@ public class Interval extends Term {
 
     // time is a positive integer
     public Interval(long time) {
-        magnitude = (int) Math.floor(Math.log(time));
-        name = "[" + magnitude + "]";
+        magnitude = (int) Math.log(time);
+        name = "" + Symbols.INTERVAL_PREFIX + magnitude;
+    }
+    
+    public Interval(String s) {
+        magnitude = Integer.parseInt(s.substring(1));
+        name = s;
     }
     
     public long getTime() {
-        return (long) Math.exp(magnitude);
+        return (long) Math.ceil(Math.exp(magnitude));
     }
     
     @Override
     public Object clone() {
-        return new Interval(getTime());
+        return new Interval(name);
     }
 }

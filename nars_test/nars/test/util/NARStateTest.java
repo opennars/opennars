@@ -17,6 +17,7 @@
 
 package nars.test.util;
 
+import java.io.IOException;
 import java.util.HashMap;
 import nars.core.NAR;
 import nars.util.NARState;
@@ -31,14 +32,14 @@ import org.junit.Test;
 public class NARStateTest {
  
     @Test
-    public void testNARState() {
+    public void testNARState() throws IOException {
         int N = 2;
         
         double[] x = randomArray(N, 1.0, 0);
         
         NAR n = new NAR();
                 
-        new Number1DInput(n, "x", x);
+        new Number1DInput(n, "x", x, 2);
         n.finish(16);
         
         

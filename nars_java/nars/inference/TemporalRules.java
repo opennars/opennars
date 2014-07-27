@@ -126,6 +126,11 @@ public class TemporalRules {
         Interval interval = null;
         if (Math.abs(timeDiff) > Parameters.DURATION) {
             interval = new Interval(Math.abs(timeDiff));
+            if (timeDiff > 0) {
+                t1 = Conjunction.make(t1, interval, ORDER_FORWARD, memory);
+            } else {
+                t2 = Conjunction.make(t2, interval, ORDER_FORWARD, memory);
+            }
         }
         int order;
         if (timeDiff > Parameters.DURATION) {

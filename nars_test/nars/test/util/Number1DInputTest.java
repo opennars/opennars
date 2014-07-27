@@ -17,11 +17,7 @@
 
 package nars.test.util;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.core.NAR;
-import nars.gui.NARSwing;
 import nars.util.Number1DInput;
 import nars.io.TextOutput;
 import org.junit.Assert;
@@ -40,33 +36,60 @@ public class Number1DInputTest {
         }
         return d;
     }
-    
+
+    public static double[] pulse(int size, int center) {
+        double[] d = new double[size];
+        d[center] = 1.0;
+        return d;
+    }    
     
     @Test
     public void test1() throws Exception {
-        int N = 3;
+        int N = 4;
         
         double[] x = randomArray(N, 1.0, 0);
         
         NAR n = new NAR();
-        n.start(0);
         
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out);
         
-        Number1DInput v = new Number1DInput(n, "myVector", x, 3);
+        Number1DInput v = new Number1DInput(n, "a", x, 2);
         for (int i = 0; i < 10; i++) {
-            v.next(randomArray(N, 1.0, 0));
-            
+            //v.next(randomArray(N, 1.0, 0));
+            v.next(pulse(N,i%N));            
         }
         v.close();
         
-
+        n.finish(256);
         
-        
-        //Assert.assertTrue(true);        
+        Assert.assertTrue(true);        
     }
+    
+   @Test
+    public void test2() throws Exception {
+        int N = 4;
+        int resolution = 4;
+        
+        double[] x = randomArray(N, 1.0, 0);
+        
+        NAR n = new NAR();
+        
+        new TextOutput(n, System.out);
+        
+        Number1DInput v = new Number1DInput(n, "a", x, resolution);
+        for (int i = 0; i < 10; i++) {
+            v.next(randomArray(N, 1.0, 0));
+            //v.next(pulse(N,i%N));            
+        }
+        v.close();
+        
+        n.finish(12);
+        
+        Assert.assertTrue(true);        
+    }    
     
     public static void main(String[] args) throws Exception {
         new Number1DInputTest().test1();
+        //new Number1DInputTest().test2();
     }
 }
