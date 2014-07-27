@@ -141,7 +141,6 @@ public class Number1DInput extends PrintWriterInput {
                 product += ",";
         }
         product += ") --> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n";
-        System.out.println(product);
         out.write(product);
         
         if (iteration>0) {

@@ -21,7 +21,6 @@
 package nars.inference;
 
 import nars.core.Parameters;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -32,6 +31,7 @@ import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
+import nars.language.Interval;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
@@ -343,14 +343,37 @@ public final class SyllogisticRules {
             newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent, memory);
         }
         Term content;
+        long delta = 0;
         if (newCondition != null) {
-            content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
+             if (newCondition instanceof Interval) {
+                 content = premise1.getPredicate();
+                 delta = ((Interval) newCondition).getTime();
+             } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).componentAt(0) instanceof Interval)) {
+                 Interval interval = (Interval) ((CompoundTerm) newCondition).componentAt(0);
+                 delta = interval.getTime();
+                 newCondition = CompoundTerm.setComponent((CompoundTerm) newCondition, 0, null, memory);
+                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
+             } else {
+                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
+             }
+               
         } else {
             content = premise1.getPredicate();
         }
         if (content == null) {
             return;
         }
+        
+        if (delta != 0) {
+            long baseTime = (belief.getContent() instanceof Implication) ?
+                taskSentence.getOccurenceTime() : belief.getOccurenceTime();
+            if (baseTime == Stamp.ETERNAL) {
+                baseTime = memory.getTime();
+            }
+            baseTime += delta;
+            memory.getNewStamp().setOccurrenceTime(baseTime);
+        }
+        
         TruthValue truth1 = taskSentence.truth;
         TruthValue truth2 = belief.truth;
         TruthValue truth = null;
@@ -371,9 +394,8 @@ public final class SyllogisticRules {
     }
 
     /**
-     * {<(&&, S1, S2, S3) <=> P>, S1} |- <(&&, S2, S3) <=> P> {<(&&, S2, S3) <=>
-     * P>, <S1 ==> S2>} |- <(&&, S1, S3) <=> P> {<(&&, S1, S3) <=> P>, <S1 ==>
-     * S2>} |- <(&&, S2, S3) <=> P>
+     * {<(&&, S1, S2, S3) <=> P>, S1} |- <(&&, S2, S3) <=> P> {<(&&, S2, S3) <=> P>,
+     * <S1 ==> S2>} |- <(&&, S1, S3) <=> P> {<(&&, S1, S3) <=> P>, <S1 ==>
      *
      * @param premise1 The equivalence premise
      * @param index The location of the shared term in the condition of premise1

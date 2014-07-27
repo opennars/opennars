@@ -16,6 +16,7 @@ import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import static nars.io.Symbols.*;
 import nars.language.CompoundTerm;
+import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
@@ -550,6 +551,12 @@ public class TextPerception {
         {
             throw new InvalidInputException("invalid term");
         }
+        
+        char c = s.charAt(0);
+        if (c == Symbols.INTERVAL_PREFIX) {
+            return new Interval(s);
+        }
+ 
         if (Variable.containVar(s)) {
             return new Variable(s);
         } else {

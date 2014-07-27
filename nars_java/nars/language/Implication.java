@@ -22,7 +22,6 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols;
 import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 import nars.inference.TemporalRules;
@@ -111,8 +110,8 @@ public class Implication extends Statement {
             if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containComponent(subject)) {
                 return null;
             }
-            final Term newCondition = Conjunction.make(subject, oldCondition, memory);
-            return make(newCondition, ((Implication) predicate).getPredicate(), memory);
+            final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);
+            return make(newCondition, ((Implication) predicate).getPredicate(), temporalOrder, memory);
         } else {
             final ArrayList<Term> argument = argumentsToList(subject, predicate);
             return new Implication(argument, temporalOrder);
