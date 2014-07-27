@@ -55,12 +55,27 @@ public class TermLink extends Item {
     
     
     /** The linked Term */
-    private Term target;
+    public final Term target;
     /** The type of link, one of the above */
-    protected short type;
+    public final short type;
     /** The index of the component in the component list of the compound, may have up to 4 levels */
-    protected short[] index;
+    public final short[] index;
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TermLink))
+            return false;
 
+        TermLink that = (TermLink)obj;
+        return getKey().equals(that.getKey());
+    }
+
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
+    }
+
+    
 
             
     /**
@@ -72,6 +87,7 @@ public class TermLink extends Item {
      * @param indices Component indices in compound, may be 1 to 4
      */
     public TermLink(final Term target, final short type, final short... indices) {
+        super();
         this.target = target;
         this.type = type;
         assert (type % 2 == 0); // template types all point to compound, though the target is component
@@ -89,14 +105,19 @@ public class TermLink extends Item {
             for (int i = 0; i < index.length; i++)
                 index[i] = (short) indices[i]; */
         }
+        setKey();        
     }
 
     /** called from TaskLink
      * @param s The key of the TaskLink
      * @param v The budget value of the TaskLink
      */
-    protected TermLink(final String s, final BudgetValue v) {
+    protected TermLink(final String s, final BudgetValue v, final short type, short[] indices) {
         super(s, v);
+        this.type = type;
+        this.index = indices;
+        this.target = null;
+        setKey();        
     }
 
     /**
@@ -110,11 +131,10 @@ public class TermLink extends Item {
     public TermLink(final Term t, final TermLink template, final BudgetValue v) {
         super(t.getName(), v);
         target = t;
-        type = template.getType();
-        if (template.getTarget().equals(t)) {
-            type--;     // point to component
-        }
-        index = template.getIndices();
+        type = (template.target.equals(t)) 
+                ? (short)(template.type - 1) //// point to component
+                : template.type;
+        index = template.index;
         setKey();
     }
 
@@ -157,7 +177,11 @@ public class TermLink extends Item {
             at2 = Symbols.TO_COMPOUND_2;
         }
         
-        final StringBuffer sb = new StringBuffer(16).append(at1).append('T').append(type);
+        final String targetString = target!=null ? target.toString() : null;
+        int targetLength = target!=null ? targetString.length() : 0;        
+        int estimatedLength = 2+2+targetLength+1+4*( (index!=null ? index.length : 0) + 1);
+        
+        final StringBuffer sb = new StringBuffer(estimatedLength).append(at1).append('T').append(type);
         if (index != null) {
             for (int i = 0; i < index.length; i++) {
                 sb.append('-').append((index[i] + 1));
@@ -166,36 +190,14 @@ public class TermLink extends Item {
         sb.append(at2);
         
         if (target != null) {
-            sb.append(target);
+            sb.append(targetString);
         }
         key = sb.toString();
+        
+        //for debugging estimatedlength:
+        //if (index!=null)        System.out.println(estimatedLength + " " + key.length());
     }
-    
-    
-    /**
-     * Get the target of the link
-     * @return The Term pointed by the link
-     */
-    public Term getTarget() {
-        return target;
-    }
-
-    /**
-     * Get the link type
-     * @return Type of the link
-     */
-    public short getType() {
-        return type;
-    }
-
-    /**
-     * Get all the indices
-     * @return The index array
-     */
-    public short[] getIndices() {
-        return index;
-    }
-
+       
     /**
      * Get one index by level
      * @param i The index level

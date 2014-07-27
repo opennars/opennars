@@ -207,7 +207,12 @@ public abstract class Bag<E extends Item>  {
         
         final E oldItem = nameTable.put(newKey, newItem);
         if (oldItem != null) {                  // merge duplications
-            outOfBase(oldItem);
+            try {
+                outOfBase(oldItem);
+            }
+            catch (NullPointerException e) {
+                System.out.println("");
+            }
             newItem.merge(oldItem);
         }
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable

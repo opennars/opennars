@@ -43,7 +43,7 @@ public class RuleTables {
         final Task task = memory.getCurrentTask();
         Sentence taskSentence = task.getSentence();
         Term taskTerm = (Term) taskSentence.getContent().clone();         // cloning for substitution
-        Term beliefTerm = (Term) bLink.getTarget().clone();       // cloning for substitution
+        Term beliefTerm = (Term) bLink.target.clone();       // cloning for substitution
         
         if(CompoundTerm.EqualSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm)) {
            return;
@@ -73,9 +73,9 @@ public class RuleTables {
         
         short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
-        switch (tLink.getType()) {          // dispatch first by TaskLink type
+        switch (tLink.type) {          // dispatch first by TaskLink type
             case TermLink.SELF:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                     case TermLink.COMPONENT:
                         compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, memory);
                         break;
@@ -107,7 +107,7 @@ public class RuleTables {
                 }
                 break;
             case TermLink.COMPOUND:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                     case TermLink.COMPOUND:
                         compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, memory);
                         break;
@@ -132,7 +132,7 @@ public class RuleTables {
                 }
                 break;
             case TermLink.COMPOUND_STATEMENT:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                     case TermLink.COMPONENT:
                         componentAndStatement((CompoundTerm) memory.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, memory);
                         break;
@@ -155,7 +155,7 @@ public class RuleTables {
                 }
                 break;
             case TermLink.COMPOUND_CONDITION:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                       case TermLink.COMPOUND:
                         if (belief != null) {
                             detachmentWithVar(taskSentence, belief, tIndex, memory);
@@ -607,7 +607,7 @@ public class RuleTables {
      */
     public static void transformTask(TaskLink tLink, Memory memory) {
         CompoundTerm content = (CompoundTerm) memory.getCurrentTask().getContent().clone();
-        short[] indices = tLink.getIndices();
+        short[] indices = tLink.index;
         Term inh = null;
         if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
             inh = content;

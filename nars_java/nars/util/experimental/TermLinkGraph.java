@@ -30,7 +30,7 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
 
                 if (includeTermLinks) {
                     for (TermLink t : c.termLinks.nameTable.values()) {
-                        Term target = t.getTarget();
+                        Term target = t.target;
                         if (!containsVertex(target))  {
                             addVertex(target);
                         }
@@ -40,7 +40,7 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
 
                 if (includeTaskLinks) {            
                     for (TaskLink t : c.taskLinks.nameTable.values()) {
-                        Term target = t.getTarget();
+                        Term target = t.target;
                         if (!containsVertex(target))  {
                             addVertex(target);
                         }        
