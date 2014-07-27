@@ -58,7 +58,7 @@
 <bird --> swan>. %0.10% 
 // Bird is not a type of swan. 
 1
- OUT: <bird <-> swan>. %0.10;0.89% 
+ OUT: <bird <-> swan>. %0.10;0.81% 
 // Bird is different from swan.  
 
 ********** conversions between inheritance and similarity
@@ -67,7 +67,7 @@
 <bird <-> swan>. %0.10% 
 // Bird is different from swan. 
 1
- OUT: <bird --> swan>. %0.10;0.74% 
+ OUT: <bird --> swan>. %0.10;0.73% 
 // Bird is probably not a type of swan. 
 
 ********** conversions between inheritance and similarity
