@@ -4,6 +4,6 @@
 <a --> d>?
 
 ''//21
-40
+30
 
-''outputMustContain('<a --> d>. %1.00;0.29%')
+''outputMustContain('<a --> d>. %1.00;0.73%')
