@@ -15,9 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.test.util.test;
+package nars.test.util;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.core.NAR;
+import nars.gui.NARSwing;
 import nars.util.Number1DInput;
 import nars.io.TextOutput;
 import org.junit.Assert;
@@ -39,22 +43,30 @@ public class Number1DInputTest {
     
     
     @Test
-    public void test1() {
+    public void test1() throws Exception {
         int N = 3;
         
         double[] x = randomArray(N, 1.0, 0);
-        double[] y = randomArray(N, 1.0, 0);
         
         NAR n = new NAR();
+        n.start(0);
         
-        //new TextOutput(n, System.out);
+        new TextOutput(n, System.out);
         
-        new Number1DInput(n, "x", x);
-        n.finish(16);
-        Assert.assertTrue(true);        
+        Number1DInput v = new Number1DInput(n, "myVector", x, 3);
+        for (int i = 0; i < 10; i++) {
+            v.next(randomArray(N, 1.0, 0));
+            
+        }
+        v.close();
+        
+
+        
+        
+        //Assert.assertTrue(true);        
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new Number1DInputTest().test1();
     }
 }

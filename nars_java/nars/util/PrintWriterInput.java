@@ -24,10 +24,9 @@ public class PrintWriterInput extends TextInput {
         setInput(new BufferedReader(new PipedReader(output)));        
         out = new PrintWriter(output);
 
-        n.addInput(this);
     }
 
-    protected void close() {
+    public void close() {
         out.close();
     }
 }
