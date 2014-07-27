@@ -6,7 +6,8 @@
 'Can robin fly or not?
 (--,<robin --> [flying]>)?  
 
-15
+''//15
+30
 
 'It is unlikely that robin cannot fly. 
 ''outputMustContain('(--,<robin --> [flying]>). %0.10;0.90%')
