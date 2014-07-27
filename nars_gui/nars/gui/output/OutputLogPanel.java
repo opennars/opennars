@@ -49,7 +49,7 @@ public class OutputLogPanel extends NPanel implements Output {
     private boolean showQuestions = true;
     private boolean showStatements = true;
 
-    private Collection nextOutput = new ConcurrentLinkedQueue();
+    private Collection<String> nextOutput = new ConcurrentLinkedQueue();
 
     public OutputLogPanel(NAR s) {
         super();
@@ -179,9 +179,8 @@ public class OutputLogPanel extends NPanel implements Output {
             o = (o.toString() + " @ " + Arrays.asList(((Exception) o).getStackTrace()));
         }
         
-        nextOutput.add(c.getSimpleName() + ": ");
-        nextOutput.add(o);
-        nextOutput.add('\n');
+        nextOutput.add(c.getSimpleName() + ": " + objectString(o) + '\n');
+        
         SwingUtilities.invokeLater(nextOutputRunnable);
 
     }
@@ -227,43 +226,8 @@ public class OutputLogPanel extends NPanel implements Output {
                 //limitBuffer(nextOutput.baseLength());
                 limitBuffer(128);
 
-                for (Object o : nextOutput) {
-                    if ((o instanceof String) || (o instanceof Character))
-                        print(Color.BLACK, 1.0f, o.toString(), false);
-                    else if (o instanceof Sentence) {
-                        Sentence s = (Sentence)o;
-                        
-                        if (s.isQuestion() && !showQuestions)
-                            continue;
-                        if (s.isJudgment() && !showStatements)
-                            continue;
-                        
-                        float conf = 0.5f, freq = 0.5f;
-                        if (s.truth != null) {
-                            conf = s.truth.getConfidence();
-                            freq = s.truth.getFrequency();                            
-                        }
-                        
-                        float contentSize = 1f; //0.75f+conf;
-                        
-                        Color contentColor = Color.getHSBColor(0.5f + (freq-0.5f)/2f, 1.0f, 0.05f + 0.5f - conf/4f);                        
-                        print(contentColor, contentSize, s.getContent().toString() + s.punctuation + ' ' + s.stamp.getTense(nar.memory.getTime()), s.isQuestion());
-                       
-                        if (s.truth!=null) {
-                            Color truthColor = Color.getHSBColor(freq, 0, 0.25f - conf/4f);
-                            print(truthColor, contentSize,  " " + s.truth.toString(), false);
-                        }
-                       
-                        if ((showStamp) && (s.stamp!=null)) {
-                            Color stampColor = Color.GRAY;
-                            print(stampColor, contentSize, 
-                                    " " + s.stamp.getTense(nar.memory.getTime()) + 
-                                    " " + s.stamp.toString(), false);
-                        }
-                    }
-                    else {
-                        print(Color.BLACK, 1.0f, o.toString(), false);
-                    }
+                for (String o : nextOutput) {
+                    print(Color.BLACK, 1.0f, o, false);
                 }
                 
                 nextOutput.clear();
@@ -271,5 +235,33 @@ public class OutputLogPanel extends NPanel implements Output {
         }
     };
     
+    public String objectString(Object o) {
+        if ((o instanceof String) || (o instanceof Character)) {
+            return o.toString();
+        }
+        else if (o instanceof Sentence) {
+            Sentence s = (Sentence)o;
+
+            if (s.isQuestion() && !showQuestions)
+                return null;
+            if (s.isJudgment() && !showStatements)
+                return null;
+
+
+            String r = s.getContent().toString() + s.punctuation + ' ' + s.stamp.getTense(nar.memory.getTime());
+
+            if (s.truth!=null) {
+                r += " " + s.truth.toString();
+            }
+
+            if ((showStamp) && (s.stamp!=null)) {
+                r += " " + s.stamp.getTense(nar.memory.getTime()) + 
+                     " " + s.stamp.toString();
+                return r;
+            }
+        }
+        
+        return o.toString();
+    }
     
 }
