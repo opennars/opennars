@@ -126,8 +126,10 @@ public class NAR implements Runnable, Output {
         memory.init();
         Stamp.init();
         
-        output(OUT.class, "reset");
-                
+        if (memory.getRecorder().isActive()) {
+            memory.getRecorder().append("Memory Reset");
+        }
+                        
     }
 
     /** Convenience method for creating a TextInput and adding as Input Channel */

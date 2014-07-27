@@ -125,6 +125,7 @@ public class TextPerception {
             public boolean react(NAR nar, String input, TextReaction lastHandler) {                
                 if (input.equals(Symbols.RESET_COMMAND)) {
                     nar.reset();
+                    nar.output(Output.IN.class, input);
                     return true;
                 }
                 return false;
@@ -137,7 +138,7 @@ public class TextPerception {
             public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 if (!nar.isWorking())  {
                     if (input.equals(Symbols.STOP_COMMAND)) {
-                        nar.output(Output.OUT.class, "stopping.");
+                        nar.output(Output.IN.class, input);
                         nar.setWorking(false);
                         return true;
                     }
@@ -153,7 +154,7 @@ public class TextPerception {
                 if (nar.isWorking()) {
                     if (input.equals(Symbols.START_COMMAND)) {
                         nar.setWorking(true);
-                        nar.output(Output.OUT.class, "starting.");
+                        nar.output(Output.IN.class, input);
                         return true;
                     }
                 }
@@ -170,8 +171,8 @@ public class TextPerception {
                     String[] p = input.split("=");
                     if (p.length == 2) {
                         int silenceLevel = Integer.parseInt(p[1]);
-                        nar.param.setSilenceLevel(silenceLevel);
-                        nar.output(Output.OUT.class, "Silence level: " + silenceLevel);
+                        nar.param.setSilenceLevel(silenceLevel);                        
+                        nar.output(Output.IN.class, input);
                     }
                     
                     return true;
