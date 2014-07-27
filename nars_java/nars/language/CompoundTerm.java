@@ -270,6 +270,8 @@ public abstract class CompoundTerm extends Term {
                 return DifferenceExt.make(arg, memory);
             case DIFFERENCE_INT:
                 return DifferenceInt.make(arg, memory);
+            case INHERITANCE:
+                return Inheritance.make(arg.get(0), arg.get(1), memory);
             case PRODUCT:
                 return Product.make(arg, memory);
             case IMAGE_EXT:

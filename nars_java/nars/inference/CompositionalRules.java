@@ -30,6 +30,219 @@ import nars.storage.Memory;
 
 public final class CompositionalRules {
 
+public static void EliminateVariableOfConditionAbductive(int figure,Sentence sentence,Sentence belief,Memory memory) {
+        Term T1=(Term) sentence.getContent().clone();
+        Term T2=(Term) belief.getContent().clone();
+        Term S1=((Statement)T2).getSubject();
+        Term P1=((Statement)T2).getPredicate();
+        Term S2=((Statement)T1).getSubject();
+        Term P2=((Statement)T1).getPredicate();
+        
+        if(figure==21) {
+            HashMap<Term,Term> res1=new HashMap<>();
+            HashMap<Term,Term> res2=new HashMap<>();
+            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
+            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            ((CompoundTerm) T2).applySubstitute(res1);
+            if(S1 instanceof Conjunction) {
+                //try to unify P2 with a component
+                for(Term s1 : ((CompoundTerm)S1).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)S1).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+            if(P2 instanceof Conjunction) {
+                //try to unify S1 with a component
+                for(Term s1 : ((CompoundTerm)P2).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)P2).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(figure==12) {
+            HashMap<Term,Term> res1=new HashMap<>();
+            HashMap<Term,Term> res2=new HashMap<>();
+            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
+            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            ((CompoundTerm) T2).applySubstitute(res1);
+            if(S2 instanceof Conjunction) {
+                //try to unify P1 with a component
+                for(Term s1 : ((CompoundTerm)S2).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)S2).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+            if(P1 instanceof Conjunction) {
+                //try to unify S2 with a component
+                for(Term s1 : ((CompoundTerm)P1).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)P1).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(figure==11) {
+            HashMap<Term,Term> res1=new HashMap<>();
+            HashMap<Term,Term> res2=new HashMap<>();
+            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
+            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            ((CompoundTerm) T2).applySubstitute(res1);
+            if(P1 instanceof Conjunction) {
+                //try to unify P2 with a component
+                for(Term s1 : ((CompoundTerm)P1).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)P1).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+            if(P2 instanceof Conjunction) {
+                //try to unify P1 with a component
+                for(Term s1 : ((CompoundTerm)P2).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)P2).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(figure==22) {
+            HashMap<Term,Term> res1=new HashMap<>();
+            HashMap<Term,Term> res2=new HashMap<>();
+            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
+            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            ((CompoundTerm) T2).applySubstitute(res1);
+            if(S1 instanceof Conjunction) {
+                //try to unify S2 with a component
+                for(Term s1 : ((CompoundTerm)S1).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)S1).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+            if(S2 instanceof Conjunction) {
+                //try to unify S1 with a component
+                for(Term s1 : ((CompoundTerm)S2).cloneComponents()) {
+                    HashMap<Term,Term> res3=new HashMap<>();
+                    HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
+                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
+                        for(Term s2 : ((CompoundTerm)S2).cloneComponents()) {
+                            ((CompoundTerm) s2).applySubstitute(res3);
+                            if(!s2.equals(s1)) {
+                                TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
+                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
+                                memory.doublePremiseTask(s2, truth, budget);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+  static void IntroVarSameSubjectOrPredicate(Sentence originalMainSentence, Sentence subSentence, Term component, Term content, int index,Memory memory) {
+        Sentence cloned=(Sentence) originalMainSentence.clone();
+        Term T1=cloned.getContent();
+        if(!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
+            return;
+        }
+        CompoundTerm T=(CompoundTerm) T1;
+        CompoundTerm T2=(CompoundTerm) content.clone();
+        if((component instanceof Inheritance && content instanceof Inheritance) ||
+           (component instanceof Similarity && content instanceof Similarity)) {
+            CompoundTerm result=T;
+            if(component.equals(content)) {
+                return; //wouldnt make sense to create a conjunction here, would contain a statement twice
+            }
+            if(((Statement)component).getPredicate().equals(((Statement)content).getPredicate()) && !(((Statement)component).getPredicate() instanceof Variable)) {
+                Variable V=new Variable("#depIndVar1");
+                CompoundTerm zw=(CompoundTerm) T.getComponents().get(index).clone();
+                zw=(CompoundTerm) CompoundTerm.setComponent(zw,1,V,memory);
+                T2=(CompoundTerm) CompoundTerm.setComponent(T2,1,V,memory);
+                Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
+                T=(CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+            }
+            else 
+            if(((Statement)component).getSubject().equals(((Statement)content).getSubject()) && !(((Statement)component).getSubject() instanceof Variable)) {
+                Variable V=new Variable("#depIndVar2");
+                CompoundTerm zw=(CompoundTerm) T.getComponents().get(index).clone();
+                zw=(CompoundTerm) CompoundTerm.setComponent(zw,0,V,memory);
+                T2=(CompoundTerm) CompoundTerm.setComponent(T2,0,V,memory);
+                Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
+                T=(CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+            }
+            TruthValue truth = TruthFunctions.induction(originalMainSentence.truth, subSentence.truth);
+            BudgetValue budget = BudgetFunctions.compoundForward(truth, T, memory);
+            memory.doublePremiseTask(T, truth, budget);
+        }
+    }
     
     static boolean dedSecondLayerVariableUnification(Task task, Memory memory)
     {

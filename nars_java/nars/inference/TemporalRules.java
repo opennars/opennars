@@ -114,7 +114,10 @@ public class TemporalRules {
         return order;
     }
 
-    public static void temporalInduction(Sentence s1, Sentence s2, Memory memory) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {
+        if ((s1.truth==null) || (s2.truth==null))
+            return;
+        
         Term t1 = s1.cloneContent();
         Term t2 = s2.cloneContent();
         if (Statement.invalidStatement(t1, t2)) {

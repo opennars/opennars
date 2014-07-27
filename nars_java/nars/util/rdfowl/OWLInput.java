@@ -1,11 +1,7 @@
 package nars.util.rdfowl;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,9 +12,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import nars.core.NAR;
-import nars.gui.NARSwing;
 import nars.util.PrintWriterInput;
-import nars.io.TextInput;
 import nars.io.TextOutput;
 
 
@@ -493,7 +487,7 @@ public class OWLInput extends PrintWriterInput {
         
         new TextOutput(n, System.out);
         
-        new NARSwing(n);
+        //new NARSwing(n);
 
         new OWLInput(n, "/home/me/Downloads/schemaorg.owl");
         
