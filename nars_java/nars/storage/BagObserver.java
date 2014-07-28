@@ -5,7 +5,7 @@ import nars.entity.Item;
 /**
  * Bag Observer; similar to Observer design pattern, except that here we have a single observer
  */
-public interface BagObserver<BagType extends Item> {
+public interface BagObserver<E extends Item> {
 
     /**
      * Set a name for this observer
@@ -15,7 +15,7 @@ public interface BagObserver<BagType extends Item> {
     /**
      * Set the observed Bag
      */
-	public abstract void setBag( Bag<BagType> concepts );
+	public abstract void setBag( Bag<E> concepts );
 
     /**
      * Post given bag content

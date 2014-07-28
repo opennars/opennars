@@ -29,21 +29,8 @@ import nars.entity.Item;
 import nars.inference.BudgetFunctions;
 import nars.core.Parameters;
 
-/**
- * A Bag is a storage with a constant capacity and maintains an internal
- * priority distribution for retrieval.
- * <p>
- * Each entity in a bag must extend Item, which has a BudgetValue and a key.
- * <p>
- * A name table is used to merge duplicate items that have the same key.
- * <p>
- * The bag space is divided by a threshold, above which is mainly time
- * management, and below, space management. Differences: (1) level selection vs.
- * item selection, (2) decay rate
- *
- * @param <E> The type of the Item in the Bag
- */
-public abstract class Bag<E extends Item>  {
+
+public abstract class Bag<E extends Item> implements IBag<E>  {
 
     /**
      * priority levels
@@ -128,6 +115,7 @@ public abstract class Bag<E extends Item>  {
     }
     
 
+    @Override
     public final void clear() {
         for (int i = 0; i < levels; i++) {
             itemTableEmpty[i] = true;
@@ -156,6 +144,7 @@ public abstract class Bag<E extends Item>  {
      *
      * @return The number of items
      */
+    @Override
     public int size() {
         return nameTable.size();
     }
@@ -182,6 +171,7 @@ public abstract class Bag<E extends Item>  {
      * @param it An item
      * @return Whether the Item is in the Bag
      */
+    @Override
     public boolean contains(final E it) {
         return nameTable.containsValue(it);
     }
@@ -192,6 +182,7 @@ public abstract class Bag<E extends Item>  {
      * @param key The key of the Item
      * @return The Item with the given key
      */
+    @Override
     public E get(final String key) {
         return nameTable.get(key);
     }
@@ -202,6 +193,7 @@ public abstract class Bag<E extends Item>  {
      * @param newItem The new Item
      * @return Whether the new Item is added into the Bag
      */
+    @Override
     public boolean putIn(final E newItem) {
         final String newKey = newItem.getKey();
                 
@@ -240,6 +232,7 @@ public abstract class Bag<E extends Item>  {
      *
      * @return The selected Item, or null if this bag is empty
      */
+    @Override
     public E takeOut() {
         int c = size();
                 
@@ -509,6 +502,7 @@ public abstract class Bag<E extends Item>  {
         this.showLevel = showLevel;
     }
 
+    @Override
     public float getMass() {
         return mass;
     }
@@ -533,6 +527,7 @@ public abstract class Bag<E extends Item>  {
         return min;
     }
 
+    @Override
     public int getCapacity() {
         return capacity;
     }

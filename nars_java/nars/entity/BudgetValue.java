@@ -39,8 +39,8 @@ public class BudgetValue implements Cloneable {
     final protected ShortFloat priority;
 	/**
 	 * The percent of priority to be kept in a constant period; All priority
-	 * values “decay” over time, though at different rates. Each item is given a
-	 * “durability” factor in (0, 1) to specify the percentage of priority level
+	 * values "decay" over time, though at different rates. Each item is given a
+	 * "durability" factor in (0, 1) to specify the percentage of priority level
 	 * left after each reevaluation
 	 */
     final protected ShortFloat durability;
@@ -92,6 +92,9 @@ public class BudgetValue implements Cloneable {
      */
     public float getPriority() {
         return priority.getValue();
+    }
+    public short getPriorityShort() {
+        return priority.getShortValue();
     }
 
     /**

@@ -69,6 +69,7 @@ public class InputPanel extends NPanel implements ActionListener {
     private int timer;
     private final JPanel centerPanel;
     private final JTree fileTree;
+    private final JButton okSeqButton;
 
     /**
      * Constructor
@@ -99,10 +100,17 @@ public class InputPanel extends NPanel implements ActionListener {
         });
         menu.add(modeSelect);
                 
-        okButton = new JButton("Eval");
-        okButton.setToolTipText("Input the text.  Also available by ctl-enter while editing the text area.");
+        okButton = new JButton("Evaluate");
+        okButton.setDefaultCapable(true);
+        okButton.setToolTipText("Input the text, each line executed in the same clock cycle.  (Ctrl-enter)");
         okButton.addActionListener(this);
         menu.add(okButton);
+        
+        okSeqButton = new JButton("Eval Seq");
+        okSeqButton.setDefaultCapable(true);
+        okSeqButton.setToolTipText("Input the text, each line executed in successive clock cycles.");
+        okSeqButton.addActionListener(this);
+        menu.add(okSeqButton);
         
         holdButton = new JButton("Hold");
         holdButton.addActionListener(this);
@@ -206,6 +214,10 @@ public class InputPanel extends NPanel implements ActionListener {
             ready = true;
             evaluate(inputText.getText());
             inputText.setText("");
+        } else if (b == okSeqButton) {
+            ready = true;
+            evaluateSeq(inputText.getText());
+            inputText.setText("");
         } else if (b == holdButton) {
             ready = false;
         } else if (b == clearButton) {
@@ -216,7 +228,12 @@ public class InputPanel extends NPanel implements ActionListener {
     public void evaluate(String input) {
         reasoner.addInput(input);
         reasoner.step(1);
-    }    
+    }
+    public void evaluateSeq(String input) {
+        //TODO make sequential evaluation
+        reasoner.addInput(input);
+        reasoner.step(1);
+    }
    
     private void close() {
         setVisible(false);

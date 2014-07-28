@@ -21,8 +21,9 @@ import java.util.Deque;
 import java.util.LinkedList;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
-import nars.storage.Bag;
 import nars.storage.DefaultBag;
+import nars.storage.IBag;
+import nars.util.FastBag;
 
 /**
  *
@@ -36,18 +37,7 @@ public class BagPerf {
     int randomAccesses;
     double insertRatio = 0.9;
     
-    public BagPerf() {
-        
-        
-        for (int capacity = 8; capacity < 40000; capacity*=capacity) {
-            randomAccesses = capacity*64;
-            for (int i = 5; i < 200; i+=5) {
-                testBag(false, i, capacity, forgetRate);
-                testBag(true, i, capacity, forgetRate);
-            }
-        }
-        
-    }
+
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
@@ -83,7 +73,7 @@ public class BagPerf {
                 }
             }
             
-        }.printCSV();
+        }.printCSV(true);
         
         
         //items per level min
@@ -101,13 +91,17 @@ public class BagPerf {
     
     public static class NullItem extends Item {
     
+        public NullItem() {
+            this((float)Math.random());
+        }
+
         public NullItem(float priority) {
             super("" + (itemID++), new BudgetValue());
             setPriority(priority);
         }
     }
     
-    public static void randomBagIO(Bag b, int accesses, double insertProportion) {
+    public static void randomBagIO(IBag b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (Math.random() > insertProportion) {
                 //remove
@@ -115,13 +109,85 @@ public class BagPerf {
             }
             else {
                 //insert
-                b.putIn(new NullItem((float)Math.random()));
+                b.putIn(new NullItem());
             }            
         }
     }
     
+    public static double compareBagAndFastBag(final boolean normalBag, final int levels, final int levelCapacity, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
+        
+        final int forgetRate = 10; //changing this should not affect anything
+        
+        Performance p = new Performance(( (!normalBag) ? ("FastBag."+(levels*levelCapacity)) : ("Bag"+"."+levels+"x"+ levelCapacity)) , repeats, warmups) {
+
+            @Override public void init() { }
+
+            @Override
+            public void run(boolean warmup) {
+                IBag<Item> b;
+            
+                if (normalBag) {
+                    b = new DefaultBag<Item>(levels, levels*levelCapacity, forgetRate);
+                }
+                else {
+                    b = new FastBag<Item>(levels*levelCapacity, forgetRate);
+                }
+                
+                randomBagIO(b, randomAccesses, insertRatio);
+                
+                if (!warmup) {                                        
+                }
+            }
+            
+        }.printCSV(false);
+                
+        System.out.println();
+        return p.getCycleTimeMS();
+        
+    }
+    
+    public BagPerf() {
+        
+        
+        for (int capacity = 8; capacity < 40000; capacity*=capacity) {
+            randomAccesses = capacity*64;
+            for (int i = 5; i < 200; i+=5) {
+                testBag(false, i, capacity, forgetRate);
+                testBag(true, i, capacity, forgetRate);
+            }
+        }
+        
+    }
+    
     public static void main(String[] args) {
-        new BagPerf();
+        //new BagPerf();
+        
+        
+        
+        
+        int capacityPerLevel = 10;
+        int repeats = 16;
+        int warmups = 2;
+        for (int i = 0; i < 2; i++)
+            for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
+                for (int levels = 1; levels <= 150; levels += 10) {
+
+                    int randomAccesses = 256 * levels;
+                    int num = levels*capacityPerLevel;
+                    
+                    double a = 0, b = 0;
+                    if (i==0) {
+                        System.out.print(insertRatio+", "+num+", ");
+                        a = compareBagAndFastBag(true, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
+                    }                
+                    else if (i==1) {
+                        System.out.print(insertRatio+", "+num+", ");
+                        b = compareBagAndFastBag(false, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
+                    }
+                    
+                    System.out.println(a-b);
+                }
+            }
     }
     
 }

@@ -59,7 +59,7 @@ public class ShortFloat implements Cloneable {
      * To access the value as short
      * @return The current value in short
      */
-    private short getShortValue() {
+    public short getShortValue() {
         return value;
     }
 
