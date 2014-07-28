@@ -132,7 +132,7 @@ public class Memory {
         randomNumber = new Random(1);
         lastEvent = null;
         if (getRecorder().isActive()) {
-            getRecorder().append("--reset--");
+            getRecorder().append("Reset");
         }
     }
 
@@ -511,7 +511,7 @@ public class Memory {
      */
     public void workCycle(final long clock) {
         if (recorder.isActive()) {            
-            recorder.preCycle(clock);
+            recorder.onCycleStart(clock);
         }
         
         processNewTask();
@@ -527,7 +527,7 @@ public class Memory {
         novelTasks.refresh();
         
         if (recorder.isActive()) {            
-            recorder.postCycle(clock);
+            recorder.onCycleEnd(clock);
         }        
     }
 
@@ -600,7 +600,7 @@ public class Memory {
             setCurrentTerm(getCurrentConcept().term);
             
             if (recorder.isActive()) {
-                recorder.append("Concept Selected: " + getCurrentTerm() + "\n");
+                recorder.append("Concept Selected: " + getCurrentTerm());
             }
             
             concepts.putBack(getCurrentConcept());   // current Concept remains in the bag all the time
@@ -620,7 +620,7 @@ public class Memory {
         setCurrentTask(task); // one of the two places where this variable is set
         
         if (recorder.isActive()) {
-            recorder.append("Task Immediately Processed: " + task + "\n");
+            recorder.append("Task Immediately Processed: " + task);
         }
         
         setCurrentTerm(task.getContent());
@@ -815,24 +815,13 @@ public class Memory {
         
         @Override public boolean isActive() { return false;  }
 
-        @Override public void init() {        }
-
-        @Override public void show() {        }
-
-        @Override public void play() {        }
-
-        @Override public void stop() {        }
-
         @Override public void append(String s) {        }
 
-        @Override public void preCycle(long clock) {        }
-        @Override public void postCycle(long clock) {        }
-                
+        @Override public void onCycleStart(long clock) {        }
+        @Override public void onCycleEnd(long clock) {        }                
         @Override public void onConceptNew(Concept concept) {        }
-
         @Override public void onTaskAdd(Task task, String reason) {        }        
-        @Override public void onTaskRemove(Task task, String reason) {        }
-        
+        @Override public void onTaskRemove(Task task, String reason) {        }        
                
     }
     

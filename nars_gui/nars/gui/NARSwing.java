@@ -27,13 +27,12 @@ import nars.core.CommandLineArguments;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
-import nars.gui.output.OutputLogPanel;
+import nars.gui.output.LogPanel;
 import nars.io.TextInput;
 
 /**
- * The main class of the open-nars project.
- * <p>
- * Manage the internal working thread. Communicate with Reasoner only.
+ * The main Swing GUI class of the open-nars project.  
+ * Creates default Swing GUI windows to operate a NAR.
  */
 public class NARSwing  {
 
@@ -57,7 +56,8 @@ public class NARSwing  {
     
     public NARSwing(NAR nar) {
         super();
-        this.nar = nar;
+        
+        this.nar = nar;                
         
         NARControls narControls = new NARControls(nar);        
         Window mainWindow = new Window(INFO, narControls);
@@ -67,8 +67,8 @@ public class NARSwing  {
         mainWindow.setVisible(true);
         
         
-        OutputLogPanel outputLog = new OutputLogPanel(nar);
-        Window outputWindow = new Window("Output Log", outputLog);        
+        LogPanel outputLog = new LogPanel(narControls);
+        Window outputWindow = new Window("Log", outputLog);        
         outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
         outputWindow.setVisible(true);
         
@@ -126,6 +126,26 @@ public class NARSwing  {
 
 
  
+    /*
+    static {
+        try {
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(new GTKLookAndFeel());
+
+            
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                System.out.println(info + " " + info.getName());
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+            
+        } catch (Exception e) {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
+        }
+    }
+    */
 
 
 

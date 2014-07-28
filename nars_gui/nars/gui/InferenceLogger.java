@@ -20,9 +20,8 @@
  */
 package nars.gui;
 
-import nars.gui.output.InferenceWindow;
-import java.awt.FileDialog;
-import java.io.*;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.Concept;
 import nars.entity.Task;
 
@@ -32,103 +31,58 @@ import nars.entity.Task;
  */
 public class InferenceLogger implements nars.inference.InferenceRecorder {
 
-    /**
-     * the display window
-     */
-    private InferenceWindow window = new InferenceWindow(this);
-    /**
-     * whether to display
-     */
-    private boolean isReporting = false;
-    /**
-     * the log file
-     */
-    private PrintWriter logFile = null;
-
-    @Override
-    public void init() {
-        window.clear();
+    public static interface LogOutput {
+        public void logAppend(String s);
     }
-
-    @Override
-    public void show() {
-        window.setVisible(true);
+    
+    private final List<LogOutput> outputs = new CopyOnWriteArrayList<LogOutput>();
+    
+    
+    public void addOutput(LogOutput l) {
+        outputs.add(l);
+    }
+    public void removeOutput(LogOutput l) {
+        outputs.remove(l);
     }
 
     @Override
     public boolean isActive() {
-        return (isReporting || (logFile != null));
+        return !outputs.isEmpty();
     }
 
-    @Override
-    public void play() {
-        isReporting = true;
-    }
-
-    @Override
-    public void stop() {
-        isReporting = false;
-    }
 
     @Override
     public void append(String s) {
-        if (isReporting) {
-            window.append(s);
-        }
-        if (isLogging()) {
-            logFile.println(s);
-        }
+        for (LogOutput o : outputs)
+            o.logAppend(s);
     }
 
-    public void openLogFile() {
-        FileDialog dialog = new FileDialog((FileDialog) null, "Inference Log", FileDialog.SAVE);
-        dialog.setVisible(true);
-        String directoryName = dialog.getDirectory();
-        String fileName = dialog.getFile();
-        try {
-            logFile = new PrintWriter(new FileWriter(directoryName + fileName));
-        } catch (IOException ex) {
-            System.out.println("i/o error: " + ex.getMessage());
-        }
-        window.switchBackground();
-        window.setVisible(true);
-    }
-
-    public void closeLogFile() {
-        logFile.close();
-        logFile = null;
-        window.resetBackground();
-    }
-
-    public boolean isLogging() {
-        return (logFile != null);
-    }
 
     
 
     @Override
-    public void preCycle(long clock) {
-        append("\n --- " + clock + " ---\n");
+    public void onCycleStart(long clock) {
+        append("@ " + clock);
     }
 
     @Override
-    public void postCycle(long clock) {
-        append("\n");
+    public void onCycleEnd(long clock) {
+        
     }
 
     @Override
     public void onTaskAdd(Task task, String reason) {
-        append("Task Added (" + reason + "): " + task + "\n");
+        append("Task Added (" + reason + "): " + task);
     }
 
     @Override
     public void onTaskRemove(Task task, String reason) {
-        append("Task Removed (" + reason + "): " + task + "\n");
+        append("Task Removed (" + reason + "): " + task);
     }
     
     @Override
     public void onConceptNew(Concept concept) {
-        append("Concept Created: " + concept + "\n");
+        append("Concept Created: " + concept);
     }    
     
     

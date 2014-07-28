@@ -21,9 +21,8 @@
 package nars.gui.input;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -33,9 +32,9 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
@@ -43,12 +42,11 @@ import javax.swing.tree.TreePath;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.NPanel;
+import static nars.gui.output.LogPanel.setConsoleStyle;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
 
-/**
- * Input window, accepting user tasks
- */
+
 public class InputPanel extends NPanel implements ActionListener {
 
     private NAR reasoner;
@@ -69,6 +67,8 @@ public class InputPanel extends NPanel implements ActionListener {
      * number of cycles between experience lines
      */
     private int timer;
+    private final JPanel centerPanel;
+    private final JTree fileTree;
 
     /**
      * Constructor
@@ -79,56 +79,45 @@ public class InputPanel extends NPanel implements ActionListener {
     public InputPanel(final NAR reasoner) {
         super(new BorderLayout());
         
-        JTabbedPane jt = new JTabbedPane();
+        centerPanel = new JPanel(new BorderLayout());
+                
+        JPanel menu = new JPanel();
+        menu.setLayout(new FlowLayout(FlowLayout.RIGHT,0,0));
+
+        menu.setOpaque(false);
+        setBackground(Color.BLACK);
         
-        add(jt, BorderLayout.CENTER);
-        
-        JPanel textInput = new JPanel();
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        textInput.setLayout(gridbag);
-        c.ipadx = 2;
-        c.ipady = 2;
-        c.insets = new Insets(2, 2, 2, 2);
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        inputText = new JTextArea("");
-        inputText.setRows(3);        
-        inputText.addKeyListener(new KeyAdapter() {
-            @Override public void keyReleased(KeyEvent e) {
-                //control-enter evaluates
-                if (e.isControlDown())
-                    if (e.getKeyCode()==10) {
-                        okButton.doClick();
-                    }
-            }           
+
+
+        final JComboBox modeSelect = new JComboBox();
+        modeSelect.addItem("Text");
+        modeSelect.addItem("Files");
+        modeSelect.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                updateMode(modeSelect.getSelectedIndex());
+            }
         });
-        
-        textInput.add(new JScrollPane(inputText), c);
-        c.weighty = 0.0;
-        c.gridwidth = 1;
+        menu.add(modeSelect);
+                
         okButton = new JButton("Eval");
         okButton.setToolTipText("Input the text.  Also available by ctl-enter while editing the text area.");
         okButton.addActionListener(this);
-        gridbag.setConstraints(okButton, c);        
-        textInput.add(okButton);
+        menu.add(okButton);
+        
         holdButton = new JButton("Hold");
         holdButton.addActionListener(this);
-        gridbag.setConstraints(holdButton, c);
-        textInput.add(holdButton);
+        menu.add(holdButton);
+
         clearButton = new JButton("Clear");
         clearButton.addActionListener(this);
-        gridbag.setConstraints(clearButton, c);
-        textInput.add(clearButton);
+        menu.add(clearButton);
         
-        jt.addTab("Edit", textInput);
+        
         
 
         
         TreeModel model = new FileTreeModel(new File("./nal"));
-        final JTree fileTree = new JTree(model);
+        fileTree = new JTree(model);
         fileTree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 int selRow = fileTree.getRowForLocation(e.getX(), e.getY());
@@ -151,9 +140,41 @@ public class InputPanel extends NPanel implements ActionListener {
                 }
             }
         });
-        jt.addTab("Files", new JScrollPane(fileTree));
+
+        inputText = new JTextArea("");
+        inputText.setRows(3);        
+        inputText.addKeyListener(new KeyAdapter() {
+            @Override public void keyReleased(KeyEvent e) {
+                //control-enter evaluates
+                if (e.isControlDown())
+                    if (e.getKeyCode()==10) {
+                        okButton.doClick();
+                    }
+            }           
+        });
+        setConsoleStyle(inputText, true);
+
+        updateMode(0);
+        
+        add(centerPanel, BorderLayout.CENTER);
+        add(menu, BorderLayout.SOUTH);
+        
         
         this.reasoner = reasoner;
+    }
+
+    private void updateMode(int selectedIndex) {
+        centerPanel.removeAll();
+        System.out.println(selectedIndex);
+        if (selectedIndex == 0) {
+            centerPanel.add(inputText, BorderLayout.CENTER);
+        }
+        else if (selectedIndex == 1) {
+            centerPanel.add(new JScrollPane(fileTree), BorderLayout.CENTER);
+        }        
+        centerPanel.validate();
+        layout();
+        repaint();
     }
 
     /**
