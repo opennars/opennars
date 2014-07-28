@@ -31,14 +31,14 @@ public class Interval extends Term {
     private final int magnitude;
 
     // time is a positive integer
-    public Interval(long time) {
+    public Interval(final long time) {
         magnitude = (int) Math.log(time);
-        name = "" + Symbols.INTERVAL_PREFIX + magnitude;
+        setName(Symbols.INTERVAL_PREFIX + String.valueOf(magnitude));
     }
     
-    public Interval(String s) {
+    public Interval(final String s) {
         magnitude = Integer.parseInt(s.substring(1));
-        name = s;
+        setName(s);
     }
     
     public long getTime() {
@@ -47,6 +47,6 @@ public class Interval extends Term {
     
     @Override
     public Object clone() {
-        return new Interval(name);
+        return new Interval(getName());
     }
 }

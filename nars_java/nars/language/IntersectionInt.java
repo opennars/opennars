@@ -56,7 +56,7 @@ public class IntersectionInt extends CompoundTerm {
      * @return A new object, to be casted into a Conjunction
      */
     public Object clone() {
-        return new IntersectionInt(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new IntersectionInt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
     }
 
     /**

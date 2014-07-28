@@ -253,7 +253,7 @@ public class Memory {
 
     /* ---------- new task entries ---------- */
     /**
-     * add new task that waits to be processed in the next workCycle
+     * add new task that waits to be processed in the next cycleMemory
      */
     protected void addNewTask(final Task t, final String reason) {
         newTasks.add(t);
@@ -263,7 +263,7 @@ public class Memory {
     }
     
     /* There are several types of new tasks, all added into the
-     newTasks list, to be processed in the next workCycle.
+     newTasks list, to be processed in the next cycleMemory.
      Some of them are reported and/or logged. */
     /**
      * Input task processing. Invoked by the outside or inside environment.
@@ -500,7 +500,7 @@ public class Memory {
         derivedTask(newTask, false, true);
     }
 
-    /* ---------- system working workCycle ---------- */
+    /* ---------- system working cycleMemory ---------- */
     /**
      * An atomic working cycle of the system: process new Tasks, then fire a
      * concept
@@ -532,13 +532,13 @@ public class Memory {
     }
 
     /**
-     * Process the newTasks accumulated in the previous workCycle, accept
-     * addInput ones and those that corresponding to existing concepts, plus one
-     * from the buffer.
+     * Process the newTasks accumulated in the previous cycleMemory, accept
+ addInput ones and those that corresponding to existing concepts, plus one
+ from the buffer.
      */
     private void processNewTask() {
                 
-        // don't include new tasks produced in the current workCycle
+        // don't include new tasks produced in the current cycleMemory
         int counter = newTasks.size();
         Task newEvent = null;
         while (counter-- > 0) {
@@ -605,7 +605,7 @@ public class Memory {
             
             concepts.putBack(getCurrentConcept());   // current Concept remains in the bag all the time
             
-            getCurrentConcept().fire();              // a working workCycle
+            getCurrentConcept().fire();              // a working cycleMemory
         }
     }
 

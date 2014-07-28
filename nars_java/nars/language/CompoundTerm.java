@@ -48,11 +48,11 @@ public abstract class CompoundTerm extends Term {
      * syntactic complexity of the compound, the sum of those of its components
      * plus 1
      */
-    protected short complexity;
+    public final short complexity;
     /**
      * Whether the term names a concept
      */
-    protected boolean isConstant = true;
+    protected boolean isConstant;
 
 //    public static final int ORDER_FORWARD = 1;
 //    public static final int ORDER_BACKWARD = -1;
@@ -97,9 +97,9 @@ public abstract class CompoundTerm extends Term {
      */
     protected CompoundTerm(final ArrayList<Term> components) {
         this.components = ensureValidComponents(components);
-        calcComplexity();
+        this.complexity = calcComplexity();
         setName(makeName());
-        isConstant = !Variable.containVar(name);
+        this.isConstant = !containVar();
     }
 
     private List<Term> ensureValidComponents(final List<Term> components) {
@@ -123,29 +123,22 @@ public abstract class CompoundTerm extends Term {
      */
     protected CompoundTerm(final String name, final ArrayList<Term> components) {
         this.components = ensureValidComponents(components);
-        calcComplexity();
+        this.complexity = calcComplexity();
         setName(name);
-        isConstant = !Variable.containVar(name);
+        this.isConstant = !containVar();
     }
 
-    /**
-     * Change the oldName of a CompoundTerm, called after variable substitution
-     *
-     * @param s The new oldName
-     */
-    @Override
-    protected void setName(String s) {
-        name = s;
-    }
+    
 
     /**
      * The complexity of the term is the sum of those of the components plus 1
      */
-    private void calcComplexity() {
-        complexity = 1;
+    private short calcComplexity() {
+        int c = 1;
         for (int i = 0; i < components.size(); i++) {
-            complexity += components.get(i).getComplexity();
+            c += components.get(i).getComplexity();
         }
+        return (short)c;
     }
  
     /*
@@ -166,7 +159,7 @@ public abstract class CompoundTerm extends Term {
         if (hashCode() != t.hashCode())
             return false;
         
-        if (operator() != t.operator())
+        /*if (operator() != t.operator())
             return false;
         
         if (size() != t.size())
@@ -178,27 +171,19 @@ public abstract class CompoundTerm extends Term {
                 return false;
         }
         
-        return true;
+        return true;*/
+        
+        return getName().equals(t.getName());
     }
 
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-        /*
-        int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.components);
-        hash = 43 * hash + operator().hashCode();
-        return hash;
-        */
-    }
+
         
 
     /**
      * Orders among terms: variable < atomic < compound
      *
      * @param that The Term to be compared with the current Term
-     * @return The same as compareTo as defined on Strings
-     * @return The order of the two terms
+\     * @return The order of the two terms
      */
     @Override
     public int compareTo(final Term that) {
@@ -683,7 +668,7 @@ public abstract class CompoundTerm extends Term {
      * @return Whether the name contains a variable
      */
     public boolean containVar() {
-        return Variable.containVar(name);
+        return Variable.containVar(getName());
     }
 
     /**
@@ -694,9 +679,9 @@ public abstract class CompoundTerm extends Term {
         if (containVar()) {
             int existingComponents = components.size();
             renameVariables(new HashMap<Variable, Variable>());
-            if (components.size() != existingComponents) {
+            /*if (components.size() != existingComponents) {
                 throw new RuntimeException(this + " renameVariables() failed to maintain same number of components");
-            }
+            }*/
         }
         setConstant(true);
         setName(makeName());
@@ -739,9 +724,9 @@ public abstract class CompoundTerm extends Term {
      *
      * @param subs
      */
-    public void applySubstitute(final HashMap<Term, Term> subs) {        
-        int i = 0;
-        for (final Term t1 : components) {
+    public void applySubstitute(final HashMap<Term, Term> subs) {                
+        for (int i = 0; i < components.size(); i++) {
+            Term t1 = components.get(i);
             if (subs.containsKey(t1)) {
                 Term t2 = subs.get(t1);                            
                 while (subs.containsKey(t2)) {
@@ -750,8 +735,7 @@ public abstract class CompoundTerm extends Term {
                 components.set(i, (Term) t2.clone());
             } else if (t1 instanceof CompoundTerm) {
                 ((CompoundTerm) t1).applySubstitute(subs);
-            }
-            i++;
+            }            
         }
         if (this.isCommutative()) {         
             
@@ -763,7 +747,7 @@ public abstract class CompoundTerm extends Term {
             Collections.sort(components);
 
         }
-        name = makeName();
+        setName( makeName() );
     }
 
     /* ----- link CompoundTerm and its components ----- */

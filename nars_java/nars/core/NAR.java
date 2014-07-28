@@ -24,7 +24,7 @@ public class NAR implements Runnable, Output {
 
     
     private Thread thread = null;
-    long minTickPeriodMS;
+    long minCyclePeriodMS;
     
     /**
      * global DEBUG print switch
@@ -161,7 +161,7 @@ public class NAR implements Runnable, Output {
     }
 
     /**
-     * Queue additional tick()'s to the inference process.
+     * Queue additional cycle()'s to the inference process.
      *
      * @param cycles The number of inference steps
      */
@@ -173,14 +173,14 @@ public class NAR implements Runnable, Output {
     /**
      * Repeatedly execute NARS working cycle in a new thread.
      * 
-     * @param minTickPeriodMS minimum tick period (milliseconds).
+     * @param minCyclePeriodMS minimum cycle period (milliseconds).
      */    
-    public void start(final long minTickPeriodMS) {
+    public void start(final long minCyclePeriodMS) {
         if (thread == null) {
             thread = new Thread(this, "Inference");
             thread.start();
         }        
-        this.minTickPeriodMS = minTickPeriodMS;
+        this.minCyclePeriodMS = minCyclePeriodMS;
         running = true;
     }
     
@@ -216,7 +216,7 @@ public class NAR implements Runnable, Output {
         final boolean wasRunning = running;
         running = true;
         for (int i = 0; i < cycles; i++) {
-            tick();
+            cycle();
         }
         running = wasRunning;
     }
@@ -232,7 +232,7 @@ public class NAR implements Runnable, Output {
         running = true;
         step(cycles);
         while ((stepsQueued!=0) && (!inputChannels.isEmpty())) {
-            tick();
+            cycle();
         } 
         running = false;
     }
@@ -243,7 +243,7 @@ public class NAR implements Runnable, Output {
         
         while (running) {            
             try {
-                tick();
+                cycle();
             } catch (RuntimeException re) {                
                 output(ERR.class, re);
                 if (DEBUG) {
@@ -258,9 +258,9 @@ public class NAR implements Runnable, Output {
                 e.printStackTrace();
             }
             
-            if (minTickPeriodMS > 0) {
+            if (minCyclePeriodMS > 0) {
                 try {
-                    Thread.sleep(minTickPeriodMS);
+                    Thread.sleep(minCyclePeriodMS);
                 } catch (InterruptedException e) { }
             }
             else if (threadYield) {
@@ -284,7 +284,7 @@ public class NAR implements Runnable, Output {
      * Processes the next input from each input channel.  Removes channels that have finished.
      * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
-    protected boolean processInput() {
+    protected boolean cycleInput() {
         boolean inputPerceived = false;
         
         if ((inputting) && (stepsQueued == 0) && (!inputChannels.isEmpty())) {
@@ -328,8 +328,8 @@ public class NAR implements Runnable, Output {
         }
     }
     
-    /** Execute a workCycle */
-    protected void workCycle() {
+    /** Execute a cycleMemory */
+    protected void cycleMemory() {
         if ((working) && ((running || (stepsQueued > 0)))) {
             clock++;
             try {
@@ -347,15 +347,15 @@ public class NAR implements Runnable, Output {
     }
 
     /**
-     * A clock tick, consisting of 1) processing input, 2) one workCycle.
+     * A clock tick, consisting of 1) processing input, 2) one cycleMemory.
      */
-    private void tick() {
+    private void cycle() {
         if (DEBUG) {
             debugTime();            
         }
         
-        processInput();
-        workCycle();                
+        cycleInput();
+        cycleMemory();                
     }
     
     
@@ -395,15 +395,15 @@ public class NAR implements Runnable, Output {
         return running;
     }    
 
-    public long getMinTickPeriodMS() {
-        return minTickPeriodMS;
+    public long getMinCyclePeriodMS() {
+        return minCyclePeriodMS;
     }
 
     public boolean isWorking() {
         return working;
     }
 
-    /** When b is true, NAR will call Thread.yield each run() iteration that minTickPeriodMS==0 (no delay). 
+    /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 
      *  This is for improving program responsiveness when NAR is run with no delay.
      */
     public void setThreadYield(boolean b) {

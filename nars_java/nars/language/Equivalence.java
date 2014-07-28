@@ -64,7 +64,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public Object clone() {
-        return new Equivalence(name, cloneList(components), isConstant(), complexity, temporalOrder);
+        return new Equivalence(getName(), cloneList(components), isConstant(), complexity, temporalOrder);
     }
 
     /**

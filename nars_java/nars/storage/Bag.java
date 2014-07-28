@@ -67,7 +67,7 @@ public abstract class Bag<E extends Item>  {
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
-    private final int[] DISTRIBUTOR;
+    private final short[] DISTRIBUTOR;
     
     
     /**
@@ -115,7 +115,8 @@ public abstract class Bag<E extends Item>  {
 
     protected Bag(int levels, int capacity) {
         this.levels = levels;
-        THRESHOLD = showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
+        THRESHOLD = (int)(Parameters.BAG_THRESHOLD * levels);
+        showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
         RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
         this.capacity = capacity;
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
@@ -207,12 +208,7 @@ public abstract class Bag<E extends Item>  {
         
         final E oldItem = nameTable.put(newKey, newItem);
         if (oldItem != null) {                  // merge duplications
-            try {
-                outOfBase(oldItem);
-            }
-            catch (NullPointerException e) {
-                System.out.println("");
-            }
+            outOfBase(oldItem);
             newItem.merge(oldItem);
         }
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
@@ -242,19 +238,32 @@ public abstract class Bag<E extends Item>  {
      * Choose an Item according to priority distribution and take it out of the
      * Bag
      *
-     * @return The selected Item
+     * @return The selected Item, or null if this bag is empty
      */
     public E takeOut() {
-        if (nameTable.isEmpty()) { // empty bag
-            return null;
-        }
+        int c = size();
+                
+        if (c == 0) return null; // empty bag                
+                
         if (itemTableEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             
             // look for a non-empty level
-            do {
-                currentLevel = DISTRIBUTOR[levelIndex];
-                levelIndex = (levelIndex + 1) % DISTRIBUTOR.length;
-            } while (itemTableEmpty[currentLevel]);
+            if (c == 1) {
+                //optimized case: just find the next non-empty level
+                int levelsTraversed = 0;
+                do {
+                    currentLevel++;    
+                    if (currentLevel == levels) currentLevel = 0; //modulo                        
+                    levelsTraversed++;
+                } while (itemTableEmpty[currentLevel]);
+                levelIndex = (levelIndex + levelsTraversed) % DISTRIBUTOR.length;
+            }   
+            else {
+                do {
+                    currentLevel = DISTRIBUTOR[levelIndex++];
+                    if (levelIndex == DISTRIBUTOR.length) levelIndex = 0; //modulo                        
+                } while (itemTableEmpty[currentLevel]);
+            }
             
             if (currentLevel < THRESHOLD) { // for dormant levels, take one item
                 currentCounter = 1;
@@ -370,12 +379,36 @@ public abstract class Bag<E extends Item>  {
      */
     protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
-        itemTable[level].remove(oldItem);
-        itemTableEmpty[level] = itemTable[level].isEmpty();
+        
+        boolean found = false;
+        if (itemTable[level] != null)
+            if (itemTable[level].remove(oldItem)) {
+                found = true;
+                itemTableEmpty[level] = itemTable[level].isEmpty();                
+            }
+        
+        if (!found) {
+            //search other levels for this item because it's not where we thought it was according to getLevel()
+            if (!outOfBaseComplete(oldItem)) {
+                throw new RuntimeException("Can not remove missing element " + oldItem + " from " + this);
+            }
+        }
+        
         mass -= (level + 1);
         refresh();
     }
 
+    /** try to avoid calling this, it is expensive.  
+     * a bug in an outOfBase() caller might be causing the need for this. */
+    protected boolean outOfBaseComplete(final E oldItem) {
+        for (int i = 0; i < levels; i++) {
+            if (itemTable[i]!=null)
+                if (itemTable[i].remove(oldItem)==true)
+                    return true;
+        }       
+        return false;
+    }
+    
     /**
      * To start displaying the Bag in a BagWindow; {@link nars.gui.BagWindow}
      * implements interface {@link BagObserver};

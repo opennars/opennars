@@ -35,11 +35,11 @@ public class NALTest  {
     ScriptEngine js = factory.getEngineByName("JavaScript");
       
 
-    protected Map<String, String> exCache = new HashMap(); //path -> script data
+    protected static Map<String, String> exCache = new HashMap(); //path -> script data
     
 
     
-    public String getExample(String path)  {
+    public static String getExample(String path)  {
         try {
             String existing = exCache.get(path);
             if (existing!=null)
@@ -91,7 +91,7 @@ public class NALTest  {
         final NAR n = new NAR();
         
         
-        final LinkedList<String> expressions = new LinkedList();
+        final List<String> expressions = new ArrayList(2);
         out.clear();
 
         
@@ -180,14 +180,20 @@ public class NALTest  {
             System.out.println((a++) + ": " + s);
     }
     
-    protected void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
+    public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
+        perfNAL(path, extraCycles, repeats, warmups, true);
+    }
+    
+    public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups, boolean gc) {
         
         
-        new Performance(path, repeats, warmups) {
+        new Performance(path, repeats, warmups, gc) {
             private NAR n;
 
             @Override
             public void init() {
+                NAR.resetStatics();
+                
                 n = new NAR();
             }
 
