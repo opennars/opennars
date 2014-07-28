@@ -87,7 +87,7 @@ public class TextPerception {
 
             //not handled, so respond with some signal
             if (lastHandled == null) {
-                nar.output(Output.ERR.class, "Invalid input from " + i + ": " + line);
+                nar.output(Output.ERR.class, "Invalid input (" + i + "): " + line);
             }
         }
         
@@ -95,7 +95,7 @@ public class TextPerception {
     
     
     private static void initDefaultParsers() {
-        //integer, # of cycles to stepLater
+        //integer, # of cycles to step
         defaultParsers.add(new TextReaction() {
             final static String inputPrefix = Symbols.INPUT_LINE + ':';                    
 
@@ -201,6 +201,7 @@ public class TextPerception {
         });        
 
         //echo
+        //TODO standardize on an echo/comment format
         defaultParsers.add(new TextReaction() {
             @Override
             public boolean react(NAR nar, String input, TextReaction lastHandler) {
@@ -208,6 +209,11 @@ public class TextPerception {
                 if (c == Symbols.ECHO_MARK) {            
                     String echoString = input.substring(1);
                     nar.output(Output.ECHO.class, '\"' + echoString + '\"');
+                    return true;
+                }
+                final String it = input.trim();
+                if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("****") ) {
+                    nar.output(Output.ECHO.class, input);
                     return true;
                 }
                 return false;                

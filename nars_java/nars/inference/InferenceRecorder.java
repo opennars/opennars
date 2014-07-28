@@ -5,26 +5,7 @@ import nars.entity.Task;
 
 public interface InferenceRecorder {
 
-    /**
-     * Initialize the window and the file
-     */
-    public abstract void init();
 
-    /**
-     * Show the window
-     */
-    public abstract void show();
-
-    /**
-     * Begin the display
-     */
-    public abstract void play();
-
-    /**
-     * Stop the display
-     */
-    public abstract void stop();
-    
     public boolean isActive();
 
     /**
@@ -38,9 +19,10 @@ public interface InferenceRecorder {
     public void onConceptNew(Concept concept);
 
     /** called at the beginning of each inference clock cycle */
-    public void preCycle(long clock);
+    public void onCycleStart(long clock);
 
-    public void postCycle(long clock);
+    /** called at the end of each inference clock cycle */
+    public void onCycleEnd(long clock);
 
     /** Added task */
     public void onTaskAdd(Task task, String reason);

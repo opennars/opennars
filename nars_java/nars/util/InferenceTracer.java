@@ -111,21 +111,6 @@ public class InferenceTracer implements InferenceRecorder {
         timeslot.add(e);
     }
     
-    @Override
-    public void init() {
-    }
-
-    @Override
-    public void show() {
-    }
-
-    @Override
-    public void play() {
-    }
-
-    @Override
-    public void stop() {
-    }
 
     @Override
     public boolean isActive() {
@@ -159,11 +144,11 @@ public class InferenceTracer implements InferenceRecorder {
     }
 
     @Override
-    public void preCycle(long clock) {
+    public void onCycleStart(long clock) {
         this.t = clock;
     }
 
-    @Override public void postCycle(long clock) {    }
+    @Override public void onCycleEnd(long clock) {    }
     
     @Override
     public void onTaskAdd(Task task, String reason) {

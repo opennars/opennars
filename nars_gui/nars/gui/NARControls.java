@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -41,7 +42,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -49,21 +49,20 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
 import nars.util.NARState;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.input.InputPanel;
+import nars.gui.output.LogPanel;
 import nars.gui.output.SentenceTablePanel;
-import nars.inference.InferenceRecorder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.storage.Memory;
 
-/**
- * Main window of NARSwing GUI
- */
+
 public class NARControls extends JPanel implements ActionListener, Runnable {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
@@ -71,17 +70,13 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     /**
      * Reference to the reasoner
      */
-    private final NAR nar;
+    public final NAR nar;
 
     /**
      * Reference to the memory
      */
     private final Memory memory;
-    /**
-     * Reference to the inference recorder
-     */
-    private InferenceRecorder record;
-
+    
     /**
      * Reference to the experience writer
      */
@@ -120,6 +115,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     private List<ChartPanel> charts = new ArrayList();
         
     private boolean allowFullSpeed = false;
+    public final InferenceLogger logger;
 
     /**
      * Constructor
@@ -131,15 +127,14 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         super(new BorderLayout());
         
         this.nar = nar;
-        memory = nar.memory;
-        record = memory.getRecorder();
+        memory = nar.memory;        
         
         experienceWriter = new TextOutput(nar);
         conceptWin = new TermWindow(memory);
-
-        record = new InferenceLogger();
-        memory.setRecorder(record);
-
+        
+        logger = new InferenceLogger();
+        nar.memory.setRecorder(logger);
+        
         JMenuBar menuBar = new JMenuBar();
 
         JMenu m = new JMenu("Memory");
@@ -147,8 +142,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         m.addSeparator();
         addJMenuItem(m, "Load Experience");
         addJMenuItem(m, "Save Experience");
-        m.addSeparator();
-        addJMenuItem(m, "Record Inference");
         m.addActionListener(this);
         menuBar.add(m);
 
@@ -171,6 +164,19 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         
         m = new JMenu("Output");
         {
+            JMenuItem ml = new JMenuItem("+ Log");
+            ml.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    LogPanel p = new LogPanel(NARControls.this);
+                    Window w = new Window("Log", p);
+                    w.setSize(500, 300);
+                    w.setVisible(true);      
+                }
+            });
+            m.add(ml);
+
+            
             JMenuItem mv = new JMenuItem("+ Memory View");
             mv.addActionListener(new ActionListener() {
                 @Override
@@ -220,6 +226,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             });
             m.add(cct);
             
+            /*
             JMenuItem it = new JMenuItem("+ Inference Log");
             it.addActionListener(new ActionListener() {
                 @Override
@@ -229,7 +236,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 }                
             });
             m.add(it);            
-        
+            */
         }
         menuBar.add(m);
 
@@ -333,15 +340,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                     experienceWriter.openSaveFile();
                 }
                 savingExp = !savingExp;
-            } else if (label.equals("Record Inference")) {
-                if (record instanceof InferenceLogger) {
-                    InferenceLogger il = (InferenceLogger)record;
-                    if (record.isActive()) {
-                        il.closeLogFile();                    
-                    } else {
-                        il.openLogFile();
-                    }
-                }
             } else if (label.equals("Reset")) {
                 /// TODO mixture of modifier and reporting
                 nar.reset();
@@ -508,7 +506,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             Font ttfBase;
             try {
                 ttfBase = Font.createFont(Font.TRUETYPE_FONT, in);
-                ttfReal = ttfBase.deriveFont(Font.BOLD, 24);
+                ttfReal = ttfBase.deriveFont((int)Font.PLAIN, 14);
             } catch (FontFormatException ex) {
                 Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -517,13 +515,43 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
         }
         public FAButton(char faCode) {
-              if (ttfReal!=null)
-                  setFont(ttfReal);
+            super();
+            setFont(ttfReal);
 
             setText(String.valueOf(faCode));
-            //setForeground(Color.BLACK);          
         }
     }    
+    public static class FAToggleButton extends JToggleButton {
+        private final char codeUnselected;
+        private final char codeSelected;
+        public FAToggleButton(char faCodeUnselected, char faCodeSelected) {
+            super();
+            this.codeUnselected = faCodeUnselected;
+            this.codeSelected = faCodeSelected;
+            setFont(FAButton.ttfReal);
+            setText(String.valueOf(faCodeUnselected));            
+        }
+
+        @Override
+        public void setSelected(boolean b) {
+            super.setSelected(b);
+        }
+
+        
+        @Override
+        public void paint(Graphics g) {
+            if (isSelected()) {
+                setText(String.valueOf(codeSelected));
+            }
+            else {
+                setText(String.valueOf(codeUnselected));
+            }
+            super.paint(g); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+        
+        
+    }
     
     //http://astronautweb.co/snippet/font-awesome/
     private final char FA_PlayCharacter = '\uf04b';

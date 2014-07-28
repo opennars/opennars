@@ -213,11 +213,12 @@ public class NAR implements Runnable, Output {
             stepLater(cycles);
             return;
         }
+        final boolean wasRunning = running;
         running = true;
         for (int i = 0; i < cycles; i++) {
             tick();
         }
-        running = false;
+        running = wasRunning;
     }
     
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */

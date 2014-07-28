@@ -260,7 +260,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                 return false;
             }
             if (memory.getRecorder().isActive()) {
-                memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term + "\n");
+                memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term);
             }            
             memory.concepts.putBack(second);
             
