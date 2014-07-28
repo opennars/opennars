@@ -38,14 +38,14 @@ import javax.swing.JTextArea;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.gui.Window;
-import nars.storage.Bag;
 import nars.storage.BagObserver;
+import nars.storage.Bag;
 
 /**
  * JWindow display the priority distribution of items within a given bag
  */
-public class BagWindow<BagType extends Item> extends Window implements ActionListener, AdjustmentListener,
-		BagObserver<BagType> {
+public class BagWindow<E extends Item> extends Window implements ActionListener, AdjustmentListener,
+        BagObserver<E> {
 
     /**
      * The bag to be displayed
@@ -79,32 +79,31 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
 
     public BagWindow() {
         super("Concepts");
-        
-        
+
     }
 
     private void applyBorderLayout(JScrollPane textScrollPane) {
-		setLayout(new BorderLayout());
-        add(textScrollPane, BorderLayout.CENTER );
+        setLayout(new BorderLayout());
+        add(textScrollPane, BorderLayout.CENTER);
         JPanel bottomPanel = new JPanel();
-        add( bottomPanel, BorderLayout.SOUTH );
-        bottomPanel.add(valueLabel );
-        bottomPanel.add(valueBar );
-        bottomPanel.add(playButton );
-        bottomPanel.add(stopButton );
-        bottomPanel.add(closeButton );
-	}
+        add(bottomPanel, BorderLayout.SOUTH);
+        bottomPanel.add(valueLabel);
+        bottomPanel.add(valueBar);
+        bottomPanel.add(playButton);
+        bottomPanel.add(stopButton);
+        bottomPanel.add(closeButton);
+    }
 
     private void adjustLabelAndCursor(int showLevel) {
         String valueText = String.valueOf(showLevel);
         // always occupy 3 characters (padding):
-        valueText = showLevel> 9 ? "0" + valueText : "00" + valueText;
-        valueText = showLevel > 99 ? ""+showLevel : valueText;
-		valueLabel.setText(valueText);
-        valueBar.setValue(showLevel);		
-	}
+        valueText = showLevel > 9 ? "0" + valueText : "00" + valueText;
+        valueText = showLevel > 99 ? "" + showLevel : valueText;
+        valueLabel.setText(valueText);
+        valueBar.setValue(showLevel);
+    }
 
-	@Override
+    @Override
     public void post(String str) {
         showing = true;
         text.setText(str);
@@ -137,8 +136,6 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
         counter--;
     }
 
-
-
     /**
      * Handling scrollbar movement
      *
@@ -155,19 +152,17 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
     }
 
     @Override
-    public void setBag( Bag<BagType> bag ) {
+    public void setBag(Bag<E> bag) {
         this.bag = bag;
-        
+
         removeAll();
         /* The lowest level displayed -- will need adjusted for variable bag sizes*/
-        int showLevel = (int)(Parameters.BAG_THRESHOLD * bag.levels);
-        
-        
+        int showLevel = (int) (Parameters.BAG_THRESHOLD * bag.levels);
 
         text = new JTextArea("");
         text.setEditable(false);
         JScrollPane textScrollPane = new JScrollPane(text);
-        valueLabel = new JLabel( "00", JLabel.RIGHT);
+        valueLabel = new JLabel("00", JLabel.RIGHT);
         valueBar = new JScrollBar(Scrollbar.HORIZONTAL, showLevel, 0, 1, bag.levels);
         valueBar.addAdjustmentListener(this);
         stopButton = new JButton(Window.OFF_LABEL);
@@ -176,14 +171,14 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
         playButton.addActionListener(this);
         closeButton = new JButton("Close");
         closeButton.addActionListener(this);
-        
+
         applyBorderLayout(textScrollPane);
 
         setBounds(600, 60 + counter * 40, 600, 300);
-        counter++;        
+        counter++;
         adjustLabelAndCursor(showLevel);
         setVisible(true);
-        
+
     }
 
     @Override
@@ -198,31 +193,31 @@ public class BagWindow<BagType extends Item> extends Window implements ActionLis
         showing = false;
     }
 
-	@SuppressWarnings("unused")
-	private void applyGridBagLayout(JScrollPane textScrollPane) {
-		GridBagLayout gridbag = new GridBagLayout();
-	    GridBagConstraints c = new GridBagConstraints();
-	    setLayout(gridbag);
-	    c.ipadx = 3;
-	    c.ipady = 3;
-	    c.insets = new Insets(5, 5, 5, 5);
-	    c.fill = GridBagConstraints.BOTH;
-	    c.gridwidth = GridBagConstraints.REMAINDER;
-	    c.weightx = 1.0;
-	    c.weighty = 1.0;
-	    gridbag.setConstraints(textScrollPane, c);
-	    add(textScrollPane);   
-	    c.weighty = 0.0;
-	    c.gridwidth = 1;
-	    gridbag.setConstraints(valueLabel, c);
-	    add(valueLabel);
-	    gridbag.setConstraints(valueBar, c);
-	    add(valueBar);
-	    gridbag.setConstraints(playButton, c);
-	    add(playButton);
-	    gridbag.setConstraints(stopButton, c);
-	    add(stopButton);
-	    gridbag.setConstraints(closeButton, c);
-	    add(closeButton);
-	}
+    @SuppressWarnings("unused")
+    private void applyGridBagLayout(JScrollPane textScrollPane) {
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+        c.ipadx = 3;
+        c.ipady = 3;
+        c.insets = new Insets(5, 5, 5, 5);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        gridbag.setConstraints(textScrollPane, c);
+        add(textScrollPane);
+        c.weighty = 0.0;
+        c.gridwidth = 1;
+        gridbag.setConstraints(valueLabel, c);
+        add(valueLabel);
+        gridbag.setConstraints(valueBar, c);
+        add(valueBar);
+        gridbag.setConstraints(playButton, c);
+        add(playButton);
+        gridbag.setConstraints(stopButton, c);
+        add(stopButton);
+        gridbag.setConstraints(closeButton, c);
+        add(closeButton);
+    }
 }
