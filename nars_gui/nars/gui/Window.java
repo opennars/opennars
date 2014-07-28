@@ -90,7 +90,7 @@ public class Window extends JFrame {
         });
     }
     
-    public Window(String title, JComponent component) {
+    public Window(String title, Component component) {
         this(title);
         getContentPane().add(component);
     }

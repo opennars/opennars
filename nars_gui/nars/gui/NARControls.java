@@ -24,7 +24,6 @@ import nars.gui.output.BagWindow;
 import nars.gui.output.TermWindow;
 import nars.gui.output.MemoryView;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -57,6 +56,7 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
+import nars.gui.output.PLineChart;
 import nars.gui.output.SentenceTablePanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -112,11 +112,13 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     private final int GUIUpdatePeriodMS = 256;
     private NSlider volumeSlider;
 
-    private List<ChartPanel> charts = new ArrayList();
+    private List<PLineChart> charts = new ArrayList();
         
     private boolean allowFullSpeed = false;
     public final InferenceLogger logger;
 
+    int chartHistoryLength = 400;
+    
     /**
      * Constructor
      *
@@ -301,7 +303,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         @Override
         public void run() {
             speedSlider.repaint();
-            for (ChartPanel c : charts) {
+            for (PLineChart c : charts) {
                 c.update(new NARState(nar));
             }
             
@@ -617,20 +619,25 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
         JPanel chartPanel = new JPanel(new GridLayout(0,1));
         {
+            
+            
+            PLineChart chart0 = new PLineChart("concepts.Total", chartHistoryLength);
+            chartPanel.add(chart0.newPanel());
+            charts.add(chart0);
+            /*
             ChartPanel chart0 = new ChartPanel("concepts.Total");
             chart0.setPreferredSize(new Dimension(200, 150));
             charts.add(chart0);
             chartPanel.add(chart0);
+            */
 
-            ChartPanel chart1 = new ChartPanel("concepts.Mass");
-            chart1.setPreferredSize(new Dimension(200, 200));
+            PLineChart chart1 = new PLineChart("concepts.Mass", chartHistoryLength);
+            chartPanel.add(chart1.newPanel());
             charts.add(chart1);
-            chartPanel.add(chart1);
-
-            ChartPanel chart2 = new ChartPanel("concepts.AveragePriority");
-            chart2.setPreferredSize(new Dimension(200, 200));
+            PLineChart chart2 = new PLineChart("concepts.AveragePriority", chartHistoryLength);
+            chartPanel.add(chart2.newPanel());
             charts.add(chart2);
-            chartPanel.add(chart2);
+            
         }
         
         c.weighty = 1.0;
