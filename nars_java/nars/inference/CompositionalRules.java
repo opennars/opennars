@@ -255,14 +255,13 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             if(!Variable.containVar(taskterm.toString())) {
                 return false;
             }           
-            Concept second=memory.concepts.takeOut();
+            Concept second=memory.concepts.processNext();
             if(second==null) {
                 return false;
             }
             if (memory.getRecorder().isActive()) {
                 memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term);
             }            
-            memory.concepts.putBack(second);
             
             Term secterm=second.term;
             if(second.beliefs==null || second.beliefs.size()==0) {

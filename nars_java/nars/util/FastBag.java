@@ -1,6 +1,5 @@
 package nars.util;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Parameters;
@@ -8,9 +7,10 @@ import nars.entity.Item;
 import nars.entity.ShortFloat;
 import nars.inference.BudgetFunctions;
 import nars.storage.IBag;
+import nars.storage.Memory;
 
 
-public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
+public class FastBag<E extends Item> implements IBag<E> {
  
 
     /**
@@ -32,7 +32,7 @@ public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
     /**
      * array of lists of items, for items on different level
      */
-    public final SortedList<E> items;
+    public final PrioritySortedItemList<E> items;
     
     /**
      * defined in different bags
@@ -41,7 +41,7 @@ public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
     /**
      * current sum of occupied level
      */
-    private float mass;
+    private int mass;
 
 
     
@@ -60,7 +60,7 @@ public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
         RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
         this.capacity = capacity;
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
-        items = new SortedList<>(this);
+        items = new PrioritySortedItemList<>();
         this.forgetRate = forgetRate;
         clear();
         //showing = false;        
@@ -180,13 +180,21 @@ public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
     
     /** distributor function */
     public int nextRemovalIndex() {
-        // 1.0 - (Math.random())^3 :: a function which has domain and range between 0..1.0 but
+        // 1.0 - (random())^3 :: a function which has domain and range between 0..1.0 but
         // will result in values above 0.5 more often than not.  see the curve:
         //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIoMS14XjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
 
-        double p = Math.random();
+        double p = Memory.randomNumber.nextDouble();
         p = 1-(p*p*p);
-        return (int)Math.round(p * (size()-1));
+        return (int)fastRound(p * (size()-1));
+    }
+    
+    public static long fastRound(final double d) {
+        if (d > 0) {
+            return (long) (d + 0.5d);
+        } else {
+            return (long) (d - 0.5d);
+        }
     }
 
     
@@ -222,7 +230,7 @@ public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
         
         items.add(newItem);
         
-        mass += (newItem.getPriority());                  // increase total mass
+        mass += (newItem.budget.getPriorityShort());                  // increase total mass
         return oldItem;		// TODO return null is a bad smell
     }
 
@@ -236,7 +244,7 @@ public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
      */
     private E takeOutIndex(int index) {
         final E selected = items.remove(index);
-        mass -= (selected.getPriority());
+        mass -= (selected.budget.getPriorityShort());
         return selected;
     }
 
@@ -267,12 +275,6 @@ public class FastBag<E extends Item> implements IBag<E>, Comparator<E> {
         return capacity;
     }
 
-    @Override
-    public int compare(final E o1, final E o2) {
-        final int x = o1.budget.getPriorityShort();
-        final int y = o2.budget.getPriorityShort();
-        return (x < y) ? -1 : ((x == y) ? 0 : 1);
-    }
 
     @Override
     public String toString() {

@@ -44,11 +44,13 @@ import nars.inference.TemporalRules;
 import nars.io.Output.OUT;
 import nars.language.Negation;
 import nars.language.Term;
+import nars.util.XORShiftRandom;
 
 
 public class Memory {
 
-    public static Random randomNumber = new Random(1);
+    //public static Random randomNumber = new Random(1);
+    public static Random randomNumber = new XORShiftRandom(1);
 
     /**
      * Backward pointer to the nar
@@ -595,17 +597,18 @@ public class Memory {
      * Select a concept to fire.
      */
     private void processConcept() {
-        currentConcept = concepts.takeOut();
-        if (getCurrentConcept() != null) {
-            setCurrentTerm(getCurrentConcept().term);
+        //currentConcept = concepts.takeOut();
+        currentConcept = concepts.processNext();
+        if (currentConcept != null) {
+            setCurrentTerm(currentConcept.term);
             
             if (recorder.isActive()) {
                 recorder.append("Concept Selected: " + getCurrentTerm());
             }
             
-            concepts.putBack(getCurrentConcept());   // current Concept remains in the bag all the time
+            //concepts.putBack(currentConcept);   // current Concept remains in the bag all the time
             
-            getCurrentConcept().fire();              // a working cycleMemory
+            currentConcept.fire();              // a working cycleMemory
         }
     }
 
