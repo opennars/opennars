@@ -28,6 +28,10 @@ public abstract class Performance {
     private long totalMemory;
 
     public Performance(String name, int repeats, int warmups) {
+        this(name, repeats, warmups, true);
+    }
+    
+    public Performance(String name, int repeats, int warmups, boolean gc) {
         this.repeats = repeats;        
         this.name = name;
         
@@ -38,7 +42,8 @@ public abstract class Performance {
 
         for (int r = 0; r < repeats+warmups; r++) {
 
-            System.gc();
+            if (gc)
+                System.gc();
 
             long start = System.nanoTime();
             long freeMemStart = Runtime.getRuntime().freeMemory();

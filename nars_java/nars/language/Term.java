@@ -32,16 +32,14 @@ import nars.inference.TemporalRules;
  */
 public class Term implements Cloneable, Comparable<Term> {
 
-    /**
-     * A Term is identified uniquely by its name, a sequence of characters in a
-     * given alphabet (ASCII or Unicode)
-     */
-    protected String name;
-
+    private String name;
+    private int nameHash;
+    
     /**
      * Default constructor that build an internal Term
      */
-    protected Term() {        
+    protected Term() {
+        setName(null);
     }
 
     /**
@@ -81,7 +79,12 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public boolean equals(final Object that) {
-        return (that instanceof Term) && name.equals(((Term) that).getName());
+        if (!(that instanceof Term)) return false;
+        Term t = (Term)that;
+        if (t.nameHash!=nameHash) {
+            return false;
+        }        
+        return name.equals(t.getName());
     }
 
     /**
@@ -91,7 +94,8 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public int hashCode() {
-        return (name != null ? name.hashCode() : 7);
+        //return (name != null ? name.hashCode() : 7);
+        return nameHash;
     }
 
     /**
@@ -122,12 +126,20 @@ public class Term implements Cloneable, Comparable<Term> {
         return 1;
     }
 
-    protected void setName(final String name) {
-        if (name.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
-            this.name = name.intern();
+    /** only method that should modify Term.name. also caches hashcode */
+    protected final void setName(final String name) {
+        if (name!=null) {
+            if (name.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
+                this.name = name.intern();
+            }
+            else {
+                this.name = name;
+            }
+            this.nameHash = name.hashCode();
         }
         else {
-            this.name = name;
+            this.name = null;
+            this.nameHash = 7 + getClass().hashCode();
         }
     }
     
@@ -143,7 +155,7 @@ public class Term implements Cloneable, Comparable<Term> {
         } else if (that instanceof Variable) {
             return 1;
         } else {
-            return name.compareTo(that.getName());
+            return name.compareTo(that.getName());            
         }
     }
 

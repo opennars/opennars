@@ -215,7 +215,7 @@ public class InputPanel extends NPanel implements ActionListener {
 
     public void evaluate(String input) {
         reasoner.addInput(input);
-        reasoner.finish(1);
+        reasoner.step(1);
     }    
    
     private void close() {

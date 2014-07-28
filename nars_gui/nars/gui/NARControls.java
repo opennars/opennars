@@ -375,7 +375,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 } else if (currentSpeed == 1.0) {
                     s += " - run max speed";
                 } else {
-                    s += " - run " + nar.getMinTickPeriodMS() + " ms / tick";
+                    s += " - run " + nar.getMinCyclePeriodMS() + " ms / tick";
                 }
                 return s;
             }

@@ -22,7 +22,6 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols;
 import nars.io.Symbols.Operator;
 import nars.storage.Memory;
 
@@ -56,7 +55,7 @@ public class DifferenceExt extends CompoundTerm {
      * @return A new object, to be casted into a DifferenceExt
      */
     public Object clone() {
-        return new DifferenceExt(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new DifferenceExt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
     }
 
     /**

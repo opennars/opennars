@@ -72,7 +72,7 @@ public class ImageExt extends CompoundTerm {
      * @return A new object, to be casted into an ImageExt
      */
     public Object clone() {
-        return new ImageExt(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity, relationIndex);
+        return new ImageExt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity, relationIndex);
     }
 
     /**

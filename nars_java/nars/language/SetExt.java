@@ -61,7 +61,7 @@ public class SetExt extends CompoundTerm {
      * @return A new object, to be casted into a SetExt
      */
     public Object clone() {
-        return new SetExt(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new SetExt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
     }
 
     /**

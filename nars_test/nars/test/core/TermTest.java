@@ -18,9 +18,9 @@ package nars.test.core;
 
 import java.util.TreeSet;
 import nars.core.NAR;
-import nars.core.NAR;
 import nars.io.TextPerception;
 import nars.io.TextPerception.InvalidInputException;
+import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Term;
 import static org.junit.Assert.assertTrue;
@@ -32,6 +32,36 @@ import org.junit.Test;
  */
 public class TermTest {
 
+    protected void assertEquivalent(String term1String, String term2String) {
+        try {
+            NAR n = new NAR();
+
+            Term term1 = TextPerception.parseTerm(term1String, n.memory);
+            Term term2 = TextPerception.parseTerm(term2String, n.memory);
+
+            assertTrue(term1 instanceof CompoundTerm);
+            assertTrue(term2 instanceof CompoundTerm);
+            assert(!term1String.equals(term2String));
+
+            System.out.println(term1);
+            System.out.println(term2);        
+
+            assert(term1.hashCode() == term2.hashCode());
+            assert(term1.equals(term2));
+            assert(term1.compareTo(term2)==0);        
+        }
+        catch (Exception e) { assertTrue(e.toString(), false); }
+    }
+    
+    @Test
+    public void testCommutativeCompoundTerm() throws Exception {
+        NAR n = new NAR();
+
+        assertEquivalent("(&&,a,b)", "(&&,b,a)");
+        assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
+        assertEquivalent("(&&,(||,c,b),a)", "(&&,a,(||,b,c))");
+        
+    }
     
     @Test
     public void testConjunctionTreeSet() {
