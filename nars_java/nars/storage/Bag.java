@@ -195,14 +195,20 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
      */
     @Override
     public boolean putIn(final E newItem) {
-        final String newKey = newItem.getKey();
-                
+        return putIn(newItem, true);
+    }
+
+    public boolean putIn(final E newItem, boolean nameTableInsert) {        
+                        
+        if (nameTableInsert) {
+            final String newKey = newItem.getKey();
+            final E oldItem = nameTable.put(newKey, newItem);
+            if (oldItem != null) {                  // merge duplications
+                outOfBase(oldItem);
+                newItem.merge(oldItem);
+            }
+        }        
         
-        final E oldItem = nameTable.put(newKey, newItem);
-        if (oldItem != null) {                  // merge duplications
-            outOfBase(oldItem);
-            newItem.merge(oldItem);
-        }
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
             final String overflowKey = overflowItem.getKey();
@@ -211,8 +217,9 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         } else {
             return true;
         }
+        
     }
-
+    
     /**
      * Put an item back into the itemTable
      * <p>
@@ -225,6 +232,24 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         BudgetFunctions.forget(oldItem.budget, forgetRate(), RELATIVE_THRESHOLD);
         return putIn(oldItem);
     }
+    
+    /** x = takeOut(), then putBack(x) - without removing from nameTable 
+     *  @return the variable that was updated, or null if none was taken out
+     */
+    public E processNext() {
+        final E x = takeOut(false);
+        if (x!=null) {
+            //putBack():
+            BudgetFunctions.forget(x.budget, forgetRate(), RELATIVE_THRESHOLD);            
+            boolean r = putIn(x, false);
+            if (!r) {
+                throw new RuntimeException("Bag.processNext");
+            }
+            return x;
+        }
+        else
+            return null;
+    }
 
     /**
      * Choose an Item according to priority distribution and take it out of the
@@ -234,6 +259,11 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
      */
     @Override
     public E takeOut() {
+        return takeOut(true);
+    }
+    
+    
+    public E takeOut(boolean removeFromNameTable) {
         int c = size();
                 
         if (c == 0) return null; // empty bag                
@@ -264,10 +294,15 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
                 currentCounter = getLevelSize(currentLevel);
             }
         }
+        
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
         currentCounter--;
-        nameTable.remove(selected.getKey());
-        refresh();
+        
+        if (removeFromNameTable) {
+            nameTable.remove(selected.getKey());
+            refresh();
+        }
+        
         return selected;
     }
 

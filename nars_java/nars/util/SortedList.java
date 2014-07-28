@@ -26,15 +26,7 @@ public class SortedList<E> extends ArrayList<E> {
             this.comparator = c;
     }
 
-    /**
-     * <p>This method has no effect. It is not allowed to specify an index to
-     * insert an element as this might violate the sorting order of the objects
-     * in the list.</p>
-     */
-    @Override
-    public void add(int index, E element) {
-        throw new UnsupportedOperationException("add");
-    }
+ 
 
 
     /**
@@ -46,15 +38,11 @@ public class SortedList<E> extends ArrayList<E> {
      * @param o the object to be added
      */
     @Override
-    public boolean add(E o) {
-        //linear insertion
-        /*int i = 0;
-        boolean found = false;
-        while (!found && (i < size())) {
-            found = comparator.compare(o,get(i)) < 0;
-            if (!found) i++;
-        }*/
+    public boolean add(E o) {        
+                
         if (size() > 0)  {
+            
+            //binary search
             int low = 0;
             int high = size()-1;
 

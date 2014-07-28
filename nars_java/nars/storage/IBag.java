@@ -34,6 +34,16 @@ public interface IBag<E extends Item> {
      * @return Whether the new Item is added into the Bag
      */
     boolean putIn(final E newItem);
+    
+    /**
+     * Put an item back into the itemTable
+     * <p>
+     * The only place where the forgetting rate is applied
+     *
+     * @param oldItem The Item to put back
+     * @return Whether the new Item is added into the Bag
+     */
+    boolean putBack(final E oldItem);
 
     /**
      * The number of items in the bag

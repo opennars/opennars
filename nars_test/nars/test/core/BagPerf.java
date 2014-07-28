@@ -139,9 +139,9 @@ public class BagPerf {
                 }
             }
             
-        }.printCSV(false);
-                
-        System.out.println();
+        };//.printCSV(false);                
+        //System.out.println();
+        
         return p.getCycleTimeMS();
         
     }
@@ -166,28 +166,24 @@ public class BagPerf {
         
         
         int capacityPerLevel = 10;
-        int repeats = 16;
-        int warmups = 2;
-        for (int i = 0; i < 2; i++)
-            for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
-                for (int levels = 1; levels <= 150; levels += 10) {
+        int repeats = 4;
+        int warmups = 1;
+        for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
+            for (int levels = 10; levels <= 150; levels += 20) {
 
-                    int randomAccesses = 256 * levels;
-                    int num = levels*capacityPerLevel;
-                    
-                    double a = 0, b = 0;
-                    if (i==0) {
-                        System.out.print(insertRatio+", "+num+", ");
-                        a = compareBagAndFastBag(true, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
-                    }                
-                    else if (i==1) {
-                        System.out.print(insertRatio+", "+num+", ");
-                        b = compareBagAndFastBag(false, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
-                    }
-                    
-                    System.out.println(a-b);
-                }
+                int randomAccesses = 256 * levels;
+                int num = levels*capacityPerLevel;
+
+                double a = 0, b = 0;
+                //System.out.print(insertRatio+", "+num+", ");
+                a = compareBagAndFastBag(true, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
+                //System.out.print(insertRatio+", "+num+", ");
+                b = compareBagAndFastBag(false, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
+
+                System.out.print(insertRatio+", "+levels+", "+ num+", ");
+                System.out.println( (a-b)/((a+b)/2.0) );
             }
+        }
     }
     
 }
