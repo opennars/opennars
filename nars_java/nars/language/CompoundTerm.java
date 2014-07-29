@@ -50,16 +50,13 @@ public abstract class CompoundTerm extends Term {
      */
     public final short complexity;
     
-    /**
-     * Whether the term names a concept
-     */
-    private boolean isConstant, containsVar;
+    /** Whether the term names a concept */
+    private boolean isConstant;
+    
+    /** Whether contains a variable */
+    private boolean containsVar;
 
-//    public static final int ORDER_FORWARD = 1;
-//    public static final int ORDER_BACKWARD = -1;
-//    public static final int ORDER_CONCURRENT = 0;
-//    public static final int ORDER_NONE = Integer.MIN_VALUE;
-    /* ----- abstract methods to be implemented in subclasses ----- */
+
 
     /**
      * Abstract method to get the operator of the compound
@@ -74,6 +71,8 @@ public abstract class CompoundTerm extends Term {
     @Override
     public abstract Object clone();
 
+    
+    
     /* ----- object builders, called from subclasses ----- */
     /**
      * Constructor called from subclasses constructors to clone the fields
@@ -117,9 +116,12 @@ public abstract class CompoundTerm extends Term {
     }
 
     @Override
-    protected final void setName(String name) {
-        super.setName(name); //To change body of generated methods, choose Tools | Templates.
-        this.containsVar = (name!=null) ? Variable.containVar(getName()) : false;
+    protected final boolean setName(String name) {
+        if (super.setName(name)) {
+            this.containsVar = (name!=null) ? Variable.containVar(getName()) : false;
+            return true;
+        }
+        return false;
     }
     
     
