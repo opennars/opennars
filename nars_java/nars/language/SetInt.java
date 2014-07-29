@@ -20,8 +20,8 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
@@ -62,7 +62,7 @@ public class SetInt extends CompoundTerm {
      * @return A new object, to be casted into a SetInt
      */
     public Object clone() {
-        return new SetInt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new SetInt(getName(), cloneList(components), isConstant(), complexity);
     }
 
     /**

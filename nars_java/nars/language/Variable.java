@@ -20,8 +20,9 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import nars.io.Symbols;
 import nars.storage.Memory;
 
@@ -172,11 +173,11 @@ public class Variable extends Term {
             //renameVar(map2, compound2, "-2");
             if (!map1.isEmpty()) {
                 ((CompoundTerm) compound1).applySubstitute(map1);
-                ((CompoundTerm) compound1).renameVariables();
+                compound1.renameVariables();
             }
             if (!map2.isEmpty()) {
                 ((CompoundTerm) compound2).applySubstitute(map2);
-                ((CompoundTerm) compound2).renameVariables();
+                compound2.renameVariables();
             }
         }
         return hasSubs;

@@ -2,6 +2,7 @@ package nars.gui.output;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -12,7 +13,6 @@ import java.awt.event.ContainerListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
@@ -310,7 +310,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
             return Color.GRAY;        
     }
     
-    private Runnable nextOutputRunnable = new Runnable() {
+    private final Runnable nextOutputRunnable = new Runnable() {
         @Override
         public void run() {
             if (nextOutput.size() > 0) {
@@ -351,7 +351,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
     }
     
     public boolean openLogFile() {
-        FileDialog dialog = new FileDialog((FileDialog) null, "Inference Log", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog((Dialog) null, "Inference Log", FileDialog.SAVE);
         
         dialog.setVisible(true);
         String directoryName = dialog.getDirectory();

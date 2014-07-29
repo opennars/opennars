@@ -20,13 +20,32 @@
  */
 package nars.inference;
 
-import nars.storage.Memory;
 import java.util.ArrayList;
-
-import nars.entity.*;
-import nars.language.*;
 import nars.core.Parameters;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.io.Symbols;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.DifferenceExt;
+import nars.language.DifferenceInt;
+import nars.language.Equivalence;
+import nars.language.ImageExt;
+import nars.language.ImageInt;
+import nars.language.Implication;
+import nars.language.Inheritance;
+import nars.language.IntersectionExt;
+import nars.language.IntersectionInt;
+import nars.language.Negation;
+import nars.language.Product;
+import nars.language.SetExt;
+import nars.language.SetInt;
+import nars.language.Similarity;
+import nars.language.Statement;
+import nars.language.Term;
+import nars.storage.Memory;
 
 /**
  * Single-premise inference rules involving compound terms. Input are one
@@ -453,7 +472,7 @@ public final class StructuralRules {
                     newSubj = image.componentAt(relationIndex);
                     newPred = Product.make(image, predicate, relationIndex, memory);
                 } else {
-                    newSubj = ImageInt.make((ImageInt) image, predicate, i, memory);
+                    newSubj = ImageInt.make(image, predicate, i, memory);
                     newPred = image.componentAt(i);
                 }
                 inheritance = Inheritance.make(newSubj, newPred, memory);
@@ -508,7 +527,7 @@ public final class StructuralRules {
                     newPred = image.componentAt(relationIndex);
                 } else {
                     newSubj = image.componentAt(i);
-                    newPred = ImageExt.make((ImageExt) image, subject, i, memory);
+                    newPred = ImageExt.make(image, subject, i, memory);
                 }
                 inheritance = Inheritance.make(newSubj, newPred, memory);
                 if (inheritance != null) { // jmv <<<<<

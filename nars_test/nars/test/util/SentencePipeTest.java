@@ -20,9 +20,8 @@ package nars.test.util;
 import java.io.StringWriter;
 import nars.core.NAR;
 import nars.entity.Sentence;
-import nars.util.SentencePipe;
-import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.util.SentencePipe;
 import org.junit.Test;
 
 /**

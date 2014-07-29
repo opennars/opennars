@@ -84,7 +84,7 @@ public class BagPerf {
         //System.out.print((totalMinItemsPerLevel/p.repeats) + ",");
         System.out.print((totalMaxItemsPerLevel/p.repeats) + ",");
         System.out.print(totalPriority/p.repeats + ",");
-        System.out.print(totalMass/repeats/((float)levels) + ",");
+        System.out.print(totalMass/repeats/levels + ",");
         System.out.println();
     }
             

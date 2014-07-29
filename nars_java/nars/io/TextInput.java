@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
-
 import nars.core.NAR;
 import nars.io.Output.ERR;
 

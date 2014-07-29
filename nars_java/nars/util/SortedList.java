@@ -2,7 +2,8 @@ package nars.util;
 
 //package net.sourceforge.nite.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * <p>This class implements a sorted list. It is constructed with a comparator
@@ -14,7 +15,7 @@ import java.util.*;
  */
 public class SortedList<E> extends ArrayList<E> {
     
-    private Comparator<E> comparator;
+    private final Comparator<E> comparator;
 
     /**
      * <p>Constructs a new sorted list. The objects in the list will be sorted
@@ -68,5 +69,10 @@ public class SortedList<E> extends ArrayList<E> {
             super.add(0,o);
             return true;
         }
+    }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
 }

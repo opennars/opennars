@@ -44,8 +44,8 @@ public class Number1DInput extends PrintWriterInput {
     private boolean changed;
     private final String id;
     private final NAR nar;
-    private static NumberFormat nf = NumberFormat.getInstance();
-    private static NumberFormat intf = NumberFormat.getIntegerInstance();
+    private static final NumberFormat nf = NumberFormat.getInstance();
+    private static final NumberFormat intf = NumberFormat.getIntegerInstance();
     
     boolean finished = false;
     private final int resolution;

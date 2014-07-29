@@ -35,6 +35,11 @@ import org.xml.sax.SAXException;
  */
 public class NARGraph extends DirectedMultigraph {
 
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+
     /**
      * determines which NARS components can result in added graph features
      */
@@ -105,27 +110,62 @@ public class NARGraph extends DirectedMultigraph {
         public Object getSource() { return super.getSource();         }
         @Override
         public Object getTarget() { return super.getTarget();         }
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
         
     }
             
 
     public static class TermBelief extends NAREdge  {
         @Override public String toString() { return "belief"; }        
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     public static class TermQuestion extends NAREdge  {
         @Override public String toString() { return "question"; }        
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     public static class TermDerivation extends NAREdge  {
         @Override public String toString() { return "derives"; }
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     public static class TermContent extends NAREdge  {
         @Override public String toString() { return "has"; }        
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     public static class TermType extends NAREdge  {
         @Override public String toString() { return "type"; }        
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     public static class SentenceContent extends NAREdge  {
         @Override public String toString() { return "sentence"; }
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
         
     

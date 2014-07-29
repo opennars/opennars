@@ -24,10 +24,9 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
-
+import nars.core.Parameters;
 import nars.entity.Item;
 import nars.inference.BudgetFunctions;
-import nars.core.Parameters;
 
 
 public abstract class Bag<E extends Item> implements IBag<E>  {
@@ -544,7 +543,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
     }
     
     public float getAverageItemsPerLevel() {
-        return ((float)capacity)/((float)levels);
+        return capacity/levels;
     }
     public float getMaxItemsPerLevel() {
         int max = getLevelSize(0);

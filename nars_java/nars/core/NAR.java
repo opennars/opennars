@@ -2,11 +2,10 @@ package nars.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import nars.entity.Sentence;
-
 import nars.entity.Stamp;
 import nars.gui.NARControls;
 import nars.io.Input;

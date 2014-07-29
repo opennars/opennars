@@ -12,8 +12,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import nars.core.NAR;
-import nars.util.PrintWriterInput;
 import nars.io.TextOutput;
+import nars.util.PrintWriterInput;
 
 
 
@@ -32,7 +32,7 @@ public class OWLInput extends PrintWriterInput {
 
     private static String parentTagName = null;
     
-    private Map<String, Entity> entities = new HashMap();
+    private final Map<String, Entity> entities = new HashMap();
 
     public OWLInput(NAR n, String owlFileLocation) throws Exception {
         super(n);
@@ -304,7 +304,7 @@ public class OWLInput extends PrintWriterInput {
     }
     
     public String getClassName(String uri) {
-        int lastSlash = uri.lastIndexOf("/");
+        int lastSlash = uri.lastIndexOf('/');
         return uri.substring(lastSlash+1);        
     }
 

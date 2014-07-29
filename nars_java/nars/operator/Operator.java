@@ -21,11 +21,11 @@
 
 package nars.operator;
 
-import java.util.*;
-
-import nars.language.*;
+import java.util.ArrayList;
 import nars.entity.Task;
 import nars.io.Output.EXE;
+import nars.language.Statement;
+import nars.language.Term;
 import nars.storage.Memory;
 
 /**
@@ -134,6 +134,11 @@ public abstract class Operator extends Term {
         Term arguments = operation.getSubject();
         String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
         return operator + "(" + argList;        
+    }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
 }
 

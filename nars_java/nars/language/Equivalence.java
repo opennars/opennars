@@ -20,10 +20,8 @@
  */
 package nars.language;
 
-import java.util.*;
+import java.util.ArrayList;
 import nars.inference.TemporalRules;
-
-import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 

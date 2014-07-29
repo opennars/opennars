@@ -20,7 +20,7 @@
  */
 package nars.inference;
 
-import nars.entity.*;
+import nars.entity.TruthValue;
 
 /**
  * All truth-value (and desire-value) functions used in inference rules 

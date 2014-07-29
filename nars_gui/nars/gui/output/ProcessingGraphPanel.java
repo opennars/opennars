@@ -29,12 +29,12 @@ import javax.swing.event.ChangeListener;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.util.NARGraph;
-import nars.util.NARGraph.DefaultGraphizer;
 import nars.gui.NSlider;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.Memory;
+import nars.util.NARGraph;
+import nars.util.NARGraph.DefaultGraphizer;
 import org.jgrapht.ext.JGraphXAdapter;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
@@ -79,7 +79,7 @@ class papplet extends PApplet implements ActionListener
     long lasttime = -1;
 
     boolean autofetch = true;
-    private int MAX_UNSELECTED_LABEL_LENGTH = 32;
+    private final int MAX_UNSELECTED_LABEL_LENGTH = 32;
     private boolean updateNext;
     float nodeSize = 90;
     
@@ -303,13 +303,13 @@ class papplet extends PApplet implements ActionListener
 
         private float savepx = 0;
         private float savepy = 0;
-        private int selID = 0;
+        private final int selID = 0;
         private float zoom = 1.0f;
         private float difx = 0;
         private float dify = 0;
-        private int lastscr = 0;
-        private boolean EnableZooming = true;
-        private float scrollcamspeed = 1.1f;
+        private final int lastscr = 0;
+        private final boolean EnableZooming = true;
+        private final float scrollcamspeed = 1.1f;
 
         float MouseToWorldCoordX(int x) {
             return 1 / zoom * (x - difx - width / 2);
@@ -342,8 +342,8 @@ class papplet extends PApplet implements ActionListener
             }
             drawn = false;            
         }
-        private float camspeed = 20.0f;
-        private float scrollcammult = 0.92f;
+        private final float camspeed = 20.0f;
+        private final float scrollcammult = 0.92f;
         boolean keyToo = true;
 
         void keyPressed() {
@@ -662,20 +662,9 @@ public class ProcessingGraphPanel extends JFrame {
             public boolean includeConcept(final Concept c) {
                 
                 final Term t = c.term;
-                if (include.contains(t))
-                    return true;
+
                 
-                /*
-                if (t instanceof CompoundTerm) {
-                    
-                    Set<Term> contents = ((CompoundTerm)t).getContainedTerms();
-                    for (Term s : contents)
-                        if (include.contains(s))
-                            return true;
-                }
-                */
-                
-                return false;
+                return include.contains(t);
             }
             
         };
@@ -758,25 +747,24 @@ public class ProcessingGraphPanel extends JFrame {
         
        
         /*
-
-        */
-        
-        if (layoutMode.equals("Graph")) {
-            mxFastOrganicLayout l = new mxFastOrganicLayout(layout);
-                    //new mxCompactTreeLayout(jgxAdapter);
-                    //new mxCircleLayout(jgxAdapter);        
-            l.setForceConstant(edgeDistance*10f);
-            l.execute(layout.getDefaultParent());            
-        }
-        else if (layoutMode.equals("Tree")) {
-            mxCompactTreeLayout layout2 =  new mxCompactTreeLayout(layout);                
-            layout2.setUseBoundingBox(true);
-            layout2.setResizeParent(true);
-            layout2.setLevelDistance((int)(edgeDistance*1.5f));
-            layout2.setNodeDistance((int)(0.2f * edgeDistance*edgeDistance*2f));
-            layout2.setInvert(true);            
-            layout2.execute(layout.getDefaultParent());
-        
+         */
+        switch (layoutMode) {
+            case "Graph":
+                mxFastOrganicLayout l = new mxFastOrganicLayout(layout);
+                //new mxCompactTreeLayout(jgxAdapter);
+                //new mxCircleLayout(jgxAdapter);
+                l.setForceConstant(edgeDistance*10f);
+                l.execute(layout.getDefaultParent());
+                break;
+            case "Tree":
+                mxCompactTreeLayout layout2 =  new mxCompactTreeLayout(layout);
+                layout2.setUseBoundingBox(true);
+                layout2.setResizeParent(true);
+                layout2.setLevelDistance((int)(edgeDistance*1.5f));
+                layout2.setNodeDistance((int)(0.2f * edgeDistance*edgeDistance*2f));
+                layout2.setInvert(true);
+                layout2.execute(layout.getDefaultParent());
+                break;
         }
         
         

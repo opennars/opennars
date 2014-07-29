@@ -20,11 +20,21 @@
  */
 package nars.inference;
 
-import nars.storage.Memory;
-import nars.entity.*;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
+import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.io.Output.OUT;
-import nars.language.*;
 import nars.io.Symbols;
+import nars.language.CompoundTerm;
+import nars.language.Equivalence;
+import nars.language.Inheritance;
+import nars.language.Similarity;
+import nars.language.Statement;
+import nars.language.Term;
+import nars.language.Variable;
+import nars.storage.Memory;
 
 /**
  * Directly process a task by a oldBelief, with only two Terms in both. In
@@ -181,7 +191,7 @@ public class LocalRules {
      */
     public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final Memory memory) {
         if (memory.getCurrentTask().getSentence().isJudgment()) {
-            inferToAsym((Sentence) asym, (Sentence) sym, memory);
+            inferToAsym(asym, sym, memory);
         } else {
             convertRelation(memory);
         }
@@ -252,7 +262,7 @@ public class LocalRules {
      */
     private static void convertRelation(final Memory memory) {
         TruthValue truth = memory.getCurrentBelief().truth;
-        if (((Statement) memory.getCurrentTask().getContent()).isCommutative()) {
+        if (((CompoundTerm) memory.getCurrentTask().getContent()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(truth, 1.0f);

@@ -22,7 +22,6 @@ package nars.language;
 
 import java.util.ArrayList;
 import nars.inference.TemporalRules;
-
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
@@ -298,4 +297,7 @@ public abstract class Statement extends CompoundTerm {
     public Term getPredicate() {
         return components.get(1);
     }
+
+    @Override
+    public abstract Object clone();
 }

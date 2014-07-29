@@ -20,11 +20,35 @@
  */
 package nars.inference;
 
-import java.util.*;
-
-import nars.entity.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import nars.entity.BudgetValue;
+import nars.entity.Concept;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
+import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.io.Symbols;
-import nars.language.*;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.DifferenceExt;
+import nars.language.DifferenceInt;
+import nars.language.Disjunction;
+import nars.language.Equivalence;
+import nars.language.ImageExt;
+import nars.language.ImageInt;
+import nars.language.Implication;
+import nars.language.Inheritance;
+import nars.language.IntersectionExt;
+import nars.language.IntersectionInt;
+import nars.language.SetExt;
+import nars.language.SetInt;
+import nars.language.Similarity;
+import nars.language.Statement;
+import nars.language.Term;
+import nars.language.Variable;
 import nars.storage.Memory;
 
 
@@ -738,16 +762,16 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             term22 = beliefContent.getPredicate();
             if ((term12 instanceof ImageExt) && (term22 instanceof ImageExt)) {
                 commonTerm = ((ImageExt) term12).getTheOtherComponent();
-                if ((commonTerm == null) || !((ImageExt) term22).containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term22.containTerm(commonTerm)) {
                     commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                    if ((commonTerm == null) || !((ImageExt) term12).containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term12.containTerm(commonTerm)) {
                         commonTerm = null;
                     }
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((ImageExt) term12).applySubstitute(subs);
-                    ((ImageExt) term22).applySubstitute(subs);
+                    ((CompoundTerm) term12).applySubstitute(subs);
+                    ((CompoundTerm) term22).applySubstitute(subs);
                 }
             }
         } else {
@@ -757,16 +781,16 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             term22 = varInd;
             if ((term11 instanceof ImageInt) && (term21 instanceof ImageInt)) {
                 commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                if ((commonTerm == null) || !((ImageInt) term21).containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term21.containTerm(commonTerm)) {
                     commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                    if ((commonTerm == null) || !((ImageInt) term11).containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term11.containTerm(commonTerm)) {
                         commonTerm = null;
                     }
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((ImageInt) term11).applySubstitute(subs);
-                    ((ImageInt) term21).applySubstitute(subs);
+                    ((CompoundTerm) term11).applySubstitute(subs);
+                    ((CompoundTerm) term21).applySubstitute(subs);
                 }
             }
         }
@@ -873,9 +897,9 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
         if (index == 0) {
             if ((term1 instanceof ImageExt) && (term2 instanceof ImageExt)) {
                 commonTerm = ((ImageExt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !((ImageExt) term2).containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term2.containTerm(commonTerm)) {
                     commonTerm = ((ImageExt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !((ImageExt) term1).containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term1.containTerm(commonTerm)) {
                         commonTerm = null;
                     }
                 }
@@ -883,9 +907,9 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
         } else {
             if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
                 commonTerm = ((ImageInt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !((ImageInt) term2).containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term2.containTerm(commonTerm)) {
                     commonTerm = ((ImageInt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !((ImageExt) term1).containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term1.containTerm(commonTerm)) {
                         commonTerm = null;
                     }
                 }

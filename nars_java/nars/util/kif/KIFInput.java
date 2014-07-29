@@ -16,10 +16,6 @@
  */
 package nars.util.kif;
 
-import java.io.BufferedReader;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -103,85 +99,58 @@ public class KIFInput extends PrintWriterInput implements Runnable {
 
             List<String> a = f.argumentsToArrayList(1);
 
-            if (root.equals("subclass")) {            
-                if (includeSubclass) {
-                    if (a.size()!=2) {
-                        System.err.println("subclass expects 2 arguments");
-                    }
-                    else {
-                        emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
-                    }
-                }
-            } else if (root.equals("instance")) {
-                if (includeInstance) {
-                    if (a.size()!=2) {
-                        System.err.println("instance expects 2 arguments");
-                    }    
-                    else {
-                        emit("<" + a.get(0) + " {-- " + a.get(1) + ">.");
-                    }
-                }
-            }
-            else if (root.equals("relatedInternalConcept")) {
-                /*(documentation relatedInternalConcept EnglishLanguage "Means that the two arguments are related concepts within the SUMO, i.e. there is a significant similarity of meaning between them. To indicate a meaning relation between a SUMO concept and a concept from another source, use the Predicate relatedExternalConcept.")            */
-
-                if (includeRelatedInternalConcept) {
-                    if (a.size()!=2) {
-                        System.err.println("relatedInternalConcept expects 2 arguments");
-                    }    
-                    else {
+            switch (root) {
+                case "subclass":
+                    if (includeSubclass) {
+                        if (a.size()!=2) {
+                            System.err.println("subclass expects 2 arguments");
+                        }
+                        else {
+                            emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
+                        }
+                    }   break;
+                case "instance":
+                    if (includeInstance) {
+                        if (a.size()!=2) {
+                            System.err.println("instance expects 2 arguments");
+                        }
+                        else {
+                            emit("<" + a.get(0) + " {-- " + a.get(1) + ">.");
+                        }
+                    }   break;
+                case "relatedInternalConcept":
+                    /*(documentation relatedInternalConcept EnglishLanguage "Means that the two arguments are related concepts within the SUMO, i.e. there is a significant similarity of meaning between them. To indicate a meaning relation between a SUMO concept and a concept from another source, use the Predicate relatedExternalConcept.")            */
+                    if (includeRelatedInternalConcept) {
+                        if (a.size()!=2) {
+                            System.err.println("relatedInternalConcept expects 2 arguments");
+                        }
+                        else {
+                            emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
+                        }
+                    }   break;
+                case "disjoint":
+                    //"(||," <term> {","<term>} ")"      // disjunction
+                    if (includeDisjoint) {
+                        emit("<(||," + a.get(0) + ","+ a.get(1) +")>.");
+                    }   break;
+                case "disjointRelation":
+                    if (includeDisjoint) {
+                        emit("<(||," + a.get(0) + ","+ a.get(1) +")>.");
+                    }   break;
+                case "subrelation":
+                    //for now, use similarity+inheritance but more clear expression is possible
+                    if (includeSubrelation) {
                         emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
-                    }            
-                }
-            }
-            /*else if (root.equals("domain")) {
-
-                //(domain domain 1 Relation)
-                //(domain domain 2 PositiveInteger)
-                //(domain domain 3 SetOrClass)            
-
-                if (a == null) {
-
-                }
-                else if (a.size() != 3) {
-                    System.err.println("domain expects 3 arguments, got: " + a);
-                }
-                else {
-                    new TextInput(nar, "<" + a.get(2) + " --] " + a.get(0) + ">.");
-                }
-            }
-            else if (root.equals("range")) {
-
-                //for now, consider Range as the function inheriting from the result type
-                //there may be other ways of expressing this more clearly
-                new TextInput(nar, "<" + a.get(0) + " --> " + a.get(1) + ">.");
-            }
-            */
-            else if (root.equals("disjoint")) {
-                 //"(||," <term> {","<term>} ")"      // disjunction
-                if (includeDisjoint) {
-                    emit("<(||," + a.get(0) + ","+ a.get(1) +")>.");
-                }
-            }
-            else if (root.equals("disjointRelation")) {            
-                if (includeDisjoint) {
-                    emit("<(||," + a.get(0) + ","+ a.get(1) +")>.");            
-                }
-            }
-            else if (root.equals("subrelation")) {            
-                //for now, use similarity+inheritance but more clear expression is possible
-                if (includeSubrelation) {
-                    emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
-                    emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
-                }
-            }
-            else {
-                /*System.out.println("??" + f);
-                System.out.println();*/
-                if (unknownOperators.containsKey(root))
-                    unknownOperators.put(root, unknownOperators.get(root)+1);
-                else
-                    unknownOperators.put(root, 1);
+                        emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
+                    }   break;
+                default:
+                    /*System.out.println("??" + f);
+                    System.out.println();*/
+                    if (unknownOperators.containsKey(root))
+                        unknownOperators.put(root, unknownOperators.get(root)+1);
+                    else
+                        unknownOperators.put(root, 1);
+                    break;
             }
 
             if (knownOperators.containsKey(root))

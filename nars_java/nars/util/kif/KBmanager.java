@@ -13,9 +13,10 @@ in Working Notes of the IJCAI-2003 Workshop on Ontology and Distributed Systems,
 August 9, Acapulco, Mexico.
 */
 
-import java.util.*;
-import java.io.*;
-import java.text.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Set;
 
 /** This is a class that manages a group of knowledge bases.  It should only
  *  have one instance, contained in its own static member variable.
@@ -52,9 +53,9 @@ public class KBmanager {
     private static KBmanager manager = new KBmanager();
     private static final String CONFIG_FILE = "config.xml";
 
-    private HashMap preferences = new HashMap();
+    private final HashMap preferences = new HashMap();
     protected HashMap kbs = new HashMap();
-    private boolean initialized = false;
+    private final boolean initialized = false;
     private int oldInferenceBitValue = -1;
     private String error = "";
 
@@ -81,10 +82,10 @@ public class KBmanager {
             String sep = File.separator;
             String base = System.getenv("SIGMA_HOME");
             String tptpHome = System.getenv("TPTP_HOME");
-            if (base == null || base == "") {
+            if (base == null || "".equals(base)) {
                 base = System.getProperty("user.dir");
             }
-            if (tptpHome == null || tptpHome == "") {
+            if (tptpHome == null || "".equals(tptpHome)) {
                 tptpHome = System.getProperty("user.dir");
             }
             System.out.println("INFO in KBmanager.setDefaultAttributes(): base == " + base);

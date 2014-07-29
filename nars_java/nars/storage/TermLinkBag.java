@@ -21,8 +21,9 @@
 package nars.storage;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.entity.*;
 import nars.core.Parameters;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
 
 /**
  * Contains TermLinks to relevant (compound or component) Terms.

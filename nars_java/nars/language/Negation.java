@@ -20,8 +20,7 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
@@ -64,7 +63,7 @@ public class Negation extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Negation(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new Negation(getName(), cloneList(components), isConstant(), complexity);
     }
 
     /**

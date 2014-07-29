@@ -20,9 +20,10 @@
  */
 package nars.entity;
 
-import nars.inference.*;
-import nars.io.Symbols;
 import nars.core.Parameters;
+import nars.inference.BudgetFunctions;
+import nars.inference.UtilityFunctions;
+import nars.io.Symbols;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).

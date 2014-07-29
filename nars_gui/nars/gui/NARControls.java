@@ -20,10 +20,8 @@
  */
 package nars.gui;
 
-import nars.gui.output.BagWindow;
-import nars.gui.output.TermWindow;
-import nars.gui.output.MemoryView;
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -51,16 +49,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
-import nars.util.NARState;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.input.InputPanel;
+import nars.gui.output.BagWindow;
 import nars.gui.output.LogPanel;
+import nars.gui.output.MemoryView;
 import nars.gui.output.PLineChart;
 import nars.gui.output.SentenceTablePanel;
+import nars.gui.output.TermWindow;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.storage.Memory;
+import nars.util.NARState;
 
 
 public class NARControls extends JPanel implements ActionListener, Runnable {
@@ -107,7 +108,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     private NSlider speedSlider;
     private double currentSpeed = 0;
     private double lastSpeed = 0;
-    private double defaultSpeed = 0.5;
+    private final double defaultSpeed = 0.5;
 
     private final int GUIUpdatePeriodMS = 256;
     private NSlider volumeSlider;
@@ -273,7 +274,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
      * Open an addInput experience file with a FileDialog
      */
     public void openLoadFile() {
-        FileDialog dialog = new FileDialog((FileDialog) null, "Load experience", FileDialog.LOAD);
+        FileDialog dialog = new FileDialog((Dialog) null, "Load experience", FileDialog.LOAD);
         dialog.setVisible(true);
         String directoryName = dialog.getDirectory();
         String fileName = dialog.getFile();
@@ -333,30 +334,36 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             }
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
-            if (label.equals("Load Experience")) {
-                openLoadFile();
-            } else if (label.equals("Save Experience")) {
-                if (savingExp) {
-                    experienceWriter.closeSaveFile();
-                } else {
-                    FileDialog dialog = new FileDialog((FileDialog) null, "Save experience", FileDialog.SAVE);
-                    dialog.setVisible(true);
-                    String directoryName = dialog.getDirectory();
-                    String fileName = dialog.getFile();
-                    String path = directoryName + fileName;                    
-                    experienceWriter.openSaveFile(path);
-                }
-                savingExp = !savingExp;
-            } else if (label.equals("Reset")) {
-                /// TODO mixture of modifier and reporting
-                nar.reset();
-            } else if (label.equals("Related Information")) {
-//                MessageDialog web = 
-                new MessageDialog(NARSwing.WEBSITE);
-            } else if (label.equals("About NARS")) {
-//                MessageDialog info = 
-                new MessageDialog(NARSwing.INFO);
-            } 
+            switch (label) {
+                case "Load Experience":
+                    openLoadFile();
+                    break;
+                case "Save Experience":
+                    if (savingExp) {
+                        experienceWriter.closeSaveFile();
+                    } else {
+                        FileDialog dialog = new FileDialog((Dialog) null, "Save experience", FileDialog.SAVE);
+                        dialog.setVisible(true);
+                        String directoryName = dialog.getDirectory();
+                        String fileName = dialog.getFile();
+                        String path = directoryName + fileName;
+                        experienceWriter.openSaveFile(path);
+                    }
+                    savingExp = !savingExp;
+                    break;
+                case "Reset":
+                    /// TODO mixture of modifier and reporting
+                    nar.reset();
+                    break;
+                case "Related Information":
+//                MessageDialog web =
+                    new MessageDialog(NARSwing.WEBSITE); 
+                    break;
+                case "About NARS":
+//                MessageDialog info =
+                    new MessageDialog(NARSwing.INFO);
+                    break;
+            }
         }
     }
 
@@ -513,7 +520,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             Font ttfBase;
             try {
                 ttfBase = Font.createFont(Font.TRUETYPE_FONT, in);
-                ttfReal = ttfBase.deriveFont((int)Font.PLAIN, 14);
+                ttfReal = ttfBase.deriveFont(Font.PLAIN, 14);
             } catch (FontFormatException ex) {
                 Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {

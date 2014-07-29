@@ -20,17 +20,21 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.entity.*;
-import nars.storage.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import nars.entity.TermLink;
+import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.inference.TemporalRules;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.make;
 import static nars.language.CompoundTerm.makeCompoundName;
+import nars.storage.Memory;
 
 /**
  * A CompoundTerm is a Term with internal (syntactic) structure
@@ -355,7 +359,7 @@ public abstract class CompoundTerm extends Term {
             final Term t = arg.get(i);
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
-                ((CompoundTerm) t).setName(((CompoundTerm) t).makeName());
+                t.setName(((CompoundTerm) t).makeName());
             }
             nameBuilder.append(t.getName());
         }
@@ -691,7 +695,7 @@ public abstract class CompoundTerm extends Term {
                     if (term.getName().length() == 1) { // anonymous variable from input
                         var = new Variable(term.getName().charAt(0) + String.valueOf(map.size() + 1));
                     } else {
-                        var = (Variable) map.get((Variable) term);
+                        var = map.get(term);
                         if (var == null) {
                             var = new Variable(term.getName().charAt(0) + String.valueOf(map.size() + 1));
                         }
@@ -1034,7 +1038,7 @@ public abstract class CompoundTerm extends Term {
     public static Term unwrapNegation(Term T) //negation is not counting as depth
     {
         if(T!=null && T instanceof Negation)
-            return (Term) ((CompoundTerm)T).components.get(0);
+            return ((CompoundTerm)T).components.get(0);
         return T;
     }
     public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2, Memory memory) {
@@ -1062,9 +1066,9 @@ public abstract class CompoundTerm extends Term {
        if(!(itself instanceof CompoundTerm)) {
            return null;
        }
-       itself=(CompoundTerm) reduceComponentOneLayer((CompoundTerm) itself, replacement, memory);
+       itself=(CompoundTerm) reduceComponentOneLayer(itself, replacement, memory);
        int j=0;
-       for(Term t : ((CompoundTerm) itself).components) {
+       for(Term t : itself.components) {
            Term t2 = unwrapNegation(t);
             if(!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Conjunction) && !(t2 instanceof Disjunction)) {
                 j++;
@@ -1077,7 +1081,7 @@ public abstract class CompoundTerm extends Term {
             }
            j++;
        }
-       return (CompoundTerm) itself;
+       return itself;
     }
 
     

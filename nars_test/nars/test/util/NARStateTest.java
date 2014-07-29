@@ -20,9 +20,8 @@ package nars.test.util;
 import java.io.IOException;
 import java.util.HashMap;
 import nars.core.NAR;
-import nars.util.NARState;
-import nars.util.Number1DInput;
 import static nars.test.util.Number1DInputTest.randomArray;
+import nars.util.NARState;
 import org.junit.Test;
 
 /**

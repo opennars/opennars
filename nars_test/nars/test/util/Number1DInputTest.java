@@ -19,7 +19,6 @@ package nars.test.util;
 
 import nars.core.NAR;
 import nars.util.Number1DInput;
-import nars.io.TextOutput;
 import org.junit.Assert;
 import org.junit.Test;
 

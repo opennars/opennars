@@ -19,9 +19,9 @@ package nars.test.util;
 
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
-import nars.util.NARState;
 import nars.gui.NARSwing;
 import nars.io.TextOutput;
+import nars.util.NARState;
 import nars.util.kif.KIFInput;
 
 /**

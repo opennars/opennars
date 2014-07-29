@@ -1,7 +1,13 @@
 package nars.gui.output;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,13 +22,13 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.util.NARGraph;
-import nars.util.NARGraph.ExcludeLevelsBelow;
 import nars.gui.NSlider;
 import nars.gui.Window;
 import nars.language.Term;
 import nars.storage.Memory;
-import processing.core.*;
+import nars.util.NARGraph;
+import nars.util.NARGraph.ExcludeLevelsBelow;
+import processing.core.PApplet;
 
 
 class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!

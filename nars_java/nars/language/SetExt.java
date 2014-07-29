@@ -20,9 +20,8 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import java.util.ArrayList;
+import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
@@ -63,7 +62,7 @@ public class SetExt extends CompoundTerm {
      * @return A new object, to be casted into a SetExt
      */
     public Object clone() {
-        return new SetExt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new SetExt(getName(), cloneList(components), isConstant(), complexity);
     }
 
     /**

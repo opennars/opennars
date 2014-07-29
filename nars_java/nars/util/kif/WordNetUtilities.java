@@ -14,9 +14,19 @@ August 9, Acapulco, Mexico.
 
 package nars.util.kif;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** ***************************************************************
 *  @author Adam Pease
@@ -34,7 +44,7 @@ public class WordNetUtilities {
     */
     public static String getBareSUMOTerm (String term) {
 
-        if (term != null && term != "") 
+        if (term != null && !"".equals(term)) 
             return term.substring(2,term.length()-1);
         else
             return "";
@@ -45,7 +55,7 @@ public class WordNetUtilities {
      */
     public static String getPOSfromKey (String sense) {
 
-        int firstUS = sense.indexOf("_");
+        int firstUS = sense.indexOf('_');
         return sense.substring(firstUS+1,firstUS+3);
     }
 
@@ -74,7 +84,7 @@ public class WordNetUtilities {
     */
     public static char getSUMOMappingSuffix (String term) {
 
-        if (term != null && term != "") 
+        if (term != null && !"".equals(term)) 
             return term.charAt(term.length()-1);
         else
             return ' ';
@@ -250,10 +260,7 @@ public class WordNetUtilities {
         Matcher m = p.matcher(result);
         if (m.find()) {
             result = m.replaceFirst(subst);
-            if (hash.containsKey(result)) {
-                return true;
-            }
-            return false;
+            return hash.containsKey(result);
         }
         else
             return false;
@@ -263,10 +270,7 @@ public class WordNetUtilities {
      */
     private static boolean isVowel(char c) {
 
-        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') 
-            return true;
-        else
-            return false;
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
     }
 
     /** ***************************************************************
@@ -277,9 +281,9 @@ public class WordNetUtilities {
 
         String word = verb;
         String remainder = "";
-        if (verb.indexOf("_") > 0) {
-            word = verb.substring(0,verb.indexOf("_"));
-            remainder = verb.substring(verb.indexOf("_"),verb.length());
+        if (verb.indexOf('_') > 0) {
+            word = verb.substring(0,verb.indexOf('_'));
+            remainder = verb.substring(verb.indexOf('_'),verb.length());
         }
 
         // if (exceptionVerbPluralHash.containsKey(word))                  Note that there appears to be no WordNet exception list for verb plurals, just tenses
@@ -290,12 +294,12 @@ public class WordNetUtilities {
         else {
             if (word.matches(".*s$") || word.matches(".*x$") || word.matches(".*ch$") || 
                 word.matches(".*sh$") || word.matches(".*z$") || word.equals("go")) 
-                word = word + "es";
+                word += "es";
             else
                 if (word.equals("be")) 
                     word = "are";
                 else
-                    word = word + "s";
+                    word += "s";
         }
         return word + remainder;
     }
@@ -319,7 +323,7 @@ public class WordNetUtilities {
             result.append(kbName);
             result.append("&synset=");
             result.append(synset.substring(1,synset.length()));
-            result.append("\">" + word + "</a>");
+            result.append("\">").append(word).append("</a>");
             count++;
             if (it.hasNext() && count < 50) 
                 result.append(", ");          
@@ -350,7 +354,7 @@ public class WordNetUtilities {
                 result.append(kbName);
                 result.append("&synset=");
                 result.append(synset.substring(1,synset.length()));
-                result.append("\">" + word + "</a>");
+                result.append("\">").append(word).append("</a>");
                 count++;
                 if (i < synsetList.size() - 1) 
                     result.append(", ");          
@@ -391,7 +395,7 @@ public class WordNetUtilities {
                     String mapType = oldTerm.substring(oldTerm.length()-1);
                     String synset = posNum + m.group(1);
                     String newTerm = (String) hm.get(synset);
-                    if (bareOldTerm.indexOf("&%") < 0 && newTerm != null && newTerm != "" && !newTerm.equals(bareOldTerm) && kb.childOf(newTerm,bareOldTerm)) {              
+                    if (bareOldTerm.indexOf("&%") < 0 && newTerm != null && !"".equals(newTerm) && !newTerm.equals(bareOldTerm) && kb.childOf(newTerm,bareOldTerm)) {              
                         pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + " &%" + newTerm + mapType);
                         System.out.println("INFO in WordNet.processMergers(): synset, oldTerm, newterm: " + 
                                            synset + " " + oldTerm + " " + newTerm);
@@ -478,15 +482,15 @@ public class WordNetUtilities {
                     else
                         mappingChar = "+";
                     String targetSynset = avp.value; 
-                    String targetSUMO = (String) WordNet.wn.getSUMOMapping(targetSynset);
-                    if (targetSUMO != null && targetSUMO != "") {
+                    String targetSUMO = WordNet.wn.getSUMOMapping(targetSynset);
+                    if (targetSUMO != null && !"".equals(targetSUMO)) {
                         if (targetSUMO.charAt(targetSUMO.length()-1) == '[') 
                             mappingChar = "[";
                         if (Character.isUpperCase(targetSUMO.charAt(2)))     // char 2 is start of actual term after &%
                             return "&%" + getBareSUMOTerm(targetSUMO) + mappingChar;
                         else {
                             String candidate = findMappingFromHypernym(targetSynset);
-                            if (candidate != null && candidate != "") 
+                            if (candidate != null && !"".equals(candidate)) 
                                 return candidate;
                         }                            
                     }
@@ -525,7 +529,7 @@ public class WordNetUtilities {
                     if (m.matches()) {
                         String synset = posNum + m.group(1);
                         String newTerm = findMappingFromHypernym(synset); 
-                        if (newTerm != null && newTerm != "") {              
+                        if (newTerm != null && !"".equals(newTerm)) {              
                             pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + " " + newTerm);
 //                            System.out.println("INFO in WordNet.processMissingLinks(): synset, newterm: " + 
 //                                               synset + " " + " " + newTerm);
@@ -608,7 +612,7 @@ public class WordNetUtilities {
                 if (m.matches()) {
                     String newsynset = posNum + m.group(1);
                     String oldsynset = (String) mappings.get(newsynset);
-                    if (oldsynset != null && oldsynset != "") { 
+                    if (oldsynset != null && !"".equals(oldsynset)) { 
                         String term = "";
                         oldsynset = oldsynset.substring(1);
                         switch (posNum.charAt(0)) {

@@ -10,7 +10,7 @@ import javax.swing.tree.TreeModel;
  */
 public class FileTreeModel implements TreeModel {
 
-    private File root;
+    private final File root;
 
     public FileTreeModel(File root) {
         this.root = root;

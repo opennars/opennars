@@ -20,9 +20,8 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import java.util.ArrayList;
+import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
@@ -56,7 +55,7 @@ public class IntersectionInt extends CompoundTerm {
      * @return A new object, to be casted into a Conjunction
      */
     public Object clone() {
-        return new IntersectionInt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new IntersectionInt(getName(), cloneList(components), isConstant(), complexity);
     }
 
     /**

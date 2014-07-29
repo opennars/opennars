@@ -20,9 +20,16 @@
  */
 package nars.inference;
 
-import nars.entity.*;
+import nars.entity.BudgetValue;
+import nars.entity.Concept;
+import nars.entity.Item;
+import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
+import nars.entity.TruthValue;
 import nars.io.Output.ERR;
-import nars.language.*;
+import nars.language.Term;
 import nars.storage.Memory;
 
 /**

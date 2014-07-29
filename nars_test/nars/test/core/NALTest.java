@@ -50,7 +50,7 @@ public class NALTest  {
             File fp = new File(path);
             BufferedReader br = new BufferedReader(new FileReader(fp));
             while ((line = br.readLine())!=null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
             existing = sb.toString();
             exCache.put(path, existing);
@@ -62,9 +62,7 @@ public class NALTest  {
     }
         
     public boolean match(String x, String y) {
-        if (x.equals(y))
-            return true;
-        return false;
+        return x.equals(y);
     }
     
     
@@ -101,7 +99,7 @@ public class NALTest  {
             public void output(Class channel, Object signal) {                
                 if (channel == Output.ERR.class) {                       
                     if (signal instanceof Exception) {
-                        ((Exception)signal).printStackTrace();;
+                        ((Throwable)signal).printStackTrace();;
                     }
 
                     assertTrue(path + " ERR: " + signal, false);

@@ -13,8 +13,15 @@ August 9, Acapulco, Mexico.
 
 package nars.util.kif;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /** ***************************************************************
  *  A class that handles the generation of natural language from logic.
@@ -55,9 +62,9 @@ public class LanguageFormatter {
 	    if (i == 0) 
 		result.append(transliterate(ar[i],language));
 	    if (i > 0 && i < ar.length - 1) 
-		result.append(", " + transliterate(ar[i],language));
+		result.append(", ").append(transliterate(ar[i],language));
 	    if (i == ar.length -1) 
-		result.append(" " + getKeyword("and",language) + " " + transliterate(ar[i],language));
+		result.append(" ").append(getKeyword("and",language)).append(" ").append(transliterate(ar[i],language));
 	}
 	return result.toString();
     }
@@ -66,14 +73,11 @@ public class LanguageFormatter {
      */
     private static boolean logicalOperator(String word) {
 
-	if (word.equals("if") || word.equals("then") || word.equals("=>") ||
-	    word.equals("and") || word.equals("or") ||
-	    word.equals("<=>") || word.equals("not") ||
-	    word.equals("forall") || word.equals("exists") ||
-	    word.equals("holds")) 
-	    return true;
-	else
-	    return false;
+        return word.equals("if") || word.equals("then") || word.equals("=>") ||
+                word.equals("and") || word.equals("or") ||
+                word.equals("<=>") || word.equals("not") ||
+                word.equals("forall") || word.equals("exists") ||
+                word.equals("holds");
     }
 
     /** ***************************************************************
@@ -365,10 +369,10 @@ public class LanguageFormatter {
 		String arg = f.car();
 		f.read(f.cdr());
 		if (!Formula.atom(arg)) {
-		    result.append(" " + nlStmtPara(arg,isNegMode,phraseMap,termMap,language,depth+1));
+		    result.append(" ").append(nlStmtPara(arg,isNegMode,phraseMap,termMap,language,depth+1));
 		}
 		else {
-		    result.append(" " + translateWord(termMap,arg,language));
+		    result.append(" ").append(translateWord(termMap,arg,language));
 		}
 	    }
 	}
@@ -448,7 +452,7 @@ public class LanguageFormatter {
 	    String arg = f.car();
 	    String result = nlStmtPara(arg,false,phraseMap,termMap,language,depth+1);
 
-	    if (result != null && result != "" && result.length() > 0) {
+	    if (result != null && !"".equals(result) && result.length() > 0) {
 		args.add(result);
 	    }
 	    else {
@@ -479,10 +483,10 @@ public class LanguageFormatter {
 
 	if (pred.equalsIgnoreCase("=>")) {
 	    if ( isNegMode ) {
-		sb.append(args.get(1)).append(" "+AND+" ").append("~{").append(args.get(0)).append("}");
+		sb.append(args.get(1)).append(" ").append(AND).append(" ").append("~{").append(args.get(0)).append("}");
 	    }
 	    else {
-		sb.append("<ul><li>"+IF+" ").append(args.get(0)).append(",<li>"+THEN+" ").append(args.get(1)).append("</ul>");
+		sb.append("<ul><li>").append(IF).append(" ").append(args.get(0)).append(",<li>").append(THEN).append(" ").append(args.get(1)).append("</ul>");
 	    }
 	    ans = sb.toString();
 	    /*
@@ -495,7 +499,7 @@ public class LanguageFormatter {
 	if (pred.equalsIgnoreCase("and")) {
 	    if ( isNegMode ) {
 		for (int i = 0; i < args.size(); i++) {
-		    if (i != 0) { sb.append(" "+OR+" "); }
+		    if (i != 0) { sb.append(" ").append(OR).append(" "); }
 		    sb.append("~{ ");
 		    sb.append(translateWord(termMap,(String) args.get(i),language));
 		    sb.append(" }");
@@ -503,7 +507,7 @@ public class LanguageFormatter {
 	    }
 	    else {
 		for (int i = 0; i < args.size(); i++) {
-		    if (i != 0) { sb.append(" "+AND+" "); }
+		    if (i != 0) { sb.append(" ").append(AND).append(" "); }
 		    sb.append(translateWord(termMap,(String) args.get(i),language));
 		}
 	    }
@@ -519,8 +523,8 @@ public class LanguageFormatter {
 
 	    for (int i = 0; i < args.size(); i++) {
 		if (i != 0) {
-		    if ( isNegMode ) { sb.append(" "+NOT); }
-		    sb.append(" "+HOLDS+" ");
+		    if ( isNegMode ) { sb.append(" ").append(NOT); }
+		    sb.append(" ").append(HOLDS).append(" ");
 		}
 		sb.append(translateWord(termMap,(String) args.get(i),language));
 	    }
@@ -536,8 +540,8 @@ public class LanguageFormatter {
 	if (pred.equalsIgnoreCase("or")) {
 	    for (int i = 0; i < args.size(); i++) {
 		if (i != 0) { 
-		    if ( isNegMode ) { sb.append(" "+AND+" "); }
-		    else { sb.append(" "+OR+" "); }
+		    if ( isNegMode ) { sb.append(" ").append(AND).append(" "); }
+		    else { sb.append(" ").append(OR).append(" "); }
 		}
 		sb.append(translateWord(termMap,(String) args.get(i),language));
 	    }
@@ -552,20 +556,20 @@ public class LanguageFormatter {
 	if (pred.equalsIgnoreCase("<=>")) {
 	    if ( isNegMode ) {
 		sb.append(translateWord(termMap,(String) args.get(1),language));
-		sb.append(" "+OR+" ");
+		sb.append(" ").append(OR).append(" ");
 		sb.append("~{ ");
 		sb.append(translateWord(termMap,(String) args.get(0),language));
 		sb.append(" }");
-		sb.append(" "+OR+" ");
+		sb.append(" ").append(OR).append(" ");
 		sb.append(translateWord(termMap,(String) args.get(0),language));
-		sb.append(" "+OR+" ");
+		sb.append(" ").append(OR).append(" ");
 		sb.append("~{ ");
 		sb.append(translateWord(termMap,(String) args.get(1),language));
 		sb.append(" }");
 	    }
 	    else {
 		sb.append(translateWord(termMap,(String) args.get(0),language));
-		sb.append(" "+IFANDONLYIF+" ");
+		sb.append(" ").append(IFANDONLYIF).append(" ");
 		sb.append(translateWord(termMap,(String) args.get(1),language));
 	    }
 	    ans = sb.toString();
@@ -577,9 +581,9 @@ public class LanguageFormatter {
 	    return ans;
 	}
 	if (pred.equalsIgnoreCase("forall")) {
-	    if ( isNegMode ) { sb.append(" "+NOT+" "); }
-	    sb.append(FORALL+" ");
-	    if (((String) args.get(0)).indexOf(" ") == -1) {
+	    if ( isNegMode ) { sb.append(" ").append(NOT).append(" "); }
+	    sb.append(FORALL).append(" ");
+	    if (((String) args.get(0)).indexOf(' ') == -1) {
 		// If just one variable ...
 		sb.append(translateWord(termMap,(String) args.get(0),language));
 	    }
@@ -599,7 +603,7 @@ public class LanguageFormatter {
 	    return ans;
 	}
 	if (pred.equalsIgnoreCase("exists")) {
-	    if (((String) args.get(0)).indexOf(" ") == -1) {
+	    if (((String) args.get(0)).indexOf(' ') == -1) {
 
 		// If just one variable ...
 
@@ -618,19 +622,19 @@ public class LanguageFormatter {
 		  return ans;  // not the right english format
 		  }
 		*/
-		if ( isNegMode ) { sb.append(NOTEXISTS+" "); }
-		else { sb.append(EXISTS+" "); }                 
+		if ( isNegMode ) { sb.append(NOTEXISTS).append(" "); }
+		else { sb.append(EXISTS).append(" "); }                 
 		sb.append(translateWord(termMap,(String) args.get(0),language));
 	    }
 	    else {
 
 		// If more than one variable ...
 
-		if ( isNegMode ) { sb.append(NOTEXIST+" "); }
-		else { sb.append(EXIST+" "); }
+		if ( isNegMode ) { sb.append(NOTEXIST).append(" "); }
+		else { sb.append(EXIST).append(" "); }
 		sb.append(translateWord(termMap,formatList((String) args.get(0),language),language));
 	    }
-	    sb.append(" "+SUCHTHAT+" ");
+	    sb.append(" ").append(SUCHTHAT).append(" ");
 	    sb.append(translateWord(termMap,(String) args.get(1),language));
 	    ans = sb.toString();
 	    /*
@@ -682,7 +686,7 @@ public class LanguageFormatter {
 		}
 		else {
 		    int start = strFormat.indexOf("%n{") + 3;
-		    int end = strFormat.indexOf("}",start);
+		    int end = strFormat.indexOf('}',start);
 		    strFormat = ( strFormat.substring(0,start-3) 
 				  + strFormat.substring(start,end) 
 				  + strFormat.substring(end+1,strFormat.length()) );
@@ -706,7 +710,7 @@ public class LanguageFormatter {
 	    strFormat = strFormat.replaceAll("%n\\{.+?\\} "," ");
 	    if (strFormat.indexOf("%p{") != -1) {           
 		int start = strFormat.indexOf("%p{") + 3;
-		int end = strFormat.indexOf("}",start);
+		int end = strFormat.indexOf('}',start);
 		strFormat = ( strFormat.substring(0,start-3) 
 			      + strFormat.substring(start,end) 
 			      + strFormat.substring(end+1,strFormat.length()) );
@@ -722,7 +726,7 @@ public class LanguageFormatter {
 	    // System.out.println("arg: " + f.getArgument(num));
 	    // System.out.println("num: " + num);
 	    // System.out.println("str: " + strFormat);
-	    strFormat = strFormat.replace(argPointer,nlStmtPara(f.getArgument((int) num),isNegMode,phraseMap,termMap,language,1));
+	    strFormat = strFormat.replace(argPointer,nlStmtPara(f.getArgument(num),isNegMode,phraseMap,termMap,language,1));
 	    num++;
 	    argPointer = "%" + (new Integer(num)).toString();
 	}
@@ -806,7 +810,7 @@ public class LanguageFormatter {
 				// System.out.println( "INFO in LanguageFormatter.expandStar(): rangeArr == " + rangeArr );
 				for ( int i = 0 ; i < rangeArr.length ; i++ ) {
 				    if ( Formula.isNonEmptyString(rangeArr[i]) ) {
-					isRange = ( rangeArr[i].indexOf( "-" ) != -1 );
+					isRange = ( rangeArr[i].indexOf( '-') != -1 );
 					rangeArr2 = rangeArr[i].split( "-" );
 					lowStr = rangeArr2[0].trim();
 					try { 
@@ -858,13 +862,13 @@ public class LanguageFormatter {
 			for ( int i = 1 ; i < argsToPrint.length ; i++ ) {
 			    if ( addAll || (argsToPrint[i] == true) ) {
 				if ( nAdded >= 1 ) {
-				    if ( nToAdd == 2 ) { sb.append( " " + AND + " " ); }
+				    if ( nToAdd == 2 ) { sb.append(" ").append(AND).append( " "); }
 				    else { sb.append( delim ); }
 				    if ( (nToAdd > 2) && ((nAdded + 1) == nToAdd) ) {
-					sb.append( AND + " " );
+					sb.append(AND).append( " ");
 				    }
 				}
-				sb.append( "%" + i );
+				sb.append("%").append( i);
 				nAdded++;
 			    }
 			}
@@ -923,7 +927,7 @@ public class LanguageFormatter {
 	    while (nlFormat.indexOf("&%") > -1) {
 
 		start = nlFormat.indexOf("&%",start+1);
-		int word = nlFormat.indexOf("$",start);
+		int word = nlFormat.indexOf('$',start);
 		if (word == -1) {
 		    end = start + 2;
 		}

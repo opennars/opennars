@@ -38,8 +38,8 @@ import javax.swing.JTextArea;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.gui.Window;
-import nars.storage.BagObserver;
 import nars.storage.Bag;
+import nars.storage.BagObserver;
 
 /**
  * JWindow display the priority distribution of items within a given bag

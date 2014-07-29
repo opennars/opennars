@@ -16,7 +16,7 @@ import org.jgrapht.ext.JGraphXAdapter;
  */
 public class JGraphXGraphPanel extends JPanel {
     
-    private JGraphXAdapter jgxAdapter;
+    private final JGraphXAdapter jgxAdapter;
     
 
     public JGraphXGraphPanel(NAR n) {
