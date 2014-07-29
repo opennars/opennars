@@ -49,10 +49,11 @@ public abstract class CompoundTerm extends Term {
      * plus 1
      */
     public final short complexity;
+    
     /**
      * Whether the term names a concept
      */
-    protected boolean isConstant;
+    private boolean isConstant, containsVar;
 
 //    public static final int ORDER_FORWARD = 1;
 //    public static final int ORDER_BACKWARD = -1;
@@ -98,8 +99,8 @@ public abstract class CompoundTerm extends Term {
     protected CompoundTerm(final ArrayList<Term> components) {
         this.components = ensureValidComponents(components);
         this.complexity = calcComplexity();
-        setName(makeName());
-        this.isConstant = !containVar();
+        setName(makeName());        
+        this.isConstant = !containsVar;
     }
 
     private List<Term> ensureValidComponents(final List<Term> components) {
@@ -114,6 +115,14 @@ public abstract class CompoundTerm extends Term {
     public int getMinimumRequiredComponents() {
         return 2;
     }
+
+    @Override
+    protected final void setName(String name) {
+        super.setName(name); //To change body of generated methods, choose Tools | Templates.
+        this.containsVar = (name!=null) ? Variable.containVar(getName()) : false;
+    }
+    
+    
     
     /**
      * Constructor called from subclasses constructors to initialize the fields
@@ -125,7 +134,7 @@ public abstract class CompoundTerm extends Term {
         this.components = ensureValidComponents(components);
         this.complexity = calcComplexity();
         setName(name);
-        this.isConstant = !containVar();
+        this.isConstant = !containsVar;
     }
 
     
@@ -668,7 +677,7 @@ public abstract class CompoundTerm extends Term {
      * @return Whether the name contains a variable
      */
     public boolean containVar() {
-        return Variable.containVar(getName());
+        return containsVar;
     }
 
     /**
@@ -679,9 +688,6 @@ public abstract class CompoundTerm extends Term {
         if (containVar()) {
             int existingComponents = components.size();
             renameVariables(new HashMap<Variable, Variable>());
-            /*if (components.size() != existingComponents) {
-                throw new RuntimeException(this + " renameVariables() failed to maintain same number of components");
-            }*/
         }
         setConstant(true);
         setName(makeName());
