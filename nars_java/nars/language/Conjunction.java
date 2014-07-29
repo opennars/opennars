@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.storage.Memory;
 import nars.inference.TemporalRules;
 
@@ -78,14 +78,14 @@ public class Conjunction extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public Operator operator() {
+    public InnateOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return Operator.SEQUENCE;
+                return InnateOperator.SEQUENCE;
             case TemporalRules.ORDER_CONCURRENT:
-                return Operator.PARALLEL;
+                return InnateOperator.PARALLEL;
             default:
-        return Operator.CONJUNCTION;
+        return InnateOperator.CONJUNCTION;
     	}
     }
 
@@ -133,7 +133,7 @@ public class Conjunction extends CompoundTerm {
             return argList.get(0);
         }                         // special case: single component
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            final String name = makeCompoundName(Operator.SEQUENCE, argList);
+            final String name = makeCompoundName(InnateOperator.SEQUENCE, argList);
             final Term t = memory.nameToTerm(name);
             return (t != null) ? t : new Conjunction(argList, temporalOrder);
         } else {
@@ -154,9 +154,9 @@ public class Conjunction extends CompoundTerm {
         final ArrayList<Term> argument = new ArrayList<>(set);
         final String name;
         if (temporalOrder == TemporalRules.ORDER_NONE) {
-            name = makeCompoundName(Operator.CONJUNCTION, argument);
+            name = makeCompoundName(InnateOperator.CONJUNCTION, argument);
         } else {
-            name = makeCompoundName(Operator.PARALLEL, argument);
+            name = makeCompoundName(InnateOperator.PARALLEL, argument);
         }
         final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Conjunction(argument, temporalOrder);

@@ -25,7 +25,7 @@ import java.util.*;
 import nars.entity.*;
 import nars.storage.*;
 import nars.io.Symbols;
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.inference.TemporalRules;
 import static nars.language.CompoundTerm.make;
 import static nars.language.CompoundTerm.makeCompoundName;
@@ -61,7 +61,7 @@ public abstract class CompoundTerm extends Term {
     /**
      * Abstract method to get the operator of the compound
      */
-    public abstract Operator operator();
+    public abstract InnateOperator operator();
 
     /**
      * Abstract clone method
@@ -90,8 +90,10 @@ public abstract class CompoundTerm extends Term {
     }
 
     /**
-     * Similar to other constructors, except it does not invoke super(name) to avoid recomputing hashcode and containsVar.  
-     * This should perform better than constructors that invoke super constructor.
+     * High-performance constructor that avoids recalculating some Term metadata when created.
+     * Similar to other constructors, except it does not invoke super(name) to avoid recomputing hashcode 
+     * and containsVar.  Instead, all necessary values are provided directly from the callee.
+     * This should perform better than the other constructor that invokes super constructor; this does not.
      */
     protected CompoundTerm(final String name, final ArrayList<Term> components, final boolean isConstant, final boolean containsVar, final short complexity, int nameHash) {        
         this.name = name;
@@ -266,7 +268,7 @@ public abstract class CompoundTerm extends Term {
      * @param memory Reference to the memory
      * @return A compound term or null
      */    
-    public static Term make(final Operator op, final ArrayList<Term> arg, final Memory memory) {
+    public static Term make(final InnateOperator op, final ArrayList<Term> arg, final Memory memory) {
         switch (op) {
             case SET_EXT_OPENER: 
                 return SetExt.make(arg, memory);
@@ -301,53 +303,12 @@ public abstract class CompoundTerm extends Term {
             case IMPLICATION:
                 return Implication.make(arg.get(0), arg.get(1), memory);
             case EQUIVALENCE:
-                return Equivalence.make(arg.get(0), arg.get(1), memory);
-            default:
-                throw new RuntimeException("Unknown Term operator: " + op);
+                return Equivalence.make(arg.get(0), arg.get(1), memory);            
         }
+ 
+        throw new RuntimeException("Unknown Term operator: " + op);
     }    
 
-    /**
-     * Check CompoundTerm operator symbol
-     *
-     * @return if the given String is an operator symbol
-     * @param s The String to be checked
-     */
-    public static boolean isOperator(final String op) {               
-        final int length = op.length();
-        if (length == 1) {
-            final char c = op.charAt(0);
-            switch (c) {
-                case Symbols.SET_EXT_OPENER: 
-                case Symbols.SET_INT_OPENER: 
-                case Symbols.INTERSECTION_EXT_OPERATORc: 
-                case Symbols.INTERSECTION_INT_OPERATORc:
-                case Symbols.DIFFERENCE_EXT_OPERATORc:
-                case Symbols.DIFFERENCE_INT_OPERATORc:
-                case Symbols.PRODUCT_OPERATORc:
-                case Symbols.IMAGE_EXT_OPERATORc:
-                case Symbols.IMAGE_INT_OPERATORc:
-                    return true;
-            }            
-        }
-        else if (length == 2) {
-            //since these symbols are the same character repeated, we only need to compare the first character
-            final char c1 = op.charAt(0);
-            final char c2 = op.charAt(1);
-            if (c1 == c2) {
-                switch (c1) {
-                    case Symbols.NEGATION_OPERATORc:
-                    case Symbols.DISJUNCTION_OPERATORc:
-                    case Symbols.CONJUNCTION_OPERATORc:
-                        return true;                        
-                }            
-            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
-                return true;
-            }
-        }        
-        
-        return false;
-    }
 
     /**
      * build a component list from two terms
@@ -381,7 +342,7 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of components
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final Operator op, final List<Term> arg) {
+    protected static String makeCompoundName(final InnateOperator op, final List<Term> arg) {
         final int sizeEstimate = 12 * arg.size();
         
         final StringBuilder nameBuilder = new StringBuilder(sizeEstimate)
@@ -440,7 +401,7 @@ public abstract class CompoundTerm extends Term {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(final Operator op, final List<Term> arg, final int relationIndex) {
+    protected static String makeImageName(final InnateOperator op, final List<Term> arg, final int relationIndex) {
         final int sizeEstimate = 12 * arg.size() + 2;
         
         StringBuilder name = new StringBuilder(sizeEstimate)
@@ -466,9 +427,8 @@ public abstract class CompoundTerm extends Term {
      * report the term's syntactic complexity
      *
      * @return the complexity value
-     */
-    @Override
-    public int getComplexity() {
+     */    
+    @Override public short getComplexity() {
         return complexity;
     }
 

@@ -23,7 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.storage.Memory;
 
 /**
@@ -119,7 +119,7 @@ public class IntersectionInt extends CompoundTerm {
             return set.first();
         }                         // special case: single component
         ArrayList<Term> argument = new ArrayList<Term>(set);
-        String name = makeCompoundName(Operator.INTERSECTION_INT, argument);
+        String name = makeCompoundName(InnateOperator.INTERSECTION_INT, argument);
         Term t = memory.nameToTerm(name);
         return (t != null) ? t : new IntersectionInt(argument);
     }
@@ -128,8 +128,8 @@ public class IntersectionInt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public Operator operator() {
-        return Operator.INTERSECTION_INT;
+    public InnateOperator operator() {
+        return InnateOperator.INTERSECTION_INT;
     }
 
     /**

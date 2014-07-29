@@ -22,6 +22,7 @@ package nars.operation;
 
 import nars.language.*;
 import java.util.ArrayList;
+import java.util.List;
 import nars.io.Symbols;
 
 import nars.storage.Memory;
@@ -47,10 +48,10 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param cs Component list
      * @param open Open variable list
-     * @param i Syntactic complexity of the compound
+     * @param complexity Syntactic complexity of the compound
      */
-    public Operation(String n, ArrayList<Term> cs, boolean con, short i) {
-        super(n, cs, con, i);
+    public Operation(String n, ArrayList<Term> cs, boolean con, boolean hasVar, short complexity, int nameHash) {
+        super(n, cs, con, hasVar, complexity, nameHash);
     }
 
     /**
@@ -60,7 +61,7 @@ public class Operation extends Inheritance {
      */
     @Override
     public Object clone() {
-        return new Operation(name, cloneList(components), isConstant, complexity);
+        return new Operation(name, cloneList(components), isConstant(), containVar(), getComplexity(), hashCode());
     }
 
     /**
@@ -70,19 +71,23 @@ public class Operation extends Inheritance {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Inheritance make(String op, ArrayList<Term> arg, Memory memory) {
-        String name = makeName(op, arg, memory);
+    public static Inheritance make(final Operator pre, final ArrayList<Term> arg, final Memory memory) {
+        String name = makeName(pre.getName(), arg, memory);
+    
         Term t = memory.nameToTerm(name);
+        
         if (t != null) {
             return (Inheritance) t;
         }
+        
         Term sub = Product.make(arg, memory);
-        Term pre = memory.operators.get(op);
+        
         Inheritance inh = Operation.make(sub, pre, memory);
+        
         return inh;
     }
 
-    public static String makeName(final String op, ArrayList<Term> arg, Memory memory) {
+    public static String makeName(final String op, List<Term> arg, Memory memory) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
                 .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
         for (final Term t : arg) {

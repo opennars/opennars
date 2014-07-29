@@ -20,8 +20,8 @@
  */
 package nars.io;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * The ASCII symbols used in I/O.
@@ -75,48 +75,81 @@ public class Symbols {
     public static final char OPERATOR_PREFIX = '^';
 
     
-    public static enum Operator {
+    public  enum InnateOperator {
+        
         /* CompountTerm operators, length = 1 */
-        INTERSECTION_EXT { @Override public String toString() { return "&"; } },
-        INTERSECTION_INT { @Override public String toString() { return "|"; } },
-        DIFFERENCE_EXT { @Override public String toString() { return "-"; } },
-        DIFFERENCE_INT { @Override public String toString() { return "~"; } },
-        PRODUCT { @Override public String toString() { return "*"; } },
-        IMAGE_EXT { @Override public String toString() { return "/"; } },
-        IMAGE_INT { @Override public String toString() { return "\\"; } },
+        INTERSECTION_EXT("&", false, true),
+        INTERSECTION_INT("|", false, true),
+        DIFFERENCE_EXT("-", false, true),
+        DIFFERENCE_INT("~", false, true),
+        PRODUCT("*", false, true),
+        IMAGE_EXT("/", false, true),
+        IMAGE_INT("\\", false, true),
 
         /* CompoundStatement operators, length = 2 */        
-        NEGATION { @Override public String toString() { return "--"; } },
-        DISJUNCTION { @Override public String toString() { return "||"; } },
-        CONJUNCTION { @Override public String toString() { return "&&"; } },    
-        SEQUENCE { @Override public String toString() { return "&/"; } },    
-        PARALLEL { @Override public String toString() { return "&|"; } },
+        NEGATION("--", false, true),
+        DISJUNCTION("||", false, true),
+        CONJUNCTION("&&", false, true),    
+        SEQUENCE("&/", false, true),    
+        PARALLEL("&|", false, true),        
+        
         
         /* Set Int/Ext Opener/Closer */
-        SET_INT_OPENER { @Override public String toString() { return "["; } },
-        SET_INT_CLOSER { @Override public String toString() { return "]"; } },
-        SET_EXT_OPENER { @Override public String toString() { return "{"; } },
-        SET_EXT_CLOSER { @Override public String toString() { return "}"; } },
+        SET_INT_OPENER("[", false, true),
+        SET_INT_CLOSER("]", false, false),
+        SET_EXT_OPENER("{", false, true),
+        SET_EXT_CLOSER("}", false, false),
         
-        COMPOUND_TERM_OPENER { @Override public String toString() { return "("; } },
-        COMPOUND_TERM_CLOSER { @Override public String toString() { return ")"; } },
-        STATEMENT_OPENER { @Override public String toString() { return "<"; } },
-        STATEMENT_CLOSER { @Override public String toString() { return ">"; } },
+        COMPOUND_TERM_OPENER("(", false, false),
+        COMPOUND_TERM_CLOSER(")", false, false),
+        STATEMENT_OPENER("<", false, false),
+        STATEMENT_CLOSER(">", false, false),
         
         
         /* Relations */
-        INHERITANCE { @Override public String toString() { return "-->"; } },
-        SIMILARITY { @Override public String toString() { return "<->"; } },
-        INSTANCE { @Override public String toString() { return "{--"; } },
-        PROPERTY { @Override public String toString() { return "--]"; } },
-        INSTANCE_PROPERTY { @Override public String toString() { return "{-]"; } },
-        IMPLICATION { @Override public String toString() { return "==>"; } },
-        IMPLICATION_AFTER { @Override public String toString() { return "=/>"; } },
-        IMPLICATION_WHEN { @Override public String toString() { return "=|>"; } },
-        IMPLICATION_BEFORE { @Override public String toString() { return "=\\>"; } },
-        EQUIVALENCE { @Override public String toString() { return "<=>"; } },
-        EQUIVALENCE_AFTER { @Override public String toString() { return "</>"; } },
-        EQUIVALENCE_WHEN { @Override public String toString() { return "<|>"; } }
+        INHERITANCE("-->", true),
+        SIMILARITY("<->", true),
+        INSTANCE("{--", true),
+        PROPERTY("--]", true),
+        INSTANCE_PROPERTY("{-]", true),
+        IMPLICATION("==>", true),
+        IMPLICATION_AFTER("=/>", true),
+        IMPLICATION_WHEN("=|>", true),
+        IMPLICATION_BEFORE("=\\>", true),
+        EQUIVALENCE("<=>", true),
+        EQUIVALENCE_AFTER("</>", true),
+        EQUIVALENCE_WHEN("<|>", true);
+
+        
+        /** string representation of this operator */
+        public final String string; 
+        
+        /** character representation of this operator if string has length 1; else ch = 0 */
+        public final char ch;
+        
+        /** is relation? */
+        public final boolean relation;
+        
+        /** "innate"? (according to the old CompoundTerm.isOperator() method) */
+        public final boolean innate;
+
+        private InnateOperator(String string) {
+            this(string, false);
+        }
+        
+        private InnateOperator(String string, boolean relation) {
+            this(string, relation, !relation);
+        }
+
+        private InnateOperator(String string, boolean relation, boolean innate) {            
+            this.string = string;
+            this.relation = relation;
+            this.innate = innate;
+            this.ch = string.length() == 1 ? string.charAt(0) : 0;
+        }
+                
+        public String toString() { return string; }
+                
         
     }
     
@@ -150,29 +183,47 @@ public class Symbols {
 
     
 
-    protected static final Map<String,Operator> stringToOperator = new TreeMap();    
+    protected static final Map<String,InnateOperator> stringToOperator 
+            = new HashMap(InnateOperator.values().length*2);    
+    protected static final Map<Character,InnateOperator> charToOperator 
+            = new HashMap(InnateOperator.values().length*2);
+            
     static {
-        for (final Operator r : Operator.values())
+        for (final InnateOperator r : InnateOperator.values())
             stringToOperator.put(r.toString(), r);
+        for (final InnateOperator r : InnateOperator.values()) {
+            char c = r.ch;
+            if (c!=0)
+                charToOperator.put(c, r);
+        }
     }
     
-    public static Operator operator(final String s) {
-        return stringToOperator.get(s.trim());
+
+    public static InnateOperator operator(final char c) {
+        return charToOperator.get(c);
     }
-    static Operator relation(String r) {
-        r = r.trim();
-        if (r.length()!=3) return null;
-        return stringToOperator.get(r);
+    
+    public static InnateOperator operator(final String s) {
+        return stringToOperator.get(s);
+    }
+    
+    static InnateOperator opRelation(String s) {
+        //r = r.trim();
+        InnateOperator o = operator(s);
+        if (o == null) return null;
+        if (o.relation)
+            return o;
+        return null;
     }
     
     /**
-     * Check Statement relation symbol, called in StringPaser
+     * Check Statement opRelation symbol, called in StringPaser
      *
      * @param s0 The String to be checked
-     * @return if the given String is a relation symbol
+     * @return if the given String is a opRelation symbol
      */
     public static boolean isRelation(final String s) {
-        return relation(s)!=null;
+        return opRelation(s)!=null;
     }
     
     
@@ -206,4 +257,50 @@ public class Symbols {
     public static final String TO_COMPONENT_2 = ")_ ";
     public static final String TO_COMPOUND_1 = " _@(";
     public static final String TO_COMPOUND_2 = ") ";
+
+
+
+    /*
+    @Deprecated public static InnateOperator opInnate(final String op) {
+        InnateOperator i = operator(op);
+        if (i == null) return null;
+        
+        final int length = op.length();
+        if (length == 1) {
+            final char c = op.charAt(0);
+            switch (c) {
+                case Symbols.SET_EXT_OPENER: 
+                case Symbols.SET_INT_OPENER: 
+                case Symbols.INTERSECTION_EXT_OPERATORc: 
+                case Symbols.INTERSECTION_INT_OPERATORc:
+                case Symbols.DIFFERENCE_EXT_OPERATORc:
+                case Symbols.DIFFERENCE_INT_OPERATORc:
+                case Symbols.PRODUCT_OPERATORc:
+                case Symbols.IMAGE_EXT_OPERATORc:
+                case Symbols.IMAGE_INT_OPERATORc:        
+                    return true;
+            }            
+        }
+        else if (length == 2) {
+            //since these symbols are the same character repeated, we only need to compare the first character
+            final char c1 = op.charAt(0);
+            final char c2 = op.charAt(1);
+            if (c1 == c2) {
+                switch (c1) {
+                    case Symbols.NEGATION_OPERATORc:
+                    case Symbols.DISJUNCTION_OPERATORc:
+                    case Symbols.CONJUNCTION_OPERATORc:
+                        return true;                        
+                }            
+            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
+                return true;
+            }
+            
+        }        
+        
+        return false;
+    }
+    */
+
+
 }

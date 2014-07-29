@@ -34,6 +34,7 @@ import nars.storage.Memory;
  * This is the only file to modify when adding a new operator into NARS.
  */
 public abstract class Operator extends Term {
+    
     public Operator(String name) {
         super(name);
     }

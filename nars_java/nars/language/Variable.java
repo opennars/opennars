@@ -74,8 +74,7 @@ public class Variable extends Term {
      *
      * @return The complexity of the term, an integer
      */
-    @Override
-    public int getComplexity() {
+    @Override public short getComplexity() {
         return 0;
     }
 

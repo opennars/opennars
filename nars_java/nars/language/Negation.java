@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.storage.Memory;
 
 /**
@@ -94,7 +94,7 @@ public class Negation extends CompoundTerm {
         if (argument.size() != 1) {
             return null;
         }
-        final String name = makeCompoundName(Operator.NEGATION, argument);
+        final String name = makeCompoundName(InnateOperator.NEGATION, argument);
         final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Negation(argument);
     }
@@ -105,7 +105,7 @@ public class Negation extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public Operator operator() {
-        return Operator.NEGATION;
+    public InnateOperator operator() {
+        return InnateOperator.NEGATION;
     }
 }

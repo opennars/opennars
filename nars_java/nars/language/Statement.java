@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import nars.inference.TemporalRules;
 
 import nars.io.Symbols;
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.storage.Memory;
 
 /**
@@ -43,9 +43,7 @@ public abstract class Statement extends CompoundTerm {
     protected Statement(final ArrayList<Term> arg) {
         super(arg);
     }
-
     
-
     /**
      * Constructor with full values, called by clone
      *
@@ -58,11 +56,12 @@ public abstract class Statement extends CompoundTerm {
         super(n, cs, con, i);
     }
     
-    
+    /**
+     * High-performance constructor that avoids recalculating some Term metadata when created
+     */
     protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i, int nameHash) {
         super(n, cs, con, hasVar, i, nameHash);
     }
-
 
     /**
      * Make a Statement from String, called by StringParser
@@ -73,7 +72,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement make(final Operator o, final Term subject, final Term predicate, final Memory memory) {
+    public static Statement make(final InnateOperator o, final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
@@ -184,7 +183,7 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final Operator relation, final Term predicate, StringBuilder nameBuilder) {
+    protected static String makeStatementName(final Term subject, final InnateOperator relation, final Term predicate, StringBuilder nameBuilder) {
         final String subjectName = subject.getName();
         final String predicateName = predicate.getName();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
@@ -204,7 +203,7 @@ public abstract class Statement extends CompoundTerm {
             .toString();
     }
     
-    protected static String makeStatementName(final Term subject, final Operator relation, final Term predicate) {
+    protected static String makeStatementName(final Term subject, final InnateOperator relation, final Term predicate) {
         return makeStatementName(subject, relation, predicate, null);
     }
 

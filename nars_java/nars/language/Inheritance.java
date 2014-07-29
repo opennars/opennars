@@ -22,7 +22,9 @@ package nars.language;
 
 import java.util.ArrayList;
 
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
+import nars.operation.Operation;
+import nars.operation.Operator;
 import nars.storage.Memory;
 
 /**
@@ -35,7 +37,7 @@ public class Inheritance extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Inheritance(final ArrayList<Term> arg) {
+    protected Inheritance(final ArrayList<Term> arg) {
         super(arg);
     }
 
@@ -46,16 +48,16 @@ public class Inheritance extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Inheritance(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i, final int nameHash) {
-        super(n, cs, con, i);
+    protected Inheritance(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i, final int nameHash) {
+        super(n, cs, con, hasVar, i, nameHash);
     }
 
     /**
      * Clone an object
      * @return A new object, to be casted into a SetExt
      */
-    public Object clone() {
-        return new Inheritance(getName(), (ArrayList<Term>) cloneList(components), isConstant(), containVar(), complexity, hashCode());
+    @Override public Object clone() {
+        return new Inheritance(getName(), cloneList(components), isConstant(), containVar(), complexity, hashCode());
     }
 
     /**
@@ -66,25 +68,40 @@ public class Inheritance extends Statement {
      * @return A compound generated or null
      */
     public static Inheritance make(final Term subject, final Term predicate, final Memory memory) {
+        
         if (invalidStatement(subject, predicate)) {
             //throw new RuntimeException("Inheritance.make: Invalid Inheritance statement: subj=" + subject + ", pred=" + predicate);
             return null;
         }
-        String name = makeStatementName(subject, Operator.INHERITANCE, predicate);
+        
+        String name;
+        if ((subject instanceof Product) && (predicate instanceof Operator)) {
+            name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).getComponents(), memory);
+        } else {
+            name = makeStatementName(subject, InnateOperator.INHERITANCE, predicate);
+        }
+ 
         Term t = memory.nameToTerm(name);
         if (t != null) {
             return (Inheritance) t;
         }
+        
         ArrayList<Term> argument = argumentsToList(subject, predicate);
-        return new Inheritance(argument);
+        
+        if ((subject instanceof Product) && (predicate instanceof Operator)) {
+            return new Operation(argument);
+        } else {
+            return new Inheritance(argument);
+        }
+         
     }
 
     /**
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public Operator operator() {
-        return Operator.INHERITANCE;
+    public InnateOperator operator() {
+        return InnateOperator.INHERITANCE;
     }
 
 }
