@@ -1,7 +1,7 @@
 package nars.test.util;
 
 import nars.test.core.BagPerf.NullItem;
-import nars.util.FastBag;
+import nars.util.ContinuousBag;
 import org.junit.Test;
 
 /**
@@ -13,7 +13,7 @@ import org.junit.Test;
 public class FastBagTest {
  
     @Test public void testFastBag() {
-        FastBag<NullItem> f = new FastBag(4, 10);
+        ContinuousBag<NullItem> f = new ContinuousBag(4, 10);
         
         f.putIn(new NullItem(.25f));
         assert(f.size() == 1);
@@ -40,7 +40,7 @@ public class FastBagTest {
     }
 
     @Test public void testFastBagCapacityLimit() {
-        FastBag<NullItem> f = new FastBag(4, 10);
+        ContinuousBag<NullItem> f = new ContinuousBag(4, 10);
         f.putIn(new NullItem());
         f.putIn(new NullItem());
         f.putIn(new NullItem());
@@ -59,7 +59,7 @@ public class FastBagTest {
         
         int count[] = new int[N];
         
-        FastBag<NullItem> f = new FastBag(N, 10);
+        ContinuousBag<NullItem> f = new ContinuousBag(N, 10);
         
         //fill
         for (int i= 0; i < N; i++) {

@@ -1,6 +1,7 @@
 package nars.util;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Parameters;
 import nars.entity.Item;
@@ -10,7 +11,12 @@ import nars.storage.IBag;
 import nars.storage.Memory;
 
 
-public class FastBag<E extends Item> implements IBag<E> {
+/** A bag without discrete levels implemented as a sorted list, which is accessed according to a 
+ *  random probability curve.  For example, the curve can be shaped to favor higher-priority items.
+ *  This models, to a degree, the behavior of the original Bag Distributor.
+ *  ContinuousBag does not consistently perform better than Bag and remains EXPERIMENTAL.
+ */
+public class ContinuousBag<E extends Item> implements IBag<E> {
  
 
     /**
@@ -28,7 +34,7 @@ public class FastBag<E extends Item> implements IBag<E> {
     /**
      * mapping from key to item
      */
-    public final HashMap<String, E> nameTable;
+    public final Map<String, E> nameTable;
     /**
      * array of lists of items, for items on different level
      */
@@ -49,21 +55,20 @@ public class FastBag<E extends Item> implements IBag<E> {
     /**
      * The display level; initialized at lowest
      */
-    private int showLevel;
     private final AtomicInteger forgetRate;
 
-    public FastBag(int capacity, int forgetRate) {
+    public ContinuousBag(int capacity, int forgetRate) {
         this(capacity, new AtomicInteger(forgetRate));
     }
     
-    public FastBag(int capacity, AtomicInteger forgetRate) {
+    public ContinuousBag(int capacity, AtomicInteger forgetRate) {
         RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
         this.capacity = capacity;
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
-        items = new PrioritySortedItemList<>();
+        //nameTable = new FastMap<>();//(int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
+        items = new PrioritySortedItemList<E>(capacity);
         this.forgetRate = forgetRate;
-        clear();
-        //showing = false;        
+        this.mass = 0;
     }
     
 
@@ -242,9 +247,10 @@ public class FastBag<E extends Item> implements IBag<E> {
      * @param level The current level
      * @return The first Item
      */
-    private E takeOutIndex(int index) {
+    private E takeOutIndex(final int index) {
+        //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
         final E selected = items.remove(index);
-        mass -= (selected.budget.getPriorityShort());
+        mass -= selected.budget.getPriorityShort();
         return selected;
     }
 
@@ -281,6 +287,7 @@ public class FastBag<E extends Item> implements IBag<E> {
         return size() + " size, " + getMass() + " mass, items: " + items.toString();
     }
 
+    
     
     
 }
