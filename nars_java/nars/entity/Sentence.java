@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import nars.core.NAR;
 import nars.io.Symbols;
 import nars.language.*;
 import nars.inference.TruthFunctions;
@@ -292,42 +293,42 @@ public class Sentence implements Cloneable {
         return key;
     }
 
-// need a separate display method, where the occurenceTime is converted to tense,
-    // according to the current time
     /**
      * Get a String representation of the sentence for display purpose
      *
-     * @param currentTime Current time on the internal clock
      * @return The String
      */
-    public String display(long currentTime) {
-        final String contentToString = content.toString();
-        final long occurenceTime = stamp.getOccurrenceTime();
-        String tenseString = "";
-        if (occurenceTime != Stamp.ETERNAL) {
-            long timeDiff = occurenceTime - currentTime;
-            if (timeDiff > 0) {
-                tenseString = Symbols.TENSE_FUTURE;
-            } else if (timeDiff > 0) {
-                tenseString = Symbols.TENSE_PAST;
-            } else {
-                tenseString = Symbols.TENSE_PRESENT;
-            }
-        }
-        final String truthString = truth != null ? truth.toStringBrief() : null;
-        //final String stampString = stamp.toString();
+    public String toString(NAR nar, boolean showStamp) {
+    
+        String contentToString = content.toString();
+        long t = nar.memory.getTime();
+        String tenseString = stamp.getTense(t);                
 
-        int stringLength = contentToString.length() + tenseString.length() + 1 + 1/* + stampString.baseLength()*/;
+        String truthString = truth != null ? truth.toStringBrief() : null;
+        String stampString = showStamp ? stamp.toString() : null;
+        
+        int stringLength = contentToString.length() + tenseString.length() + 1 + 1;
+                
         if (truth != null) {
             stringLength += truthString.length();
         }
-
-        final StringBuilder buffer = new StringBuilder(stringLength).append(contentToString)
-                .append(punctuation).append(" ").append(tenseString);
-        if (truth != null) {
-            buffer.append(truthString);
+        if (showStamp) {
+            stringLength += stampString.length();
         }
+        
+        final StringBuilder buffer = new StringBuilder(stringLength)
+                .append(contentToString)
+                .append(punctuation);
+        
+        if (tenseString.length() > 0)
+            buffer.append(' ').append(tenseString);
+        
+        if (truth != null)
+            buffer.append(' ').append(truthString);
+        
+        if (showStamp)
+            buffer.append(' ').append(stampString);
+        
         return buffer.toString();
     }
-
 }

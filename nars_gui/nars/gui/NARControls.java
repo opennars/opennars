@@ -339,7 +339,12 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 if (savingExp) {
                     experienceWriter.closeSaveFile();
                 } else {
-                    experienceWriter.openSaveFile();
+                    FileDialog dialog = new FileDialog((FileDialog) null, "Save experience", FileDialog.SAVE);
+                    dialog.setVisible(true);
+                    String directoryName = dialog.getDirectory();
+                    String fileName = dialog.getFile();
+                    String path = directoryName + fileName;                    
+                    experienceWriter.openSaveFile(path);
                 }
                 savingExp = !savingExp;
             } else if (label.equals("Reset")) {

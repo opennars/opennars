@@ -40,11 +40,6 @@ public class Symbols {
     public static final String TENSE_PRESENT = ":|:";
     public static final String TENSE_FUTURE = ":/:";
     
-    /* cached versions of Tense markers with space character appended to end */
-    public static final String TENSE_PAST_space = TENSE_PAST + ' ';
-    public static final String TENSE_PRESENT_space = TENSE_PRESENT + ' ';
-    public static final String TENSE_FUTURE_space = TENSE_FUTURE + ' ';
-
     /* variable type */
     public static final char VAR_INDEPENDENT = '$';
     public static final char VAR_DEPENDENT = '#';

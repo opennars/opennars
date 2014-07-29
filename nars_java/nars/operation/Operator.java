@@ -25,6 +25,7 @@ import java.util.*;
 
 import nars.language.*;
 import nars.entity.Task;
+import nars.io.Output.EXE;
 import nars.storage.Memory;
 
 /**
@@ -34,7 +35,7 @@ import nars.storage.Memory;
  * This is the only file to modify when adding a new operator into NARS.
  */
 public abstract class Operator extends Term {
-    
+        
     public Operator(String name) {
         super(name);
     }
@@ -44,16 +45,16 @@ public abstract class Operator extends Term {
      * @param task The task with the arguments to be passed to the operator
      * @return The direct collectable results and feedback of the reportExecution
      */
-    public abstract ArrayList<Task> execute(Task task);
+    public abstract ArrayList<Task> execute(final Task task);
 
     /**
      * Execute an operation, then handle feedback
      * @param task The task to be executed
      * @param memory
      */
-    public void call(Task task, Memory memory) {
+    public void call(final Task task, final Memory memory) {
         ArrayList<Task> feedback = execute(task);
-        reportExecution((Statement) task.getContent());
+        reportExecution((Statement) task.getContent(), memory);
 //        Memory.executedTask(task);
         if (feedback != null) {
             for (Task t : feedback) {
@@ -124,11 +125,15 @@ public abstract class Operator extends Term {
      * <p>
      * @param operation The content of the operation to be executed
      */
-    protected void reportExecution(Statement operation) {
+    protected void reportExecution(Statement operation, Memory memory) {
+        memory.nar.output(EXE.class, operation);
+    }
+    
+    public static String operationExecutionString(final Statement operation) {
         Term operator = operation.getPredicate();
         Term arguments = operation.getSubject();
         String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
-        System.out.println("EXECUTE: " + operator + "(" + argList);
+        return operator + "(" + argList;        
     }
 }
 
