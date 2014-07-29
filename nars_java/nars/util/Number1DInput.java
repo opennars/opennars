@@ -101,7 +101,7 @@ public class Number1DInput extends PrintWriterInput {
     /*
     public static void initPredicates(NAR N, int n) {
         
-        StringBuffer s = new StringBuffer(32);
+        StringBuilder s = new StringBuilder(32);
         
         //relative sequence
         for (int i = 1; i < n; i++) {

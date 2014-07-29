@@ -700,7 +700,7 @@ public class Memory {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(1024);
+        final StringBuilder sb = new StringBuilder(1024);
         sb.append(toStringLongIfNotNull(concepts, "concepts"))
                 .append(toStringLongIfNotNull(novelTasks, "novelTasks"))
                 .append(toStringIfNotNull(newTasks, "newTasks"))

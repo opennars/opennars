@@ -1273,7 +1273,7 @@ public class KB {
      * @return A String representing a SUO-KIF formula.
      */
     public static String literalListToString(List literal) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         try {
             if (literal instanceof List) {
                 b.append("(");
@@ -2020,7 +2020,7 @@ public class KB {
 
         System.out.println("ENTER KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
         long t1 = System.currentTimeMillis();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         try {
             File constituent = new File(filename);
@@ -2140,7 +2140,7 @@ public class KB {
     public String reload() {
 
         System.out.println("ENTER KB.reload()");
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         try {
             ArrayList newConstituents = new ArrayList();
             Iterator ci = constituents.iterator();

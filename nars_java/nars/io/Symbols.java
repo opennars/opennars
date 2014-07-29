@@ -154,9 +154,9 @@ public class Symbols {
     }    
 
     protected static final Map<String,InnateOperator> stringToOperator 
-            = new HashMap(InnateOperator.values().length*2);    
+            = new HashMap(InnateOperator.values().length * 2);
     protected static final Map<Character,InnateOperator> charToOperator 
-            = new HashMap(InnateOperator.values().length*2);
+            = new HashMap(InnateOperator.values().length * 2);
             
     static {
         //Setup InnateOperator String index hashtable 

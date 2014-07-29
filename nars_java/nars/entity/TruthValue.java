@@ -183,7 +183,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
         
         //1 + 6 + 1 + 6 + 1
-        return new StringBuffer(15).append(DELIMITER).append(frequency.toString())
+        return new StringBuilder(15).append(DELIMITER).append(frequency.toString())
                      .append(SEPARATOR).append(confidence.toString()).append(DELIMITER).toString();
     }
 
@@ -220,5 +220,17 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return appendStringBrief(sb).toString();
     }
     
+    /** displays the truth value as a short string indicating degree of true/false */
+    public String toTrueFalseString() {        
+        //TODO:
+        //  F,f,~,t,T
+        return null;
+    }
+    /** displays the truth value as a short string indicating degree of yes/no */
+    public String toYesNoString() {        
+        //TODO
+        // N,n,~,y,Y
+        return null;
+    }
     
 }

@@ -45,7 +45,7 @@ public class NALTest  {
             if (existing!=null)
                 return existing;
             
-            StringBuffer  sb  = new StringBuffer();
+            StringBuilder  sb  = new StringBuilder();
             String line;
             File fp = new File(path);
             BufferedReader br = new BufferedReader(new FileReader(fp));

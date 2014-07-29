@@ -312,7 +312,7 @@ public final class SyllogisticRules {
         }
         Conjunction oldCondition = (Conjunction) subj;
 
-        int index2 = oldCondition.getComponents().indexOf(commonComponent);
+        int index2 = oldCondition.components.indexOf(commonComponent);
         if (index2 >= 0) {
             index = (short) index2;
         } else {

@@ -121,6 +121,9 @@ public class TextPerception {
                     
                     int cycles = Integer.parseInt(input);
                     nar.output(IN.class, cycles);
+                    
+                    //TODO queue the cycles, invoke call from here
+                    
                     nar.finish(cycles);
                     return true;
                 }
@@ -240,7 +243,7 @@ public class TextPerception {
                 char c = input.charAt(0);
                 if (c != Symbols.COMMENT_MARK) {
                     try {
-                        Task task = parseNarsese(new StringBuffer(input), nar.memory, nar.getTime());
+                        Task task = parseNarsese(new StringBuilder(input), nar.memory, nar.getTime());
                         if (task != null) {
                             nar.output(Output.IN.class, task.getSentence());    // report addInput
                             nar.memory.inputTask(task);
@@ -271,7 +274,7 @@ public class TextPerception {
      * @param time The current time
      * @return An experienced task
      */
-    public static Task parseNarsese(StringBuffer buffer, Memory memory, long time) throws InvalidInputException {
+    public static Task parseNarsese(StringBuilder buffer, Memory memory, long time) throws InvalidInputException {
         int i = buffer.indexOf(String.valueOf(PREFIX_MARK));
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
@@ -299,7 +302,7 @@ public class TextPerception {
         TruthValue truth = null;
         
         try {
-            StringBuffer buffer = new StringBuffer(s);
+            StringBuilder buffer = new StringBuilder(s);
             //String budgetString = getBudgetString(buffer);
             String truthString = getTruthString(buffer);
             String str = buffer.toString().trim();
@@ -328,7 +331,7 @@ public class TextPerception {
      * @return An experienced task
      */    
     public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
-        StringBuffer buffer = new StringBuffer(s);
+        StringBuilder buffer = new StringBuilder(s);
         try {
             Task task = null;
             String budgetString = getBudgetString(buffer);
@@ -359,12 +362,12 @@ public class TextPerception {
     /**
      * Return the prefix of a task string that contains a BudgetValue
      *
-     * @param s the addInput in a StringBuffer
+     * @param s the addInput in a StringBuilder
      * @return a String containing a BudgetValue
      * @throws nars.io.StringParser.InvalidInputException if the addInput cannot be
  parsed into a BudgetValue
      */
-    private static String getBudgetString(StringBuffer s) throws InvalidInputException {
+    private static String getBudgetString(StringBuilder s) throws InvalidInputException {
         if (s.charAt(0) != BUDGET_VALUE_MARK) {
             return null;
         }
@@ -384,11 +387,11 @@ public class TextPerception {
      * Return the postfix of a task string that contains a TruthValue
      *
      * @return a String containing a TruthValue
-     * @param s the addInput in a StringBuffer
+     * @param s the addInput in a StringBuilder
      * @throws nars.io.StringParser.InvalidInputException if the addInput cannot be
  parsed into a TruthValue
      */
-    private static String getTruthString(final StringBuffer s) throws InvalidInputException {
+    private static String getTruthString(final StringBuilder s) throws InvalidInputException {
         final int last = s.length() - 1;
         if (s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;
@@ -478,10 +481,10 @@ public class TextPerception {
 
     /**
      * Recognize the tense of an addInput sentence
-     * @param s the addInput in a StringBuffer
+     * @param s the addInput in a StringBuilder
      * @return a tense value
      */
-    private static String parseTense(StringBuffer s) {
+    private static String parseTense(StringBuilder s) {
         int i = s.indexOf(Symbols.TENSE_MARK);
         String t = "";
         if (i > 0) {

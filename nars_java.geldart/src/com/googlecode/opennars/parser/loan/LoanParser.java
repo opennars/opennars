@@ -245,7 +245,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(Conjunction p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Iterator<Term> iter = components.iterator();
 			Term t = iter.next();
 			Stm s = wrapTerm(t.accept(this, arg));
@@ -256,7 +256,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(ConjunctionParallel p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Iterator<Term> iter = components.iterator();
 			Term t = iter.next();
 			Stm s = wrapTerm(t.accept(this, arg));
@@ -267,7 +267,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(ConjunctionSequence p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Iterator<Term> iter = components.iterator();
 			Term t = iter.next();
 			Stm s = wrapTerm(t.accept(this, arg));
@@ -278,21 +278,21 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(DifferenceExt p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Term t1 = components.get(0);
 			Term t2 = components.get(1);
 			return new TrmExDif(wrapStatement(t1.accept(this, arg)), wrapStatement(t2.accept(this, arg)));
 		}
 
 		public Object visit(DifferenceInt p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Term t1 = components.get(0);
 			Term t2 = components.get(1);
 			return new TrmInDif(wrapStatement(t1.accept(this, arg)), wrapStatement(t2.accept(this, arg)));
 		}
 
 		public Object visit(Disjunction p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Iterator<Term> iter = components.iterator();
 			Term t = iter.next();
 			Stm s = wrapTerm(t.accept(this, arg));
@@ -321,9 +321,9 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(ImageExt p, LoanParser arg) {
-			List<Term> pre = p.getComponents().subList(0, p.getRelationIndex());
-			Term reln = p.getComponents().get(p.getRelationIndex());
-			List<Term> post = p.getComponents().subList(p.getRelationIndex() + 1, p.size());
+			List<Term> pre = p.components.subList(0, p.getRelationIndex());
+			Term reln = p.components.get(p.getRelationIndex());
+			List<Term> post = p.components.subList(p.getRelationIndex() + 1, p.size());
 			
 			com.googlecode.opennars.parser.loan.Loan.Absyn.Term relnT = wrapStatement(reln.accept(this, arg));
 			
@@ -343,9 +343,9 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(ImageInt p, LoanParser arg) {
-			List<Term> pre = p.getComponents().subList(0, p.getRelationIndex());
-			Term reln = p.getComponents().get(p.getRelationIndex());
-			List<Term> post = p.getComponents().subList(p.getRelationIndex() + 1, p.size());
+			List<Term> pre = p.components.subList(0, p.getRelationIndex());
+			Term reln = p.components.get(p.getRelationIndex());
+			List<Term> post = p.components.subList(p.getRelationIndex() + 1, p.size());
 			
 			com.googlecode.opennars.parser.loan.Loan.Absyn.Term relnT = wrapStatement(reln.accept(this, arg));
 			
@@ -407,7 +407,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(IntersectionExt p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Iterator<Term> iter = components.iterator();
 			Term t = iter.next();
 			com.googlecode.opennars.parser.loan.Loan.Absyn.Term s = wrapStatement(t.accept(this, arg));
@@ -418,7 +418,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(IntersectionInt p, LoanParser arg) {
-			ArrayList<Term> components = p.getComponents();
+			ArrayList<Term> components = p.components;
 			Iterator<Term> iter = components.iterator();
 			Term t = iter.next();
 			com.googlecode.opennars.parser.loan.Loan.Absyn.Term s = wrapStatement(t.accept(this, arg));
@@ -429,7 +429,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(Negation p, LoanParser arg) {
-			Stm s = wrapTerm(p.getComponents().get(0).accept(this, arg));
+			Stm s = wrapTerm(p.components.get(0).accept(this, arg));
 			return new StmNot(s);
 		}
 
@@ -443,7 +443,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(Product p, LoanParser arg) {
-			Iterator<Term> iter = p.getComponents().iterator();
+			Iterator<Term> iter = p.components.iterator();
 			ListTerm ts = new ListTerm();
 			while(iter.hasNext()) {
 				ts.add(wrapStatement(iter.next().accept(this, arg)));
@@ -458,7 +458,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(SetExt p, LoanParser arg) {
-			Iterator<Term> iter = p.getComponents().iterator();
+			Iterator<Term> iter = p.components.iterator();
 			ListTerm ts = new ListTerm();
 			while(iter.hasNext()) {
 				ts.add(wrapStatement(iter.next().accept(this, arg)));
@@ -467,7 +467,7 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(SetInt p, LoanParser arg) {
-			Iterator<Term> iter = p.getComponents().iterator();
+			Iterator<Term> iter = p.components.iterator();
 			ListTerm ts = new ListTerm();
 			while(iter.hasNext()) {
 				ts.add(wrapStatement(iter.next().accept(this, arg)));
@@ -482,17 +482,17 @@ public class LoanParser extends Parser {
 		}
 
 		public Object visit(TenseFuture p, LoanParser arg) {
-			Stm s = wrapTerm(p.getComponents().get(0).accept(this, arg));
+			Stm s = wrapTerm(p.components.get(0).accept(this, arg));
 			return new StmFut(s);
 		}
 
 		public Object visit(TensePast p, LoanParser arg) {
-			Stm s = wrapTerm(p.getComponents().get(0).accept(this, arg));
+			Stm s = wrapTerm(p.components.get(0).accept(this, arg));
 			return new StmPst(s);
 		}
 
 		public Object visit(TensePresent p, LoanParser arg) {
-			Stm s = wrapTerm(p.getComponents().get(0).accept(this, arg));
+			Stm s = wrapTerm(p.components.get(0).accept(this, arg));
 			return new StmPres(s);
 		}
 

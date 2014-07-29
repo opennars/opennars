@@ -49,7 +49,7 @@ public class LanguageFormatter {
      */
     private static String formatList(String list, String language) {
 
-	StringBuffer result = new StringBuffer();
+	StringBuilder result = new StringBuilder();
 	String[] ar = list.split(" ");
 	for (int i = 0; i < ar.length; i++) {
 	    if (i == 0) 
@@ -84,7 +84,7 @@ public class LanguageFormatter {
 	    return word;
 	else
 	    if (language.equals("ar")) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append('?');
 		for (int i = 1; i < word.length(); i++) {
 		    switch (word.charAt(i)) {
@@ -289,7 +289,7 @@ public class LanguageFormatter {
 	    */
 	    return "";
 	}
-	StringBuffer result = new StringBuffer();
+	StringBuilder result = new StringBuilder();
 	String ans = null;
 	Formula f = new Formula();
 	f.read(stmt);
@@ -475,7 +475,7 @@ public class LanguageFormatter {
 	String SUCHTHAT = getKeyword("such that",language);
 	if ( ! Formula.isNonEmptyString(SUCHTHAT) ) { SUCHTHAT = SOTHAT; }
 
-	StringBuffer sb = new StringBuffer();
+	StringBuilder sb = new StringBuilder();
 
 	if (pred.equalsIgnoreCase("=>")) {
 	    if ( isNegMode ) {
@@ -774,7 +774,7 @@ public class LanguageFormatter {
 		    boolean isRange = false;
 		    boolean[] argsToPrint = new boolean[ flen ];
 		    int nArgsSet = -1;
-		    StringBuffer sb = new StringBuffer();
+		    StringBuilder sb = new StringBuilder();
 		    while ( (p1 < slen) && (p2 >= 0) && (p2 < slen) ) {
 			sb.append( strFormat.substring( p1, p2 ) );
 			p1 = ( p2 + 2 );
@@ -962,7 +962,7 @@ public class LanguageFormatter {
 	}
 	/*
 	if ( Formula.isNonEmptyString(nlFormat) ) {
-	    StringBuffer sb = new StringBuffer( nlFormat );
+	    StringBuilder sb = new StringBuilder( nlFormat );
 	    sb.append( "." );
 	    char ch = sb.charAt( 0 );
 	    if ( Character.isLowerCase(ch) ) {

@@ -1,8 +1,8 @@
 package nars.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import nars.entity.Sentence;
@@ -15,11 +15,7 @@ import nars.io.TextInput;
 import nars.io.TextPerception;
 import nars.storage.Memory;
 
-/**
- * Non-Axiomatic Reasoner (core class)
- * <p>
- * An instantation of a NARS logic processor, useful for batch functionality; 
-*/
+
 public class NAR implements Runnable, Output {
 
     
@@ -38,16 +34,15 @@ public class NAR implements Runnable, Output {
      * The memory of the reasoner
      */
     public final Memory memory;
-    /**
-     * The addInput channels of the reasoner
-     */
+    
+    
+    /** The addInput channels of the reasoner     */
     protected final List<Input> inputChannels;
     
+    /** Stores a list of input channels to be removed. */
     private final List<Input> deadInputs = new ArrayList();
 
-    /**
-     * The output channels of the reasoner
-     */
+    /** The output channels of the reasoner     */
     protected List<Output> outputChannels;
     
         
@@ -106,8 +101,8 @@ public class NAR implements Runnable, Output {
         textPerception = new TextPerception(this);
         
         //needs to be concurrent in case NARS makes changes to the channels while running
-        inputChannels = new CopyOnWriteArrayList<>();
-        outputChannels = new CopyOnWriteArrayList<>();
+        inputChannels = Collections.synchronizedList(new ArrayList<Input>());
+        outputChannels = Collections.synchronizedList(new ArrayList<Output>());
     }
 
     /**

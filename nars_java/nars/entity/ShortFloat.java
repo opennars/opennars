@@ -75,6 +75,10 @@ public class ShortFloat implements Cloneable {
         }
     }
 
+    public final void setValue(final short s) {
+        this.value = s;
+    }
+    
     /**
      * Compare two ShortFloat values
      * @param that The other value to be compared

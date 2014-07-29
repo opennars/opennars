@@ -52,8 +52,8 @@ public class Operation extends Inheritance {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    public Operation(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short complexity, final int nameHash) {
-        super(n, cs, con, hasVar, complexity, nameHash);
+    public Operation(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short complexity) {
+        super(n, cs, con, hasVar, complexity);
     }
 
     /**
@@ -63,7 +63,7 @@ public class Operation extends Inheritance {
      */
     @Override
     public Object clone() {
-        return new Operation(name, cloneList(components), isConstant(), containVar(), getComplexity(), hashCode());
+        return new Operation(name, cloneList(components), isConstant(), containVar(), getComplexity());
     }
 
     /**
