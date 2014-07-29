@@ -15,6 +15,13 @@ import nars.inference.BudgetFunctions;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import static nars.io.Symbols.*;
+import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_OPENER;
+import static nars.io.Symbols.InnateOperator.SET_EXT_CLOSER;
+import static nars.io.Symbols.InnateOperator.SET_INT_CLOSER;
+import static nars.io.Symbols.InnateOperator.SET_INT_OPENER;
+import static nars.io.Symbols.InnateOperator.STATEMENT_CLOSER;
+import static nars.io.Symbols.InnateOperator.STATEMENT_OPENER;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.SetExt;
@@ -94,20 +101,21 @@ public class TextPerception {
         }
         
     }
-    
+        
     
     private static void initDefaultParsers() {
         //integer, # of cycles to step
         defaultParsers.add(new TextReaction() {
-            final static String inputPrefix = Symbols.INPUT_LINE + ':';                    
-
+            final String spref = Symbols.INPUT_LINE_PREFIX + ':';
+            
             @Override
             public boolean react(NAR nar, String input, TextReaction lastHandler) {
                 try {
                     input = input.trim();
                     
-                    if (input.startsWith(inputPrefix)) {
-                        input = input.substring(inputPrefix.length());
+                    
+                    if (input.startsWith(spref)) {
+                        input = input.substring(spref.length());
                     }
                     input = input.trim();
                     
@@ -267,16 +275,17 @@ public class TextPerception {
         int i = buffer.indexOf(String.valueOf(PREFIX_MARK));
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
-            switch (prefix) {
-                case OUTPUT_LINE:
-                    return null;
-                case INPUT_LINE:
-                    buffer.delete(0, i + 1);
-                    break;
+            if (prefix.equals(INPUT_LINE_PREFIX)) {
+                buffer.delete(0, i + 1);                
             }
+            else if (prefix.equals(OUTPUT_LINE_PREFIX)) {
+                //ignore outputs
+                return null;                
+            }            
         }
         char c = buffer.charAt(buffer.length() - 1);
         if (c == STAMP_CLOSER) {
+            //ignore stamp
             int j = buffer.lastIndexOf(String.valueOf(STAMP_OPENER));
             buffer.delete(j - 1, buffer.length());
         }
@@ -487,9 +496,9 @@ public class TextPerception {
      * Top-level method that react a Term in general, which may recursively call
  itself.
      * <p>
-     * There are 5 valid cases: 1. (Op, A1, ..., An) is a CompoundTerm if Op is
-     * a built-in operator 2. {A1, ..., An} is an SetExt; 3. [A1, ..., An] is an
-     * SetInt; 4. <T1 Re T2> is a Statement (including higher-order Statement);
+ There are 5 valid cases: 1. (Op, A1, ..., An) is a CompoundTerm if Op is
+ a built-in getOperator 2. {A1, ..., An} is an SetExt; 3. [A1, ..., An] is an
+ SetInt; 4. <T1 Re T2> is a Statement (including higher-order Statement);
      * 5. otherwise it is a simple term.
      *
      * @param s0 the String to be parsed
@@ -498,46 +507,56 @@ public class TextPerception {
      */
     public static Term parseTerm(String s0, Memory memory) throws InvalidInputException {
         String s = s0.trim();
+        
         try {
+            
             if (s.length() == 0) {
                 throw new InvalidInputException("missing content");
             }
-            Term t = memory.nameToTerm(s);    // existing constant or operator
+            
+            Term t = memory.nameToTerm(s);    // existing constant or getOperator
             if (t != null) {
                 return t;
-            }                           // existing Term
+            }                           
+
+            // existing Term                
             int index = s.length() - 1;
             char first = s.charAt(0);
             char last = s.charAt(index);
-            switch (first) {
-                case COMPOUND_TERM_OPENER:
-                    if (last == COMPOUND_TERM_CLOSER) {
-                        return parseCompoundTerm(s.substring(1, index), memory);
-                    } else {
-                        throw new InvalidInputException("missing CompoundTerm closer");
-                    }
-                case SET_EXT_OPENER:
-                    if (last == SET_EXT_CLOSER) {
-                        return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
-                    } else {
-                        throw new InvalidInputException("missing ExtensionSet closer");
-                    }
-                case SET_INT_OPENER:
-                    if (last == SET_INT_CLOSER) {
-                        return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
-                    } else {
-                        throw new InvalidInputException("missing IntensionSet closer");
-                    }
-                case STATEMENT_OPENER:
-                    if (last == STATEMENT_CLOSER) {
-                        return parseStatement(s.substring(1, index), memory);
-                    } else {
-                        throw new InvalidInputException("missing Statement closer");
-                    }
-                default:
-                    return parseAtomicTerm(s);
+            
+            InnateOperator opener = Symbols.getOpener(first);
+            if (opener!=null) {
+                switch (opener) {
+                    case COMPOUND_TERM_OPENER:
+                        if (last == COMPOUND_TERM_CLOSER.ch) {
+                           return parseCompoundTerm(s.substring(1, index), memory);
+                        } else {
+                            throw new InvalidInputException("missing CompoundTerm closer");
+                        }
+                    case SET_EXT_OPENER:
+                        if (last == SET_EXT_CLOSER.ch) {
+                            return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
+                        } else {
+                            throw new InvalidInputException("missing ExtensionSet closer");
+                        }                    
+                    case SET_INT_OPENER:
+                        if (last == SET_INT_CLOSER.ch) {
+                            return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
+                        } else {
+                            throw new InvalidInputException("missing IntensionSet closer");
+                        }   
+                    case STATEMENT_OPENER:
+                        if (last == STATEMENT_CLOSER.ch) {
+                            return parseStatement(s.substring(1, index), memory);
+                        } else {
+                            throw new InvalidInputException("missing Statement closer");
+                        }
+                }
             }
             
+            //if no opener, parse the term            
+            return parseAtomicTerm(s);
+
         } catch (InvalidInputException e) {
             throw new InvalidInputException(" !!! INVALID INPUT: parseTerm: " + s + " --- " + e.getMessage());
         }
@@ -597,9 +616,9 @@ public class TextPerception {
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i), memory);
         Term predicate = parseTerm(s.substring(i + 3), memory);
-        Statement t = Statement.make(Symbols.opRelation(relation), subject, predicate, memory);
+        Statement t = Statement.make(Symbols.getRelation(relation), subject, predicate, memory);
         if (t == null) {
-            throw new InvalidInputException("invalid statement: statement unable to create: " + Symbols.operator(relation) + " " + subject + " " + predicate);
+            throw new InvalidInputException("invalid statement: statement unable to create: " + Symbols.getOperator(relation) + " " + subject + " " + predicate);
         }
         return t;
     }
@@ -623,7 +642,7 @@ public class TextPerception {
         }
         
         String op = s.substring(0, firstSeparator).trim();
-        InnateOperator oInnate = Symbols.operator(op);
+        InnateOperator oInnate = Symbols.getOperator(op);
         Operator oRegistered = memory.getOperator(op);
         
         if ((oRegistered==null) && (oInnate == null)) {
@@ -700,9 +719,9 @@ public class TextPerception {
     }
 
     /**
-     * locate the top-level opRelation in a statement
+     * locate the top-level getRelation in a statement
      *
-     * @return the index of the top-level opRelation
+     * @return the index of the top-level getRelation
      * @param s The String to be parsed
      */
     private static int topRelation(final String s) {      // need efficiency improvement
@@ -732,13 +751,11 @@ public class TextPerception {
      */
     private static boolean isOpener(final String s, final int i) {
         char c = s.charAt(i);
-        boolean b = (c == COMPOUND_TERM_OPENER)
-                || (c == SET_EXT_OPENER)
-                || (c == SET_INT_OPENER)
-                || (c == STATEMENT_OPENER);
-        if (!b) {
+        
+        boolean b = (Symbols.getOpener(c)!=null);
+        if (!b)
             return false;
-        }
+        
         if (i + 3 <= s.length() && Symbols.isRelation(s.substring(i, i + 3))) {
             return false;
         }
@@ -754,13 +771,11 @@ public class TextPerception {
      */
     private static boolean isCloser(String s, int i) {
         char c = s.charAt(i);
-        boolean b = (c == COMPOUND_TERM_CLOSER)
-                || (c == SET_EXT_CLOSER)
-                || (c == SET_INT_CLOSER)
-                || (c == STATEMENT_CLOSER);
-        if (!b) {
+
+        boolean b = (Symbols.getCloser(c)!=null);
+        if (!b)
             return false;
-        }
+        
         if (i >= 2 && Symbols.isRelation(s.substring(i - 2, i + 1))) {
             return false;
         }

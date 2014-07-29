@@ -22,10 +22,11 @@ package nars.io;
 
 import java.util.HashMap;
 import java.util.Map;
+import nars.io.Output.ERR;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
 
-/**
- * The ASCII symbols used in I/O.
- */
+
 public class Symbols {
 
     /* sentence type and delimitors */
@@ -50,16 +51,6 @@ public class Symbols {
     public static final char TRUTH_VALUE_MARK = '%';
     public static final char VALUE_SEPARATOR = ';';
 
-    /* CompountTerm delimitors, must use 4 different pairs */
-    public static final char COMPOUND_TERM_OPENER = '(';
-    public static final char COMPOUND_TERM_CLOSER = ')';
-    public static final char STATEMENT_OPENER = '<';
-    public static final char STATEMENT_CLOSER = '>';
-    public static final char SET_EXT_OPENER = '{';
-    public static final char SET_EXT_CLOSER = '}';
-    public static final char SET_INT_OPENER = '[';
-    public static final char SET_INT_CLOSER = ']';
-    
     /* special characters in argument list */
     public static final char ARGUMENT_SEPARATOR = ',';
     public static final char IMAGE_PLACE_HOLDER = '_';
@@ -69,8 +60,9 @@ public class Symbols {
 
     public static final char OPERATOR_PREFIX = '^';
 
+
     
-    public  enum InnateOperator {
+    public enum InnateOperator {
         
         /* CompountTerm operators, length = 1 */
         INTERSECTION_EXT("&", false, true),
@@ -89,12 +81,13 @@ public class Symbols {
         PARALLEL("&|", false, true),        
         
         
-        /* Set Int/Ext Opener/Closer */
+        /* CompountTerm delimitors, must use 4 different pairs */
         SET_INT_OPENER("[", false, true),
         SET_INT_CLOSER("]", false, false),
         SET_EXT_OPENER("{", false, true),
-        SET_EXT_CLOSER("}", false, false),
+        SET_EXT_CLOSER("}", false, false),    
         
+        /* Syntactical, so is neither relation or innate */
         COMPOUND_TERM_OPENER("(", false, false),
         COMPOUND_TERM_CLOSER(")", false, false),
         STATEMENT_OPENER("<", false, false),
@@ -116,10 +109,13 @@ public class Symbols {
         EQUIVALENCE_WHEN("<|>", true);
 
         
-        /** string representation of this operator */
+        //-----------------------------------------------------
+        
+        
+        /** string representation of this getOperator */
         public final String string; 
         
-        /** character representation of this operator if string has length 1; else ch = 0 */
+        /** character representation of this getOperator if string has length 1; else ch = 0 */
         public final char ch;
         
         /** is relation? */
@@ -127,6 +123,12 @@ public class Symbols {
         
         /** "innate"? (according to the old CompoundTerm.isOperator() method) */
         public final boolean innate;
+        
+        /** opener? */
+        public final boolean opener;
+        
+        /** closer? */
+        public final boolean closer;
 
         private InnateOperator(String string) {
             this(string, false);
@@ -141,42 +143,15 @@ public class Symbols {
             this.relation = relation;
             this.innate = innate;
             this.ch = string.length() == 1 ? string.charAt(0) : 0;
+            
+            this.opener = name().endsWith("_OPENER");
+            this.closer = name().endsWith("_CLOSER");
         }
-                
+
         public String toString() { return string; }
                 
         
-    }
-    
-    /* CompountTerm operators, length = 1 */     
-    //@Deprecated public static final String INTERSECTION_EXT_OPERATOR = "&";
-    @Deprecated public static final char INTERSECTION_EXT_OPERATORc = '&';
-    //@Deprecated public static final String INTERSECTION_INT_OPERATOR = "|";
-    @Deprecated public static final char INTERSECTION_INT_OPERATORc = '|';
-    //@Deprecated public static final String DIFFERENCE_EXT_OPERATOR = "-";
-    @Deprecated public static final char DIFFERENCE_EXT_OPERATORc = '-';
-    //@Deprecated public static final String DIFFERENCE_INT_OPERATOR = "~";
-    @Deprecated public static final char DIFFERENCE_INT_OPERATORc = '~';
-    //@Deprecated public static final String PRODUCT_OPERATOR = "*";
-    @Deprecated public static final char PRODUCT_OPERATORc = '*';
-    //@Deprecated public static final String IMAGE_EXT_OPERATOR = "/";        
-    @Deprecated public static final char IMAGE_EXT_OPERATORc = '/';
-    //@Deprecated public static final String IMAGE_INT_OPERATOR = "\\";
-    @Deprecated public static final char IMAGE_INT_OPERATORc = '\\';
-    
-
-    /* CompoundStatement operators, length = 2 */
-    //@Deprecated public static final String NEGATION_OPERATOR = "--";
-    @Deprecated public static final char NEGATION_OPERATORc = '-';    
-    //@Deprecated public static final String DISJUNCTION_OPERATOR = "||";
-    @Deprecated public static final char DISJUNCTION_OPERATORc = '|';
-    //@Deprecated public static final String CONJUNCTION_OPERATOR = "&&";
-    @Deprecated public static final char CONJUNCTION_OPERATORc = '&';
-    @Deprecated public static final String SEQUENCE_OPERATOR = "&/";
-    @Deprecated public static final String PARALLEL_OPERATOR = "&|";
-    
-
-    
+    }    
 
     protected static final Map<String,InnateOperator> stringToOperator 
             = new HashMap(InnateOperator.values().length*2);    
@@ -184,49 +159,66 @@ public class Symbols {
             = new HashMap(InnateOperator.values().length*2);
             
     static {
+        //Setup InnateOperator String index hashtable 
         for (final InnateOperator r : InnateOperator.values())
             stringToOperator.put(r.toString(), r);
+        
+        //Setup InnateOperator Character index hashtable 
         for (final InnateOperator r : InnateOperator.values()) {
             char c = r.ch;
             if (c!=0)
                 charToOperator.put(c, r);
         }
-    }
-    
+    }    
 
-    public static InnateOperator operator(final char c) {
+    public static InnateOperator getOperator(final char c) {
         return charToOperator.get(c);
     }
     
-    public static InnateOperator operator(final String s) {
+    public static InnateOperator getOperator(final String s) {
         return stringToOperator.get(s);
     }
     
-    static InnateOperator opRelation(String s) {
-        //r = r.trim();
-        InnateOperator o = operator(s);
+    public static InnateOperator getRelation(final String s) {
+        InnateOperator o = getOperator(s);
         if (o == null) return null;
         if (o.relation)
             return o;
         return null;
     }
+
+    public static InnateOperator getOpener(final char c) {
+        InnateOperator o = getOperator(c);
+        if (o == null) return null;
+        if (o.opener)
+            return o;
+        return null;
+    }
+    
+    public static InnateOperator getCloser(final char c) {
+        InnateOperator o = getOperator(c);
+        if (o == null) return null;
+        if (o.closer)
+            return o;
+        return null;
+    }
     
     /**
-     * Check Statement opRelation symbol, called in StringPaser
+     * Check Statement getRelation symbol, called in StringPaser
      *
      * @param s0 The String to be checked
-     * @return if the given String is a opRelation symbol
+     * @return if the given String is a getRelation symbol
      */
     public static boolean isRelation(final String s) {
-        return opRelation(s)!=null;
+        return getRelation(s)!=null;
     }
     
     
 
     /* experience line prefix */
-    public static final String INPUT_LINE = "IN";
-    public static final String OUTPUT_LINE = "OUT";
-    public static final String ERROR_LINE = "ERR"; 
+    public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
+    public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
+    public static final String ERROR_LINE_PREFIX = ERR.class.getSimpleName();
 
     public static final char PREFIX_MARK = ':';
     public static final char COMMENT_MARK = '/';
@@ -257,7 +249,7 @@ public class Symbols {
 
     /*
     @Deprecated public static InnateOperator opInnate(final String op) {
-        InnateOperator i = operator(op);
+        InnateOperator i = getOperator(op);
         if (i == null) return null;
         
         final int length = op.length();

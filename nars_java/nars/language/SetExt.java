@@ -24,6 +24,8 @@ import java.util.*;
 
 import nars.io.Symbols;
 import nars.io.Symbols.InnateOperator;
+import static nars.io.Symbols.InnateOperator.SET_EXT_CLOSER;
+import static nars.io.Symbols.InnateOperator.SET_EXT_OPENER;
 import nars.storage.Memory;
 
 /**
@@ -98,7 +100,7 @@ public class SetExt extends CompoundTerm {
             return null;
         }
         final ArrayList<Term> argument = new ArrayList<Term>(set);
-        final String name = makeSetName(Symbols.SET_EXT_OPENER, argument, Symbols.SET_EXT_CLOSER);
+        final String name = makeSetName(SET_EXT_OPENER.ch, argument, SET_EXT_CLOSER.ch);
         final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new SetExt(argument);
     }
@@ -126,7 +128,7 @@ public class SetExt extends CompoundTerm {
      */
     @Override
     public String makeName() {
-        return makeSetName(Symbols.SET_EXT_OPENER, components, Symbols.SET_EXT_CLOSER);
+        return makeSetName(SET_EXT_OPENER.ch, components, SET_EXT_CLOSER.ch);
     }
 }
 

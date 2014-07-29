@@ -23,8 +23,9 @@ package nars.language;
 import java.util.ArrayList;
 import nars.inference.TemporalRules;
 
-import nars.io.Symbols;
 import nars.io.Symbols.InnateOperator;
+import static nars.io.Symbols.InnateOperator.STATEMENT_CLOSER;
+import static nars.io.Symbols.InnateOperator.STATEMENT_OPENER;
 import nars.storage.Memory;
 
 /**
@@ -195,11 +196,11 @@ public abstract class Statement extends CompoundTerm {
         nameBuilder.ensureCapacity(length);
         
         return nameBuilder
-            .append(Symbols.STATEMENT_OPENER)
+            .append(STATEMENT_OPENER.ch)
             .append(subjectName)
             .append(' ').append(relation).append(' ')
             .append(predicateName)
-            .append(Symbols.STATEMENT_CLOSER)
+            .append(STATEMENT_CLOSER.ch)
             .toString();
     }
     

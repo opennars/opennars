@@ -27,6 +27,8 @@ import nars.storage.*;
 import nars.io.Symbols;
 import nars.io.Symbols.InnateOperator;
 import nars.inference.TemporalRules;
+import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.make;
 import static nars.language.CompoundTerm.makeCompoundName;
 
@@ -346,7 +348,7 @@ public abstract class CompoundTerm extends Term {
         final int sizeEstimate = 12 * arg.size();
         
         final StringBuilder nameBuilder = new StringBuilder(sizeEstimate)
-            .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
+            .append(COMPOUND_TERM_OPENER.ch).append(op.toString());
             
         for (int i = 0; i < arg.size(); i++) {
             final Term t = arg.get(i);
@@ -356,7 +358,7 @@ public abstract class CompoundTerm extends Term {
             }
             nameBuilder.append(t.getName());
         }
-        nameBuilder.append(Symbols.COMPOUND_TERM_CLOSER);
+        nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
                 
         return nameBuilder.toString();
     }
@@ -405,7 +407,7 @@ public abstract class CompoundTerm extends Term {
         final int sizeEstimate = 12 * arg.size() + 2;
         
         StringBuilder name = new StringBuilder(sizeEstimate)
-            .append(Symbols.COMPOUND_TERM_OPENER)
+            .append(COMPOUND_TERM_OPENER.ch)
             .append(op)
             .append(Symbols.ARGUMENT_SEPARATOR)
             .append(arg.get(relationIndex).getName());
@@ -418,7 +420,7 @@ public abstract class CompoundTerm extends Term {
                 name.append(arg.get(i).getName());
             }
         }
-        name.append(Symbols.COMPOUND_TERM_CLOSER);
+        name.append(COMPOUND_TERM_CLOSER.ch);
         return name.toString();
     }
 

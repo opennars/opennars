@@ -24,6 +24,8 @@ import nars.language.*;
 import java.util.ArrayList;
 import java.util.List;
 import nars.io.Symbols;
+import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_OPENER;
 
 import nars.storage.Memory;
 
@@ -89,14 +91,14 @@ public class Operation extends Inheritance {
 
     public static String makeName(final String op, List<Term> arg, Memory memory) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
-                .append(Symbols.COMPOUND_TERM_OPENER).append(op);
+                .append(COMPOUND_TERM_OPENER.ch).append(op);
         
         for (final Term t : arg) {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             nameBuilder.append(t.getName());
         }
         
-        nameBuilder.append(Symbols.COMPOUND_TERM_CLOSER);
+        nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
         return nameBuilder.toString();
     }
 }
