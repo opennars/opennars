@@ -15,13 +15,13 @@ import nars.inference.BudgetFunctions;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import static nars.io.Symbols.*;
-import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_OPENER;
-import static nars.io.Symbols.InnateOperator.SET_EXT_CLOSER;
-import static nars.io.Symbols.InnateOperator.SET_INT_CLOSER;
-import static nars.io.Symbols.InnateOperator.SET_INT_OPENER;
-import static nars.io.Symbols.InnateOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.InnateOperator.STATEMENT_OPENER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
+import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
+import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
+import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
+import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.SetExt;
@@ -29,8 +29,8 @@ import nars.language.SetInt;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.operation.Operation;
-import nars.operation.Operator;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
@@ -527,7 +527,7 @@ public class TextPerception {
             char first = s.charAt(0);
             char last = s.charAt(index);
             
-            InnateOperator opener = Symbols.getOpener(first);
+            NativeOperator opener = Symbols.getOpener(first);
             if (opener!=null) {
                 switch (opener) {
                     case COMPOUND_TERM_OPENER:
@@ -645,7 +645,7 @@ public class TextPerception {
         }
         
         String op = s.substring(0, firstSeparator).trim();
-        InnateOperator oInnate = Symbols.getOperator(op);
+        NativeOperator oInnate = Symbols.getOperator(op);
         Operator oRegistered = memory.getOperator(op);
         
         if ((oRegistered==null) && (oInnate == null)) {

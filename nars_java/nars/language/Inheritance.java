@@ -22,9 +22,9 @@ package nars.language;
 
 import java.util.ArrayList;
 
-import nars.io.Symbols.InnateOperator;
-import nars.operation.Operation;
-import nars.operation.Operator;
+import nars.io.Symbols.NativeOperator;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
@@ -78,7 +78,7 @@ public class Inheritance extends Statement {
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
             name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).components, memory);
         } else {
-            name = makeStatementName(subject, InnateOperator.INHERITANCE, predicate);
+            name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
         }
  
         Term t = memory.nameToTerm(name);
@@ -86,12 +86,12 @@ public class Inheritance extends Statement {
             return (Inheritance) t;
         }
         
-        ArrayList<Term> argument = argumentsToList(subject, predicate);
+        ArrayList<Term> arguments = argumentsToList(subject, predicate);
         
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            return new Operation(argument);
+            return new Operation(name, arguments);
         } else {
-            return new Inheritance(argument);
+            return new Inheritance(arguments);
         }
          
     }
@@ -100,8 +100,8 @@ public class Inheritance extends Statement {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public InnateOperator operator() {
-        return InnateOperator.INHERITANCE;
+    public NativeOperator operator() {
+        return NativeOperator.INHERITANCE;
     }
 
 }

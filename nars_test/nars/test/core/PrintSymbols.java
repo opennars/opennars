@@ -1,9 +1,7 @@
 package nars.test.core;
 
 import nars.io.Symbols;
-import nars.io.Symbols.InnateOperator;
-
-/**
+import nars.io.Symbols.NativeOperator;/**
  *
  * @author me
  */
@@ -17,7 +15,7 @@ public class PrintSymbols {
         int symbols = 0;
         
         System.out.println("string" + "\t\t" + "rel?" + "\t\t" + "innate?" + "\t\t" + "opener?" + "\t\t" + "closer?");
-        for (InnateOperator i : Symbols.InnateOperator.values()) {
+        for (NativeOperator i : Symbols.NativeOperator.values()) {
             System.out.println(i.string + "\t\t" + i.relation + "\t\t" + i.innate + "\t\t" + i.opener + "\t\t" + i.closer); 
             if (i.relation) relations++;
             if (i.innate) innates++;

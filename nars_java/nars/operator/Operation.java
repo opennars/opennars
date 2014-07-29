@@ -18,14 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.operation;
+package nars.operator;
 
 import nars.language.*;
 import java.util.ArrayList;
 import java.util.List;
 import nars.io.Symbols;
-import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_OPENER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 import nars.storage.Memory;
 
@@ -40,8 +40,9 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    public Operation(ArrayList<Term> arg) {
+    public Operation(String name, ArrayList<Term> arg) {
         super(arg);
+        setName(name);
     }
 
     /**
@@ -52,7 +53,7 @@ public class Operation extends Inheritance {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    public Operation(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short complexity) {
+    protected Operation(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short complexity) {
         super(n, cs, con, hasVar, complexity);
     }
 
@@ -73,23 +74,24 @@ public class Operation extends Inheritance {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Inheritance make(final Operator pre, final ArrayList<Term> arg, final Memory memory) {
-        String name = makeName(pre.getName(), arg, memory);
-    
-        Term t = memory.nameToTerm(name);
-        
-        if (t != null) {
-            return (Inheritance) t;
+    public static Operation make(final String op, final ArrayList<Term> arg, final Memory memory) {
+        Operator oper = memory.getOperator(op);
+        if (oper == null) {
+            return null;
         }
-        
-        Term sub = Product.make(arg, memory);
-        
-        Inheritance inh = Operation.make(sub, pre, memory);
-        
-        return inh;
+        String name = makeName(op, arg, memory);
+        Term t = memory.nameToTerm(name);
+        if (t != null) {
+            return (Operation) t;
+        }
+        ArrayList<Term> opArg = new ArrayList<>();
+        Term list = Product.make(arg, memory);
+        opArg.add(list);
+        opArg.add(oper);
+        return new Operation(name, opArg);
     }
 
-    public static String makeName(final String op, List<Term> arg, Memory memory) {
+    public static String makeName(final String op, final List<Term> arg, final Memory memory) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         

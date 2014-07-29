@@ -43,7 +43,7 @@ import nars.inference.TemporalRules;
 import nars.io.Output.OUT;
 import nars.language.Negation;
 import nars.language.Term;
-import nars.operation.Operator;
+import nars.operator.Operator;
 import nars.util.XORShiftRandom;
 
 

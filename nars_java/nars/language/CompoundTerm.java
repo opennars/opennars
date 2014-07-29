@@ -25,10 +25,10 @@ import java.util.*;
 import nars.entity.*;
 import nars.storage.*;
 import nars.io.Symbols;
-import nars.io.Symbols.InnateOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.inference.TemporalRules;
-import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.InnateOperator.COMPOUND_TERM_OPENER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.make;
 import static nars.language.CompoundTerm.makeCompoundName;
 
@@ -63,7 +63,7 @@ public abstract class CompoundTerm extends Term {
     /**
      * Abstract method to get the operator of the compound
      */
-    public abstract InnateOperator operator();
+    public abstract NativeOperator operator();
 
     /**
      * Abstract clone method
@@ -269,7 +269,7 @@ public abstract class CompoundTerm extends Term {
      * @param memory Reference to the memory
      * @return A compound term or null
      */    
-    public static Term make(final InnateOperator op, final ArrayList<Term> arg, final Memory memory) {
+    public static Term make(final NativeOperator op, final ArrayList<Term> arg, final Memory memory) {
         switch (op) {
             case SET_EXT_OPENER: 
                 return SetExt.make(arg, memory);
@@ -345,7 +345,7 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of components
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final InnateOperator op, final List<Term> arg) {
+    protected static String makeCompoundName(final NativeOperator op, final List<Term> arg) {
         final int sizeEstimate = 12 * arg.size();
         
         final StringBuilder nameBuilder = new StringBuilder(sizeEstimate)
@@ -404,7 +404,7 @@ public abstract class CompoundTerm extends Term {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(final InnateOperator op, final List<Term> arg, final int relationIndex) {
+    protected static String makeImageName(final NativeOperator op, final List<Term> arg, final int relationIndex) {
         final int sizeEstimate = 12 * arg.size() + 2;
         
         StringBuilder name = new StringBuilder(sizeEstimate)

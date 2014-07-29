@@ -23,9 +23,9 @@ package nars.language;
 import java.util.ArrayList;
 import nars.inference.TemporalRules;
 
-import nars.io.Symbols.InnateOperator;
-import static nars.io.Symbols.InnateOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.InnateOperator.STATEMENT_OPENER;
+import nars.io.Symbols.NativeOperator;
+import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
+import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 import nars.storage.Memory;
 
 /**
@@ -73,7 +73,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement make(final InnateOperator o, final Term subject, final Term predicate, final Memory memory) {
+    public static Statement make(final NativeOperator o, final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
@@ -184,7 +184,7 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final InnateOperator relation, final Term predicate, StringBuilder nameBuilder) {
+    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate, StringBuilder nameBuilder) {
         final String subjectName = subject.getName();
         final String predicateName = predicate.getName();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
@@ -204,7 +204,7 @@ public abstract class Statement extends CompoundTerm {
             .toString();
     }
     
-    protected static String makeStatementName(final Term subject, final InnateOperator relation, final Term predicate) {
+    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
         return makeStatementName(subject, relation, predicate, null);
     }
 
