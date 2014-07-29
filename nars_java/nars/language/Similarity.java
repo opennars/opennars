@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.ArrayList;
 
-import nars.io.Symbols.InnateOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
@@ -73,7 +73,7 @@ public class Similarity extends Statement {
         if (subject.compareTo(predicate) > 0) {
             return make(predicate, subject, memory);
         }
-        String name = makeStatementName(subject, InnateOperator.SIMILARITY, predicate);
+        String name = makeStatementName(subject, NativeOperator.SIMILARITY, predicate);
         Term t = memory.nameToTerm(name);
         if (t != null) {
             return (Similarity) t;
@@ -87,8 +87,8 @@ public class Similarity extends Statement {
      * @return the operator of the term
      */
     @Override
-    public InnateOperator operator() {
-        return InnateOperator.SIMILARITY;
+    public NativeOperator operator() {
+        return NativeOperator.SIMILARITY;
     }
 
     /**

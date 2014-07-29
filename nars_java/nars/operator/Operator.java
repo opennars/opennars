@@ -19,7 +19,7 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.operation;
+package nars.operator;
 
 import java.util.*;
 

@@ -27,7 +27,7 @@ import java.util.Arrays;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.language.Statement;
-import nars.operation.Operator;
+import nars.operator.Operator;
 
 /**
  * To read and write experience as Task streams

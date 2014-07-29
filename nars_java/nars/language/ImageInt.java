@@ -23,7 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
-import nars.io.Symbols.InnateOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
@@ -149,7 +149,7 @@ public class ImageInt extends CompoundTerm {
      * @return the Term generated from the arguments
      */
     public static Term make(final ArrayList<Term> argument, final short index, final Memory memory) {
-        String name = makeImageName(InnateOperator.IMAGE_INT, argument, index);
+        String name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
         Term t = memory.nameToTerm(name);
         return (t != null) ? t : new ImageInt(name, argument, index);
     }
@@ -187,14 +187,14 @@ public class ImageInt extends CompoundTerm {
      */
     @Override
     public String makeName() {
-        return makeImageName(InnateOperator.IMAGE_INT, components, relationIndex);
+        return makeImageName(NativeOperator.IMAGE_INT, components, relationIndex);
     }
 
     /**
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public InnateOperator operator() {
-        return InnateOperator.IMAGE_INT;
+    public NativeOperator operator() {
+        return NativeOperator.IMAGE_INT;
     }
 }

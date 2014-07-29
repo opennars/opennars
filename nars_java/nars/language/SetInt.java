@@ -22,9 +22,9 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols.InnateOperator;
-import static nars.io.Symbols.InnateOperator.SET_INT_CLOSER;
-import static nars.io.Symbols.InnateOperator.SET_INT_OPENER;
+import nars.io.Symbols.NativeOperator;
+import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
+import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
 import nars.storage.Memory;
 
 /**
@@ -108,8 +108,8 @@ public class SetInt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public InnateOperator operator() {
-        return InnateOperator.SET_INT_OPENER;
+    public NativeOperator operator() {
+        return NativeOperator.SET_INT_OPENER;
     }
 
     /**

@@ -23,9 +23,9 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
-import nars.io.Symbols.InnateOperator;
-import static nars.io.Symbols.InnateOperator.SET_EXT_CLOSER;
-import static nars.io.Symbols.InnateOperator.SET_EXT_OPENER;
+import nars.io.Symbols.NativeOperator;
+import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
+import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 import nars.storage.Memory;
 
 /**
@@ -109,8 +109,8 @@ public class SetExt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public InnateOperator operator() {
-        return InnateOperator.SET_EXT_OPENER;
+    public NativeOperator operator() {
+        return NativeOperator.SET_EXT_OPENER;
     }
 
     /**

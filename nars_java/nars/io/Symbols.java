@@ -62,7 +62,7 @@ public class Symbols {
 
 
     
-    public enum InnateOperator {
+    public enum NativeOperator {
         
         /* CompountTerm operators, length = 1 */
         INTERSECTION_EXT("&", false, true),
@@ -130,15 +130,15 @@ public class Symbols {
         /** closer? */
         public final boolean closer;
 
-        private InnateOperator(String string) {
+        private NativeOperator(String string) {
             this(string, false);
         }
         
-        private InnateOperator(String string, boolean relation) {
+        private NativeOperator(String string, boolean relation) {
             this(string, relation, !relation);
         }
 
-        private InnateOperator(String string, boolean relation, boolean innate) {            
+        private NativeOperator(String string, boolean relation, boolean innate) {            
             this.string = string;
             this.relation = relation;
             this.innate = innate;
@@ -153,50 +153,50 @@ public class Symbols {
         
     }    
 
-    protected static final Map<String,InnateOperator> stringToOperator 
-            = new HashMap(InnateOperator.values().length * 2);
-    protected static final Map<Character,InnateOperator> charToOperator 
-            = new HashMap(InnateOperator.values().length * 2);
+    protected static final Map<String,NativeOperator> stringToOperator 
+            = new HashMap(NativeOperator.values().length * 2);
+    protected static final Map<Character,NativeOperator> charToOperator 
+            = new HashMap(NativeOperator.values().length * 2);
             
     static {
-        //Setup InnateOperator String index hashtable 
-        for (final InnateOperator r : InnateOperator.values())
+        //Setup NativeOperator String index hashtable 
+        for (final NativeOperator r : NativeOperator.values())
             stringToOperator.put(r.toString(), r);
         
-        //Setup InnateOperator Character index hashtable 
-        for (final InnateOperator r : InnateOperator.values()) {
+        //Setup NativeOperator Character index hashtable 
+        for (final NativeOperator r : NativeOperator.values()) {
             char c = r.ch;
             if (c!=0)
                 charToOperator.put(c, r);
         }
     }    
 
-    public static InnateOperator getOperator(final char c) {
+    public static NativeOperator getOperator(final char c) {
         return charToOperator.get(c);
     }
     
-    public static InnateOperator getOperator(final String s) {
+    public static NativeOperator getOperator(final String s) {
         return stringToOperator.get(s);
     }
     
-    public static InnateOperator getRelation(final String s) {
-        InnateOperator o = getOperator(s);
+    public static NativeOperator getRelation(final String s) {
+        NativeOperator o = getOperator(s);
         if (o == null) return null;
         if (o.relation)
             return o;
         return null;
     }
 
-    public static InnateOperator getOpener(final char c) {
-        InnateOperator o = getOperator(c);
+    public static NativeOperator getOpener(final char c) {
+        NativeOperator o = getOperator(c);
         if (o == null) return null;
         if (o.opener)
             return o;
         return null;
     }
     
-    public static InnateOperator getCloser(final char c) {
-        InnateOperator o = getOperator(c);
+    public static NativeOperator getCloser(final char c) {
+        NativeOperator o = getOperator(c);
         if (o == null) return null;
         if (o.closer)
             return o;
@@ -248,8 +248,8 @@ public class Symbols {
 
 
     /*
-    @Deprecated public static InnateOperator opInnate(final String op) {
-        InnateOperator i = getOperator(op);
+    @Deprecated public static NativeOperator opInnate(final String op) {
+        NativeOperator i = getOperator(op);
         if (i == null) return null;
         
         final int length = op.length();

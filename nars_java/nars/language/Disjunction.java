@@ -23,7 +23,7 @@ package nars.language;
 import java.util.*;
 
 import nars.io.Symbols;
-import nars.io.Symbols.InnateOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /** 
@@ -122,7 +122,7 @@ public class Disjunction extends CompoundTerm {
             return set.first();
         }                         // special case: single component
         ArrayList<Term> argument = new ArrayList<>(set);
-        String name = makeCompoundName(Symbols.InnateOperator.DISJUNCTION, argument);
+        String name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
         Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Disjunction(argument);
     }
@@ -132,8 +132,8 @@ public class Disjunction extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public InnateOperator operator() {
-        return InnateOperator.DISJUNCTION;
+    public NativeOperator operator() {
+        return NativeOperator.DISJUNCTION;
     }
 
     /**
