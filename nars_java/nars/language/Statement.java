@@ -57,6 +57,12 @@ public abstract class Statement extends CompoundTerm {
     protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
+    
+    
+    protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i, int nameHash) {
+        super(n, cs, con, hasVar, i, nameHash);
+    }
+
 
     /**
      * Make a Statement from String, called by StringParser

@@ -54,7 +54,7 @@ public abstract class CompoundTerm extends Term {
     private boolean isConstant;
     
     /** Whether contains a variable */
-    private boolean containsVar;
+    private boolean hasVar;
 
 
 
@@ -84,10 +84,24 @@ public abstract class CompoundTerm extends Term {
      */
     protected CompoundTerm(final String name, final ArrayList<Term> components, final boolean isConstant, final short complexity) {
         super(name);
-        this.components = ensureValidComponents(components);
+        this.components = components; //ensureValidComponents(components);
         this.isConstant = isConstant;
         this.complexity = complexity;
     }
+
+    /**
+     * Similar to other constructors, except it does not invoke super(name) to avoid recomputing hashcode and containsVar.  
+     * This should perform better than constructors that invoke super constructor.
+     */
+    protected CompoundTerm(final String name, final ArrayList<Term> components, final boolean isConstant, final boolean containsVar, final short complexity, int nameHash) {        
+        this.name = name;
+        this.components = components; //ensureValidComponents(components);
+        this.hasVar = containsVar;
+        this.isConstant = isConstant;
+        this.complexity = complexity;
+        this.nameHash = nameHash;
+    }
+    
 
 
     /**
@@ -96,10 +110,10 @@ public abstract class CompoundTerm extends Term {
      * @param components Component list
      */
     protected CompoundTerm(final ArrayList<Term> components) {
-        this.components = ensureValidComponents(components);
+        this.components = components; //ensureValidComponents(components);
         this.complexity = calcComplexity();
         setName(makeName());        
-        this.isConstant = !containsVar;
+        this.isConstant = !hasVar;
     }
 
     private List<Term> ensureValidComponents(final List<Term> components) {
@@ -118,7 +132,7 @@ public abstract class CompoundTerm extends Term {
     @Override
     protected final boolean setName(String name) {
         if (super.setName(name)) {
-            this.containsVar = (name!=null) ? Variable.containVar(getName()) : false;
+            this.hasVar = (name!=null) ? Variable.containVar(getName()) : false;
             return true;
         }
         return false;
@@ -136,7 +150,7 @@ public abstract class CompoundTerm extends Term {
         this.components = ensureValidComponents(components);
         this.complexity = calcComplexity();
         setName(name);
-        this.isConstant = !containsVar;
+        this.isConstant = !hasVar;
     }
 
     
@@ -368,9 +382,13 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeCompoundName(final Operator op, final List<Term> arg) {
-        final StringBuilder nameBuilder = new StringBuilder(16  /* estimate */)
+        final int sizeEstimate = 12 * arg.size();
+        
+        final StringBuilder nameBuilder = new StringBuilder(sizeEstimate)
             .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
-        for (final Term t : arg) {
+            
+        for (int i = 0; i < arg.size(); i++) {
+            final Term t = arg.get(i);
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
                 ((CompoundTerm) t).setName(((CompoundTerm) t).makeName());
@@ -378,6 +396,7 @@ public abstract class CompoundTerm extends Term {
             nameBuilder.append(t.getName());
         }
         nameBuilder.append(Symbols.COMPOUND_TERM_CLOSER);
+                
         return nameBuilder.toString();
     }
 
@@ -390,7 +409,9 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeSetName(final char opener, final List<Term> arg, final char closer) {
-        StringBuilder name = new StringBuilder(16 /* estimate */)
+        final int sizeEstimate = 12 * arg.size() + 2;
+        
+        StringBuilder name = new StringBuilder(sizeEstimate)
             .append(opener);
 
         if (arg.size() == 0) { 
@@ -420,11 +441,13 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeImageName(final Operator op, final List<Term> arg, final int relationIndex) {
-        StringBuilder name = new StringBuilder(16 /* estimate */)
-        .append(Symbols.COMPOUND_TERM_OPENER)
-        .append(op)
-        .append(Symbols.ARGUMENT_SEPARATOR)
-        .append(arg.get(relationIndex).getName());
+        final int sizeEstimate = 12 * arg.size() + 2;
+        
+        StringBuilder name = new StringBuilder(sizeEstimate)
+            .append(Symbols.COMPOUND_TERM_OPENER)
+            .append(op)
+            .append(Symbols.ARGUMENT_SEPARATOR)
+            .append(arg.get(relationIndex).getName());
         
         for (int i = 0; i < arg.size(); i++) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
@@ -679,7 +702,7 @@ public abstract class CompoundTerm extends Term {
      * @return Whether the name contains a variable
      */
     public boolean containVar() {
-        return containsVar;
+        return hasVar;
     }
 
     /**
