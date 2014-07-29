@@ -126,8 +126,17 @@ public class Term implements Cloneable, Comparable<Term> {
         return 1;
     }
 
-    /** only method that should modify Term.name. also caches hashcode */
-    protected void setName(final String name) {
+    /** only method that should modify Term.name. also caches hashcode 
+     * @return whether the name was changed
+     */
+    protected boolean setName(final String name) {
+        if (this.name!=null) {
+            if (this.name.equals(name)) {
+                //name is the same
+                return false;
+            }
+        }
+        
         if (name!=null) {
             if (name.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
                 this.name = name.intern();
@@ -141,6 +150,7 @@ public class Term implements Cloneable, Comparable<Term> {
             this.name = null;
             this.nameHash = 7 + getClass().hashCode();
         }
+        return true;
     }
     
     /**
