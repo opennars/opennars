@@ -382,8 +382,9 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
     }
     
     protected Deque<E> newLevel() {
-        //return new LinkedList<E>();
         return new ArrayDeque<E>(1+capacity/levels);
+        //return new LinkedList<E>();  //not good
+        //return new FastTable<E>(); //slower than arraydeque        
     }
     
     /**
