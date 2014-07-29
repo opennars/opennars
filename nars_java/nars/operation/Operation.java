@@ -50,7 +50,7 @@ public class Operation extends Inheritance {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    public Operation(String n, ArrayList<Term> cs, boolean con, boolean hasVar, short complexity, int nameHash) {
+    public Operation(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short complexity, final int nameHash) {
         super(n, cs, con, hasVar, complexity, nameHash);
     }
 
@@ -89,11 +89,13 @@ public class Operation extends Inheritance {
 
     public static String makeName(final String op, List<Term> arg, Memory memory) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
-                .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
+                .append(Symbols.COMPOUND_TERM_OPENER).append(op);
+        
         for (final Term t : arg) {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             nameBuilder.append(t.getName());
         }
+        
         nameBuilder.append(Symbols.COMPOUND_TERM_CLOSER);
         return nameBuilder.toString();
     }

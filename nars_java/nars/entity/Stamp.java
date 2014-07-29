@@ -353,6 +353,9 @@ public class Stamp implements Cloneable {
         return Objects.hash(toSet(), creationTime, occurrenceTime);
     }
 
+    public Stamp cloneToTime(long newTime) {
+        return new Stamp(this, newTime);
+    }
 
     /**
      * Get the occurrenceTime of the truth-value
@@ -384,19 +387,56 @@ public class Stamp implements Cloneable {
         }
 
         long timeDiff = occurrenceTime - currentTime;
+        
         if (timeDiff > Parameters.DURATION) {
-            return Symbols.TENSE_FUTURE_space;
+            return Symbols.TENSE_FUTURE;
         } else if (timeDiff < -Parameters.DURATION) {
-            return  Symbols.TENSE_PAST_space;
+            return  Symbols.TENSE_PAST;
         } else {
-            return Symbols.TENSE_PRESENT_space;
+            return Symbols.TENSE_PRESENT;
         }
+        
     }
-
 
     public void setOccurrenceTime(final long time) {
         occurrenceTime = time;
     }
+
+
+    @Override
+    public String toString() {
+        final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
+
+        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        buffer.append(Symbols.STAMP_OPENER).append(creationTime);
+        if (occurrenceTime != ETERNAL) {
+            buffer.append('|').append(occurrenceTime);
+        }
+        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+        for (int i = 0; i < baseLength; i++) {
+            buffer.append(Long.toString(evidentialBase[i]));
+            if (i < (baseLength - 1)) {
+                buffer.append(Symbols.STAMP_SEPARATOR);
+            } else {
+                if (derivationChain.isEmpty()) {
+                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+                }
+            }
+        }
+        for (int i = 0; i < derivationChain.size(); i++) {
+            buffer.append(derivationChain.get(i));
+            if (i < (derivationChain.size() - 1)) {
+                buffer.append(Symbols.STAMP_SEPARATOR);
+            }
+        }
+        buffer.append(Symbols.STAMP_CLOSER).append(' ');
+
+        //this is for estimating an initial size of the stringbuffer
+        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
+        return buffer.toString();
+    }
+
+
 
     //String toStringCache = null; //holds pre-allocated string for toString()
     /**
@@ -433,41 +473,5 @@ public class Stamp implements Cloneable {
      return toStringCache;
      }
      */
-    @Override
-    public String toString() {
-        final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
-        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
-        buffer.append(Symbols.STAMP_OPENER).append(creationTime);
-        if (occurrenceTime != ETERNAL) {
-            buffer.append('|').append(occurrenceTime);
-        }
-        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
-        for (int i = 0; i < baseLength; i++) {
-            buffer.append(Long.toString(evidentialBase[i]));
-            if (i < (baseLength - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
-            } else {
-                if (derivationChain.isEmpty()) {
-                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
-                }
-            }
-        }
-        for (int i = 0; i < derivationChain.size(); i++) {
-            buffer.append(derivationChain.get(i));
-            if (i < (derivationChain.size() - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
-            }
-        }
-        buffer.append(Symbols.STAMP_CLOSER).append(' ');
-
-        //this is for estimating an initial size of the stringbuffer
-        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
-        return buffer.toString();
-    }
-
-
-    public Stamp cloneToTime(long newTime) {
-        return new Stamp(this, newTime);
-    }
 }

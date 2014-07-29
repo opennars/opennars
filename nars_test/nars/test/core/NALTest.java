@@ -98,31 +98,31 @@ public class NALTest  {
         //new TextOutput(n, new PrintWriter(System.out));
         new TextOutput(n) {
             @Override
-            public void output(Class c, Object line) {                
-                if (c == Output.ERR.class) {                       
-                    if (line instanceof Exception) {
-                        ((Exception)line).printStackTrace();;
+            public void output(Class channel, Object signal) {                
+                if (channel == Output.ERR.class) {                       
+                    if (signal instanceof Exception) {
+                        ((Exception)signal).printStackTrace();;
                     }
 
-                    assertTrue(path + " ERR: " + line, false);
+                    assertTrue(path + " ERR: " + signal, false);
                 }
                 
-                String s = line.toString();
-                s = s.trim();
-
-                if (c == Output.ECHO.class) {
-                    if (s.startsWith("\"\'")) {      
+                if (channel == Output.ECHO.class) {
+                    String e = signal.toString();
+                    
+                    //extract embedded Javascript expressions
+                    if (e.startsWith("\"\'")) {      
                         //remove begining "' and trailing "
-                        String expression = s.substring(2, s.length()-1);
+                        String expression = e.substring(2, e.length()-1);
                         expressions.add(expression);
-                        return;
-                    }                        
+                    }           
                 }
-
-                if (c == Output.OUT.class) {
+                else if (channel == OUT.class) {
+                    String s = getOutputString(channel, signal, true, true, n);                    
                     out.add(s);
                 }
-            }            
+
+            }
         };         
         
         n.addInput(getExample(path));

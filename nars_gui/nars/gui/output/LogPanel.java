@@ -44,6 +44,7 @@ import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.gui.WrapLayout;
 import nars.io.Output;
+import nars.io.TextOutput;
 
 
 public class LogPanel extends NPanel implements Output, LogOutput {
@@ -249,11 +250,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
                 return;        
         }
 
-        if (o instanceof Exception) {
-            o = (o.toString() + " @ " + Arrays.asList(((Exception) o).getStackTrace()));
-        }
-        
-        String s = c.getSimpleName() + ": " + objectString(o) + '\n';
+        String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         
         nextOutput.add(s);
         
@@ -323,7 +320,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
                     limitBuffer(128);
 
                     for (String o : nextOutput) {
-                        print(getLineColor(o), 1.0f, o, false);
+                        print(getLineColor(o), 1.0f, o+'\n', false);
                     }
 
                     nextOutput.clear();
@@ -335,35 +332,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
             }
         }
     };
-    
-    public String objectString(Object o) {
-        if ((o instanceof String) || (o instanceof Character)) {
-            return o.toString();
-        }
-        else if (o instanceof Sentence) {
-            Sentence s = (Sentence)o;
 
-            if (s.isQuestion() && !showQuestions)
-                return null;
-            if (s.isJudgment() && !showStatements)
-                return null;
-
-
-            String r = s.getContent().toString() + s.punctuation + ' ' + s.stamp.getTense(nar.memory.getTime());
-
-            if (s.truth!=null) {
-                r += " " + s.truth.toString();
-            }
-
-            if ((showStamp) && (s.stamp!=null)) {
-                r += " " + s.stamp.getTense(nar.memory.getTime()) + 
-                     " " + s.stamp.toString();
-                return r;
-            }
-        }
-        
-        return o.toString();
-    }
 
     public static final class LOG {   }
     

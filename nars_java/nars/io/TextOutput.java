@@ -21,42 +21,41 @@
  */
 package nars.io;
 
-import java.awt.FileDialog;
 import java.io.*;
 import java.util.Arrays;
 
 import nars.core.NAR;
 import nars.entity.Sentence;
+import nars.language.Statement;
+import nars.operation.Operator;
 
 /**
  * To read and write experience as Task streams
  */
 public class TextOutput implements Output {
 
-    private final NAR reasoner;
-    /**
-     * Input experience from a file
-     */
+    private final NAR nar;
+    
+    private String prefix = "";
+    private LineOutput outExp2;
     private PrintWriter outExp;
-    private boolean errors = true;
-    private boolean errorStack;
-
+    private boolean showErrors = true;
+    private boolean showStackTrace;
+    private boolean showStamp = true;
     
 
     public interface LineOutput {
         public void println(String s);
     }
 
-    private String prefix = "";
-    private LineOutput outExp2;
     
     /**
-     * Default constructor
+     * Default constructor; adds the reasoner to a NAR's outptu channels
      *
      * @param reasoner
      */
     public TextOutput(NAR reasoner) {
-        this.reasoner = reasoner;
+        this.nar = reasoner;
         reasoner.addOutput(this);
     }
     public TextOutput(NAR reasoner, LineOutput outExp2) {
@@ -77,13 +76,9 @@ public class TextOutput implements Output {
     /**
      * Open an output experience file
      */
-    public void openSaveFile() {
-        FileDialog dialog = new FileDialog((FileDialog) null, "Save experience", FileDialog.SAVE);
-        dialog.setVisible(true);
-        String directoryName = dialog.getDirectory();
-        String fileName = dialog.getFile();
+    public void openSaveFile(String path) {
         try {
-            outExp = new PrintWriter(new FileWriter(directoryName + fileName));
+            outExp = new PrintWriter(new FileWriter(path));
         } catch (IOException ex) {
             System.out.println("i/o error: " + ex.getMessage());
         }
@@ -94,7 +89,7 @@ public class TextOutput implements Output {
      */
     public void closeSaveFile() {
         outExp.close();
-        reasoner.removeOutput(this);
+        nar.removeOutput(this);
     }
 
     /**
@@ -104,7 +99,7 @@ public class TextOutput implements Output {
      */
     @Override
     public synchronized void output(final Class channel, final Object o) {
-        if ((!errors) && (channel == ERR.class))
+        if ((!showErrors) && (channel == ERR.class))
             return;
         
         final String s = process(channel, o);
@@ -125,35 +120,76 @@ public class TextOutput implements Output {
     StringBuilder result = new StringBuilder(16 /* estimate */);
     
     public String process(final Class c, final Object o) {
-        result.setLength(0);
-        result.append(c.getSimpleName()).append(": ");
-        if (o instanceof Sentence) {
-            result.append(((Sentence) o).display(reasoner.memory.getTime()));
-        } else {
-            result.append(o.toString());
-        }
-        if (errorStack && (c == ERR.class)) {
-            if (o instanceof Exception) {
-                Exception e = (Exception)o;
-                result.append(' ').append(Arrays.asList(e.getStackTrace()));
-            }
-        }
-        return result.toString();
+        return getOutputString(c, o, true, showStamp, nar, result);
     }
 
     public TextOutput setErrors(boolean errors) {
-        this.errors = errors;
+        this.showErrors = errors;
         return this;
     }    
     
     public TextOutput setErrorStackTrace(boolean b) {
-        this.errorStack = true;
+        this.showStackTrace = true;
         return this;
     }
 
     public TextOutput setLinePrefix(String prefix) {
         this.prefix = prefix;
         return this;
-    }    
+    }
+
+    /** generates a human-readable string from an output channel and signal */
+    public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar, StringBuilder buffer) {
+        buffer.setLength(0);
+        
+        if (showChannel)
+            buffer.append(channel.getSimpleName()).append(": ");        
+        
+        if (channel == ERR.class) {
+            if (signal instanceof Exception) {
+                Exception e = (Exception)signal;
+
+                buffer.append(e.toString());
+
+                /*if (showStackTrace)*/ {
+                    buffer.append(" " + Arrays.asList(e.getStackTrace()));
+                }
+            }
+            else {
+                buffer.append(signal.toString());
+            }                            
+        }        
+        else if (channel == OUT.class) {
+            if (signal instanceof Sentence) {
+                Sentence s = (Sentence)signal;                
+                buffer.append(s.toString(nar, showStamp));
+                        
+            } else {
+                buffer.append(signal.toString());
+            }
+            
+        }
+        else if ((channel == IN.class) || (channel == ECHO.class)) {
+            buffer.append(signal.toString());
+        }
+        else if (channel == EXE.class) {
+            if (signal instanceof Statement)
+                buffer.append(Operator.operationExecutionString((Statement)signal));
+            else {
+                buffer.append(signal.toString());
+            }
+        }
+        else {
+            buffer.append(signal.toString());
+        }
+        
+        return buffer.toString();
+        
+    }
+    
+    public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
+        return getOutputString(channel, signal, showChannel, showStamp, nar, new StringBuilder());
+    }
+    
     
 }
