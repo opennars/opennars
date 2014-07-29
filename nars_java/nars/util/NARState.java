@@ -38,5 +38,10 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
         put(now, data);        
         return data;
     }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

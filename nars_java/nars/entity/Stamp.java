@@ -20,10 +20,14 @@
  */
 package nars.entity;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import nars.core.Parameters;
+import nars.io.Symbols;
 import nars.language.Term;
 
 

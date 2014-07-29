@@ -23,7 +23,6 @@ package nars.storage;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.TaskLink;
-import nars.core.Parameters;
 
 /**
  * TaskLinkBag contains links to tasks.

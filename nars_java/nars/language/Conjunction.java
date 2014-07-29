@@ -20,11 +20,11 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.TreeSet;
+import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
-import nars.inference.TemporalRules;
 
 /**
  * Conjunction of statements
@@ -96,11 +96,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public boolean isCommutative() {
-        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            return false;
-        } else {
-        return true;
-    	}
+        return temporalOrder != TemporalRules.ORDER_FORWARD;
     }
 
     /**
@@ -179,15 +175,15 @@ public class Conjunction extends CompoundTerm {
     public static Term make(final Term term1, final Term term2, int temporalOrder, final Memory memory) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final ArrayList<Term> list;
-            if ((term1 instanceof Conjunction) && (((Conjunction) term1).getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 list = new ArrayList<>(((CompoundTerm) term1).cloneComponents());
-                if ((term2 instanceof Conjunction) && (((Conjunction) term2).getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+                if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                     list.addAll(((CompoundTerm) term2).cloneComponents());
                 } // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 else {
                     list.add((Term) term2.clone());
                 }                          // (&,(&,P,Q),R) = (&,P,Q,R)
-            } else if ((term2 instanceof Conjunction) && (((Conjunction) term2).getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 list = new ArrayList<>(((CompoundTerm) term2).size() + 1);
                 list.add((Term) term1.clone());
                 list.addAll(((CompoundTerm) term2).cloneComponents()); // (&,R,(&,P,Q)) = (&,P,Q,R)

@@ -49,15 +49,15 @@ import nars.io.TextInput;
 
 public class InputPanel extends NPanel implements ActionListener {
 
-    private NAR reasoner;
+    private final NAR reasoner;
     /**
      * Control buttons
      */
-    private JButton okButton, holdButton, clearButton;
+    private final JButton okButton, holdButton, clearButton;
     /**
      * Input area
      */
-    private JTextArea inputText;
+    private final JTextArea inputText;
     /**
      * Whether the window is ready to accept new addInput (in fact whether the
  Reasoner will read the content of {@link #inputText} )

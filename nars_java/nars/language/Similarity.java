@@ -21,7 +21,6 @@
 package nars.language;
 
 import java.util.ArrayList;
-
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
@@ -56,7 +55,7 @@ public class Similarity extends Statement {
      */
     @Override
     public Object clone() {
-        return new Similarity(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new Similarity(getName(), cloneList(components), isConstant(), complexity);
     }
 
     /**

@@ -13,10 +13,23 @@ in Working Notes of the IJCAI-2003 Workshop on Ontology and Distributed Systems,
 August 9, Acapulco, Mexico.
 */
 
-import java.util.*;
-import java.util.regex.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** *****************************************************************
  *  Contains methods for reading, writing knowledge bases and their
@@ -142,8 +155,8 @@ public class KB {
         if (col != null) {
             for (int i = 0; i < col.size(); i++) {
                 String lang = ((Formula) col.get(i)).theFormula;
-                int langStart = lang.indexOf(" ");
-                int langEnd = lang.indexOf(" ",langStart+1);
+                int langStart = lang.indexOf(' ');
+                int langEnd = lang.indexOf(' ',langStart+1);
                 lang = lang.substring(langStart+1, langEnd);
                 if (!al.contains(lang.intern())) 
                     al.add(lang.intern());
@@ -494,7 +507,7 @@ public class KB {
                             if (keyTerm.endsWith("Fn")) {
                                 valTerm = "Function";
                             }
-                            else if (Character.isLowerCase(keyTerm.charAt(0)) && (keyTerm.indexOf("(") == -1)) {
+                            else if (Character.isLowerCase(keyTerm.charAt(0)) && (keyTerm.indexOf('(') == -1)) {
                                 valTerm = "Predicate";
                             }
                             addRelationCacheEntry(inst1, keyTerm, valTerm);
@@ -670,7 +683,7 @@ public class KB {
                 it = dc1.values().iterator();
                 count = 0;
                 while (it.hasNext()) {
-                    dc1ValSet = (HashSet) it.next();
+                    dc1ValSet = (Set) it.next();
                     count += dc1ValSet.size();
                 }
             }
@@ -760,7 +773,7 @@ public class KB {
                                 System.out.println("Error in KB.cacheRelnsWithRelnArgs():");
                                 System.out.println("  reln == " + reln 
                                                    + ", argPos == " + argPos
-                                                   + ", signature == " + signature);
+                                                   + ", signature == " + Arrays.toString(signature));
                                 throw e1;
                             }
                         }
@@ -946,7 +959,7 @@ public class KB {
         while (it.hasNext()) {
             String parent = (String) it.next();
             System.out.print(parent + " ");
-            System.out.println((HashSet) parents.get(parent));
+            System.out.println(parents.get(parent));
         }
         System.out.println();
     }
@@ -962,7 +975,7 @@ public class KB {
         while (it.hasNext()) {
             String child = (String) it.next();
             System.out.print(child + " ");
-            System.out.println((HashSet) children.get(child));
+            System.out.println(children.get(child));
         }
         System.out.println();
     }
@@ -978,7 +991,7 @@ public class KB {
         while (it.hasNext()) {
             String term = (String) it.next();
             System.out.print(term + " is disjoint with ");
-            System.out.println((Set) disjoint.get(term));
+            System.out.println(disjoint.get(term));
         }
         System.out.println();
     }
@@ -1136,7 +1149,7 @@ public class KB {
                     formsIt = forms.iterator();
                     while (formsIt.hasNext()) {
                         formula = (Formula) formsIt.next();
-                        if ((formula.theFormula.indexOf("(",2) == -1) 
+                        if ((formula.theFormula.indexOf('(',2) == -1) 
                             && !(formula.sourceFile.endsWith(_cacheFileSuffix))) {
 
                             arg1 = formula.getArgument(1).intern();
@@ -1177,7 +1190,7 @@ public class KB {
                     formsIt = forms.iterator();
                     while (formsIt.hasNext()) {
                         formula = (Formula) formsIt.next();
-                        if ((formula.theFormula.indexOf("(",2) == -1) 
+                        if ((formula.theFormula.indexOf('(',2) == -1) 
                             && !(formula.sourceFile.endsWith(_cacheFileSuffix))) {
 
                             arglist = formula.argumentsToArrayList(2);
@@ -1381,7 +1394,7 @@ public class KB {
             Iterator it = keys.iterator();
             while (it.hasNext()) {
                 String key = (String) it.next();
-                ArrayList newFormulas = new ArrayList((ArrayList) kif.formulas.get(key));
+                ArrayList newFormulas = new ArrayList((Collection) kif.formulas.get(key));
                 if (formulas.containsKey(key)) {
                     ArrayList oldFormulas = (ArrayList) formulas.get(key);
                     for (int i = 0; i < newFormulas.size(); i++) {
@@ -1801,18 +1814,18 @@ public class KB {
         ArrayList al = arrayListWithBlanks(30);
         Object[] t = terms.toArray();
         int i = 0;
-        while (i < t.length && ((String) t[i]).compareTo(term) < 0) 
+        while (i < t.length && ((Comparable<String>) t[i]).compareTo(term) < 0) 
             i++;
         int lower = i;
         while (i - lower < 15 && lower > 0) { 
             lower--;
-            al.set(15 - (i - lower),(String) t[lower]);
+            al.set(15 - (i - lower), t[lower]);
         }
         int upper = i-1;
         System.out.println(t.length);
         while (upper - i < 14 && upper < t.length-1) {        
             upper++;
-            al.set(15 + (upper - i),(String) t[upper]);
+            al.set(15 + (upper - i), t[upper]);
         }
         return al;       
     }
@@ -1881,7 +1894,7 @@ public class KB {
                     if (format.endsWith("\"")) {
                         format = format.substring(0, format.length() - 1);
                     }
-                    if (format.indexOf("$") < 0) {
+                    if (format.indexOf('$') < 0) {
                         format = format.replaceAll("\\x26\\x25", "\\&\\%"+key+"\\$");
                     }
                     formatMap.put(key.intern(), format);
@@ -2043,9 +2056,9 @@ public class KB {
             catch (Exception ex1) {
                 result.append(ex1.getMessage());
                 if (ex1 instanceof ParseException) {
-                    result.append(" at line " + ((ParseException)ex1).getErrorOffset());
+                    result.append(" at line ").append(((ParseException)ex1).getErrorOffset());
                 }
-                result.append(" in file " + canonicalPath);
+                result.append(" in file ").append(canonicalPath);
                 return result.toString();
             }
 
@@ -2082,11 +2095,11 @@ public class KB {
                     }
                     else {
                         result.append("Warning: Duplicate axiom in ");
-                        result.append(f.sourceFile + " at line " + f.startLine + "<BR>");
-                        result.append(f.theFormula + "<P>");
+                        result.append(f.sourceFile).append(" at line ").append(f.startLine).append("<BR>");
+                        result.append(f.theFormula).append("<P>");
                         Formula existingFormula = (Formula) formulaMap.get(internedFormula);
                         result.append("Warning: Existing formula appears in ");
-                        result.append(existingFormula.sourceFile + " at line " + existingFormula.startLine + "<BR>");
+                        result.append(existingFormula.sourceFile).append(" at line ").append(existingFormula.startLine).append("<BR>");
                         result.append("<P>");
                     }
 
@@ -2281,7 +2294,7 @@ public class KB {
         if (Formula.isNonEmptyString(key) && (REGEX_PATTERNS != null)) {
             ArrayList al = (ArrayList) REGEX_PATTERNS.get(key);
             if (al != null) {
-                return ((Integer)al.get(1)).intValue();
+                return ((Number)al.get(1)).intValue();
             }
         }
         return -1;
@@ -2871,13 +2884,13 @@ public class KB {
             while (!containsTerm(newFormula.substring(i+2,j)) && j > i + 2) 
                 j--;
             term = newFormula.substring(i+2,j);
-            if (term != "" && containsTerm(newFormula.substring(i+2,j))) {
+            if (!"".equals(term) && containsTerm(newFormula.substring(i+2,j))) {
                 newFormula = newFormula.substring(0,i) +
                     "<a href=\"" + href + "&term=" + term + "\">" + term + "</a>" +
-                    newFormula.substring(j,newFormula.toString().length());
+                    newFormula.substring(j,newFormula.length());
             }
             else
-                newFormula = newFormula.substring(0,i) + newFormula.substring(j,newFormula.toString().length());
+                newFormula = newFormula.substring(0,i) + newFormula.substring(j,newFormula.length());
         }
         return newFormula;
     }
@@ -3185,7 +3198,7 @@ public class KB {
             while (it.hasNext()) {
                 Formula formula = (Formula) it.next();
                 String result = formula.toProlog();
-                if (result != null && result != "") 
+                if (result != null && !"".equals(result)) 
                     pr.println(result);
                 if (i % 100 == 1) System.out.print(".");                                                            
             }
@@ -3535,6 +3548,11 @@ public class KB {
             relationName = predName;
             keyArgument = keyArg;
             valueArgument = valueArg;
+        }
+
+        @Override
+        public Object clone() {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
     }
 

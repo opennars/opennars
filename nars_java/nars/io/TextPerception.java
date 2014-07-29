@@ -14,7 +14,12 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
-import static nars.io.Symbols.*;
+import static nars.io.Symbols.ARGUMENT_SEPARATOR;
+import static nars.io.Symbols.BUDGET_VALUE_MARK;
+import static nars.io.Symbols.GOAL_MARK;
+import static nars.io.Symbols.INPUT_LINE_PREFIX;
+import static nars.io.Symbols.JUDGMENT_MARK;
+import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
@@ -22,6 +27,14 @@ import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
+import static nars.io.Symbols.OUTPUT_LINE_PREFIX;
+import static nars.io.Symbols.PREFIX_MARK;
+import static nars.io.Symbols.QUESTION_MARK;
+import static nars.io.Symbols.QUEST_MARK;
+import static nars.io.Symbols.STAMP_CLOSER;
+import static nars.io.Symbols.STAMP_OPENER;
+import static nars.io.Symbols.TRUTH_VALUE_MARK;
+import static nars.io.Symbols.VALUE_SEPARATOR;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.SetExt;
@@ -645,10 +658,10 @@ public class TextPerception {
         }
         
         String op = s.substring(0, firstSeparator).trim();
-        NativeOperator oInnate = Symbols.getOperator(op);
+        NativeOperator oNative = Symbols.getOperator(op);
         Operator oRegistered = memory.getOperator(op);
         
-        if ((oRegistered==null) && (oInnate == null)) {
+        if ((oRegistered==null) && (oNative == null)) {
             throw new InvalidInputException("Unknown operator: " + op);
         }
 
@@ -656,8 +669,8 @@ public class TextPerception {
         
         Term t;
         
-        if (oInnate!=null) {
-            t = CompoundTerm.make(oInnate, arg, memory);
+        if (oNative!=null) {
+            t = CompoundTerm.make(oNative, arg, memory);
         }
         else if (oRegistered!=null) {
             t = Operation.make(oRegistered, arg, memory);
@@ -759,10 +772,7 @@ public class TextPerception {
         if (!b)
             return false;
         
-        if (i + 3 <= s.length() && Symbols.isRelation(s.substring(i, i + 3))) {
-            return false;
-        }
-        return true;
+        return i + 3 > s.length() || !Symbols.isRelation(s.substring(i, i + 3));
     }
 
     /**
@@ -779,10 +789,7 @@ public class TextPerception {
         if (!b)
             return false;
         
-        if (i >= 2 && Symbols.isRelation(s.substring(i - 2, i + 1))) {
-            return false;
-        }
-        return true;
+        return i < 2 || !Symbols.isRelation(s.substring(i - 2, i + 1));
     }
     
 }

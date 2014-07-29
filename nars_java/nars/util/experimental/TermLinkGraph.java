@@ -1,12 +1,9 @@
 package nars.util.experimental;
 
 import nars.entity.Concept;
-import nars.entity.Item;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
-import nars.util.NARGraph.NAREdge;
 import nars.language.Term;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 
 /**
@@ -57,5 +54,10 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
     
     public boolean includeLevel(int l) {
         return true;
+    }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
 }

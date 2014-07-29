@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -46,12 +45,12 @@ public class NARRun {
     NAR nar;
     private boolean logging;
     private PrintStream out = System.out;
-    private boolean dumpLastState = true;
+    private final boolean dumpLastState = true;
     int maxTime = 0;
     /**
      * Flag to distinguish the two running modes of the project.
      */
-    private static boolean standAlone = false;
+    private static final boolean standAlone = false;
 
     /**
      * The entry point of the standalone application.

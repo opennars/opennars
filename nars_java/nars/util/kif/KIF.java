@@ -13,9 +13,22 @@ August 9, Acapulco, Mexico.
 
 package nars.util.kif;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 
 /** *****************************************************************
  * A class designed to read a file in SUO-KIF format into memory.
@@ -266,9 +279,9 @@ public class KIF {
                         if (mode == NORMAL_PARSE_MODE) {
                             String validArgs = f.validArgs((file != null ? file.getName() : null), 
                                                            (file != null ? new Integer(f.startLine) : null));
-                            if (validArgs == null || validArgs == "") 
+                            if (validArgs == null || "".equals(validArgs)) 
                                 validArgs = f.badQuantification();                      
-                            if (validArgs != null && validArgs != "") 
+                            if (validArgs != null && !"".equals(validArgs)) 
                                 throw new ParseException("Parsing error in " + filename + ".\n Invalid number of arguments. " + validArgs,f.startLine);  
                         }
                         // formulaList.add(expression.intern());
@@ -320,7 +333,7 @@ public class KIF {
                     else
                         expression.append(Double.toString(st.nval));
                     if (parenLevel<2)                                 // Don't care if parenLevel > 1
-                        argumentNum = argumentNum + 1;                // RAP - added on 11/27/04 
+                        argumentNum += 1;                // RAP - added on 11/27/04 
                 }
                 else if (st.ttype == StreamTokenizer.TT_WORD) {                  // a token
                     if ((st.sval.compareTo("=>") == 0 || st.sval.compareTo("<=>") == 0) && parenLevel == 1)   
@@ -328,7 +341,7 @@ public class KIF {
                         // prevent implications embedded in statements from being rules
                         inRule = true;
                     if (parenLevel<2)                                 // Don't care if parenLevel > 1
-                        argumentNum = argumentNum + 1;
+                        argumentNum += 1;
                     if (lastVal != 40)                                // add back whitespace that ST removes
                         expression.append(" ");
                     expression.append(String.valueOf(st.sval));
@@ -390,7 +403,7 @@ public class KIF {
             while (it.hasNext()) {
                 String w = (String) it.next();
                 System.err.println((w.startsWith("Error") ? w : "Warning in KIF.parse(): " + w));
-                warnings.append("\n<br/>" + w + "<br/>\n");
+                warnings.append("\n<br/>").append(w).append("<br/>\n");
             }
             System.err.println(warnings);
         }        
@@ -425,7 +438,7 @@ public class KIF {
                               int parenLevel) {
 
         if (sval == null) { sval="null";}
-        String key = new String("");
+        String key = "";
         if (inAntecedent) {
             key = key.concat("ant-");
             key = key.concat(sval);

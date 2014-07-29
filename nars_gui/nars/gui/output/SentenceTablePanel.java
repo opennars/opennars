@@ -5,9 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,17 +14,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import nars.core.NAR;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.TruthValue;
-import nars.util.NARGraph;
-import nars.util.NARGraph.DefaultGraphizer;
-import nars.util.NARGraph.Filter;
-import nars.util.NARGraph.SentenceContent;
 import nars.gui.NPanel;
 import nars.io.Output;
-import nars.language.CompoundTerm;
-import nars.language.Term;
 
 /**
  *

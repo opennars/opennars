@@ -21,9 +21,7 @@
 package nars.operator;
 
 import java.util.ArrayList;
-
 import nars.entity.Task;
-import nars.language.*;
 import nars.storage.Memory;
 
 /**
@@ -87,5 +85,10 @@ public class Wait extends Operator {
 //        }
 //        return 0;
 //    }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
 }
 

@@ -1,7 +1,6 @@
 package nars.web;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -105,7 +104,7 @@ public class NARServer  {
             
             if (args.length >= 3) {
                 nlpHost = args[1];
-                if (args[2]!="null") {
+                if (!"null".equals(args[2])) {
                     nlpPort = Integer.parseInt(args[2]);
                     //nlp = new NLPInputParser(nlpHost, nlpPort);
                 }

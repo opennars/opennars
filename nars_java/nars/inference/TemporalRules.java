@@ -18,9 +18,16 @@ package nars.inference;
 
 
 import nars.core.Parameters;
-import nars.entity.*;
-import nars.language.*;
-import nars.storage.*;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.TruthValue;
+import nars.language.Conjunction;
+import nars.language.Equivalence;
+import nars.language.Implication;
+import nars.language.Interval;
+import nars.language.Statement;
+import nars.language.Term;
+import nars.storage.Memory;
 
 /**
  *

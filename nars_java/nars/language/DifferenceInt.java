@@ -20,8 +20,8 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
@@ -55,7 +55,7 @@ public class DifferenceInt extends CompoundTerm {
      * @return A new object, to be casted into a DifferenceInt
      */
     public Object clone() {
-        return new DifferenceInt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new DifferenceInt(getName(), cloneList(components), isConstant(), complexity);
     }
 
     /**

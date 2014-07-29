@@ -20,15 +20,18 @@
  */
 package nars.gui.output;
 
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import nars.entity.Concept;
 import nars.entity.EntityObserver;
 import nars.gui.Window;
-//import nars.io.StringParser;
 import nars.storage.Memory;
 
 /**
@@ -39,20 +42,20 @@ public class TermWindow extends Window implements ActionListener {
     /**
      * Display label
      */
-    private JLabel termLabel;
+    private final JLabel termLabel;
     /**
      * Input field for term name
      */
-    private JTextField termField;
+    private final JTextField termField;
     /**
      * Control buttons
      */
-    private JButton playButton, hideButton;
+    private final JButton playButton, hideButton;
     
     /**
      * Reference to the memory
      */
-    private Memory memory;
+    private final Memory memory;
 
     /**
      * Constructor

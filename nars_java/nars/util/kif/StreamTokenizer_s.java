@@ -12,7 +12,9 @@ August 9, Acapulco, Mexico.
 */
 
 package nars.util.kif;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 /**
  * The <code>StreamTokenizer_s</code> class takes an input stream and
@@ -588,7 +590,7 @@ public class StreamTokenizer_s {
 		    decexp--;
 		}
 		/* Do one division of a likely-to-be-more-accurate number */
-		v = v / denom;
+		v /= denom;
 	    }
 	    nval = neg ? -v : v;
 	    return ttype = TT_NUMBER;
@@ -627,7 +629,7 @@ public class StreamTokenizer_s {
    		    c = read();
 		    int first = c;   /* To allow \377, but not \477 */
 		    if (c >= '0' && c <= '7') {
-			c = c - '0';
+			c -= '0';
 			int c2 = read();
 			if ('0' <= c2 && c2 <= '7') {
 			    c = (c << 3) + (c2 - '0');

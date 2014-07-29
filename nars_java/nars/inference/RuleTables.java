@@ -20,10 +20,26 @@
  */
 package nars.inference;
 
-import nars.entity.*;
-import nars.language.*;
-import nars.storage.Memory;
+import nars.entity.Concept;
+import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
 import nars.io.Symbols;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.Disjunction;
+import nars.language.Equivalence;
+import nars.language.Implication;
+import nars.language.Inheritance;
+import nars.language.Negation;
+import nars.language.SetExt;
+import nars.language.SetInt;
+import nars.language.Similarity;
+import nars.language.Statement;
+import nars.language.Term;
+import nars.language.Variable;
+import nars.storage.Memory;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -136,7 +152,7 @@ public class RuleTables {
                         if (belief != null) {
                             if (beliefTerm instanceof Implication) {
 
-                                if (Variable.unify(Symbols.VAR_INDEPENDENT, ((Implication) beliefTerm).getSubject(), taskTerm, beliefTerm, taskTerm)) {
+                                if (Variable.unify(Symbols.VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, beliefTerm, taskTerm)) {
                                     detachmentWithVar(belief, taskSentence, bIndex, memory);
                                 } else {
                                     SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, memory);
@@ -184,7 +200,7 @@ public class RuleTables {
                         if (belief != null) {
                             if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
                             {
-                                Term subj = ((Implication) taskTerm).getSubject();
+                                Term subj = ((Statement) taskTerm).getSubject();
                                 if (subj instanceof Negation) {
                                     if (task.getSentence().isJudgment()) {
                                     componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, memory);
@@ -540,7 +556,7 @@ public class RuleTables {
 //        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
-                StructuralRules.transformNegation(((Negation) compound).componentAt(0), memory);
+                StructuralRules.transformNegation(compound.componentAt(0), memory);
             } else {
                 StructuralRules.transformNegation(compound, memory);
             }

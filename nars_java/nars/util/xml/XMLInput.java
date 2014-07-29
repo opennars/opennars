@@ -11,8 +11,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
-import nars.util.PrintWriterInput;
 import nars.io.TextOutput;
+import nars.util.PrintWriterInput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -199,7 +199,7 @@ public class XMLInput extends PrintWriterInput {
     public static String getNodeTextValue(final Node n) {
         String val = n.getNodeValue();
         if (val != null) {
-            if (val.trim().equals("")) {
+            if (val.trim().isEmpty()) {
                 // Whitespace
                 return null;
             } else {

@@ -20,13 +20,14 @@
  */
 package nars.operator;
 
-import nars.language.*;
 import java.util.ArrayList;
 import java.util.List;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
-
+import nars.language.Inheritance;
+import nars.language.Product;
+import nars.language.Term;
 import nars.storage.Memory;
 
 /**

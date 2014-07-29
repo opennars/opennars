@@ -20,8 +20,7 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
@@ -72,7 +71,7 @@ public class ImageExt extends CompoundTerm {
      * @return A new object, to be casted into an ImageExt
      */
     public Object clone() {
-        return new ImageExt(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity, relationIndex);
+        return new ImageExt(getName(), cloneList(components), isConstant(), complexity, relationIndex);
     }
 
     /**

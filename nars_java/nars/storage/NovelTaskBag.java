@@ -21,8 +21,8 @@
 
 package nars.storage;
 
-import nars.entity.Task;
 import nars.core.Parameters;
+import nars.entity.Task;
 
 /**
  * New tasks that contain new Term.

@@ -60,13 +60,13 @@ public abstract class Performance {
     }    
  
     public Performance print() {
-        System.out.print(name + ": " + ((double)totalTime)/((double)repeats)/1000000.0 + "ms per iteration, ");
-        System.out.println(((double)totalMemory)/((double)repeats)/1024.0 + " kb per iteration");
+        System.out.print(name + ": " + totalTime/repeats/1000000.0 + "ms per iteration, ");
+        System.out.println(totalMemory/repeats/1024.0 + " kb per iteration");
         return this;
     }
     public Performance printCSV(boolean finalComma) {
         System.out.print(name + ", " + getCycleTimeMS() +", ");
-        System.out.print(((double)totalMemory)/((double)repeats)/1024.0);
+        System.out.print(totalMemory/repeats/1024.0);
         if (finalComma)
             System.out.print(",");
         return this;
@@ -77,6 +77,6 @@ public abstract class Performance {
     
     
     public double getCycleTimeMS() {
-        return ((double)totalTime)/((double)repeats)/1000000.0;
+        return totalTime/repeats/1000000.0;
     }
 }

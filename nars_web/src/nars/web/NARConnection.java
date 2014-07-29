@@ -8,11 +8,10 @@ package nars.web;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import nars.core.NAR;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextOutput.LineOutput;
-import nars.core.NAR;
-import nars.io.TextReaction;
 
 /**
  * An instance of a web socket session to a NAR

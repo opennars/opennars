@@ -20,11 +20,10 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
-import nars.inference.TemporalRules;
 
 /**
  * A Statement about an Inheritance copula.
@@ -109,12 +108,12 @@ public class Implication extends Statement {
             return (Implication) t;
         }
         if (predicate instanceof Implication) {
-            final Term oldCondition = ((Implication) predicate).getSubject();
+            final Term oldCondition = ((Statement) predicate).getSubject();
             if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containComponent(subject)) {
                 return null;
             }
             final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);
-            return make(newCondition, ((Implication) predicate).getPredicate(), temporalOrder, memory);
+            return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder, memory);
         } else {
             final ArrayList<Term> argument = argumentsToList(subject, predicate);
             return new Implication(argument, temporalOrder);

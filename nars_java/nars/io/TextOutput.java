@@ -21,9 +21,12 @@
  */
 package nars.io;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
-
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.language.Statement;
@@ -152,7 +155,7 @@ public class TextOutput implements Output {
                 buffer.append(e.toString());
 
                 /*if (showStackTrace)*/ {
-                    buffer.append(" " + Arrays.asList(e.getStackTrace()));
+                    buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
                 }
             }
             else {

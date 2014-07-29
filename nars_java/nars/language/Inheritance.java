@@ -21,7 +21,6 @@
 package nars.language;
 
 import java.util.ArrayList;
-
 import nars.io.Symbols.NativeOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;

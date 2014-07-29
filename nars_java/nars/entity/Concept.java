@@ -23,15 +23,14 @@ package nars.entity;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
-
+import nars.core.NARRun;
+import nars.core.Parameters;
 import nars.inference.BudgetFunctions;
 import nars.inference.LocalRules;
 import nars.inference.RuleTables;
 import nars.inference.UtilityFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.core.NARRun;
-import nars.core.Parameters;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
 import nars.storage.NullBagObserver;

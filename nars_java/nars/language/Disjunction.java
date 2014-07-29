@@ -20,8 +20,8 @@
  */
 package nars.language;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.TreeSet;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
@@ -69,7 +69,7 @@ public class Disjunction extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Disjunction(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new Disjunction(getName(), cloneList(components), isConstant(), complexity);
     }
 
     /**

@@ -50,13 +50,7 @@ public class JSONOutput extends TextOutput {
 
                     @Override
                     public boolean shouldSkipField(FieldAttributes fa) {
-                        //System.out.println(fa.getDeclaredClass() + 
-                                //" " + fa.getName());
-                        if (fa.getName().equals("derivationChain")) {
-                            return true;
-                        }
-
-                        return false;
+                        return fa.getName().equals("derivationChain");
                     }
 
                     @Override
