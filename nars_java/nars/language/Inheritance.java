@@ -35,7 +35,7 @@ public class Inheritance extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Inheritance(ArrayList<Term> arg) {
+    private Inheritance(final ArrayList<Term> arg) {
         super(arg);
     }
 
@@ -46,7 +46,7 @@ public class Inheritance extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Inheritance(String n, ArrayList<Term> cs, boolean con, short i) {
+    private Inheritance(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i, final int nameHash) {
         super(n, cs, con, i);
     }
 
@@ -55,7 +55,7 @@ public class Inheritance extends Statement {
      * @return A new object, to be casted into a SetExt
      */
     public Object clone() {
-        return new Inheritance(getName(), (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+        return new Inheritance(getName(), (ArrayList<Term>) cloneList(components), isConstant(), containVar(), complexity, hashCode());
     }
 
     /**
@@ -65,7 +65,7 @@ public class Inheritance extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Inheritance make(Term subject, Term predicate, Memory memory) {
+    public static Inheritance make(final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             //throw new RuntimeException("Inheritance.make: Invalid Inheritance statement: subj=" + subject + ", pred=" + predicate);
             return null;

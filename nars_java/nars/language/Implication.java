@@ -53,12 +53,15 @@ public class Implication extends Statement {
         temporalOrder = order;
     }
 
+    
+    
     /**
      * Clone an object
      * @return A new object
      */
     @Override
     public Object clone() {
+        //TODO use the faster super constructor here
         return new Implication(getName(), cloneList(components), isConstant(), complexity, temporalOrder);
     }
 

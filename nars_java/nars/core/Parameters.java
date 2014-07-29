@@ -111,10 +111,10 @@ public class Parameters {
 
     
     /**
-     * max complexity of a Term that its name can be stored globally via String.intern().
+     * max length of a Term name for which it can be stored statically via String.intern().
      * set to zero to disable this feature.
      */
-    public static int INTERNED_TERM_NAME_MAXLEN = 6;
+    public static int INTERNED_TERM_NAME_MAXLEN = 10;
     
 }
 

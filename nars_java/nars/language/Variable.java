@@ -122,8 +122,9 @@ public class Variable extends Term {
     public static boolean containVar(final String n) {
         //return containVarIndep(n) || containVarDep(n) || containVarQuery(n);
         
-        //replaced with one iteration:
-        for (int i = 0; i < n.length(); i++) {
+        //replaced with one iteration
+        final int l = n.length();
+        for (int i = 0; i < l; i++) {
             char c = n.charAt(i);
             if ((c == Symbols.VAR_INDEPENDENT) || (c == Symbols.VAR_DEPENDENT) || (c == Symbols.VAR_QUERY))
                 return true;
@@ -132,7 +133,8 @@ public class Variable extends Term {
     }
     
     public static boolean containDepOrIndepVar(final String n) {
-        for (int i = 0; i < n.length(); i++) {
+        final int l = n.length();
+        for (int i = 0; i < l; i++) {
             char c = n.charAt(i);
             if ((c == Symbols.VAR_INDEPENDENT) || (c == Symbols.VAR_DEPENDENT))
                 return true;

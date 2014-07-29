@@ -32,8 +32,8 @@ import nars.inference.TemporalRules;
  */
 public class Term implements Cloneable, Comparable<Term> {
 
-    private String name;
-    private int nameHash;
+    protected String name;
+    protected int nameHash;
     
     /**
      * Default constructor that build an internal Term
@@ -129,22 +129,22 @@ public class Term implements Cloneable, Comparable<Term> {
     /** only method that should modify Term.name. also caches hashcode 
      * @return whether the name was changed
      */
-    protected boolean setName(final String name) {
+    protected boolean setName(final String newName) {
         if (this.name!=null) {
-            if (this.name.equals(name)) {
+            if (this.name.equals(newName)) {
                 //name is the same
                 return false;
             }
         }
         
-        if (name!=null) {
-            if (name.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
-                this.name = name.intern();
+        if (newName!=null) {
+            if (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
+                this.name = newName.intern();
             }
             else {
-                this.name = name;
+                this.name = newName;
             }
-            this.nameHash = name.hashCode();            
+            this.nameHash = newName.hashCode();            
         }
         else {
             this.name = null;

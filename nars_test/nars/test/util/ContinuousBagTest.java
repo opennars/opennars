@@ -10,7 +10,7 @@ import org.junit.Test;
  */
 
 
-public class FastBagTest {
+public class ContinuousBagTest {
  
     @Test public void testFastBag() {
         ContinuousBag<NullItem> f = new ContinuousBag(4, 10);
@@ -22,7 +22,7 @@ public class FastBagTest {
         f.putIn(new NullItem(.9f));
         f.putIn(new NullItem(.75f));
         
-        System.out.println(f);
+        //System.out.println(f);
         
         //sorted
         assert(f.items.get(0).getPriority() < f.items.get(1).getPriority());
