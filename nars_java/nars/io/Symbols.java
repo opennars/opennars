@@ -69,9 +69,10 @@ public class Symbols {
     public static final char ARGUMENT_SEPARATOR = ',';
     public static final char IMAGE_PLACE_HOLDER = '_';
     
-    /* interval indicator */
+    /* prefix of special Term name */
     public static final char INTERVAL_PREFIX = '+';
 
+    public static final char OPERATOR_PREFIX = '^';
 
     
     public static enum Operator {

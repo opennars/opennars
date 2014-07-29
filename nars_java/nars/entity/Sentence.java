@@ -36,15 +36,19 @@ public class Sentence implements Cloneable {
      * The content of a Sentence is a Term
      */
     private Term content;
+    
     /**
-     * The punctuation also indicates the type of the Sentence: Judgment,
-     * Question, or Goal
+     * The punctuation also indicates the type of the Sentence: 
+     * Judgment, Question, Goal, or Quest.
+     * Represented by characters: '.', '?', '!', or '@'
      */
     public final char punctuation;
+    
     /**
-     * The truth value of Judgment
+     * The truth value of Judgment, or desire value of Goal     
      */
     public final TruthValue truth;
+    
     /**
      * Partial record of the derivation path
      */
@@ -55,7 +59,7 @@ public class Sentence implements Cloneable {
      */
     private boolean revisible;
 
-    //caches the 'getKey()' result
+    /** caches the 'getKey()' result */
     private String key;
 
     /**
@@ -133,6 +137,13 @@ public class Sentence implements Cloneable {
         return new Sentence((Term) content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
     }
 
+    /**
+      * project a judgment to a difference occurrence time
+      *
+      * @param targetTime The time to be projected into
+      * @param currentTime The current time as a reference
+      * @return The projected belief
+      */    
     public Sentence projection(long targetTime, long currentTime) {
         TruthValue newTruth = new TruthValue(truth);
         boolean eternalizing = false;
