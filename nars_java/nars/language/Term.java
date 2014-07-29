@@ -33,13 +33,12 @@ import nars.inference.TemporalRules;
 public class Term implements Cloneable, Comparable<Term> {
 
     protected String name;
-    protected int nameHash;
     
     /**
      * Default constructor that build an internal Term
      */
     protected Term() {
-        setName(null);
+        setName("");
     }
 
     /**
@@ -81,7 +80,7 @@ public class Term implements Cloneable, Comparable<Term> {
     public boolean equals(final Object that) {
         if (!(that instanceof Term)) return false;
         Term t = (Term)that;
-        if (t.nameHash!=nameHash) {
+        if (t.hashCode()!=hashCode()) {
             return false;
         }        
         return name.equals(t.getName());
@@ -94,8 +93,7 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public int hashCode() {
-        //return (name != null ? name.hashCode() : 7);
-        return nameHash;
+        return name.hashCode();
     }
 
     /**
@@ -137,18 +135,11 @@ public class Term implements Cloneable, Comparable<Term> {
             }
         }
         
-        if (newName!=null) {
-            if (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
-                this.name = newName.intern();
-            }
-            else {
-                this.name = newName;
-            }
-            this.nameHash = newName.hashCode();            
+        if (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
+            this.name = newName.intern();
         }
         else {
-            this.name = null;
-            this.nameHash = 7 + getClass().hashCode();
+            this.name = newName;
         }
         return true;
     }

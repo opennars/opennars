@@ -295,7 +295,7 @@ public class NARGraph extends DirectedMultigraph {
         
         void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
 
-            for (Term b : c.getComponents()) {
+            for (Term b : c.components) {
                 if (!g.containsVertex(b))
                     g.addVertex(b);
                 

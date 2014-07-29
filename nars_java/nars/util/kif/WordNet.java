@@ -1373,7 +1373,7 @@ public class WordNet {
      */
     private String sumoDisplay(String synsetBlock, String word, String type, String sumokbname, String synsetNum) {
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String synset;
         String documentation = new String();
         String sumoEquivalent = new String();
@@ -1598,7 +1598,7 @@ public class WordNet {
      */
     private String processAdverb(String sumokbname, String mixedCase, String input, String synset) {
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String synsetBlock;
 
         synsetBlock = (String) adverbSynsetHash.get(input);      
@@ -1613,7 +1613,7 @@ public class WordNet {
      */
     private String processAdjective(String sumokbname, String mixedCase, String input, String synset) {
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String synsetBlock;
 
         synsetBlock = (String) adjectiveSynsetHash.get(input);
@@ -1779,11 +1779,11 @@ public class WordNet {
     public String page (String inp, int pos, String sumokbname, String synset) {
     
         String input = inp;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         String mixedCase = input;
         String[] s = input.split("\\s+");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length; i++) {
             sb.append(s[i]);
             if ((i+1)<s.length) {
@@ -1810,7 +1810,7 @@ public class WordNet {
      */
     public String displaySynset (String sumokbname, String synset) {
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         char POS = synset.charAt(0);
         String gloss = "";
         String SUMOterm = "";

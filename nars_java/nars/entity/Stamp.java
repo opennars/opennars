@@ -176,11 +176,13 @@ public class Stamp implements Cloneable {
 
         derivationChain = new ArrayList<>(baseLength); //take as long till the chain is full or all elements were taken out of chain1 and chain2:
 
+        
+        
         j = 0;
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
-                    final Term c1i1 = chain1.get(i1);                    
+                    final Term c1i1 = chain1.get(i1);                         
                     if (!derivationChain.contains(c1i1)) {
                         derivationChain.add(c1i1);
                     } else {
@@ -454,7 +456,7 @@ public class Stamp implements Cloneable {
      public String toString() {
      if (toStringCache == null) {
      int numBases = evidentialBase.size();
-     final StringBuffer b = new StringBuffer(8+numBases*5 // TODO properly estimate this //);
+     final StringBuilder b = new StringBuilder(8+numBases*5 // TODO properly estimate this //);
         
      b.append(stampOpenerSpace).append(creationTime)
      .append(spaceStampStarterSpace);

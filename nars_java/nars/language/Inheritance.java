@@ -48,8 +48,8 @@ public class Inheritance extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    protected Inheritance(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i, final int nameHash) {
-        super(n, cs, con, hasVar, i, nameHash);
+    protected Inheritance(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i) {
+        super(n, cs, con, hasVar, i);
     }
 
     /**
@@ -57,7 +57,7 @@ public class Inheritance extends Statement {
      * @return A new object, to be casted into a SetExt
      */
     @Override public Object clone() {
-        return new Inheritance(getName(), cloneList(components), isConstant(), containVar(), complexity, hashCode());
+        return new Inheritance(getName(), cloneList(components), isConstant(), containVar(), complexity);
     }
 
     /**
@@ -76,7 +76,7 @@ public class Inheritance extends Statement {
         
         String name;
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).getComponents(), memory);
+            name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).components, memory);
         } else {
             name = makeStatementName(subject, InnateOperator.INHERITANCE, predicate);
         }

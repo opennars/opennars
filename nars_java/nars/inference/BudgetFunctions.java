@@ -212,13 +212,13 @@ public final class BudgetFunctions extends UtilityFunctions {
      * Merge an item into another one in a bag, when the two are identical
      * except in budget values
      *
-     * @param baseValue The budget value to be modified
-     * @param adjustValue The budget doing the adjusting
+     * @param b The budget baseValue to be modified
+     * @param a The budget adjustValue doing the adjusting
      */
-    public static void merge(final BudgetValue baseValue, final BudgetValue adjustValue) {
-        baseValue.setPriority(Math.max(baseValue.getPriority(), adjustValue.getPriority()));
-        baseValue.setDurability(Math.max(baseValue.getDurability(), adjustValue.getDurability()));
-        baseValue.setQuality(Math.max(baseValue.getQuality(), adjustValue.getQuality()));
+    public static void merge(final BudgetValue b, final BudgetValue a) {        
+        b.priority.setValue((short)Math.max(b.getPriorityShort(), a.getPriorityShort()));
+        b.durability.setValue((short)Math.max(b.durability.getShortValue(), a.durability.getShortValue()));
+        b.quality.setValue((short)Math.max(b.quality.getShortValue(), a.quality.getShortValue()));
     }
 
     /* ----- Task derivation in LocalRules and SyllogisticRules ----- */

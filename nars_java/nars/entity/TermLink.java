@@ -181,7 +181,7 @@ public class TermLink extends Item {
         int targetLength = target!=null ? targetString.length() : 0;        
         int estimatedLength = 2+2+targetLength+1+4*( (index!=null ? index.length : 0) + 1);
         
-        final StringBuffer sb = new StringBuffer(estimatedLength).append(at1).append('T').append(type);
+        final StringBuilder sb = new StringBuilder(estimatedLength).append(at1).append('T').append(type);
         if (index != null) {
             for (int i = 0; i < index.length; i++) {
                 sb.append('-').append((index[i] + 1));

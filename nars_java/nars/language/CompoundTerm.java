@@ -97,13 +97,12 @@ public abstract class CompoundTerm extends Term {
      * and containsVar.  Instead, all necessary values are provided directly from the callee.
      * This should perform better than the other constructor that invokes super constructor; this does not.
      */
-    protected CompoundTerm(final String name, final ArrayList<Term> components, final boolean isConstant, final boolean containsVar, final short complexity, int nameHash) {        
+    protected CompoundTerm(final String name, final ArrayList<Term> components, final boolean isConstant, final boolean containsVar, final short complexity) {
         this.name = name;
         this.components = components; //ensureValidComponents(components);
         this.hasVar = containsVar;
         this.isConstant = isConstant;
         this.complexity = complexity;
-        this.nameHash = nameHash;
     }
     
 
@@ -136,7 +135,7 @@ public abstract class CompoundTerm extends Term {
     @Override
     protected final boolean setName(String name) {
         if (super.setName(name)) {
-            this.hasVar = (name!=null) ? Variable.containVar(getName()) : false;
+            this.hasVar = Variable.containVar(getName());
             return true;
         }
         return false;
@@ -151,7 +150,7 @@ public abstract class CompoundTerm extends Term {
      * @param components Component list
      */
     protected CompoundTerm(final String name, final ArrayList<Term> components) {
-        this.components = ensureValidComponents(components);
+        this.components = components; //ensureValidComponents(components);
         this.complexity = calcComplexity();
         setName(name);
         this.isConstant = !hasVar;
@@ -308,7 +307,7 @@ public abstract class CompoundTerm extends Term {
                 return Equivalence.make(arg.get(0), arg.get(1), memory);            
         }
  
-        throw new RuntimeException("Unknown Term operator: " + op);
+        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }    
 
 
@@ -325,6 +324,8 @@ public abstract class CompoundTerm extends Term {
         list.add(t2);
         return list;
     }
+    
+    
 
     /* ----- utilities for oldName ----- */
     /**
@@ -487,15 +488,6 @@ public abstract class CompoundTerm extends Term {
         return components.get(i);
     }
 
-    /**
-     * Get the component list
-     *
-     * @return The component list
-     */
-    public List<Term> getComponents() {
-        return components;
-    }
-    
     /** Gives a set of all contained components, recursively */
     public Set<Term> getContainedTerms() {
         Set<Term> s = new HashSet();
@@ -526,14 +518,19 @@ public abstract class CompoundTerm extends Term {
         if (original == null) {
             return null;
         }
-        final int osize = original.size();
         
+        //TODO if terms are stored as an array, then we dont need to deepClone.
+        //the only reason for deep cloning is to avvoid concurrentmodification of shared subterms.
+        //arrays wont have iterators that throw concurrentmodificationexceptions.
+        
+        final int osize = original.size();                
         final ArrayList<Term> arr = new ArrayList(osize);        
         for (int i = 0; i < osize; i++) {
             Term original1 = original.get(i);
             arr.add((Term) (original1.clone()));
         }
         return arr;
+        
     }
 
     /**
@@ -572,7 +569,7 @@ public abstract class CompoundTerm extends Term {
      */
     public boolean containAllComponents(final Term t) {
         if (getClass() == t.getClass()) {
-            return components.containsAll(((CompoundTerm) t).getComponents());
+            return components.containsAll(((CompoundTerm) t).components);
         } else {
             return components.contains(t);
         }
@@ -593,7 +590,7 @@ public abstract class CompoundTerm extends Term {
         boolean success;
         final ArrayList<Term> list = t1.cloneComponents();
         if (t1.getClass() == t2.getClass()) {
-            success = list.addAll(((CompoundTerm) t2).getComponents());
+            success = list.addAll(((CompoundTerm) t2).components);
         } else {
             success = list.add(t2);
         }
@@ -613,7 +610,7 @@ public abstract class CompoundTerm extends Term {
         boolean success;
         final ArrayList<Term> list = t1.cloneComponents();
         if (t1.getClass() == t2.getClass()) {
-            success = list.removeAll(((CompoundTerm) t2).getComponents());
+            success = list.removeAll(((CompoundTerm) t2).components);
         } else {
             success = list.remove(t2);
         }
@@ -840,10 +837,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(predA);
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                    for(Term t : ((CompoundTerm)predB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -859,10 +856,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(subjA);
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                    for(Term t : ((CompoundTerm)predA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -878,10 +875,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(subjA);
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                    for(Term t : ((CompoundTerm)predA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                    for(Term t : ((CompoundTerm)predB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -897,10 +894,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(subjA);
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                    for(Term t : ((CompoundTerm)predA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                    for(Term t : ((CompoundTerm)predB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -916,10 +913,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(predA);
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -935,10 +932,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(predA);
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -954,10 +951,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(subjA);
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)predA).getComponents()) {
+                    for(Term t : ((CompoundTerm)predA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)subjB).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -973,10 +970,10 @@ public abstract class CompoundTerm extends Term {
                     ArrayList<Term> componentsB=new ArrayList<>();
                     componentsA.add(predA);
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)subjA).getComponents()) {
+                    for(Term t : ((CompoundTerm)subjA).components) {
                         componentsA.add(t);
                     }
-                    for(Term t : ((CompoundTerm)predB).getComponents()) {
+                    for(Term t : ((CompoundTerm)predB).components) {
                         componentsB.add(t);
                     }
                     if(componentsA.containsAll(componentsB)) {
@@ -1001,8 +998,8 @@ public abstract class CompoundTerm extends Term {
         if(a instanceof Similarity && b instanceof Similarity) {
             return EqualSubjectPredicateInRespectToImageAndProduct(a,b) || EqualSubjectPredicateInRespectToImageAndProduct(b,a);
         }
-        List<Term> A=((CompoundTerm) a).getComponents();
-        List<Term> B=((CompoundTerm) b).getComponents();
+        List<Term> A=((CompoundTerm) a).components;
+        List<Term> B=((CompoundTerm) b).components;
         if(A.size()!=B.size()) {
             return false;
         }
@@ -1037,14 +1034,14 @@ public abstract class CompoundTerm extends Term {
     public static Term unwrapNegation(Term T) //negation is not counting as depth
     {
         if(T!=null && T instanceof Negation)
-            return (Term) ((CompoundTerm)T).getComponents().get(0);
+            return (Term) ((CompoundTerm)T).components.get(0);
         return T;
     }
     public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2, Memory memory) {
         boolean success;
         ArrayList<Term> list = t1.cloneComponents();
         if (t1.getClass() == t2.getClass()) {
-            success = list.removeAll(((CompoundTerm) t2).getComponents());
+            success = list.removeAll(((CompoundTerm) t2).components);
         } else {
             success = list.remove(t2);
         }
@@ -1067,7 +1064,7 @@ public abstract class CompoundTerm extends Term {
        }
        itself=(CompoundTerm) reduceComponentOneLayer((CompoundTerm) itself, replacement, memory);
        int j=0;
-       for(Term t : ((CompoundTerm) itself).getComponents()) {
+       for(Term t : ((CompoundTerm) itself).components) {
            Term t2 = unwrapNegation(t);
             if(!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Conjunction) && !(t2 instanceof Disjunction)) {
                 j++;

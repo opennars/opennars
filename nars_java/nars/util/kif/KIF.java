@@ -172,7 +172,7 @@ public class KIF {
         
         String key = null;
         ArrayList keySet;
-        StringBuffer expression = new StringBuffer(40);
+        StringBuilder expression = new StringBuilder(40);
         StreamTokenizer_s st;
         int parenLevel;
         boolean inRule;
@@ -386,7 +386,7 @@ public class KIF {
 
         if (warningSet.size() > 0) {
             Iterator it = warningSet.iterator();
-            StringBuffer warnings = new StringBuffer();
+            StringBuilder warnings = new StringBuilder();
             while (it.hasNext()) {
                 String w = (String) it.next();
                 System.err.println((w.startsWith("Error") ? w : "Warning in KIF.parse(): " + w));

@@ -49,7 +49,7 @@ public class TextInput extends Symbols implements Input {
     
     private boolean finished = false;
     
-    private StringBuffer text = new StringBuffer();   
+    private StringBuilder text = new StringBuilder();   
     
     private int linesPerCycle = 1024;
     

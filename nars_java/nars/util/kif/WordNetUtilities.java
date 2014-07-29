@@ -305,7 +305,7 @@ public class WordNetUtilities {
      */
     public static String formatWords(TreeMap words, String kbName) {
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int count = 0;
         Iterator it = words.keySet().iterator();
         while (it.hasNext() && count < 50) {
@@ -334,7 +334,7 @@ public class WordNetUtilities {
      */
     public static String formatWordsList(TreeMap words, String kbName) {
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int count = 0;
         Iterator it = words.keySet().iterator();
         while (it.hasNext() && count < 50) {

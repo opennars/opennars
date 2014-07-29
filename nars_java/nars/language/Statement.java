@@ -60,8 +60,8 @@ public abstract class Statement extends CompoundTerm {
     /**
      * High-performance constructor that avoids recalculating some Term metadata when created
      */
-    protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i, int nameHash) {
-        super(n, cs, con, hasVar, i, nameHash);
+    protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i) {
+        super(n, cs, con, hasVar, i);
     }
 
     /**

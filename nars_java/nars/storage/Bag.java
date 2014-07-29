@@ -483,7 +483,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
      */
     @Override
     public String toString() {
-        final StringBuffer buf = new StringBuffer(" ");
+        final StringBuilder buf = new StringBuilder(" ");
         for (int i = levels-1; i >= showLevel; i--) {
             if (itemTable[i]!=null && !itemTable[i].isEmpty()) {
                 buf.append("\n --- Level ").append((i+1)).append(":\n");
@@ -499,7 +499,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
      * TODO refactor : paste from preceding method
      */
     public String toStringLong() {
-        StringBuffer buf = new StringBuffer(32)
+        StringBuilder buf = new StringBuilder(32)
             .append(" BAG ").append(getClass().getSimpleName())
             .append(" ").append(showSizes());
         

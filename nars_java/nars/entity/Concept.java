@@ -164,8 +164,12 @@ public final class Concept extends Item {
             } else if (LocalRules.revisible(judg, oldBelief)) {
                 memory.setNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
                 if (memory.getNewStamp() != null) {
-                    memory.setCurrentBelief( oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime()) );
-                    LocalRules.revision(judg, memory.getCurrentBelief(), false, memory);
+                    Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
+                    if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
+                        memory.singlePremiseTask(projectedBelief, task.budget);
+                    }
+                    memory.setCurrentBelief(projectedBelief);
+                    LocalRules.revision(judg, projectedBelief, false, memory);
                 }
             }
         }
@@ -438,10 +442,16 @@ public final class Concept extends Item {
             if (memory.getRecorder().isActive()) {
                 memory.getRecorder().append(" * Selected Belief: " + belief);
             }
+            
             memory.setNewStamp( Stamp.make(taskStamp, belief.stamp, currentTime) );
-//            if (memory.newStamp != null) {
-                return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
-//            }
+////            if (memory.newStamp != null) {
+ //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
+////            }
+            Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.getTime());
+            if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
+                memory.singlePremiseTask(projectedBelief, task.budget);
+            }
+            return projectedBelief;                
         }
         return null;
     }

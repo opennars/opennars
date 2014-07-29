@@ -32,6 +32,7 @@ import org.junit.Test;
  */
 public class TermTest {
 
+    
     protected void assertEquivalent(String term1String, String term2String) {
         try {
             NAR n = new NAR();

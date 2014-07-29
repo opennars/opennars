@@ -1058,9 +1058,9 @@ public class Formula implements Comparable {
         ArrayList unquantVariables = collectUnquantifiedVariables(theFormula,quantVariables);
 
         if (unquantVariables.size() > 0) {       // Quantify all the unquantified variables
-            StringBuffer quant = new StringBuffer("(forall (");  
+            StringBuilder quant = new StringBuilder("(forall (");  
             if (query) 
-                quant = new StringBuffer("(exists (");     
+                quant = new StringBuilder("(exists (");     
             for (int i = 0; i < unquantVariables.size(); i++) {
                 quant = quant.append((String) unquantVariables.get(i));
                 if (i < unquantVariables.size() - 1) 
@@ -1112,7 +1112,7 @@ public class Formula implements Comparable {
         Formula result = this;
         try {
             if (this.listP()) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 Formula f = new Formula();
                 f.read(this.theFormula);
                 int flen = f.listLength();
@@ -1234,7 +1234,7 @@ public class Formula implements Comparable {
                 else {
                     TreeSet rowVars = f.findRowVars();
                     Iterator it = rowVars.iterator();
-                    StringBuffer result = new StringBuffer(f.theFormula);
+                    StringBuilder result = new StringBuilder(f.theFormula);
                     long t1 = 0L;
 
                     // Iterate through the row variables
@@ -1253,8 +1253,8 @@ public class Formula implements Comparable {
                         // Increment the timer for adjustExpansionCount().
                         KB.ppTimers[5] += (System.currentTimeMillis() - t1);
 
-                        StringBuffer rowResult = new StringBuffer();
-                        StringBuffer rowReplace = new StringBuffer();
+                        StringBuilder rowResult = new StringBuilder();
+                        StringBuilder rowReplace = new StringBuilder();
                         for (int j = 1 ; j < range[1] ; j++) {
                             if (rowReplace.toString().length() > 0) {
                                 rowReplace = rowReplace.append(" ");
@@ -1267,7 +1267,7 @@ public class Formula implements Comparable {
                         if (!hasVariableArityRelation) {
                             rowResult = rowResult.append(result.toString().replaceAll("\\@" + row, rowReplace.toString()) + "\n");
                         }
-                        result = new StringBuffer(rowResult.toString());
+                        result = new StringBuilder(rowResult.toString());
                     }
                     ArrayList al = parseList(result.toString());
                     // System.out.println("INFO in Formula.expandRowVars(" + this + ")");
@@ -2610,7 +2610,7 @@ public class Formula implements Comparable {
         ArrayList mathOperators = new ArrayList(Arrays.asList(matOps));
         ArrayList comparisonOperators = new ArrayList(Arrays.asList(compOps));
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (f.theFormula == "" || !f.listP() || f.atom() || f.empty()) return "";
 
         String prefix = "";
@@ -2925,8 +2925,8 @@ public class Formula implements Comparable {
     public String format(String hyperlink, String indentChars, String eolChars) {
 
         boolean inQuantifier = false;
-        StringBuffer token = new StringBuffer();
-        StringBuffer formatted = new StringBuffer();
+        StringBuilder token = new StringBuilder();
+        StringBuilder formatted = new StringBuilder();
         int indentLevel = 0;
         boolean inToken = false;
         boolean inVariable = false;
@@ -2953,7 +2953,7 @@ public class Formula implements Comparable {
                 if (theFormula.charAt(i) == '(' && indentLevel == 0 && i == 0) 
                     formatted = formatted.append(theFormula.charAt(i));
                 if (Character.isJavaIdentifierStart(theFormula.charAt(i)) && !inToken && !inVariable) {
-                    token = new StringBuffer(theFormula.charAt(i));
+                    token = new StringBuilder(theFormula.charAt(i));
                     inToken = true;
                 }
                 if ((Character.isJavaIdentifierPart(theFormula.charAt(i)) || theFormula.charAt(i) == '-') && inToken)
@@ -2962,7 +2962,7 @@ public class Formula implements Comparable {
                     if (inQuantifier) {
                         inQuantifier = false;
                         inVarlist = true;
-                        token = new StringBuffer();
+                        token = new StringBuilder();
                     }
                     else
                         indentLevel++;
@@ -2989,7 +2989,7 @@ public class Formula implements Comparable {
                         formatted = formatted.append("<a href=\"" + hyperlink + "&term=" + token + "\">" + token + "</a>");
                     else
                         formatted = formatted.append(token);
-                    token = new StringBuffer();
+                    token = new StringBuilder();
                 }
                 if (!inToken && i>0 && !(Character.isWhitespace(theFormula.charAt(i)) && theFormula.charAt(i-1) == '(')) {
                     if (Character.isWhitespace(theFormula.charAt(i))) { 
@@ -3072,7 +3072,7 @@ public class Formula implements Comparable {
             System.out.println("INFO in Fomula.toProlog(): Empty formula: " + theFormula);
             return "";
         }
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String relation = car();
         Formula f = new Formula();
         f.theFormula = cdr();
@@ -3291,7 +3291,7 @@ public class Formula implements Comparable {
             int arity;
             String quantification;
 
-            StringBuffer tptpFormula = new StringBuffer(suoString.length());
+            StringBuilder tptpFormula = new StringBuilder(suoString.length());
 
             parenLevel = 0;
             countStack.push(0);
@@ -4088,7 +4088,7 @@ public class Formula implements Comparable {
         try {
             Formula f = this;
             if (f.listP() && !f.empty()) {
-                StringBuffer litBuf = new StringBuffer();
+                StringBuilder litBuf = new StringBuilder();
                 String arg0 = f.car();
                 if (f.isRule()
                     // arg0.equals("<=>") || 
@@ -4202,7 +4202,7 @@ public class Formula implements Comparable {
             Set added = new HashSet();
 
             // Get the clauses for this Formula.
-            StringBuffer litBuf = new StringBuffer();
+            StringBuilder litBuf = new StringBuilder();
             List clauses = getClauses();
             Map varMap = getVarMap();
             String qlString = null;

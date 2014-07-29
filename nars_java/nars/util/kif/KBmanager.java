@@ -137,7 +137,7 @@ public class KBmanager {
 
         SimpleElement configuration = null;
         System.out.println("INFO in KBmanager.readConfiguration()"); 
-        StringBuffer xml = new StringBuffer();
+        StringBuilder xml = new StringBuilder();
         String kbDirStr = (String) preferences.get("kbDir");
         File kbDir = null;
         if ((kbDirStr == null) || kbDirStr.isEmpty()) {
@@ -183,7 +183,7 @@ public class KBmanager {
      */
     public static String escapeFilename(String fname) {
 
-        StringBuffer newstring = new StringBuffer("");
+        StringBuilder newstring = new StringBuilder("");
         
         for (int i = 0; i < fname.length(); i++) {
             if (fname.charAt(i) == 92 && fname.charAt(i+1) != 92) 

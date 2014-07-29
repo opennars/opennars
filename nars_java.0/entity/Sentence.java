@@ -204,7 +204,7 @@ public class Sentence implements Cloneable {
      */
     @Override
     public String toString() {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append(content.toString());
         s.append(punctuation + " ");
         if (truth != null) {
@@ -227,7 +227,7 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public String toKey() {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append(content.toString());
         s.append(punctuation + " ");
         if (truth != null) {
