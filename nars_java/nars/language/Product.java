@@ -23,7 +23,7 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.storage.Memory;
 
 /**
@@ -71,7 +71,7 @@ public class Product extends CompoundTerm {
      * @param memory Reference to the memeory
      */
     public static Term make(final ArrayList<Term> argument, final Memory memory) {
-        final String name = makeCompoundName(Operator.PRODUCT, argument);
+        final String name = makeCompoundName(InnateOperator.PRODUCT, argument);
         final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Product(argument);
     }
@@ -95,7 +95,7 @@ public class Product extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public Operator operator() {
-        return Operator.PRODUCT;
+    public InnateOperator operator() {
+        return InnateOperator.PRODUCT;
     }
 }

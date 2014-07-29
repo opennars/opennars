@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -42,9 +41,9 @@ import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output.OUT;
-import nars.io.Symbols.Operator;
 import nars.language.Negation;
 import nars.language.Term;
+import nars.operation.Operator;
 import nars.util.XORShiftRandom;
 
 
@@ -65,7 +64,7 @@ public class Memory {
     public final ConceptBag concepts;
     
     
-    /* Operator registry. Containing all registered operators of the system */
+    /* InnateOperator registry. Containing all registered operators of the system */
     public final HashMap<String, Operator> operators;
     
     /**
@@ -125,12 +124,20 @@ public class Memory {
      * @param nar
      */
     public Memory(NAR nar) {
+        
         this.nar = nar;
+        
         recorder = NullInferenceRecorder.global;
+        
         concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
-        operators = Operator.loadDefaultOperators();
+        
+        operators = new HashMap<>();
+        Operator.loadDefaultOperators(this);
+                        
         novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
+        
         newTasks = new ArrayDeque<>();
+        
         lastEvent = null;
     }
 
@@ -185,12 +192,12 @@ public class Memory {
     }
 
     /**
-     * Get a Term for a given name of a Concept or Operator
+     * Get a Term for a given name of a Concept or InnateOperator
      * <p>
      * called in StringParser and the make methods of compound terms.
      *
      * @param name the name of a concept or operator
-     * @return a Term or null (if no Concept/Operator has this name)
+     * @return a Term or null (if no Concept/InnateOperator has this name)
      */
     public Term nameToTerm(final String name) {
         final Concept concept = concepts.get(name);
@@ -280,9 +287,9 @@ public class Memory {
      Some of them are reported and/or logged. */
     /**
      * Input task processing. Invoked by the outside or inside environment.
-     * Outside: StringParser (addInput); Inside: Operator (feedback). Input
-     * tasks with low priority are ignored, and the others are put into task
-     * buffer.
+ Outside: StringParser (addInput); Inside: InnateOperator (feedback). Input
+ tasks with low priority are ignored, and the others are put into task
+ buffer.
      *
      * @param task The addInput task
      */
@@ -646,6 +653,16 @@ public class Memory {
         }
     }
 
+    
+     public Operator getOperator(String op) {
+        return operators.get(op);
+     }
+     
+     public void registerOperator(Operator op) {
+         operators.put(op.getName(), op);
+     }
+     
+ 
     /* ---------- display ---------- */
     /**
      * Start display active concepts on given bagObserver, called from

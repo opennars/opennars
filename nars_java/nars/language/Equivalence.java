@@ -24,7 +24,7 @@ import java.util.*;
 import nars.inference.TemporalRules;
 
 import nars.io.Symbols;
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.storage.Memory;
 
 /**
@@ -94,18 +94,18 @@ public class Equivalence extends Statement {
             subject = predicate;
             predicate = interm;
         }
-        Operator copula;
+        InnateOperator copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_BACKWARD:
                 temporalOrder = TemporalRules.ORDER_FORWARD;
             case TemporalRules.ORDER_FORWARD:
-                copula = Operator.EQUIVALENCE_AFTER;
+                copula = InnateOperator.EQUIVALENCE_AFTER;
                 break;
             case TemporalRules.ORDER_CONCURRENT:
-                copula = Operator.EQUIVALENCE_WHEN;
+                copula = InnateOperator.EQUIVALENCE_WHEN;
                 break;
             default:
-                copula = Operator.EQUIVALENCE;
+                copula = InnateOperator.EQUIVALENCE;
         }
         String name = makeStatementName(subject, copula, predicate);
         Term t = memory.nameToTerm(name);
@@ -122,14 +122,14 @@ public class Equivalence extends Statement {
      * @return the operator of the term
      */
     @Override
-    public Operator operator() {
+    public InnateOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return Operator.EQUIVALENCE_AFTER;
+                return InnateOperator.EQUIVALENCE_AFTER;
             case TemporalRules.ORDER_CONCURRENT:
-                return Operator.EQUIVALENCE_WHEN;
+                return InnateOperator.EQUIVALENCE_WHEN;
         }
-        return Operator.EQUIVALENCE;
+        return InnateOperator.EQUIVALENCE;
     }
 
     /**

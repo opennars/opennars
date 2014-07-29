@@ -22,6 +22,8 @@ import nars.language.SetInt;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
+import nars.operation.Operation;
+import nars.operation.Operator;
 import nars.storage.Memory;
 
 /**
@@ -595,7 +597,7 @@ public class TextPerception {
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i), memory);
         Term predicate = parseTerm(s.substring(i + 3), memory);
-        Statement t = Statement.make(Symbols.relation(relation), subject, predicate, memory);
+        Statement t = Statement.make(Symbols.opRelation(relation), subject, predicate, memory);
         if (t == null) {
             throw new InvalidInputException("invalid statement: statement unable to create: " + Symbols.operator(relation) + " " + subject + " " + predicate);
         }
@@ -613,25 +615,35 @@ public class TextPerception {
     private static Term parseCompoundTerm(final String s0, final Memory memory) throws InvalidInputException {
         String s = s0.trim();
         if (s.isEmpty()) {
-            throw new InvalidInputException("empty compound term: " + s);
+            throw new InvalidInputException("Empty compound term: " + s);
         }
         int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
         if (firstSeparator == -1) {
-            throw new InvalidInputException("invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
+            throw new InvalidInputException("Invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
         }
-        String op = s.substring(0, firstSeparator).trim();
-        if (!CompoundTerm.isOperator(op) && !memory.isRegisteredOperator(op)) {
-            throw new InvalidInputException("unknown operator: " + op);
-        }
-        Operator o = Symbols.operator(op);        
         
+        String op = s.substring(0, firstSeparator).trim();
+        InnateOperator oInnate = Symbols.operator(op);
+        Operator oRegistered = memory.getOperator(op);
+        
+        if ((oRegistered==null) && (oInnate == null)) {
+            throw new InvalidInputException("Unknown operator: " + op);
+        }
+
         ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
         
-        Term t = CompoundTerm.make(o, arg, memory);
+        Term t;
         
-        if (t == null) {
-            throw new InvalidInputException("invalid compound term");
+        if (oInnate!=null) {
+            t = CompoundTerm.make(oInnate, arg, memory);
         }
+        else if (oRegistered!=null) {
+            t = Operation.make(oRegistered, arg, memory);
+        }
+        else {
+            throw new InvalidInputException("Invalid compound term");
+        }
+        
         return t;
     }
 
@@ -688,9 +700,9 @@ public class TextPerception {
     }
 
     /**
-     * locate the top-level relation in a statement
+     * locate the top-level opRelation in a statement
      *
-     * @return the index of the top-level relation
+     * @return the index of the top-level opRelation
      * @param s The String to be parsed
      */
     private static int topRelation(final String s) {      // need efficiency improvement

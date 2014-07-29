@@ -22,7 +22,7 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols.Operator;
+import nars.io.Symbols.InnateOperator;
 import nars.storage.Memory;
 import nars.inference.TemporalRules;
 
@@ -86,19 +86,19 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        Operator copula;
+        InnateOperator copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                copula = Operator.IMPLICATION_AFTER;
+                copula = InnateOperator.IMPLICATION_AFTER;
                 break;
             case TemporalRules.ORDER_CONCURRENT:
-                copula = Operator.IMPLICATION_WHEN;
+                copula = InnateOperator.IMPLICATION_WHEN;
                 break;
             case TemporalRules.ORDER_BACKWARD:
-                copula = Operator.IMPLICATION_BEFORE;
+                copula = InnateOperator.IMPLICATION_BEFORE;
                 break;
             default:
-                copula = Operator.IMPLICATION;
+                copula = InnateOperator.IMPLICATION;
         }                
         final String name = makeStatementName(subject, copula, predicate);
         final Term t = memory.nameToTerm(name);
@@ -126,16 +126,16 @@ public class Implication extends Statement {
      * @return the operator of the term
      */
     @Override
-    public Operator operator() {
+    public InnateOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return Operator.IMPLICATION_AFTER;
+                return InnateOperator.IMPLICATION_AFTER;
             case TemporalRules.ORDER_CONCURRENT:
-                return Operator.IMPLICATION_WHEN;
+                return InnateOperator.IMPLICATION_WHEN;
             case TemporalRules.ORDER_BACKWARD:
-                return Operator.IMPLICATION_BEFORE;
+                return InnateOperator.IMPLICATION_BEFORE;
         }
-        return Operator.IMPLICATION;
+        return InnateOperator.IMPLICATION;
     }
     
     public int getTemporalOrder() {
