@@ -74,12 +74,11 @@ public class Operation extends Inheritance {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Operation make(final String op, final ArrayList<Term> arg, final Memory memory) {
-        Operator oper = memory.getOperator(op);
+    public static Operation make(Operator oper, final ArrayList<Term> arg, final Memory memory) {        
         if (oper == null) {
             return null;
         }
-        String name = makeName(op, arg, memory);
+        String name = makeName(oper.getName(), arg, memory);
         Term t = memory.nameToTerm(name);
         if (t != null) {
             return (Operation) t;
