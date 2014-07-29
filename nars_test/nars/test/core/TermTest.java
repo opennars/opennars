@@ -43,9 +43,6 @@ public class TermTest {
             assertTrue(term2 instanceof CompoundTerm);
             assert(!term1String.equals(term2String));
 
-            System.out.println(term1);
-            System.out.println(term2);        
-
             assert(term1.hashCode() == term2.hashCode());
             assert(term1.equals(term2));
             assert(term1.compareTo(term2)==0);        
