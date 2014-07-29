@@ -42,6 +42,7 @@ import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output.OUT;
+import nars.io.Symbols.Operator;
 import nars.language.Negation;
 import nars.language.Term;
 import nars.util.XORShiftRandom;
@@ -62,6 +63,11 @@ public class Memory {
      * Concept bag. Containing all Concepts of the system
      */
     public final ConceptBag concepts;
+    
+    
+    /* Operator registry. Containing all registered operators of the system */
+    public final HashMap<String, Operator> operators;
+    
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
@@ -122,6 +128,7 @@ public class Memory {
         this.nar = nar;
         recorder = NullInferenceRecorder.global;
         concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
+        operators = Operator.loadDefaultOperators();
         novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new ArrayDeque<>();
         lastEvent = null;
@@ -150,7 +157,11 @@ public class Memory {
         return nar.getTime();
     }
 
-
+     /* ---------- operator processing ---------- */
+     public boolean isRegisteredOperator(String op) {
+         return operators.containsKey(op);
+     }
+ 
     /**
      * Actually means that there are no new Tasks
      *

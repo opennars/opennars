@@ -81,6 +81,19 @@ public class Parameters {
     /** Default durability of input question */
     public static final float DEFAULT_QUESTION_DURABILITY = (float) 0.9;
 
+    
+     /** Default confidence of input goal. */
+     public static final float DEFAULT_GOAL_CONFIDENCE = (float) 0.9;
+     /** Default priority of input judgment */
+     public static final float DEFAULT_GOAL_PRIORITY = (float) 0.9;
+     /** Default durability of input judgment */
+     public static final float DEFAULT_GOAL_DURABILITY = (float) 0.9;
+     /** Default priority of input question */
+     public static final float DEFAULT_QUEST_PRIORITY = (float) 0.9;
+     /** Default durability of input question */
+     public static final float DEFAULT_QUEST_DURABILITY = (float) 0.9;
+ 
+    
     /* ---------- space management ---------- */
     
     /** Level separation in Bag, one digit, for display (run-time adjustable) and management (fixed) */
