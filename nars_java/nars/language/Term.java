@@ -166,12 +166,12 @@ public class Term implements Cloneable, Comparable<Term> {
      * @param target The term to be searched
      * @return Whether the two have the same content
      */
-    public boolean containTerm(final Term target) {
+    public boolean containsTermRecursively(final Term target) {
         return equals(target);
     }
 
     /** whether this contains a term in its components. */
-    public boolean containComponent(final Term target) {
+    public boolean containsTerm(final Term target) {
         return equals(target);
     }
 

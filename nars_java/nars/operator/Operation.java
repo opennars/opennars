@@ -41,8 +41,7 @@ public class Operation extends Inheritance {
      * @param arg The component list of the term
      */
     public Operation(String name, Term[] arg) {
-        super(arg);
-        setName(name);
+        super(name, arg);
     }
 
     /**
@@ -65,7 +64,7 @@ public class Operation extends Inheritance {
     @Override
     public Object clone() {
         
-        return new Operation(name, cloneComponents(), isConstant(), containVar(), getComplexity());
+        return new Operation(name, cloneTerms(), isConstant(), containVar(), getComplexity());
     }
 
     /**

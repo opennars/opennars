@@ -69,7 +69,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Conjunction(getName(), cloneTerms(components), isConstant(), complexity, temporalOrder);
+        return new Conjunction(getName(), cloneTermsAppend(term), isConstant(), complexity, temporalOrder);
     }
 
     /**
@@ -100,7 +100,7 @@ public class Conjunction extends CompoundTerm {
     }
 
     /**
-     * Try to make a new compound from a list of components. Called by
+     * Try to make a new compound from a list of term. Called by
      * StringParser.
      *
      * @return the Term generated from the arguments
@@ -112,10 +112,10 @@ public class Conjunction extends CompoundTerm {
     }
         
     /**
-     * Try to make a new compound from a list of components. Called by
+     * Try to make a new compound from a list of term. Called by
      * StringParser.
      *
-     * @param temporalOrder The temporal order among components
+     * @param temporalOrder The temporal order among term
      * @param argList the list of arguments
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
@@ -140,10 +140,10 @@ public class Conjunction extends CompoundTerm {
     }
 
     /**
-     * Try to make a new Disjunction from a set of components. Called by the
+     * Try to make a new Disjunction from a set of term. Called by the
      * public make methods.
      *
-     * @param set a set of Term as components
+     * @param set a set of Term as term
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
@@ -161,7 +161,7 @@ public class Conjunction extends CompoundTerm {
 
     // overload this method by term type?
     /**
-     * Try to make a new compound from two components. Called by the inference
+     * Try to make a new compound from two term. Called by the inference
      * rules.
      *
      * @param term1 The first component
@@ -177,9 +177,9 @@ public class Conjunction extends CompoundTerm {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final ArrayList<Term> list;
             if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                list = new ArrayList<>(((CompoundTerm) term1).cloneComponentsList());
+                list = new ArrayList<>(((CompoundTerm) term1).cloneTermsList());
                 if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                    list.addAll(((CompoundTerm) term2).cloneComponentsList());
+                    list.addAll(((CompoundTerm) term2).cloneTermsList());
                 } // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 else {
                     list.add((Term) term2.clone());
@@ -187,7 +187,7 @@ public class Conjunction extends CompoundTerm {
             } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 list = new ArrayList<>(((CompoundTerm) term2).size() + 1);
                 list.add((Term) term1.clone());
-                list.addAll(((CompoundTerm) term2).cloneComponentsList()); // (&,R,(&,P,Q)) = (&,P,Q,R)
+                list.addAll(((CompoundTerm) term2).cloneTermsList()); // (&,R,(&,P,Q)) = (&,P,Q,R)
             } else {
                 list = new ArrayList<>(2);
                 list.add((Term) term1.clone());
@@ -197,15 +197,15 @@ public class Conjunction extends CompoundTerm {
         } else {
         final TreeSet<Term> set;
         if (term1 instanceof Conjunction) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneComponentsList());
+            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
             if (term2 instanceof Conjunction) {
-                set.addAll(((CompoundTerm) term2).cloneComponentsList());
+                set.addAll(((CompoundTerm) term2).cloneTermsList());
             } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
                 set.add((Term) term2.clone());
             }                          // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof Conjunction) {
-            set = new TreeSet<>(((CompoundTerm) term2).cloneComponentsList());
+            set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
             set.add((Term) term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();

@@ -41,7 +41,7 @@ public class NARGraph extends DirectedMultigraph {
     }
 
     /**
-     * determines which NARS components can result in added graph features
+     * determines which NARS term can result in added graph features
      */
     public static interface Filter {
 
@@ -65,7 +65,7 @@ public class NARGraph extends DirectedMultigraph {
     };
             
     /**
-     * creates graph features from NARS components
+     * creates graph features from NARS term
      */
     public static interface Graphize {
 
@@ -335,7 +335,7 @@ public class NARGraph extends DirectedMultigraph {
         
         void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
 
-            for (Term b : c.components) {
+            for (Term b : c.term) {
                 if (!g.containsVertex(b))
                     g.addVertex(b);
                 
@@ -369,10 +369,10 @@ public class NARGraph extends DirectedMultigraph {
                       for (final Term b : terms) {
                           if (a == b) continue;
 
-                          if (a.containComponent(b)) {
+                          if (a.containsTerm(b)) {
                               g.addEdge(a, b, new TermContent());
                           }
-                          if (b.containComponent(a)) {
+                          if (b.containsTerm(a)) {
                               g.addEdge(b, a, new TermContent());
                           }
                       }

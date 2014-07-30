@@ -20,13 +20,13 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
- * A compound term whose extension is the intersection of the extensions of its components
+ * A compound term whose extension is the intersection of the extensions of its term
  */
 public class IntersectionExt extends CompoundTerm {
 
@@ -35,8 +35,8 @@ public class IntersectionExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private IntersectionExt(Term[] arg) {
-        super(arg);
+    private IntersectionExt(final String name, Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -55,11 +55,11 @@ public class IntersectionExt extends CompoundTerm {
      * @return A new object, to be casted into a IntersectionExt
      */
     public Object clone() {
-        return new IntersectionExt(getName(), cloneTerms(components), isConstant(), complexity);
+        return new IntersectionExt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two term. Called by the inference rules.
      * @param term1 The first compoment
      * @param term2 The first compoment
      * @param memory Reference to the memory
@@ -68,25 +68,25 @@ public class IntersectionExt extends CompoundTerm {
     public static Term make(Term term1, Term term2, Memory memory) {
         TreeSet<Term> set;
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponentsList());
-            set.addAll(((CompoundTerm) term2).cloneComponentsList());        // set union
+            set = new TreeSet<Term>(((CompoundTerm) term1).cloneTermsList());
+            set.addAll(((CompoundTerm) term2).cloneTermsList());        // set union
             return SetInt.make(set, memory);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponentsList());
-            set.retainAll(((CompoundTerm) term2).cloneComponentsList());     // set intersection
+            set = new TreeSet<Term>(((CompoundTerm) term1).cloneTermsList());
+            set.retainAll(((CompoundTerm) term2).cloneTermsList());     // set intersection
             return SetExt.make(set, memory);
         }
         if (term1 instanceof IntersectionExt) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponentsList());
+            set = new TreeSet<Term>(((CompoundTerm) term1).cloneTermsList());
             if (term2 instanceof IntersectionExt) {
-                set.addAll(((CompoundTerm) term2).cloneComponentsList());
+                set.addAll(((CompoundTerm) term2).cloneTermsList());
             }               // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
                 set.add((Term) term2.clone());
             }               // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof IntersectionExt) {
-            set = new TreeSet<Term>(((CompoundTerm) term2).cloneComponentsList());
+            set = new TreeSet<Term>(((CompoundTerm) term2).cloneTermsList());
             set.add((Term) term1.clone());    // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<Term>();
@@ -99,16 +99,16 @@ public class IntersectionExt extends CompoundTerm {
     /**
      * Try to make a new IntersectionExt. Called by StringParser.
      * @return the Term generated from the arguments
-     * @param argList The list of components
+     * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
+    public static Term make(Collection<Term> argList, Memory memory) {
         TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
         return make(set, memory);
     }
 
     /**
-     * Try to make a new compound from a set of components. Called by the public make methods.
+     * Try to make a new compound from a set of term. Called by the public make methods.
      * @param set a set of Term as compoments
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
@@ -120,7 +120,7 @@ public class IntersectionExt extends CompoundTerm {
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeCompoundName(NativeOperator.INTERSECTION_EXT, argument);
         Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new IntersectionExt(argument);
+        return (t != null) ? t : new IntersectionExt(name, argument);
     }
 
     /**

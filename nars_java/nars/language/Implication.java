@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
@@ -35,8 +34,8 @@ public class Implication extends Statement {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private Implication(Term[] arg, int order) {
-        super(arg);
+    private Implication(String name, Term[] arg, int order) {
+        super(name, arg);
         temporalOrder = order;
     }
 
@@ -61,11 +60,11 @@ public class Implication extends Statement {
     @Override
     public Object clone() {
         //TODO use the faster super constructor here
-        return new Implication(getName(), cloneTerms(components), isConstant(), complexity, temporalOrder);
+        return new Implication(getName(), cloneTermsAppend(term), isConstant(), complexity, temporalOrder);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two term. Called by the inference rules.
      * @param subject The first component
      * @param predicate The second component
      * @param memory Reference to the memory
@@ -109,13 +108,13 @@ public class Implication extends Statement {
         }
         if (predicate instanceof Implication) {
             final Term oldCondition = ((Statement) predicate).getSubject();
-            if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containComponent(subject)) {
+            if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containsTerm(subject)) {
                 return null;
             }
             final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);
             return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder, memory);
         } else {
-            return new Implication(new Term[] { subject, predicate }, temporalOrder);
+            return new Implication(name, new Term[] { subject, predicate }, temporalOrder);
         }
     }
 

@@ -20,7 +20,7 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.TreeSet;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -36,11 +36,8 @@ public class Disjunction extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Disjunction(Term[] arg) {
-        super(arg);
-        /*if (arg.length<2) {
-            throw new RuntimeException("Conjunction requires >=2 components");
-        }*/
+    private Disjunction(final String name, final Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -53,7 +50,7 @@ public class Disjunction extends CompoundTerm {
     private Disjunction(String n, Term[] arg, boolean con, short i) {
         super(n, arg, con, i);
         /*if (arg.size()<2) {
-            throw new RuntimeException("Conjunction requires >=2 components");
+            throw new RuntimeException("Conjunction requires >=2 term");
         } */       
     }
 
@@ -69,11 +66,11 @@ public class Disjunction extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Disjunction(getName(), cloneTerms(components), isConstant(), complexity);
+        return new Disjunction(getName(), cloneTermsAppend(term), isConstant(), complexity);
     }
 
     /**
-     * Try to make a new Disjunction from two components. Called by the inference rules.
+     * Try to make a new Disjunction from two term. Called by the inference rules.
      * @param term1 The first component
      * @param term2 The first component
      * @param memory Reference to the memory
@@ -82,15 +79,15 @@ public class Disjunction extends CompoundTerm {
     public static Term make(Term term1, Term term2, Memory memory) {
         TreeSet<Term> set;
         if (term1 instanceof Disjunction) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneComponentsList());
+            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
             if (term2 instanceof Disjunction) {
-                set.addAll(((CompoundTerm) term2).cloneComponentsList());
+                set.addAll(((CompoundTerm) term2).cloneTermsList());
             } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
                 set.add((Term) term2.clone());
             }                          // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof Disjunction) {
-            set = new TreeSet<>(((CompoundTerm) term2).cloneComponentsList());
+            set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
             set.add((Term) term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();
@@ -102,18 +99,18 @@ public class Disjunction extends CompoundTerm {
 
     /**
      * Try to make a new IntersectionExt. Called by StringParser.
-     * @param argList a list of Term as components
+     * @param argList a list of Term as term
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
+    public static Term make(Collection<Term> argList, Memory memory) {
         TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
         return make(set, memory);
     }
 
     /**
-     * Try to make a new Disjunction from a set of components. Called by the public make methods.
-     * @param set a set of Term as components
+     * Try to make a new Disjunction from a set of term. Called by the public make methods.
+     * @param set a set of Term as term
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
@@ -124,7 +121,7 @@ public class Disjunction extends CompoundTerm {
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
         Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new Disjunction(argument);
+        return (t != null) ? t : new Disjunction(name, argument);
     }
 
     /**
