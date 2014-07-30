@@ -36,15 +36,15 @@ public class Sample extends Operator {
 
     /** called from Operator */
     ArrayList<Task> execute(Task task) {
-         Operation content = (Operation) task.getContent();
-         Operator op = content.getOperator();
+        Operation content = (Operation) task.getContent();
+        Operator op = content.getOperator();
          
-         Term[] arg = content.getArguments();
-         System.out.println("Executed: " + op);
-         for (Term t : arg) {
-             System.out.println(" --- " + t);
-         }
-         return null;
+        Term[] arg = content.getArguments();
+        System.out.println("Executed: " + op);
+        for (Term t : arg) {
+            System.out.println(" --- " + t);
+        }
+        return null;
     }
 
 }
