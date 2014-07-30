@@ -40,15 +40,16 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
+
 /**
  * Directly process a task by a oldBelief, with only two Terms in both. In
- * matching, the new task is compared with all existing direct Tasks in that
+ * matching, the new task is compared with an existing direct Task in that
  * Concept, to carry out:
  * <p>
- * revision: between judgments on non-overlapping evidence; revision: between
- * judgments; satisfy: between a Sentence and a Question/Goal; merge: between
- * items of the same type and stamp; conversion: between different inheritance
- * relations.
+ *   revision: between judgments or goals on non-overlapping evidence; 
+ *   satisfy: between a Sentence and a Question/Goal; 
+ *   merge: between items of the same type and stamp; 
+ *   conversion: between different inheritance relations.
  */
 public class LocalRules {
 
@@ -117,9 +118,9 @@ public class LocalRules {
         Sentence problem = task.getSentence();
         if (TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             Sentence oldBest = task.getBestSolution();
-            float newQ = solutionQuality(problem, belief);
+            float newQ = solutionQuality(problem, belief, memory);
             if (oldBest != null) {
-                float oldQ = solutionQuality(problem, oldBest);
+                float oldQ = solutionQuality(problem, oldBest, memory);
                 if (oldQ >= newQ) {
                     return;
                 }
@@ -150,17 +151,21 @@ public class LocalRules {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(final Sentence problem, final Sentence solution) {
-        if (problem == null) {
-            return solution.truth.getExpectation();
-        }
+     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
+ //        if (problem == null) {
+ //            return solution.getTruth().getExpectation();
+ //        }
         if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0f;
         }
-        final TruthValue truth = solution.truth;
+        TruthValue truth = solution.truth;
+        if (problem.getOccurenceTime() != solution.getOccurenceTime()) {
+            Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.getTime());
+            truth = cloned.truth;
+        }
         if (problem.containQueryVar()) {   // "yes/no" question
             return truth.getExpectation() / solution.getContent().getComplexity();
-        } else {                                    // "what" question or goal
+        } else {                           // "what" question or goal
             return truth.getConfidence();
         }
     }

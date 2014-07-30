@@ -119,6 +119,10 @@ public class Task extends Item {
     public boolean isInput() {
         return parentTask == null;
     }
+    
+    public boolean aboveThreshold() {
+        return budget.aboveThreshold();
+    }
 
     /**
      * Check if a Task is derived by a StructuralRule
