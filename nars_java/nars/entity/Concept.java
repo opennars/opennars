@@ -32,7 +32,6 @@ import nars.inference.UtilityFunctions;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.operator.Operator;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
 import nars.storage.NullBagObserver;
@@ -53,17 +52,17 @@ public final class Concept extends Item {
      * The term is the unique ID of the concept
      */
     public final Term term;
-    
+
     /**
      * Task links for indirect processing
      */
     public final TaskLinkBag taskLinks;
-    
+
     /**
      * Term links between the term and its components and compounds; beliefs
      */
     public final TermLinkBag termLinks;
-    
+
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm jmv TODO
      * explain more
@@ -78,26 +77,25 @@ public final class Concept extends Item {
      */
     public final ArrayList<Task> questions;
 
-     /**
-      * pending Quests to be merged into Questions?
-      */
+    /**
+     * pending Quests to be merged into Questions?
+     */
     public final ArrayList<Task> quests;
- 
-     /**
-       * Sentences directly made about the term, with non-future tense
-       */
+
+    /**
+     * Sentences directly made about the term, with non-future tense
+     */
     public final ArrayList<Sentence> beliefs;
- 
-     /**
-      * Pending goals to be achieved
-      */
+
+    /**
+     * Pending goals to be achieved
+     */
     public final ArrayList<Sentence> desires;
- 
- 
+
     /**
      * Reference to the memory
      */
-    final Memory memory;
+    public final Memory memory;
     /**
      * The display window
      */
@@ -117,7 +115,7 @@ public final class Concept extends Item {
         super(tm.getName());
         term = tm;
         this.memory = memory;
-        
+
         questions = new ArrayList();
         beliefs = new ArrayList();
         quests = new ArrayList<>();
@@ -148,20 +146,19 @@ public final class Concept extends Item {
         char type = task.getSentence().punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
-                 processJudgment(task);
-                 break;
+                processJudgment(task);
+                break;
             case Symbols.GOAL_MARK:
-                 processGoal(task);
-                 break;
+                processGoal(task);
+                break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
-                 processQuestion(task);
-                 break;
+                processQuestion(task);
+                break;
             default:
-                 return;
+                return;
         }
-        
-        
+
         if (task.budget.aboveThreshold()) {    // still need to be processed
             linkToTask(task);
         }
@@ -209,8 +206,7 @@ public final class Concept extends Item {
         }
     }
 
-    
-       /**
+    /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
      *
@@ -221,38 +217,35 @@ public final class Concept extends Item {
     private void processGoal(final Task task) {
         final Sentence goal = task.getSentence();
         final Sentence oldGoal = evaluation(goal, desires);
+        boolean noRevision = true;
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             if (newStamp.equals(oldStamp)) {
-                if (task.getParentTask().getSentence().isJudgment()) {
-                    task.budget.decPriority(0);    // duplicated task
-                }   // else: activated belief
-                return;
+                return; // duplicates --- increasing priority?                
             } else if (LocalRules.revisible(goal, oldGoal)) {
-                memory.setNewStamp( Stamp.make(newStamp, oldStamp, memory.getTime()) );
+                memory.setNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
                 if (memory.getNewStamp() != null) {
                     LocalRules.revision(goal, oldGoal, false, memory);
+                    noRevision = false;
                 }
             }
         }
         if (task.budget.aboveThreshold()) {
-            for (final Task ques : quests) {
+            for (final Sentence belief : beliefs) { // check if the Goal is already satisfied
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
-                LocalRules.trySolution(goal, ques, memory);
-            }
-            
-            Operator oper = goal.getOperator();
-            if (oper == null) {
-                addToTable(goal, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
-            } else if (LocalRules.decisionMaking(goal)) {
-                oper.call(task, memory);
-                task.setPriority(0);
+                LocalRules.trySolution(belief, task, memory);
             }
 
+            if (task.budget.aboveThreshold()) {    // still worth pursuing
+                addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);
+                if (noRevision) {
+                    LocalRules.decisionMaking(task, this);
+                }
+            }
         }
     }
-    
+
     /**
      * To answer a question by existing beliefs
      *
@@ -433,7 +426,6 @@ public final class Concept extends Item {
         termLinks.putIn(termLink);
     }
 
-
     /**
      * Return a string representation of the concept, called in ConceptBag only
      *
@@ -513,20 +505,32 @@ public final class Concept extends Item {
             if (memory.getRecorder().isActive()) {
                 memory.getRecorder().append(" * Selected Belief: " + belief);
             }
-            
-            memory.setNewStamp( Stamp.make(taskStamp, belief.stamp, currentTime) );
+
+            memory.setNewStamp(Stamp.make(taskStamp, belief.stamp, currentTime));
 ////            if (memory.newStamp != null) {
- //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
+            //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.getTime());
             if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                 memory.singlePremiseTask(projectedBelief, task.budget);
             }
-            return projectedBelief;                
+            return projectedBelief;     // return the first satisfying belief
         }
         return null;
     }
 
+    
+    
+    /** Get the current overall desire value. 
+     *  TODO to be refined */
+    public TruthValue getDesire() {
+        if (desires.isEmpty()) {
+            return null;
+        }
+        TruthValue topValue = desires.get(0).truth;
+        return topValue;
+    }    
+    
     /* ---------- main loop ---------- */
     /**
      * An atomic step in a concept, only called in {@link Memory#processConcept}
@@ -536,16 +540,16 @@ public final class Concept extends Item {
         if (currentTaskLink == null) {
             return;
         }
-        memory.setCurrentTaskLink( currentTaskLink );
-        memory.setCurrentBeliefLink( null );
+        memory.setCurrentTaskLink(currentTaskLink);
+        memory.setCurrentBeliefLink(null);
         if (memory.getRecorder().isActive()) {
             memory.getRecorder().append(" * Selected TaskLink: " + currentTaskLink);
         }
         final Task task = currentTaskLink.getTargetTask();
-        memory.setCurrentTask ( task );  // one of the two places where this variable is set
+        memory.setCurrentTask(task);  // one of the two places where this variable is set
 //      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
         if (currentTaskLink.type == TermLink.TRANSFORM) {
-            memory.setCurrentBelief( null );
+            memory.setCurrentBelief(null);
             RuleTables.transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
         } else {
             int termLinkCount = Parameters.MAX_REASONED_TERM_LINK;
@@ -556,7 +560,7 @@ public final class Concept extends Item {
                     if (memory.getRecorder().isActive()) {
                         memory.getRecorder().append(" * Selected TermLink: " + termLink);
                     }
-                    memory.setCurrentBeliefLink( termLink );
+                    memory.setCurrentBeliefLink(termLink);
                     RuleTables.reason(currentTaskLink, termLink, memory);
                     termLinks.putBack(termLink);
                     termLinkCount--;

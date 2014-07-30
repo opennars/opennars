@@ -173,7 +173,6 @@ public class InputPanel extends NPanel implements ActionListener {
 
     private void updateMode(int selectedIndex) {
         centerPanel.removeAll();
-        System.out.println(selectedIndex);
         if (selectedIndex == 0) {
             centerPanel.add(inputText, BorderLayout.CENTER);
         }

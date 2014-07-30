@@ -102,4 +102,14 @@ public class Operation extends Inheritance {
         nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
         return nameBuilder.toString();
     }
+    
+    
+    public Operator getOperator() {
+        return (Operator) getPredicate();
+    }
+    
+    public Term[] getArguments() {
+        return ((Product) getSubject()).term;
+    }    
+    
 }
