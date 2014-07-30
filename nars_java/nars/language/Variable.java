@@ -20,8 +20,6 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import nars.io.Symbols;
 import nars.storage.Memory;

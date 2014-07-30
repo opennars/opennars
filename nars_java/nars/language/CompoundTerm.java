@@ -123,7 +123,7 @@ public abstract class CompoundTerm extends Term {
 
     private Term[] ensureValidComponents(final Term[] components) {
         if (components.length < getMinimumRequiredComponents()) {
-            throw new RuntimeException(getClass().getSimpleName() + " requires >=" + getMinimumRequiredComponents() + " components, invalid argument:" + components);
+            throw new RuntimeException(getClass().getSimpleName() + " requires >=" + getMinimumRequiredComponents() + " components, invalid argument:" + Arrays.toString(components));
         }
         
         //return Collections.unmodifiableList( term );
@@ -922,25 +922,21 @@ public abstract class CompoundTerm extends Term {
         Statement A=(Statement) a;
         Statement B=(Statement) b;
         if(A instanceof Similarity && B instanceof Similarity || A instanceof Inheritance && B instanceof Inheritance) {
-            Term subjA=A.getSubject();
-            Term predA=A.getPredicate();
-            Term subjB=B.getSubject();
-            Term predB=B.getPredicate();
+            Term subjA = A.getSubject();
+            Term predA = A.getPredicate();
+            Term subjB = B.getSubject();
+            Term predB = B.getPredicate();
 
             //ok we know they are not equal, its time to determine how image structure could make them equal:
             if(subjA instanceof Product) { //A is a product, so B must be a extensional image to make true
                 if(predB instanceof ImageExt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
                     componentsA.add(predA);
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
+                    Set<Term> componentsB=new HashSet();
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)subjA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)predB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }
@@ -950,16 +946,12 @@ public abstract class CompoundTerm extends Term {
             if(subjB instanceof Product) { //B is a product, so A must be a extensional image to make true
                 if(predA instanceof ImageExt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
                     componentsA.add(subjA);
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
+                    Set<Term> componentsB=new HashSet();
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)predA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)subjB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }
@@ -969,16 +961,12 @@ public abstract class CompoundTerm extends Term {
             if(predA instanceof ImageExt) { //A is a extensional image, so B must be a extensional image to make true
                 if(predB instanceof ImageExt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
+                    Set<Term> componentsB=new HashSet();
                     componentsA.add(subjA);
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)predA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)predB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }
@@ -988,16 +976,12 @@ public abstract class CompoundTerm extends Term {
             if(predA instanceof ImageExt) { //A is a extensional image, so B must be a extensional image to make true
                 if(predB instanceof ImageExt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
+                    Set<Term> componentsB=new HashSet();
                     componentsA.add(subjA);
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)predA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)predB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }
@@ -1007,16 +991,12 @@ public abstract class CompoundTerm extends Term {
             if(subjA instanceof ImageInt) { //A is a intensional image, so B must be a intensional image to make true
                 if(subjB instanceof ImageInt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
+                    Set<Term> componentsB=new HashSet();
                     componentsA.add(predA);
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)subjA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)subjB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }
@@ -1026,16 +1006,12 @@ public abstract class CompoundTerm extends Term {
             if(subjA instanceof ImageInt) { //A is a intensional image, so B must be a intensional image to make true
                 if(subjB instanceof ImageInt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
+                    Set<Term> componentsB=new HashSet();
                     componentsA.add(predA);
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)subjA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)subjB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }
@@ -1045,16 +1021,12 @@ public abstract class CompoundTerm extends Term {
             if(predA instanceof Product) { //A is a product, so B must be a intensional image to make true
                 if(subjB instanceof ImageInt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
+                    Set<Term> componentsB=new HashSet();
                     componentsA.add(subjA);
                     componentsB.add(predB);
-                    for(Term t : ((CompoundTerm)predA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)subjB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }
@@ -1064,16 +1036,12 @@ public abstract class CompoundTerm extends Term {
             if(predB instanceof Product) { //A is a product, so B must be a intensional image to make true
                 if(subjA instanceof ImageInt) {
                     //now the term of both statements need to be the same:
-                    ArrayList<Term> componentsA=new ArrayList<>();
-                    ArrayList<Term> componentsB=new ArrayList<>();
+                    Set<Term> componentsA=new HashSet();
+                    Set<Term> componentsB=new HashSet();
                     componentsA.add(predA);
                     componentsB.add(subjB);
-                    for(Term t : ((CompoundTerm)subjA).term) {
-                        componentsA.add(t);
-                    }
-                    for(Term t : ((CompoundTerm)predB).term) {
-                        componentsB.add(t);
-                    }
+                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
+                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
                     if(componentsA.containsAll(componentsB)) {
                         return true;
                     }

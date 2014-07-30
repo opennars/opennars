@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -299,4 +300,9 @@ public class LocalRules {
         }
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
+    
+    /** Add plausibility estimation */
+    public static boolean decisionMaking(Sentence goal) {
+        return goal.truth.getExpectation() > Parameters.DECISION_THRESHOLD;
+    }    
 }

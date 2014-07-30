@@ -29,8 +29,10 @@ import nars.inference.BudgetFunctions;
 import nars.inference.LocalRules;
 import nars.inference.RuleTables;
 import nars.inference.UtilityFunctions;
+import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
+import nars.operator.Operator;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
 import nars.storage.NullBagObserver;
@@ -76,10 +78,22 @@ public final class Concept extends Item {
      */
     public final ArrayList<Task> questions;
 
-    /**
-     * Sentences directly made about the term, with non-future tense
-     */
+     /**
+      * pending Quests to be merged into Questions?
+      */
+    public final ArrayList<Task> quests;
+ 
+     /**
+       * Sentences directly made about the term, with non-future tense
+       */
     public final ArrayList<Sentence> beliefs;
+ 
+     /**
+      * Pending goals to be achieved
+      */
+    public final ArrayList<Sentence> desires;
+ 
+ 
     /**
      * Reference to the memory
      */
@@ -103,8 +117,11 @@ public final class Concept extends Item {
         super(tm.getName());
         term = tm;
         this.memory = memory;
+        
         questions = new ArrayList();
         beliefs = new ArrayList();
+        quests = new ArrayList<>();
+        desires = new ArrayList<>();
 
         final NAR nar = memory.nar;
 
@@ -128,11 +145,23 @@ public final class Concept extends Item {
      * @param task The task to be processed
      */
     public void directProcess(final Task task) {
-        if (task.getSentence().isJudgment()) {
-            processJudgment(task);
-        } else {
-            processQuestion(task);
+        char type = task.getSentence().punctuation;
+        switch (type) {
+            case Symbols.JUDGMENT_MARK:
+                 processJudgment(task);
+                 break;
+            case Symbols.GOAL_MARK:
+                 processGoal(task);
+                 break;
+            case Symbols.QUESTION_MARK:
+            case Symbols.QUEST_MARK:
+                 processQuestion(task);
+                 break;
+            default:
+                 return;
         }
+        
+        
         if (task.budget.aboveThreshold()) {    // still need to be processed
             linkToTask(task);
         }
@@ -142,8 +171,7 @@ public final class Concept extends Item {
     }
 
     /**
-     * To accept a new judgment as isBelief, and check for revisions and
-     * solutions
+     * To accept a new judgment as belief, and check for revisions and solutions
      *
      * @param judg The judgment to be accepted
      * @param task The task to be processed
@@ -181,6 +209,50 @@ public final class Concept extends Item {
         }
     }
 
+    
+       /**
+     * To accept a new goal, and check for revisions and realization, then
+     * decide whether to actively pursue it
+     *
+     * @param judg The judgment to be accepted
+     * @param task The task to be processed
+     * @return Whether to continue the processing of the task
+     */
+    private void processGoal(final Task task) {
+        final Sentence goal = task.getSentence();
+        final Sentence oldGoal = evaluation(goal, desires);
+        if (oldGoal != null) {
+            final Stamp newStamp = goal.stamp;
+            final Stamp oldStamp = oldGoal.stamp;
+            if (newStamp.equals(oldStamp)) {
+                if (task.getParentTask().getSentence().isJudgment()) {
+                    task.budget.decPriority(0);    // duplicated task
+                }   // else: activated belief
+                return;
+            } else if (LocalRules.revisible(goal, oldGoal)) {
+                memory.setNewStamp( Stamp.make(newStamp, oldStamp, memory.getTime()) );
+                if (memory.getNewStamp() != null) {
+                    LocalRules.revision(goal, oldGoal, false, memory);
+                }
+            }
+        }
+        if (task.budget.aboveThreshold()) {
+            for (final Task ques : quests) {
+//                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
+                LocalRules.trySolution(goal, ques, memory);
+            }
+            if (LocalRules.decisionMaking(goal)) {
+                Operator oper = goal.getOperator();
+                if (oper == null) {
+                    addToTable(goal, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
+                } else {
+                    oper.execute(task);
+                }
+            }
+
+        }
+    }
+    
     /**
      * To answer a question by existing beliefs
      *
@@ -208,7 +280,7 @@ public final class Concept extends Item {
             questions.remove(0);    // FIFO
         }
 
-        final Sentence newAnswer = evaluation(ques, beliefs);
+        final Sentence newAnswer = (ques.isQuestion()) ? evaluation(ques, beliefs) : evaluation(ques, desires);
         if (newAnswer != null) {
 //            LocalRules.trySolution(ques, newAnswer, task, memory);
             LocalRules.trySolution(newAnswer, task, memory);
@@ -251,8 +323,8 @@ public final class Concept extends Item {
     }
 
     /**
-     * Add a new belief (or goal) into the table Sort the beliefs/goals by rank,
-     * and remove redundant or low rank one
+     * Add a new belief (or goal) into the table Sort the beliefs/desires by
+     * rank, and remove redundant or low rank one
      *
      * @param newSentence The judgment to be processed
      * @param table The table to be revised
@@ -283,7 +355,7 @@ public final class Concept extends Item {
     }
 
     /**
-     * Evaluate a query against beliefs (and desires in the future)
+     * Evaluate a query against beliefs or desires
      *
      * @param query The question to be processed
      * @param list The list of beliefs to be used
@@ -535,7 +607,7 @@ public final class Concept extends Item {
     }
 
     /**
-     * Collect direct isBelief, questions, and goals for display
+     * Collect direct isBelief, questions, and desires for display
      *
      * @return String representation of direct content
      */

@@ -49,7 +49,7 @@ public class Operation extends Inheritance {
      *
      * @param n The name of the term
      * @param cs Component list
-     * @param open Open variable list
+     * @param con Whether the term is a constant
      * @param complexity Syntactic complexity of the compound
      */
     protected Operation(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
