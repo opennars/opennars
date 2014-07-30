@@ -241,13 +241,13 @@ public final class Concept extends Item {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 LocalRules.trySolution(goal, ques, memory);
             }
-            if (LocalRules.decisionMaking(goal)) {
-                Operator oper = goal.getOperator();
-                if (oper == null) {
-                    addToTable(goal, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
-                } else {
-                    oper.execute(task);
-                }
+            
+            Operator oper = goal.getOperator();
+            if (oper == null) {
+                addToTable(goal, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
+            } else if (LocalRules.decisionMaking(goal)) {
+                oper.call(task, memory);
+                task.setPriority(0);
             }
 
         }
