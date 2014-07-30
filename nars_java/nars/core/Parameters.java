@@ -59,8 +59,10 @@ public class Parameters {
     /** Reliance factor, the empirical confidence of analytical truth. */
     public static final float RELIANCE = (float) 0.9;    // the same as default confidence
     /** Tense usage convention, how far away "past" and "future" is from "now". */
-    public static final int DURATION = 5;    // a better word?
-
+    public static final int DURATION = 5;    // the range of "now" is [-DURATION, DURATION];
+    /** Minimum expectation for a desire value. */
+    public static final float DECISION_THRESHOLD = (float) 0.66;    // the range of "now" is [-DURATION, DURATION];
+ 
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted. */
     public static final float BUDGET_THRESHOLD = (float) 0.01;

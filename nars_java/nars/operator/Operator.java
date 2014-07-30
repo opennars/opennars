@@ -72,7 +72,8 @@ public abstract class Operator extends Term {
      * @return A Map between Operator name and object
      */
     public static void loadDefaultOperators(Memory memory) {
-        memory.registerOperator(new Wait("^wait"));
+        //memory.registerOperator(new Wait("^wait"));
+        memory.registerOperator(new Sample("^sample"));
         
         /* operators for tasks */
 //        table.put("^believe", new Believe("^believe"));     // accept a statement with a default truth-value
@@ -83,6 +84,8 @@ public abstract class Operator extends Term {
 //        table.put("^consider", new Consider("^consider"));  // find the most active concept
 //        table.put("^remind", new Remind("^remind"));        // create/activate a concept
 //        table.put("^wait", new Wait("^wait"));              // wait for a certain number of clock cycle
+        
+//        table.put("^wait", neSampleit("^wait"));              // wait for a certain number of clock cycle        
         /*
          * observe          // process a new task (Channel ID: optional?)
          * think            // carry out a working cycle

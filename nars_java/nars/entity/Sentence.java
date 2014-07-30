@@ -24,8 +24,11 @@ import nars.core.NAR;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
 import nars.language.Conjunction;
+import nars.language.Inheritance;
 import nars.language.Term;
 import nars.language.Variable;
+import nars.operator.Operation;
+import nars.operator.Operator;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -199,7 +202,7 @@ public class Sentence implements Cloneable {
 
 
     /**
-     * Distinguish Judgment from Goal ("instanceof Judgment" doesn't work)
+     * Recognize a Judgment
      *
      * @return Whether the object is a Judgment
      */
@@ -208,7 +211,7 @@ public class Sentence implements Cloneable {
     }
 
     /**
-     * Distinguish Question from Quest ("instanceof Question" doesn't work)
+     * Recognize a Question
      *
      * @return Whether the object is a Question
      */
@@ -216,6 +219,14 @@ public class Sentence implements Cloneable {
         return (punctuation == Symbols.QUESTION_MARK);
     }
 
+    public boolean isGoal() {
+        return (punctuation == Symbols.GOAL_MARK);
+    }
+ 
+    public boolean isQuest() {
+        return (punctuation == Symbols.QUEST_MARK);
+    }    
+    
     public boolean containQueryVar() {
         return (content.getName().indexOf(Symbols.VAR_QUERY) >= 0);
     }
@@ -235,6 +246,14 @@ public class Sentence implements Cloneable {
     public long getOccurenceTime() {
         return stamp.getOccurrenceTime();
     }
+    
+    public Operator getOperator() {
+        if (content instanceof Operation) {
+             return (Operator) ((Inheritance) content).getPredicate();
+        } else {
+             return null;
+        }
+    }    
     
     /**
      * Get a String representation of the sentence

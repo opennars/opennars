@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
 import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
