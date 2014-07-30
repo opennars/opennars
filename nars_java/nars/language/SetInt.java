@@ -20,7 +20,7 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
@@ -37,8 +37,8 @@ public class SetInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetInt(Term[] arg) {
-        super(arg);
+    private SetInt(String name, Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -62,7 +62,7 @@ public class SetInt extends CompoundTerm {
      * @return A new object, to be casted into a SetInt
      */
     public Object clone() {
-        return new SetInt(getName(), cloneTerms(components), isConstant(), complexity);
+        return new SetInt(getName(), cloneTermsAppend(term), isConstant(), complexity);
     }
 
     /**
@@ -80,16 +80,16 @@ public class SetInt extends CompoundTerm {
     /**
      * Try to make a new SetExt. Called by StringParser.
      * @return the Term generated from the arguments
-     * @param argList The list of components
+     * @param argList The list of term
      * @param memory Reference to the memeory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
+    public static Term make(Collection<Term> argList, Memory memory) {
         TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
         return make(set, memory);
     }
 
     /**
-     * Try to make a new compound from a set of components. Called by the public make methods.
+     * Try to make a new compound from a set of term. Called by the public make methods.
      * @param set a set of Term as compoments
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
@@ -101,7 +101,7 @@ public class SetInt extends CompoundTerm {
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
         Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new SetInt(argument);
+        return (t != null) ? t : new SetInt(name, argument);
     }
 
     /**
@@ -127,7 +127,7 @@ public class SetInt extends CompoundTerm {
      */
     @Override
     public String makeName() {
-        return makeSetName(SET_INT_OPENER.ch, components, SET_INT_CLOSER.ch);
+        return makeSetName(SET_INT_OPENER.ch, term, SET_INT_CLOSER.ch);
     }
 }
 

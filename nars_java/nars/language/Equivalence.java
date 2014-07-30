@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
@@ -37,8 +36,8 @@ public class Equivalence extends Statement {
      *
      * @param components The component list of the term
      */
-    private Equivalence(Term[] components, int order) {
-        super(components);
+    private Equivalence(String name, Term[] components, int order) {
+        super(name, components);
         temporalOrder = order;
     }
 
@@ -62,11 +61,11 @@ public class Equivalence extends Statement {
      */
     @Override
     public Object clone() {
-        return new Equivalence(getName(), cloneTerms(components), isConstant(), complexity, temporalOrder);
+        return new Equivalence(getName(), cloneTermsAppend(term), isConstant(), complexity, temporalOrder);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference
+     * Try to make a new compound from two term. Called by the inference
      * rules.
      *
      * @param subject The first component
@@ -111,7 +110,7 @@ public class Equivalence extends Statement {
         if (t != null) {
             return (Equivalence) t;
         }
-        return new Equivalence(new Term[] { subject, predicate }, temporalOrder);
+        return new Equivalence(name, termArray(subject, predicate), temporalOrder);
     }
 
     /**

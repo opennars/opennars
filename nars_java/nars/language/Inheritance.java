@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
 import nars.io.Symbols.NativeOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -36,8 +35,8 @@ public class Inheritance extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected Inheritance(final Term[] arg) {
-        super(arg);
+    protected Inheritance(String name, final Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -56,11 +55,11 @@ public class Inheritance extends Statement {
      * @return A new object, to be casted into a SetExt
      */
     @Override public Object clone() {
-        return new Inheritance(getName(), cloneTerms(components), isConstant(), containVar(), complexity);
+        return new Inheritance(getName(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two term. Called by the inference rules.
      * @param subject The first compoment
      * @param predicate The second compoment
      * @param memory Reference to the memory
@@ -75,7 +74,7 @@ public class Inheritance extends Statement {
         
         String name;
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).components, memory);
+            name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).term, memory);
         } else {
             name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
         }
@@ -83,14 +82,14 @@ public class Inheritance extends Statement {
         Term t = memory.nameToTerm(name);
         if (t != null) {
             return (Inheritance) t;
-        }
+        }        
         
-        Term[] arguments = new Term[] { subject, predicate };
+        Term[] arguments = termArray( subject, predicate );
         
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
             return new Operation(name, arguments);
         } else {
-            return new Inheritance(arguments);
+            return new Inheritance(name, arguments);
         }
          
     }

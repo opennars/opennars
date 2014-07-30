@@ -34,8 +34,8 @@ public class Product extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Product(Term[] arg) {
-        super(arg);
+    private Product(final String name, final Term[] arg) {
+        super(name, arg);
     }
     
     /**
@@ -59,19 +59,19 @@ public class Product extends CompoundTerm {
      * @return A new object, to be casted into an ImageExt
      */
     public Object clone() {
-        return new Product(getName(), cloneComponents(), isConstant(), containVar(), complexity);
+        return new Product(getName(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
      /**
      * Try to make a new compound. Called by StringParser.
      * @return the Term generated from the arguments
-     * @param argument The list of components
+     * @param argument The list of term
      * @param memory Reference to the memory
      */
     public static Term make(Term[] argument, final Memory memory) {
         final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
         final Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new Product(argument);
+        return (t != null) ? t : new Product(name, argument);
     }
         
     /**
@@ -83,7 +83,7 @@ public class Product extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final CompoundTerm image, final Term component, final int index, final Memory memory) {
-        Term[] argument = image.cloneComponents();
+        Term[] argument = image.cloneTerms();
         argument[index] = component;
         return make(argument, memory);
     }

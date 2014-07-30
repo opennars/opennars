@@ -313,13 +313,13 @@ public final class SyllogisticRules {
         Conjunction oldCondition = (Conjunction) subj;
 
         
-        int index2 = CompoundTerm.indexOf(oldCondition.components,commonComponent);
+        int index2 = CompoundTerm.indexOf(oldCondition.term,commonComponent);
         if (index2 >= 0) {
             index = (short) index2;
         } else {
-            boolean match = Variable.unify(Symbols.VAR_INDEPENDENT, oldCondition.componentAt(index), commonComponent, premise1, premise2);
+            boolean match = Variable.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-                match = Variable.unify(Symbols.VAR_INDEPENDENT, oldCondition.componentAt(index), ((CompoundTerm) commonComponent).componentAt(index), premise1, premise2);
+                match = Variable.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
             }
             if (!match) {
                 return;
@@ -349,8 +349,8 @@ public final class SyllogisticRules {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
                  delta = ((Interval) newCondition).getTime();
-             } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).componentAt(0) instanceof Interval)) {
-                 Interval interval = (Interval) ((CompoundTerm) newCondition).componentAt(0);
+             } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
+                 Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
                  delta = interval.getTime();
                  newCondition = CompoundTerm.setComponent((CompoundTerm) newCondition, 0, null, memory);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
@@ -429,9 +429,9 @@ public final class SyllogisticRules {
         }
         Conjunction oldCondition = (Conjunction) tm;
 
-        boolean match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.componentAt(index), commonComponent, premise1, premise2);
+        boolean match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
         if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-            match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.componentAt(index), ((CompoundTerm) commonComponent).componentAt(index), premise1, premise2);
+            match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
         }
         if (!match) {
             return;

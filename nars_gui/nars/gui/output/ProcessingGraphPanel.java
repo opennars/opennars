@@ -707,7 +707,7 @@ public class ProcessingGraphPanel extends JFrame {
                         
                         for (Term x : contained) {                            
                             addTerm(g, x);
-                            if (ct.containComponent(x))
+                            if (ct.containsTerm(x))
                                 g.addEdge(x, t, new NARGraph.TermContent());
                             
                             
@@ -715,7 +715,7 @@ public class ProcessingGraphPanel extends JFrame {
                                 addTerm(g, y);
                                 
                                 if (x != y)
-                                    if (x.containComponent(y))
+                                    if (x.containsTerm(y))
                                         g.addEdge(y, x, new NARGraph.TermContent());
                             }
                             

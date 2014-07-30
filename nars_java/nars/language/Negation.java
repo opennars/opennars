@@ -63,7 +63,7 @@ public class Negation extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Negation(getName(), cloneTerms(components), isConstant(), complexity);
+        return new Negation(getName(), cloneTermsAppend(term), isConstant(), complexity);
     }
 
     /**
@@ -75,7 +75,7 @@ public class Negation extends CompoundTerm {
      */
     public static Term make(final Term t, final Memory memory) {
         if (t instanceof Negation) {
-            return ((CompoundTerm) t).cloneComponents()[0];
+            return ((CompoundTerm) t).cloneTerms()[0];
         }         // (--,(--,P)) = P
         return make(new Term[] { t }, memory);
     }
@@ -84,7 +84,7 @@ public class Negation extends CompoundTerm {
      * Try to make a new Negation. Called by StringParser.
      *
      * @return the Term generated from the arguments
-     * @param argument The list of components
+     * @param argument The list of term
      * @param memory Reference to the memory
      */
     public static Term make(final Term[] argument, final Memory memory) {

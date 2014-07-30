@@ -595,7 +595,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 //                for (int j = 0; j < hsim.obj.size(); j++) {
 //                    Vertex target = (Vertex) hsim.obj.get(j);
 //                    try {
-//                        if ((ho).name.containTerm((target.name))) {
+//                        if ((ho).name.containsTermRecursively((target.name))) {
 //                            int alpha = (ho.name.getComplexity() + target.name.getComplexity())/2;
 //                            alpha = alpha * 10;
 //                            alpha += 75;

@@ -70,11 +70,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(Term s1 : ((CompoundTerm)S1).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -87,11 +87,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             }
             if(P2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(Term s1 : ((CompoundTerm)P2).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)P2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -112,11 +112,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(Term s1 : ((CompoundTerm)S2).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)S2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -129,11 +129,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             }
             if(P1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(Term s1 : ((CompoundTerm)P1).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)P1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -154,11 +154,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             ((CompoundTerm) T2).applySubstitute(res1);
             if(P1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(Term s1 : ((CompoundTerm)P1).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)P1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -171,11 +171,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             }
             if(P2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(Term s1 : ((CompoundTerm)P2).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)P2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -196,11 +196,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(Term s1 : ((CompoundTerm)S1).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -213,11 +213,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             }
             if(S2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(Term s1 : ((CompoundTerm)S2).cloneComponents()) {
+                for(Term s1 : ((CompoundTerm)S2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).cloneComponents()) {
+                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);
@@ -247,7 +247,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             }
             if(((Statement)component).getPredicate().equals(((Statement)content).getPredicate()) && !(((Statement)component).getPredicate() instanceof Variable)) {
                 Variable V=new Variable("#depIndVar1");
-                CompoundTerm zw=(CompoundTerm) T.components[index].clone();
+                CompoundTerm zw=(CompoundTerm) T.term[index].clone();
                 zw=(CompoundTerm) CompoundTerm.setComponent(zw,1,V,memory);
                 T2=(CompoundTerm) CompoundTerm.setComponent(T2,1,V,memory);
                 Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
@@ -256,7 +256,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             else 
             if(((Statement)component).getSubject().equals(((Statement)content).getSubject()) && !(((Statement)component).getSubject() instanceof Variable)) {
                 Variable V=new Variable("#depIndVar2");
-                CompoundTerm zw=(CompoundTerm) T.components[index].clone();
+                CompoundTerm zw=(CompoundTerm) T.term[index].clone();
                 zw=(CompoundTerm) CompoundTerm.setComponent(zw,0,V,memory);
                 T2=(CompoundTerm) CompoundTerm.setComponent(T2,0,V,memory);
                 Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
@@ -298,9 +298,9 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             ArrayList<CompoundTerm> terms_dependent=new ArrayList<CompoundTerm>();
             ArrayList<CompoundTerm> terms_independent=new ArrayList<CompoundTerm>();
             
-            //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms components
+            //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
-            Term[] components_level1 = ((CompoundTerm)taskterm).components;            
+            Term[] components_level1 = ((CompoundTerm)taskterm).term;            
             Term secterm_unwrap=(Term) CompoundTerm.unwrapNegation(secterm).clone();
             for(Term T1 : components_level1) {
                 Term T1_unwrap=CompoundTerm.unwrapNegation(T1);
@@ -326,7 +326,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                     continue;
                 }
                 if(T1_unwrap instanceof CompoundTerm) {
-                    Term[] components_level2 = ((CompoundTerm)T1_unwrap).components;
+                    Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
                     for(Term T2 : components_level2) {
                         Term T2_unwrap=(Term) CompoundTerm.unwrapNegation(T2).clone(); 
                         HashMap<Term, Term> Values3 = new HashMap<Term, Term>(); //we are only interested in first variables
@@ -384,8 +384,8 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
     /**
      * {(&&,A,B,...)?, A,B} |- {(&&,A,B)}
      * {(&&,A,_components_1_)?, (&&,_part_of_components_1_),A} |- {(&&,A,_part_of_components_1_,B)}
-     * and also the case where both are conjunctions, all components need to be subterm of the question-conjunction
-     * in order for the subterms of both conjunctions to be collected together.
+ and also the case where both are conjunctions, all term need to be subterm of the question-conjunction
+ in order for the subterms of both conjunctions to be collected together.
      *
      * @param sentence The first premise
      * @param belief The second premise
@@ -427,26 +427,26 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                         continue;
                     }
                     if(!(term1 instanceof Conjunction) && !(term2 instanceof Conjunction)) {
-                        if(!(ctpcontent).containComponent(term1) || !(ctpcontent).containComponent(term2)) {
+                        if(!(ctpcontent).containsTerm(term1) || !(ctpcontent).containsTerm(term2)) {
                             continue;
                         }
                     }
                     
                     if(term1 instanceof Conjunction) {
-                        if(!(term2 instanceof Conjunction) && !(ctpcontent).containComponent(term2))
+                        if(!(term2 instanceof Conjunction) && !(ctpcontent).containsTerm(term2))
                             continue;
                         if(((CompoundTerm)term1).containVar())
                             continue;                        
-                        if (!((CompoundTerm)term1).containAllComponents(ctpcontent))
+                        if (!((CompoundTerm)term1).containsAllTerms(ctpcontent))
                             continue;
                     }
                     
                     if(term2 instanceof Conjunction) {
-                        if(!(term1 instanceof Conjunction) && !(ctpcontent).containComponent(term1))
+                        if(!(term1 instanceof Conjunction) && !(ctpcontent).containsTerm(term1))
                             continue;
                         if(((CompoundTerm)term2).containVar())
                             continue;
-                        if (!((CompoundTerm)term2).containAllComponents(ctpcontent))
+                        if (!((CompoundTerm)term2).containsAllTerms(ctpcontent))
                             continue;
                     }
                     
@@ -484,19 +484,19 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
         if ((!memory.getCurrentTask().getSentence().isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
             return;
         }
-        final Term componentT = taskContent.componentAt(1 - index);
-        final Term componentB = beliefContent.componentAt(1 - index);
-        final Term componentCommon = taskContent.componentAt(index);
+        final Term componentT = taskContent.term[1 - index];
+        final Term componentB = beliefContent.term[1 - index];
+        final Term componentCommon = taskContent.term[index];
         int order1 = taskContent.getTemporalOrder();
         int order2 = beliefContent.getTemporalOrder();
         int order = TemporalRules.composeOrder(order1, order2);
         if (order == TemporalRules.ORDER_INVALID) {
             return;
         }
-        if ((componentT instanceof CompoundTerm) && ((CompoundTerm) componentT).containAllComponents(componentB)) {
+        if ((componentT instanceof CompoundTerm) && ((CompoundTerm) componentT).containsAllTerms(componentB)) {
             decomposeCompound((CompoundTerm) componentT, componentB, componentCommon, index, true, order, memory);
             return;
-        } else if ((componentB instanceof CompoundTerm) && ((CompoundTerm) componentB).containAllComponents(componentT)) {
+        } else if ((componentB instanceof CompoundTerm) && ((CompoundTerm) componentB).containsAllTerms(componentT)) {
             decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, memory);
             return;
         }
@@ -625,7 +625,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                 } else if ((compound instanceof SetExt) && (component instanceof SetExt)) {
                     truth = TruthFunctions.reduceDisjunction(v1, v2);
                 } else if (compound instanceof DifferenceExt) {
-                    if (compound.componentAt(0).equals(component)) {
+                    if (compound.term[0].equals(component)) {
                         truth = TruthFunctions.reduceDisjunction(v2, v1);
                     } else {
                         truth = TruthFunctions.reduceConjunctionNeg(v1, v2);
@@ -653,7 +653,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                 } else if ((compound instanceof SetInt) && (component instanceof SetInt)) {
                     truth = TruthFunctions.reduceDisjunction(v1, v2);
                 } else if (compound instanceof DifferenceInt) {
-                    if (compound.componentAt(1).equals(component)) {
+                    if (compound.term[1].equals(component)) {
                         truth = TruthFunctions.reduceDisjunction(v2, v1);
                     } else {
                         truth = TruthFunctions.reduceConjunctionNeg(v1, v2);
@@ -762,9 +762,9 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             term22 = beliefContent.getPredicate();
             if ((term12 instanceof ImageExt) && (term22 instanceof ImageExt)) {
                 commonTerm = ((ImageExt) term12).getTheOtherComponent();
-                if ((commonTerm == null) || !term22.containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term22.containsTermRecursively(commonTerm)) {
                     commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                    if ((commonTerm == null) || !term12.containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term12.containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }
@@ -781,9 +781,9 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             term22 = varInd;
             if ((term11 instanceof ImageInt) && (term21 instanceof ImageInt)) {
                 commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                if ((commonTerm == null) || !term21.containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term21.containsTermRecursively(commonTerm)) {
                     commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                    if ((commonTerm == null) || !term11.containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term11.containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }
@@ -841,7 +841,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
     static void introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, Memory memory) {
         Task task = memory.getCurrentTask();
         Sentence taskSentence = task.getSentence();
-        if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containComponent(premise1)) {
+        if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
             return;
         }
         Term subject1 = premise1.getSubject();
@@ -897,9 +897,9 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
         if (index == 0) {
             if ((term1 instanceof ImageExt) && (term2 instanceof ImageExt)) {
                 commonTerm = ((ImageExt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !term2.containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
                     commonTerm = ((ImageExt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !term1.containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }
@@ -907,9 +907,9 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
         } else {
             if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
                 commonTerm = ((ImageInt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !term2.containTerm(commonTerm)) {
+                if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
                     commonTerm = ((ImageInt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !term1.containTerm(commonTerm)) {
+                    if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }

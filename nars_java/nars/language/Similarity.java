@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
@@ -34,8 +33,8 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Similarity(Term[] arg) {
-        super(arg);
+    private Similarity(String name, Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -55,11 +54,11 @@ public class Similarity extends Statement {
      */
     @Override
     public Object clone() {
-        return new Similarity(getName(), cloneTerms(components), isConstant(), complexity);
+        return new Similarity(getName(), cloneTermsAppend(term), isConstant(), complexity);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two term. Called by the inference rules.
      * @param subject The first component
      * @param predicate The second component
      * @param memory Reference to the memory
@@ -77,7 +76,7 @@ public class Similarity extends Statement {
         if (t != null) {
             return (Similarity) t;
         }
-        return new Similarity(new Term[] { subject, predicate });
+        return new Similarity(name, termArray(subject, predicate));
     }
 
     /**

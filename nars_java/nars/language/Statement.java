@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import java.util.ArrayList;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
@@ -40,8 +39,8 @@ public abstract class Statement extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Statement(final Term[] arg) {
-        super(arg);
+    protected Statement(final String name, final Term[] arg) {
+        super(name, arg);
     }
     
     /**
@@ -108,7 +107,7 @@ public abstract class Statement extends CompoundTerm {
     }
 
     /**
-     * Make a Statement from given components, called by the rules
+     * Make a Statement from given term, called by the rules
      *
      * @param order The temporal order of the statement
      * @return The Statement built
@@ -139,8 +138,8 @@ public abstract class Statement extends CompoundTerm {
     }
 
     /**
-     * Make a symmetric Statement from given components and temporal
-     * information, called by the rules
+     * Make a symmetric Statement from given term and temporal
+ information, called by the rules
      *
      * @param statement A sample asymmetric statement providing the class type
      * @param subj The first component
@@ -254,7 +253,7 @@ public abstract class Statement extends CompoundTerm {
         if ((com instanceof ImageExt) || (com instanceof ImageInt)) {
             return false;
         }
-        return com.containComponent(t2);
+        return com.containsTerm(t2);
     }
 
     
@@ -286,7 +285,7 @@ public abstract class Statement extends CompoundTerm {
      * @return The first component
      */
     public Term getSubject() {
-        return components[0];
+        return term[0];
     }
 
     /**
@@ -295,7 +294,7 @@ public abstract class Statement extends CompoundTerm {
      * @return The second component
      */
     public Term getPredicate() {
-        return components[1];
+        return term[1];
     }
 
     @Override

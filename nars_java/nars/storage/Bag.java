@@ -24,6 +24,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Map;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.inference.BudgetFunctions;
@@ -59,7 +60,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
     /**
      * mapping from key to item
      */
-    public final HashMap<String, E> nameTable;
+    public final Map<String, E> nameTable;
     /**
      * array of lists of items, for items on different level
      */
@@ -415,12 +416,15 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
                 itemTableEmpty[level] = itemTable[level].isEmpty();                
             }
         
+        /*
+        //If it wasn't found, it probably was removed already.  So this check is probably not necessary
+        
         if (!found) {
             //search other levels for this item because it's not where we thought it was according to getLevel()
             if (!outOfBaseComplete(oldItem)) {
-                throw new RuntimeException("Can not remove missing element " + oldItem + " from " + this);
+                throw new RuntimeException("Can not remove missing element " + oldItem + " from " + this.getClass().getSimpleName());
             }
-        }
+        }*/
         
         mass -= (level + 1);
         refresh();

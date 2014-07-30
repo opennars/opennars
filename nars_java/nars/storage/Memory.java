@@ -194,7 +194,7 @@ public class Memory {
     /**
      * Get a Term for a given name of a Concept or InnateOperator
      * <p>
-     * called in StringParser and the make methods of compound terms.
+     * called in StringParser and the make____() methods of compound terms.
      *
      * @param name the name of a concept or operator
      * @return a Term or null (if no Concept/InnateOperator has this name)

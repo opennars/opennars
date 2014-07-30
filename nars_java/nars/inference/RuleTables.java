@@ -486,7 +486,7 @@ public class RuleTables {
     private static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, Memory memory) {
         Sentence mainSentence = (Sentence) originalMainSentence.clone();   // for substitution
         Statement statement = (Statement) mainSentence.getContent();
-        Term component = statement.componentAt(index);
+        Term component = statement.term[index];
         Term content = subSentence.getContent();
         if (((component instanceof Inheritance) || (component instanceof Negation)) && (memory.getCurrentBelief() != null)) {
             if (component.isConstant()) {
@@ -517,13 +517,13 @@ public class RuleTables {
      */
     private static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, Memory memory) {
         CompoundTerm condition = (CompoundTerm) conditional.getSubject();
-        Term component = condition.componentAt(index);
+        Term component = condition.term[index];
         Term component2 = null;
         if (statement instanceof Inheritance) {
             component2 = statement;
             side = -1;
         } else if (statement instanceof Implication) {
-            component2 = statement.componentAt(side);
+            component2 = statement.term[side];
         }
 
         if (component2 != null) {
@@ -550,13 +550,13 @@ public class RuleTables {
         if ((compound instanceof Conjunction) || (compound instanceof Disjunction)) {
             if (memory.getCurrentBelief() != null) {
                 CompositionalRules.decomposeStatement(compound, component, compoundTask, memory);
-            } else if (compound.containComponent(component)) {
+            } else if (compound.containsTerm(component)) {
                 StructuralRules.structuralCompound(compound, component, compoundTask, memory);
             }
 //        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
-                StructuralRules.transformNegation(compound.componentAt(0), memory);
+                StructuralRules.transformNegation(compound.term[0], memory);
             } else {
                 StructuralRules.transformNegation(compound, memory);
             }
@@ -591,13 +591,13 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, Memory memory) {
-        Term component = compound.componentAt(index);
+        Term component = compound.term[index];
         Task task = memory.getCurrentTask();
         if (component.getClass() == statement.getClass()) {
             if ((compound instanceof Conjunction) && (memory.getCurrentBelief() != null)) {
                 if (Variable.unify(Symbols.VAR_DEPENDENT, component, statement, compound, statement)) {
                     SyllogisticRules.elimiVarDep(compound, component, statement.equals(beliefTerm), memory);
-                } else if (task.getSentence().isJudgment()) { // && !compound.containComponent(component)) {
+                } else if (task.getSentence().isJudgment()) { // && !compound.containsTerm(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, memory);
                 } else if (Variable.unify(Symbols.VAR_QUERY, component, statement, compound, statement)) {
                     CompositionalRules.decomposeStatement(compound, component, true, memory);                    
@@ -670,11 +670,11 @@ public class RuleTables {
         if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
             inh = content;
         } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
-            inh = content.componentAt(indices[0]);
+            inh = content.term[indices[0]];
         } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
-            Term component = content.componentAt(indices[0]);
+            Term component = content.term[indices[0]];
             if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
-                inh = ((CompoundTerm) component).componentAt(indices[1]);
+                inh = ((CompoundTerm) component).term[indices[1]];
             } else {
                 return;
             }
