@@ -43,7 +43,7 @@ public class ImageInt extends CompoundTerm {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageInt(String n, ArrayList<Term> arg, short index) {
+    private ImageInt(String n, Term[] arg, short index) {
         super(n, arg);
         relationIndex = index;
     }
@@ -56,7 +56,7 @@ public class ImageInt extends CompoundTerm {
      * @param complexity Syntactic complexity of the compound
      * @param index The index of relation in the component list
      */
-    private ImageInt(String n, ArrayList<Term> cs, boolean con, short complexity, short index) {
+    private ImageInt(String n, Term[] cs, boolean con, short complexity, short index) {
         super(n, cs, con, complexity);
         relationIndex = index;
     }
@@ -71,7 +71,7 @@ public class ImageInt extends CompoundTerm {
      * @return A new object, to be casted into an ImageInt
      */
     public Object clone() {
-        return new ImageInt(getName(), cloneList(components), isConstant(), complexity, relationIndex);
+        return new ImageInt(getName(), cloneTerms(components), isConstant(), complexity, relationIndex);
     }
 
     /**
@@ -80,20 +80,21 @@ public class ImageInt extends CompoundTerm {
      * @param argList The list of components
      * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
-        if (argList.size() < 2) {
+    public static Term make(Term[] argList, Memory memory) {
+        if (argList.length < 2) {
             return null;
         }
-        Term relation = argList.get(0);
-        ArrayList<Term> argument = new ArrayList<Term>();
-        int index = 0;
-        for (int j = 1; j < argList.size(); j++) {
-            if (argList.get(j).getName().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
+        Term relation = argList[0];
+        Term[] argument = new Term[argList.length-1];
+        int index = 0, n = 0;
+        for (int j = 1; j < argList.length; j++) {
+            if (argList[j].getName().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
                 index = j - 1;
-                argument.add(relation);
+                argument[n] = relation;
             } else {
-                argument.add(argList.get(j));
+                argument[n] = argList[j];
             }
+            n++;
         }
         return make(argument, (short) index, memory);
     }
@@ -118,8 +119,8 @@ public class ImageInt extends CompoundTerm {
                 }
             }
         }
-        ArrayList<Term> argument = product.cloneComponents();
-        argument.set(index, relation);
+        Term[] argument = product.cloneComponents();
+        argument[index] = relation;
         return make(argument, index, memory);
     }
 
@@ -132,11 +133,11 @@ public class ImageInt extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final ImageInt oldImage, final Term component, final short index, final Memory memory) {
-        ArrayList<Term> argList = oldImage.cloneComponents();
+        Term[] argList = oldImage.cloneComponents();
         int oldIndex = oldImage.getRelationIndex();
-        Term relation = argList.get(oldIndex);
-        argList.set(oldIndex, component);
-        argList.set(index, relation);
+        Term relation = argList[oldIndex];
+        argList[oldIndex] = component;
+        argList[index] = relation;
         return make(argList, index, memory);
     }
 
@@ -147,7 +148,7 @@ public class ImageInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(final ArrayList<Term> argument, final short index, final Memory memory) {
+    public static Term make(final Term[] argument, final short index, final Memory memory) {
         String name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
         Term t = memory.nameToTerm(name);
         return (t != null) ? t : new ImageInt(name, argument, index);
@@ -166,7 +167,7 @@ public class ImageInt extends CompoundTerm {
      * @return The term representing a relation
      */
     public Term getRelation() {
-        return components.get(relationIndex);
+        return components[relationIndex];
     }
 
     /**
@@ -174,10 +175,10 @@ public class ImageInt extends CompoundTerm {
      * @return The term related
      */
     public Term getTheOtherComponent() {
-        if (components.size() != 2) {
+        if (components.length != 2) {
             return null;
         }
-        return (relationIndex == 0) ? components.get(1) : components.get(0);
+        return (relationIndex == 0) ? components[1] : components[0];
     }
 
     /**

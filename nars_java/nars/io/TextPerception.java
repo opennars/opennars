@@ -666,14 +666,15 @@ public class TextPerception {
         }
 
         ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
+        Term[] argA = arg.toArray(new Term[arg.size()]);
         
         Term t;
         
         if (oNative!=null) {
-            t = CompoundTerm.make(oNative, arg, memory);
+            t = CompoundTerm.make(oNative, argA, memory);
         }
         else if (oRegistered!=null) {
-            t = Operation.make(oRegistered, arg, memory);
+            t = Operation.make(oRegistered, argA, memory);
         }
         else {
             throw new InvalidInputException("Invalid compound term");

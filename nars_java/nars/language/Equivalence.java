@@ -37,7 +37,7 @@ public class Equivalence extends Statement {
      *
      * @param components The component list of the term
      */
-    private Equivalence(ArrayList<Term> components, int order) {
+    private Equivalence(Term[] components, int order) {
         super(components);
         temporalOrder = order;
     }
@@ -50,7 +50,7 @@ public class Equivalence extends Statement {
      * @param constant Whether the statement contains open variable
      * @param complexity Syntactic complexity of the compound
      */
-    private Equivalence(String n, ArrayList<Term> components, boolean constant, short complexity, int order) {
+    private Equivalence(String n, Term[] components, boolean constant, short complexity, int order) {
         super(n, components, constant, complexity);
         temporalOrder = order;
     }
@@ -62,7 +62,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public Object clone() {
-        return new Equivalence(getName(), cloneList(components), isConstant(), complexity, temporalOrder);
+        return new Equivalence(getName(), cloneTerms(components), isConstant(), complexity, temporalOrder);
     }
 
     /**
@@ -96,6 +96,7 @@ public class Equivalence extends Statement {
         switch (temporalOrder) {
             case TemporalRules.ORDER_BACKWARD:
                 temporalOrder = TemporalRules.ORDER_FORWARD;
+                //TODO determine if this missing break is intended
             case TemporalRules.ORDER_FORWARD:
                 copula = NativeOperator.EQUIVALENCE_AFTER;
                 break;
@@ -110,8 +111,7 @@ public class Equivalence extends Statement {
         if (t != null) {
             return (Equivalence) t;
         }
-        ArrayList<Term> argument = argumentsToList(subject, predicate);
-        return new Equivalence(argument, temporalOrder);
+        return new Equivalence(new Term[] { subject, predicate }, temporalOrder);
     }
 
     /**

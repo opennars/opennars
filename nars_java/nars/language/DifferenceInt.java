@@ -35,7 +35,7 @@ public class DifferenceInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private DifferenceInt(ArrayList<Term> arg) {
+    private DifferenceInt(Term[] arg) {
         super(arg);
     }
 
@@ -46,7 +46,7 @@ public class DifferenceInt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private DifferenceInt(String n, ArrayList<Term> cs, boolean con, short i) {
+    private DifferenceInt(String n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -55,7 +55,7 @@ public class DifferenceInt extends CompoundTerm {
      * @return A new object, to be casted into a DifferenceInt
      */
     public Object clone() {
-        return new DifferenceInt(getName(), cloneList(components), isConstant(), complexity);
+        return new DifferenceInt(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -64,17 +64,17 @@ public class DifferenceInt extends CompoundTerm {
      * @param argList The list of components
      * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
-        if (argList.size() == 1) { // special case from CompoundTerm.reduceComponent
-            return argList.get(0);
+    public static Term make(Term[] argList, Memory memory) {
+        if (argList.length == 1) { // special case from CompoundTerm.reduceComponent
+            return argList[0];
         }
-        if (argList.size() != 2) {
+        if (argList.length != 2) {
             return null;
         }
         
-        if ((argList.get(0) instanceof SetInt) && (argList.get(1) instanceof SetInt)) {
-            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) argList.get(0)).cloneComponents());
-            set.removeAll(((CompoundTerm) argList.get(1)).cloneComponents());           // set difference
+        if ((argList[0] instanceof SetInt) && (argList[1] instanceof SetInt)) {
+            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) argList[0]).cloneComponentsList());
+            set.removeAll(((CompoundTerm) argList[1]).cloneComponentsList());           // set difference
             return SetInt.make(set, memory);
         }
         
@@ -95,8 +95,7 @@ public class DifferenceInt extends CompoundTerm {
             return null;
         }
 
-        ArrayList<Term> list = argumentsToList(t1, t2);
-        return make(list, memory);
+        return make(new Term[] { t1, t2 }, memory);
     }
 
     /**

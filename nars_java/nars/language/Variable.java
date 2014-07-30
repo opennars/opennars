@@ -237,13 +237,13 @@ public class Variable extends Term {
                 || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).getRelationIndex() != ((ImageInt) cTerm2).getRelationIndex())) {
                 return false;
             }
-            ArrayList<Term> list = cTerm1.cloneComponents();
+            Term[] list = cTerm1.cloneComponents();
             if (cTerm1.isCommutative()) {
-                Collections.shuffle(list, Memory.randomNumber);
+                CompoundTerm.shuffle(list, Memory.randomNumber);                
             }
             
             for (int i = 0; i < cTerm1.size(); i++) {   // assuming matching order
-                Term t1 = list.get(i);
+                Term t1 = list[i];
                 Term t2 = cTerm2.componentAt(i);
                 if (!findSubstitute(type, t1, t2, map1, map2)) {
                     return false;

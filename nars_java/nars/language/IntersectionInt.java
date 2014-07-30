@@ -35,7 +35,7 @@ public class IntersectionInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private IntersectionInt(ArrayList<Term> arg) {
+    private IntersectionInt(Term[] arg) {
         super(arg);
     }
 
@@ -46,7 +46,7 @@ public class IntersectionInt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private IntersectionInt(String n, ArrayList<Term> cs, boolean con, short i) {
+    private IntersectionInt(String n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -55,7 +55,7 @@ public class IntersectionInt extends CompoundTerm {
      * @return A new object, to be casted into a Conjunction
      */
     public Object clone() {
-        return new IntersectionInt(getName(), cloneList(components), isConstant(), complexity);
+        return new IntersectionInt(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -68,25 +68,25 @@ public class IntersectionInt extends CompoundTerm {
     public static Term make(Term term1, Term term2, Memory memory) {
         TreeSet<Term> set;
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponents());
-            set.addAll(((CompoundTerm) term2).cloneComponents());           // set union
+            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponentsList());
+            set.addAll(((CompoundTerm) term2).cloneComponentsList());           // set union
             return SetExt.make(set, memory);
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponents());
-            set.retainAll(((CompoundTerm) term2).cloneComponents());        // set intersection
+            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponentsList());
+            set.retainAll(((CompoundTerm) term2).cloneComponentsList());        // set intersection
             return SetInt.make(set, memory);
         }
         if (term1 instanceof IntersectionInt) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponents());
+            set = new TreeSet<Term>(((CompoundTerm) term1).cloneComponentsList());
             if (term2 instanceof IntersectionInt) {
-                set.addAll(((CompoundTerm) term2).cloneComponents());
+                set.addAll(((CompoundTerm) term2).cloneComponentsList());
             } // (|,(|,P,Q),(|,R,S)) = (|,P,Q,R,S)
             else {
                 set.add((Term) term2.clone());
             }                          // (|,(|,P,Q),R) = (|,P,Q,R)
         } else if (term2 instanceof IntersectionInt) {
-            set = new TreeSet<Term>(((CompoundTerm) term2).cloneComponents());
+            set = new TreeSet<Term>(((CompoundTerm) term2).cloneComponentsList());
             set.add((Term) term1.clone());   // (|,R,(|,P,Q)) = (|,P,Q,R)
         } else {
             set = new TreeSet<Term>();
@@ -117,7 +117,7 @@ public class IntersectionInt extends CompoundTerm {
         if (set.size() == 1) {
             return set.first();
         }                         // special case: single component
-        ArrayList<Term> argument = new ArrayList<Term>(set);
+        Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeCompoundName(NativeOperator.INTERSECTION_INT, argument);
         Term t = memory.nameToTerm(name);
         return (t != null) ? t : new IntersectionInt(argument);

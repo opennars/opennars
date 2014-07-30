@@ -37,7 +37,7 @@ public class SetExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetExt(final ArrayList<Term> arg) {
+    private SetExt(Term[] arg) {
         super(arg);
     }
 
@@ -48,7 +48,7 @@ public class SetExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetExt(final String n, final ArrayList<Term> cs, final boolean con, final short i) {
+    private SetExt(final String n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
@@ -62,7 +62,7 @@ public class SetExt extends CompoundTerm {
      * @return A new object, to be casted into a SetExt
      */
     public Object clone() {
-        return new SetExt(getName(), cloneList(components), isConstant(), complexity);
+        return new SetExt(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -98,7 +98,7 @@ public class SetExt extends CompoundTerm {
         if (set.isEmpty()) {
             return null;
         }
-        final ArrayList<Term> argument = new ArrayList<Term>(set);
+        Term[] argument = set.toArray(new Term[set.size()]);
         final String name = makeSetName(SET_EXT_OPENER.ch, argument, SET_EXT_CLOSER.ch);
         final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new SetExt(argument);

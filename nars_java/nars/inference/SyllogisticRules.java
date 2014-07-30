@@ -312,7 +312,8 @@ public final class SyllogisticRules {
         }
         Conjunction oldCondition = (Conjunction) subj;
 
-        int index2 = oldCondition.components.indexOf(commonComponent);
+        
+        int index2 = CompoundTerm.indexOf(oldCondition.components,commonComponent);
         if (index2 >= 0) {
             index = (short) index2;
         } else {

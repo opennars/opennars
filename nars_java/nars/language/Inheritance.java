@@ -36,7 +36,7 @@ public class Inheritance extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected Inheritance(final ArrayList<Term> arg) {
+    protected Inheritance(final Term[] arg) {
         super(arg);
     }
 
@@ -47,7 +47,7 @@ public class Inheritance extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    protected Inheritance(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i) {
+    protected Inheritance(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
         super(n, cs, con, hasVar, i);
     }
 
@@ -56,7 +56,7 @@ public class Inheritance extends Statement {
      * @return A new object, to be casted into a SetExt
      */
     @Override public Object clone() {
-        return new Inheritance(getName(), cloneList(components), isConstant(), containVar(), complexity);
+        return new Inheritance(getName(), cloneTerms(components), isConstant(), containVar(), complexity);
     }
 
     /**
@@ -85,7 +85,7 @@ public class Inheritance extends Statement {
             return (Inheritance) t;
         }
         
-        ArrayList<Term> arguments = argumentsToList(subject, predicate);
+        Term[] arguments = new Term[] { subject, predicate };
         
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
             return new Operation(name, arguments);
