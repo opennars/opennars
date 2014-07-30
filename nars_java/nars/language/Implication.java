@@ -35,7 +35,7 @@ public class Implication extends Statement {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private Implication(ArrayList<Term> arg, int order) {
+    private Implication(Term[] arg, int order) {
         super(arg);
         temporalOrder = order;
     }
@@ -47,7 +47,7 @@ public class Implication extends Statement {
      * @param con Whether it is a constant term
      * @param i Syntactic complexity of the compound
      */
-    private Implication(String n, ArrayList<Term> cs, boolean con, short i, int order) {
+    private Implication(String n, Term[] cs, boolean con, short i, int order) {
         super(n, cs, con, i);
         temporalOrder = order;
     }
@@ -61,7 +61,7 @@ public class Implication extends Statement {
     @Override
     public Object clone() {
         //TODO use the faster super constructor here
-        return new Implication(getName(), cloneList(components), isConstant(), complexity, temporalOrder);
+        return new Implication(getName(), cloneTerms(components), isConstant(), complexity, temporalOrder);
     }
 
     /**
@@ -115,8 +115,7 @@ public class Implication extends Statement {
             final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);
             return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder, memory);
         } else {
-            final ArrayList<Term> argument = argumentsToList(subject, predicate);
-            return new Implication(argument, temporalOrder);
+            return new Implication(new Term[] { subject, predicate }, temporalOrder);
         }
     }
 

@@ -72,7 +72,7 @@ public final class StructuralRules {
         }
         Term sub = statement.getSubject();
         Term pred = statement.getPredicate();
-        ArrayList<Term> components = compound.cloneComponents();
+        ArrayList<Term> components = compound.cloneComponentsList();
         if (((side == 0) && components.contains(pred)) || ((side == 1) && components.contains(sub))) {
             return;
         }
@@ -403,20 +403,20 @@ public final class StructuralRules {
         } else if ((oldContent instanceof Statement) && (indices[0] == 1)) {
             content = Statement.make((Statement) oldContent, oldContent.componentAt(0), newInh, oldContent.getTemporalOrder(), memory);
         } else {
-            ArrayList<Term> componentList;
+            Term[] componentList;
             Term condition = oldContent.componentAt(0);
             if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
                 componentList = ((CompoundTerm) condition).cloneComponents();
-                componentList.set(indices[1], newInh);
+                componentList[indices[1]] = newInh;
                 Term newCond = CompoundTerm.make((CompoundTerm) condition, componentList, memory);
                 content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder(), memory);
             } else {
                 componentList = oldContent.cloneComponents();
-                componentList.set(indices[0], newInh);
+                componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
                     content = CompoundTerm.make(oldContent, componentList, memory);
                 } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
-                    content = Statement.make((Statement) oldContent, componentList.get(0), componentList.get(1), oldContent.getTemporalOrder(), memory);
+                    content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder(), memory);
                 }
             }
         }

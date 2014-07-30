@@ -40,7 +40,7 @@ public abstract class Statement extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Statement(final ArrayList<Term> arg) {
+    protected Statement(final Term[] arg) {
         super(arg);
     }
     
@@ -52,14 +52,14 @@ public abstract class Statement extends CompoundTerm {
      * @param con Constant indicator
      * @param i Syntactic complexity of the compound
      */
-    protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final short i) {
+    protected Statement(final String n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
     
     /**
      * High-performance constructor that avoids recalculating some Term metadata when created
      */
-    protected Statement(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short i) {
+    protected Statement(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
         super(n, cs, con, hasVar, i);
     }
 
@@ -286,7 +286,7 @@ public abstract class Statement extends CompoundTerm {
      * @return The first component
      */
     public Term getSubject() {
-        return components.get(0);
+        return components[0];
     }
 
     /**
@@ -295,7 +295,7 @@ public abstract class Statement extends CompoundTerm {
      * @return The second component
      */
     public Term getPredicate() {
-        return components.get(1);
+        return components[1];
     }
 
     @Override

@@ -35,7 +35,7 @@ public class DifferenceExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private DifferenceExt(ArrayList<Term> arg) {
+    private DifferenceExt(Term[] arg) {
         super(arg);
     }
 
@@ -46,7 +46,7 @@ public class DifferenceExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private DifferenceExt(String n, ArrayList<Term> cs, boolean con, short i) {
+    private DifferenceExt(String n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -55,7 +55,7 @@ public class DifferenceExt extends CompoundTerm {
      * @return A new object, to be casted into a DifferenceExt
      */
     public Object clone() {
-        return new DifferenceExt(getName(), cloneList(components), isConstant(), complexity);
+        return new DifferenceExt(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -64,16 +64,16 @@ public class DifferenceExt extends CompoundTerm {
      * @param argList The list of components
      * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
-        if (argList.size() == 1) { // special case from CompoundTerm.reduceComponent
-            return argList.get(0);
+    public static Term make(Term[] argList, Memory memory) {
+        if (argList.length == 1) { // special case from CompoundTerm.reduceComponent
+            return argList[0];
         }
-        if (argList.size() != 2) {
+        if (argList.length  != 2) {
             return null;
         }
-        if ((argList.get(0) instanceof SetExt) && (argList.get(1) instanceof SetExt)) {
-            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) argList.get(0)).cloneComponents());
-            set.removeAll(((CompoundTerm) argList.get(1)).cloneComponents());           // set difference
+        if ((argList[0] instanceof SetExt) && (argList[1] instanceof SetExt)) {
+            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) argList[0]).cloneComponentsList());
+            set.removeAll(((CompoundTerm) argList[1]).cloneComponentsList());           // set difference
             return SetExt.make(set, memory);
         }
         
@@ -93,8 +93,7 @@ public class DifferenceExt extends CompoundTerm {
         if (t1.equals(t2)) {
             return null;
         }
-        ArrayList<Term> list = argumentsToList(t1, t2);
-        return make(list, memory);
+        return make(new Term[]{t1,t2}, memory);
     }
 
     /**

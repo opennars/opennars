@@ -34,7 +34,7 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Similarity(ArrayList<Term> arg) {
+    private Similarity(Term[] arg) {
         super(arg);
     }
 
@@ -45,7 +45,7 @@ public class Similarity extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Similarity(String n, ArrayList<Term> cs, boolean con, short i) {
+    private Similarity(String n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -55,7 +55,7 @@ public class Similarity extends Statement {
      */
     @Override
     public Object clone() {
-        return new Similarity(getName(), cloneList(components), isConstant(), complexity);
+        return new Similarity(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -77,8 +77,7 @@ public class Similarity extends Statement {
         if (t != null) {
             return (Similarity) t;
         }
-        ArrayList<Term> argument = argumentsToList(subject, predicate);
-        return new Similarity(argument);
+        return new Similarity(new Term[] { subject, predicate });
     }
 
     /**

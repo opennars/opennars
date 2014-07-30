@@ -21,7 +21,6 @@
 
 package nars.language;
 
-import java.util.ArrayList;
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
@@ -35,7 +34,7 @@ public class Product extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Product(final ArrayList<Term> arg) {
+    private Product(Term[] arg) {
         super(arg);
     }
     
@@ -46,7 +45,7 @@ public class Product extends CompoundTerm {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    private Product(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short complexity) {
+    private Product(final String n, Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
         super(n, cs, con, hasVar, complexity);
     }
     
@@ -60,7 +59,7 @@ public class Product extends CompoundTerm {
      * @return A new object, to be casted into an ImageExt
      */
     public Object clone() {
-        return new Product(getName(), cloneList(components), isConstant(), containVar(), complexity);
+        return new Product(getName(), cloneComponents(), isConstant(), containVar(), complexity);
     }
 
      /**
@@ -69,7 +68,7 @@ public class Product extends CompoundTerm {
      * @param argument The list of components
      * @param memory Reference to the memory
      */
-    public static Term make(final ArrayList<Term> argument, final Memory memory) {
+    public static Term make(Term[] argument, final Memory memory) {
         final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
         final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Product(argument);
@@ -84,8 +83,8 @@ public class Product extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final CompoundTerm image, final Term component, final int index, final Memory memory) {
-        final ArrayList<Term> argument = image.cloneComponents();
-        argument.set(index, component);
+        Term[] argument = image.cloneComponents();
+        argument[index] = component;
         return make(argument, memory);
     }
     

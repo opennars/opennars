@@ -21,7 +21,6 @@
 package nars.operator;
 
 import java.util.ArrayList;
-import java.util.List;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
@@ -41,7 +40,7 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    public Operation(String name, ArrayList<Term> arg) {
+    public Operation(String name, Term[] arg) {
         super(arg);
         setName(name);
     }
@@ -54,7 +53,7 @@ public class Operation extends Inheritance {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    protected Operation(final String n, final ArrayList<Term> cs, final boolean con, final boolean hasVar, final short complexity) {
+    protected Operation(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
         super(n, cs, con, hasVar, complexity);
     }
 
@@ -65,7 +64,8 @@ public class Operation extends Inheritance {
      */
     @Override
     public Object clone() {
-        return new Operation(name, cloneList(components), isConstant(), containVar(), getComplexity());
+        
+        return new Operation(name, cloneComponents(), isConstant(), containVar(), getComplexity());
     }
 
     /**
@@ -75,7 +75,7 @@ public class Operation extends Inheritance {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Operation make(Operator oper, final ArrayList<Term> arg, final Memory memory) {        
+    public static Operation make(Operator oper, final Term[] arg, final Memory memory) {        
         if (oper == null) {
             return null;
         }
@@ -88,10 +88,10 @@ public class Operation extends Inheritance {
         Term list = Product.make(arg, memory);
         opArg.add(list);
         opArg.add(oper);
-        return new Operation(name, opArg);
+        return new Operation(name, opArg.toArray(new Term[opArg.size()]));
     }
 
-    public static String makeName(final String op, final List<Term> arg, final Memory memory) {
+    public static String makeName(final String op, Term[] arg, final Memory memory) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         

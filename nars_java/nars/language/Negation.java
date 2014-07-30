@@ -35,7 +35,7 @@ public class Negation extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Negation(ArrayList<Term> arg) {
+    private Negation(Term[] arg) {
         super(arg);
     }
 
@@ -47,7 +47,7 @@ public class Negation extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Negation(String n, ArrayList<Term> cs, boolean con, short i) {
+    private Negation(String n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -63,7 +63,7 @@ public class Negation extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Negation(getName(), cloneList(components), isConstant(), complexity);
+        return new Negation(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -75,11 +75,9 @@ public class Negation extends CompoundTerm {
      */
     public static Term make(final Term t, final Memory memory) {
         if (t instanceof Negation) {
-            return ((CompoundTerm) t).cloneComponents().get(0);
+            return ((CompoundTerm) t).cloneComponents()[0];
         }         // (--,(--,P)) = P
-        final ArrayList<Term> argument = new ArrayList<>(1);
-        argument.add(t);
-        return make(argument, memory);
+        return make(new Term[] { t }, memory);
     }
 
     /**
@@ -89,8 +87,8 @@ public class Negation extends CompoundTerm {
      * @param argument The list of components
      * @param memory Reference to the memory
      */
-    public static Term make(final ArrayList<Term> argument, final Memory memory) {
-        if (argument.size() != 1) {
+    public static Term make(final Term[] argument, final Memory memory) {
+        if (argument.length != 1) {
             return null;
         }
         final String name = makeCompoundName(NativeOperator.NEGATION, argument);

@@ -36,11 +36,11 @@ public class Disjunction extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Disjunction(ArrayList<Term> arg) {
+    private Disjunction(Term[] arg) {
         super(arg);
-        if (arg.size()<2) {
+        /*if (arg.length<2) {
             throw new RuntimeException("Conjunction requires >=2 components");
-        }
+        }*/
     }
 
     /**
@@ -50,11 +50,11 @@ public class Disjunction extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Disjunction(String n, ArrayList<Term> arg, boolean con, short i) {
+    private Disjunction(String n, Term[] arg, boolean con, short i) {
         super(n, arg, con, i);
-        if (arg.size()<2) {
+        /*if (arg.size()<2) {
             throw new RuntimeException("Conjunction requires >=2 components");
-        }        
+        } */       
     }
 
     
@@ -69,7 +69,7 @@ public class Disjunction extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Disjunction(getName(), cloneList(components), isConstant(), complexity);
+        return new Disjunction(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -82,15 +82,15 @@ public class Disjunction extends CompoundTerm {
     public static Term make(Term term1, Term term2, Memory memory) {
         TreeSet<Term> set;
         if (term1 instanceof Disjunction) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneComponents());
+            set = new TreeSet<>(((CompoundTerm) term1).cloneComponentsList());
             if (term2 instanceof Disjunction) {
-                set.addAll(((CompoundTerm) term2).cloneComponents());
+                set.addAll(((CompoundTerm) term2).cloneComponentsList());
             } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
                 set.add((Term) term2.clone());
             }                          // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof Disjunction) {
-            set = new TreeSet<>(((CompoundTerm) term2).cloneComponents());
+            set = new TreeSet<>(((CompoundTerm) term2).cloneComponentsList());
             set.add((Term) term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();
@@ -121,7 +121,7 @@ public class Disjunction extends CompoundTerm {
         if (set.size() == 1) {
             return set.first();
         }                         // special case: single component
-        ArrayList<Term> argument = new ArrayList<>(set);
+        Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
         Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Disjunction(argument);

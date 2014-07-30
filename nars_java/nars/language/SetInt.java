@@ -37,7 +37,7 @@ public class SetInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetInt(ArrayList<Term> arg) {
+    private SetInt(Term[] arg) {
         super(arg);
     }
 
@@ -48,7 +48,7 @@ public class SetInt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetInt(String n, ArrayList<Term> cs, boolean con, short i) {
+    private SetInt(String n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -62,7 +62,7 @@ public class SetInt extends CompoundTerm {
      * @return A new object, to be casted into a SetInt
      */
     public Object clone() {
-        return new SetInt(getName(), cloneList(components), isConstant(), complexity);
+        return new SetInt(getName(), cloneTerms(components), isConstant(), complexity);
     }
 
     /**
@@ -98,7 +98,7 @@ public class SetInt extends CompoundTerm {
         if (set.isEmpty()) {
             return null;
         }
-        ArrayList<Term> argument = new ArrayList<Term>(set);
+        Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
         Term t = memory.nameToTerm(name);
         return (t != null) ? t : new SetInt(argument);

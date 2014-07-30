@@ -247,7 +247,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             }
             if(((Statement)component).getPredicate().equals(((Statement)content).getPredicate()) && !(((Statement)component).getPredicate() instanceof Variable)) {
                 Variable V=new Variable("#depIndVar1");
-                CompoundTerm zw=(CompoundTerm) T.components.get(index).clone();
+                CompoundTerm zw=(CompoundTerm) T.components[index].clone();
                 zw=(CompoundTerm) CompoundTerm.setComponent(zw,1,V,memory);
                 T2=(CompoundTerm) CompoundTerm.setComponent(T2,1,V,memory);
                 Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
@@ -256,7 +256,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             else 
             if(((Statement)component).getSubject().equals(((Statement)content).getSubject()) && !(((Statement)component).getSubject() instanceof Variable)) {
                 Variable V=new Variable("#depIndVar2");
-                CompoundTerm zw=(CompoundTerm) T.components.get(index).clone();
+                CompoundTerm zw=(CompoundTerm) T.components[index].clone();
                 zw=(CompoundTerm) CompoundTerm.setComponent(zw,0,V,memory);
                 T2=(CompoundTerm) CompoundTerm.setComponent(T2,0,V,memory);
                 Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
@@ -300,7 +300,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms components
             //for two levels, and remember the terms which unify with second
-            List<Term> components_level1=((CompoundTerm)taskterm).components;            
+            Term[] components_level1 = ((CompoundTerm)taskterm).components;            
             Term secterm_unwrap=(Term) CompoundTerm.unwrapNegation(secterm).clone();
             for(Term T1 : components_level1) {
                 Term T1_unwrap=CompoundTerm.unwrapNegation(T1);
@@ -326,7 +326,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                     continue;
                 }
                 if(T1_unwrap instanceof CompoundTerm) {
-                    List<Term> components_level2 = ((CompoundTerm)T1_unwrap).components;
+                    Term[] components_level2 = ((CompoundTerm)T1_unwrap).components;
                     for(Term T2 : components_level2) {
                         Term T2_unwrap=(Term) CompoundTerm.unwrapNegation(T2).clone(); 
                         HashMap<Term, Term> Values3 = new HashMap<Term, Term>(); //we are only interested in first variables
