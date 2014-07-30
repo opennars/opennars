@@ -23,9 +23,10 @@ package nars.operator;
 import java.util.ArrayList;
 
 import nars.entity.Task;
+import nars.language.Term;
 
 /**
- * A class used in testing only.
+ *  A class used as a template for Operator definition.
  */
 public class Sample extends Operator {
 
@@ -33,9 +34,17 @@ public class Sample extends Operator {
         super(name);
     }
 
+    /** called from Operator */
     ArrayList<Task> execute(Task task) {
-        System.out.println("^Sample execute: " + task);
-        return new ArrayList<>();
+         Operation content = (Operation) task.getContent();
+         Operator op = content.getOperator();
+         
+         Term[] arg = content.getArguments();
+         System.out.println("Executed: " + op);
+         for (Term t : arg) {
+             System.out.println(" --- " + t);
+         }
+         return null;
     }
 
 }

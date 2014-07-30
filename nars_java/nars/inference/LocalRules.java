@@ -22,6 +22,7 @@ package nars.inference;
 
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -35,6 +36,8 @@ import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
@@ -302,7 +305,17 @@ public class LocalRules {
     }
     
     /** Add plausibility estimation */
-    public static boolean decisionMaking(Sentence goal) {
-        return goal.truth.getExpectation() > Parameters.DECISION_THRESHOLD;
+    public static void decisionMaking(Task task, Concept concept) {
+         Term content = concept.term;
+         TruthValue desireValue = concept.getDesire();
+         if (desireValue.getExpectation() < Parameters.DECISION_THRESHOLD) {
+             return;
+         }
+         if (!(content instanceof Operation)) {
+             return;
+         }
+         Operator oper = ((Operation) content).getOperator();
+         oper.call(task, concept.memory);
+         task.setPriority(0);
     }    
 }
