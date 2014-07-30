@@ -33,7 +33,7 @@ public class Sample extends Operator {
         super(name);
     }
 
-    public ArrayList<Task> execute(Task task) {
+    ArrayList<Task> execute(Task task) {
         System.out.println("^Sample execute: " + task);
         return new ArrayList<>();
     }

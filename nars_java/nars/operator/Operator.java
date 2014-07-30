@@ -45,7 +45,7 @@ public abstract class Operator extends Term {
      * @param task The task with the arguments to be passed to the operator
      * @return The direct collectable results and feedback of the reportExecution
      */
-    public abstract ArrayList<Task> execute(final Task task);
+    abstract ArrayList<Task> execute(final Task task);
 
     /**
      * Execute an operation, then handle feedback
