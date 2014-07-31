@@ -95,6 +95,8 @@ public class RuleTables {
         
         Sentence buf1=memory.getCurrentBelief();
         Task buf2=memory.getCurrentTask();
+        
+        // to be invoked by the corresponding links 
         CompositionalRules.dedSecondLayerVariableUnification(task,memory);
         memory.setCurrentBelief(buf1);
         memory.setCurrentTask(buf2);
