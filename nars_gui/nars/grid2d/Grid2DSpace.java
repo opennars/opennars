@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
+import nars.grid2d.Cell.Material;
 import nars.gui.Window;
 import processing.core.PApplet;
 
@@ -189,6 +190,30 @@ public class Grid2DSpace extends PApplet {
         return time;
     }
 
+    enum MotionEffect {
+        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
+    }
+    
+    public MotionEffect getMotionEffect(int x, int y, int tx, int ty) {
+        int dx = Math.abs(tx-x);
+        int dy = Math.abs(ty-y);
+        if (!((dx <= 1) && (dy <= 1)))
+            return MotionEffect.TooFar;
+
+        Cell from = cells.at(x, y);
+        Cell to = cells.at(tx, ty);
+                
+        System.out.println(to + " " + to.material);
+        if ((to.material == Material.StoneWall) || (to.material == Material.DirtWall))
+            return MotionEffect.TooSolid;
+        
+        final float maxTraversableHeight = 8;
+        float dHeight = to.height - from.height;
+        if (dHeight > maxTraversableHeight)
+            return MotionEffect.TooHigh;
+        
+        return MotionEffect.Moved;
+    }
     
     public void drawObjects() {
         pushMatrix();

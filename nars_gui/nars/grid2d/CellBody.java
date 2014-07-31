@@ -1,46 +1,56 @@
 package nars.grid2d;
 
 import java.awt.Color;
+import nars.grid2d.Grid2DSpace.MotionEffect;
+import static nars.grid2d.Hauto.DOWN;
+import static nars.grid2d.Hauto.DOWNLEFT;
+import static nars.grid2d.Hauto.DOWNRIGHT;
+import static nars.grid2d.Hauto.LEFT;
+import static nars.grid2d.Hauto.RIGHT;
+import static nars.grid2d.Hauto.UP;
+import static nars.grid2d.Hauto.UPLEFT;
+import static nars.grid2d.Hauto.UPRIGHT;
 
 
-/** an agent body that is 1 cell in size */
-public class CellAgent extends GridObject {
-    
-    final static int RIGHT = -9;
-    final static int DOWN = 180;
-    final static int LEFT = 90;
-    final static int UP = 0;
-    final static int UPLEFT = (UP+LEFT)/2;
-    final static int UPRIGHT = (UP+RIGHT)/2;
-    final static int DOWNLEFT = (DOWN+LEFT)/2;
-    final static int DOWNRIGHT = (DOWN+RIGHT)/2;
-    
-    public float cx, cy, cheading;
-    public int x;
-    public int y;
-    public int heading; //in degrees
+
+public class CellBody extends LocalGridObject {
+
+    public CellBody(int x, int y) {
+        super(x, y);
+    }
     
     //LERP interpolation rate
     float lerpRate = 0.1f;
-
     
     /** rounds to the nearest cardinal direction and moves. steps can be postive or negative */
-    public void forward(int steps, boolean allowDiagonal) {    
+    public void forward(Grid2DSpace p, int steps, boolean allowDiagonal) {    
+        int tx = x;
+        int ty = y;
         switch (heading) {
-            case LEFT: x-=steps; break;
-            case RIGHT: x+=steps; break;
-            case UP: y+=steps; break;
-            case DOWN: y-=steps; break;
+            case LEFT: tx-=steps; break;
+            case RIGHT: tx+=steps; break;
+            case UP: ty+=steps; break;
+            case DOWN: ty-=steps; break;
             default:
                 if (allowDiagonal) {
                     switch (heading) {
-                        case UPLEFT: x-=steps; y+=steps; break;
-                        case UPRIGHT: x+=steps; y+=steps; break;
-                        case DOWNLEFT: x-=steps; y-=steps; break;
+                        case UPLEFT: tx-=steps; ty+=steps; break;
+                        case UPRIGHT: tx+=steps; ty+=steps; break;
+                        case DOWNLEFT: tx-=steps; ty-=steps; break;
                         //case DOWNRIGHT: x+=steps; y+=steps;  break;
                     }
                 }
                 break;                
+        }
+        MotionEffect e = p.getMotionEffect(x, y, tx, ty);
+        
+        if (e == MotionEffect.Moved) {
+            x = tx;
+            y = ty;
+            System.out.println("moved to: " + x + "," + y);
+        }
+        else {
+            System.out.println(e);
         }
     }
     
@@ -64,8 +74,9 @@ public class CellAgent extends GridObject {
             else if (randDir == 7)        heading = DOWNRIGHT;
         }
         
-        if (Math.random() < 0.2)
-            forward(1, true);        
+        if (Math.random() < 0.2) {
+            forward(p, 1, true);
+        }
     }
     
     @Override
