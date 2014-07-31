@@ -1,12 +1,25 @@
 package nars.grid2d;
 
-class Hauto {
+public class Hauto {
 
+    final public static int RIGHT = -9;
+    final public static int DOWN = 180;
+    final public static int LEFT = 90;
+    final public static int UP = 0;
+    final public static int UPLEFT = (UP+LEFT)/2;
+    final public static int UPRIGHT = (UP+RIGHT)/2;
+    final public static int DOWNLEFT = (DOWN+LEFT)/2;
+    final public static int DOWNRIGHT = (DOWN+RIGHT)/2;
+    
     public int t = 0;
     public Cell[][] readCells; //2D-array(**) of Cell objects(*)
     public Cell[][] writeCells; //2D-array(**) of Cell objects(*)
     public final int w;
     public final int h;
+    
+    public static int irand(int max) {
+        return (int)(Math.random()*max);
+    }
     
     
     public Hauto(int w, int h) {
@@ -115,7 +128,7 @@ class Hauto {
         return 0.0f;
     }
 
-    void forEach(int x1, int y1, int x2, int y2, CellFunction c) {
+    public void forEach(int x1, int y1, int x2, int y2, CellFunction c) {
         x1 = Math.max(1, x1);
         x2 = Math.min(w-1, x2);
         x2 = Math.max(x1, x2);
@@ -129,5 +142,28 @@ class Hauto {
            }
         copyReadToWrite();
     }
+
+    public void at(int x, int y, CellFunction c) {
+        c.update(readCells[x][y]);
+        copyReadToWrite();
+    }
     
+    public Cell at(int x, int y) {
+        return readCells[x][y];
+    }
+    
+    public static class SetMaterial implements CellFunction {
+        private final Cell.Material material;
+
+        public SetMaterial(Cell.Material m) {
+            this.material = m;
+        }
+        
+        @Override
+        public void update(Cell cell) {
+            cell.material = material;
+            cell.height = (material == Cell.Material.StoneWall) ? 64 : 1;
+        }
+        
+    }    
 }
