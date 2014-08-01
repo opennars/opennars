@@ -123,11 +123,17 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.decPriority(1 - difB);
             bLink.decDurability(1 - difB);
         }
-        final float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
+        float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
+        
+        //TODO determine if this is correct
+        if (dif < 0) dif = 0;  
+        
+        
         float priority = or(dif, task.getPriority());
         float durability = aveAri(dif, task.getDurability());
         float quality = truthToQuality(truth);
         
+        /*
         if (priority < 0) {
             memory.nar.output(ERR.class, 
                     new RuntimeException("BudgetValue.revise resulted in negative priority; set to 0"));
@@ -143,6 +149,8 @@ public final class BudgetFunctions extends UtilityFunctions {
                     new RuntimeException("BudgetValue.revise resulted in negative quality; set to 0"));
             quality = 0;
         }
+        */
+        
         return new BudgetValue(priority, durability, quality);
     }
 

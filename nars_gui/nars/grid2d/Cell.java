@@ -3,11 +3,13 @@ package nars.grid2d;
 public class Cell {
 
     public float charge = 0;
+    public float value=0;
+    public float value2=0;
     public float conductivity = 0.98f;
     public boolean chargeFront = false;
     public float height = 0;
     public Material material;
-
+    public Logic logic;
     
     public enum Material {
         DirtFloor,
@@ -20,14 +22,35 @@ public class Cell {
         //case Tile.Chest:        
     }
     
+    public enum Logic {
+        NotALogicBlock,
+        AND,
+        OR,
+        XOR,
+        NOT,
+        BRIDGE,
+        SWITCH,
+        OFFSWITCH,
+        WIRE
+    }
+    
     public Cell() {
         height = 64;
         material = Material.Empty;
+        logic=Logic.NotALogicBlock;
+        charge=-0.5f; //undefined charge by default
     }
     
     public void setHeightInfinity() {
         height = Float.MAX_VALUE;
         material = Material.StoneWall;
+    }
+    
+    public void drawtext(Grid2DSpace s, String str) {
+        s.pushMatrix();
+        s.translate(0.2f,0.9f);
+        s.text(str,0,0);
+        s.popMatrix();
     }
     
     public void draw(Grid2DSpace s) {
@@ -49,13 +72,13 @@ public class Cell {
                 a = 255;
             }           
         }
+
         
         s.fill(r, g, b, a);
         s.rect(0,0,1,1);
         
-        if (charge > 0) {
-            int points = (int)(charge * 100.0f);
-            
+
+        if (charge>=0) {
             int cr = chargeFront ? 255 : 128;
             int sparkRes = 2;
             float invSparkRes = 1.0f / ((float)sparkRes);
@@ -66,17 +89,44 @@ public class Cell {
                     ra = ra >> 1;
                     if (ra == 0)
                         ra = nextInt();
-                    
-                    if (sparkle) {
+                    s.fill(0);
+                    s.rect( sx * invSparkRes, sy * invSparkRes, invSparkRes, invSparkRes);
+                    //if (sparkle) { eye cancer off for now
                         s.fill(cr,255,0,(int)(charge*128.0));
                         s.rect( sx * invSparkRes, sy * invSparkRes, invSparkRes, invSparkRes);
-                    }
+                    //}
                 }
             }
-                
-            for (int i = 0; i < points; i++) {
-                int p = nextInt()%(16*16);
-            }
+        }
+        s.textSize(1);
+        s.fill(255,0,0);
+        if(logic==Logic.AND)
+        {
+            drawtext(s,"^");
+        }
+        if(logic==Logic.OR)
+        {
+            drawtext(s,"v");
+        }
+        if(logic==Logic.XOR)
+        {
+            drawtext(s,"x");
+        }
+        if(logic==Logic.NOT)
+        {
+            drawtext(s,"~");
+        }
+        if(logic==Logic.BRIDGE)
+        {
+            drawtext(s,"H");
+        }
+        if(logic==Logic.SWITCH)
+        {
+            drawtext(s,"1");
+        }
+        if(logic==Logic.OFFSWITCH)
+        {
+            drawtext(s,"0");
         }
         
         
