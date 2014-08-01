@@ -10,13 +10,14 @@ public class Cell {
     public float height = 0;
     public Material material;
     public Logic logic;
-    
+
     public enum Material {
         DirtFloor,
         StoneWall,
         Corridor,
         Door, 
         Empty, DirtWall,
+        Machine
         //case Tile.Upstairs:
         //case Tile.Downstairs:
         //case Tile.Chest:        
@@ -59,6 +60,11 @@ public class Cell {
         int r=0,g=0,b=0,a=1;
         if (material == Material.Empty) {
         }
+        else if (material == Material.Machine) {
+            g = b = 127;
+            r = 200;
+            a = 188;
+        }
         else if (material == Material.StoneWall) {
             r = g = b = a = 255;
         }
@@ -73,31 +79,31 @@ public class Cell {
             }           
         }
 
+        if (charge>0) {
+            float freq = 4;
+            if (chargeFront) {
+                freq = 7;
+                b += 25;
+            }
+
+            int chargeBright = (int)((Math.cos(s.getRealtime()*freq)+1) * 25);
+            
+            r += chargeBright;
+            g += chargeBright/2;
+            a += 150;
+            
+        }
+        
+        r = Math.min(255, r);
+        g = Math.min(255, g);
+        b = Math.min(255, b);
+        a = Math.min(255, a);
         
         s.fill(r, g, b, a);
-        s.rect(0,0,1,1);
+        s.rect(0,0,1.05f,1.05f);
         
 
-        if (charge>=0) {
-            int cr = chargeFront ? 255 : 128;
-            int sparkRes = 2;
-            float invSparkRes = 1.0f / ((float)sparkRes);
-            int ra = nextInt();
-            for (int sx = 0; sx < sparkRes; sx++) {
-                for (int sy = 0; sy < sparkRes; sy++) {
-                    boolean sparkle = (ra & 1) > 0;
-                    ra = ra >> 1;
-                    if (ra == 0)
-                        ra = nextInt();
-                    s.fill(0);
-                    s.rect( sx * invSparkRes, sy * invSparkRes, invSparkRes, invSparkRes);
-                    //if (sparkle) { eye cancer off for now
-                        s.fill(cr,255,0,(int)(charge*128.0));
-                        s.rect( sx * invSparkRes, sy * invSparkRes, invSparkRes, invSparkRes);
-                    //}
-                }
-            }
-        }
+        
         s.textSize(1);
         s.fill(255,0,0);
         if(logic==Logic.AND)
@@ -160,6 +166,12 @@ public class Cell {
         this.height = h;
     }
             
+    void setLogic(Logic logic, float initialCharge) {
+        this.material = Material.Machine;
+        this.logic = logic;
+        this.charge = initialCharge;
+    }
+    
     
 
 //public class Tile {
