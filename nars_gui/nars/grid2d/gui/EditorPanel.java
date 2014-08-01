@@ -39,12 +39,17 @@ public class EditorPanel extends JPanel {
         
         DefaultMutableTreeNode logicMenu = new DefaultMutableTreeNode("Logic");
         root.add(logicMenu);
+
+        DefaultMutableTreeNode machineMenu = new DefaultMutableTreeNode("Machine");
+        root.add(machineMenu);
+        
         root.add(new DefaultMutableTreeNode("Tools"));
         
         
         DefaultTreeModel model = new DefaultTreeModel(root);
         
-        final JTree toolTree = new JTree(model);        
+        final JTree toolTree = new JTree(model);       
+        toolTree.expandRow(0);
         add(toolTree, BorderLayout.CENTER);
         
         toolTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -63,6 +68,7 @@ public class EditorPanel extends JPanel {
         structMenu.add(new EditorMode("Dirt Floor") {
             @Override public void run() { s.cells.click("DirtFloor"); }            
         });
+        
         
         logicMenu.add(new EditorMode("On Wire") {
             @Override public void run() { s.cells.click("OnWire"); }            
@@ -91,6 +97,14 @@ public class EditorPanel extends JPanel {
         logicMenu.add(new EditorMode("On Switch") {
             @Override public void run() { s.cells.click("onswitch"); }
         });        
+        
+        machineMenu.add(new EditorMode("Light") {
+            @Override public void run() { s.cells.click("Light"); }
+        });        
+        machineMenu.add(new EditorMode("Turret") {
+            @Override public void run() { s.cells.click("Turret"); }
+        });        
+        
     }
     
     

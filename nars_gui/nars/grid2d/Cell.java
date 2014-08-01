@@ -10,7 +10,7 @@ public class Cell {
     public float height = 0;
     public Material material;
     public Logic logic;
-    public float light;
+    public final CellState state;
     
     public boolean isSolid() {
         return material == Material.StoneWall;
@@ -37,16 +37,33 @@ public class Cell {
         BRIDGE,
         SWITCH,
         OFFSWITCH,
-        WIRE
+        WIRE, 
+        Load     
     }
     
+    public enum Machine {
+        Light,
+        Turret
+    }
+    
+    public Machine machine;
+    
     public Cell() {
+        this(new CellState(0, 0));
+    }
+    
+    public Cell(CellState state) {
+        this.state = state;
+        
         height = 64;
         material = Material.Empty;
         logic=Logic.NotALogicBlock;
+        machine = null;
+        
         charge=-0.5f; //undefined charge by default
     }
     
+
     public void setHeightInfinity() {
         height = Float.MAX_VALUE;
         material = Material.StoneWall;
@@ -60,28 +77,30 @@ public class Cell {
         s.popMatrix();
     }
     
+    
     public void draw(Grid2DSpace s) {
 
+        int ambientLight = 200;
+        
         //draw ground height
         int r=0,g=0,b=0,a=1;
+        a = ambientLight;            
+        
         if (material == Material.Empty) {
         }
         else if (material == Material.Machine) {
             g = b = 127;
             r = 200;
-            a = 188;
         }
         else if (material == Material.StoneWall) {
-            r = g = b = a = 255;
+            r = g = b = 255;
         }
         else if (material == Material.DirtFloor) {
             if (height == Float.MAX_VALUE) {
                 r = g = b = 255;
-                a = 255;
             }
             else {
                 r = g = b = (int)(128 + height);
-                a = 255;
             }           
         }
 
@@ -93,11 +112,18 @@ public class Cell {
             }
 
             int chargeBright = (int)((Math.cos(s.getRealtime()*freq)+1) * 25);
-            
+        
             r += chargeBright;
             g += chargeBright/2;
             a += 150;
             
+        }
+        
+        if (state.light > 0) {
+            r += state.light;
+            g += state.light;
+            b += state.light;
+            a += state.light;
         }
         
         r = Math.min(255, r);
@@ -106,12 +132,11 @@ public class Cell {
         a = Math.min(255, a);
         
         s.fill(r, g, b, a);
-        s.rect(0,0,1.05f,1.05f);
+        s.rect(0,0,1.0f,1.0f);
         
 
         
         s.textSize(1);
-        s.fill(255,0,0);
         if(logic==Logic.AND)
         {
             drawtext(s,"^");
@@ -141,6 +166,21 @@ public class Cell {
             drawtext(s,"0");
         }
         
+        if (machine!=null) {
+            switch (machine) {
+                case Light:
+                    if (charge > 0)
+                        drawtext(s,"+");
+                    else
+                        drawtext(s,"-");
+                    break;
+                case Turret:            
+                    if (charge > 0)
+                        s.particles.emitParticles(0.5f, 0.3f, s.getTime()/40f, 0.07f, state.x+0.5f, state.y+0.5f, 1);
+                    break;
+            }
+        }
+        
         
     }
     
@@ -164,8 +204,9 @@ public class Cell {
     void copyFrom(Cell c) {
         this.material = c.material;
         this.height = c.height;
+        this.machine = c.machine;
         this.charge = c.charge;
-        this.chargeFront = c.chargeFront;
+        this.chargeFront = c.chargeFront;        
     }
 
     void setHeight(int h) {

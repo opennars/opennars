@@ -7,6 +7,7 @@ public class Particle {
     public float pxVel, pyVel;
     public int age = 0;
     public int[] gradient;
+    public int rgba;
 
 	//seems to be {screen_foreground, particle trail, particle trail, ... , particle center }
     public final static int[] FIRE_GRAD = {0x00000000, 0xaf9f1604, 0xffdf3509, 0xffef6a10, 0xfffc9b11, 0xffffaa22, 0xffffbb33, 0xffffdd66, 0xffffffaa, 0xffffffff};
