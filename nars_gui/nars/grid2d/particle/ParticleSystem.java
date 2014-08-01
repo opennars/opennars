@@ -1,13 +1,13 @@
 package nars.grid2d.particle;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 import javolution.util.FastTable;
 import nars.grid2d.Cell;
-import nars.grid2d.Cell.Material;
 import nars.grid2d.Grid2DSpace;
+import nars.grid2d.Hauto;
 import nars.util.XORShiftRandom;
-import processing.core.PImage;
 
 public class ParticleSystem  {
 
@@ -23,6 +23,7 @@ public class ParticleSystem  {
     private Cell[][] blockArray;
     private final int WIDTH;
     private final int HEIGHT;
+    private final Hauto cells;
 
     public ParticleSystem(Grid2DSpace p) {
         int w = p.getWidth();
@@ -31,6 +32,7 @@ public class ParticleSystem  {
 
         gravitonAL.add(new Graviton());
 
+        this.cells = p.cells;
         this.blockArray = p.cells.readCells;
        
 
@@ -63,8 +65,8 @@ public class ParticleSystem  {
 
         if (!blockArray[x][y].isSolid()) {
 
-            if (blockArray[x][y].light <= light) {
-                blockArray[x][y].light = light;
+            if (blockArray[x][y].state.light <= light) {
+                blockArray[x][y].state.light = light;
             }
 
             if (light <= lightCutoff || x < 1 || x >= (WIDTH) || y < 1 || y >= (HEIGHT)/*if light <= 1 || location invalid*/) {
@@ -74,44 +76,44 @@ public class ParticleSystem  {
 
                 float lightAttenuation = .8f;
 
-                if (light > lightCutoff + blockArray[x + 1][y].light) {
+                if (light > lightCutoff + blockArray[x + 1][y].state.light) {
                     glow((int) (light * lightAttenuation), x + 1, y);
                 }
 
-                if (light > lightCutoff + blockArray[x - 1][y].light) {
+                if (light > lightCutoff + blockArray[x - 1][y].state.light) {
                     glow((int) (light * lightAttenuation), x - 1, y);
                 }
 
-                if (light > lightCutoff + blockArray[x][y + 1].light) {
+                if (light > lightCutoff + blockArray[x][y + 1].state.light) {
                     glow((int) (light * lightAttenuation), x, y + 1);
                 }
 
-                if (light > lightCutoff + blockArray[x][y - 1].light) {
+                if (light > lightCutoff + blockArray[x][y - 1].state.light) {
                     glow((int) (light * lightAttenuation), x, y - 1);
                 }
 
             }
         } else {
-            if (light <= lightCutoff || x <= 0 || x >= (WIDTH / 32) || y <= 0 || y >= (HEIGHT / 32)) {
+            if (light <= lightCutoff || x <= 0 || x >= (WIDTH) || y <= 0 || y >= (HEIGHT)) {
         //base case
                 //do nothing
             } else {
 
                 float lightAttenuation = .3f;
 
-                if (light > lightCutoff + blockArray[x + 1][y].light) {
+                if (light > lightCutoff + blockArray[x + 1][y].state.light) {
                     glow((int) (light * lightAttenuation), x + 1, y);
                 }
 
-                if (light > lightCutoff + blockArray[x - 1][y].light) {
+                if (light > lightCutoff + blockArray[x - 1][y].state.light) {
                     glow((int) (light * lightAttenuation), x - 1, y);
                 }
 
-                if (light > lightCutoff + blockArray[x][y + 1].light) {
+                if (light > lightCutoff + blockArray[x][y + 1].state.light) {
                     glow((int) (light * lightAttenuation), x, y + 1);
                 }
 
-                if (light > lightCutoff + blockArray[x][y - 1].light) {
+                if (light > lightCutoff + blockArray[x][y - 1].state.light) {
                     glow((int) (light * lightAttenuation), x, y - 1);
                 }
             }
@@ -119,22 +121,23 @@ public class ParticleSystem  {
 
     }
 
-    public void emitParticles(float particleSpeed, float spread, float px, float py, int numberSquare) {
+    public void emitParticles(float particleSpeed, float spread, float heading, float angle, float px, float py, int numberSquare) {
 
         for (int x = 0; x <= numberSquare; x++) {
             for (int y = 0; y <= numberSquare; y++) {
 
                 Particle p = new Particle();
 
+                p.rgba = Color.WHITE.getRGB();
                 float xPos = (px + spread * (x - numberSquare / 2));
                 float yPos = (py + spread * (y - numberSquare / 2));
 
                 float Vel = r.nextFloat() * particleSpeed;
 
-                double angle = r.nextDouble() * Math.PI * 2;
+                double a = heading + angle * r.nextDouble();
 
-                float xVel = Vel * (float) Math.cos(angle);
-                float yVel = Vel * (float) Math.sin(angle);
+                float xVel = Vel * (float) Math.cos(a);
+                float yVel = Vel * (float) Math.sin(a);
 
                 p.pxVel = xVel;
                 p.pyVel = yVel;
@@ -159,7 +162,7 @@ public class ParticleSystem  {
 
     /*
     public void paintBlock(int x, int y) {
-        int light = (int) (.1 * blockArray[x][y].light);
+        int light = (int) (.1 * blockArray[x][y].state.light);
         if (light > 200) {
             light = 200;
         }
@@ -177,10 +180,10 @@ public class ParticleSystem  {
             }
         } else if (blockArray[x][y].type == Block.GRYSTONE) {
 
-            float leftBright = blockArray[x - 1][y].light + .5f * blockArray[x - 2][y].light + .25f * blockArray[x - 3][y].light + .125f * blockArray[x - 1][y - 1].light + .125f * blockArray[x - 1][y + 1].light;
-            float rightBright = blockArray[x + 1][y].light + .5f * blockArray[x + 2][y].light + .25f * blockArray[x + 3][y].light + .125f * blockArray[x + 1][y - 1].light + .125f * blockArray[x + 1][y + 1].light;
-            float upBright = blockArray[x][y - 1].light + .5f * blockArray[x][y - 2].light + .25f * blockArray[x][y - 3].light + .125f * blockArray[x - 1][y - 1].light + .125f * blockArray[x + 1][y - 1].light;
-            float downBright = blockArray[x][y + 1].light + .5f * blockArray[x][y + 2].light + .25f * blockArray[x][y + 3].light + .125f * blockArray[x - 1][y + 1].light + .125f * blockArray[x - 1][y + 1].light;
+            float leftBright = blockArray[x - 1][y].state.light + .5f * blockArray[x - 2][y].state.light + .25f * blockArray[x - 3][y].state.light + .125f * blockArray[x - 1][y - 1].state.light + .125f * blockArray[x - 1][y + 1].state.light;
+            float rightBright = blockArray[x + 1][y].state.light + .5f * blockArray[x + 2][y].state.light + .25f * blockArray[x + 3][y].state.light + .125f * blockArray[x + 1][y - 1].state.light + .125f * blockArray[x + 1][y + 1].state.light;
+            float upBright = blockArray[x][y - 1].state.light + .5f * blockArray[x][y - 2].state.light + .25f * blockArray[x][y - 3].state.light + .125f * blockArray[x - 1][y - 1].state.light + .125f * blockArray[x + 1][y - 1].state.light;
+            float downBright = blockArray[x][y + 1].state.light + .5f * blockArray[x][y + 2].state.light + .25f * blockArray[x][y + 3].state.light + .125f * blockArray[x - 1][y + 1].state.light + .125f * blockArray[x - 1][y + 1].state.light;
 
             for (int x_I = 0; x_I < 8; x_I++) {
                 for (int y_I = 0; y_I < 8; y_I++) {
@@ -210,19 +213,18 @@ public class ParticleSystem  {
         
 
         /*
-        for (int x_I = 0, lightWidth = (WIDTH / 32); x_I < lightWidth; x_I++) {  //Draw previous frame's lighting, then clear lightArray
-            for (int y_I = 0, lightHeight = (HEIGHT / 32); y_I < lightHeight; y_I++) {
+        for (int x_I = 0, lightWidth = (WIDTH); x_I < lightWidth; x_I++) {  //Draw previous frame's lighting, then clear lightArray
+            for (int y_I = 0, lightHeight = (HEIGHT); y_I < lightHeight; y_I++) {
                 paintBlock(x_I, y_I);
             }
         }*/
 
         if (!pause) {
 
-            for (int x_I = 0, lightWidth = (WIDTH / 32) + 1; x_I < lightWidth; x_I++) {  //clear lightArray
-                for (int y_I = 0, lightHeight = (HEIGHT / 32) + 1; y_I < lightHeight; y_I++) {
+            for (int x_I = 0, lightWidth = (WIDTH); x_I < lightWidth; x_I++) {  //clear lightArray
+                for (int y_I = 0, lightHeight = (HEIGHT); y_I < lightHeight; y_I++) {
 
-                    blockArray[x_I][y_I].light = (int) (.9 * blockArray[x_I][y_I].light);
-
+                    blockArray[x_I][y_I].state.light = ( .9f * blockArray[x_I][y_I].state.light );
                 }
             }
 
@@ -318,7 +320,7 @@ public class ParticleSystem  {
                     life -= 10 / (axVel + ayVel);
                 }
 
-                if (xPos <= width - 4 && xPos >= 4 && yPos <= height - 4 && yPos >= 4) { // in canvas
+                if (xPos < width && xPos >= 0 && yPos < height && yPos >= 0) { // in canvas
 
                     /*
                     for (int xi = -2; xi < 2; xi++) {
@@ -393,7 +395,7 @@ public class ParticleSystem  {
 
             Block b = new Block();
             b.setBlock(0, 0, 0, 0);
-            blockArray[(int) (oldX / 32)][(int) (oldY / 32)] = b;
+            blockArray[(int) (oldX)][(int) (oldY)] = b;
 
         }
 

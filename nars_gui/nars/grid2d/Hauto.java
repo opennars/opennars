@@ -1,5 +1,6 @@
 package nars.grid2d;
 
+import nars.grid2d.Cell.Logic;
 import static nars.grid2d.Cell.Logic.AND;
 import static nars.grid2d.Cell.Logic.BRIDGE;
 import static nars.grid2d.Cell.Logic.NOT;
@@ -8,6 +9,7 @@ import static nars.grid2d.Cell.Logic.OR;
 import static nars.grid2d.Cell.Logic.SWITCH;
 import static nars.grid2d.Cell.Logic.WIRE;
 import static nars.grid2d.Cell.Logic.XOR;
+import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;
 
 public class Hauto {
@@ -85,6 +87,11 @@ public class Hauto {
             w.charge=0;
             w.chargeFront=true;
         }
+        
+        if (r.logic == Cell.Logic.Load) {
+            w.charge = Math.max(up.charge, Math.max(down.charge, Math.max(left.charge, right.charge)));
+            w.chargeFront = false;
+        }
             //w.charge *= w.conductivity;
     }
     
@@ -96,6 +103,8 @@ public class Hauto {
         writeCells[(int) x][(int) y].logic = selected.logic;
         readCells[(int) x][(int) y].material = selected.material;
         writeCells[(int) x][(int) y].material = selected.material;
+        readCells[(int) x][(int) y].machine = selected.machine;
+        writeCells[(int) x][(int) y].machine = selected.machine;
     }
     
     Cell selected=new Cell();
@@ -105,6 +114,7 @@ public class Hauto {
             selected.material = Material.StoneWall;            
         }
 
+        selected.machine = null;
         
         if(label=="NOT") {
             selected.setLogic(Cell.Logic.NOT, 0);
@@ -129,7 +139,7 @@ public class Hauto {
         {
             selected.setLogic(Cell.Logic.WIRE, 1.0f);
             selected.chargeFront = true;
-        }        
+        }
         if(label=="OffWire")
         {
             selected.setLogic(Cell.Logic.WIRE, 0);
@@ -143,6 +153,19 @@ public class Hauto {
         {
             selected.setLogic(Cell.Logic.OFFSWITCH, 0);
         }
+
+    
+        if(label=="Light") {
+            selected.logic = Logic.Load;
+            selected.material = Material.Machine;
+            selected.machine = Machine.Light;
+        }
+        if(label=="Turret") {
+            selected.logic = Logic.Load;
+            selected.material = Material.Machine;
+            selected.machine = Machine.Turret;
+        }
+    
     }
     
     public float Neighbor_Value(Cell c,String mode,float data)
@@ -187,8 +210,9 @@ public class Hauto {
             readCells[i] = new Cell[h];
             writeCells[i] = new Cell[h];
             for (int j = 0; j < h; j++) {
-                readCells[i][j] = new Cell();
-                writeCells[i][j] = new Cell();
+                CellState s = new CellState(i, j);
+                readCells[i][j] = new Cell(s);
+                writeCells[i][j] = new Cell(s);
                 
                 if ((i == 0) || (i == w-1))
                     readCells[i][j].setBoundary();

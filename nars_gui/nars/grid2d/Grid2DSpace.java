@@ -44,7 +44,7 @@ public class Grid2DSpace extends PApplet {
     float sy = 800;
     long lasttime = -1;
     double realtime;
-    private ParticleSystem particles;
+    public ParticleSystem particles;
     
     public Grid2DSpace(Hauto cells) {
         super();
@@ -172,7 +172,7 @@ public class Grid2DSpace extends PApplet {
             for (GridObject g : objects)
                 g.update(this);
         } 
-        particles.emitParticles(0.2f, 0.01f, 16,16,4);
+        
         
         popMatrix();
         hrend_DrawGUI();
@@ -257,7 +257,7 @@ public class Grid2DSpace extends PApplet {
         
         particles.tick();
         for (Particle p : particles.p) {
-            fill(Color.RED.getRGB(),128);
+            fill(p.rgba);
             rect(p.xPos, p.yPos, 0.1f,0.1f);
         }
     }
