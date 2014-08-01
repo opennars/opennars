@@ -10,11 +10,16 @@ public abstract class LocalGridObject implements GridObject {
     public int x;
     public int y;
     public int heading; //in degrees
+    public Grid2DSpace space;
 
     public LocalGridObject(int x, int y) {
         setPosition(x, y);
     }
     
+    /** set by space when added */
+    public void init(Grid2DSpace space) {
+        this.space = space;
+    }
     
     public void setPosition(int x, int y) {
         this.cx = this.x = x;
