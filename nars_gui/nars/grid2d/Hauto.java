@@ -8,6 +8,7 @@ import static nars.grid2d.Cell.Logic.OR;
 import static nars.grid2d.Cell.Logic.SWITCH;
 import static nars.grid2d.Cell.Logic.WIRE;
 import static nars.grid2d.Cell.Logic.XOR;
+import nars.grid2d.Cell.Material;
 
 public class Hauto {
 
@@ -100,6 +101,11 @@ public class Hauto {
     Cell selected=new Cell();
     
     public void click(String label) {
+        if(label=="StoneWall") {
+            selected.material = Material.StoneWall;            
+        }
+
+        
         if(label=="NOT") {
             selected.setLogic(Cell.Logic.NOT, 0);
         }

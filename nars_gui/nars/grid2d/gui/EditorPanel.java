@@ -33,7 +33,9 @@ public class EditorPanel extends JPanel {
         
         
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        root.add(new DefaultMutableTreeNode("Structural"));
+        
+        DefaultMutableTreeNode structMenu = new DefaultMutableTreeNode("Structural");
+        root.add(structMenu);
         
         DefaultMutableTreeNode logicMenu = new DefaultMutableTreeNode("Logic");
         root.add(logicMenu);
@@ -55,6 +57,12 @@ public class EditorPanel extends JPanel {
             }            
         });
         
+        structMenu.add(new EditorMode("Stone Wall") {
+            @Override public void run() { s.cells.click("StoneWall"); }            
+        });
+        structMenu.add(new EditorMode("Dirt Floor") {
+            @Override public void run() { s.cells.click("DirtFloor"); }            
+        });
         
         logicMenu.add(new EditorMode("On Wire") {
             @Override public void run() { s.cells.click("OnWire"); }            

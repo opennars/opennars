@@ -2,18 +2,18 @@ package nars.grid2d;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
+import nars.grid2d.particle.Particle;
+import nars.grid2d.particle.ParticleSystem;
 import nars.gui.Window;
 import processing.core.PApplet;
 
@@ -44,6 +44,7 @@ public class Grid2DSpace extends PApplet {
     float sy = 800;
     long lasttime = -1;
     double realtime;
+    private ParticleSystem particles;
     
     public Grid2DSpace(Hauto cells) {
         super();
@@ -159,6 +160,7 @@ public class Grid2DSpace extends PApplet {
         
         drawGround();        
         drawObjects();
+        drawParticles();
         
         hrend_DrawEnd();
         //popMatrix();
@@ -170,6 +172,8 @@ public class Grid2DSpace extends PApplet {
             for (GridObject g : objects)
                 g.update(this);
         } 
+        particles.emitParticles(0.2f, 0.01f, 16,16,4);
+        
         popMatrix();
         hrend_DrawGUI();
     }
@@ -196,6 +200,8 @@ public class Grid2DSpace extends PApplet {
     @Override
     public void setup() {
         frameRate(FrameRate);
+        
+        particles = new ParticleSystem(this);
     }
     int time = 0;
     float rendersize = 1;
@@ -243,6 +249,17 @@ public class Grid2DSpace extends PApplet {
         for (GridObject g : objects)
             g.draw(this);
         popMatrix();
+    }
+    
+    public void drawParticles() {
+        //PImage b = particles.particleImage;
+        //this.blend(b, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), PImage.ADD);
+        
+        particles.tick();
+        for (Particle p : particles.p) {
+            fill(Color.RED.getRGB(),128);
+            rect(p.xPos, p.yPos, 0.1f,0.1f);
+        }
     }
     
     public void drawGround() {

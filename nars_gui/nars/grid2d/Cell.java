@@ -10,6 +10,11 @@ public class Cell {
     public float height = 0;
     public Material material;
     public Logic logic;
+    public float light;
+    
+    public boolean isSolid() {
+        return material == Material.StoneWall;
+    }
 
     public enum Material {
         DirtFloor,
