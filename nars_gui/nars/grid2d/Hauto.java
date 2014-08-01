@@ -99,7 +99,7 @@ public class Hauto {
     
     Cell selected=new Cell();
     
-    void click(String label) {
+    public void click(String label) {
         if(label=="NOT") {
             selected.setLogic(Cell.Logic.NOT, 0);
         }

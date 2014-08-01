@@ -11,9 +11,9 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import nars.grid2d.Cell.Material;
+import nars.grid2d.gui.EditorPanel;
 import nars.gui.Window;
 import processing.core.PApplet;
 
@@ -82,56 +82,17 @@ public class Grid2DSpace extends PApplet {
         
         /*final JCheckBox syntaxEnable = new JCheckBox("Syntax");
         syntaxEnable.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                
-            }
+        @Override public void actionPerformed(ActionEvent e) {
+        }
         });
-        menu.add(syntaxEnable);        
-        */
+        menu.add(syntaxEnable);
+         */
         
-        final JButton syntaxEnable = new JButton("OnWire");
-        syntaxEnable.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                cells.click(syntaxEnable.getLabel());
-            }
-        });
-        menu.add(syntaxEnable);     
+        EditorPanel editor = new EditorPanel(this);
+        Window editorWindow = new Window("Edit", editor);
+        editorWindow.setSize(200, 400);
+        editorWindow.setVisible(true);
         
-        final JButton syntaxEnable2 = new JButton("OffWire");
-        syntaxEnable2.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                cells.click(syntaxEnable2.getLabel());
-            }
-        });
-        menu.add(syntaxEnable2); 
-        
-        final JButton syntaxEnable3 = new JButton("AND");
-        syntaxEnable3.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable3.getLabel()); }});
-        menu.add(syntaxEnable3); 
-        
-        final JButton syntaxEnable4 = new JButton("OR");
-        syntaxEnable4.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable4.getLabel()); }});
-        menu.add(syntaxEnable4); 
-        
-        final JButton syntaxEnable5 = new JButton("XOR");
-        syntaxEnable5.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable5.getLabel()); }});
-        menu.add(syntaxEnable5); 
-        
-        final JButton syntaxEnable7 = new JButton("NOT");
-        syntaxEnable7.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable7.getLabel()); }});
-        menu.add(syntaxEnable7); 
-        
-        final JButton syntaxEnable6 = new JButton("bridge");
-        syntaxEnable6.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable6.getLabel()); }});
-        menu.add(syntaxEnable6); 
-          
-        final JButton syntaxEnable8= new JButton("offswitch");
-        syntaxEnable8.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable8.getLabel()); }});
-        menu.add(syntaxEnable8); 
-        
-        final JButton syntaxEnable9= new JButton("onswitch");
-        syntaxEnable9.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable9.getLabel()); }});
-        menu.add(syntaxEnable9); 
         
         
         content.add(menu, BorderLayout.NORTH);
