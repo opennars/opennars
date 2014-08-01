@@ -30,7 +30,7 @@ public class TestChamber {
         
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         
-        CellBody a = new CellBody(17,17);
+        GridAgent a = new GridAgent(17,17);
         v.add(a);
         
         v.add(new Key(1,1));

@@ -3,19 +3,23 @@ package nars.grid2d;
 
 public class RayVision implements GridObject {
     
-    public final CellBody body;
+    public final GridAgent body;
 
-    public RayVision(CellBody body, double focusAngle, double distance, int r) {
+    public RayVision(GridAgent body, double focusAngle, double distance, int r) {
         this.body = body;
     }
     
+    public void init(Grid2DSpace p) {
+        
+    }
+    
     @Override
-    public void update(Grid2DSpace p) {
+    public void update() {
         
     }
 
     @Override
-    public void draw(Grid2DSpace p) {
+    public void draw() {
     }
     
 }

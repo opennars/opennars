@@ -7,9 +7,11 @@ package nars.grid2d;
 
 
 public interface GridObject {
+
+    public void init(Grid2DSpace space);
     
-    public void update(Grid2DSpace p);
+    public void update();
     
-    public void draw(Grid2DSpace p);
+    public void draw();
     
 }

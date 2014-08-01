@@ -2,7 +2,6 @@ package nars.grid2d;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.MouseWheelEvent;
@@ -58,6 +57,7 @@ public class Grid2DSpace extends PApplet {
     
     public void add(GridObject g) {
         objects.add(g);
+        g.init(this);
     }
     
     public Window newWindow(int width, int height, final boolean exitOnClose) {
@@ -165,19 +165,39 @@ public class Grid2DSpace extends PApplet {
         hrend_DrawEnd();
         //popMatrix();
        
-        realtime = System.nanoTime() / 1.0e9;
-        
-        if (time % automataPeriod == 0) {
-            cells.Exec();
-            for (GridObject g : objects)
-                g.update(this);
-        } 
         
         
         popMatrix();
         hrend_DrawGUI();
+
+        realtime = System.nanoTime() / 1.0e9;
+        
+        if (time % automataPeriod == 0) {
+            cells.Exec();
+            for (GridObject g : objects) {
+                g.update();
+                if (g instanceof GridAgent) {
+                    GridAgent b = (GridAgent)g;
+                    if (b.actions.size() > 0) {
+                        Action a = b.actions.pop();
+                        if (a!=null) {
+                            process(b, a);
+                        }
+                    }
+                }
+            }
+        } 
+    
     }
 
+    
+    public void process(GridAgent agent, Action action) {
+        Effect e = action.process(this, agent);
+        if (e!=null) {
+            agent.perceive(e);
+        }
+    }
+    
     void hrend_DrawBegin() {
     }
 
@@ -215,29 +235,29 @@ public class Grid2DSpace extends PApplet {
     }
     
 
-    enum MotionEffect {
-        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
-    }
+//    enum MotionEffect {
+//        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
+//    }
     
-    public MotionEffect getMotionEffect(int x, int y, int tx, int ty) {
+    public Effect getMotionEffect(GridAgent agent, Action a, int x, int y, int tx, int ty) {
         int dx = Math.abs(tx-x);
         int dy = Math.abs(ty-y);
         if (!((dx <= 1) && (dy <= 1)))
-            return MotionEffect.TooFar;
+            return new Effect(a, false, getTime(), "Too far");
 
         Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);
                 
-        System.out.println(to + " " + to.material);
+        //System.out.println(to + " " + to.material);
         if ((to.material == Material.StoneWall) || (to.material == Material.DirtWall))
-            return MotionEffect.TooSolid;
+            return new Effect(a, false, getTime(), "Too solid");
         
         final float maxTraversableHeight = 8;
         float dHeight = to.height - from.height;
         if (dHeight > maxTraversableHeight)
-            return MotionEffect.TooHigh;
+            return new Effect(a, false, getTime(), "Too high");
         
-        return MotionEffect.Moved;
+        return new Effect(a, true, getTime(), "Moved");
     }
     
     public void drawObjects() {
@@ -247,7 +267,7 @@ public class Grid2DSpace extends PApplet {
         translate(rendersize/2f, rendersize/2f);
         
         for (GridObject g : objects)
-            g.draw(this);
+            g.draw();
         popMatrix();
     }
     
