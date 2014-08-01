@@ -100,52 +100,42 @@ public class Hauto {
     Cell selected=new Cell();
     
     void click(String label) {
-        if(label=="NOT")
-        {
-            selected.logic=Cell.Logic.NOT;
-            selected.charge=0;
+        if(label=="NOT") {
+            selected.setLogic(Cell.Logic.NOT, 0);
         }
         if(label=="AND")
         {
-            selected.logic=Cell.Logic.AND;
-            selected.charge=0;
+            selected.setLogic(Cell.Logic.AND, 0);
         }
         if(label=="OR")
         {
-            selected.logic=Cell.Logic.OR;
-            selected.charge=0;
+            selected.setLogic(Cell.Logic.OR, 0);
         }
         if(label=="XOR")
         {
-            selected.logic=Cell.Logic.XOR;
-            selected.charge=0;
+            selected.setLogic(Cell.Logic.XOR, 0);
         }
         if(label=="bridge")
         {
-            selected.logic=Cell.Logic.BRIDGE;
-            selected.charge=0;
+            selected.setLogic(Cell.Logic.BRIDGE, 0);
         }
         if(label=="OnWire")
         {
-            selected.chargeFront=true;
-            selected.charge=1.0f;
-            selected.logic=Cell.Logic.WIRE;
-        }
+            selected.setLogic(Cell.Logic.WIRE, 1.0f);
+            selected.chargeFront = true;
+        }        
         if(label=="OffWire")
         {
-            selected.chargeFront=true;
-            selected.charge=0.0f;
-            selected.logic=Cell.Logic.WIRE;
+            selected.setLogic(Cell.Logic.WIRE, 0);
+            selected.chargeFront = true;
         }
         if(label=="onswitch")
         {
-            selected.charge=1.0f;
-            selected.logic=Cell.Logic.SWITCH;
+            selected.setLogic(Cell.Logic.SWITCH, 1.0f);
         }
         if(label=="offswitch")
         {
-            selected.charge=0.0f;
-            selected.logic=Cell.Logic.OFFSWITCH;
+            selected.setLogic(Cell.Logic.OFFSWITCH, 0);
         }
     }
     

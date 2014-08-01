@@ -43,6 +43,7 @@ public class Grid2DSpace extends PApplet {
     float sx = 800;
     float sy = 800;
     long lasttime = -1;
+    double realtime;
     
     public Grid2DSpace(Hauto cells) {
         super();
@@ -201,6 +202,7 @@ public class Grid2DSpace extends PApplet {
         hrend_DrawEnd();
         //popMatrix();
        
+        realtime = System.nanoTime() / 1.0e9;
         
         if (time % automataPeriod == 0) {
             cells.Exec();
@@ -240,6 +242,11 @@ public class Grid2DSpace extends PApplet {
     public int getTime() {
         return time;
     }
+
+    public double getRealtime() {
+        return realtime;
+    }
+    
 
     enum MotionEffect {
         Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
@@ -444,6 +451,7 @@ public class Grid2DSpace extends PApplet {
                 dragged = true;
                 dragElems();
             }
+            mousePressed();
         }
 
         void mouseReleased() {
