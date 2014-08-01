@@ -4,10 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import nars.grid2d.Cell.Material;
 import nars.gui.Window;
@@ -74,17 +78,60 @@ public class Grid2DSpace extends PApplet {
 
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
-        /*
-        final JCheckBox syntaxEnable = new JCheckBox("Syntax");
+        
+        /*final JCheckBox syntaxEnable = new JCheckBox("Syntax");
         syntaxEnable.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                app.showSyntax = (syntaxEnable.isSelected());        
-                app.setUpdateNext();
+                
             }
         });
         menu.add(syntaxEnable);        
         */
+        
+        final JButton syntaxEnable = new JButton("OnWire");
+        syntaxEnable.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                cells.click(syntaxEnable.getLabel());
+            }
+        });
+        menu.add(syntaxEnable);     
+        
+        final JButton syntaxEnable2 = new JButton("OffWire");
+        syntaxEnable2.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                cells.click(syntaxEnable2.getLabel());
+            }
+        });
+        menu.add(syntaxEnable2); 
+        
+        final JButton syntaxEnable3 = new JButton("AND");
+        syntaxEnable3.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable3.getLabel()); }});
+        menu.add(syntaxEnable3); 
+        
+        final JButton syntaxEnable4 = new JButton("OR");
+        syntaxEnable4.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable4.getLabel()); }});
+        menu.add(syntaxEnable4); 
+        
+        final JButton syntaxEnable5 = new JButton("XOR");
+        syntaxEnable5.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable5.getLabel()); }});
+        menu.add(syntaxEnable5); 
+        
+        final JButton syntaxEnable7 = new JButton("NOT");
+        syntaxEnable7.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable7.getLabel()); }});
+        menu.add(syntaxEnable7); 
+        
+        final JButton syntaxEnable6 = new JButton("bridge");
+        syntaxEnable6.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable6.getLabel()); }});
+        menu.add(syntaxEnable6); 
           
+        final JButton syntaxEnable8= new JButton("offswitch");
+        syntaxEnable8.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable8.getLabel()); }});
+        menu.add(syntaxEnable8); 
+        
+        final JButton syntaxEnable9= new JButton("onswitch");
+        syntaxEnable9.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) {cells.click(syntaxEnable9.getLabel()); }});
+        menu.add(syntaxEnable9); 
+        
         
         content.add(menu, BorderLayout.NORTH);
         content.add(this, BorderLayout.CENTER);
@@ -137,14 +184,14 @@ public class Grid2DSpace extends PApplet {
         if (realx >= cells.w || realy >= cells.h) {
             return;
         }
-        cells.readCells[(int) realx][(int) realy].charge = 1;
-        cells.writeCells[(int) realx][(int) realy].charge = 1;
+        cells.clicked(realx,realy);
     }
 
     @Override
     public void draw() {
         background(0, 0, 0/*, 0.001f*/);
-        //pushMatrix();
+        pushMatrix();
+         
         hnav.Transform();
         hrend_DrawBegin();
         
@@ -153,13 +200,15 @@ public class Grid2DSpace extends PApplet {
         
         hrend_DrawEnd();
         //popMatrix();
-        hrend_DrawGUI();
+       
         
         if (time % automataPeriod == 0) {
             cells.Exec();
             for (GridObject g : objects)
                 g.update(this);
-        }        
+        } 
+        popMatrix();
+        hrend_DrawGUI();
     }
 
     void hrend_DrawBegin() {
@@ -177,6 +226,8 @@ public class Grid2DSpace extends PApplet {
     }
 
     public void hrend_DrawGUI() {
+        fill(255);
+        rect(10,10,10,10);
     }
 
     @Override

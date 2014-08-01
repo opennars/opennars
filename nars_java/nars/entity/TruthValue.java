@@ -67,7 +67,10 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     public TruthValue(final float f, final float c, final boolean b) {
         frequency = new ShortFloat(f);
+        
+        //if (c < 0) c = 0;
         confidence = (c < 1) ? new ShortFloat(c) : new ShortFloat(0.9999f);
+        
         analytic = b;
     }
 
