@@ -49,6 +49,7 @@ public class Cell {
     
     public void drawtext(Grid2DSpace s, String str) {
         s.pushMatrix();
+        s.fill(255,255,255,128);
         s.translate(0.2f,0.9f);
         s.text(str,0,0);
         s.popMatrix();
