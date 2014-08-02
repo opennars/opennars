@@ -364,7 +364,9 @@ public abstract class CompoundTerm extends Term {
         for (final Term t : arg) {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
-                t.setName(((CompoundTerm) t).makeName());
+                CompoundTerm ct = (CompoundTerm)t;
+                if (ct.containVar())
+                    t.setName(ct.makeName());
             }
             nameBuilder.append(t.getName());
         }
@@ -551,7 +553,7 @@ public abstract class CompoundTerm extends Term {
             final Term t = original[i];      
             
             //experiental optimization
-            if (t.isConstant())
+            if (!t.containVar())
                 arr[i] = t;
             else
                 arr[i] = ( deep ? (Term)t.clone() : t );
@@ -563,7 +565,7 @@ public abstract class CompoundTerm extends Term {
             final Term t = additional[j];                    
             
             //experiental optimization
-            if (t.isConstant())
+            if (!t.containVar())
                 arr[i+j] = t;
             else            
                 arr[i+j] = ( deep ? (Term)t.clone() : t );
@@ -582,7 +584,7 @@ public abstract class CompoundTerm extends Term {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
              //experiental optimization
-            if (t.isConstant())
+            if (!t.containVar())
                 l.add(t);
             else
                 l.add( deep ? (Term)t.clone() : t );  
@@ -777,6 +779,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @return Whether the name contains a variable
      */
+    @Override
     public boolean containVar() {
         return hasVar;
     }
@@ -787,10 +790,10 @@ public abstract class CompoundTerm extends Term {
     @Override
     public void renameVariables() {
         if (containVar()) {
-            int existingComponents = term.length;
+            //int existingComponents = term.length;
             renameVariables(new HashMap<Variable, Variable>());
         }
-        isConstant = true;
+        isConstant = true;        
         setName(makeName());
     }
 

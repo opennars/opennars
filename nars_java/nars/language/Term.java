@@ -161,6 +161,15 @@ public class Term implements Cloneable, Comparable<Term> {
     }
 
     /**
+     * Whether this compound term contains any variable term
+     *
+     * @return Whether the name contains a variable
+     */
+    public boolean containVar() {
+        return false;
+    }
+    
+    /**
      * Recursively check if a compound contains a term
      *
      * @param target The term to be searched
