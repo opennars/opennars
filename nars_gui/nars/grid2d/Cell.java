@@ -1,6 +1,7 @@
 package nars.grid2d;
 
 public class Cell {
+    
 
     public float charge = 0;
     public float value=0;
@@ -77,6 +78,10 @@ public class Cell {
         s.popMatrix();
     }
     
+    public static float lerp(float current, float next, float speed) {
+        return current * (1.0f - speed) + next * (speed);
+    }    
+    
     
     public void draw(Grid2DSpace s) {
 
@@ -104,19 +109,29 @@ public class Cell {
             }           
         }
 
-        if (charge>0) {
-            float freq = 4;
-            if (chargeFront) {
-                freq = 7;
-                b += 25;
-            }
+        if ((charge>0) || (chargeFront)) {
+            {
+                float freq = 4;
+                int chargeBright = (int)((Math.cos(s.getRealtime()*freq)+1) * 25);
 
-            int chargeBright = (int)((Math.cos(s.getRealtime()*freq)+1) * 25);
-        
-            r += chargeBright;
-            g += chargeBright/2;
-            a += 150;
-            
+                if (charge > 0) {
+                    r += chargeBright;
+                    g += chargeBright/2;                    
+                }
+                else {
+                    g += chargeBright;
+                    r += chargeBright/2;
+                }
+                
+                if (chargeFront) {
+                    freq = 7;
+                    b += 25;
+                }
+
+
+                a += 150;
+
+            }
         }
         
         if (state.light > 0) {
@@ -131,7 +146,12 @@ public class Cell {
         b = Math.min(255, b);
         a = Math.min(255, a);
         
-        s.fill(r, g, b, a);
+        state.cr = lerp(state.cr, r, 0.19f);
+        state.cg = lerp(state.cg, g, 0.19f);
+        state.cb = lerp(state.cb, b, 0.19f);
+        state.ca = lerp(state.ca, a, 0.19f);
+        
+        s.fill(state.cr, state.cg, state.cb, state.ca);
         s.rect(0,0,1.0f,1.0f);
         
 
