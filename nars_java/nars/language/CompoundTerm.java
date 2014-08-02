@@ -40,7 +40,7 @@ import nars.storage.Memory;
 
 
 public abstract class CompoundTerm extends Term {
-    private static final boolean allowNonDeepCopy = false;
+    private static final boolean allowNonDeepCopy = false; //temporary, disables eliminating deep copy
 
     /**
      * list of (direct) term
@@ -365,8 +365,12 @@ public abstract class CompoundTerm extends Term {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
                 CompoundTerm ct = (CompoundTerm)t;
-                if (ct.containVar())
+                if (!ct.containVar() && allowNonDeepCopy) {
+                    //no need to change name
+                }
+                else {                    
                     t.setName(ct.makeName());
+                }
             }
             nameBuilder.append(t.getName());
         }

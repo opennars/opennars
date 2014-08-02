@@ -421,6 +421,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
             if (itemTable[level].remove(oldItem)) {
                 found = true;
                 itemTableEmpty[level] = itemTable[level].isEmpty();                
+                mass -= (level + 1);
             }
         
         /*
@@ -433,7 +434,6 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
             }
         }*/
         
-        mass -= (level + 1);
         refresh();
     }
 

@@ -477,7 +477,12 @@ public final class Concept extends Item {
     public float getQuality() {
         float linkPriority = termLinks.getAveragePriority();
         float termComplexityFactor = 1.0f / term.getComplexity();
-        return UtilityFunctions.or(linkPriority, termComplexityFactor);
+        float result = UtilityFunctions.or(linkPriority, termComplexityFactor);
+        if (result < 0) {
+            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor );
+        }
+        return result;
+        
     }
 
     /**

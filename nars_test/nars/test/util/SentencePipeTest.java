@@ -73,6 +73,8 @@ public class SentencePipeTest {
 
         assert(target.memory.concepts.size() > 0);
         
+        
+        
     }
     
 }
