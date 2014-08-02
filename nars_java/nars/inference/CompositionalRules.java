@@ -468,8 +468,8 @@ public final class CompositionalRules {
             return;
         }
         
-        TruthValue truthT = memory.getCurrentTask().sentence.truth;
-        TruthValue truthB = memory.getCurrentBelief().truth;
+        
+        
         Variable varInd = new Variable("$varInd1");
         Variable varInd2 = new Variable("$varInd2");
         Term term11, term12, term21, term22, commonTerm;
@@ -519,6 +519,18 @@ public final class CompositionalRules {
         if (content == null) {
             return;
         }
+        
+        TruthValue truthT = memory.getCurrentTask().sentence.truth;
+        TruthValue truthB = memory.getCurrentBelief().truth;
+        /*
+        if (truthT == null)
+            throw new RuntimeException("CompositionalRules.introVarOuter: current task has null truth: " + memory.getCurrentTask());
+        
+        if (truthB == null)
+            throw new RuntimeException("CompositionalRules.introVarOuter: current belief has null truth: " + memory.getCurrentBelief());
+        */
+        if ((truthT==null) || (truthB == null))
+            return;
         
         TruthValue truth = TruthFunctions.induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
