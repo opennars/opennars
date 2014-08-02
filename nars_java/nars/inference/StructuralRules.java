@@ -70,6 +70,9 @@ public final class StructuralRules {
         if (compound.equals(statement.term[side])) {
             return;
         }
+        if (!memory.getCurrentTask().sentence.isJudgment() || (compound.size() == 1)) {
+            return; // forward inference only
+        }
         Term sub = statement.getSubject();
         Term pred = statement.getPredicate();
         ArrayList<Term> components = compound.cloneTermsList();
@@ -102,27 +105,14 @@ public final class StructuralRules {
         if (content == null) {
             return;
         }
-        Task task = memory.getCurrentTask();
-        Sentence sentence = task.sentence;
-        TruthValue truth = sentence.truth;
-        BudgetValue budget;
-        if (sentence.isQuestion()) {
-            budget = BudgetFunctions.compoundBackwardWeak(content, memory);
-        } else {
-            if (compound.size() > 1) {
-                if (sentence.isJudgment()) {
-                    truth = TruthFunctions.deduction(truth, RELIANCE);
-                } else {
-                    return;
-                }
-            }
-            budget = BudgetFunctions.compoundForward(truth, content, memory);
-        }
+        Sentence sentence = memory.getCurrentTask().sentence;
+        TruthValue truth = truth = TruthFunctions.deduction(sentence.truth, RELIANCE);
+        BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.singlePremiseTask(content, truth, budget);
     }
 
     /**
-     * {<(S&T) --> (P&T)>, S@(S&T)} |- <S --> P>
+     * {<(S*T) --> (P*T)>, S@(S*T)} |- <S --> P>
      *
      * @param statement The premise
      * @param memory Reference to the memory
@@ -137,6 +127,9 @@ public final class StructuralRules {
         CompoundTerm pre = (CompoundTerm) pred;
         if (sub.size() != pre.size() || sub.size() <= index) {
             return;
+        }
+        if (!(sub instanceof Product)) {
+            return; // no abduction on other compounds for now, but may change in the future
         }
         Term t1 = sub.term[index];
         Term t2 = pre.term[index];
@@ -154,12 +147,9 @@ public final class StructuralRules {
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
         BudgetValue budget;
-        if (sentence.isQuestion()) {
+        if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, memory);
         } else {
-            if (!(sub instanceof Product) && (sub.size() > 1) && (sentence.isJudgment())) {
-                return;
-            }
             budget = BudgetFunctions.compoundForward(truth, content, memory);
         }
         memory.singlePremiseTask(content, truth, budget);
@@ -180,7 +170,7 @@ public final class StructuralRules {
     }
 
     /**
-     * {<S --> P>, P@(P&Q)} |- <S --> (P&Q)>
+     * {<S --> P>, P@(P|Q)} |- <S --> (P|Q)>
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -189,7 +179,7 @@ public final class StructuralRules {
      */
     static void structuralCompose1(CompoundTerm compound, short index, Statement statement, Memory memory) {
         if (!memory.getCurrentTask().sentence.isJudgment()) {
-            return;
+            return;     // forward inference only
         }
         Term component = compound.term[index];
         Task task = memory.getCurrentTask();
@@ -228,7 +218,7 @@ public final class StructuralRules {
     }
 
     /**
-     * {<(S&T) --> P>, S@(S&T)} |- <S --> P>
+     * {<(S|T) --> P>, S@(S|T)} |- <S --> P> {<S --> (P&T)>, P@(P&T)} |- <S --> P>
      *
      * @param compound The compound term
      * @param index The location of the indicated term in the compound
@@ -236,9 +226,9 @@ public final class StructuralRules {
      * @param memory Reference to the memory
      */
     static void structuralDecompose1(CompoundTerm compound, short index, Statement statement, Memory memory) {
-        if (!memory.getCurrentTask().sentence.isJudgment()) {
-            return;
-        }
+//        if (!memory.getCurrentTask().sentence.isJudgment()) {
+//            return;
+//        }
         Term component = compound.term[index];
         Task task = memory.getCurrentTask();
         Sentence sentence = task.sentence;
@@ -333,10 +323,10 @@ public final class StructuralRules {
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
         BudgetValue budget;
-        if (sentence.isQuestion()) {
-            budget = BudgetFunctions.compoundBackward(content, memory);
-        } else {
+        if (sentence.isJudgment()) {
             budget = BudgetFunctions.compoundForward(truth, content, memory);
+        } else {
+            budget = BudgetFunctions.compoundBackward(content, memory);
         }
         memory.singlePremiseTask(content, truth, budget);
     }
@@ -553,23 +543,29 @@ public final class StructuralRules {
      * @param compoundTask Whether the compound comes from the task
      * @param memory Reference to the memory
      */
-    static void structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
+    static void structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, Memory memory) {
         if (!component.isConstant()) {
             return;
         }
+        
+        if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
+            return;
+        }        
         Term content = (compoundTask ? component : compound);
         Task task = memory.getCurrentTask();
 
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
-        Sentence belief = memory.getCurrentBelief();
+
         BudgetValue budget;
-        if (sentence.isQuestion()) {
+        if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, memory);
-        } else {
+        } else {  // need to redefine the cases
             if ((sentence.isJudgment()) == (compoundTask == (compound instanceof Conjunction))) {
                 truth = TruthFunctions.deduction(truth, RELIANCE);
-            } else {
+            } else if (sentence.isGoal()) {
+                truth = TruthFunctions.deduction(truth, RELIANCE);
+            }else {
                 TruthValue v1, v2;
                 v1 = TruthFunctions.negation(truth);
                 v2 = TruthFunctions.deduction(v1, RELIANCE);
@@ -591,14 +587,14 @@ public final class StructuralRules {
         Task task = memory.getCurrentTask();
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
-        if (sentence.isJudgment()) {
-            truth = TruthFunctions.negation(truth);
-        }
+
         BudgetValue budget;
-        if (sentence.isQuestion()) {
-            budget = BudgetFunctions.compoundBackward(content, memory);
-        } else {
+        
+        if (sentence.isJudgment() || sentence.isGoal()) {
+            truth = TruthFunctions.negation(truth);
             budget = BudgetFunctions.compoundForward(truth, content, memory);
+        } else {
+            budget = BudgetFunctions.compoundBackward(content, memory);
         }
         memory.singlePremiseTask(content, truth, budget);
     }
@@ -616,7 +612,7 @@ public final class StructuralRules {
                 TemporalRules.reverseOrder(statement.getTemporalOrder()), memory);
         TruthValue truth = sentence.truth;
         BudgetValue budget;
-        if (sentence.isQuestion()) {
+        if (sentence.isQuestion() || sentence.isQuest()) {
             if (content instanceof Implication) {
                 budget = BudgetFunctions.compoundBackwardWeak(content, memory);
             } else {

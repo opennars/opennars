@@ -61,7 +61,8 @@ public class Stamp implements Cloneable {
     public long occurrenceTime;
 
     /**
-     * default for atemporal events, means "always"
+     * default for atemporal events
+     * means "always" in Judgment/Question, but "current" in Goal/Quest     
      */
     public static final long ETERNAL = Integer.MIN_VALUE;
 
