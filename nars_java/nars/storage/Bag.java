@@ -228,9 +228,13 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */
-    public boolean putBack(final E oldItem) {
+    public boolean putBack(final E oldItem, boolean insertIntoNameTable) {
         BudgetFunctions.forget(oldItem.budget, forgetRate(), RELATIVE_THRESHOLD);
-        return putIn(oldItem);
+        return putIn(oldItem, insertIntoNameTable);
+    }
+    
+    public boolean putBack(final E oldItem) {
+        return putBack(oldItem, true);
     }
     
     /** x = takeOut(), then putBack(x) - without removing from nameTable 

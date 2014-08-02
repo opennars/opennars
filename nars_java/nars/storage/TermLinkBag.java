@@ -57,14 +57,15 @@ public class TermLinkBag extends Bag<TermLink> {
      */
     public TermLink takeOut(final TaskLink taskLink, final long time) {
         for (int i = 0; i < Parameters.MAX_MATCHED_TERM_LINK; i++) {
-            final TermLink termLink = takeOut();
+            final TermLink termLink = takeOut(false);
             if (termLink == null) {
                 return null;
             }
             if (taskLink.novel(termLink, time)) {
+                nameTable.remove(termLink.getKey());
                 return termLink;
             }
-            putBack(termLink);
+            putBack(termLink, false);
         }
         return null;
     }
