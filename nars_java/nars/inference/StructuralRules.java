@@ -234,6 +234,11 @@ public final class StructuralRules {
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();
         TruthValue truth = sentence.truth;
+        
+        if (truth == null) {
+            return;
+        }
+        
         TruthValue truthDed = TruthFunctions.deduction(truth, RELIANCE);
         TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, RELIANCE));
         Term subj = statement.getSubject();
