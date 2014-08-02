@@ -19,7 +19,10 @@ import nars.io.TextOutput;
 import nars.io.TextPerception;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.junit.runner.Result;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.junit.runners.Parameterized;
 
 
@@ -29,7 +32,7 @@ public class NALTest  {
     static final boolean testPerformance = false;    
     private final int performanceIterations = 4;
 
-    int maxSummaryOutputLines = 10;
+    int maxSummaryOutputLines = 50;
     
     ScriptEngineManager factory = new ScriptEngineManager();
     ScriptEngine js = factory.getEngineByName("JavaScript");
@@ -217,6 +220,7 @@ public class NALTest  {
         for (final File file : folder.listFiles()) {
             if (file.getName().equals("README.txt"))
                 continue;
+            addTest(file.getName());
             l.add(new Object[] { file.getAbsolutePath() } );
         }
                   
@@ -233,9 +237,42 @@ public class NALTest  {
     public void test() {
         testNAL(scriptPath);
     }
+    
+    public static Map<String, Boolean> tests = new HashMap();
+    
+    public static void addTest(String name) {
+        name = name.substring(3, name.indexOf(".nal"));
+        tests.put(name, true);
+    }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.runClasses(NALTest.class);
+        
+        Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
+        
+        
+     
+        for (Failure f : result.getFailures()) {
+            String test = f.getMessage().substring(f.getMessage().indexOf("test/nal") + 8, f.getMessage().indexOf(".nal"));
+            
+            tests.put(test, false);            
+        }
+        
+        int levelSuccess[] = new int[9];
+        int levelTotals[] = new int[9];
+        
+        
+        for (Map.Entry<String, Boolean> e : tests.entrySet()) {
+            String name = e.getKey();
+            int level = Integer.parseInt(name.split("\\.")[0]);
+            levelTotals[level]++;
+            if (e.getValue())
+                levelSuccess[level]++;
+        }
+        for (int i = 1; i < 9; i++) {            
+            float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0; 
+            System.out.println("NAL" + i + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
+        }
+        
     }
 
 }

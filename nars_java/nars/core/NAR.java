@@ -129,7 +129,6 @@ public class NAR implements Runnable, Output {
     /** Convenience method for creating a TextInput and adding as Input Channel */
     public TextInput addInput(final String text) {
         final TextInput i = new TextInput(this, text);
-        addInput(i);
         return i;
     }
     
@@ -230,9 +229,12 @@ public class NAR implements Runnable, Output {
         DEBUG = debug; 
         running = true;
         step(cycles);
-        while ((stepsQueued!=0) && (!inputChannels.isEmpty())) {
+        while (stepsQueued!=0) {
             cycle();
-        } 
+        }
+        while (!inputChannels.isEmpty()) {
+            cycle();
+        }
         running = false;
     }
     
@@ -329,7 +331,7 @@ public class NAR implements Runnable, Output {
     
     /** Execute a cycleMemory */
     protected void cycleMemory() {
-        if ((working) && ((running || (stepsQueued > 0)))) {
+        if (working) {
             clock++;
             try {
                 memory.workCycle(clock);

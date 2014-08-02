@@ -74,6 +74,7 @@ public class SentencePipe implements Input, Output {
     public Object next() {
         if (buffer.size() > 0)
             return buffer.remove();
+        active = false;
         return null;
     }
     

@@ -132,5 +132,8 @@ public class Parameters {
      */
     public static int INTERNED_TERM_NAME_MAXLEN = 4;
     
+    /** contraposition should have much lower priority considering the flood of implications coming from temporal knowledge.  a lower value means more frequent, must be > 0 */
+    public static double CONTRAPOSITION_PRIORITY = 30;
+    
 }
 

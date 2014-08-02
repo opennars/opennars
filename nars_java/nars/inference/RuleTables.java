@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -63,8 +64,8 @@ public class RuleTables {
         
         
         if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            double n=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
-            double w=1.0/((n*(n-1))/2.0); //let's assume hierachical tuple (triangle numbers) amount for this
+            double n=taskTerm.getComplexity() * Parameters.CONTRAPOSITION_PRIORITY; //don't let this rule apply every time, make it dependent on complexity
+            double w=1.0/n; //let's assume hierachical tuple (triangle numbers) amount for this
             if(Memory.randomNumber.nextDouble()<w) { //so that NARS memory will not be spammed with contrapositions
                 StructuralRules.contraposition((Statement) taskTerm, taskSentence, memory); //before it was the linkage which did that
             } //now we some sort "emulate" it.
