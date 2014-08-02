@@ -147,7 +147,7 @@ public final class Concept extends Item {
      * @param task The task to be processed
      */
     public void directProcess(final Task task) {
-        char type = task.getSentence().punctuation;
+        char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
                 processJudgment(task);
@@ -179,13 +179,13 @@ public final class Concept extends Item {
      * @return Whether to continue the processing of the task
      */
     private void processJudgment(final Task task) {
-        final Sentence judg = task.getSentence();
+        final Sentence judg = task.sentence;
         final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
             if (newStamp.equals(oldStamp)) {
-                if (task.getParentTask().getSentence().isJudgment()) {
+                if (task.getParentTask().sentence.isJudgment()) {
                     task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
                 return;
@@ -219,7 +219,7 @@ public final class Concept extends Item {
      * @return Whether to continue the processing of the task
      */
     private void processGoal(final Task task) {
-        final Sentence goal = task.getSentence();
+        final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean noRevision = true;
         if (oldGoal != null) {
@@ -257,11 +257,11 @@ public final class Concept extends Item {
      */
     public void processQuestion(final Task task) {
 
-        Sentence ques = task.getSentence();
+        Sentence ques = task.sentence;
         boolean newQuestion = true;
         for (final Task t : questions) {
-            final Sentence q = t.getSentence();
-            if (q.getContent().equals(ques.getContent())) {
+            final Sentence q = t.sentence;
+            if (q.content.equals(ques.content)) {
                 ques = q;
                 newQuestion = false;
                 break;
@@ -500,7 +500,7 @@ public final class Concept extends Item {
      * @return The selected isBelief
      */
     public Sentence getBelief(final Task task) {
-        final Stamp taskStamp = task.getSentence().stamp;
+        final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.getTime();
 
         for (Sentence belief : beliefs) {

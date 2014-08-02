@@ -305,11 +305,11 @@ public class NARGraph extends DirectedMultigraph {
 
                     
                     //TODO check if kb.getContent() is never distinct from c.getTerm()
-                    if (term.equals(kb.getContent()))
+                    if (term.equals(kb.content))
                         continue;
                     
-                    addTerm(g, kb.getContent());                    
-                    g.addEdge(term, kb.getContent(), new TermBelief());                    
+                    addTerm(g, kb.content);                    
+                    g.addEdge(term, kb.content, new TermBelief());                    
                 }
             }
             
@@ -396,7 +396,7 @@ public class NARGraph extends DirectedMultigraph {
                         final List<Term> tchain = s.getKey().stamp.getChain();                        
                         final Sentence deriverSentence = t.getKey();
                         
-                        if (schain.contains(deriverSentence.getContent())) {
+                        if (schain.contains(deriverSentence.content)) {
                             g.addEdge(deriver, derived, new TermDerivation());
                         }
                         if (tchain.contains(derived)) {

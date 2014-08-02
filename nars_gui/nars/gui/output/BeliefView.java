@@ -1,15 +1,46 @@
 package nars.gui.output;
 
-import java.awt.BorderLayout;
-import java.util.List;
-import javax.swing.JPanel;
-import processing.core.PVector;
+import java.util.HashMap;
+import java.util.Map;
+import nars.entity.Sentence;
+import nars.entity.TruthValue;
+import nars.language.Term;
 
 /**
  * 2D scatter plot of belief frequency/certainty
  */
 public class BeliefView extends PPanel {
 
+    public static class TermTruthRange {
+        public final Term term;
+        float minConf, maxConf;
+        float minFreq, maxFreq;
+        int sentences;
+
+        public TermTruthRange(Term term) {
+            this.term = term;
+            sentences = 0;
+            minFreq = minConf = 1.0f;
+            maxFreq = maxConf = 0.0f;
+        }
+        
+        public void include(Sentence s) {
+            assert(s.content.equals(term));
+            TruthValue t = s.truth;
+            if (t!=null) {
+                float co = t.getConfidence();
+                float fr = t.getFrequency();
+                if (co < minConf) minConf = co;
+                if (co > maxConf) maxConf = co;
+                if (fr < minFreq) minFreq = fr;
+                if (fr > maxFreq) maxFreq = fr;
+                sentences++;
+            }
+        }        
+    }
+    
+    public Map<Term, TermTruthRange> termRanges = new HashMap();
+    
     public BeliefView() {
         super();
     }

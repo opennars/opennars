@@ -1,10 +1,10 @@
 package nars.core;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.gui.NARControls;
@@ -100,8 +100,8 @@ public class NAR implements Runnable, Output {
         textPerception = new TextPerception(this);
         
         //needs to be concurrent in case NARS makes changes to the channels while running
-        inputChannels = Collections.synchronizedList(new ArrayList<Input>());
-        outputChannels = Collections.synchronizedList(new ArrayList<Output>());
+        inputChannels = new CopyOnWriteArrayList<Input>();
+        outputChannels = new CopyOnWriteArrayList<Output>();
     }
 
     /**
@@ -222,6 +222,11 @@ public class NAR implements Runnable, Output {
     
     /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
     public void finish(final int cycles, final boolean debug) {
+        if (running == true) {
+            stepLater(cycles);
+            return;
+        }
+        
         DEBUG = debug; 
         running = true;
         step(cycles);
@@ -281,7 +286,7 @@ public class NAR implements Runnable, Output {
     protected boolean cycleInput() {
         boolean inputPerceived = false;
         
-        if ((inputting) && (stepsQueued == 0) && (!inputChannels.isEmpty())) {
+        if ((inputting) && (!inputChannels.isEmpty())) {
             
             for (int j = 0; j < inputChannels.size(); j++) {                
                 final Input i = inputChannels.get(j);
@@ -315,7 +320,7 @@ public class NAR implements Runnable, Output {
         else if (o instanceof Sentence) {
             //TEMPORARY
             Sentence s = (Sentence)o;
-            textPerception.perceive(i, s.getContent().toString() + s.punctuation + " " + s.truth.toString());
+            textPerception.perceive(i, s.content.toString() + s.punctuation + " " + s.truth.toString());
         }
         else {
             output(ERR.class, "Unrecognized input (" + o.getClass() + "): " + o);

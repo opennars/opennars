@@ -319,7 +319,7 @@ public class Memory {
             final float s = task.budget.summary();
             final float minSilent = nar.param.getSilenceLevel() / 100.0f;
             if (s > minSilent) {  // only report significant derived Tasks
-                nar.output(OUT.class, task.getSentence());
+                nar.output(OUT.class, task.sentence);
             }
         }
 
@@ -333,8 +333,8 @@ public class Memory {
      */
     public void derivedTask(final Task task, final boolean revised, final boolean single) {
         if (task.budget.aboveThreshold()) {
-            if (task.getSentence() != null && task.getSentence().truth != null) {
-                float conf = task.getSentence().truth.getConfidence();                
+            if (task.sentence != null && task.sentence.truth != null) {
+                float conf = task.sentence.truth.getConfidence();                
                 if (conf == 0) { 
                     //no confidence - we can delete the wrongs out that way.
                     if (recorder.isActive()) {
@@ -343,13 +343,13 @@ public class Memory {
                     return;
                 }
             }
-            final Stamp stamp = task.getSentence().stamp;
+            final Stamp stamp = task.sentence.stamp;
             final List<Term> chain = stamp.getChain();
             
             final Term currentTaskContent = getCurrentTask().getContent();
             
             if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
-                final Term currentBeliefContent = getCurrentBelief().getContent();
+                final Term currentBeliefContent = getCurrentBelief().content;
                 if(chain.contains(currentBeliefContent)) {
                 //if(stamp.chainContainsInstance(currentBeliefContent)) {
                     chain.remove(currentBeliefContent);
@@ -359,7 +359,7 @@ public class Memory {
             
             
             //workaround for single premise task issue:
-            if(currentBelief == null && single && currentTask != null && currentTask.getSentence().isJudgment()) {
+            if(currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
                 if(chain.contains(currentTaskContent)) {
                 //if(stamp.chainContainsInstance(currentTaskContent)) {
                     chain.remove(currentTaskContent);
@@ -368,7 +368,7 @@ public class Memory {
             }
             //end workaround
         
-            if (currentTask != null && !single && currentTask.getSentence().isJudgment()) {
+            if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
                 if(chain.contains(currentTaskContent)) {                
                 //if(stamp.chainContainsInstance(currentTaskContent)) {                    
                     chain.remove(currentTaskContent);
@@ -380,7 +380,7 @@ public class Memory {
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
                 for (int i = 0; i < chain.size(); i++) {
                     final Term chain1 = chain.get(i);
-                    if (task.getSentence().isJudgment() && task.getContent().equals(chain1)) {
+                    if (task.sentence.isJudgment() && task.getContent().equals(chain1)) {
                         if(task.getParentTask()==null || 
                            (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
                            !(task.getContent().equals(Negation.make(task.getParentTask().getContent(), this))))) {
@@ -414,7 +414,7 @@ public class Memory {
             //Experiment:  if it has the budget (equal) then it  should be able to buy the output, so changing '>' to '>='           
             if (budget >= minSilent) {  
                 // only report significant derived Tasks
-                nar.output(OUT.class, task.getSentence());
+                nar.output(OUT.class, task.sentence);
             }
             
             addNewTask(task, "Derived");
@@ -437,7 +437,7 @@ public class Memory {
      */
     public void doublePremiseTaskRevised(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
         if (newContent != null) {
-            Sentence newSentence = new Sentence(newContent, getCurrentTask().getSentence().punctuation, newTruth, getNewStamp());
+            Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getNewStamp());
             Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
             derivedTask(newTask, true, false);
         }
@@ -453,7 +453,7 @@ public class Memory {
      */
     public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         if (newContent != null) {
-            final Sentence newSentence = new Sentence(newContent, getCurrentTask().getSentence().punctuation, newTruth, getNewStamp());
+            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getNewStamp());
             final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
             derivedTask(newTask, false, false);
         }
@@ -486,7 +486,7 @@ public class Memory {
      * @param newBudget The budget value in task
      */
     public void singlePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
-        singlePremiseTask(newContent, getCurrentTask().getSentence().punctuation, newTruth, newBudget);
+        singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
     /**
@@ -503,7 +503,7 @@ public class Memory {
         if (parentTask != null && newContent.equals(parentTask.getContent())) { // circular structural inference
             return;
         }
-        Sentence taskSentence = getCurrentTask().getSentence();
+        Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isJudgment() || getCurrentBelief() == null) {
             setNewStamp(new Stamp(taskSentence.stamp, getTime()));
         } else {    // to answer a question with negation in NAL-5 --- move to activated task?
@@ -566,15 +566,15 @@ public class Memory {
             if (task.isInput() || (termToConcept(task.getContent()) != null)) {
                 // new addInput or existing concept
                 immediateProcess(task);
-                if (task.getSentence().stamp.getOccurrenceTime() != Stamp.ETERNAL) {
+                if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
                     if ((newEvent == null)
-                            || (BudgetFunctions.rankBelief(newEvent.getSentence())
-                            < BudgetFunctions.rankBelief(task.getSentence()))) {
+                            || (BudgetFunctions.rankBelief(newEvent.sentence)
+                            < BudgetFunctions.rankBelief(task.sentence))) {
                         newEvent = task;
                     }
                 }
             } else {
-                final Sentence s = task.getSentence();
+                final Sentence s = task.sentence;
                 if (s.isJudgment()) {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
@@ -590,11 +590,11 @@ public class Memory {
         }
         if (newEvent != null) {
             if (lastEvent != null) {
-                setNewStamp(Stamp.make(newEvent.getSentence().stamp, lastEvent.getSentence().stamp, getTime()));
+                setNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
                 if (getNewStamp() != null) {
                     setCurrentTask(newEvent);
-                    setCurrentBelief(lastEvent.getSentence());
-                    TemporalRules.temporalInduction(newEvent.getSentence(), getCurrentBelief(), this);
+                    setCurrentBelief(lastEvent.sentence);
+                    TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
                 }
             }
             lastEvent = newEvent;

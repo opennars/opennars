@@ -258,7 +258,7 @@ public class TextPerception {
                     try {
                         Task task = parseNarsese(new StringBuilder(input), nar.memory, nar.getTime());
                         if (task != null) {
-                            nar.output(Output.IN.class, task.getSentence());    // report addInput
+                            nar.output(Output.IN.class, task.sentence);    // report addInput
                             nar.memory.inputTask(task);
                             return true;
                         }

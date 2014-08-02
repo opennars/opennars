@@ -41,7 +41,7 @@ public class Sentence implements Cloneable {
     /**
      * The content of a Sentence is a Term
      */
-    private Term content;
+    public final Term content;
     
     /**
      * The punctuation also indicates the type of the Sentence: 
@@ -97,7 +97,7 @@ public class Sentence implements Cloneable {
     public boolean equals(final Object that) {
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            return content.equals(t.getContent()) && punctuation == punctuation && truth.equals(truth) && stamp.equals(stamp);
+            return content.equals(content) && punctuation == punctuation && truth.equals(truth) && stamp.equals(stamp);
         }
         return false;
     }
@@ -126,7 +126,7 @@ public class Sentence implements Cloneable {
      * @return Whether the two are equivalent
      */
     public boolean equivalentTo(final Sentence that) {
-        assert content.equals(that.getContent()) && punctuation == that.punctuation;
+        assert content.equals(content) && punctuation == that.punctuation;
         return (truth.equals(that.truth) && stamp.equals(that.stamp));
     }
 
@@ -143,6 +143,14 @@ public class Sentence implements Cloneable {
         return new Sentence((Term) content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
     }
 
+    /** Clone with a different Term */    
+    public Sentence clone(Term t) {
+        if (truth == null) {
+            return new Sentence(t, punctuation, null, (Stamp) stamp.clone());
+        }
+        return new Sentence(t, punctuation, new TruthValue(truth), (Stamp) stamp.clone());
+    }
+    
     /**
       * project a judgment to a difference occurrence time
       *
@@ -175,19 +183,7 @@ public class Sentence implements Cloneable {
         return newSentence;
     }
 
-    /**
-     * Get the content of the sentence
-     *
-     * @return The content Term
-     */
-    public Term getContent() {
-        return content;
-    }
 
-    public void setContent(final Term t) {
-        content = t;
-        key = null;
-    }
 
 
     /**

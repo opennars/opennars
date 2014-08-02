@@ -83,6 +83,7 @@ public class NALTest  {
     }
     
     protected void testNAL(final String path) {
+        int minCycles = 50;
         
         NAR.resetStatics();
         
@@ -124,8 +125,7 @@ public class NALTest  {
         };         
         
         n.addInput(getExample(path));
-
-        n.finish(1);
+        n.finish(minCycles);
 
 
         //JS context setup --------
