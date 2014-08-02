@@ -110,6 +110,12 @@ public class Variable extends Term {
         return n.indexOf(Symbols.VAR_QUERY) >= 0;
     }
 
+    @Override
+    public boolean containVar() {
+        return true;
+    }
+
+    
     /**
      * Check whether a string represent a name of a term that contains a
      * variable
