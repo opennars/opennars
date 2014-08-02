@@ -40,7 +40,7 @@ import nars.storage.Memory;
 
 
 public abstract class CompoundTerm extends Term {
-
+    private static final boolean allowNonDeepCopy = false;
 
     /**
      * list of (direct) term
@@ -553,7 +553,7 @@ public abstract class CompoundTerm extends Term {
             final Term t = original[i];      
             
             //experiental optimization
-            if (!t.containVar())
+            if (!t.containVar() && allowNonDeepCopy)
                 arr[i] = t;
             else
                 arr[i] = ( deep ? (Term)t.clone() : t );
@@ -565,7 +565,7 @@ public abstract class CompoundTerm extends Term {
             final Term t = additional[j];                    
             
             //experiental optimization
-            if (!t.containVar())
+            if (!t.containVar() && allowNonDeepCopy)
                 arr[i+j] = t;
             else            
                 arr[i+j] = ( deep ? (Term)t.clone() : t );
@@ -584,7 +584,7 @@ public abstract class CompoundTerm extends Term {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
              //experiental optimization
-            if (!t.containVar())
+            if (!t.containVar() && allowNonDeepCopy)
                 l.add(t);
             else
                 l.add( deep ? (Term)t.clone() : t );  

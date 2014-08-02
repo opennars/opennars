@@ -1,0 +1,14 @@
+<<(*,$1,key_101) --> hold> =/> <(*,$1,room_101) --> enter>>. %1.00;0.90%
+<(*,John,room_101) --> enter>. %1.00;0.90%
+
+100
+
+OUT: <<key_101 --> (/,hold,$1,_)> =/> <(*,$1,room_101) --> enter>>. %1.00;0.90% {1 : 1<<(*,$1,key_101) --> hold> =/> <(*,$1,room_101) --> enter>>}
+OUT: <John --> (/,enter,_,room_101)>. :|: %1.00;0.90% {3|0 : 2<(*,John,room_101) --> enter>}
+OUT: <room_101 --> (/,enter,John,_)>. :|: %1.00;0.90% {3|0 : 2<(*,John,room_101) --> enter>}
+OUT: <<key_101 --> (/,hold,$1,_)> =/> <room_101 --> (/,enter,$1,_)>>. %1.00;0.90% {5 : 1<<(*,$1,key_101) --> hold> =/> <(*,$1,room_101) --> enter>>;<<key_101 --> (/,hold,$1,_)> =/> <(*,$1,room_101) --> enter>>}
+OUT: <(*,John,key_101) --> hold>. %1.00;0.81%
+
+''!outputMustContain('<(*,John,key_101) --> hold>. %1.00;0.81%')
+''outputMustContain('<(*,John,key_101) --> hold>. :|: %1.00;0.81%')
+
