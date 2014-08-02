@@ -313,6 +313,7 @@ public class NARGraph extends DirectedMultigraph {
                 }
             }
             
+            
             if (includeQuestions) {
                 for (final Task q : c.getQuestions()) {
                     if (term.equals(q.getContent()))
