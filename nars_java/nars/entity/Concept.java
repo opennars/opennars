@@ -238,7 +238,8 @@ public final class Concept extends Item {
         }
         if (task.aboveThreshold()) {
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
-            LocalRules.trySolution(belief, task, memory);
+            if (belief!=null)
+                LocalRules.trySolution(belief, task, memory);
 
             if (task.aboveThreshold()) {    // still worth pursuing
                 addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);

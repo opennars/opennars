@@ -60,7 +60,9 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
     /**
      * mapping from key to item
      */
+    //public final Set<E> nameTable;
     public final Map<String, E> nameTable;
+
     /**
      * array of lists of items, for items on different level
      */
@@ -106,6 +108,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
         RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
         this.capacity = capacity;
+        //nameTable = new HashSet<>(capacity, LOAD_FACTOR);
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         itemTableEmpty = new boolean[this.levels];
         itemTable = new Deque[this.levels];

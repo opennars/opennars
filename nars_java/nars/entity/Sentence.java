@@ -285,7 +285,9 @@ public class Sentence implements Cloneable {
         //key must be invalidated if content or truth change
         if (key == null) {
             final String contentToString = content.toString();
-            final String occurrenceTimeString = stamp.getOccurrenceTimeString();
+            
+            final String occurrenceTimeString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getOccurrenceTimeString() : "";
+            
             final String truthString = truth != null ? truth.toStringBrief() : null;
             //final String stampString = stamp.toString();
 
@@ -318,10 +320,12 @@ public class Sentence implements Cloneable {
     public String toString(NAR nar, boolean showStamp) {
     
         String contentToString = content.toString();
-        long t = nar.memory.getTime();
-        String tenseString = stamp.getTense(t);                
+        
+        final long t = nar.memory.getTime();
 
-        String truthString = truth != null ? truth.toStringBrief() : null;
+        final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t) : "";
+        final String truthString = (truth != null) ? truth.toStringBrief() : null;
+ 
         String stampString = showStamp ? stamp.toString() : null;
         
         int stringLength = contentToString.length() + tenseString.length() + 1 + 1;

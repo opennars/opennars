@@ -272,8 +272,12 @@ public final class SyllogisticRules {
         if ((content instanceof Statement) && ((Statement) content).invalid()) {
             return;
         }
+        
+        Sentence taskSentence = memory.getCurrentTask().sentence;
+        Sentence beliefSentence = memory.getCurrentBelief();
+        
         int order = statement.getTemporalOrder();
-        if (order != Stamp.ETERNAL) {
+        if ((order != TemporalRules.ORDER_NONE) && !taskSentence.isGoal() && !taskSentence.isQuest()) {
             long baseTime = subSentence.getOccurenceTime();
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = memory.getTime();
@@ -282,8 +286,7 @@ public final class SyllogisticRules {
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
             memory.getNewStamp().setOccurrenceTime(time);
         }
-        Sentence taskSentence = memory.getCurrentTask().sentence;
-        Sentence beliefSentence = memory.getCurrentBelief();
+        
         TruthValue beliefTruth = beliefSentence.truth;
         TruthValue truth1 = mainSentence.truth;
         TruthValue truth2 = subSentence.truth;
