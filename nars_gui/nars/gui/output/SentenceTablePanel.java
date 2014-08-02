@@ -112,7 +112,7 @@ public class SentenceTablePanel extends NPanel implements Output {
                 String.format("%08d",  nar.getTime()), s.punctuation,
                 freq == -1 ? "" : freq,
                 conf == -1 ? "" : conf,
-                String.format("%03d",  s.getContent().getComplexity())     
+                String.format("%03d",  s.content.getComplexity())     
             });
         }
     }

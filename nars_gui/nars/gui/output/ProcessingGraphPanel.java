@@ -645,7 +645,7 @@ public class ProcessingGraphPanel extends JFrame {
 
         final Set<Term> include = new HashSet();
         for (final Sentence s : selected) {
-            Term t = s.getContent();
+            Term t = s.content;
             include.add(t);
             if (t instanceof CompoundTerm) {
                 CompoundTerm ct = (CompoundTerm)t;
@@ -697,9 +697,9 @@ public class ProcessingGraphPanel extends JFrame {
                 for (Sentence s : getSentences()) {
                     g.addVertex(s);
                     
-                    Term t = s.getContent();
+                    Term t = s.content;
                     addTerm(g, t);
-                    g.addEdge(s, s.getContent(), new NARGraph.SentenceContent());
+                    g.addEdge(s, s.content, new NARGraph.SentenceContent());
                     
                     if (t instanceof CompoundTerm) {
                         CompoundTerm ct = ((CompoundTerm)t);

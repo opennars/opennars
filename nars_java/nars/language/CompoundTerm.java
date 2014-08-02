@@ -552,17 +552,32 @@ public abstract class CompoundTerm extends Term {
         if (original == null) {
             return null;
         }        
-        
+                
         final Term[] arr = new Term[original.length + additional.length];
         
         int i;
         for (i = 0; i < original.length; i++) {            
-            final Term t = original[i];                    
-            arr[i] = ( deep ? (Term)t.clone() : t );
+            final Term t = original[i];      
+            
+            //experiental optimization
+            if (t.isConstant())
+                arr[i] = t;
+            else
+                arr[i] = ( deep ? (Term)t.clone() : t );
+
+            //arr[i] = ( deep ? (Term)t.clone() : t );
+        
         }
         for (int j = 0; j < additional.length; j++) {
             final Term t = additional[j];                    
-            arr[i+j] = ( deep ? (Term)t.clone() : t );
+            
+            //experiental optimization
+            if (t.isConstant())
+                arr[i+j] = t;
+            else            
+                arr[i+j] = ( deep ? (Term)t.clone() : t );
+            
+            //arr[i+j] = ( deep ? (Term)t.clone() : t );
         }
         return arr;
         
@@ -575,7 +590,13 @@ public abstract class CompoundTerm extends Term {
     public ArrayList<Term> cloneTermsList(boolean deep) {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
-            l.add( deep ? (Term)t.clone() : t );
+             //experiental optimization
+            if (t.isConstant())
+                l.add(t);
+            else
+                l.add( deep ? (Term)t.clone() : t );  
+            
+            //l.add( deep ? (Term)t.clone() : t );
         }
         return l;        
     }

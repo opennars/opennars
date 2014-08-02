@@ -55,8 +55,8 @@ import nars.storage.Memory;
 public final class CompositionalRules {
 
 public static void EliminateVariableOfConditionAbductive(int figure,Sentence sentence,Sentence belief,Memory memory) {
-        Term T1=(Term) sentence.getContent().clone();
-        Term T2=(Term) belief.getContent().clone();
+        Term T1=(Term) sentence.content.clone();
+        Term T2=(Term) belief.content.clone();
         Term S1=((Statement)T2).getSubject();
         Term P1=((Statement)T2).getPredicate();
         Term S2=((Statement)T1).getSubject();
@@ -233,7 +233,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
     
   static void IntroVarSameSubjectOrPredicate(Sentence originalMainSentence, Sentence subSentence, Term component, Term content, int index,Memory memory) {
         Sentence cloned=(Sentence) originalMainSentence.clone();
-        Term T1=cloned.getContent();
+        Term T1=cloned.content;
         if(!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
             return;
         }
@@ -270,11 +270,11 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
     
     static boolean dedSecondLayerVariableUnification(Task task, Memory memory)
     {
-        Sentence taskSentence=task.getSentence();
+        Sentence taskSentence=task.sentence;
         if(taskSentence==null || taskSentence.isQuestion()) {
             return false;
         }
-        Term taskterm=taskSentence.getContent();
+        Term taskterm=taskSentence.content;
         if(taskterm instanceof CompoundTerm && (taskterm instanceof Disjunction || taskterm instanceof Conjunction || taskterm instanceof Equivalence || taskterm instanceof Implication)) { //lets just allow conjunctions, implication and equivalence for now
             if(!Variable.containVar(taskterm.toString())) {
                 return false;
@@ -368,7 +368,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                 Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, 
                         new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );                
                 
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.getContent(), memory);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
                 memory.setCurrentBelief(taskSentence);
@@ -396,8 +396,8 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             return;
         }
         
-        Term term1 = sentence.getContent();
-        Term term2 = belief.getContent();
+        Term term1 = sentence.content;
+        Term term2 = belief.content;
         Deque<Concept>[] bag = memory.concepts.itemTable;        
         
         for (final Deque<Concept> baglevel : bag) {
@@ -415,13 +415,13 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                         continue;
                     }
                     
-                    Sentence qu=question.getSentence();
+                    Sentence qu=question.sentence;
                     
                     if(qu==null) {
                         continue;
                     }
                     
-                    Term pcontent = qu.getContent();
+                    Term pcontent = qu.content;
                     final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
                     if(pcontent==null || !(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
                         continue;
@@ -455,7 +455,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                     if (Variable.containDepOrIndepVar(conj.toString()))
                         continue;
                     
-                    TruthValue truthT = memory.getCurrentTask().getSentence().truth;
+                    TruthValue truthT = memory.getCurrentTask().sentence.truth;
                     TruthValue truthB = memory.getCurrentBelief().truth;
                     if(truthT==null || truthB==null) {
                         return;
@@ -481,7 +481,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
      * @param memory Reference to the memory
      */
     static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final Memory memory) {
-        if ((!memory.getCurrentTask().getSentence().isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
+        if ((!memory.getCurrentTask().sentence.isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
             return;
         }
         final Term componentT = taskContent.term[1 - index];
@@ -500,7 +500,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             decomposeCompound((CompoundTerm) componentB, componentT, componentCommon, index, false, order, memory);
             return;
         }
-        final TruthValue truthT = memory.getCurrentTask().getSentence().truth;
+        final TruthValue truthT = memory.getCurrentTask().sentence.truth;
         final TruthValue truthB = memory.getCurrentBelief().truth;
         final TruthValue truthOr = TruthFunctions.union(truthT, truthB);
         final TruthValue truthAnd = TruthFunctions.intersection(truthT, truthB);
@@ -568,7 +568,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             return;
         }
         Term content = Statement.make(statement, subject, predicate, order, memory);
-        if ((content == null) || content.equals(statement) || content.equals(memory.getCurrentBelief().getContent())) {
+        if ((content == null) || content.equals(statement) || content.equals(memory.getCurrentBelief().content)) {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
@@ -596,7 +596,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             return;
         }
         Task task = memory.getCurrentTask();
-        Sentence sentence = task.getSentence();
+        Sentence sentence = task.sentence;
         Sentence belief = memory.getCurrentBelief();
         Statement oldContent = (Statement) task.getContent();
         TruthValue v1,
@@ -683,7 +683,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
      */
     static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
         Task task = memory.getCurrentTask();
-        Sentence sentence = task.getSentence();
+        Sentence sentence = task.sentence;
 
         Sentence belief = memory.getCurrentBelief();
         Term content = CompoundTerm.reduceComponents(compound, component, memory);
@@ -696,7 +696,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
             budget = BudgetFunctions.compoundBackward(content, memory);
             memory.doublePremiseTask(content, truth, budget);
             // special inference to answer conjunctive questions with query variables
-            if (Variable.containVarQuery(sentence.getContent().getName())) {
+            if (Variable.containVarQuery(sentence.content.getName())) {
                 Concept contentConcept = memory.termToConcept(content);
                 if (contentConcept == null) {
                     return;
@@ -749,7 +749,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
      * @param memory Reference to the memory
      */
     private static void introVarOuter(Statement taskContent, Statement beliefContent, int index, Memory memory) {
-        TruthValue truthT = memory.getCurrentTask().getSentence().truth;
+        TruthValue truthT = memory.getCurrentTask().sentence.truth;
         TruthValue truthB = memory.getCurrentBelief().truth;
         Variable varInd = new Variable("$varInd1");
         Variable varInd2 = new Variable("$varInd2");
@@ -840,7 +840,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
      */
     static void introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, Memory memory) {
         Task task = memory.getCurrentTask();
-        Sentence taskSentence = task.getSentence();
+        Sentence taskSentence = task.sentence;
         if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
             return;
         }
@@ -875,7 +875,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
         if (content == null)
             return;
         content.applySubstitute(substitute);
-        if (premise1.equals(taskSentence.getContent())) {
+        if (premise1.equals(taskSentence.content)) {
             truth = TruthFunctions.induction(belief.truth, taskSentence.truth);
         } else {
             truth = TruthFunctions.induction(taskSentence.truth, belief.truth);
@@ -920,7 +920,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
 
     private static void dedSecondLayerVariableUnificationTerms(Memory memory, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth) {
         
-            Sentence taskSentence = task.getSentence();
+            Sentence taskSentence = task.sentence;
             
             Stamp sx = new Stamp(taskSentence.stamp, memory.getTime(), s);
             
@@ -929,7 +929,7 @@ public static void EliminateVariableOfConditionAbductive(int figure,Sentence sen
                
                 Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, sx);
                                                 
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.getContent(), memory);
+                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                 
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);

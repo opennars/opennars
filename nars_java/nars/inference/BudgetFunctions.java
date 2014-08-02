@@ -83,7 +83,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             task = memory.getCurrentTask();
             feedbackToLinks = true;
         }
-        boolean judgmentTask = task.getSentence().isJudgment();
+        boolean judgmentTask = task.sentence.isJudgment();
         final float quality = LocalRules.solutionQuality(problem, solution, memory);
         if (judgmentTask) {
             task.incPriority(quality);
@@ -162,7 +162,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget value of the updating task
      */
     static BudgetValue update(final Task task, final TruthValue bTruth) {
-        final TruthValue tTruth = task.getSentence().truth;
+        final TruthValue tTruth = task.sentence.truth;
         final float dif = tTruth.getExpDifAbs(bTruth);
         final float priority = or(dif, task.getPriority());
         final float durability = aveAri(dif, task.getDurability());

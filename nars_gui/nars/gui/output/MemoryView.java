@@ -131,7 +131,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                      alpha = 0.5f;
                      color = Color.GRAY.getRGB();
                  }
-                Term t = ((Sentence)o).getContent();
+                Term t = ((Sentence) o).content;
                 radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
              }
              else if (o instanceof Task) {
