@@ -455,15 +455,6 @@ public abstract class CompoundTerm extends Term {
     }
 
     /**
-     * Set the constant status
-     *
-     * @param isConstant
-     */
-    public void setConstant(final boolean isConstant) {
-        this.isConstant = isConstant;
-    }
-
-    /**
      * Check if the order of the term matters
      * <p>
      * commutative CompoundTerms: Sets, Intersections Commutative Statements:
@@ -799,7 +790,7 @@ public abstract class CompoundTerm extends Term {
             int existingComponents = term.length;
             renameVariables(new HashMap<Variable, Variable>());
         }
-        setConstant(true);
+        isConstant = true;
         setName(makeName());
     }
 
