@@ -254,15 +254,15 @@ public class Grid2DSpace extends PApplet {
 //        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
 //    }
     
-    private String whyNonTraversible(GridAgent agent, int x, int y, int tx, int ty) {
+    public String whyNonTraversible(GridAgent agent, int x, int y, int tx, int ty) {
         int dx = Math.abs(tx-x);
         int dy = Math.abs(ty-y);
         
         if (!((dx <= 1) && (dy <= 1)))
             return "Too far";
 
-        if ((tx < 0) || (ty < 0) || (tx >= WIDTH) || (ty >= HEIGHT))
-            return "Out of bounds";
+        if ((tx < 0) || (ty < 0) || (tx >= cells.w) || (ty >= cells.h))
+            return "Out of bounds: " + tx + " " + ty;
             
         Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);

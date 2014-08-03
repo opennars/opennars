@@ -38,7 +38,7 @@ abstract public class GridAgent extends LocalGridObject {
     float animationLerpRate = 0.1f; //LERP interpolation rate
     
     public void forward(int steps) {     act(new Forward(steps));    }
-    public void turn(int angle) {   act(new Turn(angle));  }
+    public void turn(int angle) {   act(new Turn(angle(angle)));  }
 
     abstract public void update(Effect nextEffect);
     

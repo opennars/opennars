@@ -6,6 +6,7 @@ import static nars.grid2d.Hauto.DOWN;
 import static nars.grid2d.Hauto.LEFT;
 import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
+import nars.grid2d.agent.ql.QLAgent;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import processing.core.PVector;
@@ -120,6 +121,8 @@ public class TestChamber {
             
         };
         space.add(a);
+        
+        space.add(new QLAgent(10,20));
         
         space.add(new Key(1,1));
         
