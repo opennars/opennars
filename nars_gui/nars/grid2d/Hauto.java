@@ -14,6 +14,7 @@ import nars.grid2d.Cell.Material;
 
 public class Hauto {
 
+
     
     boolean is_logic(Cell c){ 
         return (c.logic==OR || c.logic==XOR || c.logic==AND || c.logic==NOT); 

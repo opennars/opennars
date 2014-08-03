@@ -79,6 +79,7 @@ public abstract class Operator extends Term {
     public static void loadDefaultOperators(Memory memory) {
         //memory.registerOperator(new Wait("^wait"));
         memory.registerOperator(new Sample("^sample"));
+        memory.registerOperator(new Goto("^goto"));
         
 
         /* operators for tasks */

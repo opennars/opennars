@@ -14,11 +14,18 @@ import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
 import nars.grid2d.particle.ParticleSystem;
 import nars.gui.Window;
+import nars.language.Term;
 import processing.core.PApplet;
 
 
 public class Grid2DSpace extends PApplet {
 
+    public static boolean world_used=false;
+
+    public static void pathFindAndGoto(Term[] arg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     ///////////////HAMLIB
     //processingjs compatibility layer
     int mouseScroll = 0;
@@ -48,6 +55,7 @@ public class Grid2DSpace extends PApplet {
     public Grid2DSpace(Hauto cells) {
         super();
         this.cells = cells;
+        world_used=true;
         
         init();
         
