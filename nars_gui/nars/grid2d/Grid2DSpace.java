@@ -324,7 +324,7 @@ public class Grid2DSpace extends PApplet {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 Cell c = cells.readCells[i][j];
-                float x = i*rendersize;
+                float x = i*rendersize; 
                 float y = j*rendersize;
 
         
