@@ -266,7 +266,7 @@ public class Hauto {
         return 0.0f;
     }
 
-    final public static int RIGHT = -9;
+    final public static int RIGHT = -90;
     final public static int DOWN = 180;
     final public static int LEFT = 90;
     final public static int UP = 0;
