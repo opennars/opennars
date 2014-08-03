@@ -40,7 +40,7 @@ public class Grid2DSpace extends PApplet {
     float selection_distance = 10;
     public float maxNodeSize = 40f;
     float FrameRate = 30f;
-    private int automataPeriod = 10;
+    private int automataPeriod = 1;
     boolean drawn = false;
     Hsim hsim = new Hsim();
     Hamlib hamlib = new Hamlib();
@@ -184,6 +184,8 @@ public class Grid2DSpace extends PApplet {
         
         if (time % automataPeriod == 0) {
             cells.Exec();
+        }
+        if (time % 10 == 0) {
             for (GridObject g : objects) {
                 Effect e = (g instanceof GridAgent) ? ((GridAgent)g).perceiveNext() : null;
                 g.update(e);
@@ -328,7 +330,7 @@ public class Grid2DSpace extends PApplet {
         
                 pushMatrix();
                 translate(x, y);
-                c.draw(this);
+                c.draw(this,j==0 || i==0 || i==cells.w-1 || j==cells.w-1);
                 popMatrix();
 
             }
