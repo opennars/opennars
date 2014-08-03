@@ -6,7 +6,7 @@ package nars.grid2d;
 public class CellState {
     public float light;
     public int x, y;
-
+    boolean is_solid;
     
     //display color
     transient float cr, cg, cb, ca;
