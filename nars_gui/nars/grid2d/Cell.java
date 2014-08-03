@@ -4,7 +4,7 @@ import nars.grid2d.Cell.Logic;
 
 public class Cell {
     
-
+    public float light=0.0f;
     public float charge = 0;
     public float value=0;
     public float value2=0;
@@ -86,9 +86,9 @@ public class Cell {
     }    
     
     
-    public void draw(Grid2DSpace s) {
+    public void draw(Grid2DSpace s,boolean edge) {
 
-        int ambientLight = 200;
+        int ambientLight = 100;
         
         //draw ground height
         int r=0,g=0,b=0,a=1;
@@ -111,7 +111,6 @@ public class Cell {
                 r = g = b = (int)(128 + height);
             }           
         }
-        
         if(material==Material.Door  && is_solid) {
             b=0;
             g=(int) (g/2.0f);
@@ -119,7 +118,6 @@ public class Cell {
         if(material==Material.Door) {
             r=200;
         }
-
         if ((charge>0) || (chargeFront)) {
             {
                 float freq = 4;
@@ -143,6 +141,21 @@ public class Cell {
                 a += 150;
 
             }
+        }
+        if(edge)
+        {
+            light=255;
+        }
+        
+        a+=light*255;
+        //g+=light*128;
+        //b+=light*128;
+        //r+=light*128;
+        
+        
+        if(material==Material.StoneWall) {
+            a=r=g=b=(int) (200+light*255);
+            
         }
         
         if (state.light > 0) {
