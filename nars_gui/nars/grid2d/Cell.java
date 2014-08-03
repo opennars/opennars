@@ -13,6 +13,7 @@ public class Cell {
     public Material material;
     public Logic logic;
     public final CellState state;
+    public float water;
     
     
     public boolean isSolid() {
@@ -32,7 +33,7 @@ public class Cell {
     }
     
     public enum Logic {
-        NotALogicBlock,
+        NotALogicBlock, //TODO use null, this isnt necessary
         AND,
         OR,
         XOR,
@@ -107,8 +108,23 @@ public class Cell {
                 r = g = b = 255;
             }
             else { 
-                r = g = b = (int)(128 + height);
+                if (height > 0) {
+                    g = (int)(128 + (height*height)/20f) ;
+                    b = (int)(32);
+                    r = (int)(32);
+                }
+                else {
+                    g = (int)(128 + height);
+                    b = (int)(32 - height);
+                    r = (int)(32 - height);
+                }
             }           
+            
+            if (water > 0) {
+                b+= (int)(Math.min(1.0,water) * 255.0f);
+                /*g-= (int)(water*50f);
+                r-= (int)(water*50f);*/
+            }
         }
         if(material==Material.Door  && state.is_solid) {
             b=0;
@@ -275,6 +291,7 @@ public class Cell {
         this.machine = c.machine;
         this.charge = c.charge;
         this.chargeFront = c.chargeFront;        
+        this.water = c.water;
     }
 
     void setHeight(int h) {
