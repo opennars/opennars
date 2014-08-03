@@ -1,0 +1,14 @@
+'********** updating and revision 
+
+<(*,John,key_101) --> hold>. :|: 
+
+1 
+
+<(*,John,key_101) --> hold>. :|: %0% 
+
+<(*,John,key_101) --> hold>? :|: 
+
+100
+
+''outputMustContain('<(*,John,key_101) --> hold>. :\\: %0.09;0.91%')
+

@@ -23,7 +23,7 @@ package nars.storage;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.NAR;
@@ -344,7 +344,7 @@ public class Memory {
                 }
             }
             final Stamp stamp = task.sentence.stamp;
-            final List<Term> chain = stamp.getChain();
+            final LinkedHashSet<Term> chain = stamp.getChain();
             
             final Term currentTaskContent = getCurrentTask().getContent();
             
@@ -378,8 +378,8 @@ public class Memory {
                           
             
             if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
-                for (int i = 0; i < chain.size(); i++) {
-                    final Term chain1 = chain.get(i);
+                int i = 0;
+                for (Term chain1 : chain) {
                     if (task.sentence.isJudgment() && task.getContent().equals(chain1)) {
                         if(task.getParentTask()==null || 
                            (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
@@ -390,7 +390,7 @@ public class Memory {
                         return;
                         }
                     }
-                    
+                    i++;                    
                 }
             } else { //its revision, of course its cyclic, apply evidental base policy
                 final int stampLength = stamp.baseLength;
@@ -567,10 +567,12 @@ public class Memory {
                 // new addInput or existing concept
                 immediateProcess(task);
                 if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
-                    if ((newEvent == null)
-                            || (BudgetFunctions.rankBelief(newEvent.sentence)
-                            < BudgetFunctions.rankBelief(task.sentence))) {
-                        newEvent = task;
+                    if (task.sentence.isJudgment()) {
+                        if ((newEvent == null)
+                                || (BudgetFunctions.rankBelief(newEvent.sentence)
+                                < BudgetFunctions.rankBelief(task.sentence))) {
+                            newEvent = task;
+                        }
                     }
                 }
             } else {

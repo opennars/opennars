@@ -1,0 +1,17 @@
+'********** induction on events 
+
+<(*,John,key_101) --> hold>. :\:  %1.0000;0.9000% 
+
+6 
+
+''outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %1.00;0.90%') 
+''outputMustContain('<key_101 --> (/,hold,John,_)>. :\\: %1.00;0.90%') 
+''outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %1.00;0.90%') 
+''outputMustContain('<key_101 --> (/,hold,John,_)>. :\\: %1.00;0.90%')
+
+<<(*,John,door_101) --> open> =/> <(*,John,room_101) --> enter>>. :|:  %1.0000;0.9000% 
+
+100 
+
+''outputMustContain('<(&/,<(*,John,key_101) --> hold>,+2,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>. :|: %1.00;0.45%')
+ 

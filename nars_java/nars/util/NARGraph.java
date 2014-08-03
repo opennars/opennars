@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -384,7 +385,7 @@ public class NARGraph extends DirectedMultigraph {
             if (includeDerivations && includeBeliefs) {
                 for (final Entry<Sentence,Term> s : sentenceTerms.entrySet()) {
                     
-                    final List<Term> schain = s.getKey().stamp.getChain();
+                    final Collection<Term> schain = s.getKey().stamp.getChain();
                     final Term derived = s.getValue();
 
                     for (final Entry<Sentence,Term> t : sentenceTerms.entrySet()) {
@@ -394,7 +395,7 @@ public class NARGraph extends DirectedMultigraph {
                         if (derived==deriver) //avoid loops
                             continue;
 
-                        final List<Term> tchain = s.getKey().stamp.getChain();                        
+                        final Collection<Term> tchain = s.getKey().stamp.getChain();                        
                         final Sentence deriverSentence = t.getKey();
                         
                         if (schain.contains(deriverSentence.content)) {
