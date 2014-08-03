@@ -21,6 +21,7 @@
 
 package nars.operator;
 
+import nars.grid2d.operator.Goto;
 import java.util.ArrayList;
 import nars.entity.Task;
 import nars.io.Output.EXE;
@@ -48,7 +49,7 @@ public abstract class Operator extends Term {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    abstract ArrayList<Task> execute(final Task task);
+    abstract public ArrayList<Task> execute(final Task task);
 
      /**
      * The standard way to carry out an operation, which invokes the execute
@@ -78,9 +79,7 @@ public abstract class Operator extends Term {
      */
     public static void loadDefaultOperators(Memory memory) {
         //memory.registerOperator(new Wait("^wait"));
-        memory.registerOperator(new Sample("^sample"));
-        memory.registerOperator(new Goto("^goto"));
-        
+        memory.registerOperator(new Sample("^sample"));               
 
         /* operators for tasks */
 //        table.put("^believe", new Believe("^believe"));     // accept a statement with a default truth-value

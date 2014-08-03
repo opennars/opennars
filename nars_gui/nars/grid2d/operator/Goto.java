@@ -18,24 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.operator;
+package nars.grid2d.operator;
 
 import java.util.ArrayList;
 
 import nars.entity.Task;
+import nars.grid2d.Grid2DSpace;
 import nars.language.Term;
+import nars.operator.Operation;
+import nars.operator.Operator;
 
 /**
  *  A class used as a template for Operator definition.
+ * TODO: memory.registerOperator(new Goto("^goto"));
  */
 public class Goto extends Operator {
 
-    public Goto(String name) {
+    public Goto(Grid2DSpace space, String name) {
         super(name);
     }
 
     /** called from Operator */
-    ArrayList<Task> execute(Task task) {
+    public ArrayList<Task> execute(Task task) {
         Operation content = (Operation) task.getContent();
         Operator op = content.getOperator();
          
@@ -47,7 +51,7 @@ public class Goto extends Operator {
         
         if(nars.grid2d.Grid2DSpace.world_used) {
             //ok lets start pathfinding tool
-            nars.grid2d.Grid2DSpace.pathFindAndGoto(arg);
+            //nars.grid2d.Grid2DSpace.pathFindAndGoto(arg);
         }
         
         return null;
