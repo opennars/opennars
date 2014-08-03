@@ -40,7 +40,7 @@ import nars.storage.Memory;
 
 
 public abstract class CompoundTerm extends Term {
-    private static final boolean allowNonDeepCopy = false; //temporary, disables eliminating deep copy
+    @Deprecated private static final boolean allowNonDeepCopy = true; //temporary, disables eliminating deep copy
 
     /**
      * list of (direct) term

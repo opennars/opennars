@@ -21,11 +21,12 @@
 package nars.entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.language.Term;
@@ -40,7 +41,7 @@ public class Stamp implements Cloneable {
     public static long currentSerial = 0;
 
     /**
-     * serial numbers
+     * serial numbers. not to be modified after Stamp constructor has initialized it
      */
     public final long[] evidentialBase;
 
@@ -73,9 +74,10 @@ public class Stamp implements Cloneable {
 
     /**
      * derivation chain containing the used premises and conclusions which made
-     * deriving the conclusion c possible *
+     * deriving the conclusion c possible
+     * Uses LinkedHashSet for optimal contains/indexOf performance.
      */
-    public final List<Term> derivationChain;
+    public final LinkedHashSet<Term> derivationChain;
 
 
     /** caches hashcode value; only computed on-demand since stamp's hashcode does not seem used in inference (yet) */
@@ -104,7 +106,7 @@ public class Stamp implements Cloneable {
         } else { // if (tense.equals(Symbols.TENSE_PRESENT)) 
             occurrenceTime = time;
         }
-        derivationChain = new ArrayList<>();
+        derivationChain = new LinkedHashSet<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
     }
 
     /**
@@ -174,20 +176,21 @@ public class Stamp implements Cloneable {
         }
         
 
-        final List<Term> chain1 = first.getChain();
-        final List<Term> chain2 = second.getChain();
-        i1 = chain1.size() - 1;
-        i2 = chain2.size() - 1;
-
-        derivationChain = new ArrayList<>(baseLength); //take as long till the chain is full or all elements were taken out of chain1 and chain2:
-
+        //TODO create Term[] getChainArray() method
+        final Term[] chain1 = first.getChain().toArray( new Term[ first.getChain().size() ]);        
+        final Term[] chain2 = second.getChain().toArray( new Term[ second.getChain().size() ]);
         
+        i1 = chain1.length - 1;
+        i2 = chain2.length - 1;
+
+        //take as long till the chain is full or all elements were taken out of chain1 and chain2:
+        LinkedHashSet<Term> derivationChain = new LinkedHashSet<>(baseLength); 
         
         j = 0;
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
-                    final Term c1i1 = chain1.get(i1);                         
+                    final Term c1i1 = chain1[i1];                         
                     if (!derivationChain.contains(c1i1)) {
                         derivationChain.add(c1i1);
                     } else {
@@ -197,7 +200,7 @@ public class Stamp implements Cloneable {
                 }
             } else {
                 if (i2 >= 0) {
-                    final Term c2i2 = chain2.get(i2);                    
+                    final Term c2i2 = chain2[i2];
                     if (!derivationChain.contains(c2i2)) {
                         derivationChain.add(c2i2);
                     } else {
@@ -208,7 +211,12 @@ public class Stamp implements Cloneable {
             }
             j++;
         } //ok but now the most important elements are at the beginning so let's change that:
-        Collections.reverse(derivationChain); //if jvm implements that correctly this is O(1)
+        
+        //reverse the linkedhashset
+        ArrayList<Term> reverseDerivation = new ArrayList(derivationChain);
+        Collections.reverse(reverseDerivation);
+        
+        this.derivationChain = new LinkedHashSet(reverseDerivation);
 
         creationTime = time;
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
@@ -292,7 +300,7 @@ public class Stamp implements Cloneable {
      *
      * @return The evidentialBase of numbers
      */
-    public List<Term> getChain() {
+    public LinkedHashSet<Term> getChain() {
         return derivationChain;
     }
 
@@ -304,7 +312,8 @@ public class Stamp implements Cloneable {
     public void addToChain(final Term T) {
         derivationChain.add(T);
         if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
-            derivationChain.remove(0);
+            Term next = derivationChain.iterator().next();
+            derivationChain.remove(next); //remove 0th
         }
 
     }
@@ -316,10 +325,9 @@ public class Stamp implements Cloneable {
      */
     private Set<Long> toSet() {
         if (evidentialSet == null) {
-            evidentialSet = new TreeSet<>();
+            evidentialSet = new HashSet<>(evidentialBase.length);
             for (final Long l : evidentialBase)
                 evidentialSet.add(l);
-            evidentialSet = Collections.unmodifiableSet(evidentialSet);
         }
         return evidentialSet;
     }
@@ -342,7 +350,7 @@ public class Stamp implements Cloneable {
         if (creationTime!=s.creationTime)
             return false;
         
-        //TODO see if there is a faster way than creating two treeset's
+        //TODO see if there is a faster way than creating two set's
         final Set<Long> set1 = toSet();
         final Set<Long> set2 = s.toSet();
 
@@ -356,8 +364,9 @@ public class Stamp implements Cloneable {
      * @return The hash code
      */
     @Override
-    public int hashCode() {        
-        return Objects.hash(toSet(), creationTime, occurrenceTime);
+    public int hashCode() {
+//        return Objects.hash(toSet(), creationTime, occurrenceTime);
+        return Objects.hash(Arrays.hashCode(evidentialBase), creationTime, occurrenceTime);      
     }
 
     public Stamp cloneToTime(long newTime) {
@@ -430,11 +439,13 @@ public class Stamp implements Cloneable {
                 }
             }
         }
-        for (int i = 0; i < derivationChain.size(); i++) {
-            buffer.append(derivationChain.get(i));
+        int i = 0;
+        for (Term t : derivationChain) {
+            buffer.append(t);
             if (i < (derivationChain.size() - 1)) {
                 buffer.append(Symbols.STAMP_SEPARATOR);
             }
+            i++;
         }
         buffer.append(Symbols.STAMP_CLOSER).append(' ');
 
@@ -442,6 +453,8 @@ public class Stamp implements Cloneable {
         //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
         return buffer.toString();
     }
+
+
 
 
 
