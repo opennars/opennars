@@ -1,0 +1,544 @@
+OUT: Loaded file: /home/tc/Dateien/opennars/./nal/Examples/Example-NAL2-edited.txt
+ECHO: ********** revision
+IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {1 : 1 : } 
+ECHO: // If robin can fly then robin is a type of bird.
+IN: <<robin --> [flying]> ==> <robin --> bird>>. %0.00;0.60% {1 : 2 : } 
+ECHO: // If robin can fly then robin may not a type of bird.
+IN: 1
+ECHO: OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.86;0.91%
+ECHO: // If robin can fly then robin is a type of bird.
+ECHO: ********** deduction
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 3 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {1 : 4 : } 
+ECHO: // If robin can fly then robin is a type of bird.
+IN: 1
+ECHO: OUT: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.81%
+ECHO: // If robin can fly then robin is a type of animal.
+ECHO: ********** exemplification
+IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {1 : 5 : } 
+ECHO: // If robin can fly then robin is a type of bird.
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 6 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: 1
+ECHO: OUT: <<robin --> animal> ==> <robin --> [flying]>>. %1.00;0.45%
+ECHO: // I guess if robin is a type of animal then robin can fly.
+ECHO: ********** induction
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 7 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.80;0.90% {1 : 8 : } 
+ECHO: // If robin is a type of bird then robin can fly.
+IN: 1
+ECHO: OUT: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.39%
+ECHO: // I guess if robin can fly then robin is a type of animal.
+ECHO: OUT: <<robin --> animal> ==> <robin --> [flying]>>. %0.80;0.45%
+ECHO: // I guess if robin is a type of animal then robin can fly.
+ECHO: ********** abduction
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 9 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: <<robin --> [flying]> ==> <robin --> animal>>. %0.80;0.90% {1 : 10 : } 
+ECHO: // If robin can fly then robin is probably a type of animal.
+IN: 1
+ECHO: OUT: <<robin --> bird> ==> <robin --> [flying]>>. %1.00;0.39%
+ECHO: // I guess if robin is a type of bird then robin can fly.
+ECHO: OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.80;0.45%
+ECHO: // I guess if robin can fly then robin is a type of bird.
+ECHO: ********** detachment
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 11 : } 
+ECHO: // If robin is a type of bird then robin can fly.
+IN: <robin --> bird>. %1.00;0.90% {1 : 12 : } 
+ECHO: // Robin is a type of bird.
+IN: 1
+ECHO: OUT: <robin --> animal>. %1.00;0.81%
+ECHO: // Robin is a type of animal.
+ECHO: ********** detachment
+IN: <<robin --> bird> ==> <robin --> animal>>. %0.70;0.90% {1 : 13 : } 
+ECHO: // Usually if robin is a type of bird then robin is a type of animal.
+IN: <robin --> animal>. %1.00;0.90% {1 : 14 : } 
+ECHO: // Robin is a type of animal.
+IN: 1
+ECHO: OUT: <robin --> bird>. %1.00;0.36%
+ECHO: // I guess robin is a type of bird.
+ECHO: ********** comparison
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 15 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.80;0.90% {1 : 16 : } 
+ECHO: // If robin is a type of bird then robin can fly.
+IN: 1
+ECHO: OUT: <<robin --> animal> <=> <robin --> [flying]>>. %0.80;0.45%
+ECHO: // I guess robin is a type of animal if and only if robin can fly.
+ECHO: ********** comparison
+IN: <<robin --> bird> ==> <robin --> animal>>. %0.70;0.90% {1 : 17 : } 
+ECHO: // If robin is a type of bird then usually robin is a type of animal.
+IN: <<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.90% {1 : 18 : } 
+ECHO: // If robin can fly then robin is a type of animal.
+IN: 1
+ECHO: OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.70;0.45%
+ECHO: // I guess robin is a type of bird if and only if robin can fly.
+ECHO: ********** analogy
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 19 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: <<robin --> bird> <=> <robin --> [flying]>>. %0.80;0.90% {1 : 20 : } 
+ECHO: // Usually, robin is a type of bird if and only if robin can fly.
+IN: 1
+ECHO: OUT: <<robin --> [flying]> ==> <robin --> animal>>. %0.80;0.65%
+ECHO: // If robin can fly then probably robin is a type of animal.
+ECHO: ********** analogy
+IN: <robin --> bird>. %1.00;0.90% {1 : 21 : } 
+ECHO: // Robin is a type of bird.
+IN: <<robin --> bird> <=> <robin --> [flying]>>. %0.80;0.90% {1 : 22 : } 
+ECHO: // Usually, robin is a type of bird if and only if robin can fly.
+IN: 1
+ECHO: OUT: <robin --> [flying]>. %0.80;0.65%
+ECHO: // I guess usually robin can fly.
+ECHO: ********** resemblance
+IN: <<robin --> animal> <=> <robin --> bird>>. %1.00;0.90% {1 : 23 : } 
+ECHO: // Robin is a type of animal if and only if robin is a type of bird.
+IN: <<robin --> bird> <=> <robin --> [flying]>>. %0.90;0.90% {1 : 24 : } 
+ECHO: // Robin is a type of bird if and only if robin can fly.
+IN: 1
+ECHO: OUT: <<robin --> animal> <=> <robin --> [flying]>>. %0.90;0.81%
+ECHO: // Robin is a type of animal if and only if robin can fly.
+ECHO: ********** conversions between Implication and Equivalence
+IN: <<robin --> [flying]> ==> <robin --> bird>>. %0.90;0.90% {1 : 25 : } 
+ECHO: // If robin can fly then robin is a type of bird.
+IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.90;0.90% {1 : 26 : } 
+ECHO: // If robin is a type of bird then robin can fly.
+IN: 1
+ECHO: OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.81;0.81%
+ECHO: // Robin can fly if and only if robin is a type of bird.
+ECHO: ********** compound composition, two premises
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 27 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: <<robin --> bird> ==> <robin --> [flying]>>. %0.90;0.90% {1 : 28 : } 
+ECHO: // If robin is a type of bird then robin can fly.
+IN: 1
+ECHO: OUT: <<robin --> bird> ==> (||,<robin --> [flying]>,<robin --> animal>)>. %1.00;0.81%
+ECHO: // If robin is a type of bird then robin is a type of animal or can fly.
+ECHO: OUT: <<robin --> bird> ==> (&&,<robin --> [flying]>,<robin --> animal>)>. %0.90;0.81%
+ECHO: // If robin is a type of bird then usually robin is a type of animal and can fly.
+ECHO: ********** compound composition, two premises
+IN: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.90% {1 : 29 : } 
+ECHO: // If robin is a type of bird then robin is a type of animal.
+IN: <<robin --> [flying]> ==> <robin --> animal>>. %0.90;0.90% {1 : 30 : } 
+ECHO: // If robin can fly then robin is a type of animal.
+IN: 1
+ECHO: OUT: <(&&,<robin --> [flying]>,<robin --> bird>) ==> <robin --> animal>>. %1.00;0.81%
+ECHO: // If robin can fly and is a type of bird then robin is a type of animal.
+ECHO: OUT: <(||,<robin --> [flying]>,<robin --> bird>) ==> <robin --> animal>>. %0.90;0.81%
+ECHO: // If robin can fly or is a type of bird then robin is a type of animal.
+ECHO: ********** compound decomposition, two premises
+IN: <<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>. %0.00;0.90% {1 : 31 : } 
+ECHO: // If robin is a type of bird then robin is not a type of flying animal.
+IN: <<robin --> bird> ==> <robin --> [flying]>>. %1.00;0.90% {1 : 32 : } 
+ECHO: // If robin is a type of bird then robin can fly.
+IN: 1
+ECHO: OUT: <<robin --> bird> ==> <robin --> animal>>. %0.00;0.81%
+ECHO: // It is unlikely that if a robin is a type of bird then robin is a type of animal.
+ECHO: ********** compound decomposition, two premises
+IN: (&&,<robin --> swimmer>,<robin --> [flying]>). %0.00;0.90% {1 : 33 : } 
+ECHO: // Robin cannot be both a flyer and a swimmer.
+IN: <robin --> [flying]>. %1.00;0.90% {1 : 34 : } 
+ECHO: // Robin can fly.
+IN: 4
+ECHO: OUT: <robin --> swimmer>. %0.00;0.81%
+ECHO: // Robin cannot swim.
+ECHO: ********** compound decomposition, two premises
+IN: (||,<robin --> swimmer>,<robin --> [flying]>). %1.00;0.90% {1 : 35 : } 
+ECHO: // Robin can fly or swim.
+IN: <robin --> swimmer>. %0.00;0.90% {1 : 36 : } 
+ECHO: // Robin cannot swim.
+IN: 1
+ECHO: OUT: <robin --> [flying]>. %1.00;0.81%
+ECHO: // Robin can fly.
+ECHO: ********** compound composition, one premises
+IN: <robin --> [flying]>. %1.00;0.90% {1 : 37 : } 
+ECHO: // Robin can fly.
+IN: (||,<robin --> swimmer>,<robin --> [flying]>)? {1 : 38 : } 
+ECHO: // Can robin fly or swim?
+IN: 5
+ECHO: OUT: (||,<robin --> swimmer>,<robin --> [flying]>). %1.00;0.81%
+ECHO: // Robin can fly or swim.
+ECHO: ********** compound decomposition, one premises
+IN: (&&,<robin --> swimmer>,<robin --> [flying]>). %0.90;0.90% {1 : 39 : } 
+ECHO: // Robin can fly and swim.
+IN: 2
+ECHO: OUT: <robin --> swimmer>. %0.90;0.73%
+ECHO: // Robin can swim.
+IN: 6
+ECHO: OUT: <robin --> [flying]>. %0.90;0.73%
+ECHO: // Robin can fly.
+ECHO: ********** negation
+IN: (--,<robin --> [flying]>). %0.10;0.90% {1 : 40 : } 
+ECHO: // It is unlikely that robin cannot fly.
+IN: 1
+ECHO: OUT: <robin --> [flying]>. %0.90;0.90%
+ECHO: // Robin can fly.
+ECHO: ********** negation
+IN: <robin --> [flying]>. %0.90;0.90% {1 : 41 : } 
+ECHO: // Robin can fly.
+IN: (--,<robin --> [flying]>)? {1 : 42 : } 
+ECHO: // Can robin fly or not?
+IN: 1
+ECHO: OUT: (--,<robin --> [flying]>). %0.10;0.90%
+ECHO: // It is unlikely that robin cannot fly.
+ECHO: ********** contraposition
+IN: <(--,<robin --> bird>) ==> <robin --> [flying]>>. %0.10;0.90% {1 : 43 : } 
+ECHO: // It is unlikely that if robin is not a type of bird then robin can fly.
+IN: <(--,<robin --> [flying]>) ==> <robin --> bird>>? {1 : 44 : } 
+ECHO: // If robin cannot fly then is robin a type of bird?
+IN: 18
+ECHO: OUT: <(--,<robin --> [flying]>) ==> <robin --> bird>>. %0.00;0.45%
+ECHO: // I guess it is unlikely that if robin cannot fly then robin is a type of bird.
+ECHO: ********** conditional deduction
+IN: <(&&,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {1 : 45 : } 
+ECHO: // If robin can fly and has wings then robin is a bird.
+IN: <robin --> [flying]>. %1.00;0.90% {1 : 46 : } 
+ECHO: // robin can fly.
+IN: 3
+ECHO: OUT: <<robin --> [with-wings]> ==> <robin --> bird>>. %1.00;0.81%
+ECHO: // If robin has wings then robin is a bird
+ECHO: ********** conditional deduction
+IN: <(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {1 : 47 : } 
+ECHO: // If robin can fly, has wings, and chirps, then robin is a bird
+IN: <robin --> [flying]>. %1.00;0.90% {1 : 48 : } 
+ECHO: // robin can fly.
+IN: 5
+ECHO: OUT: <(&&,<robin --> [chirping]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.81%
+ECHO: // If robin has wings and chirps then robin is a bird.
+ECHO: ********** conditional deduction
+IN: <(&&,<robin --> bird>,<robin --> [living]>) ==> <robin --> animal>>. %1.00;0.90% {1 : 49 : } 
+ECHO: // If robin is a bird and it's living, then robin is an animal
+IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {1 : 50 : } 
+ECHO: // If robin can fly, then robin is a bird
+IN: 14
+ECHO: OUT: <(&&,<robin --> [flying]>,<robin --> [living]>) ==> <robin --> animal>>. %1.00;0.81%
+ECHO: // If robin is living and it can fly, then robin is an animal.
+ECHO: ********** conditional abduction
+IN: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.90% {1 : 51 : } 
+ECHO: // If robin can fly then robin is a bird.
+IN: <(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>. %1.00;0.90% {1 : 52 : } 
+ECHO: // If robin both swims and flys then robin is a bird.
+IN: 15
+ECHO: OUT: <robin --> swimmer>. %1.00;0.45%
+ECHO: // I guess robin swims.
+ECHO: ********** conditional abduction
+IN: <(&&,<robin --> [chirping]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {1 : 53 : } 
+ECHO: // If robin is has wings and chirps, then robin is a bird
+IN: <(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.90% {1 : 54 : } 
+ECHO: // If robin can fly, has wings, and chirps, then robin is a bird
+IN: 8
+ECHO: OUT: <robin --> [flying]>. %1.00;0.45%
+ECHO: // I guess that robin can fly.
+ECHO: ********** conditional abduction
+IN: <(&&,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> [living]>>. %0.90;0.90% {1 : 55 : } 
+ECHO: // If robin can fly and it has wings, then robin is living.
+IN: <(&&,<robin --> bird>,<robin --> [flying]>) ==> <robin --> [living]>>. %1.00;0.90% {1 : 56 : } 
+ECHO: // If robin can fly and robin is a bird then robin is living.
+IN: 8
+ECHO: OUT: <<robin --> bird> ==> <robin --> [with-wings]>>. %1.00;0.42%
+ECHO: // I guess if robin is a bird, then robin has wings.
+ECHO: OUT: <<robin --> [with-wings]> ==> <robin --> bird>>. %0.90;0.45%
+ECHO: // I guess if robin has wings, then robin is a bird.
+ECHO: ********** conditional induction
+IN: <(&&,<robin --> [chirping]>,<robin --> [flying]>) ==> <robin --> bird>>. %1.00;0.90% {1 : 57 : } 
+ECHO: // If robin can fly and robin chirps, then robin is a bird
+IN: <<robin --> [flying]> ==> <robin --> [with-beak]>>. %0.90;0.90% {1 : 58 : } 
+ECHO: // If robin can fly then usually robin has a beak.
+IN: 11
+ECHO: OUT: <(&&,<robin --> [chirping]>,<robin --> [with-beak]>) ==> <robin --> bird>>. %1.00;0.42%
+ECHO: // I guess that if robin chirps and robin has a beak, then robin is a bird.
+ECHO: ********** revision
+IN: <robin <-> swan>. %1.00;0.90% {1 : 59 : } 
+ECHO: // Robin is similar to swan.
+IN: <robin <-> swan>. %0.10;0.60% {1 : 60 : } 
+ECHO: // I think robin is not similar to swan.
+IN: 1
+ECHO: OUT: <robin <-> swan>. %0.87;0.91%
+ECHO: // Robin is probably similar to swan.
+ECHO: ********** comparison
+IN: <swan --> swimmer>. %0.90;0.90% {1 : 61 : } 
+ECHO: // Swan is a type of swimmer.
+IN: <swan --> bird>. %1.00;0.90% {1 : 62 : } 
+ECHO: // Swan is a type of bird.
+IN: 3
+ECHO: OUT: <bird <-> swimmer>. %0.90;0.45%
+ECHO: // I guess that bird is similar to swimmer.
+ECHO: ********** comparison
+IN: <sport --> competition>. %1.00;0.90% {1 : 63 : } 
+ECHO: // Sport is a type of competition.
+IN: <chess --> competition>. %0.90;0.90% {1 : 64 : } 
+ECHO: // Chess is a type of competition.
+IN: 3
+ECHO: OUT: <chess <-> sport>. %0.90;0.45%
+ECHO: // I guess chess is similar to sport.
+ECHO: ********** analogy
+IN: <swan --> swimmer>. %1.00;0.90% {1 : 65 : } 
+ECHO: // Swan is a type of swimmer.
+IN: <gull <-> swan>. %1.00;0.90% {1 : 66 : } 
+ECHO: // Gull is similar to swan.
+IN: 3
+ECHO: OUT: <gull --> swimmer>. %1.00;0.81%
+ECHO: // I think gull is a type of swimmer.
+ECHO: ********** analogy
+IN: <gull --> swimmer>. %1.00;0.90% {1 : 67 : } 
+ECHO: // Gull is a type of swimmer.
+IN: <gull <-> swan>. %1.00;0.90% {1 : 68 : } 
+ECHO: // Gull is similar to a swan.
+IN: 3
+ECHO: OUT: <swan --> swimmer>. %1.00;0.81%
+ECHO: // I believe a swan is a type of swimmer.
+ECHO: ********** resemblance
+IN: <robin <-> swan>. %1.00;0.90% {1 : 69 : } 
+ECHO: // Robin is similar to swan.
+IN: <gull <-> swan>. %1.00;0.90% {1 : 70 : } 
+ECHO: // Gull is similar to swan.
+IN: 3
+ECHO: OUT: <gull <-> robin>. %1.00;0.81%
+ECHO: // Gull is similar to robin.
+ECHO: ********** conversions between inheritance and similarity
+IN: <swan --> bird>. %1.00;0.90% {1 : 71 : } 
+ECHO: // Swan is a type of bird.
+IN: <bird --> swan>. %0.10;0.90% {1 : 72 : } 
+ECHO: // Bird is not a type of swan.
+IN: 1
+ECHO: OUT: <bird <-> swan>. %0.10;0.81%
+ECHO: // Bird is different from swan.
+ECHO: ********** conversions between inheritance and similarity
+IN: <swan --> bird>. %1.00;0.90% {1 : 73 : } 
+ECHO: // Swan is a type of bird.
+IN: <bird <-> swan>. %0.10;0.90% {1 : 74 : } 
+ECHO: // Bird is different from swan.
+IN: 1
+ECHO: OUT: <bird --> swan>. %0.10;0.73%
+ECHO: // Bird is probably not a type of swan.
+ECHO: ********** conversions between inheritance and similarity
+IN: <swan --> bird>. %0.90;0.90% {1 : 75 : } 
+ECHO: // Swan is a type of bird.
+IN: <bird <-> swan>? {1 : 76 : } 
+ECHO: // Is bird similar to swan?
+IN: 6
+ECHO: OUT: <bird <-> swan>. %0.90;0.47%
+ECHO: // I guess that bird is similar to swan.
+ECHO: ********** conversions between inheritance and similarity
+IN: <bird <-> swan>. %0.90;0.90% {1 : 77 : } 
+ECHO: // a bird is similar to a swan.
+IN: <swan --> bird>? {1 : 78 : } 
+ECHO: // Is swan a type of bird?
+IN: 6
+ECHO: OUT: <swan --> bird>. %0.90;0.81%
+ECHO: // A swan is a type of bird.
+ECHO: ********** translating instance into inheritance
+IN: <{Tweety} --> bird>. %1.00;0.90% {1 : 79 : } 
+ECHO: // Tweety is a bird.
+IN: <{Tweety} --> bird>. %1.00;0.90% {1 : 80 : } 
+ECHO: // Tweety is a bird.
+ECHO: ********** translating property into inheritance
+IN: <raven --> [black]>. %1.00;0.90% {1 : 81 : } 
+ECHO: // Ravens are black.
+IN: <raven --> [black]>. %1.00;0.90% {1 : 82 : } 
+ECHO: // Ravens are black.
+ECHO: ********** translating instance-property into inheritance
+IN: <{Tweety} --> [yellow]>. %1.00;0.90% {1 : 83 : } 
+ECHO: // Tweety is yellow.
+IN: <{Tweety} --> [yellow]>. %1.00;0.90% {1 : 84 : } 
+ECHO: // Tweety is yellow.
+ECHO: ********** set definition
+IN: <{Tweety} --> {Birdie}>. %1.00;0.90% {1 : 85 : } 
+ECHO: // Tweety is Birdie.
+IN: 3
+ECHO: OUT: <{Birdie} <-> {Tweety}>. %1.00;0.90%
+ECHO: // Birdie is similar to Tweety.
+ECHO: ********** set definition
+IN: <[smart] --> [bright]>. %1.00;0.90% {1 : 86 : } 
+ECHO: // Smart thing is a type of bright thing.
+IN: 1
+ECHO: OUT: <[bright] <-> [smart]>. %1.00;0.90%
+ECHO: // Bright thing is similar to smart thing.
+ECHO: ********** set definition
+IN: <{Birdie} <-> {Tweety}>. %1.00;0.90% {1 : 87 : } 
+ECHO: // Birdie is similar to Tweety.
+IN: 1
+ECHO: OUT: <Birdie <-> Tweety>. %1.00;0.90%
+ECHO: // Birdie is similar to Tweety.
+ECHO: OUT: <{Tweety} --> {Birdie}>. %1.00;0.90%
+ECHO: // Tweety is Birdie.
+ECHO: ********** set definition
+IN: <[bright] <-> [smart]>. %1.00;0.90% {1 : 88 : } 
+ECHO: // Bright thing is similar to smart thing.
+IN: 1
+ECHO: OUT: <bright <-> smart>. %1.00;0.90%
+ECHO: // Bright is similar to smart.
+ECHO: OUT: <[bright] --> [smart]>. %1.00;0.90%
+ECHO: // Bright thing is a type of smart thing.
+ECHO: ********** structure transformation
+IN: <Birdie <-> Tweety>. %0.90;0.90% {1 : 89 : } 
+ECHO: // Birdie is similar to Tweety
+IN: <{Birdie} <-> {Tweety}>? {1 : 90 : } 
+ECHO: // Is Birdie similar to Tweety?
+IN: 6
+ECHO: OUT: <{Birdie} <-> {Tweety}>. %0.90;0.90%
+ECHO: // Birdie is similar to Tweety.
+ECHO: ********** structure transformation
+IN: <bright <-> smart>. %0.90;0.90% {1 : 91 : } 
+ECHO: // Bright is similar to smart.
+IN: <[bright] --> [smart]>? {1 : 92 : } 
+ECHO: // Is bright thing a type of smart thing?
+IN: 6
+ECHO: OUT: <[bright] --> [smart]>. %0.90;0.81%
+ECHO: // Bright thing is a type of smart thing.
+ECHO: ********** backward inference
+IN: <bird --> swimmer>. %1.00;0.90% {1 : 93 : } 
+ECHO: // Bird is a type of swimmer.
+IN: <{?1} --> swimmer>? {1 : 94 : } 
+ECHO: // What is a swimmer?
+IN: 5
+ECHO: OUT: <{?1} --> bird>?
+ECHO: // What is a bird?
+OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.86;0.91% {2 : 1;2<<robin --> [flying]> ==> <robin --> bird>>} 
+OUT: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.95% {2 : 1;4<<robin --> [flying]> ==> <robin --> bird>>} 
+OUT: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.95% {2 : 4;5<<robin --> [flying]> ==> <robin --> bird>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.95% {2 : 3;6<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.95% {2 : 6;7<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.95% {2 : 7;9<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.95% {2 : 9;11<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %0.85;0.95% {2 : 11;13<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %0.85;0.95% {2 : 13;15<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> [flying]>>. %0.80;0.95% {2 : 8;16<<robin --> bird> ==> <robin --> [flying]>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %0.85;0.95% {2 : 15;17<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> [flying]> ==> <robin --> animal>>. %0.90;0.95% {2 : 10;18<<robin --> [flying]> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %0.85;0.95% {2 : 17;19<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <robin --> bird>. %1.00;0.95% {2 : 12;21<robin --> bird>} 
+OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.80;0.95% {2 : 20;22<<robin --> bird> <=> <robin --> [flying]>>} 
+OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.85;0.95% {2 : 22;24<<robin --> bird> <=> <robin --> [flying]>>} 
+OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.95;0.95% {2 : 5;25<<robin --> [flying]> ==> <robin --> bird>>} 
+OUT: <<robin --> bird> ==> <robin --> [flying]>>. %0.85;0.95% {2 : 16;26<<robin --> bird> ==> <robin --> [flying]>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.95% {2 : 19;27<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> [flying]>>. %0.90;0.95% {2 : 26;28<<robin --> bird> ==> <robin --> [flying]>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.95% {2 : 27;29<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> [flying]> ==> <robin --> animal>>. %0.95;0.95% {2 : 18;30<<robin --> [flying]> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> [flying]>>. %0.95;0.95% {2 : 28;32<<robin --> bird> ==> <robin --> [flying]>>} 
+OUT: <robin --> [flying]>. %1.00;0.95% {2 : 34;37<robin --> [flying]>} 
+OUT: (||,<robin --> swimmer>,<robin --> [flying]>). %1.00;0.90% {1 : 35 : } 
+OUT: (&&,<robin --> swimmer>,<robin --> [flying]>). %0.45;0.95% {2 : 33;39(&&,<robin --> swimmer>,<robin --> [flying]>)} 
+OUT: <robin --> [flying]>. %0.95;0.95% {2 : 37;41<robin --> [flying]>} 
+OUT: (--,<robin --> [flying]>). %0.10;0.90% {1 : 40 : } 
+OUT: <robin --> [flying]>. %0.95;0.95% {2 : 41;46<robin --> [flying]>} 
+OUT: <robin --> [flying]>. %1.00;0.95% {2 : 46;48<robin --> [flying]>} 
+OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.95;0.95% {2 : 25;50<<robin --> [flying]> ==> <robin --> bird>>} 
+OUT: <<robin --> [flying]> ==> <robin --> bird>>. %1.00;0.95% {2 : 50;51<<robin --> [flying]> ==> <robin --> bird>>} 
+OUT: <(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.95% {2 : 47;54<(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>} 
+OUT: <robin <-> swan>. %0.87;0.91% {2 : 59;60<robin <-> swan>} 
+OUT: <swan --> swimmer>. %0.95;0.95% {2 : 61;65<swan --> swimmer>} 
+OUT: <gull <-> swan>. %1.00;0.95% {2 : 66;68<gull <-> swan>} 
+OUT: <robin <-> swan>. %1.00;0.95% {2 : 59;69<robin <-> swan>} 
+OUT: <gull <-> swan>. %1.00;0.95% {2 : 68;70<gull <-> swan>} 
+OUT: <swan --> bird>. %1.00;0.95% {2 : 62;71<swan --> bird>} 
+OUT: <swan --> bird>. %1.00;0.95% {2 : 71;73<swan --> bird>} 
+OUT: <swan --> bird>. %0.95;0.95% {2 : 73;75<swan --> bird>} 
+OUT: <bird <-> swan>. %0.10;0.90% {1 : 74 : } 
+OUT: <bird <-> swan>. %0.50;0.95% {2 : 74;77<bird <-> swan>} 
+OUT: <swan --> bird>. %0.90;0.90% {1 : 75 : } 
+OUT: <{Tweety} --> bird>. %1.00;0.95% {2 : 79;80<{Tweety} --> bird>} 
+OUT: <raven --> [black]>. %1.00;0.95% {2 : 81;82<raven --> [black]>} 
+OUT: <{Tweety} --> [yellow]>. %1.00;0.95% {2 : 83;84<{Tweety} --> [yellow]>} 
+OUT: <{Birdie} <-> {Tweety}>. %1.00;0.90% {1 : 87 : } 
+OUT: <<robin --> [flying]> ==> <robin --> bird>>. %0.92;0.95% {3 : 51;1;2<<robin --> [flying]> ==> <robin --> bird>>} 
+OUT: <<robin --> bird> ==> <robin --> animal>>. %1.00;0.96% {3 : 29;3;6<<robin --> bird> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> ==> <robin --> [flying]>>. %0.87;0.96% {3 : 32;8;16<<robin --> bird> ==> <robin --> [flying]>>} 
+OUT: <<robin --> [flying]> ==> <robin --> animal>>. %0.90;0.96% {3 : 30;10;18<<robin --> [flying]> ==> <robin --> animal>>} 
+OUT: <<robin --> bird> <=> <robin --> [flying]>>. %0.83;0.96% {3 : 24;20;22<<robin --> bird> <=> <robin --> [flying]>>} 
+OUT: <robin --> [flying]>. %1.00;0.96% {3 : 48;34;37<robin --> [flying]>} 
+OUT: <robin <-> swan>. %0.93;0.95% {3 : 69;59;60<robin <-> swan>} 
+OUT: <gull <-> swan>. %1.00;0.96% {3 : 70;66;68<gull <-> swan>} 
+OUT: <swan --> bird>. %0.97;0.96% {3 : 75;62;71<swan --> bird>} 
+OUT: <swan --> bird>. %1.00;0.95% {2 : 62;71<swan --> bird>} 
+OUT: <bird <-> swan>. %0.50;0.95% {3 : 77;74<bird <-> swan>} 
+OUT: <bird <-> swan>. %0.50;0.95% {2 : 74;77<bird <-> swan>} 
+OUT: <swan --> bird>. %0.97;0.96% {3 : 75;62;71<swan --> bird>} 
+OUT: <robin --> [flying]>? {5 : 36;38<robin --> swimmer>} 
+OUT: <robin --> [flying]>? {5 : 36;38<robin --> swimmer>} 
+OUT: <robin --> [flying]>? {7 : 48;34;37<robin --> [flying]>} 
+OUT: <robin --> [flying]>? {7 : 42 : } 
+OUT: <robin --> [flying]>? {7 : 42 : } 
+OUT: <robin --> [flying]>. %0.90;0.90% {12 : 40(--,<robin --> [flying]>)} 
+OUT: <robin --> [flying]>. %0.98;0.97% {13 : 48;34;37;40(--,<robin --> [flying]>);<robin --> [flying]>} 
+OUT: <robin --> bird>. %0.90;0.43% {16 : 32;8;16;40(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>} 
+OUT: <robin --> bird>. %1.00;0.95% {17 : 12;21;32;8;16;40(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.90;0.43% {18 : 32;8;16;40(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>} 
+OUT: <robin --> bird>. %1.00;0.46% {26 : 29;3;6;14<<robin --> bird> ==> <robin --> animal>>;<robin --> animal>} 
+OUT: <robin --> bird>. %1.00;0.95% {27 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> [flying]>. %0.90;0.90% {28 : 40(--,<robin --> [flying]>);<robin --> [flying]>} 
+OUT: <robin --> bird>? {29 : 40;44<robin --> [flying]>;(--,<robin --> [flying]>)} 
+OUT: <robin --> bird>. %0.90;0.73% {40 : 52;39<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;(&&,<robin --> swimmer>,<robin --> [flying]>)} 
+OUT: <robin --> bird>. %0.98;0.96% {41 : 12;21;32;8;16;40;29;3<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<robin --> animal>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.98% {42 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.98% {43 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.98% {43 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {44 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {44 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {45 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {45 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {46 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {46 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {47 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {47 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {48 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {48 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {49 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {49 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {50 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {50 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {51 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {51 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {52 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {52 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {53 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {53 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {54 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {54 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {55 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {55 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.99;0.99% {55 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {56 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<<robin --> bird> ==> <robin --> animal>>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<robin --> animal>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {57 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {58 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {59 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> [flying]>. %0.86;0.83% {60 : 12;21;32;8;16;40;29;3<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<robin --> bird>;<<robin --> bird> ==> <robin --> [flying]>>} 
+OUT: <robin --> [flying]>. %0.96;0.98% {61 : 48;34;37;40;12;21;32;8<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;(--,<robin --> [flying]>);<robin --> bird>;<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>} 
+OUT: <swan --> swimmer>. %1.00;0.81% {64 : 67;70<gull --> swimmer>;<gull <-> swan>} 
+OUT: <swan --> swimmer>. %0.96;0.96% {65 : 61;65;67;70<gull --> swimmer>;<gull <-> swan>;<swan --> swimmer>} 
+OUT: <sport --> chess>. %1.00;0.42% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <chess --> sport>. %0.90;0.45% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <chess <-> sport>. %0.90;0.45% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <(&,chess,sport) --> competition>. %1.00;0.81% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <(|,chess,sport) --> competition>. %0.90;0.81% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <<sport --> $1> ==> <chess --> $1>>. %0.90;0.45% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <<chess --> $1> ==> <sport --> $1>>. %1.00;0.42% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <<chess --> $1> <=> <sport --> $1>>. %0.90;0.45% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: (&&,<chess --> #1>,<sport --> #1>). %0.90;0.81% {67 : 64;63<chess --> competition>;<sport --> competition>} 
+OUT: <[bright] <-> [smart]>? {68 : 92 : } 
+OUT: <robin --> bird>. %1.00;0.81% {70 : 14;23<robin --> animal>;<<robin --> animal> <=> <robin --> bird>>} 
+OUT: <robin --> bird>. %0.00;0.99% {71 : 12;21;32;8;16;40;29;3<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<robin --> animal>;<<robin --> animal> <=> <robin --> bird>>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {72 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {73 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {74 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {75 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {76 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {77 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {78 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {79 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {80 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {81 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {82 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {83 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {84 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {85 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {86 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {87 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {88 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {89 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {90 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {91 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {92 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 
+OUT: <robin --> bird>. %0.00;0.99% {93 : 12;21;32;8;16;40;29;3(--,<robin --> [flying]>);<<robin --> bird> ==> <robin --> [flying]>>;<robin --> [flying]>;<(&&,<robin --> swimmer>,<robin --> [flying]>) ==> <robin --> bird>>;<<robin --> bird> ==> <robin --> animal>>;(&&,<robin --> swimmer>,<robin --> [flying]>);<<robin --> animal> <=> <robin --> bird>>;<robin --> animal>;<robin --> bird>} 

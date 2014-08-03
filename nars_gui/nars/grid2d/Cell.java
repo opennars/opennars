@@ -131,13 +131,10 @@ public class Cell {
                     g += chargeBright;
                     r += chargeBright/2;
                 }
-                
                 if (chargeFront) {
                     freq = 7;
                     b += 25;
                 }
-
-
                 a += 150;
 
             }
