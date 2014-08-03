@@ -215,7 +215,7 @@ public class Hauto {
             return c.charge;
         }
         if("get_light".equals(mode) && (data==1 || !c.is_solid && !(c.material==Material.StoneWall))) {
-            return c.light;
+            return Math.max(c.charge*0.2f, c.light);
         }
         return 0.0f;
     }
