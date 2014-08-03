@@ -26,24 +26,24 @@ public class Hauto {
         w.charge=r.charge;
         w.value=r.value;
         w.value2=r.value2;
-        w.is_solid=r.is_solid;
+        w.state.is_solid=r.state.is_solid;
         w.chargeFront=false;
         //
         if(r.machine==Machine.Light && r.charge==1)
         {
-            w.light=1.0f;
+            w.state.light=1.0f;
         }
         else
         {
-            w.light=NeighborsValue2("op_max", i, j, readcells, "get_light", (r.is_solid || r.material==Material.StoneWall) ? 1 : 0)/1.1f; //1.1
+            w.state.light=NeighborsValue2("op_max", i, j, readcells, "get_state.light", (r.state.is_solid || r.material==Material.StoneWall) ? 1 : 0)/1.1f; //1.1
         }
         ///door
         if(r.material==Material.Door) {
             if(NeighborsValue2("op_or", i, j, readcells, "having_charge", 1.0f) != 0) {
-                w.is_solid=false;
+                w.state.is_solid=false;
             }
             else {
-                w.is_solid=true;
+                w.state.is_solid=true;
             }
         }
         //////// WIRE / CURRENT PULSE FLOW /////////////////////////////////////////////////////////////				
@@ -130,16 +130,16 @@ public class Hauto {
     Cell selected=new Cell();
     
     public void click(String label) {
-        selected.is_solid=false;
+        selected.state.is_solid=false;
         if(label=="StoneWall") {
             selected.material = Material.StoneWall;     
-            selected.is_solid=true;
+            selected.state.is_solid=true;
             selected.logic=Logic.NotALogicBlock;
         }
         
         if(label=="DirtFloor") {
             selected.material = Material.DirtFloor;     
-            selected.is_solid=false;
+            selected.state.is_solid=false;
             selected.logic=Logic.NotALogicBlock;
         }
 
@@ -187,19 +187,19 @@ public class Hauto {
             selected.logic = Logic.NotALogicBlock;
             selected.charge=0;
             selected.material = Material.Door;
-            selected.is_solid=true;
+            selected.state.is_solid=true;
         }
         if(label=="Light") {
             selected.logic = Logic.Load;
             selected.material = Material.Machine;
             selected.machine = Machine.Light;
-            selected.is_solid=true;
+            selected.state.is_solid=true;
         }
         if(label=="Turret") {
             selected.logic = Logic.Load;
             selected.material = Material.Machine;
             selected.machine = Machine.Turret;
-            selected.is_solid=true;
+            selected.state.is_solid=true;
         }
     
     }
@@ -214,8 +214,8 @@ public class Hauto {
         if("just_getcharge".equals(mode)) {
             return c.charge;
         }
-        if("get_light".equals(mode) && (data==1 || !c.is_solid && !(c.material==Material.StoneWall))) {
-            return Math.max(c.charge*0.2f, c.light);
+        if("get_state.light".equals(mode) && (data==1 || !c.state.is_solid && !(c.material==Material.StoneWall))) {
+            return Math.max(c.charge*0.2f, c.state.light);
         }
         return 0.0f;
     }

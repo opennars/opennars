@@ -275,7 +275,11 @@ public class ParticleSystem  {
 
                 if (xPos > 0 && xPos < WIDTH && yPos > 0 && yPos < HEIGHT) { // if visible
 
-                    if (!blockArray[ (int) ((xPos + xVel) )][(int) ((yPos + yVel)  )].isSolid()) { // if no collision
+                    int tx = (int) ((xPos + xVel));
+                    int ty = (int) ((yPos + yVel));
+                    tx = Math.max(0, Math.min(tx, WIDTH));
+                    ty = Math.max(0, Math.min(ty, HEIGHT));
+                    if (!blockArray[ tx][ty].isSolid()) { // if no collision
 
                         xPos += xVel;
                         yPos += yVel;
@@ -293,14 +297,14 @@ public class ParticleSystem  {
                             life -= 10000;
                         }
 
-                        if (blockArray[ (int) (xPos)][(int) ((yPos + yVel))].isSolid()) {
+                        if (blockArray[ (int) (xPos)][ty].isSolid()) {
                             xVel = xVel > 0 ? Vel : -Vel;
                             yVel = r.nextFloat() - .5f;
                         } else {
                             yPos += yVel;
                         }
 
-                        if (blockArray[ (int) ((xPos + xVel))][(int) (yPos)].isSolid()) {
+                        if (blockArray[tx][(int) (yPos)].isSolid()) {
                             yVel = yVel > 0 ? Vel : -Vel;
                             xVel = r.nextFloat() - .5f;
                         } else {

@@ -4,20 +4,19 @@ import nars.grid2d.Cell.Logic;
 
 public class Cell {
     
-    public float light=0.0f;
     public float charge = 0;
     public float value=0;
     public float value2=0;
-    public float conductivity = 0.98f;
+    
     public boolean chargeFront = false;
     public float height = 0;
     public Material material;
     public Logic logic;
     public final CellState state;
-    public boolean is_solid=false;
+    
     
     public boolean isSolid() {
-        return is_solid;
+        return state.is_solid || material == Material.StoneWall;
     }
 
     public enum Material {
@@ -100,10 +99,10 @@ public class Cell {
             g = b = 127;
             r = 200;
         }
-        else if (material == Material.StoneWall || (material==Material.Door && is_solid)) {
+        else if (material == Material.StoneWall || (material==Material.Door && state.is_solid)) {
             r = g = b = 255;
         }
-        else if (material == Material.DirtFloor || (material==Material.Door && !is_solid)) {
+        else if (material == Material.DirtFloor || (material==Material.Door && !state.is_solid)) {
             if (height == Float.MAX_VALUE) {
                 r = g = b = 255;
             }
@@ -111,7 +110,7 @@ public class Cell {
                 r = g = b = (int)(128 + height);
             }           
         }
-        if(material==Material.Door  && is_solid) {
+        if(material==Material.Door  && state.is_solid) {
             b=0;
             g=(int) (g/2.0f);
         }
@@ -141,17 +140,17 @@ public class Cell {
         }
         if(edge)
         {
-            light=255;
+            state.light=255;
         }
         
-        a+=light*255;
+        a+=state.light*255;
         //g+=light*128;
         //b+=light*128;
         //r+=light*128;
         
         
         if(material==Material.StoneWall) {
-            a=r=g=b=(int) (200+light*255);
+            a=r=g=b=(int) (200+state.light*255);
             
         }
         
@@ -160,6 +159,10 @@ public class Cell {
             g += state.light;
             b += state.light;
             a += state.light;
+        }
+
+        if(logic!=Logic.NotALogicBlock) {
+            r/=2.0f;
         }
         
         r = Math.min(255, r);
@@ -173,15 +176,8 @@ public class Cell {
         state.ca = lerp(state.ca, a, 0.19f);
         
         s.fill(state.cr, state.cg, state.cb, state.ca);
-        if(logic!=Logic.NotALogicBlock)
-        {
-            s.fill(state.cr/2.0f);
-            s.rect(0,0,1.0f,1.0f);
-        }
-        else {
-            s.rect(0,0,1.0f,1.0f);
-        }
         
+        s.rect(0,0,1.0f,1.0f);
 
         
         s.textSize(1);
@@ -289,7 +285,7 @@ public class Cell {
         this.material = Material.Machine;
         this.logic = logic;
         this.charge = initialCharge;
-        this.is_solid=false;
+        this.state.is_solid=false;
     }
     
     
