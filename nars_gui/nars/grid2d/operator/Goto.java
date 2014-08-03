@@ -19,7 +19,7 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.grid2d.operator;
-
+ 
 import java.util.ArrayList;
 
 import nars.entity.Task;
