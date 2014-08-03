@@ -28,6 +28,15 @@ public class Hauto {
         w.value2=r.value2;
         w.is_solid=r.is_solid;
         w.chargeFront=false;
+        //
+        if(r.machine==Machine.Light && r.charge==1)
+        {
+            w.light=1.0f;
+        }
+        else
+        {
+            w.light=NeighborsValue2("op_max", i, j, readcells, "get_light", (r.is_solid || r.material==Material.StoneWall) ? 1 : 0)/1.1f; //1.1
+        }
         ///door
         if(r.material==Material.Door) {
             if(NeighborsValue2("op_or", i, j, readcells, "having_charge", 1.0f) != 0) {
@@ -204,6 +213,9 @@ public class Hauto {
         }
         if("just_getcharge".equals(mode)) {
             return c.charge;
+        }
+        if("get_light".equals(mode) && (data==1 || !c.is_solid && !(c.material==Material.StoneWall))) {
+            return c.light;
         }
         return 0.0f;
     }
