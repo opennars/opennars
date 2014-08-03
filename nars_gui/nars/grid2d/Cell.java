@@ -1,5 +1,7 @@
 package nars.grid2d;
 
+import nars.grid2d.Cell.Logic;
+
 public class Cell {
     
 
@@ -12,9 +14,10 @@ public class Cell {
     public Material material;
     public Logic logic;
     public final CellState state;
+    public boolean is_solid=false;
     
     public boolean isSolid() {
-        return material == Material.StoneWall;
+        return is_solid;
     }
 
     public enum Material {
@@ -90,23 +93,31 @@ public class Cell {
         //draw ground height
         int r=0,g=0,b=0,a=1;
         a = ambientLight;            
-        
+         
         if (material == Material.Empty) {
         }
         else if (material == Material.Machine) {
             g = b = 127;
             r = 200;
         }
-        else if (material == Material.StoneWall) {
+        else if (material == Material.StoneWall || (material==Material.Door && is_solid)) {
             r = g = b = 255;
         }
-        else if (material == Material.DirtFloor) {
+        else if (material == Material.DirtFloor || (material==Material.Door && !is_solid)) {
             if (height == Float.MAX_VALUE) {
                 r = g = b = 255;
             }
-            else {
+            else { 
                 r = g = b = (int)(128 + height);
             }           
+        }
+        
+        if(material==Material.Door  && is_solid) {
+            b=0;
+            g=(int) (g/2.0f);
+        }
+        if(material==Material.Door) {
+            r=200;
         }
 
         if ((charge>0) || (chargeFront)) {
@@ -152,11 +163,42 @@ public class Cell {
         state.ca = lerp(state.ca, a, 0.19f);
         
         s.fill(state.cr, state.cg, state.cb, state.ca);
-        s.rect(0,0,1.0f,1.0f);
+        if(logic!=Logic.NotALogicBlock)
+        {
+            s.fill(state.cr/2.0f);
+            s.rect(0,0,1.0f,1.0f);
+        }
+        else {
+            s.rect(0,0,1.0f,1.0f);
+        }
         
 
         
         s.textSize(1);
+         if(logic==Logic.SWITCH || logic==Logic.OFFSWITCH)
+        {
+            s.fill(state.cr, state.cg, state.cb, state.ca);
+            s.ellipse(0.5f, 0.5f, 1.0f, 1.0f);
+        }
+        else
+        if(logic!=Logic.BRIDGE && logic!=Logic.NotALogicBlock && logic!=Logic.WIRE) {
+            s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
+            s.triangle(0.25f, 1.0f, 0.5f, 0.5f, 0.75f, 1.0f);
+            s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
+            s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
+            s.rect(0, 0.3f, 1, 0.4f);
+            
+           // s.triangle(0.5f, 0.25f, 1, 0.5f, 0.5f, 0.75f);
+            //s.triangle(0.5f, 0.25f, 0, 0.5f, 0.5f, 0.75f);
+        }
+         else
+        if(logic==Logic.WIRE || logic==Logic.BRIDGE) {
+            s.fill(state.cr, state.cg, state.cb, state.ca);
+            s.rect(0, 0.3f, 1, 0.4f);
+            s.rect(0.3f, 0, 0.4f, 1);
+        }
+       
+        
         if(logic==Logic.AND)
         {
             drawtext(s,"^");
@@ -237,6 +279,7 @@ public class Cell {
         this.material = Material.Machine;
         this.logic = logic;
         this.charge = initialCharge;
+        this.is_solid=false;
     }
     
     
