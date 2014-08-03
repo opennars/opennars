@@ -7,25 +7,26 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JPanel;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
 import nars.grid2d.particle.ParticleSystem;
 import nars.gui.Window;
-import nars.language.Term;
 import processing.core.PApplet;
+import processing.core.PVector;
 
 
 public class Grid2DSpace extends PApplet {
 
     public static boolean world_used=false;
 
-    public static void pathFindAndGoto(Term[] arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
     ///////////////HAMLIB
     //processingjs compatibility layer
     int mouseScroll = 0;
@@ -533,4 +534,58 @@ public class Grid2DSpace extends PApplet {
         void Camera() {
         }
     }
+
+    static List<PVector> Reconstruct_Taken_Path(Map<PVector, PVector> parent, PVector start, PVector target) {
+        List<PVector> path = new ArrayList<PVector>();
+        path.add( target );
+        while (!path.get(path.size()-1).equals(start)) {
+            //since bfs found a solution, start is included for sure and thus this loop terminates for sure
+            path.add(parent.get(path.get(path.size()-1)));
+        }
+        Collections.reverse(path);
+        return path;
+    }
+
+    static List<PVector> Shortest_Path(Grid2DSpace s, PVector start, PVector target) {
+        Set<PVector> avoid = new HashSet<PVector>();
+        Map<PVector, PVector> parent = new HashMap<PVector, PVector>();
+        List<PVector> queue = new ArrayList<PVector>();
+        queue.add(start);
+
+        PVector x = new PVector();
+
+        while (queue.size() > 0)     {
+            PVector active = queue.get(0);
+            queue.remove(active);
+
+            avoid.add(active);
+
+            if (active == target)
+                return Reconstruct_Taken_Path(parent, start, target);
+
+            for (int i = 0; i < 4; i++) {
+                switch (i) {
+                    case 0: 
+                        x.set(active.x+1, active.y);
+                        break;
+                    case 1: 
+                        x.set(active.x-1, active.y);
+                        break;
+                    case 2: 
+                        x.set(active.x, active.y+1);
+                        break;
+                    case 3: 
+                        x.set(active.x, active.y-1);
+                        break;
+                }
+
+                if (avoid.contains(x) && !s.cells.readCells[(int)x.x][(int)x.y].isSolid())
+                    continue;
+                parent.put(x, active);
+                queue.add(x);            
+            }
+        }
+        return new ArrayList<PVector>();
+    }
+
 }
