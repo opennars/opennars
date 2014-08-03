@@ -209,7 +209,7 @@ public class Hauto {
         if("having_charge".equals(mode)) {
             if(c.logic!=Cell.Logic.WIRE)
                 return -1.0f; //not a charge 
-            return c.charge==data ? 1.0f : 0.0f;
+            return c.charge==data ? 1.0f : 0.0f; 
         }
         if("just_getcharge".equals(mode)) {
             return c.charge;
