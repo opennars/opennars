@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
-import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
 import nars.grid2d.particle.ParticleSystem;
@@ -32,7 +32,7 @@ public class Grid2DSpace extends PApplet {
     //processingjs compatibility layer
     int mouseScroll = 0;
     public final Hauto cells;
-    List<GridObject> objects = new ArrayList();
+    List<GridObject> objects = new CopyOnWriteArrayList();
     ProcessingJs processingjs = new ProcessingJs();
     //Hnav 2D navigation system
     Hnav hnav = new Hnav();
@@ -261,6 +261,9 @@ public class Grid2DSpace extends PApplet {
         if (!((dx <= 1) && (dy <= 1)))
             return "Too far";
 
+        if ((tx < 0) || (ty < 0) || (tx >= WIDTH) || (ty >= HEIGHT))
+            return "Out of bounds";
+            
         Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);
                 
@@ -268,7 +271,7 @@ public class Grid2DSpace extends PApplet {
         if (to.isSolid())
             return "Too solid";
         
-        final float maxTraversableHeight = 8;
+        final float maxTraversableHeight = 16;
         float dHeight = to.height - from.height;
         if (dHeight > maxTraversableHeight)
             return "Too high";
