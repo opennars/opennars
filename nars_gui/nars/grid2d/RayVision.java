@@ -14,7 +14,7 @@ public class RayVision implements GridObject {
     }
     
     @Override
-    public void update() {
+    public void update(Effect nextEffect) {
         
     }
 

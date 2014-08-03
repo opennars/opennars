@@ -6,18 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Action.Turn;
-import static nars.grid2d.Hauto.DOWN;
-import static nars.grid2d.Hauto.DOWNLEFT;
-import static nars.grid2d.Hauto.DOWNRIGHT;
-import static nars.grid2d.Hauto.LEFT;
-import static nars.grid2d.Hauto.RIGHT;
-import static nars.grid2d.Hauto.UP;
-import static nars.grid2d.Hauto.UPLEFT;
-import static nars.grid2d.Hauto.UPRIGHT;
 
 
 
-public class GridAgent extends LocalGridObject {
+abstract public class GridAgent extends LocalGridObject {
     
     public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
     public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
@@ -36,25 +28,11 @@ public class GridAgent extends LocalGridObject {
     
     public void perceive(Effect e) {         effects.add(e);     }
     
-    public boolean perceiveNext() {
+    public Effect perceiveNext() {
         if (effects.size() == 0)
-            return false;
+            return null;
         
-        Effect e = effects.pop();        
-        
-        /*if (e.action instanceof Forward) {
-            if (e.success) {
-                System.out.println("moved to: " + x + "," + y);
-            }
-            else {
-                System.out.println("can't move to: " + x + "," + y + " because: " + e);
-            }
-        }
-        else {*/
-            System.out.println(e);
-        //}
-        
-        return true;
+        return effects.pop();
     }
         
     float animationLerpRate = 0.1f; //LERP interpolation rate
@@ -62,27 +40,7 @@ public class GridAgent extends LocalGridObject {
     public void forward(int steps) {     act(new Forward(steps));    }
     public void turn(int angle) {   act(new Turn(angle));  }
 
-    public void update() {
-        int a = 0;
-        if (Math.random() < 0.4) {
-            int randDir = (int)(Math.random()*4);
-            if (randDir == 0)             a = LEFT;
-            else if (randDir == 1)        a = RIGHT;
-            else if (randDir == 2)        a = UP;
-            else if (randDir == 3)        a = DOWN;
-            else if (randDir == 4)        a = UPLEFT;
-            else if (randDir == 5)        a = UPRIGHT;
-            else if (randDir == 6)        a = DOWNLEFT;
-            else if (randDir == 7)        a = DOWNRIGHT;
-            turn(a);
-        }
-        
-        if (Math.random() < 0.2) {
-            forward(1);
-        }
-        
-        perceiveNext();
-    }
+    abstract public void update(Effect nextEffect);
     
     @Override
     public void draw() {
@@ -111,3 +69,4 @@ public class GridAgent extends LocalGridObject {
  
     
 }
+

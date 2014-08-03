@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -184,7 +185,9 @@ public class Grid2DSpace extends PApplet {
         if (time % automataPeriod == 0) {
             cells.Exec();
             for (GridObject g : objects) {
-                g.update();
+                Effect e = (g instanceof GridAgent) ? ((GridAgent)g).perceiveNext() : null;
+                g.update(e);
+                
                 if (g instanceof GridAgent) {
                     GridAgent b = (GridAgent)g;
                     if (b.actions.size() > 0) {
@@ -193,6 +196,7 @@ public class Grid2DSpace extends PApplet {
                             process(b, a);
                         }
                     }
+                    
                 }
             }
         } 
@@ -248,25 +252,39 @@ public class Grid2DSpace extends PApplet {
 //        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
 //    }
     
-    public Effect getMotionEffect(GridAgent agent, Action a, int x, int y, int tx, int ty) {
+    private String whyNonTraversible(GridAgent agent, int x, int y, int tx, int ty) {
         int dx = Math.abs(tx-x);
         int dy = Math.abs(ty-y);
+        
         if (!((dx <= 1) && (dy <= 1)))
-            return new Effect(a, false, getTime(), "Too far");
+            return "Too far";
 
         Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);
                 
         //System.out.println(to + " " + to.material);
         if ((to.material == Material.StoneWall) || (to.material == Material.DirtWall))
-            return new Effect(a, false, getTime(), "Too solid");
+            return "Too solid";
         
         final float maxTraversableHeight = 8;
         float dHeight = to.height - from.height;
         if (dHeight > maxTraversableHeight)
-            return new Effect(a, false, getTime(), "Too high");
+            return "Too high";
+     
+        return null;
+    }
+
+    
+    public Effect getMotionEffect(GridAgent agent, Action a, int x, int y, int tx, int ty) {
+        String reason = whyNonTraversible(agent, x, y, tx, ty);
+        if (reason == null) {
+            return new Effect(a, true, getTime(), "Moved");
+        }
+        else {
+            return new Effect(a, false, getTime(), reason);
+        }
         
-        return new Effect(a, true, getTime(), "Moved");
+        
     }
     
     public void drawObjects() {
@@ -317,6 +335,7 @@ public class Grid2DSpace extends PApplet {
         }
         
     }
+
 
     class ProcessingJs {
 
@@ -546,24 +565,29 @@ public class Grid2DSpace extends PApplet {
         return path;
     }
 
-    static List<PVector> Shortest_Path(Grid2DSpace s, PVector start, PVector target) {
+    static List<PVector> Shortest_Path(Grid2DSpace s, GridAgent a, PVector start, PVector target) {
         Set<PVector> avoid = new HashSet<PVector>();
         Map<PVector, PVector> parent = new HashMap<PVector, PVector>();
-        List<PVector> queue = new ArrayList<PVector>();
+        ArrayDeque<PVector> queue = new ArrayDeque<PVector>();
         queue.add(start);
 
-        PVector x = new PVector();
 
-        while (queue.size() > 0)     {
-            PVector active = queue.get(0);
-            queue.remove(active);
+        while (!queue.isEmpty()) {
+            PVector active = queue.removeFirst();
+
+            if (avoid.contains(active))
+                continue;
 
             avoid.add(active);
 
-            if (active == target)
+            
+
+            if (active.equals(target)) {
                 return Reconstruct_Taken_Path(parent, start, target);
+            }
 
             for (int i = 0; i < 4; i++) {
+                PVector x = new PVector();
                 switch (i) {
                     case 0: 
                         x.set(active.x+1, active.y);
@@ -579,13 +603,16 @@ public class Grid2DSpace extends PApplet {
                         break;
                 }
 
-                if (avoid.contains(x) && !s.cells.readCells[(int)x.x][(int)x.y].isSolid())
+                
+                if (avoid.contains(x) || 
+                        s.whyNonTraversible(a, (int)active.x, (int)active.y, (int)x.x, (int)x.y)!=null)
                     continue;
+                
                 parent.put(x, active);
-                queue.add(x);            
+                queue.add(x);
             }
-        }
-        return new ArrayList<PVector>();
+        }        
+        return null;        
     }
 
 }
