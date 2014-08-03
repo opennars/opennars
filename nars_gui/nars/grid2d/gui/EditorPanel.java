@@ -103,7 +103,11 @@ public class EditorPanel extends JPanel {
         });        
         machineMenu.add(new EditorMode("Turret") {
             @Override public void run() { s.cells.click("Turret"); }
-        });        
+        });    
+        
+        machineMenu.add(new EditorMode("Door") {
+            @Override public void run() { s.cells.click("Door"); }
+        });  
         
     }
     
