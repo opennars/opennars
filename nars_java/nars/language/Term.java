@@ -145,19 +145,24 @@ public class Term implements Cloneable, Comparable<Term> {
     }
     
     /**
-     * Orders among terms: variable < atomic < compound
      * @param that The Term to be compared with the current Term
      * @return The same as compareTo as defined on Strings
      */
     @Override
     public int compareTo(final Term that) {
-        if (that instanceof CompoundTerm) {
+        //This removes this class's dependency on CompoundTerm
+        if (that.getClass() == getClass())
+            return name.compareTo(that.getName());
+        return that.getClass().getName().compareTo(getClass().getName());
+        
+        //previously: Orders among terms: variable < atomic < compound
+        /*if (that instanceof CompoundTerm) {
             return -1;
         } else if (that instanceof Variable) {
             return 1;
         } else {
             return name.compareTo(that.getName());            
-        }
+        }*/
     }
 
     /**

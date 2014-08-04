@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.junit.runners.Parameterized;
 
 

@@ -1,11 +1,8 @@
 package nars.grid2d.map;
 
-import java.util.List;
 import nars.grid2d.Cell;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.Hauto;
-import static nars.grid2d.map.Dungeon.GetFeatureLowerBound;
-import static nars.grid2d.map.Dungeon.IsFeatureWallBound;
 
 
 public class Dungeon {

@@ -43,6 +43,7 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.IntersectionExt;
 import nars.language.IntersectionInt;
+import static nars.language.Language.*;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Similarity;
@@ -153,7 +154,7 @@ public final class CompositionalRules {
                     }
                     Term conj = Conjunction.make(term1, term2, memory);
                     
-                    if (Variable.containDepOrIndepVar(conj.toString()))
+                    if (containDepOrIndepVar(conj.toString()))
                         continue;
                     
                     TruthValue truthT = memory.getCurrentTask().sentence.truth;
@@ -289,7 +290,7 @@ public final class CompositionalRules {
         if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
             return;
         }
-        Term term2 = CompoundTerm.reduceComponents(compound, component, memory);
+        Term term2 = reduceComponents(compound, component, memory);
         if (term2 == null) {
             return;
         }
@@ -387,7 +388,7 @@ public final class CompositionalRules {
         Task task = memory.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = memory.getCurrentBelief();
-        Term content = CompoundTerm.reduceComponents(compound, component, memory);
+        Term content = reduceComponents(compound, component, memory);
         if (content == null) {
             return;
         }
@@ -397,7 +398,7 @@ public final class CompositionalRules {
             budget = BudgetFunctions.compoundBackward(content, memory);
             memory.doublePremiseTask(content, truth, budget);
             // special inference to answer conjunctive questions with query variables
-            if (Variable.containVarQuery(taskSentence.content.getName())) {
+            if (containVarQuery(taskSentence.content.getName())) {
                 Concept contentConcept = memory.termToConcept(content);
                 if (contentConcept == null) {
                     return;
@@ -660,7 +661,7 @@ public final class CompositionalRules {
         if(figure==21) {
             HashMap<Term,Term> res1=new HashMap<>();
             HashMap<Term,Term> res2=new HashMap<>();
-            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
+            findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
             ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
@@ -668,7 +669,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -685,7 +686,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)P2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -702,7 +703,7 @@ public final class CompositionalRules {
         if(figure==12) {
             HashMap<Term,Term> res1=new HashMap<>();
             HashMap<Term,Term> res2=new HashMap<>();
-            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
+            findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
             ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S2 instanceof Conjunction) {
@@ -710,7 +711,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)S2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -727,7 +728,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)P1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -744,7 +745,7 @@ public final class CompositionalRules {
         if(figure==11) {
             HashMap<Term,Term> res1=new HashMap<>();
             HashMap<Term,Term> res2=new HashMap<>();
-            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
+            findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
             ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
             ((CompoundTerm) T2).applySubstitute(res1);
             if(P1 instanceof Conjunction) {
@@ -752,7 +753,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)P1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -769,7 +770,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)P2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -786,7 +787,7 @@ public final class CompositionalRules {
         if(figure==22) {
             HashMap<Term,Term> res1=new HashMap<>();
             HashMap<Term,Term> res2=new HashMap<>();
-            Variable.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
+            findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
             ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
@@ -794,7 +795,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -811,7 +812,7 @@ public final class CompositionalRules {
                 for(Term s1 : ((CompoundTerm)S2).cloneTerms()) {
                     HashMap<Term,Term> res3=new HashMap<>();
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
-                    if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
+                    if(findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -894,23 +895,23 @@ public final class CompositionalRules {
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
             Term[] components_level1 = ((CompoundTerm)taskterm).term;            
-            Term secterm_unwrap=(Term) CompoundTerm.unwrapNegation(secterm).clone();
+            Term secterm_unwrap=(Term) unwrapNegation(secterm).clone();
             for(Term T1 : components_level1) {
-                Term T1_unwrap=CompoundTerm.unwrapNegation(T1);
+                Term T1_unwrap=unwrapNegation(T1);
                 HashMap<Term, Term> Values = new HashMap<Term, Term>(); //we are only interested in first variables
-                if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,new HashMap<Term, Term>())) {
+                if(findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,new HashMap<Term, Term>())) {
                     CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                     taskterm_subs.applySubstitute(Values);
-                    taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                    taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                     if(taskterm_subs!=null) {
                         terms_dependent.add(taskterm_subs);
                     }
                 }
                 HashMap<Term, Term> Values2 = new HashMap<Term, Term>(); //we are only interested in first variables
-                if(Variable.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2,new HashMap<Term, Term>())) {
+                if(findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2,new HashMap<Term, Term>())) {
                     CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                     taskterm_subs.applySubstitute(Values2);
-                    taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                    taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                     if(taskterm_subs!=null) {
                         terms_independent.add(taskterm_subs);
                     }
@@ -921,23 +922,23 @@ public final class CompositionalRules {
                 if(T1_unwrap instanceof CompoundTerm) {
                     Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
                     for(Term T2 : components_level2) {
-                        Term T2_unwrap=(Term) CompoundTerm.unwrapNegation(T2).clone(); 
+                        Term T2_unwrap=(Term) unwrapNegation(T2).clone(); 
                         HashMap<Term, Term> Values3 = new HashMap<Term, Term>(); //we are only interested in first variables
-                        if(Variable.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<Term, Term>())) {
+                        if(findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<Term, Term>())) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
                             CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                             taskterm_subs.applySubstitute(Values3);
-                            taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                            taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                             if(taskterm_subs!=null) {
                                 terms_dependent.add(taskterm_subs);
                             }
                         }
                         HashMap<Term, Term> Values4 = new HashMap<Term, Term>(); //we are only interested in first variables
-                        if(Variable.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4,new HashMap<Term, Term>())) {
+                        if(findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4,new HashMap<Term, Term>())) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
                             CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                             taskterm_subs.applySubstitute(Values4);
-                            taskterm_subs=CompoundTerm.ReduceTillLayer2(taskterm_subs,secterm,memory);
+                            taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                             if(taskterm_subs!=null) {
                                 terms_independent.add(taskterm_subs);
                             }

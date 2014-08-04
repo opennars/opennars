@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
-import nars.gui.NARControls;
 import nars.io.Input;
 import nars.io.Output;
 import nars.io.TextInput;

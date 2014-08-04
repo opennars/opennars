@@ -20,6 +20,9 @@ package nars.inference;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
@@ -164,5 +167,66 @@ public class TemporalRules {
         memory.doublePremiseTask(statement1, truth1, budget1);
         memory.doublePremiseTask(statement2, truth2, budget2);
         memory.doublePremiseTask(statement3, truth3, budget3);
+    }
+
+    /**
+     * Evaluate the quality of the judgment as a solution to a problem
+     *
+     * @param problem A goal or question
+     * @param solution The solution to be evaluated
+     * @return The quality of the judgment as the solution
+     */
+    public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
+        if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
+            return 0.0F;
+        }
+        TruthValue truth = solution.truth;
+        if (problem.getOccurenceTime() != solution.getOccurenceTime()) {
+            Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.getTime());
+            truth = cloned.truth;
+        }
+        if (problem.containQueryVar()) {
+            return truth.getExpectation() / solution.content.getComplexity();
+        } else {
+            return truth.getConfidence();
+        }
+    }
+
+
+    /* ----- Functions used both in direct and indirect processing of tasks ----- */
+    /**
+     * Evaluate the quality of a belief as a solution to a problem, then reward
+     * the belief and de-prioritize the problem
+     *
+     * @param problem The problem (question or goal) to be solved
+     * @param solution The belief as solution
+     * @param task The task to be immediately processed, or null for continued
+     * process
+     * @return The budget for the new task which is the belief activated, if
+     * necessary
+     */
+    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
+        BudgetValue budget = null;
+        boolean feedbackToLinks = false;
+        if (task == null) {
+            task = memory.getCurrentTask();
+            feedbackToLinks = true;
+        }
+        boolean judgmentTask = task.sentence.isJudgment();
+        final float quality = TemporalRules.solutionQuality(problem, solution, memory);
+        if (judgmentTask) {
+            task.incPriority(quality);
+        } else {
+            float taskPriority = task.getPriority();
+            budget = new BudgetValue(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
+            task.setPriority(Math.min(1 - quality, taskPriority));
+        }
+        if (feedbackToLinks) {
+            TaskLink tLink = memory.getCurrentTaskLink();
+            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
+            TermLink bLink = memory.getCurrentBeliefLink();
+            bLink.incPriority(quality);
+        }
+        return budget;
     }
 }

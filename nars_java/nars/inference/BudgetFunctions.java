@@ -64,42 +64,6 @@ public final class BudgetFunctions extends UtilityFunctions {
         return or(confidence, originality);
     }
 
-    /* ----- Functions used both in direct and indirect processing of tasks ----- */
-    /**
-     * Evaluate the quality of a belief as a solution to a problem, then reward
-     * the belief and de-prioritize the problem
-     *
-     * @param problem The problem (question or goal) to be solved
-     * @param solution The belief as solution
-     * @param task The task to be immediately processed, or null for continued
-     * process
-     * @return The budget for the new task which is the belief activated, if
-     * necessary
-     */
-    static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
-        BudgetValue budget = null;
-        boolean feedbackToLinks = false;
-        if (task == null) {                   // called in continued processing
-            task = memory.getCurrentTask();
-            feedbackToLinks = true;
-        }
-        boolean judgmentTask = task.sentence.isJudgment();
-        final float quality = LocalRules.solutionQuality(problem, solution, memory);
-        if (judgmentTask) {
-            task.incPriority(quality);
-        } else {
-            float taskPriority = task.getPriority();
-            budget = new BudgetValue(or(taskPriority, quality), task.getDurability(), truthToQuality(solution.truth));
-            task.setPriority(Math.min(1 - quality, taskPriority));
-        }
-        if (feedbackToLinks) {
-            TaskLink tLink = memory.getCurrentTaskLink();
-            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = memory.getCurrentBeliefLink();
-            bLink.incPriority(quality);
-        }
-        return budget;
-    }
 
     /**
      * Evaluate the quality of a revision, then de-prioritize the premises
@@ -331,4 +295,8 @@ public final class BudgetFunctions extends UtilityFunctions {
         }
         return new BudgetValue(priority, durability, quality);
     }
+
+    @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
+        throw new RuntimeException("Moved to TemporalRules.java");
+    }    
 }
