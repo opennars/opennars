@@ -93,11 +93,11 @@ public class DefaultTextPerception extends TextPerception {
             @Override
             public boolean react(Memory m, String input, TextReaction lastHandler) {                
 
-                if (input.indexOf(Symbols.SILENCE_COMMAND)==0) {
+                if (input.indexOf(Symbols.SET_NOISE_LEVEL_COMMAND)==0) {
                     String[] p = input.split("=");
                     if (p.length == 2) {
-                        int silenceLevel = Integer.parseInt(p[1]);
-                        m.param.setSilenceLevel(silenceLevel);                        
+                        int noiseLevel = Integer.parseInt(p[1]);
+                        m.param.noiseLevel.set(noiseLevel);                        
                         m.output(Output.IN.class, input);
                     }
                     

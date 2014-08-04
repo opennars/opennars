@@ -33,20 +33,18 @@ public class KIFInput extends PrintWriterInput implements Runnable {
     private final KIF kif;
     private final Iterator<Formula> formulaIterator;
     boolean closed = false;
-    private final NAR nar;
     private boolean includeSubclass;
     private boolean includeInstance;
     private boolean includeRelatedInternalConcept;
     private boolean includeDisjoint;
     private boolean includeSubrelation;
 
-    public KIFInput(NAR n, String kifPath) throws Exception {
-        super(n);
+    public KIFInput(String kifPath) throws Exception {
+        super();
         
         kif = new KIF(kifPath);
         formulaIterator = kif.getFormulas().iterator();
         
-        this.nar = n;                
     }
 
     public void setIncludeDisjoint(boolean includeDisjoint) {

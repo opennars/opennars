@@ -1,5 +1,6 @@
 package nars.test.util;
 
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.util.NARGraph;
 import nars.util.NARGraph.DefaultGraphizer;
@@ -17,7 +18,7 @@ public class TestNARGraph {
     @Test
     public void testGraph() {
     
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
         
         n.addInput("<a --> b>.");
         

@@ -1,5 +1,6 @@
 package nars.test.util;
 
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.util.InferenceTracer;
 import org.junit.Test;
@@ -12,7 +13,7 @@ public class InferenceTracerTest {
     
     @Test
     public void testConceptAndTask() {
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
         
         InferenceTracer tracer = new InferenceTracer();
         n.memory.setRecorder(tracer);
@@ -33,7 +34,7 @@ public class InferenceTracerTest {
     
     @Test
     public void test2() {
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
         
         InferenceTracer tracer = new InferenceTracer();
         n.memory.setRecorder(tracer);

@@ -17,6 +17,7 @@
 
 package nars.test.util;
 
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.util.Number1DInput;
 import org.junit.Assert;
@@ -48,11 +49,12 @@ public class Number1DInputTest {
         
         double[] x = randomArray(N, 1.0, 0);
         
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
         
         //new TextOutput(n, System.out);
         
-        Number1DInput v = new Number1DInput(n, "a", x, 2);
+        Number1DInput v = new Number1DInput("a", x, 2);
+        n.addInput(v);
         /*
         for (int i = 0; i < 10; i++) {
             //v.next(randomArray(N, 1.0, 0));
@@ -73,11 +75,13 @@ public class Number1DInputTest {
         
         double[] x = randomArray(N, 1.0, 0);
         
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
         
         //new TextOutput(n, System.out);
         
-        Number1DInput v = new Number1DInput(n, "a", x, resolution);
+        Number1DInput v = new Number1DInput("a", x, resolution);
+        n.addInput(v);
+        
         for (int i = 0; i < 10; i++) {
             v.next(randomArray(N, 1.0, 0));
             //v.next(pulse(N,i%N));            

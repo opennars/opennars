@@ -55,26 +55,26 @@ public class TextOutput implements Output {
     /**
      * Default constructor; adds the reasoner to a NAR's outptu channels
      *
-     * @param reasoner
+     * @param n
      */
-    public TextOutput(NAR reasoner) {
-        this.nar = reasoner;
-        reasoner.addOutput(this);
+    public TextOutput(NAR n) {
+        this.nar = n;
+        n.addOutput(this);
     }
-    public TextOutput(NAR reasoner, LineOutput outExp2) {
-        this(reasoner);
+    public TextOutput(NAR n, LineOutput outExp2) {
+        this(n);
         this.outExp2 = outExp2;
     }
 
-    public TextOutput(NAR reasoner, PrintWriter outExp) {
-        this(reasoner);
+    public TextOutput(NAR n, PrintWriter outExp) {
+        this(n);
         this.outExp = outExp;
     }
-    public TextOutput(NAR reasoner, PrintStream ps) {
-        this(reasoner, new PrintWriter(ps));
+    public TextOutput(NAR n, PrintStream ps) {
+        this(n, new PrintWriter(ps));
     }
-    public TextOutput(NAR reasoner, StringWriter s) {
-        this(reasoner, new PrintWriter(s));
+    public TextOutput(NAR n, StringWriter s) {
+        this(n, new PrintWriter(s));
     }
     /**
      * Open an output experience file

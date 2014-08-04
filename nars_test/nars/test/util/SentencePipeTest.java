@@ -18,6 +18,7 @@
 package nars.test.util;
 
 import java.io.StringWriter;
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.TextOutput;
@@ -34,8 +35,8 @@ public class SentencePipeTest {
     
     @Test
     public void testPipe() {
-        NAR source = new NAR();
-        NAR target = new NAR();
+        NAR source = new DefaultNARBuilder().build();
+        NAR target = new DefaultNARBuilder().build();
         
         new SentencePipe(source, target) {
 
