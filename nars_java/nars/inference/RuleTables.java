@@ -133,13 +133,13 @@ public class RuleTables {
                         }
                         break;
                     case TermLink.COMPONENT_CONDITION:
-                        if (belief != null) {
+                        if ((belief != null) && (taskTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
                             SyllogisticRules.conditionalDedInd((Implication) taskTerm, bIndex, beliefTerm, tIndex, memory);
                         }
                         break;
                     case TermLink.COMPOUND_CONDITION:
-                        if (belief != null) {
+                        if ((belief != null) && (taskTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
                             SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, tIndex, memory);
                         }

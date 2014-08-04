@@ -26,10 +26,11 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.NAR;
+import nars.core.NARParams;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.entity.ConceptBuilder;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -40,6 +41,7 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
+import nars.io.Output;
 import nars.io.Output.OUT;
 import nars.language.Negation;
 import nars.language.Term;
@@ -47,7 +49,7 @@ import nars.operator.Operator;
 import nars.util.XORShiftRandom;
 
 
-public class Memory {
+public class Memory implements Output {
 
     //public static Random randomNumber = new Random(1);
     public static Random randomNumber = new XORShiftRandom(1);
@@ -55,7 +57,7 @@ public class Memory {
     /**
      * Backward pointer to the nar
      */
-    public final NAR nar;
+    //public final NAR nar;
 
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**
@@ -66,6 +68,8 @@ public class Memory {
     
     /* InnateOperator registry. Containing all registered operators of the system */
     public final HashMap<String, Operator> operators;
+    
+    private long currentStampSerial = 0;
     
     /**
      * New tasks with novel composed terms, for delayed and selective processing
@@ -78,7 +82,7 @@ public class Memory {
     
     public final AtomicInteger beliefForgettingRate = new AtomicInteger(Parameters.TERM_LINK_FORGETTING_CYCLE);
     public final AtomicInteger taskForgettingRate = new AtomicInteger(Parameters.TASK_LINK_FORGETTING_CYCLE);
-    public final AtomicInteger conceptForgettingRate = new AtomicInteger(Parameters.CONCEPT_FORGETTING_CYCLE);
+    
 
     /* ---------- Short-term workspace for a single cycle ---	------- */
     /**
@@ -100,6 +104,19 @@ public class Memory {
 
     private Stamp newStamp;
     
+    private boolean working = true;    
+    /**
+     * The remaining number of steps to be carried out (stepLater mode)
+     */
+    private int stepsQueued;
+
+    
+/**
+     * System clock, relatively defined to guarantee the repeatability of
+     * behaviors
+     */
+    private long clock;
+    
     /**
      * The substitution that unify the common term in the Task and the Belief
      * TODO unused
@@ -109,6 +126,10 @@ public class Memory {
 
     // for temporal induction
     private Task lastEvent;
+    public final NARParams param;
+    
+    transient private Output output;
+    private final ConceptBuilder conceptBuilder;
 
     public BudgetValue getLastEventBudget() {
         return lastEvent.budget;
@@ -123,30 +144,33 @@ public class Memory {
      *
      * @param nar
      */
-    public Memory(NAR nar) {
+    public Memory(NARParams param, ConceptBag concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder) {                
         
-        this.nar = nar;
+        this.param = param;
+        this.conceptBuilder = conceptBuilder;
         
         recorder = NullInferenceRecorder.global;
         
-        concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
+        this.concepts = concepts;
+        this.novelTasks = novelTasks;
         
+        newTasks = new ArrayDeque<>();        
+        lastEvent = null;
+
         operators = new HashMap<>();
         Operator.loadDefaultOperators(this);
-                        
-        novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
-        
-        newTasks = new ArrayDeque<>();
-        
-        lastEvent = null;
+
     }
 
-    public void init() {
+    public void reset() {
         concepts.clear();
         novelTasks.clear();
         newTasks.clear();
         randomNumber = new Random(1);
         lastEvent = null;
+        clock = 0;
+        stepsQueued = 0;
+        working = true;
         if (getRecorder().isActive()) {
             getRecorder().append("Reset");
         }
@@ -161,7 +185,7 @@ public class Memory {
     }
 
     public long getTime() {
-        return nar.getTime();
+        return clock;
     }
 
      /* ---------- operator processing ---------- */
@@ -231,7 +255,8 @@ public class Memory {
         Concept concept = concepts.get(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
-            concept = new Concept(term, this);
+            
+            concept = conceptBuilder.newConcept(term, this);
 
             final boolean created = concepts.putIn(concept);
             if (!created) {
@@ -316,14 +341,26 @@ public class Memory {
         final Task task = new Task(sentence, budget, getCurrentTask(), sentence, candidateBelief);
 
         if (sentence.isQuestion()) {
-            final float s = task.budget.summary();
-            final float minSilent = nar.param.getSilenceLevel() / 100.0f;
-            if (s > minSilent) {  // only report significant derived Tasks
-                nar.output(OUT.class, task.sentence);
-            }
+            output(task);
         }
 
         addNewTask(task, "Activated");
+    }
+    
+    public void output(Task t) {
+        if (output == null) return;
+        
+        final float minSilent = param.getSilenceLevel() / 100.0f;
+        final float budget = t.budget.summary();        
+        if (budget >= minSilent) {  // only report significant derived Tasks
+            output(OUT.class, t.sentence);
+        }        
+    }
+    
+    @Override
+    public void output(Class c, Object signal) {
+        if (output!=null)
+            output.output(c, signal);
     }
 
     /**
@@ -407,15 +444,8 @@ public class Memory {
                     }
                 }
             }
-            float budget = task.budget.summary();
-            float minSilent = nar.param.getSilenceLevel() / 100.0f;
-            
-            
-            //Experiment:  if it has the budget (equal) then it  should be able to buy the output, so changing '>' to '>='           
-            if (budget >= minSilent) {  
-                // only report significant derived Tasks
-                nar.output(OUT.class, task.sentence);
-            }
+
+            output(task);
             
             addNewTask(task, "Derived");
             
@@ -529,26 +559,34 @@ public class Memory {
      *
      * @param clock The current time to be displayed
      */
-    public void workCycle(final long clock) {
-        if (recorder.isActive()) {            
-            recorder.onCycleStart(clock);
+    public void cycle() {
+        if (working) {
+            if (recorder.isActive()) {            
+                recorder.onCycleStart(clock);
+            }
+
+            processNewTask();
+
+            if (noResult()) {       // necessary?
+                processNovelTask();
+            }
+
+            if (noResult()) {       // necessary?
+                processConcept();
+            }
+
+            novelTasks.refresh();
+
+            if (recorder.isActive()) {            
+                recorder.onCycleEnd(clock);
+            }       
+            
+            if (stepsQueued > 0) {
+                stepsQueued--;
+            }            
+
+            clock++;
         }
-        
-        processNewTask();
-        
-        if (noResult()) {       // necessary?
-            processNovelTask();
-        }
-        
-        if (noResult()) {       // necessary?
-            processConcept();
-        }
-        
-        novelTasks.refresh();
-        
-        if (recorder.isActive()) {            
-            recorder.onCycleEnd(clock);
-        }        
     }
 
     /**
@@ -734,10 +772,7 @@ public class Memory {
     public AtomicInteger getBeliefForgettingRate() {
         return beliefForgettingRate;
     }
-
-    public AtomicInteger getConceptForgettingRate() {
-        return conceptForgettingRate;
-    }
+    
 
     private void onTaskAdd(Task t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -839,6 +874,21 @@ public class Memory {
         return currentConcept;
     }
 
+    public long newStampSerial() {
+        return currentStampSerial++;
+    }
+
+    /**
+     * sets the current output destination for Memory's emitted signals     
+     */
+    public void setOutput(Output o) {
+        output = o;
+    }
+
+    public int getCyclesQueued() {
+        return stepsQueued;
+    }
+
     public static final class NullInferenceRecorder implements InferenceRecorder {
 
         public static final NullInferenceRecorder global = new NullInferenceRecorder();
@@ -858,4 +908,22 @@ public class Memory {
                
     }
     
+
+    public boolean isWorking() {
+        return working;
+    }
+        
+    /** Can be used to pause/resume inference, without killing the running thread. */
+    public void setWorking(boolean b) {
+        this.working = b;
+    }
+    
+    /**
+     * Queue additional cycle()'s to the inference process.
+     *
+     * @param cycles The number of inference steps
+     */
+    public void stepLater(final int cycles) {
+        stepsQueued += cycles;
+    }    
 }

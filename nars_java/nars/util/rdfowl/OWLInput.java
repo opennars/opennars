@@ -11,6 +11,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.io.TextOutput;
 import nars.util.PrintWriterInput;
@@ -34,8 +35,8 @@ public class OWLInput extends PrintWriterInput {
     
     private final Map<String, Entity> entities = new HashMap();
 
-    public OWLInput(NAR n, String owlFileLocation) throws Exception {
-        super(n);
+    public OWLInput(String owlFileLocation) throws Exception {
+        super();
         
         parseAndLoadData(new File(owlFileLocation));
     }
@@ -485,13 +486,13 @@ public class OWLInput extends PrintWriterInput {
     }
     
     public static void main(String[] args) throws Exception {
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
         
         new TextOutput(n, System.out);
         
         //new NARSwing(n);
 
-        new OWLInput(n, "/home/me/Downloads/schemaorg.owl");
+        n.addInput(new OWLInput("/home/me/Downloads/schemaorg.owl"));
         
     }
 }

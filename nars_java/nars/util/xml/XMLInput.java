@@ -47,16 +47,16 @@ public class XMLInput extends PrintWriterInput {
 
         
         //new XMLInput(n, "/home/me/Downloads/schemaorg.owl","");
-        new XMLInput(n, "/home/me/Downloads/Semantic_Web.rdf","");
+        n.addInput(new XMLInput("/home/me/Downloads/Semantic_Web.rdf",""));
         
     }
     
-    public XMLInput(NAR n, String filename, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
-        this(n, new File(filename), nodePrefix);
+    public XMLInput(String filename, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
+        this(new File(filename), nodePrefix);
     }
     
-    public XMLInput(NAR n, File f, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
-        super(n);
+    public XMLInput(File f, String nodePrefix) throws IOException, ParserConfigurationException, SAXException {
+        super();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(f);

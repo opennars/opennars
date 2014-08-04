@@ -113,26 +113,25 @@ public final class Concept extends Item {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Term tm, final Memory memory) {
+    public Concept(final Term tm, TaskLinkBag taskLinks, TermLinkBag termLinks, final Memory memory) {
         super(tm.getName());
-        term = tm;
+        this.term = tm;
         this.memory = memory;
 
-        questions = new ArrayList();
-        beliefs = new ArrayList();
-        quests = new ArrayList<>();
-        desires = new ArrayList<>();
+        this.questions = new ArrayList();
+        this.beliefs = new ArrayList();
+        this.quests = new ArrayList<>();
+        this.desires = new ArrayList<>();       
 
-        final NAR nar = memory.nar;
+        this.taskLinks = taskLinks;
+        this.termLinks = termLinks;
 
-        taskLinks = new TaskLinkBag(nar.config.getTaskLinkBagLevels(), nar.config.getTaskLinkBagSize(), memory.taskForgettingRate);
-        termLinks = new TermLinkBag(nar.config.getTermLinkBagLevels(), nar.config.getTermLinkBagSize(), memory.beliefForgettingRate);
 
         if (tm instanceof CompoundTerm) {
-            termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
+            this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         }
         else {
-            termLinkTemplates = null;
+            this.termLinkTemplates = null;
         }
 
     }

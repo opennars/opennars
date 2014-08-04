@@ -1,7 +1,5 @@
 package nars.io;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
@@ -12,8 +10,6 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.io.Output.ERR;
-import nars.io.Output.IN;
 import static nars.io.Symbols.ARGUMENT_SEPARATOR;
 import static nars.io.Symbols.BUDGET_VALUE_MARK;
 import static nars.io.Symbols.GOAL_MARK;
@@ -51,15 +47,10 @@ import nars.storage.Memory;
  */
 public class TextPerception {
     
-    private final NAR nar;
-
-    public static final List<TextReaction> defaultParsers = new ArrayList();
-    
-    static {
-        initDefaultParsers(); //shared by all ExperienceReaders
-    }
+    public final Memory memory;
     
     public final List<TextReaction> parsers;
+    private final NAR nar;
     
     
     /**
@@ -76,14 +67,15 @@ public class TextPerception {
             super(s);
         }
     }    
-
-    public TextPerception(NAR n, List<TextReaction> parsers) {
-        this.nar = n;
-        this.parsers = parsers;        
+    
+    public TextPerception(NAR nar) {
+        this(nar, new ArrayList());
     }
 
-    public TextPerception(NAR n) {
-        this(n, defaultParsers);
+    public TextPerception(NAR nar, List<TextReaction> parsers) {
+        this.nar = nar;
+        this.memory = nar.memory;
+        this.parsers = parsers;        
     }
     
     public void perceive(final Input i, final String lines) {
@@ -99,7 +91,7 @@ public class TextPerception {
             TextReaction lastHandled = null;
             for (TextReaction p : parsers) {            
 
-                boolean result = p.react(nar, line, lastHandled);
+                boolean result = p.react(memory, line, lastHandled);
 
                 //System.out.println(line + " parser " + p + " " + result);
 
@@ -109,172 +101,13 @@ public class TextPerception {
 
             //not handled, so respond with some signal
             if (lastHandled == null) {
-                nar.output(Output.ERR.class, "Invalid input (" + i + "): " + line);
+                memory.output(Output.ERR.class, "Invalid input (" + i + "): " + line);
             }
         }
         
     }
         
     
-    private static void initDefaultParsers() {
-        //integer, # of cycles to step
-        defaultParsers.add(new TextReaction() {
-            final String spref = Symbols.INPUT_LINE_PREFIX + ':';
-            
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {
-                try {
-                    input = input.trim();
-                    
-                    
-                    if (input.startsWith(spref)) {
-                        input = input.substring(spref.length());
-                    }
-                    input = input.trim();
-                    
-                    int cycles = Integer.parseInt(input);
-                    nar.output(IN.class, cycles);
-                    
-                    //TODO queue the cycles, invoke call from here
-                    
-                    nar.finish(cycles);
-                    return true;
-                }
-                catch (NumberFormatException e) {
-                    return false;
-                }                
-            }
-        });
-        
-        //reset
-        defaultParsers.add(new TextReaction() {
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {                
-                if (input.equals(Symbols.RESET_COMMAND)) {
-                    nar.reset();
-                    nar.output(Output.IN.class, input);
-                    return true;
-                }
-                return false;
-            }
-        });
-        
-        //stop
-        defaultParsers.add(new TextReaction() {
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {
-                if (!nar.isWorking())  {
-                    if (input.equals(Symbols.STOP_COMMAND)) {
-                        nar.output(Output.IN.class, input);
-                        nar.setWorking(false);
-                        return true;
-                    }
-                }
-                return false;                
-            }
-        });    
-        
-        //start
-        defaultParsers.add(new TextReaction() {
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {                
-                if (nar.isWorking()) {
-                    if (input.equals(Symbols.START_COMMAND)) {
-                        nar.setWorking(true);
-                        nar.output(Output.IN.class, input);
-                        return true;
-                    }
-                }
-                return false;                
-            }
-        });
-        
-        //silence
-        defaultParsers.add(new TextReaction() {
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {                
-
-                if (input.indexOf(Symbols.SILENCE_COMMAND)==0) {
-                    String[] p = input.split("=");
-                    if (p.length == 2) {
-                        int silenceLevel = Integer.parseInt(p[1]);
-                        nar.param.setSilenceLevel(silenceLevel);                        
-                        nar.output(Output.IN.class, input);
-                    }
-                    
-                    return true;
-                }
-
-                return false;                
-            }
-        });
-        
-        //URL include
-        defaultParsers.add(new TextReaction() {
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {
-                char c = input.charAt(0);
-                if (c == Symbols.URL_INCLUDE_MARK) {            
-                    try {
-                        new TextInput(nar, new URL(input.substring(1)));
-                    } catch (IOException ex) {
-                        nar.output(ERR.class, ex);
-                    }
-                    return true;
-                }
-                return false;                
-            }
-        });        
-
-        //echo
-        //TODO standardize on an echo/comment format
-        defaultParsers.add(new TextReaction() {
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {
-                char c = input.charAt(0);
-                if (c == Symbols.ECHO_MARK) {            
-                    String echoString = input.substring(1);
-                    nar.output(Output.ECHO.class, '\"' + echoString + '\"');
-                    return true;
-                }
-                final String it = input.trim();
-                if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("****") ) {
-                    nar.output(Output.ECHO.class, input);
-                    return true;
-                }
-                return false;                
-            }
-        });
-        
-        //narsese
-        defaultParsers.add(new TextReaction() {
-            @Override
-            public boolean react(NAR nar, String input, TextReaction lastHandler) {
-                if (lastHandler != null)
-                    return false;
-
-                char c = input.charAt(0);
-                if (c != Symbols.COMMENT_MARK) {
-                    try {
-                        Task task = parseNarsese(new StringBuilder(input), nar.memory, nar.getTime());
-                        if (task != null) {
-                            nar.output(Output.IN.class, task.sentence);    // report addInput
-                            nar.memory.inputTask(task);
-                            return true;
-                        }
-                    } catch (InvalidInputException ex) {
-                        /*System.err.println(ex.toString());
-                        ex.printStackTrace();*/
-                        return false;
-                    }
-                }
-                return false;                
-            }
-        });             
-
-                   
-    }
-
     
 
     /**
@@ -353,7 +186,7 @@ public class TextPerception {
             String str = buffer.toString().trim();
             int last = str.length() - 1;
             char punc = str.charAt(last);
-            Stamp stamp = new Stamp(time, tense);
+            Stamp stamp = new Stamp(time, tense, memory.newStampSerial());
             TruthValue truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last), memory);
             if (content == null) throw new InvalidInputException("Content term missing");

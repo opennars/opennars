@@ -17,6 +17,7 @@
 package nars.test.core;
 
 import java.util.TreeSet;
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.io.TextPerception;
 import nars.io.TextPerception.InvalidInputException;
@@ -35,7 +36,7 @@ public class TermTest {
     
     protected void assertEquivalent(String term1String, String term2String) {
         try {
-            NAR n = new NAR();
+            NAR n = new DefaultNARBuilder().build();
 
             Term term1 = TextPerception.parseTerm(term1String, n.memory);
             Term term2 = TextPerception.parseTerm(term2String, n.memory);
@@ -53,7 +54,7 @@ public class TermTest {
     
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
@@ -63,7 +64,7 @@ public class TermTest {
     
     @Test
     public void testConjunctionTreeSet() {
-        NAR n = new NAR();
+        NAR n = new DefaultNARBuilder().build();
         
         try {           
             

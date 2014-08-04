@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintWriter;
-import nars.core.NAR;
 import nars.io.TextInput;
 
 /**
@@ -17,8 +16,8 @@ public class PrintWriterInput extends TextInput {
     /** Printing to out will be piped into TextInput */
     public final PrintWriter out;
 
-    public PrintWriterInput(NAR n) throws IOException  {
-        super(n);
+    public PrintWriterInput() throws IOException  {
+        super();
         
         PipedWriter output = new PipedWriter();
         setInput(new BufferedReader(new PipedReader(output)));        

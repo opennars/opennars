@@ -135,7 +135,7 @@ public abstract class Operator extends Term {
         Term arguments = operation.getSubject();
         String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
         //System.out.println("EXECUTE: " + operator + "(" + argList);
-        memory.nar.output(EXE.class, operator + "(" + argList);
+        memory.output(EXE.class, operator + "(" + argList);
     }
     
     public static String operationExecutionString(final Statement operation) {

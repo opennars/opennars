@@ -1,23 +1,20 @@
 package nars.core;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import nars.entity.ConceptBuilder;
+import nars.storage.ConceptBag;
+import nars.storage.Memory;
+import nars.storage.NovelTaskBag;
+
 /**
  * NAR design parameters which define a NAR at initialization.  These do not change at runtime.
  * For runtime parameters, @see NARParams
  * @author me
  */
-abstract public class NARBuilder extends Parameters implements NARConfiguration {
-    
-    /** determines maximum number of concepts */
-    private int conceptBagSize;
-    
-    @Override public int getConceptBagSize() { return conceptBagSize; }    
-    public NARBuilder setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
+abstract public class NARBuilder extends Parameters implements NARConfiguration, ConceptBuilder {
 
-    /** Level granularity in Bag, usually 100 (two digits) */    
-    private int conceptBagLevels;
-    @Override public int getConceptBagLevels() { return conceptBagLevels; }    
-    public NARBuilder setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
-    
+    @Deprecated public final AtomicInteger conceptForgettingRate = new AtomicInteger(Parameters.CONCEPT_FORGETTING_CYCLE);
+
     public int taskLinkBagLevels;
     
     /** Size of TaskLinkBag */
@@ -32,9 +29,13 @@ abstract public class NARBuilder extends Parameters implements NARConfiguration 
     
     /** initial runtime parameters */
     abstract public NARParams newInitialParams();
+    abstract public ConceptBag newConceptBag();
+    abstract public NovelTaskBag newNovelTaskBag();
     
     public NAR build() {
-        return new NAR(this/*, newInitialParams()*/);
+        NARParams p = newInitialParams();
+        Memory m = new Memory(p, newConceptBag(), newNovelTaskBag(), this);
+        return new NAR(m);
     }
 
     /**

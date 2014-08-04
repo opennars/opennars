@@ -28,18 +28,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
-import nars.core.NAR;
-import nars.io.Output.ERR;
 
 /**
  * To read and write experience as Task streams
  */
 public class TextInput extends Symbols implements Input {
 
-    /**
-     * Reference to the reasoner
-     */
-    private final NAR nar;
+
     
     /**
      * Input experience from a file
@@ -52,27 +47,26 @@ public class TextInput extends Symbols implements Input {
     
     private int linesPerCycle = 1024;
     
-    public TextInput(NAR reasoner) { 
-        this.nar = reasoner;
-        nar.addInput(this);        
-    }
-    
 
-    public TextInput(NAR reasoner, String input) {
-        this(reasoner, new BufferedReader(new StringReader(input)));
+    public TextInput(String input) {
+        this(new BufferedReader(new StringReader(input)));
     }
     
-    public TextInput(NAR reasoner, File input) throws FileNotFoundException {
-        this(reasoner, new BufferedReader(new FileReader(input)));
+    public TextInput(File input) throws FileNotFoundException {
+        this(new BufferedReader(new FileReader(input)));
     }
     
-    public TextInput(NAR reasoner, URL u) throws IOException {
-        this(reasoner, new BufferedReader(new InputStreamReader(u.openStream())));
+    public TextInput(URL u) throws IOException {
+        this(new BufferedReader(new InputStreamReader(u.openStream())));
     }
     
-    public TextInput(NAR reasoner, BufferedReader input) {
-        this(reasoner);
+    public TextInput(BufferedReader input) {        
+        this();
         setInput(input);
+    }
+    
+    public TextInput() {
+        
     }
     
     protected void setInput(BufferedReader input) {
@@ -102,7 +96,7 @@ public class TextInput extends Symbols implements Input {
     }
 
     @Override
-    public Object next() {
+    public Object next() throws IOException {
         String line;
         
         if (input==null) {
@@ -112,28 +106,21 @@ public class TextInput extends Symbols implements Input {
         
         text.setLength(0);
         
-        try {
-            
-            int i = linesPerCycle;
-            while (i > 0)  {
-                
-                line = input.readLine();
-                if (line == null) {
-                    finished = true;
-                    break;
-                }
-                else {
-                    if (line.length() > 0) {
-                        text.append(line).append('\n');
-                        i--;
-                    }
+        int i = linesPerCycle;
+        while (i > 0)  {
+
+            line = input.readLine();
+            if (line == null) {
+                finished = true;
+                break;
+            }
+            else {
+                if (line.length() > 0) {
+                    text.append(line).append('\n');
+                    i--;
                 }
             }
-
-        } catch (IOException ex) {
-            nar.output(ERR.class, ex);
-            finished = true;
-        }        
+        }
         
         if (finished) {
             try {

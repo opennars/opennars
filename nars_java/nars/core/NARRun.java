@@ -95,13 +95,13 @@ public class NARRun {
         
         if (args.length > 0) {
             try {
-                TextInput fileInput = new TextInput(nar, new File(args[0]));
+                nar.addInput(new TextInput(new File(args[0])));
             } catch (FileNotFoundException ex) {
                 System.err.println("NARRun.init: " + ex);
             }
         }
-        else {
-            new TextInput(nar, new BufferedReader(new InputStreamReader(System.in)));
+        else {            
+            nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
         }
     }
 
@@ -126,7 +126,7 @@ public class NARRun {
      * Can instantiate multiple reasoners
      */
     public final void init() {
-        nar = new NAR();
+        nar = new DefaultNARBuilder().build();
     }
 
     /**
