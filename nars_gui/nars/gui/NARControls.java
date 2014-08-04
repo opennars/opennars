@@ -624,8 +624,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
         c.ipady = 4;
 
-        p.add(newIntSlider(memory.getTaskForgettingRate(), "Task Forgetting Rate", 1, 99), c);
-        p.add(newIntSlider(memory.getBeliefForgettingRate(), "Belief Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.param.taskForgettingRate, "Task Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.param.beliefForgettingRate, "Belief Forgetting Rate", 1, 99), c);
         p.add(newIntSlider(memory.param.conceptForgettingRate, "Concept Forgetting Rate", 1, 99), c);
 
 

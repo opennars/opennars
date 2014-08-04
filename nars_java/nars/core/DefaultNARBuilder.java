@@ -9,24 +9,21 @@ import nars.storage.TaskLinkBag;
 import nars.storage.TermLinkBag;
 
 /**
- * Default set of NAR parameters.
- * @author me
+ * Default set of NAR parameters which have been classically used for development.
  */
 public class DefaultNARBuilder extends NARBuilder {
 
     
-    final static int DefaultLevels = 100;
-    
     public DefaultNARBuilder() {
         super();
         
-        setConceptBagLevels(DefaultLevels);
+        setConceptBagLevels(100);
         setConceptBagSize(1000);        
         
-        setTaskLinkBagLevels(DefaultLevels);        
+        setTaskLinkBagLevels(100);        
         setTaskLinkBagSize(20);
 
-        setTermLinkBagLevels(DefaultLevels);
+        setTermLinkBagLevels(100);
         setTermLinkBagSize(100);
     }
 

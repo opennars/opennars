@@ -50,10 +50,7 @@ public class NARSwing  {
 
     public final NAR nar;
 
-    public NARSwing() {
-        this(new DefaultNARBuilder().build());
-    }
-    
+
     public NARSwing(NAR nar) {
         super();
         
@@ -82,11 +79,7 @@ public class NARSwing  {
                 
         
     }
-    
-    public NARSwing(String... args) {
-        this();
-        init(args);
-    }
+
 
     
     
@@ -99,29 +92,27 @@ public class NARSwing  {
  --silence <integer>
      */
     public static void main(String args[]) {
-        NARSwing swing = new NARSwing();
-        swing.init(args);
-        if (args.length > 1)
-            swing.nar.start(0);
-                
-    }
+        NAR nar = new CommandLineNARBuilder(args).build();
 
-    /**
-     * TODO multiple files
-     */
-    public void init(String[] args) {
+        NARSwing swing = new NARSwing(nar);
         
         if (args.length > 0
                 && CommandLineNARBuilder.isReallyFile(args[0])) {
 
             try {
-                new TextInput(nar, new File(args[0]));
+                nar.addInput(new TextInput(new File(args[0])));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
-        CommandLineNARBuilder.decode(args, nar);
+        
+        
+        if (args.length > 1)
+            swing.nar.start(0);
+                
     }
+
+
 
 
 

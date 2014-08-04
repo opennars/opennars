@@ -1,6 +1,6 @@
 package nars.core;
 
-
+/** Interprets command-line arguments as configuration parameters to build NAR's */
 public class CommandLineNARBuilder extends DefaultNARBuilder {
     private final Param param;
 
