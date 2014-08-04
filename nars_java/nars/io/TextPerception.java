@@ -35,12 +35,12 @@ import static nars.io.Symbols.STAMP_CLOSER;
 import static nars.io.Symbols.STAMP_OPENER;
 import static nars.io.Symbols.TRUTH_VALUE_MARK;
 import static nars.io.Symbols.VALUE_SEPARATOR;
-import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Language;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -608,7 +608,7 @@ public class TextPerception {
             return new Interval(s);
         }
  
-        if (Variable.containVar(s)) {
+        if (Language.containVar(s)) {
             return new Variable(s);
         } else {
             return new Term(s);
@@ -671,7 +671,7 @@ public class TextPerception {
         Term t;
         
         if (oNative!=null) {
-            t = CompoundTerm.make(oNative, argA, memory);
+            t = Language.make(oNative, argA, memory);
         }
         else if (oRegistered!=null) {
             t = Operation.make(oRegistered, argA, memory);

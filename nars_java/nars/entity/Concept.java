@@ -28,6 +28,7 @@ import nars.core.Parameters;
 import nars.inference.BudgetFunctions;
 import nars.inference.LocalRules;
 import nars.inference.RuleTables;
+import nars.inference.TemporalRules;
 import nars.inference.UtilityFunctions;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -365,7 +366,7 @@ public final class Concept extends Item {
         float beliefQuality;
         Sentence candidate = null;
         for (final Sentence judg : list) {
-            beliefQuality = LocalRules.solutionQuality(query, judg, memory);
+            beliefQuality = TemporalRules.solutionQuality(query, judg, memory);
             if (beliefQuality > currentBest) {
                 currentBest = beliefQuality;
                 candidate = judg;

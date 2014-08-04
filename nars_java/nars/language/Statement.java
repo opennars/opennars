@@ -256,15 +256,16 @@ public abstract class Statement extends CompoundTerm {
         return com.containsTerm(t2);
     }
 
-    
+   
     public static boolean invalidPair(final String s1, final String s2) {
-        if (Variable.containVarIndep(s1) && !Variable.containVarIndep(s2)) {
+        if (Language.containVarIndep(s1) && !Language.containVarIndep(s2)) {
             return true;
-        } else if (!Variable.containVarIndep(s1) && Variable.containVarIndep(s2)) {
+        } else if (!Language.containVarIndep(s1) && Language.containVarIndep(s2)) {
             return true;
         }
         return false;
     }
+    
 
     /**
      * Check the validity of a potential Statement. [To be refined]

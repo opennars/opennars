@@ -34,8 +34,9 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Variable;
+import static nars.language.Language.*;
 import nars.storage.Memory;
+
 
 /**
  * Syllogisms: Inference rules based on the transitivity of the relation.
@@ -349,7 +350,7 @@ public final class SyllogisticRules {
         Sentence taskSentence = task.sentence;
         Sentence belief = memory.getCurrentBelief();
         boolean deduction = (side != 0);
-        boolean conditionalTask = Variable.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
+        boolean conditionalTask = hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -373,9 +374,9 @@ public final class SyllogisticRules {
         if (index2 >= 0) {
             index = (short) index2;
         } else {
-            boolean match = Variable.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
+            boolean match = unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-                match = Variable.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
+                match = unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
             }
             if (!match) {
                 return;
@@ -476,7 +477,7 @@ public final class SyllogisticRules {
         Task task = memory.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = memory.getCurrentBelief();
-        boolean conditionalTask = Variable.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
+        boolean conditionalTask = hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -495,9 +496,9 @@ public final class SyllogisticRules {
         }
         Conjunction oldCondition = (Conjunction) tm;
 
-        boolean match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
+        boolean match = unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
         if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-            match = Variable.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
+            match = unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
         }
         if (!match) {
             return;
@@ -581,11 +582,11 @@ public final class SyllogisticRules {
         Term term2 = null;
 //        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
         if (cond1 instanceof Conjunction) {
-            term1 = CompoundTerm.reduceComponents((CompoundTerm) cond1, cond2, memory);
+            term1 = reduceComponents((CompoundTerm) cond1, cond2, memory);
         }
 //        if ((cond2 instanceof Conjunction) && !Variable.containVarDep(cond2.getName())) {
         if (cond2 instanceof Conjunction) {
-            term2 = CompoundTerm.reduceComponents((CompoundTerm) cond2, cond1, memory);
+            term2 = reduceComponents((CompoundTerm) cond2, cond1, memory);
         }
         if ((term1 == null) && (term2 == null)) {
             return false;
@@ -597,7 +598,7 @@ public final class SyllogisticRules {
         TruthValue value2 = belief.truth;
         Term content;
         
-        boolean keepOrder = Variable.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getContent());
+        boolean keepOrder = hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getContent());
         
         TruthValue truth = null;
         BudgetValue budget;
@@ -658,7 +659,7 @@ public final class SyllogisticRules {
      * @param memory Reference to the memory
      */
     static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
-        Term content = CompoundTerm.reduceComponents(compound, component, memory);
+        Term content = reduceComponents(compound, component, memory);
         if ((content == null) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
         }

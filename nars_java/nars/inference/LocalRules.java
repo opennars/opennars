@@ -35,9 +35,9 @@ import nars.language.Inheritance;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import static nars.language.Language.*;
 import nars.storage.Memory;
 
 
@@ -70,7 +70,7 @@ public class LocalRules {
                 if (revisible(sentence, belief)) {
                     revision(sentence, belief, true, memory);
                 }
-            } else if (Variable.unify(Symbols.VAR_QUERY, sentence.content, (Term) belief.content.clone())) {
+            } else if (unify(Symbols.VAR_QUERY, sentence.content, (Term) belief.content.clone())) {
                 trySolution(belief, task, memory);
             }
         }
@@ -107,6 +107,11 @@ public class LocalRules {
         memory.doublePremiseTaskRevised(content, truth, budget);
     }
 
+    @Deprecated public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
+        //moved to BudgetFunctions.java
+        throw new RuntimeException("Moved to TemporalRules.java");
+    }
+    
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
@@ -118,16 +123,16 @@ public class LocalRules {
         Sentence problem = task.sentence;
         if (TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             Sentence oldBest = task.getBestSolution();
-            float newQ = solutionQuality(problem, belief, memory);
+            float newQ = TemporalRules.solutionQuality(problem, belief, memory);
             if (oldBest != null) {
-                float oldQ = solutionQuality(problem, oldBest, memory);
+                float oldQ = TemporalRules.solutionQuality(problem, oldBest, memory);
                 if (oldQ >= newQ) {
                     return;
                 }
             }
             Term content = belief.cloneContent();
-            if (Variable.containVarIndep(content.getName())) {
-                Variable.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
+            if (containVarIndep(content.getName())) {
+                unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
                 belief = belief.clone(content);
                 Stamp st = new Stamp(belief.stamp, memory.getTime());
                 st.addToChain(belief.content);
@@ -136,38 +141,13 @@ public class LocalRules {
             if (task.isInput()) {    // moved from Sentence
                 memory.nar.output(OUT.class, belief);
             }
-            BudgetValue budget = BudgetFunctions.solutionEval(problem, belief, task, memory);
+            BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
             if ((budget != null) && budget.aboveThreshold()) {
                 memory.activatedTask(budget, belief, task.getParentBelief());
             }
         }
     }
 
-    /**
-     * Evaluate the quality of the judgment as a solution to a problem
-     *
-     * @param problem A goal or question
-     * @param solution The solution to be evaluated
-     * @return The quality of the judgment as the solution
-     */
-     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
- //        if (problem == null) {
- //            return solution.getTruth().getExpectation();
- //        }
-        if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
-            return 0.0f;
-        }
-        TruthValue truth = solution.truth;
-        if (problem.getOccurenceTime() != solution.getOccurenceTime()) {
-            Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.getTime());
-            truth = cloned.truth;
-        }
-        if (problem.containQueryVar()) {   // "yes/no" question
-            return truth.getExpectation() / solution.content.getComplexity();
-        } else {                           // "what" question or goal
-            return truth.getConfidence();
-        }
-    }
 
     /* -------------------- same terms, difference relations -------------------- */
     /**
@@ -297,11 +277,11 @@ public class LocalRules {
         final Term subjB = beliefContent.getSubject();
         final Term predB = beliefContent.getPredicate();
         Term otherTerm;
-        if (Variable.containVarQuery(subjT.getName())) {
+        if (containVarQuery(subjT.getName())) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, otherTerm, predT, order, memory);
         }
-        if (Variable.containVarQuery(predT.getName())) {
+        if (containVarQuery(predT.getName())) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, subjT, otherTerm, order, memory);
         }

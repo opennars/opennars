@@ -22,19 +22,16 @@ package nars.language;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import nars.entity.TermLink;
-import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
-import static nars.language.CompoundTerm.make;
 import static nars.language.CompoundTerm.makeCompoundName;
 import nars.storage.Memory;
 
@@ -134,7 +131,7 @@ public abstract class CompoundTerm extends Term {
     @Override
     protected final boolean setName(String name) {
         if (super.setName(name)) {
-            this.hasVar = Variable.containVar(getName());
+            this.hasVar = Language.containVar(getName());
             return true;
         }
         return false;
@@ -242,83 +239,6 @@ public abstract class CompoundTerm extends Term {
         }
     }
 
-    /* static methods making new compounds, which may return null */
-    /**
-     * Try to make a compound term from a template and a list of term
-     *
-     * @param compound The template
-     * @param components The term
-     * @param memory Reference to the memory
-     * @return A compound term or null
-     */
-    public static Term make(final CompoundTerm compound, final Term[] components, final Memory memory) {
-                
-        if (compound instanceof ImageExt) {
-            return ImageExt.make(components, ((ImageExt) compound).relationIndex, memory);
-        } else if (compound instanceof ImageInt) {
-            return ImageInt.make(components, ((ImageInt) compound).relationIndex, memory);
-        } else {
-            return make(compound.operator(), components, memory);
-        }
-    }
-    
-    public static Term make(final CompoundTerm compound, Collection<Term> components, final Memory memory) { 
-        Term[] c = components.toArray(new Term[components.size()]);
-        return make(compound, c, memory);
-    }
-
-    /**
-     * Try to make a compound term from an operator and a list of term
-     * <p>
-     * Called from StringParser
-     *
-     * @param op Term operator
-     * @param arg Component list
-     * @param memory Reference to the memory
-     * @return A compound term or null
-     */    
-    public static Term make(final NativeOperator op, final Term[] a, final Memory memory) {
-        
-        
-        switch (op) {
-            case SET_EXT_OPENER: 
-                return SetExt.make(termList(a), memory);
-            case SET_INT_OPENER: 
-                return SetInt.make(termList(a), memory);
-            case INTERSECTION_EXT: 
-                return IntersectionExt.make(termList(a), memory);
-            case INTERSECTION_INT:
-                return IntersectionInt.make(termList(a), memory);
-            case DIFFERENCE_EXT:
-                return DifferenceExt.make(a, memory);
-            case DIFFERENCE_INT:
-                return DifferenceInt.make(a, memory);
-            case INHERITANCE:
-                return Inheritance.make(a[0], a[1], memory);
-            case PRODUCT:
-                return Product.make(a, memory);
-            case IMAGE_EXT:
-                return ImageExt.make(a, memory);
-            case IMAGE_INT:
-                return ImageInt.make(a, memory);                    
-            case NEGATION:
-                return Negation.make(a, memory);            
-            case DISJUNCTION:
-                return Disjunction.make(termList(a), memory);            
-            case CONJUNCTION:
-                return Conjunction.make(a, memory);
-            case SEQUENCE:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, memory);
-            case PARALLEL:
-                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, memory);
-            case IMPLICATION:
-                return Implication.make(a[0], a[1], memory);
-            case EQUIVALENCE:
-                return Equivalence.make(a[0], a[1], memory);            
-        }
- 
-        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
-    }    
 
 
     /**
@@ -506,7 +426,7 @@ public abstract class CompoundTerm extends Term {
         return cloneTerms(true, additional);
     }
     
-    private Term[] cloneTermsExcept(boolean requireModification, final Term... toRemove) {
+    public Term[] cloneTermsExcept(boolean requireModification, final Term... toRemove) {
         return cloneTermsExcept(true, requireModification, toRemove);
     }
 
@@ -713,41 +633,10 @@ public abstract class CompoundTerm extends Term {
         } else {
             terms = t1.cloneTerms(t2);
         }
-        return make(t1, terms, memory);
+        return Language.make(t1, terms, memory);
     }
 
 
-    /**
-     * Try to remove a component from a compound
-     *
-     * @param t1 The compound
-     * @param t2 The component
-     * @param memory Reference to the memory
-     * @return The new compound
-     */
-    public static Term reduceComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
-        final Term[] list;
-        if (t1.getClass() == t2.getClass()) {
-            //success = list.removeAll(((CompoundTerm) t2).term);
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
-        } else {
-            //success = list.remove(t2);
-            list = t1.cloneTermsExcept(true, t2);
-        }
-        if (list!=null) {
-            if (list.length > 1) {
-                return make(t1, list, memory);
-            }
-            if (list.length == 1) {
-                if ((t1 instanceof Conjunction) || (t1 instanceof Disjunction)
-                        || (t1 instanceof IntersectionExt) || (t1 instanceof IntersectionInt)
-                        || (t1 instanceof DifferenceExt) || (t1 instanceof DifferenceInt)) {
-                    return list[0];
-                }
-            }
-        }
-        return null;
-    }    
 
     /**
      * Try to replace a component in a compound at a given index by another one
@@ -771,7 +660,7 @@ public abstract class CompoundTerm extends Term {
                 }
             }
         }
-        return make(compound, list, memory);
+        return Language.make(compound, list, memory);
     }
 
     /* ----- variable-related utilities ----- */
@@ -866,351 +755,9 @@ public abstract class CompoundTerm extends Term {
     public List<TermLink> prepareComponentLinks() {
         //complexity seems like an upper bound for the resulting number of componentLinks. 
         //so use it as an initial size for the array list
-        final List<TermLink> componentLinks = new ArrayList<>( getComplexity() );
-        
-        short type = (this instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
-        prepareComponentLinks(componentLinks, type, this);
-        return componentLinks;
+        final List<TermLink> componentLinks = new ArrayList<>( getComplexity() );              
+        return Language.prepareComponentLinks(componentLinks, this);
     }
-
-    /**
-     * Collect TermLink templates into a list, go down one level except in
-     * special cases
-     * <p>
-     *
-     * @param componentLinks The list of TermLink templates built so far
-     * @param type The type of TermLink to be built
-     * @param term The CompoundTerm for which the links are built
-     */
-    private void prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm t) {
-        //Term t1, t2, t3 are term at different levels
-        for (int i = 0; i < t.size(); i++) {     // first level term
-           final Term t1 = t.term[i];
-            if (t1.isConstant()) {
-                componentLinks.add(new TermLink(type, t1, i));
-            }
-            if (((this instanceof Equivalence) || ((this instanceof Implication) && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
-                
-                ((CompoundTerm) t1).prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
-
-            } else if (t1 instanceof CompoundTerm) {
-                for (int j = 0; j < ((CompoundTerm) t1).size(); j++) {  // second level term
-                    final Term t2 = ((CompoundTerm) t1).term[j];
-                    if (t2.isConstant()) {
-                        if ((t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt)) {
-                            if (type == TermLink.COMPOUND_CONDITION) {
-                                componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, 0, i, j));
-                            } else {
-                                componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, i, j));
-                            }
-                        } else {
-                            componentLinks.add(new TermLink(type, t2, i, j));
-                        }
-                    }
-                    if ((t2 instanceof Product) || (t2 instanceof ImageExt) || (t2 instanceof ImageInt)) {
-                        for (int k = 0; k < ((CompoundTerm) t2).size(); k++) {
-                            final Term t3 = ((CompoundTerm) t2).term[k];
-                            if (t3.isConstant()) {                           // third level
-                                if (type == TermLink.COMPOUND_CONDITION) {
-                                    componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k));
-                                } else {
-                                    componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, i, j, k));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    
-    
-    static boolean EqualSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
-        if(a==null || b==null) {
-            return false;
-        }
-        if(!(a instanceof Statement) && !(b instanceof Statement))
-            return false;
-        if(a.equals(b)) {
-            return true;
-        }
-        Statement A=(Statement) a;
-        Statement B=(Statement) b;
-        if(A instanceof Similarity && B instanceof Similarity || A instanceof Inheritance && B instanceof Inheritance) {
-            Term subjA = A.getSubject();
-            Term predA = A.getPredicate();
-            Term subjB = B.getSubject();
-            Term predB = B.getPredicate();
-
-            //ok we know they are not equal, its time to determine how image structure could make them equal:
-            if(subjA instanceof Product) { //A is a product, so B must be a extensional image to make true
-                if(predB instanceof ImageExt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    componentsA.add(predA);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
-                    Set<Term> componentsB=new HashSet();
-                    componentsB.add(subjB);
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            
-            if(subjB instanceof Product) { //B is a product, so A must be a extensional image to make true
-                if(predA instanceof ImageExt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    componentsA.add(subjA);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
-                    Set<Term> componentsB=new HashSet();
-                    componentsB.add(predB);
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            
-            if(predA instanceof ImageExt) { //A is a extensional image, so B must be a extensional image to make true
-                if(predB instanceof ImageExt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    Set<Term> componentsB=new HashSet();
-                    componentsA.add(subjA);
-                    componentsB.add(subjB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            
-            if(predA instanceof ImageExt) { //A is a extensional image, so B must be a extensional image to make true
-                if(predB instanceof ImageExt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    Set<Term> componentsB=new HashSet();
-                    componentsA.add(subjA);
-                    componentsB.add(subjB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            
-            if(subjA instanceof ImageInt) { //A is a intensional image, so B must be a intensional image to make true
-                if(subjB instanceof ImageInt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    Set<Term> componentsB=new HashSet();
-                    componentsA.add(predA);
-                    componentsB.add(predB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            
-            if(subjA instanceof ImageInt) { //A is a intensional image, so B must be a intensional image to make true
-                if(subjB instanceof ImageInt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    Set<Term> componentsB=new HashSet();
-                    componentsA.add(predA);
-                    componentsB.add(predB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            
-            if(predA instanceof Product) { //A is a product, so B must be a intensional image to make true
-                if(subjB instanceof ImageInt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    Set<Term> componentsB=new HashSet();
-                    componentsA.add(subjA);
-                    componentsB.add(predB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)predA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)subjB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            
-            if(predB instanceof Product) { //A is a product, so B must be a intensional image to make true
-                if(subjA instanceof ImageInt) {
-                    //now the term of both statements need to be the same:
-                    Set<Term> componentsA=new HashSet();
-                    Set<Term> componentsB=new HashSet();
-                    componentsA.add(predA);
-                    componentsB.add(subjB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm)subjA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm)predB).term));
-                    if(componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    
-    public static boolean EqualSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
-        if(a==null || b==null) {
-            return false;
-        }
-        if(!((a instanceof CompoundTerm) && (b instanceof CompoundTerm))) {
-            return a.equals(b);
-        }
-        if(a instanceof Inheritance && b instanceof Inheritance) {
-            return EqualSubjectPredicateInRespectToImageAndProduct(a,b);
-        }
-        if(a instanceof Similarity && b instanceof Similarity) {
-            return EqualSubjectPredicateInRespectToImageAndProduct(a,b) || EqualSubjectPredicateInRespectToImageAndProduct(b,a);
-        }
-        Term[] A=((CompoundTerm) a).term;
-        Term[] B=((CompoundTerm) b).term;
-        if(A.length != B.length) {
-            return false;
-        }
-        else {
-            for(int i=0;i<A.length;i++) {
-                Term x = A[i];
-                Term y = B[i];
-                if(!x.equals(y)) {
-                    if(x instanceof Inheritance && y instanceof Inheritance) {
-                        if(!EqualSubjectPredicateInRespectToImageAndProduct(x,y)) {
-                            return false;
-                        }
-                        else {
-                            continue;
-                        }
-                    }
-                    if(x instanceof Similarity && y instanceof Similarity) {
-                        if(!EqualSubjectPredicateInRespectToImageAndProduct(x,y) && !EqualSubjectPredicateInRespectToImageAndProduct(y,x)) {
-                            return false;
-                        }
-                        else {
-                            continue;
-                        }
-                    }
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-    
-    //3 helper functions for dedSecondLayerVariableUnification:
-    public static Term unwrapNegation(Term T) { //negation is not counting as depth
-        if(T!=null && T instanceof Negation)
-            return ((CompoundTerm)T).term[0];
-        return T;
-    }
-    
-    public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2, Memory memory) {
-        Term[] list;
-        if (t1.getClass() == t2.getClass()) {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
-        } else {
-            list = t1.cloneTermsExcept(true, t2);
-        }
-        if (list!=null) {
-            if (list.length > 1) {
-                return make(t1, list, memory);
-            }
-            else if (list.length == 1) {
-                if (t1 instanceof CompoundTerm) {
-                    return list[0];
-                }
-            }
-        }
-        return t1;
-    }
-    public static CompoundTerm ReduceTillLayer2(CompoundTerm itself, Term replacement, Memory memory)
-    {
-       if(!(itself instanceof CompoundTerm)) {
-           return null;
-       }
-       itself=(CompoundTerm) reduceComponentOneLayer(itself, replacement, memory);
-       int j=0;
-       for(Term t : itself.term) {
-           Term t2 = unwrapNegation(t);
-            if(!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Conjunction) && !(t2 instanceof Disjunction)) {
-                j++;
-                continue;
-            }
-            Term ret2=reduceComponentOneLayer((CompoundTerm) t2,replacement,memory);
-            CompoundTerm replaced=(CompoundTerm) CompoundTerm.setComponent((CompoundTerm) itself, j, ret2, memory);
-            if(replaced!=null) {
-                itself=replaced;
-            }
-           j++;
-       }
-       return itself;
-    }
-
-    
-    /*
-    @Deprecated public static Term make(final String op, final ArrayList<Term> arg, final Memory memory) {
-        final int length = op.length();
-        if (length == 1) {
-            final char c = op.charAt(0);
-            switch (c) {
-                case Symbols.SET_EXT_OPENER: 
-                    return SetExt.make(arg, memory);
-                case Symbols.SET_INT_OPENER: 
-                    return SetInt.make(arg, memory);
-                case Symbols.INTERSECTION_EXT_OPERATORc: 
-                    return IntersectionExt.make(arg, memory);
-                case Symbols.INTERSECTION_INT_OPERATORc:
-                    return IntersectionInt.make(arg, memory);
-                case Symbols.DIFFERENCE_EXT_OPERATORc:
-                    return DifferenceExt.make(arg, memory);
-                case Symbols.DIFFERENCE_INT_OPERATORc:
-                    return DifferenceInt.make(arg, memory);
-                case Symbols.PRODUCT_OPERATORc:
-                    return Product.make(arg, memory);
-                case Symbols.IMAGE_EXT_OPERATORc:
-                    return ImageExt.make(arg, memory);
-                case Symbols.IMAGE_INT_OPERATORc:
-                    return ImageInt.make(arg, memory);                    
-            }            
-        }
-        else if (length == 2) {
-            //since these symbols are the same character repeated, we only need to compare the first character
-            final char c1 = op.charAt(0);
-            final char c2 = op.charAt(1);
-            if (c1 == c2) {
-                switch (c1) {
-                    case Symbols.NEGATION_OPERATORc:
-                        return Negation.make(arg, memory);            
-                    case Symbols.DISJUNCTION_OPERATORc:
-                        return Disjunction.make(arg, memory);            
-                    case Symbols.CONJUNCTION_OPERATORc:
-                        return Conjunction.make(arg, memory);
-                }            
-            } else if (op.equals(Symbols.SEQUENCE_OPERATOR)) {
-                return Conjunction.make(arg, TemporalRules.ORDER_FORWARD, memory);
-            } else if (op.equals(Symbols.PARALLEL_OPERATOR)) {
-                return Conjunction.make(arg, TemporalRules.ORDER_CONCURRENT, memory);
-            }
-        }
-        throw new RuntimeException("Unknown Term operator: " + op);
-    }
-    */
 
 
 }
