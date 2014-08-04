@@ -871,7 +871,7 @@ public final class CompositionalRules {
         }
         Term taskterm=taskSentence.content;
         if(taskterm instanceof CompoundTerm && (taskterm instanceof Disjunction || taskterm instanceof Conjunction || taskterm instanceof Equivalence || taskterm instanceof Implication)) { //lets just allow conjunctions, implication and equivalence for now
-            if(!Variable.containVar(taskterm.toString())) {
+            if (!taskterm.containVar()) {
                 return false;
             }           
             Concept second=memory.concepts.processNext();

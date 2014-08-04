@@ -77,7 +77,7 @@ public class Parameters {
     /** Default priority of input judgment */
     public static final float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
     /** Default durability of input judgment */
-    public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5;
+    public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
     public static final float DEFAULT_QUESTION_PRIORITY = (float) 0.9;
     /** Default durability of input question */
