@@ -277,8 +277,8 @@ public class ParticleSystem  {
 
                     int tx = (int) ((xPos + xVel));
                     int ty = (int) ((yPos + yVel));
-                    tx = Math.max(0, Math.min(tx, WIDTH));
-                    ty = Math.max(0, Math.min(ty, HEIGHT));
+                    tx = Math.max(0, Math.min(tx, cells.w-1 ));
+                    ty = Math.max(0, Math.min(ty, cells.h-1 ));
                     if (!blockArray[ tx][ty].isSolid()) { // if no collision
 
                         xPos += xVel;
