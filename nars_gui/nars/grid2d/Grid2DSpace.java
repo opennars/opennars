@@ -14,13 +14,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
+import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
 import nars.grid2d.particle.ParticleSystem;
 import nars.gui.Window;
 import processing.core.PApplet;
+import static processing.core.PConstants.DOWN;
+import static processing.core.PConstants.LEFT;
+import static processing.core.PConstants.RIGHT;
+import static processing.core.PConstants.UP;
 import processing.core.PVector;
 
 
@@ -32,7 +36,7 @@ public class Grid2DSpace extends PApplet {
     //processingjs compatibility layer
     int mouseScroll = 0;
     public final Hauto cells;
-    List<GridObject> objects = new CopyOnWriteArrayList();
+    List<GridObject> objects = new ArrayList();
     ProcessingJs processingjs = new ProcessingJs();
     //Hnav 2D navigation system
     Hnav hnav = new Hnav();
@@ -40,7 +44,7 @@ public class Grid2DSpace extends PApplet {
     float selection_distance = 10;
     public float maxNodeSize = 40f;
     float FrameRate = 30f;
-    private int automataPeriod = 10;
+    private int automataPeriod = 1;
     boolean drawn = false;
     Hsim hsim = new Hsim();
     Hamlib hamlib = new Hamlib();
@@ -261,20 +265,17 @@ public class Grid2DSpace extends PApplet {
         if (!((dx <= 1) && (dy <= 1)))
             return "Too far";
 
-        if ((tx < 0) || (ty < 0) || (tx >= WIDTH) || (ty >= HEIGHT))
-            return "Out of bounds";
-            
         Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);
                 
         //System.out.println(to + " " + to.material);
-        if (to.isSolid())
+        if ((to.material == Material.StoneWall) || to.is_solid)
             return "Too solid";
         
-        final float maxTraversableHeight = 16;
+        final float maxTraversableHeight = 8;
         float dHeight = to.height - from.height;
-        if (dHeight > maxTraversableHeight)
-            return "Too high";
+        //if (dHeight > maxTraversableHeight)
+        //    return "Too high";
      
         return null;
     }

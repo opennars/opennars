@@ -14,7 +14,7 @@ import nars.grid2d.Cell.Material;
 
 public class Hauto {
 
-    float waterRate = 0.5f;
+
     
     boolean is_logic(Cell c){ 
         return (c.logic==OR || c.logic==XOR || c.logic==AND || c.logic==NOT); 
@@ -26,24 +26,24 @@ public class Hauto {
         w.charge=r.charge;
         w.value=r.value;
         w.value2=r.value2;
-        w.state.is_solid=r.state.is_solid;
+        w.is_solid=r.is_solid;
         w.chargeFront=false;
         //
         if(r.machine==Machine.Light && r.charge==1)
         {
-            w.state.light=1.0f;
+            w.light=1.0f;
         }
         else
         {
-            w.state.light=NeighborsValue2("op_max", i, j, readcells, "get_state.light", (r.state.is_solid || r.material==Material.StoneWall) ? 1 : 0)/1.1f; //1.1
+            w.light=NeighborsValue2("op_max", i, j, readcells, "get_light", (r.is_solid || r.material==Material.StoneWall) ? 1 : 0)/1.1f; //1.1
         }
         ///door
         if(r.material==Material.Door) {
             if(NeighborsValue2("op_or", i, j, readcells, "having_charge", 1.0f) != 0) {
-                w.state.is_solid=false;
+                w.is_solid=false;
             }
             else {
-                w.state.is_solid=true;
+                w.is_solid=true;
             }
         }
         //////// WIRE / CURRENT PULSE FLOW /////////////////////////////////////////////////////////////				
@@ -113,26 +113,10 @@ public class Hauto {
             w.chargeFront = false;
         }
             //w.charge *= w.conductivity;
-        
-        
-        
-        if ((r.material == Material.DirtFloor)) {
-            if (NeighborsValue2("op_plus", i, j, readcells, "higher_than", r.height) > 0) {
-                w.water += (NeighborsValue2("op_plus", i, j, readcells, "more_water", r.water));
-            }
-        }
-        
-	/////////// WATER WITHOUT HAVING A ROOT WATER HAS LOST ITS SOURCE, AND IF ROOT IS LOWER, TOO ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*if(readme->state==WATER && readme->rootwater!=NULL && (((Cell*)readme->rootwater)->state!=WATER || ((Cell*)readme->rootwater)->height<readme->height))
-	{
-		writeme_state(GRASS);
-		writeme->rootwater=NULL;
-	} */       
     }
     
     public void clicked(float x,float y)
     {
-        //TODO replace with copyFrom
         readCells[(int) x][(int) y].charge = selected.charge;
         writeCells[(int) x][(int) y].charge = selected.charge;
         readCells[(int) x][(int) y].logic = selected.logic;
@@ -141,36 +125,31 @@ public class Hauto {
         writeCells[(int) x][(int) y].material = selected.material;
         readCells[(int) x][(int) y].machine = selected.machine;
         writeCells[(int) x][(int) y].machine = selected.machine;
-        readCells[(int) x][(int) y].height = selected.height;
-        writeCells[(int) x][(int) y].height = selected.height;
-        readCells[(int) x][(int) y].water = selected.water;
-        writeCells[(int) x][(int) y].water = selected.water;
     }
     
     Cell selected=new Cell();
     
     public void click(String label) {
-        selected.state.is_solid=false;
+        selected.is_solid=false;
         if(label=="StoneWall") {
             selected.material = Material.StoneWall;     
-            selected.state.is_solid=true;
+            selected.is_solid=true;
             selected.logic=Logic.NotALogicBlock;
+            selected.charge=0;
         }
         
         if(label=="DirtFloor") {
             selected.material = Material.DirtFloor;     
-            selected.state.is_solid=false;
+            selected.is_solid=false;
             selected.logic=Logic.NotALogicBlock;
-            selected.height = 0;
-            selected.water = 0;
+            selected.charge=0;
         }
-
-        if(label=="Water") {            
-            selected.material = Material.DirtFloor;     
-            selected.state.is_solid=false;
+        
+        if(label=="GrassFloor") {
+            selected.material = Material.GrassFloor;     
+            selected.is_solid=false;
             selected.logic=Logic.NotALogicBlock;
-            selected.water += 10.0f;
-            selected.height = 0;            
+            selected.charge=0;
         }
 
         selected.machine = null;
@@ -217,19 +196,19 @@ public class Hauto {
             selected.logic = Logic.NotALogicBlock;
             selected.charge=0;
             selected.material = Material.Door;
-            selected.state.is_solid=true;
+            selected.is_solid=true;
         }
         if(label=="Light") {
             selected.logic = Logic.Load;
             selected.material = Material.Machine;
             selected.machine = Machine.Light;
-            selected.state.is_solid=true;
+            selected.is_solid=true;
         }
         if(label=="Turret") {
             selected.logic = Logic.Load;
             selected.material = Material.Machine;
             selected.machine = Machine.Turret;
-            selected.state.is_solid=true;
+            selected.is_solid=true;
         }
     
     }
@@ -244,25 +223,9 @@ public class Hauto {
         if("just_getcharge".equals(mode)) {
             return c.charge;
         }
-        if("get_state.light".equals(mode) && (data==1 || !c.state.is_solid && !(c.material==Material.StoneWall))) {
-            return Math.max(c.charge*0.2f, c.state.light);
+        if("get_light".equals(mode) && (data==1 || !c.is_solid && !(c.material==Material.StoneWall))) {
+            return Math.max(c.charge*0.2f, c.light);
         }
-        /*if("water_and_higher_than".equals(mode)) {
-            boolean waterFlow = ((c.height >= data) && (c.water > waterRate));
-            if (waterFlow)
-                c.water -= waterRate;
-            return waterFlow ? 1.0f : 0.0f;
-        }*/
-        if("higher_than".equals(mode)) {
-            return (c.height > data) ? 1.0f : 0.0f;
-        }
-        if("more_water".equals(mode)) {
-            boolean waterFlow = ((c.water > waterRate) && (c.water > data));
-            if (waterFlow)
-                c.water -= waterRate;
-            return waterFlow ? waterRate : 0;
-        }
-        
         return 0.0f;
     }
 
