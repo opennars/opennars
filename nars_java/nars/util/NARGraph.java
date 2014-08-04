@@ -235,8 +235,8 @@ public class NARGraph extends DirectedMultigraph {
         private final boolean includeQuestions;
 
 
-        private Set<Term> terms = new HashSet();
-        private Map<Sentence,Term> sentenceTerms = new HashMap();
+        public final Set<Term> terms = new HashSet();
+        public final Map<Sentence,Term> sentenceTerms = new HashMap();
         
         private final boolean includeTermContent;
         private final boolean includeDerivations;

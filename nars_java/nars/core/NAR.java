@@ -209,7 +209,17 @@ public class NAR implements Runnable, Output {
         final boolean wasRunning = running;
         running = true;
         for (int i = 0; i < cycles; i++) {
-            cycle();
+            
+            try {
+                cycle();
+            }
+            catch (Exception e) {
+                output(ERR.class, e);
+                
+                System.err.println(e);
+                e.printStackTrace();
+            }
+            
         }
         running = wasRunning;
     }
@@ -242,23 +252,10 @@ public class NAR implements Runnable, Output {
     /** Main loop executed by the Thread.  Should not be called directly. */
     @Override public void run() {
         
-        while (running) {            
-            try {
-                cycle();
-            } catch (RuntimeException re) {                
-                output(ERR.class, re);
-                if (DEBUG) {
-                    System.err.println(re);                
-                    re.printStackTrace();
-                }
-            }
-            catch (Exception e) {
-                output(ERR.class, e);
-                
-                System.err.println(e);
-                e.printStackTrace();
-            }
+        while (running) {      
             
+            step(1);
+                        
             if (minCyclePeriodMS > 0) {
                 try {
                     Thread.sleep(minCyclePeriodMS);
@@ -333,14 +330,9 @@ public class NAR implements Runnable, Output {
     protected void cycleMemory() {
         if (working) {
             clock++;
-            try {
-                memory.workCycle(clock);
-            }
-            catch (RuntimeException e) {
-                output(ERR.class, e);
-                if (DEBUG)
-                    e.printStackTrace();
-            }
+            
+            memory.workCycle(clock);
+            
             if (stepsQueued > 0) {
                 stepsQueued--;
             }

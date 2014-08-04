@@ -24,7 +24,7 @@ import nars.core.NAR;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
 import nars.language.Conjunction;
-import nars.language.Inheritance;
+import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
@@ -248,7 +248,7 @@ public class Sentence implements Cloneable {
     
     public Operator getOperator() {
         if (content instanceof Operation) {
-             return (Operator) ((Inheritance) content).getPredicate();
+             return (Operator) ((Statement) content).getPredicate();
         } else {
              return null;
         }

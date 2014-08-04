@@ -151,7 +151,7 @@ public class NARRun {
                         + " " + nar.inputChannels.size());
             
             if (maxTime > 0) {
-                if ((nar.inputChannels.size() == 0) || nar.getTime() == maxTime) {
+                if ((nar.inputChannels.isEmpty()) || nar.getTime() == maxTime) {
                     break;
                 }
             }

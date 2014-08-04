@@ -113,16 +113,16 @@ public final class CompositionalRules {
                     }
                     
                     if(term1 instanceof Conjunction) {
-                        if(!(term2 instanceof Conjunction) && !(ctpcontent).containsTerm(term2)) {
+                        if(!(term2 instanceof Conjunction) && !ctpcontent.containsTerm(term2)) {
                             continue;
                         }
-                        if (((CompoundTerm) term1).containVar()) {
+                        if (term1.containVar()) {
                             continue;                        
                         }
 
                         boolean contin = false;
                         for (Term t : ((CompoundTerm) term1).term) {
-                            if (!(ctpcontent).containsTerm(t)) {
+                            if (!ctpcontent.containsTerm(t)) {
                                 contin = true;
                                 break;
                             }
@@ -137,12 +137,12 @@ public final class CompositionalRules {
                         if (!(term1 instanceof Conjunction) && !ctpcontent.containsTerm(term1)) {
                             continue;
                         }
-                        if (((CompoundTerm) term2).containVar()) {
+                        if (term2.containVar()) {
                             continue;
                         }
                         boolean contin = false;
                         for (Term t : ((CompoundTerm) term2).term) {
-                            if (!(ctpcontent).containsTerm(t)) {
+                            if (!ctpcontent.containsTerm(t)) {
                                 contin = true;
                                 break;
                             }
@@ -481,9 +481,9 @@ public final class CompositionalRules {
             term22 = beliefContent.getPredicate();
             if ((term12 instanceof ImageExt) && (term22 instanceof ImageExt)) {
                 commonTerm = ((ImageExt) term12).getTheOtherComponent();
-                if ((commonTerm == null) || !((ImageExt)term22).containsTermRecursively(commonTerm)) {
+                if ((commonTerm == null) || !(/*(ImageExt)*/term22).containsTermRecursively(commonTerm)) {
                     commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                    if ((commonTerm == null) || !((ImageExt) term12).containsTermRecursively(commonTerm)) {
+                    if ((commonTerm == null) || !(/*(ImageExt)*/term12).containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }
@@ -500,9 +500,9 @@ public final class CompositionalRules {
             term22 = varInd;
             if ((term11 instanceof ImageInt) && (term21 instanceof ImageInt)) {
                 commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                if ((commonTerm == null) || !((ImageInt) term21).containsTermRecursively(commonTerm)) {
+                if ((commonTerm == null) || !(/*(ImageInt)*/term21).containsTermRecursively(commonTerm)) {
                     commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                    if ((commonTerm == null) || !((ImageInt) term11).containsTermRecursively(commonTerm)) {
+                    if ((commonTerm == null) || !(/*(ImageInt)*/term11).containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }
@@ -826,43 +826,41 @@ public final class CompositionalRules {
         }
     }
     
-  static void IntroVarSameSubjectOrPredicate(Sentence originalMainSentence, Sentence subSentence, Term component, Term content, int index,Memory memory) {
-        Sentence cloned=(Sentence) originalMainSentence.clone();
-        Term T1=cloned.content;
-        if(!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
+    static void IntroVarSameSubjectOrPredicate(Sentence originalMainSentence, Sentence subSentence, Term component, Term content, int index, Memory memory) {
+        Sentence cloned = (Sentence) originalMainSentence.clone();
+        Term T1 = cloned.content;
+        if (!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
             return;
         }
-        CompoundTerm T=(CompoundTerm) T1;
-        CompoundTerm T2=(CompoundTerm) content.clone();
-        if((component instanceof Inheritance && content instanceof Inheritance) ||
-           (component instanceof Similarity && content instanceof Similarity)) {
-            CompoundTerm result=T;
-            if(component.equals(content)) {
+        CompoundTerm T = (CompoundTerm) T1;
+        CompoundTerm T2 = (CompoundTerm) content.clone();
+        if ((component instanceof Inheritance && content instanceof Inheritance)
+                || (component instanceof Similarity && content instanceof Similarity)) {
+            CompoundTerm result = T;
+            if (component.equals(content)) {
                 return; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
-            if(((Statement)component).getPredicate().equals(((Statement)content).getPredicate()) && !(((Statement)component).getPredicate() instanceof Variable)) {
-                Variable V=new Variable("#depIndVar1");
-                CompoundTerm zw=(CompoundTerm) T.term[index].clone();
-                zw=(CompoundTerm) CompoundTerm.setComponent(zw,1,V,memory);
-                T2=(CompoundTerm) CompoundTerm.setComponent(T2,1,V,memory);
-                Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
-                T=(CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
-            }
-            else 
-            if(((Statement)component).getSubject().equals(((Statement)content).getSubject()) && !(((Statement)component).getSubject() instanceof Variable)) {
-                Variable V=new Variable("#depIndVar2");
-                CompoundTerm zw=(CompoundTerm) T.term[index].clone();
-                zw=(CompoundTerm) CompoundTerm.setComponent(zw,0,V,memory);
-                T2=(CompoundTerm) CompoundTerm.setComponent(T2,0,V,memory);
-                Conjunction res=(Conjunction) Conjunction.make(zw, T2, memory);
-                T=(CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+            if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
+                Variable V = new Variable("#depIndVar1");
+                CompoundTerm zw = (CompoundTerm) T.term[index].clone();
+                zw = (CompoundTerm) CompoundTerm.setComponent(zw, 1, V, memory);
+                T2 = (CompoundTerm) CompoundTerm.setComponent(T2, 1, V, memory);
+                Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
+                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+            } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
+                Variable V = new Variable("#depIndVar2");
+                CompoundTerm zw = (CompoundTerm) T.term[index].clone();
+                zw = (CompoundTerm) CompoundTerm.setComponent(zw, 0, V, memory);
+                T2 = (CompoundTerm) CompoundTerm.setComponent(T2, 0, V, memory);
+                Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
+                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
             }
             TruthValue truth = TruthFunctions.induction(originalMainSentence.truth, subSentence.truth);
             BudgetValue budget = BudgetFunctions.compoundForward(truth, T, memory);
             memory.doublePremiseTask(T, truth, budget);
         }
     }
-    
+
     static boolean dedSecondLayerVariableUnification(Task task, Memory memory)
     {
         Sentence taskSentence=task.sentence;
@@ -883,7 +881,7 @@ public final class CompositionalRules {
             }            
             
             Term secterm=second.term;
-            if(second.beliefs==null || second.beliefs.size()==0) {
+            if(second.beliefs==null || second.beliefs.isEmpty()) {
                 return false;
             }
            

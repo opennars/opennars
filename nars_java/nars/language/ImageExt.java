@@ -34,7 +34,7 @@ import nars.storage.Memory;
 public class ImageExt extends CompoundTerm {
 
     /** The index of relation in the component list */
-    private short relationIndex;
+    public final short relationIndex;
 
     /**
      * Constructor with partial values, called by make
@@ -131,7 +131,7 @@ public class ImageExt extends CompoundTerm {
      */
     public static Term make(ImageExt oldImage, Term component, short index, Memory memory) {
         Term[] argList = oldImage.cloneTerms();
-        int oldIndex = oldImage.getRelationIndex();
+        int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
@@ -150,13 +150,6 @@ public class ImageExt extends CompoundTerm {
         return (t != null) ? t : new ImageExt(name, argument, index);
     }
 
-    /**
-     * get the index of the relation in the component list
-     * @return the index of relation
-     */
-    public short getRelationIndex() {
-        return relationIndex;
-    }
 
     /**
      * Get the relation term in the Image

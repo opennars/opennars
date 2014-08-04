@@ -90,7 +90,7 @@ public class Cell {
     
     
     public void draw(Grid2DSpace s,boolean edge) {
-
+        
         int ambientLight = 100;
         
         //draw ground height

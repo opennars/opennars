@@ -48,7 +48,7 @@ public class TextInput extends Symbols implements Input {
     
     private boolean finished = false;
     
-    private StringBuilder text = new StringBuilder();   
+    private final StringBuilder text = new StringBuilder();   
     
     private int linesPerCycle = 1024;
     
@@ -103,7 +103,7 @@ public class TextInput extends Symbols implements Input {
 
     @Override
     public Object next() {
-        String line = null;
+        String line;
         
         if (input==null) {
             finished = true;

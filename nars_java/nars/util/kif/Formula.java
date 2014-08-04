@@ -2966,7 +2966,7 @@ public class Formula implements Comparable {
                 if (theFormula.charAt(i) == '(' && indentLevel == 0 && i == 0) 
                     formatted = formatted.append(theFormula.charAt(i));
                 if (Character.isJavaIdentifierStart(theFormula.charAt(i)) && !inToken && !inVariable) {
-                    token = new StringBuilder(theFormula.charAt(i));
+                    token = new StringBuilder().append(theFormula.charAt(i));
                     inToken = true;
                 }
                 if ((Character.isJavaIdentifierPart(theFormula.charAt(i)) || theFormula.charAt(i) == '-') && inToken)

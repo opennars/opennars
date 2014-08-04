@@ -28,7 +28,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
-import nars.io.Output.ERR;
 import nars.language.Term;
 import nars.storage.Memory;
 

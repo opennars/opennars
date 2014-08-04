@@ -331,7 +331,7 @@ public class Memory {
      *
      * @param task the derived task
      */
-    public void derivedTask(final Task task, final boolean revised, final boolean single) {
+    public void derivedTask(final Task task, final boolean revised, final boolean single) {                
         if (task.budget.aboveThreshold()) {
             if (task.sentence != null && task.sentence.truth != null) {
                 float conf = task.sentence.truth.getConfidence();                
@@ -509,7 +509,7 @@ public class Memory {
         } else {    // to answer a question with negation in NAL-5 --- move to activated task?
             setNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
-
+        
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
         derivedTask(newTask, false, true);

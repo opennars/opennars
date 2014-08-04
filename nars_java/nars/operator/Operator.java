@@ -21,7 +21,6 @@
 
 package nars.operator;
 
-import nars.grid2d.operator.Goto;
 import java.util.ArrayList;
 import nars.entity.Task;
 import nars.io.Output.EXE;
