@@ -5,4 +5,4 @@
 
 65
 
-''outputMustContain('<a --> d>. %1.00;0.73%')
+''outputMustContain('<a --> d>. %1.00;0.29%')
