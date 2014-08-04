@@ -92,22 +92,27 @@ class papplet extends PApplet implements ActionListener
         hamlib.mouseScrolled();
     }
 
+    @Override
     public void keyPressed() {
         hamlib.keyPressed();
     }
 
+    @Override
     public void mouseMoved() {
         hamlib.mouseMoved();
     }
 
+    @Override
     public void mouseReleased() {
         hamlib.mouseReleased();
     }
 
+    @Override
     public void mouseDragged() {
         hamlib.mouseDragged();
     }
 
+    @Override
     public void mousePressed() {
         hamlib.mousePressed();
     }
@@ -273,6 +278,7 @@ class papplet extends PApplet implements ActionListener
     private static final float linkWeight = 6.0f;
 
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         String command = ((Button) e.getSource()).getActionCommand();
         if (command.equals("Fetch")) {
@@ -289,6 +295,7 @@ class papplet extends PApplet implements ActionListener
 
         ProcessingJs() {
             addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+                @Override
                 public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     mouseScroll = -evt.getWheelRotation();
                     mouseScrolled();

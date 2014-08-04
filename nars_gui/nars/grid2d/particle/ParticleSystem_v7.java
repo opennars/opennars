@@ -29,6 +29,7 @@ public class ParticleSystem_v7 extends Canvas {
 		frame.setVisible(true);
 
 		Thread runThread = new Thread(new Runnable() {
+                        @Override
 			public void run() {
 				while (true) {
 					long time = System.currentTimeMillis();

@@ -398,6 +398,7 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
 
     }
 
+    @Override
     public void paint(Graphics g) {
         super.paintComponent(g);
 

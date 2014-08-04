@@ -19,6 +19,7 @@ public abstract class LocalGridObject implements GridObject {
     }
     
     /** set by space when added */
+    @Override
     public void init(Grid2DSpace space) {
         this.space = space;
     }

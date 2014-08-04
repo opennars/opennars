@@ -233,6 +233,7 @@ public class Formula implements Comparable {
      * Implement the Comparable interface by defining the compareTo
      * method.  Formulas are equal if their formula strings are equal.
      */
+    @Override
     public int compareTo(Object f) throws ClassCastException {
         if (!f.getClass().getName().equalsIgnoreCase("com.articulate.sigma.Formula")) 
             throw new ClassCastException("Error in Formula.compareTo(): Class cast exception for argument of class: " + f.getClass().getName());
@@ -3040,6 +3041,7 @@ public class Formula implements Comparable {
     /** ***************************************************************
      * Format a formula for text presentation.
      */
+    @Override
     public String toString() {
 
         return textFormat();

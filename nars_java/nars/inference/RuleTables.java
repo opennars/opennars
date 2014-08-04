@@ -61,7 +61,7 @@ public class RuleTables {
         Sentence taskSentence = task.sentence;
         Term taskTerm = (Term) taskSentence.content.clone();         // cloning for substitution
         Term beliefTerm = (Term) bLink.target.clone();       // cloning for substitution
-        
+
         
         if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             double n=taskTerm.getComplexity() * Parameters.CONTRAPOSITION_PRIORITY; //don't let this rule apply every time, make it dependent on complexity

@@ -16,6 +16,7 @@ public abstract class CuriousPlayerPerception extends Perception {
 	private double novelty;
 	private Perception foreseePerc = this;
 
+        @Override
 	public double getReward() {
 		this.novelty = curiosity.getAvgError();
 		double wundtCurve = wundtCurve(this.novelty);
@@ -33,6 +34,7 @@ public abstract class CuriousPlayerPerception extends Perception {
 		return max / (1 + Math.exp(-slope * (n - min)));
 	}
 	
+        @Override
 	public void start() {
 		super.start();
 		if (foreseePerc != this) {
@@ -40,6 +42,7 @@ public abstract class CuriousPlayerPerception extends Perception {
 		}
 	}
 	
+        @Override
 	public void perceive() {
 		super.perceive();
 		if (getOutput()!=null && foreseePerc != this) {

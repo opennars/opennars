@@ -236,6 +236,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         return putIn(oldItem, insertIntoNameTable);
     }
     
+    @Override
     public boolean putBack(final E oldItem) {
         return putBack(oldItem, true);
     }
@@ -323,6 +324,7 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
      * @param key The given key
      * @return The Item with the key
      */
+    @Override
     public E pickOut(final String key) {
         final E picked = nameTable.get(key);
         if (picked != null) {

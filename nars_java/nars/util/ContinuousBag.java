@@ -161,6 +161,7 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */
+    @Override
     public boolean putBack(final E oldItem) {
         BudgetFunctions.forget(oldItem.budget, forgetRate.get(), RELATIVE_THRESHOLD);
         return putIn(oldItem);
@@ -209,6 +210,7 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
      * @param key The given key
      * @return The Item with the key
      */
+    @Override
     public E pickOut(final String key) {
         final E picked = nameTable.get(key);
         if (picked != null) {

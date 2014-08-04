@@ -69,8 +69,9 @@ public class ImageExt extends CompoundTerm {
      * Clone an object
      * @return A new object, to be casted into an ImageExt
      */
+    @Override
     public Object clone() {
-        return new ImageExt(getName(), cloneTermsAppend(term), isConstant(), complexity, relationIndex);
+        return new ImageExt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
     /**
@@ -183,6 +184,7 @@ public class ImageExt extends CompoundTerm {
      * get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.IMAGE_EXT;
     }

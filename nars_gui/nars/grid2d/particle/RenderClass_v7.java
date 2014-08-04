@@ -340,6 +340,7 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 	}
 
 
+        @Override
 	public void paint(Graphics g) {
 
 		//CLEAR

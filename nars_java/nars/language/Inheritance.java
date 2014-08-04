@@ -98,6 +98,7 @@ public class Inheritance extends Statement {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.INHERITANCE;
     }

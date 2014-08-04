@@ -104,6 +104,7 @@ public class TermWindow extends Window implements ActionListener {
      *
      * @param e The ActionEvent
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton) e.getSource();
         if (b == playButton) {
@@ -117,6 +118,7 @@ public class TermWindow extends Window implements ActionListener {
         }
     }
 
+    @Override
     protected void close() {
         setVisible(false);
     }

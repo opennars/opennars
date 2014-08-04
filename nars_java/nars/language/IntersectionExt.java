@@ -54,6 +54,7 @@ public class IntersectionExt extends CompoundTerm {
      * Clone an object
      * @return A new object, to be casted into a IntersectionExt
      */
+    @Override
     public Object clone() {
         return new IntersectionExt(getName(), cloneTerms(), isConstant(), complexity);
     }
@@ -127,6 +128,7 @@ public class IntersectionExt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.INTERSECTION_EXT;
     }

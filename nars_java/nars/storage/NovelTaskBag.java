@@ -41,6 +41,7 @@ public class NovelTaskBag extends Bag<Task> {
      * Get the (constant) forget rate in NovelTaskBag
      * @return The forget rate in NovelTaskBag
      */
+    @Override
     protected int forgetRate() {
         return Parameters.NEW_TASK_FORGETTING_CYCLE;
     }

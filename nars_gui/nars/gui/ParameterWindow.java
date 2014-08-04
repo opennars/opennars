@@ -106,6 +106,7 @@ public class ParameterWindow extends Window implements ActionListener, Adjustmen
      * Handling button click
      * @param e The ActionEvent
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object s = e.getSource();
         if (s == defaultButton) {
@@ -133,6 +134,7 @@ public class ParameterWindow extends Window implements ActionListener, Adjustmen
      * Handling scrollbar movement
      * @param e The AdjustmentEvent
      */
+    @Override
     public void adjustmentValueChanged(AdjustmentEvent e) {
         if (e.getSource() == valueBar) {
             int v = valueBar.getValue();

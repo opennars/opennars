@@ -53,8 +53,9 @@ public class DifferenceExt extends CompoundTerm {
      * Clone an object
      * @return A new object, to be casted into a DifferenceExt
      */
+    @Override
     public Object clone() {
-        return new DifferenceExt(getName(), cloneTermsAppend(term), isConstant(), complexity);
+        return new DifferenceExt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
     /**
@@ -99,6 +100,7 @@ public class DifferenceExt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.DIFFERENCE_EXT;
     }

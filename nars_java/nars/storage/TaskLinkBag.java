@@ -43,6 +43,7 @@ public class TaskLinkBag extends Bag<TaskLink> {
      * Get the (adjustable) forget rate of TaskLinkBag
      * @return The forget rate of TaskLinkBag
      */
+    @Override
     protected int forgetRate() {
         return taskForgettingRate.get();
     }

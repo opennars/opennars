@@ -61,7 +61,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public Object clone() {
-        return new Equivalence(getName(), cloneTermsAppend(term), isConstant(), complexity, temporalOrder);
+        return new Equivalence(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
 
     /**
@@ -139,6 +139,7 @@ public class Equivalence extends Statement {
         return (temporalOrder != TemporalRules.ORDER_FORWARD);
     }
 
+    @Override
     public int getTemporalOrder() {
         return temporalOrder;
     }

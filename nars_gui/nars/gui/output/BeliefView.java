@@ -46,6 +46,7 @@ public class BeliefView extends PPanel {
     }
 
 
+    @Override
     public void setup() {
         super.setup();
         
@@ -53,6 +54,7 @@ public class BeliefView extends PPanel {
 
     
 // Draws the chart and a title.
+    @Override
     public void draw() {
 //        background(0);
 //        textSize(9);

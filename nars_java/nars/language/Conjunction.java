@@ -39,10 +39,9 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    private Conjunction(Term[] arg, int order) {
-        super(arg);
+    private Conjunction(String name, Term[] arg, int order) {
+        super(name, arg);
         temporalOrder = order;
-        setName(makeName());
     }
 
     @Override
@@ -71,7 +70,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public Object clone() {
-        return new Conjunction(getName(), cloneTermsAppend(term), isConstant(), complexity, temporalOrder);
+        return new Conjunction(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
 
     /**
@@ -132,7 +131,7 @@ public class Conjunction extends CompoundTerm {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final String name = makeCompoundName(NativeOperator.SEQUENCE, argList);
             final Term t = memory.nameToTerm(name);
-            return (t != null) ? t : new Conjunction(argList, temporalOrder);
+            return (t != null) ? t : new Conjunction(name, argList, temporalOrder);
         } else {
             final TreeSet<Term> set = new TreeSet<>(); // sort/merge arguments
             set.addAll(Arrays.asList(argList));
@@ -157,7 +156,7 @@ public class Conjunction extends CompoundTerm {
             name = makeCompoundName(NativeOperator.PARALLEL, argument);
         }
         final Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new Conjunction(argument, temporalOrder);
+        return (t != null) ? t : new Conjunction(name, argument, temporalOrder);
     }
 
     // overload this method by term type?
@@ -217,6 +216,7 @@ public class Conjunction extends CompoundTerm {
         }
     }
 
+    @Override
     public int getTemporalOrder() {
         return temporalOrder;
     }

@@ -67,6 +67,7 @@ public class MessageDialog extends JDialog implements ActionListener, WindowList
      * Handling button click
      * @param e The ActionEvent
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == button) {
             close();

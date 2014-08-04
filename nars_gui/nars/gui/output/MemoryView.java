@@ -245,22 +245,27 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         hamlib.mouseScrolled();
     }
 
+    @Override
     public void keyPressed() {
         hamlib.keyPressed();
     }
 
+    @Override
     public void mouseMoved() {
         hamlib.mouseMoved();
     }
 
+    @Override
     public void mouseReleased() {
         hamlib.mouseReleased();
     }
 
+    @Override
     public void mouseDragged() {
         hamlib.mouseDragged();
     }
 
+    @Override
     public void mousePressed() {
         hamlib.mousePressed();
     }
@@ -621,6 +626,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
         ProcessingJs() {
             addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+                @Override
                 public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     mouseScroll = -evt.getWheelRotation();
                     mouseScrolled();

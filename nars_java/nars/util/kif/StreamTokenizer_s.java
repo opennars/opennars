@@ -772,6 +772,7 @@ public class StreamTokenizer_s {
      * @see     java.io.StreamTokenizer_s#sval
      * @see     java.io.StreamTokenizer_s#ttype
      */
+    @Override
     public String toString() {
 	String ret;
 	switch (ttype) {

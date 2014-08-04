@@ -61,8 +61,9 @@ public class SetInt extends CompoundTerm {
      * Clone a SetInt
      * @return A new object, to be casted into a SetInt
      */
+    @Override
     public Object clone() {
-        return new SetInt(getName(), cloneTermsAppend(term), isConstant(), complexity);
+        return new SetInt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
     /**
@@ -108,6 +109,7 @@ public class SetInt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.SET_INT_OPENER;
     }
