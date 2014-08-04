@@ -650,7 +650,7 @@ public final class CompositionalRules {
         return commonTerm;
     }
     
-    public static void EliminateVariableOfConditionAbductive(int figure,Sentence sentence,Sentence belief,Memory memory) {
+    public static void EliminateVariableOfConditionAbductive(int figure,Sentence sentence,Sentence belief, Memory memory) {
         Term T1=(Term) sentence.content.clone();
         Term T2=(Term) belief.content.clone();
         Term S1=((Statement)T2).getSubject();
@@ -797,6 +797,8 @@ public final class CompositionalRules {
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                            if (!(s2 instanceof CompoundTerm)) continue;
+                            
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = TruthFunctions.abduction(sentence.truth, belief.truth);

@@ -34,8 +34,8 @@ public class Negation extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Negation(Term[] arg) {
-        super(arg);
+    private Negation(String name, Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -92,7 +92,7 @@ public class Negation extends CompoundTerm {
         }
         final String name = makeCompoundName(NativeOperator.NEGATION, argument);
         final Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new Negation(argument);
+        return (t != null) ? t : new Negation(name, argument);
     }
 
     /**

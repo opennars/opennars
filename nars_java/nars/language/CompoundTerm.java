@@ -100,10 +100,25 @@ public abstract class CompoundTerm extends Term {
         this.complexity = complexity;
     }
     
+    
+    /**
+     * Constructor called from subclasses constructors to initialize the fields
+     *
+     * @param name Name of the compound
+     * @param components Component list
+     */
+    protected CompoundTerm(final String name, final Term[] components) {
+        this.term = components; //ensureValidComponents(term);
+        this.complexity = calcComplexity();
+        setName(name);
+        this.isConstant = !hasVar;
+    }
+
 
 
     /**
-     * Constructor called from subclasses constructors to initialize the fields
+     * Constructor called from subclasses constructors to initialize the fields.
+     * Calculates name, hasVar, & complexity.
      *
      * @param components Component list
      */
@@ -138,20 +153,6 @@ public abstract class CompoundTerm extends Term {
     }
     
     
-    
-    /**
-     * Constructor called from subclasses constructors to initialize the fields
-     *
-     * @param name Name of the compound
-     * @param components Component list
-     */
-    protected CompoundTerm(final String name, final Term[] components) {
-        this.term = components; //ensureValidComponents(term);
-        this.complexity = calcComplexity();
-        setName(name);
-        this.isConstant = !hasVar;
-    }
-
     
 
     /**
