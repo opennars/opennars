@@ -237,8 +237,8 @@ public class Variable extends Term {
             if (cTerm1.size() != (cTerm2).size()) {
                 return false;
             }
-            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).getRelationIndex() != ((ImageExt) cTerm2).getRelationIndex())
-                || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).getRelationIndex() != ((ImageInt) cTerm2).getRelationIndex())) {
+            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex)
+                || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
                 return false;
             }
             Term[] list = cTerm1.cloneTerms();

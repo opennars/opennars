@@ -98,7 +98,7 @@ public class TaskLink extends TermLink {
      */
     public boolean novel(final TermLink termLink, final long currentTime) {
         final Term bTerm = termLink.target;
-        if (bTerm.equals(targetTask.sentence.content)) {
+        if (bTerm.equals(targetTask.sentence.content)) {            
             return false;
         }
         String linkKey = termLink.getKey();

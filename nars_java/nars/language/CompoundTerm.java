@@ -257,9 +257,9 @@ public abstract class CompoundTerm extends Term {
     public static Term make(final CompoundTerm compound, final Term[] components, final Memory memory) {
                 
         if (compound instanceof ImageExt) {
-            return ImageExt.make(components, ((ImageExt) compound).getRelationIndex(), memory);
+            return ImageExt.make(components, ((ImageExt) compound).relationIndex, memory);
         } else if (compound instanceof ImageInt) {
-            return ImageInt.make(components, ((ImageInt) compound).getRelationIndex(), memory);
+            return ImageInt.make(components, ((ImageInt) compound).relationIndex, memory);
         } else {
             return make(compound.operator(), components, memory);
         }

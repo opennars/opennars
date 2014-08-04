@@ -346,7 +346,7 @@ public class TextPerception {
     public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
         StringBuilder buffer = new StringBuilder(s);
         try {
-            Task task = null;
+            
             String budgetString = getBudgetString(buffer);
             String truthString = getTruthString(buffer);
             String tense = parseTense(buffer);
@@ -362,7 +362,7 @@ public class TextPerception {
             //    sentence.setRevisible(false);
             //}
             BudgetValue budget = parseBudget(budgetString, punc, truth);
-            task = new Task(sentence, budget);
+            Task task = new Task(sentence, budget);
             return task;
         }
         catch (InvalidInputException e) {

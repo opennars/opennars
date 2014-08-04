@@ -32,7 +32,8 @@ import nars.storage.Memory;
  */
 public class Conjunction extends CompoundTerm {
 
-    private int temporalOrder;
+    public final int temporalOrder;
+    
     /**
      * Constructor with partial values, called by make
      *

@@ -106,7 +106,7 @@ public final class StructuralRules {
             return;
         }
         Sentence sentence = memory.getCurrentTask().sentence;
-        TruthValue truth = truth = TruthFunctions.deduction(sentence.truth, RELIANCE);
+        TruthValue truth = TruthFunctions.deduction(sentence.truth, RELIANCE);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.singlePremiseTask(content, truth, budget);
     }
@@ -165,8 +165,8 @@ public final class StructuralRules {
      */
     private static boolean switchOrder(CompoundTerm compound, short index) {
         return ((((compound instanceof DifferenceExt) || (compound instanceof DifferenceInt)) && (index == 1))
-                || ((compound instanceof ImageExt) && (index != ((ImageExt) compound).getRelationIndex()))
-                || ((compound instanceof ImageInt) && (index != ((ImageInt) compound).getRelationIndex())));
+                || ((compound instanceof ImageExt) && (index != ((ImageExt) compound).relationIndex))
+                || ((compound instanceof ImageInt) && (index != ((ImageInt) compound).relationIndex)));
     }
 
     /**
@@ -373,7 +373,7 @@ public final class StructuralRules {
                 predicate = comp.term[index];
             }
         } else if ((comp instanceof ImageExt) && (side == 1)) {
-            if (index == ((ImageExt) comp).getRelationIndex()) {
+            if (index == ((ImageExt) comp).relationIndex) {
                 subject = Product.make(comp, inh.getSubject(), index, memory);
                 predicate = comp.term[index];
             } else {
@@ -381,7 +381,7 @@ public final class StructuralRules {
                 predicate = ImageExt.make((ImageExt) comp, inh.getSubject(), index, memory);
             }
         } else if ((comp instanceof ImageInt) && (side == 0)) {
-            if (index == ((ImageInt) comp).getRelationIndex()) {
+            if (index == ((ImageInt) comp).relationIndex) {
                 subject = comp.term[index];
                 predicate = Product.make(comp, inh.getPredicate(), index, memory);
             } else {
@@ -461,7 +461,7 @@ public final class StructuralRules {
             }
         } else if (subject instanceof ImageInt) {
             ImageInt image = (ImageInt) subject;
-            int relationIndex = image.getRelationIndex();
+            int relationIndex = image.relationIndex;
             for (short i = 0; i < image.size(); i++) {
                 if (i == relationIndex) {
                     newSubj = image.term[relationIndex];
@@ -515,7 +515,7 @@ public final class StructuralRules {
             }
         } else if (predicate instanceof ImageExt) {
             ImageExt image = (ImageExt) predicate;
-            int relationIndex = image.getRelationIndex();
+            int relationIndex = image.relationIndex;
             for (short i = 0; i < image.size(); i++) {
                 if (i == relationIndex) {
                     newSubj = Product.make(image, subject, relationIndex, memory);
