@@ -97,10 +97,10 @@ public class Sentence implements Cloneable {
     public boolean equals(final Object that) {
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            return content.equals(content) && 
+            return content.equals(t.content) && 
                     punctuation == t.punctuation &&
-                    truth.equals(truth) &&
-                    stamp.equals(stamp);
+                    truth.equals(t.truth) &&
+                    stamp.equals(t.stamp);
         }
         return false;
     }
