@@ -50,7 +50,7 @@ public class DefaultTextPerception extends TextPerception {
             @Override
             public boolean react(Memory m, String input, TextReaction lastHandler) {                
                 if (input.equals(Symbols.RESET_COMMAND)) {
-                    m.reset();
+                    nar.reset();
                     m.output(Output.IN.class, input);
                     return true;
                 }

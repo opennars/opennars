@@ -500,9 +500,9 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
             long nowTime = nar.getTime();
 
-            if (lastTime == nowTime) {
+            /*if (lastTime == nowTime) {
                 continue;
-            }
+            }*/
             lastTime = nowTime;
 
             updateGUI();

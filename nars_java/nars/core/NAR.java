@@ -182,16 +182,7 @@ public class NAR implements Runnable, Output {
         final boolean wasRunning = running;
         running = true;
         for (int i = 0; i < cycles; i++) {
-            
-            try {
-                cycle();
-            }
-            catch (Exception e) {
-                output(ERR.class, e);
-                
-                System.err.println(e);
-                e.printStackTrace();
-            }
+            cycle();
             
         }
         running = wasRunning;
@@ -227,7 +218,7 @@ public class NAR implements Runnable, Output {
         
         while (running) {      
             
-            step(1);
+            cycle();
                         
             if (minCyclePeriodMS > 0) {
                 try {
@@ -315,10 +306,18 @@ public class NAR implements Runnable, Output {
             debugTime();            
         }
         
-        if (memory.getCyclesQueued()==0)
-            cycleInput();
-        
-        memory.cycle();
+        try {
+            if (memory.getCyclesQueued()==0)
+                cycleInput();
+
+            memory.cycle();
+        }
+        catch (Exception e) {
+            output(ERR.class, e);
+
+            System.err.println(e);
+            e.printStackTrace();
+        }        
     }
     
     

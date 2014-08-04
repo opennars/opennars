@@ -45,7 +45,7 @@ public class TextInput extends Symbols implements Input {
     
     private final StringBuilder text = new StringBuilder();   
     
-    private int linesPerCycle = 1024;
+    private int linesPerCycle = 1;
     
 
     public TextInput(String input) {
@@ -73,6 +73,7 @@ public class TextInput extends Symbols implements Input {
         this.input = input;
     }
 
+    /** how many input lines to process each cycle.  default=1 */
     public void setLinesPerCycle(int linesPerCycle) {
         this.linesPerCycle = linesPerCycle;
     }
