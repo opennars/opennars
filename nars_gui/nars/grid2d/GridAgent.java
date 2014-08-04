@@ -40,6 +40,7 @@ abstract public class GridAgent extends LocalGridObject {
     public void forward(int steps) {     act(new Forward(steps));    }
     public void turn(int angle) {   act(new Turn(angle(angle)));  }
 
+    @Override
     abstract public void update(Effect nextEffect);
     
     @Override

@@ -127,6 +127,7 @@ public class InputPanel extends NPanel implements ActionListener {
         TreeModel model = new FileTreeModel(new File("./nal"));
         fileTree = new JTree(model);
         fileTree.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 int selRow = fileTree.getRowForLocation(e.getX(), e.getY());
                 TreePath selPath = fileTree.getPathForLocation(e.getX(), e.getY());
@@ -207,6 +208,7 @@ public class InputPanel extends NPanel implements ActionListener {
      *
      * @param e The ActionEvent
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton) e.getSource();
         if (b == okButton) {

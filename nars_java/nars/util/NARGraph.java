@@ -350,6 +350,7 @@ public class NARGraph extends DirectedMultigraph {
             }
         }
         
+        @Override
         public void onFinish(NARGraph g) {
             if (includeSyntax > 0) {
                 for (final Term a : terms) {

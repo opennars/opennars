@@ -59,8 +59,6 @@ public abstract class CompoundTerm extends Term {
     /** Whether contains a variable */
     private boolean hasVar;
 
-
-
     /**
      * Abstract method to get the operator of the compound
      */
@@ -71,8 +69,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @return A clone of the compound term
      */
-    @Override
-    public abstract Object clone();
+    @Override public abstract Object clone();
 
     
     

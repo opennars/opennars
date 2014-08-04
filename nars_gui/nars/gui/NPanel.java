@@ -19,16 +19,19 @@ abstract public class NPanel extends JPanel implements HierarchyListener {
         super(l);
     }
     
+    @Override
     public void addNotify() {
         super.addNotify();
         addHierarchyListener(this);
     }
 
+    @Override
     public void removeNotify() {
         removeHierarchyListener(this);
         super.removeNotify();
     }
 
+    @Override
     public void hierarchyChanged(HierarchyEvent e) {
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
             boolean showing = isShowing();

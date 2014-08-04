@@ -69,8 +69,9 @@ public class ImageInt extends CompoundTerm {
      * Clone an object
      * @return A new object, to be casted into an ImageInt
      */
+    @Override
     public Object clone() {
-        return new ImageInt(getName(), cloneTermsAppend(term), isConstant(), complexity, relationIndex);
+        return new ImageInt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
     /**
@@ -186,6 +187,7 @@ public class ImageInt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.IMAGE_INT;
     }

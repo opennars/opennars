@@ -131,6 +131,7 @@ public class BagPerf {
             
                 if (first) {
                     b = new DefaultBag<Item>(levels, levels*levelCapacity, forgetRate) {
+                          @Override
                           protected Deque<Item> newLevel() {
                               //return new LinkedList<E>();
                               return new ArrayDeque<Item>(1+capacity/levels);
@@ -142,6 +143,7 @@ public class BagPerf {
                 else {
                     //b = new FastBag<Item>(levels*levelCapacity, forgetRate);
                     b = new DefaultBag<Item>(levels, levels*levelCapacity, forgetRate) {
+                          @Override
                           protected Deque<Item> newLevel() {
                               //return new LinkedList<E>();
                               //return new ArrayDeque<Item>(1+capacity/levels);

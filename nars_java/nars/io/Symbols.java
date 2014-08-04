@@ -148,6 +148,7 @@ public class Symbols {
             this.closer = name().endsWith("_CLOSER");
         }
 
+        @Override
         public String toString() { return string; }
                 
         

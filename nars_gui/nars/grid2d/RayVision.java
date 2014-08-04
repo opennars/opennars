@@ -9,6 +9,7 @@ public class RayVision implements GridObject {
         this.body = body;
     }
     
+    @Override
     public void init(Grid2DSpace p) {
         
     }

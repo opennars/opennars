@@ -32,6 +32,7 @@ public class PLineChart extends PApplet {
     XYChart lineChart;
 
 // Loads data into the chart and customises its appearance.
+    @Override
     public void setup() {
         noLoop();
         
@@ -76,6 +77,7 @@ public class PLineChart extends PApplet {
     }
     
 // Draws the chart and a title.
+    @Override
     public void draw() {
         background(0);
         textSize(9);

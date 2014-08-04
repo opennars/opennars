@@ -132,22 +132,27 @@ public class Grid2DSpace extends PApplet {
         hamlib.mouseScrolled();
     }
 
+    @Override
     public void keyPressed() {
         hamlib.keyPressed();
     }
 
+    @Override
     public void mouseMoved() {
         hamlib.mouseMoved();
     }
 
+    @Override
     public void mouseReleased() {
         hamlib.mouseReleased();
     }
 
+    @Override
     public void mouseDragged() {
         hamlib.mouseDragged();
     }
 
+    @Override
     public void mousePressed() {
         hamlib.mousePressed();
     }
@@ -350,6 +355,7 @@ public class Grid2DSpace extends PApplet {
 
         ProcessingJs() {
             addMouseWheelListener(new MouseWheelListener() {
+                @Override
                 public void mouseWheelMoved(MouseWheelEvent evt) {
                     mouseScroll = -evt.getWheelRotation();
                     mouseScrolled();

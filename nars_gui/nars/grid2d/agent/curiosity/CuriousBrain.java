@@ -17,6 +17,7 @@ public class CuriousBrain extends Brain {
 		curiosity = new Curiosity(perception, this, predictionNetHiddenNeurons);
 	}
 
+        @Override
 	public void count() {
 		getPerception().perceive(); // perc(t)
 		curiosity.learn();

@@ -38,6 +38,7 @@ abstract public class NARConnection implements LineOutput {
             resume();
     }
     
+    @Override
     abstract public void println(String output);
     
     

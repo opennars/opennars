@@ -61,6 +61,7 @@ public class SetExt extends CompoundTerm {
      * Clone a SetExt
      * @return A new object, to be casted into a SetExt
      */
+    @Override
     public Object clone() {
         return new SetExt(getName(), cloneTerms(), isConstant(), complexity);
     }
@@ -112,6 +113,7 @@ public class SetExt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.SET_EXT_OPENER;
     }

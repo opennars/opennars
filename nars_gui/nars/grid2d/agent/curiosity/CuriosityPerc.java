@@ -20,14 +20,17 @@ public class CuriosityPerc extends Perception {
 		this.brain = brain;
 	}
 
+        @Override
 	public double getReward() {
 		return 0;
 	}
 
+        @Override
 	public boolean isUnipolar() {
 		return this.perception.isUnipolar();
 	}
 
+        @Override
 	protected void updateInputValues() {
 		double[] percOut = this.perception.getOutput();
 		for (int i = 1; i < percOut.length; i++) {

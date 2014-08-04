@@ -108,6 +108,7 @@ public class OWLInput extends PrintWriterInput {
 
                     if (tagName.equalsIgnoreCase("owl:Class")) {
                         processTag(parser, new TagProcessor() {
+                            @Override
                             public void execute(XMLStreamReader parser) {
 
                                 String tagName = formatTag(parser.getName());
@@ -216,6 +217,7 @@ public class OWLInput extends PrintWriterInput {
                         
                         if (parentEntity != null) {
                             processTag(parser, new TagProcessor() {
+                                @Override
                                 public void execute(XMLStreamReader parser) {
                                     String tagName = formatTag(parser.getName());
                                     //String id = parser.getAttributeValue(RDF_URI, "ID");

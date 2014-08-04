@@ -15,6 +15,7 @@ abstract public class PPanel extends PApplet {
 
 
 
+    @Override
     public void setup() {
         noLoop();
         

@@ -54,8 +54,9 @@ public class IntersectionInt extends CompoundTerm {
      * Clone an object
      * @return A new object, to be casted into a Conjunction
      */
+    @Override
     public Object clone() {
-        return new IntersectionInt(getName(), cloneTermsAppend(term), isConstant(), complexity);
+        return new IntersectionInt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
     /**
@@ -127,6 +128,7 @@ public class IntersectionInt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.INTERSECTION_INT;
     }

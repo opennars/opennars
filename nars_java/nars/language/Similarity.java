@@ -54,7 +54,7 @@ public class Similarity extends Statement {
      */
     @Override
     public Object clone() {
-        return new Similarity(getName(), cloneTermsAppend(term), isConstant(), complexity);
+        return new Similarity(getName(), cloneTerms(), isConstant(), complexity);
     }
 
     /**

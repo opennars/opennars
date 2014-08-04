@@ -53,8 +53,9 @@ public class DifferenceInt extends CompoundTerm {
      * Clone an object
      * @return A new object, to be casted into a DifferenceInt
      */
+    @Override
     public Object clone() {
-        return new DifferenceInt(getName(), cloneTermsAppend(term), isConstant(), complexity);
+        return new DifferenceInt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
     /**
@@ -101,6 +102,7 @@ public class DifferenceInt extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
+    @Override
     public NativeOperator operator() {
         return NativeOperator.DIFFERENCE_INT;
     }

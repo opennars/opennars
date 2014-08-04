@@ -3373,6 +3373,7 @@ public class KB {
                        sanitizedKBName + "\n");
 
             orderedFormulae = new TreeSet(new Comparator() {
+                    @Override
                     public int compare(Object o1, Object o2) {
                         Formula f1 = (Formula) o1;
                         Formula f2 = (Formula) o2;

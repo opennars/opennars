@@ -216,6 +216,7 @@ abstract public class HTTPServer {
 
         final ServerSocket ss = new ServerSocket(myTcpPort);
         Thread t = new Thread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     while (true) {
@@ -284,6 +285,7 @@ abstract public class HTTPServer {
             t.start();
         }
 
+        @Override
         public void run() {
             try {
                 InputStream is = mySocket.getInputStream();

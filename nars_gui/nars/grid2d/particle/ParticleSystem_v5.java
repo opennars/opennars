@@ -32,6 +32,7 @@ public class ParticleSystem_v5 extends Canvas {
 
 		Thread runThread = new Thread(new Runnable() {
 
+                        @Override
 			public void run() {
 				if (true) {
 					while (true) {
