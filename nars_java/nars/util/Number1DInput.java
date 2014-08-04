@@ -43,7 +43,6 @@ public class Number1DInput extends PrintWriterInput {
     //TODO subclasses: NormalizedArray1DInput, Synchronous, Asynch, ..
     private boolean changed;
     private final String id;
-    private final NAR nar;
     private static final NumberFormat nf = NumberFormat.getInstance();
     private static final NumberFormat intf = NumberFormat.getIntegerInstance();
     
@@ -51,16 +50,15 @@ public class Number1DInput extends PrintWriterInput {
     private final int resolution;
     int iteration = 0;
 
-    public Number1DInput(NAR n, String id, double[] data, int resolution) throws IOException {
-        super(n);
-        this.nar = n;
+    public Number1DInput(String id, double[] data, int resolution) throws IOException {
+        super();
         this.id = id;
         this.resolution = resolution;
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);        
         intf.setMinimumIntegerDigits(2);
         
-        initPredicates(n, resolution);
+        initPredicates(resolution);
         set(data);
         
         
@@ -75,7 +73,7 @@ public class Number1DInput extends PrintWriterInput {
         return Termize.enterm("\u211d" + ps + "/" + resolution);
     }
     
-    public void initPredicates(NAR N, int resolution) {
+    public void initPredicates(int resolution) {
         assert(resolution >= 2);
         double v = 0;
         double dv = 1.0 / resolution;

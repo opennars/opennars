@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.Output;
@@ -84,13 +85,16 @@ public class NALTest  {
         return TextPerception.parseOutput(o);
     }
     
+    public static NAR newNAR() {
+        return new DefaultNARBuilder().build();
+    }
+    
     protected void testNAL(final String path) {
-        int minCycles = 50;
+        int minCycles = 100;
         
         NAR.resetStatics();
         
-        final NAR n = new NAR();
-        
+        final NAR n = newNAR();
         
         final List<String> expressions = new ArrayList(2);
         out.clear();
@@ -194,7 +198,7 @@ public class NALTest  {
             public void init() {
                 NAR.resetStatics();
                 
-                n = new NAR();
+                n = newNAR();
             }
 
             @Override

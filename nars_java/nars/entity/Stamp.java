@@ -34,11 +34,6 @@ import nars.language.Term;
 
 public class Stamp implements Cloneable {
 
-    /**
-     * serial number, for the whole system TODO : should it really be static? or
-     * a Stamp be a field in {@link ReasonerBatch} ?
-     */
-    public static long currentSerial = 0;
 
     /**
      * serial numbers. not to be modified after Stamp constructor has initialized it
@@ -91,11 +86,10 @@ public class Stamp implements Cloneable {
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time, final String tense) {
-        currentSerial++;
+    public Stamp(final long time, final String tense, final long serial) {        
         baseLength = 1;
         evidentialBase = new long[baseLength];
-        evidentialBase[0] = currentSerial;
+        evidentialBase[0] = serial;
         creationTime = time;
         if (tense.length() == 0) {
             occurrenceTime = ETERNAL;
@@ -274,13 +268,6 @@ public class Stamp implements Cloneable {
     @Override
     public Object clone() {
         return new Stamp(this);
-    }
-
-    /**
-     * Initialize the stamp mechanism of the system, called in Reasoner
-     */
-    public static void init() {
-        currentSerial = 0;
     }
 
 

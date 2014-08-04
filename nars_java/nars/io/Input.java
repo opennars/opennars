@@ -19,6 +19,8 @@
 
 package nars.io;
 
+import java.io.IOException;
+
 /**
  * 
  * Provides input for the next moment from an input channel that delivers input asynchronously
@@ -26,7 +28,7 @@ package nars.io;
 public interface Input<X> {
    
     /** returns next input if available, null if none */
-    public X next();
+    public X next() throws IOException;
     
     /**
      * 

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
+import nars.gui.NARControls;
+import nars.io.DefaultTextPerception;
 import nars.io.Input;
 import nars.io.Output;
 import nars.io.TextInput;
@@ -44,19 +45,13 @@ public class NAR implements Runnable, Output {
     protected List<Output> outputChannels;
     
         
-    /**
-     * System clock, relatively defined to guarantee the repeatability of
-     * behaviors
-     */
-    private long clock;
+    
     /**
      * Flag for running continuously
      */
     private boolean running = false;
-    /**
-     * The remaining number of steps to be carried out (stepLater mode)
-     */
-    private int stepsQueued;
+    
+    
     
     /**
      * determines the end of {@link NARSBatch} program (set but not accessed in
@@ -68,35 +63,26 @@ public class NAR implements Runnable, Output {
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
     
-    
-    /**
-     *  Design parameters which do not change at runtime
-     */
-    public final NARBuilder config;
-    
+
     /**
      *  Parameters which can be changed at runtime
     */
-    public final NARParams param;
+    //public final NARParams param;
     
     
 
     private final TextPerception textPerception;
     
-    private boolean working = true;
+    
     private boolean inputting = true;
     private boolean threadYield;
 
-    @Deprecated public NAR() {
-        this(new DefaultNARBuilder());
-    }
-    
-    protected NAR(NARBuilder p) {
-        this.config = p;
-        this.param = p.newInitialParams();
+    protected NAR(Memory m) {
+        this.memory = m;
         
-        memory = new Memory(this);
-        textPerception = new TextPerception(this);
+        m.setOutput(this);
+        
+        textPerception = new DefaultTextPerception(this);
         
         //needs to be concurrent in case NARS makes changes to the channels while running
         inputChannels = new CopyOnWriteArrayList<Input>();
@@ -112,12 +98,9 @@ public class NAR implements Runnable, Output {
         for (Input i : inputChannels) {
             i.finished(true);
         }
-        inputChannels.clear();
+        inputChannels.clear();               
         
-        stepsQueued = 0;
-        clock = 0;
-        memory.init();
-        Stamp.init();
+        memory.reset();
         
         if (memory.getRecorder().isActive()) {
             memory.getRecorder().append("Memory Reset");
@@ -127,7 +110,8 @@ public class NAR implements Runnable, Output {
 
     /** Convenience method for creating a TextInput and adding as Input Channel */
     public TextInput addInput(final String text) {
-        final TextInput i = new TextInput(this, text);
+        final TextInput i = new TextInput(text);
+        addInput(i);
         return i;
     }
     
@@ -152,14 +136,7 @@ public class NAR implements Runnable, Output {
         outputChannels.remove(channel);
     }
 
-    /**
-     * Queue additional cycle()'s to the inference process.
-     *
-     * @param cycles The number of inference steps
-     */
-    public void stepLater(final int cycles) {
-        stepsQueued += cycles;
-    }
+    
     
     
     /**
@@ -175,11 +152,7 @@ public class NAR implements Runnable, Output {
         this.minCyclePeriodMS = minCyclePeriodMS;
         running = true;
     }
-    
-    /** Can be used to pause/resume inference, without killing the running thread. */
-    public void setWorking(boolean b) {
-        this.working = b;
-    }
+
 
     /** Can be used to pause/resume input */
     public void setInputting(boolean inputEnabled) {
@@ -202,9 +175,10 @@ public class NAR implements Runnable, Output {
     /** Execute a fixed number of cycles. */
     public void step(final int cycles) {
         if (thread!=null) {
-            stepLater(cycles);
+            memory.stepLater(cycles);
             return;
         }
+        
         final boolean wasRunning = running;
         running = true;
         for (int i = 0; i < cycles; i++) {
@@ -231,18 +205,18 @@ public class NAR implements Runnable, Output {
     /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
     public void finish(final int cycles, final boolean debug) {
         if (running == true) {
-            stepLater(cycles);
+            memory.stepLater(cycles);
             return;
         }
         
         DEBUG = debug; 
         running = true;
         step(cycles);
-        while (stepsQueued!=0) {
-            cycle();
-        }
         while (!inputChannels.isEmpty()) {
-            cycle();
+            step(1);
+        }
+        while (memory.getCyclesQueued() > 0) {
+            step(1);
         }
         running = false;
     }
@@ -268,13 +242,13 @@ public class NAR implements Runnable, Output {
     
     
     private void debugTime() {
-        if (running || stepsQueued > 0 || !finishedInputs) {
+        //if (running || stepsQueued > 0 || !finishedInputs) {
             System.out.println("// doTick: "
-                    + "walkingSteps " + stepsQueued
-                    + ", clock " + clock);
+                    //+ "walkingSteps " + stepsQueued
+                    + ", clock " + getTime());
 
             System.out.flush();
-        }
+        //}
     }
 
     /**     
@@ -293,10 +267,17 @@ public class NAR implements Runnable, Output {
                     deadInputs.add(i);
                 }
                 else {
-                    Object o = i.next();
-                    if (o!=null) {
-                        perceive(i, o);
-                        inputPerceived = true;                        
+                    try {
+                        Object o = i.next();
+                        if (o!=null) {
+                            perceive(i, o);
+                            inputPerceived = true;                        
+                        }
+                    }
+                    catch (Exception e) {
+                        output(ERR.class, e);
+                        i.finished(true);
+                        deadInputs.add(i);                        
                     }
                 }
             }            
@@ -325,18 +306,6 @@ public class NAR implements Runnable, Output {
         }
     }
     
-    /** Execute a cycleMemory */
-    protected void cycleMemory() {
-        if (working) {
-            clock++;
-            
-            memory.workCycle(clock);
-            
-            if (stepsQueued > 0) {
-                stepsQueued--;
-            }
-        }        
-    }
 
     /**
      * A clock tick, consisting of 1) processing input, 2) one cycleMemory.
@@ -346,8 +315,10 @@ public class NAR implements Runnable, Output {
             debugTime();            
         }
         
-        cycleInput();
-        cycleMemory();                
+        if (memory.getCyclesQueued()==0)
+            cycleInput();
+        
+        memory.cycle();
     }
     
     
@@ -380,7 +351,7 @@ public class NAR implements Runnable, Output {
      * @return The current time
      */
     public long getTime() {
-        return clock;
+        return memory.getTime();
     }
 
     public boolean isRunning() {
@@ -389,10 +360,6 @@ public class NAR implements Runnable, Output {
 
     public long getMinCyclePeriodMS() {
         return minCyclePeriodMS;
-    }
-
-    public boolean isWorking() {
-        return working;
     }
 
     /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 
@@ -405,7 +372,10 @@ public class NAR implements Runnable, Output {
 
     public static void resetStatics() {
         Memory.randomNumber = new Random(1);
-        Stamp.currentSerial = 0;
+    }
+
+    public NARParams param() {
+        return memory.param;
     }
     
 }
