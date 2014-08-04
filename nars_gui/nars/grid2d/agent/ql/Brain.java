@@ -328,7 +328,7 @@ public class Brain implements Serializable {
      *
      * @param change
      */
-    private void updateWeights(double change) {
+    private void updateWeights(final double change) {
         for (int l = w.length - 1; l >= 0; l--) {
             for (int i = 0; i < w[l].length; i++) {
                 for (int j = 0; j < w[l][i].length; j++) {
@@ -345,7 +345,7 @@ public class Brain implements Serializable {
      *
      * @param percent
      */
-    public void mutate(double percent) {
+    public void mutate(final double percent) {
         for (int l = 0; l < w.length; l++) {
             for (int i = 0; i < w[l].length; i++) {
                 for (int j = 0; j < w[l][i].length; j++) {
