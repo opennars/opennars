@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.NARParams;
+import nars.core.Param;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -80,8 +80,7 @@ public class Memory implements Output {
      */
     private InferenceRecorder recorder;
     
-    public final AtomicInteger beliefForgettingRate = new AtomicInteger(Parameters.TERM_LINK_FORGETTING_CYCLE);
-    public final AtomicInteger taskForgettingRate = new AtomicInteger(Parameters.TASK_LINK_FORGETTING_CYCLE);
+ 
     
 
     /* ---------- Short-term workspace for a single cycle ---	------- */
@@ -126,7 +125,7 @@ public class Memory implements Output {
 
     // for temporal induction
     private Task lastEvent;
-    public final NARParams param;
+    public final Param param;
     
     transient private Output output;
     private final ConceptBuilder conceptBuilder;
@@ -144,7 +143,7 @@ public class Memory implements Output {
      *
      * @param nar
      */
-    public Memory(NARParams param, ConceptBag concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder) {                
+    public Memory(Param param, ConceptBag concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder) {                
         
         this.param = param;
         this.conceptBuilder = conceptBuilder;
@@ -350,9 +349,9 @@ public class Memory implements Output {
     public void output(Task t) {
         if (output == null) return;
         
-        final float minSilent = param.getSilenceLevel() / 100.0f;
+        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
         final float budget = t.budget.summary();        
-        if (budget >= minSilent) {  // only report significant derived Tasks
+        if (budget >= noiseLevel) {  // only report significant derived Tasks
             output(OUT.class, t.sentence);
         }        
     }
@@ -765,13 +764,6 @@ public class Memory implements Output {
                 + item.toString();
     }
 
-    public AtomicInteger getTaskForgettingRate() {
-        return taskForgettingRate;
-    }
-
-    public AtomicInteger getBeliefForgettingRate() {
-        return beliefForgettingRate;
-    }
     
 
     private void onTaskAdd(Task t) {

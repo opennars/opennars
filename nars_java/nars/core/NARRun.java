@@ -39,31 +39,24 @@ import nars.io.TextOutput;
  */
 public class NARRun {
 
-    /**
-     * The nar
-     */
-    NAR nar;
+    private final NAR nar;
+
     private boolean logging;
     private PrintStream out = System.out;
     private final boolean dumpLastState = true;
     int maxTime = 0;
-    /**
-     * Flag to distinguish the two running modes of the project.
-     */
-    private static final boolean standAlone = false;
+
 
     /**
      * The entry point of the standalone application.
      * <p>
- Create an instance of the class, then finish the {@link #init(String[])} and
-     * {@link #run()} methods.
-     *
      * @param args optional argument used : one addInput file
      */
     public static void main(String args[]) {
-        NARRun nars = new NARRun();
-        CommandLineArguments.decode(args, nars.getReasoner());
+                
+        NARRun nars = new NARRun(new CommandLineNARBuilder(args).build());        
         nars.runInference(args);
+        
         // TODO only if single finish ( no reset in between )
         if (nars.dumpLastState) {
             System.out.println("\n==== Dump Last State ====\n"
@@ -71,8 +64,8 @@ public class NARRun {
         }
     }
 
-    public NARRun() {
-        init();
+    public NARRun(NAR n) {
+        this.nar = n;
     }
 
     /**
@@ -80,15 +73,6 @@ public class NARRun {
  an addInput file
      */
     public void runInference(String args[]) {
-        init(args);
-        run();
-        System.exit(0);
-    }
-
-    /**
-     * initialize from an addInput file
-     */
-    public void init(String[] args) {
         TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
         output.setErrors(true);
         output.setErrorStackTrace(true);
@@ -103,39 +87,8 @@ public class NARRun {
         else {            
             nar.addInput(new TextInput(new BufferedReader(new InputStreamReader(System.in))));
         }
-    }
-
-    /**
-     * non-static equivalent to {@link #main(String[])} : finish to completion from
- a BufferedReader
-     */
-    /*public void runInference(BufferedReader r, BufferedWriter w) {
-        init(r, w);
-        run();
-    }
-
-    private void init(BufferedReader r, BufferedWriter w) {
-        TextInput experienceReader = new TextInput(nar, r);
-        nar.addOutput(new TextOutput(nar,
-                new PrintWriter(w, true)));
-    }
-    */
-
-    /**
-     * Initialize the system at the control center.<p>
-     * Can instantiate multiple reasoners
-     */
-    public final void init() {
-        nar = new DefaultNARBuilder().build();
-    }
-
-    /**
-     * Run to completion: repeatedly execute NARS working cycle, until Inputs
-     * are Finished, or 1000 steps. This method is called when the Runnable's
-     * thread is started.
-     */
-    public void run() {
-        while (true) {
+        
+               while (true) {
             if (logging)
                 log("NARSBatch.run():"
                         + " step " + nar.getTime()
@@ -156,6 +109,8 @@ public class NARRun {
                 }
             }
         }
+               
+        System.exit(0);
     }
 
     public void setPrintStream(PrintStream out) {
@@ -168,21 +123,4 @@ public class NARRun {
         }
     }
 
-    public NAR getReasoner() {
-        return nar;
-    }
-    
-
-//    /**
-//     * Whether the project running as an application.
-//     *
-//     * @return true for application; false for applet.
-//     */
-//    public static boolean isStandAlone() {
-//        return standAlone;
-//    }
-//
-//    public static void setStandAlone(boolean standAlone) {
-//        NARRun.standAlone = standAlone;
-//    }
 }

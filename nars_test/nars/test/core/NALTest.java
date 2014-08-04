@@ -90,7 +90,7 @@ public class NALTest  {
     }
     
     protected void testNAL(final String path) {
-        int minCycles = 100;
+        @Deprecated int minCycles = 50; //TODO reduce this to one or zero
         
         NAR.resetStatics();
         

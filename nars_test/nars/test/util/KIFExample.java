@@ -37,10 +37,12 @@ public class KIFExample {
                 .setConceptBagLevels(512)
                 .build();
                 
-        n.param.setSilenceLevel(99);
+        n.param().noiseLevel.set(99);
         
-        KIFInput k = new KIFInput(n, "/home/me/sigma/KBs/Merge.kif");
+        KIFInput k = new KIFInput("/home/me/sigma/KBs/Merge.kif");
         k.setIncludeSubclass(true);
+        n.addInput(k);
+        
         k.start();
         
         TextOutput t = new TextOutput(n, System.out);

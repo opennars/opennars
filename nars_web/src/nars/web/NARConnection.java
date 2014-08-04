@@ -32,7 +32,7 @@ abstract public class NARConnection implements LineOutput {
     }
 
     public void read(final String message) {
-        TextInput e = new TextInput(nar, new BufferedReader( new StringReader(message)));
+        nar.addInput(message);
                 
         if (!running)
             resume();

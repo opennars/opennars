@@ -23,7 +23,7 @@ package nars.gui;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
-import nars.core.CommandLineArguments;
+import nars.core.CommandLineNARBuilder;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
@@ -112,7 +112,7 @@ public class NARSwing  {
     public void init(String[] args) {
         
         if (args.length > 0
-                && CommandLineArguments.isReallyFile(args[0])) {
+                && CommandLineNARBuilder.isReallyFile(args[0])) {
 
             try {
                 new TextInput(nar, new File(args[0]));
@@ -120,7 +120,7 @@ public class NARSwing  {
                 ex.printStackTrace();
             }
         }
-        CommandLineArguments.decode(args, nar);
+        CommandLineNARBuilder.decode(args, nar);
     }
 
 

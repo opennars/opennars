@@ -67,7 +67,7 @@ public class NAR implements Runnable, Output {
     /**
      *  Parameters which can be changed at runtime
     */
-    //public final NARParams param;
+    //public final Param param;
     
     
 
@@ -374,7 +374,7 @@ public class NAR implements Runnable, Output {
         Memory.randomNumber = new Random(1);
     }
 
-    public NARParams param() {
+    public Param param() {
         return memory.param;
     }
     

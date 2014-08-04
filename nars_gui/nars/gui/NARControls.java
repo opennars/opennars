@@ -281,7 +281,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         String filePath = directoryName + fileName;
 
         try {
-            new TextInput(nar, new File(filePath));
+            nar.addInput(new TextInput(new File(filePath)));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -437,8 +437,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
             @Override
             public void onChange(double v) {
-                int level = 100 - (int) v;
-                nar.param.setSilenceLevel(level);
+                int level = (int) v;
+                nar.param().noiseLevel.set(level);
             }
 
         };
@@ -626,7 +626,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
         p.add(newIntSlider(memory.getTaskForgettingRate(), "Task Forgetting Rate", 1, 99), c);
         p.add(newIntSlider(memory.getBeliefForgettingRate(), "Belief Forgetting Rate", 1, 99), c);
-        p.add(newIntSlider(memory.getConceptForgettingRate(), "Concept Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.param.conceptForgettingRate, "Concept Forgetting Rate", 1, 99), c);
 
 
         JPanel chartPanel = new JPanel(new GridLayout(0,1));

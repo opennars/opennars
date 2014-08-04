@@ -31,42 +31,93 @@ public class DefaultNARBuilder extends NARBuilder {
     }
 
     @Override
-    public NARParams newInitialParams() {
-        NARParams p = new NARParams();
-        p.setSilenceLevel(0);
+    public Param newParam() {
+        Param p = new Param();
+        p.noiseLevel.set(100);
+        p.conceptForgettingRate.set(10);             
+        p.taskForgettingRate.set(20);
+        p.beliefForgettingRate.set(50);
+    
         return p;
     }
 
     @Override
     public Concept newConcept(final Term t, final Memory m) {
         
-        TaskLinkBag taskLinks = new TaskLinkBag(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.taskForgettingRate);
-        TermLinkBag termLinks = new TermLinkBag(getTermLinkBagLevels(), getTermLinkBagSize(), m.beliefForgettingRate);
+        TaskLinkBag taskLinks = new TaskLinkBag(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskForgettingRate);
+        TermLinkBag termLinks = new TermLinkBag(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgettingRate);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }
 
     
     @Override
-    public ConceptBag newConceptBag() {
-        return new ConceptBag(getConceptBagLevels(), getConceptBagSize(), conceptForgettingRate);
+    public ConceptBag newConceptBag(Param p) {
+        return new ConceptBag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgettingRate);
     }
 
     @Override
-    public NovelTaskBag newNovelTaskBag() {
+    public NovelTaskBag newNovelTaskBag(Param p) {
         return new NovelTaskBag(getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE); 
     }
  
+    public int taskLinkBagLevels;
+    
+    /** Size of TaskLinkBag */
+    public int taskLinkBagSize;
+    
+    public int termLinkBagLevels;
+    
+    /** Size of TermLinkBag */
+    public int termLinkBagSize;
     
     /** determines maximum number of concepts */
     private int conceptBagSize;    
-    @Override public int getConceptBagSize() { return conceptBagSize; }    
-    public NARBuilder setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
+    public int getConceptBagSize() { return conceptBagSize; }    
+    public DefaultNARBuilder setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
     /** Level granularity in Bag, usually 100 (two digits) */    
     private int conceptBagLevels;
-    @Override public int getConceptBagLevels() { return conceptBagLevels; }    
-    public NARBuilder setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
+    public int getConceptBagLevels() { return conceptBagLevels; }    
+    public DefaultNARBuilder setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
         
+    /**
+     * @return the taskLinkBagLevels
+     */
+    public int getTaskLinkBagLevels() {
+        return taskLinkBagLevels;
+    }
+
+    public DefaultNARBuilder setTaskLinkBagLevels(int taskLinkBagLevels) {
+        this.taskLinkBagLevels = taskLinkBagLevels;
+        return this;
+    }
+
+    public int getTaskLinkBagSize() {
+        return taskLinkBagSize;
+    }
+
+    public DefaultNARBuilder setTaskLinkBagSize(int taskLinkBagSize) {
+        this.taskLinkBagSize = taskLinkBagSize;
+        return this;
+    }
+
+    public int getTermLinkBagLevels() {
+        return termLinkBagLevels;
+    }
+
+    public DefaultNARBuilder setTermLinkBagLevels(int termLinkBagLevels) {
+        this.termLinkBagLevels = termLinkBagLevels;
+        return this;
+    }
+
+    public int getTermLinkBagSize() {
+        return termLinkBagSize;
+    }
+
+    public DefaultNARBuilder setTermLinkBagSize(int termLinkBagSize) {
+        this.termLinkBagSize = termLinkBagSize;
+        return this;
+    }
     
 }
