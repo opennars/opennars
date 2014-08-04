@@ -74,10 +74,10 @@ public class InputPanel extends NPanel implements ActionListener {
     /**
      * Constructor
      *
-     * @param reasoner The reasoner
+     * @param nar The reasoner
      * @param title The title of the window
      */
-    public InputPanel(final NAR reasoner) {
+    public InputPanel(final NAR nar) {
         super(new BorderLayout());
         
         centerPanel = new JPanel(new BorderLayout());
@@ -139,8 +139,8 @@ public class InputPanel extends NPanel implements ActionListener {
 
                         if (!f.isDirectory()) {
                             try {
-                                new TextInput(reasoner, f);
-                                reasoner.output(OUT.class, "Loaded file: " + f.getAbsolutePath());
+                                nar.addInput(new TextInput(f));
+                                nar.output(OUT.class, "Loaded file: " + f.getAbsolutePath());
                             } catch (IOException ex) {
                                 System.err.println(ex);
                             }
@@ -169,7 +169,7 @@ public class InputPanel extends NPanel implements ActionListener {
         add(menu, BorderLayout.SOUTH);
         
         
-        this.reasoner = reasoner;
+        this.reasoner = nar;
     }
 
     private void updateMode(int selectedIndex) {
