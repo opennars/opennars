@@ -1,39 +1,42 @@
 package nars.grid2d;
 
 import nars.grid2d.Cell.Logic;
+import nars.grid2d.Cell.Material;
 
 public class Cell {
     
+    public float light=0.0f;
     public float charge = 0;
     public float value=0;
     public float value2=0;
-    
+    public float conductivity = 0.98f;
     public boolean chargeFront = false;
     public float height = 0;
     public Material material;
     public Logic logic;
     public final CellState state;
-    public float water;
-    
+    public boolean is_solid=false;
     
     public boolean isSolid() {
-        return state.is_solid || material == Material.StoneWall;
+        return is_solid;
     }
 
     public enum Material {
         DirtFloor,
+        GrassFloor,
         StoneWall,
         Corridor,
         Door, 
         Empty, DirtWall,
-        Machine
+        Machine,
+        Water
         //case Tile.Upstairs:
         //case Tile.Downstairs:
         //case Tile.Chest:        
     }
     
     public enum Logic {
-        NotALogicBlock, //TODO use null, this isnt necessary
+        NotALogicBlock,
         AND,
         OR,
         XOR,
@@ -100,33 +103,18 @@ public class Cell {
             g = b = 127;
             r = 200;
         }
-        else if (material == Material.StoneWall || (material==Material.Door && state.is_solid)) {
+        else if (material == Material.StoneWall || (material==Material.Door && is_solid)) {
             r = g = b = 255;
         }
-        else if (material == Material.DirtFloor || (material==Material.Door && !state.is_solid)) {
+        else if (material == Material.DirtFloor || material == Material.GrassFloor || (material==Material.Door && !is_solid)) {
             if (height == Float.MAX_VALUE) {
                 r = g = b = 255;
             }
             else { 
-                if (height > 0) {
-                    g = (int)(128 + (height*height)/20f) ;
-                    b = (int)(32);
-                    r = (int)(32);
-                }
-                else {
-                    g = (int)(128 + height);
-                    b = (int)(32 - height);
-                    r = (int)(32 - height);
-                }
+                r = g = b = (int)(128 + height);
             }           
-            
-            if (water > 0) {
-                b+= (int)(Math.min(1.0,water) * 255.0f);
-                /*g-= (int)(water*50f);
-                r-= (int)(water*50f);*/
-            }
         }
-        if(material==Material.Door  && state.is_solid) {
+        if(material==Material.Door  && is_solid) {
             b=0;
             g=(int) (g/2.0f);
         }
@@ -156,45 +144,63 @@ public class Cell {
         }
         if(edge)
         {
-            state.light=255;
+            light=255;
         }
         
-        a+=state.light*255;
+        a+=light*255;
         //g+=light*128;
         //b+=light*128;
         //r+=light*128;
         
         
         if(material==Material.StoneWall) {
-            a=r=g=b=(int) (200+state.light*255);
+            a=r=g=b=(int) (200+light*255);
             
         }
-        
-        if (state.light > 0) {
-            r += state.light;
-            g += state.light;
-            b += state.light;
-            a += state.light;
-        }
-
-        if(logic!=Logic.NotALogicBlock) {
-            r/=2.0f;
+        if(material==Material.Water) {
+            b=64;
+            g=32;
         }
         
         r = Math.min(255, r);
         g = Math.min(255, g);
         b = Math.min(255, b);
         a = Math.min(255, a);
-        
+
         state.cr = lerp(state.cr, r, 0.19f);
         state.cg = lerp(state.cg, g, 0.19f);
         state.cb = lerp(state.cb, b, 0.19f);
         state.ca = lerp(state.ca, a, 0.19f);
         
+        if(material==Material.GrassFloor) {
+            state.cr+=8;
+            state.cg+=16;
+        }
         s.fill(state.cr, state.cg, state.cb, state.ca);
         
-        s.rect(0,0,1.0f,1.0f);
-
+        if(logic!=Logic.NotALogicBlock)
+        {
+            s.fill(state.cr/2.0f);
+            s.rect(0,0,1.0f,1.0f);
+        }
+        else if(material!=Material.Water && material!=Material.StoneWall)
+        {
+            s.rect(0,0,1.0f,1.0f);
+        }
+        else
+        if(material==Material.Water)
+        {
+            s.rect(0.2f,0.2f,2.0f,2.0f);
+        }
+        else
+        if(material==Material.StoneWall || material==Material.Water)
+        {
+            s.rect(0.2f,0.2f,1.0f,1.0f);
+            s.rect(0.2f,0.2f,1.0f,1.0f);
+            //also try this one, it looks more seamless but less 3d:
+            //s.rect(0.2f,0.0f,1.0f,1.0f);
+            //s.rect(0.2f,0.0f,1.0f,1.0f);
+        }
         
         s.textSize(1);
          if(logic==Logic.SWITCH || logic==Logic.OFFSWITCH)
@@ -209,9 +215,6 @@ public class Cell {
             s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
             s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
             s.rect(0, 0.3f, 1, 0.4f);
-            
-           // s.triangle(0.5f, 0.25f, 1, 0.5f, 0.5f, 0.75f);
-            //s.triangle(0.5f, 0.25f, 0, 0.5f, 0.5f, 0.75f);
         }
          else
         if(logic==Logic.WIRE || logic==Logic.BRIDGE) {
@@ -219,7 +222,6 @@ public class Cell {
             s.rect(0, 0.3f, 1, 0.4f);
             s.rect(0.3f, 0, 0.4f, 1);
         }
-       
         
         if(logic==Logic.AND)
         {
@@ -290,11 +292,11 @@ public class Cell {
         this.height = c.height;
         this.machine = c.machine;
         this.charge = c.charge;
-        this.chargeFront = c.chargeFront;        
-        this.water = c.water;
+        this.chargeFront = c.chargeFront;  
+        this.light=c.light;
     }
 
-    void setHeight(int h) {
+    public void setHeight(int h) {
         this.height = h;
     }
             
@@ -302,7 +304,7 @@ public class Cell {
         this.material = Material.Machine;
         this.logic = logic;
         this.charge = initialCharge;
-        this.state.is_solid=false;
+        this.is_solid=false;
     }
     
     

@@ -20,19 +20,23 @@ public class TestChamber {
         
         int w = 50;
         int h = 50;
+        int water_threshold=30;
         Hauto cells = new Hauto(w,h);
         cells.forEach(0,0,w,h, new CellFunction() {
             @Override  public void update(Cell c) {
-                float smoothness = 10f;
-            
-                c.material = Material.DirtFloor;
-                //c.setHeight((int)(Math.random() * 12 + 1));
-                double n = SimplexNoise.noise(c.state.x/smoothness, c.state.y/smoothness);
-                c.setHeight( (int)(n*64));
+                ///c.setHeight((int)(Math.random() * 12 + 1));
+                float smoothness = 20f;
+                
+                c.material = Material.GrassFloor;
+               double n = SimplexNoise.noise(c.state.x/smoothness, c.state.y/smoothness);
+                if((int)(n*64)>water_threshold) {
+                    c.material=Material.Water;
+                }
+                c.setHeight( (int)(Math.random() * 24 + 1));
             }
         });
         
-        Maze.buildMaze(cells, 4,4,18,18);
+        Maze.buildMaze(cells, 4,4,24,24);
                 
                 
         final Grid2DSpace space = new Grid2DSpace(cells);
@@ -67,13 +71,14 @@ public class TestChamber {
                 PVector current = new PVector(x, y);
                 PVector target = new PVector(1,1);
 
+                System.out.println(nextEffect);
                 if (nextEffect == null) {
                     List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, target);
 
                     actions.clear();
                     
+                    System.out.println(path);
                     if (path!=null) {
-                        System.out.println(path);
                         if (path.size() <= 1) {
                             System.out.println("at destination; didnt need to find path");
                         }
@@ -109,9 +114,6 @@ public class TestChamber {
                             }
                         }
                     }
-                }
-                else {
-                    System.out.println(nextEffect);
                 }
 
                 
