@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>NARS: Non-Axiomatic Reasoning System</title>
+	<meta name="author" content="" />
+	<meta name="description" content="" />
+	<meta name="keywords"  content="nars,opennars,wang" />
+	<meta name="Resource-type" content="Document" />
+
+
+	<link rel="stylesheet" type="text/css" href="jquery.fullPage.css" />
+	<link rel="stylesheet" type="text/css" href="index.css" />
+
+	<!--[if IE]>
+		<script type="text/javascript">
+			 var console = { log: function() {} };
+		</script>
+	<![endif]-->
+
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+	<script type="text/javascript" src="jquery.fullPage.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#fullpage').fullpage({
+				sectionsColor: ['#f2f2f2', '#7BAABE', '#ccddff', 'whitesmoke', '#4BBFC3'],
+				anchors:['main', 'theory', 'dev'],
+				menu: '#menu',
+                navigation: false,
+                navigationPosition: 'right',
+                slidesNavigation: true,
+                slidesNavPosition: 'bottom',
+                keyboardScrolling: true,
+                touchSensitivity: 15,
+                continuousVertical: false,
+                loopBottom: true,
+                loopTop: true,
+                loopHorizontal: true,
+                scrollingSpeed: 200
+			});
+		});
+	</script>
+
+</head>
+<body>
+
+
+<div id="fullpage">
+	<div class="section active" id="_main" data-anchor="main">
+	    <h1>NARS: Non-Axiomatic Reasoning System</h1>
+	    <br/>
+	    <h2><b>General-purpose reasoning AI system.<br/><a href="#theory">Learn more...</a></b></h2>
+	    <br/><br/>
+	    [<a href="https://github.com/opennars/opennars/archive/master.zip">Download</a>]
+	    [<a href="http://github.com/opennars/opennars">Source code</a>]
+	    [<a href="http://groups.google.com/group/open-nars">Discussion group</a>]
+	</div>
+	<!--
+	<div class="section" id="about" data-anchor="about"><h1>What is NARS?</h1></div>
+	<div class="section" id="logic"  data-anchor="logic" >
+	    <div class="slide"  ><h1>Logic</h1></div>
+	    <div class="slide"><h1>NAL 0</h1></div>
+	    <div class="slide"><h1>NAL 1</h1></div>
+	    <div class="slide"><h1>NAL 2</h1></div>
+	</div>
+	-->
+	<div class="section" id="_theory" data-anchor="theory">
+	    <h1>Theory</h1>
+	    <ul>
+            <li><a href="Overview.html">Overview</a></li>
+            <li><a href="https://sites.google.com/site/narswang/EBook">General Theory of Intelligence (Book)</a></li>
+	        <li><a href="NAL.html">NAL Logic</a></li>
+            <li><a href="NarseseIO.html">Narsese I/O</a></li>
+	    </ul>
+	</div>
+	
+	<div class="section" id="_dev" data-anchor="dev"><h1>Development</h1></div>
+</div>
+<ul id="menu">
+    <li data-menuanchor="main" class="active"><a href="#main">NARS</a></li>
+    <li data-menuanchor="theory"><a href="#theory">Theory</a></li>
+    <!--
+    <li data-menuanchor="about"><a href="#about">About</a></li>
+    <li data-menuanchor="logic"><a href="#logic">Logic</a></li>
+    -->
+    <li data-menuanchor="dev"><a href="#dev">Development</a></li>
+</ul>
+</body>
+</html>
