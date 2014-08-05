@@ -45,7 +45,7 @@ import nars.language.SetInt;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import static nars.language.Language.*;
+import static nars.language.Terms.*;
 import nars.storage.Memory;
 
 /**

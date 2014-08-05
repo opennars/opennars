@@ -37,7 +37,8 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import static nars.language.Language.*;
+import static nars.language.Terms.*;
+import nars.language.Variables;
 import nars.storage.Memory;
 
 
@@ -70,7 +71,7 @@ public class LocalRules {
                 if (revisible(sentence, belief)) {
                     revision(sentence, belief, true, memory);
                 }
-            } else if (unify(Symbols.VAR_QUERY, sentence.content, (Term) belief.content.clone())) {
+            } else if (Variables.unify(Symbols.VAR_QUERY, sentence.content, (Term) belief.content.clone())) {
                 trySolution(belief, task, memory);
             }
         }
@@ -131,8 +132,8 @@ public class LocalRules {
                 }
             }
             Term content = belief.cloneContent();
-            if (containVarIndep(content.getName())) {
-                unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
+            if (Variables.containVarIndep(content.getName())) {
+                Variables.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
                 belief = belief.clone(content);
                 Stamp st = new Stamp(belief.stamp, memory.getTime());
                 st.addToChain(belief.content);
@@ -277,11 +278,11 @@ public class LocalRules {
         final Term subjB = beliefContent.getSubject();
         final Term predB = beliefContent.getPredicate();
         Term otherTerm;
-        if (containVarQuery(subjT.getName())) {
+        if (Variables.containVarQuery(subjT.getName())) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, otherTerm, predT, order, memory);
         }
-        if (containVarQuery(predT.getName())) {
+        if (Variables.containVarQuery(predT.getName())) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, subjT, otherTerm, order, memory);
         }

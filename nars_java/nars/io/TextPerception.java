@@ -36,8 +36,9 @@ import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Language;
+import nars.language.Terms;
 import nars.language.Variable;
+import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
@@ -441,7 +442,7 @@ public class TextPerception {
             return new Interval(s);
         }
  
-        if (Language.containVar(s)) {
+        if (Variables.containVar(s)) {
             return new Variable(s);
         } else {
             return new Term(s);
@@ -504,7 +505,7 @@ public class TextPerception {
         Term t;
         
         if (oNative!=null) {
-            t = Language.make(oNative, argA, memory);
+            t = Terms.make(oNative, argA, memory);
         }
         else if (oRegistered!=null) {
             t = Operation.make(oRegistered, argA, memory);

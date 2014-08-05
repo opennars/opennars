@@ -146,7 +146,7 @@ public abstract class CompoundTerm extends Term {
     @Override
     protected final boolean setName(String name) {
         if (super.setName(name)) {
-            this.hasVar = Language.containVar(getName());
+            this.hasVar = Variables.containVar(getName());
             return true;
         }
         return false;
@@ -634,7 +634,7 @@ public abstract class CompoundTerm extends Term {
         } else {
             terms = t1.cloneTerms(t2);
         }
-        return Language.make(t1, terms, memory);
+        return Terms.make(t1, terms, memory);
     }
 
 
@@ -661,7 +661,7 @@ public abstract class CompoundTerm extends Term {
                 }
             }
         }
-        return Language.make(compound, list, memory);
+        return Terms.make(compound, list, memory);
     }
 
     /* ----- variable-related utilities ----- */
@@ -757,7 +757,7 @@ public abstract class CompoundTerm extends Term {
         //complexity seems like an upper bound for the resulting number of componentLinks. 
         //so use it as an initial size for the array list
         final List<TermLink> componentLinks = new ArrayList<>( getComplexity() );              
-        return Language.prepareComponentLinks(componentLinks, this);
+        return Terms.prepareComponentLinks(componentLinks, this);
     }
 
 
