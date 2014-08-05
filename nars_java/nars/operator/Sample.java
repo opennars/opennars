@@ -20,30 +20,27 @@
  */
 package nars.operator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import nars.entity.Task;
 import nars.language.Term;
+import nars.storage.Memory;
 
 /**
  *  A class used as a template for Operator definition.
  */
 public class Sample extends Operator {
 
-    public Sample(String name) {
-        super(name);
+    public Sample() {
+        super("^sample");
     }
 
     /** called from Operator */
-    @Override
-    public ArrayList<Task> execute(Task task) {
-        Operation content = (Operation) task.getContent();
-        Operator op = content.getOperator();
-         
-        Term[] arg = content.getArguments();
-        System.out.println("Executed: " + op);
-        for (Term t : arg) {
-            System.out.println(" --- " + t);
+    @Override 
+    protected List<Task> execute(Term[] args, Memory memory) {
+        System.out.println("Executed: " + this);
+        for (Term t : args) {
+           System.out.println(" --- " + t);
         }
         return null;
     }

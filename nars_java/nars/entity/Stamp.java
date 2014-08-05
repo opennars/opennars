@@ -30,6 +30,7 @@ import java.util.Set;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.language.Term;
+import nars.storage.Memory;
 
 
 public class Stamp implements Cloneable {
@@ -239,6 +240,10 @@ public class Stamp implements Cloneable {
 //        } else {
 //            return new Stamp(second, first, time);
 //        }
+    }
+
+    public Stamp(Memory memory, String tense) {
+        this(memory.getTime(), tense, memory.newStampSerial());
     }
 
     /*

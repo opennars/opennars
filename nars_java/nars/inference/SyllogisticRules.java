@@ -286,7 +286,7 @@ public final class SyllogisticRules {
             }
             long inc = order * Parameters.DURATION;
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
-            memory.getNewStamp().setOccurrenceTime(time);
+            memory.getTheNewStamp().setOccurrenceTime(time);
         }
         
         TruthValue beliefTruth = beliefSentence.truth;
@@ -430,7 +430,7 @@ public final class SyllogisticRules {
                 baseTime = memory.getTime();
             }
             baseTime += delta;
-            memory.getNewStamp().setOccurrenceTime(baseTime);
+            memory.getTheNewStamp().setOccurrenceTime(baseTime);
         }
         
         TruthValue truth1 = taskSentence.truth;

@@ -190,8 +190,8 @@ public final class Concept extends Item {
                 }   // else: activated belief
                 return;
             } else if (LocalRules.revisible(judg, oldBelief)) {
-                memory.setNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
-                if (memory.getNewStamp() != null) {
+                memory.setTheNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
+                if (memory.getTheNewStamp() != null) {
                     Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
                     if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
                         memory.singlePremiseTask(projectedBelief, task.budget);
@@ -229,8 +229,8 @@ public final class Concept extends Item {
                 return;
             }
             if (LocalRules.revisible(goal, oldGoal)) {
-                memory.setNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
-                if (memory.getNewStamp() != null) {
+                memory.setTheNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
+                if (memory.getTheNewStamp() != null) {
                     LocalRules.revision(goal, oldGoal, false, memory);
                     noRevision = false;
                 }
@@ -514,7 +514,7 @@ public final class Concept extends Item {
                 memory.getRecorder().append(" * Selected Belief: " + belief);
             }
 
-            memory.setNewStamp(Stamp.make(taskStamp, belief.stamp, currentTime));
+            memory.setTheNewStamp(Stamp.make(taskStamp, belief.stamp, currentTime));
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }

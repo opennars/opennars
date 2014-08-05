@@ -20,13 +20,13 @@
  */
 package nars.grid2d.operator;
  
-import java.util.ArrayList;
+import java.util.List;
 
 import nars.entity.Task;
 import nars.grid2d.Grid2DSpace;
 import nars.language.Term;
-import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.storage.Memory;
 
 /**
  *  A class used as a template for Operator definition.
@@ -38,15 +38,14 @@ public class Goto extends Operator {
         super(name);
     }
 
-    /** called from Operator */
     @Override
-    public ArrayList<Task> execute(Task task) {
-        Operation content = (Operation) task.getContent();
-        Operator op = content.getOperator();
+    public List<Task> execute(Term[] args, Memory memory) {
+        //Operation content = (Operation) task.getContent();
+        //Operator op = content.getOperator();
          
-        Term[] arg = content.getArguments();
-        System.out.println("Executed: " + op);
-        for (Term t : arg) {
+        
+        System.out.println("Executed: " + this);
+        for (Term t : args) {
             System.out.println(" --- " + t);
         }
         

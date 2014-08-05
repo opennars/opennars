@@ -291,16 +291,17 @@ public class LocalRules {
     
     /** Add plausibility estimation */
     public static void decisionMaking(Task task, Concept concept) {
-         Term content = concept.term;
-         TruthValue desireValue = concept.getDesire();
-         if (desireValue.getExpectation() < Parameters.DECISION_THRESHOLD) {
-             return;
-         }
-         if (!(content instanceof Operation)) {
-             return;
-         }
-         Operator oper = ((Operation) content).getOperator();
-         oper.call(task, concept.memory);
-         task.setPriority(0);
+        Term content = concept.term;
+        TruthValue desireValue = concept.getDesire();
+        if (desireValue.getExpectation() < Parameters.DECISION_THRESHOLD) {
+            return;
+        }
+        if (!(content instanceof Operation)) {
+            return;
+        }
+        Operation op = (Operation) content;
+        Operator oper = op.getOperator();
+        oper.call(oper, op.getArguments(), concept.memory);
+        task.setPriority(0);
     }    
 }

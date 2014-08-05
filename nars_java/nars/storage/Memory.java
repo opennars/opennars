@@ -466,7 +466,7 @@ public class Memory implements Output {
      */
     public void doublePremiseTaskRevised(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
         if (newContent != null) {
-            Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getNewStamp());
+            Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
             Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
             derivedTask(newTask, true, false);
         }
@@ -482,7 +482,7 @@ public class Memory implements Output {
      */
     public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         if (newContent != null) {
-            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getNewStamp());
+            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
             final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
             derivedTask(newTask, false, false);
         }
@@ -534,12 +534,12 @@ public class Memory implements Output {
         }
         Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            setNewStamp(new Stamp(taskSentence.stamp, getTime()));
+            setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
         } else {    // to answer a question with negation in NAL-5 --- move to activated task?
-            setNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
+            setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
         
-        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getNewStamp());
+        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
         derivedTask(newTask, false, true);
     }
@@ -629,8 +629,8 @@ public class Memory implements Output {
         }
         if (newEvent != null) {
             if (lastEvent != null) {
-                setNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
-                if (getNewStamp() != null) {
+                setTheNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
+                if (getTheNewStamp() != null) {
                     setCurrentTask(newEvent);
                     setCurrentBelief(lastEvent.sentence);
                     TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
@@ -792,14 +792,14 @@ public class Memory implements Output {
     /**
      * @return the newStamp
      */
-    public Stamp getNewStamp() {
+    public Stamp getTheNewStamp() {
         return newStamp;
     }
 
     /**
      * @param newStamp the newStamp to set
      */
-    public void setNewStamp(Stamp newStamp) {
+    public void setTheNewStamp(Stamp newStamp) {
         this.newStamp = newStamp;
     }
 
