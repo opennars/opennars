@@ -21,7 +21,7 @@
 
 package nars.operator;
 
-import java.util.ArrayList;
+import java.util.List;
 import nars.entity.Task;
 import nars.io.Output.EXE;
 import nars.language.Statement;
@@ -36,7 +36,7 @@ import nars.storage.Memory;
  */
 public abstract class Operator extends Term {
         
-    public Operator(String name) {
+    protected Operator(String name) {
         super(name);
     }
     
@@ -48,7 +48,7 @@ public abstract class Operator extends Term {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    abstract public ArrayList<Task> execute(final Task task);
+    protected abstract List<Task> execute(Term[] args, Memory memory);
 
      /**
      * The standard way to carry out an operation, which invokes the execute
@@ -57,10 +57,10 @@ public abstract class Operator extends Term {
      * @param task The task to be executed
      * @param memory
      */
-    public void call(final Task task, final Memory memory) {
-        ArrayList<Task> feedback = execute(task);
-        reportExecution((Statement) task.getContent(), memory);
-//        Memory.executedTask(task);
+    public void call(final Operator op, final Term[] args, final Memory memory) {
+        List<Task> feedback = op.execute(args, memory);
+        reportExecution(op, args, memory);
+//        Memory.executedTask(task);            
         if (feedback != null) {
             for (Task t : feedback) {
                 memory.inputTask(t);
@@ -78,7 +78,8 @@ public abstract class Operator extends Term {
      */
     public static void loadDefaultOperators(Memory memory) {
         //memory.registerOperator(new Wait("^wait"));
-        memory.registerOperator(new Sample("^sample"));               
+        memory.registerOperator(new Sample());
+        memory.registerOperator(new Believe());        
 
         /* operators for tasks */
 //        table.put("^believe", new Believe("^believe"));     // accept a statement with a default truth-value
@@ -130,12 +131,13 @@ public abstract class Operator extends Term {
      * <p>
      * @param operation The content of the operation to be executed
      */
-    private void reportExecution(Statement operation, Memory memory) {
-        Term operator = operation.getPredicate();
-        Term arguments = operation.getSubject();
-        String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
-        //System.out.println("EXECUTE: " + operator + "(" + argList);
-        memory.output(EXE.class, operator + "(" + argList);
+    public static void reportExecution(final Operator operator, final Term[] args, final Memory memory) {
+        StringBuilder buffer = new StringBuilder();
+        for (Object obj : args) {
+            buffer.append(obj).append(",");
+        }
+        System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
+        memory.output(EXE.class, operator + "(" + args);
     }
     
     public static String operationExecutionString(final Statement operation) {
