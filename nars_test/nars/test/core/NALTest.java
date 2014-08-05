@@ -31,8 +31,8 @@ public class NALTest  {
 
     static final boolean testPerformance = false;    
     private final int performanceIterations = 4;
-
-    int maxSummaryOutputLines = 50;
+    boolean showSuccess = false;
+    int maxSummaryOutputLines = 25;
     
     ScriptEngineManager factory = new ScriptEngineManager();
     ScriptEngine js = factory.getEngineByName("JavaScript");
@@ -70,11 +70,13 @@ public class NALTest  {
     
     
     final List<String> out = new ArrayList();
-
+    int currentOutputLine = 0;
     public boolean outputContains(String s) {        
+        currentOutputLine = 0;
         for (String o : out) {
             if (o.indexOf(s)!=-1)
                 return true;
+            currentOutputLine++;
         }
         return false;
     }
@@ -90,7 +92,7 @@ public class NALTest  {
     }
     
     protected void testNAL(final String path) {
-        @Deprecated int minCycles = 50; //TODO reduce this to one or zero
+        @Deprecated int minCycles = 250; //TODO reduce this to one or zero
         
         NAR.resetStatics();
         
@@ -163,6 +165,13 @@ public class NALTest  {
                         
                         assertTrue(failMsg, r);
                     }
+                    else {
+                        if (showSuccess) {
+                            System.out.println(path + ": " + e + " OK @ " + + n.getTime() + ", output lines=" + out.size());
+                            System.out.println(out.get(currentOutputLine));
+                            
+                        }
+                    }
                     
                 }
             }
@@ -170,6 +179,8 @@ public class NALTest  {
                 assertTrue(path + ": " + x.toString()  + ": ", false);                
             }            
         }
+        
+        System.out.println(path + " OK");
         
         if (testPerformance) {
             perfNAL(path, 0, performanceIterations, 1);            
