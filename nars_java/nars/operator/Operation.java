@@ -62,8 +62,7 @@ public class Operation extends Inheritance {
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Object clone() {
-        
+    public Object clone() {        
         return new Operation(name, cloneTerms(), isConstant(), containVar(), getComplexity());
     }
 
