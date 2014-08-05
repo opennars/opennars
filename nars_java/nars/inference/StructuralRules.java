@@ -393,6 +393,9 @@ public final class StructuralRules {
             return;
         }
         Inheritance newInh = Inheritance.make(subject, predicate, memory);
+        if (newInh == null)
+            return;
+        
         Term content = null;
         if (indices.length == 2) {
             content = newInh;

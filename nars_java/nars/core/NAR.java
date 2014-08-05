@@ -195,17 +195,18 @@ public class NAR implements Runnable, Output {
     
     /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
     public void finish(final int cycles, final boolean debug) {
-        if (running == true) {
-            memory.stepLater(cycles);
-            return;
-        }
-        
         DEBUG = debug; 
         running = true;
-        step(cycles);
+
+        //clear input
         while (!inputChannels.isEmpty()) {
             step(1);
         }
+        
+        //queue additional cycles
+        memory.stepLater(cycles);
+        
+        //finish all remaining cycles
         while (memory.getCyclesQueued() > 0) {
             step(1);
         }

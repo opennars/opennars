@@ -255,7 +255,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
         nextOutput.add(s);
         
         if (logFile!=null) {
-            logFile.print(s);
+            logFile.println(s);
         }
         
         SwingUtilities.invokeLater(nextOutputRunnable);
