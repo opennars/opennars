@@ -26,7 +26,8 @@ import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Language;
+import nars.language.Terms;
+import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
@@ -84,7 +85,7 @@ public class Sentence implements Cloneable {
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
-        this.revisible = !((content instanceof Conjunction) && Language.containVarDep(content.getName()));
+        this.revisible = !((content instanceof Conjunction) && Variables.containVarDep(content.getName()));
     }
 
     /**

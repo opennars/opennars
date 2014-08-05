@@ -34,7 +34,8 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Statement;
 import nars.language.Term;
-import static nars.language.Language.*;
+import static nars.language.Terms.*;
+import nars.language.Variables;
 import nars.storage.Memory;
 
 
@@ -350,7 +351,7 @@ public final class SyllogisticRules {
         Sentence taskSentence = task.sentence;
         Sentence belief = memory.getCurrentBelief();
         boolean deduction = (side != 0);
-        boolean conditionalTask = hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
+        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -374,9 +375,9 @@ public final class SyllogisticRules {
         if (index2 >= 0) {
             index = (short) index2;
         } else {
-            boolean match = unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
+            boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-                match = unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
+                match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
             }
             if (!match) {
                 return;
@@ -477,7 +478,7 @@ public final class SyllogisticRules {
         Task task = memory.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = memory.getCurrentBelief();
-        boolean conditionalTask = hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
+        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.content);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -496,9 +497,9 @@ public final class SyllogisticRules {
         }
         Conjunction oldCondition = (Conjunction) tm;
 
-        boolean match = unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
+        boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
         if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-            match = unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
+            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
         }
         if (!match) {
             return;
@@ -598,7 +599,7 @@ public final class SyllogisticRules {
         TruthValue value2 = belief.truth;
         Term content;
         
-        boolean keepOrder = hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getContent());
+        boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getContent());
         
         TruthValue truth = null;
         BudgetValue budget;

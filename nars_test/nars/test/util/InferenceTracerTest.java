@@ -58,7 +58,7 @@ public class InferenceTracerTest {
         //tracer.printTime(System.out);        
         //System.out.println(tracer.concept);
         
-        assert(tracer.time.size() >= 5);
+        assert(tracer.time.size() >= 4);
         
 
     }    

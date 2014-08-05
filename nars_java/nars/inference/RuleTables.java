@@ -39,7 +39,8 @@ import nars.language.SetInt;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import static nars.language.Language.*;
+import static nars.language.Terms.*;
+import nars.language.Variables;
 import nars.storage.Memory;
 
 /**
@@ -158,7 +159,7 @@ public class RuleTables {
                         if (belief != null) {
                             if (beliefTerm instanceof Implication) {
 
-                                if (unify(Symbols.VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, beliefTerm, taskTerm)) {
+                                if (Variables.unify(Symbols.VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, beliefTerm, taskTerm)) {
                                     detachmentWithVar(belief, taskSentence, bIndex, memory);
                                 } else {
                                     SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, memory);
@@ -307,7 +308,7 @@ public class RuleTables {
         Term t1, t2;
         switch (figure) {
             case 11:    // induction
-                if (unify(Symbols.VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
                     if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
@@ -323,13 +324,13 @@ public class RuleTables {
 
                 break;
             case 12:    // deduction
-                if (unify(Symbols.VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
                     if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
                     t1 = beliefStatement.getSubject();
                     t2 = taskStatement.getPredicate();
-                    if (unify(Symbols.VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
+                    if (Variables.unify(Symbols.VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
                         LocalRules.matchReverse(memory);
                     } else {
                         SyllogisticRules.dedExe(t1, t2, taskSentence, belief, memory);
@@ -337,13 +338,13 @@ public class RuleTables {
                 }
                 break;
             case 21:    // exemplification
-                if (unify(Symbols.VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
                     if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
                     t1 = taskStatement.getSubject();
                     t2 = beliefStatement.getPredicate();
-                    if (unify(Symbols.VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
+                    if (Variables.unify(Symbols.VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
                         LocalRules.matchReverse(memory);
                     } else {
                         SyllogisticRules.dedExe(t1, t2, taskSentence, belief, memory);
@@ -351,7 +352,7 @@ public class RuleTables {
                 }
                 break;
             case 22:    // abduction
-                if (unify(Symbols.VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
                     if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
@@ -387,10 +388,10 @@ public class RuleTables {
         Term t1, t2;
         switch (figure) {
             case 11:
-                if (unify(Symbols.VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), asymSt, symSt)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), asymSt, symSt)) {
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getPredicate();
-                    if (unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (Variables.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t2, t1, asym, sym, figure, memory);
@@ -399,10 +400,10 @@ public class RuleTables {
                 }
                 break;
             case 12:
-                if (unify(Symbols.VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), asymSt, symSt)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), asymSt, symSt)) {
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getSubject();
-                    if (unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (Variables.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t2, t1, asym, sym, figure, memory);
@@ -410,10 +411,10 @@ public class RuleTables {
                 }
                 break;
             case 21:
-                if (unify(Symbols.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), asymSt, symSt)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), asymSt, symSt)) {
                     t1 = asymSt.getSubject();
                     t2 = symSt.getPredicate();
-                    if (unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (Variables.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t1, t2, asym, sym, figure, memory);
@@ -421,10 +422,10 @@ public class RuleTables {
                 }
                 break;
             case 22:
-                if (unify(Symbols.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), asymSt, symSt)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), asymSt, symSt)) {
                     t1 = asymSt.getSubject();
                     t2 = symSt.getSubject();
-                    if (unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (Variables.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t1, t2, asym, sym, figure, memory);
@@ -449,27 +450,27 @@ public class RuleTables {
         boolean eliminateVariable = false;
         switch (figure) {
             case 11:
-                if (unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getSubject(), s1, s2)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getSubject(), s1, s2)) {
                     SyllogisticRules.resemblance(s1.getPredicate(), s2.getPredicate(), belief, taskSentence, figure, memory);
                     eliminateVariable = true;
                 }
                 
                 break;
             case 12:
-                if (unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getPredicate(), s1, s2)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getPredicate(), s1, s2)) {
                     SyllogisticRules.resemblance(s1.getPredicate(), s2.getSubject(), belief, taskSentence, figure, memory);
                     eliminateVariable = true;
                 }
                 break;
             case 21:
-                if (unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getSubject(), s1, s2)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getSubject(), s1, s2)) {
                     SyllogisticRules.resemblance(s1.getSubject(), s2.getPredicate(), belief, taskSentence, figure, memory);
                     eliminateVariable = true;
 
                 }
                 break;
             case 22:
-                if (unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getPredicate(), s1, s2)) {
+                if (Variables.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getPredicate(), s1, s2)) {
                     SyllogisticRules.resemblance(s1.getSubject(), s2.getSubject(), belief, taskSentence, figure, memory);
                     eliminateVariable = true;
                 }
@@ -500,7 +501,7 @@ public class RuleTables {
         if (((component instanceof Inheritance) || (component instanceof Negation)) && (memory.getCurrentBelief() != null)) {
             if (component.isConstant()) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, memory);
-            } else if (unify(Symbols.VAR_INDEPENDENT, component, content, statement, content)) {
+            } else if (Variables.unify(Symbols.VAR_INDEPENDENT, component, content, statement, content)) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, memory);
             } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (memory.getCurrentTask().sentence.isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();
@@ -536,9 +537,9 @@ public class RuleTables {
         }
 
         if (component2 != null) {
-            boolean unifiable = unify(Symbols.VAR_INDEPENDENT, component, component2, conditional, statement);
+            boolean unifiable = Variables.unify(Symbols.VAR_INDEPENDENT, component, component2, conditional, statement);
             if (!unifiable) {
-                unifiable = unify(Symbols.VAR_DEPENDENT, component, component2, conditional, statement);
+                unifiable = Variables.unify(Symbols.VAR_DEPENDENT, component, component2, conditional, statement);
             }
             if (unifiable) {
                 SyllogisticRules.conditionalDedInd(conditional, index, statement, side, memory);
@@ -604,11 +605,11 @@ public class RuleTables {
         Task task = memory.getCurrentTask();
         if (component.getClass() == statement.getClass()) {
             if ((compound instanceof Conjunction) && (memory.getCurrentBelief() != null)) {
-                if (unify(Symbols.VAR_DEPENDENT, component, statement, compound, statement)) {
+                if (Variables.unify(Symbols.VAR_DEPENDENT, component, statement, compound, statement)) {
                     SyllogisticRules.elimiVarDep(compound, component, statement.equals(beliefTerm), memory);
                 } else if (task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, memory);
-                } else if (unify(Symbols.VAR_QUERY, component, statement, compound, statement)) {
+                } else if (Variables.unify(Symbols.VAR_QUERY, component, statement, compound, statement)) {
                     CompositionalRules.decomposeStatement(compound, component, true, index, memory);                    
                 }
             }
