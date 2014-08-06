@@ -1,20 +1,22 @@
 package nars.util;
 
+import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.RandomAccess;
 
 public class CircularArrayList<E> extends AbstractList<E> implements RandomAccess, Deque<E> {
-  
+    private final E e = null;
+    
     private final int n; // buffer length
-    public Object[] buf;
+    public E[] buf;
     private int head = 0;
     private int tail = 0;
   
-    public CircularArrayList(int capacity) {
-        n = capacity + 1;
-        buf = new Object[capacity];
+    public CircularArrayList(Class<E> clazz, int capacity) {
+        n = capacity;
+        buf = (E[])Array.newInstance(clazz, capacity);
     }
   
     public int capacity() {
@@ -31,8 +33,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
   
     // This method is O(n) but will never be called if the
     // CircularArrayList is used in its typical/intended role.
-    private void shiftBlock(int startIndex, int endIndex) {
-        assert (endIndex > startIndex);        
+    private void shiftBlock(final int startIndex, final int endIndex) {
+        //assert (endIndex > startIndex);        
         for (int i = endIndex - 1; i >= startIndex; i--) {
             set(i + 1, get(i));
         }
@@ -44,19 +46,19 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
   
     @Override
-    public E get(int i) {
-        return (E)buf[wrapIndex(head + i)];
+    public E get(final int i) {
+        return buf[wrapIndex(head + i)];
     }
   
     @Override
-    public E set(int i, E e) {
+    public E set(final int i, final E e) {
         if (i < 0 || i >= size()) {
             throw new IndexOutOfBoundsException();
         }
-        Object existing = buf[wrapIndex(head + i)];
+        E existing = buf[wrapIndex(head + i)];
         buf[wrapIndex(head + i)] = e;
         if (existing!=null)
-            return (E)existing;
+            return existing;
         return null;
     }
   
@@ -78,7 +80,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
   
     @Override
-    public E remove(int i) {
+    public E remove(final int i) {
         int s = size();
         if (i < 0 || i >= s) {
             throw new IndexOutOfBoundsException();
@@ -88,19 +90,29 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
             shiftBlock(0, i);
         }
         head = wrapIndex(head + 1);
+        
         return e;
     }
 
     @Override
-    public void addFirst(E e) {
+    public void addFirst(final E e) {
         add(0, e);
     }
 
     @Override
-    public void addLast(E e) {
-        add(size()-1, e);
+    public void addLast(final E e) {
+        add(size(), e);
     }
 
+
+    @Override
+    public E removeFirst() {
+        return remove(0);
+    }
+
+
+    
+    
     @Override
     public boolean offerFirst(E e) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -110,12 +122,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     public boolean offerLast(E e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public E removeFirst() {
-        return remove(0);
-    }
-
+    
+    
     @Override
     public E removeLast() {
         throw new UnsupportedOperationException("Not supported yet.");

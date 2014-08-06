@@ -1,8 +1,10 @@
-package nars.test.core;
+package nars.perf;
 
 import java.util.Collection;
 import nars.core.NAR;
+import nars.test.core.NALTest;
 import static nars.test.core.NALTest.newNAR;
+
 
 
 public class NALTestPerf  {

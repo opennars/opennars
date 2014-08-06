@@ -34,16 +34,25 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * current sum of occupied level
      */
     private int mass;
+    
+    /** whether items are removed by random sampling, or a continuous scanning */
+    private boolean randomRemoval;
+    
+    /** rate of sampling index when in non-random removal mode */
+    final float scanningRate = ((float)Math.E)/10.0f; //an irrational #
+    
 
+    /** current x (irrelevant when randomRemoval = true) */
+    float x = Memory.randomNumber.nextFloat();
 
-
-    public ContinuousBag(int capacity, int forgetRate) {
-        this(capacity, new AtomicInteger(forgetRate));
+    public ContinuousBag(int capacity, int forgetRate, boolean randomRemoval) {
+        this(capacity, new AtomicInteger(forgetRate), randomRemoval);
     }
     
-    public ContinuousBag(int capacity, AtomicInteger forgetRate) {
+    public ContinuousBag(int capacity, AtomicInteger forgetRate, boolean randomRemoval) {
         super();
         this.capacity = capacity;
+        this.randomRemoval = randomRemoval;        
         
         nameTable = new HashMap<>(capacity);
         //nameTable = new FastMap<>();
@@ -160,14 +169,46 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     
     /** distributor function */
     public int nextRemovalIndex() {
-        // 1.0 - (random())^3 :: a function which has domain and range between 0..1.0 but
-        // will result in values above 0.5 more often than not.  see the curve:
-        //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIoMS14XjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
-
-        double p = Memory.randomNumber.nextDouble();
-        p = 1-(p*p*p);
-        return (int)fastRound(p * (size()-1));
+        int size = size();
+        if (size == 0)
+            throw new RuntimeException("No removal index for empty " + this);
+        
+        float y;
+        if (randomRemoval) {
+            x = getFocus(Memory.randomNumber.nextFloat());            
+        }
+        else {
+            x += scanningRate * 1.0f / (size);
+            if (x >= 1.0f)
+                x = x - 1.0f;
+        }
+        
+        y = getFocus(x);
+        
+        int result = (int)fastRound(y * (size()-1));            
+        if (result == capacity) {
+            throw new RuntimeException("Invalid removal index: " + x + " -> " + y);
+        }
+        
+        return result;
     }
+    
+    /**
+     * defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
+     * @param x
+     * @return 
+     */
+    public float getFocus(float x) {
+        //1.0 - ((1.0-x)^2)
+        // a function which has domain and range between 0..1.0 but
+        //   will result in values above 0.5 more often than not.  see the curve:        
+        //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
+        float oneMinusX = 1.0f - x;
+        return 1.0f - (oneMinusX*oneMinusX);
+    }
+    
+
+
     
     public static long fastRound(final double d) {
         if (d > 0) {
@@ -176,6 +217,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
             return (long) (d - 0.5d);
         }
     }
+    
 
     
     /**
@@ -274,7 +316,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<E> iterator() {        
         return items.descendingIterator();
     }
 

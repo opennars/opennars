@@ -4,7 +4,8 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
-import nars.test.core.BagPerf.NullItem;
+import nars.perf.BagPerf.NullItem;
+import nars.util.ContinuousBag;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -14,8 +15,9 @@ import org.junit.Test;
  */
 
 
-public class TestBagIterator {
-    
+public class BagIteratorTest {
+    int L = 4;
+
 
     public void testIterator(AbstractBag<NullItem> b) {
         int count = 0;
@@ -26,8 +28,11 @@ public class TestBagIterator {
             if (first == null)
                 first = n;
             current =n;
+            System.out.println(current);
             count++;
         }
+        
+        System.out.println();
         
         if (b.size() > 1) {
             //check correct order
@@ -37,10 +42,7 @@ public class TestBagIterator {
         assertTrue(count==b.size());
     }
     
-    @Test
-    public void testBagIterator() {
-        int L = 4;
-        Bag<NullItem> b = new Bag(L, L*2, new AtomicInteger(10));
+    public void testBagIterator(AbstractBag<NullItem> b) {
         
         b.putIn(new NullItem(0.1f));
         b.putIn(new NullItem(0.2f));
@@ -51,7 +53,8 @@ public class TestBagIterator {
         b.putIn(new NullItem(0.7f));
         b.putIn(new NullItem(0.8f));
                 
-        assert(b.numEmptyLevels() < L);
+        if (b instanceof Bag)
+            assert(((Bag)b).numEmptyLevels() < L);
         
         testIterator(b);
         
@@ -62,6 +65,16 @@ public class TestBagIterator {
         b.putIn(new NullItem(0.6f));
         
         testIterator(b);
+        
+    }
+    
+    @Test
+    public void testBags() {
+        Bag<NullItem> b = new Bag(L, L*2, new AtomicInteger(10));
+        testBagIterator(b);
+        
+        ContinuousBag<NullItem> c = new ContinuousBag(L*2, new AtomicInteger(10), false);
+        testBagIterator(c);
         
     }
     
