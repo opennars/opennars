@@ -25,6 +25,7 @@ import nars.entity.TruthValue;
 import nars.gui.NSlider;
 import nars.gui.Window;
 import nars.language.Term;
+import nars.storage.Bag;
 import nars.storage.Memory;
 import nars.util.NARGraph;
 import nars.util.NARGraph.ExcludeLevelsBelow;
@@ -157,12 +158,12 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         public void position(float level, float index) {
             if (mode == 1) {
                 tx = (index * maxNodeSize * 3.5f);
-                ty = -((nar.memory.concepts.levels - level) * maxNodeSize * 3.5f);
+                ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
             }
             else if (mode == 0) {
                 float LEVELRAD = maxNodeSize * 2.5f;
 
-                double radius = ((nar.memory.concepts.levels - level)+8);
+                double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
                 float angle = index; //TEMPORARY
                 tx = (float)(Math.cos(angle/3.0) * radius) * LEVELRAD;
                 ty = (float)(Math.sin(angle/3.0) * radius) * LEVELRAD;
@@ -294,7 +295,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 graph.add(nar, new ExcludeLevelsBelow(minLevel), 
                         new NARGraph.DefaultGraphizer(showBeliefs, showBeliefs, showBeliefs, true, showSyntax) {
 
-                    float level = nar.memory.concepts.levels;
+                    float level = ((Bag<Concept>)nar.memory.concepts).levels;
                     float index = 0;
                     int levelContents = 0;
 
@@ -930,7 +931,7 @@ public class MemoryView extends Window {
         menu.add(nodeSize);
 
         
-        final int numLevels = n.memory.concepts.levels;
+        final int numLevels = ((Bag<Concept>)n.memory.concepts).levels;
         NSlider maxLevels = new NSlider(numLevels, 1, numLevels) {
             @Override
             public void onChange(double v) {

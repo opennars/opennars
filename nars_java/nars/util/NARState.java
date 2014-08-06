@@ -3,7 +3,8 @@ package nars.util;
 import java.util.HashMap;
 import java.util.TreeMap;
 import nars.core.NAR;
-import nars.storage.ConceptBag;
+import nars.entity.Concept;
+import nars.storage.AbstractBag;
 
 /**
  * Contains information about the state of a NAR, including measurements 
@@ -28,7 +29,7 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
         long now = nar.getTime();
         HashMap<String, Object> data = newData();
         
-        ConceptBag concepts = nar.memory.concepts;
+        AbstractBag<Concept> concepts = nar.memory.concepts;
         
         //..
         data.put("concepts.AveragePriority", nar.memory.concepts.getAveragePriority());

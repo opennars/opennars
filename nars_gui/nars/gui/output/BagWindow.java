@@ -38,6 +38,7 @@ import javax.swing.JTextArea;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.gui.Window;
+import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.storage.BagObserver;
 
@@ -152,8 +153,14 @@ public class BagWindow<E extends Item> extends Window implements ActionListener,
     }
 
     @Override
-    public void setBag(Bag<E> bag) {
-        this.bag = bag;
+    public void setBag(AbstractBag<E> _bag) {
+        //TODO support AbstractBag
+        if (!(bag instanceof Bag)) {
+            return;
+        }
+        
+        
+        this.bag = (Bag<E>)bag;
 
         removeAll();
         /* The lowest level displayed -- will need adjusted for variable bag sizes*/

@@ -24,7 +24,7 @@ import javolution.util.FastTable;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.DefaultBag;
-import nars.storage.IBag;
+import nars.storage.AbstractBag;
 
 /**
  *
@@ -102,7 +102,7 @@ public class BagPerf {
         }
     }
     
-    public static void randomBagIO(IBag b, int accesses, double insertProportion) {
+    public static void randomBagIO(AbstractBag b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (Math.random() > insertProportion) {
                 //remove
@@ -127,7 +127,7 @@ public class BagPerf {
 
             @Override
             public void run(boolean warmup) {
-                IBag<Item> b;
+                AbstractBag<Item> b;
             
                 if (first) {
                     b = new DefaultBag<Item>(levels, levels*levelCapacity, forgetRate) {

@@ -28,24 +28,15 @@ import nars.entity.TaskLink;
  * TaskLinkBag contains links to tasks.
  */
 public class TaskLinkBag extends Bag<TaskLink> {
-    private final AtomicInteger taskForgettingRate;
 
     /** Constructor
      * @param memory The reference of memory
      */
-    public TaskLinkBag(int levels, int capacity, AtomicInteger taskForgettingRAte) {
-        super(levels, capacity);
-        this.taskForgettingRate = taskForgettingRAte;        
+    public TaskLinkBag(int levels, int capacity, AtomicInteger taskForgettingRate) {
+        super(levels, capacity, taskForgettingRate);
     }
 
     
-    /**
-     * Get the (adjustable) forget rate of TaskLinkBag
-     * @return The forget rate of TaskLinkBag
-     */
-    @Override
-    protected int forgetRate() {
-        return taskForgettingRate.get();
-    }
+ 
 }
 

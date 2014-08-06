@@ -51,6 +51,7 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.language.Variables;
+import nars.storage.Bag;
 import nars.storage.Memory;
 
 /**
@@ -80,7 +81,9 @@ public final class CompositionalRules {
         
         Term term1 = sentence.content;
         Term term2 = belief.content;
-        Deque<Concept>[] bag = memory.concepts.itemTable;        
+        
+        //TODO use AbstractBag
+        Deque<Concept>[] bag = ((Bag<Concept>)memory.concepts).itemTable;        
         
         for (final Deque<Concept> baglevel : bag) {
             

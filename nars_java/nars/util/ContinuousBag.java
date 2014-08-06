@@ -1,28 +1,21 @@
 package nars.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.entity.ShortFloat;
-import nars.inference.BudgetFunctions;
-import nars.storage.IBag;
+import nars.storage.AbstractBag;
 import nars.storage.Memory;
 
 
-/** A bag without discrete levels implemented as a sorted list, which is accessed according to a 
- *  random probability curve.  For example, the curve can be shaped to favor higher-priority items.
- *  This models, to a degree, the behavior of the original Bag Distributor.
- *  ContinuousBag does not consistently perform better than Bag and remains EXPERIMENTAL.
- */
-public class ContinuousBag<E extends Item> implements IBag<E> {
+
+public class ContinuousBag<E extends Item> extends AbstractBag<E> {
  
 
-    /**
-     * relative threshold, only calculate once
-     */
-    private final float RELATIVE_THRESHOLD;
     /**
      * hashtable load factor
      */
@@ -35,6 +28,7 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
      * mapping from key to item
      */
     public final Map<String, E> nameTable;
+    
     /**
      * array of lists of items, for items on different level
      */
@@ -50,24 +44,18 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
     private int mass;
 
 
-    
-    
-    /**
-     * The display level; initialized at lowest
-     */
-    private final AtomicInteger forgetRate;
 
     public ContinuousBag(int capacity, int forgetRate) {
         this(capacity, new AtomicInteger(forgetRate));
     }
     
     public ContinuousBag(int capacity, AtomicInteger forgetRate) {
-        RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
+        super();
         this.capacity = capacity;
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         //nameTable = new FastMap<>();//(int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
         items = new PrioritySortedItemList<E>(capacity);
-        this.forgetRate = forgetRate;
+        this.forgettingRate = forgetRate;
         this.mass = 0;
     }
     
@@ -134,15 +122,17 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
      * @return Whether the new Item is added into the Bag
      */
     @Override
-    public boolean putIn(final E newItem) {
-        final String newKey = newItem.getKey();
-                
-        
-        final E oldItem = nameTable.put(newKey, newItem);
-        if (oldItem != null) {                  // merge duplications
-            outOfBase(oldItem);
-            newItem.merge(oldItem);
+    public boolean putIn(final E newItem, boolean nameTableInsert) {
+        //TODO this is identical with Bag, should merge?
+        if (nameTableInsert) {
+            final String newKey = newItem.getKey();                        
+            final E oldItem = nameTable.put(newKey, newItem);
+            if (oldItem != null) {                  // merge duplications
+                outOfBase(oldItem);
+                newItem.merge(oldItem);
+            }
         }
+        
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
             final String overflowKey = overflowItem.getKey();
@@ -153,19 +143,6 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
         }
     }
 
-    /**
-     * Put an item back into the itemTable
-     * <p>
-     * The only place where the forgetting rate is applied
-     *
-     * @param oldItem The Item to put back
-     * @return Whether the new Item is added into the Bag
-     */
-    @Override
-    public boolean putBack(final E oldItem) {
-        BudgetFunctions.forget(oldItem.budget, forgetRate.get(), RELATIVE_THRESHOLD);
-        return putIn(oldItem);
-    }
 
     /**
      * Choose an Item according to priority distribution and take it out of the
@@ -174,13 +151,16 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E takeOut() {
+    public E takeOut(boolean removeFromNameTable) {
         int c = size();
                 
         if (c == 0) return null; // empty bag                
         
         final E selected = takeOutIndex( nextRemovalIndex() );
-        nameTable.remove(selected.getKey());
+        
+        if (removeFromNameTable) {
+            nameTable.remove(selected.getKey());
+        }
         return selected;
     }
     
@@ -288,6 +268,17 @@ public class ContinuousBag<E extends Item> implements IBag<E> {
     public String toString() {
         return size() + " size, " + getMass() + " mass, items: " + items.toString();
     }
+
+    @Override
+    public Set<String> keySet() {
+        return nameTable.keySet();
+    }
+
+    @Override
+    public Collection<E> values() {
+        return nameTable.values();
+    }
+
 
     
     

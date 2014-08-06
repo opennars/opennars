@@ -18,7 +18,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.storage.ConceptBag;
+import nars.storage.Bag;
 import org.jgrapht.ext.GmlExporter;
 import org.jgrapht.ext.GraphMLExporter;
 import org.jgrapht.ext.IntegerEdgeNameProvider;
@@ -179,7 +179,8 @@ public class NARGraph extends DirectedMultigraph {
     public void add(NAR n, Filter filter, Graphize graphize) {
         graphize.onTime(this, n.getTime());
 
-        ConceptBag bag = n.memory.concepts;
+        //TODO support AbstractBag
+        Bag<Concept> bag = (Bag<Concept>)n.memory.concepts;
 
         for (int level = bag.levels - 1; level >= 0; level--) {
 

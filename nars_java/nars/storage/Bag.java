@@ -25,12 +25,13 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Parameters;
 import nars.entity.Item;
-import nars.inference.BudgetFunctions;
 
 
-public abstract class Bag<E extends Item> implements IBag<E>  {
+public class Bag<E extends Item> extends AbstractBag<E>  {
 
     /**
      * priority levels
@@ -40,10 +41,6 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
      * firing threshold
      */
     public final int THRESHOLD;
-    /**
-     * relative threshold, only calculate once
-     */
-    private final float RELATIVE_THRESHOLD;
     /**
      * hashtable load factor
      */
@@ -95,18 +92,26 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
     private int currentCounter;
 
     
-    private BagObserver<E> bagObserver = null;
     
     /**
      * The display level; initialized at lowest
      */
     private int showLevel;
+    
+    
 
+    
     protected Bag(int levels, int capacity) {
+        this(levels, capacity, null);
+    }
+    
+    public Bag(int levels, int capacity, AtomicInteger forgettingRate) {
         this.levels = levels;
+        this.forgettingRate = forgettingRate;
+        
         THRESHOLD = (int)(Parameters.BAG_THRESHOLD * levels);
         showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
-        RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
+        
         this.capacity = capacity;
         //nameTable = new HashSet<>(capacity, LOAD_FACTOR);
         nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
@@ -134,13 +139,6 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
 
 
 
-    /**
-     * Get the item decay rate, which differs in difference subclass, and can be
-     * changed in run time by the user, so not a constant.
-     *
-     * @return The number of times for a decay factor to be fully applied
-     */
-    protected abstract int forgetRate();
 
     /**
      * The number of items in the bag
@@ -152,11 +150,19 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         return nameTable.size();
     }
 
+    @Override
+    public Set<String> keySet() {
+        return nameTable.keySet();
+    }
+    
+    
+
     /**
      * Get the average priority of Items
      *
      * @return The average priority of Items in the bag
      */
+    @Override
     public float getAveragePriority() {
         if (size() == 0) {
             return 0.01f;
@@ -190,17 +196,8 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         return nameTable.get(key);
     }
 
-    /**
-     * Add a new Item into the Bag
-     *
-     * @param newItem The new Item
-     * @return Whether the new Item is added into the Bag
-     */
-    @Override
-    public boolean putIn(final E newItem) {
-        return putIn(newItem, true);
-    }
 
+    @Override 
     public boolean putIn(final E newItem, boolean nameTableInsert) {        
                         
         if (nameTableInsert) {
@@ -223,54 +220,11 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         
     }
     
-    /**
-     * Put an item back into the itemTable
-     * <p>
-     * The only place where the forgetting rate is applied
-     *
-     * @param oldItem The Item to put back
-     * @return Whether the new Item is added into the Bag
-     */
-    public boolean putBack(final E oldItem, boolean insertIntoNameTable) {
-        BudgetFunctions.forget(oldItem.budget, forgetRate(), RELATIVE_THRESHOLD);
-        return putIn(oldItem, insertIntoNameTable);
-    }
-    
-    @Override
-    public boolean putBack(final E oldItem) {
-        return putBack(oldItem, true);
-    }
-    
-    /** x = takeOut(), then putBack(x) - without removing from nameTable 
-     *  @return the variable that was updated, or null if none was taken out
-     */
-    public E processNext() {
-        final E x = takeOut(false);
-        if (x!=null) {
-            //putBack():
-            BudgetFunctions.forget(x.budget, forgetRate(), RELATIVE_THRESHOLD);            
-            boolean r = putIn(x, false);
-            if (!r) {
-                throw new RuntimeException("Bag.processNext");
-            }
-            return x;
-        }
-        else
-            return null;
-    }
 
-    /**
-     * Choose an Item according to priority distribution and take it out of the
-     * Bag
-     *
-     * @return The selected Item, or null if this bag is empty
-     */
+
+
+    
     @Override
-    public E takeOut() {
-        return takeOut(true);
-    }
-    
-    
     public E takeOut(boolean removeFromNameTable) {
         int c = size();
                 
@@ -450,35 +404,6 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
         return false;
     }
     
-    /**
-     * To start displaying the Bag in a BagWindow; {@link nars.gui.BagWindow}
-     * implements interface {@link BagObserver};
-     *
-     * @param bagObserver BagObserver to set
-     * @param title The title of the window
-     */
-    public void addBagObserver(BagObserver<E> bagObserver, String title) {
-        this.bagObserver = bagObserver;
-        bagObserver.post(toString());
-        bagObserver.setTitle(title);
-        bagObserver.setBag(this);
-    }
-
-    /**
-     * Resume display
-     */
-    public void play() {
-        if (bagObserver!=null)
-            bagObserver.post(toString());
-    }
-
-    /**
-     * Stop display
-     */
-    public void stop() {
-        if (bagObserver!=null)        
-            bagObserver.stop();
-    }
 
     /**
      * Refresh display
@@ -583,5 +508,12 @@ public abstract class Bag<E extends Item> implements IBag<E>  {
     public Deque<E> getLevel(final int i) {
         return itemTable[i];
     }
+
+    @Override
+    public Collection<E> values() {
+        return nameTable.values();
+    }
         
+    
+    
 }

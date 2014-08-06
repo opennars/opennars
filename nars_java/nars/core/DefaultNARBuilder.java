@@ -2,7 +2,8 @@ package nars.core;
 
 import nars.entity.Concept;
 import nars.language.Term;
-import nars.storage.ConceptBag;
+import nars.storage.AbstractBag;
+import nars.storage.Bag;
 import nars.storage.Memory;
 import nars.storage.NovelTaskBag;
 import nars.storage.TaskLinkBag;
@@ -49,8 +50,8 @@ public class DefaultNARBuilder extends NARBuilder {
 
     
     @Override
-    public ConceptBag newConceptBag(Param p) {
-        return new ConceptBag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgettingRate);
+    public AbstractBag<Concept> newConceptBag(Param p) {
+        return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgettingRate);
     }
 
     @Override

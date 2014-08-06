@@ -1,9 +1,10 @@
 package nars.core;
 
+import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.operator.DefaultOperators;
 import nars.operator.Operator;
-import nars.storage.ConceptBag;
+import nars.storage.AbstractBag;
 import nars.storage.Memory;
 import nars.storage.NovelTaskBag;
 
@@ -21,7 +22,7 @@ abstract public class NARBuilder extends Parameters implements ConceptBuilder {
     
     /** initial runtime parameters */
     abstract public Param newParam();
-    abstract public ConceptBag newConceptBag(Param p);
+    abstract public AbstractBag<Concept> newConceptBag(Param p);
     abstract public NovelTaskBag newNovelTaskBag(Param p);
     
     public NAR build() {
