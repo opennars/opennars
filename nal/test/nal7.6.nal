@@ -9,10 +9,12 @@
 1
 
 '//ERROR, should be =/>, and with confidence 0.45 according to 1.3.3 
-''outputMustContain('<<$1 --> (/,open,_,door_101)> ==> <$1 --> (/,enter,_,room_101)>>. :\\: %1.00;0.30%') // :\:  {11|1 : 2;3<John --> (/,enter,_,room_101)>;<John --> (/,open,_,door_101)>}
+''outputMustContain('<<$1 --> (/,open,_,door_101)> ==> <$1 --> (/,enter,_,room_101)>>. :\\: %1.00;0.30%')
+''// :\:  {11|1 : 2;3<John --> (/,enter,_,room_101)>;<John --> (/,open,_,door_101)>}
 
 '//ERROR, should be =\>, and with confidence 0.45 according to 1.3.3 
-''outputMustContain('<<$1 --> (/,enter,_,room_101)> ==> <$1 --> (/,open,_,door_101)>>. :\\: %1.00;0.30%') // :\:  {11|1 : 2;3<John --> (/,enter,_,room_101)>;<John --> (/,open,_,door_101)>}
+''outputMustContain('<<$1 --> (/,enter,_,room_101)> ==> <$1 --> (/,open,_,door_101)>>. :\\: %1.00;0.30%')
+''// :\:  {11|1 : 2;3<John --> (/,enter,_,room_101)>;<John --> (/,open,_,door_101)>}
 
 //ERROR, should be </>, and with confidence 0.45 according to 1.3.3 
 ''outputMustContain('<<$1 --> (/,enter,_,room_101)> <=> <$1 --> (/,open,_,door_101)>>. :\\: %1.00;0.30%')
