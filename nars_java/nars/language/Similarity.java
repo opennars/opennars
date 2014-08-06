@@ -44,8 +44,8 @@ public class Similarity extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Similarity(String n, Term[] cs, boolean con, short i) {
-        super(n, cs, con, i);
+    private Similarity(String n, Term[] cs, boolean constant, boolean containsVar, short i) {
+        super(n, cs, constant, containsVar, i);
     }
 
     /**
@@ -54,7 +54,7 @@ public class Similarity extends Statement {
      */
     @Override
     public Object clone() {
-        return new Similarity(getName(), cloneTerms(), isConstant(), complexity);
+        return new Similarity(getName(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
     /**

@@ -51,7 +51,7 @@ public abstract class Statement extends CompoundTerm {
      * @param con Constant indicator
      * @param i Syntactic complexity of the compound
      */
-    protected Statement(final String n, final Term[] cs, final boolean con, final short i) {
+    @Deprecated protected Statement(final String n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
     
@@ -188,7 +188,7 @@ public abstract class Statement extends CompoundTerm {
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
         if (nameBuilder == null) {
-            nameBuilder = new StringBuilder();
+            nameBuilder = new StringBuilder(length);
         }
         nameBuilder.setLength(0);
         nameBuilder.ensureCapacity(length);

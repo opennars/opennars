@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import nars.core.Parameters;
 import nars.entity.Item;
 import nars.entity.ShortFloat;
 import nars.storage.AbstractBag;
@@ -14,15 +13,7 @@ import nars.storage.Memory;
 
 
 public class ContinuousBag<E extends Item> extends AbstractBag<E> {
- 
-
-    /**
-     * hashtable load factor
-     */
-    public static final float LOAD_FACTOR = Parameters.LOAD_FACTOR;       //
-    
-
-    
+     
     
     /**
      * mapping from key to item
@@ -52,8 +43,10 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     public ContinuousBag(int capacity, AtomicInteger forgetRate) {
         super();
         this.capacity = capacity;
-        nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
-        //nameTable = new FastMap<>();//(int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
+        
+        nameTable = new HashMap<>(capacity);
+        //nameTable = new FastMap<>();
+        
         items = new PrioritySortedItemList<E>(capacity);
         this.forgettingRate = forgetRate;
         this.mass = 0;

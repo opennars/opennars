@@ -187,11 +187,11 @@ public class Task extends Item {
         if (parentTask != null) {
             s.append("  \n from task: ").append(parentTask.toStringBrief());
             if (parentBelief != null) {
-                s.append("  \n from belief: ").append(parentBelief.toStringBrief());
+                s.append("  \n from belief: ").append(parentBelief.toString());
             }
         }
         if (bestSolution != null) {
-            s.append("  \n solution: ").append(bestSolution.toStringBrief());
+            s.append("  \n solution: ").append(bestSolution.toString());
         }
         return s.toString();
     }
