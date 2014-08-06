@@ -408,7 +408,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     /**
      * Refresh display
      */
-    protected void refresh() {
+    @Deprecated protected void refresh() {
         if (bagObserver!=null)       
             if (bagObserver.isActive()) {
                 bagObserver.refresh(toString());

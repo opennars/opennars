@@ -4,6 +4,5 @@
 
 2130
 
-''outputMustContain('<<$1 --> num>')
-''outputMustContain('<<$1 --> num> ==>')
+''outputMustContain('<<$1 --> num> ==> <(*,$1) --> num>>.')
 ''outputMustContain('<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.45%')

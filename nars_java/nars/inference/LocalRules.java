@@ -37,7 +37,6 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import static nars.language.Terms.*;
 import nars.language.Variables;
 import nars.storage.Memory;
 
@@ -224,7 +223,10 @@ public class LocalRules {
         Statement statement = (Statement) asym.content;
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
+        
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder(), memory);
+        if (content == null) return;
+        
         TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
         memory.doublePremiseTask(content, truth, budget);
@@ -286,6 +288,9 @@ public class LocalRules {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, subjT, otherTerm, order, memory);
         }
+        
+        if (content == null) return;
+        
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
     

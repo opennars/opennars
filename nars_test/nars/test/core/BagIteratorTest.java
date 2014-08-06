@@ -28,11 +28,9 @@ public class BagIteratorTest {
             if (first == null)
                 first = n;
             current =n;
-            System.out.println(current);
+            //System.out.println(current);
             count++;
-        }
-        
-        System.out.println();
+        }               
         
         if (b.size() > 1) {
             //check correct order

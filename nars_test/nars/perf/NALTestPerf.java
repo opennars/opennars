@@ -1,40 +1,48 @@
 package nars.perf;
 
 import java.util.Collection;
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.Param;
+import nars.core.Parameters;
+import nars.entity.Concept;
+import nars.entity.Task;
+import nars.storage.AbstractBag;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.newNAR;
+import nars.util.ContinuousBag;
 
 
 
 public class NALTestPerf  {
     
     public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
-        perfNAL(path, extraCycles, repeats, warmups, true);
+        perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
     }
     
-    public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups, boolean gc) {
+    public static double perfNAL(final NAR n, final String path, final int extraCycles, int repeats, int warmups, boolean gc) {
         
         final String example = NALTest.getExample(path);
         
-        new Performance(path, repeats, warmups, gc) {
-            private NAR n;
+        Performance p = new Performance(path, repeats, warmups, gc) {
             long totalCycles;
             
             @Override
             public void init() {
-                NAR.resetStatics();
                 
-                n = newNAR();
                 totalCycles = 0;
-                
             }
 
             @Override
             public void run(boolean warmup) {
-                n.reset();
-                n.addInput(example);
-                n.finish(extraCycles);
+                try {
+                    n.reset();
+                    n.addInput(example);
+                    n.finish(extraCycles);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
                 
                 if (!warmup)
                     totalCycles += n.getTime();
@@ -48,20 +56,52 @@ public class NALTestPerf  {
                 
             }
 
-        }.print();
+        };
+        p.print();
         
-           
+        return p.getCycleTimeMS();
+                   
+    }
+    
+    public static void test(NAR n) {
+        int repeats = 4;
+        int warmups = 1;
+        int extraCycles = 1000;
+
+        Collection c = NALTest.params();
+        double totalTime = 0;
+        for (Object o : c) {
+            String examplePath = (String)((Object[])o)[0];
+            totalTime += perfNAL(n,examplePath,extraCycles,repeats,warmups,true);
+        }
+        System.out.println("\n\nTotal mean runtime (ms): " + totalTime);        
     }
     
     public static void main(String[] args) {
-        int repeats = 10;
-        int warmups = 1;
-        int extraCycles = 1;
         
-        Collection c = NALTest.params();
-        for (Object o : c) {
-            String examplePath = (String)((Object[])o)[0];
-            perfNAL(examplePath,extraCycles,repeats,warmups,true);
+
+        NAR nd = new DefaultNARBuilder().build();
+        test(nd);
+        
+        NAR nc = new ContinuousBagNARBuilder().build();
+        test(nc);
+        
+    }
+
+    private static class ContinuousBagNARBuilder extends DefaultNARBuilder {
+
+        public ContinuousBagNARBuilder() {
+            super();
+        }
+
+        @Override
+        public AbstractBag<Task> newNovelTaskBag(Param p) {
+            return new ContinuousBag<Task>(Parameters.TASK_BUFFER_SIZE, Parameters.NEW_TASK_FORGETTING_CYCLE, true);
+        }
+
+        @Override
+        public AbstractBag<Concept> newConceptBag(Param p) {
+            return new ContinuousBag<Concept>(getConceptBagSize(), CONCEPT_FORGETTING_CYCLE, true);
         }
     }
 }

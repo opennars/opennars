@@ -1,11 +1,12 @@
 package nars.core;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Concept;
+import nars.entity.Task;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.storage.Memory;
-import nars.storage.NovelTaskBag;
 import nars.storage.TaskLinkBag;
 import nars.storage.TermLinkBag;
 
@@ -55,8 +56,8 @@ public class DefaultNARBuilder extends NARBuilder {
     }
 
     @Override
-    public NovelTaskBag newNovelTaskBag(Param p) {
-        return new NovelTaskBag(getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE); 
+    public AbstractBag<Task> newNovelTaskBag(Param p) {
+        return new Bag<Task>(getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE, new AtomicInteger(Parameters.NEW_TASK_FORGETTING_CYCLE)); 
     }
  
     public int taskLinkBagLevels;

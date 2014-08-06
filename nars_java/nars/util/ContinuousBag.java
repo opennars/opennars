@@ -38,8 +38,9 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     /** whether items are removed by random sampling, or a continuous scanning */
     private boolean randomRemoval;
     
-    /** rate of sampling index when in non-random removal mode */
-    final float scanningRate = ((float)Math.E)/10.0f; //an irrational #
+    /** rate of sampling index when in non-random removal mode.
+     *  valid values are:  > 0 (NOT equal) and <= 1.0 */
+    final float scanningRate = 1.0f;
     
 
     /** current x (irrelevant when randomRemoval = true) */
@@ -178,7 +179,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
             x = getFocus(Memory.randomNumber.nextFloat());            
         }
         else {
-            x += scanningRate * 1.0f / (size);
+            x += scanningRate * 1.0f / (1+size);
             if (x >= 1.0f)
                 x = x - 1.0f;
         }

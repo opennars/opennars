@@ -3,7 +3,6 @@ package nars.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.Sentence;
 import nars.gui.NARControls;
@@ -384,9 +383,6 @@ public class NAR implements Runnable, Output {
     }
 
 
-    public static void resetStatics() {
-        Memory.randomNumber = new Random(1);
-    }
 
     public Param param() {
         return memory.param;

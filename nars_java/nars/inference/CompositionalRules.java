@@ -21,7 +21,6 @@
 package nars.inference;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import nars.entity.BudgetValue;
@@ -51,7 +50,6 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.language.Variables;
-import nars.storage.Bag;
 import nars.storage.Memory;
 import static nars.inference.TruthFunctions.*;
 
@@ -83,81 +81,70 @@ public final class CompositionalRules {
         Term term1 = sentence.content;
         Term term2 = belief.content;
         
-        //TODO use AbstractBag
-        Deque<Concept>[] bag = ((Bag<Concept>)memory.concepts).itemTable;        
-        
-        for (final Deque<Concept> baglevel : bag) {
-            
-            if (baglevel == null)
-                continue;
-            
-            for (final Concept concept : baglevel) {
-                
-                final List<Task> questions = concept.getQuestions();                
-                
-                for (int i = 0; i < questions.size(); i++) {
-                    
-                    final Task question = questions.get(i);                                    
-                    
-                    if(question==null) { assert(false); continue; }
-                    
-                    Sentence qu=question.sentence;
-                    
-                    if(qu==null) { assert(false); continue; }
-                    
-                    final Term pcontent = qu.content;
-                    final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
-                    if(pcontent==null || !(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
-                        continue;
-                    }
-                    
-                    if(!(term1 instanceof Conjunction) && !(term2 instanceof Conjunction)) {
-                        if(!(ctpcontent).containsTerm(term1) || !(ctpcontent).containsTerm(term2)) {
-                            continue;
-                        }
-                    }
-                    
-                    if(term1 instanceof Conjunction) {
-                        if(!(term2 instanceof Conjunction) && !ctpcontent.containsTerm(term2)) {
-                            continue;
-                        }
-                        if (term1.containVar()) {
-                            continue;                        
-                        }
+        for (final Concept concept : memory.concepts) {
 
-                        if (!ctpcontent.containsAllTermsOf(term1))
-                            continue;                        
-                    }
-                    
-                
-                    if (term2 instanceof Conjunction) {
-                        if (!(term1 instanceof Conjunction) && !ctpcontent.containsTerm(term1)) {
-                            continue;
-                        }
-                        if (term2.containVar()) {
-                            continue;
-                        }
-                        if (!ctpcontent.containsAllTermsOf(term2))
-                            continue;
-                    }
-                    
-                    Term conj = Conjunction.make(term1, term2, memory);
-                    
-                    if (Variables.containVarDepOrIndep(conj.toString()))
-                        continue;
-                    
-                    TruthValue truthT = memory.getCurrentTask().sentence.truth;
-                    TruthValue truthB = memory.getCurrentBelief().truth;
-                    if(truthT==null || truthB==null) {
-                        //continue; //<- should this be return and not continue?
-                        return;
-                    }
-                    
-                    TruthValue truthAnd = intersection(truthT, truthB);
-                    BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, memory);
-                    memory.doublePremiseTask(conj, truthAnd, budget);
-                    break;
+            final List<Task> questions = concept.getQuestions();
+            for (int i = 0; i < questions.size(); i++) {
+                final Task question = questions.get(i);                                    
+
+                if(question==null) { assert(false); continue; }
+
+                Sentence qu=question.sentence;
+
+                if(qu==null) { assert(false); continue; }
+
+                final Term pcontent = qu.content;
+                final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
+                if(pcontent==null || !(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
+                    continue;
                 }
+
+                if(!(term1 instanceof Conjunction) && !(term2 instanceof Conjunction)) {
+                    if(!(ctpcontent).containsTerm(term1) || !(ctpcontent).containsTerm(term2)) {
+                        continue;
+                    }
+                }
+
+                if(term1 instanceof Conjunction) {
+                    if(!(term2 instanceof Conjunction) && !ctpcontent.containsTerm(term2)) {
+                        continue;
+                    }
+                    if (term1.containVar()) {
+                        continue;                        
+                    }
+
+                    if (!ctpcontent.containsAllTermsOf(term1))
+                        continue;                        
+                }
+
+
+                if (term2 instanceof Conjunction) {
+                    if (!(term1 instanceof Conjunction) && !ctpcontent.containsTerm(term1)) {
+                        continue;
+                    }
+                    if (term2.containVar()) {
+                        continue;
+                    }
+                    if (!ctpcontent.containsAllTermsOf(term2))
+                        continue;
+                }
+
+                Term conj = Conjunction.make(term1, term2, memory);
+
+                if (Variables.containVarDepOrIndep(conj.toString()))
+                    continue;
+
+                TruthValue truthT = memory.getCurrentTask().sentence.truth;
+                TruthValue truthB = memory.getCurrentBelief().truth;
+                if(truthT==null || truthB==null) {
+                    //continue; //<- should this be return and not continue?
+                    return;
+                }
+
+                TruthValue truthAnd = intersection(truthT, truthB);
+                BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, memory);
+                memory.doublePremiseTask(conj, truthAnd, budget);
+                break;
             }
         }
 
@@ -748,6 +735,10 @@ public final class CompositionalRules {
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                            
+                            if (!(s2 instanceof CompoundTerm))
+                                continue;
+                            
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
