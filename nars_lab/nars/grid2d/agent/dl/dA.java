@@ -195,7 +195,7 @@ public class dA {
         int n_visible = 20;
         int n_hidden = 5;
 
-        double learning_rate = 0.1 / ((double)train_N);
+        double learning_rate = 0.1 / train_N;
 
         double[][] train_X = {
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
