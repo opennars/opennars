@@ -23,6 +23,13 @@ package nars.entity;
 import nars.core.Parameters;
 import nars.inference.BudgetFunctions;
 import nars.inference.UtilityFunctions;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 
 /**
@@ -111,7 +118,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incPriority(final float v) {
-        priority.setValue(UtilityFunctions.or(priority.getValue(), v));
+        priority.setValue(or(priority.getValue(), v));
     }
 
     /**
@@ -119,7 +126,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decPriority(final float v) {
-        priority.setValue(UtilityFunctions.and(priority.getValue(), v));
+        priority.setValue(and(priority.getValue(), v));
     }
 
     /**
@@ -143,7 +150,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incDurability(final float v) {
-        durability.setValue(UtilityFunctions.or(durability.getValue(), v));
+        durability.setValue(or(durability.getValue(), v));
     }
 
     /**
@@ -151,7 +158,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decDurability(final float v) {
-        durability.setValue(UtilityFunctions.and(durability.getValue(), v));
+        durability.setValue(and(durability.getValue(), v));
     }
 
     /**
@@ -175,7 +182,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incQuality(final float v) {
-        quality.setValue(UtilityFunctions.or(quality.getValue(), v));
+        quality.setValue(or(quality.getValue(), v));
     }
 
     /**
@@ -183,7 +190,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decQuality(final float v) {
-        quality.setValue(UtilityFunctions.and(quality.getValue(), v));
+        quality.setValue(and(quality.getValue(), v));
     }
 
     /**
@@ -199,7 +206,7 @@ public class BudgetValue implements Cloneable {
      * @return The summary value
      */
     public float summary() {
-        return UtilityFunctions.aveGeo(priority.getValue(), durability.getValue(), quality.getValue());
+        return aveGeo(priority.getValue(), durability.getValue(), quality.getValue());
     }
 
     /**

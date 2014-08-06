@@ -25,11 +25,22 @@ import java.util.List;
 import nars.core.NAR;
 import nars.core.NARRun;
 import nars.core.Parameters;
+import static nars.entity.Stamp.make;
 import nars.inference.BudgetFunctions;
+import static nars.inference.BudgetFunctions.distributeAmongLinks;
+import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.LocalRules;
+import static nars.inference.LocalRules.decisionMaking;
+import static nars.inference.LocalRules.revisible;
+import static nars.inference.LocalRules.revision;
+import static nars.inference.LocalRules.trySolution;
 import nars.inference.RuleTables;
+import static nars.inference.RuleTables.reason;
+import static nars.inference.RuleTables.transformTask;
 import nars.inference.TemporalRules;
+import static nars.inference.TemporalRules.solutionQuality;
 import nars.inference.UtilityFunctions;
+import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -189,22 +200,22 @@ public final class Concept extends Item {
                     task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
                 return;
-            } else if (LocalRules.revisible(judg, oldBelief)) {
-                memory.setTheNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
+            } else if (revisible(judg, oldBelief)) {
+                memory.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
                 if (memory.getTheNewStamp() != null) {
                     Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
                     if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
                         memory.singlePremiseTask(projectedBelief, task.budget);
                     }
                     memory.setCurrentBelief(projectedBelief);
-                    LocalRules.revision(judg, projectedBelief, false, memory);
+                    revision(judg, projectedBelief, false, memory);
                 }
             }
         }
         if (task.aboveThreshold()) {
             for (final Task ques : questions) {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
-                LocalRules.trySolution(judg, ques, memory);
+                trySolution(judg, ques, memory);
             }
             addToTable(judg, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
         }
@@ -228,10 +239,10 @@ public final class Concept extends Item {
             if (newStamp.equals(oldStamp)) {
                 return;
             }
-            if (LocalRules.revisible(goal, oldGoal)) {
-                memory.setTheNewStamp(Stamp.make(newStamp, oldStamp, memory.getTime()));
+            if (revisible(goal, oldGoal)) {
+                memory.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
                 if (memory.getTheNewStamp() != null) {
-                    LocalRules.revision(goal, oldGoal, false, memory);
+                    revision(goal, oldGoal, false, memory);
                     noRevision = false;
                 }
             }
@@ -239,12 +250,12 @@ public final class Concept extends Item {
         if (task.aboveThreshold()) {
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
             if (belief!=null)
-                LocalRules.trySolution(belief, task, memory);
+                trySolution(belief, task, memory);
 
             if (task.aboveThreshold()) {    // still worth pursuing
                 addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);
                 if (noRevision) {
-                    LocalRules.decisionMaking(task, this);
+                    decisionMaking(task, this);
                 }
             }
         }
@@ -282,7 +293,7 @@ public final class Concept extends Item {
                                        selectCandidate(ques, desires);
         
         if (newAnswer != null) {
-            LocalRules.trySolution(newAnswer, task, memory);
+            trySolution(newAnswer, task, memory);
         }
     }
 
@@ -300,7 +311,7 @@ public final class Concept extends Item {
         insertTaskLink(new TaskLink(task, null, taskBudget));  // link type: SELF
         if (term instanceof CompoundTerm) {
             if (!termLinkTemplates.isEmpty()) {
-                final BudgetValue subBudget = BudgetFunctions.distributeAmongLinks(taskBudget, termLinkTemplates.size());
+                final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
                 if (subBudget.aboveThreshold()) {
 
                     for (final TermLink termLink : termLinkTemplates) {
@@ -327,11 +338,11 @@ public final class Concept extends Item {
      * @param capacity The capacity of the table
      */
     private void addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
-        final float rank1 = BudgetFunctions.rankBelief(newSentence);    // for the new isBelief
+        final float rank1 = rankBelief(newSentence);    // for the new isBelief
         float rank2;
         int i = 0;
         for (final Sentence judgment2 : table) {
-            rank2 = BudgetFunctions.rankBelief(judgment2);
+            rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
                     return;
@@ -365,7 +376,7 @@ public final class Concept extends Item {
         float beliefQuality;
         Sentence candidate = null;
         for (final Sentence judg : list) {
-            beliefQuality = TemporalRules.solutionQuality(query, judg, memory);
+            beliefQuality = solutionQuality(query, judg, memory);
             if (beliefQuality > currentBest) {
                 currentBest = beliefQuality;
                 candidate = judg;
@@ -397,7 +408,7 @@ public final class Concept extends Item {
      */
     public void buildTermLinks(final BudgetValue taskBudget) {
         if (termLinkTemplates.size() > 0) {
-            BudgetValue subBudget = BudgetFunctions.distributeAmongLinks(taskBudget, termLinkTemplates.size());
+            BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
             if (subBudget.aboveThreshold()) {
                 for (final TermLink template : termLinkTemplates) {
                     if (template.type != TermLink.TRANSFORM) {
@@ -477,7 +488,7 @@ public final class Concept extends Item {
     public float getQuality() {
         float linkPriority = termLinks.getAveragePriority();
         float termComplexityFactor = 1.0f / term.getComplexity();
-        float result = UtilityFunctions.or(linkPriority, termComplexityFactor);
+        float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
             throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor );
         }
@@ -514,7 +525,7 @@ public final class Concept extends Item {
                 memory.getRecorder().append(" * Selected Belief: " + belief);
             }
 
-            memory.setTheNewStamp(Stamp.make(taskStamp, belief.stamp, currentTime));
+            memory.setTheNewStamp(make(taskStamp, belief.stamp, currentTime));
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
@@ -558,7 +569,7 @@ public final class Concept extends Item {
 //      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
         if (currentTaskLink.type == TermLink.TRANSFORM) {
             memory.setCurrentBelief(null);
-            RuleTables.transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
+            transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
         } else {
             int termLinkCount = Parameters.MAX_REASONED_TERM_LINK;
 //        while (memory.noResult() && (termLinkCount > 0)) {
@@ -569,7 +580,7 @@ public final class Concept extends Item {
                         memory.getRecorder().append(" * Selected TermLink: " + termLink);
                     }
                     memory.setCurrentBeliefLink(termLink);
-                    RuleTables.reason(currentTaskLink, termLink, memory);
+                    reason(currentTaskLink, termLink, memory);
                     termLinks.putBack(termLink);
                     termLinkCount--;
                 } else {

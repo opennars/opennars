@@ -1,5 +1,7 @@
 package nars.io;
 
+import static java.lang.Float.parseFloat;
+import static java.lang.String.valueOf;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
@@ -9,7 +11,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions;
+import static nars.inference.BudgetFunctions.truthToQuality;
 import static nars.io.Symbols.ARGUMENT_SEPARATOR;
 import static nars.io.Symbols.BUDGET_VALUE_MARK;
 import static nars.io.Symbols.GOAL_MARK;
@@ -31,15 +33,20 @@ import static nars.io.Symbols.STAMP_CLOSER;
 import static nars.io.Symbols.STAMP_OPENER;
 import static nars.io.Symbols.TRUTH_VALUE_MARK;
 import static nars.io.Symbols.VALUE_SEPARATOR;
+import static nars.io.Symbols.getCloser;
+import static nars.io.Symbols.getOpener;
+import static nars.io.Symbols.getOperator;
+import static nars.io.Symbols.getRelation;
+import static nars.io.Symbols.isRelation;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Terms;
+import static nars.language.Terms.make;
 import nars.language.Variable;
-import nars.language.Variables;
-import nars.operator.Operation;
+import static nars.language.Variables.containVar;
+import static nars.operator.Operation.make;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -122,7 +129,7 @@ public class TextPerception {
      * @return An experienced task
      */
     public static Task parseNarsese(StringBuilder buffer, Memory memory, long time) throws InvalidInputException {
-        int i = buffer.indexOf(String.valueOf(PREFIX_MARK));
+        int i = buffer.indexOf(valueOf(PREFIX_MARK));
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
             if (prefix.equals(INPUT_LINE_PREFIX)) {
@@ -136,7 +143,7 @@ public class TextPerception {
         char c = buffer.charAt(buffer.length() - 1);
         if (c == STAMP_CLOSER) {
             //ignore stamp
-            int j = buffer.lastIndexOf(String.valueOf(STAMP_OPENER));
+            int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
             buffer.delete(j - 1, buffer.length());
         }
         return parseTask(buffer.toString().trim(), memory, time);
@@ -218,7 +225,7 @@ public class TextPerception {
         if (s.charAt(0) != BUDGET_VALUE_MARK) {
             return null;
         }
-        int i = s.indexOf(String.valueOf(BUDGET_VALUE_MARK), 1);    // looking for the end
+        int i = s.indexOf(valueOf(BUDGET_VALUE_MARK), 1);    // looking for the end
         if (i < 0) {
             throw new InvalidInputException("missing budget closer");
         }
@@ -243,7 +250,7 @@ public class TextPerception {
         if (s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;
         }
-        final int first = s.indexOf(String.valueOf(TRUTH_VALUE_MARK));    // looking for the beginning
+        final int first = s.indexOf(valueOf(TRUTH_VALUE_MARK));    // looking for the beginning
         if (first == last) { // no matching closer
             throw new InvalidInputException("missing truth mark");
         }
@@ -272,10 +279,10 @@ public class TextPerception {
         if (s != null) {
             int i = s.indexOf(VALUE_SEPARATOR);
             if (i < 0) {
-                frequency = Float.parseFloat(s);
+                frequency = parseFloat(s);
             } else {
-                frequency = Float.parseFloat(s.substring(0, i));
-                confidence = Float.parseFloat(s.substring(i + 1));
+                frequency = parseFloat(s.substring(0, i));
+                confidence = parseFloat(s.substring(i + 1));
             }
         }
         return new TruthValue(frequency, confidence);
@@ -316,13 +323,13 @@ public class TextPerception {
         if (s != null) { // overrite default
             int i = s.indexOf(VALUE_SEPARATOR);
             if (i < 0) {        // default durability
-                priority = Float.parseFloat(s);
+                priority = parseFloat(s);
             } else {
-                priority = Float.parseFloat(s.substring(0, i));
-                durability = Float.parseFloat(s.substring(i + 1));
+                priority = parseFloat(s.substring(0, i));
+                durability = parseFloat(s.substring(i + 1));
             }
         }
-        float quality = (truth == null) ? 1 : BudgetFunctions.truthToQuality(truth);
+        float quality = (truth == null) ? 1 : truthToQuality(truth);
         return new BudgetValue(priority, durability, quality);
     }
 
@@ -374,7 +381,7 @@ public class TextPerception {
             char first = s.charAt(0);
             char last = s.charAt(index);
             
-            NativeOperator opener = Symbols.getOpener(first);
+            NativeOperator opener = getOpener(first);
             if (opener!=null) {
                 switch (opener) {
                     case COMPOUND_TERM_OPENER:
@@ -442,7 +449,7 @@ public class TextPerception {
             return new Interval(s);
         }
  
-        if (Variables.containVar(s)) {
+        if (containVar(s)) {
             return new Variable(s);
         } else {
             return new Term(s);
@@ -466,9 +473,9 @@ public class TextPerception {
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i), memory);
         Term predicate = parseTerm(s.substring(i + 3), memory);
-        Statement t = Statement.make(Symbols.getRelation(relation), subject, predicate, memory);
+        Statement t = make(getRelation(relation), subject, predicate, memory);
         if (t == null) {
-            throw new InvalidInputException("invalid statement: statement unable to create: " + Symbols.getOperator(relation) + " " + subject + " " + predicate);
+            throw new InvalidInputException("invalid statement: statement unable to create: " + getOperator(relation) + " " + subject + " " + predicate);
         }
         return t;
     }
@@ -492,7 +499,7 @@ public class TextPerception {
         }
         
         String op = s.substring(0, firstSeparator).trim();
-        NativeOperator oNative = Symbols.getOperator(op);
+        NativeOperator oNative = getOperator(op);
         Operator oRegistered = memory.getOperator(op);
         
         if ((oRegistered==null) && (oNative == null)) {
@@ -505,10 +512,10 @@ public class TextPerception {
         Term t;
         
         if (oNative!=null) {
-            t = Terms.make(oNative, argA, memory);
+            t = make(oNative, argA, memory);
         }
         else if (oRegistered!=null) {
-            t = Operation.make(oRegistered, argA, memory);
+            t = make(oRegistered, argA, memory);
         }
         else {
             throw new InvalidInputException("Invalid compound term");
@@ -579,7 +586,7 @@ public class TextPerception {
         int levelCounter = 0;
         int i = 0;
         while (i < s.length() - 3) {    // don't need to check the last 3 characters
-            if ((levelCounter == 0) && (Symbols.isRelation(s.substring(i, i + 3)))) {
+            if ((levelCounter == 0) && (isRelation(s.substring(i, i + 3)))) {
                 return i;
             }
             if (isOpener(s, i)) {
@@ -603,11 +610,11 @@ public class TextPerception {
     private static boolean isOpener(final String s, final int i) {
         char c = s.charAt(i);
         
-        boolean b = (Symbols.getOpener(c)!=null);
+        boolean b = (getOpener(c)!=null);
         if (!b)
             return false;
         
-        return i + 3 > s.length() || !Symbols.isRelation(s.substring(i, i + 3));
+        return i + 3 > s.length() || !isRelation(s.substring(i, i + 3));
     }
 
     /**
@@ -620,11 +627,11 @@ public class TextPerception {
     private static boolean isCloser(String s, int i) {
         char c = s.charAt(i);
 
-        boolean b = (Symbols.getCloser(c)!=null);
+        boolean b = (getCloser(c)!=null);
         if (!b)
             return false;
         
-        return i < 2 || !Symbols.isRelation(s.substring(i - 2, i + 1));
+        return i < 2 || !isRelation(s.substring(i - 2, i + 1));
     }
     
 }
