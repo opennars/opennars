@@ -29,7 +29,7 @@ public class TestChamber {
                 
                 c.material = Material.GrassFloor;
                double n = SimplexNoise.noise(c.state.x/smoothness, c.state.y/smoothness);
-                if((int)(n*64)>water_threshold) {
+                if((n*64)>water_threshold) {
                     c.material=Material.Water;
                 }
                 c.setHeight( (int)(Math.random() * 24 + 1));

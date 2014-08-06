@@ -34,8 +34,8 @@ public class Hsom {
         this.SomSize = SomSize;
         for (int i1 = 0; i1 < SomSize; i1++) {
             for (int i2 = 0; i2 < SomSize; i2++) {
-                coords1[i1][i2] = (double) i1 * 1.0; //Kartenkoords
-                coords2[i1][i2] = (double) i2 * 1.0;
+                coords1[i1][i2] = i1 * 1.0; //Kartenkoords
+                coords2[i1][i2] = i2 * 1.0;
             }
         }
         for (int x = 0; x < SomSize; x++) {
@@ -83,9 +83,7 @@ public class Hsom {
     void output(final double[] outarr) {
         final int x = winnerx;
         final int y = winnery;
-        for (int i = 0; i < numInputs; i++) {
-            outarr[i] = links[x][y][i];
-        }
+        System.arraycopy(links[x][y], 0, outarr, 0, numInputs);
     }
 
     double hsit(int i1, int i2) {   //neighboorhood-function
@@ -94,7 +92,7 @@ public class Hsom {
         double diff2 = (coords2[i1][i2] - coords2[winnerx][winnery]) 
                         * (coords2[i1][i2] - coords2[winnerx][winnery]);
         return 1.0f / ((double) Math.sqrt(2 * Math.PI * gamma * gamma)) 
-                        * ((double) Math.exp((diff1 + diff2) / (-2 * gamma * gamma)));
+                        * Math.exp((diff1 + diff2) / (-2 * gamma * gamma));
     }
 
     void adapt(final double[] input) {

@@ -326,10 +326,10 @@ public class Hauto {
             return (a==1.0f && b==1.0f) ? 1.0f : 0.0f;
         }
         if("op_max".equals(op)) {
-            return (float) Math.max(a, b);
+            return Math.max(a, b);
         }
         if("op_min".equals(op)) {
-            return (float) Math.min(a, b);
+            return Math.min(a, b);
         }
         if("op_plus".equals(op)) {
             return a+b;

@@ -131,9 +131,7 @@ public class Brain implements Serializable {
         this.randActions = randActions;
         this.maxWeight = maxWeight;
         neuronsNo = new int[hiddenNeuronsNo.length + 1];
-        for (int i = 0; i < hiddenNeuronsNo.length; i++) {
-            neuronsNo[i] = hiddenNeuronsNo[i];
-        }
+        System.arraycopy(hiddenNeuronsNo, 0, neuronsNo, 0, hiddenNeuronsNo.length);
         neuronsNo[neuronsNo.length - 1] = actionsArray.length;
         activation = createActivationTable(neuronsNo);
         layerInput = createLayerInputs(neuronsNo);
@@ -283,9 +281,7 @@ public class Brain implements Serializable {
     public void inheritFrom(Brain brain, Brain brain2) {
         for (int l = 0; l < w.length; l++) {
             for (int i = 0; i < w[l].length; i++) {
-                for (int j = 0; j < w[l][i].length; j++) {
-                    w[l][i][j] = brain.w[l][i][j];
-                }
+                System.arraycopy(brain.w[l][i], 0, w[l][i], 0, w[l][i].length);
             }
         }
     }
@@ -549,9 +545,7 @@ public class Brain implements Serializable {
         }
         for (int l = 0; l < w.length; l++) {
             for (int i = 0; i < w[l].length; i++) {
-                for (int j = 0; j < w[l][i].length; j++) {
-                    wBackup[l][i][j] = w[l][i][j];
-                }
+                System.arraycopy(w[l][i], 0, wBackup[l][i], 0, w[l][i].length);
             }
         }
     }
@@ -560,9 +554,7 @@ public class Brain implements Serializable {
         if (wBackup != null) {
             for (int l = 0; l < w.length; l++) {
                 for (int i = 0; i < w[l].length; i++) {
-                    for (int j = 0; j < w[l][i].length; j++) {
-                        w[l][i][j] = wBackup[l][i][j];
-                    }
+                    System.arraycopy(wBackup[l][i], 0, w[l][i], 0, w[l][i].length);
                 }
             }
         }
@@ -571,9 +563,7 @@ public class Brain implements Serializable {
     public void set(Brain brain) {
         for (int l = 0; l < w.length; l++) {
             for (int i = 0; i < w[l].length; i++) {
-                for (int j = 0; j < w[l][i].length; j++) {
-                    w[l][i][j] = brain.w[l][i][j];
-                }
+                System.arraycopy(brain.w[l][i], 0, w[l][i], 0, w[l][i].length);
             }
         }
     }

@@ -44,7 +44,7 @@ public class Hai {
         
         int Action = 0;
         if (random(1.0) < Alpha) {
-            Action = (int) random((double) nActions);
+            Action = (int) random(nActions);
         } else {
             Action = maxk;
         }

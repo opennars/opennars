@@ -19,7 +19,7 @@ import nars.storage.Memory;
  */
 public class Terms {
 
-    public static boolean EqualSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
+    public static boolean equalSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
         if (a == null || b == null) {
             return false;
         }
@@ -27,10 +27,10 @@ public class Terms {
             return a.equals(b);
         }
         if (a instanceof Inheritance && b instanceof Inheritance) {
-            return EqualSubjectPredicateInRespectToImageAndProduct(a, b);
+            return equalSubjectPredicateInRespectToImageAndProduct(a, b);
         }
         if (a instanceof Similarity && b instanceof Similarity) {
-            return EqualSubjectPredicateInRespectToImageAndProduct(a, b) || EqualSubjectPredicateInRespectToImageAndProduct(b, a);
+            return equalSubjectPredicateInRespectToImageAndProduct(a, b) || equalSubjectPredicateInRespectToImageAndProduct(b, a);
         }
         Term[] A = ((CompoundTerm) a).term;
         Term[] B = ((CompoundTerm) b).term;
@@ -42,14 +42,14 @@ public class Terms {
                 Term y = B[i];
                 if (!x.equals(y)) {
                     if (x instanceof Inheritance && y instanceof Inheritance) {
-                        if (!EqualSubjectPredicateInRespectToImageAndProduct(x, y)) {
+                        if (!equalSubjectPredicateInRespectToImageAndProduct(x, y)) {
                             return false;
                         } else {
                             continue;
                         }
                     }
                     if (x instanceof Similarity && y instanceof Similarity) {
-                        if (!EqualSubjectPredicateInRespectToImageAndProduct(x, y) && !EqualSubjectPredicateInRespectToImageAndProduct(y, x)) {
+                        if (!equalSubjectPredicateInRespectToImageAndProduct(x, y) && !equalSubjectPredicateInRespectToImageAndProduct(y, x)) {
                             return false;
                         } else {
                             continue;
@@ -253,135 +253,107 @@ public class Terms {
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
 
-    public static Term unwrapNegation(Term T) {
+    public static Term unwrapNegation(final Term T) {
         if (T != null && T instanceof Negation) {
             return ((CompoundTerm) T).term[0];
         }
         return T;
     }
 
-    public static boolean EqualSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
+    public static boolean equalSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
+        
         if (a == null || b == null) {
             return false;
         }
+        
         if (!(a instanceof Statement) && !(b instanceof Statement)) {
             return false;
         }
+        
         if (a.equals(b)) {
             return true;
         }
+        
         Statement A = (Statement) a;
         Statement B = (Statement) b;
-        if (A instanceof Similarity && B instanceof Similarity || A instanceof Inheritance && B instanceof Inheritance) {
-            Term subjA = A.getSubject();
-            Term predA = A.getPredicate();
-            Term subjB = B.getSubject();
-            Term predB = B.getPredicate();
-            if (subjA instanceof Product) {
-                if (predB instanceof ImageExt) {
-                    Set<Term> componentsA = new HashSet();
-                    componentsA.add(predA);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                    Set<Term> componentsB = new HashSet();
-                    componentsB.add(subjB);
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) predB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
+        
+        if (!(A instanceof Similarity && B instanceof Similarity 
+                || A instanceof Inheritance && B instanceof Inheritance))
+            return false;
+            
+        Term subjA = A.getSubject();
+        Term predA = A.getPredicate();
+        Term subjB = B.getSubject();
+        Term predB = B.getPredicate();
+
+        Term ta = null, tb = null;
+        Term sa = null, sb = null;
+
+        if ((subjA instanceof Product) && (predB instanceof ImageExt)) {
+            ta = predA; sa = subjA;
+            tb = subjB; sb = predB;
+        }
+        if ((subjB instanceof Product) && (predA instanceof ImageExt)) {
+            ta = subjA; sa = predA;
+            tb = predB; sb = subjB;                
+        }
+        if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
+            ta = subjA; sa = predA;
+            tb = subjB; sb = predB;                
+        }
+        //DUPLICATE?
+        /*if ((predA instanceof ImageExt) && (predB instanceof ImageExt)) {
+            ta = subjA; sa = predA;
+            tb = subjB; sb = predB;
+        }*/
+        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
+            ta = predA; sa = subjA;
+            tb = predB; sb = subjB;
+        }
+        //ANOTHER DUPLICATE?
+        /*
+        if ((subjA instanceof ImageInt) && (subjB instanceof ImageInt)) {
+                Set<Term> componentsA = new HashSet();
+                Set<Term> componentsB = new HashSet();
+                componentsA.add(predA);
+                componentsB.add(predB);
+                componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
+                componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
+                if (componentsA.containsAll(componentsB)) {
+                    return true;
                 }
-            }
-            if (subjB instanceof Product) {
-                if (predA instanceof ImageExt) {
-                    Set<Term> componentsA = new HashSet();
-                    componentsA.add(subjA);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) predA).term));
-                    Set<Term> componentsB = new HashSet();
-                    componentsB.add(predB);
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            if (predA instanceof ImageExt) {
-                if (predB instanceof ImageExt) {
-                    Set<Term> componentsA = new HashSet();
-                    Set<Term> componentsB = new HashSet();
-                    componentsA.add(subjA);
-                    componentsB.add(subjB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) predA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) predB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            if (predA instanceof ImageExt) {
-                if (predB instanceof ImageExt) {
-                    Set<Term> componentsA = new HashSet();
-                    Set<Term> componentsB = new HashSet();
-                    componentsA.add(subjA);
-                    componentsB.add(subjB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) predA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) predB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            if (subjA instanceof ImageInt) {
-                if (subjB instanceof ImageInt) {
-                    Set<Term> componentsA = new HashSet();
-                    Set<Term> componentsB = new HashSet();
-                    componentsA.add(predA);
-                    componentsB.add(predB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            if (subjA instanceof ImageInt) {
-                if (subjB instanceof ImageInt) {
-                    Set<Term> componentsA = new HashSet();
-                    Set<Term> componentsB = new HashSet();
-                    componentsA.add(predA);
-                    componentsB.add(predB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            if (predA instanceof Product) {
-                if (subjB instanceof ImageInt) {
-                    Set<Term> componentsA = new HashSet();
-                    Set<Term> componentsB = new HashSet();
-                    componentsA.add(subjA);
-                    componentsB.add(predB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) predA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) subjB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
-            }
-            if (predB instanceof Product) {
-                if (subjA instanceof ImageInt) {
-                    Set<Term> componentsA = new HashSet();
-                    Set<Term> componentsB = new HashSet();
-                    componentsA.add(predA);
-                    componentsB.add(subjB);
-                    componentsA.addAll(Arrays.asList(((CompoundTerm) subjA).term));
-                    componentsB.addAll(Arrays.asList(((CompoundTerm) predB).term));
-                    if (componentsA.containsAll(componentsB)) {
-                        return true;
-                    }
-                }
+
+        }
+        */
+        if ((predA instanceof Product) && (subjB instanceof ImageInt)) {
+            ta = subjA; sa = predA;
+            tb = predB; sb = subjB;                
+        }
+        if ((predB instanceof Product) && (subjA instanceof ImageInt)) {
+            ta = predA; sa = subjA;
+            tb = subjB; sb = predB;
+        }
+
+        if (ta!=null) {
+            Term[] sat = ((CompoundTerm)sa).term;
+            Term[] sbt = ((CompoundTerm)sb).term;
+
+            Set<Term> componentsA = new HashSet(1+sat.length);
+            Set<Term> componentsB = new HashSet(1+sbt.length);
+
+            componentsA.add(ta);
+            for (final Term x : sat) 
+                componentsA.add(x);
+
+            componentsB.add(tb);
+            for (final Term x : sbt) 
+                componentsB.add(x);
+
+            if (componentsA.containsAll(componentsB)) {
+                return true;
             }
         }
+            
         return false;
     }
 

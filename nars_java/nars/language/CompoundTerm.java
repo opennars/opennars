@@ -581,7 +581,7 @@ public abstract class CompoundTerm extends Term {
      */
     @Override
     public boolean containsTerm(final Term t) {        
-        return CompoundTerm.contains(term, t);
+        return contains(term, t);
     }
 
     /**
@@ -607,7 +607,7 @@ public abstract class CompoundTerm extends Term {
      * @param t The other term
      * @return Whether the term are all in the compound
      */
-    public boolean containsAllTerms(final Term t) {
+    public boolean containsAllTermsOf(final Term t) {
         if (getClass() == t.getClass()) { //(t instanceof CompoundTerm) {
             return containsAll(term, ((CompoundTerm) t).term );
         } else {
