@@ -340,7 +340,7 @@ public class WordNet {
             String synsets = (String) nounSynsetHash.get(word);
             if (synsets == null) 
                 synsets = "";                
-            if (synsets.indexOf(synsetStr) < 0) {
+            if (!synsets.contains(synsetStr)) {
                 if (synsets.length() > 0) 
                     synsets += " ";
                 synsets += synsetStr;
@@ -351,7 +351,7 @@ public class WordNet {
             synsets = (String) verbSynsetHash.get(word);
             if (synsets == null) 
                 synsets = "";                
-            if (synsets.indexOf(synsetStr) < 0) {
+            if (!synsets.contains(synsetStr)) {
                 if (synsets.length() > 0) 
                     synsets += " ";
                 synsets += synsetStr;
@@ -362,7 +362,7 @@ public class WordNet {
             synsets = (String) adjectiveSynsetHash.get(word);
             if (synsets == null) 
                 synsets = "";                
-            if (synsets.indexOf(synsetStr) < 0) {
+            if (!synsets.contains(synsetStr)) {
                 if (synsets.length() > 0) 
                     synsets += " ";
                 synsets += synsetStr;
@@ -373,7 +373,7 @@ public class WordNet {
             synsets = (String) adverbSynsetHash.get(word);
             if (synsets == null) 
                 synsets = "";                
-            if (synsets.indexOf(synsetStr) < 0) {
+            if (!synsets.contains(synsetStr)) {
                 if (synsets.length() > 0) 
                     synsets += " ";
                 synsets += synsetStr;
@@ -1954,7 +1954,7 @@ public class WordNet {
         for (int i = 0; i < words.length; i++) {              
             if (words[i].length() > 0 && 
                 (words[i].indexOf('-') > -1 || (words[i].indexOf('.') > -1) || 
-                 (words[i].indexOf("\\'") > -1) || Character.isUpperCase(words[i].charAt(0)) || Character.isDigit(words[i].charAt(0))))
+                 (words[i].contains("\\'")) || Character.isUpperCase(words[i].charAt(0)) || Character.isDigit(words[i].charAt(0))))
                 words[i] = "'" + words[i] + "'";               
             word += words[i];
             if (i < words.length-1) 
@@ -1990,7 +1990,7 @@ public class WordNet {
             else {
                 word = word.replace("'","\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1) || 
-                    (word.indexOf("\\'") > -1) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
+                    (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
                     word = "'" + word + "'";               
                     plural = "'" + plural + "'";
                 }
@@ -2035,7 +2035,7 @@ public class WordNet {
             else {
                 word = word.replace("'","\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1) || 
-                    (word.indexOf("\\'") > -1) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
+                    (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
                     word = "'" + word + "'";               
                 }
             }
@@ -2074,7 +2074,7 @@ public class WordNet {
             else {
                 word = word.replace("'","\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1) || 
-                    (word.indexOf("\\'") > -1) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
+                    (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) {
                     word = "'" + word + "'";               
                 }
             }
@@ -2108,7 +2108,7 @@ public class WordNet {
             else {
                 word = word.replace("'","\\'");
                 if (word.indexOf('-') > -1 || (word.indexOf('.') > -1) || 
-                    (word.indexOf("\\'") > -1) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) 
+                    (word.contains("\\'")) || Character.isUpperCase(word.charAt(0)) || Character.isDigit(word.charAt(0))) 
                     word = "'" + word + "'";                             
             }
             String[] synsetList = splitSynsets(stringSynsets);

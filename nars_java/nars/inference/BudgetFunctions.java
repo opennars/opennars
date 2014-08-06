@@ -20,6 +20,9 @@
  */
 package nars.inference;
 
+import static java.lang.Math.max;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -47,7 +50,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static float truthToQuality(final TruthValue t) {
         final float exp = t.getExpectation();
-        return (float) Math.max(exp, (1 - exp)*0.75);
+        return (float) max(exp, (1 - exp)*0.75);
     }
 
     /**
@@ -87,7 +90,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.decPriority(1 - difB);
             bLink.decDurability(1 - difB);
         }
-        float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
+        float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
         
         //TODO determine if this is correct
         if (dif < 0) dif = 0;  
@@ -143,7 +146,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget value for each link
      */
     public static BudgetValue distributeAmongLinks(final BudgetValue b, final int n) {
-        final float priority = (float) (b.getPriority() / Math.sqrt(n));
+        final float priority = (float) (b.getPriority() / sqrt(n));
         return new BudgetValue(priority, b.getDurability(), b.getQuality());
     }
 
@@ -182,7 +185,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         double quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
         final double p = budget.getPriority() - quality;                     // priority above quality
         if (p > 0) {
-            quality += p * Math.pow(budget.getDurability(), 1.0 / (forgetRate * p));
+            quality += p * pow(budget.getDurability(), 1.0 / (forgetRate * p));
         }    // priority Durability
         budget.setPriority((float) quality);
     }
@@ -195,9 +198,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param a The budget adjustValue doing the adjusting
      */
     public static void merge(final BudgetValue b, final BudgetValue a) {        
-        b.priority.setValue((short)Math.max(b.getPriorityShort(), a.getPriorityShort()));
-        b.durability.setValue((short)Math.max(b.durability.getShortValue(), a.durability.getShortValue()));
-        b.quality.setValue((short)Math.max(b.quality.getShortValue(), a.quality.getShortValue()));
+        b.priority.setValue((short)max(b.getPriorityShort(), a.getPriorityShort()));
+        b.durability.setValue((short)max(b.durability.getShortValue(), a.durability.getShortValue()));
+        b.quality.setValue((short)max(b.quality.getShortValue(), a.quality.getShortValue()));
     }
 
     /* ----- Task derivation in LocalRules and SyllogisticRules ----- */

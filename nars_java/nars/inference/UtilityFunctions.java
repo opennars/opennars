@@ -20,6 +20,8 @@
  */
 package nars.inference;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import nars.core.Parameters;
 
 /**
@@ -94,17 +96,17 @@ public class UtilityFunctions {
         for (final float f : arr) {
             product *= f;
         }
-        return (float) Math.pow(product, 1.00 / arr.length);
+        return (float) pow(product, 1.00 / arr.length);
     }
 
     //may be more efficient than the for-loop version above, for 2 params
     public final static float aveGeo(final float a, final float b) {
-        return (float)Math.sqrt(a*b);
+        return (float)sqrt(a*b);
     }
     
     //may be more efficient than the for-loop version above, for 3 params
     public final static float aveGeo(final float a, final float b, final float c) {
-        return (float)Math.pow(a*b*c, 1.0/3.0);
+        return (float)pow(a*b*c, 1.0/3.0);
     }    
     
     /**

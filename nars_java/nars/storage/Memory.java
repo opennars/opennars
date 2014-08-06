@@ -50,7 +50,7 @@ import nars.util.XORShiftRandom;
 
 
 /**
- * Memory consists of the run-time state of a NAR, including:
+ * Memory consists  the run-time state of a NAR, including:
  *   * term and concept memory
  *   * clock
  *   * reasoner state

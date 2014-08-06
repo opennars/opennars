@@ -121,7 +121,7 @@ public class Symbols {
         /** is relation? */
         public final boolean relation;
         
-        /** is native? */
+        /** is native */
         public final boolean isNative;
         
         /** opener? */
