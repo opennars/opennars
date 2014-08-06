@@ -17,15 +17,15 @@
 
 package nars.test.core;
 
-/**
- *
- * @author me
- */
+import java.text.DecimalFormat;
+
+
 public abstract class Performance {
     public final int repeats;
     private final String name;
     private long totalTime;
     private long totalMemory;
+    protected final DecimalFormat df = new DecimalFormat("#.###");
 
     public Performance(String name, int repeats, int warmups) {
         this(name, repeats, warmups, true);
@@ -45,8 +45,9 @@ public abstract class Performance {
             if (gc)
                 System.gc();
 
-            long start = System.nanoTime();
             long freeMemStart = Runtime.getRuntime().freeMemory();
+            
+            long start = System.nanoTime();
             
             run(warmups != 0);
 
@@ -60,8 +61,9 @@ public abstract class Performance {
     }    
  
     public Performance print() {
-        System.out.print(name + ": " + totalTime/repeats/1000000.0 + "ms per iteration, ");
-        System.out.println(totalMemory/repeats/1024.0 + " kb per iteration");
+        System.out.println();
+        System.out.print(name + ": " + df.format(getCycleTimeMS()) + "ms/run, ");
+        System.out.print(df.format(totalMemory/repeats/1024.0) + " kb/run");
         return this;
     }
     public Performance printCSV(boolean finalComma) {
