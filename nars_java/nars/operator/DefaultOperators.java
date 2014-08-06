@@ -4,6 +4,7 @@ import nars.operator.mental.Believe;
 
 public class DefaultOperators {
     
+    
     /**
      * Default set of Operator's for core functionality.
      * An operator name should contain at least two characters after '^'.

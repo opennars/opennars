@@ -20,12 +20,12 @@
  */
 package nars.storage;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Param;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -49,7 +49,20 @@ import nars.operator.Operator;
 import nars.util.XORShiftRandom;
 
 
-public class Memory implements Output {
+/**
+ * Memory consists of the run-time state of a NAR, including:
+ *   * term and concept memory
+ *   * clock
+ *   * reasoner state
+ *   * etc.
+ * 
+ * Excluding input/output channels which are managed by a NAR.  
+ * 
+ * A memory is controlled by zero or one NAR's at a given time.
+ * 
+ * Memory is serializable so it can be persisted and transported.
+ */
+public class Memory implements Output, Serializable {
 
     //public static Random randomNumber = new Random(1);
     public static Random randomNumber = new XORShiftRandom(1);
@@ -138,12 +151,10 @@ public class Memory implements Output {
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
-     * <p>
-     * Called in Reasoner.reset only
      *
-     * @param nar
+     * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, ConceptBag concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder) {                
+    public Memory(Param param, ConceptBag concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
         
         this.param = param;
         this.conceptBuilder = conceptBuilder;
@@ -156,8 +167,10 @@ public class Memory implements Output {
         newTasks = new ArrayDeque<>();        
         lastEvent = null;
 
-        operators = new HashMap<>();
-        Operator.loadDefaultOperators(this);
+        this.operators = new HashMap<>();
+        
+        for (Operator o : initialOperators)
+            addOperator(o);
 
     }
 
@@ -699,7 +712,7 @@ public class Memory implements Output {
         return operators.get(op);
      }
      
-     public void registerOperator(Operator op) {
+     public void addOperator(Operator op) {
          operators.put(op.getName(), op);
      }
      
