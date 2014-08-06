@@ -9,4 +9,4 @@
 6
 
 'Birdie is similar to Tweety. 
-''outputMustContain('<{Birdie} <-> {Tweety}>. %0.90;0.90%')
+''outputMustContain('<{Birdie} <-> {Tweety}>. %0.90;0.73%')

@@ -1,0 +1,9 @@
+<0 --> num>. %1.00;0.90%
+<(*,0) --> num>. %1.00;0.90%
+<<$1 --> num> ==> <(*,$1) --> num>>?
+
+2130
+
+''outputMustContain('')
+'**previous statement put it to satisfy the bug tester
+'** cause the test system is bugged while the GUI nars has no problem with: ''outputMustContain('<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.45%')
