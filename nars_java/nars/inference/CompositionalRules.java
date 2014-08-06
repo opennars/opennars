@@ -809,6 +809,7 @@ public final class CompositionalRules {
                     HashMap<Term,Term> res4=new HashMap<>(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
                         for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                            if (!(s2 instanceof CompoundTerm)) continue;
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);

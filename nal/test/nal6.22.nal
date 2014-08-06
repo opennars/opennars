@@ -12,7 +12,7 @@
 600
 
 'I guess 3 is a number
-''outputMustContain('*,(*,(*,0)))')
+''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00')
 ''outputMustContain('*,(*,(*,0))) --> ')
 ''outputMustContain('*,(*,(*,0))) --> num>')
 ''outputMustContain('*,(*,(*,0))) --> num>. %1.00;')

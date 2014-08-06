@@ -247,6 +247,10 @@ public class Terms {
                 return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, memory);
             case IMPLICATION:
                 return Implication.make(a[0], a[1], memory);
+            case IMPLICATION_AFTER:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD, memory);
+            case IMPLICATION_BEFORE:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD, memory);
             case EQUIVALENCE:
                 return Equivalence.make(a[0], a[1], memory);
         }

@@ -126,24 +126,28 @@ public class NAR implements Runnable, Output {
     }
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
-    public void addInput(Input channel) {
+    public Input addInput(Input channel) {
         inputChannels.add(channel);        
+        return channel;
     }
 
     /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
-    public void removeInput(Input channel) {
+    public Input removeInput(Input channel) {
         inputChannels.remove(channel);
         channel.finished(true);
+        return channel;
     }
 
     /** Adds an output channel */
-    public void addOutput(Output channel) {
+    public Output addOutput(Output channel) {
         outputChannels.add(channel);
+        return channel;
     }
 
     /** Removes an output channel */
-    public void removeOutput(Output channel) {
+    public Output removeOutput(Output channel) {
         outputChannels.remove(channel);
+        return channel;
     }
 
     
