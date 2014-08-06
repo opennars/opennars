@@ -5,19 +5,20 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.Output;
+import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
+import nars.util.StringUtil;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -29,20 +30,67 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest  {
 
-    static final boolean testPerformance = false;    
-    private final int performanceIterations = 4;
-    boolean showSuccess = false;
-    int maxSummaryOutputLines = 300;
+
     
-    ScriptEngineManager factory = new ScriptEngineManager();
-    ScriptEngine js = factory.getEngineByName("JavaScript");
+
       
 
     protected static Map<String, String> exCache = new HashMap(); //path -> script data
+    public static Map<String, Boolean> tests = new HashMap();
     
+    boolean saveSimilar = true;
 
+    private final String scriptPath;
     
-    public static String getExample(String path)  {
+    /** reads an example file line-by-line, before being processed, to extract expectations */
+    public static List<Expect> getExpectations(NAR n, String example, boolean saveSimilar)  {
+        List<Expect> expects = new ArrayList();
+        String[] lines = example.split("\n");
+        
+        for (String s : lines) {
+            s = s.trim();
+
+            final String expectOutContains = "*expect.outContains('";
+
+            if (s.indexOf(expectOutContains)==0) {
+
+                //without ') suffix:
+                String e = s.substring(expectOutContains.length(), s.length()-3);
+                
+                Expect ex = new ExpectContains(n, e, saveSimilar);
+
+                expects.add((Expect)n.addOutput(ex));
+            }
+            
+            
+            //TEMPORARY, process old script format
+            final String expectOutContains2 = "''outputMustContain('";
+
+            if (s.indexOf(expectOutContains2)==0) {
+
+                //without ') suffix:
+                String e = s.substring(expectOutContains2.length(), s.length()-3); 
+                e = e.replace("\\\\","\\");
+                
+                Expect ex = new ExpectContains(n, e, saveSimilar);
+
+                expects.add((Expect)n.addOutput(ex));
+            }                
+            
+            final String expectOutEmpty = "*expect.outEmpty";
+            if (s.indexOf(expectOutEmpty)==0) {                
+                Expect ex = new ExpectOutputEmpty(n);
+                expects.add((Expect)n.addOutput(ex));
+            }                
+            
+
+        }
+        
+        return expects;
+    }
+
+
+    public static String getExample(String path) {
         try {
             String existing = exCache.get(path);
             if (existing!=null)
@@ -63,168 +111,9 @@ public class NALTest  {
         }
         return "";
     }
-        
-    public boolean match(String x, String y) {
-        return x.equals(y);
-    }
-    
-    
-    final List<String> out = new ArrayList();
-    int currentOutputLine = 0;
-    public boolean outputContains(String s) {        
-        currentOutputLine = 0;
-        for (String o : out) {
-            if (o.contains(s))
-                return true;
-            currentOutputLine++;
-        }
-        return false;
-    }
-    
-
-    public Sentence parseOutput(String o) {
-        //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
-        return TextPerception.parseOutput(o);
-    }
     
     public static NAR newNAR() {
         return new DefaultNARBuilder().build();
-    }
-    
-    protected void testNAL(final String path) {
-        @Deprecated int minCycles = 1; //TODO reduce this to one or zero
-        
-        NAR.resetStatics();
-        
-        final NAR n = newNAR();
-        
-        final List<String> expressions = new ArrayList(2);
-        out.clear();
-
-        
-        //new TextOutput(n, new PrintWriter(System.out));
-        new TextOutput(n/*, System.out*/) {
-            @Override
-            public void output(Class channel, Object signal) {                
-                
-                //super.output(channel, signal);
-                
-                if (channel == Output.ERR.class) {                       
-                    if (signal instanceof Exception) {
-                        ((Throwable)signal).printStackTrace();;
-                    }
-
-                    assertTrue(path + " ERR: " + signal, false);
-                }
-                
-                if (channel == Output.ECHO.class) {
-                    String e = signal.toString();
-                    
-                    //extract embedded Javascript expressions
-                    if (e.startsWith("\"\'")) {      
-                        //remove begining "' and trailing "
-                        String expression = e.substring(2, e.length()-1);
-                        expressions.add(expression);
-                    }           
-                }
-                else if (channel == OUT.class) {
-                    String s = getOutputString(channel, signal, true, true, n);                    
-                    out.add(s);
-                }
-
-            }
-        };         
-        n.addInput(getExample(path));
-        n.finish(minCycles);
-
-
-        //JS context setup --------
-        js.put("test", this);
-        js.put("out", out);
-        try {
-            js.eval("function outputMustContain(x) { return test.outputContains(x); };");
-        } catch (ScriptException ex) {
-            System.err.println(ex.toString());
-        }
-        //-------------------------
-
-        if (expressions.isEmpty()) {
-            assertTrue(path + " contains no expressions to evaluate",  false);
-        }
-        
-        for (String e : expressions) {
-            try {
-                Object result = js.eval(e);
-                if (result instanceof Boolean) {
-                    boolean r = (Boolean)result;
-                    
-                    
-                    if (!r) {
-                        String failMsg = path + ": " + e + " FAIL @ " + + n.getTime() + ", output lines=" + out.size();
-                        System.out.println(failMsg);
-                        printOutputSummary();
-                        System.out.println();
-                        
-                        assertTrue(failMsg, r);
-                    }
-                    else {
-                        if (showSuccess) {
-                            System.out.println(path + ": " + e + " OK @ " + + n.getTime() + ", output lines=" + out.size());
-                            System.out.println(out.get(currentOutputLine));
-                            
-                        }
-                    }
-                    
-                }
-            }
-            catch (Exception x) {
-                assertTrue(path + ": " + x.toString()  + ": ", false);                
-            }            
-        }
-        
-        System.out.println(path + " OK");
-        
-        if (testPerformance) {
-            perfNAL(path, 0, performanceIterations, 1);            
-        }
-    }
-    
-    protected void printOutputSummary() {
-        int b = out.size();
-        int a = Math.max(0, b - maxSummaryOutputLines);
-        List<String> l = out.subList(a, b);
-        for (String s : l)
-            System.out.println((a++) + ": " + s);
-    }
-    
-    public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
-        perfNAL(path, extraCycles, repeats, warmups, true);
-    }
-    
-    public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups, boolean gc) {
-        
-        
-        new Performance(path, repeats, warmups, gc) {
-            private NAR n;
-
-            @Override
-            public void init() {
-                NAR.resetStatics();
-                
-                n = newNAR();
-            }
-
-            @Override
-            public void run(boolean warmup) {
-                n.reset();
-                n.addInput(getExample(path));
-                n.finish(extraCycles);
-            }
-
-
-        }.print();
-        
-           
     }
     
     @Parameterized.Parameters
@@ -239,22 +128,10 @@ public class NALTest  {
             addTest(file.getName());
             l.add(new Object[] { file.getAbsolutePath() } );
         }
-                  
+        
         return l;
     }
-
-    private final String scriptPath;
-
-    public NALTest(String scriptPath) {        
-        this.scriptPath = scriptPath;
-    }
-
-    @Test
-    public void test() {
-        testNAL(scriptPath);
-    }
     
-    public static Map<String, Boolean> tests = new HashMap();
     
     public static void addTest(String name) {
         name = name.substring(3, name.indexOf(".nal"));
@@ -262,15 +139,14 @@ public class NALTest  {
     }
 
     public static void main(String[] args) {
-        
         Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         
+        System.out.println("\n\n");
         
-     
         for (Failure f : result.getFailures()) {
             String test = f.getMessage().substring(f.getMessage().indexOf("test/nal") + 8, f.getMessage().indexOf(".nal"));
             
-            tests.put(test, false);            
+            tests.put(test, false);
         }
         
         int levelSuccess[] = new int[9];
@@ -284,11 +160,179 @@ public class NALTest  {
             if (e.getValue())
                 levelSuccess[level]++;
         }
-        for (int i = 1; i < 9; i++) {            
-            float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0; 
+        for (int i = 1; i < 9; i++) {
+            float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
             System.out.println("NAL" + i + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
         }
+    }
+
+    public NALTest(String scriptPath) {        
+        this.scriptPath = scriptPath;
+    }
+
+    public Sentence parseOutput(String o) {
+        //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
+        return TextPerception.parseOutput(o);
+    }
+    
+    
+    protected void testNAL(final String path) {
+        @Deprecated int minCycles = 10; //TODO reduce this to one or zero
         
+        NAR.resetStatics();
+        
+        final NAR n = newNAR();
+        
+        final List<Expect> expects = new ArrayList();
+        
+                
+        String example = getExample(path);
+        List<Expect> extractedExpects = getExpectations(n, example, saveSimilar);
+        for (Expect e1 : extractedExpects)
+            expects.add((Expect)n.addOutput(e1));
+        
+        n.addInput(new TextInput(example));
+        
+        n.finish(minCycles);
+        
+        System.out.println('\n' + path + " @" + n.getTime());
+        
+        if (expects.size() == 0) {
+            //no tests
+            System.out.println("  no tests");
+            assertTrue(path + " has no test", false);
+        }
+        boolean success = true;
+        for (Expect e: expects) {
+            System.out.println("  " + e);
+            if (!e.realized) success = false;
+        }
+        assertTrue(path, success);
+        
+    }
+
+    
+    
+    
+    
+    @Test
+    public void test() {
+        testNAL(scriptPath);
+    }
+
+    public static abstract class Expect implements Output {
+
+        public boolean realized = false;
+        public List<String> exact = new ArrayList();
+        protected final NAR nar;
+
+        public Expect(NAR nar) {
+            super();
+            this.nar = nar;
+            
+            nar.addOutput(this);
+        }
+        
+        @Override
+        public void output(Class channel, Object signal) {
+            if (channel == OUT.class) {
+                if (condition(channel, signal)) {
+                    exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
+                    realized = true;
+                }
+            }
+        }
+        
+        /** returns true if condition was satisfied */
+        abstract public boolean condition(Class channel, Object signal);
+
+        public String toString() {            
+            return realized ? "OK: " + exact : getFailureReason();
+        }
+
+        abstract public String getFailureReason();
+    }
+    
+    public static class ExpectOutputEmpty extends Expect {
+
+        public ExpectOutputEmpty(NAR nar) {
+            super(nar);
+            realized = true;
+        }
+
+        public String getFailureReason() {
+            return "FAIL: output exists";
+        }
+         
+        @Override
+        public boolean condition(Class channel, Object signal) {
+            //any OUT or ERR output is a failure
+            if ((channel == OUT.class) || (channel == ERR.class)) {
+                realized = false;
+                return false;
+            }
+            return false;
+        }
+    }
+
+    public static class ExpectContains extends Expect {
+
+        private final String containing;
+        final int similarityThreshold = 4;
+        public Map<String, Integer> almost = new HashMap();
+        private final boolean saveSimilar;
+
+        public ExpectContains(NAR nar, String containing, boolean saveSimilar) {
+            super(nar);            
+            this.containing = containing;
+            this.saveSimilar = saveSimilar;
+        }
+
+        public String getFailureReason() {
+            String s = "FAIL: No substring match: " + containing;
+            if (!almost.isEmpty()) {
+                for (String cs : getCandidates(5)) {
+                    s += "\n\tsimilar: " + cs;
+                }
+            }
+            return s;
+        }
+        
+        public List<String> getCandidates(int max) {
+            List<String> c = new ArrayList(almost.keySet());
+            
+            Collections.sort(c, new Comparator<String>() {
+
+                @Override
+                public int compare(String a, String b) {
+                    return Integer.compare(almost.get(a), almost.get(b));
+                }
+                
+            });
+            
+            if (c.size() < max) 
+                return c;
+            else
+                return c.subList(0, max);            
+        }
+        
+        @Override
+        public boolean condition(Class channel, Object signal) {
+            if (channel == OUT.class) {
+                String o = TextOutput.getOutputString(channel, signal, false, false, nar);
+                if (o.contains(containing)) return true;
+
+                if (saveSimilar) {
+                    int dist = StringUtil.levenshteinDistance(o, containing);            
+                    //if (dist < similarityThreshold + Math.abs(o.length() - containing.length()))
+                    almost.put(TextOutput.getOutputString(channel, signal, false, true, nar), dist);
+                }            
+            }
+            if (channel == ERR.class) {
+                assertTrue(signal.toString(), false);
+            }
+            return false;
+        }
     }
 
 }
