@@ -45,8 +45,8 @@ public class Believe extends Operator {
 +    * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(ArrayList<Term> args, Memory memory) {
-        Term content = args.get(0);
+    public ArrayList<Task> execute(Term[] args, Memory memory) {
+        Term content = args[0];
         Stamp stamp = new Stamp(memory, "");  // how to specify tense? as a term or a seperate operator?
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);

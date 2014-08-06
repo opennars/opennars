@@ -87,7 +87,7 @@ public class Symbols {
         SET_EXT_OPENER("{", false, true),
         SET_EXT_CLOSER("}", false, false),    
         
-        /* Syntactical, so is neither relation or innate */
+        /* Syntactical, so is neither relation or isNative */
         COMPOUND_TERM_OPENER("(", false, false),
         COMPOUND_TERM_CLOSER(")", false, false),
         STATEMENT_OPENER("<", false, false),
@@ -121,8 +121,8 @@ public class Symbols {
         /** is relation? */
         public final boolean relation;
         
-        /** "innate"? (according to the old CompoundTerm.isOperator() method) */
-        public final boolean innate;
+        /** is native? */
+        public final boolean isNative;
         
         /** opener? */
         public final boolean opener;
@@ -141,7 +141,7 @@ public class Symbols {
         private NativeOperator(String string, boolean relation, boolean innate) {            
             this.string = string;
             this.relation = relation;
-            this.innate = innate;
+            this.isNative = innate;
             this.ch = string.length() == 1 ? string.charAt(0) : 0;
             
             this.opener = name().endsWith("_OPENER");
