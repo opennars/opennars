@@ -350,7 +350,8 @@ public class Memory implements Output {
         if (output == null) return;
         
         final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
-        final float budget = t.budget.summary();        
+        final float budget = t.budget.summary();       
+        
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             output(OUT.class, t.sentence);
         }        
@@ -358,6 +359,7 @@ public class Memory implements Output {
     
     @Override
     public void output(Class c, Object signal) {
+        
         if (output!=null)
             output.output(c, signal);
     }

@@ -181,7 +181,6 @@ public class InputPanel extends NPanel implements ActionListener {
             centerPanel.add(new JScrollPane(fileTree), BorderLayout.CENTER);
         }        
         centerPanel.validate();
-        layout();
         repaint();
     }
 

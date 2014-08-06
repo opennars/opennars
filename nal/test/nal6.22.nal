@@ -9,13 +9,14 @@
 '3 is a number?
 <(*,(*,(*,0))) --> num>?  {0 : 3} 
 
-1000
+600
 
 'I guess 3 is a number
 ''outputMustContain('*,(*,(*,0)))')
 ''outputMustContain('*,(*,(*,0))) --> ')
 ''outputMustContain('*,(*,(*,0))) --> num>')
 ''outputMustContain('*,(*,(*,0))) --> num>. %1.00;')
-''//outputMustContain('*,(*,(*,0))) --> num>. %1.00;0.31%')
+''outputMustContain('*,(*,(*,0))) --> num>. %1.00;0.')
+''outputMustContain('*,(*,(*,0))) --> num>. %1.00;0.31%')
 
 
