@@ -1,9 +1,11 @@
 package nars.util;
 
 import java.util.AbstractList;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.RandomAccess;
 
-public class CircularArrayList<E> extends AbstractList<E> implements RandomAccess {
+public class CircularArrayList<E> extends AbstractList<E> implements RandomAccess, Deque<E> {
   
     private final int n; // buffer length
     public Object[] buf;
@@ -19,7 +21,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         return n - 1;
     }
   
-    private int wrapIndex(int i) {
+    private int wrapIndex(final int i) {
         int m = i % n;
         if (m < 0) { // java modulus can be negative
             m += n;
@@ -87,5 +89,115 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         }
         head = wrapIndex(head + 1);
         return e;
+    }
+
+    @Override
+    public void addFirst(E e) {
+        add(0, e);
+    }
+
+    @Override
+    public void addLast(E e) {
+        add(size()-1, e);
+    }
+
+    @Override
+    public boolean offerFirst(E e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean offerLast(E e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E removeFirst() {
+        return remove(0);
+    }
+
+    @Override
+    public E removeLast() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E pollFirst() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E pollLast() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E getFirst() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E getLast() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E peekFirst() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E peekLast() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean removeFirstOccurrence(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean removeLastOccurrence(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean offer(E e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E remove() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E poll() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E element() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E peek() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void push(E e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public E pop() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Iterator<E> descendingIterator() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

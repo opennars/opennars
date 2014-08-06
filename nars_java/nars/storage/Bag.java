@@ -24,6 +24,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -511,6 +512,65 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     @Override
     public Collection<E> values() {
         return nameTable.values();
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+
+            int l = itemTable.length-1;            
+            private Iterator<E> levelIterator;
+            private E next;
+            int size = size();
+            int count = 0;
+            
+            @Override
+            public boolean hasNext() {
+                if (next!=null)
+                    return true;
+                
+                if (l >=0 && levelIterator == null) {
+                    while (itemTableEmpty[l]) {
+                        l--;
+                        if (l == -1)
+                            return false; //end of the levels
+                    }
+                    levelIterator = itemTable[l].iterator();
+                }
+                
+                if (levelIterator == null)
+                    return false;
+                
+                next = levelIterator.next();
+                count++;                                
+                
+                if (levelIterator.hasNext()) {
+                    return true;
+                }
+                else {
+                    levelIterator = null;
+                    l--;
+                    return count <= size;
+                }                
+            }
+
+            @Override
+            public E next() {
+                E e = next;
+                next = null;
+                return e;
+            }
+            
+        };
+    }
+
+    public int numEmptyLevels() {
+        int empty = 0;
+        for (int i = 0; i < itemTableEmpty.length; i++) {
+            if (itemTableEmpty[i])
+                empty++;
+        }
+        return empty;
     }
         
     

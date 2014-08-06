@@ -19,8 +19,8 @@ package nars.test.core;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
-import javolution.util.FastTable;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.DefaultBag;
@@ -34,7 +34,7 @@ public class BagPerf {
     
     int repeats = 8;
     int warmups = 1;
-    int forgetRate = 10;
+    final static int forgetRate = 10;
     int randomAccesses;
     double insertRatio = 0.9;
     
@@ -102,7 +102,7 @@ public class BagPerf {
         }
     }
     
-    public static void randomBagIO(AbstractBag b, int accesses, double insertProportion) {
+    public static void randomBagIO(AbstractBag<NullItem> b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (Math.random() > insertProportion) {
                 //remove
@@ -114,46 +114,37 @@ public class BagPerf {
             }            
         }
     }
+    public static void iterate(AbstractBag<NullItem> b) {
+        Iterator<NullItem> i = b.iterator();
+        int count = 0;
+        while (i.hasNext()) {
+            i.next();
+            count++;
+        }
+        if (count != b.size()) {
+            System.err.println("Error itrating " + b);
+        }
+    }
     
-    public static double compareBagAndFastBag(final boolean first, final int levels, final int levelCapacity, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
+    public interface BagBuilder<E extends Item> {
+        public AbstractBag<E> newBag();
+    }
+    
+    //final boolean first, final int levels, final int levelCapacity, 
+    public static double compare(String label, BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
         
-        final int forgetRate = 10; //changing this should not affect anything
-        
-        final int capacity = levels*levelCapacity;
-        
-        Performance p = new Performance(( (!first) ? ("FastBag."+(capacity)) : ("Bag"+"."+levels+"x"+ levelCapacity)) , repeats, warmups) {
+        Performance p = new Performance(label, repeats, warmups) {
 
             @Override public void init() { }
 
             @Override
             public void run(boolean warmup) {
-                AbstractBag<Item> b;
-            
-                if (first) {
-                    b = new DefaultBag<Item>(levels, levels*levelCapacity, forgetRate) {
-                          @Override
-                          protected Deque<Item> newLevel() {
-                              //return new LinkedList<E>();
-                              return new ArrayDeque<Item>(1+capacity/levels);
-                              //return new FastTable<Item>();
-                              //return new GapList<Item>(1+capacity/levels);
-                          }                        
-                    };
-                }
-                else {
-                    //b = new FastBag<Item>(levels*levelCapacity, forgetRate);
-                    b = new DefaultBag<Item>(levels, levels*levelCapacity, forgetRate) {
-                          @Override
-                          protected Deque<Item> newLevel() {
-                              //return new LinkedList<E>();
-                              //return new ArrayDeque<Item>(1+capacity/levels);
-                              return new FastTable<Item>();
-                          }                        
-                    };
-                    
-                }
+                AbstractBag bag = b.newBag();
                 
-                randomBagIO(b, randomAccesses, insertRatio);
+                randomBagIO(bag, randomAccesses, insertRatio);
+                
+                for (int i = 0; i < iterations; i++)
+                    iterate(bag);
                 
                 if (!warmup) {                                        
                 }
@@ -189,27 +180,56 @@ public class BagPerf {
         int repeats = 4;
         int warmups = 1;
         double totalDiff = 0;
+        final int iterations = 10;
         for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
             for (int levels = 10; levels <= 150; levels += 20) {
 
-                int randomAccesses = 256 * levels;
-                int num = levels*capacityPerLevel;
-
+                int randomAccesses = 512 * levels;
+                final int capacity = levels*capacityPerLevel;
+                final int _levels = levels;
+                
                 double a = 0, b = 0;
-                //System.out.print(insertRatio+", "+num+", ");
-                a = compareBagAndFastBag(true, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
-                //System.out.print(insertRatio+", "+num+", ");
-                b = compareBagAndFastBag(false, levels, capacityPerLevel, randomAccesses, insertRatio, repeats, warmups);
+                
+                a = compare("ArrayDeque", new BagBuilder() {
+                    @Override public AbstractBag newBag() {
+                        return new DefaultBag<Item>(_levels, capacity, forgetRate) {
+                          @Override
+                          protected Deque<Item> newLevel() {
+                              //return new LinkedList<>();
+                              return new ArrayDeque<>(1+capacity/_levels);
+                              //return new FastTable<>();
+                              //return new GapList<>(1+capacity/levels);
+                          }                        
+                        };
+                    }                    
+                }, iterations, randomAccesses, insertRatio, repeats, warmups);
+                
+                b = compare("LinkedList", new BagBuilder() {
+                    @Override public AbstractBag newBag() {
+                        return new DefaultBag<Item>(_levels, capacity, forgetRate) {
+                          @Override
+                          protected Deque<Item> newLevel() {
+                              return new LinkedList<>();
+                              //return new ArrayDeque<>(1+num/_levels);
+                              //return new FastTable<>();
+                              //return new GapList<>(1+capacity/levels);
+                          }                        
+                        };
+                    }                    
+                }, iterations, randomAccesses, insertRatio, repeats, warmups);
 
                 
                 //positive = b faster than a, negative = a faster than b
-                System.out.print(insertRatio+", "+levels+", "+ num+", ");                
+                System.out.print(insertRatio+", "+levels+", "+ capacity+", ");                
                 System.out.println( (a-b)/((a+b)/2.0) );
                 totalDiff += (a-b);
             }
         }
         
+        if (totalDiff > 0) System.out.print("B faster: ");
+        else System.out.print("A faster: ");
         System.out.println("total difference (ms): " + totalDiff);
+        
     }
     
 }

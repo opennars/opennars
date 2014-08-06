@@ -2,6 +2,7 @@ package nars.util;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -270,6 +271,11 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     @Override
     public Collection<E> values() {
         return nameTable.values();
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return items.descendingIterator();
     }
 
 

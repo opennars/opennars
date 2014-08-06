@@ -1,6 +1,7 @@
 package nars.storage;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Parameters;
@@ -8,7 +9,7 @@ import nars.entity.Item;
 import nars.inference.BudgetFunctions;
 
 
-public abstract class AbstractBag<E extends Item> {
+public abstract class AbstractBag<E extends Item> implements Iterable<E> {
 
     /**
      * relative threshold, only calculate once
@@ -192,4 +193,6 @@ public abstract class AbstractBag<E extends Item> {
 
     abstract public float getAveragePriority();
         
+    /** iterates all items in descending priority */
+    public abstract Iterator<E> iterator();
 }
