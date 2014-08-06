@@ -93,9 +93,10 @@ public final class StructuralRules {
                 pred = compound;
             }
         }
-        if ((sub == null) || (pred == null)) {
+        
+        if ((sub == null) || (pred == null))
             return;
-        }
+        
         Term content;
         int order = statement.getTemporalOrder();
         if (switchOrder(compound, index)) {
@@ -103,9 +104,10 @@ public final class StructuralRules {
         } else {
             content = Statement.make(statement, sub, pred, order, memory);
         }
-        if (content == null) {
+        
+        if (content == null)
             return;
-        }
+        
         Sentence sentence = memory.getCurrentTask().sentence;
         TruthValue truth = TruthFunctions.deduction(sentence.truth, RELIANCE);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
@@ -364,7 +366,12 @@ public final class StructuralRules {
         }
         short index = indices[indices.length - 1];
         short side = indices[indices.length - 2];
-        CompoundTerm comp = (CompoundTerm) inh.term[side];
+        
+        Term compT = inh.term[side];
+        if (!(compT instanceof CompoundTerm))
+            return;
+        CompoundTerm comp = (CompoundTerm)compT;
+        
         if (comp instanceof Product) {
             if (side == 0) {
                 subject = comp.term[index];
@@ -419,9 +426,10 @@ public final class StructuralRules {
                 }
             }
         }
-        if (content == null) {
+        
+        if (content == null)
             return;
-        }
+        
         Sentence sentence = memory.getCurrentTask().sentence;
         TruthValue truth = sentence.truth;
         BudgetValue budget;
@@ -617,8 +625,16 @@ public final class StructuralRules {
     static void contraposition(Statement statement, Sentence sentence, Memory memory) {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
-        Term content = Statement.make(statement, Negation.make(pred, memory), Negation.make(subj, memory),
-                TemporalRules.reverseOrder(statement.getTemporalOrder()), memory);
+        
+        Term content = Statement.make(statement, 
+                Negation.make(pred, memory), 
+                Negation.make(subj, memory), 
+                TemporalRules.reverseOrder(statement.getTemporalOrder()), 
+                memory);
+        
+        if (content == null)
+            return;
+        
         TruthValue truth = sentence.truth;
         BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {

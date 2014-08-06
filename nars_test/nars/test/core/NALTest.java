@@ -18,6 +18,7 @@ import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
+import nars.storage.Memory;
 import nars.util.StringUtil;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -30,7 +31,9 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest  {
 
-
+    static {
+        Memory.randomSeed = 2;
+    }
     
 
       
@@ -180,9 +183,8 @@ public class NALTest  {
     
     
     protected void testNAL(final String path) {
-        @Deprecated int minCycles = 10; //TODO reduce this to one or zero
-        
-        NAR.resetStatics();
+        @Deprecated int minCycles = 800; //TODO reduce this to one or zero
+                
         
         final NAR n = newNAR();
         

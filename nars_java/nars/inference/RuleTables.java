@@ -26,7 +26,6 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
-import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Disjunction;
@@ -41,7 +40,6 @@ import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.*;
 import static nars.io.Symbols.*;
-import nars.language.Variables;
 import static nars.language.Variables.unify;
 import nars.storage.Memory;
 
@@ -691,7 +689,13 @@ public class RuleTables {
         } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
             Term component = content.term[indices[0]];
             if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
-                inh = ((CompoundTerm) component).term[indices[1]];
+                
+                Term[] cterms = ((CompoundTerm) component).term;
+                if (indices[1] < cterms.length-1)
+                    inh = cterms[indices[1]];
+                else
+                    return;
+                
             } else {
                 return;
             }

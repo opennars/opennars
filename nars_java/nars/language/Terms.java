@@ -1,14 +1,11 @@
 package nars.language;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
-import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.*;
 import nars.storage.Memory;
@@ -63,10 +60,14 @@ public class Terms {
     }
 
     public static CompoundTerm ReduceTillLayer2(CompoundTerm itself, Term replacement, Memory memory) {
-        if (!(itself instanceof CompoundTerm)) {
+        if (!(itself instanceof CompoundTerm))
             return null;
-        }
-        itself = (CompoundTerm) reduceComponentOneLayer(itself, replacement, memory);
+        
+        Term reduced = reduceComponentOneLayer(itself, replacement, memory);
+        if (!(reduced instanceof CompoundTerm))
+            return null;
+        
+        itself = (CompoundTerm)reduced;
         int j = 0;
         for (Term t : itself.term) {
             Term t2 = unwrapNegation(t);
@@ -75,7 +76,13 @@ public class Terms {
                 continue;
             }
             Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
-            CompoundTerm replaced = (CompoundTerm) CompoundTerm.setComponent((CompoundTerm) itself, j, ret2, memory);
+            
+            CompoundTerm itselfCompound = (CompoundTerm)itself;
+            CompoundTerm replaced = null;
+            if (j < itself.term.length  )
+                replaced = (CompoundTerm) CompoundTerm.setComponent(
+                    (CompoundTerm) itself, j, ret2, memory);
+            
             if (replaced != null) {
                 itself = replaced;
             }
@@ -219,40 +226,55 @@ public class Terms {
                 return SetExt.make(CompoundTerm.termList(a), memory);
             case SET_INT_OPENER:
                 return SetInt.make(CompoundTerm.termList(a), memory);
+            
             case INTERSECTION_EXT:
                 return IntersectionExt.make(CompoundTerm.termList(a), memory);
             case INTERSECTION_INT:
                 return IntersectionInt.make(CompoundTerm.termList(a), memory);
+            
             case DIFFERENCE_EXT:
                 return DifferenceExt.make(a, memory);
             case DIFFERENCE_INT:
                 return DifferenceInt.make(a, memory);
+            
             case INHERITANCE:
                 return Inheritance.make(a[0], a[1], memory);
+            
             case PRODUCT:
                 return Product.make(a, memory);
+            
             case IMAGE_EXT:
                 return ImageExt.make(a, memory);
             case IMAGE_INT:
                 return ImageInt.make(a, memory);
+            
             case NEGATION:
                 return Negation.make(a, memory);
+            
             case DISJUNCTION:
                 return Disjunction.make(CompoundTerm.termList(a), memory);
             case CONJUNCTION:
                 return Conjunction.make(a, memory);
+            
             case SEQUENCE:
                 return Conjunction.make(a, TemporalRules.ORDER_FORWARD, memory);
             case PARALLEL:
                 return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, memory);
+            
             case IMPLICATION:
                 return Implication.make(a[0], a[1], memory);
             case IMPLICATION_AFTER:
                 return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD, memory);
             case IMPLICATION_BEFORE:
                 return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD, memory);
+
             case EQUIVALENCE:
-                return Equivalence.make(a[0], a[1], memory);
+                return Equivalence.make(a[0], a[1], memory);            
+            case EQUIVALENCE_WHEN:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, memory);
+            case EQUIVALENCE_AFTER:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD, memory);
+            
         }
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }

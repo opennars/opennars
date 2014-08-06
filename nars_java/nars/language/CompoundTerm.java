@@ -283,13 +283,8 @@ public abstract class CompoundTerm extends Term {
         for (final Term t : arg) {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             if (t instanceof CompoundTerm) {
-                CompoundTerm ct = (CompoundTerm)t;
-                if (!ct.containVar() && allowNonDeepCopy) {
-                    //no need to change name
-                }
-                else {                    
-                    t.setName(ct.makeName());
-                }
+                CompoundTerm ct = (CompoundTerm)t;               
+                t.setName(ct.makeName());
             }
             nameBuilder.append(t.getName());
         }
@@ -535,6 +530,10 @@ public abstract class CompoundTerm extends Term {
 
     
     static void shuffle(Term[] list, Random randomNumber) {
+        if (list.length < 2)  {
+            return;
+        }
+        
         int n = list.length;
         for (int i = 0; i < n; i++) {
             // between i and n-1

@@ -19,6 +19,20 @@ import nars.inference.InferenceRecorder;
 
 
 public class InferenceTracer implements InferenceRecorder {
+
+    /** utility method for diagnosing stack overflow errors caused by unbounded recursion or other phenomena */
+    public static void guardStack(String methodname, Object... args) {
+        int alertDepth = 10;
+        StackTraceElement[] st = new Exception().getStackTrace();
+        if (st.length < 1+alertDepth) return;
+        for (int i = 1; i < alertDepth; i++) {
+            //look for a series of equal (TODO: or cyclic) method names
+            if (!methodname.equals(st[i].getMethodName()))
+                return;
+        }
+        System.out.println(methodname + " LOOPING");
+        System.out.println("  args=" + Arrays.toString(args));
+    }
     
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final Map<Long, List<InferenceEvent>> time = new TreeMap();

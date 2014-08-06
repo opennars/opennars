@@ -65,7 +65,13 @@ import nars.util.XORShiftRandom;
 public class Memory implements Output, Serializable {
 
     //public static Random randomNumber = new Random(1);
-    public static Random randomNumber = new XORShiftRandom(1);
+    public static long randomSeed = 1;
+    public static Random randomNumber = new XORShiftRandom(randomSeed);
+
+    public static void resetStatic() {
+        randomNumber.setSeed(randomSeed);    
+    }
+    
 
     /**
      * Backward pointer to the nar
@@ -87,7 +93,7 @@ public class Memory implements Output, Serializable {
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    public final NovelTaskBag novelTasks;
+    public final AbstractBag<Task> novelTasks;
     /**
      * Inference record text to be written into a log file
      */
@@ -154,7 +160,7 @@ public class Memory implements Output, Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, AbstractBag<Concept> concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
+    public Memory(Param param, AbstractBag<Concept> concepts, AbstractBag<Task> novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
         
         this.param = param;
         this.conceptBuilder = conceptBuilder;
@@ -177,8 +183,7 @@ public class Memory implements Output, Serializable {
     public void reset() {
         concepts.clear();
         novelTasks.clear();
-        newTasks.clear();
-        randomNumber = new Random(1);
+        newTasks.clear();        
         lastEvent = null;
         clock = 0;
         stepsQueued = 0;
@@ -544,8 +549,12 @@ public class Memory implements Output, Serializable {
      */
     public void singlePremiseTask(Term newContent, char punctuation, TruthValue newTruth, BudgetValue newBudget) {
         Task parentTask = getCurrentTask().getParentTask();
-        if (parentTask != null && newContent.equals(parentTask.getContent())) { // circular structural inference
-            return;
+                
+        if (parentTask != null) {
+            if (parentTask.getContent() == null)
+                return;            
+            if (newContent.equals(parentTask.getContent())) // circular structural inference
+                return;            
         }
         Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isJudgment() || getCurrentBelief() == null) {
@@ -589,7 +598,7 @@ public class Memory implements Output, Serializable {
                 processConcept();
             }
 
-            novelTasks.refresh();
+            //novelTasks.refresh();
 
             if (recorder.isActive()) {            
                 recorder.onCycleEnd(clock);

@@ -35,6 +35,7 @@ import nars.language.Interval;
 import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.*;
+import static nars.inference.TemporalRules.*;
 import nars.language.Variables;
 import nars.storage.Memory;
 
@@ -62,8 +63,8 @@ public final class SyllogisticRules {
         }
         int order1 = sentence.content.getTemporalOrder();
         int order2 = belief.content.getTemporalOrder();
-        int order = TemporalRules.dedExeOrder(order1, order2);
-        if (order == TemporalRules.ORDER_INVALID) {
+        int order = dedExeOrder(order1, order2);
+        if (order == ORDER_INVALID) {
             return;
         }
         TruthValue value1 = sentence.truth;
@@ -92,7 +93,11 @@ public final class SyllogisticRules {
         }
         Statement content = (Statement) sentence.content;
         Statement content1 = Statement.make(content, term1, term2, order, memory);
-        Statement content2 = Statement.make(content, term2, term1, TemporalRules.reverseOrder(order), memory);
+        Statement content2 = Statement.make(content, term2, term1, reverseOrder(order), memory);
+        
+        if ((content1 == null) || (content2 == null))
+            return;
+        
         memory.doublePremiseTask(content1, truth1, budget1);
         memory.doublePremiseTask(content2, truth2, budget2);
     }
@@ -114,8 +119,8 @@ public final class SyllogisticRules {
         }
         int order1 = sentence1.content.getTemporalOrder();
         int order2 = sentence2.content.getTemporalOrder();
-        int order = TemporalRules.abdIndComOrder(order1, order2);
-        if (order == TemporalRules.ORDER_INVALID) {
+        int order = abdIndComOrder(order1, order2);
+        if (order == ORDER_INVALID) {
             return;
         }
         Statement taskContent = (Statement) sentence1.content;
@@ -149,12 +154,15 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, memory);
             budget3 = BudgetFunctions.forward(truth3, memory);
         }
-        Statement statement1 = Statement.make(taskContent, term1, term2, order, memory);
-        Statement statement2 = Statement.make(taskContent, term2, term1, TemporalRules.reverseOrder(order), memory);
-        Statement statement3 = Statement.makeSym(taskContent, term1, term2, order, memory);
-        memory.doublePremiseTask(statement1, truth1, budget1);
-        memory.doublePremiseTask(statement2, truth2, budget2);
-        memory.doublePremiseTask(statement3, truth3, budget3);
+                
+        memory.doublePremiseTask(
+                Statement.make(taskContent, term1, term2, order, memory), truth1, budget1);
+        memory.doublePremiseTask(
+                Statement.make(taskContent, term2, term1, reverseOrder(order), memory), 
+                    truth2, budget2);
+        memory.doublePremiseTask(
+                Statement.makeSym(taskContent, term1, term2, order, memory), truth3, budget3);
+        
     }
 
     /**
@@ -173,11 +181,11 @@ public final class SyllogisticRules {
         }
         int order1 = asym.content.getTemporalOrder();
         int order2 = sym.content.getTemporalOrder();
-        int order = TemporalRules.analogyOrder(order1, order2, figure);
-        if (order == TemporalRules.ORDER_INVALID) {
+        int order = analogyOrder(order1, order2, figure);
+        if (order == ORDER_INVALID) {
             return;
         } else if (figure < 20) {
-            order = TemporalRules.reverseOrder(order);
+            order = reverseOrder(order);
         }
         Statement st = (Statement) asym.content;
         TruthValue truth = null;
@@ -203,8 +211,8 @@ public final class SyllogisticRules {
             
             budget = BudgetFunctions.forward(truth, memory);
         }
-        Term content = Statement.make(st, subj, pred, order, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        
+        memory.doublePremiseTask( Statement.make(st, subj, pred, order, memory), truth, budget);
     }
 
     /**
@@ -223,8 +231,8 @@ public final class SyllogisticRules {
         }
         int order1 = belief.content.getTemporalOrder();
         int order2 = sentence.content.getTemporalOrder();
-        int order = TemporalRules.resemblanceOrder(order1, order2, figure);
-        if (order == TemporalRules.ORDER_INVALID) {
+        int order = resemblanceOrder(order1, order2, figure);
+        if (order == ORDER_INVALID) {
             return;
         }
         Statement st = (Statement) belief.content;
@@ -240,8 +248,8 @@ public final class SyllogisticRules {
             }            
             budget = BudgetFunctions.forward(truth, memory);
         }
-        Term statement = Statement.make(st, term1, term2, order, memory);
-        memory.doublePremiseTask(statement, truth, budget);
+        
+        memory.doublePremiseTask( Statement.make(st, term1, term2, order, memory), truth, budget );
     }
 
     /* --------------- rules used only in conditional inference --------------- */
@@ -279,7 +287,7 @@ public final class SyllogisticRules {
         Sentence beliefSentence = memory.getCurrentBelief();
         
         int order = statement.getTemporalOrder();
-        if ((order != TemporalRules.ORDER_NONE) && !taskSentence.isGoal() && !taskSentence.isQuest()) {
+        if ((order != ORDER_NONE) && !taskSentence.isGoal() && !taskSentence.isQuest()) {
             long baseTime = subSentence.getOccurenceTime();
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = memory.getTime();
@@ -384,14 +392,14 @@ public final class SyllogisticRules {
             }
         }
         int conjunctionOrder = subj.getTemporalOrder();
-        if (conjunctionOrder == TemporalRules.ORDER_FORWARD) {
+        if (conjunctionOrder == ORDER_FORWARD) {
             if (index > 0) {
                 return;
             }
-            if ((side == 0) && (premise2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            if ((side == 0) && (premise2.getTemporalOrder() == ORDER_FORWARD)) {
                 return;
             }
-            if ((side == 1) && (premise2.getTemporalOrder() == TemporalRules.ORDER_BACKWARD)) {
+            if ((side == 1) && (premise2.getTemporalOrder() == ORDER_BACKWARD)) {
                 return;
             }
         }
@@ -419,9 +427,9 @@ public final class SyllogisticRules {
         } else {
             content = premise1.getPredicate();
         }
-        if (content == null) {
-            return;
-        }
+        
+        if (content == null)
+            return;        
         
         if (delta != 0) {
             long baseTime = (belief.content instanceof Implication) ?
@@ -505,14 +513,14 @@ public final class SyllogisticRules {
             return;
         }
         int conjunctionOrder = oldCondition.getTemporalOrder();
-        if (conjunctionOrder == TemporalRules.ORDER_FORWARD) {
+        if (conjunctionOrder == ORDER_FORWARD) {
             if (index > 0) {
                 return;
             }
-            if ((side == 0) && (premise2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            if ((side == 0) && (premise2.getTemporalOrder() == ORDER_FORWARD)) {
                 return;
             }
-            if ((side == 1) && (premise2.getTemporalOrder() == TemporalRules.ORDER_BACKWARD)) {
+            if ((side == 1) && (premise2.getTemporalOrder() == ORDER_BACKWARD)) {
                 return;
             }
         }
@@ -528,9 +536,10 @@ public final class SyllogisticRules {
         } else {
             content = premise1.getPredicate();
         }
-        if (content == null) {
+        
+        if (content == null)
             return;
-        }
+        
         TruthValue truth1 = taskSentence.truth;
         TruthValue truth2 = belief.truth;
         TruthValue truth = null;
@@ -576,7 +585,7 @@ public final class SyllogisticRules {
         }
         int order1 = st1.getTemporalOrder();
         int order2 = st2.getTemporalOrder();
-        if (order1 != TemporalRules.reverseOrder(order2)) {
+        if (order1 != reverseOrder(order2)) {
             return false;
         }
         Term term1 = null;
@@ -603,6 +612,10 @@ public final class SyllogisticRules {
         
         TruthValue truth = null;
         BudgetValue budget;
+        
+        //is this correct because the second term2!=null condition may overwrite the first
+        //should the inner if be: if (term2 == null) then it makes sense.
+        
         if (term1 != null) {
             if (term2 != null) {
                 content = Statement.make(st2, term2, term1, st2.getTemporalOrder(), memory);
@@ -625,6 +638,7 @@ public final class SyllogisticRules {
             }
             memory.doublePremiseTask(content, truth, budget);
         }
+        
         if (term2 != null) {
             if (term1 != null) {
                 content = Statement.make(st1, term1, term2, st1.getTemporalOrder(), memory);
@@ -648,6 +662,7 @@ public final class SyllogisticRules {
             }
             memory.doublePremiseTask(content, truth, budget);
         }
+        
         return true;
     }
 
