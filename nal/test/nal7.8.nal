@@ -2,13 +2,13 @@
 
 <(*,John,key_101) --> hold>. :|: 
 
-1 
+6
 
 <(*,John,key_101) --> hold>. :|: %0% 
 
 <(*,John,key_101) --> hold>? :|: 
 
-100
+120
 
-''outputMustContain('<(*,John,key_101) --> hold>. :\\: %0.09;0.91%')
+''outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %0.09;0.91%')
 
