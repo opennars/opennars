@@ -79,9 +79,10 @@ public abstract class CompoundTerm extends Term {
      * @param isConstant Whether the term refers to a concept
      * @param complexity Complexity of the compound term
      */
-    protected CompoundTerm(final String name, final Term[] components, final boolean isConstant, final short complexity) {
-        super(name);
+    @Deprecated protected CompoundTerm(final String name, final Term[] components, final boolean isConstant, final short complexity) {
+        this.name = name;
         this.term = components; //ensureValidComponents(term);
+        this.hasVar = Variables.containVar(getName());
         this.isConstant = isConstant;
         this.complexity = complexity;
     }

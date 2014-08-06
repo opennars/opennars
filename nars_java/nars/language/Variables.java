@@ -22,9 +22,11 @@ public class Variables {
      */
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final HashMap<Term, Term> map1, final HashMap<Term, Term> map2) {
         Term t;
+                
         if ((term1 instanceof Variable) && (((Variable) term1).getType() == type)) {
             final Variable var1 = (Variable) term1;
-            t = map1.get(var1);
+            t = map1.get(var1);                        
+            
             if (t != null) {
                 return findSubstitute(type, t, term2, map1, map2);
             } else {
@@ -87,9 +89,11 @@ public class Variables {
     public static boolean containVar(final String n) {
         final int l = n.length();
         for (int i = 0; i < l; i++) {
-            char c = n.charAt(i);
-            if ((c == Symbols.VAR_INDEPENDENT) || (c == Symbols.VAR_DEPENDENT) || (c == Symbols.VAR_QUERY)) {
-                return true;
+            switch (n.charAt(i)) {
+                case Symbols.VAR_INDEPENDENT:
+                case Symbols.VAR_DEPENDENT:
+                case Symbols.VAR_QUERY:
+                    return true;
             }
         }
         return false;
@@ -118,8 +122,8 @@ public class Variables {
      * @return Whether the unification is possible
      */
     public static boolean unify(final char type, final Term t1, final Term t2, final Term compound1, final Term compound2) {
-        final HashMap<Term, Term> map1 = new HashMap<>();
-        final HashMap<Term, Term> map2 = new HashMap<>();
+        final HashMap<Term, Term> map1 = new HashMap<>(4);
+        final HashMap<Term, Term> map2 = new HashMap<>(4);
         final boolean hasSubs = findSubstitute(type, t1, t2, map1, map2);
         if (hasSubs) {
             if (!map1.isEmpty()) {
@@ -131,6 +135,7 @@ public class Variables {
                 compound2.renameVariables();
             }
         }
+ 
         return hasSubs;
     }
 
@@ -150,7 +155,7 @@ public class Variables {
     }
 
     public static boolean isCommonVariable(final Variable v) {
-        String s = v.getName();
+        String s = v.getName();        
         return s.charAt(s.length() - 1) == '$';
     }
 

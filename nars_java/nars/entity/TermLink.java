@@ -164,10 +164,15 @@ public class TermLink extends Item {
     }
     */
     
+    protected final void setKey() {
+        setKey(null);        
+    }
+    
     /**
      * Set the key of the link
+     * @param suffix optional suffix, may be null
      */    
-    protected final void setKey() {
+    protected final void setKey(String suffix) {
         final String at1, at2;
         if ((type % 2) == 1) {  // to component
             at1 = Symbols.TO_COMPONENT_1;
@@ -181,6 +186,10 @@ public class TermLink extends Item {
         int targetLength = target!=null ? targetString.length() : 0;        
         int estimatedLength = 2+2+targetLength+1+4*( (index!=null ? index.length : 0) + 1);
         
+        if (suffix!=null)
+            estimatedLength += suffix.length();
+        
+        
         final StringBuilder sb = new StringBuilder(estimatedLength).append(at1).append('T').append(type);
         if (index != null) {
             for (int i = 0; i < index.length; i++) {
@@ -192,6 +201,11 @@ public class TermLink extends Item {
         if (target != null) {
             sb.append(targetString);
         }
+        
+        if (suffix!=null) {
+            sb.append(suffix);
+        }
+        
         key = sb.toString();
         
         //for debugging estimatedlength:

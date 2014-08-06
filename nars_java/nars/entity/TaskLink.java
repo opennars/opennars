@@ -73,8 +73,8 @@ public class TaskLink extends TermLink {
         recordedLinks = new String[Parameters.TERM_LINK_RECORD_LENGTH];
         recordingTime = new long[Parameters.TERM_LINK_RECORD_LENGTH];
         counter = 0;
-        setKey();   // as defined in TermLink
-        key += t.getKey();
+        setKey(t.getKey());   // as defined in TermLink
+        
     }
 
     /**

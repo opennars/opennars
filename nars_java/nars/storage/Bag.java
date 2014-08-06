@@ -41,10 +41,6 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      * firing threshold
      */
     public final int THRESHOLD;
-    /**
-     * hashtable load factor
-     */
-    public static final float LOAD_FACTOR = Parameters.LOAD_FACTOR;       //
     
 
     
@@ -113,11 +109,14 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
         
         this.capacity = capacity;
-        //nameTable = new HashSet<>(capacity, LOAD_FACTOR);
-        nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
+        
+        nameTable = new HashMap<>(capacity);
+        
         itemTableEmpty = new boolean[this.levels];
         itemTable = new Deque[this.levels];
+        
         DISTRIBUTOR = Distributor.get(this.levels).order;
+        
         clear();
         //showing = false;        
     }
@@ -347,7 +346,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     protected Deque<E> newLevel() {
         return new ArrayDeque<E>(1+capacity/levels);
         //return new LinkedList<E>();  //not good
-        //return new FastTable<E>(); //slower than arraydeque        
+        //return new FastTable<E>(); //slower than arraydeque under current loads    
     }
     
     /**

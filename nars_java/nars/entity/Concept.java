@@ -22,24 +22,18 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import nars.core.NAR;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import static nars.entity.Stamp.make;
-import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
-import nars.inference.LocalRules;
 import static nars.inference.LocalRules.decisionMaking;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
-import nars.inference.RuleTables;
 import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
-import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
-import nars.inference.UtilityFunctions;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -415,10 +409,13 @@ public final class Concept extends Item {
                         Term t = template.target;
                         final Concept concept = memory.getConcept(t);
                         if (concept != null) {
-                            TermLink termLink1 = new TermLink(t, template, subBudget);
-                            insertTermLink(termLink1);   // this termLink to that
-                            TermLink termLink2 = new TermLink(term, template, subBudget);
-                            concept.insertTermLink(termLink2);   // that termLink to this
+                            
+                            // this termLink to that
+                            TermLink termLink1 = insertTermLink(new TermLink(t, template, subBudget));
+                            
+                            // that termLink to this
+                            TermLink termLink2 = concept.insertTermLink(new TermLink(term, template, subBudget));
+                            
                             if (t instanceof CompoundTerm) {
                                 concept.buildTermLinks(subBudget);
                             }
@@ -436,8 +433,9 @@ public final class Concept extends Item {
      *
      * @param termLink The termLink to be inserted
      */
-    public void insertTermLink(final TermLink termLink) {
+    public TermLink insertTermLink(final TermLink termLink) {
         termLinks.putIn(termLink);
+        return termLink;
     }
 
     /**

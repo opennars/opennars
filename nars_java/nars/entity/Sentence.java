@@ -262,7 +262,7 @@ public class Sentence implements Cloneable {
      */
     @Override
     public String toString() {
-        return toStringBrief();
+        return toKey();
     }
 
     /**
@@ -270,9 +270,10 @@ public class Sentence implements Cloneable {
      *
      * @return The String
      */
-    public String toStringBrief() {
+    /*public String toStringBrief() {
         return toKey() + " " + stamp.toString();
     }
+    */
 
     /*
     public void setStamp(Stamp stamp) {

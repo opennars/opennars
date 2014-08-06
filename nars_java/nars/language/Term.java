@@ -32,13 +32,12 @@ import nars.inference.TemporalRules;
  */
 public class Term implements Cloneable, Comparable<Term> {
 
-    protected String name;
+    protected String name = "";
     
     /**
      * Default constructor that build an internal Term
      */
     protected Term() {
-        setName("");
     }
 
     /**
