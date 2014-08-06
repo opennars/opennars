@@ -7,13 +7,14 @@ import nars.entity.Item;
 public class PrioritySortedItemList<E extends Item> extends FastTable<E>  {
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
-
+    
     public PrioritySortedItemList() {
         super();
     }
     
     public PrioritySortedItemList(int capacity) {
-        super(/*capacity*/);
+        //super(capacity);
+        super();
     }
     
     public int positionOf(E o) {

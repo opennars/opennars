@@ -1,6 +1,6 @@
 package nars.test.util;
 
-import nars.test.core.BagPerf.NullItem;
+import nars.perf.BagPerf.NullItem;
 import nars.util.ContinuousBag;
 import org.junit.Test;
 
@@ -12,8 +12,32 @@ import org.junit.Test;
 
 public class ContinuousBagTest {
  
-    @Test public void testFastBag() {
-        ContinuousBag<NullItem> f = new ContinuousBag(4, 10);
+    @Test 
+    public void testContinuousBag() {
+        testFastBag(false);
+        testFastBag(true);
+        
+        testFastBagCapacityLimit(false);
+        testFastBagCapacityLimit(true);
+        
+        
+        
+        testRemovalDistribution(4, false);
+        testRemovalDistribution(4, true);
+        
+        testRemovalDistribution(7, false);
+        testRemovalDistribution(7, true);
+        
+        testRemovalDistribution(16, false);
+        testRemovalDistribution(16, true);
+
+        testRemovalDistribution(13, false);
+        testRemovalDistribution(13, true);
+        
+    }
+    
+    public void testFastBag(boolean random) {
+        ContinuousBag<NullItem> f = new ContinuousBag(4, 10, random);
         
         f.putIn(new NullItem(.25f));
         assert(f.size() == 1);
@@ -39,8 +63,8 @@ public class ContinuousBagTest {
         assert(f.getMass() == 0);
     }
 
-    @Test public void testFastBagCapacityLimit() {
-        ContinuousBag<NullItem> f = new ContinuousBag(4, 10);
+    public void testFastBagCapacityLimit(boolean random) {
+        ContinuousBag<NullItem> f = new ContinuousBag(4, 10, random);
         f.putIn(new NullItem());
         f.putIn(new NullItem());
         f.putIn(new NullItem());
@@ -53,13 +77,12 @@ public class ContinuousBagTest {
 
     }
     
-    @Test public void testRemovalDistribution() {
-        int N = 4;
-        int samples = 4096 * N;
+    public void testRemovalDistribution(int N, boolean random) {
+        int samples = 256 * N;
         
         int count[] = new int[N];
         
-        ContinuousBag<NullItem> f = new ContinuousBag(N, 10);
+        ContinuousBag<NullItem> f = new ContinuousBag(N, 10, random);
         
         //fill
         for (int i= 0; i < N; i++) {
@@ -69,11 +92,14 @@ public class ContinuousBagTest {
         for (int i= 0; i < samples; i++) {
             count[f.nextRemovalIndex()]++;
         }
-        
+                
+        //removal rates are monotonically increasing function
         assert(count[0] < count[1]);
-        assert(count[1] < count[2]);
-        assert(count[2] < count[3]);
+        assert(count[0] < count[N/2]);        
+        assert(count[N-2] < count[N-1]);        
+        assert(count[N/2] < count[N-1]);
         
+        //System.out.println(random + " " + Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
         
     }

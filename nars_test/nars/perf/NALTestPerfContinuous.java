@@ -1,7 +1,8 @@
-package nars.test.core;
+package nars.perf;
 
 import java.util.Collection;
-import static nars.test.core.NALTestPerf.perfNAL;
+import nars.test.core.NALTest;
+import static nars.perf.NALTestPerf.perfNAL;
 
 /**
  * Runs NALTestPerf continuously, for profiling
