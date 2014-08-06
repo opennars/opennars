@@ -32,7 +32,7 @@ public class NALTest  {
     static final boolean testPerformance = false;    
     private final int performanceIterations = 4;
     boolean showSuccess = false;
-    int maxSummaryOutputLines = 25;
+    int maxSummaryOutputLines = 300;
     
     ScriptEngineManager factory = new ScriptEngineManager();
     ScriptEngine js = factory.getEngineByName("JavaScript");
@@ -74,7 +74,7 @@ public class NALTest  {
     public boolean outputContains(String s) {        
         currentOutputLine = 0;
         for (String o : out) {
-            if (o.indexOf(s)!=-1)
+            if (o.contains(s))
                 return true;
             currentOutputLine++;
         }
@@ -92,7 +92,7 @@ public class NALTest  {
     }
     
     protected void testNAL(final String path) {
-        @Deprecated int minCycles = 250; //TODO reduce this to one or zero
+        @Deprecated int minCycles = 1; //TODO reduce this to one or zero
         
         NAR.resetStatics();
         
@@ -103,9 +103,12 @@ public class NALTest  {
 
         
         //new TextOutput(n, new PrintWriter(System.out));
-        new TextOutput(n) {
+        new TextOutput(n/*, System.out*/) {
             @Override
             public void output(Class channel, Object signal) {                
+                
+                //super.output(channel, signal);
+                
                 if (channel == Output.ERR.class) {                       
                     if (signal instanceof Exception) {
                         ((Throwable)signal).printStackTrace();;
@@ -131,7 +134,6 @@ public class NALTest  {
 
             }
         };         
-        
         n.addInput(getExample(path));
         n.finish(minCycles);
 
