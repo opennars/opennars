@@ -12,7 +12,7 @@ public class NullBagObserver<E extends Item> implements BagObserver<E> {
     }
 
     @Override
-    public void setBag(Bag<E> concepts) {
+    public void setBag(AbstractBag<E> concepts) {
     }
 
     @Override

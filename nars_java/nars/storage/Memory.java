@@ -76,7 +76,7 @@ public class Memory implements Output, Serializable {
     /**
      * Concept bag. Containing all Concepts of the system
      */
-    public final ConceptBag concepts;
+    public final AbstractBag<Concept> concepts;
     
     
     /* InnateOperator registry. Containing all registered operators of the system */
@@ -154,7 +154,7 @@ public class Memory implements Output, Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, ConceptBag concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
+    public Memory(Param param, AbstractBag<Concept> concepts, NovelTaskBag novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
         
         this.param = param;
         this.conceptBuilder = conceptBuilder;
@@ -764,9 +764,9 @@ public class Memory implements Output, Serializable {
         return sb.toString();
     }
 
-    private String toStringLongIfNotNull(Bag<?> item, String title) {
+    private String toStringLongIfNotNull(AbstractBag<?> item, String title) {
         return item == null ? "" : "\n " + title + ":\n"
-                + item.toStringLong();
+                + item.toString();
     }
 
     private String toStringLongIfNotNull(Item item, String title) {
@@ -787,7 +787,7 @@ public class Memory implements Output, Serializable {
 
     /** returns a collection of all concepts */
     public Collection<Concept> getConcepts() {
-        return concepts.nameTable.values();
+        return concepts.values();
     }
 
     /**
