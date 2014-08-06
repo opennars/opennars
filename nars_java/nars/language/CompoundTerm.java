@@ -37,7 +37,7 @@ import nars.storage.Memory;
 
 
 public abstract class CompoundTerm extends Term {
-    @Deprecated private static final boolean allowNonDeepCopy = true; //temporary, disables eliminating deep copy
+    @Deprecated private static final boolean allowNonDeepCopy = false; //temporary, disables eliminating deep copy
 
     /**
      * list of (direct) term
@@ -511,6 +511,14 @@ public abstract class CompoundTerm extends Term {
         }
         return l;        
     }
+  
+    /** forced deep clone of terms */
+    public ArrayList<Term> cloneTermsListDeep() {
+        ArrayList<Term> l = new ArrayList(term.length);
+        for (final Term t : term)
+            l.add((Term)t.clone());
+        return l;        
+    }
 
     
     //TODO move this to a utility method
@@ -649,7 +657,7 @@ public abstract class CompoundTerm extends Term {
      * @return The new compound
      */
     public static Term setComponent(final CompoundTerm compound, final int index, final Term t, final Memory memory) {
-        List<Term> list = compound.cloneTermsList();
+        List<Term> list = compound.cloneTermsListDeep();
         list.remove(index);
         if (t != null) {
             if (compound.getClass() != t.getClass()) {

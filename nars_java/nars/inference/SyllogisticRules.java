@@ -385,7 +385,15 @@ public final class SyllogisticRules {
         } else {
             boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-                match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
+            
+                CompoundTerm compoundCommonComponent = ((CompoundTerm) commonComponent);
+                
+                if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index))
+                    match = Variables.unify(Symbols.VAR_INDEPENDENT, 
+                            oldCondition.term[index], 
+                            compoundCommonComponent.term[index], 
+                            premise1, premise2);
+                
             }
             if (!match) {
                 return;
