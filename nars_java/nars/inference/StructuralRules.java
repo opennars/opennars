@@ -71,9 +71,9 @@ public final class StructuralRules {
         if (compound.equals(statement.term[side])) {
             return;
         }
-        if (!memory.getCurrentTask().sentence.isJudgment() || (compound.size() == 1)) {
+        /*if (!memory.getCurrentTask().sentence.isJudgment() || (compound.size() == 1)) {
             return; // forward inference only
-        }
+        }*/
         Term sub = statement.getSubject();
         Term pred = statement.getPredicate();
         ArrayList<Term> components = compound.cloneTermsList();
@@ -129,9 +129,9 @@ public final class StructuralRules {
         if (sub.size() != pre.size() || sub.size() <= index) {
             return;
         }
-        if (!(sub instanceof Product) && !(sub instanceof SetExt) && !(sub instanceof SetInt)) {
-            return; // no abduction on other compounds for now, but may change in the future
-        }
+        //if (!(sub instanceof Product) && !(sub instanceof SetExt) && !(sub instanceof SetInt)) {
+        //    return; // no abduction on other compounds for now, but may change in the future
+        //}
         Term t1 = sub.term[index];
         Term t2 = pre.term[index];
         Term content;
