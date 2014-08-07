@@ -743,7 +743,9 @@ public abstract class CompoundTerm extends Term {
                 while (subs.containsKey(t2)) {
                     t2 = subs.get(t2);
                 }
-                term[i] = (Term) t2.clone();
+                //prevents infinite recursion
+                if (!t2.containsTerm(t1))
+                    term[i] = (Term) t2.clone();
             } else if (t1 instanceof CompoundTerm) {
                 ((CompoundTerm) t1).applySubstitute(subs);
             }            
