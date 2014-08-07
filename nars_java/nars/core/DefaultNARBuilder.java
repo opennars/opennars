@@ -3,12 +3,12 @@ package nars.core;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.storage.Memory;
-import nars.storage.TaskLinkBag;
-import nars.storage.TermLinkBag;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -43,8 +43,8 @@ public class DefaultNARBuilder extends NARBuilder {
     @Override
     public Concept newConcept(final Term t, final Memory m) {
         
-        TaskLinkBag taskLinks = new TaskLinkBag(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskForgettingRate);
-        TermLinkBag termLinks = new TermLinkBag(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgettingRate);
+        AbstractBag<TaskLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskForgettingRate);
+        AbstractBag<TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgettingRate);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }

@@ -572,7 +572,12 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         }
         return empty;
     }
+
+    @Override public E removeKey(final String key) {
+        return nameTable.remove(key);
+    }
         
+    
     
     
 }

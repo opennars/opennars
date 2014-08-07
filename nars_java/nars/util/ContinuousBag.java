@@ -329,6 +329,9 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         return items.descendingIterator();
     }
 
+    @Override public E removeKey(final String key) {
+        return nameTable.remove(key);
+    }
 
     
     
