@@ -13,7 +13,7 @@ import static nars.test.core.NALTest.newNAR;
 import nars.util.ContinuousBag;
 
 
-
+/** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load */
 public class NALTestPerf  {
     
     public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
@@ -44,14 +44,13 @@ public class NALTestPerf  {
                     e.printStackTrace();
                 }
                 
-                if (!warmup)
-                    totalCycles += n.getTime();
+                totalCycles += n.getTime();
             }
 
             @Override
             public Performance print() {                
                 super.print();
-                System.out.print(", " + df.format(getCycleTimeMS() / ((double)totalCycles) * 1000.0) + " ns/cycle, " + (totalCycles/repeats) + " cycles/run");
+                System.out.print(", " + df.format(getCycleTimeMS() / ((double)totalCycles) * 1000.0) + " ns/cycle, " + (((float)totalCycles)/(warmups+repeats)) + " cycles/run");
                 return this;
                 
             }
