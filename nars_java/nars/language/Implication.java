@@ -22,33 +22,28 @@ package nars.language;
 
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
 
 /**
  * A Statement about an Inheritance copula.
  */
 public class Implication extends Statement {
-    private int temporalOrder = TemporalRules.ORDER_NONE;
 
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private Implication(String name, Term[] arg, int order) {
-        super(name, arg);
-        temporalOrder = order;
+    private Implication(Term[] arg, int order) {
+        super(arg, order);
     }
 
     /**
      * Constructor with full values, called by clone
-     * @param n The name of the term
      * @param cs Component list
      * @param con Whether it is a constant term
-     * @param i Syntactic complexity of the compound
+     * @param compl Syntactic complexity of the compound
      */
-    private Implication(String n, Term[] cs, boolean con, short i, int order) {
-        super(n, cs, con, i);
-        temporalOrder = order;
+    private Implication(Term[] cs, int torder, boolean con, boolean var, short compl, int hash) {
+        super(cs, torder, con, var, compl, hash);
     }
 
     
@@ -58,9 +53,8 @@ public class Implication extends Statement {
      * @return A new object
      */
     @Override
-    public Object clone() {
-        //TODO use the faster super constructor here
-        return new Implication(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
+    public Implication clone() {
+        return new Implication(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
     /**
@@ -70,11 +64,11 @@ public class Implication extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Implication make(final Term subject, final Term predicate, final Memory memory) {
-        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
+    public static Implication make(final Term subject, final Term predicate) {
+        return make(subject, predicate, TemporalRules.ORDER_NONE);
     }
     
-    public static Implication make(final Term subject, final Term predicate, int temporalOrder, final Memory memory) {
+    public static Implication make(final Term subject, final Term predicate, int temporalOrder) {
         if ((subject == null) || (predicate == null)) {
             return null;
         }
@@ -98,23 +92,16 @@ public class Implication extends Statement {
             default:
                 copula = NativeOperator.IMPLICATION;
         }                
-        final String name = makeStatementName(subject, copula, predicate);
-        final Term t = memory.nameToTerm(name);
-        if (t != null) {            
-            if (t.getClass()!=Implication.class) {                
-                throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() + " = " + t.toString() );
-            }
-            return (Implication) t;
-        }
+
         if (predicate instanceof Implication) {
             final Term oldCondition = ((Statement) predicate).getSubject();
             if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containsTerm(subject)) {
                 return null;
             }
-            final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);
-            return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder, memory);
+            final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder);
+            return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
         } else {
-            return new Implication(name, new Term[] { subject, predicate }, temporalOrder);
+            return new Implication(new Term[] { subject, predicate }, temporalOrder);
         }
     }
 

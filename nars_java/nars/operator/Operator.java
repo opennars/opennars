@@ -24,6 +24,7 @@ package nars.operator;
 import java.util.List;
 import nars.entity.Task;
 import nars.io.Output.EXE;
+import nars.language.Atom;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.storage.Memory;
@@ -34,7 +35,7 @@ import nars.storage.Memory;
  * <p>
  * This is the only file to modify when registering a new operator into NARS.
  */
-public abstract class Operator extends Term {
+public abstract class Operator extends Atom {
         
     protected Operator(String name) {
         super(name);
@@ -91,9 +92,6 @@ public abstract class Operator extends Term {
         return operator + "(" + argList;        
     }
 
-    @Override
-    public Object clone() {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 }
 

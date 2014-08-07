@@ -95,7 +95,7 @@ public final class CompositionalRules {
 
                 final Term pcontent = qu.content;
                 final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
-                if(pcontent==null || !(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
+                if(pcontent==null || !(pcontent instanceof Conjunction) || ctpcontent.containsVar()) {
                     continue;
                 }
 
@@ -109,7 +109,7 @@ public final class CompositionalRules {
                     if(!(term2 instanceof Conjunction) && !ctpcontent.containsTerm(term2)) {
                         continue;
                     }
-                    if (term1.containVar()) {
+                    if (term1.containsVar()) {
                         continue;                        
                     }
 
@@ -122,7 +122,7 @@ public final class CompositionalRules {
                     if (!(term1 instanceof Conjunction) && !ctpcontent.containsTerm(term1)) {
                         continue;
                     }
-                    if (term2.containVar()) {
+                    if (term2.containsVar()) {
                         continue;
                     }
                     if (!ctpcontent.containsAllTermsOf(term2))
@@ -376,7 +376,7 @@ public final class CompositionalRules {
             budget = BudgetFunctions.compoundBackward(content, memory);
             memory.doublePremiseTask(content, truth, budget);
             // special inference to answer conjunctive questions with query variables
-            if (Variables.containVarQuery(taskSentence.content.getName())) {
+            if (Variables.containVarQuery(taskSentence.content.toString())) {
                 Concept contentConcept = memory.termToConcept(content);
                 if (contentConcept == null) {
                     return;
@@ -859,7 +859,7 @@ public final class CompositionalRules {
         }
         Term taskterm=taskSentence.content;
         if(taskterm instanceof CompoundTerm && (taskterm instanceof Disjunction || taskterm instanceof Conjunction || taskterm instanceof Equivalence || taskterm instanceof Implication)) { //lets just allow conjunctions, implication and equivalence for now
-            if (!taskterm.containVar()) {
+            if (!taskterm.containsVar()) {
                 return false;
             }           
             Concept second=memory.concepts.processNext();

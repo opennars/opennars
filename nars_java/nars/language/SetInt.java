@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
-import nars.storage.Memory;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.
@@ -37,8 +36,8 @@ public class SetInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetInt(String name, Term[] arg) {
-        super(name, arg);
+    public SetInt(final Term[] arg) {
+        super(arg);
     }
 
     /**
@@ -46,47 +45,34 @@ public class SetInt extends CompoundTerm {
      * @param n The name of the term
      * @param cs Component list
      * @param open Open variable list
-     * @param i Syntactic complexity of the compound
+     * @param complex Syntactic complexity of the compound
      */
-    private SetInt(String n, Term[] cs, boolean con, short i) {
-        super(n, cs, con, i);
+    private SetInt(Term[] cs, int torder, boolean con, boolean hasVar, short complex, int hash) {
+        super(cs, torder, con, hasVar, complex, hash);
     }
 
     @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
+    public boolean validSize(int num) {
+        return num >= 1;
     }
+    
     
     /**
      * Clone a SetInt
      * @return A new object, to be casted into a SetInt
      */
     @Override
-    public Object clone() {
-        return new SetInt(getName(), cloneTerms(), isConstant(), complexity);
+    public SetInt clone() {
+        return new SetInt(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
-    /**
-     * Try to make a new set from one component. Called by the inference rules.
-     * @param t The compoment
-     * @param memory Reference to the memeory
-     * @return A compound generated or a term it reduced to
-     */
-    public static Term make(Term t, Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>();
-        set.add(t);
-        return make(set, memory);
+ 
+    public static Term make(Term t) {
+        return new SetInt(new Term[] { t });
     }
 
-    /**
-     * Try to make a new SetExt. Called by StringParser.
-     * @return the Term generated from the arguments
-     * @param argList The list of term
-     * @param memory Reference to the memeory
-     */
-    public static Term make(Collection<Term> argList, Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
-        return make(set, memory);
+    public static SetInt make(Collection<Term> argList) {
+        return make ((TreeSet)new TreeSet<Term>(argList)); // sort/merge arguments
     }
 
     /**
@@ -95,14 +81,10 @@ public class SetInt extends CompoundTerm {
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set, Memory memory) {
-        if (set.isEmpty()) {
+    public static SetInt make(TreeSet<Term> set) {
+        if (set.isEmpty())
             return null;
-        }
-        Term[] argument = set.toArray(new Term[set.size()]);
-        String name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
-        Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new SetInt(name, argument);
+        return new SetInt( set.toArray(new Term[set.size()]) );
     }
 
     /**

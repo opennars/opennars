@@ -22,7 +22,6 @@ package nars.language;
 
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
 
 /**
  * An extension image.
@@ -31,47 +30,39 @@ import nars.storage.Memory;
  * <p>
  * Internally, it is actually (/,A,P)_1, with an index.
  */
-public class ImageExt extends CompoundTerm {
+public class ImageExt extends RelIndexCompoundTerm {
 
-    /** The index of relation in the component list */
-    public final short relationIndex;
 
     /**
      * Constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageExt(String n, Term[] arg, short index) {
-        super(n, arg);
-        relationIndex = index;
+    public ImageExt(Term[] arg, short index) {
+        super(arg, index);        
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param complexity Syntactic complexity of the compound
-     * @param index The index of relation in the component list
-     */
-    private ImageExt(String n, Term[] cs, boolean con, short complexity, short index) {
-        super(n, cs, con, complexity);
-        relationIndex = index;
-    }
-    
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
+//    /**
+//     * Constructor with full values, called by clone
+//     * @param n The name of the term
+//     * @param cs Component list
+//     * @param open Open variable list
+//     * @param complexity Syntactic complexity of the compound
+//     * @param index The index of relation in the component list
+//     */
+//    private ImageExt(Term[] arg, boolean con, short complexity, short index) {
+//        super(arg, con, complexity);
+//        relationIndex = index;
+//    }
+
 
     /**
      * Clone an object
      * @return A new object, to be casted into an ImageExt
      */
     @Override
-    public Object clone() {
-        return new ImageExt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
+    public ImageExt clone() {
+        return new ImageExt(cloneTerms(), relationIndex);
     }
 
     /**
@@ -80,7 +71,7 @@ public class ImageExt extends CompoundTerm {
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argList, Memory memory) {
+    public static ImageExt make(Term[] argList) {
         if (argList.length < 2) {
             return null;
         }
@@ -88,7 +79,7 @@ public class ImageExt extends CompoundTerm {
         Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {
-            if (argList[j].getName().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
+            if (argList[j].toString().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
                 index = j - 1;
                 argument[n] = relation;
             } else {
@@ -96,7 +87,7 @@ public class ImageExt extends CompoundTerm {
             }
             n++;
         }
-        return make(argument, (short) index, memory);
+        return new ImageExt(argument, (short)index);
     }
 
     /**
@@ -106,7 +97,7 @@ public class ImageExt extends CompoundTerm {
      * @param index The index of the place-holder
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Product product, Term relation, short index, Memory memory) {
+    public static Term make(Product product, Term relation, short index) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {
@@ -120,7 +111,7 @@ public class ImageExt extends CompoundTerm {
         }
         Term[] argument = product.cloneTerms();
         argument[index] = relation;
-        return make(argument, index, memory);
+        return new ImageExt(argument, index);
     }
 
     /**
@@ -130,46 +121,16 @@ public class ImageExt extends CompoundTerm {
      * @param index The index of the place-holder in the new Image
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(ImageExt oldImage, Term component, short index, Memory memory) {
+    public static ImageExt make(ImageExt oldImage, Term component, short index) {
         Term[] argList = oldImage.cloneTerms();
         int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
-        return make(argList, index, memory);
-    }
-
-    /**
-     * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param argument The argument list
-     * @param index The index of the place-holder in the new Image
-     * @return the Term generated from the arguments
-     */
-    public static Term make(Term[] argument, short index, Memory memory) {
-        String name = makeImageName(NativeOperator.IMAGE_EXT, argument, index);
-        Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new ImageExt(name, argument, index);
+        return new ImageExt(argList, index);
     }
 
 
-    /**
-     * Get the relation term in the Image
-     * @return The term representing a relation
-     */
-    public Term getRelation() {
-        return term[relationIndex];
-    }
-
-    /**
-     * Get the other term in the Image
-     * @return The term related
-     */
-    public Term getTheOtherComponent() {
-        if (term.length != 2) {
-            return null;
-        }
-        return (relationIndex == 0) ? term[1] : term[0];
-    }
 
     /**
      * override the default in making the name of the current term from existing fields
@@ -188,4 +149,5 @@ public class ImageExt extends CompoundTerm {
     public NativeOperator operator() {
         return NativeOperator.IMAGE_EXT;
     }
+    
 }

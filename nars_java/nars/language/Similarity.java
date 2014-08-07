@@ -21,7 +21,6 @@
 package nars.language;
 
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
 
 /**
  * A Statement about a Similarity relation.
@@ -33,8 +32,8 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Similarity(String name, Term[] arg) {
-        super(name, arg);
+    public Similarity(Term[] arg) {
+        super(arg);
     }
 
     /**
@@ -44,8 +43,8 @@ public class Similarity extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Similarity(String n, Term[] cs, boolean constant, boolean containsVar, short i) {
-        super(n, cs, constant, containsVar, i);
+    private Similarity(Term[] cs, int torder, boolean constant, boolean containsVar, short i, int hash) {
+        super(cs, torder, constant, containsVar, i, hash);
     }
 
     /**
@@ -53,8 +52,8 @@ public class Similarity extends Statement {
      * @return A new object, to be casted into a Similarity
      */
     @Override
-    public Object clone() {
-        return new Similarity(getName(), cloneTerms(), isConstant(), containVar(), complexity);
+    public Similarity clone() {
+        return new Similarity(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
     /**
@@ -64,19 +63,14 @@ public class Similarity extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Similarity make(Term subject, Term predicate, Memory memory) {
+    public static Similarity make(Term subject, Term predicate) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
         if (subject.compareTo(predicate) > 0) {
-            return make(predicate, subject, memory);
+            return make(predicate, subject);
         }
-        String name = makeStatementName(subject, NativeOperator.SIMILARITY, predicate);
-        Term t = memory.nameToTerm(name);
-        if (t != null) {
-            return (Similarity) t;
-        }
-        return new Similarity(name, termArray(subject, predicate));
+        return new Similarity(termArray(subject, predicate));
     }
 
     /**

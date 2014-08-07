@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import nars.core.Parameters;
 import nars.inference.TemporalRules;
 
 /**
@@ -30,43 +29,8 @@ import nars.inference.TemporalRules;
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
  */
-public class Term implements Cloneable, Comparable<Term> {
-
-    protected String name = "";
+abstract public class Term implements Cloneable, Comparable<Term> {
     
-    /**
-     * Default constructor that build an internal Term
-     */
-    protected Term() {
-    }
-
-    /**
-     * Constructor with a given name
-     *
-     * @param name A String as the name of the Term
-     */
-    public Term(final String name) {
-        setName(name);
-    }
-
-    /**
-     * Reporting the name of the current Term.
-     *
-     * @return The name of the term as a String
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Make a new Term with the same name.
-     *
-     * @return The new Term
-     */
-    @Override
-    public Object clone() {
-        return new Term(name);
-    }
 
     /**
      * Equal terms have identical name, though not necessarily the same
@@ -75,7 +39,7 @@ public class Term implements Cloneable, Comparable<Term> {
      * @return Whether the two Terms are equal
      * @param that The Term to be compared with the current Term
      */
-    @Override
+    /*@Override
     public boolean equals(final Object that) {
         if (!(that instanceof Term)) return false;
         Term t = (Term)that;
@@ -83,27 +47,24 @@ public class Term implements Cloneable, Comparable<Term> {
             return false;
         }        
         return name.equals(t.getName());
-    }
-
-    /**
-     * Produce a hash code for the term
-     *
-     * @return An integer hash code
-     */
+    }*/
     @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
+    abstract public boolean equals(Object that);
 
+
+    @Override
+    abstract public Term clone();
+    
     /**
      * Check whether the current Term can name a Concept.
      *
      * @return A Term is constant by default
      */
-    public boolean isConstant() {
-        return true;
-    }
+    abstract public boolean isConstant();
     
+    /**
+     * Temporal order; default = none
+     */
     public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
     }
@@ -119,62 +80,40 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return The complexity of the term, an integer
      */
-    public short getComplexity() {
-        return 1;
-    }
+    abstract public short getComplexity();
 
-    /** only method that should modify Term.name. also caches hashcode 
-     * @return whether the name was changed
-     */
-    protected boolean setName(final String newName) {
-        if (this.name!=null) {
-            if (this.name.equals(newName)) {
-                //name is the same
-                return false;
-            }
-        }
-        
-        if (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
-            this.name = newName.intern();
-        }
-        else {
-            this.name = newName;
-        }
-        return true;
-    }
+
     
-    /**
-     * @param that The Term to be compared with the current Term
-     * @return The same as compareTo as defined on Strings
-     */
-    @Override
-    public int compareTo(final Term that) {
-        //This removes this class's dependency on CompoundTerm
-        if (that.getClass() == getClass())
-            return name.compareTo(that.getName());
-        return that.getClass().getName().compareTo(getClass().getName());
-        
-        //previously: Orders among terms: variable < atomic < compound
-        /*if (that instanceof CompoundTerm) {
-            return -1;
-        } else if (that instanceof Variable) {
-            return 1;
-        } else {
-            return name.compareTo(that.getName());            
-        }*/
-    }
+//    /**
+//     * @param that The Term to be compared with the current Term
+//     * @return The same as compareTo as defined on Strings
+//     */
+//    @Override
+//    abstract public int compareTo(final Term that) {
+//        //This removes this class's dependency on CompoundTerm
+//        if (that.getClass() == getClass())
+//            return name.compareTo(that.getName());
+//        return that.getClass().getName().compareTo(getClass().getName());
+//        
+//        //previously: Orders among terms: variable < atomic < compound
+//        /*if (that instanceof CompoundTerm) {
+//            return -1;
+//        } else if (that instanceof Variable) {
+//            return 1;
+//        } else {
+//            return name.compareTo(that.getName());            
+//        }*/
+//    }
 
     /**
      * Whether this compound term contains any variable term
      *
      * @return Whether the name contains a variable
      */
-    public boolean containVar() {
-        return false;
-    }
+    abstract public boolean containsVar();
     
     /**
-     * Recursively check if a compound contains a term
+     * Recursively check if a compound contains a term. Implements more complex behavior in CompoundTerm subclass.
      *
      * @param target The term to be searched
      * @return Whether the two have the same content
@@ -183,7 +122,7 @@ public class Term implements Cloneable, Comparable<Term> {
         return equals(target);
     }
 
-    /** whether this contains a term in its components. */
+    /** whether this contains a term in its components. Implements more complex behavior in CompoundTerm subclass.*/
     public boolean containsTerm(final Term target) {
         return equals(target);
     }
@@ -192,10 +131,8 @@ public class Term implements Cloneable, Comparable<Term> {
      * The same as getName by default, used in display only.
      *
      * @return The name of the term as a String
-     */
+     */    
     @Override
-    public final String toString() {
-        return name;
-    }
+    abstract public String toString();
 
 }

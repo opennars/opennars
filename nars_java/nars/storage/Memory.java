@@ -240,7 +240,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept or operator
      * @return a Term or null (if no Concept/InnateOperator has this name)
      */
-    public Term nameToTerm(final String name) {
+    protected Term nameToTerm(final String name) {
         final Concept concept = concepts.get(name);
         if (concept != null) {
             return concept.term;
@@ -255,7 +255,7 @@ public class Memory implements Output, Serializable {
      * @return a Concept or null
      */
     public Concept termToConcept(final Term term) {
-        return nameToConcept(term.getName());
+        return nameToConcept(term.toString());
     }
 
     /**
@@ -268,7 +268,7 @@ public class Memory implements Output, Serializable {
         if (!term.isConstant()) {
             return null;
         }
-        final String n = term.getName();
+        final String n = term.toString();
         Concept concept = concepts.get(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
@@ -438,8 +438,8 @@ public class Memory implements Output, Serializable {
                 for (Term chain1 : chain) {
                     if (task.sentence.isJudgment() && task.getContent().equals(chain1)) {
                         if(task.getParentTask()==null || 
-                           (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
-                           !(task.getContent().equals(Negation.make(task.getParentTask().getContent(), this))))) {
+                           (!(task.getParentTask().getContent().equals(Negation.make(task.getContent()))) &&
+                           !(task.getContent().equals(Negation.make(task.getParentTask().getContent()))))) {
                         if (recorder.isActive()) {
                             recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
                         }
@@ -722,7 +722,7 @@ public class Memory implements Output, Serializable {
      }
      
      public void addOperator(Operator op) {
-         operators.put(op.getName(), op);
+         operators.put(op.toString(), op);
      }
      
  

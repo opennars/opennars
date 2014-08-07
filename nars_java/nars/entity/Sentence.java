@@ -26,7 +26,6 @@ import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Terms;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -85,7 +84,7 @@ public class Sentence implements Cloneable {
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
-        this.revisible = !((content instanceof Conjunction) && Variables.containVarDep(content.getName()));
+        this.revisible = !((content instanceof Conjunction) && Variables.containVarDep(content.toString()));
     }
 
     /**
@@ -228,7 +227,7 @@ public class Sentence implements Cloneable {
     }    
     
     public boolean containQueryVar() {
-        return (content.getName().indexOf(Symbols.VAR_QUERY) >= 0);
+        return (content.toString().indexOf(Symbols.VAR_QUERY) >= 0);
     }
 
     public boolean getRevisible() {

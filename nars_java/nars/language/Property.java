@@ -21,8 +21,6 @@
 
 package nars.language;
 
-import nars.storage.Memory;
-
 /**
  * A Statement about a Property relation, which is used only in Narsese for I/O, 
  * and translated into Inheritance for internal use.
@@ -38,7 +36,7 @@ public abstract class Property /*extends Statement*/ {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Statement make(Term subject, Term predicate, Memory memory) {
-        return Inheritance.make(subject, SetInt.make(predicate, memory), memory);
+    public static Inheritance make(Term subject, Term predicate) {
+        return Inheritance.make(subject, SetInt.make(predicate));
     }
 }

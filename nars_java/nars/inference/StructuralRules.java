@@ -250,7 +250,7 @@ public final class StructuralRules {
             if (compound instanceof IntersectionInt) {
                 structuralStatement(component, pred, order, truthDed, memory);
             } else if ((compound instanceof SetExt) && (compound.size() > 1)) {
-                structuralStatement(SetExt.make(component, memory), pred, order, truthDed, memory);
+                structuralStatement(SetExt.make(component), pred, order, truthDed, memory);
             } else if (compound instanceof DifferenceInt) {
                 if (index == 0) {
                     structuralStatement(component, pred, order, truthDed, memory);
@@ -262,7 +262,7 @@ public final class StructuralRules {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(subj, component, order, truthDed, memory);
             } else if ((compound instanceof SetInt) && (compound.size() > 1)) {
-                structuralStatement(subj, SetInt.make(component, memory), order, truthDed, memory);
+                structuralStatement(subj, SetInt.make(component), order, truthDed, memory);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
                     structuralStatement(subj, component, order, truthDed, memory);
@@ -460,7 +460,7 @@ public final class StructuralRules {
             Product product = (Product) subject;
             for (short i = 0; i < product.size(); i++) {
                 newSubj = product.term[i];
-                newPred = ImageExt.make(product, predicate, i, memory);
+                newPred = ImageExt.make(product, predicate, i);
                 inheritance = Inheritance.make(newSubj, newPred, memory);
                 if (inheritance != null) {
                     if (truth == null) {
@@ -477,7 +477,7 @@ public final class StructuralRules {
             for (short i = 0; i < image.size(); i++) {
                 if (i == relationIndex) {
                     newSubj = image.term[relationIndex];
-                    newPred = Product.make(image, predicate, relationIndex, memory);
+                    newPred = Product.make(image, predicate, relationIndex);
                 } else {
                     newSubj = ImageInt.make(image, predicate, i, memory);
                     newPred = image.term[i];
@@ -530,11 +530,11 @@ public final class StructuralRules {
             int relationIndex = image.relationIndex;
             for (short i = 0; i < image.size(); i++) {
                 if (i == relationIndex) {
-                    newSubj = Product.make(image, subject, relationIndex, memory);
+                    newSubj = Product.make(image, subject, relationIndex);
                     newPred = image.term[relationIndex];
                 } else {
                     newSubj = image.term[i];
-                    newPred = ImageExt.make(image, subject, i, memory);
+                    newPred = ImageExt.make(image, subject, i);
                 }
                 inheritance = Inheritance.make(newSubj, newPred, memory);
                 if (inheritance != null) { // jmv <<<<<

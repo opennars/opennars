@@ -21,7 +21,6 @@
 package nars.language;
 
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
 
 /**
  * A negation of a statement.
@@ -34,8 +33,8 @@ public class Negation extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Negation(String name, Term[] arg) {
-        super(name, arg);
+    public Negation(Term[] arg) {
+        super(arg);
     }
 
     /**
@@ -46,14 +45,15 @@ public class Negation extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Negation(String n, Term[] cs, boolean con, short i) {
-        super(n, cs, con, i);
+    private Negation(Term[] cs, int torder, boolean con, boolean var, short i, int hashcode) {
+        super(cs, torder, con, var, i, hashcode);
     }
 
     @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
+    public boolean validSize(int num) {
+        return num >= 1;
     }
+    
     
     /**
      * Clone an object
@@ -61,8 +61,8 @@ public class Negation extends CompoundTerm {
      * @return A new object
      */
     @Override
-    public Object clone() {
-        return new Negation(getName(), cloneTerms(), isConstant(), complexity);
+    public Negation clone() {
+        return new Negation(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
     /**
@@ -72,11 +72,11 @@ public class Negation extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term t, final Memory memory) {
+    public static Term make(final Term t) {
         if (t instanceof Negation) {
             return ((Negation) t).cloneTerms()[0];
         }         // (--,(--,P)) = P
-        return make(new Term[] { t }, memory);
+        return make(new Term[] { t });
     }
 
     /**
@@ -86,13 +86,11 @@ public class Negation extends CompoundTerm {
      * @param argument The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(final Term[] argument, final Memory memory) {
+    public static Term make(final Term[] argument) {
         if (argument.length != 1) {
             return null;
         }
-        final String name = makeCompoundName(NativeOperator.NEGATION, argument);
-        final Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new Negation(name, argument);
+        return new Negation(argument);
     }
 
     /**

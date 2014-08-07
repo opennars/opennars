@@ -31,56 +31,36 @@ import nars.storage.Memory;
  * <p>
  * Internally, it is actually (\,A,P)_1, with an index.
  */
-public class ImageInt extends CompoundTerm {
-
-    /** The index of relation in the component list */
-    public final short relationIndex;
+public class ImageInt extends RelIndexCompoundTerm {
 
     /**
      * constructor with partial values, called by make
-     * @param n The name of the term
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageInt(String n, Term[] arg, short index) {
-        super(n, arg);
-        relationIndex = index;
+    public ImageInt(Term[] arg, short index) {
+        super(arg, index);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param complexity Syntactic complexity of the compound
-     * @param index The index of relation in the component list
-     */
-    private ImageInt(String n, Term[] cs, boolean con, short complexity, short index) {
-        super(n, cs, con, complexity);
-        relationIndex = index;
-    }
-
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
-    
+ 
     /**
      * Clone an object
      * @return A new object, to be casted into an ImageInt
      */
     @Override
-    public Object clone() {
-        return new ImageInt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
+    public ImageInt clone() {
+        return new ImageInt(term, relationIndex);
     }
 
     /**
-     * Try to make a new ImageExt. Called by StringParser.
+     * Try to make a new ImageInt. Called by StringParser.
      * @return the Term generated from the arguments
      * @param argList The list of term
      * @param memory Reference to the memory
+     * 
+     * TODO move this up to RelIndexCompoundTerm
      */
-    public static Term make(Term[] argList, Memory memory) {
+    public static ImageInt make(Term[] argList) {
         if (argList.length < 2) {
             return null;
         }
@@ -88,7 +68,7 @@ public class ImageInt extends CompoundTerm {
         Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {
-            if (argList[j].getName().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
+            if (argList[j].toString().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
                 index = j - 1;
                 argument[n] = relation;
             } else {
@@ -96,7 +76,7 @@ public class ImageInt extends CompoundTerm {
             }
             n++;
         }
-        return make(argument, (short) index, memory);
+        return new ImageInt(argument, (short) index);
     }
 
     /**
@@ -121,7 +101,7 @@ public class ImageInt extends CompoundTerm {
         }
         Term[] argument = product.cloneTerms();
         argument[index] = relation;
-        return make(argument, index, memory);
+        return new ImageInt(argument, index);
     }
 
     /**
@@ -132,26 +112,13 @@ public class ImageInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final ImageInt oldImage, final Term component, final short index, final Memory memory) {
+    public static ImageInt make(final ImageInt oldImage, final Term component, final short index, final Memory memory) {
         Term[] argList = oldImage.cloneTerms();
         int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
-        return make(argList, index, memory);
-    }
-
-    /**
-     * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param argument The argument list
-     * @param index The index of the place-holder in the new Image
-     * @param memory Reference to the memory
-     * @return the Term generated from the arguments
-     */
-    public static Term make(final Term[] argument, final short index, final Memory memory) {
-        String name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
-        Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new ImageInt(name, argument, index);
+        return new ImageInt(argList, index);
     }
 
 

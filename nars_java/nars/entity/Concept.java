@@ -111,7 +111,7 @@ public final class Concept extends Item {
      * @param memory A reference to the memory
      */
     public Concept(final Term tm, AbstractBag<TaskLink> taskLinks, AbstractBag<TermLink> termLinks, final Memory memory) {
-        super(tm.getName());
+        super(tm.toString());
         this.term = tm;
         this.memory = memory;
 

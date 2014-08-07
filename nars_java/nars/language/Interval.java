@@ -17,36 +17,78 @@
 
 package nars.language;
 
+import java.util.Objects;
 import nars.io.Symbols;
 
-/**
- *
- * @author peiwang
- */
-/**
- *
- * @author peiwang
- */
+
 public class Interval extends Term {
-    private final int magnitude;
+    
+    private final long time;
+    
+    /** magnitude is what is used for comparing, hash, and equality.  time is saved for reference */
+    public final int magnitude;
+    
+    transient private final int hash;
 
     // time is a positive integer
     public Interval(final long time) {
-        magnitude = (int) Math.log(time);
-        setName(Symbols.INTERVAL_PREFIX + String.valueOf(magnitude));
+        super();
+        this.time = time;
+        this.magnitude = (int)Math.log(time);        
+        this.hash = Objects.hash(Term.class.getSimpleName(), magnitude);
     }
-    
-    public Interval(final String s) {
-        magnitude = Integer.parseInt(s.substring(1));
-        setName(s);
-    }
-    
-    public long getTime() {
-        return (long) Math.ceil(Math.exp(magnitude));
+    public Interval(final String magnitudeString) {
+        super();
+        this.magnitude = Integer.parseInt(magnitudeString.substring(1));
+        this.time = (long) Math.ceil(Math.exp(magnitude));
+        this.hash = Objects.hash(Term.class.getSimpleName(), magnitude);
     }
     
     @Override
-    public Object clone() {
-        return new Interval(getName());
+    public String toString() {
+        return Symbols.INTERVAL_PREFIX + String.valueOf(magnitude);
     }
+            
+    @Override
+    public Interval clone() {
+        return new Interval(time);
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    @Override
+    public int compareTo(Term o) {
+        if (o instanceof Interval) {
+            return Integer.compare(magnitude, ((Interval)o).magnitude);
+        }
+        return -1;
+    }
+    
+    @Override
+    public boolean equals(Object that) {
+        if (that instanceof Interval) {
+            return magnitude == ((Interval)that).magnitude;
+        }
+        return false;    
+    }
+
+    @Override
+    public boolean isConstant() {
+        return true;
+    }
+
+    @Override
+    public short getComplexity() {
+        return 0;
+    }
+
+    @Override
+    public boolean containsVar() {
+        return false;
+    }
+
+ 
 }

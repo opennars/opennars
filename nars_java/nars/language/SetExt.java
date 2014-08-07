@@ -37,10 +37,10 @@ public class SetExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetExt(final String name, final Term[] arg) {
-        super(name, arg);
+    public SetExt(final Term[] arg) {
+        super(arg);
     }
-
+    
     /**
      * Constructor with full values, called by clone
      * @param n The name of the term
@@ -48,65 +48,50 @@ public class SetExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetExt(final String n, final Term[] cs, final boolean con, final short i) {
-        super(n, cs, con, i);
+    private SetExt(Term[] cs, int torder, boolean con, boolean hasVar, short complex, int hash) {
+        super(cs, torder, con, hasVar, complex, hash);
     }
 
     @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }    
+    public boolean validSize(int num) {
+        return num >= 1;
+    }
+    
     
     /**
      * Clone a SetExt
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Object clone() {
-        return new SetExt(getName(), cloneTerms(), isConstant(), complexity);
+    public SetExt clone() {
+        return new SetExt(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
-    /**
-     * Try to make a new set from one component. Called by the inference rules.
-     * @param t The compoment
-     * @param memory Reference to the memeory
-     * @return A compound generated or a term it reduced to
-     */
-    public static Term make(final Term t, final Memory memory) {
-        final TreeSet<Term> set = new TreeSet<Term>();
-        set.add(t);
-        return make(set, memory);
+    //TODO inline this and SetInt's
+    public static SetExt make(Term t) {
+        return new SetExt(new Term[] { t });
     }
 
-    /**
-     * Try to make a new SetExt. Called by StringParser.
-     * @return the Term generated from the arguments
-     * @param argList The list of term
-     * @param memory Reference to the memeory
-     */
-    public static Term make(final Collection<Term> argList, final Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
-        return make(set, memory);
+    public static SetExt make(Collection<Term> argList) {
+        return make((TreeSet)new TreeSet<Term>(argList)); // sort/merge arguments
     }
-
+    
     /**
      * Try to make a new compound from a set of term. Called by the public make methods.
      * @param set a set of Term as compoments
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(final TreeSet<Term> set, final Memory memory) {
-        if (set.isEmpty()) {
-            return null;
-        }
-        Term[] argument = set.toArray(new Term[set.size()]);
-        return make(argument, memory);
+    public static SetExt make(final TreeSet<Term> set) {
+        if (set.isEmpty())
+            return null;        
+        
+        return new SetExt(set.toArray(new Term[set.size()]));
     }
 
     private static Term make(final Term[] termSet, final Memory memory) {
-        final String name = makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch);
-        final Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new SetExt(name, termSet);
+        
+        return new SetExt(termSet);
     }
     
     /**
