@@ -29,6 +29,10 @@ import java.util.Objects;
 import java.util.Set;
 import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.io.Symbols.Tense;
+import static nars.io.Symbols.Tense.Future;
+import static nars.io.Symbols.Tense.Past;
+import static nars.io.Symbols.Tense.Present;
 import nars.language.Term;
 import nars.storage.Memory;
 
@@ -87,20 +91,24 @@ public class Stamp implements Cloneable {
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time, final String tense, final long serial) {        
+    public Stamp(final long time, final Tense tense, final long serial) {        
         baseLength = 1;
         evidentialBase = new long[baseLength];
         evidentialBase[0] = serial;
         creationTime = time;
-        if (tense.length() == 0) {
+        
+        if (tense == null) {
             occurrenceTime = ETERNAL;
-        } else if (tense.equals(Symbols.TENSE_PAST)) {
+        } else if (tense == Past) {
             occurrenceTime = time - Parameters.DURATION;
-        } else if (tense.equals(Symbols.TENSE_FUTURE)) {
+        } else if (tense == Future) {
             occurrenceTime = time + Parameters.DURATION;
-        } else { // if (tense.equals(Symbols.TENSE_PRESENT)) 
+        } else if (tense == Present) {
+            occurrenceTime = time;
+        } else {
             occurrenceTime = time;
         }
+        
         derivationChain = new LinkedHashSet<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
     }
 
@@ -110,11 +118,11 @@ public class Stamp implements Cloneable {
      * @param old The stamp to be cloned
      */
     private Stamp(final Stamp old) {
-        baseLength = old.baseLength;
-        evidentialBase = old.evidentialBase;
-        creationTime = old.creationTime;
-        occurrenceTime = old.getOccurrenceTime();
-        derivationChain = old.getChain();
+        this.baseLength = old.baseLength;
+        this.evidentialBase = old.evidentialBase;
+        this.creationTime = old.creationTime;
+        this.occurrenceTime = old.getOccurrenceTime();
+        this.derivationChain = old.getChain();
     }
 
     /**
@@ -127,19 +135,19 @@ public class Stamp implements Cloneable {
      * @param creationTim The current time
      */
     public Stamp(final Stamp old, final long creationTime) {
-        baseLength = old.baseLength;
-        evidentialBase = old.evidentialBase;
+        this.baseLength = old.baseLength;
+        this.evidentialBase = old.evidentialBase;
         this.creationTime = creationTime;
-        occurrenceTime = old.getOccurrenceTime();
-        derivationChain = old.getChain();
+        this.occurrenceTime = old.getOccurrenceTime();
+        this.derivationChain = old.getChain();
     }
 
-    public Stamp(final Stamp old, final long creationTime, Stamp useEvidentialBase) {        
+    public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {        
         this.evidentialBase = useEvidentialBase.evidentialBase;
         this.baseLength = useEvidentialBase.baseLength;
         this.creationTime = creationTime;
-        occurrenceTime = old.getOccurrenceTime();
-        derivationChain = old.getChain();
+        this.occurrenceTime = old.getOccurrenceTime();
+        this.derivationChain = old.getChain();
     }
     
     /**
@@ -154,8 +162,8 @@ public class Stamp implements Cloneable {
         
         int i1, i2, j;
         i1 = i2 = j = 0;
-        baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
-        evidentialBase = new long[baseLength];
+        this.baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
+        this.evidentialBase = new long[baseLength];
 
         final long[] firstBase = first.evidentialBase;
         final long[] secondBase = second.evidentialBase;     
@@ -242,7 +250,7 @@ public class Stamp implements Cloneable {
 //        }
     }
 
-    public Stamp(Memory memory, String tense) {
+    public Stamp(final Memory memory, final Tense tense) {
         this(memory.getTime(), tense, memory.newStampSerial());
     }
 
@@ -450,7 +458,7 @@ public class Stamp implements Cloneable {
 
 
 
-    //String toStringCache = null; //holds pre-allocated string for toString()
+    //String toStringCache = null; //holds pre-allocated symbol for toString()
     /**
      * Get a String form of the Stamp for display Format: {creationTime [:
      * eventTime] : evidentialBase}

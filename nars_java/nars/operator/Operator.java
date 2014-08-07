@@ -21,7 +21,6 @@
 
 package nars.operator;
 
-import nars.operator.mental.Believe;
 import java.util.List;
 import nars.entity.Task;
 import nars.io.Output.EXE;
@@ -45,23 +44,23 @@ public abstract class Operator extends Term {
      * Required method for every operator, specifying the corresponding
      * operation
      *
-     * @param task The task with the arguments to be passed to the operator
+     * @param args The task with the arguments to be passed to the operator
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
     protected abstract List<Task> execute(Term[] args, Memory memory);
 
-     /**
-     * The standard way to carry out an operation, which invokes the execute
-     * method defined for the operator, and handles feedback tasks as input
-     *
-     * @param task The task to be executed
-     * @param memory
-     */
+    /**
+    * The standard way to carry out an operation, which invokes the execute
+    * method defined for the operator, and handles feedback tasks as input
+    *
+    * @param op The operator to be executed
+    * @param args The arguments to be taken by the operator
+    * @param memory The memory on which the operation is executed
+    */
     public void call(final Operator op, final Term[] args, final Memory memory) {
         List<Task> feedback = op.execute(args, memory);
         reportExecution(op, args, memory);
-//        Memory.executedTask(task);            
         if (feedback != null) {
             for (Task t : feedback) {
                 memory.inputTask(t);

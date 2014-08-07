@@ -1,6 +1,12 @@
 package nars.operator;
 
 import nars.operator.mental.Believe;
+import nars.operator.mental.Consider;
+import nars.operator.mental.Evaluate;
+import nars.operator.mental.Remind;
+import nars.operator.mental.Want;
+import nars.operator.mental.Wonder;
+
 
 public class DefaultOperators {
     
@@ -15,18 +21,20 @@ public class DefaultOperators {
         return new Operator[] {
             //new Wait(),            
             new Sample(),
-            new Believe(), //accept a statement with a default truth-value
-//        table.put("^want", new Want("^want"));              // accept a statement with a default desire-value
-//        table.put("^wonder", new Wonder("^wonder"));        // find the truth-value of a statement
-//        table.put("^assess", new Assess("^assess"));        // find the desire-value of a statement
-//        /* operators for internal perceptions */
-//        table.put("^consider", new Consider("^consider"));  // find the most active concept
-//        table.put("^remind", new Remind("^remind"));        // create/activate a concept
+            new Believe(),  // accept a statement with a default truth-value
+            new Want(),     // accept a statement with a default desire-value
+            new Wonder(),   // find the truth-value of a statement
+            new Evaluate(), // find the desire-value of a statement
+            
+            //concept operations for internal perceptions
+            new Remind(),   // create/activate a concept
+            new Consider()  // find the most active concept
+            
 //        table.put("^wait", neSampleit("^wait"));              // wait for a certain number of clock cycle
         /*
          * observe          // process a new task (Channel ID: optional?)
-         * think            // carry out a working cycle
-         * do               // turn a statement into a goal
+         * -think            // carry out a working cycle
+         * -do               // turn a statement into a goal
          *
          * possibility      // return the possibility of a term
          * doubt            // decrease the confidence of a belief
@@ -44,10 +52,11 @@ public class DefaultOperators {
          * comparisons      // < = >
          * inference        // binary inference
          *
-         * assume           // local assumption ???
+         * -assume           // local assumption ???
          * name             // turn a compount term into an atomic term ???
-         * ???              // rememberAction the history of the system? excutions of operatons?
+         * -???              // rememberAction the history of the system? excutions of operatons?
          */
+                
         /* operators for testing examples */
 //        table.put("^go-to", new GoTo("^go-to"));
 //        table.put("^pick", new Pick("^pick"));
