@@ -26,6 +26,7 @@ import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.language.*;
 import nars.io.Symbols;
+import nars.io.Symbols.Tense;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -47,7 +48,7 @@ public class Believe extends Operator {
     @Override
     public ArrayList<Task> execute(Term[] args, Memory memory) {
         Term content = args[0];
-        Stamp stamp = new Stamp(memory, "");  // how to specify tense? as a term or a seperate operator?
+        Stamp stamp = new Stamp(memory, Tense.Present);
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
         float quality = BudgetFunctions.truthToQuality(truth);

@@ -35,6 +35,40 @@ public class Symbols {
     public static final char GOAL_MARK = '!';
     public static final char QUEST_MARK = '@';
 
+    public enum Tense {
+        
+        Mark(":"),
+        Past(":\\:"),
+        Present(":|:"),
+        Future(":/:");
+        
+        public final String symbol;
+        
+        private Tense(String string) {
+            this.symbol = string;            
+        }
+
+        @Override
+        public String toString() {
+            return symbol;
+        }
+        
+        
+    }
+    
+    protected static final Map<String,Tense> stringToTense 
+            = new HashMap(Tense.values().length * 2);
+            
+    static {
+        for (final Tense t : Tense.values())
+            stringToTense.put(t.toString(), t);
+    }    
+
+    public static Tense tense(final String s) {
+        return stringToTense.get(s);
+    }    
+    
+    
     /* Tense markers */
     public static final String TENSE_MARK = ":";
     public static final String TENSE_PAST = ":\\:";
@@ -112,10 +146,10 @@ public class Symbols {
         //-----------------------------------------------------
         
         
-        /** string representation of this getOperator */
-        public final String string; 
+        /** symbol representation of this getOperator */
+        public final String symbol; 
         
-        /** character representation of this getOperator if string has length 1; else ch = 0 */
+        /** character representation of this getOperator if symbol has length 1; else ch = 0 */
         public final char ch;
         
         /** is relation? */
@@ -139,7 +173,7 @@ public class Symbols {
         }
 
         private NativeOperator(String string, boolean relation, boolean innate) {            
-            this.string = string;
+            this.symbol = string;
             this.relation = relation;
             this.isNative = innate;
             this.ch = string.length() == 1 ? string.charAt(0) : 0;
@@ -149,7 +183,7 @@ public class Symbols {
         }
 
         @Override
-        public String toString() { return string; }
+        public String toString() { return symbol; }
                 
         
     }    

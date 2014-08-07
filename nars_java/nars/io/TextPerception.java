@@ -32,6 +32,7 @@ import static nars.io.Symbols.QUEST_MARK;
 import static nars.io.Symbols.STAMP_CLOSER;
 import static nars.io.Symbols.STAMP_OPENER;
 import static nars.io.Symbols.TRUTH_VALUE_MARK;
+import nars.io.Symbols.Tense;
 import static nars.io.Symbols.VALUE_SEPARATOR;
 import static nars.io.Symbols.getCloser;
 import static nars.io.Symbols.getOpener;
@@ -190,7 +191,7 @@ public class TextPerception {
             
             String budgetString = getBudgetString(buffer);
             String truthString = getTruthString(buffer);
-            String tense = parseTense(buffer);
+            Tense tense = parseTense(buffer);
             String str = buffer.toString().trim();
             int last = str.length() - 1;
             char punc = str.charAt(last);
@@ -214,7 +215,7 @@ public class TextPerception {
 
     /* ---------- react values ---------- */
     /**
-     * Return the prefix of a task string that contains a BudgetValue
+     * Return the prefix of a task symbol that contains a BudgetValue
      *
      * @param s the addInput in a StringBuilder
      * @return a String containing a BudgetValue
@@ -238,7 +239,7 @@ public class TextPerception {
     }
 
     /**
-     * Return the postfix of a task string that contains a TruthValue
+     * Return the postfix of a task symbol that contains a TruthValue
      *
      * @return a String containing a TruthValue
      * @param s the addInput in a StringBuilder
@@ -338,14 +339,14 @@ public class TextPerception {
      * @param s the addInput in a StringBuilder
      * @return a tense value
      */
-    private static String parseTense(StringBuilder s) {
+    public static Tense parseTense(StringBuilder s) {
         int i = s.indexOf(Symbols.TENSE_MARK);
         String t = "";
         if (i > 0) {
             t = s.substring(i).trim();
             s.delete(i, s.length());
         }
-        return t;
+        return Symbols.tense(t);
     }
 
     /* ---------- react String into term ---------- */
