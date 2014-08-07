@@ -733,7 +733,7 @@ public abstract class CompoundTerm extends Term {
     }
 
     protected int calcHash() {
-        return Objects.hash(operator(), term, temporalOrder);
+        return Objects.hash(operator(), Objects.hash(term), temporalOrder);
     }
     
     private void changed() {
