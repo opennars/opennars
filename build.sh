@@ -28,6 +28,10 @@ mkdir -p build/html
 mkdir -p build/html/javadoc
 
 
+#generate documentation
+javadoc -sourcepath nars_java/ -d build/html/javadoc -subpackages nars
+
+
 # install (node.js-based) "marked" markdown -> HTML converter with:    sudo npm i -g marked
 
 if [ -f `which marked` ];
@@ -46,8 +50,6 @@ fi
 
 cp -R doc/site/* build/html
 
-#generate documentation
-javadoc -sourcepath nars_java/ -d build/html/javadoc -subpackages nars
 
 
 echo 'Documentation generated in: build/html'

@@ -18,7 +18,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.storage.Bag;
+import nars.storage.AbstractBag;
 import org.jgrapht.ext.GmlExporter;
 import org.jgrapht.ext.GraphMLExporter;
 import org.jgrapht.ext.IntegerEdgeNameProvider;
@@ -46,22 +46,22 @@ public class NARGraph extends DirectedMultigraph {
      */
     public static interface Filter {
 
-        boolean includeLevel(int l);
+        boolean includePriority(float l);
 
         boolean includeConcept(Concept c);
     }
 
     
     public final static Filter IncludeEverything = new Filter() {
-        @Override public boolean includeLevel(int l) { return true;  }
+        @Override public boolean includePriority(float l) { return true;  }
         @Override public boolean includeConcept(Concept c) { return true;  }
     };
-    public final static class ExcludeLevelsBelow implements Filter { 
+    public final static class ExcludeBelowPriority implements Filter { 
 
-        final int thresh;
+        final float thresh;
         
-        public ExcludeLevelsBelow(int l) { this.thresh = l;         }        
-        @Override public boolean includeLevel(int l) { return l >= thresh;  }
+        public ExcludeBelowPriority(float l) { this.thresh = l;         }        
+        @Override public boolean includePriority(float l) { return l >= thresh;  }
         @Override public boolean includeConcept(Concept c) { return true;  }
     };
             
@@ -77,19 +77,6 @@ public class NARGraph extends DirectedMultigraph {
          */
         void onTime(NARGraph g, long time);
 
-        /**
-         * called at beginning of each level
-         * @param g
-         * @param l 
-         */
-        void preLevel(NARGraph g, int l);
-        
-        /**
-         * called at end of each level
-         * @param g
-         * @param l 
-         */
-        void postLevel(NARGraph g, int l);
 
         /**
          * called per concept
@@ -180,30 +167,24 @@ public class NARGraph extends DirectedMultigraph {
         graphize.onTime(this, n.getTime());
 
         //TODO support AbstractBag
-        Bag<Concept> bag = (Bag<Concept>)n.memory.concepts;
+        AbstractBag<Concept> bag = n.memory.concepts;
 
-        for (int level = bag.levels - 1; level >= 0; level--) {
-
-            if (!filter.includeLevel(level)) continue;
-
-            graphize.preLevel(this, level);
-
-            if (!bag.emptyLevel(level)) {
-
-                currentLevel.clear();
-                currentLevel.addAll(bag.getLevel(level));
-                
-                for (final Concept c : currentLevel) {
-
-                    if (!filter.includeConcept(c)) continue;
-                    
-                    if (c!=null)
-                        graphize.onConcept(this, c);
-                }
-
-            }
+        for (Concept c : bag) {
             
-            graphize.postLevel(this, level);
+            //TODO use more efficient iterator so that the entire list does not need to be traversed when excluding ranges
+            
+            float p = c.getPriority();
+            
+            if (!filter.includePriority(p)) continue;
+
+            //graphize.preLevel(this, p);
+
+
+            if (!filter.includeConcept(c)) continue;
+
+            graphize.onConcept(this, c);
+
+            //graphize.postLevel(this, level);
             
         }
         
@@ -260,15 +241,6 @@ public class NARGraph extends DirectedMultigraph {
             terms.clear();
             sentenceTerms.clear();
         }
-
-        @Override
-        public void preLevel(NARGraph g, int l) {
-        }
-
-        @Override
-        public void postLevel(NARGraph g, int l) {
-        }
-        
 
         protected void addTerm(NARGraph g, Term t) {
             if (terms.add(t)) {

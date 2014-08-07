@@ -38,13 +38,16 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     /** whether items are removed by random sampling, or a continuous scanning */
     private boolean randomRemoval;
     
-    /** rate of sampling index when in non-random removal mode.
-     *  valid values are:  > 0 (NOT equal) and <= 1.0 */
-    final float scanningRate = 1.0f;
+    /** Rate of sampling index when in non-random "scanning" removal mode.  
+     *  The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
+     *  Default scanning behavior is to start at 1.0 (highest priority) and decrement.
+     *  When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
+     * 
+     *  Valid values are: -1.0 <= x <= 1.0, x!=0      */
+    final float scanningRate = -1.0f;
     
-
-    /** current x (irrelevant when randomRemoval = true) */
-    float x = Memory.randomNumber.nextFloat();
+    /** current removal index x, between 0..1.0.  set automatically */
+    private float x;
 
     public ContinuousBag(int capacity, int forgetRate, boolean randomRemoval) {
         this(capacity, new AtomicInteger(forgetRate), randomRemoval);
@@ -55,8 +58,12 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
         
-        nameTable = new HashMap<>(capacity);
-        //nameTable = new FastMap<>();
+        if (randomRemoval)
+            x = Memory.randomNumber.nextFloat();
+        else
+            x = 1.0f; //start a highest priority
+        
+        nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
         items = new PrioritySortedItemList<E>(capacity);
         this.forgettingRate = forgetRate;
@@ -173,8 +180,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         int size = size();
         if (size == 0)
             throw new RuntimeException("No removal index for empty " + this);
-        
-        float y;
+                
         if (randomRemoval) {
             x = getFocus(Memory.randomNumber.nextFloat());            
         }
@@ -182,9 +188,11 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
             x += scanningRate * 1.0f / (1+size);
             if (x >= 1.0f)
                 x = x - 1.0f;
+            if (x <= 0.0f)
+                x = x + 1.0f;
         }
         
-        y = getFocus(x);
+        float y = getFocus(x);
         
         int result = (int)fastRound(y * (size()-1));            
         if (result == capacity) {
@@ -195,7 +203,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     }
     
     /**
-     * defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
+     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
      * @param x
      * @return 
      */

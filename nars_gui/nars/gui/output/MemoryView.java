@@ -25,10 +25,9 @@ import nars.entity.TruthValue;
 import nars.gui.NSlider;
 import nars.gui.Window;
 import nars.language.Term;
-import nars.storage.Bag;
 import nars.storage.Memory;
 import nars.util.NARGraph;
-import nars.util.NARGraph.ExcludeLevelsBelow;
+import nars.util.NARGraph.ExcludeBelowPriority;
 import processing.core.PApplet;
 
 
@@ -66,7 +65,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     NAR nar;
     
     
-    int minLevel = 0;
+    float minPriority = 0;
             
     public int mode = 0;
     
@@ -155,15 +154,18 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
              }
         }
         
-        public void position(float level, float index) {
+        public void position(float level, float index, float priority) {
+            float LEVELRAD = maxNodeSize * 2.5f;
+            
             if (mode == 1) {
-                tx = (index * maxNodeSize * 3.5f);
-                ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
+                tx = ((float)Math.sin(index/10d) * LEVELRAD) * 5 * ((10+index)/20);
+                //ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
+                ty = (1.0f - priority) * LEVELRAD * 150;
             }
             else if (mode == 0) {
-                float LEVELRAD = maxNodeSize * 2.5f;
 
-                double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
+                //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
+                double radius = (1.0 - priority) * LEVELRAD + 8;
                 float angle = index; //TEMPORARY
                 tx = (float)(Math.cos(angle/3.0) * radius) * LEVELRAD;
                 ty = (float)(Math.sin(angle/3.0) * radius) * LEVELRAD;
@@ -292,17 +294,16 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             try {
                 
                 graph = new NARGraph();
-                graph.add(nar, new ExcludeLevelsBelow(minLevel), 
+                graph.add(nar, new ExcludeBelowPriority(minPriority), 
                         new NARGraph.DefaultGraphizer(showBeliefs, showBeliefs, showBeliefs, true, showSyntax) {
 
-                    float level = ((Bag<Concept>)nar.memory.concepts).levels;
+                    float level;
                     float index = 0;
                     int levelContents = 0;
+                    private float priority;
 
-                    @Override
+                    
                     public void preLevel(NARGraph g, int l) {
-                        super.preLevel(g, l);
-
                         if (!compressLevels)
                             level = l;
                         
@@ -310,53 +311,33 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
                         if (mode == 1)
                             index = 0;
-                        
-                                                
                     }
 
-                    @Override
+                    
                     public void postLevel(NARGraph g, int l) {                        
                         if (compressLevels) {
                             if (levelContents > 0)
                                 level--;
                         }                        
-
-                        
-                        //center vertices on (0,0)
-                        /*
-                        boolean first = true;
-                        for (VertexDisplay v : vertices.values()) {
-                            float vx = v.tx;
-                            float vy = v.ty;
-                            if (first) {
-                                minX = maxX = vx;
-                                minY = maxY = vy;
-                                first = false;
-                            }
-                            else {
-                                if (vx < minX) minX = vx;
-                                if (vy < minY) minY = vy;
-                                if (vx > maxX) maxX = vx;
-                                if (vy > maxY) maxY = vy;
-                            }
-                        }
-                        */
-                        
                     }
                     
                     @Override
                     public void onConcept(NARGraph g, Concept c) {
                         super.onConcept(g, c);
 
+                        priority = c.getPriority();
+                        level = (int)(priority*100.0);
                         index++;
+                        
                         VertexDisplay d = displayVertex(c);
-                        d.position(level, index);
+                        d.position(level, index, priority);
                         deadVertices.remove(c);
 
                         if (currentConcept!=null)
                             if (c.equals(currentConcept))
                                 d.boost = 1.0f;                        
 
+                        
                         levelContents++;
                                  
                     }
@@ -366,7 +347,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         index++;
 
                         VertexDisplay d = displayVertex(t);
-                        d.position(level, index);
+                        d.position(level, index, priority);
                         deadVertices.remove(d);
 
                         levelContents++;
@@ -378,7 +359,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         index+= 0.25f;
 
                         VertexDisplay d = displayVertex(kb);
-                        d.position(level, index);                    
+                        d.position(level, index, priority);                    
                         deadVertices.remove(kb);
                         
                         if (currentBelief!=null)
@@ -394,7 +375,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         index+= 0.25f;
 
                         VertexDisplay d = displayVertex(t);
-                        d.position(level, index);                    
+                        d.position(level, index, priority);                    
                         deadVertices.remove(t);
 
                         if (currentTask!=null)
@@ -931,11 +912,12 @@ public class MemoryView extends Window {
         menu.add(nodeSize);
 
         
-        final int numLevels = ((Bag<Concept>)n.memory.concepts).levels;
-        NSlider maxLevels = new NSlider(numLevels, 1, numLevels) {
+        
+        //final int numLevels = ((Bag<Concept>)n.memory.concepts).levels;
+        NSlider maxLevels = new NSlider(1, 0, 1) {
             @Override
-            public void onChange(double v) {
-                app.minLevel = numLevels - (int)v;
+            public void onChange(double v) {                
+                app.minPriority = (float)(1.0 - v);
                 app.setUpdateNext();
             }          
         };        

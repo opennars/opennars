@@ -663,7 +663,7 @@ public class ProcessingGraphPanel extends JFrame {
         return new NARGraph.Filter() {
 
             @Override
-            public boolean includeLevel(int l) {  return true; }
+            public boolean includePriority(float l) {  return true; }
 
             @Override
             public boolean includeConcept(final Concept c) {
