@@ -82,11 +82,14 @@ public class TermTest {
             assertTrue(term1.getClass().equals(Inheritance.class));
             
             
-            //System.out.println("t1: " + term1 + ", complexity=" + term1.getComplexity());
-            //System.out.println("t2: " + term2 + ", complexity=" + term2.getComplexity());
+            System.out.println("t1: " + term1 + ", complexity=" + term1.getComplexity());
+            System.out.println("t2: " + term2 + ", complexity=" + term2.getComplexity());
             
             
-            assertTrue(term1.equals(term1.clone()));
+            Term term11 = term1.clone();
+            System.out.println(term1);
+            System.out.println(term11);
+            assertTrue(term1.equals(term11));
             assertTrue(term1.compareTo((Term)term1.clone())==0);            
             assertTrue(term2.equals(term2.clone()));
             assertTrue(term2.compareTo((Term)term2.clone())==0);
