@@ -59,10 +59,21 @@ body{
 	position: relative;
 }
 h1{
-	font-size: 6em;	
+	font-size: 5em;	
+        font-weight: bold;
 }
-p{
+h2{
+	font-size: 3em;	
+}
+h3{
 	font-size: 2em;
+}
+p {
+    font-size: 2em;
+    text-align: left;
+    margin-left: 2em;
+    margin-right: 2em;
+    margin-top: 2em;
 }
 .intro p{
 	width: 50%;

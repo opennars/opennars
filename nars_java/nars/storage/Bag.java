@@ -535,7 +535,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
                         if (l == -1)
                             return false; //end of the levels
                     }
-                    levelIterator = itemTable[l].iterator();
+                    levelIterator = itemTable[l].descendingIterator();
                 }
                 
                 if (levelIterator == null)
