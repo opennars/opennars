@@ -195,4 +195,15 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
         
     /** iterates all items in descending priority */
     public abstract Iterator<E> iterator();
+
+    /**
+    *  Removes a key from the nameTable, but not from the bag itself.
+    *  Use only after having tentatively removed an item with takeOut(false) to complete
+    *  the removal operation.
+    * 
+    *  @return the previous value associated with <tt>key</tt>, or 
+    *  <tt>null</tt> if there was no mapping for <tt>key</tt>.
+    */
+    abstract public E removeKey(String key);
+    
 }

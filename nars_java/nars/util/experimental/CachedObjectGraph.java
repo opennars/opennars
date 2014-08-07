@@ -69,7 +69,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
                 addVertex(c);
 
                 /*if (includeConceptTermLinks)*/ {
-                    for (TermLink t : c.termLinks.nameTable.values()) {
+                    for (TermLink t : c.termLinks.values()) {
                         Term target = t.target;
                         if (!containsVertex(target))  {
                             addVertex(target);
@@ -79,7 +79,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
                 }
 
                 /*if (includeConceptTaskLinks)*/ {
-                    for (TaskLink t : c.taskLinks.nameTable.values()) {
+                    for (TaskLink t : c.taskLinks.values()) {
                         Term target = t.target;
                         if (!containsVertex(target))  {
                             addVertex(target);

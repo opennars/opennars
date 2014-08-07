@@ -38,20 +38,12 @@ import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
+import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
 import nars.storage.NullBagObserver;
-import nars.storage.TaskLinkBag;
-import nars.storage.TermLinkBag;
 
-/**
- * A concept contains information associated with a term, including directly and
- * indirectly related tasks and beliefs.
- * <p>
- * To make sure the space will be released, the only allowed reference to a
- * concept are those in a ConceptBag. All other access go through the Term that
- * names the concept.
- */
+
 public final class Concept extends Item {
 
     /**
@@ -62,12 +54,12 @@ public final class Concept extends Item {
     /**
      * Task links for indirect processing
      */
-    public final TaskLinkBag taskLinks;
+    public final AbstractBag<TaskLink> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
      */
-    public final TermLinkBag termLinks;
+    public final AbstractBag<TermLink> termLinks;
 
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
@@ -118,7 +110,7 @@ public final class Concept extends Item {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Term tm, TaskLinkBag taskLinks, TermLinkBag termLinks, final Memory memory) {
+    public Concept(final Term tm, AbstractBag<TaskLink> taskLinks, AbstractBag<TermLink> termLinks, final Memory memory) {
         super(tm.getName());
         this.term = tm;
         this.memory = memory;
@@ -572,7 +564,7 @@ public final class Concept extends Item {
             int termLinkCount = Parameters.MAX_REASONED_TERM_LINK;
 //        while (memory.noResult() && (termLinkCount > 0)) {
             while (termLinkCount > 0) {
-                final TermLink termLink = termLinks.takeOut(currentTaskLink, memory.getTime());
+                final TermLink termLink = selectTermLink(currentTaskLink, memory.getTime());
                 if (termLink != null) {
                     if (memory.getRecorder().isActive()) {
                         memory.getRecorder().append(" * Selected TermLink: " + termLink);
@@ -647,6 +639,27 @@ public final class Concept extends Item {
             }
         }
         return buffer.toString();
+    }
+
+    /**
+     * Replace default to prevent repeated inference, by checking TaskLink
+     * @param taskLink The selected TaskLink
+     * @param time The current time
+     * @return The selected TermLink
+     */    
+    protected TermLink selectTermLink(TaskLink taskLink, long time) {
+        for (int i = 0; i < Parameters.MAX_MATCHED_TERM_LINK; i++) {
+            final TermLink termLink = termLinks.takeOut(false);
+            if (termLink == null) {
+                return null;
+            }
+            if (taskLink.novel(termLink, time)) {
+                termLinks.removeKey(termLink.getKey());
+                return termLink;
+            }
+            termLinks.putBack(termLink, false);
+        }
+        return null;        
     }
 
     static final class NullEntityObserver implements EntityObserver {
