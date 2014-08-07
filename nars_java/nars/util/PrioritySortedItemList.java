@@ -17,14 +17,14 @@ public class PrioritySortedItemList<E extends Item> extends FastTable<E>  {
         super();
     }
     
-    public int positionOf(E o) {
+    public int positionOf(final E o) {
         final int y = o.budget.getPriorityShort();
-
-        if (size() > 0)  {
+        final int s = size();
+        if (s > 0)  {
 
             //binary search
             int low = 0;
-            int high = size()-1;
+            int high = s-1;
 
             while (low <= high) {
                 int mid = (low + high) >>> 1;
@@ -51,13 +51,12 @@ public class PrioritySortedItemList<E extends Item> extends FastTable<E>  {
     }
 
     @Override
-    public boolean add(E o) {
-        if (size() == 0) {
+    public boolean add(final E o) {
+        if (isEmpty()) {
             return super.add(o);
         }
         else {
-            int p = positionOf(o);
-            super.add(p, o);
+            super.add(positionOf(o), o);
             return true;
         }
     }

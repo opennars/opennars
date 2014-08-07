@@ -480,7 +480,7 @@ public final class Concept extends Item {
         float termComplexityFactor = 1.0f / term.getComplexity();
         float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
-            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor );
+            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size() );
         }
         return result;
         

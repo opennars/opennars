@@ -30,9 +30,10 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class NALTest  {
+    int minCycles = 500; //TODO reduce this to one or zero
 
     static {
-        Memory.randomSeed = 5;
+        Memory.randomSeed = 1;
     }
     
 
@@ -182,10 +183,8 @@ public class NALTest  {
     }
     
     
-    protected void testNAL(final String path) {
-        @Deprecated int minCycles = 800; //TODO reduce this to one or zero
-                
-        
+    protected void testNAL(final String path) {               
+                        
         final NAR n = newNAR();
         
         final List<Expect> expects = new ArrayList();

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Item;
-import nars.entity.ShortFloat;
 import nars.storage.AbstractBag;
 import nars.storage.Memory;
 
@@ -15,6 +14,7 @@ import nars.storage.Memory;
 
 public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      
+    final float MASS_EPSILON = 1e-5f;
     
     /**
      * mapping from key to item
@@ -33,7 +33,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     /**
      * current sum of occupied level
      */
-    private int mass;
+    private float mass;
     
     /** whether items are removed by random sampling, or a continuous scanning */
     private boolean randomRemoval;
@@ -93,14 +93,17 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      *
      * @return The average priority of Items in the bag
      */
+    @Override
     public float getAveragePriority() {
-        if (size() == 0) {
+        final int s = size();
+        if (s == 0) {
             return 0.01f;
         }
-        float f = (float) mass / capacity;
-        if (f > 1) {
+        float f = mass / size();
+        if (f > 1f)
             return 1.0f;
-        }
+        if (f < 0.01f)
+            return 0.01f;
         return f;
     }
 
@@ -163,9 +166,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      */
     @Override
     public E takeOut(boolean removeFromNameTable) {
-        int c = size();
-                
-        if (c == 0) return null; // empty bag                
+        if (size()==0) return null; // empty bag                
         
         final E selected = takeOutIndex( nextRemovalIndex() );
         
@@ -176,16 +177,13 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     }
     
     /** distributor function */
-    public int nextRemovalIndex() {
-        int size = size();
-        if (size == 0)
-            throw new RuntimeException("No removal index for empty " + this);
-                
+    public int nextRemovalIndex() {      
+        final int s = size();
         if (randomRemoval) {
             x = getFocus(Memory.randomNumber.nextFloat());            
         }
         else {
-            x += scanningRate * 1.0f / (1+size);
+            x += scanningRate * 1.0f / (1+s);
             if (x >= 1.0f)
                 x = x - 1.0f;
             if (x <= 0.0f)
@@ -194,10 +192,11 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         float y = getFocus(x);
         
-        int result = (int)fastRound(y * (size()-1));            
-        if (result == capacity) {
+        
+        int result = (int)fastRound(y * (s-1));            
+        if (result == s) {
             throw new RuntimeException("Invalid removal index: " + x + " -> " + y);
-        }
+        }        
         
         return result;
     }
@@ -262,11 +261,12 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         items.add(newItem);
         
-        mass += (newItem.budget.getPriorityShort());                  // increase total mass
+        mass += (newItem.budget.getPriority());                  // increase total mass
         return oldItem;		// TODO return null is a bad smell
     }
 
 
+    
     
     /**
      * Take out the first or last E in a level from the itemTable
@@ -276,8 +276,8 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      */
     private E takeOutIndex(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
-        final E selected = items.remove(index);
-        mass -= selected.budget.getPriorityShort();
+        final E selected = items.remove(index);        
+        addToMass(-(selected.budget.getPriority()));
         return selected;
     }
 
@@ -287,19 +287,34 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * @param oldItem The Item to be removed
      */
     protected void outOfBase(final E oldItem) {
-        if (items.remove(oldItem)) {
-            //mass could be incorrect if priority changes while it was inserted
-            mass -= (oldItem.getPriority());            
+        /*
+        //A test for debugging to see if olditem and currentitem are ever different instances.
+        final E currentItem = items.get(items.indexOf(oldItem));
+        if (currentItem!=oldItem) {
+            System.out.println("differing items: " + currentItem);
+            System.out.println("  old: " + oldItem);
+            throw new RuntimeException();
+        }*/
+        
+        if (items.remove(oldItem)) {            
+            addToMass(-(oldItem.getPriority()));
         }
     }
 
+    protected void addToMass(float delta) {
+        mass += delta;
+        if (mass < MASS_EPSILON)  mass = 0;
+        if (mass > -MASS_EPSILON) mass = 0;
+        if (mass < 0)
+            throw new RuntimeException("Mass < 0: mass=" + mass +", items=" + size());        
+    }
 
 
     @Override
     public float getMass() {
-        if (mass < ShortFloat.MIN_VALUE)
+        if (mass < Float.MIN_VALUE)
             mass = 0;
-        return mass;
+        return mass+size();
     }
     
 

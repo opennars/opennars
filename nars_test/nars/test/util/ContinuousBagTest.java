@@ -1,7 +1,11 @@
 package nars.test.util;
 
 import nars.perf.BagPerf.NullItem;
+import nars.storage.Bag;
+import nars.storage.DefaultBag;
 import nars.util.ContinuousBag;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -104,4 +108,42 @@ public class ContinuousBagTest {
         
     }
     
+    @Test
+    public void testAveragePriority() {
+        testAveragePriority(4);
+        testAveragePriority(8);
+    }
+    
+    public void testAveragePriority(int capacity) {
+        
+        final float priorityEpsilon = 0.1f;
+        
+        ContinuousBag<NullItem> c = new ContinuousBag(capacity, 10, false);
+        Bag<NullItem> d = new DefaultBag<NullItem>(capacity, 10, 10);
+        
+        assertEquals(c.getMass(), d.getMass(), 0);
+        assertEquals(c.getAveragePriority(), d.getAveragePriority(), 0);
+        
+        c.putIn(new NullItem(.25f));
+        d.putIn(new NullItem(.25f));
+        
+        //check that continuousbag and discretebag calculate the same average priority value
+        assertTrue(c.getMass() != d.getMass()); //method of tracking mass does not need to be the same
+        assertEquals(c.getAveragePriority(), d.getAveragePriority(), priorityEpsilon);
+        
+        c.clear();
+        d.clear();
+        
+        assert(c.getAveragePriority() == 0.01f);
+        assert(d.getAveragePriority() == 0.01f);
+        
+        c.putIn(new NullItem(.25f));
+        d.putIn(new NullItem(.25f));
+        c.putIn(new NullItem(.87f));
+        d.putIn(new NullItem(.87f));
+        
+        assertEquals(c.getAveragePriority(), d.getAveragePriority(), priorityEpsilon);
+                System.out.println(c.getAveragePriority() + " "+ d.getAveragePriority());
+
+    }
 }
