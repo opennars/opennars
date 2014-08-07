@@ -58,9 +58,9 @@ public class NALTestPerf  {
     }
     
     public static void test(NAR n) {
-        int repeats = 4;
-        int warmups = 1;
-        int extraCycles = 1000;
+        int repeats = 1;
+        int warmups = 0;
+        int extraCycles = 5000;
 
         Collection c = NALTest.params();
         double totalTime = 0;
