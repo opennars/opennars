@@ -535,7 +535,12 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, Memory memory) {
-        CompoundTerm condition = (CompoundTerm) conditional.getSubject();
+        
+        if (!(conditional.getSubject() instanceof CompoundTerm))
+            return;
+        
+        CompoundTerm condition = (CompoundTerm) conditional.getSubject();        
+        
         Term component = condition.term[index];
         Term component2 = null;
         if (statement instanceof Inheritance) {

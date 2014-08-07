@@ -38,6 +38,8 @@ import nars.storage.Memory;
 
 public abstract class CompoundTerm extends Term {
     @Deprecated private static final boolean allowNonDeepCopy = false; //temporary, disables eliminating deep copy
+    //one reason why deepcopy is necessary is to eliminate cyclic clones 
+    
 
     /**
      * list of (direct) term
@@ -463,7 +465,7 @@ public abstract class CompoundTerm extends Term {
         if (original == null) {
             return null;
         }        
-                
+
         final Term[] arr = new Term[original.length + additional.length];
         
         int i;

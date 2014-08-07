@@ -40,7 +40,8 @@ public abstract class Performance {
         totalTime = 0;
         totalMemory = 0;
 
-        for (int r = 0; r < repeats+warmups; r++) {
+        int total = repeats+warmups;
+        for (int r = 0; r < total; r++) {
 
             if (gc)
                 System.gc();
