@@ -60,8 +60,8 @@ public class RuleTables {
     public static void reason(final TaskLink tLink, final TermLink bLink, final Memory memory) {
         final Task task = memory.getCurrentTask();
         Sentence taskSentence = task.sentence;
-        Term taskTerm = (Term) taskSentence.content.clone();         // cloning for substitution
-        Term beliefTerm = (Term) bLink.target.clone();       // cloning for substitution
+        Term taskTerm = taskSentence.content.clone();         // cloning for substitution
+        Term beliefTerm = bLink.target.clone();       // cloning for substitution
 
         
         if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {

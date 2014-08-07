@@ -23,7 +23,7 @@ import nars.io.Symbols;
 
 public class Interval extends Term {
     
-    private final long time;
+    public final long time;
     
     /** magnitude is what is used for comparing, hash, and equality.  time is saved for reference */
     public final int magnitude;

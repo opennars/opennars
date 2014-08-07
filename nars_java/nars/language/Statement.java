@@ -75,29 +75,29 @@ public abstract class Statement extends CompoundTerm {
         
         switch (o) {
             case INHERITANCE:
-                return Inheritance.make(subject, predicate, memory);
+                return Inheritance.make(subject, predicate);
             case SIMILARITY:
-                return Similarity.make(subject, predicate, memory);
+                return Similarity.make(subject, predicate);
             case INSTANCE:
-                return Instance.make(subject, predicate, memory);
+                return Instance.make(subject, predicate);
             case PROPERTY:
-                return Property.make(subject, predicate, memory);
+                return Property.make(subject, predicate);
             case INSTANCE_PROPERTY:
-                return InstanceProperty.make(subject, predicate, memory);
+                return InstanceProperty.make(subject, predicate);
             case IMPLICATION:
-                return Implication.make(subject, predicate, memory);
+                return Implication.make(subject, predicate);
             case IMPLICATION_AFTER:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_FORWARD, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_BACKWARD, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_BACKWARD);
             case IMPLICATION_WHEN:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_CONCURRENT, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE:
-                return Equivalence.make(subject, predicate, memory);
+                return Equivalence.make(subject, predicate);
             case EQUIVALENCE_AFTER:
-                return Equivalence.make(subject, predicate, TemporalRules.ORDER_FORWARD, memory);
+                return Equivalence.make(subject, predicate, TemporalRules.ORDER_FORWARD);
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(subject, predicate, TemporalRules.ORDER_CONCURRENT, memory);            
+                return Equivalence.make(subject, predicate, TemporalRules.ORDER_CONCURRENT);            
         }
         
         return null;
@@ -150,10 +150,10 @@ public abstract class Statement extends CompoundTerm {
      */
     public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order, final Memory memory) {
         if (statement instanceof Inheritance) {
-            return Similarity.make(subj, pred, memory);
+            return Similarity.make(subj, pred);
         }
         if (statement instanceof Implication) {
-            return Equivalence.make(subj, pred, order, memory);
+            return Equivalence.make(subj, pred, order);
         }
         return null;
     }
@@ -237,8 +237,8 @@ public abstract class Statement extends CompoundTerm {
         return com.containsTerm(t2);
     }
 
-   
-    public static boolean invalidPair(final String s1, final String s2) {
+    //TODO replace this with a non-string comparison
+    @Deprecated public static boolean invalidPair(final String s1, final String s2) {
         if (Variables.containVarIndep(s1) && !Variables.containVarIndep(s2)) {
             return true;
         } else if (!Variables.containVarIndep(s1) && Variables.containVarIndep(s2)) {

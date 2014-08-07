@@ -35,7 +35,6 @@ import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
-import nars.storage.Memory;
 
 
 public abstract class CompoundTerm extends Term {
@@ -429,7 +428,7 @@ public abstract class CompoundTerm extends Term {
             if (!t.containsVar() && allowNonDeepCopy)
                 arr[i] = t;
             else
-                arr[i] = ( deep ? (Term)t.clone() : t );
+                arr[i] = ( deep ? t.clone() : t );
 
             //arr[i] = ( deep ? (Term)t.clone() : t );
         
@@ -441,7 +440,7 @@ public abstract class CompoundTerm extends Term {
             if (!t.containsVar() && allowNonDeepCopy)
                 arr[i+j] = t;
             else            
-                arr[i+j] = ( deep ? (Term)t.clone() : t );
+                arr[i+j] = ( deep ? t.clone() : t );
             
             //arr[i+j] = ( deep ? (Term)t.clone() : t );
         }
@@ -460,7 +459,7 @@ public abstract class CompoundTerm extends Term {
             if (!t.containsVar() && allowNonDeepCopy)
                 l.add(t);
             else
-                l.add( deep ? (Term)t.clone() : t );  
+                l.add( deep ? t.clone() : t );  
             
             //l.add( deep ? (Term)t.clone() : t );
         }
@@ -471,7 +470,7 @@ public abstract class CompoundTerm extends Term {
     public ArrayList<Term> cloneTermsListDeep() {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term)
-            l.add((Term)t.clone());
+            l.add(t.clone());
         return l;        
     }
 
@@ -586,7 +585,7 @@ public abstract class CompoundTerm extends Term {
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static CompoundTerm addComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
+    public static Term addComponents(final CompoundTerm t1, final Term t2) {
         if (t2 == null)
             return t1;
         
@@ -597,7 +596,7 @@ public abstract class CompoundTerm extends Term {
         } else {
             terms = t1.cloneTerms(t2);
         }
-        return Terms.make(t1, terms, memory);
+        return Terms.make(t1, terms);
     }
 
 
@@ -611,7 +610,7 @@ public abstract class CompoundTerm extends Term {
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static CompoundTerm setComponent(final CompoundTerm compound, final int index, final Term t, final Memory memory) {
+    public static Term setComponent(final CompoundTerm compound, final int index, final Term t) {
 
         List<Term> list = compound.cloneTermsListDeep();
         
@@ -626,7 +625,7 @@ public abstract class CompoundTerm extends Term {
             }
         }
         
-        return Terms.make(compound, list, memory);
+        return Terms.make(compound, list);
     }
 
     /* ----- variable-related utilities ----- */
@@ -700,7 +699,7 @@ public abstract class CompoundTerm extends Term {
                 }
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1))
-                    term[i] = (Term) t2.clone();
+                    term[i] = t2.clone();
             } else if (t1 instanceof CompoundTerm) {
                 ((CompoundTerm) t1).applySubstitute(subs);
             }            

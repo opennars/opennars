@@ -240,7 +240,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept or operator
      * @return a Term or null (if no Concept/InnateOperator has this name)
      */
-    protected Term nameToTerm(final String name) {
+    public Term nameToTerm(final String name) {
         final Concept concept = concepts.get(name);
         if (concept != null) {
             return concept.term;

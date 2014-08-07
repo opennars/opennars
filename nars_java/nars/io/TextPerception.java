@@ -39,6 +39,7 @@ import static nars.io.Symbols.getOpener;
 import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getRelation;
 import static nars.io.Symbols.isRelation;
+import nars.language.Atom;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
@@ -393,13 +394,13 @@ public class TextPerception {
                         }
                     case SET_EXT_OPENER:
                         if (last == SET_EXT_CLOSER.ch) {
-                            return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
+                            return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory));
                         } else {
                             throw new InvalidInputException("missing ExtensionSet closer");
                         }                    
                     case SET_INT_OPENER:
                         if (last == SET_INT_CLOSER.ch) {
-                            return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
+                            return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory));
                         } else {
                             throw new InvalidInputException("missing IntensionSet closer");
                         }   
@@ -450,11 +451,10 @@ public class TextPerception {
             return new Interval(s);
         }
  
-        if (containVar(s)) {
+        if (containVar(s))
             return new Variable(s);
-        } else {
-            return new Term(s);
-        }
+        else
+            return new Atom(s);
     }
 
     /**
@@ -513,10 +513,10 @@ public class TextPerception {
         Term t;
         
         if (oNative!=null) {
-            t = make(oNative, argA, memory);
+            t = make(oNative, argA);
         }
         else if (oRegistered!=null) {
-            t = make(oRegistered, argA, memory);
+            t = make(oRegistered, argA);
         }
         else {
             throw new InvalidInputException("Invalid compound term");

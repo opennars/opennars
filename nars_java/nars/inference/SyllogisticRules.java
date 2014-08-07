@@ -114,7 +114,7 @@ public final class SyllogisticRules {
      * @param memory Reference to the memory
      */
     static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final Memory memory) {
-        if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1.getName(), term2.getName())) {
+        if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1.toString(), term2.toString())) {
             return;
         }
         int order1 = sentence1.content.getTemporalOrder();
@@ -415,18 +415,18 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent, memory);
+            newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent);
         }
         Term content;
         long delta = 0;
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
-                 delta = ((Interval) newCondition).getTime();
+                 delta = ((Interval) newCondition).time;
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                  Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
-                 delta = interval.getTime();
-                 newCondition = CompoundTerm.setComponent((CompoundTerm) newCondition, 0, null, memory);
+                 delta = interval.time;
+                 newCondition = CompoundTerm.setComponent((CompoundTerm) newCondition, 0, null);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
              } else {
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
@@ -536,7 +536,7 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent, memory);
+            newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent);
         }
         Term content;
         if (newCondition != null) {

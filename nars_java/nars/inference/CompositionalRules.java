@@ -52,6 +52,7 @@ import nars.language.Variable;
 import nars.language.Variables;
 import nars.storage.Memory;
 import static nars.inference.TruthFunctions.*;
+import nars.language.RelIndexCompoundTerm;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -129,7 +130,7 @@ public final class CompositionalRules {
                         continue;
                 }
 
-                Term conj = Conjunction.make(term1, term2, memory);
+                Term conj = Conjunction.make(term1, term2);
 
                 if (Variables.containVarDepOrIndep(conj.toString()))
                     continue;
@@ -190,44 +191,44 @@ public final class CompositionalRules {
         Term termDif = null;
         if (index == 0) {
             if (taskContent instanceof Inheritance) {
-                termOr = IntersectionInt.make(componentT, componentB, memory);
-                termAnd = IntersectionExt.make(componentT, componentB, memory);
+                termOr = IntersectionInt.make(componentT, componentB);
+                termAnd = IntersectionExt.make(componentT, componentB);
                 if (truthB.isNegative()) {
                     if (!truthT.isNegative()) {
-                        termDif = DifferenceExt.make(componentT, componentB, memory);
+                        termDif = DifferenceExt.make(componentT, componentB);
                         truthDif = intersection(truthT, negation(truthB));
                     }
                 } else if (truthT.isNegative()) {
-                    termDif = DifferenceExt.make(componentB, componentT, memory);
+                    termDif = DifferenceExt.make(componentB, componentT);
                     truthDif = intersection(truthB, negation(truthT));
                 }
             } else if (taskContent instanceof Implication) {
-                termOr = Disjunction.make(componentT, componentB, memory);
-                termAnd = Conjunction.make(componentT, componentB, memory);
+                termOr = Disjunction.make(componentT, componentB);
+                termAnd = Conjunction.make(componentT, componentB);
             }
-            processComposed(taskContent, (Term) componentCommon.clone(), termOr, order, truthOr, memory);
-            processComposed(taskContent, (Term) componentCommon.clone(), termAnd, order, truthAnd, memory);
-            processComposed(taskContent, (Term) componentCommon.clone(), termDif, order, truthDif, memory);
+            processComposed(taskContent, componentCommon.clone(), termOr, order, truthOr, memory);
+            processComposed(taskContent, componentCommon.clone(), termAnd, order, truthAnd, memory);
+            processComposed(taskContent, componentCommon.clone(), termDif, order, truthDif, memory);
         } else {    // index == 1
             if (taskContent instanceof Inheritance) {
-                termOr = IntersectionExt.make(componentT, componentB, memory);
-                termAnd = IntersectionInt.make(componentT, componentB, memory);
+                termOr = IntersectionExt.make(componentT, componentB);
+                termAnd = IntersectionInt.make(componentT, componentB);
                 if (truthB.isNegative()) {
                     if (!truthT.isNegative()) {
-                        termDif = DifferenceInt.make(componentT, componentB, memory);
+                        termDif = DifferenceInt.make(componentT, componentB);
                         truthDif = intersection(truthT, negation(truthB));
                     }
                 } else if (truthT.isNegative()) {
-                    termDif = DifferenceInt.make(componentB, componentT, memory);
+                    termDif = DifferenceInt.make(componentB, componentT);
                     truthDif = intersection(truthB, negation(truthT));
                 }
             } else if (taskContent instanceof Implication) {
-                termOr = Conjunction.make(componentT, componentB, memory);
-                termAnd = Disjunction.make(componentT, componentB, memory);
+                termOr = Conjunction.make(componentT, componentB);
+                termAnd = Disjunction.make(componentT, componentB);
             }
-            processComposed(taskContent, termOr, (Term) componentCommon.clone(), order, truthOr, memory);
-            processComposed(taskContent, termAnd, (Term) componentCommon.clone(), order, truthAnd, memory);
-            processComposed(taskContent, termDif, (Term) componentCommon.clone(), order, truthDif, memory);
+            processComposed(taskContent, termOr, componentCommon.clone(), order, truthOr, memory);
+            processComposed(taskContent, termAnd, componentCommon.clone(), order, truthAnd, memory);
+            processComposed(taskContent, termDif, componentCommon.clone(), order, truthDif, memory);
         }
     }
 
@@ -387,7 +388,7 @@ public final class CompositionalRules {
                 }
                 Task contentTask = new Task(contentBelief, task.budget);
                 memory.setCurrentTask(contentTask);
-                Term conj = Conjunction.make(component, content, memory);
+                Term conj = Conjunction.make(component, content);
                 truth = intersection(contentBelief.truth, belief.truth);
                 budget = BudgetFunctions.compoundForward(truth, conj, memory);
                 memory.doublePremiseTask(conj, truth, budget);
@@ -459,17 +460,17 @@ public final class CompositionalRules {
             term12 = taskContent.getPredicate();
             term22 = beliefContent.getPredicate();
             if ((term12 instanceof ImageExt) && (term22 instanceof ImageExt)) {
-                commonTerm = ((ImageExt) term12).getTheOtherComponent();
+                commonTerm = ((RelIndexCompoundTerm) term12).getTheOtherComponent();
                 if ((commonTerm == null) || !(/*(ImageExt)*/term22).containsTermRecursively(commonTerm)) {
-                    commonTerm = ((ImageExt) term22).getTheOtherComponent();
+                    commonTerm = ((RelIndexCompoundTerm) term22).getTheOtherComponent();
                     if ((commonTerm == null) || !(/*(ImageExt)*/term12).containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((ImageExt) term12).applySubstitute(subs);
-                    ((ImageExt) term22).applySubstitute(subs);
+                    ((CompoundTerm) term12).applySubstitute(subs);
+                    ((CompoundTerm) term22).applySubstitute(subs);
                 }
             }
         } else {
@@ -478,23 +479,23 @@ public final class CompositionalRules {
             term12 = varInd;
             term22 = varInd;
             if ((term11 instanceof ImageInt) && (term21 instanceof ImageInt)) {
-                commonTerm = ((ImageInt) term11).getTheOtherComponent();
+                commonTerm = ((RelIndexCompoundTerm) term11).getTheOtherComponent();
                 if ((commonTerm == null) || !(/*(ImageInt)*/term21).containsTermRecursively(commonTerm)) {
-                    commonTerm = ((ImageInt) term21).getTheOtherComponent();
+                    commonTerm = ((RelIndexCompoundTerm) term21).getTheOtherComponent();
                     if ((commonTerm == null) || !(/*(ImageInt)*/term11).containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((ImageInt) term11).applySubstitute(subs);
-                    ((ImageInt) term21).applySubstitute(subs);
+                    ((CompoundTerm) term11).applySubstitute(subs);
+                    ((CompoundTerm) term21).applySubstitute(subs);
                 }
             }
         }
-        Statement state1 = Inheritance.make(term11, term12, memory);
-        Statement state2 = Inheritance.make(term21, term22, memory);
-        Term content = Implication.make(state1, state2, memory);
+        Statement state1 = Inheritance.make(term11, term12);
+        Statement state2 = Inheritance.make(term21, term22);
+        Term content = Implication.make(state1, state2);
         if (content == null) {
             return;
         }
@@ -514,23 +515,23 @@ public final class CompositionalRules {
         TruthValue truth = induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
-        content = Implication.make(state2, state1, memory);
+        content = Implication.make(state2, state1);
         truth = induction(truthB, truthT);
         budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
-        content = Equivalence.make(state1, state2, memory);
+        content = Equivalence.make(state1, state2);
         truth = comparison(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
         Variable varDep = new Variable("#varDep");
         if (index == 0) {
-            state1 = Inheritance.make(varDep, taskContent.getPredicate(), memory);
-            state2 = Inheritance.make(varDep, beliefContent.getPredicate(), memory);
+            state1 = Inheritance.make(varDep, taskContent.getPredicate());
+            state2 = Inheritance.make(varDep, beliefContent.getPredicate());
         } else {
-            state1 = Inheritance.make(taskContent.getSubject(), varDep, memory);
-            state2 = Inheritance.make(beliefContent.getSubject(), varDep, memory);
+            state1 = Inheritance.make(taskContent.getSubject(), varDep);
+            state2 = Inheritance.make(beliefContent.getSubject(), varDep);
         }
-        content = Conjunction.make(state1, state2, memory);
+        content = Conjunction.make(state1, state2);
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
@@ -572,7 +573,7 @@ public final class CompositionalRules {
         
         HashMap<Term, Term> substitute = new HashMap<>();
         substitute.put(commonTerm1, new Variable("#varDep2"));
-        CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound, memory);
+        CompoundTerm content = Conjunction.make(premise1, oldCompound);
         content.applySubstitute(substitute);
         TruthValue truth = intersection(taskSentence.truth, belief.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
@@ -583,7 +584,7 @@ public final class CompositionalRules {
         if (commonTerm2 != null) {
             substitute.put(commonTerm2, new Variable("$varInd2"));
         }
-        content = Implication.make(premise1, oldCompound, memory);
+        content = Implication.make(premise1, oldCompound);
         if (content == null)
             return;
         content.applySubstitute(substitute);
@@ -608,9 +609,9 @@ public final class CompositionalRules {
         Term commonTerm = null;
         if (index == 0) {
             if ((term1 instanceof ImageExt) && (term2 instanceof ImageExt)) {
-                commonTerm = ((ImageExt) term1).getTheOtherComponent();
+                commonTerm = ((RelIndexCompoundTerm) term1).getTheOtherComponent();
                 if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
-                    commonTerm = ((ImageExt) term2).getTheOtherComponent();
+                    commonTerm = ((RelIndexCompoundTerm) term2).getTheOtherComponent();
                     if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
@@ -618,9 +619,9 @@ public final class CompositionalRules {
             }
         } else {
             if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
-                commonTerm = ((ImageInt) term1).getTheOtherComponent();
+                commonTerm = ((RelIndexCompoundTerm) term1).getTheOtherComponent();
                 if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
-                    commonTerm = ((ImageInt) term2).getTheOtherComponent();
+                    commonTerm = ((RelIndexCompoundTerm) term2).getTheOtherComponent();
                     if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
                         commonTerm = null;
                     }
@@ -631,8 +632,8 @@ public final class CompositionalRules {
     }
     
     public static void eliminateVariableOfConditionAbductive(int figure,Sentence sentence,Sentence belief, Memory memory) {
-        Term T1=(Term) sentence.content.clone();
-        Term T2=(Term) belief.content.clone();
+        Term T1=sentence.content.clone();
+        Term T2=belief.content.clone();
         Term S1=((Statement)T2).getSubject();
         Term P1=((Statement)T2).getPredicate();
         Term S2=((Statement)T1).getSubject();
@@ -823,7 +824,7 @@ public final class CompositionalRules {
             return;
         }
         CompoundTerm T = (CompoundTerm) T1;
-        CompoundTerm T2 = (CompoundTerm) content.clone();
+        Term T2 = (CompoundTerm) content.clone();
         if ((component instanceof Inheritance && content instanceof Inheritance)
                 || (component instanceof Similarity && content instanceof Similarity)) {
             CompoundTerm result = T;
@@ -832,18 +833,18 @@ public final class CompositionalRules {
             }
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
                 Variable V = new Variable("#depIndVar1");
-                CompoundTerm zw = (CompoundTerm) T.term[index].clone();
-                zw = (CompoundTerm) CompoundTerm.setComponent(zw, 1, V, memory);
-                T2 = (CompoundTerm) CompoundTerm.setComponent(T2, 1, V, memory);
-                Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
-                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+                Term zw = T.term[index].clone();
+                zw = CompoundTerm.setComponent((CompoundTerm) zw, 1, V);
+                T2 = CompoundTerm.setComponent((CompoundTerm) T2, 1, V);
+                CompoundTerm res = Conjunction.make(zw, T2);
+                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res);
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
                 Variable V = new Variable("#depIndVar2");
-                CompoundTerm zw = (CompoundTerm) T.term[index].clone();
-                zw = (CompoundTerm) CompoundTerm.setComponent(zw, 0, V, memory);
-                T2 = (CompoundTerm) CompoundTerm.setComponent(T2, 0, V, memory);
-                Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
-                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+                Term zw = (CompoundTerm) T.term[index].clone();
+                zw = CompoundTerm.setComponent((CompoundTerm) zw, 0, V);
+                T2 = CompoundTerm.setComponent((CompoundTerm) T2, 0, V);
+                CompoundTerm res = Conjunction.make(zw, T2);
+                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res);
             }
             TruthValue truth = induction(originalMainSentence.truth, subSentence.truth);
             BudgetValue budget = BudgetFunctions.compoundForward(truth, T, memory);
@@ -884,7 +885,7 @@ public final class CompositionalRules {
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
             Term[] components_level1 = ((CompoundTerm)taskterm).term;            
-            Term secterm_unwrap=(Term) unwrapNegation(secterm).clone();
+            Term secterm_unwrap=unwrapNegation(secterm).clone();
             for(Term T1 : components_level1) {
                 Term T1_unwrap=unwrapNegation(T1);
                 HashMap<Term, Term> Values = new HashMap<Term, Term>(); //we are only interested in first variables
@@ -911,7 +912,7 @@ public final class CompositionalRules {
                 if(T1_unwrap instanceof CompoundTerm) {
                     Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
                     for(Term T2 : components_level2) {
-                        Term T2_unwrap=(Term) unwrapNegation(T2).clone(); 
+                        Term T2_unwrap=unwrapNegation(T2).clone(); 
                         HashMap<Term, Term> Values3 = new HashMap<Term, Term>(); //we are only interested in first variables
                         if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<Term, Term>())) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);

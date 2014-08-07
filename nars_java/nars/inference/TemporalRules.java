@@ -140,9 +140,9 @@ public class TemporalRules {
         if (Math.abs(timeDiff) > Parameters.DURATION) {
             interval = new Interval(Math.abs(timeDiff));
             if (timeDiff > 0) {
-                t1 = Conjunction.make(t1, interval, ORDER_FORWARD, memory);
+                t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
             } else {
-                t2 = Conjunction.make(t2, interval, ORDER_FORWARD, memory);
+                t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
             }
         }
         int order;
@@ -161,9 +161,9 @@ public class TemporalRules {
         BudgetValue budget1 = BudgetFunctions.forward(truth1, memory);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, memory);
         BudgetValue budget3 = BudgetFunctions.forward(truth3, memory);
-        Statement statement1 = Implication.make(t1, t2, order, memory);
-        Statement statement2 = Implication.make(t2, t1, reverseOrder(order), memory);
-        Statement statement3 = Equivalence.make(t1, t2, order, memory);
+        Statement statement1 = Implication.make(t1, t2, order);
+        Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
+        Statement statement3 = Equivalence.make(t1, t2, order);
         memory.doublePremiseTask(statement1, truth1, budget1);
         memory.doublePremiseTask(statement2, truth2, budget2);
         memory.doublePremiseTask(statement3, truth3, budget3);
