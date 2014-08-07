@@ -217,9 +217,4 @@ public class Conjunction extends CompoundTerm {
             return make(set, temporalOrder);
         }
     }
-
-    @Override
-    public int getTemporalOrder() {
-        return temporalOrder;
-    }
 }
