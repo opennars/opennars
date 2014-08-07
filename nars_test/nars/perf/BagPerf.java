@@ -175,13 +175,13 @@ public class BagPerf {
         
         
         
-        int capacityPerLevel = 100;
-        int repeats = 1;
-        int warmups = 1;
+        int capacityPerLevel = 10;
+        int repeats = 2;
+        int warmups = 0;
         double totalDiff = 0;
-        final int iterations = 1000;
-        for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.25f) {
-            for (int levels = 10; levels <= 150; levels += 20) {
+        final int iterations = 1;
+        for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
+            for (int levels = 1; levels <= 150; levels += 2) {
 
                 final int bagCapacity = levels*capacityPerLevel;
                 int randomAccesses = 64 * bagCapacity;
@@ -198,6 +198,7 @@ public class BagPerf {
                               return new ArrayDeque<>(1+bagCapacity/_levels);
                               //return new FastTable<>();
                               //return new GapList<>(1+capacity/levels);
+                              //return new CircularArrayList<>(Item.class, 1+bagCapacity); //yes this allocates many
                           }                        
                         };
                     }                    
@@ -206,7 +207,7 @@ public class BagPerf {
                 b = compare("B", new BagBuilder() {
                     @Override public AbstractBag newBag() {
                         
-                       /* 
+                        /*
                         return new DefaultBag<Item>(_levels, bagCapacity, forgetRate) {
                           @Override
                           protected Deque<Item> newLevel() {
@@ -217,7 +218,7 @@ public class BagPerf {
                               return new CircularArrayList<>(Item.class, 1+bagCapacity); //yes this allocates many
                           }                        
                         };
-                               */
+                        */     
                         
                         return new ContinuousBag<Item>(bagCapacity, forgetRate, false);
 

@@ -5,8 +5,11 @@ import nars.core.Param;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
+import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.util.ContinuousBag;
+import nars.storage.Memory;
 
 
 public class ContinuousBagNARBuilder extends DefaultNARBuilder {
@@ -29,4 +32,14 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     public AbstractBag<Concept> newConceptBag(Param p) {
         return new ContinuousBag<Concept>(getConceptBagSize(), Parameters.CONCEPT_FORGETTING_CYCLE, randomRemoval);
     }
+    
+    @Override
+    public Concept newConcept(final Term t, final Memory m) {
+        
+        AbstractBag<TaskLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), m.param.taskForgettingRate, randomRemoval);
+        AbstractBag<TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), m.param.beliefForgettingRate, randomRemoval);
+        
+        return new Concept(t, taskLinks, termLinks, m);        
+    }
+    
 }

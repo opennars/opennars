@@ -4,14 +4,8 @@ import nars.util.ContinuousBagNARBuilder;
 import java.util.Collection;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
-import nars.core.Param;
-import nars.core.Parameters;
-import nars.entity.Concept;
-import nars.entity.Task;
-import nars.storage.AbstractBag;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.newNAR;
-import nars.util.ContinuousBag;
 
 
 /** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load */
@@ -79,12 +73,12 @@ public class NALTestPerf  {
     
     public static void main(String[] args) {
         
+        NAR nc = new ContinuousBagNARBuilder().build();
+        test(nc);
 
         NAR nd = new DefaultNARBuilder().build();
         test(nd);
         
-        NAR nc = new ContinuousBagNARBuilder().build();
-        test(nc);
         
     }
 
