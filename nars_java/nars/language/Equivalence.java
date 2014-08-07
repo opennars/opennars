@@ -22,37 +22,25 @@ package nars.language;
 
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
 
-/**
- * A Statement about an Equivalence relation.
- */
+
 public class Equivalence extends Statement {
 
-    private int temporalOrder = TemporalRules.ORDER_NONE;
 
     /**
      * Constructor with partial values, called by make
      *
      * @param components The component list of the term
      */
-    private Equivalence(String name, Term[] components, int order) {
-        super(name, components);
-        temporalOrder = order;
+    private Equivalence(Term[] components, int order) {
+        super(components, order);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     *
-     * @param n The name of the term
-     * @param components Component list
-     * @param constant Whether the statement contains open variable
-     * @param complexity Syntactic complexity of the compound
-     */
-    private Equivalence(String n, Term[] components, boolean constant, short complexity, int order) {
-        super(n, components, constant, complexity);
-        temporalOrder = order;
+    private Equivalence(Term[] cloneTerms, int temporalOrder, boolean constant, boolean containsVar, short complexity, int hashCode) {
+        super(cloneTerms, temporalOrder, constant, containsVar, complexity, hashCode);
     }
+
+
 
     /**
      * Clone an object
@@ -60,8 +48,8 @@ public class Equivalence extends Statement {
      * @return A new object
      */
     @Override
-    public Object clone() {
-        return new Equivalence(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
+    public Equivalence clone() {
+        return new Equivalence(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
     /**
@@ -73,11 +61,11 @@ public class Equivalence extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Equivalence make(Term subject, Term predicate, Memory memory) {  // to be extended to check if subject is Conjunction
-        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
+    public static Equivalence make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
+        return make(subject, predicate, TemporalRules.ORDER_NONE);
     }
 
-    public static Equivalence make(Term subject, Term predicate, int temporalOrder, Memory memory) {  // to be extended to check if subject is Conjunction
+    public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
         if (invalidStatement(subject, predicate)) {
             return null;
         }
@@ -105,12 +93,8 @@ public class Equivalence extends Statement {
             default:
                 copula = NativeOperator.EQUIVALENCE;
         }
-        String name = makeStatementName(subject, copula, predicate);
-        Term t = memory.nameToTerm(name);
-        if (t != null) {
-            return (Equivalence) t;
-        }
-        return new Equivalence(name, termArray(subject, predicate), temporalOrder);
+
+        return new Equivalence(termArray(subject, predicate), temporalOrder);
     }
 
     /**

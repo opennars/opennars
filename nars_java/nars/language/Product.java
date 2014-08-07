@@ -22,7 +22,6 @@
 package nars.language;
 
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
 
 /**
  * A Product is a sequence of 1 or more terms.
@@ -34,8 +33,8 @@ public class Product extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Product(final String name, final Term[] arg) {
-        super(name, arg);
+    public Product(final Term[] arg) {
+        super(arg);
     }
     
     /**
@@ -45,48 +44,49 @@ public class Product extends CompoundTerm {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    private Product(final String n, Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
-        super(n, cs, con, hasVar, complexity);
+    private Product(Term[] cs, int torder, final boolean con, final boolean hasVar, final short complexity, int hashcode) {
+        super(cs, torder, con, hasVar, complexity, hashcode);
+    }
+
+    @Override
+    public boolean validSize(int num) {
+        return num >= 1;
     }
     
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }    
+    
     
     /**
      * Clone a Product
      * @return A new object, to be casted into an ImageExt
      */
     @Override
-    public Object clone() {
-        return new Product(getName(), cloneTerms(), isConstant(), containVar(), complexity);
+    public Product clone() {
+        return new Product(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
-     /**
-     * Try to make a new compound. Called by StringParser.
-     * @return the Term generated from the arguments
-     * @param argument The list of term
-     * @param memory Reference to the memory
-     */
-    public static Term make(Term[] argument, final Memory memory) {
-        final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
-        final Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new Product(name, argument);
-    }
+//     /**
+//     * Try to make a new compound. Called by StringParser.
+//     * @return the Term generated from the arguments
+//     * @param argument The list of term
+//     * @param memory Reference to the memory
+//     */
+//    public static Term make(Term[] argument, final Memory memory) {
+//        final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
+//        final Term t = memory.nameToTerm(name);
+//        return (t != null) ? t : new Product(name, argument);
+//    }
         
     /**
      * Try to make a Product from an ImageExt/ImageInt and a component. Called by the inference rules.
      * @param image The existing Image
      * @param component The component to be added into the component list
      * @param index The index of the place-holder in the new Image -- optional parameter
-     * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final CompoundTerm image, final Term component, final int index, final Memory memory) {
+    public static Product make(final CompoundTerm image, final Term component, final int index) {
         Term[] argument = image.cloneTerms();
         argument[index] = component;
-        return make(argument, memory);
+        return new Product(argument);
     }
     
     /**

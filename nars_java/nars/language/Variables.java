@@ -32,7 +32,7 @@ public class Variables {
                     map2.put(term2, CommonVar);
                 } else {
                     map1.put(var1, term2);
-                    if (isCommonVariable(var1)) {
+                    if (var1.common) {
                         map2.put(var1, term2);
                     }
                 }
@@ -45,7 +45,7 @@ public class Variables {
                 return findSubstitute(type, term1, t, map1, map2, depth+1);
             } else {
                 map2.put(var2, term1);
-                if (isCommonVariable(var2)) {
+                if (var2.common) {
                     map1.put(var2, term1);
                 }
                 return true;
@@ -97,7 +97,7 @@ public class Variables {
      * @param n The string name to be checked
      * @return Whether the name contains a variable
      */
-    public static boolean containVar(final String n) {
+    @Deprecated public static boolean containVar(final String n) {
         final int l = n.length();
         for (int i = 0; i < l; i++) {
             switch (n.charAt(i)) {
@@ -110,6 +110,13 @@ public class Variables {
         return false;
     }
 
+    public static boolean containVar(final Term[] n) {
+        final int l = n.length;
+        for (int i = 0; i < l; i++) {
+            if (n[i].containsVar()) return true;
+        }
+        return false;
+    }    
     /**
      * To unify two terms
      *
@@ -162,13 +169,9 @@ public class Variables {
     }
 
     public static Variable makeCommonVariable(final Term v1, final Term v2) {
-        return new Variable(v1.getName() + v2.getName() + '$');
+        return new Variable(v1.toString() + v2.toString() + '$');
     }
 
-    public static boolean isCommonVariable(final Variable v) {
-        String s = v.getName();        
-        return s.charAt(s.length() - 1) == '$';
-    }
 
     /**
      * Check whether a string represent a name of a term that contains a

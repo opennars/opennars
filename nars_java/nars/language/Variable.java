@@ -20,11 +20,12 @@
  */
 package nars.language;
 
-/**
- * A variable term, which does not correspond to a concept
- */
-public class Variable extends Term {
 
+public class Variable extends Atom {
+
+    final char type;
+    final boolean common;
+    
     /**
      * Constructor, from a given variable name
      *
@@ -32,6 +33,8 @@ public class Variable extends Term {
      */
     public Variable(final String s) {
         super(s);
+        type = s.charAt(0);
+        common = (s.charAt(s.length() - 1) == '$');        
     }
 
     /**
@@ -40,8 +43,8 @@ public class Variable extends Term {
      * @return The cloned Variable
      */
     @Override
-    public Object clone() {
-        return new Variable(getName());
+    public Variable clone() {
+        return new Variable(name);
     }
 
     /**
@@ -50,7 +53,7 @@ public class Variable extends Term {
      * @return The variable type
      */
     public char getType() {
-        return getName().charAt(0);
+        return type;
     }
 
     /**
@@ -75,7 +78,7 @@ public class Variable extends Term {
 
 
     @Override
-    public boolean containVar() {
+    public boolean containsVar() {
         return true;
     }
 
@@ -105,14 +108,14 @@ public class Variable extends Term {
 //        }
 //    }
 
-    /**
-     * variable terms are listed first alphabetically
-     *
-     * @param that The Term to be compared with the current Term
-     * @return The same as compareTo as defined on Strings
-     */
-    @Override
-    public final int compareTo(final Term that) {
-        return (that instanceof Variable) ? getName().compareTo(that.getName()) : -1;
-    }
+//    /**
+//     * variable terms are listed first alphabetically
+//     *
+//     * @param that The Term to be compared with the current Term
+//     * @return The same as compareTo as defined on Strings
+//     */
+//    @Override
+//    public final int compareTo(final Term that) {
+//        return (that instanceof Variable) ? getName().compareTo(that.getName()) : -1;
+//    }
 }

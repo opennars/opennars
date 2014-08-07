@@ -31,7 +31,6 @@ import nars.storage.Memory;
  * relation symbol in between. It can be of either first-order or higher-order.
  */
 public abstract class Statement extends CompoundTerm {
-    private StringBuilder nameBuilder;
 
     
     /**
@@ -39,29 +38,27 @@ public abstract class Statement extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Statement(final String name, final Term[] arg) {
-        super(name, arg);
+    protected Statement(final Term[] arg) {
+        super(arg);
     }
-    
-    /**
-     * Constructor with full values, called by clone
-     *
-     * @param n The nameStr of the term
-     * @param cs Component list
-     * @param con Constant indicator
-     * @param i Syntactic complexity of the compound
-     */
-    @Deprecated protected Statement(final String n, final Term[] cs, final boolean con, final short i) {
-        super(n, cs, con, i);
+
+    protected Statement(final Term[] arg, int torder) {
+        super(arg, torder);
     }
     
     /**
      * High-performance constructor that avoids recalculating some Term metadata when created
      */
-    protected Statement(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
-        super(n, cs, con, hasVar, i);
+    protected Statement(final Term[] args, int torder, final boolean con, final boolean hasVar, final short i, int hash) {
+        super(args, torder, con, hasVar, i, hash);
     }
 
+    @Override
+    public boolean validSize(int num) {
+        return num == 2;
+    }
+
+    
     /**
      * Make a Statement from String, called by StringParser
      *
@@ -123,16 +120,16 @@ public abstract class Statement extends CompoundTerm {
     public static Statement make(final Statement statement, final Term subj, final Term pred, int order, final Memory memory) {
 
         if (statement instanceof Inheritance) {
-            return Inheritance.make(subj, pred, memory);
+            return Inheritance.make(subj, pred);
         }
         if (statement instanceof Similarity) {
-            return Similarity.make(subj, pred, memory);
+            return Similarity.make(subj, pred);
         }
         if (statement instanceof Implication) {
-            return Implication.make(subj, pred, order, memory);
+            return Implication.make(subj, pred, order);
         }
         if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, order, memory);
+            return Equivalence.make(subj, pred, order);
         }
         
         System.err.println("Unrecognized type for Statement.make: " + statement.getClass().getSimpleName() + ", subj=" + subj + ", pred=" + pred + ", order=" + order);
@@ -161,21 +158,11 @@ public abstract class Statement extends CompoundTerm {
         return null;
     }
 
-
-
-    /**
-     * Override the default in making the nameStr of the current term from
-     * existing fields
-     *
-     * @return the nameStr of the term
-     */
     @Override
-    protected String makeName() {
-        if (nameBuilder==null)
-            nameBuilder = new StringBuilder();
-        
-        return makeStatementName(getSubject(), operator(), getPredicate(), nameBuilder);
+    public String makeName() {
+        return makeStatementName(getSubject(), operator(), getPredicate());
     }
+
 
     /**
      * Default method to make the nameStr of an image term from given fields
@@ -185,18 +172,12 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate, StringBuilder nameBuilder) {
-        final String subjectName = subject.getName();
-        final String predicateName = predicate.getName();
+    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+        final String subjectName = subject.toString();
+        final String predicateName = predicate.toString();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
-        
-        if (nameBuilder == null) {
-            nameBuilder = new StringBuilder(length);
-        }
-        nameBuilder.setLength(0);
-        nameBuilder.ensureCapacity(length);
-        
-        return nameBuilder
+                
+        return new StringBuilder(length)
             .append(STATEMENT_OPENER.ch)
             .append(subjectName)
             .append(' ').append(relation).append(' ')
@@ -204,10 +185,7 @@ public abstract class Statement extends CompoundTerm {
             .append(STATEMENT_CLOSER.ch)
             .toString();
     }
-    
-    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
-        return makeStatementName(subject, relation, predicate, null);
-    }
+
 
     /**
      * Check the validity of a potential Statement. [To be refined]
@@ -300,7 +278,6 @@ public abstract class Statement extends CompoundTerm {
     public Term getPredicate() {
         return term[1];
     }
-
-    @Override
-    public abstract Object clone();
+    
+    @Override public abstract Statement clone();
 }

@@ -195,17 +195,17 @@ public class Terms {
      * @param memory Reference to the memory
      * @return A compound term or null
      */
-    public static Term make(final CompoundTerm compound, final Term[] components, final Memory memory) {
+    public static CompoundTerm make(final CompoundTerm compound, final Term[] components, final Memory memory) {
         if (compound instanceof ImageExt) {
-            return ImageExt.make(components, ((ImageExt) compound).relationIndex, memory);
+            return new ImageExt(components, ((ImageExt) compound).relationIndex);
         } else if (compound instanceof ImageInt) {
-            return ImageInt.make(components, ((ImageInt) compound).relationIndex, memory);
+            return new ImageInt(components, ((ImageInt) compound).relationIndex);
         } else {
             return make(compound.operator(), components, memory);
         }
     }
 
-    public static Term make(final CompoundTerm compound, Collection<Term> components, final Memory memory) {
+    public static CompoundTerm make(final CompoundTerm compound, Collection<Term> components, final Memory memory) {
         Term[] c = components.toArray(new Term[components.size()]);
         return make(compound, c, memory);
     }
@@ -220,12 +220,12 @@ public class Terms {
      * @param memory Reference to the memory
      * @return A compound term or null
      */
-    public static Term make(final NativeOperator op, final Term[] a, final Memory memory) {
+    public static CompoundTerm make(final NativeOperator op, final Term[] a, final Memory memory) {
         switch (op) {
             case SET_EXT_OPENER:
-                return SetExt.make(CompoundTerm.termList(a), memory);
+                return SetExt.make(CompoundTerm.termList(a));
             case SET_INT_OPENER:
-                return SetInt.make(CompoundTerm.termList(a), memory);
+                return SetInt.make(CompoundTerm.termList(a));
             
             case INTERSECTION_EXT:
                 return IntersectionExt.make(CompoundTerm.termList(a), memory);
@@ -241,12 +241,12 @@ public class Terms {
                 return Inheritance.make(a[0], a[1], memory);
             
             case PRODUCT:
-                return Product.make(a, memory);
+                return new Product(a);
             
             case IMAGE_EXT:
-                return ImageExt.make(a, memory);
+                return ImageExt.make(a);
             case IMAGE_INT:
-                return ImageInt.make(a, memory);
+                return ImageInt.make(a);
             
             case NEGATION:
                 return Negation.make(a, memory);

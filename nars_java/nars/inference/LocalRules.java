@@ -131,7 +131,7 @@ public class LocalRules {
                 }
             }
             Term content = belief.cloneContent();
-            if (Variables.containVarIndep(content.getName())) {
+            if (Variables.containVarIndep(content.toString())) {
                 Variables.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
                 belief = belief.clone(content);
                 Stamp st = new Stamp(belief.stamp, memory.getTime());
@@ -280,11 +280,11 @@ public class LocalRules {
         final Term subjB = beliefContent.getSubject();
         final Term predB = beliefContent.getPredicate();
         Term otherTerm;
-        if (Variables.containVarQuery(subjT.getName())) {
+        if (Variables.containVarQuery(subjT.toString())) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, otherTerm, predT, order, memory);
         }
-        if (Variables.containVarQuery(predT.getName())) {
+        if (Variables.containVarQuery(predT.toString())) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, subjT, otherTerm, order, memory);
         }

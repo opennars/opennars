@@ -40,20 +40,19 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    public Operation(String name, Term[] arg) {
-        super(name, arg);
+    public Operation(Term[] arg) {
+        super(arg);
     }
 
     /**
      * Constructor with full values, called by clone
      *
-     * @param n The name of the term
      * @param cs Component list
      * @param con Whether the term is a constant
      * @param complexity Syntactic complexity of the compound
      */
-    protected Operation(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
-        super(n, cs, con, hasVar, complexity);
+    protected Operation(final Term[] cs, int torder, final boolean con, final boolean hasVar, final short complexity, int hash) {
+        super(cs, torder, con, hasVar, complexity, hash);
     }
 
     /**
@@ -62,8 +61,8 @@ public class Operation extends Inheritance {
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Object clone() {        
-        return new Operation(name, cloneTerms(), isConstant(), containVar(), getComplexity());
+    public Operation clone() {        
+        return new Operation(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
     /**
@@ -73,20 +72,16 @@ public class Operation extends Inheritance {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Operation make(Operator oper, final Term[] arg, final Memory memory) {        
+    public static Operation make(Operator oper, final Term[] arg) {
         if (oper == null) {
             return null;
         }
-        String name = makeName(oper.getName(), arg, memory);
-        Term t = memory.nameToTerm(name);
-        if (t != null) {
-            return (Operation) t;
-        }
+        
         ArrayList<Term> opArg = new ArrayList<>();
-        Term list = Product.make(arg, memory);
+        Term list = new Product(arg);
         opArg.add(list);
         opArg.add(oper);
-        return new Operation(name, opArg.toArray(new Term[opArg.size()]));
+        return new Operation(opArg.toArray(new Term[opArg.size()]));
     }
 
     public static String makeName(final String op, Term[] arg, final Memory memory) {
@@ -95,7 +90,7 @@ public class Operation extends Inheritance {
         
         for (final Term t : arg) {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
-            nameBuilder.append(t.getName());
+            nameBuilder.append(t.toString());
         }
         
         nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
