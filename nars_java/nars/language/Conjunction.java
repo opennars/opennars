@@ -36,7 +36,7 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    private Conjunction(Term[] arg, int order) {
+    public Conjunction(Term[] arg, int order) {
         super(arg, order);
     }
 
@@ -45,8 +45,6 @@ public class Conjunction extends CompoundTerm {
         return num >= 1;
     }
 
-    
-    
     /**
      * Constructor with full values, called by clone
      *
@@ -57,7 +55,7 @@ public class Conjunction extends CompoundTerm {
      */
     private Conjunction(Term[] arg, int torder, boolean con, boolean var, short i, int hash) {
         super(arg, torder, con, var, i, hash);
-        
+
     }
 
     /**
@@ -83,8 +81,8 @@ public class Conjunction extends CompoundTerm {
             case TemporalRules.ORDER_CONCURRENT:
                 return NativeOperator.PARALLEL;
             default:
-        return NativeOperator.CONJUNCTION;
-    	}
+                return NativeOperator.CONJUNCTION;
+        }
     }
 
     /**
@@ -98,8 +96,7 @@ public class Conjunction extends CompoundTerm {
     }
 
     /**
-     * Try to make a new compound from a list of term. Called by
-     * StringParser.
+     * Try to make a new compound from a list of term. Called by StringParser.
      *
      * @return the Term generated from the arguments
      * @param argList the list of arguments
@@ -108,10 +105,9 @@ public class Conjunction extends CompoundTerm {
     public static Term make(Term[] argList) {
         return make(argList, TemporalRules.ORDER_NONE);
     }
-        
+
     /**
-     * Try to make a new compound from a list of term. Called by
-     * StringParser.
+     * Try to make a new compound from a list of term. Called by StringParser.
      *
      * @param temporalOrder The temporal order among term
      * @param argList the list of arguments
@@ -135,8 +131,8 @@ public class Conjunction extends CompoundTerm {
     }
 
     /**
-     * Try to make a new Disjunction from a set of term. Called by the
-     * public make methods.
+     * Try to make a new Disjunction from a set of term. Called by the public
+     * make methods.
      *
      * @param set a set of Term as term
      * @param memory Reference to the memory
@@ -159,28 +155,26 @@ public class Conjunction extends CompoundTerm {
                 break;
             default:
                 op = NativeOperator.PARALLEL;
-                break;                                
+                break;
         }
-        
+
         return makeCompoundName(op, term);
     }
 
-    
     // overload this method by term type?
     /**
-     * Try to make a new compound from two term. Called by the inference
-     * rules.
+     * Try to make a new compound from two term. Called by the inference rules.
      *
      * @param term1 The first component
      * @param term2 The second component
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term term1, final Term term2) {
+    public static CompoundTerm make(final Term term1, final Term term2) {
         return make(term1, term2, TemporalRules.ORDER_NONE);
     }
 
-    public static Term make(final Term term1, final Term term2, int temporalOrder) {
+    public static CompoundTerm make(final Term term1, final Term term2, int temporalOrder) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final ArrayList<Term> list;
             if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
@@ -189,36 +183,37 @@ public class Conjunction extends CompoundTerm {
                     list.addAll(((CompoundTerm) term2).cloneTermsList());
                 } // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 else {
-                    list.add((Term) term2.clone());
+                    list.add(term2.clone());
                 }                          // (&,(&,P,Q),R) = (&,P,Q,R)
             } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 list = new ArrayList<>(((CompoundTerm) term2).size() + 1);
-                list.add((Term) term1.clone());
+                list.add(term1.clone());
                 list.addAll(((CompoundTerm) term2).cloneTermsList()); // (&,R,(&,P,Q)) = (&,P,Q,R)
             } else {
                 list = new ArrayList<>(2);
-                list.add((Term) term1.clone());
-                list.add((Term) term2.clone());
+                list.add(term1.clone());
+                list.add(term2.clone());
             }
-            return make(list.toArray(new Term[list.size()]), temporalOrder);
+            
+            return (CompoundTerm)make(list.toArray(new Term[list.size()]), temporalOrder);
         } else {
-        final TreeSet<Term> set;
-        if (term1 instanceof Conjunction) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
-            if (term2 instanceof Conjunction) {
-                set.addAll(((CompoundTerm) term2).cloneTermsList());
-            } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-            else {
-                set.add((Term) term2.clone());
-            }                          // (&,(&,P,Q),R) = (&,P,Q,R)
-        } else if (term2 instanceof Conjunction) {
-            set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
-            set.add((Term) term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
-        } else {
-            set = new TreeSet<>();
-            set.add((Term) term1.clone());
-            set.add((Term) term2.clone());
-        }
+            final TreeSet<Term> set;
+            if (term1 instanceof Conjunction) {
+                set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
+                if (term2 instanceof Conjunction) {
+                    set.addAll(((CompoundTerm) term2).cloneTermsList());
+                } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+                else {
+                    set.add(term2.clone());
+                }                          // (&,(&,P,Q),R) = (&,P,Q,R)
+            } else if (term2 instanceof Conjunction) {
+                set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
+                set.add(term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
+            } else {
+                set = new TreeSet<>();
+                set.add(term1.clone());
+                set.add(term2.clone());
+            }
             return make(set, temporalOrder);
         }
     }

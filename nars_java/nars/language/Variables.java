@@ -56,7 +56,7 @@ public class Variables {
             if (cTerm1.size() != (cTerm2).size()) {
                 return false;
             }
-            if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
+            if ((cTerm1 instanceof ImageExt) && (((RelIndexCompoundTerm) cTerm1).relationIndex != ((RelIndexCompoundTerm) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((RelIndexCompoundTerm) cTerm1).relationIndex != ((RelIndexCompoundTerm) cTerm2).relationIndex)) {
                 return false;
             }
             Term[] list = cTerm1.cloneTerms();
@@ -97,7 +97,7 @@ public class Variables {
      * @param n The string name to be checked
      * @return Whether the name contains a variable
      */
-    @Deprecated public static boolean containVar(final String n) {
+    public static boolean containVar(final String n) {
         final int l = n.length();
         for (int i = 0; i < l; i++) {
             switch (n.charAt(i)) {

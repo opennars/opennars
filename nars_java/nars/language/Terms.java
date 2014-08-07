@@ -63,7 +63,7 @@ public class Terms {
         if (!(itself instanceof CompoundTerm))
             return null;
         
-        Term reduced = reduceComponentOneLayer(itself, replacement, memory);
+        Term reduced = reduceComponentOneLayer(itself, replacement);
         if (!(reduced instanceof CompoundTerm))
             return null;
         
@@ -75,13 +75,13 @@ public class Terms {
                 j++;
                 continue;
             }
-            Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
+            Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement);
             
-            CompoundTerm itselfCompound = (CompoundTerm)itself;
+            CompoundTerm itselfCompound = itself;
             CompoundTerm replaced = null;
             if (j < itself.term.length  )
                 replaced = (CompoundTerm) CompoundTerm.setComponent(
-                    (CompoundTerm) itself, j, ret2, memory);
+                        itself, j, ret2);
             
             if (replaced != null) {
                 itself = replaced;
@@ -97,23 +97,23 @@ public class Terms {
     final char c = op.charAt(0);
     switch (c) {
     case Symbols.SET_EXT_OPENER:
-    return SetExt.make(arg, memory);
+    return SetExt.make(arg);
     case Symbols.SET_INT_OPENER:
-    return SetInt.make(arg, memory);
+    return SetInt.make(arg);
     case Symbols.INTERSECTION_EXT_OPERATORc:
-    return IntersectionExt.make(arg, memory);
+    return IntersectionExt.make(arg);
     case Symbols.INTERSECTION_INT_OPERATORc:
-    return IntersectionInt.make(arg, memory);
+    return IntersectionInt.make(arg);
     case Symbols.DIFFERENCE_EXT_OPERATORc:
-    return DifferenceExt.make(arg, memory);
+    return DifferenceExt.make(arg);
     case Symbols.DIFFERENCE_INT_OPERATORc:
-    return DifferenceInt.make(arg, memory);
+    return DifferenceInt.make(arg);
     case Symbols.PRODUCT_OPERATORc:
-    return Product.make(arg, memory);
+    return Product.make(arg);
     case Symbols.IMAGE_EXT_OPERATORc:
-    return ImageExt.make(arg, memory);
+    return ImageExt.make(arg);
     case Symbols.IMAGE_INT_OPERATORc:
-    return ImageInt.make(arg, memory);
+    return ImageInt.make(arg);
     }
     }
     else if (length == 2) {
@@ -123,16 +123,16 @@ public class Terms {
     if (c1 == c2) {
     switch (c1) {
     case Symbols.NEGATION_OPERATORc:
-    return Negation.make(arg, memory);
+    return Negation.make(arg);
     case Symbols.DISJUNCTION_OPERATORc:
-    return Disjunction.make(arg, memory);
+    return Disjunction.make(arg);
     case Symbols.CONJUNCTION_OPERATORc:
-    return Conjunction.make(arg, memory);
+    return Conjunction.make(arg);
     }
     } else if (op.equals(Symbols.SEQUENCE_OPERATOR)) {
-    return Conjunction.make(arg, TemporalRules.ORDER_FORWARD, memory);
+    return Conjunction.make(arg, TemporalRules.ORDER_FORWARD);
     } else if (op.equals(Symbols.PARALLEL_OPERATOR)) {
-    return Conjunction.make(arg, TemporalRules.ORDER_CONCURRENT, memory);
+    return Conjunction.make(arg, TemporalRules.ORDER_CONCURRENT);
     }
     }
     throw new RuntimeException("Unknown Term operator: " + op);
@@ -156,7 +156,7 @@ public class Terms {
         }
         if (list != null) {
             if (list.length > 1) {
-                return make(t1, list, memory);
+                return make(t1, list);
             }
             if (list.length == 1) {
                 if ((t1 instanceof Conjunction) || (t1 instanceof Disjunction) || (t1 instanceof IntersectionExt) || (t1 instanceof IntersectionInt) || (t1 instanceof DifferenceExt) || (t1 instanceof DifferenceInt)) {
@@ -167,7 +167,7 @@ public class Terms {
         return null;
     }
 
-    public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2, Memory memory) {
+    public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2) {
         Term[] list;
         if (t1.getClass() == t2.getClass()) {
             list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
@@ -176,7 +176,7 @@ public class Terms {
         }
         if (list != null) {
             if (list.length > 1) {
-                return make(t1, list, memory);
+                return make(t1, list);
             } else if (list.length == 1) {
                 if (t1 instanceof CompoundTerm) {
                     return list[0];
@@ -195,19 +195,19 @@ public class Terms {
      * @param memory Reference to the memory
      * @return A compound term or null
      */
-    public static CompoundTerm make(final CompoundTerm compound, final Term[] components, final Memory memory) {
+    public static Term make(final CompoundTerm compound, final Term[] components) {
         if (compound instanceof ImageExt) {
-            return new ImageExt(components, ((ImageExt) compound).relationIndex);
+            return new ImageExt(components, ((RelIndexCompoundTerm) compound).relationIndex);
         } else if (compound instanceof ImageInt) {
-            return new ImageInt(components, ((ImageInt) compound).relationIndex);
+            return new ImageInt(components, ((RelIndexCompoundTerm) compound).relationIndex);
         } else {
-            return make(compound.operator(), components, memory);
+            return make(compound.operator(), components);
         }
     }
 
-    public static CompoundTerm make(final CompoundTerm compound, Collection<Term> components, final Memory memory) {
+    public static Term make(final CompoundTerm compound, Collection<Term> components) {
         Term[] c = components.toArray(new Term[components.size()]);
-        return make(compound, c, memory);
+        return make(compound, c);
     }
 
     /**
@@ -220,7 +220,7 @@ public class Terms {
      * @param memory Reference to the memory
      * @return A compound term or null
      */
-    public static CompoundTerm make(final NativeOperator op, final Term[] a, final Memory memory) {
+    public static Term make(final NativeOperator op, final Term[] a) {
         switch (op) {
             case SET_EXT_OPENER:
                 return SetExt.make(CompoundTerm.termList(a));
@@ -228,17 +228,17 @@ public class Terms {
                 return SetInt.make(CompoundTerm.termList(a));
             
             case INTERSECTION_EXT:
-                return IntersectionExt.make(CompoundTerm.termList(a), memory);
+                return IntersectionExt.make(CompoundTerm.termList(a));
             case INTERSECTION_INT:
-                return IntersectionInt.make(CompoundTerm.termList(a), memory);
+                return IntersectionInt.make(CompoundTerm.termList(a));
             
             case DIFFERENCE_EXT:
-                return DifferenceExt.make(a, memory);
+                return DifferenceExt.make(a);
             case DIFFERENCE_INT:
-                return DifferenceInt.make(a, memory);
+                return DifferenceInt.make(a);
             
             case INHERITANCE:
-                return Inheritance.make(a[0], a[1], memory);
+                return Inheritance.make(a[0], a[1]);
             
             case PRODUCT:
                 return new Product(a);
@@ -249,33 +249,33 @@ public class Terms {
                 return ImageInt.make(a);
             
             case NEGATION:
-                return Negation.make(a, memory);
+                return Negation.make(a);
             
             case DISJUNCTION:
-                return Disjunction.make(CompoundTerm.termList(a), memory);
+                return Disjunction.make(CompoundTerm.termList(a));
             case CONJUNCTION:
-                return Conjunction.make(a, memory);
+                return Conjunction.make(a);
             
             case SEQUENCE:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, memory);
+                return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
             case PARALLEL:
-                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, memory);
+                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
             
             case IMPLICATION:
-                return Implication.make(a[0], a[1], memory);
+                return Implication.make(a[0], a[1]);
             case IMPLICATION_AFTER:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD, memory);
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD, memory);
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD);
             case IMPLICATION_WHEN:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, memory);
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
 
             case EQUIVALENCE:
-                return Equivalence.make(a[0], a[1], memory);            
+                return Equivalence.make(a[0], a[1]);            
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, memory);
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE_AFTER:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD, memory);
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
             
         }
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");

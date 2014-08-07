@@ -70,7 +70,7 @@ public class LocalRules {
                 if (revisible(sentence, belief)) {
                     revision(sentence, belief, true, memory);
                 }
-            } else if (Variables.unify(Symbols.VAR_QUERY, sentence.content, (Term) belief.content.clone())) {
+            } else if (Variables.unify(Symbols.VAR_QUERY, sentence.content, belief.content.clone())) {
                 trySolution(belief, task, memory);
             }
         }
@@ -200,9 +200,9 @@ public class LocalRules {
         Term t2 = s1.getPredicate();
         Term content;
         if (s1 instanceof Inheritance) {
-            content = Similarity.make(t1, t2, memory);
+            content = Similarity.make(t1, t2);
         } else {
-            content = Equivalence.make(t1, t2, s1.getTemporalOrder(), memory);
+            content = Equivalence.make(t1, t2, s1.getTemporalOrder());
         }
         TruthValue value1 = judgment1.truth;
         TruthValue value2 = judgment2.truth;

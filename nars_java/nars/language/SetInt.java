@@ -72,7 +72,7 @@ public class SetInt extends CompoundTerm {
     }
 
     public static SetInt make(Collection<Term> argList) {
-        return make ((TreeSet)new TreeSet<Term>(argList)); // sort/merge arguments
+        return make (new TreeSet<Term>(argList)); // sort/merge arguments
     }
 
     /**

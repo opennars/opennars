@@ -22,13 +22,9 @@ package nars.language;
 
 import java.util.Collection;
 import java.util.TreeSet;
-import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
 
-/** 
- * A disjunction of Statements.
- */
+
 public class Disjunction extends CompoundTerm {
 
     /**
@@ -36,37 +32,28 @@ public class Disjunction extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Disjunction(final String name, final Term[] arg) {
-        super(name, arg);
+    private Disjunction(final Term[] arg) {
+        super(arg);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private Disjunction(String n, Term[] arg, boolean con, short i) {
-        super(n, arg, con, i);
-        /*if (arg.size()<2) {
-            throw new RuntimeException("Conjunction requires >=2 term");
-        } */       
+    private Disjunction(Term[] cloneTerms, int temporalOrder, boolean constant, boolean containsVar, short complexity, int hashCode) {
+        super(cloneTerms, temporalOrder, constant, containsVar, complexity, hashCode);
     }
 
-    
+
     @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
+    public boolean validSize(int num) {
+        return num >= 1;
     }
+
     
     /**
      * Clone an object
      * @return A new object
      */
     @Override
-    public Object clone() {
-        return new Disjunction(getName(), cloneTerms(), isConstant(), complexity);
+    public Disjunction clone() {
+        return new Disjunction(cloneTerms(), getTemporalOrder(), isConstant(), containsVar(), getComplexity(), hashCode());
     }
 
     /**
@@ -76,7 +63,7 @@ public class Disjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A Disjunction generated or a Term it reduced to
      */
-    public static Term make(Term term1, Term term2, Memory memory) {
+    public static Term make(Term term1, Term term2) {
         TreeSet<Term> set;
         if (term1 instanceof Disjunction) {
             set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
@@ -84,17 +71,17 @@ public class Disjunction extends CompoundTerm {
                 set.addAll(((CompoundTerm) term2).cloneTermsList());
             } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
-                set.add((Term) term2.clone());
+                set.add(term2.clone());
             }                          // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof Disjunction) {
             set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
-            set.add((Term) term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
+            set.add(term1.clone());   // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();
-            set.add((Term) term1.clone());
-            set.add((Term) term2.clone());
+            set.add(term1.clone());
+            set.add(term2.clone());
         }
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -103,9 +90,9 @@ public class Disjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(Collection<Term> argList, Memory memory) {
+    public static Term make(Collection<Term> argList) {
         TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -114,15 +101,16 @@ public class Disjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set, Memory memory) {
+    public static Term make(TreeSet<Term> set) {
         if (set.size() == 1) {
             return set.first();
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
-        String name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
-        Term t = memory.nameToTerm(name);
-        return (t != null) ? t : new Disjunction(name, argument);
+        return new Disjunction(argument);        
     }
+
+    
+    
 
     /**
      * Get the operator of the term.

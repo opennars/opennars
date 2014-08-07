@@ -87,7 +87,7 @@ public class ImageInt extends RelIndexCompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Product product, Term relation, short index, Memory memory) {
+    public static Term make(Product product, Term relation, short index) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {

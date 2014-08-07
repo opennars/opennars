@@ -73,7 +73,7 @@ public class SetExt extends CompoundTerm {
     }
 
     public static SetExt make(Collection<Term> argList) {
-        return make((TreeSet)new TreeSet<Term>(argList)); // sort/merge arguments
+        return make(new TreeSet<Term>(argList)); // sort/merge arguments
     }
     
     /**
