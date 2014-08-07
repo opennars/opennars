@@ -120,6 +120,12 @@ public abstract class CompoundTerm extends Term {
         return (short)c;
     }
 
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    
     
     @Override
     public boolean equals(final Object that) {
@@ -130,7 +136,7 @@ public abstract class CompoundTerm extends Term {
         
         final CompoundTerm t = (CompoundTerm)that;
         
-        if (hashCode() != t.hashCode())
+        if (hash != t.hash)
             return false;
 
         /*

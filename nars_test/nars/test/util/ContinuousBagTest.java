@@ -143,7 +143,6 @@ public class ContinuousBagTest {
         d.putIn(new NullItem(.87f));
         
         assertEquals(c.getAveragePriority(), d.getAveragePriority(), priorityEpsilon);
-                System.out.println(c.getAveragePriority() + " "+ d.getAveragePriority());
 
     }
 }
