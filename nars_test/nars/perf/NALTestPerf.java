@@ -1,5 +1,6 @@
 package nars.perf;
 
+import nars.util.ContinuousBagNARBuilder;
 import java.util.Collection;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
@@ -87,20 +88,4 @@ public class NALTestPerf  {
         
     }
 
-    private static class ContinuousBagNARBuilder extends DefaultNARBuilder {
-
-        public ContinuousBagNARBuilder() {
-            super();
-        }
-
-        @Override
-        public AbstractBag<Task> newNovelTaskBag(Param p) {
-            return new ContinuousBag<Task>(Parameters.TASK_BUFFER_SIZE, Parameters.NEW_TASK_FORGETTING_CYCLE, true);
-        }
-
-        @Override
-        public AbstractBag<Concept> newConceptBag(Param p) {
-            return new ContinuousBag<Concept>(getConceptBagSize(), CONCEPT_FORGETTING_CYCLE, true);
-        }
-    }
 }

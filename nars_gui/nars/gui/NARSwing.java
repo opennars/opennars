@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
 import nars.core.CommandLineNARBuilder;
-import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
@@ -93,7 +92,10 @@ public class NARSwing  {
      */
     public static void main(String args[]) {
         NAR nar = new CommandLineNARBuilder(args).build();
-
+        
+        //temporary:
+        //NAR nar = new ContinuousBagNARBuilder(false).build();
+        
         NARSwing swing = new NARSwing(nar);
         
         if (args.length > 0
