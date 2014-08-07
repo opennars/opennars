@@ -1,5 +1,6 @@
 package nars.io;
 
+import nars.language.Tense;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import static nars.io.Symbols.QUEST_MARK;
 import static nars.io.Symbols.STAMP_CLOSER;
 import static nars.io.Symbols.STAMP_OPENER;
 import static nars.io.Symbols.TRUTH_VALUE_MARK;
-import nars.io.Symbols.Tense;
 import static nars.io.Symbols.VALUE_SEPARATOR;
 import static nars.io.Symbols.getCloser;
 import static nars.io.Symbols.getOpener;
@@ -346,7 +346,7 @@ public class TextPerception {
             t = s.substring(i).trim();
             s.delete(i, s.length());
         }
-        return Symbols.tense(t);
+        return Tense.tense(t);
     }
 
     /* ---------- react String into term ---------- */
