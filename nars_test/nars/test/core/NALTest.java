@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized;
 public class NALTest  {
 
     static {
-        Memory.randomSeed = 2;
+        Memory.randomSeed = 5;
     }
     
 
@@ -201,20 +201,23 @@ public class NALTest  {
         
         n.addInput(new TextInput(example));
         
-        n.finish(minCycles);
-        
-        System.out.println('\n' + path + " @" + n.getTime());
-        
-        if (expects.size() == 0) {
-            //no tests
-            System.out.println("  no tests");
-            assertTrue(path + " has no test", false);
+        boolean error = false;
+        try {
+            n.finish(minCycles);
         }
-        boolean success = true;
+        catch (RuntimeException e) {
+            e.printStackTrace();
+            error = true;
+        }
+        
+        System.err.println('\n' + path + " @" + n.getTime());
+        
+        boolean success = expects.size() > 0 && (!error);
         for (Expect e: expects) {
-            System.out.println("  " + e);
+            System.err.println("  " + e);
             if (!e.realized) success = false;
         }
+        //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
         assertTrue(path, success);
         
     }
@@ -255,7 +258,7 @@ public class NALTest  {
         abstract public boolean condition(Class channel, Object signal);
 
         public String toString() {            
-            return realized ? "OK: " + exact : getFailureReason();
+            return  getClass().getSimpleName() + " " + (realized ? "OK: " + exact : getFailureReason());
         }
 
         abstract public String getFailureReason();
@@ -300,7 +303,7 @@ public class NALTest  {
             String s = "FAIL: No substring match: " + containing;
             if (!almost.isEmpty()) {
                 for (String cs : getCandidates(5)) {
-                    s += "\n\tsimilar: " + cs;
+                    s += "\n\t" + cs;
                 }
             }
             return s;
@@ -333,7 +336,7 @@ public class NALTest  {
                 if (saveSimilar) {
                     int dist = StringUtil.levenshteinDistance(o, containing);            
                     //if (dist < similarityThreshold + Math.abs(o.length() - containing.length()))
-                    almost.put(TextOutput.getOutputString(channel, signal, false, true, nar), dist);
+                    almost.put("similar(" + dist + "): " + TextOutput.getOutputString(channel, signal, false, true, nar), dist);
                 }            
             }
             if (channel == ERR.class) {
