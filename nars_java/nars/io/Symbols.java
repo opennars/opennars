@@ -35,38 +35,7 @@ public class Symbols {
     public static final char GOAL_MARK = '!';
     public static final char QUEST_MARK = '@';
 
-    public enum Tense {
-        
-        Mark(":"),
-        Past(":\\:"),
-        Present(":|:"),
-        Future(":/:");
-        
-        public final String symbol;
-        
-        private Tense(String string) {
-            this.symbol = string;            
-        }
-
-        @Override
-        public String toString() {
-            return symbol;
-        }
-        
-        
-    }
     
-    protected static final Map<String,Tense> stringToTense 
-            = new HashMap(Tense.values().length * 2);
-            
-    static {
-        for (final Tense t : Tense.values())
-            stringToTense.put(t.toString(), t);
-    }    
-
-    public static Tense tense(final String s) {
-        return stringToTense.get(s);
-    }    
     
     
     /* Tense markers */

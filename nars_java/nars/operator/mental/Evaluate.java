@@ -22,7 +22,7 @@ import nars.core.Parameters;
 import nars.entity.*;
 import nars.language.*;
 import nars.io.Symbols;
-import nars.io.Symbols.Tense;
+import nars.language.Tense;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
