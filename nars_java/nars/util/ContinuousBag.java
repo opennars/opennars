@@ -180,7 +180,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     public int nextRemovalIndex() {      
         final int s = size();
         if (randomRemoval) {
-            x = getFocus(Memory.randomNumber.nextFloat());            
+            x = Memory.randomNumber.nextFloat();            
         }
         else {
             x += scanningRate * 1.0f / (1+s);
