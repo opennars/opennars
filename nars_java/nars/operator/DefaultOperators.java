@@ -20,7 +20,7 @@ public class DefaultOperators {
         
         return new Operator[] {
             //new Wait(),            
-            new Sample(),
+            new NullOperator(),
             new Believe(),  // accept a statement with a default truth-value
             new Want(),     // accept a statement with a default desire-value
             new Wonder(),   // find the truth-value of a statement

@@ -4,6 +4,7 @@ import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.entity.Task;
 import nars.operator.DefaultOperators;
+import nars.operator.ExampleOperators;
 import nars.operator.Operator;
 import nars.storage.AbstractBag;
 import nars.storage.Memory;
@@ -26,6 +27,11 @@ abstract public class NARBuilder extends Parameters implements ConceptBuilder {
         Param p = newParam();
         Operator[] operators = DefaultOperators.get();
         Memory m = new Memory(p, newConceptBag(p), newNovelTaskBag(p), this, operators);
+        
+        for (Operator o : ExampleOperators.get()) {
+            m.addOperator(o);
+        }
+        
         return new NAR(m);
     }
 
