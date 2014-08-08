@@ -40,7 +40,7 @@ public class Variable extends Term {
      * @return The cloned Variable
      */
     @Override
-    public Object clone() {
+    public Variable clone() {
         return new Variable(getName());
     }
 

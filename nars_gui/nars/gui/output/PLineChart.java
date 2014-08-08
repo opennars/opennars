@@ -110,11 +110,11 @@ public class PLineChart extends PApplet {
         
         Object value = data.get(title);
         if (value instanceof Double)
-           addPoint(when, ((Double)value).floatValue());
+           addPoint(when, ((Number)value).floatValue());
         if (value instanceof Float)
-           addPoint(when, ((Float)value).floatValue());
+           addPoint(when, ((Number)value).floatValue());
         if (value instanceof Integer)
-           addPoint(when, ((Integer)value).floatValue());
+           addPoint(when, ((Number)value).floatValue());
         
     }
 

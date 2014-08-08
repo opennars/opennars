@@ -87,9 +87,9 @@ public class TermTest {
             
             
             assertTrue(term1.equals(term1.clone()));
-            assertTrue(term1.compareTo((Term)term1.clone())==0);            
+            assertTrue(term1.compareTo(term1.clone())==0);            
             assertTrue(term2.equals(term2.clone()));
-            assertTrue(term2.compareTo((Term)term2.clone())==0);
+            assertTrue(term2.compareTo(term2.clone())==0);
             
             boolean t1e2 = term1.equals(term2);
             int t1c2 = term1.compareTo(term2);

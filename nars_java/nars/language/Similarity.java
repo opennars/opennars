@@ -53,7 +53,7 @@ public class Similarity extends Statement {
      * @return A new object, to be casted into a Similarity
      */
     @Override
-    public Object clone() {
+    public Similarity clone() {
         return new Similarity(getName(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
@@ -72,7 +72,7 @@ public class Similarity extends Statement {
             return make(predicate, subject, memory);
         }
         String name = makeStatementName(subject, NativeOperator.SIMILARITY, predicate);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         if (t != null) {
             return (Similarity) t;
         }

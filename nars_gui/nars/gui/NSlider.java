@@ -80,7 +80,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
             g.setColor(barColor);
         }
         
-        int wp = (int)(((double)w) * p );
+        int wp = (int)(w * p );
         g.setColor(barColor);
         g.fillRect(0, 0, wp, h);
         super.paint(g);
@@ -119,7 +119,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     */
 
     protected void updatePosition(int x) {
-        double p = ((double)x) / ((double)getWidth());
+        double p = x / getWidth();
         double v = p * (max-min) + min;
         v = Math.max(v, min);
         v = Math.min(v, max);        

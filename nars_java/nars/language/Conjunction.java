@@ -69,7 +69,7 @@ public class Conjunction extends CompoundTerm {
      * @return A new object
      */
     @Override
-    public Object clone() {
+    public Conjunction clone() {
         return new Conjunction(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
 
@@ -130,7 +130,7 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final String name = makeCompoundName(NativeOperator.SEQUENCE, argList);
-            final Term t = memory.nameToTerm(name);
+            final Term t = memory.term(name);
             return (t != null) ? t : new Conjunction(name, argList, temporalOrder);
         } else {
             final TreeSet<Term> set = new TreeSet<>(); // sort/merge arguments
@@ -155,7 +155,7 @@ public class Conjunction extends CompoundTerm {
         } else {
             name = makeCompoundName(NativeOperator.PARALLEL, argument);
         }
-        final Term t = memory.nameToTerm(name);
+        final Term t = memory.term(name);
         return (t != null) ? t : new Conjunction(name, argument, temporalOrder);
     }
 
@@ -182,16 +182,16 @@ public class Conjunction extends CompoundTerm {
                     list.addAll(((CompoundTerm) term2).cloneTermsList());
                 } // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 else {
-                    list.add((Term) term2.clone());
+                    list.add(term2.clone());
                 }                          // (&,(&,P,Q),R) = (&,P,Q,R)
             } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 list = new ArrayList<>(((CompoundTerm) term2).size() + 1);
-                list.add((Term) term1.clone());
+                list.add(term1.clone());
                 list.addAll(((CompoundTerm) term2).cloneTermsList()); // (&,R,(&,P,Q)) = (&,P,Q,R)
             } else {
                 list = new ArrayList<>(2);
-                list.add((Term) term1.clone());
-                list.add((Term) term2.clone());
+                list.add(term1.clone());
+                list.add(term2.clone());
             }
             return make(list.toArray(new Term[list.size()]), temporalOrder, memory);
         } else {
@@ -202,15 +202,15 @@ public class Conjunction extends CompoundTerm {
                 set.addAll(((CompoundTerm) term2).cloneTermsList());
             } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
-                set.add((Term) term2.clone());
+                set.add(term2.clone());
             }                          // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof Conjunction) {
             set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
-            set.add((Term) term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
+            set.add(term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();
-            set.add((Term) term1.clone());
-            set.add((Term) term2.clone());
+            set.add(term1.clone());
+            set.add(term2.clone());
         }
             return make(set, temporalOrder, memory);
         }

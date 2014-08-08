@@ -160,7 +160,7 @@ public class BagWindow<E extends Item> extends Window implements ActionListener,
         }
         
         
-        this.bag = (Bag<E>)bag;
+        this.bag = bag;
 
         removeAll();
         /* The lowest level displayed -- will need adjusted for variable bag sizes*/

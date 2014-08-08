@@ -46,7 +46,7 @@ public class Interval extends Term {
     }
     
     @Override
-    public Object clone() {
+    public Interval clone() {
         return new Interval(getName());
     }
 }

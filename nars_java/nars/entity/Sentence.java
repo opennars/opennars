@@ -142,9 +142,9 @@ public class Sentence implements Cloneable {
     @Override
     public Object clone() {
         if (truth == null) {
-            return new Sentence((Term) content.clone(), punctuation, null, (Stamp) stamp.clone());
+            return new Sentence(content.clone(), punctuation, null, (Stamp) stamp.clone());
         }
-        return new Sentence((Term) content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
+        return new Sentence(content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
     }
 
     /** Clone with a different Term */    
@@ -196,7 +196,7 @@ public class Sentence implements Cloneable {
      * @return A clone of the content Term
      */
     public Term cloneContent() {
-        return (Term) content.clone();
+        return content.clone();
     }
 
 

@@ -70,7 +70,7 @@ public class LocalRules {
                 if (revisible(sentence, belief)) {
                     revision(sentence, belief, true, memory);
                 }
-            } else if (Variables.unify(Symbols.VAR_QUERY, sentence.content, (Term) belief.content.clone())) {
+            } else if (Variables.unify(Symbols.VAR_QUERY, sentence.content, belief.content.clone())) {
                 trySolution(belief, task, memory);
             }
         }

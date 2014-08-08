@@ -108,7 +108,7 @@ public class TermWindow extends Window implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton) e.getSource();
         if (b == playButton) {
-            Concept concept = memory.nameToConcept(termField.getText().trim());
+            Concept concept = memory.conceptExisting(termField.getText().trim());
             if (concept != null) {
                 EntityObserver entityObserver = new ConceptWindow(concept);
                 concept.startPlay(entityObserver, true);

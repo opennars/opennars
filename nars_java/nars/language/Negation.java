@@ -61,7 +61,7 @@ public class Negation extends CompoundTerm {
      * @return A new object
      */
     @Override
-    public Object clone() {
+    public Negation clone() {
         return new Negation(getName(), cloneTerms(), isConstant(), complexity);
     }
 
@@ -91,7 +91,7 @@ public class Negation extends CompoundTerm {
             return null;
         }
         final String name = makeCompoundName(NativeOperator.NEGATION, argument);
-        final Term t = memory.nameToTerm(name);
+        final Term t = memory.term(name);
         return (t != null) ? t : new Negation(name, argument);
     }
 

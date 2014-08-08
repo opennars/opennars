@@ -62,7 +62,7 @@ public class SetExt extends CompoundTerm {
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Object clone() {
+    public SetExt clone() {
         return new SetExt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
@@ -105,7 +105,7 @@ public class SetExt extends CompoundTerm {
 
     private static Term make(final Term[] termSet, final Memory memory) {
         final String name = makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch);
-        final Term t = memory.nameToTerm(name);
+        final Term t = memory.term(name);
         return (t != null) ? t : new SetExt(name, termSet);
     }
     

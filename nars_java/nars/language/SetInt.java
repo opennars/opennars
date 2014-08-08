@@ -62,7 +62,7 @@ public class SetInt extends CompoundTerm {
      * @return A new object, to be casted into a SetInt
      */
     @Override
-    public Object clone() {
+    public SetInt clone() {
         return new SetInt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
@@ -101,7 +101,7 @@ public class SetInt extends CompoundTerm {
         }
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         return (t != null) ? t : new SetInt(name, argument);
     }
 

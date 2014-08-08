@@ -59,7 +59,7 @@ public class Product extends CompoundTerm {
      * @return A new object, to be casted into an ImageExt
      */
     @Override
-    public Object clone() {
+    public Product clone() {
         return new Product(getName(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
@@ -71,7 +71,7 @@ public class Product extends CompoundTerm {
      */
     public static Term make(Term[] argument, final Memory memory) {
         final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
-        final Term t = memory.nameToTerm(name);
+        final Term t = memory.term(name);
         return (t != null) ? t : new Product(name, argument);
     }
         

@@ -92,8 +92,9 @@ public abstract class Operator extends Term {
     }
 
     @Override
-    public Object clone() {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    public Operator clone() {
+        //return new Operator(name); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 }
 

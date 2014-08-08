@@ -54,7 +54,7 @@ public class DifferenceInt extends CompoundTerm {
      * @return A new object, to be casted into a DifferenceInt
      */
     @Override
-    public Object clone() {
+    public DifferenceInt clone() {
         return new DifferenceInt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
@@ -79,7 +79,7 @@ public class DifferenceInt extends CompoundTerm {
         }
         
         String name = makeCompoundName(NativeOperator.DIFFERENCE_INT, argList);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         return (t != null) ? t : new DifferenceInt(name, argList);
     }
 

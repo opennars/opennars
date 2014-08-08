@@ -205,9 +205,9 @@ public final class CompositionalRules {
                 termOr = Disjunction.make(componentT, componentB, memory);
                 termAnd = Conjunction.make(componentT, componentB, memory);
             }
-            processComposed(taskContent, (Term) componentCommon.clone(), termOr, order, truthOr, memory);
-            processComposed(taskContent, (Term) componentCommon.clone(), termAnd, order, truthAnd, memory);
-            processComposed(taskContent, (Term) componentCommon.clone(), termDif, order, truthDif, memory);
+            processComposed(taskContent, componentCommon.clone(), termOr, order, truthOr, memory);
+            processComposed(taskContent, componentCommon.clone(), termAnd, order, truthAnd, memory);
+            processComposed(taskContent, componentCommon.clone(), termDif, order, truthDif, memory);
         } else {    // index == 1
             if (taskContent instanceof Inheritance) {
                 termOr = IntersectionExt.make(componentT, componentB, memory);
@@ -225,9 +225,9 @@ public final class CompositionalRules {
                 termOr = Conjunction.make(componentT, componentB, memory);
                 termAnd = Disjunction.make(componentT, componentB, memory);
             }
-            processComposed(taskContent, termOr, (Term) componentCommon.clone(), order, truthOr, memory);
-            processComposed(taskContent, termAnd, (Term) componentCommon.clone(), order, truthAnd, memory);
-            processComposed(taskContent, termDif, (Term) componentCommon.clone(), order, truthDif, memory);
+            processComposed(taskContent, termOr, componentCommon.clone(), order, truthOr, memory);
+            processComposed(taskContent, termAnd, componentCommon.clone(), order, truthAnd, memory);
+            processComposed(taskContent, termDif, componentCommon.clone(), order, truthDif, memory);
         }
     }
 
@@ -377,7 +377,7 @@ public final class CompositionalRules {
             memory.doublePremiseTask(content, truth, budget);
             // special inference to answer conjunctive questions with query variables
             if (Variables.containVarQuery(taskSentence.content.getName())) {
-                Concept contentConcept = memory.termToConcept(content);
+                Concept contentConcept = memory.conceptExisting(content);
                 if (contentConcept == null) {
                     return;
                 }
@@ -468,8 +468,8 @@ public final class CompositionalRules {
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((ImageExt) term12).applySubstitute(subs);
-                    ((ImageExt) term22).applySubstitute(subs);
+                    ((CompoundTerm) term12).applySubstitute(subs);
+                    ((CompoundTerm) term22).applySubstitute(subs);
                 }
             }
         } else {
@@ -487,8 +487,8 @@ public final class CompositionalRules {
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((ImageInt) term11).applySubstitute(subs);
-                    ((ImageInt) term21).applySubstitute(subs);
+                    ((CompoundTerm) term11).applySubstitute(subs);
+                    ((CompoundTerm) term21).applySubstitute(subs);
                 }
             }
         }
@@ -631,8 +631,8 @@ public final class CompositionalRules {
     }
     
     public static void eliminateVariableOfConditionAbductive(int figure,Sentence sentence,Sentence belief, Memory memory) {
-        Term T1=(Term) sentence.content.clone();
-        Term T2=(Term) belief.content.clone();
+        Term T1=sentence.content.clone();
+        Term T2=belief.content.clone();
         Term S1=((Statement)T2).getSubject();
         Term P1=((Statement)T2).getPredicate();
         Term S2=((Statement)T1).getSubject();
@@ -884,7 +884,7 @@ public final class CompositionalRules {
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
             Term[] components_level1 = ((CompoundTerm)taskterm).term;            
-            Term secterm_unwrap=(Term) unwrapNegation(secterm).clone();
+            Term secterm_unwrap=unwrapNegation(secterm).clone();
             for(Term T1 : components_level1) {
                 Term T1_unwrap=unwrapNegation(T1);
                 HashMap<Term, Term> Values = new HashMap<Term, Term>(); //we are only interested in first variables
@@ -911,7 +911,7 @@ public final class CompositionalRules {
                 if(T1_unwrap instanceof CompoundTerm) {
                     Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
                     for(Term T2 : components_level2) {
-                        Term T2_unwrap=(Term) unwrapNegation(T2).clone(); 
+                        Term T2_unwrap=unwrapNegation(T2).clone(); 
                         HashMap<Term, Term> Values3 = new HashMap<Term, Term>(); //we are only interested in first variables
                         if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<Term, Term>())) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);

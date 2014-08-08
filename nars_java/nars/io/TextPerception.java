@@ -372,7 +372,7 @@ public class TextPerception {
                 throw new InvalidInputException("missing content");
             }
             
-            Term t = memory.nameToTerm(s);    // existing constant or getOperator
+            Term t = memory.term(s);    // existing constant or getOperator
             if (t != null) {
                 return t;
             }                           

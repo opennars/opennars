@@ -77,11 +77,11 @@ public class Terms {
             }
             Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
             
-            CompoundTerm itselfCompound = (CompoundTerm)itself;
+            CompoundTerm itselfCompound = itself;
             CompoundTerm replaced = null;
             if (j < itself.term.length  )
                 replaced = (CompoundTerm) CompoundTerm.setComponent(
-                    (CompoundTerm) itself, j, ret2, memory);
+                        itself, j, ret2, memory);
             
             if (replaced != null) {
                 itself = replaced;

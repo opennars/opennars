@@ -70,7 +70,7 @@ public class ImageExt extends CompoundTerm {
      * @return A new object, to be casted into an ImageExt
      */
     @Override
-    public Object clone() {
+    public ImageExt clone() {
         return new ImageExt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
@@ -147,7 +147,7 @@ public class ImageExt extends CompoundTerm {
      */
     public static Term make(Term[] argument, short index, Memory memory) {
         String name = makeImageName(NativeOperator.IMAGE_EXT, argument, index);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         return (t != null) ? t : new ImageExt(name, argument, index);
     }
 

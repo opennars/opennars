@@ -60,7 +60,7 @@ public class Equivalence extends Statement {
      * @return A new object
      */
     @Override
-    public Object clone() {
+    public Equivalence clone() {
         return new Equivalence(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
 
@@ -106,7 +106,7 @@ public class Equivalence extends Statement {
                 copula = NativeOperator.EQUIVALENCE;
         }
         String name = makeStatementName(subject, copula, predicate);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         if (t != null) {
             return (Equivalence) t;
         }
