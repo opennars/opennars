@@ -30,7 +30,7 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class NALTest  {
-    int minCycles = 1200; //TODO reduce this to one or zero
+    int minCycles = 600; //TODO reduce this to one or zero
 
     static {
         Memory.randomSeed = 2;

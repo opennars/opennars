@@ -54,7 +54,7 @@ public class DifferenceExt extends CompoundTerm {
      * @return A new object, to be casted into a DifferenceExt
      */
     @Override
-    public Object clone() {
+    public DifferenceExt clone() {
         return new DifferenceExt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
@@ -78,7 +78,7 @@ public class DifferenceExt extends CompoundTerm {
         }
         
         String name = makeCompoundName(NativeOperator.DIFFERENCE_EXT, argList);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         return (t != null) ? t : new DifferenceExt(name, argList);
     }
 

@@ -70,7 +70,7 @@ public class ImageInt extends CompoundTerm {
      * @return A new object, to be casted into an ImageInt
      */
     @Override
-    public Object clone() {
+    public ImageInt clone() {
         return new ImageInt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
@@ -150,7 +150,7 @@ public class ImageInt extends CompoundTerm {
      */
     public static Term make(final Term[] argument, final short index, final Memory memory) {
         String name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         return (t != null) ? t : new ImageInt(name, argument, index);
     }
 

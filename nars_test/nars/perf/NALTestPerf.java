@@ -45,7 +45,7 @@ public class NALTestPerf  {
             @Override
             public Performance print() {                
                 super.print();
-                System.out.print(", " + df.format(getCycleTimeMS() / ((double)totalCycles) * 1000.0) + " ns/cycle, " + (((float)totalCycles)/(warmups+repeats)) + " cycles/run");
+                System.out.print(", " + df.format(getCycleTimeMS() / totalCycles * 1000.0) + " ns/cycle, " + (((float)totalCycles)/(warmups+repeats)) + " cycles/run");
                 return this;
                 
             }

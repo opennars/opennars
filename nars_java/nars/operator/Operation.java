@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
@@ -62,7 +63,7 @@ public class Operation extends Inheritance {
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Object clone() {        
+    public Operation clone() {        
         return new Operation(name, cloneTerms(), isConstant(), containVar(), getComplexity());
     }
 
@@ -78,7 +79,7 @@ public class Operation extends Inheritance {
             return null;
         }
         String name = makeName(oper.getName(), arg, memory);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         if (t != null) {
             return (Operation) t;
         }
@@ -108,7 +109,7 @@ public class Operation extends Inheritance {
     }
     
     public Term[] getArguments() {
-        return ((Product) getSubject()).term;
+        return ((CompoundTerm) getSubject()).term;
     }    
     
 }

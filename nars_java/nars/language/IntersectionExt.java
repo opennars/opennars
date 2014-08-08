@@ -55,7 +55,7 @@ public class IntersectionExt extends CompoundTerm {
      * @return A new object, to be casted into a IntersectionExt
      */
     @Override
-    public Object clone() {
+    public IntersectionExt clone() {
         return new IntersectionExt(getName(), cloneTerms(), isConstant(), complexity);
     }
 
@@ -84,15 +84,15 @@ public class IntersectionExt extends CompoundTerm {
                 set.addAll(((CompoundTerm) term2).cloneTermsList());
             }               // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
-                set.add((Term) term2.clone());
+                set.add(term2.clone());
             }               // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof IntersectionExt) {
             set = new TreeSet<Term>(((CompoundTerm) term2).cloneTermsList());
-            set.add((Term) term1.clone());    // (&,R,(&,P,Q)) = (&,P,Q,R)
+            set.add(term1.clone());    // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<Term>();
-            set.add((Term) term1.clone());
-            set.add((Term) term2.clone());
+            set.add(term1.clone());
+            set.add(term2.clone());
         }
         return make(set, memory);
     }
@@ -120,7 +120,7 @@ public class IntersectionExt extends CompoundTerm {
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeCompoundName(NativeOperator.INTERSECTION_EXT, argument);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         return (t != null) ? t : new IntersectionExt(name, argument);
     }
 

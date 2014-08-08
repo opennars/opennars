@@ -206,7 +206,7 @@ public class Memory implements Output, Serializable {
     }
 
      /* ---------- operator processing ---------- */
-     public boolean isRegisteredOperator(String op) {
+     public boolean isOperatorRegistered(String op) {
          return operators.containsKey(op);
      }
  
@@ -228,7 +228,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept
      * @return a Concept or null
      */
-    public Concept nameToConcept(final String name) {
+    public Concept conceptExisting(final String name) {
         return concepts.get(name);
     }
 
@@ -240,7 +240,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept or operator
      * @return a Term or null (if no Concept/InnateOperator has this name)
      */
-    public Term nameToTerm(final String name) {
+    public Term term(final String name) {
         final Concept concept = concepts.get(name);
         if (concept != null) {
             return concept.term;
@@ -254,8 +254,8 @@ public class Memory implements Output, Serializable {
      * @param term The Term naming a concept
      * @return a Concept or null
      */
-    public Concept termToConcept(final Term term) {
-        return nameToConcept(term.getName());
+    public Concept conceptExisting(final Term term) {
+        return conceptExisting(term.getName());
     }
 
     /**
@@ -264,7 +264,7 @@ public class Memory implements Output, Serializable {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null ( TODO bad smell )
      */
-    public Concept getConcept(final Term term) {
+    public Concept concept(final Term term) {
         if (!term.isConstant()) {
             return null;
         }
@@ -294,7 +294,7 @@ public class Memory implements Output, Serializable {
      * @return the priority value of the concept
      */
     public float getConceptActivation(final Term t) {
-        final Concept c = termToConcept(t);
+        final Concept c = conceptExisting(t);
         return (c == null) ? 0f : c.getPriority();
     }
 
@@ -624,7 +624,7 @@ public class Memory implements Output, Serializable {
         Task newEvent = null;
         while (counter-- > 0) {
             final Task task = newTasks.removeFirst();
-            if (task.isInput() || (termToConcept(task.getContent()) != null)) {
+            if (task.isInput() || (conceptExisting(task.getContent()) != null)) {
                 // new addInput or existing concept
                 immediateProcess(task);
                 if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
@@ -708,7 +708,7 @@ public class Memory implements Output, Serializable {
         }
         
         setCurrentTerm(task.getContent());
-        currentConcept = getConcept(getCurrentTerm());
+        currentConcept = concept(getCurrentTerm());
         
         if (getCurrentConcept() != null) {
             activateConcept(getCurrentConcept(), task.budget);

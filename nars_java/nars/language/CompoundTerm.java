@@ -68,7 +68,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @return A clone of the compound term
      */
-    @Override public abstract Object clone();
+    @Override public abstract CompoundTerm clone();
 
     
     
@@ -476,7 +476,7 @@ public abstract class CompoundTerm extends Term {
             if (!t.containVar() && allowNonDeepCopy)
                 arr[i] = t;
             else
-                arr[i] = ( deep ? (Term)t.clone() : t );
+                arr[i] = ( deep ? t.clone() : t );
 
             //arr[i] = ( deep ? (Term)t.clone() : t );
         
@@ -488,7 +488,7 @@ public abstract class CompoundTerm extends Term {
             if (!t.containVar() && allowNonDeepCopy)
                 arr[i+j] = t;
             else            
-                arr[i+j] = ( deep ? (Term)t.clone() : t );
+                arr[i+j] = ( deep ? t.clone() : t );
             
             //arr[i+j] = ( deep ? (Term)t.clone() : t );
         }
@@ -507,7 +507,7 @@ public abstract class CompoundTerm extends Term {
             if (!t.containVar() && allowNonDeepCopy)
                 l.add(t);
             else
-                l.add( deep ? (Term)t.clone() : t );  
+                l.add( deep ? t.clone() : t );  
             
             //l.add( deep ? (Term)t.clone() : t );
         }
@@ -518,7 +518,7 @@ public abstract class CompoundTerm extends Term {
     public ArrayList<Term> cloneTermsListDeep() {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term)
-            l.add((Term)t.clone());
+            l.add(t.clone());
         return l;        
     }
 
@@ -745,7 +745,7 @@ public abstract class CompoundTerm extends Term {
                 }
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1))
-                    term[i] = (Term) t2.clone();
+                    term[i] = t2.clone();
             } else if (t1 instanceof CompoundTerm) {
                 ((CompoundTerm) t1).applySubstitute(subs);
             }            

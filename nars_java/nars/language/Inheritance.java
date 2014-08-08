@@ -54,7 +54,7 @@ public class Inheritance extends Statement {
      * Clone an object
      * @return A new object, to be casted into a SetExt
      */
-    @Override public Object clone() {
+    @Override public Inheritance clone() {
         return new Inheritance(getName(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
@@ -79,7 +79,7 @@ public class Inheritance extends Statement {
             name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
         }
  
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         if (t != null) {
             return (Inheritance) t;
         }        

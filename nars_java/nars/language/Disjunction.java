@@ -65,7 +65,7 @@ public class Disjunction extends CompoundTerm {
      * @return A new object
      */
     @Override
-    public Object clone() {
+    public Disjunction clone() {
         return new Disjunction(getName(), cloneTerms(), isConstant(), complexity);
     }
 
@@ -84,15 +84,15 @@ public class Disjunction extends CompoundTerm {
                 set.addAll(((CompoundTerm) term2).cloneTermsList());
             } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
-                set.add((Term) term2.clone());
+                set.add(term2.clone());
             }                          // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof Disjunction) {
             set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
-            set.add((Term) term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
+            set.add(term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();
-            set.add((Term) term1.clone());
-            set.add((Term) term2.clone());
+            set.add(term1.clone());
+            set.add(term2.clone());
         }
         return make(set, memory);
     }
@@ -120,7 +120,7 @@ public class Disjunction extends CompoundTerm {
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
-        Term t = memory.nameToTerm(name);
+        Term t = memory.term(name);
         return (t != null) ? t : new Disjunction(name, argument);
     }
 

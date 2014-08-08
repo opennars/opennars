@@ -58,7 +58,7 @@ public class Implication extends Statement {
      * @return A new object
      */
     @Override
-    public Object clone() {
+    public Implication clone() {
         //TODO use the faster super constructor here
         return new Implication(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
@@ -99,7 +99,7 @@ public class Implication extends Statement {
                 copula = NativeOperator.IMPLICATION;
         }                
         final String name = makeStatementName(subject, copula, predicate);
-        final Term t = memory.nameToTerm(name);
+        final Term t = memory.term(name);
         if (t != null) {            
             if (t.getClass()!=Implication.class) {                
                 throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() + " = " + t.toString() );

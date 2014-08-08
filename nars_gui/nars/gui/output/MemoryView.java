@@ -326,7 +326,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         super.onConcept(g, c);
 
                         priority = c.getPriority();
-                        level = (int)(priority*100.0);
+                        level = (float)(priority*100.0);
                         index++;
                         
                         VertexDisplay d = displayVertex(c);

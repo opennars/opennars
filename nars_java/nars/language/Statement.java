@@ -301,6 +301,5 @@ public abstract class Statement extends CompoundTerm {
         return term[1];
     }
 
-    @Override
-    public abstract Object clone();
+    @Override public abstract Statement clone();
 }

@@ -64,7 +64,7 @@ public class Term implements Cloneable, Comparable<Term> {
      * @return The new Term
      */
     @Override
-    public Object clone() {
+    public Term clone() {
         return new Term(name);
     }
 
