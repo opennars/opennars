@@ -65,7 +65,10 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public Term clone() {
-        return new Term(name);
+        //avoids setName and its intern(); the string will already be intern:
+        Term t = new Term();
+        t.name = name;
+        return t;
     }
 
     /**
@@ -107,6 +110,8 @@ public class Term implements Cloneable, Comparable<Term> {
     public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
     }
+    
+
 
     /**
      * Blank method to be override in CompoundTerm
@@ -152,7 +157,7 @@ public class Term implements Cloneable, Comparable<Term> {
         //This removes this class's dependency on CompoundTerm
         if (that.getClass() == getClass())
             return name.compareTo(that.name());
-        return that.getClass().getName().compareTo(getClass().getName());
+        return that.getClass().getSimpleName().compareTo(getClass().getSimpleName());
         
         //previously: Orders among terms: variable < atomic < compound
         /*if (that instanceof CompoundTerm) {

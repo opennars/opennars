@@ -58,8 +58,10 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final Memory memory) {
+        
         final Task task = memory.getCurrentTask();
         Sentence taskSentence = task.sentence;
+        
         Term taskTerm = taskSentence.content.clone();         // cloning for substitution
         Term beliefTerm = bLink.target.clone();       // cloning for substitution
 
