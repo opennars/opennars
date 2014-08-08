@@ -693,10 +693,12 @@ public abstract class CompoundTerm extends Term {
     public void renameVariables() {
         if (containVar()) {
             //int existingComponents = term.length;
-            renameVariables(new HashMap<Variable, Variable>());
+            boolean b = renameVariables(new HashMap<Variable, Variable>());
+            if (b) {
+                setName(makeName());                
+            }
         }
         isConstant = true;        
-        setName(makeName());
     }
 
     /**
@@ -704,8 +706,9 @@ public abstract class CompoundTerm extends Term {
      *
      * @param map The substitution established so far
      */
-    private void renameVariables(final HashMap<Variable, Variable> map) {
+    private boolean renameVariables(final HashMap<Variable, Variable> map) {
         if (containVar()) {
+            boolean renamed = false;
             for (int i = 0; i < term.length; i++) {
                 final Term term = this.term[i];
                 if (term instanceof Variable) {
@@ -720,15 +723,22 @@ public abstract class CompoundTerm extends Term {
                     }
                     if (!term.equals(var)) {
                         this.term[i] = var;
+                        renamed = true;
                     }
                     map.put((Variable) term, var);
+                    
                 } else if (term instanceof CompoundTerm) {
                     CompoundTerm ct = (CompoundTerm)term;
-                    ct.renameVariables(map);
-                    ct.setName(ct.makeName());
-                }
+                    boolean r = ct.renameVariables(map);
+                    if (r) {
+                        ct.setName(ct.makeName());
+                        renamed = true;
+                    }
+                }                
             }
+            return renamed;
         }
+        return false;
     }
 
     /**
