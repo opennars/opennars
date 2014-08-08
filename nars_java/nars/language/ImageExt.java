@@ -31,10 +31,8 @@ import nars.storage.Memory;
  * <p>
  * Internally, it is actually (/,A,P)_1, with an index.
  */
-public class ImageExt extends CompoundTerm {
+public class ImageExt extends Image {
 
-    /** The index of relation in the component list */
-    public final short relationIndex;
 
     /**
      * Constructor with partial values, called by make
@@ -43,8 +41,7 @@ public class ImageExt extends CompoundTerm {
      * @param index The index of relation in the component list
      */
     private ImageExt(String n, Term[] arg, short index) {
-        super(n, arg);
-        relationIndex = index;
+        super(n, arg, index);
     }
 
     /**
@@ -55,9 +52,8 @@ public class ImageExt extends CompoundTerm {
      * @param complexity Syntactic complexity of the compound
      * @param index The index of relation in the component list
      */
-    private ImageExt(String n, Term[] cs, boolean con, short complexity, short index) {
-        super(n, cs, con, complexity);
-        relationIndex = index;
+    protected ImageExt(String n, Term[] cs, boolean con, short complexity, short index) {
+        super(n, cs, con, complexity, index);
     }
     
     @Override
@@ -74,6 +70,10 @@ public class ImageExt extends CompoundTerm {
         return new ImageExt(name(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
+    
+
+    
+    
     /**
      * Try to make a new ImageExt. Called by StringParser.
      * @return the Term generated from the arguments

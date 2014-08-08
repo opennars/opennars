@@ -31,10 +31,9 @@ import nars.storage.Memory;
  * <p>
  * Internally, it is actually (\,A,P)_1, with an index.
  */
-public class ImageInt extends CompoundTerm {
+public class ImageInt extends Image {
 
-    /** The index of relation in the component list */
-    public final short relationIndex;
+
 
     /**
      * constructor with partial values, called by make
@@ -43,8 +42,7 @@ public class ImageInt extends CompoundTerm {
      * @param index The index of relation in the component list
      */
     private ImageInt(String n, Term[] arg, short index) {
-        super(n, arg);
-        relationIndex = index;
+        super(n, arg, index);
     }
 
     /**
@@ -56,8 +54,7 @@ public class ImageInt extends CompoundTerm {
      * @param index The index of relation in the component list
      */
     private ImageInt(String n, Term[] cs, boolean con, short complexity, short index) {
-        super(n, cs, con, complexity);
-        relationIndex = index;
+        super(n, cs, con, complexity, index);
     }
 
     @Override
@@ -163,6 +160,7 @@ public class ImageInt extends CompoundTerm {
         return term[relationIndex];
     }
 
+    
     /**
      * Get the other term in the Image
      * @return The term related

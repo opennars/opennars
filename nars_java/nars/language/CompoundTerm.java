@@ -37,7 +37,7 @@ import nars.storage.Memory;
 
 
 public abstract class CompoundTerm extends Term {
-    @Deprecated private static final boolean allowNonDeepCopy = false; //temporary, disables eliminating deep copy
+    @Deprecated private static final boolean allowNonDeepCopy = true; //temporary, disables eliminating deep copy
     //one reason why deepcopy is necessary is to eliminate cyclic clones 
     
 
@@ -169,40 +169,13 @@ public abstract class CompoundTerm extends Term {
         return (short)c;
     }
  
-    /*
-    @Override
-    public boolean equals(final Object that) {
-        return (that instanceof Term) && (compareTo((Term) that) == 0);
-    }
-    */
-    
-    //slightly faster version of equals() that works like compare but only needs to return true/false
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        
+ 
+ @Override
+    public boolean equals(final Object that) {       
         if (!(that instanceof CompoundTerm))
             return false;
         
         final CompoundTerm t = (CompoundTerm)that;
-        
-        if (hashCode() != t.hashCode())
-            return false;
-        
-        /*if (operator() != t.operator())
-            return false;
-        
-        if (size() != t.size())
-            return false;
-        
-        for (int i = 0; i < term.size(); i++) {
-            final Term c = term.get(i);
-            if (!c.equals(t.componentAt(i)))
-                return false;
-        }
-        
-        return true;*/
-        
         return name().equals(t.name());
     }
 
@@ -226,6 +199,11 @@ public abstract class CompoundTerm extends Term {
                 if (opDiff != 0) {
                     return opDiff;
                 }
+                
+                int tDiff = this.getTemporalOrder() - t.getTemporalOrder(); //should be faster faster than Enum.compareTo                
+                if (tDiff != 0) {
+                    return tDiff;
+                }
 
                 for (int i = 0; i < term.length; i++) {
                     final int diff = term[i].compareTo(t.term[i]);
@@ -242,6 +220,80 @@ public abstract class CompoundTerm extends Term {
             return 1;
         }
     }
+
+    /*
+    @Override
+    public boolean equals(final Object that) {
+        return (that instanceof Term) && (compareTo((Term) that) == 0);
+    }
+    */
+
+    
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (!(that instanceof CompoundTerm))
+//            return false;
+//        
+//        final CompoundTerm t = (CompoundTerm)that;
+//        return name().equals(t.name());
+//        
+//        /*if (hashCode() != t.hashCode())
+//            return false;
+//        
+//        if (operator() != t.operator())
+//            return false;
+//        
+//        if (size() != t.size())
+//            return false;
+//        
+//        for (int i = 0; i < term.size(); i++) {
+//            final Term c = term.get(i);
+//            if (!c.equals(t.componentAt(i)))
+//                return false;
+//        }
+//        
+//        return true;*/
+//        
+//    }
+//
+//
+//        
+//
+//    /**
+//     * Orders among terms: variable < atomic < compound
+//     *
+//     * @param that The Term to be compared with the current Term
+//\     * @return The order of the two terms
+//     */
+//    @Override
+//    public int compareTo(final Term that) {
+//        /*if (!(that instanceof CompoundTerm)) {
+//            return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
+//        }
+//        */        
+//        return -name.compareTo(that.name());
+//            /*
+//            if (size() == t.size()) {
+//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
+//                if (opDiff != 0) {
+//                    return opDiff;
+//                }
+//
+//                for (int i = 0; i < term.length; i++) {
+//                    final int diff = term[i].compareTo(t.term[i]);
+//                    if (diff != 0) {
+//                        return diff;
+//                    }
+//                }
+//
+//                return 0;
+//            } else {
+//                return size() - t.size();
+//            }
+//        } else {
+//            return 1;
+//            */
+//    }
 
 
 
@@ -473,7 +525,8 @@ public abstract class CompoundTerm extends Term {
             final Term t = original[i];      
             
             //experiental optimization
-            if (!t.containVar() && allowNonDeepCopy)
+            //if (allowNonDeepCopy && t.isConstant() && !t.containVar())
+            if (allowNonDeepCopy && t.getClass() == Term.class)
                 arr[i] = t;
             else
                 arr[i] = ( deep ? t.clone() : t );
@@ -485,7 +538,7 @@ public abstract class CompoundTerm extends Term {
             final Term t = additional[j];                    
             
             //experiental optimization
-            if (!t.containVar() && allowNonDeepCopy)
+            if (allowNonDeepCopy && t.getClass() == Term.class)
                 arr[i+j] = t;
             else            
                 arr[i+j] = ( deep ? t.clone() : t );
@@ -504,7 +557,7 @@ public abstract class CompoundTerm extends Term {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
              //experiental optimization
-            if (!t.containVar() && allowNonDeepCopy)
+            if (allowNonDeepCopy && t.getClass() == Term.class)
                 l.add(t);
             else
                 l.add( deep ? t.clone() : t );  
