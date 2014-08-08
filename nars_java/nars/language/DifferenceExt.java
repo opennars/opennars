@@ -78,7 +78,7 @@ public class DifferenceExt extends CompoundTerm {
         }
         
         String name = makeCompoundName(NativeOperator.DIFFERENCE_EXT, argList);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         return (t != null) ? t : new DifferenceExt(name, argList);
     }
 

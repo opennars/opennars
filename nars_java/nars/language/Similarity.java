@@ -72,7 +72,7 @@ public class Similarity extends Statement {
             return make(predicate, subject, memory);
         }
         String name = makeStatementName(subject, NativeOperator.SIMILARITY, predicate);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Similarity) t;
         }

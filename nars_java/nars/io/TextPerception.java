@@ -44,7 +44,6 @@ import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
 import nars.language.Term;
-import static nars.language.Terms.make;
 import nars.language.Variable;
 import static nars.language.Variables.containVar;
 import static nars.operator.Operation.make;
@@ -57,6 +56,8 @@ import nars.storage.Memory;
 public class TextPerception {
     
     public final Memory memory;
+    
+    //public final Map<String, Term> terms = new HashMap();
     
     public final List<TextReaction> parsers;
     private final NAR nar;
@@ -129,7 +130,8 @@ public class TextPerception {
      * @param time The current time
      * @return An experienced task
      */
-    public static Task parseNarsese(StringBuilder buffer, Memory memory, long time) throws InvalidInputException {
+    public Task parseNarsese(StringBuilder buffer) throws InvalidInputException {
+        long time = memory.getTime();
         int i = buffer.indexOf(valueOf(PREFIX_MARK));
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
@@ -147,7 +149,7 @@ public class TextPerception {
             int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
             buffer.delete(j - 1, buffer.length());
         }
-        return parseTask(buffer.toString().trim(), memory, time);
+        return parseTask(buffer.toString().trim(), time);
     }
 
 
@@ -167,7 +169,7 @@ public class TextPerception {
             truth = parseTruth(truthString, punc);
 
 
-            /*Term content = parseTerm(str.substring(0, last), memory);
+            /*Term content = parseTerm(str.substring(0, last));
             if (content == null) throw new InvalidInputException("Content term missing");*/
         }
         catch (InvalidInputException e) {
@@ -185,7 +187,7 @@ public class TextPerception {
      * @param time The current time
      * @return An experienced task
      */    
-    public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
+    public Task parseTask(String s, long time) throws InvalidInputException {
         StringBuilder buffer = new StringBuilder(s);
         try {
             
@@ -197,7 +199,7 @@ public class TextPerception {
             char punc = str.charAt(last);
             Stamp stamp = new Stamp(time, tense, memory.newStampSerial());
             TruthValue truth = parseTruth(truthString, punc);
-            Term content = parseTerm(str.substring(0, last), memory);
+            Term content = parseTerm(str.substring(0, last));
             if (content == null) throw new InvalidInputException("Content term missing");
             Sentence sentence = new Sentence(content, punc, truth, stamp);
             //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
@@ -349,6 +351,31 @@ public class TextPerception {
         return Tense.tense(t);
     }
 
+    
+    public Term parseTerm(String s) throws InvalidInputException {
+        if (s.isEmpty())
+            throw new InvalidInputException("empty string");        
+        
+        s = s.trim();
+        
+        Term t = memory.conceptTerm(s);    // existing constant or getOperator
+        if (t != null) {
+            return t;   
+        }
+        
+        Term x = _parseTerm(s);
+        /*
+        Term existing = terms.get(s);
+        
+        if (existing == null)        
+            terms.put(s, x); 
+        else
+            System.out.println(existing + " " + x + " " + x.equals(existing));
+          */   
+            
+        return x;
+    }
+    
     /* ---------- react String into term ---------- */
     /**
      * Top-level method that react a Term in general, which may recursively call
@@ -363,21 +390,16 @@ public class TextPerception {
      * @param memory Reference to the memory
      * @return the Term generated from the String
      */
-    public static Term parseTerm(String s0, Memory memory) throws InvalidInputException {
-        String s = s0.trim();
+    public Term _parseTerm(String s) throws InvalidInputException {
         
         try {
             
-            if (s.length() == 0) {
-                throw new InvalidInputException("missing content");
-            }
             
-            Term t = memory.term(s);    // existing constant or getOperator
-            if (t != null) {
-                return t;
-            }                           
+            
 
-            // existing Term                
+            
+                                   
+
             int index = s.length() - 1;
             char first = s.charAt(0);
             char last = s.charAt(index);
@@ -387,25 +409,25 @@ public class TextPerception {
                 switch (opener) {
                     case COMPOUND_TERM_OPENER:
                         if (last == COMPOUND_TERM_CLOSER.ch) {
-                           return parseCompoundTerm(s.substring(1, index), memory);
+                           return parseCompoundTerm(s.substring(1, index));
                         } else {
                             throw new InvalidInputException("missing CompoundTerm closer");
                         }
                     case SET_EXT_OPENER:
                         if (last == SET_EXT_CLOSER.ch) {
-                            return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
+                            return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
                         } else {
                             throw new InvalidInputException("missing ExtensionSet closer");
                         }                    
                     case SET_INT_OPENER:
                         if (last == SET_INT_CLOSER.ch) {
-                            return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR, memory), memory);
+                            return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
                         } else {
                             throw new InvalidInputException("missing IntensionSet closer");
                         }   
                     case STATEMENT_OPENER:
                         if (last == STATEMENT_CLOSER.ch) {
-                            return parseStatement(s.substring(1, index), memory);
+                            return parseStatement(s.substring(1, index));
                         } else {
                             throw new InvalidInputException("missing Statement closer");
                         }
@@ -465,15 +487,15 @@ public class TextPerception {
      * @throws nars.io.StringParser.InvalidInputException the String cannot be
      * parsed into a Term
      */
-    private static Statement parseStatement(String s0, Memory memory) throws InvalidInputException {
+    private Statement parseStatement(String s0) throws InvalidInputException {
         String s = s0.trim();
         int i = topRelation(s);
         if (i < 0) {
             throw new InvalidInputException("invalid statement: topRelation(s) < 0");
         }
         String relation = s.substring(i, i + 3);
-        Term subject = parseTerm(s.substring(0, i), memory);
-        Term predicate = parseTerm(s.substring(i + 3), memory);
+        Term subject = parseTerm(s.substring(0, i));
+        Term predicate = parseTerm(s.substring(i + 3));
         Statement t = make(getRelation(relation), subject, predicate, memory);
         if (t == null) {
             throw new InvalidInputException("invalid statement: statement unable to create: " + getOperator(relation) + " " + subject + " " + predicate);
@@ -489,7 +511,7 @@ public class TextPerception {
      * @throws nars.io.StringParser.InvalidInputException the String cannot be
      * parsed into a Term
      */
-    private static Term parseCompoundTerm(final String s0, final Memory memory) throws InvalidInputException {
+    private Term parseCompoundTerm(final String s0) throws InvalidInputException {
         String s = s0.trim();
         if (s.isEmpty()) {
             throw new InvalidInputException("Empty compound term: " + s);
@@ -507,13 +529,13 @@ public class TextPerception {
             throw new InvalidInputException("Unknown operator: " + op);
         }
 
-        ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
+        ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
         Term[] argA = arg.toArray(new Term[arg.size()]);
         
         Term t;
         
         if (oNative!=null) {
-            t = make(oNative, argA, memory);
+            t = memory.term(oNative, argA);
         }
         else if (oRegistered!=null) {
             t = make(oRegistered, argA, memory);
@@ -533,7 +555,7 @@ public class TextPerception {
      * @throws nars.io.StringParser.InvalidInputException the String cannot be
      * parsed into an argument get
      */
-    private static ArrayList<Term> parseArguments(String s0, Memory memory) throws InvalidInputException {
+    private ArrayList<Term> parseArguments(String s0) throws InvalidInputException {
         String s = s0.trim();
         ArrayList<Term> list = new ArrayList<>();
         int start = 0;
@@ -541,7 +563,7 @@ public class TextPerception {
         Term t;
         while (end < s.length() - 1) {
             end = nextSeparator(s, start);
-            t = parseTerm(s.substring(start, end), memory);     // recursive call
+            t = parseTerm(s.substring(start, end));     // recursive call
             list.add(t);
             start = end + 1;
         }

@@ -101,7 +101,7 @@ public class SetInt extends CompoundTerm {
         }
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         return (t != null) ? t : new SetInt(name, argument);
     }
 

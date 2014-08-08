@@ -71,7 +71,7 @@ public class Product extends CompoundTerm {
      */
     public static Term make(Term[] argument, final Memory memory) {
         final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
-        final Term t = memory.term(name);
+        final Term t = memory.conceptTerm(name);
         return (t != null) ? t : new Product(name, argument);
     }
         

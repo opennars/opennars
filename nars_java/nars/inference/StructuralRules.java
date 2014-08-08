@@ -45,7 +45,6 @@ import nars.language.SetInt;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import static nars.language.Terms.*;
 import nars.storage.Memory;
 
 /**
@@ -84,12 +83,12 @@ public final class StructuralRules {
             if (components.contains(sub)) {
                 sub = compound;
                 components.set(index, pred);
-                pred = make(compound, components, memory);
+                pred = memory.term(compound, components);
             }
         } else {
             if (components.contains(pred)) {
                 components.set(index, sub);
-                sub = make(compound, components, memory);
+                sub = memory.term(compound, components);
                 pred = compound;
             }
         }
@@ -414,13 +413,13 @@ public final class StructuralRules {
             if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
                 componentList = ((CompoundTerm) condition).cloneTerms();
                 componentList[indices[1]] = newInh;
-                Term newCond = make((CompoundTerm) condition, componentList, memory);
+                Term newCond = memory.term((CompoundTerm) condition, componentList);
                 content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder(), memory);
             } else {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
-                    content = make(oldContent, componentList, memory);
+                    content = memory.term(oldContent, componentList);
                 } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
                     content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder(), memory);
                 }

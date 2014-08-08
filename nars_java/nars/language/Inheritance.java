@@ -79,7 +79,7 @@ public class Inheritance extends Statement {
             name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
         }
  
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Inheritance) t;
         }        

@@ -43,7 +43,45 @@ import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
 import nars.io.Output.OUT;
+import nars.io.Symbols.NativeOperator;
+import static nars.io.Symbols.NativeOperator.CONJUNCTION;
+import static nars.io.Symbols.NativeOperator.DIFFERENCE_EXT;
+import static nars.io.Symbols.NativeOperator.DIFFERENCE_INT;
+import static nars.io.Symbols.NativeOperator.DISJUNCTION;
+import static nars.io.Symbols.NativeOperator.EQUIVALENCE;
+import static nars.io.Symbols.NativeOperator.EQUIVALENCE_AFTER;
+import static nars.io.Symbols.NativeOperator.EQUIVALENCE_WHEN;
+import static nars.io.Symbols.NativeOperator.IMAGE_EXT;
+import static nars.io.Symbols.NativeOperator.IMAGE_INT;
+import static nars.io.Symbols.NativeOperator.IMPLICATION;
+import static nars.io.Symbols.NativeOperator.IMPLICATION_AFTER;
+import static nars.io.Symbols.NativeOperator.IMPLICATION_BEFORE;
+import static nars.io.Symbols.NativeOperator.IMPLICATION_WHEN;
+import static nars.io.Symbols.NativeOperator.INHERITANCE;
+import static nars.io.Symbols.NativeOperator.INTERSECTION_EXT;
+import static nars.io.Symbols.NativeOperator.INTERSECTION_INT;
+import static nars.io.Symbols.NativeOperator.NEGATION;
+import static nars.io.Symbols.NativeOperator.PARALLEL;
+import static nars.io.Symbols.NativeOperator.PRODUCT;
+import static nars.io.Symbols.NativeOperator.SEQUENCE;
+import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
+import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.DifferenceExt;
+import nars.language.DifferenceInt;
+import nars.language.Disjunction;
+import nars.language.Equivalence;
+import nars.language.ImageExt;
+import nars.language.ImageInt;
+import nars.language.Implication;
+import nars.language.Inheritance;
+import nars.language.IntersectionExt;
+import nars.language.IntersectionInt;
 import nars.language.Negation;
+import nars.language.Product;
+import nars.language.SetExt;
+import nars.language.SetInt;
 import nars.language.Term;
 import nars.operator.Operator;
 import nars.util.XORShiftRandom;
@@ -70,6 +108,93 @@ public class Memory implements Output, Serializable {
 
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
+    }
+    
+    
+    
+
+    /* static methods making new compounds, which may return null */
+    /**
+     * Try to make a compound term from a template and a list of term
+     *
+     * @param compound The template
+     * @param components The term
+     * @param memory Reference to the memory
+     * @return A compound term or null
+     */
+    public Term term(final CompoundTerm compound, final Term[] components) {
+        if (compound instanceof ImageExt) {
+            return ImageExt.make(components, ((ImageExt) compound).relationIndex, this);
+        } else if (compound instanceof ImageInt) {
+            return ImageInt.make(components, ((ImageInt) compound).relationIndex, this);
+        } else {
+            return term(compound.operator(), components);
+        }
+    }
+
+    public Term term(final CompoundTerm compound, Collection<Term> components) {
+        Term[] c = components.toArray(new Term[components.size()]);
+        return term(compound, c);
+    }
+    
+
+    /**
+     * Try to make a compound term from an operator and a list of term
+     * <p>
+     * Called from StringParser
+     *
+     * @param op Term operator
+     * @param arg Component list
+     * @return A term or null
+     */
+    public Term term(final NativeOperator op, final Term[] a) {
+        switch (op) {
+            case SET_EXT_OPENER:
+                return SetExt.make(CompoundTerm.termList(a), this);
+            case SET_INT_OPENER:
+                return SetInt.make(CompoundTerm.termList(a), this);
+            case INTERSECTION_EXT:
+                return IntersectionExt.make(CompoundTerm.termList(a), this);
+            case INTERSECTION_INT:
+                return IntersectionInt.make(CompoundTerm.termList(a), this);
+            case DIFFERENCE_EXT:
+                return DifferenceExt.make(a, this);
+            case DIFFERENCE_INT:
+                return DifferenceInt.make(a, this);
+            case INHERITANCE:
+                return Inheritance.make(a[0], a[1], this);
+            case PRODUCT:
+                return Product.make(a, this);
+            case IMAGE_EXT:
+                return ImageExt.make(a, this);
+            case IMAGE_INT:
+                return ImageInt.make(a, this);
+            case NEGATION:
+                return Negation.make(a, this);
+            case DISJUNCTION:
+                return Disjunction.make(CompoundTerm.termList(a), this);
+            case CONJUNCTION:
+                return Conjunction.make(a, this);
+            case SEQUENCE:
+                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, this);
+            case PARALLEL:
+                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, this);
+            case IMPLICATION:
+                return Implication.make(a[0], a[1], this);
+            case IMPLICATION_AFTER:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
+            case IMPLICATION_BEFORE:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD, this);
+            case IMPLICATION_WHEN:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
+            case EQUIVALENCE:
+                return Equivalence.make(a[0], a[1], this);
+            case EQUIVALENCE_WHEN:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
+            case EQUIVALENCE_AFTER:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
+        }
+        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
     
 
@@ -135,12 +260,7 @@ public class Memory implements Output, Serializable {
      */
     private long clock;
     
-    /**
-     * The substitution that unify the common term in the Task and the Belief
-     * TODO unused
-     */
-    protected HashMap<Term, Term> substitute;
-    
+
 
     // for temporal induction
     private Task lastEvent;
@@ -240,7 +360,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept or operator
      * @return a Term or null (if no Concept/InnateOperator has this name)
      */
-    public Term term(final String name) {
+    public Term conceptTerm(final String name) {
         final Concept concept = concepts.get(name);
         if (concept != null) {
             return concept.term;

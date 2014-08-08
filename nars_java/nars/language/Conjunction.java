@@ -130,7 +130,7 @@ public class Conjunction extends CompoundTerm {
         }                         // special case: single component
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             final String name = makeCompoundName(NativeOperator.SEQUENCE, argList);
-            final Term t = memory.term(name);
+            final Term t = memory.conceptTerm(name);
             return (t != null) ? t : new Conjunction(name, argList, temporalOrder);
         } else {
             final TreeSet<Term> set = new TreeSet<>(); // sort/merge arguments
@@ -155,7 +155,7 @@ public class Conjunction extends CompoundTerm {
         } else {
             name = makeCompoundName(NativeOperator.PARALLEL, argument);
         }
-        final Term t = memory.term(name);
+        final Term t = memory.conceptTerm(name);
         return (t != null) ? t : new Conjunction(name, argument, temporalOrder);
     }
 

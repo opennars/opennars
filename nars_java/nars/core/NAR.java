@@ -11,6 +11,7 @@ import nars.io.Input;
 import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextPerception;
+import nars.language.Term;
 import nars.storage.Memory;
 
 
@@ -386,6 +387,16 @@ public class NAR implements Runnable, Output {
 
     public Param param() {
         return memory.param;
+    }
+    
+    /** parses and returns a Term from a string; or null if parsing error */
+    public Term term(final String s) {        
+        try {
+            return textPerception.parseTerm(s);
+        } catch (TextPerception.InvalidInputException ex) {
+            output(ERR.class, ex);
+        }
+        return null;
     }
     
 }

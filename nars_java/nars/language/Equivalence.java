@@ -106,7 +106,7 @@ public class Equivalence extends Statement {
                 copula = NativeOperator.EQUIVALENCE;
         }
         String name = makeStatementName(subject, copula, predicate);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Equivalence) t;
         }

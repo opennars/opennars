@@ -79,7 +79,7 @@ public class Operation extends Inheritance {
             return null;
         }
         String name = makeName(oper.getName(), arg, memory);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Operation) t;
         }

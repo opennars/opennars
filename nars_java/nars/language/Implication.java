@@ -99,7 +99,7 @@ public class Implication extends Statement {
                 copula = NativeOperator.IMPLICATION;
         }                
         final String name = makeStatementName(subject, copula, predicate);
-        final Term t = memory.term(name);
+        final Term t = memory.conceptTerm(name);
         if (t != null) {            
             if (t.getClass()!=Implication.class) {                
                 throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() + " = " + t.toString() );
