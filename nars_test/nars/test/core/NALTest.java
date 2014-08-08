@@ -33,7 +33,7 @@ public class NALTest  {
     int minCycles = 600; //TODO reduce this to one or zero
 
     static {
-        Memory.randomSeed = 2;
+        Memory.randomSeed = 1;
     }
     
 
@@ -184,7 +184,7 @@ public class NALTest  {
     
     
     protected void testNAL(final String path) {               
-                        
+        Memory.resetStatic();
         final NAR n = newNAR();
         
         final List<Expect> expects = new ArrayList();
@@ -204,10 +204,12 @@ public class NALTest  {
         try {
             n.finish(minCycles);
         }
-        catch (RuntimeException e) {
+        catch (Exception e) {
             e.printStackTrace();
             error = true;
         }
+        catch(Throwable e){ error = true; }
+      
         
         System.err.println('\n' + path + " @" + n.getTime());
         

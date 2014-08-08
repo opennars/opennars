@@ -6,7 +6,7 @@
 'If robin is a type of bird then robin can fly. 
 <<robin --> bird> ==> <robin --> [flying]>>. %0.80% 
 
-14
+140
 
 'I guess if robin can fly then robin is a type of animal. 
 ''outputMustContain('<<robin --> [flying]> ==> <robin --> animal>>. %1.00;0.39%')
