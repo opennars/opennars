@@ -70,7 +70,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public Conjunction clone() {
-        return new Conjunction(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
+        return new Conjunction(name(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
 
     /**

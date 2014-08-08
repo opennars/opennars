@@ -1,31 +1,13 @@
 package nars.io;
 
-import nars.language.Tense;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
-import java.util.ArrayList;
-import java.util.List;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.truthToQuality;
 import static nars.io.Symbols.ARGUMENT_SEPARATOR;
 import static nars.io.Symbols.BUDGET_VALUE_MARK;
 import static nars.io.Symbols.GOAL_MARK;
 import static nars.io.Symbols.INPUT_LINE_PREFIX;
 import static nars.io.Symbols.JUDGMENT_MARK;
-import nars.io.Symbols.NativeOperator;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
-import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
-import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
-import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
-import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
-import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 import static nars.io.Symbols.OUTPUT_LINE_PREFIX;
 import static nars.io.Symbols.PREFIX_MARK;
 import static nars.io.Symbols.QUESTION_MARK;
@@ -39,14 +21,34 @@ import static nars.io.Symbols.getOpener;
 import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getRelation;
 import static nars.io.Symbols.isRelation;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
+import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
+import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
+import static nars.language.Statement.make;
+import static nars.language.Variables.containVar;
+import static nars.operator.Operation.make;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import nars.core.NAR;
+import nars.core.Parameters;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
+import nars.entity.Task;
+import nars.entity.TruthValue;
+import nars.io.Symbols.NativeOperator;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
+import nars.language.Tense;
 import nars.language.Term;
 import nars.language.Variable;
-import static nars.language.Variables.containVar;
-import static nars.operator.Operation.make;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -56,8 +58,9 @@ import nars.storage.Memory;
 public class TextPerception {
     
     public final Memory memory;
-    
-    //public final Map<String, Term> terms = new HashMap();
+        
+    //an index of known, but non-conceptualized Terms
+    final Map<String,Term> unconceptualized = new HashMap();
     
     public final List<TextReaction> parsers;
     private final NAR nar;
@@ -352,28 +355,35 @@ public class TextPerception {
     }
 
     
-    public Term parseTerm(String s) throws InvalidInputException {
+    
+    public Term parseTerm(final String s) throws InvalidInputException {
         if (s.isEmpty())
             throw new InvalidInputException("empty string");        
         
-        s = s.trim();
+        Term parsed = _parseTerm(s.trim());
         
-        Term t = memory.conceptTerm(s);    // existing constant or getOperator
-        if (t != null) {
-            return t;   
+        Term conceptualized = memory.conceptTerm(parsed.name());    // existing constant or getOperator
+        if (conceptualized != null) {
+        	//already conceptualized
+        	
+        	//remove from unconceptualized if it happens to be there
+        	unconceptualized.remove(conceptualized.name());
+        	
+            return conceptualized;   
+        }
+        else {        	
+        	Term known = unconceptualized.get(parsed.name());
+        	if (known!=null) {
+            	//unconceptualized, but known
+        		return known;
+        	}
+        	else {
+            	//new Term
+        		unconceptualized.put(parsed.name(), parsed);
+        		return parsed;
+        	}
         }
         
-        Term x = _parseTerm(s);
-        /*
-        Term existing = terms.get(s);
-        
-        if (existing == null)        
-            terms.put(s, x); 
-        else
-            System.out.println(existing + " " + x + " " + x.equals(existing));
-          */   
-            
-        return x;
     }
     
     /* ---------- react String into term ---------- */

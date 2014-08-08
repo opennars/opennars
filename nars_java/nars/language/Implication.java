@@ -60,7 +60,7 @@ public class Implication extends Statement {
     @Override
     public Implication clone() {
         //TODO use the faster super constructor here
-        return new Implication(getName(), cloneTerms(), isConstant(), complexity, temporalOrder);
+        return new Implication(name(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
 
     /**

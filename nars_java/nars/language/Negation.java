@@ -62,7 +62,7 @@ public class Negation extends CompoundTerm {
      */
     @Override
     public Negation clone() {
-        return new Negation(getName(), cloneTerms(), isConstant(), complexity);
+        return new Negation(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**

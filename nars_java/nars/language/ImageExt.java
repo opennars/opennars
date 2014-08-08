@@ -71,7 +71,7 @@ public class ImageExt extends CompoundTerm {
      */
     @Override
     public ImageExt clone() {
-        return new ImageExt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
+        return new ImageExt(name(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ImageExt extends CompoundTerm {
         Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {
-            if (argList[j].getName().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
+            if (argList[j].name().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
                 index = j - 1;
                 argument[n] = relation;
             } else {

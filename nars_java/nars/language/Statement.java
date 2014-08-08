@@ -31,8 +31,6 @@ import nars.storage.Memory;
  * relation symbol in between. It can be of either first-order or higher-order.
  */
 public abstract class Statement extends CompoundTerm {
-    private StringBuilder nameBuilder;
-
     
     /**
      * Constructor with partial values, called by make
@@ -171,10 +169,7 @@ public abstract class Statement extends CompoundTerm {
      */
     @Override
     protected String makeName() {
-        if (nameBuilder==null)
-            nameBuilder = new StringBuilder();
-        
-        return makeStatementName(getSubject(), operator(), getPredicate(), nameBuilder);
+        return makeStatementName(getSubject(), operator(), getPredicate());
     }
 
     /**
@@ -185,18 +180,12 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate, StringBuilder nameBuilder) {
-        final String subjectName = subject.getName();
-        final String predicateName = predicate.getName();
+    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+        final String subjectName = subject.name();
+        final String predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
-        if (nameBuilder == null) {
-            nameBuilder = new StringBuilder(length);
-        }
-        nameBuilder.setLength(0);
-        nameBuilder.ensureCapacity(length);
-        
-        return nameBuilder
+        return new StringBuilder(length)
             .append(STATEMENT_OPENER.ch)
             .append(subjectName)
             .append(' ').append(relation).append(' ')
@@ -205,10 +194,6 @@ public abstract class Statement extends CompoundTerm {
             .toString();
     }
     
-    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
-        return makeStatementName(subject, relation, predicate, null);
-    }
-
     /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>

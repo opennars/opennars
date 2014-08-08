@@ -129,7 +129,7 @@ public class TermLink extends Item {
      * @param v Budget value of the link
      */
     public TermLink(final Term t, final TermLink template, final BudgetValue v) {
-        super(t.getName(), v);
+        super(t.name(), v);
         target = t;
         type = (template.target.equals(t)) 
                 ? (short)(template.type - 1) //// point to component

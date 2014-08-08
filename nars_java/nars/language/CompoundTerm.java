@@ -84,7 +84,7 @@ public abstract class CompoundTerm extends Term {
     @Deprecated protected CompoundTerm(final String name, final Term[] components, final boolean isConstant, final short complexity) {
         this.name = name;
         this.term = components; //ensureValidComponents(term);
-        this.hasVar = Variables.containVar(getName());
+        this.hasVar = Variables.containVar(name());
         this.isConstant = isConstant;
         this.complexity = complexity;
     }
@@ -149,7 +149,7 @@ public abstract class CompoundTerm extends Term {
     @Override
     protected final boolean setName(String name) {
         if (super.setName(name)) {
-            this.hasVar = Variables.containVar(getName());
+            this.hasVar = Variables.containVar(name());
             return true;
         }
         return false;
@@ -203,7 +203,7 @@ public abstract class CompoundTerm extends Term {
         
         return true;*/
         
-        return getName().equals(t.getName());
+        return name().equals(t.name());
     }
 
 
@@ -288,7 +288,7 @@ public abstract class CompoundTerm extends Term {
                 CompoundTerm ct = (CompoundTerm)t;               
                 t.setName(ct.makeName());
             }
-            nameBuilder.append(t.getName());
+            nameBuilder.append(t.name());
         }
         nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
                 
@@ -315,11 +315,11 @@ public abstract class CompoundTerm extends Term {
         }
         else {
         
-            name.append(arg[0].getName());
+            name.append(arg[0].name());
 
             for (int i = 1; i < arg.length; i++) {
                 name.append(Symbols.ARGUMENT_SEPARATOR);
-                name.append(arg[i].getName());
+                name.append(arg[i].name());
             }
         }
         
@@ -342,14 +342,14 @@ public abstract class CompoundTerm extends Term {
             .append(COMPOUND_TERM_OPENER.ch)
             .append(op)
             .append(Symbols.ARGUMENT_SEPARATOR)
-            .append(arg[relationIndex].getName());
+            .append(arg[relationIndex].name());
         
         for (int i = 0; i < arg.length; i++) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             if (i == relationIndex) {
                 name.append(Symbols.IMAGE_PLACE_HOLDER);
             } else {
-                name.append(arg[i].getName());
+                name.append(arg[i].name());
             }
         }
         name.append(COMPOUND_TERM_CLOSER.ch);
@@ -710,12 +710,12 @@ public abstract class CompoundTerm extends Term {
                 final Term term = this.term[i];
                 if (term instanceof Variable) {
                     Variable var;                    
-                    if (term.getName().length() == 1) { // anonymous variable from input
-                        var = new Variable(term.getName().charAt(0) + String.valueOf(map.size() + 1));
+                    if (term.name().length() == 1) { // anonymous variable from input
+                        var = new Variable(term.name().charAt(0) + String.valueOf(map.size() + 1));
                     } else {
                         var = map.get(term);
                         if (var == null) {
-                            var = new Variable(term.getName().charAt(0) + String.valueOf(map.size() + 1));
+                            var = new Variable(term.name().charAt(0) + String.valueOf(map.size() + 1));
                         }
                     }
                     if (!term.equals(var)) {

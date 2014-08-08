@@ -54,7 +54,7 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return The name of the term as a String
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -82,7 +82,7 @@ public class Term implements Cloneable, Comparable<Term> {
         if (t.hashCode()!=hashCode()) {
             return false;
         }        
-        return name.equals(t.getName());
+        return name.equals(t.name());
     }
 
     /**
@@ -151,7 +151,7 @@ public class Term implements Cloneable, Comparable<Term> {
     public int compareTo(final Term that) {
         //This removes this class's dependency on CompoundTerm
         if (that.getClass() == getClass())
-            return name.compareTo(that.getName());
+            return name.compareTo(that.name());
         return that.getClass().getName().compareTo(getClass().getName());
         
         //previously: Orders among terms: variable < atomic < compound

@@ -63,7 +63,7 @@ public class SetExt extends CompoundTerm {
      */
     @Override
     public SetExt clone() {
-        return new SetExt(getName(), cloneTerms(), isConstant(), complexity);
+        return new SetExt(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**

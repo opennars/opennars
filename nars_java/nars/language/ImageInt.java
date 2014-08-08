@@ -71,7 +71,7 @@ public class ImageInt extends CompoundTerm {
      */
     @Override
     public ImageInt clone() {
-        return new ImageInt(getName(), cloneTerms(), isConstant(), complexity, relationIndex);
+        return new ImageInt(name(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ImageInt extends CompoundTerm {
         Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {
-            if (argList[j].getName().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
+            if (argList[j].name().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
                 index = j - 1;
                 argument[n] = relation;
             } else {

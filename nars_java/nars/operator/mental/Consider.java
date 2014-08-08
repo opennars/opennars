@@ -43,7 +43,7 @@ public class Consider extends Operator {
     @Override
     public ArrayList<Task> execute(Term[] args, Memory memory) {
         Term term = args[0];
-        Concept concept = memory.concept(term);
+        Concept concept = memory.conceptualize(term);
         concept.fire();
         return null;
     }

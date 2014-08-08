@@ -85,7 +85,7 @@ public class RuleTables {
            return;
         }
         
-        Concept beliefConcept = memory.conceptExisting(beliefTerm);
+        Concept beliefConcept = memory.concept(beliefTerm);
         Sentence belief = null;
         if (beliefConcept != null) {
             belief = beliefConcept.getBelief(task);

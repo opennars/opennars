@@ -144,11 +144,11 @@ public class Variables {
     }
 
     public static Variable makeCommonVariable(final Term v1, final Term v2) {
-        return new Variable(v1.getName() + v2.getName() + '$');
+        return new Variable(v1.name() + v2.name() + '$');
     }
 
     public static boolean isCommonVariable(final Variable v) {
-        String s = v.getName();        
+        String s = v.name();     
         return s.charAt(s.length() - 1) == '$';
     }
 

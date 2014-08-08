@@ -56,7 +56,7 @@ public class IntersectionExt extends CompoundTerm {
      */
     @Override
     public IntersectionExt clone() {
-        return new IntersectionExt(getName(), cloneTerms(), isConstant(), complexity);
+        return new IntersectionExt(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**

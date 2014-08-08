@@ -55,7 +55,7 @@ public class Inheritance extends Statement {
      * @return A new object, to be casted into a SetExt
      */
     @Override public Inheritance clone() {
-        return new Inheritance(getName(), cloneTerms(), isConstant(), containVar(), complexity);
+        return new Inheritance(name(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
     /**
@@ -74,7 +74,7 @@ public class Inheritance extends Statement {
         
         String name;
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).term, memory);
+            name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term, memory);
         } else {
             name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
         }
