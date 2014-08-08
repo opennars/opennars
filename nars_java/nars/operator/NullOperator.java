@@ -29,10 +29,15 @@ import nars.storage.Memory;
 /**
  *  A class used as a template for Operator definition.
  */
-public class Sample extends Operator {
+public class NullOperator extends Operator {
 
-    public Sample() {
-        super("^sample");
+    
+    public NullOperator() {
+        this("^sample");
+    }
+    
+    public NullOperator(String name) {
+        super(name);
     }
 
     /** called from Operator */
