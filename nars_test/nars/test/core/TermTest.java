@@ -19,8 +19,6 @@ package nars.test.core;
 import java.util.TreeSet;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
-import nars.io.TextPerception;
-import nars.io.TextPerception.InvalidInputException;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Term;
@@ -38,8 +36,8 @@ public class TermTest {
         try {
             NAR n = new DefaultNARBuilder().build();
 
-            Term term1 = TextPerception.parseTerm(term1String, n.memory);
-            Term term2 = TextPerception.parseTerm(term2String, n.memory);
+            Term term1 = n.term(term1String);
+            Term term2 = n.term(term2String);
 
             assertTrue(term1 instanceof CompoundTerm);
             assertTrue(term2 instanceof CompoundTerm);
@@ -66,55 +64,66 @@ public class TermTest {
     public void testConjunctionTreeSet() {
         NAR n = new DefaultNARBuilder().build();
         
-        try {           
+        
             
-            String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-            Term term1 = TextPerception.parseTerm(term1String, n.memory);
+        String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
+        Term term1 = n.term(term1String);
 
-            // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
-            Term term2 = TextPerception.parseTerm("<#1 --> (|,boy,(/,taller_than,{Tom},_))>", n.memory);
-   
-            assertTrue(term1.toString().equals(term1String));
-            assertTrue(term1.getComplexity() > 1);
-            assertTrue(term1.getComplexity() == term2.getComplexity());
-                        
-            assertTrue(term1.getClass().equals(Inheritance.class));
-            assertTrue(term1.getClass().equals(Inheritance.class));
-            
-            
-            //System.out.println("t1: " + term1 + ", complexity=" + term1.getComplexity());
-            //System.out.println("t2: " + term2 + ", complexity=" + term2.getComplexity());
-            
-            
-            assertTrue(term1.equals(term1.clone()));
-            assertTrue(term1.compareTo(term1.clone())==0);            
-            assertTrue(term2.equals(term2.clone()));
-            assertTrue(term2.compareTo(term2.clone())==0);
-            
-            boolean t1e2 = term1.equals(term2);
-            int t1c2 = term1.compareTo(term2);
-            int t2c1 = term2.compareTo(term1);
+        // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
+        Term term2 = n.term("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
 
-            assertTrue(!t1e2);
-            assertTrue("term1 and term2 inequal, so t1.compareTo(t2) should not = 0", t1c2!=0);
-            assertTrue("term1 and term2 inequal, so t2.compareTo(t1) should not = 0", t2c1!=0);
-            
-            /*
-            System.out.println("t1 equals t2 " + t1e2);
-            System.out.println("t1 compareTo t2 " + t1c2);
-            System.out.println("t2 compareTo t1 " + t2c1);
-            */
-            
-            TreeSet<Term> set = new TreeSet<Term>();
-            boolean added1 = set.add((Term) term1.clone());
-            boolean added2 = set.add((Term) term2.clone());
-            assertTrue("term 1 added to set", added1);
-            assertTrue("term 2 added to set", added2);
-            
-            assertTrue(set.size() == 2);
-        }
-        catch (InvalidInputException e) {
-            assertTrue(e.toString(), false);
-        }
+        assertTrue(term1.toString().equals(term1String));
+        assertTrue(term1.getComplexity() > 1);
+        assertTrue(term1.getComplexity() == term2.getComplexity());
+
+        assertTrue(term1.getClass().equals(Inheritance.class));
+        assertTrue(term1.getClass().equals(Inheritance.class));
+
+
+        //System.out.println("t1: " + term1 + ", complexity=" + term1.getComplexity());
+        //System.out.println("t2: " + term2 + ", complexity=" + term2.getComplexity());
+
+
+        assertTrue(term1.equals(term1.clone()));
+        assertTrue(term1.compareTo(term1.clone())==0);            
+        assertTrue(term2.equals(term2.clone()));
+        assertTrue(term2.compareTo(term2.clone())==0);
+
+        boolean t1e2 = term1.equals(term2);
+        int t1c2 = term1.compareTo(term2);
+        int t2c1 = term2.compareTo(term1);
+
+        assertTrue(!t1e2);
+        assertTrue("term1 and term2 inequal, so t1.compareTo(t2) should not = 0", t1c2!=0);
+        assertTrue("term1 and term2 inequal, so t2.compareTo(t1) should not = 0", t2c1!=0);
+
+        /*
+        System.out.println("t1 equals t2 " + t1e2);
+        System.out.println("t1 compareTo t2 " + t1c2);
+        System.out.println("t2 compareTo t1 " + t2c1);
+        */
+
+        TreeSet<Term> set = new TreeSet<Term>();
+        boolean added1 = set.add((Term) term1.clone());
+        boolean added2 = set.add((Term) term2.clone());
+        assertTrue("term 1 added to set", added1);
+        assertTrue("term 2 added to set", added2);
+
+        assertTrue(set.size() == 2);
+        
+    }
+    
+    @Test
+    public void testTermInstancing() {
+       NAR n = new DefaultNARBuilder().build();
+        
+       String term1String ="<a --> b>";
+       Term term1 = n.term(term1String);
+       Term term2 = n.term(term1String);
+       
+       assert(term1.equals(term2));
+       assert(term1.hashCode() == term2.hashCode());
+       assert(term1 == term2);
+        
     }
 }

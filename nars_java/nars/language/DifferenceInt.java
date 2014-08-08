@@ -79,7 +79,7 @@ public class DifferenceInt extends CompoundTerm {
         }
         
         String name = makeCompoundName(NativeOperator.DIFFERENCE_INT, argList);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         return (t != null) ? t : new DifferenceInt(name, argList);
     }
 

@@ -147,7 +147,7 @@ public class ImageExt extends CompoundTerm {
      */
     public static Term make(Term[] argument, short index, Memory memory) {
         String name = makeImageName(NativeOperator.IMAGE_EXT, argument, index);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         return (t != null) ? t : new ImageExt(name, argument, index);
     }
 

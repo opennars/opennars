@@ -105,7 +105,7 @@ public class SetExt extends CompoundTerm {
 
     private static Term make(final Term[] termSet, final Memory memory) {
         final String name = makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch);
-        final Term t = memory.term(name);
+        final Term t = memory.conceptTerm(name);
         return (t != null) ? t : new SetExt(name, termSet);
     }
     

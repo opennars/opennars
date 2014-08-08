@@ -91,7 +91,7 @@ public class Negation extends CompoundTerm {
             return null;
         }
         final String name = makeCompoundName(NativeOperator.NEGATION, argument);
-        final Term t = memory.term(name);
+        final Term t = memory.conceptTerm(name);
         return (t != null) ? t : new Negation(name, argument);
     }
 

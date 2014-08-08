@@ -249,10 +249,10 @@ public abstract class CompoundTerm extends Term {
      * build a component list from terms
      * @return the component list
      */
-    protected static Term[] termArray(final Term... t) {
+    public static Term[] termArray(final Term... t) {
         return t;
     }
-    protected static List<Term> termList(final Term... t) {
+    public static List<Term> termList(final Term... t) {
         return Arrays.asList(t);
     }
     
@@ -625,27 +625,27 @@ public abstract class CompoundTerm extends Term {
         }
     }
 
-    /**
-     * Try to add a component into a compound
-     *
-     * @param t1 The compound
-     * @param t2 The component
-     * @param memory Reference to the memory
-     * @return The new compound
-     */
-    public static Term addComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
-        if (t2 == null)
-            return t1;
-        
-        boolean success;
-        Term[] terms;
-        if (t2 instanceof CompoundTerm) {
-            terms = t1.cloneTerms(((CompoundTerm) t2).term);
-        } else {
-            terms = t1.cloneTerms(t2);
-        }
-        return Terms.make(t1, terms, memory);
-    }
+//    /**
+//     * Try to add a component into a compound
+//     *
+//     * @param t1 The compound
+//     * @param t2 The component
+//     * @param memory Reference to the memory
+//     * @return The new compound
+//     */
+//    public static Term addComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
+//        if (t2 == null)
+//            return t1;
+//        
+//        boolean success;
+//        Term[] terms;
+//        if (t2 instanceof CompoundTerm) {
+//            terms = t1.cloneTerms(((CompoundTerm) t2).term);
+//        } else {
+//            terms = t1.cloneTerms(t2);
+//        }
+//        return Memory.make(t1, terms, memory);
+//    }
 
 
 
@@ -660,18 +660,19 @@ public abstract class CompoundTerm extends Term {
      */
     public static Term setComponent(final CompoundTerm compound, final int index, final Term t, final Memory memory) {
         List<Term> list = compound.cloneTermsListDeep();
-        list.remove(index);
+        
         if (t != null) {
             if (compound.getClass() != t.getClass()) {
-                list.add(index, t);
+                list.set(index, t);
             } else {
+                list.remove(index);
                 final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
                 for (int i = 0; i < list2.size(); i++) {
                     list.add(index + i, list2.get(i));
                 }
             }
         }
-        return Terms.make(compound, list, memory);
+        return memory.term(compound, list);
     }
 
     /* ----- variable-related utilities ----- */

@@ -120,7 +120,7 @@ public class IntersectionInt extends CompoundTerm {
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
         String name = makeCompoundName(NativeOperator.INTERSECTION_INT, argument);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         return (t != null) ? t : new IntersectionInt(name, argument);
     }
 

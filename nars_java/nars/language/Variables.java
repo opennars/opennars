@@ -1,7 +1,6 @@
 package nars.language;
 
 import java.util.HashMap;
-import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.storage.Memory;
 
@@ -12,11 +11,8 @@ public class Variables {
 
     
     
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final HashMap<Term, Term> map1, final HashMap<Term, Term> map2, int depth) {
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final HashMap<Term, Term> map1, final HashMap<Term, Term> map2) {
         
-        if (depth == Parameters.MAX_VARIABLE_SUBSTITUTION_DEPTH) return false;
-        //temporary
-        //InferenceTracer.guardStack("findSubstitute", type, term1, term2, map1, map2);        
         
         Term t;                
         if ((term1 instanceof Variable) && (((Variable) term1).getType() == type)) {
@@ -24,7 +20,7 @@ public class Variables {
             t = map1.get(var1);                        
             
             if (t != null) {
-                return findSubstitute(type, t, term2, map1, map2, depth+1);
+                return findSubstitute(type, t, term2, map1, map2);
             } else {
                 if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
                     Variable CommonVar = makeCommonVariable(term1, term2);
@@ -42,7 +38,7 @@ public class Variables {
             final Variable var2 = (Variable) term2;
             t = map2.get(var2);
             if (t != null) {
-                return findSubstitute(type, term1, t, map1, map2, depth+1);
+                return findSubstitute(type, term1, t, map1, map2);
             } else {
                 map2.put(var2, term1);
                 if (isCommonVariable(var2)) {
@@ -66,7 +62,7 @@ public class Variables {
             for (int i = 0; i < cTerm1.size(); i++) {
                 Term t1 = list[i];
                 Term t2 = cTerm2.term[i];
-                if (!findSubstitute(type, t1, t2, map1, map2, depth+1)) {
+                if (!findSubstitute(type, t1, t2, map1, map2)) {
                     return false;
                 }
             }
@@ -74,21 +70,7 @@ public class Variables {
         }
         return term1.equals(term2);        
     }
-    
-    /**
-     * To recursively find a substitution that can unify two Terms without
-     * changing them
-     *
-     * @param type The type of Variable to be substituted
-     * @param term1 The first Term to be unified
-     * @param term2 The second Term to be unified
-     * @param map1 The substitution for term1 formed so far
-     * @param map2 The substitution for term2 formed so far
-     * @return Whether there is a substitution that unifies the two Terms
-     */
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final HashMap<Term, Term> map1, final HashMap<Term, Term> map2) {
-        return findSubstitute(type, term1, term2, map1, map2, 0);        
-    }
+
 
     /**
      * Check whether a string represent a name of a term that contains a

@@ -155,7 +155,7 @@ public class DefaultTextPerception extends TextPerception {
                 char c = input.charAt(0);
                 if (c != Symbols.COMMENT_MARK) {
                     try {
-                        Task task = parseNarsese(new StringBuilder(input), nar.memory, nar.getTime());
+                        Task task = parseNarsese(new StringBuilder(input));
                         if (task != null) {
                             nar.output(Output.IN.class, task.sentence);    // report addInput
                             nar.memory.inputTask(task);

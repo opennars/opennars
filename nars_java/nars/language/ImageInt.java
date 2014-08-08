@@ -150,7 +150,7 @@ public class ImageInt extends CompoundTerm {
      */
     public static Term make(final Term[] argument, final short index, final Memory memory) {
         String name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
-        Term t = memory.term(name);
+        Term t = memory.conceptTerm(name);
         return (t != null) ? t : new ImageInt(name, argument, index);
     }
 
