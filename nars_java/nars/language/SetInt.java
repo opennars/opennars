@@ -63,7 +63,7 @@ public class SetInt extends CompoundTerm {
      */
     @Override
     public SetInt clone() {
-        return new SetInt(getName(), cloneTerms(), isConstant(), complexity);
+        return new SetInt(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**

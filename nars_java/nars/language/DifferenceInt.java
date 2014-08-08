@@ -55,7 +55,7 @@ public class DifferenceInt extends CompoundTerm {
      */
     @Override
     public DifferenceInt clone() {
-        return new DifferenceInt(getName(), cloneTerms(), isConstant(), complexity);
+        return new DifferenceInt(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**

@@ -16,13 +16,17 @@
  */
 package nars.test.core;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.TreeSet;
+
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.entity.Concept;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Term;
-import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 /**
@@ -114,16 +118,59 @@ public class TermTest {
     }
     
     @Test
-    public void testTermInstancing() {
+    public void testUnconceptualizedTermInstancing() {
        NAR n = new DefaultNARBuilder().build();
         
        String term1String ="<a --> b>";
        Term term1 = n.term(term1String);
        Term term2 = n.term(term1String);
        
-       assert(term1.equals(term2));
-       assert(term1.hashCode() == term2.hashCode());
-       assert(term1 == term2);
-        
+       assertTrue(term1.equals(term2));
+       assertTrue(term1.hashCode() == term2.hashCode());
+       
+       //this is the key part of this test.  
+       //since term1String is not conceptualized, 
+       //test if it has been stored in the TextPerception unconceptualized index
+       assertTrue(term1 == term2);
+       
+       CompoundTerm cterm1 = ((CompoundTerm)term1);
+       CompoundTerm cterm2 = ((CompoundTerm)term2);
+
+       //test subterms
+       assertTrue(cterm1.term[0].equals(cterm2.term[0])); //'a'
+       assertTrue(cterm1.term[0] == cterm2.term[0]); //'a'
+
     }
+    
+    @Test
+    public void testConceptInstancing() {
+       NAR n = new DefaultNARBuilder().build();
+        
+       String statement1 = "<a --> b>.";
+       
+       Term a = n.term("a");
+       assertTrue(a!=null);
+       Term a1 = n.term("a");
+       assertTrue(a == a1);
+       
+       n.addInput(statement1);       
+       n.step(4);
+              
+       n.addInput(" <a  --> b>.  ");
+       n.step(1);
+       n.addInput(" <a--> b>.  ");
+       n.step(1);
+       
+       String statement2 = "<a --> c>.";
+       n.addInput(statement2);
+       n.step(1);
+       
+       Term a2 = n.term("a");
+       assertTrue(a2!=null);
+       Concept ca = n.memory.concept("a");
+       assertTrue(ca!=null);
+       
+       assertTrue(n.memory.getConcepts().size() == 5);
+
+    }    
 }

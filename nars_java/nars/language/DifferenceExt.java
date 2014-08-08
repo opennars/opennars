@@ -55,7 +55,7 @@ public class DifferenceExt extends CompoundTerm {
      */
     @Override
     public DifferenceExt clone() {
-        return new DifferenceExt(getName(), cloneTerms(), isConstant(), complexity);
+        return new DifferenceExt(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**

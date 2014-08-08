@@ -111,7 +111,7 @@ public final class Concept extends Item {
      * @param memory A reference to the memory
      */
     public Concept(final Term tm, AbstractBag<TaskLink> taskLinks, AbstractBag<TermLink> termLinks, final Memory memory) {
-        super(tm.getName());
+        super(tm.name());
         this.term = tm;
         this.memory = memory;
 
@@ -303,7 +303,7 @@ public final class Concept extends Item {
                     for (final TermLink termLink : termLinkTemplates) {
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                         Term componentTerm = termLink.target;
-                        Concept componentConcept = memory.concept(componentTerm);
+                        Concept componentConcept = memory.conceptualize(componentTerm);
                         if (componentConcept != null) {
                             componentConcept.insertTaskLink(new TaskLink(task, termLink, subBudget));
                         }
@@ -382,7 +382,7 @@ public final class Concept extends Item {
     public void insertTaskLink(final TaskLink taskLink) {
         final BudgetValue taskBudget = taskLink.budget;
         taskLinks.putIn(taskLink);
-        memory.activateConcept(this, taskBudget);
+        memory.conceptActivate(this, taskBudget);
     }
 
     /**
@@ -399,7 +399,7 @@ public final class Concept extends Item {
                 for (final TermLink template : termLinkTemplates) {
                     if (template.type != TermLink.TRANSFORM) {
                         Term t = template.target;
-                        final Concept concept = memory.concept(t);
+                        final Concept concept = memory.conceptualize(t);
                         if (concept != null) {
                             
                             // this termLink to that

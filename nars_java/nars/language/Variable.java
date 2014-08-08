@@ -41,7 +41,7 @@ public class Variable extends Term {
      */
     @Override
     public Variable clone() {
-        return new Variable(getName());
+        return new Variable(name());
     }
 
     /**
@@ -50,7 +50,7 @@ public class Variable extends Term {
      * @return The variable type
      */
     public char getType() {
-        return getName().charAt(0);
+        return name().charAt(0);
     }
 
     /**
@@ -113,6 +113,6 @@ public class Variable extends Term {
      */
     @Override
     public final int compareTo(final Term that) {
-        return (that instanceof Variable) ? getName().compareTo(that.getName()) : -1;
+        return (that instanceof Variable) ? name().compareTo(that.name()) : -1;
     }
 }

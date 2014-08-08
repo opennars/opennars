@@ -348,7 +348,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept
      * @return a Concept or null
      */
-    public Concept conceptExisting(final String name) {
+    public Concept concept(final String name) {
         return concepts.get(name);
     }
 
@@ -374,8 +374,8 @@ public class Memory implements Output, Serializable {
      * @param term The Term naming a concept
      * @return a Concept or null
      */
-    public Concept conceptExisting(final Term term) {
-        return conceptExisting(term.getName());
+    public Concept concept(final Term term) {
+        return concept(term.name());
     }
 
     /**
@@ -384,11 +384,11 @@ public class Memory implements Output, Serializable {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null ( TODO bad smell )
      */
-    public Concept concept(final Term term) {
+    public Concept conceptualize(final Term term) {
         if (!term.isConstant()) {
             return null;
         }
-        final String n = term.getName();
+        final String n = term.name();
         Concept concept = concepts.get(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
@@ -413,8 +413,8 @@ public class Memory implements Output, Serializable {
      * @param t The Term naming a concept
      * @return the priority value of the concept
      */
-    public float getConceptActivation(final Term t) {
-        final Concept c = conceptExisting(t);
+    public float conceptActivation(final Term t) {
+        final Concept c = concept(t);
         return (c == null) ? 0f : c.getPriority();
     }
 
@@ -427,7 +427,7 @@ public class Memory implements Output, Serializable {
      * @param c the concept to be adjusted
      * @param b the new BudgetValue
      */
-    public void activateConcept(final Concept c, final BudgetValue b) {
+    public void conceptActivate(final Concept c, final BudgetValue b) {
         concepts.pickOut(c.getKey());
         BudgetFunctions.activate(c, b);
         concepts.putBack(c);
@@ -744,7 +744,7 @@ public class Memory implements Output, Serializable {
         Task newEvent = null;
         while (counter-- > 0) {
             final Task task = newTasks.removeFirst();
-            if (task.isInput() || (conceptExisting(task.getContent()) != null)) {
+            if (task.isInput() || (concept(task.getContent()) != null)) {
                 // new addInput or existing concept
                 immediateProcess(task);
                 if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
@@ -828,10 +828,10 @@ public class Memory implements Output, Serializable {
         }
         
         setCurrentTerm(task.getContent());
-        currentConcept = concept(getCurrentTerm());
+        currentConcept = conceptualize(getCurrentTerm());
         
         if (getCurrentConcept() != null) {
-            activateConcept(getCurrentConcept(), task.budget);
+            conceptActivate(getCurrentConcept(), task.budget);
             getCurrentConcept().directProcess(task);
         }
     }
@@ -842,7 +842,7 @@ public class Memory implements Output, Serializable {
      }
      
      public void addOperator(Operator op) {
-         operators.put(op.getName(), op);
+         operators.put(op.name(), op);
      }
      
  

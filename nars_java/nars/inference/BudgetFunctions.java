@@ -292,7 +292,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());
-            final float targetActivation = memory.getConceptActivation(bLink.target);
+            final float targetActivation = memory.conceptActivation(bLink.target);
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
         }

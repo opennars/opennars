@@ -60,7 +60,7 @@ public class Product extends CompoundTerm {
      */
     @Override
     public Product clone() {
-        return new Product(getName(), cloneTerms(), isConstant(), containVar(), complexity);
+        return new Product(name(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
      /**

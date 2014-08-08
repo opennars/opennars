@@ -78,7 +78,7 @@ public class Operation extends Inheritance {
         if (oper == null) {
             return null;
         }
-        String name = makeName(oper.getName(), arg, memory);
+        String name = makeName(oper.name(), arg, memory);
         Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Operation) t;
@@ -96,7 +96,7 @@ public class Operation extends Inheritance {
         
         for (final Term t : arg) {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
-            nameBuilder.append(t.getName());
+            nameBuilder.append(t.name());
         }
         
         nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
