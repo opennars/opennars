@@ -713,17 +713,15 @@ public abstract class CompoundTerm extends Term {
      */
     public static Term setComponent(final CompoundTerm compound, final int index, final Term t, final Memory memory) {
         List<Term> list = compound.cloneTermsListDeep();
-        if(t==null) {
-            list.remove(index);
-        }
+        list.remove(index);
         if (t != null) {
             if (compound.getClass() != t.getClass()) {
-                list.set(index, t);
+                list.add(index, t);
             } else {
                 list.remove(index);
                 final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
                 for (int i = 0; i < list2.size(); i++) {
-                    list.set(index + i, list2.get(i));
+                    list.add(index + i, list2.get(i));
                 }
             }
         }
