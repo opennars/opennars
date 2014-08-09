@@ -44,7 +44,7 @@ public class NALTest  {
     
     boolean output = false;
     boolean saveSimilar = true;
-    
+    boolean showSuccess = false;
     
 
     private final String scriptPath;
@@ -164,14 +164,23 @@ public class NALTest  {
         
         for (Map.Entry<String, Boolean> e : tests.entrySet()) {
             String name = e.getKey();
-            int level = Integer.parseInt(name.split("\\.")[0]);
+            int level = 0;
+            try {
+                level = Integer.parseInt(name.split("\\.")[0]);
+            }
+            catch (NumberFormatException ne) {
+                
+            }
             levelTotals[level]++;
-            if (e.getValue())
+            if (e.getValue()) {
                 levelSuccess[level]++;
+            }
         }
-        for (int i = 1; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
-            System.out.println("NAL" + i + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
+            String prefix = (i > 0) ? ("NAL" + i) : "Other";
+            
+            System.out.println(prefix + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
         }
     }
 
@@ -213,13 +222,20 @@ public class NALTest  {
         catch(Throwable e){ error = true; }
       
         
-        System.err.println('\n' + path + " @" + n.getTime());
+        
         
         boolean success = expects.size() > 0 && (!error);
         for (Expect e: expects) {
-            System.err.println("  " + e);
             if (!e.realized) success = false;
         }
+
+        if ((!success) || (success && showSuccess)) {
+            System.err.println('\n' + path + " @" + n.getTime());
+            for (Expect e: expects) {
+                System.err.println("  " + e);
+            }
+        }
+        
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
         assertTrue(path, success);
         

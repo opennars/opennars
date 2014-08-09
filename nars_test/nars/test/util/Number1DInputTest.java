@@ -55,6 +55,8 @@ public class Number1DInputTest {
         
         Number1DInput v = new Number1DInput("a", x, 2);
         n.addInput(v);
+        
+        n.step(1);
         /*
         for (int i = 0; i < 10; i++) {
             //v.next(randomArray(N, 1.0, 0));
@@ -80,21 +82,24 @@ public class Number1DInputTest {
         //new TextOutput(n, System.out);
         
         Number1DInput v = new Number1DInput("a", x, resolution);
-        n.addInput(v);
+        //n.addInput(v);
+        
+        n.step(1);
         
         for (int i = 0; i < 10; i++) {
             v.next(randomArray(N, 1.0, 0));
             //v.next(pulse(N,i%N));            
         }
-        v.close();
+        //v.close();
         
         n.finish(12);
+        //v.close();
         
         Assert.assertTrue(true);        
     }    
     
     public static void main(String[] args) throws Exception {
-        new Number1DInputTest().test1();
+        //new Number1DInputTest().test1();
         //new Number1DInputTest().test2();
     }
 }

@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized;
 public class NALTestSome extends NALTest {
 
    public static boolean include(String filename) {
-       return filename.startsWith("nal6.22");
+       return filename.startsWith("nal8-1.0");
    }
 
    
@@ -42,7 +42,7 @@ public class NALTestSome extends NALTest {
    public NALTestSome(String scriptPath) {
         super(scriptPath);
         System.out.println("Running: "  + scriptPath);
-        setOutput(true);
+        //setOutput(true);
    }
    
 }
