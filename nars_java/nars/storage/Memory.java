@@ -805,6 +805,7 @@ public class Memory implements Output, Serializable {
                     setCurrentTask(newEvent);
                     setCurrentBelief(lastEvent.sentence);
                     TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
+                    TemporalRules.temporalIndCom(newEvent.sentence, getCurrentBelief(), this);
                 }
             }
             lastEvent = newEvent;

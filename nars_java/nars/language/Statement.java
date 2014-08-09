@@ -61,6 +61,29 @@ public abstract class Statement extends CompoundTerm {
     }
 
     /**
+     * Make a Statement from given components, called by the rules
+     * @return The Statement built
+     * @param subj The first component
+     * @param pred The second component
+     * @param statement A sample statement providing the class type
+     */
+    public static Statement make(Statement statement, Term subj, Term pred, final Memory memory) {
+        if (statement instanceof Inheritance) {
+            return Inheritance.make(subj, pred, memory);
+        }
+        if (statement instanceof Similarity) {
+            return Similarity.make(subj, pred, memory);
+        }
+        if (statement instanceof Implication) {
+            return Implication.make(subj, pred, statement.getTemporalOrder(), memory);
+        }
+        if (statement instanceof Equivalence) {
+            return Equivalence.make(subj, pred, statement.getTemporalOrder(), memory);
+        }
+        return null;
+    }
+    
+    /**
      * Make a Statement from String, called by StringParser
      *
      * @param o The relation String
