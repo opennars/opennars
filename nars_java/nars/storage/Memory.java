@@ -84,7 +84,6 @@ import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Term;
 import nars.operator.Operator;
-import nars.util.XORShiftRandom;
 
 
 /**
@@ -254,7 +253,14 @@ public class Memory implements Output, Serializable {
     
     
     
-    
+    /*abstract public static class Emotion {
+        
+        private float happy, busy;
+        
+        abstract public void reset();
+        //get..set for each
+        
+    }*/
     
     /* ---------- global variables used to record emotional values ----------\ */
 
