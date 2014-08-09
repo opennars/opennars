@@ -104,7 +104,7 @@ public class Memory implements Output, Serializable {
 
     //public static Random randomNumber = new Random(1);
     public static long randomSeed = 1;
-    public static Random randomNumber = new XORShiftRandom(randomSeed);
+    public static Random randomNumber = new Random(randomSeed);
 
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
