@@ -60,8 +60,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param judg The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
      */
-    public static float rankBelief(final Sentence judg) {
-        assert(judg.isJudgment());
+    public static float rankBelief(final Sentence judg) {        
         final float confidence = judg.truth.getConfidence();
         final float originality = 1.0f / (judg.stamp.evidentialBase.length + 1);
         return or(confidence, originality);
