@@ -25,7 +25,6 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
-import static nars.language.Statement.make;
 import static nars.language.Variables.containVar;
 import static nars.operator.Operation.make;
 
@@ -146,6 +145,9 @@ public class TextPerception {
                 return null;                
             }            
         }
+        
+        
+        
         char c = buffer.charAt(buffer.length() - 1);
         if (c == STAMP_CLOSER) {
             //ignore stamp
@@ -191,7 +193,7 @@ public class TextPerception {
      * @return An experienced task
      */    
     public Task parseTask(String s, long time) throws InvalidInputException {
-        StringBuilder buffer = new StringBuilder(s);
+        StringBuilder buffer = new StringBuilder(Texts.escape(s));
         try {
             
             String budgetString = getBudgetString(buffer);
@@ -472,8 +474,10 @@ public class TextPerception {
         if (s.length() == 0) {
             throw new InvalidInputException("missing term");
         }
-        if (s.contains(" ")) // invalid characters in a name
-        {
+        
+        
+        
+        if (s.contains(" ")) { // invalid characters in a name
             throw new InvalidInputException("invalid term");
         }
         

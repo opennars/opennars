@@ -19,8 +19,7 @@ package nars.util;
 
 import java.io.IOException;
 import java.text.NumberFormat;
-import nars.core.NAR;
-import nars.io.Termize;
+import nars.io.Texts;
 
 
 public class Number1DInput extends PrintWriterInput {
@@ -70,7 +69,7 @@ public class Number1DInput extends PrintWriterInput {
         int i = (int)Math.round(v/dv);
         double percent = (dv * i);
         String ps = intf.format(i);        
-        return Termize.enterm("\u211d" + ps + "/" + resolution);
+        return Texts.escapeLiteral("\u211d" + ps + "/" + resolution).toString();
     }
     
     public void initPredicates(int resolution) {

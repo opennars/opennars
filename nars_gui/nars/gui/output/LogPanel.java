@@ -286,7 +286,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
         StyleConstants.setBold(aset, bold);
         
         try {
-            doc.insertString(doc.getLength(), text, null);
+            doc.insertString(doc.getLength(), text, null);            
 
             ioText.getStyledDocument().setCharacterAttributes(doc.getLength() - text.length(), text.length(), aset, true);
         } catch (BadLocationException ex) {
