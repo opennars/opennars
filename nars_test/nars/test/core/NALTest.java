@@ -132,8 +132,10 @@ public class NALTest  {
         for (final File file : folder.listFiles()) {
             if (file.getName().equals("README.txt"))
                 continue;
-            addTest(file.getName());
-            l.add(new Object[] { file.getAbsolutePath() } );
+            if(!("extra".equals(file.getName()))) {
+                addTest(file.getName());
+                l.add(new Object[] { file.getAbsolutePath() } );
+            }
         }
         
         return l;
