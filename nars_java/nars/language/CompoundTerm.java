@@ -335,13 +335,9 @@ public abstract class CompoundTerm extends Term {
             .append(COMPOUND_TERM_OPENER.ch).append(op.toString());
             
         for (final Term t : arg) {
-            nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
-            if (t instanceof CompoundTerm) {
-                CompoundTerm ct = (CompoundTerm)t;               
-                t.setName(ct.makeName());
-            }
-            nameBuilder.append(t.name());
+            nameBuilder.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
         }
+        
         nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
                 
         return nameBuilder.toString();
@@ -718,7 +714,6 @@ public abstract class CompoundTerm extends Term {
             if (compound.getClass() != t.getClass()) {
                 list.add(index, t);
             } else {
-                list.remove(index);
                 final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
                 for (int i = 0; i < list2.size(); i++) {
                     list.add(index + i, list2.get(i));
