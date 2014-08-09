@@ -6,12 +6,12 @@
 
 <John --> (/,enter,_,room_101)>. :|: 
 
-1
-''outputMustContain('<<John --> (/,enter,_,room_101)> =\> (&/,<John --> (/,open,_,door_101)>,+1)>. :|: %1.00;0.45%')
-''outputMustContain('<(&/,<John --> (/,open,_,door_101)>,+1) =/> <John --> (/,enter,_,room_101)>>. :|: %1.00;0.45%')
-''outputMustContain('<(&/,<John --> (/,open,_,door_101)>,+1) </> <John --> (/,enter,_,room_101)>>. :|: %1.00;0.45%')
+50
+''outputMustContain('<(&/,<door_101 --> (/,open,John,_)>,+1) =/> <John --> (/,enter,_,room_101)>>. :\: %1.00;0.45%')
+''outputMustContain('<<John --> (/,enter,_,room_101)> =\> (&/,<door_101 --> (/,open,John,_)>,+1)>. :\: %1.00;0.45%')
+''outputMustContain('<(&/,<door_101 --> (/,open,John,_)>,+1) </> <John --> (/,enter,_,room_101)>>. :\: %1.00;0.45%')
 
 'new: variable introduction also in time:
-''outputMustContain('<(&/,<$0 --> (/,open,_,door_101)>,+1) =/> <$0 --> (/,enter,_,room_101)>>. :|: %1.00;0.45%')
+''outputMustContain('<<$1 --> (/,enter,_,room_101)> =\> (&/,<$1 --> (/,open,_,door_101)>,+1)>. :|: %1.00;0.45%')
 
-100
+10
