@@ -62,6 +62,7 @@ public class Symbols {
     public static final char INTERVAL_PREFIX = '+';
     public static final char OPERATOR_PREFIX = '^';
     public static final char TERM_PREFIX = 'T';
+    public static final char QUOTE = '\"';
 
     
     public enum NativeOperator {
@@ -225,9 +226,9 @@ public class Symbols {
 
     public static final char PREFIX_MARK = ':';
     public static final char COMMENT_MARK = '/';
-    public static final char URL_INCLUDE_MARK = '`';
+    //public static final char URL_INCLUDE_MARK = '`';
     public static final char ECHO_MARK = '\'';
-    public static final char NATURAL_LANGUAGE_MARK = '\"';
+    //public static final char NATURAL_LANGUAGE_MARK = '\"';
 
     /* control commands */
     public static final String RESET_COMMAND = "*reset";
