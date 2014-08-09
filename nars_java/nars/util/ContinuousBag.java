@@ -19,7 +19,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     /**
      * mapping from key to item
      */
-    public final Map<String, E> nameTable;
+    public final Map<CharSequence, E> nameTable;
     
     /**
      * array of lists of items, for items on different level
@@ -125,7 +125,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final String key) {
+    public E get(final CharSequence key) {
         return nameTable.get(key);
     }
 
@@ -139,7 +139,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     public boolean putIn(final E newItem, boolean nameTableInsert) {
         //TODO this is identical with Bag, should merge?
         if (nameTableInsert) {
-            final String newKey = newItem.getKey();                        
+            final CharSequence newKey = newItem.getKey();                        
             final E oldItem = nameTable.put(newKey, newItem);
             if (oldItem != null) {                  // merge duplications
                 outOfBase(oldItem);
@@ -149,7 +149,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
-            final String overflowKey = overflowItem.getKey();
+            final CharSequence overflowKey = overflowItem.getKey();
             nameTable.remove(overflowKey);
             return (overflowItem != newItem);
         } else {
@@ -235,7 +235,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * @return The Item with the key
      */
     @Override
-    public E pickOut(final String key) {
+    public E pickOut(final CharSequence key) {
         final E picked = nameTable.get(key);
         if (picked != null) {
             outOfBase(picked);
@@ -330,7 +330,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     }
 
     @Override
-    public Set<String> keySet() {
+    public Set<CharSequence> keySet() {
         return nameTable.keySet();
     }
 
@@ -344,7 +344,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         return items.descendingIterator();
     }
 
-    @Override public E removeKey(final String key) {
+    @Override public E removeKey(final CharSequence key) {
         return nameTable.remove(key);
     }
 

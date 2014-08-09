@@ -35,9 +35,9 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    abstract public E get(final String key);
+    abstract public E get(final CharSequence key);
     
-    abstract public Set<String> keySet();
+    abstract public Set<CharSequence> keySet();
 
     abstract public int getCapacity();
 
@@ -80,10 +80,10 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @return The selected Item, or null if this bag is empty
      */
     abstract public E takeOut(boolean removeFromNameTable);
-    abstract public E pickOut(final String key);    
+    abstract public E pickOut(final CharSequence key);    
 
     public void printAll() {
-        for (String k : keySet()) {
+        for (CharSequence k : keySet()) {
             E v = get(k);
             System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
         }
@@ -204,6 +204,6 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     *  @return the previous value associated with <tt>key</tt>, or 
     *  <tt>null</tt> if there was no mapping for <tt>key</tt>.
     */
-    abstract public E removeKey(String key);
+    abstract public E removeKey(CharSequence key);
     
 }

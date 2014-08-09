@@ -101,6 +101,7 @@ public final class Concept extends Item {
 
     private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
     private EntityObserver entityObserver = defaultNullEntityObserver;
+    public final String key;
 
 
     /* ---------- constructor and initialization ---------- */
@@ -111,7 +112,8 @@ public final class Concept extends Item {
      * @param memory A reference to the memory
      */
     public Concept(final Term tm, AbstractBag<TaskLink> taskLinks, AbstractBag<TermLink> termLinks, final Memory memory) {
-        super(tm.name());
+        super();
+        this.key = tm.name();
         this.term = tm;
         this.memory = memory;
 
@@ -132,6 +134,12 @@ public final class Concept extends Item {
         }
 
     }
+
+    @Override public String getKey() {
+        return key;
+    }
+    
+    
 
     /* ---------- direct processing of tasks ---------- */
     /**

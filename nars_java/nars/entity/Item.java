@@ -28,8 +28,7 @@ package nars.entity;
  */
 public abstract class Item {
 
-    /** The key of the Item, unique in a Bag */
-    protected String key;
+    
     /** The budget of the Item, consisting of 3 numbers */
     public final BudgetValue budget;
 
@@ -37,25 +36,15 @@ public abstract class Item {
      * The default constructor
      */
     protected Item() {
-        this.budget = new BudgetValue();
+        this(new BudgetValue());
     }
-
-    /**
-     * Constructor with default budget
-     * @param key The key value
-     */
-    protected Item(final String key) {
-        this();
-        this.key = key;
-     }
 
     /**
      * Constructor with initial budget
      * @param key The key value
      * @param budget The initial budget
      */
-    protected Item(final String key, final BudgetValue budget) {
-        this.key = key;
+    protected Item(final BudgetValue budget) {
         this.budget = new BudgetValue(budget);  // clone, not assignment
     }
 
@@ -64,9 +53,7 @@ public abstract class Item {
      * Get the current key
      * @return Current key value
      */
-    public String getKey() {
-        return key;
-    }
+    abstract public CharSequence getKey();
 
 
     /**
@@ -165,7 +152,7 @@ public abstract class Item {
     public String toString() {        
         //return budget + " " + key ;
         String budgetStr = budget.toString();
-        return new StringBuilder(budgetStr.length()+key.length()+1).append(budgetStr).append(' ').append(key).toString();
+        return new StringBuilder(budgetStr.length()+getKey().length()+1).append(budgetStr).append(' ').append(getKey()).toString();
     }
 
     /**
@@ -175,7 +162,7 @@ public abstract class Item {
     public String toStringBrief() {        
         //return budget.toStringBrief() + " " + key ;
         final String briefBudget = budget.toStringBrief();
-        return new StringBuilder(briefBudget.length()+key.length()+1).append(briefBudget).append(' ').append(key).toString();
+        return new StringBuilder(briefBudget.length()+getKey().length()+1).append(briefBudget).append(' ').append(getKey()).toString();
     }
     
     public String toStringLong() {

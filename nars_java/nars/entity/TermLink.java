@@ -60,6 +60,7 @@ public class TermLink extends Item {
     public final short type;
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
+    private String key;
     
     @Override
     public boolean equals(Object obj) {
@@ -73,6 +74,11 @@ public class TermLink extends Item {
     @Override
     public int hashCode() {
         return getKey().hashCode();
+    }
+
+    @Override
+    public CharSequence getKey() {
+        return key;
     }
 
     
@@ -112,8 +118,8 @@ public class TermLink extends Item {
      * @param s The key of the TaskLink
      * @param v The budget value of the TaskLink
      */
-    protected TermLink(final String s, final BudgetValue v, final short type, short[] indices) {
-        super(s, v);
+    protected TermLink(final BudgetValue v, final short type, short[] indices) {
+        super(v);
         this.type = type;
         this.index = indices;
         this.target = null;
@@ -129,7 +135,7 @@ public class TermLink extends Item {
      * @param v Budget value of the link
      */
     public TermLink(final Term t, final TermLink template, final BudgetValue v) {
-        super(t.name(), v);
+        super(v);
         target = t;
         type = (template.target.equals(t)) 
                 ? (short)(template.type - 1) //// point to component

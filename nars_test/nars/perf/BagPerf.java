@@ -92,15 +92,23 @@ public class BagPerf {
     public static int itemID = 0;
     
     public static class NullItem extends Item {
+        private final String key;
     
         public NullItem() {
             this((float)Math.random());
         }
 
         public NullItem(float priority) {
-            super("" + (itemID++), new BudgetValue());
+            super(new BudgetValue());
+            this.key = "" + (itemID++);
             setPriority(priority);
         }
+
+        @Override
+        public CharSequence getKey() {
+            return key;
+        }
+        
     }
     
     public static void randomBagIO(AbstractBag<NullItem> b, int accesses, double insertProportion) {
