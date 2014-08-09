@@ -38,7 +38,7 @@ public class TaskLink extends TermLink {
     /**
      * Remember the TermLinks that has been used recently with this TaskLink
      */
-    public final String recordedLinks[];
+    public final CharSequence recordedLinks[];
     /**
      * Remember the time when each TermLink is used with this TaskLink
      */
@@ -58,8 +58,7 @@ public class TaskLink extends TermLink {
      * @param v The budget
      */
     public TaskLink(final Task t, final TermLink template, final BudgetValue v) {
-        super("", v, 
-                
+        super(v,                 
                 template == null ? 
                         TermLink.SELF : 
                         template.type,
@@ -67,7 +66,7 @@ public class TaskLink extends TermLink {
                 template == null ?
                         null : 
                         template.index
-                );
+        );
         
         targetTask = t;
         recordedLinks = new String[Parameters.TERM_LINK_RECORD_LENGTH];
@@ -101,7 +100,7 @@ public class TaskLink extends TermLink {
         if (bTerm.equals(targetTask.sentence.content)) {            
             return false;
         }
-        String linkKey = termLink.getKey();
+        CharSequence linkKey = termLink.getKey();
         int next, i;
         for (i = 0; i < counter; i++) {
             next = i % Parameters.TERM_LINK_RECORD_LENGTH;
