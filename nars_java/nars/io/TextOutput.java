@@ -105,21 +105,19 @@ public class TextOutput implements Output {
         if ((!showErrors) && (channel == ERR.class))
             return;
         
-        final String s = process(channel, o);
-        outputString(s);
+        
+        if ((outExp!=null) || (outExp2!=null)) {
+            final String s = process(channel, o);
+            if (outExp != null) {
+                outExp.println(prefix + s);
+                outExp.flush();
+            }
+            if (outExp2 != null) {
+                outExp2.println(prefix + s);            
+            }
+        }
     }
     
-    protected void outputString(String s) {
-        if (outExp != null) {
-            outExp.println(prefix + s);
-            outExp.flush();
-        }
-        if (outExp2 != null) {
-            outExp2.println(prefix + s);            
-        }
-        
-    }
-
     StringBuilder result = new StringBuilder(16 /* estimate */);
     
     public String process(final Class c, final Object o) {
@@ -186,7 +184,7 @@ public class TextOutput implements Output {
             buffer.append(signal.toString());
         }
         
-        return buffer.toString();
+        return Texts.unescape(buffer).toString();
         
     }
     

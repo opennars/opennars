@@ -23,9 +23,11 @@ import java.util.TreeSet;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Concept;
+import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Term;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -173,4 +175,26 @@ public class TermTest {
        assertTrue(n.memory.getConcepts().size() == 5);
 
     }    
+    
+    @Test
+    public void testEscaping() {        
+        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
+        
+        NAR n = new DefaultNARBuilder().build();
+        n.addInput("<a --> \"b c\">.");
+        n.step(1);
+        
+        assertTrue(n.memory.concept(Texts.escape("\"b c\"").toString())!=null);
+
+    }
+    
+    protected void bidiEscape(String... tests) {
+        for (String s : tests) {
+            s = '"' + s + '"';
+            String escaped = Texts.escape(s).toString();
+            String unescaped = Texts.unescape(escaped).toString();
+            //System.out.println(s + " " + escaped + " " + unescaped);
+            assertEquals(s, unescaped);
+        }
+    }
 }
