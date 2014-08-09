@@ -60,9 +60,8 @@ public class Symbols {
     
     /* prefix of special Term name */
     public static final char INTERVAL_PREFIX = '+';
-
     public static final char OPERATOR_PREFIX = '^';
-
+    public static final char TERM_PREFIX = 'T';
 
     
     public enum NativeOperator {

@@ -22,9 +22,7 @@ package nars.entity;
 
 import nars.io.Symbols;
 
-/**
- * Frequency and confidence.
- */
+
 public class TruthValue implements Cloneable { // implements Cloneable {
 
     /**
@@ -175,7 +173,23 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     public Object clone() {
         return new TruthValue(getFrequency(), getConfidence(), getAnalytic());
     }
+    
+    public TruthValue setFrequency(float f) {
+        frequency.setValue(f);
+        return this;
+    }
+    
+    public TruthValue setConfidence(float f) {
+        confidence.setValue(f);
+        return this;
+    }
+    
+    public TruthValue setAnalytic(boolean b) {
+        this.analytic = b;
+        return this;
+    }
 
+    
     /**
      * The String representation of a TruthValue
      *
@@ -235,5 +249,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         // N,n,~,y,Y
         return null;
     }
+
+
     
 }

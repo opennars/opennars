@@ -27,28 +27,29 @@ import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
- * Operator that creates a goal with a given statement
+ * Operator that give a CompoundTerm an atomic name
  */
-public class Want extends Operator {
+public class Abbreviate extends Operator {
 
-    public Want() {
-        super("^want");
+    public Abbreviate() {
+        super("^abbreviate");
     }
 
     /**
-     * To create a goal with a given statement
+     * To create a judgment with a given statement
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    public ArrayList<Task> execute(Term[] args, Memory memory) {
-        Term content = args[0];                
-        
-        TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL_MARK, truth, new Stamp(memory));
+    protected ArrayList<Task> execute(Term[] args, Memory memory) {
+        Term compound = args[0];
+        Term atomic = memory.newSerialTerm(Symbols.TERM_PREFIX);
+        Similarity content = Similarity.make(compound, atomic, memory);
+        TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
+        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
         float quality = BudgetFunctions.truthToQuality(truth);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, quality);
+        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
         Task task = new Task(sentence, budget);
         ArrayList<Task> feedback = new ArrayList<>(1);
         feedback.add(task);

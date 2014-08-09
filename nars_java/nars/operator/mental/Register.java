@@ -18,41 +18,31 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
-import nars.core.Parameters;
 import nars.entity.*;
-import nars.inference.BudgetFunctions;
 import nars.language.*;
-import nars.io.Symbols;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
- * Operator that creates a goal with a given statement
+ * Register a new operator
  */
-public class Want extends Operator {
+public class Register extends Operator {
 
-    public Want() {
-        super("^want");
+    public Register() {
+        super("^register");
     }
 
     /**
-     * To create a goal with a given statement
+     * To register a new operator
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    public ArrayList<Task> execute(Term[] args, Memory memory) {
-        Term content = args[0];                
-        
-        TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL_MARK, truth, new Stamp(memory));
-        float quality = BudgetFunctions.truthToQuality(truth);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, quality);
-        Task task = new Task(sentence, budget);
-        ArrayList<Task> feedback = new ArrayList<>(1);
-        feedback.add(task);
-        return feedback;
+    protected ArrayList<Task> execute(Term[] args, Memory memory) {
+        Term operator = args[0];
+        memory.addOperator((Operator) operator);  // add error checking
+        return null;
     }
     
 }

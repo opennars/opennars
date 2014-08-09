@@ -699,4 +699,16 @@ public final class Concept extends Item {
         return questions;
     }
 
+    
+    public void discountConfidence(boolean onBeliefs) {
+        if (onBeliefs) {
+            for (Sentence s : beliefs) {
+                s.discountConfidence();
+            }
+        } else {
+            for (Sentence s : desires) {
+                s.discountConfidence();
+            }            
+        }
+    }    
 }
