@@ -42,7 +42,7 @@ public class NALTest  {
     protected static Map<String, String> exCache = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
     
-    boolean output = false;
+    boolean showOutput = false;
     boolean saveSimilar = true;
     boolean showSuccess = false;
     
@@ -206,7 +206,7 @@ public class NALTest  {
         for (Expect e1 : extractedExpects)
             expects.add((Expect)n.addOutput(e1));
         
-        if (output)
+        if (showOutput)
             new TextOutput(n, System.out);
         
         n.addInput(new TextInput(example));
@@ -219,7 +219,10 @@ public class NALTest  {
             e.printStackTrace();
             error = true;
         }
-        catch(Throwable e){ error = true; }
+        catch(Throwable e){ 
+            e.printStackTrace();
+            error = true; 
+        }
       
         
         
@@ -367,7 +370,7 @@ public class NALTest  {
 
     /** whether to print the execution output to System.out */
     public void setOutput(boolean output) {
-        this.output = output;
+        this.showOutput = output;
     }
 
     
