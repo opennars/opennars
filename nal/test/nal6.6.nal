@@ -6,8 +6,8 @@
 'If something can fly, then it has wings.
 <<$y --> flyer> ==> <$y --> [with-wings]>>.
 
-
-900
+''//4 originally
+13 
 
 'If something has wings and eats worms, then I guess it is a bird.
-''outputMustContain('<(&&,<$1 --> [with-wings]>,<worms --> (/,food,$1,_)>) ==> <$1 --> bird>>. %1.00;0.45%')
+''outputMustContain('<(&&,<$1 --> [with-wings]>,<(*,$1,worms) --> food>) ==> <$1 --> bird>>. %1.00;0.45%')
