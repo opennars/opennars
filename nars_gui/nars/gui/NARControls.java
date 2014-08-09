@@ -304,9 +304,16 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         @Override
         public void run() {
             speedSlider.repaint();
-            for (PLineChart c : charts) {
-                c.update(new NARState(nar));
+            
+            long nowTime = nar.getTime();
+
+            if (lastTime != nowTime) {                
+                for (PLineChart c : charts) {
+                    c.update(new NARState(nar));
+                }
             }
+
+            lastTime = nowTime;
             
         }
     };
@@ -486,11 +493,15 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         }
     }
 
+    long lastTime;
+
     @Override
     public void run() {
-        long lastTime = nar.getTime();
+        
 
         updateGUI();
+        
+        lastTime = nar.getTime();
 
         while (true) {
             try {
@@ -498,12 +509,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             } catch (InterruptedException ex) {
             }
 
-            long nowTime = nar.getTime();
-
-            /*if (lastTime == nowTime) {
-                continue;
-            }*/
-            lastTime = nowTime;
 
             updateGUI();
 
