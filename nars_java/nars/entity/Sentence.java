@@ -21,12 +21,12 @@
 package nars.entity;
 
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Terms;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -356,5 +356,15 @@ public class Sentence implements Cloneable {
             buffer.append(' ').append(stampString);
         
         return buffer.toString();
+    }
+    
+   
+    /**
+     * Get the truth value (or desire value) of the sentence
+     *
+     * @return Truth value, null for question
+     */
+    public void discountConfidence() {
+        truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
     }
 }

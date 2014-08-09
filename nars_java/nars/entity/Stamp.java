@@ -254,6 +254,10 @@ public class Stamp implements Cloneable {
         this(memory.getTime(), tense, memory.newStampSerial());
     }
 
+    public Stamp(final Memory memory) {
+        this(memory, Tense.Present);
+    }
+
     /*
      private static boolean equalBases(long[] base1, long[] base2) {
      if (base1.baseLength != base2.baseLength) {

@@ -22,7 +22,6 @@ import nars.core.Parameters;
 import nars.entity.*;
 import nars.language.*;
 import nars.io.Symbols;
-import nars.language.Tense;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -44,9 +43,9 @@ public class Wonder extends Operator {
     @Override
     public ArrayList<Task> execute(Term[] args, Memory memory) {
         Term content = args[0];
-        Stamp stamp = new Stamp(memory, Tense.Present);
         
-        Sentence sentence = new Sentence(content, Symbols.QUESTION_MARK, null, stamp);
+        
+        Sentence sentence = new Sentence(content, Symbols.QUESTION_MARK, null, new Stamp(memory));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         Task task = new Task(sentence, budget);
         ArrayList<Task> feedback = new ArrayList<>(1);

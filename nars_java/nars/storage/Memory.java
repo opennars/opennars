@@ -214,6 +214,8 @@ public class Memory implements Output, Serializable {
     public final HashMap<String, Operator> operators;
     
     private long currentStampSerial = 0;
+    private long currentTermSerial = 1;
+    
     
     /**
      * New tasks with novel composed terms, for delayed and selective processing
@@ -245,16 +247,36 @@ public class Memory implements Output, Serializable {
 
     private Sentence currentBelief;
 
+    /** previous event, for temporal induction */
+    private Task lastEvent;
+
     private Stamp newStamp;
     
-    private boolean working = true;    
+    
+    
+    
+    
+    /* ---------- global variables used to record emotional values ----------\ */
+
+    /** average desire-value */
+    private float happy;
+
+    /** average priority */
+    private float busy;
+    
+    /* ---------- global variables used to record emotional values ----------/ */
+    
+    
+    
+    
+    private boolean working;    
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
     private int stepsQueued;
 
     
-/**
+    /**
      * System clock, relatively defined to guarantee the repeatability of
      * behaviors
      */
@@ -262,8 +284,7 @@ public class Memory implements Output, Serializable {
     
 
 
-    // for temporal induction
-    private Task lastEvent;
+    
     public final Param param;
     
     transient private Output output;
@@ -284,19 +305,20 @@ public class Memory implements Output, Serializable {
         
         this.param = param;
         this.conceptBuilder = conceptBuilder;
-        
-        recorder = NullInferenceRecorder.global;
-        
+
         this.concepts = concepts;
         this.novelTasks = novelTasks;
         
-        newTasks = new ArrayDeque<>();        
-        lastEvent = null;
+        recorder = NullInferenceRecorder.global;
+        
+        newTasks = new ArrayDeque<>();                
 
         this.operators = new HashMap<>();
         
         for (Operator o : initialOperators)
             addOperator(o);
+        
+        reset();
 
     }
 
@@ -308,6 +330,10 @@ public class Memory implements Output, Serializable {
         clock = 0;
         stepsQueued = 0;
         working = true;
+        
+        happy = 0.5f;
+        busy = 0.5f;
+
         if (getRecorder().isActive()) {
             getRecorder().append("Reset");
         }
@@ -744,6 +770,7 @@ public class Memory implements Output, Serializable {
         Task newEvent = null;
         while (counter-- > 0) {
             final Task task = newTasks.removeFirst();
+            adjustBusy(task.getPriority(), task.getDurability());
             if (task.isInput() || (concept(task.getContent()) != null)) {
                 // new addInput or existing concept
                 immediateProcess(task);
@@ -784,6 +811,34 @@ public class Memory implements Output, Serializable {
         }
     }
 
+    
+    /* ---------- status evaluation ---------- */
+
+    public float happyValue() {
+       return happy;
+    }
+
+    public float busyValue() {
+        return busy;
+    }
+
+    public void adjustHappy(float newValue, float weight) {
+//        float oldV = happy;
+        happy += newValue * weight;
+        happy /= 1.0f + weight;
+//        if (Math.abs(oldV - happy) > 0.1) {
+//            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happy*10.0) + "\n");
+//        }
+    }
+    public void adjustBusy(float newValue, float weight) {
+//        float oldV = busy;
+        busy += newValue * weight;
+        busy /= (1.0f + weight);
+//        if (Math.abs(oldV - busy) > 0.1) {
+//            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busy*10.0) + "\n");
+//        }
+    }
+    
     /**
      * Select a novel task to process.
      */
@@ -1012,6 +1067,9 @@ public class Memory implements Output, Serializable {
 
     public long newStampSerial() {
         return currentStampSerial++;
+    }
+    public Term newSerialTerm(char prefix) {
+        return new Term(prefix + String.valueOf(currentTermSerial++));
     }
 
     /**

@@ -131,8 +131,11 @@ public class Parameters {
     /** contraposition should have much lower priority considering the flood of implications coming from temporal knowledge.  a lower value means more frequent, must be > 0 */
     public static double CONTRAPOSITION_PRIORITY = 30;
     
-    //for preventing recursion in Variables.findSubstitution
-    public static int MAX_VARIABLE_SUBSTITUTION_DEPTH = 64;
-    
+
+    /**
+     * The rate of confidence decrease in mental operations Doubt and Hesitate
+     * set to zero to disable this feature.
+     */
+    public static float DISCOUNT_RATE = 0.5f;    
 }
 

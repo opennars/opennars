@@ -18,41 +18,34 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
-import nars.core.Parameters;
-import nars.entity.*;
-import nars.inference.BudgetFunctions;
-import nars.language.*;
-import nars.io.Symbols;
+import nars.entity.Concept;
+import nars.entity.Task;
+import nars.language.Term;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
- * Operator that creates a goal with a given statement
+ * Operator that activates a concept
  */
-public class Want extends Operator {
+public class Doubt extends Operator {
 
-    public Want() {
-        super("^want");
+    public Doubt() {
+        super("^doubt");
     }
 
     /**
-     * To create a goal with a given statement
+     * To activate a concept as if a question has been asked about it
+     *
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    public ArrayList<Task> execute(Term[] args, Memory memory) {
-        Term content = args[0];                
-        
-        TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL_MARK, truth, new Stamp(memory));
-        float quality = BudgetFunctions.truthToQuality(truth);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, quality);
-        Task task = new Task(sentence, budget);
-        ArrayList<Task> feedback = new ArrayList<>(1);
-        feedback.add(task);
-        return feedback;
+    protected ArrayList<Task> execute(Term[] args, Memory memory) {
+        Term term = args[0];
+        Concept concept = memory.conceptualize(term);
+        concept.discountConfidence(true);
+        return null;
     }
-    
+
 }
