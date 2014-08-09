@@ -53,7 +53,7 @@ public class InputPanel extends NPanel implements ActionListener {
     /**
      * Control buttons
      */
-    private final JButton okButton, holdButton, clearButton;
+    private final JButton eval, evalAll, holdButton, clearButton;
     /**
      * Input area
      */
@@ -69,7 +69,6 @@ public class InputPanel extends NPanel implements ActionListener {
     private int timer;
     private final JPanel centerPanel;
     private final JTree fileTree;
-    private final JButton okSeqButton;
 
     /**
      * Constructor
@@ -100,17 +99,19 @@ public class InputPanel extends NPanel implements ActionListener {
         });
         menu.add(modeSelect);
                 
-        okButton = new JButton("Evaluate");
-        okButton.setDefaultCapable(true);
-        okButton.setToolTipText("Input the text, each line executed in the same clock cycle.  (Ctrl-enter)");
-        okButton.addActionListener(this);
-        menu.add(okButton);
+        eval = new JButton("Evaluate");
+        eval.setDefaultCapable(true);
+        eval.setToolTipText("Input the text, each line executed in successive clock cycles.");
+        eval.addActionListener(this);
+        menu.add(eval);
         
-        okSeqButton = new JButton("Eval Seq");
-        okSeqButton.setDefaultCapable(true);
-        okSeqButton.setToolTipText("Input the text, each line executed in successive clock cycles.");
-        okSeqButton.addActionListener(this);
-        menu.add(okSeqButton);
+        evalAll = new JButton("Eval All");
+        evalAll.setDefaultCapable(true);
+        evalAll.addActionListener(this);
+        evalAll.setToolTipText("Input the text, each line executed in the same clock cycle.  (Ctrl-enter)");
+        
+        evalAll.addActionListener(this);
+        menu.add(evalAll);
         
         holdButton = new JButton("Hold");
         holdButton.addActionListener(this);
@@ -119,10 +120,6 @@ public class InputPanel extends NPanel implements ActionListener {
         clearButton = new JButton("Clear");
         clearButton.addActionListener(this);
         menu.add(clearButton);
-        
-        
-        
-
         
         TreeModel model = new FileTreeModel(new File("./nal"));
         fileTree = new JTree(model);
@@ -157,7 +154,7 @@ public class InputPanel extends NPanel implements ActionListener {
                 //control-enter evaluates
                 if (e.isControlDown())
                     if (e.getKeyCode()==10) {
-                        okButton.doClick();
+                        eval.doClick();
                     }
             }           
         });
@@ -210,13 +207,13 @@ public class InputPanel extends NPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton) e.getSource();
-        if (b == okButton) {
-            ready = true;
-            evaluate(inputText.getText());
-            inputText.setText("");
-        } else if (b == okSeqButton) {
+        if (b == eval) {
             ready = true;
             evaluateSeq(inputText.getText());
+            inputText.setText("");
+        } else if (b == evalAll) {
+            ready = true;
+            evaluateAll(inputText.getText());
             inputText.setText("");
         } else if (b == holdButton) {
             ready = false;
@@ -225,7 +222,7 @@ public class InputPanel extends NPanel implements ActionListener {
         }
     }
 
-    public void evaluate(String input) {
+    public void evaluateAll(String input) {
         reasoner.addInput(input);
         reasoner.step(1);
     }
