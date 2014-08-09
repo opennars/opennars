@@ -17,6 +17,7 @@
 package nars.inference;
 
 
+import java.util.ArrayList;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -24,12 +25,16 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import nars.io.Symbols;
+import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
+import nars.language.Inheritance;
 import nars.language.Interval;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Variable;
 import nars.storage.Memory;
 
 /**
@@ -169,6 +174,103 @@ public class TemporalRules {
         memory.doublePremiseTask(statement3, truth3, budget3);
     }
 
+    public static void temporalIndCom(Sentence judg1, Sentence judg2, Memory memory) {
+        Term term1 = judg1.content;
+        Term term2 = judg2.content;
+        if ((term1 instanceof CompoundTerm) && ((CompoundTerm) term1).containsTerm(term2)) {
+            return;
+        }
+
+        if ((term2 instanceof CompoundTerm) && ((CompoundTerm) term2).containsTerm(term1)) {
+            return;
+        }
+
+        if ((term1 instanceof Inheritance) && (term2 instanceof Inheritance)) {
+            Statement s1 = (Statement) term1;
+            Statement s2 = (Statement) term2;
+
+            Variable var1 = new Variable("$0");
+            Variable var2 = new Variable("$1");
+            if (s1.getSubject().equals(s2.getSubject())) {
+                term1 = Statement.make(s1, var1, s1.getPredicate(), memory);
+                Statement.make(Symbols.NativeOperator.PRODUCT, var1, s1.getPredicate(), memory);
+                term2 = Statement.make(s2, var2, s2.getPredicate(), memory);
+            } else if (s1.getPredicate().equals(s2.getPredicate())) {
+                term1 = Statement.make(s1, s1.getSubject(), var1, memory);
+                term2 = Statement.make(s2, s2.getSubject(), var2, memory);
+            }
+
+        } else { // to generalize
+            Term condition;
+            if (term1 instanceof Implication) {
+                condition = ((Implication) term1).getSubject();
+                if (condition.equals(term2)) {
+                    return;
+                }
+
+                if ((condition instanceof Conjunction) && ((Conjunction) condition).containsTerm(term2)) {
+                    return;
+                }
+
+            } else if (term2 instanceof Implication) {
+                condition = ((Implication) term2).getSubject();
+                if (condition.equals(term1)) {
+                    return;
+                }
+
+                if ((condition instanceof Conjunction) && ((Conjunction) condition).containsTerm(term1)) {
+                    return;
+                }
+            }
+        }
+        long time1 = judg1.getOccurenceTime();
+        long time2 = judg2.getOccurenceTime();
+        int distance = (int) (time2 - time1);
+        int order=TemporalRules.ORDER_NONE;
+        int order2=TemporalRules.ORDER_NONE;
+        
+        if(distance>0) {
+            order=TemporalRules.ORDER_FORWARD;
+            order2=TemporalRules.ORDER_BACKWARD;
+        }
+        if(distance<0) {
+            order=TemporalRules.ORDER_BACKWARD;
+            order2=TemporalRules.ORDER_FORWARD;
+        }
+        
+        if (Math.abs(distance) > 0) {
+            long deltat = Math.abs(distance);
+            Interval delta=new Interval(deltat);
+            
+            Term[] argument = new Term[2];
+            argument[0]=term2;
+            argument[1]=delta;
+
+            term2 = Conjunction.make(argument, TemporalRules.ORDER_FORWARD, memory);
+        }
+
+        Statement statement1 = Implication.make(term1, term2, order, memory);
+        Statement statement2 = Implication.make(term2, term1, order2, memory);
+        Statement statement3 = Equivalence.make(term1, term2, order, memory);
+        TruthValue value1 = judg1.truth;
+        TruthValue value2 = judg2.truth;
+        TruthValue truth1 = TruthFunctions.induction(value1, value2);
+        TruthValue truth2 = TruthFunctions.induction(value2, value1);
+        TruthValue truth3 = TruthFunctions.comparison(value1, value2);
+        /*BudgetValue budget1 = BudgetFunctions.temporalIndCom(task1.budget, task2.budget, truth1);
+        BudgetValue budget2 = BudgetFunctions.temporalIndCom(task1.budget, task2.budget, truth2);
+        BudgetValue budget3 = BudgetFunctions.temporalIndCom(task1.budget, task2.budget, truth3);*/
+        BudgetValue budget1=BudgetFunctions.compoundForward(truth1, statement1, memory);
+        BudgetValue budget2=BudgetFunctions.compoundForward(truth2, statement2, memory);
+        BudgetValue budget3=BudgetFunctions.compoundForward(truth3, statement3, memory);
+        /*memory.doublePremiseTask(budget1, statement1, truth1, judg1, judg2);
+        memory.doublePremiseTask(budget2, statement2, truth2, judg2, judg1);
+        memory.doublePremiseTask(budget3, statement3, truth3, judg1, judg2);*/
+        memory.doublePremiseTask(statement1, truth1, budget1);
+        memory.doublePremiseTask(statement2, truth2, budget2);
+        memory.doublePremiseTask(statement3, truth3, budget3);
+    }
+    
     /**
      * Evaluate the quality of the judgment as a solution to a problem
      *

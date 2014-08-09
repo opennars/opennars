@@ -1,6 +1,5 @@
 '********** inference on tense
-  IN: <<(*, $x, key_101) --> hold> =/> <(*, $x, room_101) --> enter>>.
-
-  IN: <(*,John,room_101) --> enter>. :|:
-200
-''outputMustContain('<John --> (/,hold,_,key_101)>. :\\: %1.00;0.38%')
+  IN: <(&/,<(*, $x, key_101) --> hold>,+1) =/> <(*, $x, room_101) --> enter>>.
+  IN: <(*,John,room_101) --> enter>. :/:
+300
+''outputMustContain('(&/,<(*,John,key_101) --> hold>,+1). :\: %1.00;0.20%')
