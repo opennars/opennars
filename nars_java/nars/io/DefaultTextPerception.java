@@ -1,10 +1,7 @@
 package nars.io;
 
-import java.io.IOException;
-import java.net.URL;
 import nars.core.NAR;
 import nars.entity.Task;
-import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.storage.Memory;
 
@@ -108,22 +105,22 @@ public class DefaultTextPerception extends TextPerception {
             }
         });
         
-        //URL include
-        parsers.add(new TextReaction() {
-            @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {
-                char c = input.charAt(0);
-                if (c == Symbols.URL_INCLUDE_MARK) {            
-                    try {
-                        nar.addInput(new TextInput(new URL(input.substring(1))));
-                    } catch (IOException ex) {
-                        m.output(ERR.class, ex);
-                    }
-                    return true;
-                }
-                return false;                
-            }
-        });        
+//        //URL include
+//        parsers.add(new TextReaction() {
+//            @Override
+//            public boolean react(Memory m, String input, TextReaction lastHandler) {
+//                char c = input.charAt(0);
+//                if (c == Symbols.URL_INCLUDE_MARK) {            
+//                    try {
+//                        nar.addInput(new TextInput(new URL(input.substring(1))));
+//                    } catch (IOException ex) {
+//                        m.output(ERR.class, ex);
+//                    }
+//                    return true;
+//                }
+//                return false;                
+//            }
+//        });        
 
         //echo
         //TODO standardize on an echo/comment format
