@@ -1,7 +1,7 @@
 '********** induction on events  
 <(*,John,door_101) --> open>. :|: 
 
-11
+6
  
 <(*,John,room_101) --> enter>. :|: 
 

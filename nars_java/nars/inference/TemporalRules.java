@@ -190,7 +190,7 @@ public class TemporalRules {
             Statement s2 = (Statement) term2;
 
             Variable var1 = new Variable("$0");
-            Variable var2 = new Variable("$1");
+            Variable var2 = var1;
             if (s1.getSubject().equals(s2.getSubject())) {
                 term1 = Statement.make(s1, var1, s1.getPredicate(), memory);
                 Statement.make(Symbols.NativeOperator.PRODUCT, var1, s1.getPredicate(), memory);
