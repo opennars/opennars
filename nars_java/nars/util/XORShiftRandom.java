@@ -25,8 +25,12 @@ public class XORShiftRandom extends Random {
         x ^= (x >>> 35);
         x ^= (x << 4);
         this.seed = x;
-        x &= ((1L << nbits) - 1);
+        x &= ((1L << nbits) - 1);               
         return (int) x;
+    }
+    
+    @Override public void setSeed(long newSeed) {
+    	this.seed = newSeed;
     }
 
 }
