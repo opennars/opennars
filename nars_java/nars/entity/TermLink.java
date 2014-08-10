@@ -22,8 +22,8 @@ package nars.entity;
 
 import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.io.Texts;
 import nars.language.Term;
-import nars.util.StringUtil;
 import nars.util.rope.Rope;
 
 /**
@@ -176,7 +176,7 @@ public class TermLink extends Item {
      * @param suffix optional suffix, may be null
      */    
     protected final void setKey(final CharSequence suffix) {
-        this.key = StringUtil.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
+        this.key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
                         newKeyPrefix(), 
                         target!=null ? target.toString() : null, 
                         suffix);        

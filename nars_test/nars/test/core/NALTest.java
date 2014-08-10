@@ -3,6 +3,7 @@ package nars.test.core;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,8 +19,8 @@ import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
+import nars.io.Texts;
 import nars.storage.Memory;
-import nars.util.StringUtil;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -30,23 +31,24 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class NALTest  {
+        
     int minCycles = 600; //TODO reduce this to one or zero
 
     static {
         Memory.randomSeed = 1;
     }
-    
 
-      
-
-    protected static Map<String, String> exCache = new HashMap(); //path -> script data
-    public static Map<String, Boolean> tests = new HashMap();
-    
     boolean showOutput = false;
     boolean saveSimilar = true;
     boolean showSuccess = false;
     
+    final int similarityThreshold = 4;
+    
+    private static boolean waitForEnterKeyOnStart = true; //useful for running profiler or some other instrumentation
+      
 
+    protected static Map<String, String> exCache = new HashMap(); //path -> script data
+    public static Map<String, Boolean> tests = new HashMap();
     private final String scriptPath;
     
     /** reads an example file line-by-line, before being processed, to extract expectations */
@@ -148,6 +150,13 @@ public class NALTest  {
     }
 
     public static void main(String[] args) {
+        if (waitForEnterKeyOnStart) {
+            System.out.println("When ready, press enter");
+            try {
+                System.in.read();
+            } catch (IOException ex) { }
+        }
+        
         Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         
         System.out.println("\n\n");
@@ -311,7 +320,6 @@ public class NALTest  {
     public static class ExpectContains extends Expect {
 
         private final String containing;
-        final int similarityThreshold = 4;
         public Map<String, Integer> almost = new HashMap();
         private final boolean saveSimilar;
 
@@ -356,7 +364,7 @@ public class NALTest  {
                 if (o.contains(containing)) return true;
 
                 if (saveSimilar) {
-                    int dist = StringUtil.levenshteinDistance(o, containing);            
+                    int dist = Texts.levenshteinDistance(o, containing);            
                     //if (dist < similarityThreshold + Math.abs(o.length() - containing.length()))
                     almost.put("similar(" + dist + "): " + TextOutput.getOutputString(channel, signal, false, true, nar), dist);
                 }            

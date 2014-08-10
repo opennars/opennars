@@ -31,12 +31,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.util.StringUtil;
+import nars.io.Texts;
 import nars.util.rope.impl.AbstractRope;
 import nars.util.rope.impl.ConcatenationRope;
 import nars.util.rope.impl.FastCharSequenceRope;
 import nars.util.rope.impl.FastConcatenationRope;
-import nars.util.rope.impl.FlatCharArrayRope;
+import nars.util.rope.impl.CharArrayRope;
 import nars.util.rope.impl.FlatCharSequenceRope;
 import nars.util.rope.impl.FlatRope;
 import nars.util.rope.impl.PrePostCharRope;
@@ -81,7 +81,7 @@ import nars.util.rope.impl.SubstringRope;
 	 * @return a rope representing the underlying character array.
 	 */
 	public static Rope build(final char[] sequence) {
-		return new FlatCharArrayRope(sequence);
+		return new CharArrayRope(sequence);
 	}
 
 	/**
@@ -103,7 +103,7 @@ import nars.util.rope.impl.SubstringRope;
                     return new FastCharSequenceRope(sequence);
                 if (sequence instanceof StringBuilder) {
                     //access stringbuilder's char[] directly. dangerous
-                    return new FlatCharArrayRope(StringUtil.getCharArray((StringBuilder)sequence));
+                    return new CharArrayRope(Texts.getCharArray((StringBuilder)sequence));
                 }
                 
                 //default for other implementations
