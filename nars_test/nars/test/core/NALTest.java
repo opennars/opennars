@@ -44,7 +44,7 @@ public class NALTest  {
     
     final int similarityThreshold = 4;
     
-    private static boolean waitForEnterKeyOnStart = true; //useful for running profiler or some other instrumentation
+    private static boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
       
 
     protected static Map<String, String> exCache = new HashMap(); //path -> script data
@@ -223,10 +223,6 @@ public class NALTest  {
         boolean error = false;
         try {
             n.finish(minCycles);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            error = true;
         }
         catch(Throwable e){ 
             e.printStackTrace();
