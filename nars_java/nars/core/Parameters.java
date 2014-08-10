@@ -150,6 +150,6 @@ public class Parameters {
      * 
      * Optimal value to be determined.
      */
-    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 8;
+    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 32;
 }
 
