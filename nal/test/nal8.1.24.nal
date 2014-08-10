@@ -2,4 +2,4 @@
   IN: <(*,SELF,{t001}) --> at>. :|: 
   IN: <(&/,<(*,SELF,{t001}) --> at>,(^open,{t001}))=/><{t001} --> [opened]>>. :|:
 3
-''outputMustContain('<(^open,{t001})=/><{t001} --> [opened]>>. :\\: %1.00;0.81%')
+''outputMustContain('<(^open,{t001}) =/> <{t001} --> [opened]>>. :\: %1.00;0.81%')
