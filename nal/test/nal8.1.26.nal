@@ -1,6 +1,0 @@
-********** [36 -> 37]
-  IN: (^open,{t001})!
-1
-***EXECUTE: ^open({t001})
-
-''outputMustContain('(^open,{t001}). :|: %1.00;0.90%')

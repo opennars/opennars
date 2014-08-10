@@ -937,18 +937,23 @@ public final class CompositionalRules {
             }
             
             Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
-            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond));
-            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond));
+            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
+            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
             
-            Term result;
-            TruthValue truth;
+
             
             for(int i=0;i<terms_independent.size();i++) {
-                result=terms_independent.get(i);
-                truth=deduction(taskSentence.truth, truthSecond);
+                Term result = terms_independent.get(i);
+                TruthValue truth = deduction(taskSentence.truth, truthSecond);
+                
+                char mark=Symbols.JUDGMENT_MARK;
+                if(taskSentence.isGoal() || second_belief.isGoal()) {
+                    truth = intersection(taskSentence.truth, truthSecond); //desire strong?
+                    mark=Symbols.GOAL_MARK;
+                }
                
                 Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
-                Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, 
+                Sentence newSentence = new Sentence(result, mark, truth, 
                         new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );                
                 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
@@ -964,7 +969,7 @@ public final class CompositionalRules {
     }
     
 
-    private static void dedSecondLayerVariableUnificationTerms(Memory memory, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth) {
+    private static void dedSecondLayerVariableUnificationTerms(Memory memory, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
         
             Sentence taskSentence = task.sentence;
             
@@ -973,12 +978,18 @@ public final class CompositionalRules {
             for(int i=0;i<terms_dependent.size();i++) {
                 final CompoundTerm result = terms_dependent.get(i);
                
-                Sentence newSentence;
-                if(task.sentence.isGoal() || second_belief.isGoal())
-                    newSentence=new Sentence(result, Symbols.GOAL_MARK, truth, sx);
-                else
-                    newSentence=new Sentence(result, Symbols.JUDGMENT_MARK, truth, sx);
-                                                
+                char mark=Symbols.JUDGMENT_MARK;
+                if(task.sentence.isGoal() || second_belief.isGoal()) {
+                   /* if(strong) { //only change truth value for goal
+                        truth=TruthFunctions.desireStrong(t1, t2);
+                    }
+                    else {
+                        truth=TruthFunctions.desireWeak(t1, t2);
+                    }*/
+                    truth=intersection(t1,t2); //hm I think it should be intersection
+                    mark=Symbols.GOAL_MARK;
+                }
+                Sentence newSentence=new Sentence(result, mark, truth, sx);                     
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                 
                 Task newTask = new Task(newSentence, budget, task, null);
