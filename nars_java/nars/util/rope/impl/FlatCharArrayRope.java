@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.Iterator;
+import nars.util.StringUtil;
 import nars.util.rope.Rope;
 
 /**
@@ -47,6 +48,10 @@ public final class FlatCharArrayRope extends AbstractRope implements FlatRope {
      */
     public FlatCharArrayRope(final char[] sequence) {
         this.sequence = sequence;
+    }
+    
+    public FlatCharArrayRope(final StringBuilder sb) {
+        this(StringUtil.getCharArray(sb));
     }
 
     /**

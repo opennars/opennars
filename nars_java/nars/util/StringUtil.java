@@ -14,7 +14,7 @@ public class StringUtil {
      *  if the combined length <= maxLen, creates a StringBuilder appending them all.
      *  if the combined length > maxLen, creates a Rope appending them all.     
      */
-    public static CharSequence yarn(int maxLen, CharSequence... components) {
+    public static CharSequence yarn(final int maxLen, final CharSequence... components) {
         int totalLen = 0;
         int total = 0;
         CharSequence lastNonNull = null;

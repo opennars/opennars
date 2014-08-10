@@ -175,7 +175,7 @@ public class TermLink extends Item {
      * Set the key of the link
      * @param suffix optional suffix, may be null
      */    
-    protected final void setKey(final String suffix) {
+    protected final void setKey(final CharSequence suffix) {
         this.key = StringUtil.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
                         newKeyPrefix(), 
                         target!=null ? target.toString() : null, 

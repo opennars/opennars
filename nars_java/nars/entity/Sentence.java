@@ -30,6 +30,8 @@ import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.util.StringUtil;
+import nars.util.rope.impl.FlatCharArrayRope;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -67,7 +69,7 @@ public class Sentence implements Cloneable {
     private boolean revisible;
 
     /** caches the 'getKey()' result */
-    private String key;
+    private CharSequence key;
 
     /**
      * Create a Sentence with the given fields
@@ -262,7 +264,7 @@ public class Sentence implements Cloneable {
      */
     @Override
     public String toString() {
-        return toKey();
+        return getKey().toString();
     }
 
     /**
@@ -286,7 +288,7 @@ public class Sentence implements Cloneable {
      *
      * @return The String
      */
-    public String toKey() {
+    public CharSequence getKey() {
         //key must be invalidated if content or truth change
         if (key == null) {
             final String contentToString = content.toString();
@@ -296,22 +298,25 @@ public class Sentence implements Cloneable {
             final String truthString = truth != null ? truth.toStringBrief() : null;
             //final String stampString = stamp.toString();
 
-            int stringLength = contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
+            int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
             if (truth != null) {
                 stringLength += occurrenceTimeString.length() + truthString.length();
             }
 
-            final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
-                    .append(punctuation);
+            //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
+            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
 
             if (truth != null) {
-                k.append(' ').append(truthString);
+                suffix.append(' ').append(truthString);
             }
             if (occurrenceTimeString.length() > 0) {
-                k.append(' ').append(occurrenceTimeString);
+                suffix.append(' ').append(occurrenceTimeString);
             }
 
-            key = k.toString();
+            key = StringUtil.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
+                    contentToString, 
+                    new FlatCharArrayRope(suffix));
+            //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
 
         }
         return key;

@@ -43,7 +43,7 @@ public class Task extends Item {
      * For Question and Goal: best solution found so far
      */
     private Sentence bestSolution;
-    private final String key;
+    private final CharSequence key;
 
     /**
      * Constructor for input task
@@ -66,7 +66,7 @@ public class Task extends Item {
     public Task(final Sentence s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
         super(b);
         this.sentence = s;
-        this.key = sentence.toKey();        
+        this.key = sentence.getKey();        
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
     }
@@ -85,7 +85,7 @@ public class Task extends Item {
         this.bestSolution = solution;
     }
 
-    @Override public String getKey() {
+    @Override public CharSequence getKey() {
         return key;
     }
 
