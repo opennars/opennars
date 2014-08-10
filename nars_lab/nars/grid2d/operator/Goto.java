@@ -25,6 +25,7 @@ import java.util.List;
 import nars.entity.Task;
 import nars.grid2d.Grid2DSpace;
 import nars.language.Term;
+import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
