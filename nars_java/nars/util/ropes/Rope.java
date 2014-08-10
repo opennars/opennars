@@ -462,10 +462,13 @@ import nars.util.ropes.impl.SubstringRope;
 	}
 
         
-    
+        /** @param c array of terms to concatenate; if an item is null it will be ignored */
         public static Rope cat(CharSequence... c) {
             Rope r = null;
             for (CharSequence a : c) {
+                if (a == null) 
+                    continue;
+                
                 if (!(a instanceof Rope))
                     a = Rope.build(a);
 
@@ -580,7 +583,13 @@ import nars.util.ropes.impl.SubstringRope;
 	}
 
 	public static void visualize(final Rope r, final PrintStream out, final int depth) {
-		if (r instanceof FlatRope) {
+		if (r instanceof FlatCharSequenceRope) {
+			out.print(SPACES.substring(0,depth*2));
+                        CharSequence seq = ((FlatCharSequenceRope)r).sequence;
+			out.println("\"" + seq +  "\" " + System.identityHashCode(seq));
+//			out.println(r.length());
+		}
+                else if (r instanceof FlatRope) {
 			out.print(SPACES.substring(0,depth*2));
 			out.println("\"" + r + "\"");
 //			out.println(r.length());
