@@ -973,7 +973,11 @@ public final class CompositionalRules {
             for(int i=0;i<terms_dependent.size();i++) {
                 final CompoundTerm result = terms_dependent.get(i);
                
-                Sentence newSentence = new Sentence(result, Symbols.JUDGMENT_MARK, truth, sx);
+                Sentence newSentence;
+                if(task.sentence.isGoal() || second_belief.isGoal())
+                    newSentence=new Sentence(result, Symbols.GOAL_MARK, truth, sx);
+                else
+                    newSentence=new Sentence(result, Symbols.JUDGMENT_MARK, truth, sx);
                                                 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                 
