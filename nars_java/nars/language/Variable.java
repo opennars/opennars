@@ -25,6 +25,11 @@ package nars.language;
  */
 public class Variable extends Term {
 
+    public Variable() {
+        super();
+    }
+
+    
     /**
      * Constructor, from a given variable name
      *
@@ -41,7 +46,9 @@ public class Variable extends Term {
      */
     @Override
     public Variable clone() {
-        return new Variable(name());
+        Variable v = new Variable();
+        v.name = name(); //apply name directly, no need to invoke setName()
+        return v;
     }
 
     /**
