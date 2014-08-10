@@ -20,6 +20,7 @@ package nars.operator.mental;
 import java.util.ArrayList;
 import nars.entity.*;
 import nars.language.*;
+import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -39,7 +40,7 @@ public class Register extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term operator = args[0];
         memory.addOperator((Operator) operator);  // add error checking
         return null;

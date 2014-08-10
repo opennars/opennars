@@ -23,6 +23,7 @@ import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.language.*;
 import nars.io.Symbols;
+import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -42,7 +43,7 @@ public class Abbreviate extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term compound = args[0];
         Term atomic = memory.newSerialTerm(Symbols.TERM_PREFIX);
         Similarity content = Similarity.make(compound, atomic, memory);

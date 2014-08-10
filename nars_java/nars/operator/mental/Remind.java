@@ -22,6 +22,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.language.Term;
+import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -42,7 +43,7 @@ public class Remind extends Operator {
      * @return Immediate results as Tasks
      */
     @Override    
-    public ArrayList<Task> execute(Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[0];
         Concept concept = memory.conceptualize(term);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);

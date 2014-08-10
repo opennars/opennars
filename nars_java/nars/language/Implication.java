@@ -46,8 +46,8 @@ public class Implication extends Statement {
      * @param con Whether it is a constant term
      * @param i Syntactic complexity of the compound
      */
-    private Implication(String n, Term[] cs, boolean con, short i, int order) {
-        super(n, cs, con, i);
+    private Implication(String n, Term[] cs, boolean con, boolean hasVar, short i, int order) {
+        super(n, cs, con, hasVar, i);
         temporalOrder = order;
     }
 
@@ -59,8 +59,7 @@ public class Implication extends Statement {
      */
     @Override
     public Implication clone() {
-        //TODO use the faster super constructor here
-        return new Implication(name(), cloneTerms(), isConstant(), complexity, temporalOrder);
+        return new Implication(name(), cloneTerms(), isConstant(), containVar(), complexity, temporalOrder);
     }
 
     /**

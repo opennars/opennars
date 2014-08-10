@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.language.Term;
+import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -41,7 +42,7 @@ public class Doubt extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[0];
         Concept concept = memory.conceptualize(term);
         concept.discountConfidence(true);

@@ -1090,6 +1090,8 @@ public class Memory implements Output, Serializable {
         return stepsQueued;
     }
 
+
+
     public static final class NullInferenceRecorder implements InferenceRecorder {
 
         public static final NullInferenceRecorder global = new NullInferenceRecorder();
@@ -1127,4 +1129,18 @@ public class Memory implements Output, Serializable {
     public void stepLater(final int cycles) {
         stepsQueued += cycles;
     }    
+
+    /** convenience method for forming a new Task from a term */
+    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
+        
+        TruthValue truth = new TruthValue(freq, conf);
+        Sentence sentence = new Sentence(
+                content, 
+                sentenceType, 
+                truth, 
+                new Stamp(this));
+        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
+        Task task = new Task(sentence, budget);        
+        return task;
+    }
 }
