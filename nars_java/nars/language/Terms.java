@@ -1,7 +1,7 @@
 package nars.language;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import nars.entity.TermLink;
 import nars.storage.Memory;
@@ -296,17 +296,21 @@ public class Terms {
      * @param type The type of TermLink to be built
      * @param term The CompoundTerm for which the links are built
      */
-    public static List<TermLink> prepareComponentLinks(final List<TermLink> componentLinks, final short type, final CompoundTerm t) {
+    public static ArrayList<TermLink> prepareComponentLinks(final ArrayList<TermLink> componentLinks, final short type, final CompoundTerm t) {
         for (int i = 0; i < t.size(); i++) {
             final Term t1 = t.term[i];
+            
+            
             if (t1.isConstant()) {
                 componentLinks.add(new TermLink(type, t1, i));
             }
             if (((t instanceof Equivalence) || ((t instanceof Implication) && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
                 prepareComponentLinks(componentLinks, TermLink.COMPOUND_CONDITION, (CompoundTerm) t1);
             } else if (t1 instanceof CompoundTerm) {
-                for (int j = 0; j < ((CompoundTerm) t1).size(); j++) {
-                    final Term t2 = ((CompoundTerm) t1).term[j];
+                final CompoundTerm ct1 = (CompoundTerm)t1;
+                final int ct1Size = ct1.size(); //cache because this loop is critical
+                for (int j = 0; j < ct1Size; j++) {
+                    final Term t2 = ct1.term[j];
                     if (t2.isConstant()) {
                         if ((t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt)) {
                             if (type == TermLink.COMPOUND_CONDITION) {
@@ -319,8 +323,12 @@ public class Terms {
                         }
                     }
                     if ((t2 instanceof Product) || (t2 instanceof ImageExt) || (t2 instanceof ImageInt)) {
-                        for (int k = 0; k < ((CompoundTerm) t2).size(); k++) {
-                            final Term t3 = ((CompoundTerm) t2).term[k];
+                        CompoundTerm ct2 = (CompoundTerm)t2;
+                        final int ct2Size = ct2.size();
+                        
+                        for (int k = 0; k < ct2Size; k++) {
+                            final Term t3 = ct2.term[k];
+                            
                             if (t3.isConstant()) {
                                 if (type == TermLink.COMPOUND_CONDITION) {
                                     componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k));
@@ -336,7 +344,7 @@ public class Terms {
         return componentLinks;
     }
 
-   public  static List<TermLink> prepareComponentLinks(List<TermLink> componentLinks, CompoundTerm ct) {
+   public  static ArrayList<TermLink> prepareComponentLinks(ArrayList<TermLink> componentLinks, CompoundTerm ct) {
         short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         return prepareComponentLinks(componentLinks, type, ct);
     }

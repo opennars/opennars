@@ -20,18 +20,18 @@
  *  Amin Ahmad can be contacted at amin.ahmad@gmail.com or on the web at
  *  www.ahmadsoft.org.
  */
-package nars.util.ropes.impl;
+package nars.util.rope.impl;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import nars.util.ropes.Rope;
+import nars.util.rope.Rope;
 
 /**
  * A rope that represents the concatenation of two other ropes.
  * @author Amin Ahmad
  */
-public final class ConcatenationRope extends AbstractRope {
+public class ConcatenationRope extends AbstractRope {
 
     public final Rope left;
     public final Rope right;
@@ -52,15 +52,16 @@ public final class ConcatenationRope extends AbstractRope {
 
     @Override
     public char charAt(final int index) {
-        if (index >= this.length())
-            throw new IndexOutOfBoundsException("Rope index out of range: " + index);
+        //if (index >= this.length())
+        //    throw new IndexOutOfBoundsException("Rope index out of range: " + index);
 
-        return (index < this.left.length() ? this.left.charAt(index): this.right.charAt(index - this.left.length()));
+        final int leftLen = left.length();
+        return (index < leftLen) ? left.charAt(index) : right.charAt(index - leftLen);
     }
 
     @Override
     public byte depth() {
-        return this.depth;
+        return depth;
     }
 
     @Override
@@ -68,6 +69,8 @@ public final class ConcatenationRope extends AbstractRope {
         return this.getForSequentialAccess(this);
     }
 
+
+    
     /*
      * Returns this object as a char sequence optimized for
      * regular expression searches.
@@ -120,7 +123,7 @@ public final class ConcatenationRope extends AbstractRope {
      * @return the left-hand rope.
      */
     public Rope getLeft() {
-        return this.left;
+        return left;
     }
 
     /**
@@ -128,7 +131,7 @@ public final class ConcatenationRope extends AbstractRope {
      * @return the right-hand rope.
      */
     public Rope getRight() {
-        return this.right;
+        return right;
     }
 
     @Override
@@ -141,6 +144,7 @@ public final class ConcatenationRope extends AbstractRope {
             return new ConcatenationRopeIteratorImpl(this, start);
         }
     }
+    
 
     @Override
     public int length() {

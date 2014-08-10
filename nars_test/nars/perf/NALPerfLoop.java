@@ -13,8 +13,8 @@ public class NALPerfLoop {
     
     public static void main(String[] args) {
        
-        int repeats = 20;
-        int warmups = 1;
+        int repeats = 1;
+        int warmups = 0;
         int extraCycles = 2024;
         
         NAR n = new DefaultNARBuilder().build();
@@ -23,7 +23,7 @@ public class NALPerfLoop {
         while (true) {
             for (Object o : c) {
                 String examplePath = (String)((Object[])o)[0];
-                perfNAL(n, examplePath,extraCycles,repeats,warmups,false);
+                perfNAL(n, examplePath,extraCycles,repeats,warmups,true);
             }
         }        
     }

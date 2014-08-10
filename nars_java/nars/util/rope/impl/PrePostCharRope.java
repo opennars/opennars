@@ -1,10 +1,10 @@
-package nars.util.ropes.impl;
+package nars.util.rope.impl;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Objects;
-import nars.util.ropes.Rope;
+import nars.util.rope.Rope;
 
 
 

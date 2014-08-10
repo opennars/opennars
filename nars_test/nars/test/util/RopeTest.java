@@ -31,11 +31,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.regex.Pattern;
-import nars.util.ropes.Rope;
-import nars.util.ropes.impl.ConcatenationRope;
-import nars.util.ropes.impl.FlatCharSequenceRope;
-import nars.util.ropes.impl.ReverseRope;
-import nars.util.ropes.impl.SubstringRope;
+import nars.util.rope.Rope;
+import nars.util.rope.impl.ConcatenationRope;
+import nars.util.rope.impl.FlatCharSequenceRope;
+import nars.util.rope.impl.ReverseRope;
+import nars.util.rope.impl.SubstringRope;
 
 
 

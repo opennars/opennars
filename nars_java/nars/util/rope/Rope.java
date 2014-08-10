@@ -20,7 +20,7 @@
  *  Amin Ahmad can be contacted at amin.ahmad@gmail.com or on the web at
  *  www.ahmadsoft.org.
  */
-package nars.util.ropes;
+package nars.util.rope;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -31,13 +31,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.util.ropes.impl.AbstractRope;
-import nars.util.ropes.impl.ConcatenationRope;
-import nars.util.ropes.impl.FlatCharArrayRope;
-import nars.util.ropes.impl.FlatCharSequenceRope;
-import nars.util.ropes.impl.FlatRope;
-import nars.util.ropes.impl.PrePostCharRope;
-import nars.util.ropes.impl.SubstringRope;
+import nars.util.StringUtil;
+import nars.util.rope.impl.AbstractRope;
+import nars.util.rope.impl.ConcatenationRope;
+import nars.util.rope.impl.FastCharSequenceRope;
+import nars.util.rope.impl.FastConcatenationRope;
+import nars.util.rope.impl.FlatCharArrayRope;
+import nars.util.rope.impl.FlatCharSequenceRope;
+import nars.util.rope.impl.FlatRope;
+import nars.util.rope.impl.PrePostCharRope;
+import nars.util.rope.impl.SubstringRope;
 
 
 /**
@@ -92,7 +95,22 @@ import nars.util.ropes.impl.SubstringRope;
 		return new FlatCharSequenceRope(sequence);
 	}
 
-
+        /** Builds a FastCharSequenceRope instead of FlatCharSequenceRope */
+        public static Rope buildFast(final CharSequence sequence) {
+		if (sequence instanceof Rope)
+                    return (Rope) sequence;
+                if (sequence instanceof String)
+                    return new FastCharSequenceRope(sequence);
+                if (sequence instanceof StringBuilder) {
+                    //access stringbuilder's char[] directly. dangerous
+                    return new FlatCharArrayRope(StringUtil.getCharArray((StringBuilder)sequence));
+                }
+                
+                //default for other implementations
+                return new FlatCharSequenceRope(sequence);    
+                
+	}
+        
 	/**
 	 * Returns a new rope created by appending the specified character to
 	 * this rope.
@@ -463,7 +481,7 @@ import nars.util.ropes.impl.SubstringRope;
 
         
         /** @param c array of terms to concatenate; if an item is null it will be ignored */
-        public static Rope cat(CharSequence... c) {
+        public static Rope cat(final CharSequence... c) {
             Rope r = null;
             for (CharSequence a : c) {
                 if (a == null) 
@@ -472,15 +490,27 @@ import nars.util.ropes.impl.SubstringRope;
                 if (!(a instanceof Rope))
                     a = Rope.build(a);
 
-                if (r == null) {
-                    r = (Rope)a;
-                }
-                else {                
-                    r = new ConcatenationRope(r, (Rope)a);
-                }
+                r = (r == null) ? (Rope)a : new ConcatenationRope(r, (Rope)a);
+                
             }
             return r;
         }
+        
+       /** @param c array of terms to concatenate; if an item is null it will be ignored */
+        public static Rope catFast(final CharSequence... c) {
+            Rope r = null;
+            for (CharSequence a : c) {
+                if (a == null) 
+                    continue;
+                
+                if (!(a instanceof Rope))
+                    a = Rope.buildFast(a);
+
+                r = (r == null) ? (Rope)a : new FastConcatenationRope(r, (Rope)a);
+                
+            }
+            return r;
+        }        
 
 	/**
 	 * Concatenate two ropes. Implements all recommended optimizations in "Ropes: an

@@ -20,7 +20,7 @@
  *  Amin Ahmad can be contacted at amin.ahmad@gmail.com or on the web at
  *  www.ahmadsoft.org.
  */
-package nars.util.ropes.impl;
+package nars.util.rope.impl;
 
 import java.io.IOException;
 import java.io.ObjectStreamException;
@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.util.ropes.Rope;
+import nars.util.rope.Rope;
 
 /**
  * Abstract base class for ropes that implements many of the common operations.
@@ -84,16 +84,19 @@ public abstract class AbstractRope implements Rope {
 	public boolean equals(final Object other) {
 		if (other instanceof Rope) {
 			final Rope rope = (Rope) other;
-			if (rope.hashCode() != this.hashCode() || rope.length() != this.length())
-				return false;
+			if (rope.hashCode() != this.hashCode())
+                            return false;
+                         if (rope.length() != this.length())
+                            return false;
+                         
 			final Iterator<Character> i1 = this.iterator();
 			final Iterator<Character> i2 = rope.iterator();
 
 			while (i1.hasNext()) {
-				final char a = i1.next();
-				final char b = i2.next();
-				if (a != b)
-					return false;
+                            final char a = i1.next();
+                            final char b = i2.next();
+                            if (a != b)
+                                return false;
 			}
 			return true;
 		}
@@ -111,6 +114,7 @@ public abstract class AbstractRope implements Rope {
 
 	@Override
 	public int hashCode() {
+            
 		if (this.hashCode == 0 && this.length() > 0) {
 			if (this.length() < 6) {
 				for (final char c: this)
@@ -300,6 +304,7 @@ public abstract class AbstractRope implements Rope {
 
 	@Override
 	public String toString() {
+
 		final StringWriter out = new StringWriter(this.length());
 		try {
 			this.write(out);

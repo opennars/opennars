@@ -35,7 +35,7 @@ public class NALTestPerf  {
                     n.addInput(example);
                     n.finish(extraCycles);
                 }
-                catch (Exception e) {
+                catch (Throwable e) {
                     e.printStackTrace();
                 }
                 
@@ -49,9 +49,22 @@ public class NALTestPerf  {
                 return this;
                 
             }
+            @Override
+            public Performance printCSV(boolean finalComma) {
+                super.printCSV(true);
+                System.out.print(df.format(getCycleTimeMS() / totalCycles * 1000.0) + ", " + (((float)totalCycles)/(warmups+repeats)));
+                if (finalComma)
+                    System.out.print(", ");
+                return this;
+                
+            }
 
         };
         p.print();
+        System.out.println();
+
+        /*p.printCSV(false);
+        System.out.println();*/
         
         return p.getCycleTimeMS();
                    

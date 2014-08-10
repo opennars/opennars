@@ -1,5 +1,5 @@
 /*
- *  ReverseRope.java
+ *  SubstringRope.java
  *  Copyright (C) 2007 Amin Ahmad.
  *
  *  This file is part of Java Ropes.
@@ -20,42 +20,56 @@
  *  Amin Ahmad can be contacted at amin.ahmad@gmail.com or on the web at
  *  www.ahmadsoft.org.
  */
-package nars.util.ropes.impl;
+package nars.util.rope.impl;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import nars.util.ropes.Rope;
+import nars.util.rope.Rope;
 
 /**
- * A rope representing the reversal of character sequence.
- * Internal implementation only.
- * @author Amin Ahmad
+ * Represents a lazily-evaluated substring of another rope. For performance
+ * reasons, the target rope must be a <code>FlatRope</code>.
+ * @author aahmad
  */
-public final class ReverseRope extends AbstractRope {
+public class SubstringRope extends AbstractRope {
 
-	private final Rope rope;
+	private final FlatRope rope;
+	private final int offset;
+	private final int length;
 
-	/**
-	 * Constructs a new rope from an underlying rope.
-	 * <p>
-	 * Balancing algorithm works optimally when only FlatRopes or
-	 * SubstringRopes are supplied. Framework must guarantee this
-	 * as no runtime check is performed.
-	 * @param rope
-	 */
-	public ReverseRope(final Rope rope) {
+	public SubstringRope(final FlatRope rope, final int offset, final int length) {
+		if (length < 0 || offset < 0 || offset + length > rope.length())
+			throw new IndexOutOfBoundsException("Invalid substring offset (" + offset + ") and length (" + length + ") for underlying rope with length " + rope.length());
+
 		this.rope = rope;
+		this.offset = offset;
+		this.length = length;
 	}
 
 	@Override
 	public char charAt(final int index) {
-		return this.rope.charAt(this.length() - index - 1);
+		if (index >= this.length())
+			throw new IndexOutOfBoundsException("Rope index out of range: " + index);
+
+		return this.rope.charAt(this.offset + index);
 	}
 
 	@Override
 	public byte depth() {
-		return Rope.depth(this.rope);
+		return Rope.depth(getRope());
+	}
+
+	int getOffset() {
+		return this.offset;
+	}
+
+	/**
+	 * Returns the rope underlying this one.
+	 * @return the rope underlying this one.
+	 */
+	public Rope getRope() {
+		return this.rope;
 	}
 
 	@Override
@@ -63,52 +77,61 @@ public final class ReverseRope extends AbstractRope {
 		if (start < 0 || start > this.length())
 			throw new IndexOutOfBoundsException("Rope index out of range: " + start);
 		return new Iterator<Character>() {
-			int current = start;
+
+			final Iterator<Character> u = SubstringRope.this.getRope().iterator(SubstringRope.this.getOffset() + start);
+			int position = start;
+
 			@Override
 			public boolean hasNext() {
-				return this.current < ReverseRope.this.length();
+				return this.position < SubstringRope.this.length();
 			}
 
 			@Override
 			public Character next() {
-				return ReverseRope.this.charAt(this.current++);
+				++this.position;
+				return this.u.next();
 			}
 
 			@Override
 			public void remove() {
-				throw new UnsupportedOperationException("Rope iterator is read-only.");
+				this.u.remove();
 			}
+
 		};
 	}
 
 	@Override
 	public int length() {
-		return this.rope.length();
+		return this.length;
 	}
 
 	@Override
 	public Rope reverse() {
-		return this.rope;
+		return new ReverseRope(this);
 	}
 
+	@Override
 	public Iterator<Character> reverseIterator(final int start) {
 		if (start < 0 || start > this.length())
 			throw new IndexOutOfBoundsException("Rope index out of range: " + start);
 		return new Iterator<Character>() {
-			int current = ReverseRope.this.length() - start;
+			final Iterator<Character> u = SubstringRope.this.getRope().reverseIterator(SubstringRope.this.getRope().length() - SubstringRope.this.getOffset() - SubstringRope.this.length() + start);
+			int position = SubstringRope.this.length() - start;
+
 			@Override
 			public boolean hasNext() {
-				return this.current > 0;
+				return this.position > 0;
 			}
 
 			@Override
 			public Character next() {
-				return ReverseRope.this.charAt(--this.current);
+				--this.position;
+				return this.u.next();
 			}
 
 			@Override
 			public void remove() {
-				throw new UnsupportedOperationException("Rope iterator is read-only.");
+				this.u.remove();
 			}
 		};
 	}
@@ -117,19 +140,21 @@ public final class ReverseRope extends AbstractRope {
 	public Rope subSequence(final int start, final int end) {
 		if (start == 0 && end == this.length())
 			return this;
-		return this.rope.subSequence(this.length() - end, this.length() - start).reverse();
+		return new SubstringRope(this.rope, this.offset + start, end-start);
+	}
+
+	@Override
+	public String toString() {
+		return this.rope.toString(this.offset, this.length);
 	}
 
 	@Override
 	public void write(final Writer out) throws IOException {
-		this.write(out, 0, this.length());
+		this.rope.write(out, this.offset, this.length);
 	}
 
 	@Override
 	public void write(final Writer out, final int offset, final int length) throws IOException {
-		if (offset < 0 || offset + length > this.length())
-			throw new IndexOutOfBoundsException("Rope index out of bounds:" + (offset < 0 ? offset: offset + length));
-		for (int j=offset; j<offset + length; ++j)
-			out.write(this.charAt(j));
+		this.rope.write(out, this.offset + offset, length);
 	}
 }

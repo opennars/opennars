@@ -1,6 +1,6 @@
 package nars.test.util;
 
-import nars.util.ropes.impl.PrePostCharRope;
+import nars.util.rope.impl.PrePostCharRope;
 import static java.lang.String.valueOf;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
@@ -15,7 +15,8 @@ import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
 import nars.language.CompoundTerm;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.util.ropes.Rope;
+import nars.util.rope.Rope;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -84,7 +85,21 @@ public class TestRope {
         
     }
     
-    
+    @Test
+    public void testRopeStringEqual() {
+        String s = "x";
+        Rope r = Rope.build("x");
+        
+        assertTrue(!s.equals(r));
+        
+        assertTrue(!r.equals(s));
+        
+        //careful: these are not commutive because String only equals other String
+        //so do not mix String and FastCharSequenceRope in the same collection
+        Rope rF = Rope.buildFast("x");
+        assertTrue(s.equals(rF));
+        assertTrue(rF.equals(s));
+    }
     
 
     
