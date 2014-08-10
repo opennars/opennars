@@ -1,6 +1,0 @@
-********** [32 -> 33]
-  IN: (^go-to,{t001})!  
-1
-***EXECUTE: ^go-to({t001})
-
-''outputMustContain('(^go-to,{t001}). :|: %1.00;0.90%')
