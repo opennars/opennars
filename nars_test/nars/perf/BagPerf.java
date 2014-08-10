@@ -91,6 +91,7 @@ public class BagPerf {
             
     public static int itemID = 0;
     
+    /** Empty Item implementation useful for testing */
     public static class NullItem extends Item {
         private final String key;
     
