@@ -23,6 +23,7 @@ import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.language.*;
 import nars.io.Symbols;
+import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
 
@@ -42,7 +43,7 @@ public class Want extends Operator {
      * @return Immediate results as Tasks
      */
     @Override
-    public ArrayList<Task> execute(Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term content = args[0];                
         
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);

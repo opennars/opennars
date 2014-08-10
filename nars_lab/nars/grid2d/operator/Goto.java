@@ -39,7 +39,7 @@ public class Goto extends Operator {
     }
 
     @Override
-    public List<Task> execute(Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          

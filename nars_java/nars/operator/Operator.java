@@ -21,6 +21,7 @@
 
 package nars.operator;
 
+import java.util.Arrays;
 import java.util.List;
 import nars.entity.Task;
 import nars.io.Output.EXE;
@@ -50,7 +51,7 @@ public abstract class Operator extends Term {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Term[] args, Memory memory);
+    protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory);
 
     /**
     * The standard way to carry out an operation, which invokes the execute
@@ -60,9 +61,9 @@ public abstract class Operator extends Term {
     * @param args The arguments to be taken by the operator
     * @param memory The memory on which the operation is executed
     */
-    public void call(final Operator op, final Term[] args, final Memory memory) {
-        List<Task> feedback = op.execute(args, memory);
-        reportExecution(op, args, memory);
+    public void call(final Operation operation, final Term[] args, final Memory memory) {
+        reportExecution(operation, args, memory);
+        List<Task> feedback = execute(operation, args, memory);        
         if (feedback != null) {
             for (Task t : feedback) {
                 memory.inputTask(t);
@@ -77,13 +78,15 @@ public abstract class Operator extends Term {
      * <p>
      * @param operation The content of the operation to be executed
      */
-    public static void reportExecution(final Operator operator, final Term[] args, final Memory memory) {
+    public static void reportExecution(final Operation operation, final Term[] args, final Memory memory) {
+        final Operator operator = operation.getOperator();
+        
         StringBuilder buffer = new StringBuilder();
         for (Object obj : args) {
             buffer.append(obj).append(",");
         }
-        System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
-        memory.output(EXE.class, operator + "(" + args);
+        //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
+        memory.output(EXE.class, operator + " " + Arrays.toString(args));
     }
     
     public static String operationExecutionString(final Statement operation) {

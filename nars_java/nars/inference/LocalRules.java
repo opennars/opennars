@@ -314,7 +314,7 @@ public class LocalRules {
         }
         Operation op = (Operation) content;
         Operator oper = op.getOperator();
-        oper.call(oper, op.getArguments(), concept.memory);
+        oper.call(op, op.getArguments(), concept.memory);
         task.setPriority(0);
     }    
 }
