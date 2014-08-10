@@ -940,15 +940,13 @@ public final class CompositionalRules {
             dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
             dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
             
-
-            
             for(int i=0;i<terms_independent.size();i++) {
                 Term result = terms_independent.get(i);
                 TruthValue truth = deduction(taskSentence.truth, truthSecond);
                 
                 char mark=Symbols.JUDGMENT_MARK;
                 if(taskSentence.isGoal() || second_belief.isGoal()) {
-                    truth = intersection(taskSentence.truth, truthSecond); //desire strong?
+                    truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
                     mark=Symbols.GOAL_MARK;
                 }
                
@@ -980,13 +978,12 @@ public final class CompositionalRules {
                
                 char mark=Symbols.JUDGMENT_MARK;
                 if(task.sentence.isGoal() || second_belief.isGoal()) {
-                   /* if(strong) { //only change truth value for goal
-                        truth=TruthFunctions.desireStrong(t1, t2);
+                    if(strong) {
+                        truth=abduction(t1,t2);
                     }
                     else {
-                        truth=TruthFunctions.desireWeak(t1, t2);
-                    }*/
-                    truth=intersection(t1,t2); //hm I think it should be intersection
+                        truth=intersection(t1,t2);
+                    }
                     mark=Symbols.GOAL_MARK;
                 }
                 Sentence newSentence=new Sentence(result, mark, truth, sx);                     
