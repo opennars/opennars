@@ -36,6 +36,8 @@ import nars.storage.Memory;
  */
 public abstract class Operator extends Term {
         
+    protected Operator() {   super();    }
+    
     protected Operator(String name) {
         super(name);
     }
@@ -93,8 +95,14 @@ public abstract class Operator extends Term {
 
     @Override
     public Operator clone() {
-        //return new Operator(name); //To change body of generated methods, choose Tools | Templates.
-        return null;
+        //do not clone operator, just use as-is since it's effectively immutable
+        return this;
+        
+        /*
+        Operator o = new Operator();
+        o.name = name(); //apply name directly, no need to invoke setName()
+        return o;
+        */
     }
 }
 

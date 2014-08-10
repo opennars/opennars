@@ -78,7 +78,7 @@ public class Operation extends Inheritance {
         if (oper == null) {
             return null;
         }
-        String name = makeName(oper.name(), arg, memory);
+        String name = makeName(oper.name(), arg);
         Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Operation) t;
@@ -90,7 +90,7 @@ public class Operation extends Inheritance {
         return new Operation(name, opArg.toArray(new Term[opArg.size()]));
     }
 
-    public static String makeName(final String op, Term[] arg, final Memory memory) {
+    public static String makeName(final String op, Term[] arg) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         

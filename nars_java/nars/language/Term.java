@@ -154,19 +154,19 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public int compareTo(final Term that) {
-        //This removes this class's dependency on CompoundTerm
+        /*//This removes this class's dependency on CompoundTerm
         if (that.getClass() == getClass())
             return name.compareTo(that.name());
-        return that.getClass().getSimpleName().compareTo(getClass().getSimpleName());
+        return that.getClass().getSimpleName().compareTo(getClass().getSimpleName());*/
         
         //previously: Orders among terms: variable < atomic < compound
-        /*if (that instanceof CompoundTerm) {
+        if (that instanceof CompoundTerm) {
             return -1;
         } else if (that instanceof Variable) {
             return 1;
         } else {
-            return name.compareTo(that.getName());            
-        }*/
+            return name.compareTo(that.name());            
+        }
     }
 
     /**

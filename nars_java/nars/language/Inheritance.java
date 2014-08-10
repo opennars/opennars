@@ -74,7 +74,7 @@ public class Inheritance extends Statement {
         
         String name;
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term, memory);
+            name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term);
         } else {
             name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
         }
