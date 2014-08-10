@@ -146,8 +146,10 @@ public class Parameters {
      * in its components without a redundant copy being stored) it can be more 
      * computationally costly than a character array.
      * 
+     * The value needs to be weighed against the overhead of the comparison and iteration costs.
+     * 
      * Optimal value to be determined.
      */
-    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 16;
+    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 32;
 }
 

@@ -20,7 +20,7 @@
  *  Amin Ahmad can be contacted at amin.ahmad@gmail.com or on the web at
  *  www.ahmadsoft.org.
  */
-package nars.util.ropes.impl;
+package nars.util.rope.impl;
 
 import java.util.Arrays;
 

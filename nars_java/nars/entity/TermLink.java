@@ -21,10 +21,10 @@
 package nars.entity;
 
 import nars.core.Parameters;
-import static nars.core.Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD;
 import nars.io.Symbols;
 import nars.language.Term;
-import nars.util.ropes.Rope;
+import nars.util.StringUtil;
+import nars.util.rope.Rope;
 
 /**
  * A link between a compound term and a component term
@@ -59,32 +59,15 @@ public class TermLink extends Item {
     
     /** The linked Term */
     public final Term target;
+    
     /** The type of link, one of the above */
+    
     public final short type;
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
     private CharSequence key;
     
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof TermLink))
-            return false;
-
-        TermLink that = (TermLink)obj;
-        return getKey().equals(that.getKey());
-    }
-
-    @Override
-    public int hashCode() {
-        return getKey().hashCode();
-    }
-
-    @Override
-    public CharSequence getKey() {
-        return key;
-    }
-
-    
+   
 
             
     /**
@@ -114,7 +97,7 @@ public class TermLink extends Item {
             for (int i = 0; i < index.length; i++)
                 index[i] = (short) indices[i]; */
         }
-        setKey();        
+        //setKey();        
     }
 
     /** called from TaskLink
@@ -126,7 +109,7 @@ public class TermLink extends Item {
         this.type = type;
         this.index = indices;
         this.target = null;
-        setKey();        
+        //setKey();
     }
 
     /**
@@ -144,93 +127,95 @@ public class TermLink extends Item {
                 ? (short)(template.type - 1) //// point to component
                 : template.type;
         index = template.index;
-        setKey();
+        //setKey();
     }
 
-    /**
-     * Set the key of the link
-     */
-    /*
-    @Deprecated protected final void setKeyOLD() {
-        String at1, at2;
-        if ((type % 2) == 1) {  // to component
-            at1 = Symbols.TO_COMPONENT_1;
-            at2 = Symbols.TO_COMPONENT_2;
-        } else {                // to compound
-            at1 = Symbols.TO_COMPOUND_1;
-            at2 = Symbols.TO_COMPOUND_2;
+   @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) return true;
+        
+        if (!(obj.getClass() == getClass()))
+            return false;
+        
+        TermLink that = (TermLink)obj;
+        
+        if (getKey() instanceof Rope) {
+            //some quick comparisons to fail fast, because rope equals() may be slow
+            if (that.type != type)
+                return false;
+
+            final int indexLen = index!=null ? index.length : -1;
+            final int thatIndexLen = that.index!=null ? that.index.length : -1;
+            if (indexLen != thatIndexLen)
+                return false;
         }
-        String in = "T" + type;
-        if (index != null) {
-            for (int i = 0; i < index.length; i++) {
-                in += "-" + (index[i] + 1);
-            }
-        }
-        key = at1 + in + at2;
-        if (target != null) {
-            key += target;
-        }
+                    
+        return getKey().equals(that.getKey());
     }
-    */
+
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
+    }
+
+    @Override
+    public CharSequence getKey() {
+        if (key == null)
+            setKey();
+        return key;
+    }
+
     
     protected final void setKey() {
         setKey(null);        
     }
+
     
     /**
      * Set the key of the link
      * @param suffix optional suffix, may be null
      */    
     protected final void setKey(final String suffix) {
-        
-        if (Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD > 0)
-            if  ((target!=null) && (target.toString().length() > ROPE_TERMLINK_TERM_SIZE_THRESHOLD)) {
-                this.key = newKeyRope(suffix);
-                //Rope.visualize((Rope)key, System.err);
-                return;
-    }
-        
-        //can not use stringbuilder directly because it does not implement equals and hashcode
-        this.key = newKeyStringBuilder(suffix).toString(); 
-        //System.err.println("StringBuilder:" + key);
-    }
-    
-    protected final Rope newKeyRope(String suffix) {
-        Rope r = Rope.cat( newKeyPrefix(), 
+        this.key = StringUtil.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
+                        newKeyPrefix(), 
                         target!=null ? target.toString() : null, 
-                        suffix);
-        
-        //Rope.visualize(r, System.err);
-        
-        return r;
+                        suffix);        
     }
     
-    protected final StringBuilder newKeyStringBuilder(String suffix) {
-        int estimatedLength = 0;
-        
-        CharSequence prefix = newKeyPrefix();
-        estimatedLength += prefix.length();
-        
-        String targetString = null;
-        if (target!=null) {
-            targetString = target.toString();
-            estimatedLength += targetString.length();
-        }
-        
-        if (suffix!=null)
-            estimatedLength += suffix.length();
-        
-        
-        StringBuilder sb = new StringBuilder(estimatedLength).append(prefix);
-        
-        if (target != null)
-            sb.append(targetString);        
-        
-        if (suffix!=null)
-            sb.append(suffix);        
-        
-        return sb;
-    }
+//    protected final Rope newKeyRope(String suffix) {
+//        Rope r = Rope.catFast();
+//        
+//        //Rope.visualize(r, System.err);
+//        
+//        return r;
+//    }
+//    
+//    protected final StringBuilder newKeyStringBuilder(String suffix) {
+//        int estimatedLength = 0;
+//        
+//        CharSequence prefix = newKeyPrefix();
+//        estimatedLength += prefix.length();
+//        
+//        String targetString = null;
+//        if (target!=null) {
+//            targetString = target.toString();
+//            estimatedLength += targetString.length();
+//        }
+//        
+//        if (suffix!=null)
+//            estimatedLength += suffix.length();
+//        
+//        
+//        StringBuilder sb = new StringBuilder(estimatedLength).append(prefix);
+//        
+//        if (target != null)
+//            sb.append(targetString);        
+//        
+//        if (suffix!=null)
+//            sb.append(suffix);        
+//        
+//        return sb;
+//    }
        
     public CharSequence newKeyPrefix() {
         final String at1, at2;
@@ -242,7 +227,9 @@ public class TermLink extends Item {
             at2 = Symbols.TO_COMPOUND_2;
         }
         
-        int estimatedLength = 2+2+1+4*( (index!=null ? index.length : 0) + 1);
+        final int MAX_INDEX_DIGITS = 2;
+        
+        int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);
         
         
         final StringBuilder prefix = new StringBuilder(estimatedLength);
@@ -250,8 +237,8 @@ public class TermLink extends Item {
         prefix.append(at1).append('T').append(type);
         
         if (index != null) {
-            for (int i = 0; i < index.length; i++) {
-                prefix.append('-').append((index[i] + 1));
+            for (int i : index) {
+                prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
             }
         }
         prefix.append(at2);

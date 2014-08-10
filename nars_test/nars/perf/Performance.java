@@ -43,10 +43,11 @@ public abstract class Performance {
         int total = repeats+warmups;
         for (int r = 0; r < total; r++) {
 
-            if (gc)
+            if (gc) {
                 System.gc();
+            }
 
-            long freeMemStart = Runtime.getRuntime().freeMemory();
+            long usedMemStart = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
             
             long start = System.nanoTime();
             
@@ -54,7 +55,7 @@ public abstract class Performance {
 
             if (warmups == 0) {
                 totalTime += System.nanoTime() - start;
-                totalMemory += freeMemStart - Runtime.getRuntime().freeMemory();
+                totalMemory += (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) - usedMemStart;
             }
             else
                 warmups--;
@@ -62,14 +63,13 @@ public abstract class Performance {
     }    
  
     public Performance print() {
-        System.out.println();
         System.out.print(name + ": " + df.format(getCycleTimeMS()) + "ms/run, ");
         System.out.print(df.format(totalMemory/repeats/1024.0) + " kb/run");
         return this;
     }
     public Performance printCSV(boolean finalComma) {
-        System.out.print(name + ", " + getCycleTimeMS() +", ");
-        System.out.print(totalMemory/repeats/1024.0);
+        System.out.print(name + ", " + df.format(getCycleTimeMS()) + ", ");
+        System.out.print(df.format(totalMemory/repeats/1024.0));
         if (finalComma)
             System.out.print(",");
         return this;

@@ -20,20 +20,20 @@
  *  Amin Ahmad can be contacted at amin.ahmad@gmail.com or on the web at
  *  www.ahmadsoft.org.
  */
-package nars.util.ropes.impl;
+package nars.util.rope.impl;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.util.ropes.Rope;
+import nars.util.rope.Rope;
 
 /**
  * A rope constructed from an underlying character sequence.
  * @author Amin Ahmad
  */
-public final class FlatCharSequenceRope extends AbstractRope implements FlatRope {
+public class FlatCharSequenceRope extends AbstractRope implements FlatRope {
 
 	public final CharSequence sequence;
 
@@ -50,6 +50,10 @@ public final class FlatCharSequenceRope extends AbstractRope implements FlatRope
 		return this.sequence.charAt(index);
 	}
 
+
+        
+        
+
 	@Override
 	public byte depth() {
 		return 0;
@@ -59,16 +63,19 @@ public final class FlatCharSequenceRope extends AbstractRope implements FlatRope
 	public Iterator<Character> iterator(final int start) {
 		if (start < 0 || start > this.length())
 			throw new IndexOutOfBoundsException("Rope index out of range: " + start);
-		return new Iterator<Character>() {
+	
+                return new Iterator<Character>() {
 			int current = start;
+                        final int len = length();
+                        
 			@Override
 			public boolean hasNext() {
-				return this.current < FlatCharSequenceRope.this.length();
+				return current < len;
 			}
 
 			@Override
 			public Character next() {
-				return FlatCharSequenceRope.this.sequence.charAt(this.current++);
+				return sequence.charAt(current++);
 			}
 
 			@Override
@@ -80,7 +87,7 @@ public final class FlatCharSequenceRope extends AbstractRope implements FlatRope
 
 	@Override
 	public int length() {
-		return this.sequence.length();
+		return sequence.length();
 	}
 
 	@Override
@@ -98,8 +105,11 @@ public final class FlatCharSequenceRope extends AbstractRope implements FlatRope
 	public Iterator<Character> reverseIterator(final int start) {
 		if (start < 0 || start > this.length())
 			throw new IndexOutOfBoundsException("Rope index out of range: " + start);
-		return new Iterator<Character>() {
+		
+                return new Iterator<Character>() {
 			int current = FlatCharSequenceRope.this.length() - start;
+                        
+                        
 			@Override
 			public boolean hasNext() {
 				return this.current > 0;
