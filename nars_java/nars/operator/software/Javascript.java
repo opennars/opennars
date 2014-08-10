@@ -64,20 +64,7 @@ public class Javascript extends Operator {
         results.add(memory.newTask(t, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
         return results;
         
-        
-        //----------
-        
-//        Term compound = args[0];
-//        Term atomic = memory.newSerialTerm(Symbols.TERM_PREFIX);
-//        Similarity content = Similarity.make(compound, atomic, memory);
-//        TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
-//        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
-//        float quality = BudgetFunctions.truthToQuality(truth);
-//        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
-//        Task task = new Task(sentence, budget);
-//        ArrayList<Task> feedback = new ArrayList<>(1);
-//        feedback.add(task);
-//        return feedback;
+
     }
     
 }
