@@ -33,8 +33,8 @@ import nars.util.ropes.Rope;
  */
 public final class ConcatenationRope extends AbstractRope {
 
-    private final Rope left;
-    private final Rope right;
+    public final Rope left;
+    public final Rope right;
     private final byte depth;
     private final int length;
 

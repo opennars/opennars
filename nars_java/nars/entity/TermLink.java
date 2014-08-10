@@ -20,8 +20,11 @@
  */
 package nars.entity;
 
+import nars.core.Parameters;
+import static nars.core.Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD;
 import nars.io.Symbols;
 import nars.language.Term;
+import nars.util.ropes.Rope;
 
 /**
  * A link between a compound term and a component term
@@ -60,7 +63,7 @@ public class TermLink extends Item {
     public final short type;
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
-    private String key;
+    private CharSequence key;
     
     @Override
     public boolean equals(Object obj) {
@@ -178,7 +181,58 @@ public class TermLink extends Item {
      * Set the key of the link
      * @param suffix optional suffix, may be null
      */    
-    protected final void setKey(String suffix) {
+    protected final void setKey(final String suffix) {
+        
+        if (Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD > 0)
+            if  ((target!=null) && (target.toString().length() > ROPE_TERMLINK_TERM_SIZE_THRESHOLD)) {
+                this.key = newKeyRope(suffix);
+                //Rope.visualize((Rope)key, System.err);
+                return;
+    }
+        
+        //can not use stringbuilder directly because it does not implement equals and hashcode
+        this.key = newKeyStringBuilder(suffix).toString(); 
+        //System.err.println("StringBuilder:" + key);
+    }
+    
+    protected final Rope newKeyRope(String suffix) {
+        Rope r = Rope.cat( newKeyPrefix(), 
+                        target!=null ? target.toString() : null, 
+                        suffix);
+        
+        //Rope.visualize(r, System.err);
+        
+        return r;
+    }
+    
+    protected final StringBuilder newKeyStringBuilder(String suffix) {
+        int estimatedLength = 0;
+        
+        CharSequence prefix = newKeyPrefix();
+        estimatedLength += prefix.length();
+        
+        String targetString = null;
+        if (target!=null) {
+            targetString = target.toString();
+            estimatedLength += targetString.length();
+        }
+        
+        if (suffix!=null)
+            estimatedLength += suffix.length();
+        
+        
+        StringBuilder sb = new StringBuilder(estimatedLength).append(prefix);
+        
+        if (target != null)
+            sb.append(targetString);        
+        
+        if (suffix!=null)
+            sb.append(suffix);        
+        
+        return sb;
+    }
+       
+    public CharSequence newKeyPrefix() {
         final String at1, at2;
         if ((type % 2) == 1) {  // to component
             at1 = Symbols.TO_COMPONENT_1;
@@ -188,36 +242,23 @@ public class TermLink extends Item {
             at2 = Symbols.TO_COMPOUND_2;
         }
         
-        final String targetString = target!=null ? target.toString() : null;
-        int targetLength = target!=null ? targetString.length() : 0;        
-        int estimatedLength = 2+2+targetLength+1+4*( (index!=null ? index.length : 0) + 1);
-        
-        if (suffix!=null)
-            estimatedLength += suffix.length();
+        int estimatedLength = 2+2+1+4*( (index!=null ? index.length : 0) + 1);
         
         
-        final StringBuilder sb = new StringBuilder(estimatedLength).append(at1).append('T').append(type);
+        final StringBuilder prefix = new StringBuilder(estimatedLength);
+        
+        prefix.append(at1).append('T').append(type);
+        
         if (index != null) {
             for (int i = 0; i < index.length; i++) {
-                sb.append('-').append((index[i] + 1));
+                prefix.append('-').append((index[i] + 1));
             }
         }
-        sb.append(at2);
+        prefix.append(at2);
         
-        if (target != null) {
-            sb.append(targetString);
-        }
-        
-        if (suffix!=null) {
-            sb.append(suffix);
-        }
-        
-        key = sb.toString();
-        
-        //for debugging estimatedlength:
-        //if (index!=null)        System.out.println(estimatedLength + " " + key.length());
+        return prefix;
     }
-       
+    
     /**
      * Get one index by level
      * @param i The index level

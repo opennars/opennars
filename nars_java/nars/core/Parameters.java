@@ -137,5 +137,17 @@ public class Parameters {
      * set to zero to disable this feature.
      */
     public static float DISCOUNT_RATE = 0.5f;    
+    
+    /**
+     * Determines when TermLink and TaskLink should use Rope implementation for its Key,
+     * rather than String/StringBuilder.  Set to zero to disable the Rope entirely.
+     * 
+     * While a Rope is potentially more memory efficient (because it can re-use String instances
+     * in its components without a redundant copy being stored) it can be more 
+     * computationally costly than a character array.
+     * 
+     * Optimal value to be determined.
+     */
+    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 16;
 }
 

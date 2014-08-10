@@ -244,10 +244,10 @@ public class Symbols {
     public static final char STAMP_STARTER = ':';
     
     /* TermLink type, display only */
-    public static final String TO_COMPONENT_1 = " @(";
+    public static final String TO_COMPONENT_1 = "@(";
     public static final String TO_COMPONENT_2 = ")_ ";
     public static final String TO_COMPOUND_1 = " _@(";
-    public static final String TO_COMPOUND_2 = ") ";
+    public static final String TO_COMPOUND_2 = ")";
 
 
 

@@ -35,7 +35,7 @@ import nars.util.ropes.Rope;
  */
 public final class FlatCharSequenceRope extends AbstractRope implements FlatRope {
 
-	private final CharSequence sequence;
+	public final CharSequence sequence;
 
 	/**
 	 * Constructs a new rope from an underlying character sequence.
