@@ -24,14 +24,14 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
+import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.util.StringUtil;
-import nars.util.rope.impl.FlatCharArrayRope;
+import nars.util.rope.impl.CharArrayRope;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -313,9 +313,9 @@ public class Sentence implements Cloneable {
                 suffix.append(' ').append(occurrenceTimeString);
             }
 
-            key = StringUtil.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
+            key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
                     contentToString, 
-                    new FlatCharArrayRope(suffix));
+                    new CharArrayRope(suffix));
             //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
 
         }

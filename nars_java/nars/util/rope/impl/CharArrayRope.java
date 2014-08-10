@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.Iterator;
-import nars.util.StringUtil;
+import nars.io.Texts;
 import nars.util.rope.Rope;
 
 /**
@@ -35,7 +35,7 @@ import nars.util.rope.Rope;
  *
  * @author Amin Ahmad
  */
-public final class FlatCharArrayRope extends AbstractRope implements FlatRope {
+public final class CharArrayRope extends AbstractRope implements FlatRope {
 
     public final char[] sequence;
 
@@ -46,12 +46,12 @@ public final class FlatCharArrayRope extends AbstractRope implements FlatRope {
      *
      * @param sequence the character array.
      */
-    public FlatCharArrayRope(final char[] sequence) {
+    public CharArrayRope(final char[] sequence) {
         this.sequence = sequence;
     }
     
-    public FlatCharArrayRope(final StringBuilder sb) {
-        this(StringUtil.getCharArray(sb));
+    public CharArrayRope(final StringBuilder sb) {
+        this(Texts.getCharArray(sb));
     }
 
     /**
@@ -61,7 +61,7 @@ public final class FlatCharArrayRope extends AbstractRope implements FlatRope {
      * @param offset the offset in the array.
      * @param length the length of the array.
      */
-    public FlatCharArrayRope(final char[] sequence, final int offset, final int length) {
+    public CharArrayRope(final char[] sequence, final int offset, final int length) {
         if (length > sequence.length) {
             throw new IllegalArgumentException("Length must be less than " + sequence.length);
         }
@@ -203,7 +203,7 @@ public final class FlatCharArrayRope extends AbstractRope implements FlatRope {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
         return new Iterator<Character>() {
-            int current = FlatCharArrayRope.this.length() - start;
+            int current = CharArrayRope.this.length() - start;
 
             @Override
             public boolean hasNext() {
@@ -212,7 +212,7 @@ public final class FlatCharArrayRope extends AbstractRope implements FlatRope {
 
             @Override
             public Character next() {
-                return FlatCharArrayRope.this.sequence[--this.current];
+                return CharArrayRope.this.sequence[--this.current];
             }
 
             @Override
@@ -228,7 +228,7 @@ public final class FlatCharArrayRope extends AbstractRope implements FlatRope {
             return this;
         }
         if (end - start < 16) {
-            return new FlatCharArrayRope(this.sequence, start, end - start);
+            return new CharArrayRope(this.sequence, start, end - start);
         } else {
             return new SubstringRope(this, start, end - start);
         }
