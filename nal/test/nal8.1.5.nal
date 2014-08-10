@@ -2,4 +2,4 @@
   IN: <(*,SELF,{t003}) --> at>!
   IN: <(^go-to,$1)=/><(*,SELF,$1) --> at>>.
 19
-''outputMustContain('(^go-to,{t003})! %1.00;0.81%')
+''outputMustContain('<(*,{t003}) --> ^go-to>! %1.00;0.81%')
