@@ -38,6 +38,7 @@ public class DefaultNARBuilder extends NARBuilder {
         p.taskForgettingRate.set(20);
         p.beliefForgettingRate.set(50);
         p.cycleInputTasks.set(1);
+        p.cycleMemory.set(1);
     
         return p;
     }

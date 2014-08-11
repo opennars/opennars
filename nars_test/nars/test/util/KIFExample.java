@@ -17,10 +17,11 @@
 
 package nars.test.util;
 
-import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.gui.NARSwing;
 import nars.io.TextOutput;
+import nars.util.ContinuousBagNARBuilder;
 import nars.util.NARState;
 import nars.util.kif.KIFInput;
 
@@ -32,26 +33,39 @@ public class KIFExample {
     
  
     public static void main(String[] args) throws Exception {
-        NAR n = new DefaultNARBuilder()
-                .setConceptBagSize(2048)
-                .setConceptBagLevels(512)
+        Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 16;
+        Parameters.DEFAULT_JUDGMENT_PRIORITY = 0.5f;
+        
+        NAR n = new ContinuousBagNARBuilder(true)
+                .setConceptBagSize(16192)
                 .build();
                 
-        n.param().noiseLevel.set(99);
+        
+        n.param().noiseLevel.set(40);
         
         KIFInput k = new KIFInput("/home/me/sigma/KBs/Merge.kif");
         k.setIncludeSubclass(true);
+        k.setIncludeInstance(true);
+        k.setIncludeSubrelation(true);
+        //k.setIncludeDisjoint(true);
+        k.setIncludeRelatedInternalConcept(true);
+        
+        
+        //start before adding input to begin filling buffer
+        k.start();
         n.addInput(k);
         
-        k.start();
         
         TextOutput t = new TextOutput(n, System.out);
         t.setErrors(true);
         t.setErrorStackTrace(true);
 
-        n.finish(16);
+        
+        n.finish(128000);
+        n.param().cycleMemory.set(512);
         
         new NARSwing(n);
+        
 
         /*
         new TextInput(n, "$0.99;0.99$ <Human --> ?x>?");

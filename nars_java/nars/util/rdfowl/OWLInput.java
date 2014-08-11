@@ -322,7 +322,7 @@ public class OWLInput extends PrintWriterInput {
         //entities.put(entity.getName(), entity);
         
         String className = getClassName(entity.getName());
-        out.println("<" + className + " --> class>.");
+        append("<" + className + " --> class>.\n");
         
         //System.out.println("Save: " + entity.getName());
 //        // if entity already exists, don't save
@@ -396,7 +396,7 @@ public class OWLInput extends PrintWriterInput {
         
         if ((subject==null) || (object==null)) return;
         if (predicate.equals("parentOf")) {
-            out.println("<" + getClassName(subject) + " --> " + getClassName(object) + ">.");
+            append("<" + getClassName(subject) + " --> " + getClassName(object) + ">.\n");
         }
         
 //        // get the entity ids for source and target
