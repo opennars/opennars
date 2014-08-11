@@ -31,10 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nars.io.Texts;
 import nars.util.rope.impl.AbstractRope;
 import nars.util.rope.impl.ConcatenationRope;
-import nars.util.rope.impl.FastCharSequenceRope;
 import nars.util.rope.impl.FastConcatenationRope;
 import nars.util.rope.impl.CharArrayRope;
 import nars.util.rope.impl.FlatCharSequenceRope;
@@ -96,14 +94,14 @@ import nars.util.rope.impl.SubstringRope;
 	}
 
         /** Builds a FastCharSequenceRope instead of FlatCharSequenceRope */
-        public static Rope buildFast(final CharSequence sequence) {
+        public static CharSequence rope(final CharSequence sequence) {
 		if (sequence instanceof Rope)
                     return (Rope) sequence;
-                if (sequence instanceof String)
-                    return new FastCharSequenceRope(sequence);
+                /*if ((sequence instanceof String) || (sequence instanceof TextBuilder))
+                    return new FastCharSequenceRope(sequence);*/
+                
                 if (sequence instanceof StringBuilder) {
-                    //access stringbuilder's char[] directly. dangerous
-                    return new CharArrayRope(Texts.getCharArray((StringBuilder)sequence));
+                    throw new RuntimeException("DEPRECATED Rope.rope of StringBuilder");
                 }
                 
                 //default for other implementations
@@ -496,15 +494,17 @@ import nars.util.rope.impl.SubstringRope;
             return r;
         }
         
+        final static CharArrayRope emptyCharArray = new CharArrayRope(new char[] { });
+        
        /** @param c array of terms to concatenate; if an item is null it will be ignored */
         public static Rope catFast(final CharSequence... c) {
             Rope r = null;
             for (CharSequence a : c) {
                 if (a == null) 
-                    a = new CharArrayRope(new char[] { }); //empty placeholder to maintain structure for FastConcatenationRope hash comparisons
+                    a = emptyCharArray; //empty placeholder to maintain structure for FastConcatenationRope hash comparisons
                 
                 if (!(a instanceof Rope))
-                    a = Rope.buildFast(a);
+                    a = Rope.rope(a);
 
                 r = (r == null) ? (Rope)a : new FastConcatenationRope(r, (Rope)a);
                 

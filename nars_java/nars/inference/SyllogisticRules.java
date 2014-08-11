@@ -36,6 +36,7 @@ import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.*;
 import static nars.inference.TemporalRules.*;
+import nars.language.Terms;
 import nars.language.Variables;
 import nars.storage.Memory;
 
@@ -379,7 +380,7 @@ public final class SyllogisticRules {
         Conjunction oldCondition = (Conjunction) subj;
 
         
-        int index2 = CompoundTerm.indexOf(oldCondition.term,commonComponent);
+        int index2 = Terms.indexOf(oldCondition.term,commonComponent);
         if (index2 >= 0) {
             index = (short) index2;
         } else {
@@ -415,7 +416,7 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent, memory);
+            newCondition = oldCondition.setComponent(index, newComponent, memory);
         }
         Term content;
         long delta = 0;
@@ -426,7 +427,7 @@ public final class SyllogisticRules {
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                  Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
                  delta = interval.getTime();
-                 newCondition = CompoundTerm.setComponent((CompoundTerm) newCondition, 0, null, memory);
+                 newCondition = ((CompoundTerm)newCondition).setComponent(0, null, memory);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
              } else {
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
@@ -536,7 +537,7 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent, memory);
+            newCondition = oldCondition.setComponent(index, newComponent, memory);
         }
         Term content;
         if (newCondition != null) {

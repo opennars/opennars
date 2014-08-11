@@ -41,7 +41,7 @@ public class ImageInt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageInt(CharSequence n, Term[] arg, short index) {
+    private ImageInt(final CharSequence n, final Term[] arg, final short index) {
         super(n, arg, index);
     }
 
@@ -53,13 +53,8 @@ public class ImageInt extends Image {
      * @param complexity Syntactic complexity of the compound
      * @param index The index of relation in the component list
      */
-    private ImageInt(CharSequence n, Term[] cs, boolean con, short complexity, short index) {
+    private ImageInt(final CharSequence n, final Term[] cs, final boolean con, final short complexity, final short index) {
         super(n, cs, con, complexity, index);
-    }
-
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
     }
     
     /**
@@ -71,13 +66,15 @@ public class ImageInt extends Image {
         return new ImageInt(name(), cloneTerms(), isConstant(), complexity, relationIndex);
     }
 
+    
+    
     /**
      * Try to make a new ImageExt. Called by StringParser.
      * @return the Term generated from the arguments
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argList, Memory memory) {
+    public static Term make(final Term[] argList, final Memory memory) {
         if (argList.length < 2) {
             return null;
         }
@@ -104,7 +101,7 @@ public class ImageInt extends Image {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Product product, Term relation, short index, Memory memory) {
+    public static Term make(final Product product, final Term relation, final short index, final Memory memory) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {
@@ -146,40 +143,11 @@ public class ImageInt extends Image {
      * @return the Term generated from the arguments
      */
     public static Term make(final Term[] argument, final short index, final Memory memory) {
-        String name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
+        CharSequence name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
         Term t = memory.conceptTerm(name);
         return (t != null) ? t : new ImageInt(name, argument, index);
     }
-
-
-    /**
-     * Get the relation term in the Image
-     * @return The term representing a relation
-     */
-    public Term getRelation() {
-        return term[relationIndex];
-    }
-
     
-    /**
-     * Get the other term in the Image
-     * @return The term related
-     */
-    public Term getTheOtherComponent() {
-        if (term.length != 2) {
-            return null;
-        }
-        return (relationIndex == 0) ? term[1] : term[0];
-    }
-
-    /**
-     * Override the default in making the name of the current term from existing fields
-     * @return the name of the term
-     */
-    @Override
-    public String makeName() {
-        return makeImageName(NativeOperator.IMAGE_INT, term, relationIndex);
-    }
 
     /**
      * Get the operator of the term.

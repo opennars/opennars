@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import javolution.text.TextBuilder;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.Texts;
@@ -178,7 +179,7 @@ public class TermLink extends Item {
     protected final void setKey(final CharSequence suffix) {
         this.key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
                         newKeyPrefix(), 
-                        target!=null ? target.toString() : null, 
+                        target!=null ? target.name() : null, 
                         suffix);        
     }
     
@@ -232,7 +233,7 @@ public class TermLink extends Item {
         int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);
         
         
-        final StringBuilder prefix = new StringBuilder(estimatedLength);
+        final TextBuilder prefix = new TextBuilder(estimatedLength);
         
         prefix.append(at1).append('T').append(type);
         

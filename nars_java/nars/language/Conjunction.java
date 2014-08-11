@@ -129,7 +129,7 @@ public class Conjunction extends CompoundTerm {
             return argList[0];
         }                         // special case: single component
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            final String name = makeCompoundName(NativeOperator.SEQUENCE, argList);
+            final CharSequence name = makeCompoundName(NativeOperator.SEQUENCE, argList);
             final Term t = memory.conceptTerm(name);
             return (t != null) ? t : new Conjunction(name, argList, temporalOrder);
         } else {
@@ -149,7 +149,7 @@ public class Conjunction extends CompoundTerm {
      */
     private static Term make(final TreeSet<Term> set, int temporalOrder, final Memory memory) {
         Term[] argument = set.toArray(new Term[set.size()]);
-        final String name;
+        final CharSequence name;
         if (temporalOrder == TemporalRules.ORDER_NONE) {
             name = makeCompoundName(NativeOperator.CONJUNCTION, argument);
         } else {

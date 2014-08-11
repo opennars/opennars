@@ -3,6 +3,7 @@ package nars.io;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import javolution.text.TextBuilder;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.CharArrayRope;
 
@@ -262,13 +263,13 @@ public class Texts {
         }
         
         if ((totalLen <= maxLen) || (maxLen == -1)) {            
-            StringBuilder sb = new StringBuilder(totalLen);
+            TextBuilder sb = new TextBuilder(totalLen);
             for (final CharSequence s : components) {
                 if (s != null) {
                     sb.append(s);
                 }
             }
-            return new CharArrayRope(sb);
+            return sb;
         } else {
             Rope r = Rope.catFast(components);
             return r;
@@ -282,4 +283,13 @@ public class Texts {
                 return true;        
         return false;        
     }    
+
+    /**
+     * wraps a StringBuilder in CharArrayRope for use as a general purpose immutable CharSequence.
+     * StringBuilder lacks hashCode and other support that CharArrayRope provides.
+     * CharArrayRope can use the StringBuilder's underlying char[] directly without copy.
+     */
+    public static CharSequence sequence(StringBuilder b) {
+        return new CharArrayRope(b);
+    }
 }

@@ -97,7 +97,7 @@ public class Implication extends Statement {
             default:
                 copula = NativeOperator.IMPLICATION;
         }                
-        final String name = makeStatementName(subject, copula, predicate);
+        final CharSequence name = makeStatementName(subject, copula, predicate);
         final Term t = memory.conceptTerm(name);
         if (t != null) {            
             if (t.getClass()!=Implication.class) {                

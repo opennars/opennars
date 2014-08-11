@@ -134,7 +134,7 @@ public final class CompositionalRules {
 
                 Term conj = Conjunction.make(term1, term2, memory);
 
-                if (Variables.containVarDepOrIndep(conj.toString()))
+                if (Variables.containVarDepOrIndep(conj.name()))
                     continue;
 
                 TruthValue truthT = memory.getCurrentTask().sentence.truth;
@@ -841,17 +841,17 @@ public final class CompositionalRules {
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
                 Variable V = new Variable("#depIndVar1");
                 CompoundTerm zw = (CompoundTerm) T.term[index].clone();
-                zw = (CompoundTerm) CompoundTerm.setComponent(zw, 1, V, memory);
-                T2 = (CompoundTerm) CompoundTerm.setComponent(T2, 1, V, memory);
+                zw = (CompoundTerm) zw.setComponent(1, V, memory);
+                T2 = (CompoundTerm) T2.setComponent(1, V, memory);
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
-                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+                T = (CompoundTerm) T.setComponent(index, res, memory);
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
                 Variable V = new Variable("#depIndVar2");
                 CompoundTerm zw = (CompoundTerm) T.term[index].clone();
-                zw = (CompoundTerm) CompoundTerm.setComponent(zw, 0, V, memory);
-                T2 = (CompoundTerm) CompoundTerm.setComponent(T2, 0, V, memory);
+                zw = (CompoundTerm) zw.setComponent(0, V, memory);
+                T2 = (CompoundTerm) T2.setComponent(0, V, memory);
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
-                T = (CompoundTerm) CompoundTerm.setComponent(T, index, res, memory);
+                T = (CompoundTerm) T.setComponent(index, res, memory);
             }
             TruthValue truth = induction(originalMainSentence.truth, subSentence.truth);
             BudgetValue budget = BudgetFunctions.compoundForward(truth, T, memory);

@@ -72,7 +72,7 @@ public class Inheritance extends Statement {
             return null;
         }
         
-        String name;
+        CharSequence name;
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
             name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term);
         } else {

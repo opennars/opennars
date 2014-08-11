@@ -6,7 +6,11 @@
 
 # Specify the input jars, output jars, and library jars.
 
+
 -dontwarn
+-keep,allowshrinking,allowoptimization class * { *; }
+-dontobfuscate
+
 
 -injars  dist/OpenNARS.jar
 -libraryjars  lib/
@@ -17,6 +21,8 @@
 #-libraryjars servlet.jar
 #-libraryjars jai_core.jar
 #...
+
+
 
 # Save the obfuscation mapping to a file, so you can de-obfuscate any stack
 # traces later on. Keep a fixed source file attribute and all line number

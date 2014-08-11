@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import javolution.text.TextBuilder;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
@@ -191,7 +192,7 @@ public abstract class Statement extends CompoundTerm {
      * @return the nameStr of the term
      */
     @Override
-    protected String makeName() {
+    protected CharSequence makeName() {
         return makeStatementName(getSubject(), operator(), getPredicate());
     }
 
@@ -203,18 +204,17 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+    protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
         final CharSequence subjectName = subject.name();
         final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
-        return new StringBuilder(length)
+        return new TextBuilder(length)
             .append(STATEMENT_OPENER.ch)
             .append(subjectName)
             .append(' ').append(relation).append(' ')
             .append(predicateName)
-            .append(STATEMENT_CLOSER.ch)
-            .toString();
+            .append(STATEMENT_CLOSER.ch);
     }
     
     /**

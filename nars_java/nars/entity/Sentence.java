@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import javolution.text.TextBuilder;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.inference.TruthFunctions;
@@ -31,7 +32,6 @@ import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.util.rope.impl.CharArrayRope;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -275,22 +275,7 @@ public class Sentence implements Cloneable {
         return getKey().toString();
     }
 
-    /**
-     * Get a String representation of the sentence, with 2-digit accuracy
-     *
-     * @return The String
-     */
-    /*public String toStringBrief() {
-        return toKey() + " " + stamp.toString();
-    }
-    */
-
-    /*
-    public void setStamp(Stamp stamp) {
-        this.stamp = stamp;
-    }
-    */
-
+ 
     /**
      * Get a String representation of the sentence for key of Task and TaskLink
      *
@@ -299,12 +284,11 @@ public class Sentence implements Cloneable {
     public CharSequence getKey() {
         //key must be invalidated if content or truth change
         if (key == null) {
-            final String contentToString = content.toString();
+            final CharSequence contentName = content.name();
             
             final String occurrenceTimeString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getOccurrenceTimeString() : "";
             
-            final String truthString = truth != null ? truth.toStringBrief() : null;
-            //final String stampString = stamp.toString();
+            final CharSequence truthString = truth != null ? truth.name() : null;
 
             int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
             if (truth != null) {
@@ -312,7 +296,7 @@ public class Sentence implements Cloneable {
             }
 
             //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
-            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
+            final TextBuilder suffix = new TextBuilder(stringLength).append(punctuation);
 
             if (truth != null) {
                 suffix.append(' ').append(truthString);
@@ -322,8 +306,8 @@ public class Sentence implements Cloneable {
             }
 
             key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
-                    contentToString, 
-                    new CharArrayRope(suffix));
+                    contentName, 
+                    suffix);
             //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
 
         }
@@ -335,18 +319,18 @@ public class Sentence implements Cloneable {
      *
      * @return The String
      */
-    public String toString(NAR nar, boolean showStamp) {
+    public CharSequence toString(NAR nar, boolean showStamp) {
     
-        String contentToString = content.toString();
+        CharSequence contentName = content.name();
         
         final long t = nar.memory.getTime();
 
         final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t) : "";
         final String truthString = (truth != null) ? truth.toStringBrief() : null;
  
-        String stampString = showStamp ? stamp.toString() : null;
+        CharSequence stampString = showStamp ? stamp.name() : null;
         
-        int stringLength = contentToString.length() + tenseString.length() + 1 + 1;
+        int stringLength = contentName.length() + tenseString.length() + 1 + 1;
                 
         if (truth != null) {
             stringLength += truthString.length();
@@ -355,8 +339,9 @@ public class Sentence implements Cloneable {
             stringLength += stampString.length();
         }
         
-        final StringBuilder buffer = new StringBuilder(stringLength)
-                .append(contentToString)
+        final TextBuilder buffer = new TextBuilder(stringLength)
+                .append(contentName)
+                .append(contentName)
                 .append(punctuation);
         
         if (tenseString.length() > 0)
@@ -368,7 +353,7 @@ public class Sentence implements Cloneable {
         if (showStamp)
             buffer.append(' ').append(stampString);
         
-        return buffer.toString();
+        return buffer;
     }
     
    

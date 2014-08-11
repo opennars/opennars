@@ -139,9 +139,9 @@ public class Term implements Cloneable, Comparable<Term> {
             }
         }
         
-        if (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
-            if (newName instanceof String)
-                this.name = ((String)newName).intern();
+        if ((newName instanceof String) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
+            
+            this.name = ((String)newName).intern();
         }
         else {
             this.name = newName;
