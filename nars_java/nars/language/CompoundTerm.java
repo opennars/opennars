@@ -342,7 +342,7 @@ public abstract class CompoundTerm extends Term {
         
         n.append(COMPOUND_TERM_CLOSER.ch);
                 
-        return n; //.toString();
+        return n.toString();
     }
     
 

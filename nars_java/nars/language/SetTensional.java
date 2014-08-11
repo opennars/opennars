@@ -55,7 +55,7 @@ abstract public class SetTensional extends CompoundTerm {
         }
         
         name.append(closer);
-        return name;
+        return name.toString();
     }
     
 

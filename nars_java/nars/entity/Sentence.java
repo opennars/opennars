@@ -306,8 +306,8 @@ public class Sentence implements Cloneable {
             }
 
             key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
-                    contentName, 
-                    suffix);
+                    contentName.toString(), 
+                    suffix.toString());
             //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
 
         }

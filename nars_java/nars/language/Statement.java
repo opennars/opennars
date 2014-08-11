@@ -214,7 +214,7 @@ public abstract class Statement extends CompoundTerm {
             .append(subjectName)
             .append(' ').append(relation).append(' ')
             .append(predicateName)
-            .append(STATEMENT_CLOSER.ch);
+            .append(STATEMENT_CLOSER.ch).toString();
     }
     
     /**
