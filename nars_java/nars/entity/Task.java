@@ -25,7 +25,7 @@ import nars.language.Term;
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue
  */
-public class Task extends Item {
+public class Task extends AbstractTask {
 
     /**
      * The sentence of the Task
@@ -45,16 +45,6 @@ public class Task extends Item {
     private Sentence bestSolution;
     private final CharSequence key;
     
-
-    
-
-    public Task() {
-        super();
-        sentence = null;
-        parentTask = null;
-        parentBelief = null;
-        key = getClass().getSimpleName();
-    }
     /**
      * Constructor for input task
      *
