@@ -11,7 +11,6 @@ import nars.operator.mental.Register;
 import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
-import nars.operator.software.Javascript;
 
 
 public class DefaultOperators {
@@ -43,7 +42,7 @@ public class DefaultOperators {
             new Doubt(),        // decrease the confidence of a belief
             new Hesitate(),      // decrease the confidence of a goal
                 
-            new Javascript()      // javascript evaluation
+            //new Javascript()      // javascript evaluation
             
                 
 //        new Wait()              // wait for a certain number of clock cycle

@@ -137,7 +137,7 @@ public class LocalRules {
             if (Variables.containVarIndep(content.name())) {
                 Variables.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
                 belief = belief.clone(content);
-                Stamp st = new Stamp(belief.stamp, memory.getTime());
+                Stamp st = new Stamp(belief.getStamp(), memory.getTime());
                 st.addToChain(belief.content);
             }
             task.setBestSolution(belief);

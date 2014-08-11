@@ -493,7 +493,9 @@ public class Memory implements Output, Serializable {
      *
      * @param task The addInput task
      */
-    public void inputTask(final Task task) {
+    public void inputTask(final Task task) {                                                                                  
+        output(Output.IN.class, task.sentence);
+        
         if (task.budget.aboveThreshold()) {
             addNewTask(task, "Perceived");
         } else {
@@ -557,7 +559,7 @@ public class Memory implements Output, Serializable {
                     return;
                 }
             }
-            final Stamp stamp = task.sentence.stamp;
+            final Stamp stamp = task.sentence.getStamp();
             final LinkedHashSet<Term> chain = stamp.getChain();
             
             final Term currentTaskContent = getCurrentTask().getContent();
@@ -716,9 +718,9 @@ public class Memory implements Output, Serializable {
         }
         Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
+            setTheNewStamp(new Stamp(taskSentence.getStamp(), getTime()));
         } else {    // to answer a question with negation in NAL-5 --- move to activated task?
-            setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
+            setTheNewStamp(new Stamp(getCurrentBelief().getStamp(), getTime()));
         }
         
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
@@ -779,9 +781,12 @@ public class Memory implements Output, Serializable {
             
             if (task.isInput() || (concept(task.getContent()) != null)) {
                 
+                if (task.sentence.getStamp()==null)
+                    task.sentence.setStamp(new Stamp(getTime(), task.getTense(), newStampSerial()));
+                
                 // new addInput or existing concept
                 immediateProcess(task);
-                if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
+                if (task.sentence.getStamp().getOccurrenceTime() != Stamp.ETERNAL) {
                     if (task.sentence.isJudgment()) {
                         if ((newEvent == null)
                                 || (BudgetFunctions.rankBelief(newEvent.sentence)
@@ -812,7 +817,7 @@ public class Memory implements Output, Serializable {
         }
         if (newEvent != null) {
             if (lastEvent != null) {
-                setTheNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
+                 setTheNewStamp(Stamp.make(newEvent.sentence.getStamp(), lastEvent.sentence.getStamp(), getTime()));
                 //if (getTheNewStamp() != null) {
                     setCurrentTask(newEvent);
                     setCurrentBelief(lastEvent.sentence);
