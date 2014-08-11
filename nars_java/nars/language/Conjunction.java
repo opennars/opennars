@@ -39,7 +39,7 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    private Conjunction(String name, Term[] arg, int order) {
+    private Conjunction(CharSequence name, Term[] arg, int order) {
         super(name, arg);
         temporalOrder = order;
     }
@@ -58,7 +58,7 @@ public class Conjunction extends CompoundTerm {
      * @param con Whether the term is a constant
      * @param i Syntactic complexity of the compound
      */
-    private Conjunction(String n, Term[] arg, boolean con, short i, int order) {
+    private Conjunction(CharSequence n, Term[] arg, boolean con, short i, int order) {
         super(n, arg, con, i);
         temporalOrder = order;
     }

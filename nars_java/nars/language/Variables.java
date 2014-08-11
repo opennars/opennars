@@ -2,6 +2,7 @@ package nars.language;
 
 import java.util.HashMap;
 import nars.io.Symbols;
+import nars.io.Texts;
 import nars.storage.Memory;
 
 /**
@@ -79,7 +80,7 @@ public class Variables {
      * @param n The string name to be checked
      * @return Whether the name contains a variable
      */
-    public static boolean containVar(final String n) {
+    public static boolean containVar(final CharSequence n) {
         final int l = n.length();
         for (int i = 0; i < l; i++) {
             switch (n.charAt(i)) {
@@ -132,6 +133,8 @@ public class Variables {
         return hasSubs;
     }
 
+
+    
     /**
      * Check whether a string represent a name of a term that contains a query
      * variable
@@ -139,17 +142,8 @@ public class Variables {
      * @param n The string name to be checked
      * @return Whether the name contains a query variable
      */
-    public static boolean containVarQuery(final String n) {
-        return n.indexOf(Symbols.VAR_QUERY) >= 0;
-    }
-
-    public static Variable makeCommonVariable(final Term v1, final Term v2) {
-        return new Variable(v1.name() + v2.name() + '$');
-    }
-
-    public static boolean isCommonVariable(final Variable v) {
-        String s = v.name();     
-        return s.charAt(s.length() - 1) == '$';
+    public static boolean containVarQuery(final CharSequence n) {
+        return Texts.containsChar(n, Symbols.VAR_QUERY);
     }
 
     /**
@@ -159,11 +153,22 @@ public class Variables {
      * @param n The string name to be checked
      * @return Whether the name contains a dependent variable
      */
-    public static boolean containVarDep(final String n) {
-        return n.indexOf(Symbols.VAR_DEPENDENT) >= 0;
+    public static boolean containVarDep(final CharSequence n) {
+        return Texts.containsChar(n, Symbols.VAR_DEPENDENT);
     }
 
-    public static boolean containVarDepOrIndep(final String n) {
+    public static Variable makeCommonVariable(final Term v1, final Term v2) {
+        //TODO use more efficient string construction
+        return new Variable(v1.toString() + v2.toString() + '$');
+    }
+
+    public static boolean isCommonVariable(final Variable v) {
+        String s = v.toString();     
+        return s.charAt(s.length() - 1) == '$';
+    }
+
+
+    public static boolean containVarDepOrIndep(final CharSequence n) {
         final int l = n.length();
         for (int i = 0; i < l; i++) {
             char c = n.charAt(i);
@@ -181,9 +186,9 @@ public class Variables {
      * @param n The string name to be checked
      * @return Whether the name contains an independent variable
      */
-    public static boolean containVarIndep(final String n) {
-        return n.indexOf(Symbols.VAR_INDEPENDENT) >= 0;
-    }
+    public static boolean containVarIndep(final CharSequence n) {
+        return Texts.containsChar(n, Symbols.VAR_INDEPENDENT);
+    }    
 
     /**
      * Check if two terms can be unified

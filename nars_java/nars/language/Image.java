@@ -10,11 +10,11 @@ abstract public class Image extends CompoundTerm {
     /** The index of relation in the component list */
     public final short relationIndex;
 
-    protected Image(String name, Term[] components, short relationIndex) {
+    protected Image(CharSequence name, Term[] components, short relationIndex) {
         super(name, components);
         this.relationIndex = relationIndex;
     }
-    protected Image(String n, Term[] cs, boolean con, short complexity, short index) {
+    protected Image(CharSequence n, Term[] cs, boolean con, short complexity, short index) {
         super(n, cs, con, complexity);
         this.relationIndex = index;
     }

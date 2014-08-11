@@ -34,7 +34,7 @@ public class DifferenceExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private DifferenceExt(final String name, Term[] arg) {
+    private DifferenceExt(final CharSequence name, Term[] arg) {
         super(name, arg);
     }
 
@@ -45,7 +45,7 @@ public class DifferenceExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private DifferenceExt(String n, Term[] cs, boolean con, short i) {
+    private DifferenceExt(CharSequence n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 

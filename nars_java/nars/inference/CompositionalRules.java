@@ -94,8 +94,11 @@ public final class CompositionalRules {
                 if(qu==null) { assert(false); continue; }
 
                 final Term pcontent = qu.content;
+                if ((pcontent == null) || !(pcontent instanceof CompoundTerm))
+                    continue;
+                
                 final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
-                if(pcontent==null || !(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
+                if (!(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
                     continue;
                 }
 

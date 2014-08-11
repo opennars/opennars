@@ -211,7 +211,7 @@ public class Memory implements Output, Serializable {
     
     
     /* InnateOperator registry. Containing all registered operators of the system */
-    public final HashMap<String, Operator> operators;
+    public final HashMap<CharSequence, Operator> operators;
     
     private long currentStampSerial = 0;
     private long currentTermSerial = 1;
@@ -386,7 +386,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept
      * @return a Concept or null
      */
-    public Concept concept(final String name) {
+    public Concept concept(final CharSequence name) {
         return concepts.get(name);
     }
 
@@ -398,7 +398,7 @@ public class Memory implements Output, Serializable {
      * @param name the name of a concept or operator
      * @return a Term or null (if no Concept/InnateOperator has this name)
      */
-    public Term conceptTerm(final String name) {
+    public Term conceptTerm(final CharSequence name) {
         final Concept concept = concepts.get(name);
         if (concept != null) {
             return concept.term;
@@ -426,7 +426,7 @@ public class Memory implements Output, Serializable {
         if (!term.isConstant()) {
             return null;
         }
-        final String n = term.name();
+        final CharSequence n = term.name();
         Concept concept = concepts.get(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts

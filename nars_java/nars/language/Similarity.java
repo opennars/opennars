@@ -33,7 +33,7 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Similarity(String name, Term[] arg) {
+    private Similarity(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -44,7 +44,7 @@ public class Similarity extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Similarity(String n, Term[] cs, boolean constant, boolean containsVar, short i) {
+    private Similarity(final CharSequence n, Term[] cs, boolean constant, boolean containsVar, short i) {
         super(n, cs, constant, containsVar, i);
     }
 

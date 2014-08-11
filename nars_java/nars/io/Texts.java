@@ -275,4 +275,11 @@ public class Texts {
         }
     }    
     
+    public static boolean containsChar(final CharSequence n, final char c) {
+        final int l = n.length();
+        for (int i = 0; i < l; i++)            
+            if (n.charAt(i) == c)
+                return true;        
+        return false;        
+    }    
 }

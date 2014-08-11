@@ -101,7 +101,7 @@ public final class Concept extends Item {
 
     private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
     private EntityObserver entityObserver = defaultNullEntityObserver;
-    public final String key;
+    public final CharSequence key;
 
 
     /* ---------- constructor and initialization ---------- */
@@ -135,7 +135,7 @@ public final class Concept extends Item {
 
     }
 
-    @Override public String getKey() {
+    @Override public CharSequence getKey() {
         return key;
     }
     

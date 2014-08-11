@@ -59,7 +59,7 @@ public class TextPerception {
     public final Memory memory;
         
     //an index of known, but non-conceptualized Terms
-    final Map<String,Term> unconceptualized = new HashMap();
+    final Map<CharSequence,Term> unconceptualized = new HashMap();
     
     public final List<TextReaction> parsers;
     

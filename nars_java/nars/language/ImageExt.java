@@ -40,7 +40,7 @@ public class ImageExt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageExt(String n, Term[] arg, short index) {
+    private ImageExt(CharSequence n, Term[] arg, short index) {
         super(n, arg, index);
     }
 
@@ -52,7 +52,7 @@ public class ImageExt extends Image {
      * @param complexity Syntactic complexity of the compound
      * @param index The index of relation in the component list
      */
-    protected ImageExt(String n, Term[] cs, boolean con, short complexity, short index) {
+    protected ImageExt(CharSequence n, Term[] cs, boolean con, short complexity, short index) {
         super(n, cs, con, complexity, index);
     }
     

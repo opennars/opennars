@@ -45,7 +45,7 @@ public class TextOutput implements Output {
     private boolean showErrors = true;
     private boolean showStackTrace;
     private boolean showStamp = true;
-    
+
 
     public interface LineOutput {
         public void println(String s);
@@ -190,6 +190,10 @@ public class TextOutput implements Output {
     
     public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
         return getOutputString(channel, signal, showChannel, showStamp, nar, new StringBuilder());
+    }
+    
+    public void stop() {
+        nar.removeOutput(this);
     }
     
     
