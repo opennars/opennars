@@ -501,7 +501,7 @@ import nars.util.rope.impl.SubstringRope;
             Rope r = null;
             for (CharSequence a : c) {
                 if (a == null) 
-                    continue;
+                    a = new CharArrayRope(new char[] { }); //empty placeholder to maintain structure for FastConcatenationRope hash comparisons
                 
                 if (!(a instanceof Rope))
                     a = Rope.buildFast(a);

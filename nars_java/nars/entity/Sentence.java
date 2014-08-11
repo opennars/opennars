@@ -100,10 +100,15 @@ public class Sentence implements Cloneable {
     public boolean equals(final Object that) {
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
+            if (hashCode()!=t.hashCode())
+                return false;
+            return getKey().equals(t.getKey());
+            /*
             return content.equals(t.content) && 
                     punctuation == t.punctuation &&
                     truth.equals(t.truth) &&
                     stamp.equals(t.stamp);
+            */
         }
         return false;
     }
@@ -115,12 +120,15 @@ public class Sentence implements Cloneable {
      */
     @Override
     public int hashCode() {
+        return getKey().hashCode();
+        /*
         int hash = 5;
         hash = 67 * hash + (this.content != null ? this.content.hashCode() : 0);
         hash = 67 * hash + (this.punctuation);
         hash = 67 * hash + (this.truth != null ? this.truth.hashCode() : 0);
         hash = 67 * hash + (this.stamp != null ? this.stamp.hashCode() : 0);
         return hash;
+        */
     }
 
     /**
@@ -289,10 +297,6 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public CharSequence getKey() {
-        if (stamp==null) {
-            return content.toString();
-        }
-        
         //key must be invalidated if content or truth change
         if (key == null) {
             final String contentToString = content.toString();

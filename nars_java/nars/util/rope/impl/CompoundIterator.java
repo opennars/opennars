@@ -39,6 +39,7 @@ public class CompoundIterator<T> implements Iterator<T> {
     }
 
     public T next() {
+        //TODO eliminate need to call hasNext before next()           
         if (current.hasNext()) {
             return current.next();
         }

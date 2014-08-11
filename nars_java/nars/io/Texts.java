@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import nars.util.rope.Rope;
+import nars.util.rope.impl.CharArrayRope;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 
@@ -259,14 +260,15 @@ public class Texts {
         if (total == 1) {
             return lastNonNull;
         }
-        if (totalLen <= maxLen) {
+        
+        if ((totalLen <= maxLen) || (maxLen == -1)) {            
             StringBuilder sb = new StringBuilder(totalLen);
             for (final CharSequence s : components) {
                 if (s != null) {
                     sb.append(s);
                 }
             }
-            return sb;
+            return new CharArrayRope(sb);
         } else {
             Rope r = Rope.catFast(components);
             return r;
