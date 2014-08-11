@@ -48,6 +48,50 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     
     /** current removal index x, between 0..1.0.  set automatically */
     private float x;
+    
+    public static class ContinuousBagSortedList<E extends Item> extends SortedItemList<E> {
+            
+        public ContinuousBagSortedList(int capacity) {
+            super(null,capacity);
+        }
+
+        @Override
+        public int positionOf(final E o) {
+            final int y = o.budget.getPriorityShort();
+            final int s = size();
+            if (s > 0)  {
+
+                //binary search
+                int low = 0;
+                int high = s-1;
+
+                while (low <= high) {
+                    int mid = (low + high) >>> 1;
+
+                    E midVal = get(mid);
+
+                    final int x = midVal.budget.getPriorityShort();
+                    int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   
+
+                    if (cmp < 0)
+                        low = mid + 1;
+                    else if (cmp > 0)
+                        high = mid - 1;
+                    else {
+                        // key found, insert after it
+                        return mid;
+                    }
+                }
+                return low;
+            }
+            else {
+                return 0;
+            }
+        }
+            
+    }
+
+    
 
     public ContinuousBag(int capacity, int forgetRate, boolean randomRemoval) {
         this(capacity, new AtomicInteger(forgetRate), randomRemoval);
@@ -65,43 +109,8 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
-        items = new SortedItemList<E>(null, capacity) {
-            
-            @Override
-            public int positionOf(final E o) {
-                final int y = o.budget.getPriorityShort();
-                final int s = size();
-                if (s > 0)  {
-
-                    //binary search
-                    int low = 0;
-                    int high = s-1;
-
-                    while (low <= high) {
-                        int mid = (low + high) >>> 1;
-
-                        E midVal = get(mid);
-
-                        final int x = midVal.budget.getPriorityShort();
-                        int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   
-
-                        if (cmp < 0)
-                            low = mid + 1;
-                        else if (cmp > 0)
-                            high = mid - 1;
-                        else {
-                            // key found, insert after it
-                            return mid;
-                        }
-                    }
-                    return low;
-                }
-                else {
-                    return 0;
-                }
-            }
-            
-        };
+        items = new ContinuousBagSortedList<E>(capacity);
+        
         this.forgettingRate = forgetRate;
         this.mass = 0;
     }

@@ -238,7 +238,7 @@ public class Sentence implements Cloneable {
     }    
     
     public boolean containQueryVar() {
-        return (content.name().indexOf(Symbols.VAR_QUERY) >= 0);
+        return Variables.containVarQuery(content.name());
     }
 
     public boolean getRevisible() {

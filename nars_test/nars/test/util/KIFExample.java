@@ -33,7 +33,6 @@ public class KIFExample {
     
  
     public static void main(String[] args) throws Exception {
-        Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 16;
         Parameters.DEFAULT_JUDGMENT_PRIORITY = 0.5f;
         
         NAR n = new ContinuousBagNARBuilder(true)
@@ -61,8 +60,10 @@ public class KIFExample {
         t.setErrorStackTrace(true);
 
         
-        n.finish(128000);
+        n.finish(4000);
         n.param().cycleMemory.set(512);
+        
+        t.stop();
         
         new NARSwing(n);
         

@@ -35,7 +35,7 @@ public class Inheritance extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected Inheritance(String name, final Term[] arg) {
+    protected Inheritance(final CharSequence name, final Term[] arg) {
         super(name, arg);       
     }
 
@@ -46,7 +46,7 @@ public class Inheritance extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    protected Inheritance(final String n, final Term[] arg, final boolean con, final boolean hasVar, final short i) {
+    protected Inheritance(final CharSequence n, final Term[] arg, final boolean con, final boolean hasVar, final short i) {
         super(n, arg, con, hasVar, i);
     }
 

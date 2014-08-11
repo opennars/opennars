@@ -34,7 +34,7 @@ public class DifferenceInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private DifferenceInt(final String name, final Term[] arg) {
+    private DifferenceInt(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -45,7 +45,7 @@ public class DifferenceInt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private DifferenceInt(String n, Term[] cs, boolean con, short i) {
+    private DifferenceInt(CharSequence n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 

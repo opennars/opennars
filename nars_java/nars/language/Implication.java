@@ -34,7 +34,7 @@ public class Implication extends Statement {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private Implication(String name, Term[] arg, int order) {
+    private Implication(CharSequence name, Term[] arg, int order) {
         super(name, arg);
         temporalOrder = order;
     }
@@ -46,7 +46,7 @@ public class Implication extends Statement {
      * @param con Whether it is a constant term
      * @param i Syntactic complexity of the compound
      */
-    private Implication(String n, Term[] cs, boolean con, boolean hasVar, short i, int order) {
+    private Implication(CharSequence n, Term[] cs, boolean con, boolean hasVar, short i, int order) {
         super(n, cs, con, hasVar, i);
         temporalOrder = order;
     }

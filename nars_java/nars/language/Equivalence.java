@@ -36,7 +36,7 @@ public class Equivalence extends Statement {
      *
      * @param components The component list of the term
      */
-    private Equivalence(String name, Term[] components, int order) {
+    private Equivalence(CharSequence name, Term[] components, int order) {
         super(name, components);
         temporalOrder = order;
     }
@@ -49,7 +49,7 @@ public class Equivalence extends Statement {
      * @param constant Whether the statement contains open variable
      * @param complexity Syntactic complexity of the compound
      */
-    private Equivalence(String n, Term[] components, boolean constant, short complexity, int order) {
+    private Equivalence(CharSequence n, Term[] components, boolean constant, short complexity, int order) {
         super(n, components, constant, complexity);
         temporalOrder = order;
     }

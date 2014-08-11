@@ -37,7 +37,7 @@ public class SetInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetInt(String name, Term[] arg) {
+    private SetInt(CharSequence name, Term[] arg) {
         super(name, arg);
     }
 
@@ -48,7 +48,7 @@ public class SetInt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetInt(String n, Term[] cs, boolean con, short i) {
+    private SetInt(CharSequence n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 

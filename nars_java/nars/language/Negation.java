@@ -34,7 +34,7 @@ public class Negation extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Negation(String name, Term[] arg) {
+    private Negation(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -46,7 +46,7 @@ public class Negation extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Negation(String n, Term[] cs, boolean con, short i) {
+    private Negation(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 

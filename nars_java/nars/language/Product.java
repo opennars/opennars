@@ -34,7 +34,7 @@ public class Product extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Product(final String name, final Term[] arg) {
+    private Product(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
     
@@ -45,7 +45,7 @@ public class Product extends CompoundTerm {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    private Product(final String n, Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
+    private Product(final CharSequence n, Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
         super(n, cs, con, hasVar, complexity);
     }
     

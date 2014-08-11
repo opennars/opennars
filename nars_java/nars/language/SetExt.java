@@ -37,7 +37,7 @@ public class SetExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetExt(final String name, final Term[] arg) {
+    private SetExt(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -48,7 +48,7 @@ public class SetExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetExt(final String n, final Term[] cs, final boolean con, final short i) {
+    private SetExt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 

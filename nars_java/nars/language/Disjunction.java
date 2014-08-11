@@ -47,7 +47,7 @@ public class Disjunction extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Disjunction(String n, Term[] arg, boolean con, short i) {
+    private Disjunction(CharSequence n, Term[] arg, boolean con, short i) {
         super(n, arg, con, i);
         /*if (arg.size()<2) {
             throw new RuntimeException("Conjunction requires >=2 term");

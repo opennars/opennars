@@ -41,7 +41,7 @@ public class ImageInt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageInt(String n, Term[] arg, short index) {
+    private ImageInt(CharSequence n, Term[] arg, short index) {
         super(n, arg, index);
     }
 
@@ -53,7 +53,7 @@ public class ImageInt extends Image {
      * @param complexity Syntactic complexity of the compound
      * @param index The index of relation in the component list
      */
-    private ImageInt(String n, Term[] cs, boolean con, short complexity, short index) {
+    private ImageInt(CharSequence n, Term[] cs, boolean con, short complexity, short index) {
         super(n, cs, con, complexity, index);
     }
 

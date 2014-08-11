@@ -81,7 +81,7 @@ public abstract class CompoundTerm extends Term {
      * @param isConstant Whether the term refers to a concept
      * @param complexity Complexity of the compound term
      */
-    @Deprecated protected CompoundTerm(final String name, final Term[] components, final boolean isConstant, final short complexity) {
+    @Deprecated protected CompoundTerm(final CharSequence name, final Term[] components, final boolean isConstant, final short complexity) {
         this.name = name;
         this.term = components; //ensureValidComponents(term);
         this.hasVar = Variables.containVar(name());
@@ -95,7 +95,7 @@ public abstract class CompoundTerm extends Term {
      * and containsVar.  Instead, all necessary values are provided directly from the callee.
      * This should perform better than the other constructor that invokes super constructor; this does not.
      */
-    protected CompoundTerm(final String name, final Term[] components, final boolean isConstant, final boolean containsVar, final short complexity) {
+    protected CompoundTerm(final CharSequence name, final Term[] components, final boolean isConstant, final boolean containsVar, final short complexity) {
         this.name = name;
         this.term = components; //ensureValidComponents(term);
         this.hasVar = containsVar;
@@ -110,7 +110,7 @@ public abstract class CompoundTerm extends Term {
      * @param name Name of the compound
      * @param components Component list
      */
-    protected CompoundTerm(final String name, final Term[] components) {
+    protected CompoundTerm(final CharSequence name, final Term[] components) {
         this.term = components; //ensureValidComponents(term);
         this.complexity = calcComplexity();
         setName(name);
@@ -147,7 +147,7 @@ public abstract class CompoundTerm extends Term {
     }
 
     @Override
-    protected final boolean setName(String name) {
+    protected final boolean setName(CharSequence name) {
         if (super.setName(name)) {
             this.hasVar = Variables.containVar(name());
             return true;
