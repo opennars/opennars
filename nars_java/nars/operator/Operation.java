@@ -21,6 +21,7 @@
 package nars.operator;
 
 import java.util.ArrayList;
+import javolution.text.TextBuilder;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
@@ -41,7 +42,7 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    public Operation(String name, Term[] arg) {
+    public Operation(CharSequence name, Term[] arg) {
         super(name, arg);
     }
 
@@ -53,7 +54,7 @@ public class Operation extends Inheritance {
      * @param con Whether the term is a constant
      * @param complexity Syntactic complexity of the compound
      */
-    protected Operation(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
+    protected Operation(final CharSequence n, final Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
         super(n, cs, con, hasVar, complexity);
     }
 
@@ -64,7 +65,7 @@ public class Operation extends Inheritance {
      */
     @Override
     public Operation clone() {        
-        return new Operation(name, cloneTerms(), isConstant(), containVar(), getComplexity());
+        return new Operation(name(), cloneTerms(), isConstant(), containVar(), getComplexity());
     }
 
     /**
@@ -78,7 +79,7 @@ public class Operation extends Inheritance {
         if (oper == null) {
             return null;
         }
-        String name = makeName(oper.name(), arg);
+        CharSequence name = makeName(oper.name(), arg);
         Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Operation) t;
@@ -91,13 +92,13 @@ public class Operation extends Inheritance {
     }
 
     @Override
-    protected String makeName() {
+    protected CharSequence makeName() {
         return makeName(getOperator().name(), getArguments());
     }
 
     
-    public static String makeName(final String op, Term[] arg) {
-        final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
+    public static CharSequence makeName(final CharSequence op, Term[] arg) {
+        final TextBuilder nameBuilder = new TextBuilder(16 /* estimate */)
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         
         for (final Term t : arg) {

@@ -39,15 +39,10 @@ public class TextInput extends Symbols implements Input {
     /**
      * Input experience from a file
      */
-    private BufferedReader input;
+    protected BufferedReader input;
     
     private boolean finished = false;
     
-    private final StringBuilder text = new StringBuilder();   
-    
-    private int linesPerCycle = 1;
-    
-
     public TextInput(String input) {
         this(new BufferedReader(new StringReader(input)));
     }
@@ -73,14 +68,6 @@ public class TextInput extends Symbols implements Input {
         this.input = input;
     }
 
-    /** how many input lines to process each cycle.  default=1 */
-    public void setLinesPerCycle(int linesPerCycle) {
-        this.linesPerCycle = linesPerCycle;
-    }
-
-    public int getLinesPerCycle() {
-        return linesPerCycle;
-    }    
 
     @Override
     public boolean finished(boolean forceStop) {
@@ -98,28 +85,22 @@ public class TextInput extends Symbols implements Input {
 
     @Override
     public Object next() throws IOException {
-        String line;
+        String line = null;
         
         if (input==null) {
             finished = true;
             return null;
         }
-        
-        text.setLength(0);
-        
-        int i = linesPerCycle;
-        while (i > 0)  {
-
+                
+        while (!finished) {
             line = input.readLine();
             if (line == null) {
                 finished = true;
-                break;
             }
             else {
-                if (line.length() > 0) {
-                    text.append(line).append('\n');
-                    i--;
-                }
+                line = line.trim();
+                if (line.length() > 0)
+                    break;
             }
         }
         
@@ -129,7 +110,9 @@ public class TextInput extends Symbols implements Input {
             } catch (IOException ex1) {            }
         }
 
-        return process(text.toString());
+        if (line!=null)
+            return process(line);
+        return null;
     }
 
     

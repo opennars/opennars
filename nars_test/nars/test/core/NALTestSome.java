@@ -42,7 +42,8 @@ public class NALTestSome extends NALTest {
    public NALTestSome(String scriptPath) {
         super(scriptPath);
         showSuccess = true;
-        showOutput = false;
+        showOutput = true;
+        showDebug = true;
         System.out.println("Running: "  + scriptPath);
         //setOutput(true);
    }

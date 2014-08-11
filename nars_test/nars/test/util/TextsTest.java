@@ -12,21 +12,19 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
+import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.util.rope.Rope;
+import nars.util.rope.impl.FastConcatenationRope;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-/**
- *
- * @author me
- */
 
-
-public class TestRope {
+public class TextsTest {
  
 
 
@@ -87,20 +85,61 @@ public class TestRope {
     
     @Test
     public void testRopeStringEqual() {
+        //careful: String <-> Rope comparisons are not commutive because String only 
+        //equals other String
+        //so do not mix String and FastCharSequenceRope in the same collection
+
         String s = "x";
-        Rope r = Rope.build("x");
-        
-        assertTrue(!s.equals(r));
-        
+        Rope r = (Rope)Rope.rope("x");        
+        assertTrue(!s.equals(r));        
         assertTrue(!r.equals(s));
         
-        //careful: these are not commutive because String only equals other String
-        //so do not mix String and FastCharSequenceRope in the same collection
-        Rope rF = Rope.buildFast("x");
-        assertTrue(s.equals(rF));
-        assertTrue(rF.equals(s));
+        Rope rF = (Rope)Rope.rope("x");
+        assertTrue(!s.equals(rF));
+        assertTrue(!rF.equals(s));
+        
+        assertTrue(rF.equals(r));
     }
     
+    
+    @Test
+    public void testFastConcat() {
+        String t1 = "abcdefg";
+        String t2 = "|vjxkcjvlcjxkv";
+        String t3 = "nvksdlfksjdkf";
+        
+        CharSequence r12 = Texts.yarn(1, t1, t2);
+        CharSequence s12 = Texts.yarn(1, t1, t2);
+        Rope s123 = (Rope)Texts.yarn(1, t1, t2, t3);
+        Rope r123 = (Rope)Texts.yarn(1, t1, t2, t3);
+        Rope s13 = (Rope)Texts.yarn(1, t1, null, t3);
+        Rope r13 = (Rope)Texts.yarn(1, t1, null, t3);
+        
+        assertTrue(r12 instanceof FastConcatenationRope);
+        
+        assertTrue(r12!=s12);
+        assertEquals(r12,s12);
+        assertEquals(r12.hashCode(), s12.hashCode());
+        
+        assertTrue(r123!=s123);
+        assertEquals(r123,s123);
+        assertEquals(r123.hashCode(), s123.hashCode());
+        assertTrue(r123.compareTo(s123)==0);
+        
+        assertTrue(r13!=s13);
+        assertEquals(r13,s13);
+        assertEquals(r13.hashCode(), s13.hashCode());
+        assertTrue(r13.compareTo(s13)==0);
+        assertTrue(r13.compareTo(s123)!=0);
+        
+        assertTrue( ! Texts.yarn(1,"aa", "bb").equals( Texts.yarn(1, "aabb","") ) );
+        assertTrue( ! Texts.yarn(1,"aa", "bb", null).equals( Texts.yarn(1, "aa","bb","cc") ) );
+        assertTrue(   Texts.yarn(1,"aa", "bb", null).equals( Texts.yarn(1, "aa","bb",null) ) );
+        assertTrue( ! Texts.yarn(1,"aa", null, "bb").equals( Texts.yarn(1, "aa","bb") ) );
+        assertTrue( ! Texts.yarn(1,"aa", null, "bb").equals( Texts.yarn(1, "aa","bb") ) );
+        assertTrue( ! Texts.yarn(1,"aa", "x", "bb").equals( Texts.yarn(1, "aa", null, "bb") ) );
+
+    }    
 
     
 }

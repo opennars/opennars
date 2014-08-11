@@ -82,14 +82,15 @@ public class Number1DInput extends PrintWriterInput {
             String t = getValueTerm(v, resolution);
             if ((prevT!=null) && (t.equals(prevT)))
                 continue;
-            
-            out.write('<' + t + " --> " + "\u211d\u2359>. %1.00;1.00%\n" );
+
+
+            append('<' + t + " --> " + "\u211d\u2359>. %1.00;1.00%\n" );
             v += dv;
             if (prevT!=null) {
-                out.write( "<(*," + prevT + "," + t + ") --> \u22E8>. %1.00;1.00%\n" );
+                append( "<(*," + prevT + "," + t + ") --> \u22E8>. %1.00;1.00%\n" );
             }            
             prevT = t;
-            
+
         }
         
     }
@@ -129,21 +130,22 @@ public class Number1DInput extends PrintWriterInput {
         assert(data.length == newValues.length);
         data = newValues;
 
-        
+
         String product = "<(*,";
-        
+
         for (int i = 0; i < data.length; i++) {           
             product += getValueTerm(data[i], resolution);
             if (i < data.length-1)
                 product += ",";
         }
         product += ") --> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n";
-        out.write(product);
-        
+        append(product);
+
         if (iteration>0) {
-            out.write("<" + getTermID(iteration-1) + " =\\> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n");
+            append("<" + getTermID(iteration-1) + " =\\> " + getTermID(iteration) + ">. %0.99;" + cert + "%\n");
         }
-        
+
+
 //        
 //        for (int i = 0; i < data.length; i++) {
 //            String[] s = getStatementsInheritsMinMaxProportionally(i, data[i]);

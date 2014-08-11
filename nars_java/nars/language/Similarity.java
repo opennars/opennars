@@ -33,7 +33,7 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Similarity(String name, Term[] arg) {
+    private Similarity(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -44,7 +44,7 @@ public class Similarity extends Statement {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Similarity(String n, Term[] cs, boolean constant, boolean containsVar, short i) {
+    private Similarity(final CharSequence n, Term[] cs, boolean constant, boolean containsVar, short i) {
         super(n, cs, constant, containsVar, i);
     }
 
@@ -64,14 +64,14 @@ public class Similarity extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Similarity make(Term subject, Term predicate, Memory memory) {
+    public static Similarity make(final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
         if (subject.compareTo(predicate) > 0) {
             return make(predicate, subject, memory);
         }
-        String name = makeStatementName(subject, NativeOperator.SIMILARITY, predicate);
+        CharSequence name = makeStatementName(subject, NativeOperator.SIMILARITY, predicate);
         Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Similarity) t;

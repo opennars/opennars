@@ -76,8 +76,7 @@ public class Terms {
             CompoundTerm itselfCompound = itself;
             CompoundTerm replaced = null;
             if (j < itself.term.length  )
-                replaced = (CompoundTerm) CompoundTerm.setComponent(
-                        itself, j, ret2, memory);
+                replaced = (CompoundTerm) itself.setComponent(j, ret2, memory);
             
             if (replaced != null) {
                 itself = replaced;
@@ -347,6 +346,42 @@ public class Terms {
    public  static ArrayList<TermLink> prepareComponentLinks(ArrayList<TermLink> componentLinks, CompoundTerm ct) {
         short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         return prepareComponentLinks(componentLinks, type, ct);
+    }
+
+    //TODO move this to a utility method
+    public static <T> int indexOf(final T[] array, final T v) {
+        /*if (v == null) {
+        for (final T e : array)
+        if (e == null)
+        return true;
+        } else {*/
+        int i = 0;
+        for (final T e : array) {
+            if (v.equals(e)) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
+
+    //TODO move this to a utility method
+    public static <T> boolean containsAll(final T[] array, final T v) {
+        for (final T e : array) {
+            if (!v.equals(e)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static <T> boolean contains(final T[] array, final T v) {
+        for (final T e : array) {
+            if (v.equals(e)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     

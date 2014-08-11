@@ -32,7 +32,7 @@ import nars.inference.TemporalRules;
  */
 public class Term implements Cloneable, Comparable<Term> {
 
-    protected String name = "";
+    protected CharSequence name = "";
     
     /**
      * Default constructor that build an internal Term
@@ -54,7 +54,7 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return The name of the term as a String
      */
-    public String name() {
+    public CharSequence name() {
         return name;
     }
 
@@ -131,7 +131,7 @@ public class Term implements Cloneable, Comparable<Term> {
     /** only method that should modify Term.name. also caches hashcode 
      * @return whether the name was changed
      */
-    protected boolean setName(final String newName) {
+    protected boolean setName(final CharSequence newName) {
         if (this.name!=null) {
             if (this.name.equals(newName)) {
                 //name is the same
@@ -139,8 +139,9 @@ public class Term implements Cloneable, Comparable<Term> {
             }
         }
         
-        if (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) {
-            this.name = newName.intern();
+        if ((newName instanceof String) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
+            
+            this.name = ((String)newName).intern();
         }
         else {
             this.name = newName;
@@ -165,7 +166,8 @@ public class Term implements Cloneable, Comparable<Term> {
         } else if (that instanceof Variable) {
             return 1;
         } else {
-            return name.compareTo(that.name());            
+            //force comparable, since all CharSequence we use provide it.
+            return ((Comparable)name).compareTo(that.name());            
         }
     }
 
@@ -200,7 +202,7 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public final String toString() {
-        return name;
+        return name.toString();
     }
 
 }

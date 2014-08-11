@@ -36,7 +36,7 @@ public class Disjunction extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Disjunction(final String name, final Term[] arg) {
+    private Disjunction(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -47,7 +47,7 @@ public class Disjunction extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Disjunction(String n, Term[] arg, boolean con, short i) {
+    private Disjunction(CharSequence n, Term[] arg, boolean con, short i) {
         super(n, arg, con, i);
         /*if (arg.size()<2) {
             throw new RuntimeException("Conjunction requires >=2 term");
@@ -119,7 +119,7 @@ public class Disjunction extends CompoundTerm {
             return set.first();
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
-        String name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
+        CharSequence name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
         Term t = memory.conceptTerm(name);
         return (t != null) ? t : new Disjunction(name, argument);
     }

@@ -230,6 +230,12 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         sb.append(DELIMITER);        
         return sb;
     }
+
+    public CharSequence name() {
+        //1 + 4 + 1 + 4 + 1
+        StringBuilder sb =  new StringBuilder(11);
+        return appendStringBrief(sb);
+    }
     
     public String toStringBrief() {
         //1 + 4 + 1 + 4 + 1

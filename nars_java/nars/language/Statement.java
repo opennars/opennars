@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import javolution.text.TextBuilder;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
@@ -37,7 +38,7 @@ public abstract class Statement extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Statement(final String name, final Term[] arg) {
+    protected Statement(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
     
@@ -49,14 +50,14 @@ public abstract class Statement extends CompoundTerm {
      * @param con Constant indicator
      * @param i Syntactic complexity of the compound
      */
-    @Deprecated protected Statement(final String n, final Term[] cs, final boolean con, final short i) {
+    @Deprecated protected Statement(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
     
     /**
      * High-performance constructor that avoids recalculating some Term metadata when created
      */
-    protected Statement(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
+    protected Statement(final CharSequence n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
         super(n, cs, con, hasVar, i);
     }
 
@@ -191,7 +192,7 @@ public abstract class Statement extends CompoundTerm {
      * @return the nameStr of the term
      */
     @Override
-    protected String makeName() {
+    protected CharSequence makeName() {
         return makeStatementName(getSubject(), operator(), getPredicate());
     }
 
@@ -203,18 +204,17 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static String makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
-        final String subjectName = subject.name();
-        final String predicateName = predicate.name();
+    protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+        final CharSequence subjectName = subject.name();
+        final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
-        return new StringBuilder(length)
+        return new TextBuilder(length)
             .append(STATEMENT_OPENER.ch)
             .append(subjectName)
             .append(' ').append(relation).append(' ')
             .append(predicateName)
-            .append(STATEMENT_CLOSER.ch)
-            .toString();
+            .append(STATEMENT_CLOSER.ch).toString();
     }
     
     /**
@@ -268,10 +268,12 @@ public abstract class Statement extends CompoundTerm {
     }
 
    
-    public static boolean invalidPair(final String s1, final String s2) {
-        if (Variables.containVarIndep(s1) && !Variables.containVarIndep(s2)) {
+    public static boolean invalidPair(final CharSequence s1, final CharSequence s2) {
+        boolean s1Indep = Variables.containVarIndep(s1);
+        boolean s2Indep = Variables.containVarIndep(s2);
+        if (s1Indep && !s2Indep) {
             return true;
-        } else if (!Variables.containVarIndep(s1) && Variables.containVarIndep(s2)) {
+        } else if (!s1Indep && s2Indep) {
             return true;
         }
         return false;

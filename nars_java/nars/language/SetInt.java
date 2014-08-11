@@ -30,14 +30,14 @@ import nars.storage.Memory;
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.
  */
-public class SetInt extends CompoundTerm {
+public class SetInt extends SetTensional {
 
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetInt(String name, Term[] arg) {
+    private SetInt(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -48,22 +48,17 @@ public class SetInt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetInt(String n, Term[] cs, boolean con, short i) {
+    private SetInt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }
-    
     /**
      * Clone a SetInt
      * @return A new object, to be casted into a SetInt
      */
     @Override
     public SetInt clone() {
-        return new SetInt(name(), cloneTerms(), isConstant(), complexity);
+        return new SetInt(name(), cloneTerms(), isConstant(), getComplexity());
     }
 
     /**
@@ -100,7 +95,7 @@ public class SetInt extends CompoundTerm {
             return null;
         }
         Term[] argument = set.toArray(new Term[set.size()]);
-        String name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
+        CharSequence name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
         Term t = memory.conceptTerm(name);
         return (t != null) ? t : new SetInt(name, argument);
     }
@@ -114,21 +109,13 @@ public class SetInt extends CompoundTerm {
         return NativeOperator.SET_INT_OPENER;
     }
 
-    /**
-     * Check if the compound is communitative.
-     * @return true for communitative
-     */
-    @Override
-    public boolean isCommutative() {
-        return true;
-    }
 
     /**
      * Make a String representation of the set, override the default.
      * @return true for communitative
      */
     @Override
-    public String makeName() {
+    public CharSequence makeName() {
         return makeSetName(SET_INT_OPENER.ch, term, SET_INT_CLOSER.ch);
     }
 }

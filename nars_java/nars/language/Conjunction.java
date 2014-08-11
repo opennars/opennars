@@ -39,7 +39,7 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    private Conjunction(String name, Term[] arg, int order) {
+    private Conjunction(CharSequence name, Term[] arg, int order) {
         super(name, arg);
         temporalOrder = order;
     }
@@ -58,7 +58,7 @@ public class Conjunction extends CompoundTerm {
      * @param con Whether the term is a constant
      * @param i Syntactic complexity of the compound
      */
-    private Conjunction(String n, Term[] arg, boolean con, short i, int order) {
+    private Conjunction(CharSequence n, Term[] arg, boolean con, short i, int order) {
         super(n, arg, con, i);
         temporalOrder = order;
     }
@@ -129,7 +129,7 @@ public class Conjunction extends CompoundTerm {
             return argList[0];
         }                         // special case: single component
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            final String name = makeCompoundName(NativeOperator.SEQUENCE, argList);
+            final CharSequence name = makeCompoundName(NativeOperator.SEQUENCE, argList);
             final Term t = memory.conceptTerm(name);
             return (t != null) ? t : new Conjunction(name, argList, temporalOrder);
         } else {
@@ -149,7 +149,7 @@ public class Conjunction extends CompoundTerm {
      */
     private static Term make(final TreeSet<Term> set, int temporalOrder, final Memory memory) {
         Term[] argument = set.toArray(new Term[set.size()]);
-        final String name;
+        final CharSequence name;
         if (temporalOrder == TemporalRules.ORDER_NONE) {
             name = makeCompoundName(NativeOperator.CONJUNCTION, argument);
         } else {
