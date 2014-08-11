@@ -851,7 +851,7 @@ public final class CompositionalRules {
         }
     }
 
-    static boolean dedSecondLayerVariableUnification(Task task, Memory memory)
+        static boolean dedSecondLayerVariableUnification(Task task, Memory memory)
     {
         Sentence taskSentence=task.sentence;
         if(taskSentence==null || taskSentence.isQuestion()) {
@@ -937,8 +937,8 @@ public final class CompositionalRules {
             }
             
             Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
-            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
-            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
+            dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
+            dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
             
             for(int i=0;i<terms_independent.size();i++) {
                 Term result = terms_independent.get(i);
@@ -959,7 +959,7 @@ public final class CompositionalRules {
                 Task dummy = new Task(second_belief, budget, task, null);
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
-                memory.derivedTask(newTask, false, false);
+                memory.derivedTask(newTask, false, false, taskSentence, second_belief);
             }
             return true;
         }
@@ -967,10 +967,8 @@ public final class CompositionalRules {
     }
     
 
-    private static void dedSecondLayerVariableUnificationTerms(Memory memory, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
-        
-            Sentence taskSentence = task.sentence;
-            
+    private static void dedSecondLayerVariableUnificationTerms(Memory memory, Sentence taskSentence, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
+
             Stamp sx = new Stamp(taskSentence.stamp, memory.getTime(), s);
             
             for(int i=0;i<terms_dependent.size();i++) {
@@ -986,6 +984,7 @@ public final class CompositionalRules {
                     }
                     mark=Symbols.GOAL_MARK;
                 }
+
                 Sentence newSentence=new Sentence(result, mark, truth, sx);                     
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                 
@@ -995,7 +994,7 @@ public final class CompositionalRules {
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
                 
-                memory.derivedTask(newTask, false, false);
+                memory.derivedTask(newTask, false, false, taskSentence, second_belief);
             }    
     }
 }
