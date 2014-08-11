@@ -178,7 +178,7 @@ public class TermLink extends Item {
      */    
     protected final void setKey(final CharSequence suffix) {
         this.key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
-                        newKeyPrefix(), 
+                        newKeyPrefix().toString(), 
                         target!=null ? target.name() : null, 
                         suffix);        
     }
@@ -244,7 +244,7 @@ public class TermLink extends Item {
         }
         prefix.append(at2);
         
-        return prefix;
+        return prefix.toString();
     }
     
     /**

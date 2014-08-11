@@ -53,7 +53,7 @@ abstract public class Image extends CompoundTerm {
             }
         }
         name.append(COMPOUND_TERM_CLOSER.ch);
-        return name;
+        return name.toString();
     }
     
     

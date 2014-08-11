@@ -30,6 +30,7 @@ public class FastConcatenationRope extends ConcatenationRope {
         if (!(other instanceof FastConcatenationRope)) return false;
         
         FastConcatenationRope o = (FastConcatenationRope)other;
+        if (other == this) return true;
         
         if (hashCode()!=o.hashCode())  return false;
         if (length()!=o.length())      return false;

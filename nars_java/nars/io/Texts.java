@@ -259,7 +259,7 @@ public class Texts {
             return null;
         }
         if (total == 1) {
-            return lastNonNull;
+            return lastNonNull.toString();
         }
         
         if ((totalLen <= maxLen) || (maxLen == -1)) {            
@@ -269,7 +269,7 @@ public class Texts {
                     sb.append(s);
                 }
             }
-            return sb;
+            return sb.toString();
         } else {
             Rope r = Rope.catFast(components);
             return r;

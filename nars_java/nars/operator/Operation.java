@@ -107,7 +107,7 @@ public class Operation extends Inheritance {
         }
         
         nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
-        return nameBuilder;
+        return nameBuilder.toString();
     }
     
     
