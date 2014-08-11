@@ -124,7 +124,7 @@ public class NAR implements Runnable, Output {
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
     public Input addInput(Input channel) {
         InPort i = new InPort(perception, channel, new FIFO(), 1.0f);
-       
+               
         try {
             i.update();
             inputChannels.add(i);
@@ -281,32 +281,41 @@ public class NAR implements Runnable, Output {
                     inputChannels.remove(i);
                     continue;
                 }
-
+                
                 try {
                     i.update();
                 } catch (IOException ex) {                    
                     output(ERR.class, ex);
-                }
+                }                
                 
                 if (i.hasNext()) {
-                    Task task = i.next();
-                    if (task!=null) {
-                        
-                        if (task instanceof PauseInput) {
-                            int c = ((PauseInput)task).cycles;
-                            memory.output(IN.class, c);
-                            memory.stepLater(c);        
-                            remainingInputTasks--;
-                            inputPerceived = true;
-                            break;
-                        }
-                        else {                         
-                            memory.inputTask(task);
+                    try {
+                        Object input = i.next();
                             
-                            remainingInputTasks--;
-                            inputPerceived = true;
+                        Task task = perception.perceive(input);
+
+                        if (task!=null) {
+
+                            if (task instanceof PauseInput) {
+                                int c = ((PauseInput)task).cycles;
+                                memory.output(IN.class, c);
+                                memory.stepLater(Math.max(0,c));        
+                                remainingInputTasks--;
+                                inputPerceived = true;
+                                break;
+                            }
+                            else {                                                                     
+                                memory.inputTask(task);
+
+                                remainingInputTasks--;
+                                inputPerceived = true;
+                            }
                         }
                     }
+                    catch (IOException e) {
+                        output(ERR.class, e);
+                    }
+                    
                 }
                 
                 

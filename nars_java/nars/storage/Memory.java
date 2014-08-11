@@ -547,7 +547,7 @@ public class Memory implements Output, Serializable {
      *
      * @param task the derived task
      */
-    public void derivedTask(final Task task, final boolean revised, final boolean single) {                
+    public void derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {                
         if (task.budget.aboveThreshold()) {
             if (task.sentence != null && task.sentence.truth != null) {
                 float conf = task.sentence.truth.getConfidence();                
@@ -560,6 +560,12 @@ public class Memory implements Output, Serializable {
                 }
             }
             final Stamp stamp = task.sentence.getStamp();
+            if(occurence!=null && occurence.getOccurenceTime()!=Stamp.ETERNAL) {
+                stamp.setOccurrenceTime(occurence.getOccurenceTime());
+            }
+            if(occurence2!=null && occurence2.getOccurenceTime()!=Stamp.ETERNAL) {
+                stamp.setOccurrenceTime(occurence2.getOccurenceTime());
+            }
             final LinkedHashSet<Term> chain = stamp.getChain();
             
             final Term currentTaskContent = getCurrentTask().getContent();
@@ -648,7 +654,7 @@ public class Memory implements Output, Serializable {
         if (newContent != null) {
             Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
             Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-            derivedTask(newTask, true, false);
+            derivedTask(newTask, true, false, null, null);
         }
     }
 
@@ -664,7 +670,7 @@ public class Memory implements Output, Serializable {
         if (newContent != null) {
             final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
             final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-            derivedTask(newTask, false, false);
+            derivedTask(newTask, false, false, null, null);
         }
     }
 
@@ -725,12 +731,12 @@ public class Memory implements Output, Serializable {
         
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
-        derivedTask(newTask, false, true);
+        derivedTask(newTask, false, true, null, null);
     }
 
     public void singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
-        derivedTask(newTask, false, true);
+        derivedTask(newTask, false, true, null, null);
     }
 
     /* ---------- system working cycleMemory ---------- */
@@ -780,9 +786,6 @@ public class Memory implements Output, Serializable {
             adjustBusy(task.getPriority(), task.getDurability());            
             
             if (task.isInput() || (concept(task.getContent()) != null)) {
-                
-                if (task.sentence.getStamp()==null)
-                    task.sentence.setStamp(new Stamp(getTime(), task.getTense(), newStampSerial()));
                 
                 // new addInput or existing concept
                 immediateProcess(task);

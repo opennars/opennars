@@ -61,7 +61,7 @@ public class Sentence implements Cloneable {
     /**
      * Partial record of the derivation path
      */
-    private Stamp stamp;
+    public final Stamp stamp;
 
     /**
      * Whether the sentence can be revised
@@ -384,10 +384,5 @@ public class Sentence implements Cloneable {
         return stamp;
     }
 
-    /**
-     * @param stamp the stamp to set
-     */
-    public void setStamp(Stamp stamp) {
-        this.stamp = stamp;
-    }
+
 }

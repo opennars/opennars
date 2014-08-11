@@ -220,6 +220,7 @@ public class NALTest  {
             new TextOutput(n, System.out);
         
         n.addInput(new TextInput(example));
+        n.step(1);
         
         boolean error = false;
         try {

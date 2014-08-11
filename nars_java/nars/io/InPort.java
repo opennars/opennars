@@ -2,7 +2,6 @@ package nars.io;
 
 import java.io.IOException;
 import nars.core.Perception;
-import nars.entity.Task;
 import nars.io.buffer.Buffer;
 
 
@@ -12,7 +11,7 @@ import nars.io.buffer.Buffer;
  */
 public class InPort<X> {
     public final Input<X> input;
-    public final Buffer<Task> buffer;
+    public final Buffer<X> buffer;
     private float attention;
     private final Perception perception;
     
@@ -21,7 +20,7 @@ public class InPort<X> {
 //        this(input, new FIFO(), 1.0);
 //    }
     
-    public InPort(Perception p, Input<X> input, Buffer<Task> buffer, float initialAttention) {
+    public InPort(Perception p, Input<X> input, Buffer<X> buffer, float initialAttention) {
         super();
         this.perception = p;
         this.input = input;
@@ -30,23 +29,41 @@ public class InPort<X> {
     }
  
     /** add a task to the end of the buffer */
-    public boolean queue(Task task) {
+    public boolean queue(X task) {
         return buffer.add(task);
     }
      
     public boolean hasNext() {
+        if (buffer == null) {
+            return !input.finished(false);
+        }
+        
         return buffer.size() > 0;
     }
     
-    public void update() throws IOException {
-        while (!input.finished(false) && (buffer.available() > 0) ) {            
+    protected X nextXDirect() {
+        try {
+            if (input.finished(false))
+                return null;
+            
             X x = input.next();
             if (x == null)
-                continue;
-
-            Task t = perception.perceive(x);
-            if (t != null) {
-                queue(t);
+                return null;
+            return x;
+        }
+        catch (IOException e) {
+            return null;
+        }
+            
+    }
+    
+    public void update() throws IOException {
+        if (buffer == null) return;
+        
+        while (!input.finished(false) && (buffer.available() > 0) ) {            
+            X x = input.next();
+            if (x != null) {
+                queue(x);
             }
         }
     }
@@ -56,11 +73,18 @@ public class InPort<X> {
     }        
     
     public boolean finished() {
-        return input.finished(false) && buffer.size() == 0;
+        if (buffer!=null)
+            if (buffer.size() > 0)
+                return false;
+        
+        return input.finished(false);
     }
     
-    public Task next() {
-        Task n = buffer.poll();
+    public X next() {
+        if (buffer == null)
+            return nextXDirect();
+        
+        X n = buffer.poll();
         
         //TODO update statistics
         

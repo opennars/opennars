@@ -937,8 +937,8 @@ public final class CompositionalRules {
             }
             
             Stamp ss = new Stamp(taskSentence.getStamp(), second_belief.getStamp(),memory.getTime());
-            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
-            dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
+            dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
+            dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
             
             for(int i=0;i<terms_independent.size();i++) {
                 Term result = terms_independent.get(i);
@@ -959,7 +959,7 @@ public final class CompositionalRules {
                 Task dummy = new Task(second_belief, budget, task, null);
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
-                memory.derivedTask(newTask, false, false);
+                memory.derivedTask(newTask, false, false, taskSentence, second_belief);
             }
             return true;
         }
@@ -967,10 +967,8 @@ public final class CompositionalRules {
     }
     
 
-    private static void dedSecondLayerVariableUnificationTerms(Memory memory, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(Memory memory, Sentence taskSentence, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
         
-            Sentence taskSentence = task.sentence;
-            
             Stamp sx = new Stamp(taskSentence.getStamp(), memory.getTime(), s);
             
             for(int i=0;i<terms_dependent.size();i++) {
@@ -995,7 +993,7 @@ public final class CompositionalRules {
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
                 
-                memory.derivedTask(newTask, false, false);
+                memory.derivedTask(newTask, false, false, taskSentence, second_belief);
             }    
     }
 }
