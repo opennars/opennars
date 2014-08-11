@@ -1,0 +1,6 @@
+
+********** [09 + 08 -> 12]:
+  IN: <(^break,$1) =/> <$1 --> [damaged]>>.
+  IN: <{t001} --> [damaged]>! 
+17
+''outputMustContain('(^break,{t001})! %1.00;0.81%')
