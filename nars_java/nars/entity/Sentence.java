@@ -61,7 +61,7 @@ public class Sentence implements Cloneable {
     /**
      * Partial record of the derivation path
      */
-    public final Stamp stamp;
+    private Stamp stamp;
 
     /**
      * Whether the sentence can be revised
@@ -103,7 +103,7 @@ public class Sentence implements Cloneable {
             return content.equals(t.content) && 
                     punctuation == t.punctuation &&
                     truth.equals(t.truth) &&
-                    stamp.equals(t.stamp);
+                    getStamp().equals(t.getStamp());
         }
         return false;
     }
@@ -119,7 +119,7 @@ public class Sentence implements Cloneable {
         hash = 67 * hash + (this.content != null ? this.content.hashCode() : 0);
         hash = 67 * hash + this.punctuation;
         hash = 67 * hash + (this.truth != null ? this.truth.hashCode() : 0);
-        hash = 67 * hash + (this.stamp != null ? this.stamp.hashCode() : 0);
+        hash = 67 * hash + (this.getStamp() != null ? this.getStamp().hashCode() : 0);
         return hash;
     }
 
@@ -133,7 +133,7 @@ public class Sentence implements Cloneable {
      */
     public boolean equivalentTo(final Sentence that) {
         assert content.equals(content) && punctuation == that.punctuation;
-        return (truth.equals(that.truth) && stamp.equals(that.stamp));
+        return (truth.equals(that.truth) && getStamp().equals(that.getStamp()));
     }
 
     /**
@@ -144,17 +144,17 @@ public class Sentence implements Cloneable {
     @Override
     public Object clone() {
         if (truth == null) {
-            return new Sentence(content.clone(), punctuation, null, (Stamp) stamp.clone());
+            return new Sentence(content.clone(), punctuation, null, (Stamp) getStamp().clone());
         }
-        return new Sentence(content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
+        return new Sentence(content.clone(), punctuation, new TruthValue(truth), (Stamp) getStamp().clone());
     }
 
     /** Clone with a different Term */    
     public Sentence clone(Term t) {
         if (truth == null) {
-            return new Sentence(t, punctuation, null, (Stamp) stamp.clone());
+            return new Sentence(t, punctuation, null, (Stamp) getStamp().clone());
         }
-        return new Sentence(t, punctuation, new TruthValue(truth), (Stamp) stamp.clone());
+        return new Sentence(t, punctuation, new TruthValue(truth), (Stamp) getStamp().clone());
     }
     
     /**
@@ -167,11 +167,11 @@ public class Sentence implements Cloneable {
     public Sentence projection(long targetTime, long currentTime) {
         TruthValue newTruth = new TruthValue(truth);
         boolean eternalizing = false;
-        if (stamp.getOccurrenceTime() != Stamp.ETERNAL) {
+        if (getStamp().getOccurrenceTime() != Stamp.ETERNAL) {
             newTruth = TruthFunctions.eternalization(truth);
             eternalizing = true;
             if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = stamp.getOccurrenceTime();
+                long occurrenceTime = getStamp().getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
@@ -180,7 +180,7 @@ public class Sentence implements Cloneable {
                 }
             }
         }
-        Stamp newStamp = (Stamp) stamp.clone();
+        Stamp newStamp = (Stamp) getStamp().clone();
         if (eternalizing) {
             newStamp.setOccurrenceTime(Stamp.ETERNAL);
         }
@@ -246,7 +246,7 @@ public class Sentence implements Cloneable {
     }
     
     public long getOccurenceTime() {
-        return stamp.getOccurrenceTime();
+        return getStamp().getOccurrenceTime();
     }
     
     public Operator getOperator() {
@@ -289,11 +289,15 @@ public class Sentence implements Cloneable {
      * @return The String
      */
     public CharSequence getKey() {
+        if (getStamp()==null) {
+            return content.toString();
+        }
+        
         //key must be invalidated if content or truth change
         if (key == null) {
             final String contentToString = content.toString();
             
-            final String occurrenceTimeString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getOccurrenceTimeString() : "";
+            final String occurrenceTimeString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? getStamp().getOccurrenceTimeString() : "";
             
             final String truthString = truth != null ? truth.toStringBrief() : null;
             //final String stampString = stamp.toString();
@@ -333,10 +337,10 @@ public class Sentence implements Cloneable {
         
         final long t = nar.memory.getTime();
 
-        final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t) : "";
+        final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? getStamp().getTense(t) : "";
         final String truthString = (truth != null) ? truth.toStringBrief() : null;
  
-        String stampString = showStamp ? stamp.toString() : null;
+        String stampString = showStamp ? getStamp().toString() : null;
         
         int stringLength = contentToString.length() + tenseString.length() + 1 + 1;
                 
@@ -371,5 +375,19 @@ public class Sentence implements Cloneable {
      */
     public void discountConfidence() {
         truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
+    }
+
+    /**
+     * @return the stamp
+     */
+    public Stamp getStamp() {
+        return stamp;
+    }
+
+    /**
+     * @param stamp the stamp to set
+     */
+    public void setStamp(Stamp stamp) {
+        this.stamp = stamp;
     }
 }

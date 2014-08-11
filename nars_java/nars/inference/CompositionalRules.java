@@ -936,7 +936,7 @@ public final class CompositionalRules {
                 }
             }
             
-            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
+            Stamp ss = new Stamp(taskSentence.getStamp(), second_belief.getStamp(),memory.getTime());
             dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
             dedSecondLayerVariableUnificationTerms(memory, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
             
@@ -950,9 +950,9 @@ public final class CompositionalRules {
                     mark=Symbols.GOAL_MARK;
                 }
                
-                Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
+                Stamp useEvidentalBase=new Stamp(taskSentence.getStamp(), second_belief.getStamp(),memory.getTime());
                 Sentence newSentence = new Sentence(result, mark, truth, 
-                        new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );                
+                        new Stamp(taskSentence.getStamp(), memory.getTime(), useEvidentalBase) );                
                 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                 Task newTask = new Task(newSentence, budget, task, null);
@@ -971,7 +971,7 @@ public final class CompositionalRules {
         
             Sentence taskSentence = task.sentence;
             
-            Stamp sx = new Stamp(taskSentence.stamp, memory.getTime(), s);
+            Stamp sx = new Stamp(taskSentence.getStamp(), memory.getTime(), s);
             
             for(int i=0;i<terms_dependent.size();i++) {
                 final CompoundTerm result = terms_dependent.get(i);

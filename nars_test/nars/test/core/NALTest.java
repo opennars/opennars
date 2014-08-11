@@ -41,6 +41,7 @@ public class NALTest  {
     boolean showOutput = false;
     boolean saveSimilar = true;
     boolean showSuccess = false;
+    boolean showDebug = false;
     
     final int similarityThreshold = 4;
     
@@ -222,7 +223,7 @@ public class NALTest  {
         
         boolean error = false;
         try {
-            n.finish(minCycles);
+            n.finish(minCycles, showDebug);
         }
         catch(Throwable e){ 
             e.printStackTrace();

@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import nars.language.Tense;
 import nars.language.Term;
 
 /**
@@ -44,7 +45,18 @@ public class Task extends Item {
      */
     private Sentence bestSolution;
     private final CharSequence key;
+    
+    /** a parsed ttense that will be applied to the stamp when this Task is input to memory at a certain time after parsed */
+    private Tense tense;
+    
 
+    public Task() {
+        super();
+        sentence = null;
+        parentTask = null;
+        parentBelief = null;
+        key = getClass().getSimpleName();
+    }
     /**
      * Constructor for input task
      *
@@ -53,6 +65,11 @@ public class Task extends Item {
      */
     public Task(final Sentence s, final BudgetValue b) {
         this(s, b, null, null);
+    }
+    
+    public Task(final Sentence s, final BudgetValue b, Tense tense) {
+        this(s, b);
+        this.tense = tense;
     }
 
     /**
@@ -105,7 +122,7 @@ public class Task extends Item {
      * @return The creation time of the sentence
      */
     public long getCreationTime() {
-        return sentence.stamp.creationTime;
+        return sentence.getStamp().creationTime;
     }
 
     /**
@@ -188,7 +205,7 @@ public class Task extends Item {
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
-        s.append(super.toString()).append(' ').append(sentence.stamp);
+        s.append(super.toString()).append(' ').append(sentence.getStamp());
         if (parentTask != null) {
             s.append("  \n from task: ").append(parentTask.toStringBrief());
             if (parentBelief != null) {
@@ -200,4 +217,10 @@ public class Task extends Item {
         }
         return s.toString();
     }
+
+    public Tense getTense() {
+        return tense;
+    }
+    
+    
 }

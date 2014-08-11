@@ -187,8 +187,8 @@ public final class Concept extends Item {
         final Sentence judg = task.sentence;
         final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         if (oldBelief != null) {
-            final Stamp newStamp = judg.stamp;
-            final Stamp oldStamp = oldBelief.stamp;
+            final Stamp newStamp = judg.getStamp();
+            final Stamp oldStamp = oldBelief.getStamp();
             if (newStamp.equals(oldStamp)) {
                 if (task.getParentTask().sentence.isJudgment()) {
                     task.budget.decPriority(0);    // duplicated task
@@ -228,8 +228,8 @@ public final class Concept extends Item {
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean noRevision = true;
         if (oldGoal != null) {
-            final Stamp newStamp = goal.stamp;
-            final Stamp oldStamp = oldGoal.stamp;
+            final Stamp newStamp = goal.getStamp();
+            final Stamp oldStamp = oldGoal.getStamp();
             if (newStamp.equals(oldStamp)) {
                 return;
             }
@@ -515,7 +515,7 @@ public final class Concept extends Item {
      * @return The selected isBelief
      */
     public Sentence getBelief(final Task task) {
-        final Stamp taskStamp = task.sentence.stamp;
+        final Stamp taskStamp = task.sentence.getStamp();
         final long currentTime = memory.getTime();
 
         for (Sentence belief : beliefs) {
@@ -523,7 +523,7 @@ public final class Concept extends Item {
                 memory.getRecorder().append(" * Selected Belief: " + belief);
             }
 
-            memory.setTheNewStamp(make(taskStamp, belief.stamp, currentTime));
+            memory.setTheNewStamp(make(taskStamp, belief.getStamp(), currentTime));
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
