@@ -1,0 +1,5 @@
+********** [10 + 05 -> 11]
+  IN: <(&/,<(*,Self,{t002}) --> hold>,(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>.  
+  IN: <(&/,<(*,Self,{t002}) --> reachable>,(^pick,{t002})) =/> <(*,Self,{t002}) --> hold>>.  
+40
+''outputMustContain('<(&/,<(*,Self,{t002}) --> reachable>,(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. %1.00;0.81%')
