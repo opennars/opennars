@@ -1,0 +1,10 @@
+
+
+********** [02 + 10 -> 11]:
+  IN: <(*,Self,key001) --> hold>. :|: %0% 
+5
+  IN: <(*,Self,key001) --> hold>. :|: %1.00;0.91% 
+5
+  IN: <(*,Self,key001) --> hold>? :|: 
+50
+''outputMustContain('<(*,Self,key001) --> hold>. :\: %0.53;0.95%') 
