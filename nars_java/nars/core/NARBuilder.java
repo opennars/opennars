@@ -8,6 +8,7 @@ import nars.operator.ExampleOperators;
 import nars.operator.Operator;
 import nars.storage.AbstractBag;
 import nars.storage.Memory;
+import nars.storage.Memory.MemoryCycle;
 
 /**
  * NAR design parameters which define a NAR at initialization.  These do not change at runtime.
@@ -22,11 +23,12 @@ abstract public class NARBuilder extends Parameters implements ConceptBuilder {
     abstract public Param newParam();
     abstract public AbstractBag<Concept> newConceptBag(Param p);
     abstract public AbstractBag<Task> newNovelTaskBag(Param p);
+    abstract public MemoryCycle newMemoryCycle(Param p);
     
     public NAR build() {
         Param p = newParam();
         Operator[] operators = DefaultOperators.get();
-        Memory m = new Memory(p, newConceptBag(p), newNovelTaskBag(p), this, operators);
+        Memory m = new Memory(p, newMemoryCycle(p), newConceptBag(p), newNovelTaskBag(p), this, operators);
         
         for (Operator o : ExampleOperators.get()) {
             m.addOperator(o);

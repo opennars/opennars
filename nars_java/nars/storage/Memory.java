@@ -108,6 +108,7 @@ public class Memory implements Output, Serializable {
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
     }
+    private final MemoryCycle cyclePolicy;
     
     
     
@@ -300,6 +301,10 @@ public class Memory implements Output, Serializable {
         return lastEvent.budget;
     }
 
+    /** defines a policy for top-level control of a memory cycle */
+    public interface MemoryCycle {
+        public void cycle(Memory m);
+    }
 
     /* ---------- Constructor ---------- */
     /**
@@ -307,9 +312,10 @@ public class Memory implements Output, Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, AbstractBag<Concept> concepts, AbstractBag<Task> novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
+    public Memory(Param param, MemoryCycle cycleControl, AbstractBag<Concept> concepts, AbstractBag<Task> novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
         
         this.param = param;
+        this.cyclePolicy = cycleControl;
         this.conceptBuilder = conceptBuilder;
 
         this.concepts = concepts;
@@ -740,16 +746,8 @@ public class Memory implements Output, Serializable {
                 recorder.onCycleStart(clock);
             }
 
-            processNewTask();
-
-            if (noResult()) {       // necessary?
-                processNovelTask();
-            }
-
-            if (noResult()) {       // necessary?
-                processConcept();
-            }
-
+            cyclePolicy.cycle(this);
+                
             //novelTasks.refresh();
 
             if (recorder.isActive()) {            
@@ -769,15 +767,18 @@ public class Memory implements Output, Serializable {
  addInput ones and those that corresponding to existing concepts, plus one
  from the buffer.
      */
-    private void processNewTask() {
-                
+    public void processNewTask() {        
+        
         // don't include new tasks produced in the current cycleMemory
         int counter = newTasks.size();
         Task newEvent = null;
         while (counter-- > 0) {
+            
             final Task task = newTasks.removeFirst();
-            adjustBusy(task.getPriority(), task.getDurability());
+            adjustBusy(task.getPriority(), task.getDurability());            
+            
             if (task.isInput() || (concept(task.getContent()) != null)) {
+                
                 // new addInput or existing concept
                 immediateProcess(task);
                 if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
@@ -789,17 +790,22 @@ public class Memory implements Output, Serializable {
                         }
                     }
                 }
+                
             } else {
                 final Sentence s = task.sentence;
                 if (s.isJudgment()) {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
+                        
                         // new concept formation
                         novelTasks.putIn(task);
+                        
                     } else {
+                        
                         if (recorder.isActive()) {
                             recorder.onTaskRemove(task, "Neglected");
                         }
+                        
                     }
                 }
             }
@@ -807,12 +813,12 @@ public class Memory implements Output, Serializable {
         if (newEvent != null) {
             if (lastEvent != null) {
                 setTheNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
-                if (getTheNewStamp() != null) {
+                //if (getTheNewStamp() != null) {
                     setCurrentTask(newEvent);
                     setCurrentBelief(lastEvent.sentence);
                     TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
 
-                }
+                //}
             }
             lastEvent = newEvent;
         }
@@ -849,7 +855,7 @@ public class Memory implements Output, Serializable {
     /**
      * Select a novel task to process.
      */
-    private void processNovelTask() {
+    public void processNovelTask() {
         final Task task = novelTasks.takeOut();       // select a task from novelTasks
         if (task != null) {
             immediateProcess(task);
@@ -859,7 +865,7 @@ public class Memory implements Output, Serializable {
     /**
      * Select a concept to fire.
      */
-    private void processConcept() {
+    public void processConcept() {
         //currentConcept = concepts.takeOut();
         currentConcept = concepts.processNext();
         if (currentConcept != null) {

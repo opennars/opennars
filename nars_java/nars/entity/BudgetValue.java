@@ -22,13 +22,8 @@ package nars.entity;
 
 import nars.core.Parameters;
 import nars.inference.BudgetFunctions;
-import nars.inference.UtilityFunctions;
-import static nars.inference.UtilityFunctions.and;
-import static nars.inference.UtilityFunctions.and;
 import static nars.inference.UtilityFunctions.and;
 import static nars.inference.UtilityFunctions.aveGeo;
-import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 
@@ -45,13 +40,15 @@ public class BudgetValue implements Cloneable {
     
     /** The relative share of time resource to be allocated */
     final public ShortFloat priority;
-	/**
-	 * The percent of priority to be kept in a constant period; All priority
-	 * values "decay" over time, though at different rates. Each item is given a
-	 * "durability" factor in (0, 1) to specify the percentage of priority level
-	 * left after each reevaluation
-	 */
+    
+    /**
+     * The percent of priority to be kept in a constant period; All priority
+     * values "decay" over time, though at different rates. Each item is given a
+     * "durability" factor in (0, 1) to specify the percentage of priority level
+     * left after each reevaluation
+     */
     final public ShortFloat durability;
+    
     /** The overall (context-independent) evaluation */
     final public ShortFloat quality;
 

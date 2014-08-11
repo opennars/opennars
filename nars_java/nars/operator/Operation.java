@@ -90,6 +90,12 @@ public class Operation extends Inheritance {
         return new Operation(name, opArg.toArray(new Term[opArg.size()]));
     }
 
+    @Override
+    protected String makeName() {
+        return makeName(getOperator().name(), getArguments());
+    }
+
+    
     public static String makeName(final String op, Term[] arg) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
                 .append(COMPOUND_TERM_OPENER.ch).append(op);

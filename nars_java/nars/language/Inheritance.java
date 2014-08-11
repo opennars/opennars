@@ -36,18 +36,18 @@ public class Inheritance extends Statement {
      * @param arg The component list of the term
      */
     protected Inheritance(String name, final Term[] arg) {
-        super(name, arg);
+        super(name, arg);       
     }
 
     /**
      * Constructor with full values, called by clone
      * @param n The name of the term
-     * @param cs Component list
+     * @param arg Component list
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    protected Inheritance(final String n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
-        super(n, cs, con, hasVar, i);
+    protected Inheritance(final String n, final Term[] arg, final boolean con, final boolean hasVar, final short i) {
+        super(n, arg, con, hasVar, i);
     }
 
     /**
@@ -87,7 +87,8 @@ public class Inheritance extends Statement {
         Term[] arguments = termArray( subject, predicate );
         
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            return new Operation(name, arguments);
+            //return new Operation(name, arguments);
+            return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, memory);
         } else {
             return new Inheritance(name, arguments);
         }

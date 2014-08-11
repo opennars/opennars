@@ -24,7 +24,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     /**
      * array of lists of items, for items on different level
      */
-    public final PrioritySortedItemList<E> items;
+    public final SortedItemList<E> items;
     
     /**
      * defined in different bags
@@ -65,7 +65,43 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
-        items = new PrioritySortedItemList<E>(capacity);
+        items = new SortedItemList<E>(null, capacity) {
+            
+            @Override
+            public int positionOf(final E o) {
+                final int y = o.budget.getPriorityShort();
+                final int s = size();
+                if (s > 0)  {
+
+                    //binary search
+                    int low = 0;
+                    int high = s-1;
+
+                    while (low <= high) {
+                        int mid = (low + high) >>> 1;
+
+                        E midVal = get(mid);
+
+                        final int x = midVal.budget.getPriorityShort();
+                        int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   
+
+                        if (cmp < 0)
+                            low = mid + 1;
+                        else if (cmp > 0)
+                            high = mid - 1;
+                        else {
+                            // key found, insert after it
+                            return mid;
+                        }
+                    }
+                    return low;
+                }
+                else {
+                    return 0;
+                }
+            }
+            
+        };
         this.forgettingRate = forgetRate;
         this.mass = 0;
     }
