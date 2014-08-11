@@ -45,4 +45,9 @@ public class FastConcatenationRope extends ConcatenationRope {
         return new CompoundIterator(left.iterator(), right.iterator());
     }
     
+     @Override
+    public Rope rebalance() {
+        //Disable autobalancing so hash value remains immutable
+        return this;
+    }
 }

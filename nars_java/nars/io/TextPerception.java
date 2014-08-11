@@ -198,7 +198,7 @@ public class TextPerception {
             //    sentence.setRevisible(false);
             //}
             BudgetValue budget = parseBudget(budgetString, punc, truth);
-            Task task = new Task(sentence, budget, tense);
+            Task task = new Task(sentence, budget);
             return task;
         }
         catch (InvalidInputException e) {

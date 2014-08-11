@@ -341,11 +341,22 @@ public class NAR implements Runnable, Output {
             debugTime();            
         }
         
+        int inputCycles = memory.param.cycleInputTasks.get();
+        int memCycles = memory.param.cycleMemory.get();
+        
         try {
-            if (memory.getCyclesQueued()==0)
-                cycleInput();
+            
+            if (memory.getCyclesQueued()==0) {
+                
+                for (int i = 0; i < inputCycles; i++)
+                    cycleInput();
+                
+            }
 
-            memory.cycle();
+            
+            for (int i = 0; i < memCycles; i++) {
+                memory.cycle();
+            }
         }
         catch (Throwable e) {
             output(ERR.class, e);

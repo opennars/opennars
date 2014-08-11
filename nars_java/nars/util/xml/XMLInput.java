@@ -103,7 +103,7 @@ public class XMLInput extends PrintWriterInput {
         
         //inherit from namespace        
         if ((ns!=null) && (ns.length() > 0)) {
-            out.println("<" + id + " --> " + ns + ">. %1.00;0.90%");
+            append("<" + id + " --> " + ns + ">. %1.00;0.90%" + '\n');
         }
         elementTypes.add(e);
         
@@ -123,11 +123,11 @@ public class XMLInput extends PrintWriterInput {
 
 
         //inherit from nodename
-        out.println("<" + id + " --> " + nodeName + ">.");
+        append("<" + id + " --> " + nodeName + ">.\n");
         
         String parent = nodes.get(n.getParentNode());
         if (parent!=null) {
-            out.println("<(*," + id + "," + parent + ") --> xmlParent>.");
+            append("<(*," + id + "," + parent + ") --> xmlParent>.\n");
         }        
         
         return id;
@@ -163,7 +163,7 @@ public class XMLInput extends PrintWriterInput {
             return null;
 
         String id = addNode(n);
-        out.println("<(*," + id + "," + value + ") --> value>.");
+        append("<(*," + id + "," + value + ") --> value>.\n");
         return id;
     }
     

@@ -228,8 +228,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         float y = getFocus(x);
         
-        
-        int result = (int)fastRound(y * (s-1));            
+        int result = (int)fastRound((1.0-y) * (s-1));            
         if (result == s) {
             throw new RuntimeException("Invalid removal index: " + x + " -> " + y);
         }        
@@ -246,9 +245,8 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         //1.0 - ((1.0-x)^2)
         // a function which has domain and range between 0..1.0 but
         //   will result in values above 0.5 more often than not.  see the curve:        
-        //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
-        float oneMinusX = 1.0f - x;
-        return 1.0f - (oneMinusX*oneMinusX);
+        //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-        
+        return (x*x*x);
     }
     
 

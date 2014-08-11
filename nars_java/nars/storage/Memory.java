@@ -559,7 +559,7 @@ public class Memory implements Output, Serializable {
                     return;
                 }
             }
-            final Stamp stamp = task.sentence.getStamp();
+            final Stamp stamp = task.sentence.stamp;
             if(occurence!=null && occurence.getOccurenceTime()!=Stamp.ETERNAL) {
                 stamp.setOccurrenceTime(occurence.getOccurenceTime());
             }
@@ -724,9 +724,9 @@ public class Memory implements Output, Serializable {
         }
         Sentence taskSentence = getCurrentTask().sentence;
         if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            setTheNewStamp(new Stamp(taskSentence.getStamp(), getTime()));
+            setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
         } else {    // to answer a question with negation in NAL-5 --- move to activated task?
-            setTheNewStamp(new Stamp(getCurrentBelief().getStamp(), getTime()));
+            setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
         
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
@@ -789,7 +789,7 @@ public class Memory implements Output, Serializable {
                 
                 // new addInput or existing concept
                 immediateProcess(task);
-                if (task.sentence.getStamp().getOccurrenceTime() != Stamp.ETERNAL) {
+                if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
                     if (task.sentence.isJudgment()) {
                         if ((newEvent == null)
                                 || (BudgetFunctions.rankBelief(newEvent.sentence)
@@ -820,7 +820,7 @@ public class Memory implements Output, Serializable {
         }
         if (newEvent != null) {
             if (lastEvent != null) {
-                 setTheNewStamp(Stamp.make(newEvent.sentence.getStamp(), lastEvent.sentence.getStamp(), getTime()));
+                 setTheNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
                 //if (getTheNewStamp() != null) {
                     setCurrentTask(newEvent);
                     setCurrentBelief(lastEvent.sentence);

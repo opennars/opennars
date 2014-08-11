@@ -39,7 +39,7 @@ public class TextInput extends Symbols implements Input {
     /**
      * Input experience from a file
      */
-    private BufferedReader input;
+    protected BufferedReader input;
     
     private boolean finished = false;
     
