@@ -306,8 +306,8 @@ public class NAR implements Runnable, Output {
                                 inputPerceived = true;
                                 break;
                             }
-                            else if (task instanceof Task) {                                                                                                      memory.inputTask((Task)task);
-
+                            else if (task instanceof Task) {                                       
+                                memory.inputTask((Task)task);
                                 remainingInputTasks--;
                                 inputPerceived = true;
                             }
