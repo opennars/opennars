@@ -1,24 +1,34 @@
 package nars.util;
 
+import java.util.Comparator;
 import javolution.util.FastTable;
-import nars.entity.Item;
 
 
-public class PrioritySortedItemList<E extends Item> extends FastTable<E>  {
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
+abstract public class SortedItemList<E> extends FastTable<E>  {
+    private Comparator<E> comparator = null;
+    int capacity = Integer.MAX_VALUE;
     
-    public PrioritySortedItemList() {
+
+    
+    public SortedItemList(Comparator<E> c) { 
+        this(c, Integer.MAX_VALUE);
+    }
+    public SortedItemList(Comparator<E> c, int capacity) { 
         super();
+        this.capacity = capacity;        
     }
     
-    public PrioritySortedItemList(int capacity) {
-        //super(capacity);
-        super();
-    }
+    
+    
+//    public PrioritySortedItemList(int capacity) {
+//        //super(capacity);
+//        super();
+//    }
     
     public int positionOf(final E o) {
-        final int y = o.budget.getPriorityShort();
+        final E y = o;
         final int s = size();
         if (s > 0)  {
 
@@ -31,8 +41,7 @@ public class PrioritySortedItemList<E extends Item> extends FastTable<E>  {
 
                 E midVal = get(mid);
 
-                final int x = midVal.budget.getPriorityShort();
-                int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   
+                int cmp = comparator.compare(midVal, y);
 
                 if (cmp < 0)
                     low = mid + 1;
@@ -49,6 +58,7 @@ public class PrioritySortedItemList<E extends Item> extends FastTable<E>  {
             return 0;
         }
     }
+    
 
     @Override
     public boolean add(final E o) {
@@ -56,40 +66,33 @@ public class PrioritySortedItemList<E extends Item> extends FastTable<E>  {
             return super.add(o);
         }
         else {
+            if (size() == capacity) {
+                
+                if (positionOf(o)==0) {
+                    //priority too low to join this list
+                    return false;
+                }
+                
+                reject(removeFirst()); //maybe should be last
+            }
             super.add(positionOf(o), o);
             return true;
         }
     }
-    
-    /*
-    public static class ItemEquality<E extends Item> implements Equality<E> {
 
-
-        @Override
-        public int hashCodeOf(E t) {
-            return t.hashCode();
-        }
-
-        @Override
-        public boolean areEqual(E a, E b) {
-            return a == b;
-        }
-
-        @Override
-        public int compare(final E x, final E y) {
-            System.out.println("position of" + x + " " + y);
-            
-            final short a = x.budget.getPriorityShort();
-            final short b = y.budget.getPriorityShort();
-            return (a < b) ? -1 : ((a == b) ? 0 : 1);
-        }
-        
+    public int capacity() {
+        return capacity;
     }
-    */
-    
 
     
-
+    public int available() {
+        return capacity() - size();
+    }
+    
+    
+    /** can be handled in subclasses */
+    protected void reject(E removeFirst) {
+    }    
     
 }
 /*

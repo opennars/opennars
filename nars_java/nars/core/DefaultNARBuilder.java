@@ -1,6 +1,7 @@
 package nars.core;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TaskLink;
@@ -39,6 +40,13 @@ public class DefaultNARBuilder extends NARBuilder {
     
         return p;
     }
+
+    @Override
+    public Memory.MemoryCycle newMemoryCycle(Param p) {
+        return new SequentialMemoryCycle();
+    }
+    
+    
 
     @Override
     public Concept newConcept(final Term t, final Memory m) {
