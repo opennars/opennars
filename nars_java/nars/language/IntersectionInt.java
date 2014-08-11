@@ -119,7 +119,7 @@ public class IntersectionInt extends CompoundTerm {
             return set.first();
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
-        String name = makeCompoundName(NativeOperator.INTERSECTION_INT, argument);
+        CharSequence name = makeCompoundName(NativeOperator.INTERSECTION_INT, argument);
         Term t = memory.conceptTerm(name);
         return (t != null) ? t : new IntersectionInt(name, argument);
     }

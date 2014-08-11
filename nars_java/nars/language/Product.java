@@ -70,7 +70,7 @@ public class Product extends CompoundTerm {
      * @param memory Reference to the memory
      */
     public static Term make(Term[] argument, final Memory memory) {
-        final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
+        final CharSequence name = makeCompoundName(NativeOperator.PRODUCT, argument);
         final Term t = memory.conceptTerm(name);
         return (t != null) ? t : new Product(name, argument);
     }

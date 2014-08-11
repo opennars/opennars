@@ -90,11 +90,11 @@ public class TextsTest {
         //so do not mix String and FastCharSequenceRope in the same collection
 
         String s = "x";
-        Rope r = Rope.buildFast("x");        
+        Rope r = (Rope)Rope.rope("x");        
         assertTrue(!s.equals(r));        
         assertTrue(!r.equals(s));
         
-        Rope rF = Rope.buildFast("x");
+        Rope rF = (Rope)Rope.rope("x");
         assertTrue(!s.equals(rF));
         assertTrue(!rF.equals(s));
         

@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import javolution.text.TextBuilder;
 import nars.entity.TermLink;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -37,7 +38,8 @@ import nars.storage.Memory;
 
 
 public abstract class CompoundTerm extends Term {
-    @Deprecated private static final boolean allowNonDeepCopy = true; //temporary, disables eliminating deep copy
+    
+    @Deprecated private static final boolean preventUnnecessaryDeepCopy = true; //temporary, disables eliminating deep copy
     //one reason why deepcopy is necessary is to eliminate cyclic clones 
     
 
@@ -317,7 +319,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @return the oldName of the term
      */
-    protected String makeName() {
+    protected CharSequence makeName() {
         return makeCompoundName(operator(), term);
     }
 
@@ -328,81 +330,23 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final NativeOperator op, final Term[] arg) {
+    protected static CharSequence makeCompoundName(final NativeOperator op, final Term[] arg) {
         final int sizeEstimate = 12 * arg.length;
         
-        final StringBuilder nameBuilder = new StringBuilder(sizeEstimate)
+        final TextBuilder n = new TextBuilder(sizeEstimate)
             .append(COMPOUND_TERM_OPENER.ch).append(op.toString());
             
         for (final Term t : arg) {
-            nameBuilder.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
+            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
         }
         
-        nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
+        n.append(COMPOUND_TERM_CLOSER.ch);
                 
-        return nameBuilder.toString();
+        return n; //.toString();
     }
+    
 
-    /**
-     * make the oldName of an ExtensionSet or IntensionSet
-     *
-     * @param opener the set opener
-     * @param closer the set closer
-     * @param arg the list of term
-     * @return the oldName of the term
-     */
-    protected static String makeSetName(final char opener, final Term[] arg, final char closer) {
-        final int sizeEstimate = 12 * arg.length + 2;
-        
-        StringBuilder name = new StringBuilder(sizeEstimate)
-            .append(opener);
-
-        if (arg.length == 0) { 
-            //is empty arg valid?            
-            //throw new RuntimeException("Empty arg list for makeSetName");            
-        }
-        else {
-        
-            name.append(arg[0].name());
-
-            for (int i = 1; i < arg.length; i++) {
-                name.append(Symbols.ARGUMENT_SEPARATOR);
-                name.append(arg[i].name());
-            }
-        }
-        
-        name.append(closer);
-        return name.toString();
-    }
-
-    /**
-     * default method to make the oldName of an image term from given fields
-     *
-     * @param op the term operator
-     * @param arg the list of term
-     * @param relationIndex the location of the place holder
-     * @return the oldName of the term
-     */
-    protected static String makeImageName(final NativeOperator op, final Term[] arg, final int relationIndex) {
-        final int sizeEstimate = 12 * arg.length + 2;
-        
-        StringBuilder name = new StringBuilder(sizeEstimate)
-            .append(COMPOUND_TERM_OPENER.ch)
-            .append(op)
-            .append(Symbols.ARGUMENT_SEPARATOR)
-            .append(arg[relationIndex].name());
-        
-        for (int i = 0; i < arg.length; i++) {
-            name.append(Symbols.ARGUMENT_SEPARATOR);
-            if (i == relationIndex) {
-                name.append(Symbols.IMAGE_PLACE_HOLDER);
-            } else {
-                name.append(arg[i].name());
-            }
-        }
-        name.append(COMPOUND_TERM_CLOSER.ch);
-        return name.toString();
-    }
+ 
 
     /* ----- utilities for other fields ----- */
     /**
@@ -451,7 +395,7 @@ public abstract class CompoundTerm extends Term {
 
     /** Gives a set of all contained term, recursively */
     public Set<Term> getContainedTerms() {
-        Set<Term> s = new HashSet();
+        Set<Term> s = new HashSet(getComplexity());
         for (Term t : term) {
             s.add(t);
             if (t instanceof CompoundTerm)
@@ -522,7 +466,7 @@ public abstract class CompoundTerm extends Term {
             
             //experiental optimization
             //if (allowNonDeepCopy && t.isConstant() && !t.containVar())
-            if (allowNonDeepCopy && t.getClass() == Term.class)
+            if (preventUnnecessaryDeepCopy && t.getClass() == Term.class)
                 arr[i] = t;
             else
                 arr[i] = ( deep ? t.clone() : t );
@@ -534,7 +478,7 @@ public abstract class CompoundTerm extends Term {
             final Term t = additional[j];                    
             
             //experiental optimization
-            if (allowNonDeepCopy && t.getClass() == Term.class)
+            if (preventUnnecessaryDeepCopy && t.getClass() == Term.class)
                 arr[i+j] = t;
             else            
                 arr[i+j] = ( deep ? t.clone() : t );
@@ -553,7 +497,7 @@ public abstract class CompoundTerm extends Term {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
              //experiental optimization
-            if (allowNonDeepCopy && t.getClass() == Term.class)
+            if (preventUnnecessaryDeepCopy && t.getClass() == Term.class)
                 l.add(t);
             else
                 l.add( deep ? t.clone() : t );  
@@ -572,23 +516,9 @@ public abstract class CompoundTerm extends Term {
     }
 
     
-    //TODO move this to a utility method
-    public static <T> boolean contains(final T[] array, final T v) {
-        /*if (v == null) {
-            for (final T e : array)
-                if (e == null)
-                    return true;
-        } else {*/
-        
-        for (final T e : array)
-            if (v.equals(e))
-                return true;
-
-        return false;
-    }
 
     
-    static void shuffle(Term[] list, Random randomNumber) {
+    static void shuffle(final Term[] list, final Random randomNumber) {
         if (list.length < 2)  {
             return;
         }
@@ -603,33 +533,6 @@ public abstract class CompoundTerm extends Term {
         }
     }
     
-    //TODO move this to a utility method
-    public static <T> int indexOf(final T[] array, final T v) {
-        /*if (v == null) {
-            for (final T e : array)
-                if (e == null)
-                    return true;
-        } else {*/
-        
-        int i = 0;
-        for (final T e : array) {
-            if (v.equals(e)) {
-                return i;
-            }
-            i++;
-        }
-
-        return -1;
-    }
-    
-    //TODO move this to a utility method
-    public static <T> boolean containsAll(final T[] array, final T v) {
-        for (final T e : array)
-            if (!v.equals(e))
-                return false;
-
-        return true;
-    }
     
 
     /**
@@ -640,7 +543,7 @@ public abstract class CompoundTerm extends Term {
      */
     @Override
     public boolean containsTerm(final Term t) {        
-        return contains(term, t);
+        return Terms.contains(term, t);
     }
 
     /**
@@ -668,9 +571,9 @@ public abstract class CompoundTerm extends Term {
      */
     public boolean containsAllTermsOf(final Term t) {
         if (getClass() == t.getClass()) { //(t instanceof CompoundTerm) {
-            return containsAll(term, ((CompoundTerm) t).term );
+            return Terms.containsAll(term, ((CompoundTerm) t).term );
         } else {
-            return contains(term, t);
+            return Terms.contains(term, t);
         }
     }
 
@@ -707,11 +610,11 @@ public abstract class CompoundTerm extends Term {
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term setComponent(final CompoundTerm compound, final int index, final Term t, final Memory memory) {
-        List<Term> list = compound.cloneTermsListDeep();
+    public Term setComponent(final int index, final Term t, final Memory memory) {
+        List<Term> list = cloneTermsListDeep();
         list.remove(index);
         if (t != null) {
-            if (compound.getClass() != t.getClass()) {
+            if (getClass() != t.getClass()) {
                 list.add(index, t);
             } else {
                 final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
@@ -720,7 +623,7 @@ public abstract class CompoundTerm extends Term {
                 }
             }
         }
-        return memory.term(compound, list);
+        return memory.term(this, list);
     }
 
     /* ----- variable-related utilities ----- */

@@ -47,7 +47,7 @@ public class FlatCharSequenceRope extends AbstractRope implements FlatRope {
 
 	@Override
 	public char charAt(final int index) {
-		return this.sequence.charAt(index);
+		return sequence.charAt(index);
 	}
 
 
