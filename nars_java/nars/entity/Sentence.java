@@ -341,7 +341,6 @@ public class Sentence implements Cloneable {
         
         final TextBuilder buffer = new TextBuilder(stringLength)
                 .append(contentName)
-                .append(contentName)
                 .append(punctuation);
         
         if (tenseString.length() > 0)

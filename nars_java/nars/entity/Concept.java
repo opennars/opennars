@@ -446,8 +446,7 @@ public final class Concept extends Item {
     @Override
     public String toString() {  // called from concept bag
         //return (super.toStringBrief() + " " + key);
-        throw new RuntimeException("Avoid using Concept.toString() , use .key()");
-        //return super.toStringBrief();
+        return super.toStringBrief();
     }
 
     /**

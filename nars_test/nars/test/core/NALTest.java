@@ -15,6 +15,8 @@ import java.util.Map;
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
+import nars.gui.InferenceLogger;
+import nars.gui.InferenceLogger.LogOutput;
 import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -42,6 +44,8 @@ public class NALTest  {
     boolean saveSimilar = true;
     boolean showSuccess = false;
     boolean showDebug = false;
+    boolean showTrace = false;
+    
     
     final int similarityThreshold = 4;
     
@@ -218,6 +222,19 @@ public class NALTest  {
         
         if (showOutput)
             new TextOutput(n, System.out);
+        if (showTrace) {
+            InferenceLogger logger = new InferenceLogger();
+            logger.addOutput(new LogOutput() {
+
+                @Override
+                public void logAppend(String s) {
+                    System.out.println("    " + s);
+                }
+                
+            });
+            n.memory.setRecorder(logger);
+        }
+        
         
         n.addInput(new TextInput(example));
         n.step(1);
