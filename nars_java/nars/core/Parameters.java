@@ -75,7 +75,7 @@ public class Parameters {
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = (float) 0.9;
     /** Default priority of input judgment */
-    public static final float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
+    public static float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
     /** Default durability of input judgment */
     public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
@@ -140,7 +140,11 @@ public class Parameters {
     
     /**
      * Determines when TermLink and TaskLink should use Rope implementation for its Key,
-     * rather than String/StringBuilder.  Set to zero to disable the Rope entirely.
+     * rather than String/StringBuilder.  
+     * 
+     * Set to -1 to disable the Rope entirely, 0 to use always, or a larger number as a threshold
+     * below which uses contiguous char[] implementation, and above which uses 
+     * FastConcatenationRope.
      * 
      * While a Rope is potentially more memory efficient (because it can re-use String instances
      * in its components without a redundant copy being stored) it can be more 
@@ -150,6 +154,6 @@ public class Parameters {
      * 
      * Optimal value to be determined.
      */
-    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 0;
+    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 64;
 }
 

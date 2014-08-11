@@ -30,14 +30,14 @@ import nars.storage.Memory;
 /**
  * An extensionally defined set, which contains one or more instances.
  */
-public class SetExt extends CompoundTerm {
+public class SetExt extends SetTensional {
 
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetExt(final String name, final Term[] arg) {
+    private SetExt(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
 
@@ -48,14 +48,10 @@ public class SetExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetExt(final String n, final Term[] cs, final boolean con, final short i) {
+    private SetExt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
-    @Override
-    public int getMinimumRequiredComponents() {
-        return 1;
-    }    
     
     /**
      * Clone a SetExt
@@ -63,7 +59,7 @@ public class SetExt extends CompoundTerm {
      */
     @Override
     public SetExt clone() {
-        return new SetExt(name(), cloneTerms(), isConstant(), complexity);
+        return new SetExt(name(), cloneTerms(), isConstant(), getComplexity());
     }
 
     /**
@@ -104,7 +100,7 @@ public class SetExt extends CompoundTerm {
     }
 
     private static Term make(final Term[] termSet, final Memory memory) {
-        final String name = makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch);
+        final CharSequence name = makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch);
         final Term t = memory.conceptTerm(name);
         return (t != null) ? t : new SetExt(name, termSet);
     }
@@ -118,21 +114,13 @@ public class SetExt extends CompoundTerm {
         return NativeOperator.SET_EXT_OPENER;
     }
 
-    /**
-     * Check if the compound is communitative.
-     * @return true for communitative
-     */
-    @Override
-    public boolean isCommutative() {
-        return true;
-    }
 
     /**
      * Make a String representation of the set, override the default.
      * @return true for communitative
      */
     @Override
-    public String makeName() {
+    public CharSequence makeName() {
         return makeSetName(SET_EXT_OPENER.ch, term, SET_EXT_CLOSER.ch);
     }
 }

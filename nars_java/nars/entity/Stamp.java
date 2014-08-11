@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import javolution.text.TextBuilder;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.language.Tense;
@@ -423,11 +424,10 @@ public class Stamp implements Cloneable {
     }
 
 
-    @Override
-    public String toString() {
+    public CharSequence name() {
         final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
-        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        final TextBuilder buffer = new TextBuilder(estimatedInitialSize);
         buffer.append(Symbols.STAMP_OPENER).append(creationTime);
         if (occurrenceTime != ETERNAL) {
             buffer.append('|').append(occurrenceTime);
@@ -455,7 +455,13 @@ public class Stamp implements Cloneable {
 
         //this is for estimating an initial size of the stringbuffer
         //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
-        return buffer.toString();
+        return buffer;
+    }
+
+    @Override
+    public String toString() {
+        
+        return name().toString();
     }
 
 

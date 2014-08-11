@@ -12,18 +12,19 @@ import nars.util.ContinuousBagNARBuilder;
  * Runs NALTestPerf continuously, for profiling
  */
 public class NALPerfCompare {
-    static int repeats = 20;
-    static int warmups = 10;
+    static int repeats = 10;
+    static int warmups = 2;
     static int extraCycles = 4024;
         
     public static void compareRope(String examplePath) {
-        for (int r = 0; r < 32; r+=4) {
+        
+        for (int r = 0; r < 96; r+=12) {
             Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = r;            
             System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD " + r + ":\t");
             perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
         }
         
-        Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 0;
+        Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = -1;
         System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD NO:\t");
         perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
         

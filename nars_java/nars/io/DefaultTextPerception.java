@@ -1,8 +1,6 @@
 package nars.io;
 
-import nars.core.NAR;
 import nars.entity.Task;
-import nars.io.Output.IN;
 import nars.storage.Memory;
 
 /**
@@ -10,16 +8,16 @@ import nars.storage.Memory;
  */
 public class DefaultTextPerception extends TextPerception {
     
-    public DefaultTextPerception(NAR nar) {
+    public DefaultTextPerception(Memory memory) {
     
-        super(nar);
+        super(memory);
         
         //integer, # of cycles to step
         parsers.add(new TextReaction() {
             final String spref = Symbols.INPUT_LINE_PREFIX + ':';
             
             @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {
+            public Object react(String input) {
                 try {
                     input = input.trim();
                     
@@ -27,88 +25,78 @@ public class DefaultTextPerception extends TextPerception {
                     if (input.startsWith(spref)) {
                         input = input.substring(spref.length());
                     }
-                    input = input.trim();
                     
                     int cycles = Integer.parseInt(input);
-                    m.output(IN.class, cycles);
-                    
-                    //TODO queue the cycles, invoke call from here
-                    m.stepLater(cycles);
-                    return true;
+                    return new PauseInput(cycles);                    
                 }
                 catch (NumberFormatException e) {
-                    return false;
-                }                
+                }
+                return null;
             }
         });
         
         //reset
         parsers.add(new TextReaction() {
             @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {                
+            public Object react(String input) {                
                 if (input.equals(Symbols.RESET_COMMAND)) {
-                    nar.reset();
-                    m.output(Output.IN.class, input);
-                    return true;
+                    memory.reset();
+                    memory.output(Output.IN.class, input);
+                    return Boolean.TRUE;                    
                 }
-                return false;
+                return null;
             }
         });
         
         //stop
         parsers.add(new TextReaction() {
             @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {
-                if (!m.isWorking())  {
+            public Object react(String input) {
+                if (!memory.isWorking())  {
                     if (input.equals(Symbols.STOP_COMMAND)) {
-                        m.output(Output.IN.class, input);
-                        m.setWorking(false);
-                        return true;
+                        memory.output(Output.IN.class, input);
+                        memory.setWorking(false);
+                        return Boolean.TRUE;                        
                     }
                 }
-                return false;                
+                return null;                
             }
         });    
         
         //start
         parsers.add(new TextReaction() {
-            @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {                
-                if (m.isWorking()) {
+            @Override public Object react(String input) {                
+                if (memory.isWorking()) {
                     if (input.equals(Symbols.START_COMMAND)) {
-                        m.setWorking(true);
-                        m.output(Output.IN.class, input);
-                        return true;
+                        memory.setWorking(true);
+                        memory.output(Output.IN.class, input);
+                        return Boolean.TRUE;                        
                     }
                 }
-                return false;                
+                return null;                
             }
         });
         
         //silence
         parsers.add(new TextReaction() {
-            @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {                
-
+            @Override public Object react(String input) {                
                 if (input.indexOf(Symbols.SET_NOISE_LEVEL_COMMAND)==0) {
                     String[] p = input.split("=");
                     if (p.length == 2) {
                         int noiseLevel = Integer.parseInt(p[1]);
-                        m.param.noiseLevel.set(noiseLevel);                        
-                        m.output(Output.IN.class, input);
+                        memory.param.noiseLevel.set(noiseLevel);                        
+                        memory.output(Output.IN.class, input);
+                        return Boolean.TRUE;                        
                     }
-                    
-                    return true;
                 }
-
-                return false;                
+                return null;                
             }
         });
         
 //        //URL include
 //        parsers.add(new TextReaction() {
 //            @Override
-//            public boolean react(Memory m, String input, TextReaction lastHandler) {
+//            public Object react(Memory m, String input) {
 //                char c = input.charAt(0);
 //                if (c == Symbols.URL_INCLUDE_MARK) {            
 //                    try {
@@ -126,52 +114,46 @@ public class DefaultTextPerception extends TextPerception {
         //TODO standardize on an echo/comment format
         parsers.add(new TextReaction() {
             @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {
+            public Object react(String input) {
                 char c = input.charAt(0);
                 if (c == Symbols.ECHO_MARK) {            
                     String echoString = input.substring(1);
-                    nar.output(Output.ECHO.class, '\"' + echoString + '\"');
-                    return true;
+                    memory.output(Output.ECHO.class, '\"' + echoString + '\"');
+                    return Boolean.TRUE;
                 }
                 final String it = input.trim();
-                if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("****") ) {
-                    nar.output(Output.ECHO.class, input);
-                    return true;
+                if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("***") ) {
+                    memory.output(Output.ECHO.class, input);
+                    return Boolean.TRUE;
                 }
-                return false;                
+                return null;                
             }
         });
         
         //narsese
         parsers.add(new TextReaction() {
             @Override
-            public boolean react(Memory m, String input, TextReaction lastHandler) {
-                if (lastHandler != null)
-                    return false;
+            public Object react(String input) {
+
 
                 char c = input.charAt(0);
                 if (c != Symbols.COMMENT_MARK) {
                     try {
                         Task task = parseNarsese(new StringBuilder(input));
                         if (task != null) {
-                            nar.output(Output.IN.class, task.sentence);    // report addInput
-                            nar.memory.inputTask(task);
-                            return true;
+                            return task;
                         }
                     } catch (InvalidInputException ex) {
                         /*System.err.println(ex.toString());
                         ex.printStackTrace();*/
-                        return false;
                     }
                 }
-                return false;                
+                return null;
             }
         });             
 
                    
     }
 
-
-    
     
 }

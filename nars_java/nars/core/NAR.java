@@ -1,16 +1,19 @@
 package nars.core;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import nars.entity.Sentence;
+import nars.entity.AbstractTask;
+import nars.entity.Task;
 import nars.gui.NARControls;
-import nars.io.DefaultTextPerception;
+import nars.io.InPort;
 import nars.io.Input;
 import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextPerception;
+import nars.io.buffer.FIFO;
+import nars.io.PauseInput;
 import nars.language.Term;
 import nars.storage.Memory;
 
@@ -46,11 +49,8 @@ public class NAR implements Runnable, Output {
     
     
     /** The addInput channels of the reasoner     */
-    protected final List<Input> inputChannels;
+    protected final List<InPort> inputChannels;
     
-    /** Stores a list of input channels to be removed. */
-    private final List<Input> deadInputs = new ArrayList();
-
     /** The output channels of the reasoner     */
     protected List<Output> outputChannels;
     
@@ -81,21 +81,22 @@ public class NAR implements Runnable, Output {
     
     
 
-    private final TextPerception textPerception;
+    private final Perception perception;
     
     
     private boolean inputting = true;
     private boolean threadYield;
+    
+    private int inputSelected = 0; //counter for the current selected input channel
 
-    protected NAR(Memory m) {
+    protected NAR(Memory m, Perception p) {
         this.memory = m;
+        this.perception = p;
         
-        m.setOutput(this);
-        
-        textPerception = new DefaultTextPerception(this);
+        m.setOutput(this);                
         
         //needs to be concurrent in case NARS makes changes to the channels while running
-        inputChannels = new CopyOnWriteArrayList<Input>();
+        inputChannels = new CopyOnWriteArrayList<InPort>();
         outputChannels = new CopyOnWriteArrayList<Output>();
     }
 
@@ -105,17 +106,13 @@ public class NAR implements Runnable, Output {
      */     
     public void reset() {
             
-        for (Input i : inputChannels) {
-            i.finished(true);
+        for (InPort port : inputChannels) {
+            port.input.finished(true);
         }
         inputChannels.clear();               
         
         memory.reset();
         
-        if (memory.getRecorder().isActive()) {
-            memory.getRecorder().append("Memory Reset");
-        }
-                        
     }
 
     /** Convenience method for creating a TextInput and adding as Input Channel */
@@ -127,16 +124,24 @@ public class NAR implements Runnable, Output {
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
     public Input addInput(Input channel) {
-        inputChannels.add(channel);        
+        InPort i = new InPort(perception, channel, new FIFO(), 1.0f);
+               
+        try {
+            i.update();
+            inputChannels.add(i);
+        } catch (IOException ex) {                    
+            output(ERR.class, ex);
+        }
+        
         return channel;
     }
 
-    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
-    public Input removeInput(Input channel) {
-        inputChannels.remove(channel);
-        channel.finished(true);
-        return channel;
-    }
+//    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
+//    public Input removeInput(Input channel) {
+//        inputChannels.remove(channel);
+//        channel.finished(true);
+//        return channel;
+//    }
 
     /** Adds an output channel */
     public Output addOutput(Output channel) {
@@ -266,30 +271,60 @@ public class NAR implements Runnable, Output {
         
         if ((inputting) && (!inputChannels.isEmpty())) {
             
-            for (int j = 0; j < inputChannels.size(); j++) {                
-                final Input i = inputChannels.get(j);
-                
-                if (i.finished(false)) {
-                    deadInputs.add(i);
+            int remainingInputTasks = memory.param.cycleInputTasks.get();
+            int remainingChannels = inputChannels.size(); //remaining # of channels to poll
+                        
+            while ((remainingChannels > 0) && (remainingInputTasks >0) && (inputChannels.size() > 0)) {
+                inputSelected %= inputChannels.size();
+                 
+                final InPort i = inputChannels.get(inputSelected);
+                if (i.finished()) {
+                    inputChannels.remove(i);
+                    continue;
                 }
-                else {
+                
+                try {
+                    i.update();
+                } catch (IOException ex) {                    
+                    output(ERR.class, ex);
+                }                
+                
+                if (i.hasNext()) {
                     try {
-                        Object o = i.next();
-                        if (o!=null) {
-                            perceive(i, o);
-                            inputPerceived = true;                        
+                        Object input = i.next();
+                            
+                        AbstractTask task = perception.perceive(input);
+
+                        if (task!=null) {
+
+                            //TODO move this to Memory
+                            if (task instanceof PauseInput) {
+                                int c = ((PauseInput)task).cycles;
+                                memory.output(IN.class, c);
+                                memory.stepLater(Math.max(0,c));        
+                                remainingInputTasks--;
+                                inputPerceived = true;
+                                break;
+                            }
+                            else if (task instanceof Task) {                                       
+                                memory.inputTask((Task)task);
+                                remainingInputTasks--;
+                                inputPerceived = true;
+                            }
                         }
                     }
-                    catch (Exception e) {
+                    catch (IOException e) {
                         output(ERR.class, e);
-                        i.finished(true);
-                        deadInputs.add(i);                        
                     }
+                    
                 }
-            }            
+                
+                
+                inputSelected++;
+                
+                remainingChannels--;
+            }
             
-            inputChannels.removeAll(deadInputs);
-            deadInputs.clear();
                     
         }    
         return inputPerceived;
@@ -297,20 +332,6 @@ public class NAR implements Runnable, Output {
     
 
 
-    /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    protected void perceive(final Input i, final Object o) {
-        if (o instanceof String) {
-            textPerception.perceive(i, (String)o);
-        }
-        else if (o instanceof Sentence) {
-            //TEMPORARY
-            Sentence s = (Sentence)o;
-            textPerception.perceive(i, s.content.toString() + s.punctuation + " " + s.truth.toString());
-        }
-        else {
-            output(ERR.class, "Unrecognized input (" + o.getClass() + "): " + o);
-        }
-    }
     
 
     /**
@@ -321,13 +342,24 @@ public class NAR implements Runnable, Output {
             debugTime();            
         }
         
+        int inputCycles = memory.param.cycleInputTasks.get();
+        int memCycles = memory.param.cycleMemory.get();
+        
         try {
-            if (memory.getCyclesQueued()==0)
-                cycleInput();
+            
+            if (memory.getCyclesQueued()==0) {
+                
+                for (int i = 0; i < inputCycles; i++)
+                    cycleInput();
+                
+            }
 
-            memory.cycle();
+            
+            for (int i = 0; i < memCycles; i++) {
+                memory.cycle();
+            }
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             output(ERR.class, e);
 
             System.err.println(e);
@@ -392,7 +424,7 @@ public class NAR implements Runnable, Output {
     /** parses and returns a Term from a string; or null if parsing error */
     public Term term(final String s) {        
         try {
-            return textPerception.parseTerm(s);
+            return perception.text.parseTerm(s);
         } catch (TextPerception.InvalidInputException ex) {
             output(ERR.class, ex);
         }

@@ -35,7 +35,7 @@ public class IntersectionExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private IntersectionExt(final String name, Term[] arg) {
+    private IntersectionExt(final CharSequence name, Term[] arg) {
         super(name, arg);
     }
 
@@ -46,7 +46,7 @@ public class IntersectionExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private IntersectionExt(String n, Term[] cs, boolean con, short i) {
+    private IntersectionExt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
@@ -119,7 +119,7 @@ public class IntersectionExt extends CompoundTerm {
             return set.first();
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
-        String name = makeCompoundName(NativeOperator.INTERSECTION_EXT, argument);
+        CharSequence name = makeCompoundName(NativeOperator.INTERSECTION_EXT, argument);
         Term t = memory.conceptTerm(name);
         return (t != null) ? t : new IntersectionExt(name, argument);
     }

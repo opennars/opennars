@@ -32,8 +32,16 @@ public class Interval extends Term {
 
     // time is a positive integer
     public Interval(final long time) {
-        magnitude = (int) Math.log(time);
-        setName(Symbols.INTERVAL_PREFIX + String.valueOf(magnitude));
+        this((int) Math.log(time), true);
+    }
+    
+    /** this constructor has an extra unused argument to differentiate it from the other one,
+     * for specifying magnitude directly.
+     */
+    protected Interval(final int magnitude, boolean yesMagnitude) {
+        super();
+        this.magnitude = magnitude;
+        setName(Symbols.INTERVAL_PREFIX + String.valueOf(magnitude));        
     }
     
     public Interval(final String s) {
@@ -47,6 +55,6 @@ public class Interval extends Term {
     
     @Override
     public Interval clone() {
-        return new Interval(name());
+        return new Interval(magnitude, true);
     }
 }

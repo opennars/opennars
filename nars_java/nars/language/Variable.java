@@ -59,6 +59,7 @@ public class Variable extends Term {
     public char getType() {
         return name().charAt(0);
     }
+    
 
     /**
      * A variable is not constant
@@ -120,6 +121,6 @@ public class Variable extends Term {
      */
     @Override
     public final int compareTo(final Term that) {
-        return (that instanceof Variable) ? name().compareTo(that.name()) : -1;
+        return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
     }
 }

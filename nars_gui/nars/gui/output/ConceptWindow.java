@@ -68,7 +68,7 @@ public class ConceptWindow extends Window implements ActionListener, EntityObser
      * @param concept The concept to be displayed
      */
     public ConceptWindow(Concept concept) {
-        super(concept.getKey());
+        super(concept.getKey().toString());
         this.concept = concept;
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();

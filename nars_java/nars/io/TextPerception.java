@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nars.core.NAR;
 import nars.core.Parameters;
+import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -59,10 +59,9 @@ public class TextPerception {
     public final Memory memory;
         
     //an index of known, but non-conceptualized Terms
-    final Map<String,Term> unconceptualized = new HashMap();
+    final Map<CharSequence,Term> unconceptualized = new HashMap();
     
     public final List<TextReaction> parsers;
-    private final NAR nar;
     
     
     /**
@@ -80,43 +79,32 @@ public class TextPerception {
         }
     }    
     
-    public TextPerception(NAR nar) {
-        this(nar, new ArrayList());
+    public TextPerception(Memory memory) {
+        this(memory, new ArrayList());
     }
 
-    public TextPerception(NAR nar, List<TextReaction> parsers) {
-        this.nar = nar;
-        this.memory = nar.memory;
+    public TextPerception(Memory memory, List<TextReaction> parsers) {
+        this.memory = memory;
         this.parsers = parsers;        
     }
     
-    public void perceive(final Input i, final String lines) {
-        perceive(i, lines.split("\n"));        
-    }
-        
-    protected void perceive(final Input i, final String[] lines) {
-        
-        for (String line : lines) {
-            line = line.trim();
-            if (line.isEmpty()) continue;
+    public AbstractTask perceive(String line) {
 
-            TextReaction lastHandled = null;
-            for (TextReaction p : parsers) {            
-
-                boolean result = p.react(memory, line, lastHandled);
-
-                //System.out.println(line + " parser " + p + " " + result);
-
-                if (result)
-                    lastHandled = p;
-            }        
-
-            //not handled, so respond with some signal
-            if (lastHandled == null) {
-                memory.output(Output.ERR.class, "Invalid input (" + i + "): " + line);
+        for (TextReaction p : parsers) {            
+            
+            Object result = p.react(line);
+            if (result!=null) {
+                if (result instanceof AbstractTask) {
+                    return (AbstractTask)result;
+                }
+                else if (result.equals(Boolean.TRUE))
+                    return null;
             }
-        }
-        
+        }        
+
+        //not handled, so respond with some signal
+        memory.output(Output.ERR.class, "Invalid input: " + line);
+        return null;
     }
         
     
@@ -133,7 +121,7 @@ public class TextPerception {
      * @return An experienced task
      */
     public Task parseNarsese(StringBuilder buffer) throws InvalidInputException {
-        long time = memory.getTime();
+        
         int i = buffer.indexOf(valueOf(PREFIX_MARK));
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
@@ -154,7 +142,7 @@ public class TextPerception {
             int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
             buffer.delete(j - 1, buffer.length());
         }
-        return parseTask(buffer.toString().trim(), time);
+        return parseTask(buffer.toString().trim());
     }
 
 
@@ -192,7 +180,7 @@ public class TextPerception {
      * @param time The current time
      * @return An experienced task
      */    
-    public Task parseTask(String s, long time) throws InvalidInputException {
+    public Task parseTask(String s) throws InvalidInputException {
         StringBuilder buffer = new StringBuilder(Texts.escape(s));
         try {
             
@@ -202,7 +190,7 @@ public class TextPerception {
             String str = buffer.toString().trim();
             int last = str.length() - 1;
             char punc = str.charAt(last);
-            Stamp stamp = new Stamp(time, tense, memory.newStampSerial());
+            Stamp stamp = new Stamp(memory.getTime(), tense, memory.newStampSerial());
             TruthValue truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last));
             if (content == null) throw new InvalidInputException("Content term missing");
