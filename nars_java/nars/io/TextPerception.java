@@ -189,7 +189,7 @@ public class TextPerception {
             String str = buffer.toString().trim();
             int last = str.length() - 1;
             char punc = str.charAt(last);
-            Stamp stamp = null; //stamp will be applied if and when it gets input into memory, not when this is created
+            Stamp stamp = new Stamp(memory.getTime(), tense, memory.newStampSerial());
             TruthValue truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last));
             if (content == null) throw new InvalidInputException("Content term missing");
