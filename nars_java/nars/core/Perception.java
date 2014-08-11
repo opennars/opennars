@@ -1,8 +1,8 @@
 package nars.core;
 
 import java.io.IOException;
+import nars.entity.AbstractTask;
 import nars.entity.Sentence;
-import nars.entity.Task;
 import nars.io.TextPerception;
 
 
@@ -15,8 +15,8 @@ public class Perception {
     }
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    public Task perceive(final Object o) throws IOException {        
-        Task t = null;
+    public AbstractTask perceive(final Object o) throws IOException {        
+        AbstractTask t = null;
         if (o instanceof String) {
             t = text.perceive((String) o);
         } else if (o instanceof Sentence) {

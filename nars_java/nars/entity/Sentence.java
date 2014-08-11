@@ -103,7 +103,7 @@ public class Sentence implements Cloneable {
             return content.equals(t.content) && 
                     punctuation == t.punctuation &&
                     truth.equals(t.truth) &&
-                    stamp.equals(stamp);
+                    stamp.equals(t.stamp);
         }
         return false;
     }
@@ -117,9 +117,9 @@ public class Sentence implements Cloneable {
     public int hashCode() {
         int hash = 5;
         hash = 67 * hash + (this.content != null ? this.content.hashCode() : 0);
-        hash = 67 * hash + this.punctuation;
+        hash = 67 * hash + (this.punctuation);
         hash = 67 * hash + (this.truth != null ? this.truth.hashCode() : 0);
-        hash = 67 * hash + (stamp != null ? stamp.hashCode() : 0);
+        hash = 67 * hash + (this.stamp != null ? this.stamp.hashCode() : 0);
         return hash;
     }
 
@@ -132,8 +132,8 @@ public class Sentence implements Cloneable {
      * @return Whether the two are equivalent
      */
     public boolean equivalentTo(final Sentence that) {
-        assert content.equals(content) && punctuation == that.punctuation;
-        return (truth.equals(that.truth) && stamp.equals(stamp));
+        //assert content.equals(content) && punctuation == that.punctuation;
+        return (truth.equals(that.truth) && stamp.equals(that.stamp));
     }
 
     /**

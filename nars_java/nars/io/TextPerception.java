@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import nars.core.Parameters;
+import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -87,14 +88,14 @@ public class TextPerception {
         this.parsers = parsers;        
     }
     
-    public Task perceive(String line) {
+    public AbstractTask perceive(String line) {
 
         for (TextReaction p : parsers) {            
             
             Object result = p.react(line);
             if (result!=null) {
-                if (result instanceof Task) {
-                    return (Task)result;
+                if (result instanceof AbstractTask) {
+                    return (AbstractTask)result;
                 }
                 else if (result.equals(Boolean.TRUE))
                     return null;
