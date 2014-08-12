@@ -1,6 +1,5 @@
 package nars.language;
 
-import javolution.text.TextBuilder;
 import nars.io.Symbols;
 
 /**
@@ -35,10 +34,10 @@ abstract public class SetTensional extends CompoundTerm {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    protected static CharSequence makeSetName(final char opener, final Term[] arg, final char closer) {
+    protected static String makeSetName(final char opener, final Term[] arg, final char closer) {
         final int sizeEstimate = 12 * arg.length + 2;
         
-        TextBuilder name = new TextBuilder(sizeEstimate)
+        StringBuilder name = new StringBuilder(sizeEstimate)
             .append(opener);
 
         if (arg.length == 0) { 
@@ -55,6 +54,7 @@ abstract public class SetTensional extends CompoundTerm {
         }
         
         name.append(closer);
+        
         return name.toString();
     }
     

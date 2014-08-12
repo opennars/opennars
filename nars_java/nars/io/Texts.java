@@ -3,7 +3,6 @@ package nars.io;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-import javolution.text.TextBuilder;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.CharArrayRope;
 
@@ -263,13 +262,13 @@ public class Texts {
         }
         
         if ((totalLen <= maxLen) || (maxLen == -1)) {            
-            TextBuilder sb = new TextBuilder(totalLen);
+            StringBuilder sb = new StringBuilder(totalLen);
             for (final CharSequence s : components) {
                 if (s != null) {
                     sb.append(s);
                 }
             }
-            return sb.toString();
+            return Texts.sequence(sb);
         } else {
             Rope r = Rope.catFast(components);
             return r;

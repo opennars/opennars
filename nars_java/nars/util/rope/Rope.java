@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import nars.io.Texts;
 import nars.util.rope.impl.AbstractRope;
 import nars.util.rope.impl.ConcatenationRope;
 import nars.util.rope.impl.FastConcatenationRope;
@@ -101,7 +102,7 @@ import nars.util.rope.impl.SubstringRope;
                     return new FastCharSequenceRope(sequence);*/
                 
                 if (sequence instanceof StringBuilder) {
-                    throw new RuntimeException("DEPRECATED Rope.rope of StringBuilder");
+                    return Texts.sequence((StringBuilder)sequence);
                 }
                 
                 //default for other implementations

@@ -21,7 +21,6 @@
 package nars.operator;
 
 import java.util.ArrayList;
-import javolution.text.TextBuilder;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
@@ -98,7 +97,7 @@ public class Operation extends Inheritance {
 
     
     public static CharSequence makeName(final CharSequence op, Term[] arg) {
-        final TextBuilder nameBuilder = new TextBuilder(16 /* estimate */)
+        final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         
         for (final Term t : arg) {

@@ -19,6 +19,8 @@ package nars.test.util;
 
 import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.io.TextOutput;
+import nars.util.ContinuousBagNARBuilder;
 import nars.util.Number1DInput;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,24 +47,34 @@ public class Number1DInputTest {
     
     //@Test
     public void test1() throws Exception {
-        int N = 4;
+        int N = 100;
         
         double[] x = randomArray(N, 1.0, 0);
         
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new ContinuousBagNARBuilder(true).
+                setConceptBagSize(32367).
+                build();
         
-        //new TextOutput(n, System.out);
+        n.param().cycleConcepts.set(1024);
         
-        Number1DInput v = new Number1DInput("a", x, 2);
-        n.addInput(v);
         
-        n.step(1);
-        /*
-        for (int i = 0; i < 10; i++) {
-            //v.next(randomArray(N, 1.0, 0));
-            v.next(pulse(N,i%N));            
-        }*/
-        v.close();
+        Number1DInput v = new Number1DInput(n, "a", x, 128);
+        //n.addInput(v);
+        
+        
+        
+        new TextOutput(n, System.out);
+        
+        for (int i = 0; i < 100; i++) {
+            v.next(randomArray(N, 1.0, 0));
+            //v.next(pulse(N,i%N));            
+            n.finish(10);
+        }
+        
+        n.finish(10000000);
+        
+        
+        //v.close();
                 
         
         //n.finish(256);
@@ -81,16 +93,16 @@ public class Number1DInputTest {
         
         //new TextOutput(n, System.out);
         
-        Number1DInput v = new Number1DInput("a", x, resolution);
+        //Number1DInput v = new Number1DInput("a", x, resolution);
         //n.addInput(v);
         
         n.step(1);
         
         for (int i = 0; i < 10; i++) {
-            v.next(randomArray(N, 1.0, 0));
+            //v.next(randomArray(N, 1.0, 0));
             //v.next(pulse(N,i%N));            
         }
-        v.close();
+        
         
         n.finish(12);
         //v.close();
@@ -102,7 +114,7 @@ public class Number1DInputTest {
     public void nulltest() { }
     
     public static void main(String[] args) throws Exception {
-        //new Number1DInputTest().test1();
+        new Number1DInputTest().test1();
         //new Number1DInputTest().test2();
     }
 }

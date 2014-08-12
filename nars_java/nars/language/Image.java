@@ -1,6 +1,5 @@
 package nars.language;
 
-import javolution.text.TextBuilder;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
@@ -35,10 +34,10 @@ abstract public class Image extends CompoundTerm {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static CharSequence makeImageName(final NativeOperator op, final Term[] arg, final int relationIndex) {
+    protected static String makeImageName(final NativeOperator op, final Term[] arg, final int relationIndex) {
         final int sizeEstimate = 12 * arg.length + 2;
         
-        TextBuilder name = new TextBuilder(sizeEstimate)
+        StringBuilder name = new StringBuilder(sizeEstimate)
             .append(COMPOUND_TERM_OPENER.ch)
             .append(op)
             .append(Symbols.ARGUMENT_SEPARATOR)

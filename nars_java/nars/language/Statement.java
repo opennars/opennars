@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import javolution.text.TextBuilder;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
@@ -209,12 +208,17 @@ public abstract class Statement extends CompoundTerm {
         final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
-        return new TextBuilder(length)
+        StringBuilder sb = new StringBuilder(length)
             .append(STATEMENT_OPENER.ch)
             .append(subjectName)
             .append(' ').append(relation).append(' ')
             .append(predicateName)
-            .append(STATEMENT_CLOSER.ch).toString();
+            .append(STATEMENT_CLOSER.ch);
+            
+        //EITHER WORKS, but sb.toString() seems faster right now:
+        //return Texts.sequence(sb);
+        return sb.toString();
+        
     }
     
     /**
