@@ -83,6 +83,7 @@ import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Term;
+import nars.operator.Operation;
 import nars.operator.Operator;
 
 
@@ -785,7 +786,8 @@ public class Memory implements Output, Serializable {
             final Task task = newTasks.removeFirst();
             adjustBusy(task.getPriority(), task.getDurability());            
             
-            if (task.isInput() || (concept(task.getContent()) != null)) {
+            if (task.isInput()  || concept(task.getContent())!=null || (task!=null && task.getContent()!=null && task.sentence!=null && 
+                    task.getContent() instanceof Operation && task.sentence.isGoal() && conceptualize(task.getContent()) != null)) {
                 
                 // new addInput or existing concept
                 immediateProcess(task);
