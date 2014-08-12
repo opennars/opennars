@@ -38,6 +38,7 @@ import nars.util.rope.Rope;
 public final class CharArrayRope extends AbstractRope implements FlatRope {
 
     public final char[] sequence;
+    int len;
 
     /**
      * Constructs a new rope from a character array. Does not make a copy but
@@ -47,11 +48,14 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
      * @param sequence the character array.
      */
     public CharArrayRope(final char[] sequence) {
+        super();
         this.sequence = sequence;
+        len = sequence.length;
     }
     
     public CharArrayRope(final StringBuilder sb) {
         this(Texts.getCharArray(sb));
+        len = sb.length();
     }
 
     /**
@@ -104,7 +108,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         if (fromIndex < 0 || fromIndex >= this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + fromIndex);
         }
-        for (int j = fromIndex; j < this.sequence.length; ++j) {
+        for (int j = fromIndex; j < this.length(); ++j) {
             if (this.sequence[j] == ch) {
                 return j;
             }
@@ -123,7 +127,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         // special support for unicode.
 
         // step 0. sanity check.
-        final int length = sequence.length();
+        final int length = length();
         if (length == 0) {
             return -1;
         }
@@ -172,7 +176,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
 
             @Override
             public boolean hasNext() {
-                return this.current < sequence.length;
+                return this.current < length();
             }
 
             @Override
@@ -189,7 +193,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
 
     @Override
     public int length() {
-        return sequence.length;
+        return len;
     }
 
     @Override

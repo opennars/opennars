@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import javolution.text.TextBuilder;
 import nars.entity.TermLink;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -330,10 +329,10 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    protected static CharSequence makeCompoundName(final NativeOperator op, final Term[] arg) {
+    protected static String makeCompoundName(final NativeOperator op, final Term[] arg) {
         final int sizeEstimate = 12 * arg.length;
         
-        final TextBuilder n = new TextBuilder(sizeEstimate)
+        final StringBuilder n = new StringBuilder(sizeEstimate)
             .append(COMPOUND_TERM_OPENER.ch).append(op.toString());
             
         for (final Term t : arg) {

@@ -20,7 +20,6 @@
  */
 package nars.entity;
 
-import javolution.text.TextBuilder;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.inference.TruthFunctions;
@@ -296,7 +295,7 @@ public class Sentence implements Cloneable {
             }
 
             //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
-            final TextBuilder suffix = new TextBuilder(stringLength).append(punctuation);
+            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
 
             if (truth != null) {
                 suffix.append(' ').append(truthString);
@@ -339,7 +338,7 @@ public class Sentence implements Cloneable {
             stringLength += stampString.length();
         }
         
-        final TextBuilder buffer = new TextBuilder(stringLength)
+        final StringBuilder buffer = new StringBuilder(stringLength)
                 .append(contentName)
                 .append(punctuation);
         

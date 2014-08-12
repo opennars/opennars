@@ -12,9 +12,9 @@ import nars.util.ContinuousBagNARBuilder;
  * Runs NALTestPerf continuously, for profiling
  */
 public class NALPerfCompare {
-    static int repeats = 10;
+    static int repeats = 100;
     static int warmups = 2;
-    static int extraCycles = 4024;
+    static int extraCycles = 256;
         
     public static void compareRope(String examplePath) {
         

@@ -19,10 +19,11 @@ package nars.util;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import nars.core.NAR;
 import nars.io.Texts;
 
 
-public class Number1DInput extends PrintWriterInput {
+public class Number1DInput  {
     /*
     
     %%%%%%%%%%%%%%%%%%%% Understanding rational numbers if needed %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,9 +49,11 @@ public class Number1DInput extends PrintWriterInput {
     boolean finished = false;
     private final int resolution;
     int iteration = 0;
+    private final NAR nar;
 
-    public Number1DInput(String id, double[] data, int resolution) throws IOException {
-        super();
+    public Number1DInput(NAR n, String id, double[] data, int resolution) throws IOException {
+        
+        this.nar = n;
         this.id = id;
         this.resolution = resolution;
         nf.setMaximumFractionDigits(2);
@@ -58,11 +61,12 @@ public class Number1DInput extends PrintWriterInput {
         intf.setMinimumIntegerDigits(2);
         
         initPredicates(resolution);
-        set(data);
-        
-        
+        set(data);                
     }
     
+    public void append(String s) {
+        nar.addInput(s);
+    }
     
     public static String getValueTerm(double v, int resolution) {
         double dv = 1.0/resolution;
@@ -183,13 +187,7 @@ public class Number1DInput extends PrintWriterInput {
         };
     }    
     
-    @Override
-    public boolean finished(boolean force) {
-        if (force)
-            finished = true;
-        return finished;
-    }
-
+   
     private void set(double[] data) {
         this.data = data;
         changed = true;
