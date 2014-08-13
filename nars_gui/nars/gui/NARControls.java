@@ -127,6 +127,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
      * @param nar
      * @param title
      */
+    TestChamber chamber=new TestChamber();
     public NARControls(final NAR nar) {
         super(new BorderLayout());
         
@@ -260,7 +261,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         }
         menuBar.add(m);
         
-        
         m = new JMenu("Demos");
         {
             JMenuItem cct2 = new JMenuItem("+ Test Chamber");
@@ -268,7 +268,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     
-                    TestChamber.create(nar);
+                    chamber.create(nar);
                 }                
             });
             m.add(cct2);

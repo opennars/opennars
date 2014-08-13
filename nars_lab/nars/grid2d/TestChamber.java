@@ -16,7 +16,25 @@ import processing.core.PVector;
 
 public class TestChamber {
 
-    public static void create(NAR nar) {
+    Grid2DSpace space;
+    boolean getfeedback=false;
+    PVector target=new PVector(25,25);
+    String goal="";
+    public void gotoObj(String name) {
+        Hauto cells=space.cells;
+        goal=name;
+        for (int i = 0; i < cells.w; i++) {
+            for (int j = 0; j < cells.h; j++) {
+                if(cells.readCells[i][j].name.equals(name))
+                    target=new PVector(i,j);
+            }
+            
+        }
+    }
+    
+    
+    
+    public void create(NAR nar) {
                 //NAR n = new NAR();
         
         int w = 50;
@@ -38,16 +56,15 @@ public class TestChamber {
         });
         
         Maze.buildMaze(cells, 4,4,24,24);
-                
-                
-        final Grid2DSpace space = new Grid2DSpace(cells,nar);
+        
+        space = new Grid2DSpace(cells,nar);
         space.newWindow(1000, 800, true);
         
-        PVector target = new PVector(1,1);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         
         GridAgent a = new GridAgent(17,17,nar) {
         
+            public PVector lasttarget=new PVector(1,1);
             @Override
             public void update(Effect nextEffect) {
 //                int a = 0;
@@ -69,6 +86,10 @@ public class TestChamber {
                     forward(1);
                 }*/
                 
+                if(target!=lasttarget)
+                    getfeedback=true;
+                lasttarget=target;
+                
                 PVector current = new PVector(x, y);
 
                 System.out.println(nextEffect);
@@ -82,6 +103,10 @@ public class TestChamber {
                         if (path.size() <= 1) {
                             nar.step(1);
                             System.out.println("at destination; didnt need to find path");
+                            if(getfeedback && !"".equals(goal)) {
+                                getfeedback=false;
+                                nar.addInput("<(*,Self,"+goal+") --> at>. :|:");
+                            }
                         }
                         else {
                             int numSteps = Math.min(10, path.size());
@@ -118,7 +143,7 @@ public class TestChamber {
                 }
             }   
         };
-        Goto wu=new Goto(space,"^go-to");
+        Goto wu=new Goto(this,"^go-to");
         nar.memory.addOperator(wu);
         space.add(a);
         //space.add(new QLAgent(10,20));
