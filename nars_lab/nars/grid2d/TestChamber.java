@@ -1,16 +1,18 @@
 package nars.grid2d;
 
 import java.util.List;
+import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.grid2d.Cell.Material;
 import static nars.grid2d.Hauto.DOWN;
 import static nars.grid2d.Hauto.LEFT;
 import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
-import nars.grid2d.agent.ql.QLAgent;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Goto;
+import nars.gui.NARSwing;
+import nars.io.TextOutput;
 import processing.core.PVector;
 
 
@@ -20,6 +22,7 @@ public class TestChamber {
     boolean getfeedback=false;
     PVector target=new PVector(25,25);
     String goal="";
+    
     public void gotoObj(String name) {
         Hauto cells=space.cells;
         goal=name;
@@ -57,7 +60,15 @@ public class TestChamber {
         
         Maze.buildMaze(cells, 4,4,24,24);
         
-        space = new Grid2DSpace(cells,nar);
+        space = new Grid2DSpace(cells,nar) {
+
+            @Override
+            public void updateAutomata() {
+                super.updateAutomata();
+                nar.step(1);
+            }
+            
+        };
         space.newWindow(1000, 800, true);
         
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
@@ -65,8 +76,10 @@ public class TestChamber {
         GridAgent a = new GridAgent(17,17,nar) {
         
             public PVector lasttarget=new PVector(1,1);
+            
             @Override
             public void update(Effect nextEffect) {
+
 //                int a = 0;
 //                if (Math.random() < 0.4) {
 //                    int randDir = (int)(Math.random()*4);
@@ -98,15 +111,20 @@ public class TestChamber {
 
                     actions.clear();
                     
-                    System.out.println(path);
+                    //System.out.println("path: " + path);
+                    
                     if (path!=null) {
                         if (path.size() <= 1) {
-                            nar.step(1);
                             System.out.println("at destination; didnt need to find path");
                             if(getfeedback && !"".equals(goal)) {
                                 getfeedback=false;
-                                nar.addInput("<(*,Self,"+goal+") --> at>. :|:");
+                                nar.addInput("<(*,Self,"+goal+") --> at>. :|:\n");
                             }
+                            
+                            //NEW TARGET                            
+                            target.x = (int)(Math.random() * (w-1))+1;
+                            target.y = (int)(Math.random() * (h-1))+1;
+                            System.err.println("new target: " + target);
                         }
                         else {
                             int numSteps = Math.min(10, path.size());
@@ -141,7 +159,41 @@ public class TestChamber {
                         }
                     }
                 }
+                
             }   
+
+            @Override
+            public void act(Action a) {
+                super.act(a);
+            }
+
+            @Override
+            public void perceive(Effect e) {
+                super.perceive(e);
+                
+                
+                String action = e.action.getClass().getSimpleName().toString();
+                String actionParam = e.action.toParamString();
+                String success = String.valueOf(e.success);
+                        
+                if (actionParam == null) actionParam = "";
+                if (actionParam.length() != 0) actionParam = "(*," + actionParam + "),";
+                
+                nar.addInput("$0.95$ <(*,Self," + action + "," + actionParam + success + ") --> effect>. :\\:");
+                String seeing = "(*,";
+                
+                seeing += this.cellOn().material + ",";
+                seeing += this.cellRelative(0).material + ",";
+                seeing += this.cellRelative(90).material + ",";
+                seeing += this.cellRelative(180).material + ",";
+                seeing += this.cellRelative(270).material + ")";
+                
+                        
+                nar.addInput("$0.50$ <(*,Self," + seeing + ") --> see>. :|:");
+                
+            }
+
+            
         };
         Goto wu=new Goto(this,"^go-to");
         nar.memory.addOperator(wu);
@@ -152,7 +204,21 @@ public class TestChamber {
     }
     
     public static void main(String[] arg) {
-       
+        NAR n = new DefaultNARBuilder().build();
+        n.param().cycleInputTasks.set(1);
+        n.param().cycleMemory.set(1);
+        
+        new TextOutput(n, System.out);
+        
+        TestChamber c = new TestChamber();
+        
+        
+        c.create(n);
+        
+        new NARSwing(n);
+        
+        
+        
     }
     
 }
