@@ -46,8 +46,8 @@ public class Grid2DSpace extends PApplet {
     public float maxNodeSize = 40f;
     
     /** timing */
-    float FrameRate = 30f;    
-    private int automataPeriod = 5; //how many cycles between each automata update
+    float FrameRate = 50f;    
+    private int automataPeriod = 1; //how many cycles between each automata update
     private int agentPeriod = 5;  //how many cycles between each agent update
     
     boolean drawn = false;
