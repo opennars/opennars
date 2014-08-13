@@ -44,8 +44,12 @@ public class Grid2DSpace extends PApplet {
     //Object
     float selection_distance = 10;
     public float maxNodeSize = 40f;
-    float FrameRate = 30f;
-    private int automataPeriod = 1;
+    
+    /** timing */
+    float FrameRate = 30f;    
+    private int automataPeriod = 5; //how many cycles between each automata update
+    private int agentPeriod = 50;  //how many cycles between each agent update
+    
     boolean drawn = false;
     Hsim hsim = new Hsim();
     Hamlib hamlib = new Hamlib();
@@ -171,6 +175,10 @@ public class Grid2DSpace extends PApplet {
         cells.clicked(realx,realy);
     }
 
+    public void updateAutomata() {
+            cells.Exec();        
+    }
+    
     @Override
     public void draw() {
         background(0, 0, 0/*, 0.001f*/);
@@ -194,9 +202,9 @@ public class Grid2DSpace extends PApplet {
         realtime = System.nanoTime() / 1.0e9;
         
         if (time % automataPeriod == 0) {
-            cells.Exec();
+            updateAutomata();
         }
-        if (time % 10 == 0) {
+        if (time % agentPeriod == 0) {
             for (GridObject g : objects) {
                 Effect e = (g instanceof GridAgent) ? ((GridAgent)g).perceiveNext() : null;
                 g.update(e);

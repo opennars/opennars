@@ -39,6 +39,11 @@ public abstract class LocalGridObject implements GridObject {
         return targetAngle;
     }
     
+    /** cell currently standing on */
+    public Cell cellOn() {
+        return space.cells.at(x, y);
+    }
+    
     /**
      * @return 
      */
