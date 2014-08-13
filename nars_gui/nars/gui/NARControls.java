@@ -49,11 +49,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
-import nars.entity.Concept;
-import nars.entity.Task;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
-import nars.gui.output.BagWindow;
 import nars.gui.output.LogPanel;
 import nars.gui.output.MemoryView;
 import nars.gui.output.PLineChart;
@@ -669,7 +666,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         p.add(newIntSlider(memory.param.beliefForgettingRate, "Belief Forgetting Rate", 1, 99), c);
         p.add(newIntSlider(memory.param.conceptForgettingRate, "Concept Forgetting Rate", 1, 99), c);
 
-
         JPanel chartPanel = new JPanel(new GridLayout(0,1));
         {
             
@@ -690,6 +686,31 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             PLineChart chart2 = new PLineChart("concepts.AveragePriority", chartHistoryLength);
             chartPanel.add(chart2.newPanel());
             charts.add(chart2);
+            
+            PLineChart chart3 = new PLineChart("beliefs.Total", chartHistoryLength);
+            chartPanel.add(chart3.newPanel());
+            charts.add(chart3);
+            
+            PLineChart chart4 = new PLineChart("questions.Total", chartHistoryLength);
+            chartPanel.add(chart4.newPanel());
+            charts.add(chart4);
+
+            PLineChart chart5 = new PLineChart("novelTasks.Total", chartHistoryLength);
+            chartPanel.add(chart5.newPanel());
+            charts.add(chart5);
+
+            PLineChart chart6 = new PLineChart("newTasks.Total", chartHistoryLength);
+            chartPanel.add(chart6.newPanel());
+            charts.add(chart6);
+            
+            PLineChart chart7 = new PLineChart("emotion.happy", chartHistoryLength);
+            chartPanel.add(chart7.newPanel());
+            charts.add(chart7);
+
+            PLineChart chart8 = new PLineChart("emotion.busy", chartHistoryLength);
+            chartPanel.add(chart8.newPanel());
+            charts.add(chart8);
+            
             
         }
         

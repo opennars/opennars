@@ -107,51 +107,30 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         String label;
         private final Object object;
         private float boost;
+        float stroke;
 
         public VertexDisplay(Object o) {
             this.object = o;
+            
             x = y = 0;
             tx = x;
             ty = y;
+            stroke = 0;
             radius = nodeSize;
             
-            label = o.toString();
+            if (o instanceof Concept) {
+                label = ((Concept)o).term.toString();
+            }
+            else {
+                label = o.toString();
+            }
+            
             if (label.length() > MAX_UNSELECTED_LABEL_LENGTH)
                 label = label.substring(0, MAX_UNSELECTED_LABEL_LENGTH-3) + "..";
             
-            if (o instanceof Sentence) {
-                 Sentence kb = (Sentence)o;
-                 TruthValue tr = kb.truth;
-                 if (tr!=null) {
-                     alpha = tr.getConfidence()*0.75f+0.25f;
-                     double hue = 0.25 + (0.25 * (kb.truth.getFrequency()-0.5));
-                     color = Color.getHSBColor((float)hue, 0.9f, 0.9f).getRGB();
-                 }
-                 else {
-                     alpha = 0.5f;
-                     color = Color.GRAY.getRGB();
-                 }
-                Term t = ((Sentence) o).content;
-                radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
-             }
-             else if (o instanceof Task) {
-                Task ta = (Task)o;
-                radius = 2.0f + ta.getPriority()*2.0f;
-                alpha = ta.getDurability();
-                color = papplet.getColor(o);
-             }            
-             else if (o instanceof Concept) {
-                Term t = ((Concept) o).term;
-                radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
-                alpha = papplet.getVertexAlpha(o);                             
-                color = papplet.getColor(o);                
-             }
-             else if (o instanceof Term) {
-                Term t = (Term)o;
-                radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
-                alpha = papplet.getVertexAlpha(o);                             
-                color = papplet.getColor(o);
-             }
+           
+            update(o);
+
         }
         
         public void position(float level, float index, float priority) {
@@ -186,16 +165,27 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         public void draw() {
             update();
             
+             
+            if (stroke > 0) {
+              stroke(Color.WHITE.getRGB());
+                strokeWeight(stroke);
+            }
+                        
             float r = (radius+boost*boostScale) * nodeSize / 2f;
             
             fill(color, alpha*255/2);
            
             ellipse(x, y, r, r);
-             
+
             if (label!=null) {
                 fill(255,255,255,alpha*255*0.75f);
                 textSize(r/2);
                 text(label, x, y);            
+            }
+            
+            if (stroke > 0) {                
+                //reset stroke
+                noStroke();
             }
         }
                
@@ -211,7 +201,47 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             boost *= boostMomentum;
         }
 
- 
+        private void update(Object o) {
+            if (o instanceof Sentence) {
+                 Sentence kb = (Sentence)o;
+                 TruthValue tr = kb.truth;
+                 float confidence = 0.5f;
+                 if (tr!=null) {
+                     confidence = tr.getConfidence();
+                     double hue = 0.25 + (0.25 * (kb.truth.getFrequency()-0.5));
+                     color = Color.getHSBColor((float)hue, 0.9f, 0.9f).getRGB();
+                 }
+                 else {
+                     color = Color.GRAY.getRGB();
+                 }
+                alpha = confidence*0.75f+0.25f;
+                
+                Term t = ((Sentence) o).content;
+                radius = (float)(Math.log(1+2 + confidence) * nodeSize);
+             }
+             else if (o instanceof Task) {
+                Task ta = (Task)o;
+                radius = 2.0f + ta.getPriority()*2.0f;
+                alpha = ta.getDurability();
+                color = papplet.getColor(o);
+             }            
+             else if (o instanceof Concept) {
+                Concept co = (Concept)o;
+                Term t = co.term;
+                
+                radius = (float)(2 + 6 * co.budget.summary() * nodeSize);
+                alpha = papplet.getVertexAlpha(o);                             
+                color = papplet.getColor(t);
+                stroke = 5;
+             }
+             else if (o instanceof Term) {
+                Term t = (Term)o;                
+                radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
+                alpha = papplet.getVertexAlpha(o);                             
+                color = papplet.getColor(o);
+             }
+        }
+
     }
 
     @Override
@@ -224,6 +254,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     public VertexDisplay displayVertex(Object o) {
         VertexDisplay v = vertices.get(o);
         if (v!=null) {
+            v.update(o);
             return v;
         }
         v = new VertexDisplay(o);
@@ -293,15 +324,16 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             
             try {
                 
+                
                 graph = new NARGraph();
                 graph.add(nar, new ExcludeBelowPriority(minPriority), 
-                        new NARGraph.DefaultGraphizer(showBeliefs, showBeliefs, showBeliefs, true, showSyntax) {
+                        new NARGraph.DefaultGraphizer(showBeliefs, true, showBeliefs, true, false) {
 
                     float level;
                     float index = 0;
                     int levelContents = 0;
                     private float priority;
-
+                    Concept lastConcept = null;
                     
                     public void preLevel(NARGraph g, int l) {
                         if (!compressLevels)
@@ -325,6 +357,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                     public void onConcept(NARGraph g, Concept c) {
                         super.onConcept(g, c);
 
+                        lastConcept = c;
                         priority = c.getPriority();
                         level = (float)(priority*100.0);
                         index++;
@@ -344,14 +377,15 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
                     @Override
                     public void onTerm(Term t) {
-                        index++;
+                                
+                        index++;                                               
 
                         VertexDisplay d = displayVertex(t);
                         d.position(level, index, priority);
                         deadVertices.remove(d);
 
                         levelContents++;
-                        
+                       
                     }
 
                     @Override

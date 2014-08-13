@@ -76,7 +76,7 @@ public class Operation extends Inheritance {
      * rules.
      *
      * @param memory Reference to the memory
-     * @param addSelf include SELF term at beginning of product terms
+     * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */
     public static Operation make(Operator oper, final Term[] arg, boolean addSelf, final Memory memory) {        
