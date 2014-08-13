@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
+import nars.core.NAR;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Action.Turn;
 
@@ -14,10 +15,11 @@ abstract public class GridAgent extends LocalGridObject {
     public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
     public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
     public final Set<Object> inventory = new HashSet();
+    public NAR nar;
     
-    
-    public GridAgent(int x, int y) {
+    public GridAgent(int x, int y, NAR nar) {
         super(x, y);
+        this.nar=nar;
     }
 
     

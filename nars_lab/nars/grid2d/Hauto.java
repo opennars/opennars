@@ -1,5 +1,6 @@
 package nars.grid2d;
 
+import nars.core.NAR;
 import nars.grid2d.Cell.Logic;
 import static nars.grid2d.Cell.Logic.AND;
 import static nars.grid2d.Cell.Logic.BRIDGE;
@@ -13,6 +14,7 @@ import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;
 
 public class Hauto {
+    private final NAR nar;
 
 
     
@@ -115,6 +117,7 @@ public class Hauto {
             //w.charge *= w.conductivity;
     }
     
+    Integer entityID=0;
     public void clicked(float x,float y)
     {
         readCells[(int) x][(int) y].charge = selected.charge;
@@ -125,6 +128,21 @@ public class Hauto {
         writeCells[(int) x][(int) y].material = selected.material;
         readCells[(int) x][(int) y].machine = selected.machine;
         writeCells[(int) x][(int) y].machine = selected.machine;
+        
+        if(selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH) //or other entity...
+        {
+            String name="";
+            if(selected.material==Material.Door) 
+                name="door";
+            if(selected.logic==Logic.SWITCH || selected.logic==Logic.OFFSWITCH) 
+                name="switch";
+            String Klass=name;
+            name=name+(entityID.toString());
+            nar.addInput("<"+name+" --> "+Klass+">.");
+            readCells[(int) x][(int) y].name = selected.name;
+            writeCells[(int) x][(int) y].name = selected.name;
+            entityID++;
+        }
     }
     
     Cell selected=new Cell();
@@ -249,7 +267,8 @@ public class Hauto {
     }
     
     
-    public Hauto(int w, int h) {
+    public Hauto(int w, int h, NAR nar) {
+        this.nar=nar;
         this.w = w;
         this.h = h;
         readCells = new Cell[w][];

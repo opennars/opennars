@@ -5,6 +5,7 @@ import nars.grid2d.Cell.Material;
 
 public class Cell {
     
+    public String name="";
     public float light=0.0f;
     public float charge = 0;
     public float value=0;
@@ -294,6 +295,7 @@ public class Cell {
         this.charge = c.charge;
         this.chargeFront = c.chargeFront;  
         this.light=c.light;
+        this.name=c.name;
     }
 
     public void setHeight(int h) {
