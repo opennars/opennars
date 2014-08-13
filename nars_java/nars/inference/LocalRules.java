@@ -128,7 +128,7 @@ public class LocalRules {
                 float oldQ = TemporalRules.solutionQuality(problem, oldBest, memory);
                 if (oldQ >= newQ) {
                     if (problem.isGoal()) {
-                        memory.adjustHappy(oldQ, task.getPriority());
+                        memory.emotion.adjustHappy(oldQ, task.getPriority());
                     }
                     return;
                 }
@@ -143,7 +143,7 @@ public class LocalRules {
             task.setBestSolution(belief);
             
             if (problem.isGoal()) {
-                memory.adjustHappy(newQ, task.getPriority());
+                memory.emotion.adjustHappy(newQ, task.getPriority());
             }
             
             if (task.isInput()) {    // moved from Sentence

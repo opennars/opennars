@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import nars.core.Param;
 import nars.core.Parameters;
+import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -43,6 +44,8 @@ import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
 import nars.io.Output.OUT;
+import nars.core.task.PauseInput;
+import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.CONJUNCTION;
 import static nars.io.Symbols.NativeOperator.DIFFERENCE_EXT;
@@ -82,6 +85,7 @@ import nars.language.Negation;
 import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.SetInt;
+import nars.language.Tense;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -252,6 +256,8 @@ public class Memory implements Output, Serializable {
     private Task lastEvent;
 
     private Stamp newStamp;
+
+    public final Term self;
     
     
     
@@ -266,11 +272,53 @@ public class Memory implements Output, Serializable {
     
     /* ---------- global variables used to record emotional values ----------\ */
 
-    /** average desire-value */
-    private float happy;
+    /** emotional value; self-felt internal mental states */
+    public static class Emotion implements Serializable {
+        
+        /** average desire-value */
+        private float happy;
 
-    /** average priority */
-    private float busy;
+        /** average priority */
+        private float busy;
+
+        public Emotion() {       }
+        
+        public Emotion(float happy, float busy) {
+            set(happy, busy);
+        }
+        
+        public void set(float happy, float busy) {
+            this.happy = happy;
+            this.busy = busy;
+        }
+        
+      
+        public float happy() {
+           return happy;
+        }
+
+        public float busy() {
+            return busy;
+        }
+
+        public void adjustHappy(float newValue, float weight) {
+//        float oldV = happyValue;
+            happy += newValue * weight;
+            happy /= 1.0f + weight;
+//        if (Math.abs(oldV - happyValue) > 0.1) {
+//            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
+        }
+        public void adjustBusy(float newValue, float weight) {
+//        float oldV = busyValue;
+            busy += newValue * weight;
+            busy /= (1.0f + weight);
+//        if (Math.abs(oldV - busyValue) > 0.1) {
+//            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busyValue*10.0) + "\n");
+        }
+        
+    }
+    
+    public final Emotion emotion = new Emotion();
     
     /* ---------- global variables used to record emotional values ----------/ */
     
@@ -328,6 +376,9 @@ public class Memory implements Output, Serializable {
 
         this.operators = new HashMap<>();
         
+        // create self
+        self = conceptualize(new Term(Symbols.SELF)).term;
+        
         for (Operator o : initialOperators)
             addOperator(o);
         
@@ -344,8 +395,7 @@ public class Memory implements Output, Serializable {
         stepsQueued = 0;
         working = true;
         
-        happy = 0.5f;
-        busy = 0.5f;
+        emotion.set(0.5f, 0.5f);
 
         if (getRecorder().isActive()) {
             getRecorder().append("Reset");
@@ -494,16 +544,26 @@ public class Memory implements Output, Serializable {
      *
      * @param task The addInput task
      */
-    public void inputTask(final Task task) {                                                                                  
-        output(Output.IN.class, task.sentence);
-        
-        if (task.budget.aboveThreshold()) {
-            addNewTask(task, "Perceived");
-        } else {
-            if (recorder.isActive()) {
-                recorder.onTaskRemove(task, "Neglected");
-            }
+    public void inputTask(final AbstractTask t) {                                                 
+        if (t instanceof PauseInput) {
+            int c = ((PauseInput)t).cycles;
+            output(IN.class, c);
+            stepLater(Math.max(0,c));
         }
+        else if (t instanceof Task) {                                       
+            Task task = (Task)t;
+
+            output(Output.IN.class, task.sentence);
+
+            if (task.budget.aboveThreshold()) {
+                addNewTask(task, "Perceived");
+            } else {
+                if (recorder.isActive()) {
+                    recorder.onTaskRemove(task, "Neglected");
+                }
+            }
+
+        }                                
     }
 
     /**
@@ -525,6 +585,19 @@ public class Memory implements Output, Serializable {
         addNewTask(task, "Activated");
     }
     
+    /**
+     * ExecutedTask called in Operator.reportExecution
+     *
+     * @param operation The operation just executed
+     */
+    public void executedTask(Operation operation) {
+        TruthValue truth = new TruthValue(1f,0.9999f);
+        Stamp stamp = new Stamp(this, Tense.Present); 
+        Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
+        Task task = new Task(sentence, currentTask.budget);
+        addNewTask(task, "Executed");
+    }
+
     public void output(Task t) {
         if (output == null) return;
         
@@ -784,7 +857,7 @@ public class Memory implements Output, Serializable {
         while (counter-- > 0) {
             
             final Task task = newTasks.removeFirst();
-            adjustBusy(task.getPriority(), task.getDurability());            
+            emotion.adjustBusy(task.getPriority(), task.getDurability());            
             
             if (task.isInput()  || concept(task.getContent())!=null || (task!=null && task.getContent()!=null && task.sentence!=null && 
                     task.getContent() instanceof Operation && task.sentence.isGoal() && conceptualize(task.getContent()) != null)) {
@@ -834,33 +907,6 @@ public class Memory implements Output, Serializable {
         }
     }
 
-    
-    /* ---------- status evaluation ---------- */
-
-    public float happyValue() {
-       return happy;
-    }
-
-    public float busyValue() {
-        return busy;
-    }
-
-    public void adjustHappy(float newValue, float weight) {
-//        float oldV = happy;
-        happy += newValue * weight;
-        happy /= 1.0f + weight;
-//        if (Math.abs(oldV - happy) > 0.1) {
-//            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happy*10.0) + "\n");
-//        }
-    }
-    public void adjustBusy(float newValue, float weight) {
-//        float oldV = busy;
-        busy += newValue * weight;
-        busy /= (1.0f + weight);
-//        if (Math.abs(oldV - busy) > 0.1) {
-//            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busy*10.0) + "\n");
-//        }
-    }
     
     /**
      * Select a novel task to process.

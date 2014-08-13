@@ -1,16 +1,21 @@
 package nars.operator;
 
+import nars.operator.math.Add;
 import nars.operator.mental.Abbreviate;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Consider;
 import nars.operator.mental.Doubt;
 import nars.operator.mental.Evaluate;
+import nars.operator.mental.FeelBusy;
+import nars.operator.mental.FeelHappy;
 import nars.operator.mental.Hesitate;
 import nars.operator.mental.Name;
 import nars.operator.mental.Register;
 import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
+import nars.operator.software.Javascript;
+import nars.operators.math.Count;
 
 
 public class DefaultOperators {
@@ -41,9 +46,27 @@ public class DefaultOperators {
             // truth-value operations
             new Doubt(),        // decrease the confidence of a belief
             new Hesitate(),      // decrease the confidence of a goal
+
+            // feeling operations
+            new FeelHappy(),
+            new FeelBusy(),
+
+            // math operations
+            new Count(),
+            new Add(),
+
+            new Javascript()      // javascript evaluation
                 
-            //new Javascript()      // javascript evaluation
-            
+                
+                
+         /* 
++         *          I/O operations under consideration
++         * observe          // get the most active input (Channel ID: optional?)
++         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
++         * tell             // output a judgment (Channel ID: optional?)
++         * ask              // output a question/quest (Channel ID: optional?)
++         * demand           // output a goal (Channel ID: optional?)
++         */
                 
 //        new Wait()              // wait for a certain number of clock cycle
         

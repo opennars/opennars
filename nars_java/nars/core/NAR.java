@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.AbstractTask;
-import nars.entity.Task;
 import nars.gui.NARControls;
 import nars.io.InPort;
 import nars.io.Input;
@@ -13,7 +12,6 @@ import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextPerception;
 import nars.io.buffer.FIFO;
-import nars.io.PauseInput;
 import nars.language.Term;
 import nars.storage.Memory;
 
@@ -296,21 +294,9 @@ public class NAR implements Runnable, Output {
                         AbstractTask task = perception.perceive(input);
 
                         if (task!=null) {
-
-                            //TODO move this to Memory
-                            if (task instanceof PauseInput) {
-                                int c = ((PauseInput)task).cycles;
-                                memory.output(IN.class, c);
-                                memory.stepLater(Math.max(0,c));        
-                                remainingInputTasks--;
-                                inputPerceived = true;
-                                break;
-                            }
-                            else if (task instanceof Task) {                                       
-                                memory.inputTask((Task)task);
-                                remainingInputTasks--;
-                                inputPerceived = true;
-                            }
+                            memory.inputTask(task);
+                            remainingInputTasks--;
+                            inputPerceived = true;
                         }
                     }
                     catch (IOException e) {

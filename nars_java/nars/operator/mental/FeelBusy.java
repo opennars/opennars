@@ -21,29 +21,25 @@ import java.util.ArrayList;
 import nars.entity.*;
 import nars.language.*;
 import nars.operator.Operation;
-import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
- * Register a new operator when the system is running
+ * Feeling busy value
  */
-public class Register extends Operator {
+public class FeelBusy extends Feel {
 
-    public Register() {
-        super("^register");
+    public FeelBusy() {
+        super("^feelBusy");
     }
 
     /**
-     * To register a new operator
-     * @param args Arguments, a Statement followed by an optional tense
+     * To get the current value of an internal sensor
+     * @param args Arguments, a set and a variable
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term operator = args[0];
-        memory.addOperator((Operator) operator);  // add error checking
-        return null;
-    }
-    
+        return feeling(memory.emotion.busy(), memory);
+    }    
 }

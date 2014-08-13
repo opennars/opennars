@@ -63,6 +63,7 @@ public class Symbols {
     public static final char OPERATOR_PREFIX = '^';
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';
+    
 
     
     public enum NativeOperator {
@@ -293,5 +294,5 @@ public class Symbols {
     }
     */
 
-
+    public static String SELF = "SELF";
 }

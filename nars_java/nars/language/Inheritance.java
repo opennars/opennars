@@ -88,7 +88,7 @@ public class Inheritance extends Statement {
         
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
             //return new Operation(name, arguments);
-            return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, memory);
+            return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, true, memory);
         } else {
             return new Inheritance(name, arguments);
         }

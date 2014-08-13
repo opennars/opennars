@@ -394,7 +394,7 @@ public class LogPanel extends NPanel implements Output, LogOutput {
 
         }
         c.setBorder(new EmptyBorder(0, 0, 0, 0));
-        c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 16));
     }
 
     final static String COPY = "Copy";

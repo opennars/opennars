@@ -3,13 +3,10 @@ package nars.operator.software;
 import java.util.ArrayList;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import nars.core.Parameters;
 import nars.entity.Task;
-import nars.io.Symbols;
 import nars.io.Texts;
-import nars.language.Inheritance;
-import nars.language.Product;
 import nars.language.Term;
+import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.storage.Memory;
@@ -33,8 +30,13 @@ public class Javascript extends Operator {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
 
-        if (args.length < 1)
+        if (args.length != 2)
             return null;
+        
+        if (!(args[1] instanceof Variable)){
+            //TODO report error
+            return null;
+        }        
         
         Object result = null;
         
@@ -49,10 +51,16 @@ public class Javascript extends Operator {
         
         memory.output(Javascript.class, input + " | " + result);
         
+        String resultName;
         if (result instanceof Number) {
-            result = "n_" + result;
+            resultName = String.valueOf(result);
+        }
+        else {
+            resultName = Texts.escape('"' + result.toString() + '"').toString();
         }
         
+        args[1] = new Term(resultName);
+        /*
         Term r = new Term(Texts.escape('"' + result.toString() + '"').toString());
         Inheritance t = Inheritance.make(
                 Product.make(new Term[] { operation, r }, memory),
@@ -62,7 +70,8 @@ public class Javascript extends Operator {
         
         ArrayList<Task> results = new ArrayList<>(1);
         results.add(memory.newTask(t, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
-        return results;
+                */
+        return null;
         
 
     }

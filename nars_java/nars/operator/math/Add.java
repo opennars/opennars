@@ -14,8 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package nars.operator.mental;
+package nars.operator.math;
 
 import java.util.ArrayList;
 import nars.entity.*;
@@ -25,25 +24,38 @@ import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
- * Register a new operator when the system is running
+ * Count the number of elements in a set
  */
-public class Register extends Operator {
+public class Add extends Operator {
 
-    public Register() {
-        super("^register");
+    public Add() {
+        super("^add");
     }
 
     /**
-     * To register a new operator
-     * @param args Arguments, a Statement followed by an optional tense
+     * To add two numbers and get the sum
+     *
+     * @param args Arguments, two numbers and a variable
      * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term operator = args[0];
-        memory.addOperator((Operator) operator);  // add error checking
+        if (args.length!= 3) {
+            return null;
+        }
+        if (!(args[2] instanceof Variable)){
+            //TODO report error
+            return null;
+        }
+        try {
+            int n1 = Integer.parseInt(String.valueOf(args[0].name()));
+            int n2 = Integer.parseInt(String.valueOf(args[1].name()));
+            Term numberTerm = new Term(String.valueOf(n1 + n2));
+            args[2] = numberTerm;
+        } catch (NumberFormatException e) {
+            return null;
+        }
         return null;
     }
-    
 }
