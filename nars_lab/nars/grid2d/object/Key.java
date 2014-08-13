@@ -28,9 +28,9 @@ public class Key extends LocalGridObject {
         space.pushMatrix();
         space.translate(cx, cy);
         space.rotate(a);
-        space.scale(scale);
+        space.scale(scale*0.8f);
         
-        space.fill(Color.WHITE.getRGB());
+        space.fill(Color.RED.getRGB());
         space.rect(-0.4f, -0.15f/2, 0.8f, 0.15f);
         space.rect(-0.5f, -0.2f, 0.3f, 0.4f);
         space.rect(0.3f, 0, 0.1f, 0.15f);

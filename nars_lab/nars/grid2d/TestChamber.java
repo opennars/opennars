@@ -1,6 +1,7 @@
 package nars.grid2d;
 
 import java.util.List;
+import nars.core.NAR;
 import nars.grid2d.Cell.Material;
 import static nars.grid2d.Hauto.DOWN;
 import static nars.grid2d.Hauto.LEFT;
@@ -14,9 +15,8 @@ import processing.core.PVector;
 
 public class TestChamber {
 
-    
-    public static void main(String[] arg) {
-        //NAR n = new NAR();
+    public static void create(NAR nar) {
+                //NAR n = new NAR();
         
         int w = 50;
         int h = 50;
@@ -124,11 +124,16 @@ public class TestChamber {
         };
         space.add(a);
         
-        space.add(new QLAgent(10,20));
+        //space.add(new QLAgent(10,20));
         
-        space.add(new Key(1,1));
+        space.add(new Key(20,20));
         
-        space.add(new RayVision(a, 45, 10, 8));
+        //space.add(new RayVision(a, 45, 10, 8));
+        
+    }
+    
+    public static void main(String[] arg) {
+       
     }
     
 }
