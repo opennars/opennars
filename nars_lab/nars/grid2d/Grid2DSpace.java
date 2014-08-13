@@ -48,7 +48,7 @@ public class Grid2DSpace extends PApplet {
     /** timing */
     float FrameRate = 30f;    
     private int automataPeriod = 5; //how many cycles between each automata update
-    private int agentPeriod = 50;  //how many cycles between each agent update
+    private int agentPeriod = 5;  //how many cycles between each agent update
     
     boolean drawn = false;
     Hsim hsim = new Hsim();

@@ -21,8 +21,10 @@
 
 package nars.operator;
 
+import java.util.Arrays;
 import java.util.List;
 import nars.entity.Task;
+import nars.io.Output.EXE;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.storage.Memory;
@@ -63,7 +65,7 @@ public abstract class Operator extends Term {
     public void call(final Operation operation, final Term[] args, final Memory memory) {
         List<Task> feedback = execute(operation, args, memory); // to identify failed operation?
         memory.executedTask(operation);
-        //        reportExecution(op, args, memory);
+        reportExecution(operation, args, memory);
         
         if (feedback != null) {
             for (Task t : feedback) {
@@ -98,16 +100,16 @@ public abstract class Operator extends Term {
 //     * <p>
 //     * @param operation The content of the operation to be executed
 //     */
-//    public static void reportExecution(final Operation operation, final Term[] args, final Memory memory) {
-//        final Operator operator = operation.getOperator();
-//        
-//        StringBuilder buffer = new StringBuilder();
-//        for (Object obj : args) {
-//            buffer.append(obj).append(",");
-//        }
-//        //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
-//        memory.output(EXE.class, operator + " " + Arrays.toString(args));
-//    }
+    public static void reportExecution(final Operation operation, final Term[] args, final Memory memory) {
+        final Operator operator = operation.getOperator();
+        
+        StringBuilder buffer = new StringBuilder();
+        for (Object obj : args) {
+            buffer.append(obj).append(",");
+        }
+        //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
+        memory.output(EXE.class, operator + " " + Arrays.toString(args));
+    }
     
 
 }

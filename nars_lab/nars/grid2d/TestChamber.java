@@ -1,141 +1,107 @@
 package nars.grid2d;
 
 import java.util.List;
-import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.grid2d.Cell.Material;
 import static nars.grid2d.Hauto.DOWN;
 import static nars.grid2d.Hauto.LEFT;
 import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
+import nars.grid2d.agent.ql.QLAgent;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Goto;
-import nars.gui.NARSwing;
-import nars.io.TextOutput;
 import processing.core.PVector;
-
 
 public class TestChamber {
 
     Grid2DSpace space;
-    boolean getfeedback=false;
-    PVector target=new PVector(25,25);
-    String goal="";
-    
+    boolean getfeedback = false;
+    PVector target = new PVector(25, 25);
+    String goal = "";
+
     public void gotoObj(String name) {
-        Hauto cells=space.cells;
-        goal=name;
+        Hauto cells = space.cells;
+        goal = name;
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
-                if(cells.readCells[i][j].name.equals(name))
-                    target=new PVector(i,j);
+                if (cells.readCells[i][j].name.equals(name)) {
+                    target = new PVector(i, j);
+                }
             }
-            
         }
     }
-    
-    
-    
+
     public void create(NAR nar) {
-                //NAR n = new NAR();
-        
+//NAR n = new NAR();
         int w = 50;
         int h = 50;
-        int water_threshold=30;
-        Hauto cells = new Hauto(w,h,nar);
-        cells.forEach(0,0,w,h, new CellFunction() {
-            @Override  public void update(Cell c) {
-                ///c.setHeight((int)(Math.random() * 12 + 1));
+        int water_threshold = 30;
+        Hauto cells = new Hauto(w, h, nar);
+        cells.forEach(0, 0, w, h, new CellFunction() {
+            @Override
+            public void update(Cell c) {
+///c.setHeight((int)(Math.random() * 12 + 1));
                 float smoothness = 20f;
-                
                 c.material = Material.GrassFloor;
-               double n = SimplexNoise.noise(c.state.x/smoothness, c.state.y/smoothness);
-                if((n*64)>water_threshold) {
-                    c.material=Material.Water;
+                double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
+                if ((n * 64) > water_threshold) {
+                    c.material = Material.Water;
                 }
-                c.setHeight( (int)(Math.random() * 24 + 1));
+                c.setHeight((int) (Math.random() * 24 + 1));
             }
         });
-        
-        Maze.buildMaze(cells, 4,4,24,24);
-        
-        space = new Grid2DSpace(cells,nar) {
-
-            @Override
-            public void updateAutomata() {
-                super.updateAutomata();
-                nar.step(1);
-            }
-            
-        };
+        Maze.buildMaze(cells, 4, 4, 24, 24);
+        space = new Grid2DSpace(cells, nar);
         space.newWindow(1000, 800, true);
-        
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
-        
-        GridAgent a = new GridAgent(17,17,nar) {
-        
-            public PVector lasttarget=new PVector(1,1);
-            
+        GridAgent a = new GridAgent(17, 17, nar) {
+            public PVector lasttarget = new PVector(1, 1);
+
             @Override
             public void update(Effect nextEffect) {
-
-//                int a = 0;
-//                if (Math.random() < 0.4) {
-//                    int randDir = (int)(Math.random()*4);
-//                    if (randDir == 0)             a = LEFT;
-//                    else if (randDir == 1)        a = RIGHT;
-//                    else if (randDir == 2)        a = UP;
-//                    else if (randDir == 3)        a = DOWN;
-//                    /*else if (randDir == 4)        a = UPLEFT;
-//                    else if (randDir == 5)        a = UPRIGHT;
-//                    else if (randDir == 6)        a = DOWNLEFT;
-//                    else if (randDir == 7)        a = DOWNRIGHT;*/
-//                    turn(a);
-//                }
-
-                
-                /*if (Math.random() < 0.2) {
-                    forward(1);
-                }*/
-                
-                if(target!=lasttarget)
-                    getfeedback=true;
-                lasttarget=target;
-                
+// int a = 0;
+// if (Math.random() < 0.4) {
+// int randDir = (int)(Math.random()*4);
+// if (randDir == 0) a = LEFT;
+// else if (randDir == 1) a = RIGHT;
+// else if (randDir == 2) a = UP;
+// else if (randDir == 3) a = DOWN;
+// /*else if (randDir == 4) a = UPLEFT;
+// else if (randDir == 5) a = UPRIGHT;
+// else if (randDir == 6) a = DOWNLEFT;
+// else if (randDir == 7) a = DOWNRIGHT;*/
+// turn(a);
+// }
+/*if (Math.random() < 0.2) {
+                 forward(1);
+                 }*/
+                if (target != lasttarget) {
+                    getfeedback = true;
+                }
+                lasttarget = target;
                 PVector current = new PVector(x, y);
-
                 System.out.println(nextEffect);
                 if (nextEffect == null) {
                     List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, target);
-
                     actions.clear();
-                    
-                    //System.out.println("path: " + path);
-                    
-                    if (path!=null) {
+                    System.out.println(path);
+                    if (path != null) {
                         if (path.size() <= 1) {
+                            nar.step(1);
                             System.out.println("at destination; didnt need to find path");
-                            if(getfeedback && !"".equals(goal)) {
-                                getfeedback=false;
-                                nar.addInput("<(*,Self,"+goal+") --> at>. :|:\n");
+                            if (getfeedback && !"".equals(goal)) {
+                                getfeedback = false;
+                                nar.addInput("<(*,Self," + goal + ") --> at>. :|:");
                             }
-                            
-                            //NEW TARGET                            
-                            target.x = (int)(Math.random() * (w-1))+1;
-                            target.y = (int)(Math.random() * (h-1))+1;
-                            System.err.println("new target: " + target);
-                        }
-                        else {
+                        } else {
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
                             float cy = y;
                             for (int i = 1; i < numSteps; i++) {
                                 PVector next = path.get(i);
-                                int dx = (int)(next.x - cx);
-                                int dy = (int)(next.y - cy);
-
-
+                                int dx = (int) (next.x - cx);
+                                int dy = (int) (next.y - cy);
                                 if ((dx == 0) && (dy == 1)) {
                                     turn(UP);
                                     forward(1);
@@ -152,73 +118,22 @@ public class TestChamber {
                                     turn(DOWN);
                                     forward(1);
                                 }
-                                
                                 cx = next.x;
                                 cy = next.y;
                             }
                         }
                     }
                 }
-                
-            }   
-
-            @Override
-            public void act(Action a) {
-                super.act(a);
             }
-
-            @Override
-            public void perceive(Effect e) {
-                super.perceive(e);
-                
-                
-                String action = e.action.getClass().getSimpleName().toString();
-                String actionParam = e.action.toParamString();
-                String success = String.valueOf(e.success);
-                        
-                if (actionParam == null) actionParam = "";
-                if (actionParam.length() != 0) actionParam = "(*," + actionParam + "),";
-                
-                nar.addInput("$0.95$ <(*,Self," + action + "," + actionParam + success + ") --> effect>. :\\:");
-                String seeing = "(*,";
-                
-                seeing += this.cellOn().material + ",";
-                seeing += this.cellRelative(0).material + ",";
-                seeing += this.cellRelative(90).material + ",";
-                seeing += this.cellRelative(180).material + ",";
-                seeing += this.cellRelative(270).material + ")";
-                
-                        
-                nar.addInput("$0.50$ <(*,Self," + seeing + ") --> see>. :|:");
-                
-            }
-
-            
         };
-        Goto wu=new Goto(this,"^go-to");
+        Goto wu = new Goto(this, "^go-to");
         nar.memory.addOperator(wu);
         space.add(a);
-        //space.add(new QLAgent(10,20));
-        space.add(new Key(20,20));
-        //space.add(new RayVision(a, 45, 10, 8));
+//space.add(new QLAgent(10,20));
+        space.add(new Key(20, 20));
+//space.add(new RayVision(a, 45, 10, 8));
     }
-    
+
     public static void main(String[] arg) {
-        NAR n = new DefaultNARBuilder().build();
-        n.param().cycleInputTasks.set(1);
-        n.param().cycleMemory.set(1);
-        
-        new TextOutput(n, System.out);
-        
-        TestChamber c = new TestChamber();
-        
-        
-        c.create(n);
-        
-        new NARSwing(n);
-        
-        
-        
     }
-    
 }
