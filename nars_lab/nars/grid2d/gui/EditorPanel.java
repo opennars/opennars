@@ -41,6 +41,9 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode machineMenu = new DefaultMutableTreeNode("Machine");
         root.add(machineMenu);
         
+        DefaultMutableTreeNode itemMenu = new DefaultMutableTreeNode("Items");
+        root.add(itemMenu);
+        
         root.add(new DefaultMutableTreeNode("Tools"));
         
         
@@ -102,13 +105,18 @@ public class EditorPanel extends JPanel {
         machineMenu.add(new EditorMode("Light") {
             @Override public void run() { s.cells.click("Light"); }
         });        
-        machineMenu.add(new EditorMode("Turret") {
+        machineMenu.add(new EditorMode("Firework") {
             @Override public void run() { s.cells.click("Turret"); }
         });    
         
         machineMenu.add(new EditorMode("Door") {
             @Override public void run() { s.cells.click("Door"); }
         });  
+        
+        itemMenu.add(new EditorMode("Key and Door") {
+            @Override public void run() { s.cells.click("Key and Key"); }
+        });  
+        
         
     }
     

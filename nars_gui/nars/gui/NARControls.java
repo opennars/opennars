@@ -51,6 +51,7 @@ import javax.swing.SwingUtilities;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
 import nars.gui.output.BagWindow;
 import nars.gui.output.LogPanel;
@@ -148,7 +149,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         m.addActionListener(this);
         menuBar.add(m);
 
-        m = new JMenu("Input");
+        /*m = new JMenu("Input");
         {
             JMenuItem mv = new JMenuItem("+ Text Input");
             mv.addActionListener(new ActionListener() {
@@ -163,10 +164,23 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             m.add(mv);
             
         }
-        menuBar.add(m);
+        menuBar.add(m);*/
         
-        m = new JMenu("Output");
+        m = new JMenu("Windows");
         {
+            
+            JMenuItem mv3 = new JMenuItem("+ Text Input");
+            mv3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    InputPanel inputPanel = new InputPanel(nar);
+                    Window inputWindow = new Window("Text Input", inputPanel);                    
+                    inputWindow.setSize(800, 200);
+                    inputWindow.setVisible(true);        
+                }
+            });
+            m.add(mv3);
+            
             JMenuItem ml = new JMenuItem("+ Log");
             ml.addActionListener(new ActionListener() {
                 @Override
@@ -201,11 +215,11 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             });
             m.add(st);
 
-            JMenuItem ct = new JMenuItem("+ Concepts");
+            /*JMenuItem ct = new JMenuItem("+ Concepts");
             ct.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    /* see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} */
+                    // see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} 
                     memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");                    
                 }
             });
@@ -218,7 +232,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                     memory.taskBuffersStartPlay(new BagWindow<Task>(), "Buffered Tasks");
                 }
             });
-            m.add(bt);
+            m.add(bt);*/
             
             JMenuItem cct = new JMenuItem("+ Concept Content");
             cct.addActionListener(new ActionListener() {
@@ -228,6 +242,9 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 }                
             });
             m.add(cct);
+            
+            
+            
             
             /*
             JMenuItem it = new JMenuItem("+ Inference Log");
@@ -242,9 +259,28 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             */
         }
         menuBar.add(m);
+        
+        
+        m = new JMenu("Chamber");
+        {
+            JMenuItem cct2 = new JMenuItem("+ Test Chamber");
+            cct2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    
+                    TestChamber.create(nar);
+                }                
+            });
+            m.add(cct2);
+            
+        }
+        menuBar.add(m);
+        
+        
+       
 
         m = new JMenu("Help");
-        addJMenuItem(m, "Related Information");
+        //addJMenuItem(m, "Related Information");
         addJMenuItem(m, "About NARS");
         m.addActionListener(this);
         menuBar.add(m);
@@ -368,7 +404,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                     break;
                 case "About NARS":
 //                MessageDialog info =
-                    new MessageDialog(NARSwing.INFO);
+                    new MessageDialog(NARSwing.INFO+"\n\n"+NARSwing.WEBSITE);
                     break;
             }
         }
