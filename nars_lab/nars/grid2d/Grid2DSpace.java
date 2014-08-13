@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JPanel;
+import nars.core.NAR;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
@@ -57,12 +58,13 @@ public class Grid2DSpace extends PApplet {
     long lasttime = -1;
     double realtime;
     public ParticleSystem particles;
+    public NAR nar;
     
-    public Grid2DSpace(Hauto cells) {
+    public Grid2DSpace(Hauto cells, NAR nar) {
         super();
         this.cells = cells;
         world_used=true;
-        
+        this.nar=nar;
         init();
         
         

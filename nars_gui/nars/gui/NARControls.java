@@ -261,7 +261,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         menuBar.add(m);
         
         
-        m = new JMenu("Chamber");
+        m = new JMenu("Demos");
         {
             JMenuItem cct2 = new JMenuItem("+ Test Chamber");
             cct2.addActionListener(new ActionListener() {

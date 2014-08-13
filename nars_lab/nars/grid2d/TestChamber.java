@@ -10,6 +10,7 @@ import static nars.grid2d.Hauto.UP;
 import nars.grid2d.agent.ql.QLAgent;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
+import nars.grid2d.operator.Goto;
 import processing.core.PVector;
 
 
@@ -21,7 +22,7 @@ public class TestChamber {
         int w = 50;
         int h = 50;
         int water_threshold=30;
-        Hauto cells = new Hauto(w,h);
+        Hauto cells = new Hauto(w,h,nar);
         cells.forEach(0,0,w,h, new CellFunction() {
             @Override  public void update(Cell c) {
                 ///c.setHeight((int)(Math.random() * 12 + 1));
@@ -39,14 +40,14 @@ public class TestChamber {
         Maze.buildMaze(cells, 4,4,24,24);
                 
                 
-        final Grid2DSpace space = new Grid2DSpace(cells);
+        final Grid2DSpace space = new Grid2DSpace(cells,nar);
         space.newWindow(1000, 800, true);
         
-        
+        PVector target = new PVector(1,1);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         
-        GridAgent a = new GridAgent(17,17) {
-
+        GridAgent a = new GridAgent(17,17,nar) {
+        
             @Override
             public void update(Effect nextEffect) {
 //                int a = 0;
@@ -69,7 +70,6 @@ public class TestChamber {
                 }*/
                 
                 PVector current = new PVector(x, y);
-                PVector target = new PVector(1,1);
 
                 System.out.println(nextEffect);
                 if (nextEffect == null) {
@@ -80,6 +80,7 @@ public class TestChamber {
                     System.out.println(path);
                     if (path!=null) {
                         if (path.size() <= 1) {
+                            nar.step(1);
                             System.out.println("at destination; didnt need to find path");
                         }
                         else {
@@ -115,21 +116,14 @@ public class TestChamber {
                         }
                     }
                 }
-
-                
-            }
-
-  
-            
+            }   
         };
+        Goto wu=new Goto(space,"^go-to");
+        nar.memory.addOperator(wu);
         space.add(a);
-        
         //space.add(new QLAgent(10,20));
-        
         space.add(new Key(20,20));
-        
         //space.add(new RayVision(a, 45, 10, 8));
-        
     }
     
     public static void main(String[] arg) {

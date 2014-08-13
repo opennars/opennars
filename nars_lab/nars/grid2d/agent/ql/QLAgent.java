@@ -1,6 +1,7 @@
 package nars.grid2d.agent.ql;
 
 import java.util.Arrays;
+import nars.core.NAR;
 import nars.grid2d.Cell;
 import nars.grid2d.Effect;
 import nars.grid2d.GridAgent;
@@ -15,9 +16,8 @@ import static nars.grid2d.Hauto.*;
 public class QLAgent extends GridAgent {
 
     QLearner q = new QLearner();
-
-    public QLAgent(int x, int y) {
-        super(x, y);
+    public QLAgent(int x, int y, NAR nar) {
+        super(x, y, nar);
         
         q.init(6, 4);
     }
