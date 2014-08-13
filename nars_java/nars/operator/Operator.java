@@ -21,10 +21,8 @@
 
 package nars.operator;
 
-import java.util.Arrays;
 import java.util.List;
 import nars.entity.Task;
-import nars.io.Output.EXE;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.storage.Memory;
@@ -47,7 +45,8 @@ public abstract class Operator extends Term {
      * Required method for every operator, specifying the corresponding
      * operation
      *
-     * @param args The task with the arguments to be passed to the operator
+     * @param args Arguments of the operation, both input (constant) and output (variable)
+     * @param memory The memory to work on
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
@@ -62,8 +61,10 @@ public abstract class Operator extends Term {
     * @param memory The memory on which the operation is executed
     */
     public void call(final Operation operation, final Term[] args, final Memory memory) {
-        reportExecution(operation, args, memory);
-        List<Task> feedback = execute(operation, args, memory);        
+        List<Task> feedback = execute(operation, args, memory); // to identify failed operation?
+        memory.executedTask(operation);
+        //        reportExecution(op, args, memory);
+        
         if (feedback != null) {
             for (Task t : feedback) {
                 memory.inputTask(t);
@@ -72,23 +73,6 @@ public abstract class Operator extends Term {
     }
     
    
-    /**
-     * Display a message in the output stream to indicate the reportExecution of
-     * an operation
-     * <p>
-     * @param operation The content of the operation to be executed
-     */
-    public static void reportExecution(final Operation operation, final Term[] args, final Memory memory) {
-        final Operator operator = operation.getOperator();
-        
-        StringBuilder buffer = new StringBuilder();
-        for (Object obj : args) {
-            buffer.append(obj).append(",");
-        }
-        //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
-        memory.output(EXE.class, operator + " " + Arrays.toString(args));
-    }
-    
     public static String operationExecutionString(final Statement operation) {
         Term operator = operation.getPredicate();
         Term arguments = operation.getSubject();
@@ -98,7 +82,7 @@ public abstract class Operator extends Term {
 
     @Override
     public Operator clone() {
-        //do not clone operator, just use as-is since it's effectively immutable
+        //do not clone operators, just use as-is since it's effectively immutable
         return this;
         
         /*
@@ -107,5 +91,24 @@ public abstract class Operator extends Term {
         return o;
         */
     }
+
+//    /**
+//     * Display a message in the output stream to indicate the reportExecution of
+//     * an operation
+//     * <p>
+//     * @param operation The content of the operation to be executed
+//     */
+//    public static void reportExecution(final Operation operation, final Term[] args, final Memory memory) {
+//        final Operator operator = operation.getOperator();
+//        
+//        StringBuilder buffer = new StringBuilder();
+//        for (Object obj : args) {
+//            buffer.append(obj).append(",");
+//        }
+//        //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
+//        memory.output(EXE.class, operator + " " + Arrays.toString(args));
+//    }
+    
+
 }
 

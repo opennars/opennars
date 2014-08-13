@@ -522,8 +522,8 @@ public class TextPerception {
         if (firstSeparator == -1) {
             throw new InvalidInputException("Invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
         }
-        
-        String op = s.substring(0, firstSeparator).trim();
+                
+        String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
         NativeOperator oNative = getOperator(op);
         Operator oRegistered = memory.getOperator(op);
         
@@ -531,7 +531,9 @@ public class TextPerception {
             throw new InvalidInputException("Unknown operator: " + op);
         }
 
-        ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
+        ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<Term>(0)
+                : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
+
         Term[] argA = arg.toArray(new Term[arg.size()]);
         
         Term t;
@@ -540,7 +542,7 @@ public class TextPerception {
             t = memory.term(oNative, argA);
         }
         else if (oRegistered!=null) {
-            t = make(oRegistered, argA, memory);
+            t = make(oRegistered, argA, true, memory);
         }
         else {
             throw new InvalidInputException("Invalid compound term");

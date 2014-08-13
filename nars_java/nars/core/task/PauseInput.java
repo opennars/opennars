@@ -1,4 +1,4 @@
-package nars.io;
+package nars.core.task;
 
 import nars.entity.AbstractTask;
 

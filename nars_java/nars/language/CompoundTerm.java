@@ -336,6 +336,9 @@ public abstract class CompoundTerm extends Term {
             .append(COMPOUND_TERM_OPENER.ch).append(op.toString());
             
         for (final Term t : arg) {
+            if (t == null) {
+                throw new RuntimeException("Term is null: " + Arrays.toString(arg));
+            }
             n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
         }
         

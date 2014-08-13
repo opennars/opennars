@@ -20,7 +20,6 @@
  */
 package nars.operator;
 
-import java.util.ArrayList;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
@@ -67,14 +66,24 @@ public class Operation extends Inheritance {
         return new Operation(name(), cloneTerms(), isConstant(), containVar(), getComplexity());
     }
 
+    
+    
+    
+ 
+   
     /**
      * Try to make a new compound from two components. Called by the inference
      * rules.
      *
      * @param memory Reference to the memory
+     * @param addSelf include SELF term at beginning of product terms
      * @return A compound generated or null
      */
-    public static Operation make(Operator oper, final Term[] arg, final Memory memory) {        
+    public static Operation make(Operator oper, final Term[] arg, boolean addSelf, final Memory memory) {        
+        
+        addSelf = false; //FALSE untli understand when SELF should apply
+        
+        
         if (oper == null) {
             return null;
         }
@@ -83,11 +92,21 @@ public class Operation extends Inheritance {
         if (t != null) {
             return (Operation) t;
         }
-        ArrayList<Term> opArg = new ArrayList<>();
-        Term list = Product.make(arg, memory);
-        opArg.add(list);
-        opArg.add(oper);
-        return new Operation(name, opArg.toArray(new Term[opArg.size()]));
+        
+        Term productArg[];
+        if (addSelf) {            
+            productArg = new Term[arg.length+1];
+            System.arraycopy(arg, 0, productArg, 0, arg.length);
+            productArg[arg.length] = memory.self;
+        }
+        else {
+            productArg = arg;
+        }        
+                
+        return new Operation(name, 
+                termArray(Product.make(productArg, memory), oper)
+        );
+        
     }
 
     @Override
