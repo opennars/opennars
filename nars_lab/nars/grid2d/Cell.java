@@ -79,7 +79,7 @@ public class Cell {
     
     public void drawtext(Grid2DSpace s, String str) {
         s.pushMatrix();
-        s.fill(255,255,255,128);
+        //
         s.translate(0.2f,0.9f);
         s.text(str,0,0);
         s.popMatrix();
@@ -223,7 +223,8 @@ public class Cell {
             s.rect(0, 0.3f, 1, 0.4f);
             s.rect(0.3f, 0, 0.4f, 1);
         }
-        
+         
+        s.fill(255,255,255,128);
         if(logic==Logic.AND)
         {
             drawtext(s,"^");
@@ -267,7 +268,13 @@ public class Cell {
                     break;
             }
         }
-        
+        if(!"".equals(name))
+        {
+            s.textSize(0.2f);
+            s.fill(255,0,0);
+            drawtext(s,name);
+        }
+            
         
     }
     
@@ -295,7 +302,7 @@ public class Cell {
         this.charge = c.charge;
         this.chargeFront = c.chargeFront;  
         this.light=c.light;
-        this.name=c.name;
+        this.name=c.name+"";
     }
 
     public void setHeight(int h) {

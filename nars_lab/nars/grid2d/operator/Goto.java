@@ -21,9 +21,9 @@
 package nars.grid2d.operator;
  
 import java.util.List;
-
 import nars.entity.Task;
 import nars.grid2d.Grid2DSpace;
+import nars.grid2d.TestChamber;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -35,8 +35,10 @@ import nars.storage.Memory;
  */
 public class Goto extends Operator {
 
-    public Goto(Grid2DSpace space, String name) {
+    TestChamber chamb;
+    public Goto(TestChamber chamb, String name) {
         super(name);
+        this.chamb=chamb;
     }
 
     @Override
@@ -48,12 +50,16 @@ public class Goto extends Operator {
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
+            chamb.gotoObj(t.toString());
         }
         
-        if(nars.grid2d.Grid2DSpace.world_used) {
+        
+       // if(nars.grid2d.Grid2DSpace.world_used) {
             //ok lets start pathfinding tool
             //nars.grid2d.Grid2DSpace.pathFindAndGoto(arg);
-        }
+       // }
+        
+       
         
         return null;
     }

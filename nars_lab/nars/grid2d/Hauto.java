@@ -120,6 +120,8 @@ public class Hauto {
     Integer entityID=0;
     public void clicked(float x,float y)
     {
+        if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
+            return;
         readCells[(int) x][(int) y].charge = selected.charge;
         writeCells[(int) x][(int) y].charge = selected.charge;
         readCells[(int) x][(int) y].logic = selected.logic;
@@ -139,8 +141,8 @@ public class Hauto {
             String Klass=name;
             name=name+(entityID.toString());
             nar.addInput("<"+name+" --> "+Klass+">.");
-            readCells[(int) x][(int) y].name = selected.name;
-            writeCells[(int) x][(int) y].name = selected.name;
+            readCells[(int) x][(int) y].name = name;
+            writeCells[(int) x][(int) y].name = name;
             entityID++;
         }
     }
@@ -289,6 +291,7 @@ public class Hauto {
         }
         
         copyReadToWrite();
+        click("StoneWall");
     }
 
     
