@@ -92,6 +92,7 @@ public class TestChamber {
                             System.out.println("at destination; didnt need to find path");
                             if (getfeedback && !"".equals(goal)) {
                                 getfeedback = false;
+                                nar.step(6);
                                 nar.addInput("<(*,Self," + goal + ") --> at>. :|:");
                             }
                         } else {
