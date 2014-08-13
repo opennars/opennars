@@ -268,22 +268,22 @@ public class NARGraph extends DirectedMultigraph {
             addTerm(g, term);
 
             if (includeBeliefs) {
-                for (final Sentence kb : c.beliefs) {
-                    onBelief(kb);
+                for (final Sentence belief : c.beliefs) {
+                    onBelief(belief);
 
-                    sentenceTerms.put(kb, term);
-                    g.addVertex(kb);
-                    g.addEdge(kb, term, new SentenceContent());
+                    sentenceTerms.put(belief, term);
+                    g.addVertex(belief);
+                    g.addEdge(belief, term, new SentenceContent());
                     
                     //TODO extract to onBelief                    
 
                     
                     //TODO check if kb.getContent() is never distinct from c.getTerm()
-                    if (term.equals(kb.content))
+                    if (term.equals(belief.content))
                         continue;
                     
-                    addTerm(g, kb.content);                    
-                    g.addEdge(term, kb.content, new TermBelief());                    
+                    addTerm(g, belief.content);                    
+                    g.addEdge(term, belief.content, new TermBelief());                    
                 }
             }
             
