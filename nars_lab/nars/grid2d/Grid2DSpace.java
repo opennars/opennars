@@ -314,7 +314,7 @@ public class Grid2DSpace extends PApplet {
         pushMatrix();
         
         //shift half a cell down and right so that when an object draws, it's centerd in the middle of a cell.
-        translate(rendersize/2f, rendersize/2f);
+        translate(rendersize/4f, rendersize/4f);
         
         for (GridObject g : objects)
             g.draw();
