@@ -179,6 +179,9 @@ public class Cell {
         }
         s.fill(state.cr, state.cg, state.cb, state.ca);
         
+        boolean full3d=false;
+        double v=full3d? 0.5f : 0.0f;
+        
         if(logic!=Logic.NotALogicBlock)
         {
             s.fill(state.cr/2.0f);
@@ -191,17 +194,17 @@ public class Cell {
         else
         if(material==Material.Water)
         {
-            float verschx=(float) Math.max(-0.5f, Math.min(0.0f,0.1*(x-wx)));
-            float verschy=(float) Math.max(-0.5f, Math.min(0.0f,0.1*(y-wy)));
+            float verschx=(float) Math.max(-0.5f, Math.min(v,0.1*(x-wx)));
+            float verschy=(float) Math.max(-0.5f, Math.min(v,0.1*(y-wy)));
             float add=0.0f; //0.2
             s.rect(add-verschx,add-verschy,1.05f,1.05f);
         }
         else
         if(material==Material.StoneWall || material==Material.Water)
         {
-            float verschx=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(x-wx)));
-            float verschy=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(y-wy)));
-            float add=0.0f; //0.2
+            float verschx=(float) Math.max(-0.3f, Math.min(v,0.1*(x-wx)));
+            float verschy=(float) Math.max(-0.3f, Math.min(v,0.1*(y-wy)));
+            float add=-0.2f; //0.2
             s.rect(add+verschx,add+verschy,1.1f,1.1f);
             s.rect(add+verschx,add+verschy,1.1f,1.1f);
             
