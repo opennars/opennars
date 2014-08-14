@@ -67,7 +67,7 @@ public class TestChamber {
             }
         });
         
-        Maze.buildMaze(cells, 4, 4, 24, 24);
+        Maze.buildMaze(cells, 3, 3, 23, 23);
         space = new Grid2DSpace(cells, nar);
         space.newWindow(1000, 800, true);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
