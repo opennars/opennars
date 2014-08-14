@@ -12,8 +12,11 @@ import nars.grid2d.LocalGridObject;
 
 public class Key extends LocalGridObject {
 
-    public Key(int x, int y) {
+    public String doorname="";
+    
+    public Key(int x, int y, String doorname) {
         super(x, y);
+        this.doorname=doorname;
     }
 
     @Override
@@ -27,16 +30,28 @@ public class Key extends LocalGridObject {
         
         space.pushMatrix();
         space.translate(cx, cy);
+        
+        space.pushMatrix();
         space.rotate(a);
         space.scale(scale*0.8f);
         
-        space.fill(Color.RED.getRGB());
+        space.fill(Color.GREEN.getRGB());
         space.rect(-0.4f, -0.15f/2, 0.8f, 0.15f);
         space.rect(-0.5f, -0.2f, 0.3f, 0.4f);
         space.rect(0.3f, 0, 0.1f, 0.15f);
         space.rect(0.1f, 0, 0.1f, 0.15f);
+        space.popMatrix();
+        if(!"".equals(doorname))
+        {
+            space.textSize(0.2f);
+            space.fill(255,0,0);
+            space.pushMatrix();
+            space.text(doorname,0,0);
+            space.popMatrix();
+        }
         
         space.popMatrix();
+
     }
     
     

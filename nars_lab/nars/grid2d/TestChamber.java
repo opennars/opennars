@@ -1,5 +1,6 @@
 package nars.grid2d;
 
+import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
 import nars.grid2d.Cell.Material;
@@ -11,6 +12,7 @@ import nars.grid2d.agent.ql.QLAgent;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Goto;
+import nars.grid2d.operator.Pick;
 import processing.core.PVector;
 
 public class TestChamber {
@@ -19,17 +21,30 @@ public class TestChamber {
     boolean getfeedback = false;
     PVector target = new PVector(25, 25);
     String goal = "";
-
-    public void gotoObj(String name) {
+    String opname="";
+    List<GridObject> inventory=new ArrayList<GridObject>();
+    public void gotoObj(String arg,String opname) {
+        this.opname=opname;
         Hauto cells = space.cells;
-        goal = name;
+        goal = arg;
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
-                if (cells.readCells[i][j].name.equals(name)) {
+                if (cells.readCells[i][j].name.equals(arg)) {
                     target = new PVector(i, j);
+                    getfeedback = true;
                 }
             }
         }
+        //if("pick".equals(opname)) {
+            for(GridObject gridi : space.objects) {
+                if(gridi instanceof Key && ((Key)gridi).doorname.equals(goal)) {
+                    LocalGridObject gridu=(LocalGridObject) gridi;
+                    if(opname.equals("go-to"))
+                        target = new PVector(gridu.x, gridu.y);
+                    getfeedback = true; //currently pick only allows to pick if goto was already done
+                }
+            }
+        //}
     }
 
     public void create(NAR nar) {
@@ -51,6 +66,7 @@ public class TestChamber {
                 c.setHeight((int) (Math.random() * 24 + 1));
             }
         });
+        
         Maze.buildMaze(cells, 4, 4, 24, 24);
         space = new Grid2DSpace(cells, nar);
         space.newWindow(1000, 800, true);
@@ -93,8 +109,25 @@ public class TestChamber {
                             if (getfeedback && !"".equals(goal)) {
                                 getfeedback = false;
                                 nar.step(6);
-                                nar.addInput("<(*,Self," + goal + ") --> at>. :|:");
+                                if("pick".equals(opname)) {
+                                    inventory.add(goal);
+                                    GridObject remove=null;
+                                    for(GridObject gridi : space.objects) {
+                                        if(gridi instanceof Key && ((Key)gridi).doorname.equals(goal)) {
+                                            remove=gridi;
+                                            break;
+                                        }
+                                    }
+                                    if(remove!=null)
+                                        space.objects.remove(remove);
+                                    nar.addInput("<(*,Self," + goal + ") --> hold>. :|:");
+                                }
+                                else
+                                {
+                                    nar.addInput("<(*,Self," + goal + ") --> at>. :|:");
+                                }
                             }
+                            opname="";
                         } else {
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
@@ -129,9 +162,11 @@ public class TestChamber {
         };
         Goto wu = new Goto(this, "^go-to");
         nar.memory.addOperator(wu);
+        Pick wa = new Pick(this, "^pick");
+        nar.memory.addOperator(wa);
         space.add(a);
 //space.add(new QLAgent(10,20));
-        space.add(new Key(20, 20));
+       // space.add(new Key(20, 20));
 //space.add(new RayVision(a, 45, 10, 8));
     }
 
