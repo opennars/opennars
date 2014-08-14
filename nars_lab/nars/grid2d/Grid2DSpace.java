@@ -248,7 +248,7 @@ public class Grid2DSpace extends PApplet {
 
     public void hrend_DrawGUI() {
         fill(255);
-        rect(10,10,10,10);
+       // rect(10,10,10,10);
     }
 
     @Override
