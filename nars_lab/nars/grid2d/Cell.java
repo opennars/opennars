@@ -191,10 +191,10 @@ public class Cell {
         else
         if(material==Material.Water)
         {
-            float verschx=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(x-wx)));
-            float verschy=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(y-wy)));
+            float verschx=(float) Math.max(-0.5f, Math.min(0.0f,0.1*(x-wx)));
+            float verschy=(float) Math.max(-0.5f, Math.min(0.0f,0.1*(y-wy)));
             float add=0.0f; //0.2
-            s.rect(add-verschx,add-verschy,1.1f,1.1f);
+            s.rect(add-verschx,add-verschy,1.05f,1.05f);
         }
         else
         if(material==Material.StoneWall || material==Material.Water)
