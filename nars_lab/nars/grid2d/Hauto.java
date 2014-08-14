@@ -12,6 +12,7 @@ import static nars.grid2d.Cell.Logic.WIRE;
 import static nars.grid2d.Cell.Logic.XOR;
 import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;
+import nars.grid2d.object.Key;
 
 public class Hauto {
     private final NAR nar;
@@ -117,11 +118,22 @@ public class Hauto {
             //w.charge *= w.conductivity;
     }
     
+    String doorname="";
     Integer entityID=0;
-    public void clicked(float x,float y)
+    public void clicked(float x,float y, Grid2DSpace space)
     {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
             return;
+        
+        if(!"".equals(doorname) && selected.material==Material.Door) {
+            space.add(new Key((int)x, (int)y, doorname.replace("door", "key")));
+            nar.addInput("<"+doorname.replace("door", "key")+" --> key>.");
+            doorname="";
+            return;
+        }
+        if(!(selected.material==Material.Door))
+            doorname="";
+        
         readCells[(int) x][(int) y].charge = selected.charge;
         writeCells[(int) x][(int) y].charge = selected.charge;
         readCells[(int) x][(int) y].logic = selected.logic;
@@ -134,12 +146,16 @@ public class Hauto {
         if(selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH) //or other entity...
         {
             String name="";
-            if(selected.material==Material.Door) 
+            if(selected.material==Material.Door) {
                 name="door";
+            }
             if(selected.logic==Logic.SWITCH || selected.logic==Logic.OFFSWITCH) 
                 name="switch";
             String Klass=name;
             name=name+(entityID.toString());
+            if(selected.material==Material.Door) {
+                doorname=name;
+            }
             nar.addInput("<"+name+" --> "+Klass+">.");
             readCells[(int) x][(int) y].name = name;
             writeCells[(int) x][(int) y].name = name;

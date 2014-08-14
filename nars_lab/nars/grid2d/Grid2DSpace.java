@@ -37,7 +37,7 @@ public class Grid2DSpace extends PApplet {
     //processingjs compatibility layer
     int mouseScroll = 0;
     public final Hauto cells;
-    List<GridObject> objects = new ArrayList();
+    public List<GridObject> objects = new ArrayList();
     ProcessingJs processingjs = new ProcessingJs();
     //Hnav 2D navigation system
     Hnav hnav = new Hnav();
@@ -172,7 +172,7 @@ public class Grid2DSpace extends PApplet {
         if (realx >= cells.w || realy >= cells.h) {
             return;
         }
-        cells.clicked(realx,realy);
+        cells.clicked(realx,realy,this);
     }
 
     public void updateAutomata() {
