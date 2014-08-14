@@ -352,7 +352,7 @@ public class Grid2DSpace extends PApplet {
         
                 pushMatrix();
                 translate(x, y);
-                c.draw(this,j==0 || i==0 || i==cells.w-1 || j==cells.w-1);
+                c.draw(this,j==0 || i==0 || i==cells.w-1 || j==cells.w-1,hnav.MouseToWorldCoordX(width/2),hnav.MouseToWorldCoordY(height/2),x,y,hnav.zoom);
                 popMatrix();
 
             }

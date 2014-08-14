@@ -90,7 +90,7 @@ public class Cell {
     }    
     
     
-    public void draw(Grid2DSpace s,boolean edge) {
+    public void draw(Grid2DSpace s,boolean edge,float wx,float wy,float x,float y, float z) {
         
         int ambientLight = 100;
         
@@ -191,13 +191,21 @@ public class Cell {
         else
         if(material==Material.Water)
         {
-            s.rect(0.2f,0.2f,2.0f,2.0f);
+            float verschx=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(x-wx)));
+            float verschy=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(y-wy)));
+            float add=0.0f; //0.2
+            s.rect(add-verschx,add-verschy,1.1f,1.1f);
         }
         else
         if(material==Material.StoneWall || material==Material.Water)
         {
-            s.rect(0.2f,0.2f,1.0f,1.0f);
-            s.rect(0.2f,0.2f,1.0f,1.0f);
+            float verschx=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(x-wx)));
+            float verschy=(float) Math.max(-0.5f, Math.min(0.5f,0.1*(y-wy)));
+            float add=0.0f; //0.2
+            s.rect(add+verschx,add+verschy,1.1f,1.1f);
+            s.rect(add+verschx,add+verschy,1.1f,1.1f);
+            
+            
             //also try this one, it looks more seamless but less 3d:
             //s.rect(0.2f,0.0f,1.0f,1.0f);
             //s.rect(0.2f,0.0f,1.0f,1.0f);
