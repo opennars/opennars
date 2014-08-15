@@ -42,7 +42,8 @@ public class TestChamber {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
-                    target = new PVector(i, j);
+                    if(opname.equals("go-to"))
+                        target = new PVector(i, j);
                     getfeedback = true;
                 }
             }

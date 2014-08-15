@@ -125,6 +125,13 @@ public class Hauto {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
             return;
         
+        if(oper.equals("perceive")) {
+             readCells[(int) x][(int) y].name = "place"+entityID.toString();
+            writeCells[(int) x][(int) y].name = "place"+entityID.toString();
+            entityID++;
+            return;
+        }
+        
         if(!"".equals(oper)) {
             if(!"".equals(readCells[x][y].name) && !"pick".equals(oper))
                 TestChamber.operateObj(oper, readCells[x][y].name);
@@ -176,7 +183,7 @@ public class Hauto {
     Cell selected=new Cell();
     String oper="";
     String label="";
-    
+
     public void click(String label, String oper) {
         this.label=label;
         this.oper=oper;

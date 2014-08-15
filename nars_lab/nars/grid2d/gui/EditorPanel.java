@@ -45,7 +45,6 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode actionMenu = new DefaultMutableTreeNode("Actions");
         root.add(actionMenu);
         
-        root.add(new DefaultMutableTreeNode("Tools"));
         
         
         DefaultTreeModel model = new DefaultTreeModel(root);
@@ -123,9 +122,12 @@ public class EditorPanel extends JPanel {
         });  
         
         
-        actionMenu.add(new EditorMode("Pick named") {
-            
+        actionMenu.add(new EditorMode("Pick named") {  
             @Override public void run() { s.cells.click("","pick");}
+        }); 
+        
+        actionMenu.add(new EditorMode("perceive/name") {  
+            @Override public void run() { s.cells.click("","perceive");}
         });  
         
         
