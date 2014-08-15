@@ -8,6 +8,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import nars.grid2d.Grid2DSpace;
+import nars.grid2d.TestChamber;
 
 /**
  *
@@ -41,8 +42,8 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode machineMenu = new DefaultMutableTreeNode("Machine");
         root.add(machineMenu);
         
-        //DefaultMutableTreeNode itemMenu = new DefaultMutableTreeNode("Items");
-       // root.add(itemMenu);
+        DefaultMutableTreeNode actionMenu = new DefaultMutableTreeNode("Actions");
+        root.add(actionMenu);
         
         root.add(new DefaultMutableTreeNode("Tools"));
         
@@ -64,58 +65,68 @@ public class EditorPanel extends JPanel {
         });
         
         structMenu.add(new EditorMode("Stone Wall") {
-            @Override public void run() { s.cells.click("StoneWall"); }            
+            @Override public void run() { s.cells.click("StoneWall",""); }            
         });
         structMenu.add(new EditorMode("Dirt Floor") {
-            @Override public void run() { s.cells.click("DirtFloor"); }            
+            @Override public void run() { s.cells.click("DirtFloor",""); }            
         });
          structMenu.add(new EditorMode("Grass Floor") {
-            @Override public void run() { s.cells.click("GrassFloor"); }            
+            @Override public void run() { s.cells.click("GrassFloor",""); }            
         });
         
         
         logicMenu.add(new EditorMode("On Wire") {
-            @Override public void run() { s.cells.click("OnWire"); }            
+            @Override public void run() { s.cells.click("OnWire",""); }            
         });
         logicMenu.add(new EditorMode("Off Wire") {
-            @Override public void run() { s.cells.click("OffWire"); }            
+            @Override public void run() { s.cells.click("OffWire",""); }            
         });
         logicMenu.add(new EditorMode("And") {
-            @Override public void run() { s.cells.click("AND"); }
+            @Override public void run() { s.cells.click("AND",""); }
         });
         logicMenu.add(new EditorMode("Or") {
-            @Override public void run() { s.cells.click("OR"); }
+            @Override public void run() { s.cells.click("OR",""); }
         });
         logicMenu.add(new EditorMode("Xor") {
-            @Override public void run() { s.cells.click("XOR"); }
+            @Override public void run() { s.cells.click("XOR",""); }
         });
         logicMenu.add(new EditorMode("Not") {
-            @Override public void run() { s.cells.click("NOT"); }
+            @Override public void run() { s.cells.click("NOT",""); }
         });        
         logicMenu.add(new EditorMode("Bridge") {
-            @Override public void run() { s.cells.click("bridge"); }
+            @Override public void run() { s.cells.click("bridge",""); }
         });
         logicMenu.add(new EditorMode("Off Switch") {
-            @Override public void run() { s.cells.click("offswitch"); }
+            @Override public void run() { s.cells.click("offswitch",""); }
         });
         logicMenu.add(new EditorMode("On Switch") {
-            @Override public void run() { s.cells.click("onswitch"); }
+            @Override public void run() { s.cells.click("onswitch",""); }
         });        
         
         machineMenu.add(new EditorMode("Light") {
-            @Override public void run() { s.cells.click("Light"); }
+            @Override public void run() { s.cells.click("Light",""); }
         });        
         machineMenu.add(new EditorMode("Firework") {
-            @Override public void run() { s.cells.click("Turret"); }
+            @Override public void run() { s.cells.click("Turret",""); }
         });    
         
         machineMenu.add(new EditorMode("Door and Key") {
-            @Override public void run() { s.cells.click("Door"); }
+            @Override public void run() { s.cells.click("Door",""); }
         });  
         
-      //  itemMenu.add(new EditorMode("Key and Door") {
-      //      @Override public void run() { s.cells.click("Key and Key"); }
-       // });  
+
+        
+        
+        actionMenu.add(new EditorMode("Go-To named") {
+            
+            @Override public void run() { s.cells.click("","go-to");}
+        });  
+        
+        
+        actionMenu.add(new EditorMode("Pick named") {
+            
+            @Override public void run() { s.cells.click("","pick");}
+        });  
         
         
     }

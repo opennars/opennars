@@ -9,6 +9,7 @@ public abstract class LocalGridObject implements GridObject {
 
     public float cx, cy, cheading; //current drawn location, for animation
     
+    public String doorname="";
     public int x;
     public int y;
     public int heading; //in degrees

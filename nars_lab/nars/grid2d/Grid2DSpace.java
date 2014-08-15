@@ -172,7 +172,7 @@ public class Grid2DSpace extends PApplet {
         if (realx >= cells.w || realy >= cells.h) {
             return;
         }
-        cells.clicked(realx,realy,this);
+        cells.clicked((int)realx,(int)realy,this);
     }
 
     public void updateAutomata() {

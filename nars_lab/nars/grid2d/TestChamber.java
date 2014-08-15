@@ -17,14 +17,26 @@ import processing.core.PVector;
 
 public class TestChamber {
 
-    Grid2DSpace space;
-    boolean getfeedback = false;
-    PVector target = new PVector(25, 25);
-    String goal = "";
-    String opname="";
-    List<GridObject> inventory=new ArrayList<GridObject>();
-    public void gotoObj(String arg,String opname) {
-        this.opname=opname;
+    static Grid2DSpace space;
+    static boolean getfeedback = false;
+    static PVector target = new PVector(25, 25);
+    static String goal = "";
+    static String opname="";
+    
+    public static String getobj(int x,int y) {
+        for(GridObject gridi : space.objects) {
+            if(gridi instanceof LocalGridObject) { //Key && ((Key)gridi).doorname.equals(goal)) {
+                LocalGridObject gridu=(LocalGridObject) gridi;
+                if(gridu.x==x && gridu.y==y)
+                    return gridu.doorname;
+            }
+        }
+        return "";
+    }
+    
+    static List<GridObject> inventory=new ArrayList<GridObject>();
+    public static void operateObj(String arg,String opname) {
+        opname=opname;
         Hauto cells = space.cells;
         goal = arg;
         for (int i = 0; i < cells.w; i++) {
@@ -37,7 +49,7 @@ public class TestChamber {
         }
         //if("pick".equals(opname)) {
             for(GridObject gridi : space.objects) {
-                if(gridi instanceof Key && ((Key)gridi).doorname.equals(goal)) {
+                if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                     LocalGridObject gridu=(LocalGridObject) gridi;
                     if(opname.equals("go-to"))
                         target = new PVector(gridu.x, gridu.y);

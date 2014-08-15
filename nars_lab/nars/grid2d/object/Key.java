@@ -12,7 +12,7 @@ import nars.grid2d.LocalGridObject;
 
 public class Key extends LocalGridObject {
 
-    public String doorname="";
+    
     
     public Key(int x, int y, String doorname) {
         super(x, y);
