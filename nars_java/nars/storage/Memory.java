@@ -87,6 +87,7 @@ import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
+import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
@@ -894,7 +895,10 @@ public class Memory implements Output, Serializable {
             }
         }
         if (newEvent != null) {
-            if (lastEvent != null) {
+                if (lastEvent != null) { //also here like in rule tables: we dont want to derive useless statements
+                    if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,lastEvent.sentence.content)) {
+                        return;
+                }
                  setTheNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
                 //if (getTheNewStamp() != null) {
                     setCurrentTask(newEvent);
@@ -903,7 +907,8 @@ public class Memory implements Output, Serializable {
 
                 //}
             }
-            lastEvent = newEvent;
+            if(newEvent.isInput() && (lastEvent==null || !equalSubTermsInRespectToImageAndProduct(lastEvent.getContent(),newEvent.sentence.content))) //only use input events for this heuristic
+                lastEvent = newEvent;
         }
     }
 

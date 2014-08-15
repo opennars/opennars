@@ -884,6 +884,14 @@ public final class CompositionalRules {
             }
            
             Sentence second_belief=second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
+            
+            //explaination(patrick): it is not completely valid to do temporal induction only on sequence of occured events
+            //there are rare situations which demand that it is also done in a overarching manner
+            if(taskSentence.getOccurenceTime()!=Stamp.ETERNAL && second_belief.getOccurenceTime()!=Stamp.ETERNAL)
+            {
+                TemporalRules.temporalInduction(taskSentence, second_belief, memory);
+            }
+            
             TruthValue truthSecond=second_belief.truth;
             //we have to select a random belief
             ArrayList<CompoundTerm> terms_dependent=new ArrayList<>();

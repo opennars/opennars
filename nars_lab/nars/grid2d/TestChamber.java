@@ -119,7 +119,7 @@ public class TestChamber {
                             //System.out.println("at destination; didnt need to find path");
                             if (getfeedback && !"".equals(goal) && current.equals(target)) {
                                  getfeedback = false;
-                                nar.step(6);
+                                //--nar.step(6);
                                 if("pick".equals(opname)) {
                                     inventory.add(goal);
                                     GridObject remove=null;

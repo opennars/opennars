@@ -23,6 +23,7 @@ package nars.inference;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -64,7 +65,6 @@ public class RuleTables {
         
         Term taskTerm = taskSentence.content.clone();         // cloning for substitution
         Term beliefTerm = bLink.target.clone();       // cloning for substitution
-
         
         if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             double n=taskTerm.getComplexity() * Parameters.CONTRAPOSITION_PRIORITY; //don't let this rule apply every time, make it dependent on complexity
@@ -94,6 +94,7 @@ public class RuleTables {
         }
         memory.setCurrentBelief( belief );  // may be null
         if (belief != null) {
+            
             LocalRules.match(task, belief, memory);
             if (!memory.noResult()) {
                 return;
@@ -307,6 +308,7 @@ public class RuleTables {
     private static void asymmetricAsymmetric(Sentence taskSentence, Sentence belief, int figure, Memory memory) {
         Statement taskStatement = (Statement) taskSentence.cloneContent();
         Statement beliefStatement = (Statement) belief.cloneContent();
+        
         Term t1, t2;
         switch (figure) {
             case 11:    // induction
@@ -319,7 +321,8 @@ public class RuleTables {
                     SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
 
                     CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, memory);
-                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, memory);//introVarImage(taskContent, beliefContent, index, memory);             
+                    if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
+                        CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, memory);//introVarImage(taskContent, beliefContent, index, memory);             
                     CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,memory);
                     
                 }
