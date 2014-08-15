@@ -205,6 +205,13 @@ public class Hauto {
             selected.charge=0;
         }
         
+        if("Water".equals(label)) {
+            selected.material = Material.Water;     
+            selected.is_solid=false;
+            selected.logic=Logic.NotALogicBlock;
+            selected.charge=0;
+        }
+        
         if("DirtFloor".equals(label)) {
             selected.material = Material.DirtFloor;     
             selected.is_solid=false;
