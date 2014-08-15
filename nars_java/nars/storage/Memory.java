@@ -870,7 +870,9 @@ public class Memory implements Output, Serializable {
                         if ((newEvent == null)
                                 || (BudgetFunctions.rankBelief(newEvent.sentence)
                                 < BudgetFunctions.rankBelief(task.sentence))) {
-                            newEvent = task;
+                            if((lastEvent==null || !equalSubTermsInRespectToImageAndProduct(lastEvent.getContent(),task.getContent()))) {
+                                newEvent = task;
+                            }
                         }
                     }
                 }
@@ -907,7 +909,7 @@ public class Memory implements Output, Serializable {
 
                 //}
             }
-            if(newEvent.isInput() && (lastEvent==null || !equalSubTermsInRespectToImageAndProduct(lastEvent.getContent(),newEvent.sentence.content))) //only use input events for this heuristic
+            if(newEvent.isInput()) //only use input events for this heuristic
                 lastEvent = newEvent;
         }
     }
