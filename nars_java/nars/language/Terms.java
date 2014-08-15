@@ -1,6 +1,7 @@
 package nars.language;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import nars.entity.TermLink;
@@ -56,7 +57,7 @@ public class Terms {
     }
 
     public static CompoundTerm ReduceTillLayer2(CompoundTerm itself, Term replacement, Memory memory) {
-        if (!(itself instanceof CompoundTerm))
+        if (!(itself != null))
             return null;
         
         Term reduced = reduceComponentOneLayer(itself, replacement, memory);
@@ -73,7 +74,7 @@ public class Terms {
             }
             Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
             
-            CompoundTerm itselfCompound = itself;
+            //CompoundTerm itselfCompound = itself;
             CompoundTerm replaced = null;
             if (j < itself.term.length  )
                 replaced = (CompoundTerm) itself.setComponent(j, ret2, memory);
@@ -173,9 +174,7 @@ public class Terms {
             if (list.length > 1) {
                 return memory.term(t1, list);
             } else if (list.length == 1) {
-                if (t1 instanceof CompoundTerm) {
-                    return list[0];
-                }
+                return list[0];
             }
         }
         return t1;
@@ -271,12 +270,10 @@ public class Terms {
             Set<Term> componentsB = new HashSet(1+sbt.length);
 
             componentsA.add(ta);
-            for (final Term x : sat) 
-                componentsA.add(x);
+            Collections.addAll(componentsA, sat);
 
             componentsB.add(tb);
-            for (final Term x : sbt) 
-                componentsB.add(x);
+            Collections.addAll(componentsB, sbt);
 
             if (componentsA.containsAll(componentsB)) {
                 return true;

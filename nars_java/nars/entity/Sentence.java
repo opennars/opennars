@@ -192,7 +192,7 @@ public class Sentence implements Cloneable {
             newStamp.setOccurrenceTime(Stamp.ETERNAL);
         }
         
-        Sentence newSentence = new Sentence((Term) content.clone(), punctuation, newTruth, newStamp);
+        Sentence newSentence = new Sentence(content.clone(), punctuation, newTruth, newStamp);
         return newSentence;
     }
 

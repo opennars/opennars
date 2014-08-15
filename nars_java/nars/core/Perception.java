@@ -16,7 +16,7 @@ public class Perception {
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
     public AbstractTask perceive(final Object o) throws IOException {        
-        AbstractTask t = null;
+        AbstractTask t;
         if (o instanceof String) {
             t = text.perceive((String) o);
         } else if (o instanceof Sentence) {

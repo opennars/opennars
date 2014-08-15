@@ -158,7 +158,7 @@ public class TemporalRules {
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
         long timeDiff = time2 - time1;
-        Interval interval = null;
+        Interval interval;
         if (Math.abs(timeDiff) > Parameters.DURATION) {
             interval = new Interval(Math.abs(timeDiff));
             if (timeDiff > 0) {

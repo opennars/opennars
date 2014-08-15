@@ -63,8 +63,8 @@ public class NARGraph extends DirectedMultigraph {
         public ExcludeBelowPriority(float l) { this.thresh = l;         }        
         @Override public boolean includePriority(float l) { return l >= thresh;  }
         @Override public boolean includeConcept(Concept c) { return true;  }
-    };
-            
+    }
+
     /**
      * creates graph features from NARS term
      */

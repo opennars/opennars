@@ -167,12 +167,10 @@ public final class PrePostCharRope extends AbstractRope {
     @Override
     public void write(final Writer out) throws IOException {
         //this.write(out, 0, this.length());
-        return;
     }
 
     @Override
     public void write(final Writer out, final int offset, final int length) throws IOException {
         //out.write(this.sequence, offset, length);
-        return;
     }
 }

@@ -94,7 +94,7 @@ public final class CompositionalRules {
                 if(qu==null) { assert(false); continue; }
 
                 final Term pcontent = qu.content;
-                if ((pcontent == null) || !(pcontent instanceof CompoundTerm))
+                if (!(pcontent instanceof CompoundTerm))
                     continue;
                 
                 final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
@@ -834,7 +834,7 @@ public final class CompositionalRules {
         CompoundTerm T2 = (CompoundTerm) content.clone();
         if ((component instanceof Inheritance && content instanceof Inheritance)
                 || (component instanceof Similarity && content instanceof Similarity)) {
-            CompoundTerm result = T;
+            //CompoundTerm result = T;
             if (component.equals(content)) {
                 return; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
@@ -879,15 +879,15 @@ public final class CompositionalRules {
             }            
             
             Term secterm=second.term;
-            if(second.beliefs==null || second.beliefs.isEmpty()) {
+            if(second.beliefs.isEmpty()) {
                 return false;
             }
            
             Sentence second_belief=second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
             TruthValue truthSecond=second_belief.truth;
             //we have to select a random belief
-            ArrayList<CompoundTerm> terms_dependent=new ArrayList<CompoundTerm>();
-            ArrayList<CompoundTerm> terms_independent=new ArrayList<CompoundTerm>();
+            ArrayList<CompoundTerm> terms_dependent=new ArrayList<>();
+            ArrayList<CompoundTerm> terms_independent=new ArrayList<>();
             
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
@@ -895,8 +895,8 @@ public final class CompositionalRules {
             Term secterm_unwrap=unwrapNegation(secterm).clone();
             for(Term T1 : components_level1) {
                 Term T1_unwrap=unwrapNegation(T1);
-                HashMap<Term, Term> Values = new HashMap<Term, Term>(); //we are only interested in first variables
-                if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,new HashMap<Term, Term>())) {
+                HashMap<Term, Term> Values = new HashMap<>(); //we are only interested in first variables
+                if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,new HashMap<>())) {
                     CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                     taskterm_subs.applySubstitute(Values);
                     taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
@@ -904,8 +904,8 @@ public final class CompositionalRules {
                         terms_dependent.add(taskterm_subs);
                     }
                 }
-                HashMap<Term, Term> Values2 = new HashMap<Term, Term>(); //we are only interested in first variables
-                if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2,new HashMap<Term, Term>())) {
+                HashMap<Term, Term> Values2 = new HashMap<>(); //we are only interested in first variables
+                if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2,new HashMap<>())) {
                     CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                     taskterm_subs.applySubstitute(Values2);
                     taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
@@ -920,8 +920,8 @@ public final class CompositionalRules {
                     Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
                     for(Term T2 : components_level2) {
                         Term T2_unwrap=unwrapNegation(T2).clone(); 
-                        HashMap<Term, Term> Values3 = new HashMap<Term, Term>(); //we are only interested in first variables
-                        if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<Term, Term>())) {
+                        HashMap<Term, Term> Values3 = new HashMap<>(); //we are only interested in first variables
+                        if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<>())) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
                             CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                             taskterm_subs.applySubstitute(Values3);
@@ -930,8 +930,8 @@ public final class CompositionalRules {
                                 terms_dependent.add(taskterm_subs);
                             }
                         }
-                        HashMap<Term, Term> Values4 = new HashMap<Term, Term>(); //we are only interested in first variables
-                        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4,new HashMap<Term, Term>())) {
+                        HashMap<Term, Term> Values4 = new HashMap<>(); //we are only interested in first variables
+                        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4,new HashMap<>())) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
                             CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                             taskterm_subs.applySubstitute(Values4);

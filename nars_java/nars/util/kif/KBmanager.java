@@ -14,7 +14,6 @@ August 9, Acapulco, Mexico.
 */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -123,7 +122,6 @@ public class KBmanager {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        return;
     }
 
 
@@ -223,20 +221,20 @@ public class KBmanager {
             error = "KB " + name + " does not exist and cannot be removed.";
             return;
         }
-        try {
+        //try {
             if (kb.inferenceEngine != null) 
                 kb.inferenceEngine.terminate();
-        }
+        /*}
         catch (IOException ioe) {
             System.out.println("Error in KBmanager.removeKB(): Error terminating inference engine: " + ioe.getMessage());
-        }
+        }*/
         kbs.remove(name);
-        try {
+        //try {
             writeConfiguration();
-        }
+        /*}
         catch (IOException ioe) {
             System.out.println("Error in KBmanager.removeKB(): Error writing configuration file. " + ioe.getMessage());
-        }
+        }*/
 
         System.out.println("INFO in KBmanager.removeKB: Removing KB: " + name);
     }
@@ -245,7 +243,7 @@ public class KBmanager {
      * Write the current configuration of the system.  Call 
      * writeConfiguration() on each KB object to write its manifest.
      */
-    public void writeConfiguration() throws IOException {
+    public void writeConfiguration() {
 //
 //        FileWriter fw = null;
 //        PrintWriter pw = null;
@@ -376,7 +374,7 @@ public class KBmanager {
         int bv = 0;
         String[] keys = { "typePrefix", "holdsPrefix", "cache", "TPTP" };
         int[] vals = { USE_TYPE_PREFIX, USE_HOLDS_PREFIX, USE_CACHE, USE_TPTP };
-        String pref = null;
+        String pref;
         for ( int i = 0 ; i < keys.length ; i++ ) {
             pref = this.getPref( keys[i] );
             if ( Formula.isNonEmptyString(pref) && pref.equalsIgnoreCase("yes") ) {
@@ -403,7 +401,6 @@ public class KBmanager {
      */
     public void setOldInferenceBitValue ( int bv ) {
         this.oldInferenceBitValue = bv;
-        return;
     }
 
 }

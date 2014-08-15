@@ -76,7 +76,7 @@ public class Texts {
         
         final Map<Character,Character> map = unescape ? escapeMapReverse : escapeMap;
         
-        boolean inQuotes = useQuotes ? false : true;
+        boolean inQuotes = !useQuotes;
         char lastChar = 0;
         
         for (int i = 0; i < s.length(); i++) {

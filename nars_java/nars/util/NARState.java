@@ -22,7 +22,7 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
     }
     
     protected static HashMap<String,Object> newData() {
-        return new HashMap<String,Object>();
+        return new HashMap<>();
     }
     
     public HashMap<String,Object> measure(/*...which measurements to record */) {

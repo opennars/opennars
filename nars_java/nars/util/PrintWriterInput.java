@@ -49,7 +49,7 @@ public class PrintWriterInput extends TextInput {
             out.close();
             outClosed = true;
         } catch (IOException ex) {
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
     }
 }

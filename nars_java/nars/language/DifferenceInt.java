@@ -73,7 +73,7 @@ public class DifferenceInt extends CompoundTerm {
         }
         
         if ((argList[0] instanceof SetInt) && (argList[1] instanceof SetInt)) {
-            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) argList[0]).cloneTermsList());
+            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) argList[0]).cloneTermsList());
             set.removeAll(((CompoundTerm) argList[1]).cloneTermsList());           // set difference
             return SetInt.make(set, memory);
         }

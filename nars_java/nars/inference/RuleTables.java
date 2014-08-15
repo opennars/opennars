@@ -489,8 +489,7 @@ public class RuleTables {
                     figure, taskSentence, belief, memory);
             
         }
-;
-        
+
     }
 
     /* ----- conditional inferences ----- */

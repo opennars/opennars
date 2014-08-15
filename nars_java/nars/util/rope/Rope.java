@@ -97,7 +97,7 @@ import nars.util.rope.impl.SubstringRope;
         /** Builds a FastCharSequenceRope instead of FlatCharSequenceRope */
         public static CharSequence rope(final CharSequence sequence) {
 		if (sequence instanceof Rope)
-                    return (Rope) sequence;
+                    return sequence;
                 /*if ((sequence instanceof String) || (sequence instanceof TextBuilder))
                     return new FastCharSequenceRope(sequence);*/
                 
@@ -575,8 +575,8 @@ import nars.util.rope.impl.SubstringRope;
 	public static Rope rebalance(final Rope r) {
 		// get all the nodes into a list
 		
-		final ArrayList<Rope> leafNodes = new ArrayList<Rope>();
-		final ArrayDeque<Rope> toExamine = new ArrayDeque<Rope>();
+		final ArrayList<Rope> leafNodes = new ArrayList<>();
+		final ArrayDeque<Rope> toExamine = new ArrayDeque<>();
 		// begin a depth first loop.
 		toExamine.add(r);
 		while (toExamine.size() > 0) {
@@ -649,8 +649,8 @@ import nars.util.rope.impl.SubstringRope;
 	
 	public static void stats(final Rope r, final PrintStream out) {
 		int nonLeaf=0;
-		final ArrayList<Rope> leafNodes = new ArrayList<Rope>();
-		final ArrayDeque<Rope> toExamine = new ArrayDeque<Rope>();
+		final ArrayList<Rope> leafNodes = new ArrayList<>();
+		final ArrayDeque<Rope> toExamine = new ArrayDeque<>();
 		// begin a depth first loop.
 		toExamine.add(r);
 		while (toExamine.size() > 0) {

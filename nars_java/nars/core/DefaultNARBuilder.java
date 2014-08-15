@@ -67,7 +67,7 @@ public class DefaultNARBuilder extends NARBuilder {
 
     @Override
     public AbstractBag<Task> newNovelTaskBag(Param p) {
-        return new Bag<Task>(getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE, new AtomicInteger(Parameters.NEW_TASK_FORGETTING_CYCLE)); 
+        return new Bag<>(getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE, new AtomicInteger(Parameters.NEW_TASK_FORGETTING_CYCLE));
     }
  
     public int taskLinkBagLevels;

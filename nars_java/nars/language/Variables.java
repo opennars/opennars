@@ -199,7 +199,7 @@ public class Variables {
      * @return Whether there is a substitution
      */
     public static boolean hasSubstitute(final char type, final Term term1, final Term term2) {
-        return findSubstitute(type, term1, term2, new HashMap<Term, Term>(), new HashMap<Term, Term>());
+        return findSubstitute(type, term1, term2, new HashMap<>(), new HashMap<>());
     }
     
 }

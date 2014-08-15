@@ -118,7 +118,7 @@ public class TextOutput implements Output {
         }
     }
     
-    StringBuilder result = new StringBuilder(16 /* estimate */);
+    final StringBuilder result = new StringBuilder(16 /* estimate */);
     
     public String process(final Class c, final Object o) {
         return getOutputString(c, o, true, showStamp, nar, result);

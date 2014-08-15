@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,9 +103,11 @@ public class KIF {
 
     private String filename;
 
-    public String getFilename() {
-        return this.filename;
-    }
+// --Commented out by Inspection START (8/15/14 2:38 AM):
+//    public String getFilename() {
+//        return this.filename;
+//    }
+// --Commented out by Inspection STOP (8/15/14 2:38 AM)
 
     private File file;
     private int totalLinesForComments = 0;
@@ -278,7 +279,7 @@ public class KIF {
                         // NORMAL_PARSE_MODE.
                         if (mode == NORMAL_PARSE_MODE) {
                             String validArgs = f.validArgs((file != null ? file.getName() : null), 
-                                                           (file != null ? new Integer(f.startLine) : null));
+                                                           (file != null ? f.startLine : null));
                             if (validArgs == null || "".equals(validArgs)) 
                                 validArgs = f.badQuantification();                      
                             if (validArgs != null && !"".equals(validArgs)) 
@@ -512,65 +513,67 @@ public class KIF {
         if (exThr != null) {
             throw exThr;
         }
-        return;
     }
   
-    /** ***************************************************************
-     * Write a KIF file.
-     * @param fname - the name of the file to write, including full path.
-     */
-    public void writeFile(String fname) {
+// --Commented out by Inspection START (8/15/14 2:38 AM):
+//    /** ***************************************************************
+//     * Write a KIF file.
+//     * @param fname - the name of the file to write, including full path.
+//     */
+//    public void writeFile(String fname) {
+//
+//        System.out.println("ENTER KIF.writeFile(\"" + fname + "\")");
+//        System.out.println("  number of formulas == " + formulaSet.size());
+//
+//        FileWriter fr = null;
+//        PrintWriter pr = null;
+//        Iterator it;
+//        ArrayList formulaArray;
+//        try {
+//            fr = new FileWriter(fname);
+//            pr = new PrintWriter(fr);
+//
+//            it = formulaSet.iterator();
+//            while (it.hasNext())
+//                pr.println((String) it.next());
+//        }
+//        catch (Exception ex) {
+//            System.out.println("ERROR in KIF.writeFile(\"" + fname + "\")");
+//            System.out.println("  " + ex.getMessage());
+//            ex.printStackTrace();
+//        }
+//        finally {
+//            try {
+//                if (pr != null) {
+//                    pr.close();
+//                }
+//                if (fr != null) {
+//                    fr.close();
+//                }
+//            }
+//            catch (Exception ex2) {
+//            }
+//        }
+//        System.out.println("EXIT KIF.writeFile(\"" + fname + "\")");
+//    }
+// --Commented out by Inspection STOP (8/15/14 2:38 AM)
 
-        System.out.println("ENTER KIF.writeFile(\"" + fname + "\")");
-        System.out.println("  number of formulas == " + formulaSet.size());
-
-        FileWriter fr = null;
-        PrintWriter pr = null;
-        Iterator it;
-        ArrayList formulaArray;
-        try {
-            fr = new FileWriter(fname);
-            pr = new PrintWriter(fr);
-
-            it = formulaSet.iterator();
-            while (it.hasNext())
-                pr.println((String) it.next());          
-        }
-        catch (Exception ex) {
-            System.out.println("ERROR in KIF.writeFile(\"" + fname + "\")");
-            System.out.println("  " + ex.getMessage());
-            ex.printStackTrace();
-        }
-        finally {
-            try {
-                if (pr != null) {
-                    pr.close();
-                }
-                if (fr != null) {
-                    fr.close();
-                }
-            }
-            catch (Exception ex2) {
-            }
-        }
-        System.out.println("EXIT KIF.writeFile(\"" + fname + "\")");
-        return;
-    }
-
-    /** ***************************************************************
-     * Parse a single formula.
-     */
-    public String parseStatement(String formula) {
-
-        StringReader r = new StringReader(formula);
-        try {
-            parse(r);
-        }
-        catch (Exception e) {
-            return e.getMessage();
-        }
-        return null;
-    }
+// --Commented out by Inspection START (8/15/14 2:38 AM):
+//    /** ***************************************************************
+//     * Parse a single formula.
+//     */
+//    public String parseStatement(String formula) {
+//
+//        StringReader r = new StringReader(formula);
+//        try {
+//            parse(r);
+//        }
+//        catch (Exception e) {
+//            return e.getMessage();
+//        }
+//        return null;
+//    }
+// --Commented out by Inspection STOP (8/15/14 2:38 AM)
 
     /** ***************************************************************
      * Test method for this class.  Currently, it writes the TPTP output

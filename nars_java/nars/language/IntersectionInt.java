@@ -69,17 +69,17 @@ public class IntersectionInt extends CompoundTerm {
     public static Term make(Term term1, Term term2, Memory memory) {
         TreeSet<Term> set;
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
             set.addAll(((CompoundTerm) term2).cloneTermsList());           // set union
             return SetExt.make(set, memory);
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
             set.retainAll(((CompoundTerm) term2).cloneTermsList());        // set intersection
             return SetInt.make(set, memory);
         }
         if (term1 instanceof IntersectionInt) {
-            set = new TreeSet<Term>(((CompoundTerm) term1).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
             if (term2 instanceof IntersectionInt) {
                 set.addAll(((CompoundTerm) term2).cloneTermsList());
             } // (|,(|,P,Q),(|,R,S)) = (|,P,Q,R,S)
@@ -87,10 +87,10 @@ public class IntersectionInt extends CompoundTerm {
                 set.add(term2.clone());
             }                          // (|,(|,P,Q),R) = (|,P,Q,R)
         } else if (term2 instanceof IntersectionInt) {
-            set = new TreeSet<Term>(((CompoundTerm) term2).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
             set.add(term1.clone());   // (|,R,(|,P,Q)) = (|,P,Q,R)
         } else {
-            set = new TreeSet<Term>();
+            set = new TreeSet<>();
             set.add(term1.clone());
             set.add(term2.clone());
         }
@@ -104,7 +104,7 @@ public class IntersectionInt extends CompoundTerm {
      * @param memory Reference to the memory
      */
     public static Term make(Collection<Term> argList, Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
+        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
         return make(set, memory);
     }
 
