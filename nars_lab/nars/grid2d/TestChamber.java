@@ -27,7 +27,7 @@ public class TestChamber {
         for(GridObject gridi : space.objects) {
             if(gridi instanceof LocalGridObject) { //Key && ((Key)gridi).doorname.equals(goal)) {
                 LocalGridObject gridu=(LocalGridObject) gridi;
-                if(gridu.x==x && gridu.y==y)
+                if(gridu.x==x && gridu.y==y && !"".equals(gridu.doorname))
                     return gridu.doorname;
             }
         }
@@ -35,8 +35,8 @@ public class TestChamber {
     }
     
     static List<GridObject> inventory=new ArrayList<GridObject>();
-    public static void operateObj(String arg,String opname) {
-        opname=opname;
+    public static void operateObj(String arg,String opnamer) {
+        opname=opnamer;
         Hauto cells = space.cells;
         goal = arg;
         for (int i = 0; i < cells.w; i++) {
@@ -125,7 +125,7 @@ public class TestChamber {
                                     inventory.add(goal);
                                     GridObject remove=null;
                                     for(GridObject gridi : space.objects) {
-                                        if(gridi instanceof Key && ((Key)gridi).doorname.equals(goal)) {
+                                        if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) {
                                             remove=gridi;
                                             break;
                                         }

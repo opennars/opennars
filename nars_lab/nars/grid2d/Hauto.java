@@ -126,7 +126,7 @@ public class Hauto {
             return;
         
         if(!"".equals(oper)) {
-            if(!"".equals(readCells[x][y].name))
+            if(!"".equals(readCells[x][y].name) && !"pick".equals(oper))
                 TestChamber.operateObj(oper, readCells[x][y].name);
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
