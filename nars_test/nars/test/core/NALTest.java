@@ -16,7 +16,6 @@ import nars.core.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.gui.InferenceLogger;
-import nars.gui.InferenceLogger.LogOutput;
 import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -223,15 +222,7 @@ public class NALTest  {
         if (showOutput)
             new TextOutput(n, System.out);
         if (showTrace) {
-            InferenceLogger logger = new InferenceLogger();
-            logger.addOutput(new LogOutput() {
-
-                @Override
-                public void logAppend(String s) {
-                    System.out.println("    " + s);
-                }
-                
-            });
+            InferenceLogger logger = new InferenceLogger(System.out);
             n.memory.setRecorder(logger);
         }
         

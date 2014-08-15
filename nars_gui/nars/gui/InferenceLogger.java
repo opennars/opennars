@@ -20,6 +20,7 @@
  */
 package nars.gui;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.Concept;
@@ -36,11 +37,28 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
     }
     
     private final List<LogOutput> outputs = new CopyOnWriteArrayList<LogOutput>();
+
+    public InferenceLogger() {
+    }
     
+    public InferenceLogger(PrintStream p) {
+        addOutput(p);
+    }
     
     public void addOutput(LogOutput l) {
         outputs.add(l);
     }
+    
+    public void addOutput(PrintStream p) {
+        //TODO removeOutput(p)
+        
+        addOutput(new LogOutput() {
+            @Override public void logAppend(String s) {
+                p.println("    " + s);
+            }
+        });        
+    }
+    
     public void removeOutput(LogOutput l) {
         outputs.remove(l);
     }
