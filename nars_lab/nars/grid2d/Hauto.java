@@ -128,6 +128,7 @@ public class Hauto {
         if(oper.equals("perceive")) {
              readCells[(int) x][(int) y].name = "place"+entityID.toString();
             writeCells[(int) x][(int) y].name = "place"+entityID.toString();
+            nar.addInput("<"+"place"+entityID.toString()+" --> place>.");
             entityID++;
             return;
         }
@@ -136,14 +137,14 @@ public class Hauto {
             if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
                 nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
-                nar.step(1);
+                //--nar.step(1);
                 TestChamber.operateObj(readCells[x][y].name, oper);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
                 nar.addInput("(^" + oper + ","+s+"). :|:");
-                nar.step(1);
+                //--nar.step(1);
                 TestChamber.operateObj(s, oper);
             }
             return;
@@ -153,13 +154,13 @@ public class Hauto {
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
                 nar.addInput("<(*,Self," + readCells[x][y].name+") --> "+wish+">!"); //in order to make NARS an observer
-                nar.step(1);
+                //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
                 nar.addInput("<(*,Self," + s +") --> "+wish+">!"); //in order to make NARS an observer
-                nar.step(1);
+                //--nar.step(1);
             }
             return;
         }
