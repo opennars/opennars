@@ -205,21 +205,26 @@ public class Grid2DSpace extends PApplet {
             updateAutomata();
         }
         if (time % agentPeriod == 0) {
-            for (GridObject g : objects) {
-                Effect e = (g instanceof GridAgent) ? ((GridAgent)g).perceiveNext() : null;
-                g.update(e);
-                
-                if (g instanceof GridAgent) {
-                    GridAgent b = (GridAgent)g;
-                    if (b.actions.size() > 0) {
-                        Action a = b.actions.pop();
-                        if (a!=null) {
-                            process(b, a);
+            try
+            {
+                for (GridObject g : objects) {
+                    Effect e = (g instanceof GridAgent) ? ((GridAgent)g).perceiveNext() : null;
+                    g.update(e);
+
+                    if (g instanceof GridAgent) {
+                        GridAgent b = (GridAgent)g;
+                        if (b.actions.size() > 0) {
+                            Action a = b.actions.pop();
+                            if (a!=null) {
+                                process(b, a);
+                            }
                         }
+
                     }
-                    
                 }
             }
+            catch(Exception ex)
+            {}
         } 
     
     }
