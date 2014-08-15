@@ -32,9 +32,12 @@ import nars.language.Equivalence;
 import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.Interval;
+import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
@@ -128,28 +131,59 @@ public class TemporalRules {
         }
         return order;
     }
-
+    
     public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {
         if ((s1.truth==null) || (s2.truth==null))
             return;
         
         Term t1 = s1.cloneContent();
         Term t2 = s2.cloneContent();
+        Term t11=null;
+        Term t22=null;
         
-        if (Memory.randomNumber.nextDouble()>0.5 && (t1 instanceof Inheritance) && (t2 instanceof Inheritance)) {
+        //since induction shouldnt miss something trivial random is not good here
+        if (/*Memory.randomNumber.nextDouble()>0.5 &&*/ (t1 instanceof Inheritance) && (t2 instanceof Inheritance)) {
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
 
             Variable var1 = new Variable("$0");
             Variable var2 = var1;
+
             if (ss1.getSubject().equals(ss2.getSubject())) {
-                t1 = Statement.make(ss1, var1, ss1.getPredicate(), memory);
-                Statement.make(Symbols.NativeOperator.PRODUCT, var1, ss1.getPredicate(), memory);
-                t2 = Statement.make(ss2, var2, ss2.getPredicate(), memory);
+                t11 = Statement.make(ss1, var1, ss1.getPredicate(), memory);
+                t22 = Statement.make(ss2, var2, ss2.getPredicate(), memory);
             } else if (ss1.getPredicate().equals(ss2.getPredicate())) {
-                t1 = Statement.make(ss1, ss1.getSubject(), var1, memory);
-                t2 = Statement.make(ss2, ss2.getSubject(), var2, memory);
+                t11 = Statement.make(ss1, ss1.getSubject(), var1, memory);
+                t22 = Statement.make(ss2, ss2.getSubject(), var2, memory);
             }
+            
+            //okay, and for operator arguments also
+            if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
+                if(ss2 instanceof Operation) //it is an operation, let's look if one of the arguments is same as the subject of the other term
+                { //
+                    boolean anyone=false;
+                    Term comp=ss1.getSubject();
+                    for(Term t : ((Operation)ss2).getArguments())
+                    {
+                        if(t.equals(comp)) {
+                            anyone=true;
+                        }
+                    }
+                   
+                    Term[] ars=((Operation)ss2).clone().getArguments().clone();
+                    for(int i=0;i<ars.length;i++) {
+                        if(ars[i].equals(comp)) {
+                            ars[i]=var1;
+                        }
+                    }
+
+                    t11 = Statement.make(ss1, var1, ss1.getPredicate(), memory);
+                    Product S=(Product) Product.make(ars, memory);
+                    Operation op=(Operation) Operation.make(S, ss2.getPredicate(), memory);
+                    t22 = op;
+                }
+            }
+            
         }
         
         if (Statement.invalidStatement(t1, t2)) {
@@ -186,6 +220,14 @@ public class TemporalRules {
         Statement statement1 = Implication.make(t1, t2, order, memory);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order), memory);
         Statement statement3 = Equivalence.make(t1, t2, order, memory);
+        if(t11!=null && t22!=null) {
+            Statement statement11 = Implication.make(t11, t22, order, memory);
+            Statement statement22 = Implication.make(t22, t11, reverseOrder(order), memory);
+            Statement statement33 = Equivalence.make(t11, t22, order, memory);
+            memory.doublePremiseTask(statement11, truth1, budget1);
+            memory.doublePremiseTask(statement22, truth2, budget2);
+            memory.doublePremiseTask(statement33, truth3, budget3);
+        }
         memory.doublePremiseTask(statement1, truth1, budget1);
         memory.doublePremiseTask(statement2, truth2, budget2);
         memory.doublePremiseTask(statement3, truth3, budget3);

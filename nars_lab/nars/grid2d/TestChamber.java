@@ -131,11 +131,11 @@ public class TestChamber {
                                     }
                                     if(remove!=null)
                                         space.objects.remove(remove);
-                                    nar.addInput("<(*,Self," + goal + ") --> hold>. :|:");
+                                    nar.addInput("<"+goal+" --> hold>. :|:");
                                 }
                                 else
                                 {
-                                    nar.addInput("<(*,Self," + goal + ") --> at>. :|:");
+                                    nar.addInput("<"+goal+" --> at>. :|:");
                                 }
                             }
                             opname="";
