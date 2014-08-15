@@ -133,10 +133,17 @@ public class Hauto {
         }
         
         if(!"".equals(oper)) {
-            if(!"".equals(readCells[x][y].name) && !"pick".equals(oper))
-                TestChamber.operateObj(oper, readCells[x][y].name);
+            if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
+                //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
+                nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
+                nar.step(1);
+                TestChamber.operateObj(readCells[x][y].name, oper);
+            }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
+                //nar.addInput("(^" + oper + ","+s+")!"); 
+                nar.addInput("(^" + oper + ","+s+"). :|:");
+                nar.step(1);
                 TestChamber.operateObj(s, oper);
             }
             return;

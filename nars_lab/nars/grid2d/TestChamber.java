@@ -19,7 +19,8 @@ public class TestChamber {
 
     static Grid2DSpace space;
     static boolean getfeedback = false;
-    static PVector target = new PVector(25, 25);
+    static PVector target = new PVector(25, 25); //need to be init equal else feedback will
+    public PVector lasttarget = new PVector(25, 25); //not work
     static String goal = "";
     static String opname="";
     
@@ -44,7 +45,6 @@ public class TestChamber {
                 if (cells.readCells[i][j].name.equals(arg)) {
                     if(opname.equals("go-to"))
                         target = new PVector(i, j);
-                    getfeedback = true;
                 }
             }
         }
@@ -54,12 +54,11 @@ public class TestChamber {
                     LocalGridObject gridu=(LocalGridObject) gridi;
                     if(opname.equals("go-to"))
                         target = new PVector(gridu.x, gridu.y);
-                    getfeedback = true; //currently pick only allows to pick if goto was already done
                 }
             }
         //}
     }
-
+    boolean invalid=false;
     public void create(NAR nar) {
 //NAR n = new NAR();
         int w = 50;
@@ -85,7 +84,6 @@ public class TestChamber {
         space.newWindow(1000, 800, true);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         GridAgent a = new GridAgent(17, 17, nar) {
-            public PVector lasttarget = new PVector(1, 1);
 
             @Override
             public void update(Effect nextEffect) {
@@ -105,22 +103,22 @@ public class TestChamber {
 /*if (Math.random() < 0.2) {
                  forward(1);
                  }*/
-                if (target != lasttarget) {
+                if (!target.equals(lasttarget) || target.equals(lasttarget) && "pick".equals(opname)) {
                     getfeedback = true;
                 }
                 lasttarget = target;
                 PVector current = new PVector(x, y);
-                System.out.println(nextEffect);
+               // System.out.println(nextEffect);
                 if (nextEffect == null) {
                     List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, target);
                     actions.clear();
-                    System.out.println(path);
+                   // System.out.println(path);
                     if (path != null) {
                         if (path.size() <= 1) {
-                            nar.step(1);
-                            System.out.println("at destination; didnt need to find path");
-                            if (getfeedback && !"".equals(goal)) {
-                                getfeedback = false;
+                            //nar.step(1);
+                            //System.out.println("at destination; didnt need to find path");
+                            if (getfeedback && !"".equals(goal) && current.equals(target)) {
+                                 getfeedback = false;
                                 nar.step(6);
                                 if("pick".equals(opname)) {
                                     inventory.add(goal);
