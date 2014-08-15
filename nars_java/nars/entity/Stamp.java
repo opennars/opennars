@@ -21,11 +21,9 @@
 package nars.entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -85,6 +83,7 @@ public class Stamp implements Cloneable {
     
     /** caches evidentialBase as a set for comparisons and hashcode */
     private Set<Long> evidentialSet; 
+    //TODO investigate using a BitVector
     
     /**
      * Generate a new stamp, with a new serial number, for a new Task
@@ -349,10 +348,13 @@ public class Stamp implements Cloneable {
         }
 
         Stamp s = (Stamp)that;
+
+        /*
         if (occurrenceTime!=s.occurrenceTime)
             return false;
         if (creationTime!=s.creationTime)
             return false;
+        */
         
         //TODO see if there is a faster way than creating two set's
         final Set<Long> set1 = toSet();
@@ -370,7 +372,8 @@ public class Stamp implements Cloneable {
     @Override
     public int hashCode() {
 //        return Objects.hash(toSet(), creationTime, occurrenceTime);
-        return Objects.hash(Arrays.hashCode(evidentialBase), creationTime, occurrenceTime);      
+        //return Objects.hash(Arrays.hashCode(evidentialBase), creationTime, occurrenceTime);    
+        return toSet().hashCode();
     }
 
     public Stamp cloneToTime(long newTime) {
