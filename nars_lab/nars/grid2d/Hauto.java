@@ -120,10 +120,20 @@ public class Hauto {
     
     String doorname="";
     Integer entityID=0;
-    public void clicked(float x,float y, Grid2DSpace space)
+    public void clicked(int x,int y, Grid2DSpace space)
     {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
             return;
+        
+        if(!"".equals(oper)) {
+            if(!"".equals(readCells[x][y].name))
+                TestChamber.operateObj(oper, readCells[x][y].name);
+            String s=TestChamber.getobj(x, y);
+            if(!s.equals("")) {
+                TestChamber.operateObj(s, oper);
+            }
+            return;
+        }
         
         if(!"".equals(doorname) && selected.material==Material.Door) {
             space.add(new Key((int)x, (int)y, doorname.replace("door", "key")));
@@ -164,24 +174,31 @@ public class Hauto {
     }
     
     Cell selected=new Cell();
+    String oper="";
+    String label="";
     
-    public void click(String label) {
+    public void click(String label, String oper) {
+        this.label=label;
+        this.oper=oper;
+        if("".equals(label)) {
+            return;
+        }
         selected.is_solid=false;
-        if(label=="StoneWall") {
+        if("StoneWall".equals(label)) {
             selected.material = Material.StoneWall;     
             selected.is_solid=true;
             selected.logic=Logic.NotALogicBlock;
             selected.charge=0;
         }
         
-        if(label=="DirtFloor") {
+        if("DirtFloor".equals(label)) {
             selected.material = Material.DirtFloor;     
             selected.is_solid=false;
             selected.logic=Logic.NotALogicBlock;
             selected.charge=0;
         }
         
-        if(label=="GrassFloor") {
+        if("GrassFloor".equals(label)) {
             selected.material = Material.GrassFloor;     
             selected.is_solid=false;
             selected.logic=Logic.NotALogicBlock;
@@ -190,57 +207,57 @@ public class Hauto {
 
         selected.machine = null;
         
-        if(label=="NOT") {
+        if("NOT".equals(label)) {
             selected.setLogic(Cell.Logic.NOT, 0);
         }
-        if(label=="AND")
+        if("AND".equals(label))
         {
             selected.setLogic(Cell.Logic.AND, 0);
         }
-        if(label=="OR")
+        if("OR".equals(label))
         {
             selected.setLogic(Cell.Logic.OR, 0);
         }
-        if(label=="XOR")
+        if("XOR".equals(label))
         {
             selected.setLogic(Cell.Logic.XOR, 0);
         }
-        if(label=="bridge")
+        if("bridge".equals(label))
         {
             selected.setLogic(Cell.Logic.BRIDGE, 0);
         }
-        if(label=="OnWire")
+        if("OnWire".equals(label))
         {
             selected.setLogic(Cell.Logic.WIRE, 1.0f);
             selected.chargeFront = true;
         }
-        if(label=="OffWire")
+        if("OffWire".equals(label))
         {
             selected.setLogic(Cell.Logic.WIRE, 0);
             selected.chargeFront = true;
         }
-        if(label=="onswitch")
+        if("onswitch".equals(label))
         {
             selected.setLogic(Cell.Logic.SWITCH, 1.0f);
         }
-        if(label=="offswitch")
+        if("offswitch".equals(label))
         {
             selected.setLogic(Cell.Logic.OFFSWITCH, 0);
         }
 
-        if(label=="Door") {
+        if("Door".equals(label)) {
             selected.logic = Logic.NotALogicBlock;
             selected.charge=0;
             selected.material = Material.Door;
             selected.is_solid=true;
         }
-        if(label=="Light") {
+        if("Light".equals(label)) {
             selected.logic = Logic.Load;
             selected.material = Material.Machine;
             selected.machine = Machine.Light;
             selected.is_solid=true;
         }
-        if(label=="Turret") {
+        if("Turret".equals(label)) {
             selected.logic = Logic.Load;
             selected.material = Material.Machine;
             selected.machine = Machine.Turret;
@@ -307,7 +324,7 @@ public class Hauto {
         }
         
         copyReadToWrite();
-        click("StoneWall");
+        click("StoneWall","");
     }
 
     
