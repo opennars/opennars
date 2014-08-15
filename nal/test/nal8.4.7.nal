@@ -5,5 +5,5 @@
 11
   IN: <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :|: 
 20
-''outputMustContain('<(&/,<Self --> (/,reachable,_,key001)>,+2,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%') 
+''outputMustContain('<(&/,<(*,Self,key001) --> reachable>,+2,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%') 
 

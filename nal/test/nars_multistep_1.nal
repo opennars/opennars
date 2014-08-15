@@ -13,7 +13,7 @@
 <robin --> bird>?
 50
 <robin --> swimmer>?
-1000
+2000
 
 ''outputMustContain('<bird --> swimmer>. %1.00;0.45%')
 ''outputMustContain('<bird --> swimmer>. %1.00;0.45%')

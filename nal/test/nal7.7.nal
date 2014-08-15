@@ -13,7 +13,6 @@
 
 20 
 
-''outputMustContain('<(&/,<John --> (/,hold,_,key_101)>,+2,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>. :|: %1.00;0.45%')
-''outputMustContain('<(&/,<John --> (/,hold,_,key_101)>,+2,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>. %1.00;0.31%')
+''outputMustContain('OUT: <(&/,<(*,John,key_101) --> hold>,+2,<(*,John,door_101) --> open>) =/> <(*,John,room_101) --> enter>>. :|: %1.00;0.45%')
 
 'this one is working, just throwing exception
