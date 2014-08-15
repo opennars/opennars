@@ -149,6 +149,21 @@ public class Hauto {
             return;
         }
         
+        if(!"".equals(wish)) {
+            if(!"".equals(readCells[x][y].name)) {
+                //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
+                nar.addInput("<(*,Self," + readCells[x][y].name+") --> "+wish+">!"); //in order to make NARS an observer
+                nar.step(1);
+            }
+            String s=TestChamber.getobj(x, y);
+            if(!s.equals("")) {
+                //nar.addInput("(^" + oper + ","+s+")!"); 
+                nar.addInput("<(*,Self," + s +") --> "+wish+">!"); //in order to make NARS an observer
+                nar.step(1);
+            }
+            return;
+        }
+        
         if(!"".equals(doorname) && selected.material==Material.Door) {
             space.add(new Key((int)x, (int)y, doorname.replace("door", "key")));
             nar.addInput("<"+doorname.replace("door", "key")+" --> key>.");
@@ -190,10 +205,12 @@ public class Hauto {
     Cell selected=new Cell();
     String oper="";
     String label="";
+    String wish="";
 
-    public void click(String label, String oper) {
+    public void click(String label, String oper, String wish) {
         this.label=label;
         this.oper=oper;
+        this.wish=wish;
         if("".equals(label)) {
             return;
         }
@@ -345,7 +362,7 @@ public class Hauto {
         }
         
         copyReadToWrite();
-        click("StoneWall","");
+        click("StoneWall","","");
     }
 
     
