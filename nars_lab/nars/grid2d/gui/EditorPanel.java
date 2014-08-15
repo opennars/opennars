@@ -42,8 +42,11 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode machineMenu = new DefaultMutableTreeNode("Machine");
         root.add(machineMenu);
         
-        DefaultMutableTreeNode actionMenu = new DefaultMutableTreeNode("Actions");
+        DefaultMutableTreeNode actionMenu = new DefaultMutableTreeNode("Force Action");
         root.add(actionMenu);
+        
+         DefaultMutableTreeNode goalMenu = new DefaultMutableTreeNode("Request Goal");
+        root.add(goalMenu);
         
         
         
@@ -126,9 +129,37 @@ public class EditorPanel extends JPanel {
             @Override public void run() { s.cells.click("","pick");}
         }); 
         
+        actionMenu.add(new EditorMode("switch on/open") {  
+            @Override public void run() { s.cells.click("","");}
+        });  
+        
+        actionMenu.add(new EditorMode("switch off/close") {  
+            @Override public void run() { s.cells.click("","");}
+        });  
+        
         actionMenu.add(new EditorMode("perceive/name") {  
             @Override public void run() { s.cells.click("","perceive");}
         });  
+        
+        
+        goalMenu.add(new EditorMode("be somewhere") {  
+            @Override public void run() { s.cells.click("","");}
+        });  
+        
+        goalMenu.add(new EditorMode("hold something") {  
+            @Override public void run() { s.cells.click("","");}
+        });  
+        
+        goalMenu.add(new EditorMode("make switched on/opened") {  
+            @Override public void run() { s.cells.click("","");}
+        });  
+        
+        goalMenu.add(new EditorMode("maked switched off/closed") {  
+            @Override public void run() { s.cells.click("","");}
+        });  
+        
+
+        
         
         
     }
