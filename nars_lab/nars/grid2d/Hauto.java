@@ -153,13 +153,13 @@ public class Hauto {
         if(!"".equals(wish)) {
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
-                nar.addInput("<(*,Self," + readCells[x][y].name+") --> "+wish+">!"); //in order to make NARS an observer
+                nar.addInput("<" + readCells[x][y].name+" --> "+wish+">!"); //in order to make NARS an observer
                 //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
-                nar.addInput("<(*,Self," + s +") --> "+wish+">!"); //in order to make NARS an observer
+                nar.addInput("<" + s +" --> "+wish+">!"); //in order to make NARS an observer
                 //--nar.step(1);
             }
             return;
