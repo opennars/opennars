@@ -345,7 +345,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     }
     
     protected Deque<E> newLevel() {
-        return new ArrayDeque<E>(1+capacity/levels);
+        return new ArrayDeque<>(1+capacity/levels);
         //return new LinkedList<E>();  //not good
         //return new FastTable<E>(); //slower than arraydeque under current loads    
     }
@@ -372,10 +372,10 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
         
-        boolean found = false;
+        //boolean found = false;
         if (itemTable[level] != null)
             if (itemTable[level].remove(oldItem)) {
-                found = true;
+                //found = true;
                 itemTableEmpty[level] = itemTable[level].isEmpty();                
                 mass -= (level + 1);
             }
@@ -398,7 +398,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     protected boolean outOfBaseComplete(final E oldItem) {
         for (int i = 0; i < levels; i++) {
             if (itemTable[i]!=null)
-                if (itemTable[i].remove(oldItem)==true)
+                if (itemTable[i].remove(oldItem))
                     return true;
         }       
         return false;
@@ -521,7 +521,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
             int l = itemTable.length-1;            
             private Iterator<E> levelIterator;
             private E next;
-            int size = size();
+            final int size = size();
             int count = 0;
             
             @Override

@@ -36,7 +36,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     private float mass;
     
     /** whether items are removed by random sampling, or a continuous scanning */
-    private boolean randomRemoval;
+    private final boolean randomRemoval;
     
     /** Rate of sampling index when in non-random "scanning" removal mode.  
      *  The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
@@ -109,7 +109,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
-        items = new ContinuousBagSortedList<E>(capacity);
+        items = new ContinuousBagSortedList<>(capacity);
         
         this.forgettingRate = forgetRate;
         this.mass = 0;

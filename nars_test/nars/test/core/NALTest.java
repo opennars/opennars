@@ -201,10 +201,10 @@ public class NALTest  {
         this.scriptPath = scriptPath;
     }
 
-    public Sentence parseOutput(String o) {
-        //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
-        return TextPerception.parseOutput(o);
-    }
+//    public Sentence parseOutput(String o) {
+//        //getTruthString doesnt work yet because it gets confused when Stamp is at the end of the string. either remove that first or make getTruthString aware of that
+//        return TextPerception.parseOutput(o);
+//    }
     
     
     protected void testNAL(final String path) {               

@@ -89,7 +89,6 @@ public class Formula implements Comparable {
         if (theTptpFormulas != null) {
             theTptpFormulas.clear();
         }
-        return;
     }
 
     /** A list of clausal (resolution) forms generated from this
@@ -127,7 +126,6 @@ public class Formula implements Comparable {
      */
     public void computeTheClausalForm () {
         getTheClausalForm();
-        return;
     }
 
     /** 
@@ -1517,7 +1515,6 @@ public class Formula implements Comparable {
                             if (arity < 1) {
                                 // It's a VariableArityRelation or we
                                 // can't find an arity, do nothing.
-                                ;
                             }
                             else {
                                 minMax[0] = 1;
@@ -1605,7 +1602,6 @@ public class Formula implements Comparable {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        return;
     }
 
 
@@ -1804,7 +1800,6 @@ public class Formula implements Comparable {
             SORTAL_TYPE_CACHE.clear();
         }
         SORTAL_TYPE_CACHE = null;
-        return;
     }
 
     /** ***************************************************************
@@ -1818,7 +1813,6 @@ public class Formula implements Comparable {
         SORTAL_TYPE_CACHE = new HashMap();
         System.out.println("INFO in Formula.resetSortalTypeCache()");
         System.out.println("  SORTAL_TYPE_CACHE == " + SORTAL_TYPE_CACHE);
-        return;
     }
 
     /** ***************************************************************
@@ -2102,7 +2096,6 @@ public class Formula implements Comparable {
             System.out.println("EXIT winnowTypeList(" + types + ", " + kb + ")");
         }
 
-        return;
     }
 
     /** ***************************************************************
@@ -2309,7 +2302,6 @@ public class Formula implements Comparable {
                                + kb + " )");
         }
 
-        return;
     }
 
     /** ***************************************************************
@@ -2872,20 +2864,12 @@ public class Formula implements Comparable {
         // syntactic.  But it probably will be used in the future.
         try {
             pass = !(// (equal ?X ?Y ?Z ...) - equal is strictly binary. 
-                     this.theFormula.matches(".*\\(\\s*equal\\s+\\?\\w+\\s+\\?\\w+\\s+\\?\\w+.*")
+                    this.theFormula.matches(".*\\(\\s*equal\\s+\\?\\w+\\s+\\?\\w+\\s+\\?\\w+.*")
 
-                     // (<relation> ?X ...) - no free variables in an
-                     // atomic formula that doesn't contain a string
-                     // unless the formula is a query.
-                     || (!query 
-                         && !isLogicalOperator(this.car())
-                         // The formula does not contain a string.
-                         && !this.theFormula.matches("^\\(\\s*.*\\\".*\\)$")
-                         // The formula contains a free variable.
-                         && this.theFormula.matches("^\\(\\s*.*\\?\\w+.*\\)$"))
-     
-                     // ... add more patterns here, as needed.
-                     || false
+                            || (!query
+                            && !isLogicalOperator(this.car())
+                            && !this.theFormula.matches("^\\(\\s*.*\\\".*\\)$")
+                            && this.theFormula.matches("^\\(\\s*.*\\?\\w+.*\\)$"))
                      );
         }
         catch (Exception ex) {
@@ -3513,7 +3497,7 @@ public class Formula implements Comparable {
     /** ***************************************************************
      * Parse formulae into TPTP format
      */
-    public void tptpParse(boolean query, KB kb, List preProcessedForms) throws ParseException, IOException {
+    public void tptpParse(boolean query, KB kb, List preProcessedForms) {
 
         if (kb == null) 
             kb = new KB("",KBmanager.getMgr().getPref("kbDir"));
@@ -3550,7 +3534,6 @@ public class Formula implements Comparable {
      */
     public void tptpParse(boolean query, KB kb) throws ParseException, IOException {
         this.tptpParse(query, kb, null);
-        return;
     }
 
 
@@ -5262,7 +5245,6 @@ public class Formula implements Comparable {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        return;
     }
 
     /** ***************************************************************
@@ -5810,7 +5792,6 @@ public class Formula implements Comparable {
                     e2.printStackTrace();
                 }
             }
-            return;
         }
     }
 

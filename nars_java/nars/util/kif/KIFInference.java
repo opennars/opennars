@@ -21,7 +21,7 @@ public interface KIFInference {
      * @return answer to the assertion (in the XML syntax)
      * @throws IOException should not normally be thrown
      */
-    String assertFormula(String formula) throws IOException;
+    String assertFormula(String formula);
 
     /** *************************************************************
      * Submit a query.
@@ -32,7 +32,7 @@ public interface KIFInference {
      * @return answer to the query (in the XML syntax)
      * @throws IOException should not normally be thrown
      */
-    String submitQuery(String formula, int timeLimit, int bindingsLimit) throws IOException;
+    String submitQuery(String formula, int timeLimit, int bindingsLimit);
 
     /** *************************************************************
      * Terminate this instance of Vampire.
@@ -41,6 +41,6 @@ public interface KIFInference {
      *
      * @throws IOException should not normally be thrown
      */
-    void terminate() throws IOException;
+    void terminate();
     
 }

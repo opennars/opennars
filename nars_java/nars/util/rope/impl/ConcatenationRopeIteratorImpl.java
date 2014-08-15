@@ -49,7 +49,7 @@ public class ConcatenationRopeIteratorImpl implements Iterator<Character> {
 	}
 
 	public ConcatenationRopeIteratorImpl(final Rope rope, final int start) {
-		this.toTraverse = new ArrayDeque<Rope>();
+		this.toTraverse = new ArrayDeque<>();
 		this.toTraverse.push(rope);
 		this.currentRope = null;
                 this.currentRopeLength = 0;

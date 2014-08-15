@@ -188,13 +188,13 @@ public class WordNetUtilities {
      */
     public static int sensePOS(String sense) {
 
-        if (sense.indexOf("_NN_") != -1) 
+        if (sense.contains("_NN_"))
             return WordNet.NOUN;
-        if (sense.indexOf("_VB_") != -1) 
+        if (sense.contains("_VB_"))
             return WordNet.VERB;
-        if (sense.indexOf("_JJ_") != -1) 
+        if (sense.contains("_JJ_"))
             return WordNet.ADJECTIVE;
-        if (sense.indexOf("_RB_") != -1) 
+        if (sense.contains("_RB_"))
             return WordNet.ADVERB;
         System.out.println("Error in WordNetUtilities.sensePOS(): Unknown part of speech type in sense code: " + sense);
         return 0;
@@ -395,7 +395,7 @@ public class WordNetUtilities {
                     String mapType = oldTerm.substring(oldTerm.length()-1);
                     String synset = posNum + m.group(1);
                     String newTerm = (String) hm.get(synset);
-                    if (bareOldTerm.indexOf("&%") < 0 && newTerm != null && !"".equals(newTerm) && !newTerm.equals(bareOldTerm) && kb.childOf(newTerm,bareOldTerm)) {              
+                    if (!bareOldTerm.contains("&%") && newTerm != null && !"".equals(newTerm) && !newTerm.equals(bareOldTerm) && kb.childOf(newTerm,bareOldTerm)) {
                         pw.println(m.group(1) + m.group(2) + "| " + m.group(3) + " &%" + newTerm + mapType);
                         System.out.println("INFO in WordNet.processMergers(): synset, oldTerm, newterm: " + 
                                            synset + " " + oldTerm + " " + newTerm);
@@ -472,27 +472,26 @@ public class WordNetUtilities {
 
         ArrayList rels = (ArrayList) WordNet.wn.relations.get(synset);   // relations requires prefixes
         if (rels != null) {
-            Iterator it2 = rels.iterator();
-            while (it2.hasNext()) {
-                AVPair avp = (AVPair) it2.next();
+            for (Object rel : rels) {
+                AVPair avp = (AVPair) rel;
                 if (avp.attribute.equals("hypernym") || avp.attribute.equals("instance hypernym")) {
-                    String mappingChar = "";
-                    if (avp.attribute.equals("instance hypernym")) 
+                    String mappingChar;
+                    if (avp.attribute.equals("instance hypernym"))
                         mappingChar = "@";
                     else
                         mappingChar = "+";
-                    String targetSynset = avp.value; 
+                    String targetSynset = avp.value;
                     String targetSUMO = WordNet.wn.getSUMOMapping(targetSynset);
                     if (targetSUMO != null && !"".equals(targetSUMO)) {
-                        if (targetSUMO.charAt(targetSUMO.length()-1) == '[') 
+                        if (targetSUMO.charAt(targetSUMO.length() - 1) == '[')
                             mappingChar = "[";
                         if (Character.isUpperCase(targetSUMO.charAt(2)))     // char 2 is start of actual term after &%
                             return "&%" + getBareSUMOTerm(targetSUMO) + mappingChar;
                         else {
                             String candidate = findMappingFromHypernym(targetSynset);
-                            if (candidate != null && !"".equals(candidate)) 
+                            if (candidate != null && !"".equals(candidate))
                                 return candidate;
-                        }                            
+                        }
                     }
                 }
             }
@@ -523,7 +522,7 @@ public class WordNetUtilities {
                 Pattern p = Pattern.compile(pattern);
                 line = line.trim();
                 Matcher m = p.matcher(line);
-                if (line.indexOf("&%") > -1) 
+                if (line.contains("&%"))
                     pw.println(line.trim());
                 else {
                     if (m.matches()) {

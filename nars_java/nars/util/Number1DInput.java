@@ -51,7 +51,7 @@ public class Number1DInput  {
     int iteration = 0;
     private final NAR nar;
 
-    public Number1DInput(NAR n, String id, double[] data, int resolution) throws IOException {
+    public Number1DInput(NAR n, String id, double[] data, int resolution) {
         
         this.nar = n;
         this.id = id;
@@ -71,7 +71,7 @@ public class Number1DInput  {
     public static String getValueTerm(double v, int resolution) {
         double dv = 1.0/resolution;
         int i = (int)Math.round(v/dv);
-        double percent = (dv * i);
+        //double percent = (dv * i);
         String ps = intf.format(i);        
         return Texts.escapeLiteral("\u211d" + ps + "/" + resolution).toString();
     }

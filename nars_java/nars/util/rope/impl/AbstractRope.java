@@ -59,7 +59,7 @@ public abstract class AbstractRope implements Rope {
     public int compareTo(final CharSequence sequence) {
 
         final int minCommonLength = Math.min(sequence.length(), this.length());
-        final Iterator<Character> i = this.iterator();
+        //final Iterator<Character> i = this.iterator();
 
         for (int j = 0; j < minCommonLength; j++) {
             final char x = charAt(j);
@@ -177,7 +177,7 @@ public abstract class AbstractRope implements Rope {
 
         int x = 0;
         for (Iterator<Character> i = this.iterator(offset); i.hasNext() && x < prefix.length();) {
-            if (i.next().charValue() != prefix.charAt(x++)) {
+            if (i.next() != prefix.charAt(x++)) {
                 return false;
             }
         }
@@ -202,7 +202,7 @@ public abstract class AbstractRope implements Rope {
         int index = fromIndex - 1;
         for (final Iterator<Character> i = this.iterator(fromIndex); i.hasNext();) {
             ++index;
-            if (i.next().charValue() == ch) {
+            if (i.next() == ch) {
                 return index;
             }
         }

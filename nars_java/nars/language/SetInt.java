@@ -68,7 +68,7 @@ public class SetInt extends SetTensional {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(Term t, Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>();
+        TreeSet<Term> set = new TreeSet<>();
         set.add(t);
         return make(set, memory);
     }
@@ -80,7 +80,7 @@ public class SetInt extends SetTensional {
      * @param memory Reference to the memeory
      */
     public static Term make(Collection<Term> argList, Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
+        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
         return make(set, memory);
     }
 

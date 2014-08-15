@@ -171,7 +171,7 @@ public class KIFInput extends PrintWriterInput implements Runnable {
             out.flush();
             out.close();
         } catch (IOException ex) {
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
         
         

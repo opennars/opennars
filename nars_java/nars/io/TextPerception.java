@@ -146,30 +146,30 @@ public class TextPerception {
     }
 
 
-    public static Sentence parseOutput(String s) {
-        Term content = null;
-        char punc = 0;
-        TruthValue truth = null;
-        
-        try {
-            StringBuilder buffer = new StringBuilder(s);
-            //String budgetString = getBudgetString(buffer);
-            String truthString = getTruthString(buffer);
-            String str = buffer.toString().trim();
-            int last = str.length() - 1;
-            punc = str.charAt(last);
-            //Stamp stamp = new Stamp(time);
-            truth = parseTruth(truthString, punc);
-
-
-            /*Term content = parseTerm(str.substring(0, last));
-            if (content == null) throw new InvalidInputException("Content term missing");*/
-        }
-        catch (InvalidInputException e) {
-            System.err.println("TextInput.parseOutput: " + s + " : " + e.toString());
-        }
-        return new Sentence(content, punc, truth, null);        
-    }
+//    public static Sentence parseOutput(String s) {
+//        Term content = null;
+//        char punc = 0;
+//        TruthValue truth = null;
+//
+//        try {
+//            StringBuilder buffer = new StringBuilder(s);
+//            //String budgetString = getBudgetString(buffer);
+//            String truthString = getTruthString(buffer);
+//            String str = buffer.toString().trim();
+//            int last = str.length() - 1;
+//            punc = str.charAt(last);
+//            //Stamp stamp = new Stamp(time);
+//            truth = parseTruth(truthString, punc);
+//
+//
+//            /*Term content = parseTerm(str.substring(0, last));
+//            if (content == null) throw new InvalidInputException("Content term missing");*/
+//        }
+//        catch (InvalidInputException e) {
+//            System.err.println("TextInput.parseOutput: " + s + " : " + e.toString());
+//        }
+//        return new Sentence(content, punc, truth, null);
+//    }
     
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
@@ -531,7 +531,7 @@ public class TextPerception {
             throw new InvalidInputException("Unknown operator: " + op);
         }
 
-        ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<Term>(0)
+        ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
                 : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
 
         Term[] argA = arg.toArray(new Term[arg.size()]);

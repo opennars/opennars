@@ -683,7 +683,7 @@ public final class Concept extends Item {
 
         @Override
         public BagObserver<TermLink> createBagObserver() {
-            return new NullBagObserver<TermLink>();
+            return new NullBagObserver<>();
         }
 
         @Override

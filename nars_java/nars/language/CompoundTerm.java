@@ -120,19 +120,21 @@ public abstract class CompoundTerm extends Term {
 
 
 
-    /**
-     * Constructor called from subclasses constructors to initialize the fields.
-     * Calculates name, hasVar, & complexity.
-     *
-     * @param components Component list
-     */
-    @Deprecated protected CompoundTerm(final Term[] components) {
-        this.term = components; //ensureValidComponents(term);
-        this.complexity = calcComplexity();
-        setName(makeName());        
-        this.isConstant = !hasVar;
-    }
-        
+// --Commented out by Inspection START (8/15/14 2:37 AM):
+//    /**
+//     * Constructor called from subclasses constructors to initialize the fields.
+//     * Calculates name, hasVar, & complexity.
+//     *
+//     * @param components Component list
+//     */
+//    @Deprecated protected CompoundTerm(final Term[] components) {
+//        this.term = components; //ensureValidComponents(term);
+//        this.complexity = calcComplexity();
+//        setName(makeName());
+//        this.isConstant = !hasVar;
+//    }
+// --Commented out by Inspection STOP (8/15/14 2:37 AM)
+
 
     private Term[] ensureValidComponents(final Term[] components) {
         if (components.length < getMinimumRequiredComponents()) {
@@ -646,7 +648,7 @@ public abstract class CompoundTerm extends Term {
     public void renameVariables() {
         if (containVar()) {
             //int existingComponents = term.length;
-            boolean b = renameVariables(new HashMap<Variable, Variable>());
+            boolean b = renameVariables(new HashMap<>());
             if (b) {
                 setName(makeName());                
             }

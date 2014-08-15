@@ -50,7 +50,7 @@ public class ConcatenationRopeReverseIteratorImpl implements Iterator<Character>
 
 	public ConcatenationRopeReverseIteratorImpl(final Rope rope, final int start) {
 		this.rope = rope;
-		this.toTraverse = new ArrayDeque<Rope>();
+		this.toTraverse = new ArrayDeque<>();
 		this.toTraverse.push(rope);
 		this.currentRope = null;
 		this.initialize();

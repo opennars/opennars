@@ -876,7 +876,7 @@ public class Memory implements Output, Serializable {
                 
             } else {
                 final Sentence s = task.sentence;
-                if (s.isJudgment()) {
+                if ((s!=null) && (s.isJudgment())) {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         

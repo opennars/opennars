@@ -94,8 +94,8 @@ public class NAR implements Runnable, Output {
         m.setOutput(this);                
         
         //needs to be concurrent in case NARS makes changes to the channels while running
-        inputChannels = new CopyOnWriteArrayList<InPort>();
-        outputChannels = new CopyOnWriteArrayList<Output>();
+        inputChannels = new CopyOnWriteArrayList<>();
+        outputChannels = new CopyOnWriteArrayList<>();
     }
 
     /**

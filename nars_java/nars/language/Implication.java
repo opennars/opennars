@@ -107,7 +107,7 @@ public class Implication extends Statement {
         }
         if (predicate instanceof Implication) {
             final Term oldCondition = ((Statement) predicate).getSubject();
-            if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containsTerm(subject)) {
+            if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
                 return null;
             }
             final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);

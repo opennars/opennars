@@ -69,7 +69,7 @@ public class SetExt extends SetTensional {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term t, final Memory memory) {
-        final TreeSet<Term> set = new TreeSet<Term>();
+        final TreeSet<Term> set = new TreeSet<>();
         set.add(t);
         return make(set, memory);
     }
@@ -81,7 +81,7 @@ public class SetExt extends SetTensional {
      * @param memory Reference to the memeory
      */
     public static Term make(final Collection<Term> argList, final Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
+        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
         return make(set, memory);
     }
 

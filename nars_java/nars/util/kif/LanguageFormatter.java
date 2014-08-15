@@ -209,8 +209,8 @@ public class LanguageFormatter {
 		}
 		catch (IOException e) {
 		    System.out.println("Error in LanguageFormatter.keywordMap(): Error closing file " + fname);
-		};
-		return (keywordMap);
+		}
+            return (keywordMap);
 	    }
 	    try {
 		br.close();
@@ -242,7 +242,6 @@ public class LanguageFormatter {
 	    System.out.print( "  " );
 	}
 	System.out.print( depth + ":" );
-	return;
     }
 
     /** ***************************************************************
@@ -673,15 +672,15 @@ public class LanguageFormatter {
 	// System.out.println("str format: " + strFormat);
 	int index;
 
-	if (strFormat.indexOf("&%") > -1) {                   // setup the term hyperlink
-	    strFormat.replace("&%","&%"+pred+"$");
+	if (strFormat.contains("&%")) {                   // setup the term hyperlink
+	    strFormat = strFormat.replace("&%","&%"+pred+"$");
 	}
 	if ( isNegMode ) {                                    // handle negation
-	    if (strFormat.indexOf("%n") == -1) {
+	    if (!strFormat.contains("%n")) {
 		strFormat = getKeyword("not",language) + " " + strFormat;
 	    }
 	    else {
-		if (strFormat.indexOf("%n{") == -1) {
+		if (!strFormat.contains("%n{")) {
 		    strFormat = strFormat.replace("%n",getKeyword("not",language));
 		}
 		else {
@@ -708,7 +707,7 @@ public class LanguageFormatter {
 	    // strFormat = strFormat.replaceAll("%n\\{[\\w\\']+\\} "," ");
 	    strFormat = strFormat.replaceAll(" %n\\{.+?\\} "," ");
 	    strFormat = strFormat.replaceAll("%n\\{.+?\\} "," ");
-	    if (strFormat.indexOf("%p{") != -1) {           
+	    if (strFormat.contains("%p{")) {
 		int start = strFormat.indexOf("%p{") + 3;
 		int end = strFormat.indexOf('}',start);
 		strFormat = ( strFormat.substring(0,start-3) 
@@ -721,7 +720,7 @@ public class LanguageFormatter {
 
 	int num = 1;                                          // handle arguments
 	String argPointer = "%" + (new Integer(num)).toString();
-	while (strFormat.indexOf(argPointer) > -1) {
+	while (strFormat.contains(argPointer)) {
 	    // System.out.println("INFO in LanguageFormatter.paraphraseWithFormat(): Statement: " + f.theFormula);
 	    // System.out.println("arg: " + f.getArgument(num));
 	    // System.out.println("num: " + num);
@@ -860,7 +859,7 @@ public class LanguageFormatter {
 			boolean addAll = ( nArgsSet == 0 );
 			int nToAdd = ( addAll ? (argsToPrint.length - 1) : nArgsSet );
 			for ( int i = 1 ; i < argsToPrint.length ; i++ ) {
-			    if ( addAll || (argsToPrint[i] == true) ) {
+			    if ( addAll || (argsToPrint[i]) ) {
 				if ( nAdded >= 1 ) {
 				    if ( nToAdd == 2 ) { sb.append(" ").append(AND).append( " "); }
 				    else { sb.append( delim ); }
@@ -893,13 +892,12 @@ public class LanguageFormatter {
 	    String errStr = KBmanager.getMgr().getError();
 	    String str = null;
 	    if ( errStr == null ) { errStr = ""; }
-	    Iterator it = problems.iterator();
-	    while ( it.hasNext() ) {
-		str = (String) it.next();
-		System.out.println( "Error in LanguageFormatter.expandStar(): " );
-		System.out.println( "  " + str );
-		errStr += ( "\n<br/>" + str + "\n<br/>" );
-	    }
+        for (Object problem : problems) {
+            str = (String) problem;
+            System.out.println("Error in LanguageFormatter.expandStar(): ");
+            System.out.println("  " + str);
+            errStr += ("\n<br/>" + str + "\n<br/>");
+        }
 	    KBmanager.getMgr().setError( errStr );
 	}
 	return result;
@@ -924,7 +922,7 @@ public class LanguageFormatter {
 	int start = -1;
 	String nlFormat = nlStmtPara(stmt,false,phraseMap,termMap,language,1);
 	if ( nlFormat != null ) {
-	    while (nlFormat.indexOf("&%") > -1) {
+	    while (nlFormat.contains("&%")) {
 
 		start = nlFormat.indexOf("&%",start+1);
 		int word = nlFormat.indexOf('$',start);
