@@ -286,7 +286,7 @@ public class Grid2DSpace extends PApplet {
         Cell to = cells.at(tx, ty);
                 
         //System.out.println(to + " " + to.material);
-        if ((to.material == Material.StoneWall) || to.is_solid)
+        if ((to.material == Material.StoneWall) || to.is_solid || to.material==Material.Water)
             return "Too solid";
         
         final float maxTraversableHeight = 8;

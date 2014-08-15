@@ -75,6 +75,10 @@ public class EditorPanel extends JPanel {
          structMenu.add(new EditorMode("Grass Floor") {
             @Override public void run() { s.cells.click("GrassFloor",""); }            
         });
+         
+                structMenu.add(new EditorMode("Water") {
+            @Override public void run() { s.cells.click("Water",""); }            
+        });
         
         
         logicMenu.add(new EditorMode("On Wire") {
