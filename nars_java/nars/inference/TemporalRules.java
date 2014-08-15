@@ -156,8 +156,16 @@ public class TemporalRules {
                 t11 = Statement.make(ss1, ss1.getSubject(), var1, memory);
                 t22 = Statement.make(ss2, ss2.getSubject(), var2, memory);
             }
-            
-            //okay, and for operator arguments also
+            /* nope, the following is not valid induction because only if two observations:
+            <<blub --> at> =\> (&/,(^go-to,blub),+1)>. :|: %1.00;0.45%
+            and
+            <<door --> at> =\> (&/,(^go-to,door),+1)>. :|: %1.00;0.45%
+            are made it is allowed to derive
+            //<<$1 --> (/,^go-to,_)> =/> <$1 --> at>>. %1.00;0.31%
+            //which is already the case anyway.
+            //Only problem: Altough it is derived, it is not yet easy for NARS to derive that,
+            //and thus NARS will most times not generalize its actions on keys to other keys..
+            //hmmm
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
                 if(ss2 instanceof Operation) //it is an operation, let's look if one of the arguments is same as the subject of the other term
                 { //
@@ -182,7 +190,7 @@ public class TemporalRules {
                     Operation op=(Operation) Operation.make(S, ss2.getPredicate(), memory);
                     t22 = op;
                 }
-            }
+            }*/
             
         }
         
