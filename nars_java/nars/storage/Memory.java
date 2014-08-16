@@ -695,7 +695,7 @@ public class Memory implements Output, Serializable {
                     final long baseI = stamp.evidentialBase[i];
                     
                     for (int j = 0; j < stampLength; j++) {
-                        if ((i != j) && (baseI == stamp.evidentialBase[j])) {
+                        if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.content instanceof Operation)) {
                             if (recorder.isActive()) {                                
                                 recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
                             }
