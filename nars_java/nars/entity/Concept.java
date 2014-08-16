@@ -35,9 +35,11 @@ import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
+import nars.operator.Operation;
 import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
 import nars.storage.Memory;
@@ -248,7 +250,7 @@ public final class Concept extends Item {
 
             if (task.aboveThreshold()) {    // still worth pursuing
                 addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);
-                if (noRevision) {
+                if (noRevision || (task.sentence.content instanceof Operation)) {
                     decisionMaking(task, this);
                 }
             }

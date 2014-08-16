@@ -48,6 +48,9 @@ public class EditorPanel extends JPanel {
          DefaultMutableTreeNode goalMenu = new DefaultMutableTreeNode("Request Goal");
         root.add(goalMenu);
         
+         DefaultMutableTreeNode knowMenu = new DefaultMutableTreeNode("Predefine knowledge");
+        root.add(knowMenu);
+        
         
         
         DefaultTreeModel model = new DefaultTreeModel(root);
@@ -161,6 +164,31 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("maked switched off/closed") {  
             @Override public void run() { s.cells.click("","","closed");}
         });   
+        
+        
+        
+        knowMenu.add(new EditorMode("if you go to somewhere you will be there") {  
+            @Override public void run() { s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>."); }
+        });  
+        
+        
+         knowMenu.add(new EditorMode("if you go to a key and you pick the key, you will hold the key") {  
+            @Override public void run() { /*s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
+            s.nar.addInput("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
+            s.nar.addInput("<(&/,<key1 --> at>,(^pick,key1)) =/> <key1 --> hold>>.");
+            s.nar.addInput("<(&/,<key2 --> at>,(^pick,key2)) =/> <key2 --> hold>>.");
+            s.nar.addInput("<(&/,<key3 --> at>,(^pick,key3)) =/> <key3 --> hold>>.");}
+        });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
+        
+        
+        knowMenu.add(new EditorMode("every key opens a door") {  
+            @Override public void run() { }
+        });  
+        
+        knowMenu.add(new EditorMode("for every door there exists a key which opens the door") {  
+            @Override public void run() { s.nar.addInput(""); }
+        });  
+        
         
 
         

@@ -160,7 +160,7 @@ public class TemporalRules {
             <<blub --> at> =\> (&/,(^go-to,blub),+1)>. :|: %1.00;0.45%
             and
             <<door --> at> =\> (&/,(^go-to,door),+1)>. :|: %1.00;0.45%
-            are made it is allowed to derive
+            are made it is allowed to derive*/
             //<<$1 --> (/,^go-to,_)> =/> <$1 --> at>>. %1.00;0.31%
             //which is already the case anyway.
             //Only problem: Altough it is derived, it is not yet easy for NARS to derive that,
@@ -190,7 +190,7 @@ public class TemporalRules {
                     Operation op=(Operation) Operation.make(S, ss2.getPredicate(), memory);
                     t22 = op;
                 }
-            }*/
+            }/**/
             
         }
         
