@@ -172,7 +172,7 @@ public class EditorPanel extends JPanel {
         });  
         
         
-         knowMenu.add(new EditorMode("if you go to a key and you pick the key, you will hold the key") {  
+         knowMenu.add(new EditorMode("if you are somewhere and you pick whats there, you will hold it") {  
             @Override public void run() { /*s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
             s.nar.addInput("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
             s.nar.addInput("<(&/,<key1 --> at>,(^pick,key1)) =/> <key1 --> hold>>.");
@@ -181,13 +181,13 @@ public class EditorPanel extends JPanel {
         });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
         
         
-        knowMenu.add(new EditorMode("every key opens a door") {  
+       /* knowMenu.add(new EditorMode("every key opens a door") {  
             @Override public void run() { }
         });  
         
         knowMenu.add(new EditorMode("for every door there exists a key which opens the door") {  
             @Override public void run() { s.nar.addInput(""); }
-        });  
+        });  */
         
         
 
