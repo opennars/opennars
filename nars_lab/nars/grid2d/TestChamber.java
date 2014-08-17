@@ -26,6 +26,7 @@ public class TestChamber {
     public PVector lasttarget = new PVector(25, 25); //not work
     static String goal = "";
     static String opname="";
+    public LocalGridObject inventorybag=null;  
     
     public static String getobj(int x,int y) {
         for(GridObject gridi : space.objects) {
@@ -38,7 +39,6 @@ public class TestChamber {
         return "";
     }
     
-    static List<GridObject> inventory=new ArrayList<GridObject>();
     public static void operateObj(String arg,String opnamer) {
         opname=opnamer;
         Hauto cells = space.cells;
@@ -118,17 +118,22 @@ public class TestChamber {
                     actions.clear();
                    // System.out.println(path);
                     if (path != null) {
+                        if(inventorybag!=null) {
+                            inventorybag.x=(int)current.x;
+                            inventorybag.y=(int)current.y;
+                        }
                         if (path.size() <= 1) {
                             //nar.step(1);
                             //System.out.println("at destination; didnt need to find path");
                             if (getfeedback && !"".equals(goal) && current.equals(target)) {
                                  getfeedback = false;
                                 //--nar.step(6);
-                                boolean existent=false;
                                 GridObject obi=null;
                                 if(!"".equals(opname)) {
                                     for(GridObject gridi : space.objects) {
-                                        if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) {
+                                        if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal) &&
+                                          ((LocalGridObject)gridi).x==(int)current.x &&
+                                               ((LocalGridObject)gridi).y==(int)current.y ) {
                                             obi=gridi;
                                             break;
                                         }
@@ -136,7 +141,14 @@ public class TestChamber {
                                 }
                                 if(obi!=null || cells.readCells[(int)current.x][(int)current.y].name.equals(goal)) { //only possible for existing ones
                                     if("pick".equals(opname)) {
-                                        inventory.add(goal);
+                                        if(inventorybag!=null && inventorybag instanceof LocalGridObject) {
+                                            //we have to drop it
+                                            LocalGridObject ob=(LocalGridObject) inventorybag;
+                                            ob.x=(int)current.x;
+                                            ob.y=(int)current.y;
+                                            space.objects.add(ob);
+                                        }
+                                        inventorybag=(LocalGridObject)obi;
                                         if(obi!=null)
                                             space.objects.remove(obi);
                                         nar.addInput("<"+goal+" --> hold>. :|:");
