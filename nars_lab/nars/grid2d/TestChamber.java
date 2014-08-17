@@ -3,6 +3,7 @@ package nars.grid2d;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
+import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import static nars.grid2d.Hauto.DOWN;
 import static nars.grid2d.Hauto.LEFT;
@@ -142,11 +143,36 @@ public class TestChamber {
                                     }
                                     else
                                     if("deactivate".equals(opname)) {
-                                        nar.addInput("<"+goal+" --> off>. :|:");
+                                        for(int i=0;i<cells.h;i++) {
+                                            for(int j=0;j<cells.w;j++) {
+                                                if(cells.readCells[i][j].name.equals(goal)) {
+                                                    if(cells.readCells[i][j].logic==Logic.SWITCH) {
+                                                        cells.readCells[i][j].logic=Logic.OFFSWITCH;
+                                                        cells.writeCells[i][j].logic=Logic.OFFSWITCH;
+                                                        cells.readCells[i][j].charge=0.0f;
+                                                        cells.writeCells[i][j].charge=0.0f;
+                                                        nar.addInput("<"+goal+" --> off>. :|:");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
                                     }
                                     else
                                     if("activate".equals(opname)) {
-                                        nar.addInput("<"+goal+" --> on>. :|:");
+                                        for(int i=0;i<cells.h;i++) {
+                                            for(int j=0;j<cells.w;j++) {
+                                                if(cells.readCells[i][j].name.equals(goal)) {
+                                                    if(cells.readCells[i][j].logic==Logic.OFFSWITCH) {
+                                                        cells.readCells[i][j].logic=Logic.SWITCH;
+                                                        cells.writeCells[i][j].logic=Logic.SWITCH;
+                                                        cells.readCells[i][j].charge=1.0f;
+                                                        cells.writeCells[i][j].charge=1.0f;
+                                                        nar.addInput("<"+goal+" --> on>. :|:");
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                     if("go-to".equals(opname)) {
                                         nar.addInput("<"+goal+" --> at>. :|:");
