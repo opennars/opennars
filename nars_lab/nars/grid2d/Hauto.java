@@ -34,7 +34,12 @@ public class Hauto {
         //
         if(r.machine==Machine.Light && r.charge==1)
         {
+            if(r.light!=1.0f) {
+                nar.addInput("<"+r.name+" --> on>. :|:");
+            }
             w.light=1.0f;
+            
+            
         }
         else
         {
@@ -115,6 +120,11 @@ public class Hauto {
             w.charge = Math.max(up.charge, Math.max(down.charge, Math.max(left.charge, right.charge)));
             w.chargeFront = false;
         }
+        if(r.machine==Machine.Light) {
+            if(r.light==1.0f && w.light!=1.0f) { //changed
+                nar.addInput("<"+r.name+" --> off>. :|:");
+            }
+        }
             //w.charge *= w.conductivity;
     }
     
@@ -135,17 +145,17 @@ public class Hauto {
         
         if(!"".equals(oper)) {
             if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
-                nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
+                nar.addInput("(^" + oper + ","+readCells[x][y].name+")! :|:"); //we will force the action
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
                 //--nar.step(1);
-                TestChamber.operateObj(readCells[x][y].name, oper);
+               // TestChamber.operateObj(readCells[x][y].name, oper);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
-                nar.addInput("(^" + oper + ","+s+")!"); 
+                nar.addInput("(^" + oper + ","+s+")! :|:"); 
                 //nar.addInput("(^" + oper + ","+s+"). :|:");
                 //--nar.step(1);
-                TestChamber.operateObj(s, oper);
+                //TestChamber.operateObj(s, oper);
             }
             return;
         }
@@ -153,13 +163,13 @@ public class Hauto {
         if(!"".equals(wish)) {
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
-                nar.addInput("<" + readCells[x][y].name+" --> "+wish+">!"); //in order to make NARS an observer
+                nar.addInput("<" + readCells[x][y].name+" --> "+wish+">! :|:"); //in order to make NARS an observer
                 //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
-                nar.addInput("<" + s +" --> "+wish+">!"); //in order to make NARS an observer
+                nar.addInput("<" + s +" --> "+wish+">! :|:"); //in order to make NARS an observer
                 //--nar.step(1);
             }
             return;
@@ -183,7 +193,7 @@ public class Hauto {
         readCells[(int) x][(int) y].machine = selected.machine;
         writeCells[(int) x][(int) y].machine = selected.machine;
         
-        if(selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH) //or other entity...
+        if(selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH || selected.machine==Machine.Light) //or other entity...
         {
             String name="";
             if(selected.material==Material.Door) {
@@ -191,6 +201,8 @@ public class Hauto {
             }
             if(selected.logic==Logic.SWITCH || selected.logic==Logic.OFFSWITCH) 
                 name="switch";
+            if(selected.machine==Machine.Light) 
+                name="light";
             String Klass=name;
             name=name+(entityID.toString());
             if(selected.material==Material.Door) {

@@ -11,6 +11,8 @@ import static nars.grid2d.Hauto.UP;
 import nars.grid2d.agent.ql.QLAgent;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
+import nars.grid2d.operator.Activate;
+import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import processing.core.PVector;
@@ -103,7 +105,8 @@ public class TestChamber {
 /*if (Math.random() < 0.2) {
                  forward(1);
                  }*/
-                if (!target.equals(lasttarget) || target.equals(lasttarget) && "pick".equals(opname)) {
+                if (!target.equals(lasttarget) || target.equals(lasttarget) && ("pick".equals(opname) ||
+                        "activate".equals(opname) || "deactivate".equals(opname))) {
                     getfeedback = true;
                 }
                 lasttarget = target;
@@ -120,22 +123,34 @@ public class TestChamber {
                             if (getfeedback && !"".equals(goal) && current.equals(target)) {
                                  getfeedback = false;
                                 //--nar.step(6);
-                                if("pick".equals(opname)) {
-                                    inventory.add(goal);
-                                    GridObject remove=null;
+                                boolean existent=false;
+                                GridObject obi=null;
+                                if(!"".equals(opname)) {
                                     for(GridObject gridi : space.objects) {
                                         if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) {
-                                            remove=gridi;
+                                            obi=gridi;
                                             break;
                                         }
                                     }
-                                    if(remove!=null)
-                                        space.objects.remove(remove);
-                                    nar.addInput("<"+goal+" --> hold>. :|:");
                                 }
-                                else
-                                {
-                                    nar.addInput("<"+goal+" --> at>. :|:");
+                                if(obi!=null || cells.readCells[(int)current.x][(int)current.y].name.equals(goal)) { //only possible for existing ones
+                                    if("pick".equals(opname)) {
+                                        inventory.add(goal);
+                                        if(obi!=null)
+                                            space.objects.remove(obi);
+                                        nar.addInput("<"+goal+" --> hold>. :|:");
+                                    }
+                                    else
+                                    if("deactivate".equals(opname)) {
+                                        nar.addInput("<"+goal+" --> off>. :|:");
+                                    }
+                                    else
+                                    if("activate".equals(opname)) {
+                                        nar.addInput("<"+goal+" --> on>. :|:");
+                                    }
+                                    if("go-to".equals(opname)) {
+                                        nar.addInput("<"+goal+" --> at>. :|:");
+                                    }
                                 }
                             }
                             opname="";
@@ -175,6 +190,10 @@ public class TestChamber {
         nar.memory.addOperator(wu);
         Pick wa = new Pick(this, "^pick");
         nar.memory.addOperator(wa);
+        Activate waa = new Activate(this, "^activate");
+        nar.memory.addOperator(waa);
+        Deactivate waaa = new Deactivate(this, "^deactivate");
+        nar.memory.addOperator(waaa);
         space.add(a);
 //space.add(new QLAgent(10,20));
        // space.add(new Key(20, 20));
