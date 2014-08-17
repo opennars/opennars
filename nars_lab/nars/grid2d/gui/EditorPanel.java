@@ -115,9 +115,10 @@ public class EditorPanel extends JPanel {
         machineMenu.add(new EditorMode("Light") {
             @Override public void run() { s.cells.click("Light","",""); }
         });        
-        machineMenu.add(new EditorMode("Firework") {
+        //since firework doesnt serve a special functionality yet
+        /*machineMenu.add(new EditorMode("Firework") {
             @Override public void run() { s.cells.click("Turret","",""); }
-        });    
+        }); */   
         
         machineMenu.add(new EditorMode("Door and Key") {
             @Override public void run() { s.cells.click("Door","",""); }
@@ -136,12 +137,12 @@ public class EditorPanel extends JPanel {
             @Override public void run() { s.cells.click("","pick","");}
         }); 
         
-        actionMenu.add(new EditorMode("switch on/open") {  
-            @Override public void run() { s.cells.click("","open","");}
+        actionMenu.add(new EditorMode("activate switch") {  
+            @Override public void run() { s.cells.click("","activate","");}
         });  
         
-        actionMenu.add(new EditorMode("switch off/close") {  
-            @Override public void run() { s.cells.click("","close","");}
+        actionMenu.add(new EditorMode("deactivate switch") {  
+            @Override public void run() { s.cells.click("","deactivate","");}
         });  
         
         actionMenu.add(new EditorMode("perceive/name") {  
@@ -157,13 +158,21 @@ public class EditorPanel extends JPanel {
             @Override public void run() { s.cells.click("","","hold");}
         });  
         
-        goalMenu.add(new EditorMode("make switched on/opened") {  
+        goalMenu.add(new EditorMode("make switched on") {  
+            @Override public void run() { s.cells.click("","","on");}
+        });  
+        
+        goalMenu.add(new EditorMode("make switched off") {  
+            @Override public void run() { s.cells.click("","","off");}
+        });   
+        
+        goalMenu.add(new EditorMode("make opened") {  
             @Override public void run() { s.cells.click("","","opened");}
         });  
         
-        goalMenu.add(new EditorMode("maked switched off/closed") {  
+        goalMenu.add(new EditorMode("make closed") {  
             @Override public void run() { s.cells.click("","","closed");}
-        });   
+        });  
         
         
         
