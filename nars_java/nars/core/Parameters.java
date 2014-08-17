@@ -61,7 +61,7 @@ public class Parameters {
     /** Tense usage convention, how far away "past" and "future" is from "now". */
     public static final int DURATION = 5;    // the range of "now" is [-DURATION, DURATION];
     /** Minimum expectation for a desire value. */
-    public static final float DECISION_THRESHOLD = (float) 0.10;    // the range of "now" is [-DURATION, DURATION];
+    public static final float DECISION_THRESHOLD = (float) 0.50;    // the range of "now" is [-DURATION, DURATION];
  
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted. */
