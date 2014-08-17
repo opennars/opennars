@@ -49,9 +49,15 @@ public class Hauto {
         if(r.material==Material.Door) {
             if(NeighborsValue2("op_or", i, j, readcells, "having_charge", 1.0f) != 0) {
                 w.is_solid=false;
+                if(r.is_solid) {
+                    nar.addInput("<"+r.name+" --> opened>. :|:");
+                }
             }
             else {
                 w.is_solid=true;
+                if(!r.is_solid) {
+                    nar.addInput("<"+r.name+" --> closed>. :|:");
+                }
             }
         }
         //////// WIRE / CURRENT PULSE FLOW /////////////////////////////////////////////////////////////				
