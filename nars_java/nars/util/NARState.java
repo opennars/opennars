@@ -28,21 +28,23 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
     public HashMap<String,Object> measure(/*...which measurements to record */) {
         long now = nar.getTime();
         HashMap<String, Object> data = newData();
-        
-        AbstractBag<Concept> concepts = nar.memory.concepts;
-                
-        data.put("concepts.AveragePriority", nar.memory.concepts.getAveragePriority());
-        data.put("concepts.Total", concepts.size());
-        data.put("concepts.Mass", concepts.getMass());
-        data.put("beliefs.Total", totalBeliefs(concepts));
-        data.put("questions.Total", totalQuestions(concepts));
-        data.put("novelTasks.Total", nar.memory.novelTasks.size());
-        data.put("newTasks.Total", nar.memory.newTasks.size());
-        
-        data.put("emotion.happy", nar.memory.emotion.happy());
-        data.put("emotion.busy", nar.memory.emotion.busy());
-        
-        put(now, data);        
+        try{
+            AbstractBag<Concept> concepts = nar.memory.concepts;
+
+            data.put("concepts.AveragePriority", nar.memory.concepts.getAveragePriority());
+            data.put("concepts.Total", concepts.size());
+            data.put("concepts.Mass", concepts.getMass());
+            data.put("beliefs.Total", totalBeliefs(concepts));
+            data.put("questions.Total", totalQuestions(concepts));
+            data.put("novelTasks.Total", nar.memory.novelTasks.size());
+            data.put("newTasks.Total", nar.memory.newTasks.size());
+
+            data.put("emotion.happy", nar.memory.emotion.happy());
+            data.put("emotion.busy", nar.memory.emotion.busy());
+
+            put(now, data);   
+        }
+        catch(Exception ex) {}
         return data;
     }
 
