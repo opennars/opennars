@@ -22,6 +22,14 @@ public class Hauto {
     boolean is_logic(Cell c){ 
         return (c.logic==OR || c.logic==XOR || c.logic==AND || c.logic==NOT); 
     }
+    
+    public static int doornumber(Cell c) {
+        if(c.material!=Material.Door) {
+            return -2;
+        }
+        return Integer.parseInt(c.name.replaceAll("door", ""));
+    }
+    
     //put to beginning because we will need this one most often
     public void ExecutionFunction(int t,int i,int j,Cell w,Cell r,Cell left,Cell right,Cell up,
             Cell down,Cell left_up,Cell left_down,Cell right_up,Cell right_down,Cell[][] readcells)
@@ -54,8 +62,8 @@ public class Hauto {
                 }
             }
             else {
-                w.is_solid=true;
-                if(!r.is_solid) {
+                if(!r.is_solid && TestChamber.keyn!=doornumber(r)) {
+                    w.is_solid=true;
                     nar.addInput("<"+r.name+" --> closed>. :|:");
                 }
             }
