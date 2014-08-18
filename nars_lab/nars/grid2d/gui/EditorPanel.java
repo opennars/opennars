@@ -178,6 +178,10 @@ public class EditorPanel extends JPanel {
                     }
                 }
                 s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [curious]>!");
             }
             
         });  
