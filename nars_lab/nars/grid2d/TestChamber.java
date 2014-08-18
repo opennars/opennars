@@ -26,7 +26,8 @@ public class TestChamber {
     public PVector lasttarget = new PVector(25, 25); //not work
     static String goal = "";
     static String opname="";
-    public LocalGridObject inventorybag=null;  
+    public static LocalGridObject inventorybag=null;  
+    public static int keyn=-1;
     
     public static String getobj(int x,int y) {
         for(GridObject gridi : space.objects) {
@@ -124,6 +125,9 @@ public class TestChamber {
                             inventorybag.cx=(int)current.x;
                             inventorybag.cy=(int)current.y;
                         }
+                        if(inventorybag==null || !(inventorybag instanceof Key)) {
+                            keyn=-1;
+                        }
                         if (path.size() <= 1) {
                             //nar.step(1);
                             //System.out.println("at destination; didnt need to find path");
@@ -151,8 +155,20 @@ public class TestChamber {
                                             space.objects.add(ob);
                                         }
                                         inventorybag=(LocalGridObject)obi;
-                                        if(obi!=null)
+                                        if(obi!=null) {
                                             space.objects.remove(obi);
+                                            if(inventorybag.doorname.startsWith("key")) {
+                                                keyn=Integer.parseInt(inventorybag.doorname.replaceAll("key", ""));
+                                                for(int i=0;i<cells.h;i++) {
+                                                    for(int j=0;j<cells.w;j++) {
+                                                        if(Hauto.doornumber(cells.readCells[i][j])==keyn) {
+                                                            cells.readCells[i][j].is_solid=false;
+                                                            cells.writeCells[i][j].is_solid=false;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                         nar.addInput("<"+goal+" --> hold>. :|:");
                                     }
                                     else
