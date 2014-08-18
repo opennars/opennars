@@ -7,8 +7,13 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import nars.grid2d.Cell;
+import nars.grid2d.Cell.Logic;
 import nars.grid2d.Grid2DSpace;
+import nars.grid2d.GridObject;
+import nars.grid2d.LocalGridObject;
 import nars.grid2d.TestChamber;
+import nars.grid2d.object.Key;
 
 /**
  *
@@ -126,7 +131,6 @@ public class EditorPanel extends JPanel {
         
 
         
-        
         actionMenu.add(new EditorMode("Go-To named") {
             
             @Override public void run() { s.cells.click("","go-to","");}
@@ -149,6 +153,34 @@ public class EditorPanel extends JPanel {
             @Override public void run() { s.cells.click("","perceive","");}
         });  
         
+        
+        goalMenu.add(new EditorMode("Be curious") {
+            
+            @Override public void run() { 
+                for(GridObject g : s.objects) {
+                    if(g instanceof LocalGridObject) {
+                        LocalGridObject obi=(LocalGridObject) g;
+                        if(obi instanceof Key) {
+                            s.nar.addInput("<(^go-to,"+obi.doorname+") =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(^pick,"+obi.doorname+") =/> <Self --> [curious]>>.");
+                        }
+                    }
+                }
+                for(int i=0;i<s.cells.w;i++) {
+                    for(int j=0;j<s.cells.h;j++) {
+                        if(s.cells.readCells[i][j].logic==Logic.SWITCH || s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
+                            s.nar.addInput("<(^activate,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(^deactivate,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
+                        }
+                        if(s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("key")) {
+                            s.nar.addInput("<(^go-to,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
+                        }
+                    }
+                }
+                s.nar.addInput("<Self --> [curious]>!");
+            }
+            
+        });  
         
         goalMenu.add(new EditorMode("be somewhere") {  
             @Override public void run() { s.cells.click("","","at");}
@@ -183,10 +215,18 @@ public class EditorPanel extends JPanel {
         
          knowMenu.add(new EditorMode("if you are somewhere and you pick whats there, you will hold it") {  
             @Override public void run() { /*s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
-            s.nar.addInput("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
+            for(GridObject g : s.objects) {
+                if(g instanceof LocalGridObject) {
+                    LocalGridObject obi=(LocalGridObject) g;
+                    if(obi instanceof Key) {
+                        s.nar.addInput("<(&/,<"+ obi.doorname+" --> at>,(^pick,"+obi.doorname+")) =/> <"+obi.doorname+" --> hold>>.");
+                    }
+                }
+            }
+            /*s.nar.addInput("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
             s.nar.addInput("<(&/,<key1 --> at>,(^pick,key1)) =/> <key1 --> hold>>.");
             s.nar.addInput("<(&/,<key2 --> at>,(^pick,key2)) =/> <key2 --> hold>>.");
-            s.nar.addInput("<(&/,<key3 --> at>,(^pick,key3)) =/> <key3 --> hold>>.");}
+            s.nar.addInput("<(&/,<key3 --> at>,(^pick,key3)) =/> <key3 --> hold>>.");*/}
         });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
         
         
