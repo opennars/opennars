@@ -121,6 +121,8 @@ public class TestChamber {
                         if(inventorybag!=null) {
                             inventorybag.x=(int)current.x;
                             inventorybag.y=(int)current.y;
+                            inventorybag.cx=(int)current.x;
+                            inventorybag.cy=(int)current.y;
                         }
                         if (path.size() <= 1) {
                             //nar.step(1);
