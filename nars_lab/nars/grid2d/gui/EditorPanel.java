@@ -168,12 +168,12 @@ public class EditorPanel extends JPanel {
                 }
                 for(int i=0;i<s.cells.w;i++) {
                     for(int j=0;j<s.cells.h;j++) {
+                        if(s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("key")) {
+                            s.nar.addInput("<(^go-to,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
+                        }
                         if(s.cells.readCells[i][j].logic==Logic.SWITCH || s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
                             s.nar.addInput("<(^activate,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^deactivate,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
-                        }
-                        if(s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("key")) {
-                            s.nar.addInput("<(^go-to,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
                         }
                     }
                 }
