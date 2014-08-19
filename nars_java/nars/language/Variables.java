@@ -9,11 +9,19 @@ import nars.storage.Memory;
  * Static utility class for static methods related to Variables
  */
 public class Variables {
-
-    
     
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final HashMap<Term, Term> map1, final HashMap<Term, Term> map2) {
-        
+
+//        System.out.println(type + " " + term1.getClass() + " " + term2.getClass() + " " + map1 + " " + map2);       
+//        if (InferenceTracer.guardStack(20, "findSubstitute", type, term1, term2, map1, map2)) {
+//            System.out.println("findSubstitute LOOPING");            
+//            System.exit(1);
+//        }
+
+        final boolean termsEqual = term1.equals(term2);
+        if (!(term1 instanceof Variable) && !(term2 instanceof Variable) && termsEqual) {
+            return true;
+        }
         
         Term t;                
         if ((term1 instanceof Variable) && (((Variable) term1).getType() == type)) {
@@ -69,7 +77,7 @@ public class Variables {
             }
             return true;
         }
-        return term1.equals(term2);        
+        return termsEqual;        
     }
 
 
