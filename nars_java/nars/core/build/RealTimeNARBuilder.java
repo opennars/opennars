@@ -1,24 +1,28 @@
-package nars.util;
+package nars.core.build;
 
-import nars.core.build.DefaultNARBuilder;
 import nars.core.Param;
 import nars.core.Parameters;
+import nars.core.control.RealTimeFloodCycle;
 import nars.entity.Concept;
+import nars.entity.ConceptBuilder;
 import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.storage.Memory;
+import nars.storage.MemoryModel;
+import nars.util.ContinuousBag;
 
-
-public class ContinuousBagNARBuilder extends DefaultNARBuilder {
+/**
+ *
+ * @author me
+ */
+public class RealTimeNARBuilder extends DefaultNARBuilder {
     private final boolean randomRemoval;
 
-    public ContinuousBagNARBuilder() {
+    public RealTimeNARBuilder() {
         this(true);
     }
-    public ContinuousBagNARBuilder(boolean randomRemoval) {
+    public RealTimeNARBuilder(boolean randomRemoval) {
         super();
         this.randomRemoval = randomRemoval;
     }
@@ -34,12 +38,15 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     }
     
     @Override
-    public Concept newConcept(final Term t, final Memory m) {
-        
-        AbstractBag<TaskLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), m.param.taskForgettingRate, randomRemoval);
-        AbstractBag<TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), m.param.beliefForgettingRate, randomRemoval);
-        
-        return new Concept(t, taskLinks, termLinks, m);        
+    public Concept newConcept(final Term t, final Memory m) {        
+        //NOT USED, remove this abstract method because it doesnt apply to all types
+        return null; 
     }
+
+    @Override
+    public MemoryModel newMemoryModel(Param p, ConceptBuilder c) {
+        return new RealTimeFloodCycle();
+    }
+    
     
 }

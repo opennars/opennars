@@ -18,7 +18,7 @@
 package nars.test.util;
 
 import java.io.StringWriter;
-import nars.core.DefaultNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.TextOutput;

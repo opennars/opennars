@@ -1,6 +1,6 @@
 package nars.test.util;
 
-import nars.core.DefaultNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.util.InferenceTracer;
 import org.junit.Test;
