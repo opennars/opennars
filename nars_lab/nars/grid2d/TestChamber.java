@@ -16,6 +16,7 @@ import nars.grid2d.operator.Activate;
 import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
+import nars.grid2d.operator.Tell;
 import processing.core.PVector;
 
 public class TestChamber {
@@ -250,7 +251,10 @@ public class TestChamber {
         nar.memory.addOperator(waa);
         Deactivate waaa = new Deactivate(this, "^deactivate");
         nar.memory.addOperator(waaa);
+        Tell waaaa = new Tell(this, "^tell");
+        nar.memory.addOperator(waaaa);
         space.add(a);
+        
 //space.add(new QLAgent(10,20));
        // space.add(new Key(20, 20));
 //space.add(new RayVision(a, 45, 10, 8));
