@@ -224,6 +224,10 @@ public class EditorPanel extends JPanel {
             s.nar.addInput("<(^go-to,$1) <=> <(*,SHOULD,GO,TO,$1) --> sentence>>.");
             s.nar.addInput("<(&&,<$1 --> sentence>,(^tell,$1)) =/> <I --> chatty>>.");
             s.nar.addInput("<I --> chatty>!");
+            s.nar.addInput("<I --> chatty>!");
+            s.nar.addInput("<I --> chatty>!");
+            s.nar.addInput("<I --> chatty>!");
+            s.nar.addInput("<I --> chatty>!");
         }
         }); 
         
