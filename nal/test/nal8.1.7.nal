@@ -4,4 +4,4 @@
 85
   IN: <SELF --> (/,at,_,{t003})>? :\:
 5
-''outputMustContain('<SELF --> (/,at,_,{t003})>. :\: %1.00;0.20%')
+''outputMustContain('<SELF --> (/,at,_,{t003})>. :|: %1.00;0.20%')

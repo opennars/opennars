@@ -2,4 +2,4 @@
   IN: <{t001} --> [opened]>!  
   IN: <(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|:
 24
-''outputMustContain('(&/,(^go-to,{t003}),(^pick,{t002}),<{t001} --> (/,^go-to,_)>,(^open,{t001}))! %1.00;0.43%')
+''outputMustContain('(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001}))! %1.00;0.43%')
