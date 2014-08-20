@@ -321,8 +321,8 @@ public class RuleTables {
                     SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
 
                     CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, memory);
-                    if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
-                        CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, memory);//introVarImage(taskContent, beliefContent, index, memory);             
+                    //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
+                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, memory);//introVarImage(taskContent, beliefContent, index, memory);             
                     CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,memory);
                     
                 }

@@ -162,10 +162,7 @@ public class TemporalRules {
             <<door --> at> =\> (&/,(^go-to,door),+1)>. :|: %1.00;0.45%
             are made it is allowed to derive*/
             //<<$1 --> (/,^go-to,_)> =/> <$1 --> at>>. %1.00;0.31%
-            //which is already the case anyway.
-            //Only problem: Altough it is derived, it is not yet easy for NARS to derive that,
-            //and thus NARS will most times not generalize its actions on keys to other keys..
-            //hmmm
+            //hmmm but its necessarry, use induction with itself for now and put into discussion group
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
                 if(ss2 instanceof Operation) //it is an operation, let's look if one of the arguments is same as the subject of the other term
                 { //
@@ -190,8 +187,7 @@ public class TemporalRules {
                     Operation op=(Operation) Operation.make(S, ss2.getPredicate(), memory);
                     t22 = op;
                 }
-            }/**/
-            
+            }
         }
         
         if (Statement.invalidStatement(t1, t2)) {
@@ -205,8 +201,14 @@ public class TemporalRules {
             interval = new Interval(Math.abs(timeDiff));
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD, memory);
+                if(t11!=null) {
+                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD, memory);
+                }
             } else {
                 t2 = Conjunction.make(t2, interval, ORDER_FORWARD, memory);
+                if(t22!=null) {
+                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD, memory);
+                }
             }
         }
         int order;
@@ -232,9 +234,9 @@ public class TemporalRules {
             Statement statement11 = Implication.make(t11, t22, order, memory);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order), memory);
             Statement statement33 = Equivalence.make(t11, t22, order, memory);
-            memory.doublePremiseTask(statement11, truth1, budget1);
-            memory.doublePremiseTask(statement22, truth2, budget2);
-            memory.doublePremiseTask(statement33, truth3, budget3);
+            memory.doublePremiseTask(statement11, TruthFunctions.induction(truth1,truth1), budget1);
+            memory.doublePremiseTask(statement22, TruthFunctions.induction(truth2,truth2), budget2);
+            memory.doublePremiseTask(statement33, TruthFunctions.induction(truth3,truth3), budget3);
         }
         memory.doublePremiseTask(statement1, truth1, budget1);
         memory.doublePremiseTask(statement2, truth2, budget2);
