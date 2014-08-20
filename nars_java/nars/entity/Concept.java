@@ -35,7 +35,6 @@ import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
-import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -657,7 +656,7 @@ public final class Concept extends Item {
      * @param time The current time
      * @return The selected TermLink
      */    
-    protected TermLink selectTermLink(TaskLink taskLink, long time) {
+    protected TermLink selectTermLink(final TaskLink taskLink, final long time) {
         for (int i = 0; i < Parameters.MAX_MATCHED_TERM_LINK; i++) {
             final TermLink termLink = termLinks.takeOut(false);
             if (termLink == null) {

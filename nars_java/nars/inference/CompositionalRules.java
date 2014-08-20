@@ -658,7 +658,7 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                        for(final Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -675,7 +675,7 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
+                        for(final Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -700,7 +700,8 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                        for(final Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                            if (!(s2 instanceof CompoundTerm)) continue;
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -717,7 +718,8 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                        for(final Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                            if (!(s2 instanceof CompoundTerm)) continue;
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -742,11 +744,8 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
-                            
-                            if (!(s2 instanceof CompoundTerm))
-                                continue;
-                            
+                        for(final Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                            if (!(s2 instanceof CompoundTerm)) continue;                            
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if ((!s2.equals(s1)) && (sentence.truth!=null) && (belief.truth!=null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -763,7 +762,7 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
+                        for(final Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
                             ((CompoundTerm) s2).applySubstitute(res3);
@@ -790,7 +789,7 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                        for(final Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
                             ((CompoundTerm) s2).applySubstitute(res3);
@@ -809,8 +808,9 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                        for(final Term s2 : ((CompoundTerm)S2).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
+                            
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
