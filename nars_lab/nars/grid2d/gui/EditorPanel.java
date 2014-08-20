@@ -210,7 +210,22 @@ public class EditorPanel extends JPanel {
             @Override public void run() { s.cells.click("","","closed");}
         });  
         
-        
+        goalMenu.add(new EditorMode("be chatty") {  
+            @Override public void run() {
+            s.nar.addInput("<<$1 --> on> <=> <(*,$1,SHOULD,BE,SWITCHED,ON) --> sentence>>.");
+            s.nar.addInput("<<$1 --> off> <=> <(*,$1,SHOULD,BE,OFF) --> sentence>>.");
+            s.nar.addInput("<<$1 --> opened> <=> <(*,$1,SHOULD,BE,OPENED) --> sentence>>.");
+            s.nar.addInput("<<$1 --> closed> <=> <(*,$1,SHOULD,BE,CLOSED) --> sentence>>.");
+            s.nar.addInput("<<$1 --> hold> <=> <(*,$1,SHOULD,BE,HOLD) --> sentence>>.");
+            s.nar.addInput("<<$1 --> at> <=> <(*,SHOULD,BE,AT,$1) --> sentence>>.");
+            s.nar.addInput("<(^pick,$1) <=> <(*,$1,SHOULD,BE,PICKED) --> sentence>>.");
+            s.nar.addInput("<(^activate,$1) <=> <(*,$1,SHOULD,BE,ACTIVE) --> sentence>>.");
+            s.nar.addInput("<(^deactivate,$1) <=> <(*,$1,SHOULD,BE,NOT,ACTIVE) --> sentence>>.");
+            s.nar.addInput("<(^go-to,$1) <=> <(*,SHOULD,GO,TO,$1) --> sentence>>.");
+            s.nar.addInput("<(&&,<$1 --> sentence>,(^tell,$1)) =/> <I --> chatty>>.");
+            s.nar.addInput("<I --> chatty>!");
+        }
+        }); 
         
         knowMenu.add(new EditorMode("if you go to somewhere you will be there") {  
             @Override public void run() { s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>."); }
@@ -232,7 +247,6 @@ public class EditorPanel extends JPanel {
             s.nar.addInput("<(&/,<key2 --> at>,(^pick,key2)) =/> <key2 --> hold>>.");
             s.nar.addInput("<(&/,<key3 --> at>,(^pick,key3)) =/> <key3 --> hold>>.");*/}
         });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
-        
         
        /* knowMenu.add(new EditorMode("every key opens a door") {  
             @Override public void run() { }
