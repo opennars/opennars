@@ -1,10 +1,10 @@
 package nars.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
 import nars.core.NAR;
 import nars.entity.Concept;
-import nars.storage.AbstractBag;
 
 /**
  * Contains information about the state of a NAR, including measurements 
@@ -29,11 +29,14 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
         long now = nar.getTime();
         HashMap<String, Object> data = newData();
         try{
-            AbstractBag<Concept> concepts = nar.memory.concepts;
+            Collection<Concept> concepts = nar.memory.getConcepts();
 
-            data.put("concepts.AveragePriority", nar.memory.concepts.getAveragePriority());
+            double averagePriority = 0, mass = 0;
+            //TODO calculate
+            
+            data.put("concepts.AveragePriority", averagePriority);
             data.put("concepts.Total", concepts.size());
-            data.put("concepts.Mass", concepts.getMass());
+            data.put("concepts.Mass", mass);
             data.put("beliefs.Total", totalBeliefs(concepts));
             data.put("questions.Total", totalQuestions(concepts));
             data.put("novelTasks.Total", nar.memory.novelTasks.size());
