@@ -114,7 +114,7 @@ public class Memory implements Output, Serializable {
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
     }
-    private final MemoryCycle cyclePolicy;
+    private final MemoryModel model;
     
     
     
@@ -204,16 +204,7 @@ public class Memory implements Output, Serializable {
     }
     
 
-    /**
-     * Backward pointer to the nar
-     */
-    //public final NAR nar;
 
-    /* ---------- Long-term storage for multiple cycles ---------- */
-    /**
-     * Concept bag. Containing all Concepts of the system
-     */
-    public final AbstractBag<Concept> concepts;
     
     
     /* InnateOperator registry. Containing all registered operators of the system */
@@ -259,6 +250,7 @@ public class Memory implements Output, Serializable {
     private Stamp newStamp;
 
     public final Term self;
+
     
     
     
@@ -352,8 +344,22 @@ public class Memory implements Output, Serializable {
     }
 
     /** defines a policy for top-level control of a memory cycle */
-    public interface MemoryCycle {
+    public interface MemoryModel {
         public void cycle(Memory m);
+        
+        public void processConcepts(Memory m);
+
+        public Collection<Concept> getConcepts();
+
+        public void clear();
+
+        public Concept concept(CharSequence name);
+
+        public boolean addConcept(Concept concept);
+
+        public void conceptActivate(Concept c, BudgetValue b);
+
+        public Concept sampleNextConcept();
     }
 
     /* ---------- Constructor ---------- */
@@ -362,13 +368,13 @@ public class Memory implements Output, Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, MemoryCycle cycleControl, AbstractBag<Concept> concepts, AbstractBag<Task> novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
+    public Memory(Param param, MemoryModel cycleControl, AbstractBag<Task> novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
         
         this.param = param;
-        this.cyclePolicy = cycleControl;
+        this.model = cycleControl;
         this.conceptBuilder = conceptBuilder;
 
-        this.concepts = concepts;
+        
         this.novelTasks = novelTasks;
         
         recorder = NullInferenceRecorder.global;
@@ -388,7 +394,7 @@ public class Memory implements Output, Serializable {
     }
 
     public void reset() {
-        concepts.clear();
+        model.clear();
         novelTasks.clear();
         newTasks.clear();        
         lastEvent = null;
@@ -439,7 +445,7 @@ public class Memory implements Output, Serializable {
      * @return a Concept or null
      */
     public Concept concept(final CharSequence name) {
-        return concepts.get(name);
+        return model.concept(name);
     }
 
     /**
@@ -451,7 +457,7 @@ public class Memory implements Output, Serializable {
      * @return a Term or null (if no Concept/InnateOperator has this name)
      */
     public Term conceptTerm(final CharSequence name) {
-        final Concept concept = concepts.get(name);
+        final Concept concept = concept(name);
         if (concept != null) {
             return concept.term;
         }
@@ -479,13 +485,13 @@ public class Memory implements Output, Serializable {
             return null;
         }
         final CharSequence n = term.name();
-        Concept concept = concepts.get(n);
+        Concept concept = concept(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
             
             concept = conceptBuilder.newConcept(term, this);
 
-            final boolean created = concepts.putIn(concept);
+            final boolean created = model.addConcept(concept);
             if (!created) {
                 return null;
             } else {
@@ -518,9 +524,7 @@ public class Memory implements Output, Serializable {
      * @param b the new BudgetValue
      */
     public void conceptActivate(final Concept c, final BudgetValue b) {
-        concepts.pickOut(c.getKey());
-        BudgetFunctions.activate(c, b);
-        concepts.putBack(c);
+        model.conceptActivate(c, b);
     }
 
     /* ---------- new task entries ---------- */
@@ -829,7 +833,7 @@ public class Memory implements Output, Serializable {
                 recorder.onCycleStart(clock);
             }
 
-            cyclePolicy.cycle(this);
+            model.cycle(this);
                 
             //novelTasks.refresh();
 
@@ -925,24 +929,6 @@ public class Memory implements Output, Serializable {
         }
     }
 
-    /**
-     * Select a concept to fire.
-     */
-    public void processConcept() {
-        //currentConcept = concepts.takeOut();
-        currentConcept = concepts.processNext();
-        if (currentConcept != null) {
-            setCurrentTerm(currentConcept.term);
-            
-            if (recorder.isActive()) {
-                recorder.append("Concept Selected: " + getCurrentTerm());
-            }
-            
-            //concepts.putBack(currentConcept);   // current Concept remains in the bag all the time
-            
-            currentConcept.fire();              // a working cycleMemory
-        }
-    }
 
     /* ---------- task processing ---------- */
     /**
@@ -977,26 +963,26 @@ public class Memory implements Output, Serializable {
      }
      
  
-    /* ---------- display ---------- */
-    /**
-     * Start display active concepts on given bagObserver, called from
-     * MainWindow.
-     *
-     * we don't want to expose fields concepts and novelTasks, AND we want to
-     * separate GUI and inference, so this method takes as argument a
-     * {@link BagObserver} and calls
-     * {@link ConceptBag#addBagObserver(BagObserver, String)} ;
-     *
-     * see design for {@link Bag} and {@link nars.gui.BagWindow} in
-     * {@link Bag#addBagObserver(BagObserver, String)}
-     *
-     * @param bagObserver bag Observer that will receive notifications
-     * @param title the window title
-     */
-    public void conceptsStartPlay(final BagObserver<Concept> bagObserver, final String title) {
-        bagObserver.setBag(concepts);
-        concepts.addBagObserver(bagObserver, title);
-    }
+//    /* ---------- display ---------- */
+//    /**
+//     * Start display active concepts on given bagObserver, called from
+//     * MainWindow.
+//     *
+//     * we don't want to expose fields concepts and novelTasks, AND we want to
+//     * separate GUI and inference, so this method takes as argument a
+//     * {@link BagObserver} and calls
+//     * {@link ConceptBag#addBagObserver(BagObserver, String)} ;
+//     *
+//     * see design for {@link Bag} and {@link nars.gui.BagWindow} in
+//     * {@link Bag#addBagObserver(BagObserver, String)}
+//     *
+//     * @param bagObserver bag Observer that will receive notifications
+//     * @param title the window title
+//     */
+//    public void conceptsStartPlay(final BagObserver<Concept> bagObserver, final String title) {
+//        bagObserver.setBag(concepts);
+//        concepts.addBagObserver(bagObserver, title);
+//    }
 
     /**
      * Display new tasks, called from MainWindow. see
@@ -1015,7 +1001,7 @@ public class Memory implements Output, Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(1024);
-        sb.append(toStringLongIfNotNull(concepts, "concepts"))
+        sb.append(getConcepts().toString())
                 .append(toStringLongIfNotNull(novelTasks, "novelTasks"))
                 .append(toStringIfNotNull(newTasks, "newTasks"))
                 .append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
@@ -1047,7 +1033,7 @@ public class Memory implements Output, Serializable {
 
     /** returns a collection of all concepts */
     public Collection<Concept> getConcepts() {
-        return concepts.values();
+        return model.getConcepts();
     }
 
     /**
@@ -1212,4 +1198,10 @@ public class Memory implements Output, Serializable {
         Task task = new Task(sentence, budget);        
         return task;
     }
+    
+    /** gets a next concept for processing */
+    public Concept sampleNextConcept() {
+        return model.sampleNextConcept();
+    }
+    
 }

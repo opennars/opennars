@@ -23,7 +23,7 @@ public class TestMultistepEdited {
 
         
         n.finish(10000);
-        System.out.println(n.memory.concepts);
+        //System.out.println(n.memory.concepts);
         
     }
             

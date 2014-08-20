@@ -38,14 +38,18 @@ public class DefaultNARBuilder extends NARBuilder {
         p.taskForgettingRate.set(20);
         p.beliefForgettingRate.set(50);
         p.cycleInputTasks.set(1);
-        p.cycleMemory.set(1);
-    
+                
+        
+        //Experimental parameters - adjust at your own risk
+        p.cycleMemory.set(1);                
+        p.variableUnificationLayer2_ConceptAttemptsPerCycle.set(1);
+        p.variableUnificationLayer2_MaxUnificationsPerCycle.set(1);
         return p;
     }
 
     @Override
-    public Memory.MemoryCycle newMemoryCycle(Param p) {
-        return new SequentialMemoryCycle();
+    public Memory.MemoryModel newMemoryModel(Param p) {
+        return new SequentialMemoryCycle(newConceptBag(p));
     }
     
     
@@ -60,8 +64,7 @@ public class DefaultNARBuilder extends NARBuilder {
     }
 
     
-    @Override
-    public AbstractBag<Concept> newConceptBag(Param p) {
+    protected AbstractBag<Concept> newConceptBag(Param p) {
         return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgettingRate);
     }
 

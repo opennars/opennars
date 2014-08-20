@@ -18,7 +18,6 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.storage.AbstractBag;
 import org.jgrapht.ext.GmlExporter;
 import org.jgrapht.ext.GraphMLExporter;
 import org.jgrapht.ext.IntegerEdgeNameProvider;
@@ -167,9 +166,9 @@ public class NARGraph extends DirectedMultigraph {
         graphize.onTime(this, n.getTime());
 
         //TODO support AbstractBag
-        AbstractBag<Concept> bag = n.memory.concepts;
+        Collection<Concept> cc = n.memory.getConcepts();
 
-        for (Concept c : bag) {
+        for (Concept c : cc) {
             
             //TODO use more efficient iterator so that the entire list does not need to be traversed when excluding ranges
             

@@ -81,7 +81,7 @@ public final class CompositionalRules {
         Term term1 = sentence.content;
         Term term2 = belief.content;
         
-        for (final Concept concept : memory.concepts) {
+        for (final Concept concept : memory.getConcepts()) {
 
             final List<Task> questions = concept.getQuestions();
             for (int i = 0; i < questions.size(); i++) {
@@ -633,7 +633,7 @@ public final class CompositionalRules {
         return commonTerm;
     }
     
-    public static void eliminateVariableOfConditionAbductive(int figure,Sentence sentence,Sentence belief, Memory memory) {
+    public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final Memory memory) {
         Term T1=sentence.content.clone();
         Term T2=belief.content.clone();
         Term S1=((Statement)T2).getSubject();
@@ -654,7 +654,7 @@ public final class CompositionalRules {
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(Term s1 : ((CompoundTerm)S1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
@@ -671,7 +671,7 @@ public final class CompositionalRules {
             }
             if(P2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(Term s1 : ((CompoundTerm)P2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P2).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
@@ -696,7 +696,7 @@ public final class CompositionalRules {
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(Term s1 : ((CompoundTerm)S2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S2).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
@@ -713,7 +713,7 @@ public final class CompositionalRules {
             }
             if(P1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(Term s1 : ((CompoundTerm)P1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P1).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
@@ -738,7 +738,7 @@ public final class CompositionalRules {
             ((CompoundTerm) T2).applySubstitute(res1);
             if(P1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(Term s1 : ((CompoundTerm)P1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P1).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
@@ -759,7 +759,7 @@ public final class CompositionalRules {
             }
             if(P2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(Term s1 : ((CompoundTerm)P2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P2).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
@@ -786,7 +786,7 @@ public final class CompositionalRules {
             ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(Term s1 : ((CompoundTerm)S1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
@@ -805,7 +805,7 @@ public final class CompositionalRules {
             }
             if(S2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(Term s1 : ((CompoundTerm)S2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S2).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
@@ -859,8 +859,9 @@ public final class CompositionalRules {
         }
     }
 
-        static boolean dedSecondLayerVariableUnification(Task task, Memory memory)
-    {
+    static boolean dedSecondLayerVariableUnification(Task task, Memory memory)     {
+        boolean unifiedAnything = false;
+        
         Sentence taskSentence=task.sentence;
         if(taskSentence==null || taskSentence.isQuestion()) {
             return false;
@@ -870,114 +871,165 @@ public final class CompositionalRules {
             if (!taskterm.containVar()) {
                 return false;
             }           
-            Concept second=memory.concepts.processNext();
-            if(second==null) {
-                return false;
-            }
-            if (memory.getRecorder().isActive()) {
-                memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term);
-            }            
             
-            Term secterm=second.term;
-            if(second.beliefs.isEmpty()) {
-                return false;
-            }
-           
-            Sentence second_belief=second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
             
-            //explaination(patrick): it is not completely valid to do temporal induction only on sequence of occured events
-            //there are rare situations which demand that it is also done in a overarching manner
-            //if(taskSentence.getOccurenceTime()!=Stamp.ETERNAL && second_belief.getOccurenceTime()!=Stamp.ETERNAL)
-            //{
-            //    TemporalRules.temporalInduction(taskSentence, second_belief, memory);
-            //}
+            int remainingUnifications = memory.param.variableUnificationLayer2_MaxUnificationsPerCycle.get();
             
-            TruthValue truthSecond=second_belief.truth;
-            //we have to select a random belief
-            ArrayList<CompoundTerm> terms_dependent=new ArrayList<>();
-            ArrayList<CompoundTerm> terms_independent=new ArrayList<>();
-            
-            //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
-            //for two levels, and remember the terms which unify with second
-            Term[] components_level1 = ((CompoundTerm)taskterm).term;            
-            Term secterm_unwrap=unwrapNegation(secterm).clone();
-            for(Term T1 : components_level1) {
-                Term T1_unwrap=unwrapNegation(T1);
-                HashMap<Term, Term> Values = new HashMap<>(); //we are only interested in first variables
-                if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,new HashMap<>())) {
-                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                    taskterm_subs.applySubstitute(Values);
-                    taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                    if(taskterm_subs!=null) {
-                        terms_dependent.add(taskterm_subs);
-                    }
+            int maxUnificationAttempts = memory.param.variableUnificationLayer2_ConceptAttemptsPerCycle.get();
+
+            //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
+            ArrayList<CompoundTerm> terms_dependent = null;
+            ArrayList<CompoundTerm> terms_independent = null;
+            HashMap<Term, Term> Values = null; 
+            HashMap<Term, Term> Values2 = null; 
+            HashMap<Term, Term> Values3 = null;
+            HashMap<Term, Term> Values4 = null;
+
+            for (int k = 0; k < maxUnificationAttempts; k++ ) {               
+                Concept second=memory.sampleNextConcept();
+                
+                if(second==null) {
+                    //no more concepts, stop
+                    break;
                 }
-                HashMap<Term, Term> Values2 = new HashMap<>(); //we are only interested in first variables
-                if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2,new HashMap<>())) {
-                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                    taskterm_subs.applySubstitute(Values2);
-                    taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                    if(taskterm_subs!=null) {
-                        terms_independent.add(taskterm_subs);
-                    }
-                }
-                if(!((T1_unwrap instanceof Implication) || (T1_unwrap instanceof Equivalence) || (T1_unwrap instanceof Conjunction) || (T1_unwrap instanceof Disjunction))) {
+                
+                if (second.equals(taskterm))
+                    continue;
+                
+                
+                
+                if (memory.getRecorder().isActive()) {
+                    memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term);
+                }            
+
+                Term secterm=second.term;
+                if(second.beliefs.isEmpty()) {
                     continue;
                 }
-                if(T1_unwrap instanceof CompoundTerm) {
-                    Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
-                    for(Term T2 : components_level2) {
-                        Term T2_unwrap=unwrapNegation(T2).clone(); 
-                        HashMap<Term, Term> Values3 = new HashMap<>(); //we are only interested in first variables
-                        if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<>())) {
-                            //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                            taskterm_subs.applySubstitute(Values3);
-                            taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                            if(taskterm_subs!=null) {
-                                terms_dependent.add(taskterm_subs);
-                            }
+
+                Sentence second_belief=second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
+
+                //explaination(patrick): it is not completely valid to do temporal induction only on sequence of occured events
+                //there are rare situations which demand that it is also done in a overarching manner
+                //if(taskSentence.getOccurenceTime()!=Stamp.ETERNAL && second_belief.getOccurenceTime()!=Stamp.ETERNAL)
+                //{
+                //    TemporalRules.temporalInduction(taskSentence, second_belief, memory);
+                //}
+
+                TruthValue truthSecond=second_belief.truth;
+                
+                if (k == 0) {
+                    terms_dependent=new ArrayList<>();
+                    terms_independent=new ArrayList<>();
+                    Values = new HashMap<>(); 
+                    Values2 = new HashMap<>(); 
+                    Values3 = new HashMap<>();
+                    Values4 = new HashMap<>();
+                }
+
+                //we have to select a random belief
+                terms_dependent.clear();
+                terms_independent.clear();
+
+                //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
+                //for two levels, and remember the terms which unify with second
+                Term[] components_level1 = ((CompoundTerm)taskterm).term;            
+                Term secterm_unwrap=unwrapNegation(secterm).clone();
+                
+                
+                for(final Term T1 : components_level1) {
+                    Term T1_unwrap=unwrapNegation(T1);
+                    Values.clear(); //we are only interested in first variables
+
+                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,new HashMap<>())) {
+                        CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                        taskterm_subs.applySubstitute(Values);
+                        taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
+                        if(taskterm_subs!=null) {
+                            terms_dependent.add(taskterm_subs);
                         }
-                        HashMap<Term, Term> Values4 = new HashMap<>(); //we are only interested in first variables
-                        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4,new HashMap<>())) {
-                            //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                            taskterm_subs.applySubstitute(Values4);
-                            taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                            if(taskterm_subs!=null) {
-                                terms_independent.add(taskterm_subs);
+                    }
+                    
+
+                    Values2.clear(); //we are only interested in first variables
+                    if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2,new HashMap<>())) {
+                        CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                        taskterm_subs.applySubstitute(Values2);
+                        taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
+                        if(taskterm_subs!=null) {
+                            terms_independent.add(taskterm_subs);
+                        }
+                    }
+                    if(!((T1_unwrap instanceof Implication) || (T1_unwrap instanceof Equivalence) || (T1_unwrap instanceof Conjunction) || (T1_unwrap instanceof Disjunction))) {
+                        continue;
+                    }
+                    if(T1_unwrap instanceof CompoundTerm) {
+                        Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
+                        
+                        for(final Term T2 : components_level2) {
+                            Term T2_unwrap=unwrapNegation(T2).clone(); 
+                            Values3.clear(); //we are only interested in first variables
+                            
+                            if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3,new HashMap<>())) {
+                                //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
+                                CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                                taskterm_subs.applySubstitute(Values3);
+                                taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
+                                if(taskterm_subs!=null) {
+                                    terms_dependent.add(taskterm_subs);
+                                }
+                            }
+                            
+                            Values4.clear(); //we are only interested in first variables
+                            if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4,new HashMap<>())) {
+                                //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
+                                CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                                taskterm_subs.applySubstitute(Values4);
+                                taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
+                                if(taskterm_subs!=null) {
+                                    terms_independent.add(taskterm_subs);
+                                }
                             }
                         }
                     }
                 }
-            }
-            
-            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
-            dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
-            dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
-            
-            for(int i=0;i<terms_independent.size();i++) {
-                Term result = terms_independent.get(i);
-                TruthValue truth = deduction(taskSentence.truth, truthSecond);
-                
-                char mark=Symbols.JUDGMENT_MARK;
-                if(taskSentence.isGoal() || second_belief.isGoal()) {
-                    truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
-                    mark=Symbols.GOAL_MARK;
+
+                Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
+                dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
+                dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
+
+                final int termsIndependent = terms_independent.size();
+                for(int i=0;i<termsIndependent;i++) {
+                    Term result = terms_independent.get(i);
+                    TruthValue truth = deduction(taskSentence.truth, truthSecond);
+
+                    char mark=Symbols.JUDGMENT_MARK;
+                    if(taskSentence.isGoal() || second_belief.isGoal()) {
+                        truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
+                        mark=Symbols.GOAL_MARK;
+                    }
+
+                    Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
+                    Sentence newSentence = new Sentence(result, mark, truth, 
+                            new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );                
+
+                    BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
+                    Task newTask = new Task(newSentence, budget, task, null);
+                    Task dummy = new Task(second_belief, budget, task, null);
+                    memory.setCurrentBelief(taskSentence);
+                    memory.setCurrentTask(dummy);
+                    memory.derivedTask(newTask, false, false, taskSentence, second_belief);
+                    
+                    unifiedAnything = true;
                 }
-               
-                Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
-                Sentence newSentence = new Sentence(result, mark, truth, 
-                        new Stamp(taskSentence.stamp, memory.getTime(), useEvidentalBase) );                
+                remainingUnifications--;
                 
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
-                Task newTask = new Task(newSentence, budget, task, null);
-                Task dummy = new Task(second_belief, budget, task, null);
-                memory.setCurrentBelief(taskSentence);
-                memory.setCurrentTask(dummy);
-                memory.derivedTask(newTask, false, false, taskSentence, second_belief);
+                if (remainingUnifications == 0)
+                    break;
+                                                
             }
-            return true;
+            
+            return unifiedAnything;
         }
         return true;
     }

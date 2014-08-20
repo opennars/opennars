@@ -58,7 +58,7 @@ public class SentencePipeTest {
         source.addInput("<a --> b>.");
         source.addInput("<a --> b>?");
         
-        assert(target.memory.concepts.size() == 0);
+        assert(target.memory.getConcepts().size() == 0);
         
         source.finish(8);
         
