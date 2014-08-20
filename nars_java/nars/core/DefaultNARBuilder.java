@@ -42,6 +42,8 @@ public class DefaultNARBuilder extends NARBuilder {
         
         //Experimental parameters - adjust at your own risk
         p.cycleMemory.set(1);                
+        p.variableUnificationLayer2_ConceptAttemptsPerCycle.set(1);
+        p.variableUnificationLayer2_MaxUnificationsPerCycle.set(1);
         return p;
     }
 

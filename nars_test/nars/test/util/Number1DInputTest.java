@@ -47,18 +47,18 @@ public class Number1DInputTest {
     
     //@Test
     public void test1() throws Exception {
-        int N = 4;
+        int N = 100;
         
         double[] x = randomArray(N, 1.0, 0);
         
         NAR n = new ContinuousBagNARBuilder(true).
                 setConceptBagSize(32367).
                 build();
-                
+        
         n.param().cycleConcepts.set(1024);
         
         
-        Number1DInput v = new Number1DInput(n, "a", x, 4);
+        Number1DInput v = new Number1DInput(n, "a", x, 128);
         //n.addInput(v);
         
         

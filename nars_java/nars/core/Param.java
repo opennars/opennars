@@ -32,7 +32,11 @@ public class Param implements Serializable {
     /** How many concepts to fire each cycle */
     public final AtomicInteger cycleConcepts = new AtomicInteger();
     
-
+    /** Number of concepts to attempt 2nd-layer variable unification */
+    public final AtomicInteger variableUnificationLayer2_ConceptAttemptsPerCycle = new AtomicInteger();
+    
+    /** Number of max unifications in 2nd-layer variable unification; less than or equal to variableUnificationLayer2_ConceptAttemptsPerCycle */
+    public final AtomicInteger variableUnificationLayer2_MaxUnificationsPerCycle = new AtomicInteger();
     
     
 }
