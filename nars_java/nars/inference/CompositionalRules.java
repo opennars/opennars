@@ -873,9 +873,9 @@ public final class CompositionalRules {
             }           
             
             
-            int remainingUnifications = 1; //memory.param.variableUnificationLayer2_MaxUnificationsPerCycle.get();
+            int remainingUnifications = memory.param.variableUnificationLayer2_MaxUnificationsPerCycle.get();
             
-            int maxUnificationAttempts = 1; //memory.param.variableUnificationLayer2_ConceptAttemptsPerCycle.get();
+            int maxUnificationAttempts = memory.param.variableUnificationLayer2_ConceptAttemptsPerCycle.get();
 
             //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
             ArrayList<CompoundTerm> terms_dependent = null;
@@ -918,7 +918,7 @@ public final class CompositionalRules {
 
                 TruthValue truthSecond=second_belief.truth;
                 
-                if (terms_dependent == null) {
+                if (k == 0) {
                     terms_dependent=new ArrayList<>();
                     terms_independent=new ArrayList<>();
                     Values = new HashMap<>(); 
