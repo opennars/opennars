@@ -222,7 +222,7 @@ public class EditorPanel extends JPanel {
             s.nar.addInput("<(^activate,$1) <=> <(*,$1,SHOULD,BE,ACTIVE) --> sentence>>.");
             s.nar.addInput("<(^deactivate,$1) <=> <(*,$1,SHOULD,BE,NOT,ACTIVE) --> sentence>>.");
             s.nar.addInput("<(^go-to,$1) <=> <(*,SHOULD,GO,TO,$1) --> sentence>>.");
-            s.nar.addInput("<(&&,<$1 --> sentence>,(^tell,$1)) =/> <I --> chatty>>.");
+            s.nar.addInput("<(&&,<$1 --> sentence>,(^say,$1)) =/> <I --> chatty>>.");
             s.nar.addInput("<I --> chatty>!");
             s.nar.addInput("<I --> chatty>!");
             s.nar.addInput("<I --> chatty>!");
