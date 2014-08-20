@@ -33,10 +33,10 @@ import nars.storage.Memory;
  *  A class used as a template for Operator definition.
  * TODO: memory.registerOperator(new Goto("^goto"));
  */
-public class Tell extends Operator {
+public class Say extends Operator {
 
     TestChamber chamb;
-    public Tell(TestChamber chamb, String name) {
+    public Say(TestChamber chamb, String name) {
         super(name);
         this.chamb=chamb;
     }
