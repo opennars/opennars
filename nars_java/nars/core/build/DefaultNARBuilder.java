@@ -1,8 +1,12 @@
-package nars.core;
+package nars.core.build;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.NARBuilder;
+import nars.core.Param;
+import nars.core.Parameters;
 import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
+import nars.entity.ConceptBuilder;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -10,11 +14,12 @@ import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.storage.Memory;
+import nars.storage.MemoryModel;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class DefaultNARBuilder extends NARBuilder {
+public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     
     public DefaultNARBuilder() {
@@ -44,11 +49,17 @@ public class DefaultNARBuilder extends NARBuilder {
         p.cycleMemory.set(1);                
         return p;
     }
+    
+    @Override
+    public MemoryModel newMemoryModel(Param p, ConceptBuilder c) {
+        return new SequentialMemoryCycle(newConceptBag(p), c);
+    }
 
     @Override
-    public Memory.MemoryModel newMemoryModel(Param p) {
-        return new SequentialMemoryCycle(newConceptBag(p));
+    public ConceptBuilder getConceptBuilder() {
+        return this;
     }
+    
     
     
 
@@ -128,6 +139,47 @@ public class DefaultNARBuilder extends NARBuilder {
     public DefaultNARBuilder setTermLinkBagSize(int termLinkBagSize) {
         this.termLinkBagSize = termLinkBagSize;
         return this;
+    }
+    
+    
+    public static class CommandLineNARBuilder extends DefaultNARBuilder {
+        private final Param param;
+
+        @Override public Param newParam() {        
+            return param;
+        }
+
+        public CommandLineNARBuilder(String[] args) {
+            super();
+
+            param = super.newParam();
+
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                if ("--silence".equals(arg)) {
+                    arg = args[++i];
+                    int sl = Integer.parseInt(arg);                
+                    param.noiseLevel.set(100-sl);
+                }
+                if ("--noise".equals(arg)) {
+                    arg = args[++i];
+                    int sl = Integer.parseInt(arg);                
+                    param.noiseLevel.set(sl);
+                }            
+            }        
+        }
+
+
+
+        /**
+         * Decode the silence level
+         *
+         * @param param Given argument
+         * @return Whether the argument is not the silence level
+         */
+        public static boolean isReallyFile(String param) {
+            return !"--silence".equals(param);
+        }
     }
     
 }

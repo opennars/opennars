@@ -29,7 +29,7 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
         long now = nar.getTime();
         HashMap<String, Object> data = newData();
         try{
-            Collection<Concept> concepts = nar.memory.getConcepts();
+            Collection<? extends Concept> concepts = nar.memory.getConcepts();
 
             double averagePriority = 0, mass = 0;
             //TODO calculate
@@ -57,14 +57,14 @@ public class NARState extends TreeMap<Long, HashMap<String, Object>> {
     }
 
     /** count number of beliefs of a set of concepts */
-    public static int totalBeliefs(Iterable<Concept> concepts) {
+    public static int totalBeliefs(Iterable<? extends Concept> concepts) {
         int t = 0;
         for (Concept c : concepts)
             t += c.beliefs.size();        
         return t;
     }
     /** count number of beliefs of a set of concepts */
-    public static int totalQuestions(Iterable<Concept> concepts) {
+    public static int totalQuestions(Iterable<? extends Concept> concepts) {
         int t = 0;
         for (Concept c : concepts)
             t += c.questions.size();        

@@ -17,7 +17,7 @@
 
 package nars.test.util;
 
-import nars.core.DefaultNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.io.TextOutput;
 import nars.util.ContinuousBagNARBuilder;

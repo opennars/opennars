@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.TreeSet;
 
-import nars.core.DefaultNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.io.Texts;

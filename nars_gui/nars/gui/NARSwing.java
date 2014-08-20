@@ -23,8 +23,8 @@ package nars.gui;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
-import nars.core.CommandLineNARBuilder;
 import nars.core.NAR;
+import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
 import nars.io.TextInput;
@@ -95,6 +95,7 @@ public class NARSwing  {
         
         //temporary:
         //NAR nar = new ContinuousBagNARBuilder(false).build();
+        //NAR nar = new RealTimeNARBuilder(false).build();
         
         NARSwing swing = new NARSwing(nar);
         

@@ -3,14 +3,17 @@ package nars.core.control;
 import java.util.Collection;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
+import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.storage.Memory;
+import nars.storage.MemoryModel;
 
 /**
  * A deterministic memory cycle implementation that is used for development and testing.
  */
-public class SequentialMemoryCycle implements Memory.MemoryModel {
+public class SequentialMemoryCycle implements MemoryModel {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */
@@ -18,15 +21,17 @@ public class SequentialMemoryCycle implements Memory.MemoryModel {
      * Concept bag. Containing all Concepts of the system
      */
     public final AbstractBag<Concept> concepts;
+    private final ConceptBuilder conceptBuilder;
 
-    public SequentialMemoryCycle(AbstractBag<Concept> concepts) {
+    public SequentialMemoryCycle(AbstractBag<Concept> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
+        this.conceptBuilder = conceptBuilder;
     }
     
     
     @Override
     public void cycle(Memory m) {
-        m.processNewTask();
+        m.processNewTasks();
 
         if (m.noResult()) {       // necessary?
             m.processNovelTask();
@@ -41,11 +46,10 @@ public class SequentialMemoryCycle implements Memory.MemoryModel {
     /**
      * Select a concept to fire.
      */
-    @Override
     public void processConcepts(Memory m) {
         Concept currentConcept = concepts.processNext();
         if (currentConcept != null) {
-            m.setCurrentTerm(currentConcept.term);
+            
             
             if (m.getRecorder().isActive()) {
                 m.getRecorder().append("Concept Selected: " + currentConcept.term);
@@ -71,9 +75,16 @@ public class SequentialMemoryCycle implements Memory.MemoryModel {
     }
 
     @Override
-    public boolean addConcept(Concept concept) {
-        return concepts.putIn(concept);
+    public Concept addConcept(Term term, Memory memory) {
+        Concept concept = conceptBuilder.newConcept(term, memory);
+        
+        boolean added = concepts.putIn(concept);
+        if (!added)
+            return null;
+        
+        return concept;
     }
+    
 
     @Override
     public void conceptActivate(Concept c, BudgetValue b) {

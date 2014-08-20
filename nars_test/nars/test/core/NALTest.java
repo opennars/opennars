@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import nars.core.DefaultNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.gui.InferenceLogger;

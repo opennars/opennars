@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

@@ -2,7 +2,7 @@ package nars.test.util;
 
 import nars.util.rope.impl.PrePostCharRope;
 import static java.lang.String.valueOf;
-import nars.core.DefaultNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Stamp;

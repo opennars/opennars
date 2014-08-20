@@ -31,7 +31,6 @@ import nars.core.Parameters;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.entity.ConceptBuilder;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -337,30 +336,11 @@ public class Memory implements Output, Serializable {
     public final Param param;
     
     transient private Output output;
-    private final ConceptBuilder conceptBuilder;
 
     public BudgetValue getLastEventBudget() {
         return lastEvent.budget;
     }
 
-    /** defines a policy for top-level control of a memory cycle */
-    public interface MemoryModel {
-        public void cycle(Memory m);
-        
-        public void processConcepts(Memory m);
-
-        public Collection<Concept> getConcepts();
-
-        public void clear();
-
-        public Concept concept(CharSequence name);
-
-        public boolean addConcept(Concept concept);
-
-        public void conceptActivate(Concept c, BudgetValue b);
-
-        public Concept sampleNextConcept();
-    }
 
     /* ---------- Constructor ---------- */
     /**
@@ -368,11 +348,10 @@ public class Memory implements Output, Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, MemoryModel cycleControl, AbstractBag<Task> novelTasks, ConceptBuilder conceptBuilder, Operator[] initialOperators) {                
+    public Memory(Param param, MemoryModel cycleControl, AbstractBag<Task> novelTasks, Operator[] initialOperators) {                
         
         this.param = param;
         this.model = cycleControl;
-        this.conceptBuilder = conceptBuilder;
 
         
         this.novelTasks = novelTasks;
@@ -488,16 +467,14 @@ public class Memory implements Output, Serializable {
         Concept concept = concept(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
-            
-            concept = conceptBuilder.newConcept(term, this);
-
-            final boolean created = model.addConcept(concept);
-            if (!created) {
+            Concept newConcept = model.addConcept(term, this);
+            if (newConcept == null) {
                 return null;
             } else {
                 if (recorder.isActive()) {
                     recorder.onConceptNew(concept);
                 }
+                return newConcept;
             }
         }
         return concept;
@@ -854,7 +831,7 @@ public class Memory implements Output, Serializable {
  addInput ones and those that corresponding to existing concepts, plus one
  from the buffer.
      */
-    public void processNewTask() {        
+    public void processNewTasks() {        
         
         // don't include new tasks produced in the current cycleMemory
         int counter = newTasks.size();
@@ -921,12 +898,15 @@ public class Memory implements Output, Serializable {
     
     /**
      * Select a novel task to process.
+     * @return whether a task was processed
      */
-    public void processNovelTask() {
+    public boolean processNovelTask() {
         final Task task = novelTasks.takeOut();       // select a task from novelTasks
         if (task != null) {
             immediateProcess(task);
+            return true;
         }
+        return false;
     }
 
 
@@ -1032,7 +1012,7 @@ public class Memory implements Output, Serializable {
     }
 
     /** returns a collection of all concepts */
-    public Collection<Concept> getConcepts() {
+    public Collection<? extends Concept> getConcepts() {
         return model.getConcepts();
     }
 

@@ -1,6 +1,6 @@
 package nars.test.multistep;
 
-import nars.core.DefaultNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.io.TextInput;
 import nars.io.TextOutput;

@@ -45,7 +45,7 @@ import nars.storage.Memory;
 import nars.storage.NullBagObserver;
 
 
-public final class Concept extends Item {
+public class Concept extends Item {
 
     /**
      * The term is the unique ID of the concept
@@ -184,7 +184,7 @@ public final class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    private void processJudgment(final Task task) {
+    protected void processJudgment(final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         if (oldBelief != null) {
@@ -224,7 +224,7 @@ public final class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    private void processGoal(final Task task) {
+    protected void processGoal(final Task task) {
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean noRevision = true;
@@ -262,7 +262,7 @@ public final class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public void processQuestion(final Task task) {
+    protected void processQuestion(final Task task) {
 
         Sentence ques = task.sentence;
         boolean newQuestion = true;
@@ -301,7 +301,7 @@ public final class Concept extends Item {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    private void linkToTask(final Task task) {
+    protected void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
         insertTaskLink(new TaskLink(task, null, taskBudget));  // link type: SELF
         if (term instanceof CompoundTerm) {
@@ -551,13 +551,20 @@ public final class Concept extends Item {
     
     /* ---------- main loop ---------- */
     /**
-     * An atomic step in a concept, only called in {@link Memory#processConcept}
+     * An atomic step in a concept
      */
     public void fire() {
+        memory.setCurrentTerm(term);
+        
         final TaskLink currentTaskLink = taskLinks.takeOut();
-        if (currentTaskLink == null) {
+        if (currentTaskLink == null)
             return;
-        }
+        
+        fire(currentTaskLink);
+        taskLinks.putBack(currentTaskLink);
+    }
+    
+    protected void fire(TaskLink currentTaskLink) {
         memory.setCurrentTaskLink(currentTaskLink);
         memory.setCurrentBeliefLink(null);
         if (memory.getRecorder().isActive()) {
@@ -586,8 +593,7 @@ public final class Concept extends Item {
                     termLinkCount = 0;
                 }
             }
-        }
-        taskLinks.putBack(currentTaskLink);
+        }        
     }
 
     /* ---------- display ---------- */

@@ -166,7 +166,7 @@ public class NARGraph extends DirectedMultigraph {
         graphize.onTime(this, n.getTime());
 
         //TODO support AbstractBag
-        Collection<Concept> cc = n.memory.getConcepts();
+        Collection<? extends Concept> cc = n.memory.getConcepts();
 
         for (Concept c : cc) {
             
