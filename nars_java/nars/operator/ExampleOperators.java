@@ -15,7 +15,8 @@ public class ExampleOperators {
             new NullOperator("^open"),
             new NullOperator("^pick"),
             new NullOperator("^strike"),
-            new NullOperator("^throw")
+            new NullOperator("^throw"),
+            new NullOperator("^say")
         };
     }
 }
