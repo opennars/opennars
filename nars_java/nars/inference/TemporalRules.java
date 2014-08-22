@@ -132,6 +132,17 @@ public class TemporalRules {
         return order;
     }
     
+    //helper function for temporal induction to not produce wrong terms, only one temporal operator is allowed
+    public static boolean tooMuchTemporalStatements(Term t) {
+        String s=t.toString();
+        int a=s.length() - s.replace("=/>", "").length();
+        int b=s.length() - s.replace("=|>", "").length();
+        int c=s.length() - s.replace("=\\>", "").length();
+        int d=s.length() - s.replace("</>", "").length();
+        int e=s.length() - s.replace("<|>", "").length();
+        return (a+b+c+d+e)/3 > 1;
+    }
+    
     public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {
         if ((s1.truth==null) || (s2.truth==null))
             return;
@@ -141,8 +152,12 @@ public class TemporalRules {
         Term t11=null;
         Term t22=null;
         
-        if(t1 instanceof Operation && t2 instanceof Operation) {
-            return; //wouldnt be good
+        //if(t1 instanceof Operation && t2 instanceof Operation) {
+        //   return; //maybe too restrictive
+        //}
+        if(((t1 instanceof Implication || t1 instanceof Equivalence) && t1.getTemporalOrder()!=TemporalRules.ORDER_NONE) ||
+           ((t2 instanceof Implication || t2 instanceof Equivalence) && t2.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
+            return; //better, if this is fullfilled, there would be more than one temporal operator in the statement, return
         }
         
         //since induction shouldnt miss something trivial random is not good here
@@ -160,13 +175,7 @@ public class TemporalRules {
                 t11 = Statement.make(ss1, ss1.getSubject(), var1, memory);
                 t22 = Statement.make(ss2, ss2.getSubject(), var2, memory);
             }
-            /* nope, the following is not valid induction because only if two observations:
-            <<blub --> at> =\> (&/,(^go-to,blub),+1)>. :|: %1.00;0.45%
-            and
-            <<door --> at> =\> (&/,(^go-to,door),+1)>. :|: %1.00;0.45%
-            are made it is allowed to derive*/
-            //<<$1 --> (/,^go-to,_)> =/> <$1 --> at>>. %1.00;0.31%
-            //hmmm but its necessarry, use induction with itself for now and put into discussion group
+            //allow also temporal induction on operator arguments:
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
                 if(ss2 instanceof Operation) //it is an operation, let's look if one of the arguments is same as the subject of the other term
                 { //
@@ -238,13 +247,17 @@ public class TemporalRules {
             Statement statement11 = Implication.make(t11, t22, order, memory);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order), memory);
             Statement statement33 = Equivalence.make(t11, t22, order, memory);
-            memory.doublePremiseTask(statement11, truth1, budget1);
-            memory.doublePremiseTask(statement22, truth2, budget2);
-            memory.doublePremiseTask(statement33, truth3, budget3);
+            if(!tooMuchTemporalStatements(statement11)) {
+                memory.doublePremiseTask(statement11, truth1, budget1);
+                memory.doublePremiseTask(statement22, truth2, budget2);
+                memory.doublePremiseTask(statement33, truth3, budget3);
+            }
         }
-        memory.doublePremiseTask(statement1, truth1, budget1);
-        memory.doublePremiseTask(statement2, truth2, budget2);
-        memory.doublePremiseTask(statement3, truth3, budget3);
+        if(!tooMuchTemporalStatements(statement1)) {
+            memory.doublePremiseTask(statement1, truth1, budget1);
+            memory.doublePremiseTask(statement2, truth2, budget2);
+            memory.doublePremiseTask(statement3, truth3, budget3);
+        }
     }
     
     /**
