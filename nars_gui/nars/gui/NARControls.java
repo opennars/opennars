@@ -380,6 +380,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             switch (label) {
                 case "Enable Internal Experience (NAL9)":
                     Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
+                    break;
                 case "Load Experience":
                     openLoadFile();
                     break;
