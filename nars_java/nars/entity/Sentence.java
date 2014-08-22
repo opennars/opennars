@@ -20,17 +20,21 @@
  */
 package nars.entity;
 
+import java.util.ArrayList;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Conjunction;
+import nars.language.Inheritance;
+import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.storage.Memory;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -364,6 +368,35 @@ public class Sentence implements Cloneable {
         truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
     }
 
-
+    public Term toTerm(Memory mem) {
+        String opName;
+        switch (punctuation) {
+            case Symbols.JUDGMENT_MARK:
+                opName = "^believe";
+                break;
+            case Symbols.GOAL_MARK:
+                opName = "^want";
+                break;
+            case Symbols.QUESTION_MARK:
+                opName = "^wonder";
+                break;
+            case Symbols.QUEST_MARK:
+                opName = "^assess";
+                break;
+            default:
+                return null;
+        }
+        Term opTerm = mem.getOperator(opName);
+        int size=(truth==null ? 1 : 2);
+        Term[] arg = new Term[size];
+        arg[0]=content;
+        if (truth != null) {
+            String word = truth.toWord();
+            arg[1]=new Term(word);
+        }
+        Term argTerm = Product.make(arg,mem);
+        Term operation = Inheritance.make(argTerm, opTerm, mem);
+        return operation;
+    }
 
 }

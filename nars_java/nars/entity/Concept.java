@@ -152,7 +152,7 @@ public class Concept extends Item {
      *
      * @param task The task to be processed
      */
-    public void directProcess(final Task task) {
+    public void directProcess(final Task task,Memory mem) {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
@@ -174,6 +174,10 @@ public class Concept extends Item {
         }
         if (entityObserver.isActive()) {
             entityObserver.refresh(displayContent());
+        }
+        
+        if(Parameters.ENABLE_INTERNAL_EXPERIENCE) {
+            Memory.rememberAction(task,mem);
         }
     }
 

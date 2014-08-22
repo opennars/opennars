@@ -141,6 +141,10 @@ public class TemporalRules {
         Term t11=null;
         Term t22=null;
         
+        if(t1 instanceof Operation && t2 instanceof Operation) {
+            return; //wouldnt be good
+        }
+        
         //since induction shouldnt miss something trivial random is not good here
         if (/*Memory.randomNumber.nextDouble()>0.5 &&*/ (t1 instanceof Inheritance) && (t2 instanceof Inheritance)) {
             Statement ss1 = (Statement) t1;

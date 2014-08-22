@@ -929,7 +929,7 @@ public class Memory implements Output, Serializable {
         
         if (getCurrentConcept() != null) {
             conceptActivate(getCurrentConcept(), task.budget);
-            getCurrentConcept().directProcess(task);
+            getCurrentConcept().directProcess(task,this);
         }
     }
 
@@ -1182,6 +1182,28 @@ public class Memory implements Output, Serializable {
     /** gets a next concept for processing */
     public Concept sampleNextConcept() {
         return model.sampleNextConcept();
+    }
+    
+    /**
+     * To rememberAction an internal action as an operation
+     * <p>
+     * called from Concept
+     * @param task The task processed
+     */
+    public static void rememberAction(Task task,Memory mem) {
+        Term content = task.getContent();
+        if (content instanceof Operation) {
+            return;     // to prevent infinite recursions
+        }
+        Sentence sentence = task.sentence;
+        TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+        Stamp stamp = (Stamp) task.sentence.stamp.clone();
+        stamp.setOccurrenceTime(mem.getTime());
+        
+        Sentence j = new Sentence(sentence.toTerm(mem), Symbols.JUDGMENT_MARK, truth, stamp);
+        Task newTask = new Task(j,task.budget,task,null);
+        mem.recorder.append("Remembered: " + j.toString());
+        mem.newTasks.add(newTask);
     }
     
 }

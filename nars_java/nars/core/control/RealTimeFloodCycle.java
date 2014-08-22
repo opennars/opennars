@@ -94,7 +94,7 @@ public class RealTimeFloodCycle implements MemoryModel {
             this.lastFired = memory.getTime();
             
             while (!pendingTasks.isEmpty()) {
-                super.directProcess(pendingTasks.remove());
+                super.directProcess(pendingTasks.remove(),memory);
             }
             
             super.fire();
@@ -109,7 +109,7 @@ public class RealTimeFloodCycle implements MemoryModel {
         }
 
         @Override
-        public void directProcess(Task task) {
+        public void directProcess(Task task, Memory mem) {
             pendingTasks.add(task);
         }
         
