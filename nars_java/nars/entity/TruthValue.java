@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import nars.core.Parameters;
 import nars.io.Symbols;
 
 
@@ -256,6 +257,16 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return null;
     }
 
-
+    public String toWord() {
+        float e = getExpectation();
+        float t = Parameters.DEFAULT_CREATION_EXPECTATION;
+        if (e > t) {
+            return "TRUE";
+        }
+        if (e < 1 - t) {
+            return "FALSE";
+        }
+        return "UNSURE";
+    }
     
 }

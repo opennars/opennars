@@ -35,6 +35,9 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
+    //let NARS use NAL9 operators to perceive its own mental actions
+    public static boolean ENABLE_INTERNAL_EXPERIENCE=false;
+    
     /* ---------- initial values of run-time adjustable parameters ---------- */
     /** Concept decay rate in ConceptBag, in [1, 99]. */
     public static final int CONCEPT_FORGETTING_CYCLE = 10;

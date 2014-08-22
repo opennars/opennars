@@ -49,6 +49,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
@@ -144,6 +145,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         m.addSeparator();
         addJMenuItem(m, "Load Experience");
         addJMenuItem(m, "Save Experience");
+        m.addSeparator();
+        addJMenuItem(m, "Enable Internal Experience (NAL9)");
         m.addActionListener(this);
         menuBar.add(m);
 
@@ -375,6 +378,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
             switch (label) {
+                case "Enable Internal Experience (NAL9)":
+                    Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
                 case "Load Experience":
                     openLoadFile();
                     break;
