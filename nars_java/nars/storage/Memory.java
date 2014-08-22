@@ -615,6 +615,7 @@ public class Memory implements Output, Serializable {
                     return;
                 }
             }
+            
             final Stamp stamp = task.sentence.stamp;
             if(occurence!=null && occurence.getOccurenceTime()!=Stamp.ETERNAL) {
                 stamp.setOccurrenceTime(occurence.getOccurenceTime());
@@ -683,6 +684,26 @@ public class Memory implements Output, Serializable {
                             return;
                         }
                     }
+                }
+            }
+            
+            //is it complex and also important? then give it a name:
+            if(Parameters.ENABLE_INTERNAL_EXPERIENCE && task.sentence.content.getComplexity()>Parameters.TERM_COMPLEXITY_BEFORE_NAMING_IT) {
+                if(!(task.sentence.content instanceof Operation) && task.budget.quality.getValue() > Parameters.TERM_QUALITY_BEFORE_NAMING_IT) {
+                    Term opTerm = this.getOperator("^abbreviate");
+                    Term[] arg = new Term[1];
+                    arg[0]=task.sentence.content;
+                    Term argTerm = Product.make(arg,this);
+                    Term operation = Inheritance.make(argTerm, opTerm,this);
+                    TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                    Stamp stampi = (Stamp) task.sentence.stamp.clone();
+                    stamp.setOccurrenceTime(this.getTime());
+                    Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
+                    BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
+                    Task newTask = new Task(j, budg,task,null);
+                    this.recorder.append("Named: " + j.toString());
+                    output(newTask);
+                    addNewTask(newTask, "Derived");
                 }
             }
 
