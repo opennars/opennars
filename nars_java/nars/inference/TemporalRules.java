@@ -247,13 +247,13 @@ public class TemporalRules {
             Statement statement11 = Implication.make(t11, t22, order, memory);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order), memory);
             Statement statement33 = Equivalence.make(t11, t22, order, memory);
-            if(!tooMuchTemporalStatements(statement11)) {
+            if(statement11!=null && !tooMuchTemporalStatements(statement11)) {
                 memory.doublePremiseTask(statement11, truth1, budget1);
                 memory.doublePremiseTask(statement22, truth2, budget2);
                 memory.doublePremiseTask(statement33, truth3, budget3);
             }
         }
-        if(!tooMuchTemporalStatements(statement1)) {
+        if(statement1!=null && !tooMuchTemporalStatements(statement1)) {
             memory.doublePremiseTask(statement1, truth1, budget1);
             memory.doublePremiseTask(statement2, truth2, budget2);
             memory.doublePremiseTask(statement3, truth3, budget3);
