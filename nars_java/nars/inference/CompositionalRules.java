@@ -659,6 +659,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
                         for(final Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                            if (!(s2 instanceof CompoundTerm)) continue;
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -676,6 +677,7 @@ public final class CompositionalRules {
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
                         for(final Term s2 : ((CompoundTerm)P2).cloneTerms()) {
+                            if (!(s2 instanceof CompoundTerm)) continue;
                             ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
@@ -945,7 +947,7 @@ public final class CompositionalRules {
                         CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                         taskterm_subs.applySubstitute(Values);
                         taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                        if(taskterm_subs!=null) {
+                        if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                             terms_dependent.add(taskterm_subs);
                         }
                     }
@@ -956,7 +958,8 @@ public final class CompositionalRules {
                         CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                         taskterm_subs.applySubstitute(Values2);
                         taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                        if(taskterm_subs!=null) {
+                        if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
+                            
                             terms_independent.add(taskterm_subs);
                         }
                     }
@@ -975,7 +978,7 @@ public final class CompositionalRules {
                                 CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                                 taskterm_subs.applySubstitute(Values3);
                                 taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                                if(taskterm_subs!=null) {
+                                if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                     terms_dependent.add(taskterm_subs);
                                 }
                             }
@@ -986,7 +989,7 @@ public final class CompositionalRules {
                                 CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
                                 taskterm_subs.applySubstitute(Values4);
                                 taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
-                                if(taskterm_subs!=null) {
+                                if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                     terms_independent.add(taskterm_subs);
                                 }
                             }

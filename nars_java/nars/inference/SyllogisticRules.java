@@ -339,7 +339,9 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, memory);
         }
-        memory.doublePremiseTask(content, truth, budget);
+        if(!Variables.indepVarUsedInvalid(content)) {
+            memory.doublePremiseTask(content, truth, budget);
+        }
     }
 
     /**

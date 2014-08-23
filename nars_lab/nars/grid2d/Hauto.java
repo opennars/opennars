@@ -17,7 +17,7 @@ import nars.grid2d.object.Key;
 public class Hauto {
     private final NAR nar;
 
-
+    
     
     boolean is_logic(Cell c){ 
         return (c.logic==OR || c.logic==XOR || c.logic==AND || c.logic==NOT); 
