@@ -316,4 +316,6 @@ public abstract class Statement extends CompoundTerm {
     }
 
     @Override public abstract Statement clone();
+
+    
 }

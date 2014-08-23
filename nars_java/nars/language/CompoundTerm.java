@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import nars.entity.TermLink;
+import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
@@ -58,6 +59,9 @@ public abstract class CompoundTerm extends Term {
     
     /** Whether contains a variable */
     private boolean hasVar;
+    
+    transient int containedTemporalRelations = -1;
+    
 
     /**
      * Abstract method to get the operator of the compound
@@ -223,6 +227,30 @@ public abstract class CompoundTerm extends Term {
             return 1;
         }
     }
+
+    @Override
+    public int containedTemporalRelations() {
+        if (containedTemporalRelations == -1) {
+            
+            containedTemporalRelations = 0;
+            
+            if ((this instanceof Equivalence) || (this instanceof Implication)) {
+                int temporalOrder = ((Statement)this).getTemporalOrder();
+                switch (temporalOrder) {
+                    case TemporalRules.ORDER_FORWARD:
+                    case TemporalRules.ORDER_CONCURRENT:
+                    case TemporalRules.ORDER_BACKWARD:
+                        containedTemporalRelations = 1;
+                }                
+            }
+            
+            for (final Term t : term)
+                containedTemporalRelations += t.containedTemporalRelations();
+        }
+        return this.containedTemporalRelations;
+    }
+    
+    
 
     /*
     @Override

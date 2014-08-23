@@ -17,7 +17,6 @@
 package nars.inference;
 
 
-import java.util.ArrayList;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -25,8 +24,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
-import nars.io.Symbols;
-import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
@@ -37,7 +34,6 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
-import nars.operator.Operator;
 import nars.storage.Memory;
 
 /**
@@ -137,13 +133,17 @@ public class TemporalRules {
         if(t==null) {
             return true;
         }
-        String s=t.toString();
-        int a=s.length() - s.replace("=/>", "").length(); //how often the substring is contained in s (times 3 because its 3 chars)
-        int b=s.length() - s.replace("=|>", "").length();
-        int c=s.length() - s.replace("=\\>", "").length();
-        int d=s.length() - s.replace("</>", "").length();
-        int e=s.length() - s.replace("<|>", "").length();
-        return (a+b+c+d+e)/3 > 1;
+//        String s=t.toString();
+//        int a=s.length() - s.replace("=/>", "").length(); //how often the substring is contained in s (times 3 because its 3 chars)
+//        int b=s.length() - s.replace("=|>", "").length();
+//        int c=s.length() - s.replace("=\\>", "").length();
+//        int d=s.length() - s.replace("</>", "").length();
+//        int e=s.length() - s.replace("<|>", "").length();
+        
+        //System.out.println(t.containedTemporalRelations() + " " + ((a+b+c+d+e)/3 > 1));
+        
+        return t.containedTemporalRelations() > 1;
+        //return (a+b+c+d+e)/3 > 1;
     }
     
     public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {

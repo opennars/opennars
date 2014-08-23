@@ -180,6 +180,10 @@ public class Term implements Cloneable, Comparable<Term> {
         return false;
     }
     
+    public int containedTemporalRelations() {
+        return 0;
+    }
+    
     /**
      * Recursively check if a compound contains a term
      *

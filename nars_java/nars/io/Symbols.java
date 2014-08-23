@@ -103,8 +103,10 @@ public class Symbols {
         SIMILARITY("<->", true),
         INSTANCE("{--", true),
         PROPERTY("--]", true),
-        INSTANCE_PROPERTY("{-]", true),
+        INSTANCE_PROPERTY("{-]", true),        
         IMPLICATION("==>", true),
+        
+        /* Temporal Relations */
         IMPLICATION_AFTER("=/>", true),
         IMPLICATION_WHEN("=|>", true),
         IMPLICATION_BEFORE("=\\>", true),
