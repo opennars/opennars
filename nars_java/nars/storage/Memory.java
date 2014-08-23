@@ -706,6 +706,32 @@ public class Memory implements Output, Serializable {
                     addNewTask(newTask, "Derived");
                 }
             }
+            
+            if(Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS && task.sentence.punctuation==Symbols.JUDGMENT_MARK) { //lets say we have <{...} --> M>.
+                if(task.sentence.content instanceof Inheritance) {
+                    Inheritance inh=(Inheritance) task.sentence.content;
+                    if(inh.getSubject() instanceof SetExt) {
+                        SetExt set_term=(SetExt) inh.getSubject();
+                        Integer cardinality=set_term.size();   //this gets the cardinality of M
+                        //now create term <(*,M,cardinality) --> CARDINALITY>.
+                        Term[] product_args=new Term[2];
+                        product_args[0]=inh.getPredicate();
+                        product_args[1]=new Term(cardinality.toString());
+                        Term new_subject=Product.make(product_args, this);
+                        Term new_predicate=new Term("CARDINALITY");
+                        Term new_term=Inheritance.make(new_subject, new_predicate, this);
+                        
+                        TruthValue truth = (TruthValue) task.sentence.truth.clone();
+                        Stamp stampi = (Stamp) task.sentence.stamp.clone();
+                        Sentence j = new Sentence(new_term,Symbols.JUDGMENT_MARK, truth, stampi);
+                        BudgetValue budg=(BudgetValue) task.budget.clone();
+                        Task newTask = new Task(j, budg,task,null);
+                        this.recorder.append("Counted: " + j.toString());
+                        output(newTask);
+                        addNewTask(newTask, "Derived");
+                    }
+                }
+            }
 
             output(task);
             

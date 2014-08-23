@@ -147,6 +147,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         addJMenuItem(m, "Save Experience");
         m.addSeparator();
         addJMenuItem(m, "Enable Internal Experience (NAL9)");
+        addJMenuItem(m, "Enable NARS+ Ideas");
         m.addActionListener(this);
         menuBar.add(m);
 
@@ -378,6 +379,9 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
             switch (label) {
+                case "Enable NARS+ Ideas":
+                    Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
+                    break;
                 case "Enable Internal Experience (NAL9)":
                     Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
                     break;

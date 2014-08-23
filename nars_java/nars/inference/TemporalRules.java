@@ -134,8 +134,11 @@ public class TemporalRules {
     
     //helper function for temporal induction to not produce wrong terms, only one temporal operator is allowed
     public static boolean tooMuchTemporalStatements(Term t) {
+        if(t==null) {
+            return true;
+        }
         String s=t.toString();
-        int a=s.length() - s.replace("=/>", "").length();
+        int a=s.length() - s.replace("=/>", "").length(); //how often the substring is contained in s (times 3 because its 3 chars)
         int b=s.length() - s.replace("=|>", "").length();
         int c=s.length() - s.replace("=\\>", "").length();
         int d=s.length() - s.replace("</>", "").length();
@@ -155,10 +158,10 @@ public class TemporalRules {
         //if(t1 instanceof Operation && t2 instanceof Operation) {
         //   return; //maybe too restrictive
         //}
-        if(((t1 instanceof Implication || t1 instanceof Equivalence) && t1.getTemporalOrder()!=TemporalRules.ORDER_NONE) ||
+        /*if(((t1 instanceof Implication || t1 instanceof Equivalence) && t1.getTemporalOrder()!=TemporalRules.ORDER_NONE) ||
            ((t2 instanceof Implication || t2 instanceof Equivalence) && t2.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
             return; //better, if this is fullfilled, there would be more than one temporal operator in the statement, return
-        }
+        }*/
         
         //since induction shouldnt miss something trivial random is not good here
         if (/*Memory.randomNumber.nextDouble()>0.5 &&*/ (t1 instanceof Inheritance) && (t2 instanceof Inheritance)) {
@@ -247,15 +250,23 @@ public class TemporalRules {
             Statement statement11 = Implication.make(t11, t22, order, memory);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order), memory);
             Statement statement33 = Equivalence.make(t11, t22, order, memory);
-            if(statement11!=null && !tooMuchTemporalStatements(statement11)) {
+            if(!tooMuchTemporalStatements(statement11)) {
                 memory.doublePremiseTask(statement11, truth1, budget1);
+            }
+            if(!tooMuchTemporalStatements(statement22)) {
                 memory.doublePremiseTask(statement22, truth2, budget2);
+            }
+            if(!tooMuchTemporalStatements(statement33)) {
                 memory.doublePremiseTask(statement33, truth3, budget3);
             }
         }
-        if(statement1!=null && !tooMuchTemporalStatements(statement1)) {
+        if(!tooMuchTemporalStatements(statement1)) {
             memory.doublePremiseTask(statement1, truth1, budget1);
+        }
+        if(!tooMuchTemporalStatements(statement2)) {
             memory.doublePremiseTask(statement2, truth2, budget2);
+        }
+        if(!tooMuchTemporalStatements(statement3)) {
             memory.doublePremiseTask(statement3, truth3, budget3);
         }
     }

@@ -197,6 +197,24 @@ public class Variables {
     public static boolean containVarIndep(final CharSequence n) {
         return Texts.containsChar(n, Symbols.VAR_INDEPENDENT);
     }    
+    
+    /**
+     * Check whether a string represent a name of a term that contains an
+     * independent variable
+     *
+     * @param n The string name to be checked
+     * @return Whether the name contains an independent variable
+     */
+    public static boolean indepVarUsedInvalid(Term T) {
+        if(!(T instanceof Inheritance) && !(T instanceof Similarity)) {
+            return false;
+        }
+        final CharSequence n=T.toString();
+        if(Variables.containVarIndep(T.toString())) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Check if two terms can be unified

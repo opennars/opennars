@@ -35,6 +35,9 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
+    //let NARS use NARS+ ideas (counting etc.)
+    public static boolean ENABLE_EXPERIMENTAL_NARS_PLUS=false;
+    
     //let NARS use NAL9 operators to perceive its own mental actions
     public static boolean ENABLE_INTERNAL_EXPERIENCE=false;
    
