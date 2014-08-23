@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import nars.core.Param;
 import nars.core.Parameters;
+import nars.core.task.PauseInput;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -43,7 +44,6 @@ import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
 import nars.io.Output.OUT;
-import nars.core.task.PauseInput;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.CONJUNCTION;
@@ -701,7 +701,9 @@ public class Memory implements Output, Serializable {
                     Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
                     BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
                     Task newTask = new Task(j, budg,task,null);
-                    this.recorder.append("Named: " + j.toString());
+                    if (getRecorder().isActive()) {
+                        getRecorder().append("Named: " + j.toString());
+                    }
                     output(newTask);
                     addNewTask(newTask, "Derived");
                 }
@@ -726,7 +728,9 @@ public class Memory implements Output, Serializable {
                         Sentence j = new Sentence(new_term,Symbols.JUDGMENT_MARK, truth, stampi);
                         BudgetValue budg=(BudgetValue) task.budget.clone();
                         Task newTask = new Task(j, budg,task,null);
-                        this.recorder.append("Counted: " + j.toString());
+                        if (getRecorder().isActive()) {
+                            this.recorder.append("Counted: " + j.toString());
+                        }
                         output(newTask);
                         addNewTask(newTask, "Derived");
                     }
@@ -1237,7 +1241,7 @@ public class Memory implements Output, Serializable {
      * called from Concept
      * @param task The task processed
      */
-    public static void rememberAction(Task task,Memory mem) {
+    public void rememberAction(final Task task) {
         Term content = task.getContent();
         if (content instanceof Operation) {
             return;     // to prevent infinite recursions
@@ -1245,14 +1249,18 @@ public class Memory implements Output, Serializable {
         Sentence sentence = task.sentence;
         TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Stamp stamp = (Stamp) task.sentence.stamp.clone();
-        stamp.setOccurrenceTime(mem.getTime());
+        stamp.setOccurrenceTime(getTime());
         
-        Sentence j = new Sentence(sentence.toTerm(mem), Symbols.JUDGMENT_MARK, truth, stamp);
-        BudgetValue newbudget=new BudgetValue(task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
+        Sentence j = new Sentence(sentence.toTerm(this), Symbols.JUDGMENT_MARK, truth, stamp);
+        BudgetValue newbudget=new BudgetValue(
+                task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
+                task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
         Task newTask = new Task(j, (BudgetValue) newbudget,task,null);
-        mem.recorder.append("Remembered: " + j.toString());
-        mem.newTasks.add(newTask);
+        if (getRecorder().isActive()) {
+            recorder.append("Remembered: " + j.toString());
+        }
+        newTasks.add(newTask);
     }
     
 }
