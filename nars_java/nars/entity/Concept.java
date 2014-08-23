@@ -177,7 +177,7 @@ public class Concept extends Item {
         }
         
         if(Parameters.ENABLE_INTERNAL_EXPERIENCE) {
-            Memory.rememberAction(task,mem);
+            mem.rememberAction(task);
         }
     }
 
