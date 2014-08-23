@@ -126,6 +126,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
      * @param title
      */
     TestChamber chamber=new TestChamber();
+    private final JMenuItem internalExperienceItem;
+    private final JMenuItem narsPlusItem;
     public NARControls(final NAR nar) {
         super(new BorderLayout());
         
@@ -146,8 +148,9 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         addJMenuItem(m, "Load Experience");
         addJMenuItem(m, "Save Experience");
         m.addSeparator();
-        addJMenuItem(m, "Enable Internal Experience (NAL9)");
-        addJMenuItem(m, "Enable NARS+ Ideas");
+        
+        internalExperienceItem = addJMenuItem(m, "Enable Internal Experience (NAL9)");
+        narsPlusItem = addJMenuItem(m, "Enable NARS+ Ideas");
         m.addActionListener(this);
         menuBar.add(m);
 
@@ -301,10 +304,11 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
      * @param m
      * @param item
      */
-    private void addJMenuItem(JMenu m, String item) {
+    private JMenuItem addJMenuItem(JMenu m, String item) {
         JMenuItem menuItem = new JMenuItem(item);
         m.add(menuItem);
         menuItem.addActionListener(this);
+        return menuItem;
     }
 
     /**
@@ -380,9 +384,11 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             String label = e.getActionCommand();
             switch (label) {
                 case "Enable NARS+ Ideas":
+                    narsPlusItem.setEnabled(false);
                     Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
                     break;
                 case "Enable Internal Experience (NAL9)":
+                    internalExperienceItem.setEnabled(false);
                     Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
                     break;
                 case "Load Experience":
@@ -403,6 +409,8 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                     break;
                 case "Reset":
                     /// TODO mixture of modifier and reporting
+                    narsPlusItem.setEnabled(true);
+                    internalExperienceItem.setEnabled(true);
                     nar.reset();
                     break;
                 case "Related Information":
@@ -536,7 +544,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         }
     }
 
-    long lastTime;
+    long lastTime = -1;
 
     @Override
     public void run() {
