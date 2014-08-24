@@ -363,6 +363,11 @@ public class NAR implements Runnable, Output {
      */
     @Override
     public void output(final Class channel, final Object o) {       
+//        if (o instanceof Sentence) {
+//            System.err.println("output should receive Task, not a Sentence");
+//            new Exception().printStackTrace();;
+//        }        
+//        System.out.println(o.getClass().getSimpleName());
         for (int i = 0; i < outputChannels.size(); i++)        
             outputChannels.get(i).output(channel, o);
     }

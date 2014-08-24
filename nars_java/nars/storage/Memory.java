@@ -535,7 +535,7 @@ public class Memory implements Output, Serializable {
         else if (t instanceof Task) {                                       
             Task task = (Task)t;
 
-            output(Output.IN.class, task.sentence);
+            output(Output.IN.class, task);
 
             if (task.budget.aboveThreshold()) {
                 addNewTask(task, "Perceived");
@@ -587,13 +587,12 @@ public class Memory implements Output, Serializable {
         final float budget = t.budget.summary();       
         
         if (budget >= noiseLevel) {  // only report significant derived Tasks
-            output(OUT.class, t.sentence);
+            output(OUT.class, t);
         }        
     }
     
     @Override
     public void output(Class c, Object signal) {
-        
         if (output!=null)
             output.output(c, signal);
     }
