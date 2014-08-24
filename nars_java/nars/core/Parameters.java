@@ -35,6 +35,13 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
+    //internal experience has less durability?
+    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
+    //internal experience has less priority?
+    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.5f;
+    //internal experience has less quality?
+    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;
+    
     //let NARS use NARS+ ideas (counting etc.)
     public static boolean ENABLE_EXPERIMENTAL_NARS_PLUS=false;
     
