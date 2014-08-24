@@ -27,6 +27,7 @@ import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
+import nars.gui.output.SwingLogPanel;
 import nars.io.TextInput;
 
 /**
@@ -63,7 +64,7 @@ public class NARSwing  {
         mainWindow.setVisible(true);
         
         
-        LogPanel outputLog = new LogPanel(narControls);
+        LogPanel outputLog = new SwingLogPanel(narControls);
         Window outputWindow = new Window("Log", outputLog);        
         outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
         outputWindow.setVisible(true);

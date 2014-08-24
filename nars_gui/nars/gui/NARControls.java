@@ -56,6 +56,7 @@ import nars.gui.output.LogPanel;
 import nars.gui.output.MemoryView;
 import nars.gui.output.PLineChart;
 import nars.gui.output.SentenceTablePanel;
+import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -190,7 +191,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             ml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    LogPanel p = new LogPanel(NARControls.this);
+                    LogPanel p = new SwingLogPanel(NARControls.this);
                     Window w = new Window("Log", p);
                     w.setSize(500, 300);
                     w.setVisible(true);      

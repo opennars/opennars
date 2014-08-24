@@ -42,7 +42,7 @@ import javax.swing.tree.TreePath;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.NPanel;
-import static nars.gui.output.LogPanel.setConsoleStyle;
+import static nars.gui.output.SwingLogPanel.setConsoleStyle;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
 
