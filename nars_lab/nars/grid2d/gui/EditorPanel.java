@@ -177,12 +177,16 @@ public class EditorPanel extends JPanel {
                         }
                     }
                 }*/
-                s.nar.addInput("<(^explore,RANDOM) =/> <Self --> [curious]>>.");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<(^explore,RANDOM) =/> <Self --> [curious]>>. %1.00;0.99%");
+                s.nar.addInput("<(^explore,RANDOM) =/> <Self --> [curious]>>. %1.00;0.99%");
+                s.nar.addInput("<(^explore,RANDOM) =/> <Self --> [curious]>>. %1.00;0.99%");
+                s.nar.addInput("<(^explore,RANDOM) =/> <Self --> [curious]>>. %1.00;0.99%");
+                s.nar.addInput("$1.00;0.99$ <Self --> [curious]>! %1.00;0.99%");
+                s.nar.addInput("$1.00;0.99$ <Self --> [curious]>! %1.00;0.99%");
+                s.nar.addInput("$1.00;0.99$ <Self --> [curious]>! %1.00;0.99%");
+                s.nar.addInput("$1.00;0.99$ <Self --> [curious]>! %1.00;0.99%");
+                s.nar.addInput("$1.00;0.99$ <Self --> [curious]>! %1.00;0.99%");
+                
             }
             
         });  
