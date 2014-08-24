@@ -157,7 +157,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("Be curious") {
             
             @Override public void run() { 
-                for(GridObject g : s.objects) {
+                /*for(GridObject g : s.objects) {
                     if(g instanceof LocalGridObject) {
                         LocalGridObject obi=(LocalGridObject) g;
                         if(obi instanceof Key) {
@@ -176,7 +176,8 @@ public class EditorPanel extends JPanel {
                             s.nar.addInput("<(^deactivate,"+s.cells.readCells[i][j].name+") =/> <Self --> [curious]>>.");
                         }
                     }
-                }
+                }*/
+                s.nar.addInput("<(^explore,RANDOM) =/> <Self --> [curious]>>.");
                 s.nar.addInput("<Self --> [curious]>!");
                 s.nar.addInput("<Self --> [curious]>!");
                 s.nar.addInput("<Self --> [curious]>!");
