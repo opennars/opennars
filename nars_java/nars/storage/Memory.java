@@ -1248,7 +1248,9 @@ public class Memory implements Output, Serializable {
         stamp.setOccurrenceTime(mem.getTime());
         
         Sentence j = new Sentence(sentence.toTerm(mem), Symbols.JUDGMENT_MARK, truth, stamp);
-        Task newTask = new Task(j,task.budget,task,null);
+        BudgetValue newbudget=new BudgetValue(task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
+        Task newTask = new Task(j, (BudgetValue) newbudget,task,null);
         mem.recorder.append("Remembered: " + j.toString());
         mem.newTasks.add(newTask);
     }
