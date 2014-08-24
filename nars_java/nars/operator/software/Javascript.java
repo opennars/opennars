@@ -54,16 +54,6 @@ public class Javascript extends Operator {
         }
         
         memory.output(Javascript.class, input + " | " + result);
-        /*
-        String resultName;
-        if (result instanceof Number) {
-            resultName = String.valueOf(result);
-        }
-        else {
-            resultName = Texts.escape('"' + result.toString() + '"').toString();
-        }*/
-        
-        //args[1] = new Term(resultName);
         
         Term r = new Term(Texts.escape('"' + result.toString() + '"').toString());
         Inheritance t = Inheritance.make(
