@@ -55,9 +55,9 @@ public class Explore extends Operator {
             chamb.operateObj(t.toString(),"pick");
         }
         
-        //if(args[0].toString().equals("RANDOM")) {
+        if(args[0].toString().equals("RANDOM")) {
             TestChamber.exploreRandom();
-       // }
+        }
         
        // if(nars.grid2d.Grid2DSpace.world_used) {
             //ok lets start pathfinding tool
