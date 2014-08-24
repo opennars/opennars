@@ -34,16 +34,12 @@ public class TestChamber {
     public static int keyn=-1;
     static PVector current;
     
-    static List<String> explored=new ArrayList<String>();
     public static void exploreRandom() {
         List<String> res=new ArrayList<>();
         for(GridObject g : space.objects) {
             if(g instanceof LocalGridObject) {
                 LocalGridObject obi=(LocalGridObject) g;
                 if(obi instanceof Key) {
-                    res.add("(^go-to,"+obi.doorname+")!");
-                }
-                if(obi instanceof Key && ((int)obi.x)==(int)current.x && ((int)obi.y)==(int)current.y) {
                     res.add("(^go-to,"+obi.doorname+")!");
                     res.add("(^pick,"+obi.doorname+")!");
                 }
@@ -66,22 +62,10 @@ public class TestChamber {
             res.add("(^activate,"+space.cells.readCells[i][j].name+")!");
             res.add("(^deactivate,"+space.cells.readCells[i][j].name+")!");
         }
-        if(res.isEmpty()) {
-            explored=new ArrayList<String>();
+        if(res.size()==0) {
             return;
         }
-        List<String> res2=new ArrayList<>();
-        for(String s : res) {
-            if(!explored.contains(s)) {
-                res2.add(s);
-            }
-        }
-        if(res2.isEmpty()) {
-            explored=new ArrayList<String>();
-            return;
-        }
-        String inp=res.get(Memory.randomNumber.nextInt(res2.size()));
-        explored.add(inp);
+        String inp=res.get(Memory.randomNumber.nextInt(res.size()));
         narinst.addInput(inp);
     }
     
@@ -121,7 +105,6 @@ public class TestChamber {
     boolean invalid=false;
     public void create(NAR nar) {
 //NAR n = new NAR();
-        explored=new ArrayList<String>();
         narinst=nar;
         int w = 50;
         int h = 50;
