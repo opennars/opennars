@@ -202,5 +202,17 @@ public class Task extends AbstractTask {
         return s.toString();
     }
 
+    public Task getRootTask() {
+        if (getParentTask() == null) {
+            return null;
+        }
+        Task t, p=this;
+        do {            
+            t = p;
+            p = t.getParentTask();            
+        } while (p!=null);
+        return t;
+    }
+
     
 }
