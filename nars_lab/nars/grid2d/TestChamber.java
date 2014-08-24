@@ -14,16 +14,13 @@ import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Activate;
 import nars.grid2d.operator.Deactivate;
-import nars.grid2d.operator.Explore;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.grid2d.operator.Say;
-import nars.storage.Memory;
 import processing.core.PVector;
 
 public class TestChamber {
 
-    static NAR narinst;
     static Grid2DSpace space;
     static boolean getfeedback = false;
     static PVector target = new PVector(25, 25); //need to be init equal else feedback will
@@ -32,42 +29,6 @@ public class TestChamber {
     static String opname="";
     public static LocalGridObject inventorybag=null;  
     public static int keyn=-1;
-    static PVector current;
-    
-    public static void exploreRandom() {
-        List<String> res=new ArrayList<>();
-        for(GridObject g : space.objects) {
-            if(g instanceof LocalGridObject) {
-                LocalGridObject obi=(LocalGridObject) g;
-                if(obi instanceof Key) {
-                    res.add("(^go-to,"+obi.doorname+")!");
-                    res.add("(^pick,"+obi.doorname+")!");
-                }
-            }
-        }
-        for(int i=0;i<space.cells.w;i++) {
-            for(int j=0;j<space.cells.h;j++) {
-                if(space.cells.readCells[i][j].name.startsWith("switch") || space.cells.readCells[i][j].name.startsWith("place")) {
-                    res.add("(^go-to,"+space.cells.readCells[i][j].name+")!");
-                }
-                /*if(space.cells.readCells[i][j].logic==Logic.SWITCH || space.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
-                    res.add("(^activate,"+space.cells.readCells[i][j].name+")!");
-                    res.add("(^deactivate,"+space.cells.readCells[i][j].name+")!");
-                }*/
-            }
-        }
-        int i=(int) current.x;
-        int j=(int) current.y;
-        if(space.cells.readCells[i][j].logic==Logic.SWITCH || space.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
-            res.add("(^activate,"+space.cells.readCells[i][j].name+")!");
-            res.add("(^deactivate,"+space.cells.readCells[i][j].name+")!");
-        }
-        if(res.size()==0) {
-            return;
-        }
-        String inp=res.get(Memory.randomNumber.nextInt(res.size()));
-        narinst.addInput(inp);
-    }
     
     public static String getobj(int x,int y) {
         for(GridObject gridi : space.objects) {
@@ -105,7 +66,6 @@ public class TestChamber {
     boolean invalid=false;
     public void create(NAR nar) {
 //NAR n = new NAR();
-        narinst=nar;
         int w = 50;
         int h = 50;
         int water_threshold = 30;
@@ -153,7 +113,7 @@ public class TestChamber {
                     getfeedback = true;
                 }
                 lasttarget = target;
-                current = new PVector(x, y);
+                PVector current = new PVector(x, y);
                // System.out.println(nextEffect);
                 if (nextEffect == null) {
                     List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, target);
@@ -293,8 +253,6 @@ public class TestChamber {
         nar.memory.addOperator(waaa);
         Say waaaa = new Say(this, "^say");
         nar.memory.addOperator(waaaa);
-        Explore waaaaa = new Explore(this, "^explore");
-        nar.memory.addOperator(waaaaa);
         space.add(a);
         
 //space.add(new QLAgent(10,20));
