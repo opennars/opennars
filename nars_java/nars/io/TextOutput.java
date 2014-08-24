@@ -345,6 +345,9 @@ public class TextOutput implements Output {
                 // HTML Special Chars
                 if (c == '"') {
                     sb.append("&quot;");
+                }
+                else if (c == '\'') {
+                    sb.append("&#39;");
                 } else if (c == '&') {
                     sb.append("&amp;");
                 } else if (c == '<') {
