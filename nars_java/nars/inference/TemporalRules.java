@@ -180,8 +180,7 @@ public class TemporalRules {
             }
             //allow also temporal induction on operator arguments:
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
-                if(ss2 instanceof Operation) //it is an operation, let's look if one of the arguments is same as the subject of the other term
-                { //
+                if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
                     boolean anyone=false;
                     Term comp=ss1.getSubject();
                     for(Term t : ((Operation)ss2).getArguments())

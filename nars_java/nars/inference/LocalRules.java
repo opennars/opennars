@@ -35,9 +35,10 @@ import nars.language.Inheritance;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Variable;
+import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.language.Variables;
 import nars.storage.Memory;
 
 
@@ -314,7 +315,9 @@ public class LocalRules {
         }
         Operation op = (Operation) content;
         Operator oper = op.getOperator();
-        oper.call(op, op.getArguments(), concept.memory);
+        if(!(op.getSubject() instanceof Variable)) {
+            oper.call(op, op.getArguments(), concept.memory);
+        }
         task.setPriority(0);
     }    
 }

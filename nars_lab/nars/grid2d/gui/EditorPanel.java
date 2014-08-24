@@ -177,11 +177,12 @@ public class EditorPanel extends JPanel {
                         }
                     }
                 }
+                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
+                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
                 s.nar.addInput("<Self --> [curious]>!");
                 s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [exploring]>!");
+                s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
             }
             
         });  
