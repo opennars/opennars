@@ -104,6 +104,7 @@ public class PLineChart extends PApplet {
     
 
     public void update(NARState state) {
+        try {
         Map.Entry<Long, HashMap<String, Object>> entry = state.lastEntry();
         long when = entry.getKey();
         HashMap<String, Object> data = entry.getValue();
@@ -115,7 +116,8 @@ public class PLineChart extends PApplet {
            addPoint(when, ((Number)value).floatValue());
         if (value instanceof Integer)
            addPoint(when, ((Number)value).floatValue());
-        
+        }
+        catch(Exception ex) {}
     }
 
     /*
