@@ -125,9 +125,9 @@ public class Parameters {
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
-    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 8;
+    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 20;
     /** Maximum length of the Derivation Chain of the stamp */
-    public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 10;
+    public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 20;
     
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
