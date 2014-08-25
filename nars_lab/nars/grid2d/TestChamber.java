@@ -1,6 +1,5 @@
 package nars.grid2d;
 
-import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
 import nars.grid2d.Cell.Logic;
@@ -9,7 +8,6 @@ import static nars.grid2d.Hauto.DOWN;
 import static nars.grid2d.Hauto.LEFT;
 import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
-import nars.grid2d.agent.ql.QLAgent;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Activate;
@@ -23,8 +21,8 @@ public class TestChamber {
 
     static Grid2DSpace space;
     static boolean getfeedback = false;
-    static PVector target = new PVector(25, 25); //need to be init equal else feedback will
-    public PVector lasttarget = new PVector(25, 25); //not work
+    static PVector target = new PVector(5, 25); //need to be init equal else feedback will
+    public PVector lasttarget = new PVector(5, 25); //not work
     static String goal = "";
     static String opname="";
     public static LocalGridObject inventorybag=null;  
@@ -260,6 +258,5 @@ public class TestChamber {
 //space.add(new RayVision(a, 45, 10, 8));
     }
 
-    public static void main(String[] arg) {
-    }
+
 }
