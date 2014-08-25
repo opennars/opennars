@@ -101,7 +101,11 @@ public abstract class Operator extends Term {
 //     * @param operation The content of the operation to be executed
 //     */
     public static void reportExecution(final Operation operation, final Term[] args, final Memory memory) {
-        final Operator operator = operation.getOperator();
+        final Term opT = operation.getPredicate();
+        if(!(opT instanceof Operator)) {
+            return;
+        }
+        final Operator operator = (Operator) opT;
         
         StringBuilder buffer = new StringBuilder();
         for (Object obj : args) {

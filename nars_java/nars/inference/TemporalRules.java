@@ -24,6 +24,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import nars.io.Symbols;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
@@ -33,6 +34,7 @@ import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
+import nars.language.Variables;
 import nars.operator.Operation;
 import nars.storage.Memory;
 
@@ -183,24 +185,29 @@ public class TemporalRules {
                 if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
                     boolean anyone=false;
                     Term comp=ss1.getSubject();
-                    for(Term t : ((Operation)ss2).getArguments())
-                    {
-                        if(t.equals(comp)) {
-                            anyone=true;
+                    Term ss2_term = ((Operation)ss2).getSubject();
+                    if(ss2_term instanceof Product) {
+                        Product ss2_prod=(Product) ss2_term;
+                        for(Term t : ss2_prod.term)
+                        {
+                            if(t.equals(comp)) {
+                                anyone=true;
+                            }
                         }
-                    }
-                   
-                    Term[] ars=((Operation)ss2).clone().getArguments().clone();
-                    for(int i=0;i<ars.length;i++) {
-                        if(ars[i].equals(comp)) {
-                            ars[i]=var1;
-                        }
-                    }
+                        if(anyone && !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT)) { //only if there is one and it isnt a variable already
+                            Term[] ars=ss2_prod.term.clone();
+                            for(int i=0;i<ars.length;i++) {
+                                if(ars[i].equals(comp)) {
+                                    ars[i]=var1;
+                                }
+                            }
 
-                    t11 = Statement.make(ss1, var1, ss1.getPredicate(), memory);
-                    Product S=(Product) Product.make(ars, memory);
-                    Operation op=(Operation) Operation.make(S, ss2.getPredicate(), memory);
-                    t22 = op;
+                            t11 = Statement.make(ss1, var1, ss1.getPredicate(), memory);
+                            Product S=(Product) Product.make(ars, memory);
+                            Operation op=(Operation) Operation.make(S, ss2.getPredicate(), memory);
+                            t22 = op;
+                        }
+                    }
                 }
             }
         }

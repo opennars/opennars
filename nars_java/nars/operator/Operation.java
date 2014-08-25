@@ -87,6 +87,7 @@ public class Operation extends Inheritance {
         if (oper == null) {
             return null;
         }
+        
         CharSequence name = makeName(oper.name(), arg);
         Term t = memory.conceptTerm(name);
         if (t != null) {
@@ -111,12 +112,14 @@ public class Operation extends Inheritance {
 
     @Override
     protected CharSequence makeName() {
-        return makeName(getOperator().name(), getArguments());
+        if(getSubject() instanceof Product && getPredicate() instanceof Operator)
+            return makeName(getPredicate().name(), ((Product)getSubject()).term);
+        return makeStatementName(getSubject(), Symbols.NativeOperator.INHERITANCE, getPredicate());
     }
 
     
     public static CharSequence makeName(final CharSequence op, Term[] arg) {
-        final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
+        final StringBuilder nameBuilder = new StringBuilder(16) //estimate
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         
         for (final Term t : arg) {
@@ -129,12 +132,12 @@ public class Operation extends Inheritance {
     }
     
     
-    public Operator getOperator() {
+    /*public Operator getOperator() {
         return (Operator) getPredicate();
     }
     
     public Term[] getArguments() {
         return ((CompoundTerm) getSubject()).term;
-    }    
+    }*/
     
 }
