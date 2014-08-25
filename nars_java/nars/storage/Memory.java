@@ -676,7 +676,7 @@ public class Memory implements Output, Serializable {
                     final long baseI = stamp.evidentialBase[i];
                     
                     for (int j = 0; j < stampLength; j++) {
-                        if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.content instanceof Operation)) {
+                        if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
                             if (recorder.isActive()) {                                
                                 recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
                             }
@@ -927,7 +927,7 @@ public class Memory implements Output, Serializable {
                 }
             }
         }
-        if (newEvent != null) {
+        if (newEvent != null && newEvent.isInput()) {
                 if (lastEvent != null) { //also here like in rule tables: we dont want to derive useless statements
                     if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,lastEvent.sentence.content)) {
                         return;
@@ -937,7 +937,6 @@ public class Memory implements Output, Serializable {
                     setCurrentTask(newEvent);
                     setCurrentBelief(lastEvent.sentence);
                     TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
-
                 //}
             }
             if(newEvent.isInput()) //only use input events for this heuristic
