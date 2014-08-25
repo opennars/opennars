@@ -32,6 +32,7 @@ import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
 import nars.language.Inheritance;
+import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
@@ -314,10 +315,15 @@ public class LocalRules {
             return;
         }
         Operation op = (Operation) content;
-        Operator oper = op.getOperator();
-        if(!(op.getSubject() instanceof Variable)) {
-            oper.call(op, op.getArguments(), concept.memory);
+        Term opi=op.getPredicate();
+        if(!(opi instanceof Operator)) {
+            return;
         }
-        task.setPriority(0);
+        Operator oper = (Operator) opi;
+        if((op.getSubject() instanceof Product)) {
+            Product args=(Product) op.getSubject();
+            oper.call(op, args.term, concept.memory);
+            task.setPriority(0);
+        }
     }    
 }

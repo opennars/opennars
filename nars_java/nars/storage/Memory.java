@@ -87,6 +87,7 @@ import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
@@ -736,6 +737,12 @@ public class Memory implements Output, Serializable {
                 }
             }
 
+            if(task.sentence.content instanceof Operation) {
+                Operation op=(Operation) task.sentence.content;
+                if(op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
+                    return;
+                }
+            }
             output(task);
             
             addNewTask(task, "Derived");
