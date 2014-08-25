@@ -81,7 +81,13 @@ public class TestChamber2 extends TestChamber {
         
         Maze.buildMaze(cells, 3, 3, 23, 23);
         space = new Grid2DSpace(cells, nar);
+        space.FrameRate = 25;
+        space.agentPeriod = 20;
+        space.automataPeriod = 5;
+        
         space.newWindow(1000, 800, true);
+        
+        
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         GridAgent a = new GridAgent(17, 17, nar) {
 
@@ -246,12 +252,11 @@ public class TestChamber2 extends TestChamber {
                 
                 String action = e.action.getClass().getSimpleName().toString();
                 String actionParam = e.action.toParamString();                
-                       
+                String success = String.valueOf(e.success);
                 if (actionParam == null) actionParam = "";
                 if (actionParam.length() != 0) actionParam = "(*," + actionParam + ")";
                 
-                nar.addInput("$0.60$ <(*,Self," + action + "," + actionParam + ") --> effected>. :\\: " +
-                        (e.success ? "%1.00;0.95%" : "%0.00;0.95%"));
+                nar.addInput("$0.60$ <(*,Self," + action + "," + actionParam + "," + success +") --> effect>. :|:");
                 
                 final int SightPeriod = 32;
                 if ((e.action instanceof Forward) || (space.getTime()%SightPeriod == 0)) {
