@@ -33,13 +33,13 @@ public class SequentialMemoryCycle implements MemoryModel {
     public void cycle(Memory m) {
         m.processNewTasks();
 
-        //if (m.noResult()) {       // necessary?
+        if (m.noResult()) {       // necessary?
             m.processNovelTask();
-        //}
+        }
 
-        //if (m.noResult()) {       // necessary?
+        if (m.noResult()) {       // necessary?
             processConcepts(m);
-        //}
+        }
 
     }
     
