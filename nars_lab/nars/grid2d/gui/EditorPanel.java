@@ -53,8 +53,8 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode knowMenu = new DefaultMutableTreeNode("Predefine knowledge");
         root.add(knowMenu);
 
-        DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
-        root.add(extraMenu);
+       // DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
+       // root.add(extraMenu);
         
         DefaultTreeModel model = new DefaultTreeModel(root);
 
@@ -161,7 +161,7 @@ public class EditorPanel extends JPanel {
             }
         });
         //since firework doesnt serve a special functionality yet
-        extraMenu.add(new EditorMode("Firework") {
+        machineMenu.add(new EditorMode("Firework") {
          @Override public void run() { s.cells.click("Turret","",""); }
          });
 
