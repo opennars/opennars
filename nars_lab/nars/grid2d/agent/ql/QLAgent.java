@@ -1,11 +1,13 @@
 package nars.grid2d.agent.ql;
 
-import java.util.Arrays;
 import nars.core.NAR;
 import nars.grid2d.Cell;
 import nars.grid2d.Effect;
 import nars.grid2d.GridAgent;
-import static nars.grid2d.Hauto.*;
+import static nars.grid2d.Hauto.DOWN;
+import static nars.grid2d.Hauto.LEFT;
+import static nars.grid2d.Hauto.RIGHT;
+import static nars.grid2d.Hauto.UP;
 
 /**
  *
@@ -40,7 +42,7 @@ public class QLAgent extends GridAgent {
         
         double r = reward();
         int action = q.step(r);
-        System.out.println(nextEffect + " " + Arrays.toString(q.sensor)  + " " + action + " -> " + r);
+        //System.out.println(nextEffect + " " + Arrays.toString(q.sensor)  + " " + action + " -> " + r);
         
         if (action == 0) {
             

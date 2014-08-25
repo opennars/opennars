@@ -27,7 +27,6 @@ import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
-import nars.language.Variable;
 import nars.storage.Memory;
 
 /**

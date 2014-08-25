@@ -1,6 +1,9 @@
 package nars.grid2d;
 
-import static nars.grid2d.Hauto.*;
+import static nars.grid2d.Hauto.DOWN;
+import static nars.grid2d.Hauto.LEFT;
+import static nars.grid2d.Hauto.RIGHT;
+import static nars.grid2d.Hauto.UP;
 
 /**
  * GridObject with a specific position
@@ -45,15 +48,10 @@ public abstract class LocalGridObject implements GridObject {
         return space.cells.at(x, y);
     }
     
-    /**
-     * @return 
-     */
-    public Cell cellRelative(int dAngle) {
-        int targetAngle = angle(heading + dAngle);
-        
+    public Cell cellAbsolute(int targetAngle) {
         int tx = x;
         int ty = y;
-        switch (targetAngle) {
+        switch (angle(targetAngle)) {
             case UP:
                 ty++;
                 break;
@@ -67,9 +65,16 @@ public abstract class LocalGridObject implements GridObject {
                 tx++;
                 break;
             default:
-                System.err.println("cellRelative(" + dAngle + " from " + heading + ") = Invalid angle: " + targetAngle);
+                System.err.println("cellAbsolute(" + targetAngle + " from " + heading + ") = Invalid angle: " + targetAngle);
                 return null;
         }
         return space.cells.at(tx, ty);
+    }
+    /**
+     * @return 
+     */
+    public Cell cellRelative(int dAngle) {
+        int targetAngle = angle(heading + dAngle);
+        return cellAbsolute(targetAngle);
     }
 }
