@@ -40,7 +40,7 @@ public class Hauto {
         w.is_solid=r.is_solid;
         w.chargeFront=false;
         //
-        if(r.machine==Machine.Light && r.charge==1)
+        if((r.machine==Machine.Light || r.machine==Machine.Turret) && r.charge==1)
         {
             if(r.light!=1.0f) {
                 nar.addInput("<"+r.name+" --> on>. :|:");
@@ -134,7 +134,7 @@ public class Hauto {
             w.charge = Math.max(up.charge, Math.max(down.charge, Math.max(left.charge, right.charge)));
             w.chargeFront = false;
         }
-        if(r.machine==Machine.Light) {
+        if(r.machine==Machine.Light || r.machine==Machine.Turret) {
             if(r.light==1.0f && w.light!=1.0f) { //changed
                 nar.addInput("<"+r.name+" --> off>. :|:");
             }
@@ -207,7 +207,7 @@ public class Hauto {
         readCells[(int) x][(int) y].machine = selected.machine;
         writeCells[(int) x][(int) y].machine = selected.machine;
         
-        if(selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH || selected.machine==Machine.Light) //or other entity...
+        if(selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH || selected.machine==Machine.Light || selected.machine==Machine.Turret) //or other entity...
         {
             String name="";
             if(selected.material==Material.Door) {
@@ -217,6 +217,8 @@ public class Hauto {
                 name="switch";
             if(selected.machine==Machine.Light) 
                 name="light";
+            if(selected.machine==Machine.Turret) 
+                name="firework";
             String Klass=name;
             name=name+(entityID.toString());
             if(selected.material==Material.Door) {
