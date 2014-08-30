@@ -37,10 +37,7 @@ public class PrologTheoryOperator extends nars.operator.Operator {
 
     @Override
     protected List<Task> execute(nars.operator.Operation operation, Term[] args, Memory memory) {
-        if (args.length < 2) {
-            return null;
-        }
-        if (((args.length - 2) % 2) != 0) {
+        if (args.length != 2) {
             return null;
         }
        
