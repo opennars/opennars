@@ -1,6 +1,9 @@
 package nars.prolog.interfaces;
 
+import nars.prolog.InvalidLibraryException;
+import nars.prolog.InvalidTheoryException;
 import nars.prolog.Library;
+import nars.prolog.NoMoreSolutionException;
 import nars.prolog.SolveInfo;
 import nars.prolog.Term;
 import nars.prolog.Theory;
@@ -34,8 +37,9 @@ public interface IProlog {
 	 *
 	 * @param th is the theory to be added
 	 * @throws InvalidTheoryException if the new theory is not valid
+         * @return the solved theory goal, or null if not successful
 	 */
-	void addTheory(Theory th) throws Exception;
+	SolveInfo addTheory(Theory th) throws Exception;
 	
 	/**
 	 * Clears current theory

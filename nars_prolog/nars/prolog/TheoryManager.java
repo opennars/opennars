@@ -17,6 +17,7 @@
  */
 package nars.prolog;
 
+import alice.util.Tools;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,9 +26,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
-
-
-import alice.util.Tools;
 
 /**
  * This class defines the Theory Manager who manages the clauses/theory often referred to as the Prolog database.
@@ -296,7 +294,7 @@ public class TheoryManager implements Serializable {
 		return t;
 	}
 
-	public synchronized void solveTheoryGoal() {
+	public synchronized SolveInfo solveTheoryGoal() {
 		Struct s = null;
 		while (!startGoalStack.empty()) {
 			s = (s == null) ?
@@ -305,11 +303,12 @@ public class TheoryManager implements Serializable {
 		}
 		if (s != null) {
 			try {
-				engine.solve(s);
+				return engine.solve(s);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
+                return null;
 	}
 
 	/**

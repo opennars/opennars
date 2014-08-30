@@ -285,13 +285,14 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @throws InvalidTheoryException if the new theory is not valid
 	 * @see Theory
 	 */
-	public void addTheory(Theory th) throws InvalidTheoryException {	//no syn
+	public SolveInfo addTheory(Theory th) throws InvalidTheoryException {	//no syn
 		Theory oldTh = getTheory();
 		theoryManager.consult(th, true, null);
-		theoryManager.solveTheoryGoal();
+		SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
 		Theory newTh = getTheory();
 		TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);    
 		this.notifyChangedTheory(ev);
+                return theoryGoal;
 	}    
 
 	/**
