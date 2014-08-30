@@ -196,7 +196,7 @@ public abstract class CompoundTerm extends Term {
 \     * @return The order of the two terms
      */
     @Override
-    public int compareTo(final Term that) {
+    public int compareTo(final AbstractTerm that) {
         if (this == that) return 0;
         
         if (that instanceof CompoundTerm) {

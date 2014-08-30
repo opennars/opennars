@@ -1,35 +1,34 @@
-package nars.prolog;
+package nars.prolog.net;
 
 import java.net.InetAddress;
-import java.net.Socket;
+import java.net.ServerSocket;
 import java.util.List;
+import nars.prolog.Term;
+import nars.prolog.Var;
 
 @SuppressWarnings("serial")
 
-public class Client_Socket extends AbstractSocket {
-	private Socket socket;
-
-	public Client_Socket(Socket s){
+public class Server_Socket extends AbstractSocket{
+	private ServerSocket socket;
+	
+	public Server_Socket(ServerSocket s){
 		socket=s;
 	}
-	
+	@Override
+	public ServerSocket getSocket(){
+		return socket;
+	}
 	@Override
 	public boolean isClientSocket() {
-		return true;
-	}
-
-	@Override
-	public boolean isServerSocket() {
 		return false;
 	}
 
 	@Override
-	public Socket getSocket() {
-		return socket;
+	public boolean isServerSocket() {
+		return true;
 	}
 	
-	
-	boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
+	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
 		t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(varsUnifiedArg1, varsUnifiedArg2, this);
@@ -46,17 +45,19 @@ public class Client_Socket extends AbstractSocket {
 		if(socket.isBound())return socket.getInetAddress();
 		else return null;
 	}
-
 	@Override
 	public boolean isDatagramSocket() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	@Override
 	public String toString(){
 		return socket.toString();
 	}
-	
+        
+        
+
+        
 
 }

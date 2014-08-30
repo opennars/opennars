@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import java.util.*;
+import java.util.AbstractMap;
 
 /**
  *
@@ -31,7 +31,7 @@ import java.util.*;
  * Reviewed by Paolo Contessi: implements Comparable<Number>
  */
 @SuppressWarnings("serial")
-public abstract class Number extends Term implements Comparable<Number> {
+public abstract class Number extends Term  {
     
     /**
      *  Returns the value of the number as int
@@ -107,6 +107,19 @@ public abstract class Number extends Term implements Comparable<Number> {
     public Term getTerm() {
         return this;
     }
+
+    @Override
+    public boolean isConstant() {
+        return true;
+    }
+
+    @Override
+    public boolean containVar() {
+        return false;
+    }
+    
+    
+    
     
     // checking type and properties of the Term
     
@@ -172,19 +185,19 @@ public abstract class Number extends Term implements Comparable<Number> {
      * the list argument passed contains the list of variables to be renamed
      * (if empty list then no renaming)
      */
-    Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
+    public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
         return this;
     }
     
     /**
      * gets a copy of the term.
      */
-    Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
+    public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
         return this;
     }
     
     
-    long resolveTerm(long count) {
+    public long resolveTerm(long count) {
         return count;
     }
     

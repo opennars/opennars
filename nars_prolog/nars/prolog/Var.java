@@ -17,7 +17,11 @@
  */
 package nars.prolog;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import nars.language.AbstractTerm;
+import nars.prolog.net.AbstractSocket;
 
 /**
  * This class represents a variable term.
@@ -134,7 +138,7 @@ public class Var extends Term {
 	 * a variable with the same time identifier is found in the list,
 	 * then the variable in the list is returned.
 	 */
-	Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
+	public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
 		Term tt = getTerm();
 		if (tt == this) {
 			Var v = (Var)(vMap.get(this));
@@ -153,7 +157,7 @@ public class Var extends Term {
 	/**
 	 * Gets a copy of this variable.
 	 */
-	Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
+	public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
 		Var v;
 		Object temp = vMap.get(this);
 		if (temp == null) {
@@ -382,7 +386,7 @@ public class Var extends Term {
 	 /**
 	  * Resolve the occurence of variables in a Term
 	  */
-	 long resolveTerm(long count) {
+	 public long resolveTerm(long count) {
 		 Term tt=getTerm();
 		 if (tt != this) {
 			 return tt.resolveTerm(count);
@@ -421,7 +425,7 @@ public class Var extends Term {
 	  * or p(X,X)=p(Y,f(Y)) ); if occur check is ok
 	  * then it's success and a new link is created (retractable by a code)
 	  */
-	 boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
+	 public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
 		 Term tt = getTerm();
 		 if(tt == this) {
 			 t = t.getTerm();
@@ -562,5 +566,27 @@ public class Var extends Term {
 		 tv.visit(this);
 	 }
 	 /**/
+
+    @Override
+    public boolean containVar() {
+        return true;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
+
+    @Override
+    public CharSequence name() {
+        return completeName;
+    }
+
+    @Override
+    public int compareTo(AbstractTerm o) {
+        if (!(o instanceof Var))
+            return -1;
+        return name.compareTo(((Var)o).name);
+    }
 
 }

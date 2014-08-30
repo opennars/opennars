@@ -120,7 +120,7 @@ public class Variable extends Term {
      * @return The same as compareTo as defined on Strings
      */
     @Override
-    public final int compareTo(final Term that) {
+    public final int compareTo(final AbstractTerm that) {
         return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
     }
 }

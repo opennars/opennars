@@ -1,8 +1,10 @@
-package nars.prolog;
+package nars.prolog.net;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.List;
+import nars.prolog.Term;
+import nars.prolog.Var;
 
 public class Datagram_Socket extends AbstractSocket {
 	private static final long serialVersionUID = 1L;
@@ -46,7 +48,7 @@ public class Datagram_Socket extends AbstractSocket {
 	}
 
 	@Override
-	boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
+	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
 		t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(varsUnifiedArg1, varsUnifiedArg2, this);

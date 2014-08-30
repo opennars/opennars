@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import nars.language.AbstractTerm;
 
 /**
  * Struct class represents both compound prolog term
@@ -431,7 +432,7 @@ public class Struct extends Term {
      * Gets a copy of this structure
      * @param vMap is needed for register occurence of same variables
      */
-    Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
+    public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
         Struct t = new Struct(arity);
         t.resolved  = resolved;
         t.name      = name;
@@ -448,7 +449,7 @@ public class Struct extends Term {
      * Gets a copy of this structure
      * @param vMap is needed for register occurence of same variables
      */
-    Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
+    public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
         Struct t = new Struct(arity);
         t.resolved  = false;
         t.name      = name;
@@ -464,7 +465,7 @@ public class Struct extends Term {
     /**
      * resolve term
      */
-    long resolveTerm(long count) {
+    public long resolveTerm(long count) {
         if (resolved) {
             return count;
         } else {
@@ -480,7 +481,7 @@ public class Struct extends Term {
      * @param count start timestamp for variables of this term
      * @return next timestamp for other terms
      */
-    long resolveTerm(LinkedList<Var> vl,long count) {
+    public long resolveTerm(LinkedList<Var> vl,long count) {
         long newcount=count;
         for (int c = 0;c < arity;c++) {
             Term term=arg[c];
@@ -666,7 +667,7 @@ public class Struct extends Term {
      * @param vl2 list of variables unified
      * @return true if the term is unifiable with this one
      */
-    boolean unify(List<Var> vl1,List<Var> vl2,Term t) {
+    public boolean unify(List<Var> vl1,List<Var> vl2,Term t) {
         // In fase di unificazione bisogna annotare tutte le variabili della struct completa.
         t = t.getTerm();
         if (t instanceof Struct) {
@@ -921,5 +922,28 @@ public class Struct extends Term {
 		tv.visit(this);
 	}
     /**/
+
+    @Override
+    public boolean containVar() {
+        return !this.isGround();
+    }
+
+    @Override
+    public boolean isConstant() {
+        return this.isGround();
+    }
+
+    @Override
+    public CharSequence name() {
+        return name;
+    }
+
+    @Override
+    public int compareTo(AbstractTerm o) {
+        if (!(o instanceof Struct)) {
+            return -1;
+        }
+        return name.compareTo(((Struct)o).name);
+    }
     
 }
