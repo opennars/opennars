@@ -1,9 +1,7 @@
 package nars;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.core.Parameters;
@@ -32,12 +30,13 @@ import nars.storage.Memory;
 
 
 public class PrologQueryOperator extends Operator {
+    private final PrologContext context;
 
-    /** maps a NARS term to a Prolog instance */
-    Map<Term, Prolog> prologs = new HashMap();
     
-    public PrologQueryOperator() {
+    
+    public PrologQueryOperator(PrologContext context) {
         super("^prologQuery");
+        this.context = context;
     }
 
     @Override
