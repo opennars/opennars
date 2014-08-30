@@ -55,19 +55,26 @@ public class Javascript extends Operator {
         
         memory.output(Javascript.class, input + " | " + result);
         
-        Term r = new Term(Texts.escape('"' + result.toString() + '"').toString());
-        Inheritance t = Inheritance.make(
-                Product.make(new Term[] { operation, r }, memory),
-                new Term("js_evaluation"), memory);
+        Term resultTerm = new Term(Texts.escape('"' + result.toString() + '"').toString());
         
-        memory.output(Task.class, t);
+        Inheritance operatorInheritance = Operation.make(
+            Product.make(new Term[] { args[0], resultTerm }, memory),
+            this,
+            memory
+        );
+        
+        Inheritance resultInheritance = Inheritance.make(
+            operatorInheritance,
+            new Term("js_evaluation"),
+            memory
+        );
+        
+        
+        memory.output(Task.class, resultInheritance);
         
         ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(t, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
+        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
                 
         return results;
-        
-
     }
-    
 }
