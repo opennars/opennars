@@ -13,9 +13,16 @@ import nars.storage.Memory;
  * Executes Prolog code
  * Access Prolog from NARS
  * @author irc SquareOfTwo | github PtrMan
+ * 
+ * Example:
+        < (&/, (^prolog, "exec", "database(Key, Result).", "Result", $ra, "Key", $keyA) )    =/> <(*, $keyA, $ra) --> executed > >.
+        <(*, 0, #a) --> executed >!
+
+   Should return: 
+        <(*, 0, "test") --> executed>
  */
 public class PrologTheoryOperator extends nars.operator.Operator {
-    private final PrologQueryOperator queryOperator;
+    private final PrologContext context;
     
     static public class ConversionFailedException extends RuntimeException {
         public ConversionFailedException() {
@@ -23,9 +30,9 @@ public class PrologTheoryOperator extends nars.operator.Operator {
         }
     }
    
-    public PrologTheoryOperator(PrologQueryOperator q) {
+    public PrologTheoryOperator(PrologContext context) {
         super("^prologTheory");
-        this.queryOperator = q;
+        this.context = context;
     }
 
     @Override
