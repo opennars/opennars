@@ -87,7 +87,7 @@ public class NAR implements Runnable, Output {
     
     private int inputSelected = 0; //counter for the current selected input channel
 
-    protected NAR(Memory m, Perception p) {
+    public NAR(Memory m, Perception p) {
         this.memory = m;
         this.perception = p;
         
