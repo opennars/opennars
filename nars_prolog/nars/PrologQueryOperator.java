@@ -1,16 +1,19 @@
 package nars;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;
-import nars.io.Texts;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
+import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.prolog.Agent;
 import nars.prolog.Int;
 import nars.prolog.InvalidTheoryException;
@@ -22,51 +25,29 @@ import nars.prolog.Theory;
 import nars.prolog.Var;
 import nars.storage.Memory;
 
-
 /**
- * Executes Prolog code
- * Access Prolog from NARS
- * @author irc SquareOfTwo | github PtrMan
+ *
+ * @author me
  */
-public class PrologOperator extends nars.operator.Operator {
+
+
+public class PrologQueryOperator extends Operator {
+
+    /** maps a NARS term to a Prolog instance */
+    Map<Term, Prolog> prologs = new HashMap();
     
-    static public class ConversionFailedException extends RuntimeException {
-        public ConversionFailedException() {
-            super("Conversion Failed");
-        }
-    }
-   
-    public PrologOperator() {
-        super("^prolog");
+    public PrologQueryOperator() {
+        super("^prologQuery");
     }
 
     @Override
-    protected List<Task> execute(nars.operator.Operation operation, Term[] args, Memory memory) {
-        if (args.length < 2) {
-            return null;
-        }
-        if (((args.length - 2) % 2) != 0) {
-            return null;
-        }
-       
-        // get all variablenames
-        // prolog must resolve the variables and assign values to them
-        String[] variableNames = getVariableNamesOfArgs(args);
-       
-       
-        /*
-        if (!(args[2] instanceof Variable)){
-            //TODO< report error >
-            return null;
-        }
-        */
-       
-       
-       
-        String query = getStringOfTerm(args[1]);
-       
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        Prolog p = null; //TODO lookup the selected prolog from first arg
+        String query = null;
+        String[] variableNames = null;                
+        
         // execute
-        nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(query, variableNames);
+        nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(p, query, variableNames);
        
        
        
@@ -99,7 +80,8 @@ public class PrologOperator extends nars.operator.Operator {
                
         return results;
     }
-   
+    
+    
     static private Term[] getResultVariablesFromPrologVariables(nars.prolog.Term[] prologVariables, Term[] args) {
         int numberOfVariables = (args.length - 2) / 2;
         int variableI;
@@ -133,7 +115,7 @@ public class PrologOperator extends nars.operator.Operator {
                
                     continue; // for debugging
                 }
-                catch( ConversionFailedException conversionFailedException ) {
+                catch( PrologTheoryOperator.ConversionFailedException conversionFailedException ) {
                     // the alternative is a product of numbers
                     // ASK< this may be not 100% correct, because prolog lists can be in lists etc >
                    
@@ -151,46 +133,10 @@ public class PrologOperator extends nars.operator.Operator {
         return resultTerms;
     }
    
-    static private String[] getVariableNamesOfArgs(Term[] args) {
-        int numberOfVariables = (args.length - 2) / 2;
-        int variableI;
-       
-        String[] variableNames = new String[numberOfVariables];
-       
-        for( variableI = 0; variableI < numberOfVariables; variableI++ ) {
-            Term termWithVariableName = args[2+2*variableI];
-           
-            if( !(termWithVariableName instanceof Term) ) {
-                throw new RuntimeException("Result Variable Name is not an term!");
-            }
-           
-            variableNames[variableI] = getStringOfTerm(termWithVariableName);
-        }
-       
-        return variableNames;
-    }
    
-    // tries to convert the Term (which must be a string) to a string with the content
-    static private String getStringOfTerm(Term term) {
-        // escape sign codes
-        String string = term.name().toString();
-        string = Texts.unescape(string).toString();
-        if (string.charAt(0) != '"') {
-            throw new RuntimeException("term is not a string as expected!");
-        }
-       
-        string = string.substring(1, string.length()-1);
-       
-        // because the text can contain quoted text
-        string = unescape(string);
-       
-        return string;
-    }
-   
-   
-    private nars.prolog.Term[] prologParseAndExecuteAndDereferenceInput(String input, String[] dereferencingVariableNames) {
+    private nars.prolog.Term[] prologParseAndExecuteAndDereferenceInput(Prolog p, String input, String[] dereferencingVariableNames) {
         nars.prolog.Term term = prologParseInput(input);
-        return executePrologGoalAndDereferenceVariable(term, dereferencingVariableNames);
+        return executePrologGoalAndDereferenceVariable(p, term, dereferencingVariableNames);
     }
    
     private nars.prolog.Term prologParseInput(String input) {
@@ -200,16 +146,16 @@ public class PrologOperator extends nars.operator.Operator {
             SolveInfo s = p.addTheory(new Theory(input));
             return s.getSolution();
         } catch (InvalidTheoryException ex) {
-            Logger.getLogger(PrologOperator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PrologTheoryOperator.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSolutionException ex) {
-            Logger.getLogger(PrologOperator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PrologTheoryOperator.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
    
     // TODO< return status/ error/sucess >
-    private nars.prolog.Term[] executePrologGoalAndDereferenceVariable(nars.prolog.Term goalTerm, String[] variableName) {
-        Prolog p = new Prolog();
+    private nars.prolog.Term[] executePrologGoalAndDereferenceVariable(Prolog p, nars.prolog.Term goalTerm, String[] variableName) {
+        
         SolveInfo solution = p.solve(goalTerm);
         
         if (solution == null ) {
@@ -320,14 +266,14 @@ public class PrologOperator extends nars.operator.Operator {
        
         for( nars.prolog.Term iterationTerm : array ) {
             if( !(iterationTerm instanceof Int) ) {
-                throw new ConversionFailedException();
+                throw new PrologTheoryOperator.ConversionFailedException();
             }
            
             Int integerTerm = (Int)iterationTerm;
             int integer = integerTerm.intValue();
            
             if( integer > 127 || integer < 0 ) {
-                throw new ConversionFailedException();
+                throw new PrologTheoryOperator.ConversionFailedException();
             }
            
             result += Character.toString((char)integer);
@@ -336,9 +282,7 @@ public class PrologOperator extends nars.operator.Operator {
         return result;
     }
    
-    // TODO< move into prolog utils >
-    private static String unescape(String text) {
-        return text.replace("\\\"", "\"");
-    }
-   
+    
+    
+    
 }
