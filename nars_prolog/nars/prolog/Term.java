@@ -17,15 +17,15 @@
  */
 package nars.prolog;
 
+import alice.util.OneWayList;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
+import java.util.LinkedList;
 import java.util.List;
-
-import alice.util.OneWayList;
+import nars.language.AbstractTerm;
 
 /**
  * Term class is the root abstract class for prolog data type
@@ -33,7 +33,7 @@ import alice.util.OneWayList;
  * @see Var
  * @see  Number
  */
-public abstract class Term implements Serializable {
+public abstract class Term implements nars.language.AbstractTerm, Serializable {
 	private static final long serialVersionUID = 1L;
 
     // true and false constants
@@ -42,23 +42,6 @@ public abstract class Term implements Serializable {
     
     // checking type and properties of the Term
     
-    /**
-     * is this term a prolog numeric term?
-     * @deprecated Use <tt>instanceof Number</tt> instead.
-     */
-    public abstract boolean isNumber();
-    
-    /**
-     * is this term a struct?
-     * @deprecated Use <tt>instanceof Struct</tt> instead. 
-     */
-    public abstract boolean isStruct();
-    
-    /**
-     * is this term a variable?
-     * @deprecated Use <tt>instanceof Var</tt> instead. 
-     */
-    public abstract boolean isVar();
     
     /** is this term a null term?*/
     public abstract boolean isEmptyList();
@@ -114,7 +97,7 @@ public abstract class Term implements Serializable {
     /**
      * Unlink variables inside the term
      */
-    public abstract void free();
+    abstract public void free();
     
     
     /**
@@ -124,7 +107,7 @@ public abstract class Term implements Serializable {
      * @param count new starting time count for resolving process
      * @return the new time count, after resolving process
      */
-    abstract long resolveTerm(long count);
+    abstract public long resolveTerm(long count);
     
     
     /**
@@ -160,6 +143,28 @@ public abstract class Term implements Serializable {
         }
         return copy(originals,new IdentityHashMap<Term,Var>());
     }
+
+    @Override
+    public boolean isConstant() {
+        return isGround();
+    }
+
+    @Override
+    public boolean containVar() {
+        return !isGround();
+    }
+
+    @Override
+    public int compareTo(AbstractTerm o) {
+        if (!getClass().isAssignableFrom(o.getClass())) {
+            return -1;
+        }
+        return ((String)name()).compareTo(((String)o.name()));
+    }
+    
+    
+    
+    
     
     
     /**
@@ -169,12 +174,12 @@ public abstract class Term implements Serializable {
      * (if empty list then no renaming)
      * @param idExecCtx Execution Context identifier
      */
-    abstract Term copy(AbstractMap<Var,Var> vMap, int idExecCtx);
+    abstract public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx);
     
     /**
      * gets a copy for result.
      */
-    abstract Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap);
+    abstract public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap);
     
     /**
      * Try to unify two terms
@@ -251,7 +256,7 @@ public abstract class Term implements Serializable {
      * @param varsUnifiedArg1 Vars unified in myself
      * @param varsUnifiedArg2 Vars unified in term t
      */
-    abstract boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t);
+    abstract public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t);
     
     
     /**

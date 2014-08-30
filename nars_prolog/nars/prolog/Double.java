@@ -19,6 +19,7 @@ package nars.prolog;
 
 import java.util.ArrayList;
 import java.util.List;
+import nars.language.AbstractTerm;
 
 /**
  *
@@ -172,7 +173,7 @@ public class Double extends Number {
      * Tries to unify a term with the provided term argument.
      * This service is to be used in demonstration context.
      */
-    boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
+    public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
         t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(vl2, vl1, this);
@@ -191,11 +192,13 @@ public class Double extends Number {
         return count;
     }
 
-    /**
-     * @author Paolo Contessi
-     */
-    public int compareTo(Number o) {
-        return (new java.lang.Double(value)).compareTo(o.doubleValue());
+ 
+    @Override
+    public int compareTo(AbstractTerm o) {
+        if (o instanceof Number)
+            return (new java.lang.Double(value)).compareTo(((Number)o).doubleValue());
+        else
+            return -1;
     }
     
 }

@@ -94,7 +94,7 @@ abstract public class Image extends CompoundTerm {
     }    
     
     @Override
-    public int compareTo(Term that) {
+    public int compareTo(AbstractTerm that) {
         if (that.getClass() == getClass()) {
             int c = super.compareTo(that);
             if (c==0)

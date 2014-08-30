@@ -30,7 +30,7 @@ import nars.inference.TemporalRules;
  * It is not linked in the Term, because a Concept may be forgot while the Term
  * exists. Multiple objects may represent the same Term.
  */
-public class Term implements Cloneable, Comparable<Term> {
+public class Term implements AbstractTerm {
 
     protected CharSequence name = "";
     
@@ -54,6 +54,7 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return The name of the term as a String
      */
+    @Override
     public CharSequence name() {
         return name;
     }
@@ -103,6 +104,7 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return A Term is constant by default
      */
+    @Override
     public boolean isConstant() {
         return true;
     }
@@ -154,7 +156,7 @@ public class Term implements Cloneable, Comparable<Term> {
      * @return The same as compareTo as defined on Strings
      */
     @Override
-    public int compareTo(final Term that) {
+    public int compareTo(final AbstractTerm that) {
         /*//This removes this class's dependency on CompoundTerm
         if (that.getClass() == getClass())
             return name.compareTo(that.name());
@@ -176,6 +178,7 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return Whether the name contains a variable
      */
+    @Override
     public boolean containVar() {
         return false;
     }

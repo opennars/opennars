@@ -1,7 +1,10 @@
-package nars.prolog;
+package nars.prolog.net;
 import java.net.InetAddress;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import nars.prolog.Term;
+import nars.prolog.TermVisitor;
+import nars.prolog.Var;
 @SuppressWarnings("serial")
 
 
@@ -18,23 +21,6 @@ public abstract class AbstractSocket extends Term{
 	
 	public abstract InetAddress getAddress();
 	
-	@Override
-	public boolean isNumber() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isStruct() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isVar() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public boolean isEmptyList() {
@@ -100,17 +86,17 @@ public abstract class AbstractSocket extends Term{
 	}
 
 	@Override
-	long resolveTerm(long count) {
+	public long resolveTerm(long count) {
 		return count;
 	}
 
 	@Override
-	Term copy(AbstractMap<Var, Var> vMap, int idExecCtx) {
+	public Term copy(AbstractMap<Var, Var> vMap, int idExecCtx) {
 		return this;
 	}
 
 	@Override
-	Term copy(AbstractMap<Var, Var> vMap, AbstractMap<Term, Var> substMap) {
+	public Term copy(AbstractMap<Var, Var> vMap, AbstractMap<Term, Var> substMap) {
 		return this;
 	}
 
