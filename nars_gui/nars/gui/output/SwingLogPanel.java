@@ -37,6 +37,7 @@ public class SwingLogPanel extends LogPanel {
     private final Style mainStyle;
 
     private Collection<String> nextOutput = new ConcurrentLinkedQueue();
+
     
     public SwingLogPanel(NARControls narControls) {
         super(narControls);
@@ -65,7 +66,6 @@ public class SwingLogPanel extends LogPanel {
 
         addPopupMenu();
         
-
         setConsoleStyle(ioText, true);
 
         ioTextWrap.setBorder(new EmptyBorder(0, 0, 0, 0));
