@@ -23,11 +23,11 @@ package nars.gui;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
-import nars.gui.output.LogPanel;
-import nars.gui.output.SwingLogPanel;
+import nars.gui.output.MultiLogPanel;
 import nars.io.TextInput;
 
 /**
@@ -63,11 +63,18 @@ public class NARSwing  {
         mainWindow.setVisible(true);
         mainWindow.setVisible(true);
         
-        
+        /*
         LogPanel outputLog = 
                 new SwingLogPanel(narControls);
                 //new HTMLLogPanel(narControls);
         Window outputWindow = new Window("Log", outputLog);        
+        outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
+        outputWindow.setVisible(true);
+        */
+
+        MultiLogPanel outputLog = 
+                new MultiLogPanel(narControls);
+        Window outputWindow = new Window("Log", new JScrollPane(outputLog, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));        
         outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
         outputWindow.setVisible(true);
         
