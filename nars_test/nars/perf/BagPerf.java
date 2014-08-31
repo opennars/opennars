@@ -93,7 +93,7 @@ public class BagPerf {
     
     /** Empty Item implementation useful for testing */
     public static class NullItem extends Item {
-        private final String key;
+        private final StatsKey key;
     
         public NullItem() {
             this((float)Math.random());

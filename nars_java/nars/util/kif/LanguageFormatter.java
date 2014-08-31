@@ -149,7 +149,7 @@ public class LanguageFormatter {
 	    String line;
 	    HashMap newLine;
 	    ArrayList languageKeyArray = new ArrayList();
-	    String key;
+	    StatsKey key;
 	    int i;
 	    int count;
 	    BufferedReader br;

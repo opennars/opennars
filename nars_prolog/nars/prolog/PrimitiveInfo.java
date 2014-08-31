@@ -48,7 +48,7 @@ public class PrimitiveInfo {
     private String primitive_key;
     
     
-    public PrimitiveInfo(int type, String key, Library lib, Method m, int arity) throws NoSuchMethodException {
+    public PrimitiveInfo(int type, StatsKey key, Library lib, Method m, int arity) throws NoSuchMethodException {
         if (m==null) {
             throw new NoSuchMethodException();
         }
@@ -64,7 +64,7 @@ public class PrimitiveInfo {
      * Method to invalidate primitives. It's called just mother library removed
      */
     public synchronized String invalidate() {
-        String key = primitive_key;
+        StatsKey key = primitive_key;
         primitive_key = null;
         return key;
     }

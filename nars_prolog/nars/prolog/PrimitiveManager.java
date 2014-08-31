@@ -143,7 +143,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
         //------------------------------------------
         //log.debug("Identification "+t);    
         PrimitiveInfo prim = null;
-        String key = name + "/" + arity;
+        StatsKey key = name + "/" + arity;
         
         switch (typeOfPrimitive) {
         case PrimitiveInfo.DIRECTIVE :

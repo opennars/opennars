@@ -29,7 +29,7 @@ package nars.entity;
 public abstract class Item {
 
     /** The key of the Item, unique in a Bag */
-    protected String key;
+    protected StatsKey key;
     /** The budget of the Item, consisting of 3 numbers */
     protected BudgetValue budget;
 
@@ -42,7 +42,7 @@ public abstract class Item {
      * Constructor with default budget
      * @param key The key value
      */
-    protected Item(String key) {
+    protected Item(StatsKey key) {
         this.key = key;
         this.budget = new BudgetValue();
      }
@@ -52,7 +52,7 @@ public abstract class Item {
      * @param key The key value
      * @param budget The initial budget
      */
-    protected Item(String key, BudgetValue budget) {
+    protected Item(StatsKey key, BudgetValue budget) {
         this.key = key;
         this.budget = new BudgetValue(budget);  // clone, not assignment
     }

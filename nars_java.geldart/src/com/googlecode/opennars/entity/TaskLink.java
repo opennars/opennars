@@ -75,7 +75,7 @@ public class TaskLink extends TermLink {
         Term bTerm = bLink.getTarget();
         if (bTerm.equals(targetTask.getSentence().getContent()))
             return false;
-        String key = bLink.getKey();
+        StatsKey key = bLink.getKey();
         for (int i = 0; i < record.size(); i++)
             if (key.equals((String) record.get(i)))
                 return false;

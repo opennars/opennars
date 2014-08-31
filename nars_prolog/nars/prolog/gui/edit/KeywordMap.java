@@ -77,7 +77,7 @@ public class KeywordMap
      * @param keyword The key
      * @Param id The value
      */
-    public void add(String keyword, byte id)
+    public void add(StatsKey keyword, byte id)
     {
         int key = getStringMapKey(keyword);
         map[key] = new Keyword(keyword.toCharArray(),id,map[key]);

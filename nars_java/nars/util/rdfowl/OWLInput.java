@@ -54,7 +54,7 @@ public class OWLInput extends PrintWriterInput {
             this.name = name;
         }
 
-        private void addAttribute(String key, String value) {
+        private void addAttribute(StatsKey key, String value) {
             attributes.add(new String[] { key, value });
         }
 
