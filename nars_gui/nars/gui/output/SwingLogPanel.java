@@ -5,29 +5,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-import nars.core.NAR;
 import nars.gui.NARControls;
 import nars.io.TextOutput;
 
@@ -36,102 +22,12 @@ public class SwingLogPanel extends LogPanel {
     public final SwingLogText ioText;
 
 
-    public static class SwingLogText extends JTextPane {
-        private final DefaultStyledDocument doc;
-        private final Style mainStyle;
-        private Collection<String> nextOutput = new ConcurrentLinkedQueue();
-
-        public SwingLogText() {
-            super(new DefaultStyledDocument(new StyleContext()));
-            doc = (DefaultStyledDocument)getDocument();
-            setEditable(false);
-            
-            // Create and add the main document style
-            Style defaultStyle = getStyle(StyleContext.DEFAULT_STYLE);
-            mainStyle = doc.addStyle("MainStyle", defaultStyle);
-            //StyleConstants.setLeftIndent(mainStyle, 16);
-            //StyleConstants.setRightIndent(mainStyle, 16);
-            //StyleConstants.setFirstLineIndent(mainStyle, 16);
-            //StyleConstants.setFontFamily(mainStyle, "serif");
-            //StyleConstants.setFontSize(mainStyle, 12);
-            doc.setLogicalStyle(0, mainStyle);
-        }        
-    
-        protected void print(Color c, float size, String text, boolean bold) {
-            StyleContext sc = StyleContext.getDefaultStyleContext();
-
-            MutableAttributeSet aset = getInputAttributes();
-
-            Font f = getFont();
-            StyleConstants.setForeground(aset, c);
-            //StyleConstants.setFontSize(aset, (int)(f.getSize()*size));
-            StyleConstants.setBold(aset, bold);
-
-            try {
-                doc.insertString(doc.getLength(), text, null);
-
-                getStyledDocument().setCharacterAttributes(doc.getLength() - text.length(), text.length(), aset, true);
-            } catch (BadLocationException ex) {
-                Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }       
-        
-        
-        String print(Class c, Object o, boolean showStamp, NAR n) {
-
-             String s = TextOutput.getOutputString(c, o, true, showStamp, n);
-
-             nextOutput.add(s);
-
-             SwingUtilities.invokeLater(nextOutputRunnable);
-             
-             return s;
-         }
-
-
-
-         private final Runnable nextOutputRunnable = new Runnable() {
-             @Override
-             public void run() {
-                 if (nextOutput.size() > 0) {
-
-                     try {
-                         //limitBuffer(nextOutput.baseLength());
-                         limitBuffer(128);
-
-                         for (String o : nextOutput) {
-                             print(getLineColor(o), 1.0f, o + '\n', false);
-                         }
-
-                         nextOutput.clear();
-                     } catch (Exception e) {
-                         System.err.println(e);
-                         e.printStackTrace();
-                     }
-                 }
-             }
-         };
-
-        void limitBuffer(int incomingDataSize) {
-            Document doc = getDocument();
-            int overLength = doc.getLength() + incomingDataSize - LogPanel.maxIOTextSize;
-
-            if (overLength > 0) {
-                try {
-                    doc.remove(0, overLength);
-                } catch (BadLocationException ex) {
-                }
-            }
-        }
-        
-    }
     
     public SwingLogPanel(NARControls narControls) {
         super(narControls);
 
 
-        ioText = new SwingLogText();
+        ioText = new SwingLogText(narControls.nar);
 
 
         //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
@@ -151,8 +47,9 @@ public class SwingLogPanel extends LogPanel {
 
     @Override
     void print(final Class c, final Object o) {
-        String s = ioText.print(c, o, showStamp, nar);
+        ioText.print(c, o, showStamp, nar);
 
+        String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
             logFile.println(s);
         }        

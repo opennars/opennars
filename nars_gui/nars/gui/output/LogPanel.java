@@ -28,8 +28,13 @@ import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.gui.WrapLayout;
 import nars.io.Output;
+import nars.io.TextOutput;
 
 abstract public class LogPanel extends NPanel implements Output, LogOutput {
+
+    static String getText(Object o, boolean showStamp, NAR nar) {
+        return TextOutput.getOutputString(o, showStamp, nar);
+    }
 
     protected final NAR nar;
     public static final int maxIOTextSize = (int) 8E5;
@@ -210,13 +215,14 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
     abstract void limitBuffer(int incomingDataSize);
 
 
-    public static Color getLineColor(String l) {
-        l = l.trim();
-        if (l.startsWith("OUT:")) {
+    public static Color getChannelColor(Class c) {
+        
+        
+        if (c == OUT.class) {
             return Color.LIGHT_GRAY;
-        } else if (l.startsWith("IN:")) {
+        } else if (c == IN.class) {
             return Color.WHITE;
-        } else if (l.startsWith("ERR:")) {
+        } else if (c == ERR.class) {
             return Color.ORANGE;
         } else //if (l.startsWith("LOG:")) {
         {
