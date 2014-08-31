@@ -146,8 +146,6 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
 
         setDividerLocation(0.14);
 
-        nar.addOutput(this);
-
         rootTaskPanel = new SwingLogTextM("Root");
         
         
