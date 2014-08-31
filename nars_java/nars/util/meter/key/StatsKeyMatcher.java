@@ -25,10 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import nars.util.meter.key.StatsConstants;
-import nars.util.meter.key.StatsKey;
-import nars.util.meter.key.StatsKeyAssociation;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  *
@@ -371,7 +367,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final StatsKeyMatcher delegate;
 
         NegationMatcher(final StatsKeyMatcher delegate) {
-            assertNotNull(delegate, "delegate");
+            //assertNotNull(delegate, "delegate");
             this.delegate = delegate;
         }
 
@@ -407,9 +403,9 @@ public abstract class StatsKeyMatcher implements Serializable {
         CompositeMatcher(final Op op,
                          final StatsKeyMatcher matcher1,
                          final StatsKeyMatcher matcher2) {
-            assertNotNull(op, "op");
-            assertNotNull(matcher1, "matcher1");
-            assertNotNull(matcher2, "matcher2");
+            //assertNotNull(op, "op");
+            //assertNotNull(matcher1, "matcher1");
+            //assertNotNull(matcher2, "matcher2");
 
             this.op = op;
             this.matcher1 = matcher1;
@@ -580,7 +576,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final StatsKey testKey;
 
         ExactMatcher(final StatsKey testKey) {
-            assertNotNull(testKey, "testKey");
+            //assertNotNull(testKey, "testKey");
 
             this.testKey = testKey;
         }
@@ -608,8 +604,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final Object test;
 
         EqualsMatcher(final MatchTarget target, final Object test) {
-            assertNotNull(target, "target");
-            assertNotNull(test, "test");
+            //assertNotNull(target, "target");
+            //assertNotNull(test, "test");
 
             this.target = target;
             this.test = test;
@@ -660,8 +656,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final String prefix;
 
         PrefixMatcher(final MatchTarget target, final String prefix) {
-            assertNotNull(target, "target");
-            assertNotNull(prefix, "prefix");
+            //assertNotNull(target, "target");
+            //assertNotNull(prefix, "prefix");
 
             this.target = target;
             this.prefix = prefix;
@@ -713,7 +709,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         private static String formatKeyName(String keyName) {
-            assertNotNull(keyName, "keyName");
+            //assertNotNull(keyName, "keyName");
 
             if (!keyName.endsWith(".")) {
                 keyName += ".";
@@ -728,8 +724,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final String suffix;
 
         SuffixMatcher(final MatchTarget target, final String suffix) {
-            assertNotNull(target, "target");
-            assertNotNull(suffix, "suffix");
+            //assertNotNull(target, "target");
+            //assertNotNull(suffix, "suffix");
 
             this.target = target;
             this.suffix = suffix;
@@ -780,8 +776,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final String string;
 
         ContainsMatcher(final MatchTarget target, final String string) {
-            assertNotNull(target, "target");
-            assertNotNull(string, "string");
+            //assertNotNull(target, "target");
+            //assertNotNull(string, "string");
 
             this.target = target;
             this.string = string;
@@ -908,7 +904,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         LengthMatcher(final MatchTarget target,
                       int length) {
-            assertNotNull(target, "target");
+            //assertNotNull(target, "target");
             if (length < 0) {
                 length = 0;
             }
@@ -962,8 +958,8 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         public RegExMatcher(final MatchTarget target,
                             final Pattern pattern) {
-            assertNotNull(target, "target");
-            assertNotNull(pattern, "pattern");
+            //assertNotNull(target, "target");
+            //assertNotNull(pattern, "pattern");
 
             this.target = target;
             this.pattern = pattern;

@@ -27,7 +27,7 @@ package nars.util.meter.session;
 //import nars.core.monitor.meter.key.StatsKey;
 //import nars.core.monitor.meter.key.StatsProperties;
 //import nars.core.monitor.meter.session.recorder.DataRecorder;
-//import static nars.core.monitor.meter.util.Util.assertNotNull;
+//import static nars.core.monitor.meter.util.Util.//assertNotNull;
 //import nars.io.Output;
 //
 //
@@ -57,8 +57,8 @@ package nars.util.meter.session;
 //
 //    public DefaultSessionManager(final StatsConfigManager configManager,
 //                                 final EventManager eventManager) {
-//        assertNotNull(configManager, "configManager");
-//        assertNotNull(eventManager, "eventManager");
+//        //assertNotNull(configManager, "configManager");
+//        //assertNotNull(eventManager, "eventManager");
 //
 //        this.configManager = configManager;
 //        this.eventManager = eventManager;
@@ -138,7 +138,7 @@ package nars.util.meter.session;
 //
 //    @Override
 //    public StatsSession getOrCreateSession(final StatsKey key) {
-//        assertNotNull(key, "key");
+//        //assertNotNull(key, "key");
 //
 //        StatsSession session = sessionMap.get(key);
 //

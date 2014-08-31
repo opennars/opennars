@@ -30,6 +30,10 @@ public class HitFrequencyTracker extends AbstractSpanTracker {
     public HitFrequencyTracker(final StatsSession session) {
         super(session);
     }
+    public HitFrequencyTracker(final String id) {
+        super(id);
+    }
+    
 
     @Override
     protected void startImpl(final long now) {

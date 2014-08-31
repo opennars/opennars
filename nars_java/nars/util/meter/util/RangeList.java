@@ -15,9 +15,9 @@
 package nars.util.meter.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -37,6 +37,10 @@ public class RangeList implements Iterable<Range>,Serializable {
     private final double minBegin;
     private final double maxEnd;
 
+    public RangeList(final Range... ranges) {
+        this(Arrays.asList(ranges));
+    }
+    
     public RangeList(final List<Range> ranges) {
         this(ranges, Range.DEFAULT_EXCLUSIVE_RANGE_END);
     }
@@ -210,7 +214,7 @@ public class RangeList implements Iterable<Range>,Serializable {
 
     public static class Builder {
 
-        private final List<Range> ranges = new LinkedList<Range>();
+        private final List<Range> ranges = new ArrayList<Range>();
         private boolean exclusiveRangeEnd = Range.DEFAULT_EXCLUSIVE_RANGE_END;
 
         private boolean beginningRangeAdded = false;

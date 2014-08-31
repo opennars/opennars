@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.session.recorder;
+package nars.util.meter.recorder;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Range;
 import nars.util.meter.util.RangeList;
 import nars.util.meter.util.ThreadSafe;
-import static nars.util.meter.util.Util.assertNotNull;
+
 
 /**
  *
@@ -44,7 +44,7 @@ public class RangeDataRecorder implements DataRecorder {
     private final AtomicLong[] hits;
 
     public RangeDataRecorder(final RangeList rangeList) {
-        assertNotNull(rangeList, "rangeList");
+        //assertNotNull(rangeList, "rangeList");
 
         int size = rangeList.size();
         if (size == 0) {

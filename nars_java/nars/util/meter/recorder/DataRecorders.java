@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.session.recorder;
+package nars.util.meter.recorder;
 
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -22,7 +22,6 @@ import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Decorator;
 import nars.util.meter.util.ThreadSafe;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  * Provides utility methods for manipulating {@link DataRecorder}s.
@@ -210,7 +209,7 @@ public final class DataRecorders {
 
         private LockingDataRecorderDecorator(final DataRecorder delegate,
                                              final Lock lock) {
-            assertNotNull(delegate, "delegate");
+            //assertNotNull(delegate, "delegate");
             this.delegate = delegate;
 
             if (lock == null) {

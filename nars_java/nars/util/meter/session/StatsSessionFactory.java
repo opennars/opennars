@@ -16,7 +16,7 @@ package nars.util.meter.session;
 
 import java.io.Serializable;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.session.recorder.DataRecorder;
+import nars.util.meter.recorder.DataRecorder;
 
 /**
  * A factory for {@link StatsSession} instances.

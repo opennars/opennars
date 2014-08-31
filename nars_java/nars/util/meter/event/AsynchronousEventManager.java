@@ -16,7 +16,6 @@ package nars.util.meter.event;
 
 import java.util.concurrent.Callable;
 import nars.util.meter.key.StatsKey;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  *
@@ -27,7 +26,7 @@ public class AsynchronousEventManager extends SynchronousEventManager {
     private final TaskService taskService;
 
     public AsynchronousEventManager(final TaskService taskService) {
-        assertNotNull(taskService, "taskService");
+        //assertNotNull(taskService, "taskService");
         this.taskService = taskService;
     }
 
@@ -49,9 +48,9 @@ public class AsynchronousEventManager extends SynchronousEventManager {
         EventCallable(final EventType eventType,
                       final StatsKey key,
                       final Object target) {
-            assertNotNull(eventType, "eventType");
-            assertNotNull(key, "key");
-            assertNotNull(target, "target");
+            //assertNotNull(eventType, "eventType");
+            //assertNotNull(key, "key");
+            //assertNotNull(target, "target");
 
             this.eventType = eventType;
             this.key = key;

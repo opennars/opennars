@@ -14,12 +14,18 @@
  */
 package nars.util.meter.track;
 
-import java.util.logging.Logger;
 import nars.util.meter.Tracker;
+import nars.util.meter.data.DataSet;
+import nars.util.meter.event.SynchronousEventManager;
+import nars.util.meter.key.DefaultStatsKey;
 import nars.util.meter.key.StatsKey;
+import nars.util.meter.recorder.DistributionDataRecorder;
+import nars.util.meter.recorder.RangeDataRecorder;
+import nars.util.meter.session.ConcurrentSession;
 import nars.util.meter.session.StatsSession;
-import nars.util.meter.util.Misc;
-import static nars.util.meter.util.Util.assertNotNull;
+import nars.util.meter.util.FastPutsArrayMap;
+import nars.util.meter.util.Range;
+import nars.util.meter.util.RangeList;
 
 /**
  * A convenience base implementation of {@link Tracker}.
@@ -28,17 +34,29 @@ import static nars.util.meter.util.Util.assertNotNull;
  */
 public abstract class AbstractTracker implements Tracker {
 
-    private static final Logger logger = Logger.getLogger(AbstractTracker.class.toString());
+    //private static final Logger logger = Logger.getLogger(AbstractTracker.class.toString());
 
     protected final StatsSession session;
 
     protected double value = 0;
 
     public AbstractTracker(final StatsSession session) {
-        assertNotNull(session, "session");
+        //assertNotNull(session, "session");
         this.session = session;
     }
 
+    public AbstractTracker(String id) {
+        this(new ConcurrentSession(
+                new DefaultStatsKey("", id, new FastPutsArrayMap<String,Object>()), 
+                new SynchronousEventManager(), 
+                new DistributionDataRecorder()));
+    }
+    
+    public AbstractTracker(String id, Range... ranges) {
+        this(new ConcurrentSession(new DefaultStatsKey("", id, new FastPutsArrayMap<>()), new SynchronousEventManager(), new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
+    }
+    
+    
     @Override
     public double getValue() {
         return value;
@@ -73,12 +91,20 @@ public abstract class AbstractTracker implements Tracker {
         } catch (Exception e) {
             buf.append(e.toString());
 
-            Misc.logHandledException(logger, e, "Caught Exception in toString()");
-            Misc.handleUncaughtException(getKey(), e);
+            //Misc.logHandledException(logger, e, "Caught Exception in toString()");
+            //Misc.handleUncaughtException(getKey(), e);
         }
         buf.append(']');
 
         return buf.toString();
     }
 
+    public DataSet get() {
+        return getSession().collectData();
+    }
+    
+    public DataSet getReset() {
+        return getSession().drainData();
+    }
+    
 }

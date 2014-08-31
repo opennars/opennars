@@ -15,6 +15,7 @@
 package nars.util.meter.track;
 
 import nars.util.meter.session.StatsSession;
+import nars.util.meter.util.Range;
 
 /**
  * A common base class for time duration trackers. The class chooses a
@@ -27,24 +28,17 @@ import nars.util.meter.session.StatsSession;
  */
 public abstract class TimeDurationTracker extends AbstractSpanTracker {
 
-
-    static {
-
-        try {
-            Class.forName("sun.misc.Perf");
-
-            /* Note: When trackerFactory is assigned to PerfTimeDurationTracker.FACTORY 
-             * on the line below, for some reason it returns null when running unit tests 
-             * from maven. How that is even possible, I have no idea.
-             */
-
-        } catch (ClassNotFoundException ex) {
-            // Ignore
-
-        }
-    }
-
     public TimeDurationTracker(final StatsSession session) {
         super(session);
     }
+    
+    public TimeDurationTracker(final String id) {
+        super(id);
+    }
+    
+    public TimeDurationTracker(final String id, Range... ranges) {
+        super(id, ranges);
+    }
+
+    
 }

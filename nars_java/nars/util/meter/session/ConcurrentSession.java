@@ -22,11 +22,10 @@ import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.event.EventType;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.session.recorder.DataRecorder;
-import nars.util.meter.session.recorder.DataRecorders;
+import nars.util.meter.recorder.DataRecorder;
+import nars.util.meter.recorder.DataRecorders;
 import nars.util.meter.util.AtomicDouble;
 import nars.util.meter.util.Misc;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  * <p>An implementation of {@link StatsSession} that reads and writes data fields atomically
@@ -258,7 +257,7 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     @Override
     public void restore(final DataSet dataSet) {
-        assertNotNull(dataSet, "dataSet");
+        //assertNotNull(dataSet, "dataSet");
 
         clearState();
         restoreState(dataSet);

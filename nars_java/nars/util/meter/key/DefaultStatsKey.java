@@ -16,7 +16,6 @@ package nars.util.meter.key;
 
 import java.util.Collections;
 import java.util.Map;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  * A {@link StatsKey} implementation that stores attributes in a {@link Map}. Do not
@@ -43,7 +42,7 @@ public class DefaultStatsKey extends AbstractStatsKey {
                            final String name,
                            final Map<String,Object> attributes) {
         super(namespace, name);
-        assertNotNull(attributes, "attributes");
+        //assertNotNull(attributes, "attributes");
 
         this.attributes = attributes;
 

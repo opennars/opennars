@@ -12,24 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.session.recorder;
+package nars.util.meter.recorder;
 
+import java.io.Serializable;
 
 /**
+ * Creates DataRecorder instances.
+ *
  * @author The Stajistics Project
  */
-public class DefaultDataRecorderFactory implements DataRecorderFactory {
+public interface DataRecorderFactory extends Serializable {
 
-    private static final DefaultDataRecorderFactory INSTANCE = new DefaultDataRecorderFactory();
+    /**
+     * Create an array of {@link DataRecorder} instances.
+     * @return An array of {@link DataRecorder} instances, never <tt>null</tt>,
+     *         but possibly empty.
+     */
+    DataRecorder[] createDataRecorders();
 
-    private DefaultDataRecorderFactory() {}
-
-    public static DefaultDataRecorderFactory getInstance() {
-        return INSTANCE;
-    }
-
-    @Override
-    public DataRecorder[] createDataRecorders() {
-        return new DataRecorder[] { new DistributionDataRecorder() };
-    }
 }

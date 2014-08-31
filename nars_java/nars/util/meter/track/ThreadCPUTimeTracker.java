@@ -18,15 +18,20 @@ import nars.util.meter.Tracker;
 import nars.util.meter.session.StatsSession;
 
 /**
- * 
- * 
- *
+ * CPU Time, in milliseconds
  * @author The Stajistics Project
  */
 public class ThreadCPUTimeTracker extends AbstractThreadInfoSpanTracker {
 
     private long startCPUTime; // nanos
 
+    
+    public ThreadCPUTimeTracker(final String id) {
+        super(id);
+
+        ensureCPUTimeMonitoringEnabled();
+    }
+    
     public ThreadCPUTimeTracker(final StatsSession session) {
         super(session);
 
@@ -51,6 +56,7 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoSpanTracker {
 
             session.update(this, now);
         }
+               
     }
 
     @Override

@@ -34,6 +34,23 @@ import sun.misc.Perf;
 @SuppressWarnings("restriction")
 public class PerfTimeDurationTracker extends TimeDurationTracker {
 
+
+    static {
+
+        try {
+            Class.forName("sun.misc.Perf");
+
+            /* Note: When trackerFactory is assigned to PerfTimeDurationTracker.FACTORY 
+             * on the line below, for some reason it returns null when running unit tests 
+             * from maven. How that is even possible, I have no idea.
+             */
+
+        } catch (ClassNotFoundException ex) {
+            // Ignore
+
+        }
+    }
+    
     private static final Perf PERF = Perf.getPerf();
 
     private static final double CONVERSION = 1e3 / PERF.highResFrequency();

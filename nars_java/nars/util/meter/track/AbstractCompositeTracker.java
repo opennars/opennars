@@ -14,27 +14,20 @@
  */
 package nars.util.meter.track;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import nars.util.meter.Tracker;
-import nars.util.meter.key.StatsKey;
-import nars.util.meter.session.StatsSession;
-import static nars.util.meter.util.Util.assertNotEmpty;
 
 /**
  * A convenience base implementation of {@link CompositeTracker}.
  *
  * @author The Stajistic Project
  */
-public abstract class AbstractCompositeTracker<T extends Tracker>
-    implements CompositeTracker<T>, Tracker {
+public abstract class AbstractCompositeTracker<T extends Tracker> {
 
-    protected final T[] trackers;
+    public final T[] trackers;
 
     public AbstractCompositeTracker(final T... trackers) {
-        assertNotEmpty(trackers, "trackers");
+        //assertNotEmpty(trackers, "trackers");
         this.trackers = trackers;
     }
 
@@ -43,33 +36,16 @@ public abstract class AbstractCompositeTracker<T extends Tracker>
         this(trackers.toArray((T[])new Tracker[trackers.size()]));
     }
 
-    @Override
-    public Collection<T> composites() {
-        return Collections.unmodifiableCollection(Arrays.asList(trackers));
-    }
+//    public Collection<? extends T> composites() {
+//        return Collections.unmodifiableCollection(Arrays.asList(trackers));
+//    }
 
-    @Override
-    public StatsKey getKey() {
-        return trackers[0].getKey();
-    }
 
-    @Override
-    public StatsSession getSession() {
-        return trackers[0].getSession();
-    }
-
-    @Override
-    public double getValue() {
-        return trackers[0].getValue();
-    }
-
-    @Override
-    public Tracker reset() {
+    public AbstractCompositeTracker reset() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
             trackers[i].reset();
         }
-
         return this;
     }
 
@@ -94,4 +70,15 @@ public abstract class AbstractCompositeTracker<T extends Tracker>
 
         return buf.toString();
     }
+        
+    //TODO create aggregation methods
+    /*
+    public DataSet get() {
+        return getSession().collectData();
+    }
+    public DataSet getReset() {
+        return getSession().drainData();
+    }
+    */
+    
 }

@@ -120,4 +120,10 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return dataMap.toString();
+    }
+
+    
 }
