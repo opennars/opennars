@@ -7,8 +7,6 @@ import nars.operator.DefaultOperators;
 import nars.operator.ExampleOperators;
 import nars.operator.Operator;
 import nars.storage.AbstractBag;
-import nars.storage.Memory;
-import nars.storage.MemoryModel;
 
 /**
  * NAR design parameters which define a NAR at initialization.  These do not change at runtime.
@@ -22,7 +20,7 @@ abstract public class NARBuilder extends Parameters  {
     /** initial runtime parameters */
     abstract public Param newParam();
     abstract public AbstractBag<Task> newNovelTaskBag(Param p);
-    abstract public MemoryModel newMemoryModel(Param p, ConceptBuilder c);
+    abstract public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c);
     
     public NAR build() {
         Param p = newParam();

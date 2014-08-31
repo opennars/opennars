@@ -22,7 +22,7 @@ import nars.prolog.SolveInfo;
 import nars.prolog.Struct;
 import nars.prolog.Theory;
 import nars.prolog.Var;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  *

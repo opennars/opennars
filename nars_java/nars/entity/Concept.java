@@ -41,7 +41,7 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
-import nars.storage.Memory;
+import nars.core.Memory;
 import nars.storage.NullBagObserver;
 
 

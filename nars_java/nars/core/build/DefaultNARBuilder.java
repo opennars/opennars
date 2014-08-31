@@ -13,8 +13,8 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
-import nars.storage.Memory;
-import nars.storage.MemoryModel;
+import nars.core.Memory;
+import nars.core.ConceptProcessor;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -51,7 +51,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     }
     
     @Override
-    public MemoryModel newMemoryModel(Param p, ConceptBuilder c) {
+    public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c) {
         return new SequentialMemoryCycle(newConceptBag(p), c);
     }
 

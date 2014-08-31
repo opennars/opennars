@@ -23,7 +23,7 @@ package nars.language;
 import java.util.Collection;
 import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * A compound term whose intension is the intersection of the extensions of its term

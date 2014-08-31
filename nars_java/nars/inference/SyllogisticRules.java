@@ -38,7 +38,7 @@ import static nars.language.Terms.*;
 import static nars.inference.TemporalRules.*;
 import nars.language.Terms;
 import nars.language.Variables;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 
 /**

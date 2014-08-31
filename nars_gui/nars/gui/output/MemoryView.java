@@ -25,7 +25,7 @@ import nars.entity.TruthValue;
 import nars.gui.NSlider;
 import nars.gui.Window;
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 import nars.util.NARGraph;
 import nars.util.NARGraph.ExcludeBelowPriority;
 import processing.core.PApplet;

@@ -1,7 +1,7 @@
 package nars.entity;
 
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  *

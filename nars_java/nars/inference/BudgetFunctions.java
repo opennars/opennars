@@ -32,7 +32,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Budget functions for resources allocation

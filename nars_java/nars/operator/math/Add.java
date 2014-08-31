@@ -18,7 +18,7 @@ package nars.operator.math;
 
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Count the number of elements in a set

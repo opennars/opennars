@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /** 
  * A disjunction of Statements.

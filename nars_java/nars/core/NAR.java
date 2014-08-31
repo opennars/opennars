@@ -13,7 +13,6 @@ import nars.io.TextInput;
 import nars.io.TextPerception;
 import nars.io.buffer.FIFO;
 import nars.language.Term;
-import nars.storage.Memory;
 
 
 /**

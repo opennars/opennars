@@ -9,7 +9,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 
 public class ContinuousBagNARBuilder extends DefaultNARBuilder {

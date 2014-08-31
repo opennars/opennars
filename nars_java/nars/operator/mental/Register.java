@@ -22,7 +22,7 @@ import nars.entity.*;
 import nars.language.*;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Register a new operator when the system is running

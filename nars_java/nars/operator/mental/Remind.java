@@ -24,7 +24,7 @@ import nars.entity.Task;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Operator that activates a concept

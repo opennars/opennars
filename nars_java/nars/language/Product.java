@@ -22,7 +22,7 @@
 package nars.language;
 
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * A Product is a sequence of 1 or more terms.

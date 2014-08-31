@@ -8,8 +8,8 @@ import nars.entity.ConceptBuilder;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.storage.Memory;
-import nars.storage.MemoryModel;
+import nars.core.Memory;
+import nars.core.ConceptProcessor;
 import nars.util.ContinuousBag;
 
 /**
@@ -44,7 +44,7 @@ public class RealTimeNARBuilder extends DefaultNARBuilder {
     }
 
     @Override
-    public MemoryModel newMemoryModel(Param p, ConceptBuilder c) {
+    public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c) {
         return new RealTimeFloodCycle();
     }
     

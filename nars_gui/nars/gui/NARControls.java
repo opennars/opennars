@@ -61,7 +61,7 @@ import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.storage.Memory;
+import nars.core.Memory;
 import nars.util.NARState;
 
 

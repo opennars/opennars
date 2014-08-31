@@ -22,7 +22,7 @@ package nars.language;
 
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * An intension image.

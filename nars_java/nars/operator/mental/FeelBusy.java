@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import nars.entity.*;
 import nars.language.*;
 import nars.operator.Operation;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Feeling busy value

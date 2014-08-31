@@ -25,7 +25,7 @@ import nars.language.*;
 import nars.io.Symbols;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Operator that give a CompoundTerm an atomic name

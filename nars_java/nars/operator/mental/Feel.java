@@ -23,7 +23,7 @@ import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.*;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Feeling common operations

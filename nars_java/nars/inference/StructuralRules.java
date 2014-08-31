@@ -45,7 +45,7 @@ import nars.language.SetInt;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Single-premise inference rules involving compound terms. Input are one
