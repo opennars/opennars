@@ -18,7 +18,9 @@
 package nars.prolog;
 
 import alice.util.ReadOnlyLinkedList;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Customized HashMap for storing clauses in the TheoryManager
@@ -30,21 +32,21 @@ import java.util.*;
 @SuppressWarnings("serial")
 class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterable<ClauseInfo> {
 
-	void addFirst(StatsKey key, ClauseInfo d) {
+	void addFirst(String key, ClauseInfo d) {
 		FamilyClausesList family = get(key);
 		if (family == null)
 			put(key, family = new FamilyClausesList());
 		family.addFirst(d);
 	}
 
-	void addLast(StatsKey key, ClauseInfo d) {
+	void addLast(String key, ClauseInfo d) {
 		FamilyClausesList family = get(key);
 		if (family == null)
 			put(key, family = new FamilyClausesList());
 		family.addLast(d);
 	}
 
-	FamilyClausesList abolish(StatsKey key) 
+	FamilyClausesList abolish(String key) 
 	{
 		return (FamilyClausesList) remove(key);
 	}
@@ -70,7 +72,7 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 	 * @param key   Goal's Predicate Indicator
 	 * @return      The family clauses
 	 */
-	List<ClauseInfo> getPredicates(StatsKey key){
+	List<ClauseInfo> getPredicates(String key){
 		FamilyClausesList family = (FamilyClausesList) get(key);
 		if(family == null){
 			return new ReadOnlyLinkedList<ClauseInfo>();

@@ -76,7 +76,7 @@ public class WordNet {
      * 
      * @return A File object
      */
-    public File getWnFile(StatsKey key) {
+    public File getWnFile(String key) {
         File theFile = null;
         try {
             String pattern = null;
@@ -221,7 +221,7 @@ public class WordNet {
         }
     }
 
-    private final Hashtable nounSynsetHash = new Hashtable();   // Words in root form are StatsKey keys, 
+    private final Hashtable nounSynsetHash = new Hashtable();   // Words in root form are String keys, 
     private final Hashtable verbSynsetHash = new Hashtable();   // String values are synset lists.    
     private final Hashtable adjectiveSynsetHash = new Hashtable();
     private final Hashtable adverbSynsetHash = new Hashtable();
@@ -460,7 +460,7 @@ public class WordNet {
                 while (m.lookingAt()) { 
                     String frameNum = m.group(1);
                     String wordNum = m.group(2);
-                    StatsKey key;
+                    String key;
                     if (wordNum.equals("00")) 
                         key = synset.substring(1);                    
                     else {
@@ -887,7 +887,7 @@ public class WordNet {
             FileReader r = new FileReader( wfFile );
             LineNumberReader lr = new LineNumberReader(r);
             Matcher m;
-            StatsKey key;
+            String key;
             String values;
             String[] words;
             HashMap frequencies;
@@ -1006,7 +1006,7 @@ public class WordNet {
             String synset;
             String sensenum;
             String posString;
-            StatsKey key;
+            String key;
             ArrayList al;
             String line;
             while ((line = lr.readLine()) != null) {

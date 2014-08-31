@@ -105,7 +105,7 @@ public class DefaultInputHandler extends InputHandler
      * @param keyBinding The key binding
      * @param action The action
      */
-    public void addKeyBinding(StatsKey keyBinding, ActionListener action) {
+    public void addKeyBinding(String keyBinding, ActionListener action) {
         
         Hashtable<KeyStroke,Object> current = bindings;
 
@@ -138,7 +138,7 @@ public class DefaultInputHandler extends InputHandler
      * implemented.
      * @param keyBinding The key binding
      */
-    public void removeKeyBinding(StatsKey keyBinding)
+    public void removeKeyBinding(String keyBinding)
     {
         throw new InternalError("Not yet implemented");
     }
@@ -302,7 +302,7 @@ public class DefaultInputHandler extends InputHandler
      * the <code>VK_</code> prefix.
      * @param keyStroke A string description of the key stroke
      */
-    public static KeyStroke parseKeyStroke(StatsKey keyStroke)
+    public static KeyStroke parseKeyStroke(String keyStroke)
     {
         if(keyStroke == null)
             return null;
@@ -330,7 +330,7 @@ public class DefaultInputHandler extends InputHandler
                 }
             }
         }
-        StatsKey key = keyStroke.substring(index + 1);
+        String key = keyStroke.substring(index + 1);
         if(key.length() == 1)
         {
             char ch = Character.toUpperCase(key.charAt(0));

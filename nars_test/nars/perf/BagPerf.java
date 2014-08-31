@@ -23,9 +23,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
-import nars.storage.DefaultBag;
 import nars.storage.AbstractBag;
 import nars.storage.ContinuousBag;
+import nars.storage.DefaultBag;
 
 /**
  *
@@ -93,7 +93,7 @@ public class BagPerf {
     
     /** Empty Item implementation useful for testing */
     public static class NullItem extends Item {
-        private final StatsKey key;
+        private final String key;
     
         public NullItem() {
             this((float)Math.random());
