@@ -3,7 +3,7 @@ package nars.test.util;
 import nars.perf.BagPerf.NullItem;
 import nars.storage.Bag;
 import nars.storage.DefaultBag;
-import nars.util.ContinuousBag;
+import nars.storage.ContinuousBag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;

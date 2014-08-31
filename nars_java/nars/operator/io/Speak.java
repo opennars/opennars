@@ -1,9 +1,9 @@
-package nars.core.task;
+package nars.operator.io;
 
 import nars.entity.AbstractTask;
 
 /**
- *
+ * TODO wrap as operator
  * @author me
  */
 public class Speak extends AbstractTask {

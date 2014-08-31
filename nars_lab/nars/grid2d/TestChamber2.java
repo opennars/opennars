@@ -17,7 +17,7 @@ import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.grid2d.operator.Say;
 import nars.gui.NARSwing;
-import nars.util.ContinuousBagNARBuilder;
+import nars.core.build.ContinuousBagNARBuilder;
 import processing.core.PVector;
 
 public class TestChamber2 extends TestChamber {

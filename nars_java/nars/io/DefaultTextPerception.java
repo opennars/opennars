@@ -1,6 +1,6 @@
 package nars.io;
 
-import nars.core.task.PauseInput;
+import nars.operator.io.PauseInput;
 import nars.entity.Task;
 import nars.core.Memory;
 

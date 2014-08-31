@@ -6,7 +6,7 @@ import nars.core.NAR;
 import nars.core.Parameters;
 import nars.test.core.NALTest;
 import static nars.perf.NALTestPerf.perfNAL;
-import nars.util.ContinuousBagNARBuilder;
+import nars.core.build.ContinuousBagNARBuilder;
 
 /**
  * Runs NALTestPerf continuously, for profiling

@@ -1,4 +1,4 @@
-package nars.util;
+package nars.core.build;
 
 import nars.core.build.DefaultNARBuilder;
 import nars.core.Param;
@@ -10,6 +10,7 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.core.Memory;
+import nars.storage.ContinuousBag;
 
 
 public class ContinuousBagNARBuilder extends DefaultNARBuilder {

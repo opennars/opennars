@@ -20,15 +20,14 @@
  */
 package nars.core;
 
+import nars.core.monitor.EmotionState;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Random;
-import nars.core.Param;
-import nars.core.Parameters;
-import nars.core.task.PauseInput;
+import nars.operator.io.PauseInput;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -255,67 +254,10 @@ public class Memory implements Output, Serializable {
 
     
     
+
     
-    /*abstract public static class Emotion {
-        
-        private float happy, busy;
-        
-        abstract public void reset();
-        //get..set for each
-        
-    }*/
+    public final EmotionState emotion = new EmotionState();
     
-    /* ---------- global variables used to record emotional values ----------\ */
-
-    /** emotional value; self-felt internal mental states */
-    public static class Emotion implements Serializable {
-        
-        /** average desire-value */
-        private float happy;
-
-        /** average priority */
-        private float busy;
-
-        public Emotion() {       }
-        
-        public Emotion(float happy, float busy) {
-            set(happy, busy);
-        }
-        
-        public void set(float happy, float busy) {
-            this.happy = happy;
-            this.busy = busy;
-        }
-        
-      
-        public float happy() {
-           return happy;
-        }
-
-        public float busy() {
-            return busy;
-        }
-
-        public void adjustHappy(float newValue, float weight) {
-//        float oldV = happyValue;
-            happy += newValue * weight;
-            happy /= 1.0f + weight;
-//        if (Math.abs(oldV - happyValue) > 0.1) {
-//            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
-        }
-        public void adjustBusy(float newValue, float weight) {
-//        float oldV = busyValue;
-            busy += newValue * weight;
-            busy /= (1.0f + weight);
-//        if (Math.abs(oldV - busyValue) > 0.1) {
-//            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busyValue*10.0) + "\n");
-        }
-        
-    }
-    
-    public final Emotion emotion = new Emotion();
-    
-    /* ---------- global variables used to record emotional values ----------/ */
     
     
     
