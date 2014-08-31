@@ -577,7 +577,7 @@ public class Memory implements Output, Serializable {
         TruthValue truth = new TruthValue(1f,0.9999f);
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
-        Task task = new Task(sentence, currentTask.budget);
+        Task task = new Task(sentence, currentTask.budget, operation.getTask());
         addNewTask(task, "Executed");
     }
 
@@ -700,7 +700,7 @@ public class Memory implements Output, Serializable {
                     stamp.setOccurrenceTime(this.getTime());
                     Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
                     BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
-                    Task newTask = new Task(j, budg,task,null);
+                    Task newTask = new Task(j, budg,task);
                     if (getRecorder().isActive()) {
                         getRecorder().append("Named: " + j.toString());
                     }
@@ -727,7 +727,7 @@ public class Memory implements Output, Serializable {
                         Stamp stampi = (Stamp) task.sentence.stamp.clone();
                         Sentence j = new Sentence(new_term,Symbols.JUDGMENT_MARK, truth, stampi);
                         BudgetValue budg=(BudgetValue) task.budget.clone();
-                        Task newTask = new Task(j, budg,task,null);
+                        Task newTask = new Task(j, budg,task);
                         if (getRecorder().isActive()) {
                             this.recorder.append("Counted: " + j.toString());
                         }
@@ -843,12 +843,12 @@ public class Memory implements Output, Serializable {
         }
         
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
+        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
         derivedTask(newTask, false, true, null, null);
     }
 
     public void singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), null);
+        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
         derivedTask(newTask, false, true, null, null);
     }
 
@@ -1223,6 +1223,11 @@ public class Memory implements Output, Serializable {
 
     /** convenience method for forming a new Task from a term */
     public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
+        return newTask(content, sentenceType, freq, conf, priority, durability, null);
+    }
+    
+    /** convenience method for forming a new Task from a term */
+    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask) {
         
         TruthValue truth = new TruthValue(freq, conf);
         Sentence sentence = new Sentence(
@@ -1231,7 +1236,7 @@ public class Memory implements Output, Serializable {
                 truth, 
                 new Stamp(this));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
-        Task task = new Task(sentence, budget);        
+        Task task = new Task(sentence, budget, parentTask);
         return task;
     }
     
@@ -1261,7 +1266,7 @@ public class Memory implements Output, Serializable {
                 task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                 task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                 task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
-        Task newTask = new Task(j, (BudgetValue) newbudget,task,null);
+        Task newTask = new Task(j, (BudgetValue) newbudget,task);
         if (getRecorder().isActive()) {
             recorder.append("Remembered: " + j.toString());
         }

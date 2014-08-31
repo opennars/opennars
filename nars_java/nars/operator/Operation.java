@@ -20,10 +20,10 @@
  */
 package nars.operator;
 
+import nars.entity.Task;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
-import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
@@ -33,6 +33,7 @@ import nars.storage.Memory;
  * An operation is interpreted as an Inheritance relation.
  */
 public class Operation extends Inheritance {
+    private Task task;
 
     /**
      * Constructor with partial values, called by make
@@ -139,5 +140,14 @@ public class Operation extends Inheritance {
     public Term[] getArguments() {
         return ((CompoundTerm) getSubject()).term;
     }*/
+
+    /** stores the currently executed task, which can be accessed by Operator execution */
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public Task getTask() {
+        return task;
+    }
     
 }

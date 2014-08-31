@@ -8,8 +8,6 @@ import nars.gui.NARSwing;
  *
  * @author me
  */
-
-
 public class NARPrologSwing extends NARSwing {
 
     public NARPrologSwing(NAR n) {

@@ -36,7 +36,6 @@ import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -319,6 +318,7 @@ public class LocalRules {
         if(!(opi instanceof Operator)) {
             return;
         }
+        op.setTask(task);
         Operator oper = (Operator) opi;
         if((op.getSubject() instanceof Product)) {
             Product args=(Product) op.getSubject();

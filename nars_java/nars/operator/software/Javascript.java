@@ -73,7 +73,7 @@ public class Javascript extends Operator {
         memory.output(Task.class, resultInheritance);
         
         ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
+        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()));
                 
         return results;
     }

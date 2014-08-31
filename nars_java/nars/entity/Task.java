@@ -55,7 +55,11 @@ public class Task extends AbstractTask {
         this(s, b, null, null);
     }
  
+    public Task(final Sentence s, final BudgetValue b, final Task parentTask) {
+        this(s, b, parentTask, null);        
+    }
 
+    
     /**
      * Constructor for a derived task
      *
@@ -206,12 +210,15 @@ public class Task extends AbstractTask {
         if (getParentTask() == null) {
             return null;
         }
-        Task t, p=this;
+        Task p=getParentTask();
         do {            
-            t = p;
-            p = t.getParentTask();            
+            Task n = p.getParentTask();
+            if (n!=null)
+                p = n;
+            else
+                break;
         } while (p!=null);
-        return t;
+        return p;
     }
 
     
