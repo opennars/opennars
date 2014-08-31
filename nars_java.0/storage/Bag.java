@@ -143,7 +143,7 @@ public abstract class Bag<Type extends Item> {
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    public Type get(String key) {
+    public Type get(StatsKey key) {
         return nameTable.get(key);
     }
 
@@ -214,7 +214,7 @@ public abstract class Bag<Type extends Item> {
      * @param key The given key
      * @return The Item with the key
      */
-    public Type pickOut(String key) {
+    public Type pickOut(StatsKey key) {
         Type picked = nameTable.get(key);
         if (picked != null) {
             outOfBase(picked);

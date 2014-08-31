@@ -69,7 +69,7 @@ public class TheoryManager implements Serializable {
 	 */
 	public synchronized void assertA(Struct clause, boolean dyn, String libName, boolean backtrackable) {
 		ClauseInfo d = new ClauseInfo(toClause(clause), libName);
-		String key = d.getHead().getPredicateIndicator();
+		StatsKey key = d.getHead().getPredicateIndicator();
 		if (dyn) {
 			dynamicDBase.addFirst(key, d);
 			if (staticDBase.containsKey(key)) {
@@ -85,7 +85,7 @@ public class TheoryManager implements Serializable {
 	 */
 	public synchronized void assertZ(Struct clause, boolean dyn, String libName, boolean backtrackable) {
 		ClauseInfo d = new ClauseInfo(toClause(clause), libName);
-		String key = d.getHead().getPredicateIndicator();
+		StatsKey key = d.getHead().getPredicateIndicator();
 		if (dyn) {
 			dynamicDBase.addLast(key, d);
 			if (staticDBase.containsKey(key)) {
@@ -158,7 +158,7 @@ public class TheoryManager implements Serializable {
 		
 		String arg0 = Tools.removeApices(pi.getArg(0).toString());
 		String arg1 = Tools.removeApices(pi.getArg(1).toString());
-		String key =  arg0 + "/" + arg1;
+		StatsKey key =  arg0 + "/" + arg1;
 		List<ClauseInfo> abolished = dynamicDBase.abolish(key); /* Reviewed by Paolo Contessi: LinkedList -> List */
 		if (abolished != null)
 			engine.spy("ABOLISHED: " + key + " number of clauses=" + abolished.size() + "\n");
@@ -174,7 +174,7 @@ public class TheoryManager implements Serializable {
 	 */
 	public synchronized List<ClauseInfo> find(Term headt) {
 		if (headt instanceof Struct) {
-			//String key = ((Struct) headt).getPredicateIndicator();
+			//StatsKey key = ((Struct) headt).getPredicateIndicator();
 			List<ClauseInfo> list = dynamicDBase.getPredicates(headt);
 			if (list.isEmpty())
 				list = staticDBase.getPredicates(headt);

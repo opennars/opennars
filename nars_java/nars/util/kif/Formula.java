@@ -1828,7 +1828,7 @@ public class Formula implements Comparable {
         ArrayList result = null;
         try {
             if (SORTAL_TYPE_CACHE != null) {
-                String key = "gtl" + pred + kb.name;
+                StatsKey key = "gtl" + pred + kb.name;
                 result = ((ArrayList) (SORTAL_TYPE_CACHE.get(key)));
                 if (result != null) {
                     return result;
@@ -1955,7 +1955,7 @@ public class Formula implements Comparable {
         String result = null;
         try {
             boolean cacheResult = false;
-            String key = null;
+            StatsKey key = null;
             if (SORTAL_TYPE_CACHE != null) {
                 key = "ft" + numarg + pred + kb.name;
                 result = ((String) (SORTAL_TYPE_CACHE.get(key)));

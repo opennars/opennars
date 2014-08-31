@@ -98,7 +98,7 @@ public abstract class Bag<Type extends Item> {
         return nameTable.containsValue(it);
     }
 
-    public Type get(String key) {
+    public Type get(StatsKey key) {
         return nameTable.get(key);
     }
     
@@ -149,7 +149,7 @@ public abstract class Bag<Type extends Item> {
     }
     
     // pick an item by key, then remove it from the bag
-    public Type pickOut(String key) {
+    public Type pickOut(StatsKey key) {
         Type picked = nameTable.get(key);
         if (picked != null) {
             outOfBase(picked);

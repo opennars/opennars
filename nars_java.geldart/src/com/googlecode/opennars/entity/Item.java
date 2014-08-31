@@ -32,7 +32,7 @@ public abstract class Item extends BudgetValue implements Cloneable {
 	/**
      * The key of the Item, unique in a Bag
      */
-    protected String key;   // uniquely define an Item in a bag
+    protected StatsKey key;   // uniquely define an Item in a bag
     
     protected Item(Memory memory) {
     	super(memory);

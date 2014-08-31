@@ -385,7 +385,7 @@ public class KB {
      * 
      * @return The int value 1 if a new entry is added, else 0.
      */
-    private int addRelationCacheEntry(RelationCache cache, String keyTerm, String valueTerm) {
+    private int addRelationCacheEntry(RelationCache cache, StatsKey keyTerm, String valueTerm) {
         int count = 0;
         if ((cache != null) && (keyTerm != null) && (valueTerm != null)) {
             Set valueSet = (Set) cache.get(keyTerm);
@@ -455,7 +455,7 @@ public class KB {
                 Set c1Keys = c1.keySet();
                 Iterator it1;
                 Iterator it2;
-                String keyTerm;
+                StatsKey keyTerm;
                 String valTerm;
                 Set valSet;
                 Set valSet2;
@@ -1391,7 +1391,7 @@ public class KB {
 
             Set keys = kif.formulas.keySet();
             for (Object key1 : keys) {
-                String key = (String) key1;
+                StatsKey key = (String) key1;
                 ArrayList newFormulas = new ArrayList((Collection) kif.formulas.get(key));
                 if (formulas.containsKey(key)) {
                     ArrayList oldFormulas = (ArrayList) formulas.get(key);
@@ -1897,7 +1897,7 @@ public class KB {
             Iterator ite = col.iterator();
             Formula f;
             String arg1;
-            String key;
+            StatsKey key;
             String format;
             while (ite.hasNext()) {
                 f = (Formula) ite.next();
@@ -2064,7 +2064,7 @@ public class KB {
             Iterator it;
             Iterator it2;
             KIF file = new KIF();
-            String key;
+            StatsKey key;
             String internedFormula;
             ArrayList list;
             ArrayList newList;
@@ -2246,7 +2246,7 @@ public class KB {
 //        Iterator it;
 //        HashSet formulaSet = new  HashSet();
 //        ArrayList formulaArray;
-//        String key;
+//        StatsKey key;
 //        ArrayList list;
 //        Formula f;
 //        String s;
@@ -2297,7 +2297,7 @@ public class KB {
      *
      * @return A compiled regular expression Pattern instance.
      */
-    public static Pattern getCompiledPattern(String key) {
+    public static Pattern getCompiledPattern(StatsKey key) {
         if (Formula.isNonEmptyString(key) && (REGEX_PATTERNS != null)) {
             ArrayList al = (ArrayList) REGEX_PATTERNS.get(key);
             if (al != null) {
@@ -2317,7 +2317,7 @@ public class KB {
      *
      * @return An int that indexes a binding group.
      */
-    public static int getPatternGroupIndex(String key) {
+    public static int getPatternGroupIndex(StatsKey key) {
         if (Formula.isNonEmptyString(key) && (REGEX_PATTERNS != null)) {
             ArrayList al = (ArrayList) REGEX_PATTERNS.get(key);
             if (al != null) {

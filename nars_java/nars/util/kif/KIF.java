@@ -146,7 +146,7 @@ public class KIF {
                          boolean inConsequent,
                          int argumentNum,
                          int parenLevel,
-                         String key) {
+                         StatsKey key) {
 
         System.out.print (inRule);
         System.out.print ("\t");
@@ -184,7 +184,7 @@ public class KIF {
                            + ((mode == RELAXED_PARSE_MODE) ? "RELAXED_PARSE_MODE" : "NORMAL_PARSE_MODE"));
         */
         
-        String key = null;
+        StatsKey key = null;
         ArrayList keySet;
         StringBuilder expression = new StringBuilder(40);
         StreamTokenizer_s st;
@@ -439,7 +439,7 @@ public class KIF {
                               int parenLevel) {
 
         if (sval == null) { sval="null";}
-        String key = "";
+        StatsKey key = "";
         if (inAntecedent) {
             key = key.concat("ant-");
             key = key.concat(sval);

@@ -215,7 +215,7 @@ public abstract class Library implements Serializable, IPrimitives {
                             }
                             if (valid) {
                                 String rawName = name.substring(0,index);
-                                String key = rawName + "/" + arity;
+                                StatsKey key = rawName + "/" + arity;
                                 PrimitiveInfo prim = new PrimitiveInfo(type, key, this, mlist[i], arity);
                                 mapPrimitives.get(type).add(prim);
                                 //
