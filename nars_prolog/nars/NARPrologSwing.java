@@ -18,12 +18,6 @@ public class NARPrologSwing extends NARSwing {
         NAR pn = new DefaultNARBuilder().build();
         PrologContext prologContext = new PrologContext(pn);
         
-        //nars.PrologQueryOperator prologQueryOperator = new PrologQueryOperator(prologContext);
-        //nars.PrologTheoryOperator prologTheoryOperator = new PrologTheoryOperator(prologContext);
-        
-        //pn.memory.addOperator(prologQueryOperator);
-        //pn.memory.addOperator(prologTheoryOperator);
-        
         new NARPrologSwing(pn);
         pn.addInput("'Prolog enabled");
         pn.step(1);
