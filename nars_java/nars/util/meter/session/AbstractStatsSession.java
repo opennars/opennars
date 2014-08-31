@@ -49,7 +49,7 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     protected final StatsKey key;
-    protected final EventManager eventManager;
+    protected EventManager eventManager;
 
     protected final DataRecorder[] dataRecorders;
 
@@ -85,8 +85,15 @@ public abstract class AbstractStatsSession implements StatsSession {
 
     protected abstract void setMax(double max);
 
-    protected abstract void setSum(double sum);
+    protected abstract void setSum(double sum);       
 
+    
+    @Override
+    public void setEventManager(EventManager e) {
+        eventManager = e;
+    }
+
+    
     @Override
     public StatsKey getKey() {
         return key;
@@ -131,6 +138,9 @@ public abstract class AbstractStatsSession implements StatsSession {
         if (name == DataSet.Field.SUM) {
             return getSum();
         }
+        /*if (name == DataSet.Field.STDEV) {
+            return getStdev();
+        }*/
 
         // Check DataRecorder fields
 
@@ -189,13 +199,13 @@ public abstract class AbstractStatsSession implements StatsSession {
         dataSet.setField(DataSet.Field.MAX, getMax());
         dataSet.setField(DataSet.Field.SUM, getSum());
 
-        for (DataRecorder dataRecorder : dataRecorders) {
-            try {
+        for (final DataRecorder dataRecorder : dataRecorders) {
+            //try {
                 dataRecorder.collectData(this, dataSet);
-            } catch (Exception e) {
+            /*} catch (Exception e) {
                 Misc.logHandledException(logger, e, "Failed to collectData() from {}", dataRecorder);
                 Misc.handleUncaughtException(getKey(), e);
-            }
+            }*/
         }
     }
 
@@ -236,6 +246,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                     setMin(dataSet.getField(DataSet.Field.MIN, Double.POSITIVE_INFINITY));
                     setMax(dataSet.getField(DataSet.Field.MAX, Double.NEGATIVE_INFINITY));
                     setSum(dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM));
+
 
                     // Restore DataRecorders
                     for (DataRecorder dataRecorder : dataRecorders) {
@@ -298,8 +309,6 @@ public abstract class AbstractStatsSession implements StatsSession {
         buf.append(DECIMAL_FORMAT.format(getMax()));
         buf.append(",sum=");
         buf.append(DECIMAL_FORMAT.format(getSum()));
-        /*buf.append(",stdev=");
-        buf.append(DECIMAL_FORMAT.format(getStdev()));*/
         buf.append(']');
 
         return buf.toString();

@@ -39,6 +39,7 @@ public interface DataSet extends DataContainer {
         public static final String MIN = "min";
         public static final String MAX = "max";
         public static final String SUM = "sum";
+        //public static final String STDEV = "stdDev";
 
         /**
          * Default values for standard field names. 
@@ -53,6 +54,7 @@ public interface DataSet extends DataContainer {
             public static final Double MIN = Double.NaN;
             public static final Double MAX = Double.NaN;
             public static final Double SUM = 0D;
+            //public static final Double STDEV = 0D;
         }
     }
 

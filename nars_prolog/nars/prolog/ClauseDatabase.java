@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import alice.util.ReadOnlyLinkedList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +61,7 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 	List<ClauseInfo> getPredicates(Term headt) {
 		FamilyClausesList family = (FamilyClausesList) get(((Struct) headt).getPredicateIndicator());
 		if (family == null){
-			return new ReadOnlyLinkedList<ClauseInfo>();
+			return Collections.EMPTY_LIST;
 		}
 		return family.get(headt);
 	}
@@ -75,9 +75,9 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 	List<ClauseInfo> getPredicates(String key){
 		FamilyClausesList family = (FamilyClausesList) get(key);
 		if(family == null){
-			return new ReadOnlyLinkedList<ClauseInfo>();
+			return Collections.EMPTY_LIST;
 		}
-		return new ReadOnlyLinkedList<ClauseInfo>(family);
+		return Collections.unmodifiableList(family);
 	}
 
 	public Iterator<ClauseInfo> iterator() {

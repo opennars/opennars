@@ -16,10 +16,9 @@ package nars.util.meter.recorder;
 
 import java.util.Collections;
 import java.util.Set;
-
+import nars.util.meter.Tracker;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
-import nars.util.meter.Tracker;
 import nars.util.meter.util.AtomicDouble;
 import nars.util.meter.util.Misc;
 import nars.util.meter.util.ThreadSafe;
@@ -66,7 +65,7 @@ public class DistributionDataRecorder implements DataRecorder {
         }
 
         // Sum of inverses (for harmonic mean calculation)
-        sumOfInverses.addAndGet(1 / currentValue);
+        sumOfInverses.addAndGet(1D / currentValue);
     }
 
     @Override
