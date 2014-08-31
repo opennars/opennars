@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 import nars.util.meter.key.StatsKey;
-import nars.io.Output;
 
 
 /**
@@ -18,6 +17,7 @@ import nars.io.Output;
 public final class Misc {
 
     private Misc() {}
+    
 
     @SuppressWarnings("unchecked")
     public static <T> Set<T> getStaticFieldValues(final Class<?> target,
@@ -88,11 +88,11 @@ public final class Misc {
                                            final String message,
                                            final Object... args) {
         try {
-            if (Output == null || error == null || message == null) {
+            if (logger == null || error == null || message == null) {
                 // Do not throw an Exception ourselves, because this would defeat the purpose
                 // of "swallowing" an Exception.
                 System.err.println("Passed null parameter(s): org.stajistics.util.Misc.logHandledException(" +
-                                   Output + ", " +
+                                   logger + ", " +
                                    error + ", " +
                                    message + ", " +
                                    Arrays.toString(args) + ")");
