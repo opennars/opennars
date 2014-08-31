@@ -460,7 +460,7 @@ abstract public class HTTPServer {
                 if (header != null) {
                     Enumeration e = header.keys();
                     while (e.hasMoreElements()) {
-                        StatsKey key = (String) e.nextElement();
+                        String key = (String) e.nextElement();
                         String value = header.getProperty(key);
                         pw.print(key + ": " + value + "\r\n");
                     }

@@ -18,7 +18,10 @@
 package nars.prolog;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -215,7 +218,7 @@ public abstract class Library implements Serializable, IPrimitives {
                             }
                             if (valid) {
                                 String rawName = name.substring(0,index);
-                                StatsKey key = rawName + "/" + arity;
+                                String key = rawName + "/" + arity;
                                 PrimitiveInfo prim = new PrimitiveInfo(type, key, this, mlist[i], arity);
                                 mapPrimitives.get(type).add(prim);
                                 //

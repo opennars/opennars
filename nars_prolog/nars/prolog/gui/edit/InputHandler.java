@@ -171,13 +171,13 @@ public abstract class InputHandler extends KeyAdapter
      * input-handler specific)
      * @param action The action
      */
-    public abstract void addKeyBinding(StatsKey keyBinding, ActionListener action);
+    public abstract void addKeyBinding(String keyBinding, ActionListener action);
 
     /**
      * Removes a key binding from this input handler.
      * @param keyBinding The key binding
      */
-    public abstract void removeKeyBinding(StatsKey keyBinding);
+    public abstract void removeKeyBinding(String keyBinding);
 
     /**
      * Removes all key bindings from this input handler.

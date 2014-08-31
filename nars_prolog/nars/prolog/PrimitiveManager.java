@@ -18,8 +18,13 @@
 package nars.prolog;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import nars.prolog.interfaces.IPrimitiveManager;
 
 
@@ -143,7 +148,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
         //------------------------------------------
         //log.debug("Identification "+t);    
         PrimitiveInfo prim = null;
-        StatsKey key = name + "/" + arity;
+        String key = name + "/" + arity;
         
         switch (typeOfPrimitive) {
         case PrimitiveInfo.DIRECTIVE :

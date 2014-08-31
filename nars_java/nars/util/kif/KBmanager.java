@@ -251,7 +251,7 @@ public class KBmanager {
 //        String dir = (String) preferences.get("kbDir");
 //        File fDir = new File(dir);
 //        File file = new File(fDir, CONFIG_FILE);
-//        StatsKey key;
+//        String key;
 //        String value;
 //        KB kb = null;
 //
@@ -345,7 +345,7 @@ public class KBmanager {
     /** ***************************************************************
      * Get the preference corresponding to the given kef.
      */    
-    public String getPref(StatsKey key) {
+    public String getPref(String key) {
         String ans = (String) preferences.get(key);
         if ( ans == null ) {
             ans = "";
@@ -356,7 +356,7 @@ public class KBmanager {
     /** ***************************************************************
      * Set the preference to the given value.
      */
-    public void setPref(StatsKey key, String value) {
+    public void setPref(String key, String value) {
         preferences.put(key,value);
     }
 

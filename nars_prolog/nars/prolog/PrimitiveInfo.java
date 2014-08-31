@@ -17,7 +17,8 @@
  */
 package nars.prolog;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 /**
@@ -48,7 +49,7 @@ public class PrimitiveInfo {
     private String primitive_key;
     
     
-    public PrimitiveInfo(int type, StatsKey key, Library lib, Method m, int arity) throws NoSuchMethodException {
+    public PrimitiveInfo(int type, String key, Library lib, Method m, int arity) throws NoSuchMethodException {
         if (m==null) {
             throw new NoSuchMethodException();
         }
@@ -64,7 +65,7 @@ public class PrimitiveInfo {
      * Method to invalidate primitives. It's called just mother library removed
      */
     public synchronized String invalidate() {
-        StatsKey key = primitive_key;
+        String key = primitive_key;
         primitive_key = null;
         return key;
     }
