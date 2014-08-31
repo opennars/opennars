@@ -63,17 +63,23 @@ public abstract class Operator extends Term {
     * @param memory The memory on which the operation is executed
     */
     public void call(final Operation operation, final Term[] args, final Memory memory) {
-        List<Task> feedback = execute(operation, args, memory); // to identify failed operation?
-        reportExecution(operation, args, feedback, memory);
+        try {
+            List<Task> feedback = execute(operation, args, memory);            
+            reportExecution(operation, args, feedback, memory);
 
-        if (feedback!=null) {
-            memory.executedTask(operation);
 
-            
-            for (Task t : feedback) {
-                memory.inputTask(t);
-            }            
+            if (feedback!=null) {
+                memory.executedTask(operation);
+
+                for (Task t : feedback) {
+                    memory.inputTask(t);
+                }            
+            }
         }
+        catch (Exception e) {
+            reportExecution(operation, args, e, memory);
+        }
+        
     }
     
    
@@ -102,7 +108,7 @@ public abstract class Operator extends Term {
 //     * <p>
 //     * @param operation The content of the operation to be executed
 //     */
-    public static void reportExecution(final Operation operation, final Term[] args, List<Task> feedback, final Memory memory) {
+    public static void reportExecution(final Operation operation, final Term[] args, Object feedback, final Memory memory) {
         final Term opT = operation.getPredicate();
         if(!(opT instanceof Operator)) {
             return;
@@ -113,6 +119,10 @@ public abstract class Operator extends Term {
         for (Object obj : args) {
             buffer.append(obj).append(",");
         }
+        
+        if (feedback instanceof Exception)
+            feedback = feedback.getClass().getSimpleName() + ": " + ((RuntimeException)feedback).getMessage();
+        
         //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
         memory.output(EXE.class, operator + "(" + Arrays.toString(args) + ")=" + feedback);
     }

@@ -35,7 +35,7 @@ public class Javascript extends SynchronousFunctionOperator {
         } catch (Throwable ex) {
             result = ex.toString();
         }
-        return new Term(Texts.escape('"' + result.toString() + '"').toString());
+        return Term.text(result.toString());
     }
 
     @Override public Term getRange() {
