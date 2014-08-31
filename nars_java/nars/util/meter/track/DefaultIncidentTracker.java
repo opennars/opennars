@@ -16,7 +16,6 @@ package nars.util.meter.track;
 
 
 import java.util.logging.Logger;
-import nars.util.meter.track.AbstractTracker;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Misc;
 
@@ -33,6 +32,9 @@ public class DefaultIncidentTracker extends AbstractTracker implements IncidentT
 
     public DefaultIncidentTracker(final StatsSession session) {
         super(session);
+    }
+    public DefaultIncidentTracker(final String id) {
+        super(id);
     }
 
     @Override
