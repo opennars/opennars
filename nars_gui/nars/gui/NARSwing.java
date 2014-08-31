@@ -74,7 +74,7 @@ public class NARSwing  {
 
         MultiLogPanel outputLog = 
                 new MultiLogPanel(narControls);
-        Window outputWindow = new Window("Log", new JScrollPane(outputLog, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));        
+        Window outputWindow = new Window("Log", new JScrollPane(outputLog));        
         outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
         outputWindow.setVisible(true);
         

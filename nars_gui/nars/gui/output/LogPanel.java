@@ -32,7 +32,7 @@ import nars.io.Output;
 abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
     protected final NAR nar;
-    int maxIOTextSize = (int) 8E6;
+    public static final int maxIOTextSize = (int) 8E5;
     protected boolean showErrors = true;
     protected boolean showStamp = false;
     protected boolean showQuestions = true;
@@ -210,7 +210,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
     abstract void limitBuffer(int incomingDataSize);
 
 
-    public Color getLineColor(String l) {
+    public static Color getLineColor(String l) {
         l = l.trim();
         if (l.startsWith("OUT:")) {
             return Color.LIGHT_GRAY;
