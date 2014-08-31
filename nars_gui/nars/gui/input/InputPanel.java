@@ -53,7 +53,7 @@ public class InputPanel extends NPanel implements ActionListener {
     /**
      * Control buttons
      */
-    private final JButton eval, evalAll, holdButton, clearButton;
+    private final JButton eval/*, evalAll*/, holdButton, clearButton;
     /**
      * Input area
      */
@@ -105,13 +105,14 @@ public class InputPanel extends NPanel implements ActionListener {
         eval.addActionListener(this);
         menu.add(eval);
         
+        /*
         evalAll = new JButton("Eval All");
         evalAll.setDefaultCapable(true);
         evalAll.addActionListener(this);
-        evalAll.setToolTipText("Input the text, each line executed in the same clock cycle.  (Ctrl-enter)");
-        
+        evalAll.setToolTipText("Input the text, each line executed in the same clock cycle.  (Ctrl-enter)");                
         evalAll.addActionListener(this);
         menu.add(evalAll);
+        */
         
         holdButton = new JButton("Hold");
         holdButton.addActionListener(this);
@@ -158,7 +159,7 @@ public class InputPanel extends NPanel implements ActionListener {
                     }
             }           
         });
-        setConsoleStyle(inputText, true);
+        setConsoleStyle(inputText, true, 19);
 
         updateMode(0);
         
@@ -211,10 +212,10 @@ public class InputPanel extends NPanel implements ActionListener {
             ready = true;
             evaluateSeq(inputText.getText());
             inputText.setText("");
-        } else if (b == evalAll) {
-            ready = true;
-            evaluateAll(inputText.getText());
-            inputText.setText("");
+//        } else if (b == evalAll) {
+//            ready = true;
+//            evaluateAll(inputText.getText());
+//            inputText.setText("");
         } else if (b == holdButton) {
             ready = false;
         } else if (b == clearButton) {
