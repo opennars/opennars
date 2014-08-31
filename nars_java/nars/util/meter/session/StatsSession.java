@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.List;
 import nars.util.meter.Tracker;
 import nars.util.meter.data.DataSet;
+import nars.util.meter.event.EventManager;
 import nars.util.meter.event.EventType;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
@@ -119,7 +120,8 @@ public interface StatsSession extends Serializable {
      */
     double getSum();
     
-
+   
+    
     /**
      * Obtain the value of a single field from this session.
      *
@@ -196,5 +198,8 @@ public interface StatsSession extends Serializable {
      * <p>Fires a {@link EventType#SESSION_CLEARED} event.</p>
      */
     void clear();
+    
+    void setEventManager(EventManager e);
+    
 
 }

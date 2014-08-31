@@ -1,7 +1,8 @@
 package nars.prolog;
 
-import alice.util.ReadOnlyLinkedList;
-import java.util.Collection;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.ListIterator;
  * @see LinkedList
  */
 @SuppressWarnings("serial")
-class FamilyClausesList extends LinkedList<ClauseInfo> {
+class FamilyClausesList extends ArrayList<ClauseInfo> {
 	
 	private FamilyClausesIndex<Number> numCompClausesIndex;
 	private FamilyClausesIndex<String> constantCompClausesIndex;
@@ -42,10 +43,9 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 	 * Adds the given clause as first of the family
 	 *
 	 * @param ci    The clause to be added (with related informations)
-	 */
-	@Override
+	 */	
 	public void addFirst(ClauseInfo ci){
-		super.addFirst(ci);
+		super.add(0, ci);
 
 		// Add first in type related storage
 		register(ci, true);
@@ -56,9 +56,8 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 	 *
 	 * @param ci    The clause to be added (with related informations)
 	 */
-	@Override
 	public void addLast(ClauseInfo ci){
-		super.addLast(ci);
+		super.add(ci);
 
 		// Add last in type related storage
 		register(ci, false);
@@ -71,33 +70,8 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 		return true;
 	}
 
-	/**
-	 * @deprecated 
-	 */
-	@Override
-	public boolean addAll(int index, Collection<? extends ClauseInfo> c) {
-		throw new UnsupportedOperationException("Not supported.");
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Override
-	public void add(int index, ClauseInfo element) {
-		throw new UnsupportedOperationException("Not supported.");
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Override
-	public ClauseInfo set(int index, ClauseInfo element) {
-		throw new UnsupportedOperationException("Not supported.");
-	}
-
-	@Override
 	public ClauseInfo removeFirst() {
-		ClauseInfo ci = getFirst();
+		ClauseInfo ci = get(0);
 		if (remove(ci)){
 			return ci;
 		}
@@ -105,17 +79,14 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 		return null;
 	}
 
-	@Override
 	public ClauseInfo removeLast() {
-		ClauseInfo ci = getLast();
+		ClauseInfo ci = get(size()-1);
 		if (remove(ci)){
 			return ci;
 		}
-
 		return null;
 	}
-
-	@Override
+	
 	public ClauseInfo remove(){
 		return removeFirst();
 	}
@@ -166,7 +137,7 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 			 * (and probably no optimization is needed)
 			 */
 			if(g.getArity() == 0){
-				return new ReadOnlyLinkedList<ClauseInfo>(this);
+				return Collections.unmodifiableList(this);
 			}
 
 			/* Retrieves first argument and checks type */
@@ -176,7 +147,7 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 				 * if first argument is an unbounded variable,
 				 * no reasoning is possible, all family must be returned
 				 */
-				return new ReadOnlyLinkedList<ClauseInfo>(this);
+				return Collections.unmodifiableList(this);
 			} else if(t.isAtomic()){
 				if(t instanceof Number){
 					/* retrieves clauses whose first argument is numeric (or Var)
@@ -184,32 +155,32 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 					 * are retrieved, all clauses with a variable
 					 * as first argument
 					 */
-					return new ReadOnlyLinkedList<ClauseInfo>(numCompClausesIndex.get((Number) t));
+					return Collections.unmodifiableList(numCompClausesIndex.get((Number) t));
 				} else if(t instanceof Struct){
 					/* retrieves clauses whose first argument is a constant (or Var)
 					 * and same as goal's first argument, if no clauses
 					 * are retrieved, all clauses with a variable
 					 * as first argument
 					 */
-					return new ReadOnlyLinkedList<ClauseInfo>(constantCompClausesIndex.get(((Struct) t).getName()));
+					return Collections.unmodifiableList(constantCompClausesIndex.get(((Struct) t).getName()));
 				}
 			} else if(t instanceof Struct){
 				if(isAList((Struct) t)){
 					/* retrieves clauses which has a list  (or Var) as first argument */
-					return new ReadOnlyLinkedList<ClauseInfo>(listCompClausesList);
+					return Collections.unmodifiableList(listCompClausesList);
 				} else {
 					/* retrieves clauses whose first argument is a struct (or Var)
 					 * and same as goal's first argument, if no clauses
 					 * are retrieved, all clauses with a variable
 					 * as first argument
 					 */
-					return new ReadOnlyLinkedList<ClauseInfo>(structCompClausesIndex.get(((Struct) t).getPredicateIndicator()));
+					return Collections.unmodifiableList(structCompClausesIndex.get(((Struct) t).getPredicateIndicator()));
 				}
 			}
 		}
 
 		/* Default behaviour: no optimization done */
-		return new ReadOnlyLinkedList<ClauseInfo>(this);
+		return Collections.unmodifiableList(this);
 	}
 
 	@Override
@@ -319,7 +290,7 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 	private class ListItr implements ListIterator<ClauseInfo> {
 
 		private ListIterator<ClauseInfo> it;
-		private LinkedList<ClauseInfo> l;
+		private FamilyClausesList l;
 		private int currentIndex = 0;
 
 		public ListItr(FamilyClausesList list, int index){
@@ -372,7 +343,8 @@ class FamilyClausesList extends LinkedList<ClauseInfo> {
 		}
 
 		public void add(ClauseInfo o) {
-			l.addLast(o);
+                    l.addLast(o);
+                    
 
 		}
 

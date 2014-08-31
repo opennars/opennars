@@ -38,10 +38,10 @@ public class SynchronousEventManager implements EventManager {
 
     private static final Logger logger = Logger.getLogger(SynchronousEventManager.class.toString());
 
-    private final List<EventHandler> globalEventHandlers = createEventHandlerList();
+    private List<EventHandler> globalEventHandlers = null;
 
-    private final ConcurrentMap<StatsKey,List<EventHandler>> sessionEventHandlers =
-        new ConcurrentHashMap<StatsKey,List<EventHandler>>();
+    private ConcurrentMap<StatsKey,List<EventHandler>> sessionEventHandlers = null;
+        
 
     private final Support lifeCycleSupport = new Support();
 
@@ -66,6 +66,8 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public Collection<EventHandler> getGlobalEventHandlers() {
+        if (globalEventHandlers == null)
+            return Collections.EMPTY_LIST;
         return Collections.unmodifiableCollection(globalEventHandlers);
     }
 
@@ -76,7 +78,7 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public Map<StatsKey,Collection<EventHandler>> getEventHandlers(final StatsKeyMatcher keyMatcher) {
-        if (keyMatcher.equals(StatsKeyMatcher.none())) {
+        if (keyMatcher.equals(StatsKeyMatcher.none()) || (sessionEventHandlers == null)) {
             return Collections.emptyMap();
         }
 
@@ -96,6 +98,8 @@ public class SynchronousEventManager implements EventManager {
     @Override
     public void addGlobalEventHandler(final EventHandler eventHandler) {
         //assertNotNull(eventHandler, "eventHandler");
+        if (globalEventHandlers == null)
+             globalEventHandlers = createEventHandlerList();
         globalEventHandlers.add(eventHandler);
     }
 
@@ -104,6 +108,8 @@ public class SynchronousEventManager implements EventManager {
                                 final EventHandler eventHandler) {
         //assertNotNull(key, "key");
         //assertNotNull(eventHandler, "eventHandler");
+        if (sessionEventHandlers == null)
+            sessionEventHandlers = new ConcurrentHashMap<StatsKey,List<EventHandler>>();
 
         List<EventHandler> eventHandlers = getEventHandlers(key, true);
         eventHandlers.add(eventHandler);
@@ -111,6 +117,7 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public void removeGlobalEventHandler(EventHandler eventHandler) {
+        if (globalEventHandlers == null) return;
         globalEventHandlers.remove(eventHandler);
     }
 
@@ -124,11 +131,13 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public void clearGlobalEventHandlers() {
+        if (globalEventHandlers == null) return;
         globalEventHandlers.clear();
     }
 
     @Override
     public void clearEventHandlers() {
+        if (sessionEventHandlers == null) return;
         for (Map.Entry<StatsKey,List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
             entry.getValue().clear();
         }
@@ -144,7 +153,11 @@ public class SynchronousEventManager implements EventManager {
 
     private List<EventHandler> getEventHandlers(final StatsKey key,
                                                 final boolean create) {
+
+        if (sessionEventHandlers == null) return null;
+        
         List<EventHandler> eventHandlers = null;
+        
         if (key != null) {
             eventHandlers = sessionEventHandlers.get(key);
         }
@@ -166,21 +179,25 @@ public class SynchronousEventManager implements EventManager {
         //assertNotNull(eventType, "eventType");
         //assertNotNull(target, "target");
 
-        logger.info("Firing event: {}, key: {}" + eventType + ' ' + key);
+        //logger.info("Firing event: {}, key: {}" + eventType + ' ' + key);
 
-        List<EventHandler> sessionEventHandlers = getEventHandlers(key, false);
-        if (sessionEventHandlers != null) {
-            fireEvent(sessionEventHandlers, eventType, key, target);
+        if (this.sessionEventHandlers != null) {
+            List<EventHandler> eventHandlers = getEventHandlers(key, false);
+            if (eventHandlers != null) {
+                fireEvent(eventHandlers, eventType, key, target);
+            }
         }
 
-        fireEvent(globalEventHandlers, eventType, key, target);
+        if (globalEventHandlers!=null) {
+            fireEvent(globalEventHandlers, eventType, key, target);
+        }
     }
 
-    protected void fireEvent(final List<EventHandler> handlers,
+    protected void fireEvent(final Iterable<EventHandler> handlers,
                              final EventType eventType,
                              final StatsKey key,
                              final Object target) {
-        for (EventHandler handler : handlers) {
+        for (final EventHandler handler : handlers) {
             try {
                 handler.handleStatsEvent(eventType, key, target);
             } catch (Exception e) {

@@ -16,7 +16,7 @@ package nars.util.meter.track;
 
 import nars.util.meter.Tracker;
 import nars.util.meter.data.DataSet;
-import nars.util.meter.event.SynchronousEventManager;
+import nars.util.meter.event.EventManager;
 import nars.util.meter.key.DefaultStatsKey;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DistributionDataRecorder;
@@ -48,12 +48,16 @@ public abstract class AbstractTracker implements Tracker {
     public AbstractTracker(String id) {
         this(new ConcurrentSession(
                 new DefaultStatsKey("", id, new FastPutsArrayMap<String,Object>()), 
-                new SynchronousEventManager(), 
+                null, 
                 new DistributionDataRecorder()));
     }
     
     public AbstractTracker(String id, Range... ranges) {
-        this(new ConcurrentSession(new DefaultStatsKey("", id, new FastPutsArrayMap<>()), new SynchronousEventManager(), new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
+        this(new ConcurrentSession(new DefaultStatsKey("", id, new FastPutsArrayMap<>()), null, new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
+    }
+    
+    public void setEventManager(EventManager e) {
+        getSession().setEventManager(e);
     }
     
     

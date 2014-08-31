@@ -25,7 +25,6 @@ import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.recorder.DataRecorders;
 import nars.util.meter.util.AtomicDouble;
-import nars.util.meter.util.Misc;
 
 /**
  * <p>An implementation of {@link StatsSession} that reads and writes data fields atomically
@@ -65,7 +64,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     protected volatile double last = DataSet.Field.Default.LAST;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
-    protected final AtomicDouble sum = new AtomicDouble(DataSet.Field.Default.SUM);
+    protected final AtomicDouble sum = new AtomicDouble(DataSet.Field.Default.SUM);    
 
     public ConcurrentSession(final StatsKey key,
                                   final EventManager eventManager,
@@ -75,6 +74,9 @@ public class ConcurrentSession extends AbstractStatsSession {
               DataRecorders.lockingIfNeeded(dataRecorders));
     }
 
+    
+    
+    
     @Override
     public void track(final Tracker tracker,
                       long now) {
@@ -91,7 +93,8 @@ public class ConcurrentSession extends AbstractStatsSession {
 
         //logger.info("Track: {}" + " " +  this);
 
-        eventManager.fireEvent(EventType.TRACKER_TRACKING, key, tracker);
+        if (eventManager!=null)
+            eventManager.fireEvent(EventType.TRACKER_TRACKING, key, tracker);
     }
 
     @Override
@@ -177,18 +180,19 @@ public class ConcurrentSession extends AbstractStatsSession {
         // Sum
         sum.addAndGet(currentValue);
 
-        for (DataRecorder dataRecorder : dataRecorders) {
-            try {
-                dataRecorder.update(this, tracker, now);
-            } catch (Exception e) {
+        for (final DataRecorder dataRecorder : dataRecorders) {
+            //try {
+            dataRecorder.update(this, tracker, now);
+            /*} catch (Exception e) {
                 Misc.logHandledException(logger, e, "Failed to update {}", dataRecorder);
                 Misc.handleUncaughtException(getKey(), e);
-            }
+            }*/
         }
 
         //logger.info("Commit: {}" + " " + this);
 
-        eventManager.fireEvent(EventType.TRACKER_COMMITTED, key, tracker);
+        if (eventManager!=null)
+            eventManager.fireEvent(EventType.TRACKER_COMMITTED, key, tracker);
     }
 
     @Override
@@ -250,6 +254,7 @@ public class ConcurrentSession extends AbstractStatsSession {
         return sum.get();
     }
 
+
     @Override
     protected void setSum(final double sum) {
         this.sum.set(sum);
@@ -264,7 +269,8 @@ public class ConcurrentSession extends AbstractStatsSession {
 
         //logger.trace("Restore: {}", this);
 
-        eventManager.fireEvent(EventType.SESSION_RESTORED, key, this);
+        if (eventManager!=null)
+            eventManager.fireEvent(EventType.SESSION_RESTORED, key, this);
     }
 
     @Override
@@ -273,7 +279,8 @@ public class ConcurrentSession extends AbstractStatsSession {
 
         //logger.trace("Clear: {}", this);
 
-        eventManager.fireEvent(EventType.SESSION_CLEARED, key, this);
+        if (eventManager!=null)
+            eventManager.fireEvent(EventType.SESSION_CLEARED, key, this);
     }
 
     @Override

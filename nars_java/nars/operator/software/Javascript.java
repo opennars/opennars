@@ -2,18 +2,17 @@ package nars.operator.software;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import nars.core.Memory;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
-import nars.core.Memory;
 
 /**
  * Executes a Javascript expression
  */
 public class Javascript extends SynchronousFunctionOperator {
-
-    final ScriptEngineManager factory = new ScriptEngineManager();
-    final ScriptEngine js = factory.getEngineByName("JavaScript");      
+    
+    ScriptEngine js = null;      
 
     public Javascript() {
         super("^js");
@@ -22,6 +21,11 @@ public class Javascript extends SynchronousFunctionOperator {
     @Override protected Term function(Memory memory, Term[] x) {
         if (x.length!=1)
             return null;
+        
+        if (js == null) {
+            ScriptEngineManager factory = new ScriptEngineManager();
+            js = factory.getEngineByName("JavaScript");
+        }
         
         js.put("memory", memory);
         

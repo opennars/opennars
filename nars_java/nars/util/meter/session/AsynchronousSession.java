@@ -70,11 +70,12 @@ public class AsynchronousSession extends AbstractStatsSession {
     private volatile double min = Double.POSITIVE_INFINITY;
     private volatile double max = Double.NEGATIVE_INFINITY;
     private volatile double sum = DataSet.Field.Default.SUM;
-
+    
     private final Queue<TrackerEntry> updateQueue;
     private final Lock updateQueueProcessingLock = new ReentrantLock();
 
     private final Lock stateLock = new ReentrantLock();
+
 
     public AsynchronousSession(final StatsKey key,
                                final EventManager eventManager,
@@ -285,6 +286,16 @@ public class AsynchronousSession extends AbstractStatsSession {
     protected void setSum(final double sum) {
         this.sum = sum;
     }
+
+    @Override
+    public void setEventManager(EventManager e) {
+        eventManager = e;
+    }
+
+    
+
+   
+        
 
     @Override
     public void restore(final DataSet dataSet) {

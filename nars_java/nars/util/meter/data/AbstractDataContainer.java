@@ -16,7 +16,6 @@ package nars.util.meter.data;
 
 import java.util.Map;
 import java.util.Set;
-import static nars.util.meter.util.Util.assertNotEmpty;
 
 
 /**
@@ -88,7 +87,7 @@ public abstract class AbstractDataContainer implements DataContainer {
 
     @Override
     public void setField(final String name, final Object value) {
-        assertNotEmpty(name, "name");
+        //assertNotEmpty(name, "name");
         //assertNotNull(value, "value");
 
         dataMap.put(name, value);
