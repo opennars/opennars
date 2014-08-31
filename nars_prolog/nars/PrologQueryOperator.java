@@ -28,7 +28,7 @@ import nars.prolog.MalformedGoalException;
  * 
  * 
  * Usage:
- * (^prologQuery, "database(Query,0).", (*, theory0), "Query", #0)
+ * (^prologQuery, "database(Query,0).", prolog0, "Query", #0)
  * 
  * @author me
  */
@@ -62,23 +62,22 @@ public class PrologQueryOperator extends Operator {
             return null;
         }
         
-        // check if 2nd parameter is a product
-        if (!(args[1] instanceof Product)) {
-            // TODO< error report >
+        // check if 2nd parameter is a string
+        if (!(args[1] instanceof Term)) {
+            // TODO< report error >
             return null;
         }
         
-        Product theoryProduct = (Product)args[1];
         
-        // check if product is not empty
-        if (theoryProduct.term.length == 0) {
-            // TODO< error report >
+        // try to retrive the prolog interpreter instance by the name of it
+        if (!context.prologInterpreters.containsKey(args[1])) {
+            // TODO< report error >
             return null;
         }
         
-        // TODO< what do we do if we got many theories? >
-        ArrayList<String> theories = new ArrayList<>();
-        theories.add(context.theories.get(theoryProduct.term[0]));
+        Prolog prologInterpreter = context.prologInterpreters.get(args[1]);
+        
+        
         
         Term queryTerm = (Term)args[0];
         String query = getStringOfTerm(queryTerm);
@@ -90,7 +89,7 @@ public class PrologQueryOperator extends Operator {
         String[] variableNames = getVariableNamesOfArgs(args);
         
         // execute
-        nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(theories, query, variableNames);
+        nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(prologInterpreter, query, variableNames);
        
        
        
@@ -102,22 +101,33 @@ public class PrologQueryOperator extends Operator {
         Term[] resultTerms = getResultVariablesFromPrologVariables(resolvedVariableValues, args);
        
         // create evaluation result
-        //  compose operation before resultTerms
         int i;
-       
-        Term[] resultProductTerms = new Term[1 + resultTerms.length];
-        resultProductTerms[0] = operation;
-        for( i = 0; i < resultTerms.length; i++ ) {
-            resultProductTerms[i + 1] = resultTerms[i];
+        
+        Term[] resultInnerProductTerms = new Term[2 + resultTerms.length*2];
+        resultInnerProductTerms[0] = args[0];
+        resultInnerProductTerms[1] = args[1];
+        
+        for (i = 0; i < resultTerms.length; i++ ) {
+            resultInnerProductTerms[2+i*2+0] = args[2+i*2];
+            resultInnerProductTerms[2+i*2+1] = resultTerms[i];
         }
-       
+        
+        Inheritance operatorInheritance = Operation.make(
+            Product.make(resultInnerProductTerms, memory),
+            this,
+            memory
+        );
+        
         //  create the nars result and return it
         Inheritance resultInheritance = Inheritance.make(
-                Product.make(resultProductTerms, memory),
-                new Term("prolog_evaluation"), memory);
-       
+            operatorInheritance,
+            new Term("prolog_evaluation"),
+            memory
+        );
+        
+        
         memory.output(Task.class, resultInheritance);
-       
+        
         ArrayList<Task> results = new ArrayList<>(1);
         results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
                
@@ -194,7 +204,7 @@ public class PrologQueryOperator extends Operator {
                
                     continue; // for debugging
                 }
-                catch( PrologTheoryOperator.ConversionFailedException conversionFailedException ) {
+                catch( PrologTheoryStringOperator.ConversionFailedException conversionFailedException ) {
                     // the alternative is a product of numbers
                     // ASK< this may be not 100% correct, because prolog lists can be in lists etc >
                    
@@ -211,33 +221,13 @@ public class PrologQueryOperator extends Operator {
        
         return resultTerms;
     }
-   
-   
-    private nars.prolog.Term[] prologParseAndExecuteAndDereferenceInput(ArrayList<String> theories, String input, String[] dereferencingVariableNames) {
-        Prolog prolog = new Prolog();
-        
-        try {
-            // TODO< many teories >
-            
-            prolog.addTheory(new Theory(theories.get(0)));
-            
-        } catch (InvalidTheoryException ex) {
-            Logger.getLogger(PrologTheoryOperator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-        
-        //return solveInfo.getSolution();
-        
-        return executePrologGoalAndDereferenceVariable(prolog, input, dereferencingVariableNames);
-    }
-   
+    
     // TODO< return status/ error/sucess >
-    private nars.prolog.Term[] executePrologGoalAndDereferenceVariable(Prolog p, String goal, String[] VariableNames) {
+    private nars.prolog.Term[] prologParseAndExecuteAndDereferenceInput(Prolog prolog, String goal, String[] dereferencingVariableNames) {
         SolveInfo solution;
         
         try {
-            solution = p.solve(goal);
+            solution = prolog.solve(goal);
         }
         catch (MalformedGoalException exception) {
             // TODO< error handing >
@@ -263,15 +253,15 @@ public class PrologQueryOperator extends Operator {
         
         nars.prolog.Term[] resultArray;
 
-        resultArray = new nars.prolog.Term[VariableNames.length];
+        resultArray = new nars.prolog.Term[dereferencingVariableNames.length];
         
 
         int variableI;
 
-        for( variableI = 0; variableI < VariableNames.length; variableI++ ) {
+        for( variableI = 0; variableI < dereferencingVariableNames.length; variableI++ ) {
             // get variable and dereference
             //  get the variable which has the name
-            Var variableTerm = getVariableByNameRecursive(solutionTerm, VariableNames[variableI]);
+            Var variableTerm = getVariableByNameRecursive(solutionTerm, dereferencingVariableNames[variableI]);
 
             if( variableTerm == null )
             {
@@ -369,14 +359,14 @@ public class PrologQueryOperator extends Operator {
        
         for( nars.prolog.Term iterationTerm : array ) {
             if( !(iterationTerm instanceof Int) ) {
-                throw new PrologTheoryOperator.ConversionFailedException();
+                throw new PrologTheoryStringOperator.ConversionFailedException();
             }
            
             Int integerTerm = (Int)iterationTerm;
             int integer = integerTerm.intValue();
            
             if( integer > 127 || integer < 0 ) {
-                throw new PrologTheoryOperator.ConversionFailedException();
+                throw new PrologTheoryStringOperator.ConversionFailedException();
             }
            
             result += Character.toString((char)integer);
