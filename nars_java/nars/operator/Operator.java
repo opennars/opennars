@@ -64,13 +64,15 @@ public abstract class Operator extends Term {
     */
     public void call(final Operation operation, final Term[] args, final Memory memory) {
         List<Task> feedback = execute(operation, args, memory); // to identify failed operation?
-        memory.executedTask(operation);
-        reportExecution(operation, args, memory);
-        
-        if (feedback != null) {
+        reportExecution(operation, args, feedback, memory);
+
+        if (feedback!=null) {
+            memory.executedTask(operation);
+
+            
             for (Task t : feedback) {
                 memory.inputTask(t);
-            }
+            }            
         }
     }
     
@@ -100,7 +102,7 @@ public abstract class Operator extends Term {
 //     * <p>
 //     * @param operation The content of the operation to be executed
 //     */
-    public static void reportExecution(final Operation operation, final Term[] args, final Memory memory) {
+    public static void reportExecution(final Operation operation, final Term[] args, List<Task> feedback, final Memory memory) {
         final Term opT = operation.getPredicate();
         if(!(opT instanceof Operator)) {
             return;
@@ -112,7 +114,7 @@ public abstract class Operator extends Term {
             buffer.append(obj).append(",");
         }
         //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
-        memory.output(EXE.class, operator + " " + Arrays.toString(args));
+        memory.output(EXE.class, operator + "(" + Arrays.toString(args) + ")=" + feedback);
     }
     
 
