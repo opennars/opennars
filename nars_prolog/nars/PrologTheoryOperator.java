@@ -5,7 +5,7 @@ import nars.entity.Task;
 import nars.language.Term;
 import nars.prolog.Agent;
 import nars.prolog.Prolog;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 
 /**

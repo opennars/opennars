@@ -27,7 +27,7 @@ import nars.entity.Task;
 import nars.io.Output.EXE;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * An individual operator that can be execute by the system, which can be either

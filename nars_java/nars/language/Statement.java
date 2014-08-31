@@ -24,7 +24,7 @@ import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * A statement is a compound term, consisting of a subject, a predicate, and a

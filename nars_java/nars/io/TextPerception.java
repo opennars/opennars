@@ -48,7 +48,7 @@ import nars.language.Variable;
 import static nars.language.Variables.containVar;
 import static nars.operator.Operation.make;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Processes text input

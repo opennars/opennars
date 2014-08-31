@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import nars.entity.Task;
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  *  A class used as a template for Operator definition.

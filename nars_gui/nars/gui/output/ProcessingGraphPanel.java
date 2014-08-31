@@ -32,7 +32,7 @@ import nars.entity.Sentence;
 import nars.gui.NSlider;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 import nars.util.NARGraph;
 import nars.util.NARGraph.DefaultGraphizer;
 import org.jgrapht.ext.JGraphXAdapter;

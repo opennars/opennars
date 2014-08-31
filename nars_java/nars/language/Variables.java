@@ -3,7 +3,7 @@ package nars.language;
 import java.util.HashMap;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Static utility class for static methods related to Variables

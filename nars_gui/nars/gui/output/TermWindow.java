@@ -32,7 +32,7 @@ import javax.swing.JTextField;
 import nars.entity.Concept;
 import nars.entity.EntityObserver;
 import nars.gui.Window;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * JWindow accept a Term, then display the content of the corresponding Concept

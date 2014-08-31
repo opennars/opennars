@@ -24,7 +24,7 @@ import nars.language.*;
 import nars.io.Symbols;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Operator that creates a question with a given statement

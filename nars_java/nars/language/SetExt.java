@@ -25,7 +25,7 @@ import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * An extensionally defined set, which contains one or more instances.

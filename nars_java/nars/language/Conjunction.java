@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Conjunction of statements

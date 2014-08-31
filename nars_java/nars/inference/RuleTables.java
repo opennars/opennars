@@ -42,7 +42,7 @@ import nars.language.Term;
 import static nars.language.Terms.*;
 import static nars.io.Symbols.*;
 import static nars.language.Variables.unify;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the

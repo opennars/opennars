@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.storage;
+package nars.core;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
@@ -90,6 +90,8 @@ import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.storage.AbstractBag;
+import nars.storage.BagObserver;
 
 
 /**
@@ -114,7 +116,7 @@ public class Memory implements Output, Serializable {
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
     }
-    private final MemoryModel model;
+    private final ConceptProcessor model;
     
     
     
@@ -349,7 +351,7 @@ public class Memory implements Output, Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, MemoryModel cycleControl, AbstractBag<Task> novelTasks, Operator[] initialOperators) {                
+    public Memory(Param param, ConceptProcessor cycleControl, AbstractBag<Task> novelTasks, Operator[] initialOperators) {                
         
         this.param = param;
         this.model = cycleControl;

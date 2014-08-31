@@ -50,7 +50,7 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.language.Variables;
-import nars.storage.Memory;
+import nars.core.Memory;
 import static nars.inference.TruthFunctions.*;
 
 /**

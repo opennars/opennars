@@ -27,7 +27,7 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * An operation is interpreted as an Inheritance relation.

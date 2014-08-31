@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Item;
 import nars.storage.AbstractBag;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 
 

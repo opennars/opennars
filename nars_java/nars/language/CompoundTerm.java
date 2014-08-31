@@ -34,7 +34,7 @@ import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 
 public abstract class CompoundTerm extends Term {

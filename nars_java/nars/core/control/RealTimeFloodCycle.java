@@ -16,8 +16,8 @@ import nars.entity.TermLink;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.storage.Memory;
-import nars.storage.MemoryModel;
+import nars.core.Memory;
+import nars.core.ConceptProcessor;
 import nars.util.ContinuousBag;
 
 /**
@@ -67,7 +67,7 @@ import nars.util.ContinuousBag;
  * (Tasks)
  *
  */
-public class RealTimeFloodCycle implements MemoryModel {
+public class RealTimeFloodCycle implements ConceptProcessor {
 
     float activityThreshold = 0.5f;
     float maxActivityThreshold = 0.5f;

@@ -27,7 +27,7 @@ import nars.grid2d.TestChamber;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  *  A class used as a template for Operator definition.

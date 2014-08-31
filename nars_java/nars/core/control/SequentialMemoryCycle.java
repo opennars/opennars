@@ -7,13 +7,13 @@ import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.storage.Memory;
-import nars.storage.MemoryModel;
+import nars.core.Memory;
+import nars.core.ConceptProcessor;
 
 /**
  * A deterministic memory cycle implementation that is used for development and testing.
  */
-public class SequentialMemoryCycle implements MemoryModel {
+public class SequentialMemoryCycle implements ConceptProcessor {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */

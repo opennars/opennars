@@ -39,7 +39,7 @@ import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 
 /**

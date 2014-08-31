@@ -21,7 +21,7 @@
 
 package nars.language;
 
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * A Statement about an InstanceProperty relation, which is used only in Narsese for I/O, 

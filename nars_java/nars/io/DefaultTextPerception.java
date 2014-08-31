@@ -2,7 +2,7 @@ package nars.io;
 
 import nars.core.task.PauseInput;
 import nars.entity.Task;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  *  Default handlers for text perception

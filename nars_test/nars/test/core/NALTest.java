@@ -21,7 +21,7 @@ import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
 import nars.io.Texts;
-import nars.storage.Memory;
+import nars.core.Memory;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.Result;

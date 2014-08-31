@@ -22,7 +22,7 @@ package nars.language;
 
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * A Statement about an Equivalence relation.

@@ -5,7 +5,7 @@ import javax.script.ScriptEngineManager;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Executes a Javascript expression

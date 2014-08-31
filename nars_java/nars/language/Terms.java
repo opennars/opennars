@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import nars.entity.TermLink;
-import nars.storage.Memory;
+import nars.core.Memory;
 
 /**
  * Static utility class for static methods related to Terms
