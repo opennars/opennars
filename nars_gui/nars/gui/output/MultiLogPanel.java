@@ -1,9 +1,13 @@
 package nars.gui.output;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -35,12 +39,17 @@ import nars.io.Output;
  * 
  * @author me
  */
-public class MultiLogPanel extends JSplitPane implements Output {
+public class MultiLogPanel extends JSplitPane implements Output, HierarchyListener {
 
+    final long decayPeriodNS = 100 * 1000 * 1000; //100ms
+    
     /** extension of SwingLogText with functionality specific to MultiLogPanel */
     public class SwingLogTextM extends SwingLogText  implements ChangeListener {
     
+        final float activityIncrement = 0.5f;
+        final float activityMomentum = 0.95f;
         
+        float activity = 0;
         public final JCheckBox enabler;
         final Object category;
         JPanel displayed = null;
@@ -48,12 +57,52 @@ public class MultiLogPanel extends JSplitPane implements Output {
         public SwingLogTextM(Object category) {
             super(nar);
             this.category = category;
-            this.enabler = new JCheckBox(category.toString());
+            
+            String label;
+            if (category instanceof Task) {
+                label = ((Task)category).sentence.toString();
+            }
+            else {
+                label = category.toString();
+            }
+            
+            this.enabler = new JCheckBox(label) {
+
+                @Override
+                public void paint(Graphics g) {
+                    Color c = new Color(1f, 1f-activity/2f, 1f-activity/2f );
+                    g.setColor(c);
+                    g.fillRect(0, 0, getWidth(), getHeight());                    
+                    super.paint(g);
+                }
+                
+            };
+            enabler.setOpaque(false);
             
             enabler.addChangeListener(this);
             
         }
 
+        @Override
+        public void out(Class c, Object o) {
+            super.out(c, o);
+            
+            updateActivity(activity + activityIncrement);
+            repaint();
+        }
+        
+        public void updateActivity(float newActivity) {
+            if (activity!=newActivity) {
+                activity = newActivity;
+                if (activity > 1.0f) activity = 1.0f;
+            }
+        }
+        
+        public void decayActvity() {
+            updateActivity(activity * activityMomentum);
+        }
+
+        
         @Override
         public void stateChanged(ChangeEvent e) {
             if (enabler.isSelected()) {
@@ -82,6 +131,8 @@ public class MultiLogPanel extends JSplitPane implements Output {
     public MultiLogPanel(NARControls c) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         
+        this.nar = c.nar;
+
         categoriesListModel = new DefaultListModel();
         categoriesList = new JCheckBoxList(categoriesListModel);
         
@@ -95,7 +146,6 @@ public class MultiLogPanel extends JSplitPane implements Output {
 
         setDividerLocation(0.14);
 
-        this.nar = c.nar;
         nar.addOutput(this);
 
         rootTaskPanel = new SwingLogTextM("Root");
@@ -103,7 +153,17 @@ public class MultiLogPanel extends JSplitPane implements Output {
         
         getLogPanel("Root").show();
     }
+    
+    protected void onShowing(boolean showing) {
+        if (showing) {
+            nar.addOutput(this);
+        }
+        else {
+            nar.removeOutput(this);
+        }
+    }
 
+    
     @Override
     public void output(Class channel, Object o) {
         Object category;
@@ -117,6 +177,8 @@ public class MultiLogPanel extends JSplitPane implements Output {
         SwingLogText p = getLogPanel(category);
         if (p!=null)
             p.print(channel, o, false, nar);
+        
+        decayActivities();
     }
 
     public SwingLogText getLogPanel(Object category) {
@@ -225,4 +287,37 @@ public class MultiLogPanel extends JSplitPane implements Output {
         validate();
         repaint();
     }
+    
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        addHierarchyListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        removeHierarchyListener(this);
+        super.removeNotify();
+    }
+
+    @Override
+    public void hierarchyChanged(HierarchyEvent e) {
+        if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+            boolean showing = isShowing();
+            onShowing(showing);
+        }
+    }    
+
+    long lastDecayed = 0;
+    protected void decayActivities() {
+        long now = System.nanoTime();
+        if (now - lastDecayed > decayPeriodNS) {
+            for (SwingLogTextM c : categories.values()) {
+                c.decayActvity();
+            }
+            lastDecayed = now;
+            categoriesList.repaint();
+        }
+    }
+    
 }

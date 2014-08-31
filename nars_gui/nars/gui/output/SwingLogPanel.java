@@ -21,11 +21,8 @@ public class SwingLogPanel extends LogPanel {
 
     public final SwingLogText ioText;
 
-
-    
     public SwingLogPanel(NARControls narControls) {
         super(narControls);
-
 
         ioText = new SwingLogText(narControls.nar);
 
@@ -36,7 +33,7 @@ public class SwingLogPanel extends LogPanel {
         add(ioTextScroll, BorderLayout.CENTER);
 
         addPopupMenu();
-        
+
         setConsoleStyle(ioText, true);
 
         setBackground(Color.BLACK);
@@ -49,12 +46,9 @@ public class SwingLogPanel extends LogPanel {
         String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
             logFile.println(s);
-        }        
+        }
     }
 
-    
- 
-    
     @Override
     protected void setFontSize(double v) {
         ioText.setFont(ioText.getFont().deriveFont((float) v));
@@ -65,9 +59,11 @@ public class SwingLogPanel extends LogPanel {
         ioText.setText("");
     }
 
-    
-    
-   public static void setConsoleStyle(JTextComponent c, boolean invert) {
+    public static void setConsoleStyle(JTextComponent c, boolean invert) {
+        setConsoleStyle(c, invert, 16);
+    }
+
+    public static void setConsoleStyle(JTextComponent c, boolean invert, int fontSize) {
         if (invert) {
             c.setForeground(Color.WHITE);
             c.setCaretColor(Color.WHITE);
@@ -79,7 +75,7 @@ public class SwingLogPanel extends LogPanel {
 
         }
         c.setBorder(new EmptyBorder(0, 0, 0, 0));
-        c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 16));
+        c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
     }
 
     final static String COPY = "Copy";
@@ -158,8 +154,5 @@ public class SwingLogPanel extends LogPanel {
     void limitBuffer(int incomingDataSize) {
         ioText.limitBuffer(incomingDataSize);
     }
-    
 
-    
-    
 }
