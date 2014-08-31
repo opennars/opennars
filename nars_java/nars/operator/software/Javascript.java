@@ -1,24 +1,16 @@
 package nars.operator.software;
 
-import java.util.ArrayList;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import nars.core.Parameters;
-import nars.entity.Task;
-import nars.io.Symbols;
 import nars.io.Texts;
-import nars.language.Inheritance;
-import nars.language.Product;
 import nars.language.Term;
-import nars.language.Variable;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.operator.SynchronousFunctionOperator;
 import nars.storage.Memory;
 
 /**
  * Executes a Javascript expression
  */
-public class Javascript extends Operator {
+public class Javascript extends SynchronousFunctionOperator {
 
     final ScriptEngineManager factory = new ScriptEngineManager();
     final ScriptEngine js = factory.getEngineByName("JavaScript");      
@@ -26,55 +18,29 @@ public class Javascript extends Operator {
     public Javascript() {
         super("^js");
     }
-
-    @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    
+    @Override protected Term function(Memory memory, Term[] x) {
+        if (x.length!=1)
+            return null;
         
         js.put("memory", memory);
-        //TODO make memory access optional by constructor argument
-        //TODO allow access to NAR instance?
-
-        if (args.length != 2)
-            return null;
         
-        if (!(args[1] instanceof Variable)){
-            //TODO report error
-            return null;
-        }        
-        
-        Object result = null;
-        
-        String input = Texts.unescape(args[0].name()).toString();
-        if (input.charAt(0) == '"')
-            input = input.substring(1, input.length()-1);                
+        String input = Texts.unescape(x[0].name()).toString();
+        if (input.charAt(0) == '"') {
+            input = input.substring(1, input.length() - 1);
+        }
+        Object result;
         try {
             result = js.eval(input);
-        } catch (Throwable ex) {            
+        } catch (Throwable ex) {
             result = ex.toString();
         }
-        
-        memory.output(Javascript.class, input + " | " + result);
-        
-        Term resultTerm = new Term(Texts.escape('"' + result.toString() + '"').toString());
-        
-        Inheritance operatorInheritance = Operation.make(
-            Product.make(new Term[] { args[0], resultTerm }, memory),
-            this,
-            memory
-        );
-        
-        Inheritance resultInheritance = Inheritance.make(
-            operatorInheritance,
-            new Term("js_evaluation"),
-            memory
-        );
-        
-        
-        memory.output(Task.class, resultInheritance);
-        
-        ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()));
-                
-        return results;
+        return new Term(Texts.escape('"' + result.toString() + '"').toString());
     }
+
+    @Override public Term getRange() {
+        return new Term("js_evaluation");
+    }
+    
+
 }
