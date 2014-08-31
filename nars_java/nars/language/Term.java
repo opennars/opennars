@@ -22,6 +22,7 @@ package nars.language;
 
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
+import nars.io.Texts;
 
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.
@@ -212,4 +213,10 @@ public class Term implements AbstractTerm {
         return name.toString();
     }
 
+    /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
+    public static Term text(String t) {
+        return new Term(Texts.escape('"' + t + '"').toString());
+    }
+
+    
 }

@@ -17,49 +17,55 @@
 
 package nars.operators.math;
 
-import java.util.ArrayList;
-import nars.entity.*;
-import nars.language.*;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.language.CompoundTerm;
+import nars.language.SetExt;
+import nars.language.SetInt;
+import nars.language.Term;
+import nars.operator.SynchronousFunctionOperator;
 import nars.storage.Memory;
 
 /**
  * Count the number of elements in a set
+ * 
+
+'INVALID
+(^count,a)!
+(^count,a,b)!
+(^count,a,#b)!
+
+'VALID: 
+(^count,[a,b],#b)!
+
+ * 
  */
-public class Count extends Operator {
+public class Count extends SynchronousFunctionOperator {
 
     public Count() {
         super("^count");
     }
 
-    /**
-     * To count the number of elements of a set
-     * @param args Arguments, a set and a variable
-     * @param memory The memory in which the operation is executed
-     * @return Immediate results as Tasks
-     */
-    @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        if (args.length!=2) {
-            //TODO report error
-            return null;
-        }
-                
-        Term content = args[0];
-        if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
-            //TODO report error
-            return null;
-        }
-        if (!(args[1] instanceof Variable)){
-            //TODO report error
-            return null;
-        }
-        int n = ((CompoundTerm) content).size();
-        Term numberTerm = new Term("" + n);
-        args[1] = numberTerm;
-        return null;
-    }
+    final static String requireMessage = "Requires 1 SetExt or SetInt argument";
     
+    @Override
+    protected Term function(Memory memory, Term[] x) {
+        if (x.length!=1) {
+            throw new RuntimeException(requireMessage);
+        }
+
+        Term content = x[0];
+        if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
+            throw new RuntimeException(requireMessage);
+        }       
+        
+        int n = ((CompoundTerm) content).size();
+        return new Term(Integer.toString(n));
+    }
+
+    @Override
+    protected Term getRange() {
+        return new Term("counted");
+    }
+
+
     
 }

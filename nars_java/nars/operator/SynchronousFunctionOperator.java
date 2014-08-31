@@ -9,7 +9,6 @@ import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.operator.software.Javascript;
 import nars.storage.Memory;
 
 
@@ -20,6 +19,7 @@ import nars.storage.Memory;
  */
 public abstract class SynchronousFunctionOperator extends Operator {
 
+    
     protected SynchronousFunctionOperator(String name) {
         super(name);
     }
@@ -40,22 +40,28 @@ public abstract class SynchronousFunctionOperator extends Operator {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
         if (args.length < 2) {
-            return null;
+            throw new RuntimeException("Requires at least 2 arguments");
         }
         if (!(args[args.length-1] instanceof Variable)) {
             //TODO report error
-            return null;
+            throw new RuntimeException("Last argument must be a Variable");
         }
         
         Term[] x = new Term[args.length-1];
         System.arraycopy(args, 0, x, 0, args.length-1);
         
-        Term y = function(m, x);
-        if (y == null) {
-            return null;
+        Term y;
+        try {
+            y = function(m, x);
+            if (y == null) {
+                return null;
+            }
+            m.output(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
+        }
+        catch (Exception e) {
+            throw e;
         }
         
-        m.output(Javascript.class, Arrays.toString(x) + " | " + y);
         
         Term parameterTerm = x.length == 1 ? x[0] : Product.make(x, m);
         
@@ -65,6 +71,8 @@ public abstract class SynchronousFunctionOperator extends Operator {
                         parameterTerm, y
                     },
                 m), this, m);
+        
+  
         
         Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange(), m);
         m.output(Task.class, resultInheritance);
