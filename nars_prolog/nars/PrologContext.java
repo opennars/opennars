@@ -1,7 +1,7 @@
 package nars;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import nars.core.NAR;
 import nars.language.Term;
 import nars.prolog.Prolog;
@@ -13,7 +13,7 @@ import nars.prolog.Prolog;
 public class PrologContext {
     
     /** maps a NARS term to a Prolog instance */
-    public final Map<Term, Prolog> prologs = new HashMap();
+    public final Map<Term, Prolog> prologs = new WeakHashMap();
     private final NAR nar;
     
     public PrologContext(NAR n) {

@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;
+import nars.io.Texts;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
@@ -51,7 +52,11 @@ public class PrologQueryOperator extends Operator {
         
         Prolog p = null; //TODO lookup the selected prolog from first arg
         String query = null;
-        String[] variableNames = null;                
+        
+        
+        // get all variablenames
+        // prolog must resolve the variables and assign values to them
+        String[] variableNames = getVariableNamesOfArgs(args);
         
         // execute
         nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(p, query, variableNames);
@@ -86,6 +91,42 @@ public class PrologQueryOperator extends Operator {
         results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
                
         return results;
+    }
+    
+    static private String[] getVariableNamesOfArgs(Term[] args) {
+        int numberOfVariables = (args.length - 2) / 2;
+        int variableI;
+       
+        String[] variableNames = new String[numberOfVariables];
+       
+        for( variableI = 0; variableI < numberOfVariables; variableI++ ) {
+            Term termWithVariableName = args[2+2*variableI];
+           
+            if( !(termWithVariableName instanceof Term) ) {
+                throw new RuntimeException("Result Variable Name is not an term!");
+            }
+           
+            variableNames[variableI] = getStringOfTerm(termWithVariableName);
+        }
+       
+        return variableNames;
+    }
+   
+    // tries to convert the Term (which must be a string) to a string with the content
+    static public String getStringOfTerm(Term term) {
+        // escape sign codes
+        String string = term.name().toString();
+        string = Texts.unescape(string).toString();
+        if (string.charAt(0) != '"') {
+            throw new RuntimeException("term is not a string as expected!");
+        }
+       
+        string = string.substring(1, string.length()-1);
+       
+        // because the text can contain quoted text
+        string = unescape(string);
+       
+        return string;
     }
     
     
@@ -290,6 +331,11 @@ public class PrologQueryOperator extends Operator {
     }
    
     
+    
+    // TODO< move into prolog utils >
+    private static String unescape(String text) {
+        return text.replace("\\\"", "\"");
+    }   
     
     
 }
