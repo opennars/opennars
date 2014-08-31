@@ -1,67 +1,93 @@
 package nars.gui.output;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
+import nars.gui.output.SwingLogPanel.SwingLogText;
+import nars.io.Output;
 
 /**
  *
  * @author me
  */
-public class MultiLogPanel extends JPanel {
+public class MultiLogPanel extends JPanel implements Output {
 
-    public Map<Task, LogPanel> taskPanel = new HashMap();
-    private final SwingLogPanel rootTaskPanel;
-    private final NARControls controls;
+    public Map<Task, SwingLogText> taskPanel = new HashMap();
+    private final SwingLogText rootTaskPanel;
+    private final NAR nar;
+    private final JPanel content;
 
     public MultiLogPanel(NARControls c) {
-        super(new GridLayout(1, 0));
+        super(new BorderLayout());
+        
+        content = new JPanel(new GridLayout(1, 0));
+        add(content, BorderLayout.CENTER);
 
-        this.controls = c;
-
-        rootTaskPanel = new SwingLogPanel(c) {
-
-            @Override
-            public void output(Class c, Object o) {
-                System.out.println(o);
-                if (o instanceof Task) {
-                    Task t = (Task) o;
-                    Task parent = t.getRootTask();
-                    LogPanel p = getLogPanel(parent);
-                    if (p == this)
-                        super.output(c, o);
-                    else
-                        p.output(c, o);
-                } else {
-                    super.output(c, o);
-                }
-            }
+        this.nar = c.nar;
+        nar.addOutput(this);
+        
+        rootTaskPanel = new SwingLogText() {
 
         };
-        add(rootTaskPanel);
+        add("Root", rootTaskPanel);
     }
 
-    LogPanel getLogPanel(Task parent) {
+    @Override
+    public void output(Class channel, Object o) {
+        if (o instanceof Task) {
+            Task t = (Task) o;
+            Task parent = t.getRootTask();
+            SwingLogText p = getLogPanel(parent);
+            p.print(channel, o, false, nar);
+        } else {
+            rootTaskPanel.print(channel, o, false, nar);
+        }
+    }
+
+
+    SwingLogText getLogPanel(Task parent) {
         if (parent == null) {
             return rootTaskPanel;
         } else {
-            LogPanel p = taskPanel.get(parent);
+            SwingLogText p = taskPanel.get(parent);
             if (p == null) {
-                p = new SwingLogPanel(controls);
-                add(p);
-                System.out.println("new task" + parent);
+                p = new SwingLogText();
+                add(parent.toStringBrief(), p);
                 taskPanel.put(parent, p);
             }
             return p;
         }
     }
-
     
-    public void add(LogPanel p) {
-        add(new JScrollPane(p));
+    public void add(String title, SwingLogText p) {
+        int columnWidth = 400;
+        SwingLogPanel.setConsoleStyle(p, true);
+                
+        JPanel x = new JPanel(new BorderLayout());
+        x.add(new JButton(title), BorderLayout.NORTH);
+        x.add(new JScrollPane(p), BorderLayout.CENTER);
+        
+        
+        x.setMinimumSize(new Dimension(columnWidth, 0));
+        x.setMaximumSize(new Dimension(columnWidth, Integer.MAX_VALUE/2));
+        x.setPreferredSize(new Dimension(columnWidth, 0));
+        x.validate();
+        
+        content.add(x);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                revalidate();
+                repaint();
+            }            
+        });
     }
 }
