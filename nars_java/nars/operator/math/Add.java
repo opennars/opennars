@@ -16,46 +16,45 @@
  */
 package nars.operator.math;
 
-import java.util.ArrayList;
-import nars.entity.*;
-import nars.language.*;
-import nars.operator.Operation;
-import nars.operator.Operator;
+import nars.language.Term;
+import nars.operator.SynchronousFunctionOperator;
 import nars.storage.Memory;
 
 /**
  * Count the number of elements in a set
  */
-public class Add extends Operator {
+public class Add extends SynchronousFunctionOperator {
 
     public Add() {
         super("^add");
     }
 
-    /**
-     * To add two numbers and get the sum
-     *
-     * @param args Arguments, two numbers and a variable
-     * @param memory The memory in which the operation is executed
-     * @return Immediate results as Tasks
-     */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        if (args.length!= 3) {
-            return null;
+    protected Term function(Memory memory, Term[] x) {
+        if (x.length!= 2) {
+            throw new RuntimeException("Requires 2 arguments");
         }
-        if (!(args[2] instanceof Variable)){
-            //TODO report error
-            return null;
-        }
+        
+        int n1, n2;
+        
         try {
-            int n1 = Integer.parseInt(String.valueOf(args[0].name()));
-            int n2 = Integer.parseInt(String.valueOf(args[1].name()));
-            Term numberTerm = new Term(String.valueOf(n1 + n2));
-            args[2] = numberTerm;
+            n1 = Integer.parseInt(String.valueOf(x[0].name()));
         } catch (NumberFormatException e) {
-            return null;
+            throw new RuntimeException("1st parameter not an integer");
         }
-        return null;
+        
+        try {
+            n2 = Integer.parseInt(String.valueOf(x[1].name()));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("2nd parameter not an integer");
+        }
+        
+        return new Term(String.valueOf(n1 + n2));            
     }
+
+    @Override
+    protected Term getRange() {
+        return new Term("added");
+    }
+    
 }
