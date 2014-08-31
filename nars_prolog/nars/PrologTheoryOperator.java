@@ -43,12 +43,9 @@ public class PrologTheoryOperator extends nars.operator.Operator {
         Term key = args[0];        
         String theory = PrologQueryOperator.getStringOfTerm(args[1]);
         
-        Agent a = new Agent(theory);
-        Prolog p = new Prolog();
+        context.theories.put(key, theory);
         
-        context.prologs.put(key, p);
-        
-        memory.output(Prolog.class, key + "=" + p );
+        memory.output(Prolog.class, key + "=" + theory );
 
         return null;
     }

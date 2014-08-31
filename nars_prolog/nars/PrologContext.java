@@ -12,8 +12,8 @@ import nars.prolog.Prolog;
  */
 public class PrologContext {
     
-    /** maps a NARS term to a Prolog instance */
-    public final Map<Term, Prolog> prologs = new WeakHashMap();
+    /** maps a NARS term to the coresponding theory */
+    public final Map<Term, String> theories = new WeakHashMap();
     private final NAR nar;
     
     public PrologContext(NAR n) {
