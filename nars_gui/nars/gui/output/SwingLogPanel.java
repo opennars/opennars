@@ -29,7 +29,6 @@ public class SwingLogPanel extends LogPanel {
 
         ioText = new SwingLogText(narControls.nar);
 
-
         //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
         JPanel ioTextWrap = new JPanel(new BorderLayout());
         ioTextWrap.add(ioText);
@@ -40,8 +39,6 @@ public class SwingLogPanel extends LogPanel {
         
         setConsoleStyle(ioText, true);
 
-        ioTextWrap.setBorder(new EmptyBorder(0, 0, 0, 0));
-        ioTextScroll.setBorder(new EmptyBorder(0, 0, 0, 0));
         setBackground(Color.BLACK);
     }
 

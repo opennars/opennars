@@ -36,6 +36,8 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         return TextOutput.getOutputString(o, showStamp, nar);
     }
 
+
+
     protected final NAR nar;
     public static final int maxIOTextSize = (int) 8E5;
     protected boolean showErrors = true;
@@ -217,19 +219,42 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
     public static Color getChannelColor(Class c) {
         
-        
-        if (c == OUT.class) {
-            return Color.LIGHT_GRAY;
-        } else if (c == IN.class) {
-            return Color.WHITE;
-        } else if (c == ERR.class) {
-            return Color.ORANGE;
-        } else //if (l.startsWith("LOG:")) {
-        {
-            return Color.GRAY;
+        switch (c.getSimpleName()) {
+            case "OUT":                
+                return Color.GREEN;
+            case "IN":
+                return Color.YELLOW;
+            case "ERR":
+                return Color.ORANGE;
         }
+        
+        return Color.GRAY;
     }
 
+    static Color getPriorityColor(float priority) {
+        return new Color(priority, priority, priority);
+    }
+    static Color getFrequencyColor(float frequency) {
+        return new Color(1.0f - frequency, frequency, 0);
+    }
+    static Color getConfidenceColor(float confidence) {
+        return new Color(0,0,confidence);
+    }
+
+    static Color getStatementColor(char punctuation, float priority) {
+        
+        float r = 1f, g = 1f, b = 1f;
+        switch (punctuation) {
+            case '!': r = 1f; g = 0.75f; b = 0f; break;
+            case '?': b = 1f; r = 0.3f; g = 0f; break;
+            case '.': break;
+        }        
+        r *= 0.25f + 0.75f*priority;
+        g *= 0.25f + 0.75f*priority;
+        b *= 0.25f + 0.75f*priority;
+        return new Color(r, g, b);
+    }
+    
 
     public static final class LOG {
     }

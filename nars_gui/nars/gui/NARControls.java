@@ -20,6 +20,7 @@
  */
 package nars.gui;
 
+import com.hipposretribution.controlP5.drawable.controller.single.chart.Chart;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FileDialog;
@@ -118,7 +119,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     private boolean allowFullSpeed = false;
     public final InferenceLogger logger;
 
-    int chartHistoryLength = 400;
+    int chartHistoryLength = 128;
     
     /**
      * Constructor
@@ -689,7 +690,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         {
             
             
-            PLineChart chart0 = new PLineChart("concepts.Total", chartHistoryLength);
+            PLineChart chart0 = new PLineChart("concepts.Total", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart0.newPanel());
             charts.add(chart0);
             /*
@@ -699,34 +700,34 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             chartPanel.add(chart0);
             */
 
-            PLineChart chart1 = new PLineChart("concepts.Mass", chartHistoryLength);
+            PLineChart chart1 = new PLineChart("concepts.Mass", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart1.newPanel());
             charts.add(chart1);
-            PLineChart chart2 = new PLineChart("concepts.AveragePriority", chartHistoryLength);
+            PLineChart chart2 = new PLineChart("concepts.AveragePriority", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart2.newPanel());
             charts.add(chart2);
             
-            PLineChart chart3 = new PLineChart("beliefs.Total", chartHistoryLength);
+            PLineChart chart3 = new PLineChart("beliefs.Total", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart3.newPanel());
             charts.add(chart3);
             
-            PLineChart chart4 = new PLineChart("questions.Total", chartHistoryLength);
+            PLineChart chart4 = new PLineChart("questions.Total", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart4.newPanel());
             charts.add(chart4);
 
-            PLineChart chart5 = new PLineChart("novelTasks.Total", chartHistoryLength);
+            PLineChart chart5 = new PLineChart("novelTasks.Total", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart5.newPanel());
             charts.add(chart5);
 
-            PLineChart chart6 = new PLineChart("newTasks.Total", chartHistoryLength);
+            PLineChart chart6 = new PLineChart("newTasks.Total", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart6.newPanel());
             charts.add(chart6);
             
-            PLineChart chart7 = new PLineChart("emotion.happy", chartHistoryLength);
+            PLineChart chart7 = new PLineChart("emotion.happy", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart7.newPanel());
             charts.add(chart7);
 
-            PLineChart chart8 = new PLineChart("emotion.busy", chartHistoryLength);
+            PLineChart chart8 = new PLineChart("emotion.busy", chartHistoryLength, Chart.AREA);
             chartPanel.add(chart8.newPanel());
             charts.add(chart8);
             
