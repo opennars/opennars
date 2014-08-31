@@ -41,6 +41,14 @@ public class PrologQueryOperator extends Operator {
 
     @Override
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        if (args.length == 0) {
+            return null;
+        }
+        
+        if (((args.length - 1) % 2) != 0) {
+            return null;
+        }
+        
         Prolog p = null; //TODO lookup the selected prolog from first arg
         String query = null;
         String[] variableNames = null;                
