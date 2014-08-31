@@ -27,7 +27,6 @@ import javax.swing.event.ChangeListener;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
-import nars.gui.output.SwingLogPanel.SwingLogText;
 import nars.io.Output;
 
 /**
@@ -38,14 +37,16 @@ import nars.io.Output;
  */
 public class MultiLogPanel extends JSplitPane implements Output {
 
+    /** extension of SwingLogText with functionality specific to MultiLogPanel */
     public class SwingLogTextM extends SwingLogText  implements ChangeListener {
     
         
         public final JCheckBox enabler;
-        private final Object category;
+        final Object category;
         JPanel displayed = null;
 
         public SwingLogTextM(Object category) {
+            super(nar);
             this.category = category;
             this.enabler = new JCheckBox(category.toString());
             
@@ -97,9 +98,7 @@ public class MultiLogPanel extends JSplitPane implements Output {
         this.nar = c.nar;
         nar.addOutput(this);
 
-        rootTaskPanel = new SwingLogText() {
-
-        };
+        rootTaskPanel = new SwingLogTextM("Root");
         
         
         getLogPanel("Root").show();
@@ -114,7 +113,7 @@ public class MultiLogPanel extends JSplitPane implements Output {
         } else {
             category = null;
         }
-        
+                
         SwingLogText p = getLogPanel(category);
         if (p!=null)
             p.print(channel, o, false, nar);

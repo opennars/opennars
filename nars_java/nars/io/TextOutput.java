@@ -143,7 +143,7 @@ public class TextOutput implements Output {
     }
 
     /** generates a human-readable string from an output channel and signal */
-    public static String getOutputString(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+    @Deprecated public static String getOutputString(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
         buffer.setLength(0);
         
         if (showChannel)
@@ -204,9 +204,48 @@ public class TextOutput implements Output {
         
     }
     
-    public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
+    @Deprecated public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
         return getOutputString(channel, signal, showChannel, showStamp, nar, new StringBuilder());
     }
+
+    public static String getOutputString(Object signal, final boolean showStamp, final NAR nar) {
+        return getOutputString(signal, showStamp, nar, new StringBuilder());
+    }
+    
+    /** generates a human-readable string from an output channel and signal */
+    public static String getOutputString(Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+        buffer.setLength(0);
+        
+        if (signal instanceof Exception) {
+            Exception e = (Exception)signal;
+
+            buffer.append(e.getClass().getSimpleName() + ": " + e.getMessage());
+
+            /*if (showStackTrace)*/ 
+            {
+                buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
+            }
+        }
+        else if (signal instanceof Task) {
+            Task t = (Task)signal;
+            Sentence s = t.getBestSolution();
+            if (s == null)
+                s = t.sentence;
+
+            buffer.append(s.toString(nar, showStamp));
+        }            
+        else if (signal instanceof Sentence) {
+            Sentence s = (Sentence)signal;                
+            buffer.append(s.toString(nar, showStamp));                        
+        }                    
+        else {
+            buffer.append(signal.toString());
+        }
+        
+        return Texts.unescape(buffer).toString();
+        
+    }
+    
     
     public void stop() {
         nar.removeOutput(this);
