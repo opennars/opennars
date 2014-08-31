@@ -12,14 +12,14 @@ import nars.prolog.Prolog;
  */
 public class PrologContext {
     
-    /** maps a NARS term to the coresponding theory */
-    public final Map<Term, String> theories = new WeakHashMap();
+    /** maps a NARS term to the coresponding prolog interpreter istance */
+    public final Map<Term, Prolog> prologInterpreters = new WeakHashMap();
     private final NAR nar;
     
     public PrologContext(NAR n) {
         this.nar = n;
         
-        nar.memory.addOperator(new PrologTheoryOperator(this));
+        nar.memory.addOperator(new PrologTheoryStringOperator(this));
         nar.memory.addOperator(new PrologQueryOperator(this));
         
     }
