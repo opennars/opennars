@@ -1,17 +1,18 @@
 package nars.core.control;
 
 import java.util.Collection;
+import nars.core.ConceptProcessor;
+import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.core.Memory;
-import nars.core.ConceptProcessor;
 
 /**
- * A deterministic memory cycle implementation that is used for development and testing.
+ * The original deterministic memory cycle implementation that is currently used as a standard
+ * for development and testing.
  */
 public class SequentialMemoryCycle implements ConceptProcessor {
 

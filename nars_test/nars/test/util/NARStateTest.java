@@ -22,7 +22,7 @@ import java.util.HashMap;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import static nars.test.util.Number1DInputTest.randomArray;
-import nars.util.NARState;
+import nars.core.monitor.LogicState;
 import org.junit.Test;
 
 /**
@@ -43,7 +43,7 @@ public class NARStateTest {
         n.finish(16);
         
         
-        HashMap<String, Object> d = new NARState(n).measure();
+        HashMap<String, Object> d = new LogicState(n).measure();
 
         assert(d.keySet().size() > 0);
         

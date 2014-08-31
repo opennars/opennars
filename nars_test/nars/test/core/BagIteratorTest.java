@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.perf.BagPerf.NullItem;
-import nars.util.ContinuousBag;
+import nars.storage.ContinuousBag;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 

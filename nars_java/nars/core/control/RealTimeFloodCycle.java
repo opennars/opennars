@@ -18,7 +18,7 @@ import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.core.Memory;
 import nars.core.ConceptProcessor;
-import nars.util.ContinuousBag;
+import nars.storage.ContinuousBag;
 
 /**
  *

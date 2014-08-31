@@ -22,7 +22,7 @@ import nars.core.Parameters;
 import nars.core.build.RealTimeNARBuilder;
 import nars.gui.NARSwing;
 import nars.io.TextOutput;
-import nars.util.NARState;
+import nars.core.monitor.LogicState;
 import nars.util.kif.KIFInput;
 
 /**
@@ -74,6 +74,6 @@ public class KIFExample {
         new TextInput(n, "$0.99;0.99$ <?x --> Human>?");*/
 
         
-        System.err.println(new NARState(n).measure());
+        System.err.println(new LogicState(n).measure());
     }
 }

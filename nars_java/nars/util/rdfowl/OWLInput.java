@@ -11,15 +11,15 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.build.DefaultNARBuilder;
 import nars.io.TextOutput;
 import nars.util.PrintWriterInput;
 
 
 
 /**
- * Combined OWL/RDF-S XML parser
+ * Simple combined OWL/RDF-S XML parser
  * 
  * Code from:
  * http://sujitpal.blogspot.com/2008/05/parsing-owl-xml-with-stax.html

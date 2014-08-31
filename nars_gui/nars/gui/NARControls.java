@@ -62,7 +62,7 @@ import nars.gui.output.TermWindow;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.core.Memory;
-import nars.util.NARState;
+import nars.core.monitor.LogicState;
 
 
 public class NARControls extends JPanel implements ActionListener, Runnable {
@@ -352,7 +352,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
             if (lastTime != nowTime) {                
                 for (PLineChart c : charts) {
-                    c.update(new NARState(nar));
+                    c.update(new LogicState(nar));
                 }
             }
 

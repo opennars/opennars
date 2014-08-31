@@ -25,7 +25,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.DefaultBag;
 import nars.storage.AbstractBag;
-import nars.util.ContinuousBag;
+import nars.storage.ContinuousBag;
 
 /**
  *

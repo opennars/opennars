@@ -1,4 +1,4 @@
-package nars.util;
+package nars.storage;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import nars.entity.Item;
 import nars.storage.AbstractBag;
 import nars.core.Memory;
+import nars.util.SortedItemList;
 
 
 

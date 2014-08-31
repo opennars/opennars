@@ -1,6 +1,6 @@
 package nars.perf;
 
-import nars.util.ContinuousBagNARBuilder;
+import nars.core.build.ContinuousBagNARBuilder;
 import java.util.Collection;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;

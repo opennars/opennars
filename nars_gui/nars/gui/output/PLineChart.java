@@ -6,7 +6,7 @@ import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
-import nars.util.NARState;
+import nars.core.monitor.LogicState;
 import processing.core.PApplet;
 
 
@@ -164,7 +164,7 @@ public class PLineChart extends PApplet {
     }
     
 
-    public void update(NARState state) {
+    public void update(LogicState state) {
         try {
         Map.Entry<Long, HashMap<String, Object>> entry = state.lastEntry();
         long when = entry.getKey();

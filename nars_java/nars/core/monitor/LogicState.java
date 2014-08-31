@@ -1,4 +1,4 @@
-package nars.util;
+package nars.core.monitor;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,15 +7,15 @@ import nars.core.NAR;
 import nars.entity.Concept;
 
 /**
- * Contains information about the state of a NAR, including measurements 
+ * Contains information & statistics about the Logical state of a NAR, including measurements 
  * and statistics.
  * 
  */
-public class NARState extends TreeMap<Long, HashMap<String, Object>> {
+public class LogicState extends TreeMap<Long, HashMap<String, Object>> {
     
     public final NAR nar;   
     
-    public NARState(final NAR n) {
+    public LogicState(final NAR n) {
         this.nar = n;
         
         measure();        
