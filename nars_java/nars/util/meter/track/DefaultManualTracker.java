@@ -32,6 +32,9 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
     public DefaultManualTracker(final StatsSession statsSession) {
         super(statsSession);
     }
+    public DefaultManualTracker(final String id) {
+        super(id);
+    }
 
     @Override
     public ManualTracker addValue(final double value) {
@@ -75,4 +78,6 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
 //            return ManualTracker.class;
 //        }
 //    }
+    
+    
 }
