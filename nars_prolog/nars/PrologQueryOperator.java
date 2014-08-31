@@ -13,7 +13,6 @@ import nars.language.Product;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.prolog.Agent;
 import nars.prolog.Int;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.NoSolutionException;
@@ -23,9 +22,14 @@ import nars.prolog.Struct;
 import nars.prolog.Theory;
 import nars.prolog.Var;
 import nars.core.Memory;
+import nars.prolog.MalformedGoalException;
 
 /**
- *
+ * 
+ * 
+ * Usage:
+ * (^prologQuery, "database(Query,0).", (*, theory0), "Query", #0)
+ * 
  * @author me
  */
 
@@ -42,16 +46,43 @@ public class PrologQueryOperator extends Operator {
 
     @Override
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        if (args.length == 0) {
+        if (args.length < 2) {
+            // TODO< error report >
             return null;
         }
         
-        if (((args.length - 1) % 2) != 0) {
+        if (((args.length - 2) % 2) != 0) {
+            // TODO< error report >
             return null;
         }
         
-        Prolog p = null; //TODO lookup the selected prolog from first arg
-        String query = null;
+        // check if 1st parameter is a string
+        if (!(args[0] instanceof Term)) {
+            // TODO< report error >
+            return null;
+        }
+        
+        // check if 2nd parameter is a product
+        if (!(args[1] instanceof Product)) {
+            // TODO< error report >
+            return null;
+        }
+        
+        Product theoryProduct = (Product)args[1];
+        
+        // check if product is not empty
+        if (theoryProduct.term.length == 0) {
+            // TODO< error report >
+            return null;
+        }
+        
+        // TODO< what do we do if we got many theories? >
+        ArrayList<String> theories = new ArrayList<>();
+        theories.add(context.theories.get(theoryProduct.term[0]));
+        
+        Term queryTerm = (Term)args[0];
+        String query = getStringOfTerm(queryTerm);
+        
         
         
         // get all variablenames
@@ -59,7 +90,7 @@ public class PrologQueryOperator extends Operator {
         String[] variableNames = getVariableNamesOfArgs(args);
         
         // execute
-        nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(p, query, variableNames);
+        nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(theories, query, variableNames);
        
        
        
@@ -182,45 +213,65 @@ public class PrologQueryOperator extends Operator {
     }
    
    
-    private nars.prolog.Term[] prologParseAndExecuteAndDereferenceInput(Prolog p, String input, String[] dereferencingVariableNames) {
-        nars.prolog.Term term = prologParseInput(input);
-        return executePrologGoalAndDereferenceVariable(p, term, dereferencingVariableNames);
-    }
-   
-    private nars.prolog.Term prologParseInput(String input) {
+    private nars.prolog.Term[] prologParseAndExecuteAndDereferenceInput(ArrayList<String> theories, String input, String[] dereferencingVariableNames) {
+        Prolog prolog = new Prolog();
+        
         try {
-            Agent a = new Agent(input);
-            Prolog p = new Prolog();
-            SolveInfo s = p.addTheory(new Theory(input));
-            return s.getSolution();
+            // TODO< many teories >
+            
+            prolog.addTheory(new Theory(theories.get(0)));
+            
         } catch (InvalidTheoryException ex) {
             Logger.getLogger(PrologTheoryOperator.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSolutionException ex) {
-            Logger.getLogger(PrologTheoryOperator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        
+        
+        
+        //return solveInfo.getSolution();
+        
+        return executePrologGoalAndDereferenceVariable(prolog, input, dereferencingVariableNames);
     }
    
     // TODO< return status/ error/sucess >
-    private nars.prolog.Term[] executePrologGoalAndDereferenceVariable(Prolog p, nars.prolog.Term goalTerm, String[] variableName) {
+    private nars.prolog.Term[] executePrologGoalAndDereferenceVariable(Prolog p, String goal, String[] VariableNames) {
+        SolveInfo solution;
         
-        SolveInfo solution = p.solve(goalTerm);
+        try {
+            solution = p.solve(goal);
+        }
+        catch (MalformedGoalException exception) {
+            // TODO< error handing >
+            throw new RuntimeException("MalformedGoalException");
+        }
         
         if (solution == null ) {
-                return null; // TODO error
-            }
-       
-
+            return null; // TODO error
+        }
+        
+        if (!solution.isSuccess()) {
+            throw new RuntimeException("Query was not successful");
+        }
+        
+        nars.prolog.Term solutionTerm;
+        
+        try {
+            solutionTerm = solution.getSolution();
+        }
+        catch (NoSolutionException exception) {
+            throw new RuntimeException("Query had no solution");
+        }
+        
         nars.prolog.Term[] resultArray;
 
-        resultArray = new nars.prolog.Term[variableName.length];
+        resultArray = new nars.prolog.Term[VariableNames.length];
+        
 
         int variableI;
 
-        for( variableI = 0; variableI < variableName.length; variableI++ ) {
+        for( variableI = 0; variableI < VariableNames.length; variableI++ ) {
             // get variable and dereference
             //  get the variable which has the name
-            Var variableTerm = getVariableByNameRecursive(goalTerm, variableName[variableI]);
+            Var variableTerm = getVariableByNameRecursive(solutionTerm, VariableNames[variableI]);
 
             if( variableTerm == null )
             {
@@ -232,7 +283,8 @@ public class PrologQueryOperator extends Operator {
 
             resultArray[variableI] = dereferencedTerm;
         }
-
+        
+        
         return resultArray;
     }
    
