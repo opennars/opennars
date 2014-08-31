@@ -145,7 +145,11 @@ public class MultiLogPanel extends JSplitPane implements Output {
 
         JPanel x = new JPanel(new BorderLayout());
         x.add(new JButton(title), BorderLayout.NORTH);
-        x.add(new JScrollPane(p), BorderLayout.CENTER);
+        
+        //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
+        JPanel ioTextWrap = new JPanel(new BorderLayout());
+        ioTextWrap.add(p);        
+        x.add(new JScrollPane(ioTextWrap), BorderLayout.CENTER);
 
         x.setMinimumSize(new Dimension(columnWidth, 0));
         x.setMaximumSize(new Dimension(columnWidth, Integer.MAX_VALUE / 2));
