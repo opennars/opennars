@@ -25,9 +25,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.util.ServiceLifeCycle.Support;
-import static nars.util.meter.util.Util.assertNotNull;
 import nars.util.meter.key.StatsKeyMatcher;
+import nars.util.meter.util.ServiceLifeCycle.Support;
 
 /**
  *
@@ -96,15 +95,15 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public void addGlobalEventHandler(final EventHandler eventHandler) {
-        assertNotNull(eventHandler, "eventHandler");
+        //assertNotNull(eventHandler, "eventHandler");
         globalEventHandlers.add(eventHandler);
     }
 
     @Override
     public void addEventHandler(final StatsKey key,
                                 final EventHandler eventHandler) {
-        assertNotNull(key, "key");
-        assertNotNull(eventHandler, "eventHandler");
+        //assertNotNull(key, "key");
+        //assertNotNull(eventHandler, "eventHandler");
 
         List<EventHandler> eventHandlers = getEventHandlers(key, true);
         eventHandlers.add(eventHandler);
@@ -164,8 +163,8 @@ public class SynchronousEventManager implements EventManager {
     public void fireEvent(final EventType eventType,
                           final StatsKey key,
                           final Object target) {
-        assertNotNull(eventType, "eventType");
-        assertNotNull(target, "target");
+        //assertNotNull(eventType, "eventType");
+        //assertNotNull(target, "target");
 
         logger.info("Firing event: {}, key: {}" + eventType + ' ' + key);
 

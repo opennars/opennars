@@ -23,14 +23,13 @@ import java.util.List;
  *
  * @author The Stajistics Project
  */
-public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker>
-    implements SpanTracker {
+public class CompositeSpanTracker<S extends SpanTracker> extends AbstractCompositeTracker<S> {
 
-    public CompositeSpanTracker(final SpanTracker... trackers) {
+    public CompositeSpanTracker(final S... trackers) {
         super(trackers);
     }
 
-    public CompositeSpanTracker(final List<SpanTracker> trackers) {
+    public CompositeSpanTracker(final List<S> trackers) {
         super(trackers);
     }
 
@@ -39,8 +38,7 @@ public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker>
      *
      * @return <tt>this</tt>.
      */
-    @Override
-    public SpanTracker track() {
+    public CompositeSpanTracker track() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
             trackers[i].track();
@@ -53,7 +51,6 @@ public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker>
      *
      * @return <tt>this</tt>.
      */
-    @Override
     public void commit() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
@@ -64,7 +61,6 @@ public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker>
     /**
      * Determine if any of the {@link SpanTracker}s are tracking.
      */
-    @Override
     public boolean isTracking() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
@@ -78,7 +74,6 @@ public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker>
     /**
      * Determine the earliest start time of the {@link SpanTracker}s.
      */
-    @Override
     public long getStartTime() {
         long startTime = Long.MAX_VALUE;
         int len = trackers.length;
@@ -90,4 +85,5 @@ public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker>
         }
         return startTime;
     }
+
 }

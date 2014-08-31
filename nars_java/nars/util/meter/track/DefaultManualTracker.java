@@ -16,7 +16,6 @@ package nars.util.meter.track;
 
 
 import java.util.logging.Logger;
-import nars.util.meter.track.AbstractTracker;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Misc;
 
@@ -46,6 +45,11 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
         return this;
     }
 
+    public void commit(double value) {
+        setValue(value);
+        commit();              
+    }
+            
     @Override
     public void commit() {
         try {

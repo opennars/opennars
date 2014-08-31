@@ -15,6 +15,7 @@
 package nars.util.meter.track;
 
 import nars.util.meter.session.StatsSession;
+import nars.util.meter.util.Range;
 
 /**
  * A tracker that tracks time duration with nanosecond precision 
@@ -32,6 +33,14 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
     public NanoTimeDurationTracker(final StatsSession session) {
         super(session);
     }
+    
+    public NanoTimeDurationTracker(final String id, Range... ranges) {
+        super(id, ranges);
+    }
+
+    public NanoTimeDurationTracker(final String id) {
+        super(id);
+    }
 
     @Override
     protected void startImpl(final long now) {
@@ -46,5 +55,6 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
 
         session.update(this, now);
     }
+
 
 }

@@ -16,7 +16,7 @@ package nars.util.meter.session;
 // */
 //package nars.core.monitor.meter.session;
 //
-//import static org.stajistics.Util.assertNotNull;
+//import static org.stajistics.Util.//assertNotNull;
 //
 //import java.util.Collections;
 //import java.util.List;
@@ -52,8 +52,8 @@ package nars.util.meter.session;
 //
 //    public ImmutableSession(final StatsKey key,
 //                            final DataSet dataSet) {
-//        assertNotNull(key, "key");
-//        assertNotNull(dataSet, "dataSet");
+//        //assertNotNull(key, "key");
+//        //assertNotNull(dataSet, "dataSet");
 //
 //        this.key = key;
 //        this.dataSet = DataSets.unmodifiable(dataSet);

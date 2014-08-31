@@ -21,14 +21,11 @@ import java.util.logging.Logger;
 import nars.util.meter.session.StatsSession;
 
 /**
- *
- *
- *
  * @author The Stajistics Project
  */
 public abstract class AbstractThreadInfoSpanTracker extends AbstractSpanTracker {
 
-    private static Logger logger = Logger.getLogger(AbstractThreadInfoSpanTracker.class.toString());
+    private static final Logger logger = Logger.getLogger(AbstractThreadInfoSpanTracker.class.toString());
 
     private static volatile boolean hasSetContentionMonitoringEnabled = false;
     private static volatile boolean hasSetCPUTimeMonitoringEnabled = false;
@@ -36,11 +33,17 @@ public abstract class AbstractThreadInfoSpanTracker extends AbstractSpanTracker 
     private static boolean contentionMonitoringEnabled = false;
     private static boolean cpuTimeMonitoringEnabled = false;
 
-    private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+    private static final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
     public AbstractThreadInfoSpanTracker(final StatsSession session) {
         super(session);
     }
+
+    public AbstractThreadInfoSpanTracker(final String id) {
+        super(id);
+    }
+    
+    
 
     protected static ThreadMXBean getThreadMXBean() {
         return threadMXBean;

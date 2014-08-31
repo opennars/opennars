@@ -15,7 +15,6 @@
 package nars.util.meter.data;
 
 import java.util.Set;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  * 
@@ -43,7 +42,7 @@ public class DataSets {
         private final MetaData delegateMetaData;
 
         ImmutableDataSetDecorator(final DataSet delegate) {
-            assertNotNull(delegate, "delegate");
+            //assertNotNull(delegate, "delegate");
             this.delegate = delegate;
 
             if (delegate.hasMetaData()) {
@@ -126,7 +125,7 @@ public class DataSets {
         private final MetaData delegate;
 
         ImmutableMetaDataDecorator(final MetaData delegate) {
-            assertNotNull(delegate, "delegate");
+            //assertNotNull(delegate, "delegate");
             this.delegate = delegate;
         }
 

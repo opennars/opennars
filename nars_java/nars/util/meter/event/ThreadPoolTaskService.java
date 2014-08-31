@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import nars.util.meter.key.StatsProperties;
 import nars.util.meter.util.ServiceLifeCycle.Support;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  * @author The Stajistics Project
@@ -74,7 +73,7 @@ public class ThreadPoolTaskService implements TaskService {
     }
 
     public ThreadPoolTaskService(final ThreadPoolExecutor executor) {
-        assertNotNull(executor, "executor");
+        //assertNotNull(executor, "executor");
         this.executor = executor;
     }
 

@@ -37,11 +37,6 @@ import nars.util.meter.session.StatsSession;
 public interface IncidentTracker extends Tracker {
 
     /**
-     * The factory that will produce the default type of {@link IncidentTracker} instances.
-     */
-    //public static final TrackerFactory<IncidentTracker> FACTORY = DefaultIncidentTracker.FACTORY;
-
-    /**
      * Report an occurrence of an event. Sets the <tt>value</tt> field to <tt>1</tt> and immediately
      * publishes the incident occurrence to the {@link StatsSession}. 
      *

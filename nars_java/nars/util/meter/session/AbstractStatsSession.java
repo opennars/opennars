@@ -26,10 +26,9 @@ import nars.util.meter.data.DataSet;
 import nars.util.meter.data.DefaultDataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.session.recorder.DataRecorder;
+import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.util.FastPutsLinkedMap;
 import nars.util.meter.util.Misc;
-import static nars.util.meter.util.Util.assertNotNull;
 
 /**
  *
@@ -57,8 +56,8 @@ public abstract class AbstractStatsSession implements StatsSession {
     public AbstractStatsSession(final StatsKey key,
                                 final EventManager eventManager,
                                 final DataRecorder... dataRecorders) {
-        assertNotNull(key, "key");
-        assertNotNull(eventManager, "eventManager");
+        //assertNotNull(key, "key");
+        //assertNotNull(eventManager, "eventManager");
 
         this.key = key;
         this.eventManager = eventManager;
@@ -201,7 +200,7 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     protected void restoreState(final DataSet dataSet) {
-        assertNotNull(dataSet, "dataSet");
+        //assertNotNull(dataSet, "dataSet");
 
         if (!dataSet.isEmpty()) {
 
@@ -299,8 +298,12 @@ public abstract class AbstractStatsSession implements StatsSession {
         buf.append(DECIMAL_FORMAT.format(getMax()));
         buf.append(",sum=");
         buf.append(DECIMAL_FORMAT.format(getSum()));
+        /*buf.append(",stdev=");
+        buf.append(DECIMAL_FORMAT.format(getStdev()));*/
         buf.append(']');
 
         return buf.toString();
     }
+
+    
 }

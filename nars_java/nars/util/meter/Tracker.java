@@ -15,10 +15,11 @@
 package nars.util.meter;
 
 import java.io.Serializable;
-import nars.util.meter.track.IncidentTracker;
+import nars.util.meter.data.DataSet;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.track.ManualTracker;
 import nars.util.meter.session.StatsSession;
+import nars.util.meter.track.IncidentTracker;
+import nars.util.meter.track.ManualTracker;
 import nars.util.meter.track.SpanTracker;
 
 
@@ -79,4 +80,5 @@ public interface Tracker extends Serializable {
      */
     StatsSession getSession();
 
+    DataSet get();
 }

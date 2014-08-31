@@ -20,7 +20,7 @@ import nars.util.meter.Tracker;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventType;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.session.recorder.DataRecorder;
+import nars.util.meter.recorder.DataRecorder;
 
 /**
  * Stores statistics data collected for a single {@link String}.
@@ -118,6 +118,7 @@ public interface StatsSession extends Serializable {
      * @see Tracker#getValue()
      */
     double getSum();
+    
 
     /**
      * Obtain the value of a single field from this session.

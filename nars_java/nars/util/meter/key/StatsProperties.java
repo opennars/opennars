@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 import static nars.util.meter.util.Util.assertNotEmpty;
-import static nars.util.meter.util.Util.assertNotNull;
 
 
 /**
@@ -336,7 +335,7 @@ public abstract class StatsProperties {
 
         @SuppressWarnings("unchecked")
         public MapStatsProperties(final Map propertyMap) {
-            assertNotNull(propertyMap, "propertyMap");
+            //assertNotNull(propertyMap, "propertyMap");
             this.propertyMap = propertyMap;
         }
 

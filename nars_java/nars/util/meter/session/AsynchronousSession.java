@@ -26,9 +26,8 @@ import nars.util.meter.event.EventType;
 import nars.util.meter.event.TaskService;
 import nars.util.meter.event.TaskServiceFactory;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.session.recorder.DataRecorder;
+import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.util.Misc;
-import static nars.util.meter.util.Util.assertNotNull;
 
 
 /**
@@ -89,7 +88,7 @@ public class AsynchronousSession extends AbstractStatsSession {
                                final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
 
-        assertNotNull(updateQueue, "updateQueue");
+        //assertNotNull(updateQueue, "updateQueue");
         this.updateQueue = updateQueue;
     }
 
@@ -289,7 +288,7 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     @Override
     public void restore(final DataSet dataSet) {
-        assertNotNull(dataSet, "dataSet");
+        //assertNotNull(dataSet, "dataSet");
 
         stateLock.lock();
         try {

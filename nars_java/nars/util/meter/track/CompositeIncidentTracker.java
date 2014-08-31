@@ -16,27 +16,22 @@ package nars.util.meter.track;
 
 import java.util.List;
 
-import nars.util.meter.track.AbstractCompositeTracker;
-
 /**
  *
  *
  * @author The Stajistics Project
  */
-public class CompositeIncidentTracker
-    extends AbstractCompositeTracker<IncidentTracker>
-    implements IncidentTracker {
+public class CompositeIncidentTracker<T extends IncidentTracker> extends AbstractCompositeTracker<T>     {
 
-    public CompositeIncidentTracker(final IncidentTracker... trackers) {
+    public CompositeIncidentTracker(final T... trackers) {
         super(trackers);
     }
 
-    public CompositeIncidentTracker(final List<IncidentTracker> trackers) {
+    public CompositeIncidentTracker(final List<T> trackers) {
         super(trackers);
     }
 
-    @Override
-    public IncidentTracker incident() {
+    public CompositeIncidentTracker incident() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
             trackers[i].incident();
