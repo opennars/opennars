@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -27,7 +28,6 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.Output.OUT;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
@@ -39,7 +39,6 @@ import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 
 /**
@@ -148,7 +147,7 @@ public class LocalRules {
             }
             
             if (task.isInput()) {    // moved from Sentence                
-                memory.output(OUT.class, task);
+                memory.output(task);
             }
             BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
             if ((budget != null) && budget.aboveThreshold()) {

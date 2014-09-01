@@ -41,7 +41,7 @@ public class SwingLogPanel extends LogPanel {
 
     @Override
     void print(final Class c, final Object o) {
-        ioText.print(c, o, showStamp, nar);
+        ioText.print(c, o);//, showStamp, nar);
 
         String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {

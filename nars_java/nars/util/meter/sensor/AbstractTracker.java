@@ -60,7 +60,7 @@ public abstract class AbstractTracker implements Sensor {
     public void setEventManager(EventManager e) {
         getSession().setEventManager(e);
     }
-
+    
     @Override
     public double getValue() {
         return value;
@@ -105,21 +105,25 @@ public abstract class AbstractTracker implements Sensor {
     }
 
     int gets = 0;
-    int samplePeriod = 0;
+    int sampleWindow = 0;
     
     /** automatically drain after n cycles; set to 0 for no auto-drain */
-    public void setSamplePeriod(int s) {
-        this.samplePeriod = s;
+    public void setSampleWindow(int s) {
+        this.sampleWindow = s;
     }
 
-    public int getSamplePeriod() {
-        return samplePeriod;
+    public int getSampleWindow() {
+        return sampleWindow;
     }    
 
+    protected void commit() {
+        gets++;        
+    }
+
+    
     public DataSet get() {
-        gets++;
-        if (samplePeriod > 0) {
-            if (gets % samplePeriod == 0)
+        if (sampleWindow > 0) {
+            if (gets % sampleWindow == 0)
                 return getReset();
         }
         
@@ -130,6 +134,12 @@ public abstract class AbstractTracker implements Sensor {
         return getSession().drainData();
     }
 
+    public double getHits() {
+        int hits = currentHits;
+        currentHits = 0;
+        return hits;
+    }    
+    
     public double getDeltaHits() {
         int deltaHits = currentHits - lastHits;
         lastHits = currentHits;

@@ -101,6 +101,8 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
             value = lastActualValue;
             session.update(this, -1);
         }
+        
+        commit();
 
         /*} catch (Exception e) {
          Misc.logHandledException(logger, e, "Caught Exception in commit()");

@@ -90,7 +90,6 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
             super.out(c, o);
             
             updateActivity(activity + activityIncrement);
-            repaint();
         }
         
         public void updateActivity(float newActivity) {
@@ -176,7 +175,7 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
                 
         SwingLogText p = getLogPanel(category);
         if (p!=null)
-            p.print(channel, o, false, nar);
+            p.out(channel, o);
         
         decayActivities();
     }

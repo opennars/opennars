@@ -9,7 +9,6 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -21,7 +20,7 @@ import java.util.Map;
 import nars.gui.NARSwing;
 import nars.util.meter.data.DataSet;
 
-public class PLineChart extends Canvas {
+public class ChartsPanel extends Canvas {
 
     
     //float motionBlur = 0.9f;
@@ -49,7 +48,7 @@ public class PLineChart extends Canvas {
      * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
      * Chart.BAR_CENTERED
      */
-    public PLineChart(DataSet data, int historySize) {
+    public ChartsPanel(DataSet data, int historySize) {
         super();
         this.data = data;
         this.historySize = historySize;
@@ -282,7 +281,7 @@ public class PLineChart extends Canvas {
  
         //Tell the System to do the Drawing now, otherwise it can take a few extra ms until 
         //Drawing is done which looks very jerky
-        Toolkit.getDefaultToolkit().sync();	
+        //Toolkit.getDefaultToolkit().sync();	
         
         //repaint();
     }

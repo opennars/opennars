@@ -85,10 +85,10 @@ public class SwingLogText extends JTextPane {
         
         if (isVisible()) {
             synchronized (pendingDisplay) {
-                if (pendingDisplay.size() == 0) {                
+                pendingDisplay.add(ll);
+                if (pendingDisplay.size() == 1) {
                     SwingUtilities.invokeLater(update);
                 }
-                pendingDisplay.add(ll);
             }
         }
     }
@@ -96,12 +96,14 @@ public class SwingLogText extends JTextPane {
     public final Runnable update = new Runnable() {
         @Override public void run() {
             synchronized (pendingDisplay) {
+                limitBuffer();
+
                 for (final LogLine l : pendingDisplay) {             
                     print(l.c, l.o);
                 }    
                 pendingDisplay.clear();
-                limitBuffer();
                 
+                repaint();
             }
         }
     };
@@ -178,10 +180,10 @@ public class SwingLogText extends JTextPane {
     
     
 
-    public void print(Class c, Object o, boolean showStamp, NAR n) {        
-        //limitBuffer(nextOutput.baseLength());        
-        out(c, o);        
-    }
+//    public void print(Class c, Object o, boolean showStamp, NAR n) {        
+//        //limitBuffer(nextOutput.baseLength());        
+//        out(c, o);        
+//    }
     
 
     void limitBuffer() {
