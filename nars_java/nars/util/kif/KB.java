@@ -1,18 +1,19 @@
 package nars.util.kif;
 
-/** This code is copyright Articulate Software (c) 2003.  Some portions
-copyright Teknowledge (c) 2003 and reused under the terms of the GNU license.
-This software is released under the GNU Public License <http://www.gnu.org/copyleft/gpl.html>.
-Users of this code also consent, by use of this code, to credit Articulate Software
-and Teknowledge in any writings, briefings, publications, presentations, or 
-other representations of any software which incorporates, builds on, or uses this 
-code.  Please cite the following article in any publication with references:
-
-Pease, A., (2003). The Sigma Ontology Development Environment, 
-in Working Notes of the IJCAI-2003 Workshop on Ontology and Distributed Systems,
-August 9, Acapulco, Mexico.
-*/
-
+/**
+ * This code is copyright Articulate Software (c) 2003. Some portions copyright
+ * Teknowledge (c) 2003 and reused under the terms of the GNU license. This
+ * software is released under the GNU Public License
+ * <http://www.gnu.org/copyleft/gpl.html>. Users of this code also consent, by
+ * use of this code, to credit Articulate Software and Teknowledge in any
+ * writings, briefings, publications, presentations, or other representations of
+ * any software which incorporates, builds on, or uses this code. Please cite
+ * the following article in any publication with references:
+ *
+ * Pease, A., (2003). The Sigma Ontology Development Environment, in Working
+ * Notes of the IJCAI-2003 Workshop on Ontology and Distributed Systems, August
+ * 9, Acapulco, Mexico.
+ */
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,102 +32,143 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** *****************************************************************
- *  Contains methods for reading, writing knowledge bases and their
- *  configurations.  Also contains the inference engine process for 
- *  the knowledge base.
+/**
+ * *****************************************************************
+ * Contains methods for reading, writing knowledge bases and their
+ * configurations. Also contains the inference engine process for the knowledge
+ * base.
  */
 public class KB {
 
     private static boolean DEBUG = false;
 
-    
+    /**
+     * The name of the knowledge base.
+     */
+    public String name;
 
-    /** The name of the knowledge base. */
-    public String name;                       
-
-    /** An ArrayList of Strings which are the full path file names of the files which comprise the KB. */
+    /**
+     * An ArrayList of Strings which are the full path file names of the files
+     * which comprise the KB.
+     */
     public ArrayList constituents = new ArrayList();
 
-    /** The natural language in which axiom paraphrases should be presented. */
-    public String language = "en";    
+    /**
+     * The natural language in which axiom paraphrases should be presented.
+     */
+    public String language = "en";
 
-    /** The location of preprocessed KIF files, suitable for loading into Vampire. */
+    /**
+     * The location of preprocessed KIF files, suitable for loading into
+     * Vampire.
+     */
     public String kbDir = null;
 
-    /** A HashMap of HashSets, which contain all the parent classes of a given class. */
+    /**
+     * A HashMap of HashSets, which contain all the parent classes of a given
+     * class.
+     */
     public HashMap parents = new HashMap();
 
-    /** A HashMap of HashSets, which contain all the child classes of a given class. */
+    /**
+     * A HashMap of HashSets, which contain all the child classes of a given
+     * class.
+     */
     public HashMap children = new HashMap();
 
-    /** A HashMap of HashSets, which contain all the disjoint classes of a given class. */
+    /**
+     * A HashMap of HashSets, which contain all the disjoint classes of a given
+     * class.
+     */
     public HashMap disjoint = new HashMap();
 
-    /** A threshold limiting the number of non-ground values that will be added to a single relation cache. */
+    /**
+     * A threshold limiting the number of non-ground values that will be added
+     * to a single relation cache.
+     */
     private static final int MAX_CACHE_SIZE = 1000000;
 
-    /** A List of the names of cached transitive relations. */
-    public List cachedTransitiveRelationNames = Arrays.asList("subclass", 
-                                                              "subrelation", 
-                                                              "subAttribute", 
-                                                              "subOrganization", 
-                                                              "subCollection", 
-                                                              "subProcess",
-                                                              "geographicSubregion",
-                                                              "geopoliticalSubdivision");
+    /**
+     * A List of the names of cached transitive relations.
+     */
+    public List cachedTransitiveRelationNames = Arrays.asList("subclass",
+            "subrelation",
+            "subAttribute",
+            "subOrganization",
+            "subCollection",
+            "subProcess",
+            "geographicSubregion",
+            "geopoliticalSubdivision");
 
-    /** A List of the names of cached reflexive relations. */
-    public List cachedReflexiveRelationNames = Arrays.asList("subclass", 
-                                                             "subrelation", 
-                                                             "subAttribute", 
-                                                             "subOrganization", 
-                                                             "subCollection", 
-                                                             "subProcess");
+    /**
+     * A List of the names of cached reflexive relations.
+     */
+    public List cachedReflexiveRelationNames = Arrays.asList("subclass",
+            "subrelation",
+            "subAttribute",
+            "subOrganization",
+            "subCollection",
+            "subProcess");
 
-    /** A List of the names of cached relations. */
+    /**
+     * A List of the names of cached relations.
+     */
     public List cachedRelationNames = Arrays.asList("instance", "disjoint");
 
-    /** An ArrayList of RelationCache objects. */
+    /**
+     * An ArrayList of RelationCache objects.
+     */
     public ArrayList relationCaches = new ArrayList();
 
-    /** The instance of the CELT process. */
+    /**
+     * The instance of the CELT process.
+     */
     //public CELT celt = null;
+    /**
+     * A Set of Strings, which are all the terms in the KB.
+     */
+    public TreeSet terms = new TreeSet();
 
-    /** A Set of Strings, which are all the terms in the KB. */
-    public TreeSet terms = new TreeSet(); 
-
-    /** The String constant that is the suffix for files of user assertions. */
+    /**
+     * The String constant that is the suffix for files of user assertions.
+     */
     public static final String _userAssertionsString = "_UserAssertions.kif";
 
-    /** The String constant that is the suffix for files of cached assertions. */
-    public static final String _cacheFileSuffix      = "_Cache.kif";
-
-    /** 
-     * A Map of all the Formula objects in the KB.  Each key is a
-     * String representation of a Formula.  Each value is the Formula
-     * object corresponding to the key.
+    /**
+     * The String constant that is the suffix for files of cached assertions.
      */
-    public HashMap formulaMap = new HashMap(); 
+    public static final String _cacheFileSuffix = "_Cache.kif";
 
-    /** 
-     * A HashMap of ArrayLists of Formulas, containing all the
-     * formulas in the KB.  Keys are both the formula itself, and term
-     * indexes created in KIF.createKey().
+    /**
+     * A Map of all the Formula objects in the KB. Each key is a String
+     * representation of a Formula. Each value is the Formula object
+     * corresponding to the key.
      */
-    private HashMap formulas = new HashMap();                                                   
+    public HashMap formulaMap = new HashMap();
 
-    /** The natural language formatting strings for relations in the KB. */
+    /**
+     * A HashMap of ArrayLists of Formulas, containing all the formulas in the
+     * KB. Keys are both the formula itself, and term indexes created in
+     * KIF.createKey().
+     */
+    private HashMap formulas = new HashMap();
+
+    /**
+     * The natural language formatting strings for relations in the KB.
+     */
     private HashMap formatMap = null;
 
-    /** The natural language strings for terms in the KB. */
+    /**
+     * The natural language strings for terms in the KB.
+     */
     private HashMap termFormatMap = null;
-    
+
     public KIFInference inferenceEngine; //was vampire
 
-    /** *************************************************************
-     * Constructor which takes the name of the KB and the location
-     * where KBs preprocessed for Vampire should be placed.
+    /**
+     * *************************************************************
+     * Constructor which takes the name of the KB and the location where KBs
+     * preprocessed for Vampire should be placed.
      */
     public KB(String n, String dir) {
 
@@ -134,7 +176,7 @@ public class KB {
         kbDir = dir;
         initRelationCaches();
         KBmanager mgr = KBmanager.getMgr();
-        if (mgr != null) { 
+        if (mgr != null) {
             String loadCelt = mgr.getPref("loadCELT");
             if ((loadCelt != null) && loadCelt.equalsIgnoreCase("yes")) {
                 //celt = new CELT();
@@ -166,10 +208,10 @@ public class KB {
 //        return al;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Returns a list of the names of cached relations.
-     * 
+     *
      * @return An ArrayList of relation names (Strings).
      */
     private ArrayList getCachedRelationNames() {
@@ -178,20 +220,21 @@ public class KB {
         return relationNames;
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Returns an ArrayList of RelationCache objects.
-     * 
+     *
      * @return An ArrayList of RelationCache objects.
      */
     protected ArrayList getRelationCaches() {
         return this.relationCaches;
     }
 
-    /** *************************************************************
-     * Initializes all RelationCaches.  Creates the RelationCache
-     * objects if they do not yet exist, and clears all existing
-     * RelationCache objects.
-     * 
+    /**
+     * *************************************************************
+     * Initializes all RelationCaches. Creates the RelationCache objects if they
+     * do not yet exist, and clears all existing RelationCache objects.
+     *
      * @return void
      */
     protected void initRelationCaches() {
@@ -209,12 +252,11 @@ public class KB {
                 // binary relations are cached in two RelationCaches,
                 // one that looks "upward" from the keys, and another
                 // that looks "downward" from the keys.
-                if (! relname.equals("disjoint")) {
+                if (!relname.equals("disjoint")) {
                     relationCaches.add(new RelationCache(relname, 2, 1));
                 }
             }
-        }
-        else {
+        } else {
             RelationCache cache;
             it = relationCaches.iterator();
             while (it.hasNext()) {
@@ -225,25 +267,25 @@ public class KB {
 
         // We still set these legacy variables.  Eventually, they
         // should be removed.
-        parents  = getRelationCache("subclass", 1, 2);
+        parents = getRelationCache("subclass", 1, 2);
         children = getRelationCache("subclass", 2, 1);
         disjoint = getRelationCache("disjoint", 1, 2);
 
     }
 
-    /** *************************************************************
-     * Returns the RelationCache object identified by the input
-     * arguments: relation name, key argument position, and value
-     * argument position.
+    /**
+     * *************************************************************
+     * Returns the RelationCache object identified by the input arguments:
+     * relation name, key argument position, and value argument position.
      *
      * @param relName The name of the cached relation.
      *
-     * @param keyArg An int value that indicates the argument position
-     * of the cache keys.
+     * @param keyArg An int value that indicates the argument position of the
+     * cache keys.
      *
-     * @param valueArg An int value that indicates the argument
-     * position of the cache values.
-     * 
+     * @param valueArg An int value that indicates the argument position of the
+     * cache values.
+     *
      * @return a RelationCache object, or null if there is no cache
      * corresponding to the input arguments.
      */
@@ -254,22 +296,22 @@ public class KB {
             while (it.hasNext()) {
                 cache = (RelationCache) it.next();
                 if (cache.getRelationName().equals(relName)
-                    && (cache.getKeyArgument() == keyArg)
-                    && (cache.getValueArgument() == valueArg)) {
+                        && (cache.getKeyArgument() == keyArg)
+                        && (cache.getValueArgument() == valueArg)) {
                     return cache;
                 }
             }
         }
         return null;
     }
-    
-    /** *************************************************************
-     * Writes the cache .kif file, and then calls addConstituent() so
-     * that the file can be processed and loaded by the inference
-     * engine.
+
+    /**
+     * *************************************************************
+     * Writes the cache .kif file, and then calls addConstituent() so that the
+     * file can be processed and loaded by the inference engine.
      *
-     * @return a String indicating any errors, or the empty string if
-     * there were no errors.
+     * @return a String indicating any errors, or the empty string if there were
+     * no errors.
      */
     public String cache() {
 
@@ -374,7 +416,8 @@ public class KB {
         return "";
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Adds one value to the cache, indexed under keyTerm.
      *
      * @param cache The RelationCache object to be updated.
@@ -382,7 +425,7 @@ public class KB {
      * @param keyTerm The String that is the key for this entry.
      *
      * @param valueTerm The String that is the value for this entry.
-     * 
+     *
      * @return The int value 1 if a new entry is added, else 0.
      */
     private int addRelationCacheEntry(RelationCache cache, String keyTerm, String valueTerm) {
@@ -400,20 +443,21 @@ public class KB {
         return count;
     }
 
-    /** *************************************************************
-     * Returns the HashSet indexed by term in the RelationCache
-     * identified by relation, keyArg, and valueArg.
+    /**
+     * *************************************************************
+     * Returns the HashSet indexed by term in the RelationCache identified by
+     * relation, keyArg, and valueArg.
      *
      * @param relation A String, the name of a relation.
      *
      * @param term A String (key) that indexes a HashSet.
      *
-     * @param keyArg An int value that, with relation and valueArg,
-     * identifies a RelationCache.
+     * @param keyArg An int value that, with relation and valueArg, identifies a
+     * RelationCache.
      *
-     * @param valueArg An int value that, with relation and keyArg,
-     * identifies a RelationCache.
-     * 
+     * @param valueArg An int value that, with relation and keyArg, identifies a
+     * RelationCache.
+     *
      * @return A HashSet, or null if no HashSet corresponds to term.
      */
     public HashSet getCachedRelationValues(String relation, String term, int keyArg, int valueArg) {
@@ -424,12 +468,12 @@ public class KB {
         return null;
     }
 
-    /** *************************************************************
-     * This method computes the transitive closure for the relation
-     * identified by relationName.  The results are stored in the
-     * RelationCache object for the relation and "direction" (looking
-     * from the arg1 keys toward arg2 parents, or looking from the
-     * arg2 keys toward arg1 children).
+    /**
+     * *************************************************************
+     * This method computes the transitive closure for the relation identified
+     * by relationName. The results are stored in the RelationCache object for
+     * the relation and "direction" (looking from the arg1 keys toward arg2
+     * parents, or looking from the arg2 keys toward arg1 children).
      *
      * @param relationName The name of a relation.
      *
@@ -469,11 +513,10 @@ public class KB {
                         if ((keyTerm == null) || keyTerm.isEmpty()) {
                             System.out.println("Error in KB.computeTransitiveCacheClosure(" + relationName + ")");
                             System.out.println("  keyTerm == " + ((keyTerm == null) ? null : "\"" + keyTerm + "\""));
-                        }
-                        else {
+                        } else {
                             valSet = (Set) c1.get(keyTerm);
                             valArr = valSet.toArray();
-                            for (int i = 0 ; i < valArr.length ; i++) {
+                            for (int i = 0; i < valArr.length; i++) {
                                 valTerm = (String) valArr[i];
 
                                 valSet2 = (Set) c1.get(valTerm);
@@ -507,8 +550,7 @@ public class KB {
                             valTerm = "Relation";
                             if (keyTerm.endsWith("Fn")) {
                                 valTerm = "Function";
-                            }
-                            else if (Character.isLowerCase(keyTerm.charAt(0)) && (keyTerm.indexOf('(') == -1)) {
+                            } else if (Character.isLowerCase(keyTerm.charAt(0)) && (keyTerm.indexOf('(') == -1)) {
                                 valTerm = "Predicate";
                             }
                             addRelationCacheEntry(inst1, keyTerm, valTerm);
@@ -522,28 +564,28 @@ public class KB {
                 }
             }
             System.out.println("  "
-                               + count 
-                               + " "
-                               + relationName 
-                               + " entries computed in " 
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
+                    + count
+                    + " "
+                    + relationName
+                    + " entries computed in "
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
 
             /*
-              if (relationName.equals("subclass")) {
-              printParents();
-              printChildren();
-              }
-            */
-        }
-        catch (Exception ex) {
+             if (relationName.equals("subclass")) {
+             printParents();
+             printChildren();
+             }
+             */
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /** *************************************************************
-     * This method computes the closure for the cache of the instance
-     * relation, in both directions.
+    /**
+     * *************************************************************
+     * This method computes the closure for the cache of the instance relation,
+     * in both directions.
      *
      * @return void
      */
@@ -571,7 +613,7 @@ public class KB {
                 ic1KeyTerm = (String) it1.next();
                 ic1ValSet = (Set) ic1.get(ic1KeyTerm);
                 ic1ValArr = ic1ValSet.toArray();
-                for (int i = 0 ; i < ic1ValArr.length ; i++) {
+                for (int i = 0; i < ic1ValArr.length; i++) {
                     ic1ValTerm = (String) ic1ValArr[i];
                     if (ic1ValTerm != null) {
                         sc1ValSet = (Set) sc1.get(ic1ValTerm);
@@ -604,19 +646,18 @@ public class KB {
             ic1.setIsClosureComputed(true);
             ic2.setIsClosureComputed(true);
             System.out.println("  "
-                               + count
-                               + " instance entries computed in " 
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
-        }
-        catch (Exception ex) {
+                    + count
+                    + " instance entries computed in "
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /** *************************************************************
-     * This method computes the closure for the cache of the disjoint
-     * relation.
+    /**
+     * *************************************************************
+     * This method computes the closure for the cache of the disjoint relation.
      *
      * @return void
      */
@@ -648,12 +689,12 @@ public class KB {
             dc1KeySet = dc1.keySet();
             dc1KeyArr = dc1KeySet.toArray();
             changed = false;
-            for (int i = 0 ; (i < dc1KeyArr.length) && (count < MAX_CACHE_SIZE) ; i++) {
+            for (int i = 0; (i < dc1KeyArr.length) && (count < MAX_CACHE_SIZE); i++) {
 
                 dc1KeyTerm = (String) dc1KeyArr[i];
                 dc1ValSet = (Set) dc1.get(dc1KeyTerm);
                 dc1ValArr = dc1ValSet.toArray();
-                for (int j = 0 ; j < dc1ValArr.length ; j++) {
+                for (int j = 0; j < dc1ValArr.length; j++) {
                     dc1ValTerm = (String) dc1ValArr[j];
                     sc2ValSet = (Set) sc2.get(dc1ValTerm);
                     if (sc2ValSet != null) {
@@ -693,29 +734,27 @@ public class KB {
 
             // System.out.println("  " + count + " disjoint entries after pass " + ++passes);
             // }
-
             System.out.println("  "
-                               + count
-                               + " disjoint entries computed in " 
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
+                    + count
+                    + " disjoint entries computed in "
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
 
             // printDisjointness();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-
     private HashMap relnsWithRelnArgs = null;
 
-    /** *************************************************************
-     * This method builds a cache of all Relations in the current KB
-     * for which at least one argument must be filled by a relation
-     * name (or a variable denoting a relation name).  This method
-     * should be called only after the subclass cache has been built.
-     */    
+    /**
+     * *************************************************************
+     * This method builds a cache of all Relations in the current KB for which
+     * at least one argument must be filled by a relation name (or a variable
+     * denoting a relation name). This method should be called only after the
+     * subclass cache has been built.
+     */
     private void cacheRelnsWithRelnArgs() {
 
         System.out.println("INFO in KB.cacheRelnsWithRelnArgs()");
@@ -729,7 +768,6 @@ public class KB {
             Set relnClasses = getCachedRelationValues("subclass", "Relation", 2, 1);
 
             // System.out.println("  relnClasses == " + relnClasses);
-
             if (relnClasses != null) {
                 ArrayList formulas;
                 Iterator it = relnClasses.iterator();
@@ -745,7 +783,6 @@ public class KB {
                     formulas = askWithRestriction(3, relnClass, 0, "domain");
 
                     // System.out.println("  formulas == " + formulas);
-
                     if (formulas != null) {
                         it2 = formulas.iterator();
                         while (it2.hasNext()) {
@@ -757,21 +794,20 @@ public class KB {
                             }
                             signature = (boolean[]) relnsWithRelnArgs.get(reln);
                             if (signature == null) {
-                                signature = new boolean[ valence + 1 ];
-                                for (int j = 0 ; j < signature.length ; j++) {
+                                signature = new boolean[valence + 1];
+                                for (int j = 0; j < signature.length; j++) {
                                     signature[j] = false;
                                 }
                                 relnsWithRelnArgs.put(reln, signature);
-                            }                    
+                            }
                             argPos = Integer.parseInt(f.getArgument(2));
                             try {
                                 signature[argPos] = true;
-                            }
-                            catch (Exception e1) {
+                            } catch (Exception e1) {
                                 System.out.println("Error in KB.cacheRelnsWithRelnArgs():");
-                                System.out.println("  reln == " + reln 
-                                                   + ", argPos == " + argPos
-                                                   + ", signature == " + Arrays.toString(signature));
+                                System.out.println("  reln == " + reln
+                                        + ", argPos == " + argPos
+                                        + ", signature == " + Arrays.toString(signature));
                                 throw e1;
                             }
                         }
@@ -786,28 +822,28 @@ public class KB {
                 if (signature == null) {
                     signature = new boolean[4];
                     // signature = { false, false, true, false };
-                    for (int i = 0 ; i < signature.length ; i++) {
+                    for (int i = 0; i < signature.length; i++) {
                         signature[i] = (i == 2);
                     }
                     relnsWithRelnArgs.put("format", signature);
                 }
             }
             System.out.println("  "
-                               + relnsWithRelnArgs.size()
-                               + " relation argument entries computed in " 
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
-        }
-        catch (Exception ex) {
+                    + relnsWithRelnArgs.size()
+                    + " relation argument entries computed in "
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /** *************************************************************
-     * Returns a boolean[] if the input relation has at least one
-     * argument that must be filled by a relation name.
-     * 
-     */    
+    /**
+     * *************************************************************
+     * Returns a boolean[] if the input relation has at least one argument that
+     * must be filled by a relation name.
+     *
+     */
     protected boolean[] getRelnArgSignature(String relation) {
         if (relnsWithRelnArgs != null) {
             return (boolean[]) relnsWithRelnArgs.get(relation);
@@ -821,7 +857,7 @@ public class KB {
         System.out.println("INFO in KB.cacheRelationValences()");
         try {
             long t1 = System.currentTimeMillis();
-            Set relations = getCachedRelationValues ("instance", "Relation", 2, 1);
+            Set relations = getCachedRelationValues("instance", "Relation", 2, 1);
             if (relations != null) {
                 RelationCache ic1 = getRelationCache("instance", 1, 2);
                 RelationCache ic2 = getRelationCache("instance", 2, 1);
@@ -870,12 +906,11 @@ public class KB {
                 }
             }
             System.out.println("  "
-                               + relationValences.size()
-                               + " relation valence entries computed in " 
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
-        }
-        catch (Exception ex) {
+                    + relationValences.size()
+                    + " relation valence entries computed in "
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -884,7 +919,7 @@ public class KB {
         String className = null;
         try {
             List formulas = askWithRestriction(1, reln, 0, "domain");
-            if (! ((formulas == null) || formulas.isEmpty())) {
+            if (!((formulas == null) || formulas.isEmpty())) {
                 String argN;
                 Formula f;
                 for (Object formula : formulas) {
@@ -896,8 +931,7 @@ public class KB {
                     }
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return className;
@@ -907,8 +941,7 @@ public class KB {
         boolean ans = false;
         try {
             ans = (getValence(relnName) == 0);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return ans;
@@ -944,7 +977,6 @@ public class KB {
 //        return false;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * debugging utility
@@ -962,7 +994,6 @@ public class KB {
 //        System.out.println();
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * debugging utility
@@ -980,7 +1011,6 @@ public class KB {
 //        System.out.println();
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * debugging utility
@@ -998,16 +1028,15 @@ public class KB {
 //        System.out.println();
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** *************************************************************
-     * Determine whether a particular term is an immediate instance,
-     * which has a statement of the form (instance term otherTerm).
-     * Note that this does not count for terms such as Attribute(s)
-     * and Relation(s), which may be defined as subAttribute(s) or
-     * subrelation(s) of another instance.  If the term is not an
-     * instance, return an empty ArrayList.  Otherwise, return an
-     * ArrayList of the Formula(s) in which the given term is 
-     * defined as an instance.
+    /**
+     * *************************************************************
+     * Determine whether a particular term is an immediate instance, which has a
+     * statement of the form (instance term otherTerm). Note that this does not
+     * count for terms such as Attribute(s) and Relation(s), which may be
+     * defined as subAttribute(s) or subrelation(s) of another instance. If the
+     * term is not an instance, return an empty ArrayList. Otherwise, return an
+     * ArrayList of the Formula(s) in which the given term is defined as an
+     * instance.
      *
      * @param term A String.
      *
@@ -1016,28 +1045,30 @@ public class KB {
     public ArrayList instancesOf(String term) {
 
         //System.out.println("INFO in KB.instancesOf()");
-        return askWithRestriction(1,term,0,"instance");           
+        return askWithRestriction(1, term, 0, "instance");
     }
 
-    /** *************************************************************
-     * Determine whether a particular class or instance "child" is a
-     * child of the given "parent".
+    /**
+     * *************************************************************
+     * Determine whether a particular class or instance "child" is a child of
+     * the given "parent".
      *
      * @param child A String, the name of a term.
      *
      * @param parent A String, the name of a term.
      *
-     * @return true if child and parent constitute an actual or
-     * implied relation in the current KB, else false.
+     * @return true if child and parent constitute an actual or implied relation
+     * in the current KB, else false.
      */
     public boolean childOf(String child, String parent) {
 
-        if (child.equals(parent)) 
+        if (child.equals(parent)) {
             return true;
+        }
         HashSet childs = (HashSet) children.get(parent);
-        if (childs != null && childs.contains(child)) 
+        if (childs != null && childs.contains(child)) {
             return true;
-        else {
+        } else {
             ArrayList al = instancesOf(child);
             for (Object anAl : al) {
                 Formula form = (Formula) anAl;
@@ -1046,18 +1077,21 @@ public class KB {
                 f.read(f.cdr());
                 f.read(f.cdr());
                 String superTerm = f.car();
-                if (superTerm.equals(parent))
+                if (superTerm.equals(parent)) {
                     return true;
-                if (childs != null && childs.contains(superTerm))
+                }
+                if (childs != null && childs.contains(superTerm)) {
                     return true;
+                }
             }
         }
         return false;
     }
 
-    /** *************************************************************
-     * Returns true if the subclass cache supports the conclusion that
-     * c1 is a subclass of c2, else returns false.
+    /**
+     * *************************************************************
+     * Returns true if the subclass cache supports the conclusion that c1 is a
+     * subclass of c2, else returns false.
      *
      * @param c1 A String, the name of a SetOrClass.
      *
@@ -1072,14 +1106,14 @@ public class KB {
                 Set classNames = getCachedRelationValues("subclass", c1, 1, 2);
                 ans = ((classNames != null) && classNames.contains(c2));
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return ans;
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Builds all of the relation caches for the current KB.
      */
     public void buildRelationCaches() {
@@ -1102,24 +1136,23 @@ public class KB {
             cacheRelationValences();
 
             System.out.println("Total elapsed time to build all relation caches: "
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
-        }
-        catch (Exception ex) {
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /** *************************************************************
-     * Populates all caches with ground assertions, from which
-     * closures can be computed.
+    /**
+     * *************************************************************
+     * Populates all caches with ground assertions, from which closures can be
+     * computed.
      */
     private void cacheGroundAssertions() {
 
         System.out.println("INFO in KB.cacheGroundAssertions(): ");
 
         // System.out.println("formulas == " + formulas.toString());
-
         try {
             long t1 = System.currentTimeMillis();
             String relation;
@@ -1131,10 +1164,10 @@ public class KB {
             RelationCache c2;
 
             Iterator formsIt;
-            Iterator it = getCachedRelationNames().iterator(); 
+            Iterator it = getCachedRelationNames().iterator();
             int total = 0;
             int count;
-            while (it.hasNext()) {                   
+            while (it.hasNext()) {
 
                 count = 0;
                 relation = (String) it.next();
@@ -1144,14 +1177,13 @@ public class KB {
                 if (forms != null) {
 
                     // System.out.print(relation);
-
                     c1 = getRelationCache(relation, 1, 2);
                     c2 = getRelationCache(relation, 2, 1);
                     formsIt = forms.iterator();
                     while (formsIt.hasNext()) {
                         formula = (Formula) formsIt.next();
-                        if ((formula.theFormula.indexOf('(',2) == -1) 
-                            && !(formula.sourceFile.endsWith(_cacheFileSuffix))) {
+                        if ((formula.theFormula.indexOf('(', 2) == -1)
+                                && !(formula.sourceFile.endsWith(_cacheFileSuffix))) {
 
                             arg1 = formula.getArgument(1).intern();
                             arg2 = formula.getArgument(2).intern();
@@ -1165,8 +1197,7 @@ public class KB {
                                     count += addRelationCacheEntry(c1, arg2, arg2);
                                     count += addRelationCacheEntry(c2, arg1, arg1);
                                     count += addRelationCacheEntry(c2, arg2, arg2);
-                                }
-                                else if (relation.equals("disjoint")) {
+                                } else if (relation.equals("disjoint")) {
                                     count += addRelationCacheEntry(c1, arg2, arg1);
                                 }
                             }
@@ -1191,12 +1222,12 @@ public class KB {
                     formsIt = forms.iterator();
                     while (formsIt.hasNext()) {
                         formula = (Formula) formsIt.next();
-                        if ((formula.theFormula.indexOf('(',2) == -1) 
-                            && !(formula.sourceFile.endsWith(_cacheFileSuffix))) {
+                        if ((formula.theFormula.indexOf('(', 2) == -1)
+                                && !(formula.sourceFile.endsWith(_cacheFileSuffix))) {
 
                             arglist = formula.argumentsToArrayList(2);
-                            for (int i = 0 ; i < arglist.size() ; i++) {
-                                for (int j = 0 ; j < arglist.size() ; j++) {
+                            for (int i = 0; i < arglist.size(); i++) {
+                                for (int j = 0; j < arglist.size(); j++) {
                                     if (i != j) {
                                         arg1 = ((String) arglist.get(i)).intern();
                                         arg2 = ((String) arglist.get(j)).intern();
@@ -1214,24 +1245,23 @@ public class KB {
                 total += count;
             }
             System.out.println("  "
-                               + total
-                               + " ground assertions cached in " 
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
-        }
-        catch (Exception ex) {
+                    + total
+                    + " ground assertions cached in "
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /** *************************************************************
-     * Converts all Formula objects in the input List to ArrayList
-     * tuples.
+    /**
+     * *************************************************************
+     * Converts all Formula objects in the input List to ArrayList tuples.
      *
      * @param formulaList A list of Formulas.
      *
-     * @return An ArrayList of formula tuples (ArrayLists), or an
-     * empty ArrayList.
+     * @return An ArrayList of formula tuples (ArrayLists), or an empty
+     * ArrayList.
      */
     public static ArrayList formulasToArrayLists(List formulaList) {
 
@@ -1245,14 +1275,14 @@ public class KB {
                     ans.add(f.literalToArrayList());
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return ans;
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Converts all Strings in the input List to Formula objects.
      *
      * @param strings A list of Strings.
@@ -1270,14 +1300,14 @@ public class KB {
                     ans.add(f);
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return ans;
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Converts a literal (List object) to a String.
      *
      * @param literal A List representing a SUO-KIF formula.
@@ -1289,28 +1319,27 @@ public class KB {
         try {
             if (literal instanceof List) {
                 b.append("(");
-                for (int i = 0 ; i < literal.size() ; i++) {
+                for (int i = 0; i < literal.size(); i++) {
                     if (i > 0) {
                         b.append(" ");
                     }
-                    b.append((String)literal.get(i));
+                    b.append((String) literal.get(i));
                 }
                 b.append(")");
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return b.toString();
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Converts a literal (List object) to a Formula.
      *
      * @param literal A List representing a SUO-KIF formula.
      *
-     * @return A SUO-KIF Formula object, or null if no Formula can be
-     * created.
+     * @return A SUO-KIF Formula object, or null if no Formula can be created.
      */
     public static Formula literalListToFormula(List lit) {
         Formula f = null;
@@ -1320,24 +1349,24 @@ public class KB {
                 f = new Formula();
                 f.read(theFormula);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return f;
     }
 
-    /** *************************************************************
-     * Returns an ArrayList of Formulas in which the two terms
-     * provided appear in the indicated argument positions.  If there
-     * are no Formula(s) matching the given terms and respective
-     * argument positions, return an empty ArrayList.
+    /**
+     * *************************************************************
+     * Returns an ArrayList of Formulas in which the two terms provided appear
+     * in the indicated argument positions. If there are no Formula(s) matching
+     * the given terms and respective argument positions, return an empty
+     * ArrayList.
      *
      * @return ArrayList
      */
     public ArrayList askWithRestriction(int argnum1, String term1, int argnum2, String term2) {
 
-        ArrayList partial = ask("arg",argnum1,term1);
+        ArrayList partial = ask("arg", argnum1, term1);
         ArrayList result = new ArrayList();
         if (partial != null) {
             for (int i = 0; i < partial.size(); i++) {
@@ -1350,44 +1379,45 @@ public class KB {
         return result;
     }
 
-    /** *************************************************************
-     * Returns an ArrayList containing the Formulas that match the
-     * request.
+    /**
+     * *************************************************************
+     * Returns an ArrayList containing the Formulas that match the request.
      *
      * @param kind - May be one of "ant", "cons", "stmt", or "arg"
      * @see KIF.createKey()
      * @param term - The term that appears in the statements being requested.
-     * @param argnum - The argument position of the term being asked for.  The
+     * @param argnum - The argument position of the term being asked for. The
      * first argument after the predicate is "1". This parameter is ignored if
      * the kind is "ant", "cons" or "stmt".
      * @return an ArrayList of Formula(s), or null if no match found.
      */
     public ArrayList ask(String kind, int argnum, String term) {
-        
-        if (kind.compareTo("arg") == 0) 
-            return (ArrayList) formulas.get(kind + "-" + (new Integer(argnum)).toString() + "-" + term);        
-        else 
-            return (ArrayList) formulas.get(kind + "-" + term);        
+
+        if (kind.compareTo("arg") == 0) {
+            return (ArrayList) formulas.get(kind + "-" + (new Integer(argnum)).toString() + "-" + term);
+        } else {
+            return (ArrayList) formulas.get(kind + "-" + term);
+        }
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Merges a KIF object containing a single formula into the current KB.
      *
      * @param kif A KIF object.
      *
-     * @param pathname The full, canonical pathname string of the
-     * constituent file in which the formula will be saved, if known.
+     * @param pathname The full, canonical pathname string of the constituent
+     * file in which the formula will be saved, if known.
      *
-     * @return If any of the formulas are already present, returns an
-     * ArrayList containing the old (existing) formulas, else returns
-     * an empty ArrayList.
+     * @return If any of the formulas are already present, returns an ArrayList
+     * containing the old (existing) formulas, else returns an empty ArrayList.
      */
     private ArrayList merge(KIF kif, String pathname) {
 
         ArrayList formulasPresent = new ArrayList();
         try {
             // Add all the terms from the new formula into the KB's current list
-            terms.addAll(kif.terms);                                   
+            terms.addAll(kif.terms);
 
             Set keys = kif.formulas.keySet();
             for (Object key1 : keys) {
@@ -1432,11 +1462,10 @@ public class KB {
                 }
             }
             /* collectParents();
-               if (KBmanager.getMgr().getPref("cache") != null &&
-               KBmanager.getMgr().getPref("cache").equalsIgnoreCase("yes"))
-               cache();  */     // caching is too slow to perform for just one formula
-        }
-        catch (Exception ex) {
+             if (KBmanager.getMgr().getPref("cache") != null &&
+             KBmanager.getMgr().getPref("cache").equalsIgnoreCase("yes"))
+             cache();  */     // caching is too slow to perform for just one formula
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
@@ -1470,16 +1499,16 @@ public class KB {
 //        }
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** *************************************************************
-     *  Writes a single user assertion (String) to the end of a file.
+    /**
+     * *************************************************************
+     * Writes a single user assertion (String) to the end of a file.
      *
      * @param formula A String representing a SUO-KIF Formula.
      * @param fname A String denoting the pathname of the target file.
-     * @return A long value indicating the number of bytes in the file
-     * after the formula has been written.  A value of 0L means that
-     * the file does not exist, and so could not be written for some
-     * reason.  A value of -1 probably means that some error occurred.
+     * @return A long value indicating the number of bytes in the file after the
+     * formula has been written. A value of 0L means that the file does not
+     * exist, and so could not be written for some reason. A value of -1
+     * probably means that some error occurred.
      */
     private long writeUserAssertion(String formula, String fname) throws IOException {
 
@@ -1488,17 +1517,16 @@ public class KB {
 
         try {
             File file = new File(fname);
-            fr = new FileWriter(file,true);   
+            fr = new FileWriter(file, true);
             fr.write(formula);
             fr.write("\n");
             flen = file.length();
-        }
-        catch (java.io.IOException e) {
+        } catch (java.io.IOException e) {
             System.out.println("Error writing file " + fname);
-        }
-        finally {
-            if (fr != null) 
+        } finally {
+            if (fr != null) {
                 fr.close();
+            }
         }
         return flen;
     }
@@ -1649,7 +1677,6 @@ public class KB {
 //        return result;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * Submits a query to the inference engine.  Returns an XML
@@ -1700,9 +1727,8 @@ public class KB {
 //        return result;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-
-    /** ***************************************************************
+    /**
+     * ***************************************************************
      * Takes a term and returns true if the term occurs in the KB.
      *
      * @param term A String.
@@ -1711,8 +1737,8 @@ public class KB {
     public boolean containsTerm(String term) {
 
         return terms.contains(term.intern());
-    }      
-    
+    }
+
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     * Takes a formula string and returns true if the corresponding
@@ -1726,7 +1752,6 @@ public class KB {
 //        return formulaMap.containsKey(formula.intern());
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     * Count the number of terms in the knowledge base in order to
@@ -1739,7 +1764,6 @@ public class KB {
 //        return terms.size();
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     *  Count the number of relations in the knowledge base in order to
@@ -1752,7 +1776,6 @@ public class KB {
 //        return this.getAllInstances("Relation").size();
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     *  Count the number of formulas in the knowledge base in order to
@@ -1765,12 +1788,12 @@ public class KB {
 //        return formulaMap.size();
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** ***************************************************************
-     *  An accessor providing a TreeSet of un-preProcessed String
-     *  representations of Formulas.
+    /**
+     * ***************************************************************
+     * An accessor providing a TreeSet of un-preProcessed String representations
+     * of Formulas.
      *
-     *  @return A TreeSet of Strings.
+     * @return A TreeSet of Strings.
      */
     public TreeSet getFormulas() {
 
@@ -1778,7 +1801,7 @@ public class KB {
         newFormulaSet.addAll(formulaMap.keySet());
         return newFormulaSet;
     }
-    
+
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     *  Count the number of rules in the knowledge base in order to
@@ -1804,43 +1827,46 @@ public class KB {
 //        return count;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** ***************************************************************
+    /**
+     * ***************************************************************
      * Create an ArrayList of the specific size, filled with empty strings.
      */
     private ArrayList arrayListWithBlanks(int size) {
 
         ArrayList al = new ArrayList(size);
-        for (int i = 0; i < size; i++) 
+        for (int i = 0; i < size; i++) {
             al.add("");
+        }
         return al;
     }
 
-    /** ***************************************************************
-     * Get the alphabetically nearest terms to the given term, which
-     * is not in the KB.  Elements 0-14 should be alphabetically lesser and 
-     * 15-29 alphabetically greater.  If the term is at the beginning or end
-     * of the alphabet, fill in blank items with the empty string: "".
+    /**
+     * ***************************************************************
+     * Get the alphabetically nearest terms to the given term, which is not in
+     * the KB. Elements 0-14 should be alphabetically lesser and 15-29
+     * alphabetically greater. If the term is at the beginning or end of the
+     * alphabet, fill in blank items with the empty string: "".
      */
     private ArrayList getNearestTerms(String term) {
 
         ArrayList al = arrayListWithBlanks(30);
         Object[] t = terms.toArray();
         int i = 0;
-        while (i < t.length && ((Comparable<String>) t[i]).compareTo(term) < 0) 
+        while (i < t.length && ((Comparable<String>) t[i]).compareTo(term) < 0) {
             i++;
+        }
         int lower = i;
-        while (i - lower < 15 && lower > 0) { 
+        while (i - lower < 15 && lower > 0) {
             lower--;
             al.set(15 - (i - lower), t[lower]);
         }
-        int upper = i-1;
+        int upper = i - 1;
         System.out.println(t.length);
-        while (upper - i < 14 && upper < t.length-1) {        
+        while (upper - i < 14 && upper < t.length - 1) {
             upper++;
             al.set(15 + (upper - i), t[upper]);
         }
-        return al;       
+        return al;
     }
 
 // --Commented out by Inspection START (8/15/14 2:38 AM):
@@ -1853,7 +1879,6 @@ public class KB {
 //        return getNearestTerms(term);
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     * Get the neighbors of this initial lowercase term (relation).
@@ -1864,8 +1889,8 @@ public class KB {
 //        return getNearestTerms(term);
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** ***************************************************************
+    /**
+     * ***************************************************************
      * Repopulates the format maps for lang.
      */
     private void reloadFormatMaps(String lang) {
@@ -1883,12 +1908,13 @@ public class KB {
             termFormatMap.clear();
 
             // System.out.println("INFO in KB.reloadFormatMaps(): Reading the format maps for " + lang);
-            if (lang == null)
+            if (lang == null) {
                 lingua = language;
-            else 
+            } else {
                 lingua = lang;
+            }
             long t1 = System.currentTimeMillis();
-            ArrayList col = this.ask("arg",0,"format");
+            ArrayList col = this.ask("arg", 0, "format");
             if ((col == null) || col.isEmpty()) {
                 // System.out.println("Error in KB.reloadFormatMaps(): No relation formatting file loaded for language " + lang);
                 return;
@@ -1912,17 +1938,17 @@ public class KB {
                         format = format.substring(0, format.length() - 1);
                     }
                     if (format.indexOf('$') < 0) {
-                        format = format.replaceAll("\\x26\\x25", "\\&\\%"+key+"\\$");
+                        format = format.replaceAll("\\x26\\x25", "\\&\\%" + key + "\\$");
                     }
                     formatMap.put(key.intern(), format);
                 }
             }
             System.out.println("INFO in KB.reloadFormatMaps(): "
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds to build KB.formatMap");
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds to build KB.formatMap");
 
             t1 = System.currentTimeMillis();
-            col = this.ask("arg",0,"termFormat");
+            col = this.ask("arg", 0, "termFormat");
             if ((col == null) || col.isEmpty()) {
                 // System.out.println("Error in KB.reloadFormatMaps(): No term formatting file loaded for language: " + lang);
                 return;
@@ -1943,14 +1969,13 @@ public class KB {
                     }
                     //if (format.indexOf("$") < 0)
                     //    format = format.replaceAll("\\x26\\x25", "\\&\\%"+key+"\\$");
-                    termFormatMap.put(key.intern(),format);
+                    termFormatMap.put(key.intern(), format);
                 }
             }
             System.out.println("INFO in KB.reloadFormatMaps(): "
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds to build KB.termFormatMap");
-        }
-        catch (Exception ex) {
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds to build KB.termFormatMap");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         language = lang;
@@ -1980,8 +2005,8 @@ public class KB {
 //        return formatMap;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** ***************************************************************
+    /**
+     * ***************************************************************
      * Deletes the user assertions file, and then reloads the KB.
      */
 //    public void deleteUserAssertions() {
@@ -2002,7 +2027,6 @@ public class KB {
 //        }
 //        return;
 //    }
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     *  This method creates an association list (Map) of the natural
@@ -2028,7 +2052,6 @@ public class KB {
 //        return termFormatMap;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * Add a new KB constituent by reading in the file, and then
@@ -2042,10 +2065,10 @@ public class KB {
 //        return addConstituent(filename, true,  true);
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** *************************************************************
-     * Add a new KB constituent by reading in the file, and then merging
-     * the formulas with the existing set of formulas.
+    /**
+     * *************************************************************
+     * Add a new KB constituent by reading in the file, and then merging the
+     * formulas with the existing set of formulas.
      *
      * @param filename - The full path of the file being added.
      * @param buildCachesP - If true, forces the assertion caches to be rebuilt.
@@ -2070,34 +2093,37 @@ public class KB {
             ArrayList newList;
             Formula f;
 
-            if (constituents.contains(canonicalPath)) return "Error: " + canonicalPath + " already loaded.";
+            if (constituents.contains(canonicalPath)) {
+                return "Error: " + canonicalPath + " already loaded.";
+            }
             System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
             System.out.println("  Adding " + canonicalPath);
-            try { 
+            try {
                 file.readFile(canonicalPath);
-            }
-            catch (Exception ex1) {
+            } catch (Exception ex1) {
                 result.append(ex1.getMessage());
                 if (ex1 instanceof ParseException) {
-                    result.append(" at line ").append(((ParseException)ex1).getErrorOffset());
+                    result.append(" at line ").append(((ParseException) ex1).getErrorOffset());
                 }
                 result.append(" in file ").append(canonicalPath);
                 return result.toString();
             }
 
             System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
-            System.out.println("  Parsed file " 
-                               + canonicalPath 
-                               + " of size "
-                               + file.formulas.keySet().size());
+            System.out.println("  Parsed file "
+                    + canonicalPath
+                    + " of size "
+                    + file.formulas.keySet().size());
             it = file.formulas.keySet().iterator();
             int count = 0;
-            while (it.hasNext()) {                
+            while (it.hasNext()) {
                 // Iterate through the formulas in the file, adding them to the KB, at the appropriate key.
-                key = (String) it.next();         
+                key = (String) it.next();
                 // Note that this is a slow operation that needs to be improved
                 // System.out.println("INFO KB.addConstituent(): Key " + key);
-                if ((count++ % 100) == 1) { System.out.print("."); }
+                if ((count++ % 100) == 1) {
+                    System.out.print(".");
+                }
                 list = (ArrayList) formulas.get(key);
                 if (list == null) {
                     list = new ArrayList();
@@ -2108,15 +2134,14 @@ public class KB {
                 while (it2.hasNext()) {
                     f = (Formula) it2.next();
                     internedFormula = f.theFormula.intern();
-                    if (! list.contains(f)) {
+                    if (!list.contains(f)) {
                         list.add(f);
                         formulaMap.put(internedFormula, f);
 
                         // Force translation to clausal form, since it
                         // will be used multiple times later.
                         // f.computeTheClausalForm();
-                    }
-                    else {
+                    } else {
                         result.append("Warning: Duplicate axiom in ");
                         result.append(f.sourceFile).append(" at line ").append(f.startLine).append("<BR>");
                         result.append(f.theFormula).append("<P>");
@@ -2127,31 +2152,31 @@ public class KB {
                     }
 
                     /*
-                      boolean found = false;
-                      for (int j = 0; j < list.size(); j++) {         
-                      if (j % 10000 == 1) System.out.print("!");            
-                      if (f.deepEquals((Formula) list.get(j))) 
-                      found = true;
-                      }
-                      if (!found) 
-                      list.add(newList.get(i));  
-                    */  
+                     boolean found = false;
+                     for (int j = 0; j < list.size(); j++) {         
+                     if (j % 10000 == 1) System.out.print("!");            
+                     if (f.deepEquals((Formula) list.get(j))) 
+                     found = true;
+                     }
+                     if (!found) 
+                     list.add(newList.get(i));  
+                     */
                 }
             }
             System.out.println("x");
 
             this.terms.addAll(file.terms);
 
-            if (! constituents.contains(canonicalPath)) {
+            if (!constituents.contains(canonicalPath)) {
                 constituents.add(canonicalPath);
             }
 
             System.out.println("INFO in KB.addConstituent(" + filename + ", " + buildCachesP + ", " + loadVampireP + ")");
             System.out.println("  File "
-                               + canonicalPath
-                               + " loaded in "
-                               + ((System.currentTimeMillis() - t1) / 1000.0)
-                               + " seconds");
+                    + canonicalPath
+                    + " loaded in "
+                    + ((System.currentTimeMillis() - t1) / 1000.0)
+                    + " seconds");
 
             if (buildCachesP && !canonicalPath.endsWith(_cacheFileSuffix)) {
                 buildRelationCaches();
@@ -2160,8 +2185,7 @@ public class KB {
             if (loadVampireP) {
                 loadVampire();
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             result.append(ex.getMessage());
             System.out.println(ex.getMessage());
             ex.printStackTrace();
@@ -2233,7 +2257,6 @@ public class KB {
 //        return result.toString();
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     * Write a KIF file.
@@ -2280,20 +2303,20 @@ public class KB {
 //        }
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-
-    /** *************************************************************
-     * A HashMap for holding compiled regular expression patterns.
-     * The map is initialized by calling compilePatterns().
+    /**
+     * *************************************************************
+     * A HashMap for holding compiled regular expression patterns. The map is
+     * initialized by calling compilePatterns().
      */
     private static HashMap REGEX_PATTERNS = null;
 
-    /** ***************************************************************
-     * This method returns a compiled regular expression Pattern
-     * object indexed by key.
+    /**
+     * ***************************************************************
+     * This method returns a compiled regular expression Pattern object indexed
+     * by key.
      *
-     * @param key A String that is the retrieval key for a compiled
-     * regular expression Pattern.
+     * @param key A String that is the retrieval key for a compiled regular
+     * expression Pattern.
      *
      * @return A compiled regular expression Pattern instance.
      */
@@ -2307,13 +2330,13 @@ public class KB {
         return null;
     }
 
-    /** ***************************************************************
-     * This method returns the int value that identifies the regular
-     * expression binding group to be returned when there is a match.
+    /**
+     * ***************************************************************
+     * This method returns the int value that identifies the regular expression
+     * binding group to be returned when there is a match.
      *
-     * @param key A String that is the retrieval key for the binding
-     * group index associated with a compiled regular expression
-     * Pattern.
+     * @param key A String that is the retrieval key for the binding group index
+     * associated with a compiled regular expression Pattern.
      *
      * @return An int that indexes a binding group.
      */
@@ -2321,39 +2344,40 @@ public class KB {
         if (Formula.isNonEmptyString(key) && (REGEX_PATTERNS != null)) {
             ArrayList al = (ArrayList) REGEX_PATTERNS.get(key);
             if (al != null) {
-                return ((Number)al.get(1)).intValue();
+                return ((Number) al.get(1)).intValue();
             }
         }
         return -1;
     }
 
-    /** ***************************************************************
-     * This method compiles and stores regular expression Pattern
-     * objects and binding group indexes as two cell ArrayList
-     * objects.  Each ArrayList is indexed by a String retrieval key.
+    /**
+     * ***************************************************************
+     * This method compiles and stores regular expression Pattern objects and
+     * binding group indexes as two cell ArrayList objects. Each ArrayList is
+     * indexed by a String retrieval key.
      *
      * @return void
      */
     private static void compilePatterns() {
         if (REGEX_PATTERNS == null) {
             REGEX_PATTERNS = new HashMap();
-            String[][] patternArray = 
-                { { "row_var", "\\@ROW\\d*", "0" },
-                  // { "open_lit", "\\(\\w+\\s+\\?\\w+\\s+.\\w+\\s*\\)", "0" },
-                  { "open_lit", "\\(\\w+\\s+\\?\\w+[a-zA-Z_0-9-?\\s]+\\)", "0" },
-                  { "pred_var_1", "\\(holds\\s+(\\?\\w+)\\W", "1" },
-                  { "pred_var_2", "\\((\\?\\w+)\\W", "1" },
-                  { "var_with_digit_suffix", "(\\D+)\\d*", "1" }
-                };
+            String[][] patternArray
+                    = {{"row_var", "\\@ROW\\d*", "0"},
+                    // { "open_lit", "\\(\\w+\\s+\\?\\w+\\s+.\\w+\\s*\\)", "0" },
+                    {"open_lit", "\\(\\w+\\s+\\?\\w+[a-zA-Z_0-9-?\\s]+\\)", "0"},
+                    {"pred_var_1", "\\(holds\\s+(\\?\\w+)\\W", "1"},
+                    {"pred_var_2", "\\((\\?\\w+)\\W", "1"},
+                    {"var_with_digit_suffix", "(\\D+)\\d*", "1"}
+                    };
             String pName;
             Pattern p;
             Integer groupN;
             ArrayList pVal;
-            for (int i = 0 ; i < patternArray.length ; i++) {
-                pName  = patternArray[i][0];
-                p      = Pattern.compile(patternArray[i][1]);
+            for (int i = 0; i < patternArray.length; i++) {
+                pName = patternArray[i][0];
+                p = Pattern.compile(patternArray[i][1]);
                 groupN = new Integer(patternArray[i][2]);
-                pVal   = new ArrayList();
+                pVal = new ArrayList();
                 pVal.add(p);
                 pVal.add(groupN);
                 REGEX_PATTERNS.put(pName, pVal);
@@ -2361,27 +2385,25 @@ public class KB {
         }
     }
 
-    /** ***************************************************************
-     * This method finds regular expression matches in an input string
-     * using a compiled Pattern and binding group index retrieved with
-     * patternKey.  If the ArrayList accumulator is provided, match
-     * results are added to it and it is returned.  If accumulator is
-     * not provided (is null), then a new ArrayList is created and
-     * returned if matches are found.
+    /**
+     * ***************************************************************
+     * This method finds regular expression matches in an input string using a
+     * compiled Pattern and binding group index retrieved with patternKey. If
+     * the ArrayList accumulator is provided, match results are added to it and
+     * it is returned. If accumulator is not provided (is null), then a new
+     * ArrayList is created and returned if matches are found.
      *
      * @param input The input String in which matches are sought.
      *
-     * @param patternKey A String used as the retrieval key for a
-     * regular expression Pattern object, and an int index identifying
-     * a binding group.
+     * @param patternKey A String used as the retrieval key for a regular
+     * expression Pattern object, and an int index identifying a binding group.
      *
-     * @param accumulator An optional ArrayList to which matches are
-     * added.  Note that if accumulator is provided, it will be the
-     * return value even if no new matches are found in the input
-     * String.
+     * @param accumulator An optional ArrayList to which matches are added. Note
+     * that if accumulator is provided, it will be the return value even if no
+     * new matches are found in the input String.
      *
-     * @return An ArrayList, or null if no matches are found and an
-     * accumulator is not provided.
+     * @return An ArrayList, or null if no matches are found and an accumulator
+     * is not provided.
      */
     public static ArrayList getMatches(String input, String patternKey, ArrayList accumulator) {
         ArrayList ans = null;
@@ -2414,16 +2436,16 @@ public class KB {
         return ans;
     }
 
-    /** ***************************************************************
-     * This method finds regular expression matches in an input string
-     * using a compiled Pattern and binding group index retrieved with
-     * patternKey, and returns the results, if any, in an ArrayList.
+    /**
+     * ***************************************************************
+     * This method finds regular expression matches in an input string using a
+     * compiled Pattern and binding group index retrieved with patternKey, and
+     * returns the results, if any, in an ArrayList.
      *
      * @param input The input String in which matches are sought.
      *
-     * @param patternKey A String used as the retrieval key for a
-     * regular expression Pattern object, and an int index identifying
-     * a binding group.
+     * @param patternKey A String used as the retrieval key for a regular
+     * expression Pattern object, and an int index identifying a binding group.
      *
      * @return An ArrayList, or null if no matches are found.
      */
@@ -2431,28 +2453,28 @@ public class KB {
         return KB.getMatches(input, patternKey, null);
     }
 
-    /** ***************************************************************
-     * This method retrieves Formulas by asking the query expression
-     * queryLit, and returns the results, if any, in an ArrayList.
+    /**
+     * ***************************************************************
+     * This method retrieves Formulas by asking the query expression queryLit,
+     * and returns the results, if any, in an ArrayList.
      *
-     * @param queryLit The query, which is assumed to be a List
-     * (atomic literal) consisting of a single predicate and its
-     * arguments.  The arguments could be variables, constants, or a
-     * mix of the two, but only the first constant encountered in a
-     * left to right sweep over the literal will be used in the actual
-     * query.
+     * @param queryLit The query, which is assumed to be a List (atomic literal)
+     * consisting of a single predicate and its arguments. The arguments could
+     * be variables, constants, or a mix of the two, but only the first constant
+     * encountered in a left to right sweep over the literal will be used in the
+     * actual query.
      *
-     * @return An ArrayList of Formula objects, or an empty ArrayList
-     * if no answers are retrieved.
+     * @return An ArrayList of Formula objects, or an empty ArrayList if no
+     * answers are retrieved.
      */
     public ArrayList askWithLiteral(List queryLit) {
         ArrayList ans = new ArrayList();
         if ((queryLit instanceof List) && !(queryLit.isEmpty())) {
             String pred = (String) queryLit.get(0);
-            if (pred.equals("instance") 
-                && isVariable((String)queryLit.get(1))
-                && !(isVariable((String)queryLit.get(2)))) {
-                String className = (String)queryLit.get(2);
+            if (pred.equals("instance")
+                    && isVariable((String) queryLit.get(1))
+                    && !(isVariable((String) queryLit.get(2)))) {
+                String className = (String) queryLit.get(2);
                 String inst;
                 String fStr;
                 Formula f;
@@ -2464,10 +2486,9 @@ public class KB {
                     f.read(fStr);
                     ans.add(f);
                 }
-            }
-            else if (pred.equals("valence") 
-                     && isVariable((String)queryLit.get(1))
-                     && isVariable((String)queryLit.get(2))) {
+            } else if (pred.equals("valence")
+                    && isVariable((String) queryLit.get(1))
+                    && isVariable((String) queryLit.get(2))) {
                 String inst;
                 String fStr;
                 Formula f;
@@ -2484,16 +2505,15 @@ public class KB {
                         ans.add(f);
                     }
                 }
-            }
-            else {
+            } else {
                 String constant = null;
                 int cidx = -1;
                 int qlLen = queryLit.size();
                 String term;
-                for (int i = 1 ; i < qlLen ; i++) {
+                for (int i = 1; i < qlLen; i++) {
                     term = (String) queryLit.get(i);
                     if (Formula.isNonEmptyString(term)
-                        && !(isVariable(term))) {
+                            && !(isVariable(term))) {
                         constant = term;
                         cidx = i;
                         break;
@@ -2501,8 +2521,7 @@ public class KB {
                 }
                 if (constant != null) {
                     ans = askWithRestriction(cidx, constant, 0, pred);
-                }
-                else {
+                } else {
                     ans = ask("arg", 0, pred);
                 }
             }
@@ -2529,7 +2548,6 @@ public class KB {
 //        return askWithLiteral(input);
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     * This method retrieves the upward transitive closure of all Class
@@ -2579,7 +2597,6 @@ public class KB {
 //        return ans;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     * This method retrieves the downward transitive closure of all Class
@@ -2629,13 +2646,12 @@ public class KB {
 //        return ans;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** ***************************************************************
-     * This method retrieves all instances of the classes named in the
-     * input set.
+    /**
+     * ***************************************************************
+     * This method retrieves all instances of the classes named in the input
+     * set.
      *
-     * @param classNames A Set object containing SUO-KIF class names
-     * (Strings).
+     * @param classNames A Set object containing SUO-KIF class names (Strings).
      *
      * @return A TreeSet, possibly empty, containing SUO-KIF constant names.
      */
@@ -2654,18 +2670,18 @@ public class KB {
                     }
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         // System.out.println("EXIT KB.getAllInstances(" + classNames + ")");
         // System.out.println("=> " + ans);
         return ans;
-    }    
+    }
 
-    /** ***************************************************************
-     * This method retrieves all instances of the class named in the
-     * input String.
+    /**
+     * ***************************************************************
+     * This method retrieves all instances of the class named in the input
+     * String.
      *
      * @param className The name of a SUO-KIF Class.
      *
@@ -2680,20 +2696,19 @@ public class KB {
         return new TreeSet();
     }
 
-    /** ***************************************************************
-     * This method tries to find or compute a valence for the input
-     * relation.
+    /**
+     * ***************************************************************
+     * This method tries to find or compute a valence for the input relation.
      *
      * @param relnName A String, the name of a SUO-KIF Relation.
      *
-     * @return An int value. -1 means that no valence value could be
-     * found.  0 means that the relation is a VariableArityRelation.
-     * 1-5 are the standard SUO-KIF valence values.
+     * @return An int value. -1 means that no valence value could be found. 0
+     * means that the relation is a VariableArityRelation. 1-5 are the standard
+     * SUO-KIF valence values.
      */
     public int getValence(String relnName) {
 
         // System.out.println("INFO in KB.getValence(" + relnName + ")");
-    
         int ans = -1;
         try {
             if (Formula.isNonEmptyString(relnName)) {
@@ -2738,22 +2753,19 @@ public class KB {
 
                     // See which valence-determining class the
                     // relation belongs to.
-
                     Set classNames = getCachedRelationValues("instance", relation, 1, 2);
 
                     // System.out.println("classNames == " + classNames);
-
                     if (classNames != null) {
-                        String[][] tops = { {"VariableArityRelation", "0"},
-                                            {"UnaryFunction",         "1"},
-                                            {"BinaryRelation",        "2"},
-                                            {"TernaryRelation",       "3"},
-                                            {"QuaternaryRelation",    "4"},
-                                            {"QuintaryRelation",      "5"},
-                        };
+                        String[][] tops = {{"VariableArityRelation", "0"},
+                        {"UnaryFunction", "1"},
+                        {"BinaryRelation", "2"},
+                        {"TernaryRelation", "3"},
+                        {"QuaternaryRelation", "4"},
+                        {"QuintaryRelation", "5"},};
 
-                        for (int i = 0 ; (ans < 0) && (i < tops.length) ; i++) {
-                
+                        for (int i = 0; (ans < 0) && (i < tops.length); i++) {
+
                             if (classNames.contains(tops[i][0])) {
                                 ans = Integer.parseInt(tops[i][1]);
 
@@ -2766,8 +2778,8 @@ public class KB {
                                 // is also an instance of Function has
                                 // a valence of 2, not 3.
                                 if ((i > 1)
-                                    && (relation.endsWith("Fn") || classNames.contains("Function"))
-                                    && !(tops[i][0]).endsWith("Function")) {
+                                        && (relation.endsWith("Fn") || classNames.contains("Function"))
+                                        && !(tops[i][0]).endsWith("Function")) {
                                     --ans;
                                 }
                                 break;
@@ -2782,13 +2794,12 @@ public class KB {
                     relationValences.put(relnName, rv);
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         // System.out.println("INFO in getValence(" + relnName + ") => " + ans);
         return ans;
-    }    
+    }
 
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
@@ -2806,7 +2817,6 @@ public class KB {
 //        return ans;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     *
@@ -2820,7 +2830,6 @@ public class KB {
 //        return ((obj instanceof String) && Formula.empty((String) obj));
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     *
@@ -2847,8 +2856,8 @@ public class KB {
 //        }
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** ***************************************************************
+    /**
+     * ***************************************************************
      *
      * A static utility method.
      *
@@ -2881,7 +2890,6 @@ public class KB {
 //                && (obj.equals("forall") || obj.equals("exists")));
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** ***************************************************************
 //     *
@@ -2899,7 +2907,6 @@ public class KB {
 //                && (obj.equals("and") || obj.equals("or")));
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * Hyperlink terms identified with '&%' to the URL that brings up
@@ -2935,7 +2942,6 @@ public class KB {
 //        return newFormula;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     *  Pull all the formulas into one TreeSet of Strings.
@@ -2953,7 +2959,6 @@ public class KB {
 //        return ts;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     *  Pull all the formulas in an ArrayList into one TreeSet of Strings.
@@ -2966,14 +2971,13 @@ public class KB {
 //        return ts;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Save the contents of the current KB to a file.
      */
     public String writeInferenceEngineFormulas(TreeSet forms) {
 
         // System.out.println("file separator == " + File.separator);
-
         FileWriter fr = null;
         PrintWriter pr = null;
         String filename = null;
@@ -2988,49 +2992,45 @@ public class KB {
                     filename = file.getCanonicalPath();
 
                     // System.out.println("filename == " + filename);
-
                     fr = new FileWriter(filename);
                     pr = new PrintWriter(fr);
                     for (Object form : forms) {
                         pr.println((String) form);
                         pr.println();
                     }
-                    if (! file.exists()) {
+                    if (!file.exists()) {
                         filename = null;
                         throw new Exception("Error writing " + file.getCanonicalPath());
                     }
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             System.out.println("Error in KB.writeInferenceEngineFormulas(): " + ex.getMessage());
             ex.printStackTrace();
         }
         if (pr != null) {
             try {
                 pr.close();
-            }
-            catch (Exception e1) {
+            } catch (Exception e1) {
             }
         }
         if (fr != null) {
             try {
                 fr.close();
-            }
-            catch (Exception e2) {
+            } catch (Exception e2) {
             }
         }
         return filename;
     }
 
-    /** *************************************************************
-     *  Starts Vampire and collects, preprocesses and loads all of the
-     *  constituents into it.
+    /**
+     * *************************************************************
+     * Starts Vampire and collects, preprocesses and loads all of the
+     * constituents into it.
      */
     public void loadVampire() {
 
         // System.out.println("INFO in KB.loadVampire()");
-
         try {
             if (!formulaMap.isEmpty()) {
 
@@ -3041,8 +3041,7 @@ public class KB {
                 boolean vFileSaved = Formula.isNonEmptyString(filename);
                 if (vFileSaved) {
                     System.out.println("INFO in KB.loadVampire(): " + forms.size() + " formulas saved to " + filename);
-                }
-                else {
+                } else {
                     System.out.println("INFO in KB.loadVampire(): new -v.kif file not written");
                 }
 
@@ -3069,40 +3068,43 @@ public class KB {
                         }
                     };
                 }
-                System.out.println("INFO in KB.loadVampire(): inferenceEngine == " + inferenceEngine);        
+                System.out.println("INFO in KB.loadVampire(): inferenceEngine == " + inferenceEngine);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Error in KB.loadVampire(): " + e.getMessage());
             e.printStackTrace();
         }
 
     }
 
-    /** A utility array for profiling subtasks in KB.preProcess(). */
-    protected static long[] ppTimers = { 0L,  // type pred (sortal) computation
-                                         0L,  // pred var instantion
-                                         0L,  // row var expansion
-                                         0L,  // Formula.getRowVarExpansionRange()
-                                         0L,  // Formula.toNegAndPosLitsWithRenameInfo()
-                                         0L,  // Formula.adjustExpansionCount()
-                                         0L   // Formula.preProcessRecurse()
-    };
+    /**
+     * A utility array for profiling subtasks in KB.preProcess().
+     */
+    protected static long[] ppTimers = {0L, // type pred (sortal) computation
+        0L, // pred var instantion
+        0L, // row var expansion
+        0L, // Formula.getRowVarExpansionRange()
+        0L, // Formula.toNegAndPosLitsWithRenameInfo()
+        0L, // Formula.adjustExpansionCount()
+        0L // Formula.preProcessRecurse()
+};
 
-    /** ***************************************************************
-     * Preprocess the knowledge base to work with Vampire.  This includes "holds"
+    /**
+     * ***************************************************************
+     * Preprocess the knowledge base to work with Vampire. This includes "holds"
      * prefixing, ticking nested formulas, expanding row variables, and
      * translating mathematical relation operators.
-     * @return a TreeSet of Strings. 
+     *
+     * @return a TreeSet of Strings.
      */
     public TreeSet preProcess(Set forms) {
         // System.out.println("INFO in kb.preProcess()");
         TreeSet newTreeSet = new TreeSet();
         try {
-            for (int i = 0 ; i < ppTimers.length ; i++) {
+            for (int i = 0; i < ppTimers.length; i++) {
                 ppTimers[i] = 0L;
             }
-            
+
             Formula.resetSortalTypeCache();
 
             boolean tptpParseP = KBmanager.getMgr().getPref("TPTP").equalsIgnoreCase("yes");
@@ -3120,58 +3122,58 @@ public class KB {
                 // newFormula.theFormula = new String(f.theFormula);
 
                 // System.out.println("preProcess " + newFormula);
-
                 // processed = newFormula.preProcess(false,this);   // not queries
                 processed = f.preProcess(false, this);   // not queries
 
                 if (tptpParseP) {
                     //try {
-                        f.tptpParse(false, this, processed);   // not a query
+                    f.tptpParse(false, this, processed);   // not a query
                         /*
-                    } catch (ParseException pe) {
-                        String er = "Error in KB.preProcess(): " + pe.getMessage() + " for formula in file " + f.sourceFile + " at line " + f.startLine;
-                        KBmanager.getMgr().setError(KBmanager.getMgr().getError() + "\n<br/>" + er + "\n<br/>");
-                        System.out.println(er);
-                    } catch (IOException ioe) {
-                        System.out.println("Error in KB.preProcess: " + ioe.getMessage());
-                    }*/
+                     } catch (ParseException pe) {
+                     String er = "Error in KB.preProcess(): " + pe.getMessage() + " for formula in file " + f.sourceFile + " at line " + f.startLine;
+                     KBmanager.getMgr().setError(KBmanager.getMgr().getError() + "\n<br/>" + er + "\n<br/>");
+                     System.out.println(er);
+                     } catch (IOException ioe) {
+                     System.out.println("Error in KB.preProcess: " + ioe.getMessage());
+                     }*/
                 }
 
                 for (Object aProcessed : processed) {
                     Formula p = (Formula) aProcessed;
-                    if (p.theFormula != null)
+                    if (p.theFormula != null) {
                         newTreeSet.add(p.theFormula);
+                    }
                 }
             }
             long dur = (System.currentTimeMillis() - t1);
             System.out.println("INFO in KB.preProcess()");
             System.out.println("  "
-                               + (dur / 1000.0)
-                               + " seconds total to produce "
-                               + newTreeSet.size()
-                               + " formulas");
+                    + (dur / 1000.0)
+                    + " seconds total to produce "
+                    + newTreeSet.size()
+                    + " formulas");
             System.out.println("    "
-                               + (ppTimers[1] / 1000.0)
-                               + " seconds instantiating predicate variables");
+                    + (ppTimers[1] / 1000.0)
+                    + " seconds instantiating predicate variables");
             System.out.println("    "
-                               + (ppTimers[2] / 1000.0)
-                               + " seconds expanding row variables");
+                    + (ppTimers[2] / 1000.0)
+                    + " seconds expanding row variables");
             System.out.println("      "
-                               + (ppTimers[3] / 1000.0)
-                               + " seconds in Formula.getRowVarExpansionRange()");
+                    + (ppTimers[3] / 1000.0)
+                    + " seconds in Formula.getRowVarExpansionRange()");
             System.out.println("        "
-                               + (ppTimers[4] / 1000.0)
-                               + " seconds in Formula.toNegAndPosLitsWithRenameInfo()");
+                    + (ppTimers[4] / 1000.0)
+                    + " seconds in Formula.toNegAndPosLitsWithRenameInfo()");
             System.out.println("      "
-                               + (ppTimers[5] / 1000.0)
-                               + " seconds in Formula.adjustExpansionCount()");
+                    + (ppTimers[5] / 1000.0)
+                    + " seconds in Formula.adjustExpansionCount()");
             System.out.println("    "
-                               + (ppTimers[0] / 1000.0)
-                               + " seconds adding type predicates");
+                    + (ppTimers[0] / 1000.0)
+                    + " seconds adding type predicates");
             System.out.println("    "
-                               + (ppTimers[6] / 1000.0)
-                               + " seconds in Formula.preProcessRecurse()");
-            for (int i = 0 ; i < ppTimers.length ; i++) {
+                    + (ppTimers[6] / 1000.0)
+                    + " seconds in Formula.preProcessRecurse()");
+            for (int i = 0; i < ppTimers.length; i++) {
                 ppTimers[i] = 0L;
             }
 
@@ -3187,8 +3189,7 @@ public class KB {
                         if (badCount < 11) {
                             badList.add(f);
                         }
-                    }
-                    else {
+                    } else {
                         goodCount++;
                         if (goodCount < 10) {
                             System.out.println("Sample TPTP translation: " + f.getTheTptpFormulas().get(0));
@@ -3196,18 +3197,18 @@ public class KB {
                     }
                 }
                 System.out.println("INFO in KB.preProcess(): TPTP translation succeeded for "
-                                   + goodCount
-                                   + " formula"
-                                   + ((goodCount == 1) ? "" : "s"));
+                        + goodCount
+                        + " formula"
+                        + ((goodCount == 1) ? "" : "s"));
                 boolean someAreBad = (badCount > 0);
                 System.out.println("INFO in KB.preProcess(): TPTP translation failed for "
-                                   + badCount
-                                   + " formula"
-                                   + ((badCount == 1) ? "" : "s")
-                                   + (someAreBad ? ":" : ""));
+                        + badCount
+                        + " formula"
+                        + ((badCount == 1) ? "" : "s")
+                        + (someAreBad ? ":" : ""));
                 if (someAreBad) {
                     it = badList.iterator();
-                    for (int i = 1 ; it.hasNext() ; i++) {
+                    for (int i = 1; it.hasNext(); i++) {
                         f = (Formula) it.next();
                         System.out.println("[" + i + "]: " + f);
                     }
@@ -3216,17 +3217,17 @@ public class KB {
                     }
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-     
+
         Formula.destroySortalTypeCache();
 
         return newTreeSet;
     }
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      */
     private void writePrologFormulas(ArrayList forms, PrintWriter pr) {
 
@@ -3237,11 +3238,14 @@ public class KB {
             for (Object t : ts) {
                 Formula formula = (Formula) t;
                 String result = formula.toProlog();
-                if (result != null && !"".equals(result))
+                if (result != null && !"".equals(result)) {
                     pr.println(result);
-                if (i % 100 == 1) System.out.print(".");
+                }
+                if (i % 100 == 1) {
+                    System.out.print(".");
+                }
             }
-        }        
+        }
     }
 
 // --Commented out by Inspection START (8/15/14 2:38 AM):
@@ -3306,7 +3310,6 @@ public class KB {
 //        return result;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
 // --Commented out by Inspection START (8/15/14 2:38 AM):
 //    /** *************************************************************
 //     * This method translates the entire KB to TPTP format, storing
@@ -3367,13 +3370,13 @@ public class KB {
 //        return goodCount;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
-    /** *************************************************************
+    /**
+     * *************************************************************
      */
     public String writeTPTPFile(String fileName,
-                                Formula conjecture, 
-                                boolean onlyPlainFOL, 
-                                String reasoner) {
+            Formula conjecture,
+            boolean onlyPlainFOL,
+            String reasoner) {
 
         String result = null;
         String sanitizedKBName;
@@ -3385,22 +3388,22 @@ public class KB {
         boolean sanitizedFormula;
         boolean commentedFormula;
 
-        sanitizedKBName = name.replaceAll("\\W","_");
+        sanitizedKBName = name.replaceAll("\\W", "_");
         try {
 
-            System.out.println("INFO in KB.writeTPTPFile(\"" 
-                               + fileName 
-                               + "\", " 
-                               + conjecture 
-                               + ", " 
-                               + onlyPlainFOL
-                               + ", \""
-                               + reasoner
-                               + "\")");
+            System.out.println("INFO in KB.writeTPTPFile(\""
+                    + fileName
+                    + "\", "
+                    + conjecture
+                    + ", "
+                    + onlyPlainFOL
+                    + ", \""
+                    + reasoner
+                    + "\")");
 
             //----If file name is a directory, create filename therein
             if (fileName == null) {
-                outputFile = File.createTempFile(sanitizedKBName, ".p",null);
+                outputFile = File.createTempFile(sanitizedKBName, ".p", null);
                 //----Delete temp file when program exits.
                 outputFile.deleteOnExit();
             } else {
@@ -3412,23 +3415,24 @@ public class KB {
             pr = new PrintWriter(new FileWriter(outputFile));
             pr.println("% Copyright 2007 Articulate Software Incorporated");
             pr.println("% This software released under the GNU Public License <http://www.gnu.org/copyleft/gpl.html>.");
-            pr.println("% This is a translation to TPTP of KB " + 
-                       sanitizedKBName + "\n");
+            pr.println("% This is a translation to TPTP of KB "
+                    + sanitizedKBName + "\n");
 
             orderedFormulae = new TreeSet(new Comparator() {
-                    @Override
-                    public int compare(Object o1, Object o2) {
-                        Formula f1 = (Formula) o1;
-                        Formula f2 = (Formula) o2;
-                        int fileCompare = f1.sourceFile.compareTo(f2.sourceFile);
+                @Override
+                public int compare(Object o1, Object o2) {
+                    Formula f1 = (Formula) o1;
+                    Formula f2 = (Formula) o2;
+                    int fileCompare = f1.sourceFile.compareTo(f2.sourceFile);
+                    if (fileCompare == 0) {
+                        fileCompare = (new Integer(f1.startLine)).compareTo(f2.startLine);
                         if (fileCompare == 0) {
-                            fileCompare = (new Integer(f1.startLine)).compareTo(f2.startLine);
-                            if (fileCompare == 0) {
-                                fileCompare = (new Long(f1.endFilePosition)).compareTo(f2.endFilePosition);
-                            }
-                        } 
-                        return fileCompare;
-                    } });
+                            fileCompare = (new Long(f1.endFilePosition)).compareTo(f2.endFilePosition);
+                        }
+                    }
+                    return fileCompare;
+                }
+            });
             orderedFormulae.addAll(formulaMap.values());
 
             if (onlyPlainFOL) {
@@ -3444,16 +3448,15 @@ public class KB {
                 tptpFormulas = f.getTheTptpFormulas();
 
                 // System.out.println("  1 : tptpFormulas == " + tptpFormulas);
-
                 //----If we are writing "sanitized" tptp, aka onlyPlainFOL,
                 //----here we rename all VariableArityRelations so that each
                 //----relation name has a numeric suffix corresponding to the
                 //----number of the relation's arguments.  This is required
                 //----for some provers, such as E and EP.
-                if (onlyPlainFOL 
-                    && !tptpFormulas.isEmpty() 
-                    && !KBmanager.getMgr().getPref("holdsPrefix").equalsIgnoreCase("yes")
-                    && f.containsVariableArityRelation(this)) {
+                if (onlyPlainFOL
+                        && !tptpFormulas.isEmpty()
+                        && !KBmanager.getMgr().getPref("holdsPrefix").equalsIgnoreCase("yes")
+                        && f.containsVariableArityRelation(this)) {
                     Formula tmpF = new Formula();
                     tmpF.read(f.theFormula);
                     List processed = tmpF.preProcess(false, this);
@@ -3470,7 +3473,7 @@ public class KB {
                         tptpFormulas = tmpF.getTheTptpFormulas();
                         // System.out.println("  2 : tptpFormulas == " + tptpFormulas);
                     }
-                }                
+                }
 
                 tptpIt = tptpFormulas.iterator();
                 while (tptpIt.hasNext()) {
@@ -3479,13 +3482,13 @@ public class KB {
                     if (onlyPlainFOL) {
                         //----Remove interpretations of arithmetic
                         theTPTPFormula = theTPTPFormula.
-                            replaceAll("[$]less","dollar_less").replaceAll("[$]greater","dollar_greater").
-                            replaceAll("[$]time","dollar_times").replaceAll("[$]divide","dollar_divide").
-                            replaceAll("[$]plus","dollar_plus").replaceAll("[$]minus","dollar_minus");
+                                replaceAll("[$]less", "dollar_less").replaceAll("[$]greater", "dollar_greater").
+                                replaceAll("[$]time", "dollar_times").replaceAll("[$]divide", "dollar_divide").
+                                replaceAll("[$]plus", "dollar_plus").replaceAll("[$]minus", "dollar_minus");
                         //----Don't output ""ed ''ed and numbers
-                        if (theTPTPFormula.indexOf('\'') >= 0 ||
-                            theTPTPFormula.indexOf('"') >= 0 || 
-                            theTPTPFormula.matches(".*[(,]-?[0-9].*")) {
+                        if (theTPTPFormula.indexOf('\'') >= 0
+                                || theTPTPFormula.indexOf('"') >= 0
+                                || theTPTPFormula.matches(".*[(,]-?[0-9].*")) {
                             pr.print("%FOL ");
                             commentedFormula = true;
                         }
@@ -3499,8 +3502,8 @@ public class KB {
                             }
                         }
                     }
-                    pr.println("fof(kb_" + sanitizedKBName + "_" + axiomIndex++ +
-                               ",axiom,(" + theTPTPFormula + ")).");
+                    pr.println("fof(kb_" + sanitizedKBName + "_" + axiomIndex++
+                            + ",axiom,(" + theTPTPFormula + ")).");
                     // if (commentedFormula) {
                     pr.println();
                     // }
@@ -3508,7 +3511,7 @@ public class KB {
                 if (f.getTheTptpFormulas().isEmpty()) {
                     String addErrStr = "No TPTP formula for <br/>" + f.htmlFormat(this);
                     KBmanager.getMgr().setError(KBmanager.getMgr().getError()
-                                                + "<br/>\n" + addErrStr + "\n<br/>");
+                            + "<br/>\n" + addErrStr + "\n<br/>");
                     System.out.println("INFO in KB.writeTPTPFile(): No TPTP formula for\n" + f);
                 }
             }
@@ -3522,13 +3525,12 @@ public class KB {
                 // multiple conjectures.
                 while (tptpIt.hasNext()) {
                     theTPTPFormula = (String) tptpIt.next();
-                    pr.println("fof(prove_from_" + sanitizedKBName + 
-                               ",conjecture,(" + theTPTPFormula + ")).");
+                    pr.println("fof(prove_from_" + sanitizedKBName
+                            + ",conjecture,(" + theTPTPFormula + ")).");
                 }
             }
             result = canonicalPath;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Error in KB.writeTPTPFile(): " + e.getMessage());
             e.printStackTrace();
         }
@@ -3537,21 +3539,21 @@ public class KB {
             Formula.destroySortalTypeCache();
         }
 
-        if (pr != null)  {
+        if (pr != null) {
             try {
                 pr.close();
-            }
-            catch (Exception e1) {
+            } catch (Exception e1) {
             }
         }
 
         return result;
     }
 
-    /** *************************************************************
-     * Instances of RelationCache hold the cached extensions and, when
-     * possible, the computed closures, of selected relations.
-     * Canonical examples are the caches for subclass and instance.
+    /**
+     * *************************************************************
+     * Instances of RelationCache hold the cached extensions and, when possible,
+     * the computed closures, of selected relations. Canonical examples are the
+     * caches for subclass and instance.
      *
      */
     class RelationCache extends HashMap {
@@ -3581,7 +3583,6 @@ public class KB {
 //            return isClosureComputed;
 //        }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
         public void setIsClosureComputed(boolean computed) {
             isClosureComputed = computed;
         }
@@ -3590,7 +3591,6 @@ public class KB {
 //        private RelationCache() {
 //        }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)
-
         public RelationCache(String predName, int keyArg, int valueArg) {
             relationName = predName;
             keyArgument = keyArg;
@@ -3603,12 +3603,12 @@ public class KB {
         }
     }
 
-    /** *************************************************************
-     * This method currently takes one command-line argument, which
-     * should be the absolute pathname of the directory in which the
-     * source Merge,kif file is located.  The resulting tptp file will
-     * be named TPTP-TEST-KB.tptp, and will be written to the same
-     * directory.
+    /**
+     * *************************************************************
+     * This method currently takes one command-line argument, which should be
+     * the absolute pathname of the directory in which the source Merge,kif file
+     * is located. The resulting tptp file will be named TPTP-TEST-KB.tptp, and
+     * will be written to the same directory.
      */
     public static void main(String[] args) {
 
@@ -3640,26 +3640,24 @@ public class KB {
             mgr.kbs.clear();
 
             mgr.addKB("TPTP-TEST-KB");
-                
+
             KB kb = mgr.getKB("TPTP-TEST-KB");
 
             kb.constituents.clear();
 
             File kbDir = new File(mgr.getPref("kbDir"));
-                
-            File kifFileToLoad = new File(kbDir, "Merge.kif");    
+
+            File kifFileToLoad = new File(kbDir, "Merge.kif");
 
             kb.addConstituent(kifFileToLoad.getCanonicalPath(),
-
-                              // Compute caches of "virtual" assertions,
-                              true, 
-
-                              // Don't write a file of processed
-                              // SUO-KIF formulas for the inference
-                              // engine, and don't try to start an
-                              // inference engine process.
-                              false  
-                              );
+                    // Compute caches of "virtual" assertions,
+                    true,
+                    // Don't write a file of processed
+                    // SUO-KIF formulas for the inference
+                    // engine, and don't try to start an
+                    // inference engine process.
+                    false
+            );
 
             kb.preProcess(kb.getFormulas());
 
@@ -3669,12 +3667,10 @@ public class KB {
 
             if (Formula.isNonEmptyString(fileWritten)) {
                 System.out.println("File written: " + fileWritten);
-            }
-            else {
+            } else {
                 System.out.println("Could not write " + tptpFile.getCanonicalPath());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

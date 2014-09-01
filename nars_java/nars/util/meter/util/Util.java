@@ -25,7 +25,8 @@ import java.util.Map;
  */
 public final class Util {
 
-    private Util() {}
+    private Util() {
+    }
 
     public static void assertNotNull(final Object test, final String varName) {
         if (test == null) {
@@ -67,7 +68,7 @@ public final class Util {
         }
     }
 
-    public static <K,V> void assertNotEmpty(final Map<K,V> test, final String varName) {
+    public static <K, V> void assertNotEmpty(final Map<K, V> test, final String varName) {
         if (test == null) {
             throw new NullPointerException(varName);
         }

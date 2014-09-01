@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package nars.util;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -24,71 +23,73 @@ import nars.io.Input;
 import nars.io.Output;
 
 /**
- * Pipes sentences emitted from a NAR to another NAR.  Use two in opposite directions for bidirectional communication.
+ * Pipes sentences emitted from a NAR to another NAR. Use two in opposite
+ * directions for bidirectional communication.
+ *
  * @author SeH
  */
 public class SentencePipe implements Input, Output {
+
     private final NAR source;
     private final NAR target;
     private boolean active;
     private final ArrayBlockingQueue<Sentence> buffer;
     int bufferSize = 2048;
-    
+
     public SentencePipe(NAR source, NAR target) {
         this.source = source;
         this.target = target;
-        
+
         buffer = new ArrayBlockingQueue(bufferSize);
         active = true;
-        
+
         source.addOutput(this);
         target.addInput(this);
-        
-    }
 
-    
+    }
 
     @Override
     public void output(Class channel, Object o) {
         if (channel == OUT.class) {
             if (o instanceof Sentence) {
                 //TODO avoid converting to string and instead insert directly to target's memory
-                Sentence s = (Sentence)o;
-                s = (Sentence)s.clone();
+                Sentence s = (Sentence) o;
+                s = (Sentence) s.clone();
                 s = process(s);
                 //TODO: <statement_from_other_nars --> narsinput>.
-                if (s!=null)
+                if (s != null) {
                     buffer.add(s);
+                }
             }
         }
     }
-    
-   @Override
+
+    @Override
     public boolean finished(boolean stop) {
-        if (stop)
+        if (stop) {
             active = false;
+        }
         return !active;
-    }    
+    }
 
     @Override
     public Object next() {
-        if (buffer.size() > 0)
+        if (buffer.size() > 0) {
             return buffer.remove();
+        }
         active = false;
         return null;
     }
-    
+
     /**
-     * for filtering or processing each sentence after output by source and before addInput to target.
+     * for filtering or processing each sentence after output by source and
+     * before addInput to target.
+     *
      * @param s
      * @return the sentence, either as-is, modified, or null (will not transmit)
      */
     public Sentence process(Sentence s) {
         return s;
     }
-    
- 
-    
-    
-    
+
 }

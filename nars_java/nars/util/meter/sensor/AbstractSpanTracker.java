@@ -1,7 +1,7 @@
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import java.util.Date;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Range;
 
@@ -14,26 +14,25 @@ import nars.util.meter.util.Range;
 public abstract class AbstractSpanTracker extends AbstractTracker implements SpanTracker {
 
     //private static final Logger logger = Logger.getLogger(AbstractSpanTracker.class.toString());
-
     protected long startTime = 0L;
     protected boolean tracking = false;
 
     public AbstractSpanTracker(final StatsSession session) {
         super(session);
     }
-    
+
     public AbstractSpanTracker(final String id) {
         super(id);
     }
-    
+
     public AbstractSpanTracker(final String id, final Range... ranges) {
         super(id, ranges);
     }
 
     @Override
-    public final SpanTracker track() {
+    public final SpanTracker start() {
         //try {
-        
+
         if (tracking) {
             //logger.warning("track() called when already tracking: {} " + this);
             throw new RuntimeException(this + " can not track() while already tracking");
@@ -46,10 +45,9 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
         startImpl(startTime);
 
         /*} catch (Exception e) {
-            Misc.logHandledException(logger, e, "Caught Exception in track()");
-            Misc.handleUncaughtException(getKey(), e);
-        }*/
-
+         Misc.logHandledException(logger, e, "Caught Exception in track()");
+         Misc.handleUncaughtException(getKey(), e);
+         }*/
         return this;
     }
 
@@ -58,9 +56,9 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
     }
 
     @Override
-    public final void commit() {
+    public void stop() {
         //try {
-            
+
         if (!tracking) {
             //logger.warning("commit() called when not tracking: {} " + this);
             throw new RuntimeException(this + " can not commit(); not tracking");
@@ -69,11 +67,11 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
         tracking = false;
 
         stopImpl(-1);
-        
+
         /*} catch (Exception e) {
-            Misc.logHandledException(logger, e, "Caught Exception in commit()");
-            Misc.handleUncaughtException(getKey(), e);
-        }*/
+         Misc.logHandledException(logger, e, "Caught Exception in commit()");
+         Misc.handleUncaughtException(getKey(), e);
+         }*/
     }
 
     protected void stopImpl(final long now) {
@@ -91,7 +89,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
     }
 
     @Override
-    public Tracker reset() {
+    public Sensor reset() {
         super.reset();
         startTime = 0L;
         tracking = false;

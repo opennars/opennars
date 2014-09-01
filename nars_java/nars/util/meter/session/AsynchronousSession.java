@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.event.EventType;
@@ -29,12 +29,12 @@ import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.util.Misc;
 
-
 /**
- * <p>An implementation of {@link StatsSession} that can potentially pad the
+ * <p>
+ * An implementation of {@link StatsSession} that can potentially pad the
  * tracker, and thus the client of the tracker, from blocking on calls to
- * {@link #track(Tracker, long)}, and {@link #update(Tracker, long)}.
- * When either of these calls are made, they are queued for execution by the
+ * {@link #track(Tracker, long)}, and {@link #update(Tracker, long)}. When
+ * either of these calls are made, they are queued for execution by the
  * associated {@link TaskService}, which will typically invoke them in a
  * background thread. This queuing behaviour does impose the overhead of queue
  * entry object creation on the client of a tracker, but this is necessary to
@@ -45,12 +45,14 @@ import nars.util.meter.util.Misc;
  * a update #2, the resulting {@link DataSet} will contain data related only to
  * update #1 or update #2. It will not contain the data from a partially
  * recorded update. Furthermore, it allows this data integrity without having to
- * block the client of the {@link Tracker}, which could sacrifice
- * performance. If better performance is preferred at the cost of potentially
- * inconsistent data, see {@link org.stajistics.session.ConcurrentSession}.</p>
+ * block the client of the {@link Sensor}, which could sacrifice performance.
+ * If better performance is preferred at the cost of potentially inconsistent
+ * data, see {@link org.stajistics.session.ConcurrentSession}.</p>
  *
- * <p>The {@link DataRecorder}s manipulated by this session implementation are updated
- * within locks, so the {@link DataRecorder}s themselves do not need to be thread safe.</p>
+ * <p>
+ * The {@link DataRecorder}s manipulated by this session implementation are
+ * updated within locks, so the {@link DataRecorder}s themselves do not need to
+ * be thread safe.</p>
  *
  * @see org.stajistics.session.ConcurrentSession
  *
@@ -70,30 +72,29 @@ public class AsynchronousSession extends AbstractStatsSession {
     private volatile double min = Double.POSITIVE_INFINITY;
     private volatile double max = Double.NEGATIVE_INFINITY;
     private volatile double sum = DataSet.Field.Default.SUM;
-    
+
     private final Queue<TrackerEntry> updateQueue;
     private final Lock updateQueueProcessingLock = new ReentrantLock();
 
     private final Lock stateLock = new ReentrantLock();
 
-
     public AsynchronousSession(final StatsKey key,
-                               final EventManager eventManager,
-                               final DataRecorder... dataRecorders) {
+            final EventManager eventManager,
+            final DataRecorder... dataRecorders) {
         this(key, eventManager, new ConcurrentLinkedQueue<TrackerEntry>(), dataRecorders);
     }
 
     public AsynchronousSession(final StatsKey key,
-                               final EventManager eventManager,
-                               final Queue<TrackerEntry> updateQueue,
-                               final DataRecorder... dataRecorders) {
+            final EventManager eventManager,
+            final Queue<TrackerEntry> updateQueue,
+            final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
 
         //assertNotNull(updateQueue, "updateQueue");
         this.updateQueue = updateQueue;
     }
 
-    private void queueUpdateTask(final Tracker tracker, final long now, final boolean update) {
+    private void queueUpdateTask(final Sensor tracker, final long now, final boolean update) {
         TrackerEntry entry = new TrackerEntry(tracker, now, update);
         try {
             updateQueue.add(entry);
@@ -109,11 +110,11 @@ public class AsynchronousSession extends AbstractStatsSession {
     }
 
     @Override
-    public void track(final Tracker tracker, long now) {
+    public void track(final Sensor tracker, long now) {
         queueUpdateTask(tracker, now, true);
     }
 
-    private void trackImpl(final Tracker tracker, final long now) {
+    private void trackImpl(final Sensor tracker, final long now) {
         stateLock.lock();
         try {
             hits++;
@@ -129,7 +130,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
 
         //logger.trace("Track: {}", this);
-
         eventManager.fireEvent(EventType.TRACKER_TRACKING, key, tracker);
     }
 
@@ -174,11 +174,11 @@ public class AsynchronousSession extends AbstractStatsSession {
     }
 
     @Override
-    public void update(final Tracker tracker, final long now) {
+    public void update(final Sensor tracker, final long now) {
         queueUpdateTask(tracker, now, false);
     }
 
-    private void updateImpl(final Tracker tracker, final long now) {
+    private void updateImpl(final Sensor tracker, final long now) {
         final double currentValue = tracker.getValue();
 
         stateLock.lock();
@@ -219,7 +219,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
 
         //logger.trace("Commit: {}", this);
-
         eventManager.fireEvent(EventType.TRACKER_COMMITTED, key, tracker);
     }
 
@@ -292,11 +291,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         eventManager = e;
     }
 
-    
-
-   
-        
-
     @Override
     public void restore(final DataSet dataSet) {
         //assertNotNull(dataSet, "dataSet");
@@ -311,7 +305,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
 
         //logger.trace("Restore: {}", this);
-
         eventManager.fireEvent(EventType.SESSION_RESTORED, key, this);
     }
 
@@ -411,7 +404,6 @@ public class AsynchronousSession extends AbstractStatsSession {
     }
 
     /* INNER CLASSES */
-
     protected final class ProcessUpdateQueueTask implements Runnable {
 
         @Override
@@ -431,11 +423,11 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     protected static final class TrackerEntry {
 
-        private final Tracker tracker;
+        private final Sensor tracker;
         private final long now;
         private final boolean track;
 
-        private TrackerEntry(final Tracker tracker, final long now, final boolean track) {
+        private TrackerEntry(final Sensor tracker, final long now, final boolean track) {
             this.tracker = tracker;
             this.now = now;
             this.track = track;
@@ -459,5 +451,4 @@ public class AsynchronousSession extends AbstractStatsSession {
 //                                           dataRecorders);
 //        }
 //    }
-
 }

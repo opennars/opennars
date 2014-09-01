@@ -29,6 +29,7 @@ import nars.util.rope.Rope;
 
 /**
  * A rope that represents the concatenation of two other ropes.
+ *
  * @author Amin Ahmad
  */
 public class ConcatenationRope extends AbstractRope {
@@ -40,13 +41,14 @@ public class ConcatenationRope extends AbstractRope {
 
     /**
      * Create a new concatenation rope from two ropes.
+     *
      * @param left the first rope.
      * @param right the second rope.
      */
     public ConcatenationRope(final Rope left, final Rope right) {
-        this.left   = left;
-        this.right  = right;
-        this.depth  = (byte) (Math.max(Rope.depth(left), Rope.depth(right)) + 1);
+        this.left = left;
+        this.right = right;
+        this.depth = (byte) (Math.max(Rope.depth(left), Rope.depth(right)) + 1);
         this.length = left.length() + right.length();
     }
 
@@ -69,8 +71,6 @@ public class ConcatenationRope extends AbstractRope {
         return this.getForSequentialAccess(this);
     }
 
-
-    
     /*
      * Returns this object as a char sequence optimized for
      * regular expression searches.
@@ -86,7 +86,7 @@ public class ConcatenationRope extends AbstractRope {
             @Override
             public char charAt(final int index) {
                 if (index > this.iterator.getPos()) {
-                    this.iterator.skip(index-this.iterator.getPos()-1);
+                    this.iterator.skip(index - this.iterator.getPos() - 1);
                     try {
                         final char c = this.iterator.next();
                         return c;
@@ -95,6 +95,7 @@ public class ConcatenationRope extends AbstractRope {
                         throw e;
                     }
                 } else { /* if (index <= lastIndex) */
+
                     final int toMoveBack = this.iterator.getPos() - index + 1;
                     if (this.iterator.canMoveBackwards(toMoveBack)) {
                         this.iterator.moveBackwards(toMoveBack);
@@ -120,6 +121,7 @@ public class ConcatenationRope extends AbstractRope {
 
     /**
      * Return the left-hand rope.
+     *
      * @return the left-hand rope.
      */
     public Rope getLeft() {
@@ -128,6 +130,7 @@ public class ConcatenationRope extends AbstractRope {
 
     /**
      * Return the right-hand rope.
+     *
      * @return the right-hand rope.
      */
     public Rope getRight() {
@@ -136,15 +139,15 @@ public class ConcatenationRope extends AbstractRope {
 
     @Override
     public Iterator<Character> iterator(final int start) {
-        if (start < 0 || start > this.length())
+        if (start < 0 || start > this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
+        }
         if (start >= this.left.length()) {
             return this.right.iterator(start - this.left.length());
         } else {
             return new ConcatenationRopeIteratorImpl(this, start);
         }
     }
-    
 
     @Override
     public int length() {
@@ -163,8 +166,9 @@ public class ConcatenationRope extends AbstractRope {
 
     @Override
     public Iterator<Character> reverseIterator(final int start) {
-        if (start < 0 || start > this.length())
+        if (start < 0 || start > this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
+        }
         if (start >= this.right.length()) {
             return this.left.reverseIterator(start - this.right.length());
         } else {
@@ -174,18 +178,22 @@ public class ConcatenationRope extends AbstractRope {
 
     @Override
     public Rope subSequence(final int start, final int end) {
-        if (start < 0 || end > this.length())
+        if (start < 0 || end > this.length()) {
             throw new IllegalArgumentException("Illegal subsequence (" + start + "," + end + ")");
-        if (start == 0 && end == this.length())
+        }
+        if (start == 0 && end == this.length()) {
             return this;
+        }
         final int l = this.left.length();
-        if (end <= l)
+        if (end <= l) {
             return this.left.subSequence(start, end);
-        if (start >= l)
+        }
+        if (start >= l) {
             return this.right.subSequence(start - l, end - l);
+        }
         return Rope.cat(
-            this.left.subSequence(start, l),
-            this.right.subSequence(0, end - l));
+                this.left.subSequence(start, l),
+                this.right.subSequence(0, end - l));
     }
 
     @Override
@@ -206,7 +214,6 @@ public class ConcatenationRope extends AbstractRope {
             this.right.write(out, 0, length - writeLeft);
         }
     }
-    
 
 //  /**
 //   * Not currently used. Can be used if rebalancing is performed

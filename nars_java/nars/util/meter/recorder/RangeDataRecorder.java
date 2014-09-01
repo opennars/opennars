@@ -21,13 +21,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Range;
 import nars.util.meter.util.RangeList;
 import nars.util.meter.util.ThreadSafe;
-
 
 /**
  *
@@ -72,8 +71,8 @@ public class RangeDataRecorder implements DataRecorder {
 
     @Override
     public void update(final StatsSession session,
-                       final Tracker tracker,
-                       final long now) {
+            final Sensor tracker,
+            final long now) {
         final double value = tracker.getValue();
         final boolean hasOverlap = rangeList.hasOverlap();
 
@@ -88,13 +87,13 @@ public class RangeDataRecorder implements DataRecorder {
 
     @Override
     public Object getField(final StatsSession session,
-                           final String name) {
+            final String name) {
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {
             if (ranges.get(i)
-                      .getName()
-                      .equals(name)) {
+                    .getName()
+                    .equals(name)) {
                 return hits[i].get();
             }
         }
@@ -108,7 +107,7 @@ public class RangeDataRecorder implements DataRecorder {
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {
-            dataSet.setField(ranges.get(i).getName(), hits[i].get());
+            dataSet.put(ranges.get(i).getName(), hits[i].get());
         }
     }
 
@@ -127,8 +126,8 @@ public class RangeDataRecorder implements DataRecorder {
 
             if (value == null) {
                 // The full range list is not present, so do not limp along with partial data
-                logger.warning("Dropping restore() call due to partial field data. Missing: {} " +
-                            range.getName());
+                logger.warning("Dropping restore() call due to partial field data. Missing: {} "
+                        + range.getName());
                 return;
             }
 

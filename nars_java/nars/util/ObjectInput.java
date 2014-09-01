@@ -8,5 +8,4 @@ import nars.io.Input;
 abstract public class ObjectInput implements Input {
 
     //TODO not implemented yet
-    
 }

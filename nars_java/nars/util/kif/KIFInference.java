@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package nars.util.kif;
 
 import java.io.IOException;
@@ -14,7 +13,8 @@ import java.io.IOException;
  */
 public interface KIFInference {
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Add an assertion.
      *
      * @param formula asserted formula in the KIF syntax
@@ -23,7 +23,8 @@ public interface KIFInference {
      */
     String assertFormula(String formula);
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Submit a query.
      *
      * @param formula query in the KIF syntax
@@ -34,13 +35,14 @@ public interface KIFInference {
      */
     String submitQuery(String formula, int timeLimit, int bindingsLimit);
 
-    /** *************************************************************
+    /**
+     * *************************************************************
      * Terminate this instance of Vampire.
-     * <font color='red'><b>Warning:</b></font>After calling this functions
-     * no further assertions or queries can be done.
+     * <font color='red'><b>Warning:</b></font>After calling this functions no
+     * further assertions or queries can be done.
      *
      * @throws IOException should not normally be thrown
      */
     void terminate();
-    
+
 }

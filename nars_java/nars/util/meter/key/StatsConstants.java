@@ -14,7 +14,6 @@
  */
 package nars.util.meter.key;
 
-
 /**
  * Various constants used by Stajistics.
  *
@@ -32,7 +31,8 @@ public interface StatsConstants {
     int KEY_HIERARCHY_ROOT_DEPTH = 1;
 
     /**
-     * The default unit used in {@link org.stajistics.configuration.StatsConfig} instances.
+     * The default unit used in {@link org.stajistics.configuration.StatsConfig}
+     * instances.
      */
     String DEFAULT_UNIT = "ms";
 }

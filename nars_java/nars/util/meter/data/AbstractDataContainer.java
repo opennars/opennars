@@ -17,7 +17,6 @@ package nars.util.meter.data;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * A convenience base implementation of {@link DataContainer}.
  *
@@ -25,31 +24,27 @@ import java.util.Set;
  */
 public abstract class AbstractDataContainer implements DataContainer {
 
-    protected final Map<String,Object> dataMap;
+    protected final Map<String, Object> dataMap;
 
-    protected AbstractDataContainer(final Map<String,Object> dataMap) {
+    protected AbstractDataContainer(final Map<String, Object> dataMap) {
         //assertNotNull(dataMap, "dataMap");
         this.dataMap = dataMap;
     }
 
     @Override
-    public Object getField(final String name) {
-        if (name == null) {
-            return null;
-        }
-
+    public Object get(final String name) {
         return dataMap.get(name);
     }
 
     @Override
-    public Set<String> getFieldNames() {
+    public Set<String> keySet() {
         return dataMap.keySet();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getField(final String name, final Class<T> type) {
-        Object value = getField(name);
+        Object value = get(name);
         if (value == null) {
             return null;
         }
@@ -63,30 +58,31 @@ public abstract class AbstractDataContainer implements DataContainer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getField(final String name, 
-                          final T defaultValue) {
+    public <T> T getField(final String name,
+            final T defaultValue) {
         if (name == null) {
             return defaultValue;
         }
 
         T result = defaultValue;
-        Object value = getField(name);
+        Object value = get(name);
         if (value != null) {
             try {
                 if (defaultValue == null) {
                     result = (T) value;
                 } else {
                     result = (T) defaultValue.getClass()
-                                             .cast(value);
+                            .cast(value);
                 }
-            } catch (ClassCastException cce) {}
+            } catch (ClassCastException cce) {
+            }
         }
 
         return result;
     }
 
     @Override
-    public void setField(final String name, final Object value) {
+    public void put(final String name, final Object value) {
         //assertNotEmpty(name, "name");
         //assertNotNull(value, "value");
 

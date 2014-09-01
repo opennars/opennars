@@ -16,11 +16,9 @@ import nars.core.build.DefaultNARBuilder;
 import nars.io.TextOutput;
 import nars.util.PrintWriterInput;
 
-
-
 /**
  * Simple combined OWL/RDF-S XML parser
- * 
+ *
  * Code from:
  * http://sujitpal.blogspot.com/2008/05/parsing-owl-xml-with-stax.html
  *
@@ -30,14 +28,13 @@ public class OWLInput extends PrintWriterInput {
 
     private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-
     private static String parentTagName = null;
-    
+
     private final Map<String, Entity> entities = new HashMap();
 
     public OWLInput(String owlFileLocation) throws Exception {
         super();
-        
+
         parseAndLoadData(new File(owlFileLocation));
     }
 
@@ -45,25 +42,24 @@ public class OWLInput extends PrintWriterInput {
 
         public String name;
         public final List<String[]> attributes = new LinkedList();
-                
+
         public Entity() {
         }
-        
-        
+
         public void setName(String name) {
             this.name = name;
         }
 
         private void addAttribute(String key, String value) {
-            attributes.add(new String[] { key, value });
+            attributes.add(new String[]{key, value});
         }
 
         private String getName() {
             return name;
         }
-        
+
     }
-    
+
     /**
      * These parsing rules were devised by physically looking at the OWL file
      * and figuring out what goes where. This should by no means be considered a
@@ -113,7 +109,7 @@ public class OWLInput extends PrintWriterInput {
                             public void execute(XMLStreamReader parser) {
 
                                 String tagName = formatTag(parser.getName());
-                                
+
                                 if (tagName.equalsIgnoreCase("owl:Class")) {
                                     //String name = parser.getAttributeValue(RDF_URI, "ID");
                                     String name = parser.getAttributeValue(0);
@@ -123,7 +119,7 @@ public class OWLInput extends PrintWriterInput {
                                         parentTagName = name;
                                         classEntity.setName(parentTagName);
                                         classEntity.addAttribute("Type", "Class");
-                                        
+
                                         //saveEntity(classEntity);
                                     }
                                 } else if (tagName.equalsIgnoreCase("rdfs:subClassOf")) {
@@ -131,10 +127,10 @@ public class OWLInput extends PrintWriterInput {
                                     String name = parser.getAttributeValue(0);
                                     if (name != null) {
                                         Entity superclassEntity = new Entity();
-                                        
+
                                         superclassEntity.setName(name);
                                         superclassEntity.addAttribute("Type", name);
-                                            
+
                                         //saveEntity(superclassEntity);
                                         saveRelation(parentTagName, superclassEntity.getName(), "parentOf");
                                         parentTagName = null;
@@ -211,11 +207,10 @@ public class OWLInput extends PrintWriterInput {
                     } else if (!tagName.startsWith("owl:")) {
                         Entity parentEntity = getEntity(tagName);
                         //parentEntity = null;
-                        
+
                         /*
-                        System.out.println(tagName + " " + parser.getAttributeName(0) + " " + parser.getAttributeValue(0) + " " + (parser.hasText() ? parser.getText() : ""));
-                        */
-                        
+                         System.out.println(tagName + " " + parser.getAttributeName(0) + " " + parser.getAttributeValue(0) + " " + (parser.hasText() ? parser.getText() : ""));
+                         */
                         if (parentEntity != null) {
                             processTag(parser, new TagProcessor() {
                                 @Override
@@ -223,9 +218,9 @@ public class OWLInput extends PrintWriterInput {
                                     String tagName = formatTag(parser.getName());
                                     //String id = parser.getAttributeValue(RDF_URI, "ID");
                                     String id = parser.getAttributeValue(0);
-                                    
+
                                     System.out.println("  " + tagName);
-                                    if (id!=null && id.length() > 0) {
+                                    if (id != null && id.length() > 0) {
                                         // this is the entity
                                         Entity entity = new Entity();
                                         entity.setName(id);
@@ -246,13 +241,12 @@ public class OWLInput extends PrintWriterInput {
                                 }
                             });
                         }
-                    }
-                    else {
+                    } else {
                         /*
-                        System.out.println();
-                        System.out.println(parser.getName() + " " + parser.getAttributeName(0) + " " + parser.getAttributeValue(0) + " " + (parser.hasText() ? parser.getText() : ""));                        
-                        System.out.println();
-                        */
+                         System.out.println();
+                         System.out.println(parser.getName() + " " + parser.getAttributeName(0) + " " + parser.getAttributeValue(0) + " " + (parser.hasText() ? parser.getText() : ""));                        
+                         System.out.println();
+                         */
                     }
                     break;
                 case XMLStreamConstants.END_ELEMENT:
@@ -266,9 +260,10 @@ public class OWLInput extends PrintWriterInput {
     }
 
     abstract public static class TagProcessor {
-        abstract protected void execute(XMLStreamReader parser);        
+
+        abstract protected void execute(XMLStreamReader parser);
     }
-    
+
     /**
      * A tag processor template method which takes as input a closure that is
      * responsible for extracting the information from the tag and saving it to
@@ -305,13 +300,13 @@ public class OWLInput extends PrintWriterInput {
             event = parser.next();
         }
     }
-    
+
     public String getClassName(String uri) {
         int lastSlash = uri.lastIndexOf('/');
-        return uri.substring(lastSlash+1);        
+        return uri.substring(lastSlash + 1);
     }
 
-  // ====================== DB load/save methods =========================
+    // ====================== DB load/save methods =========================
     /**
      * Saves an entity to the database. Takes care of setting attribute_types
      * and attribute objects linked to the entity.
@@ -320,10 +315,10 @@ public class OWLInput extends PrintWriterInput {
      */
     private void saveEntity(final Entity entity) {
         //entities.put(entity.getName(), entity);
-        
+
         String className = getClassName(entity.getName());
         append("<" + className + " --> class>.\n");
-        
+
         //System.out.println("Save: " + entity.getName());
 //        // if entity already exists, don't save
 //        long entityId = getEntityIdFromDb(entity.getName());
@@ -393,12 +388,14 @@ public class OWLInput extends PrintWriterInput {
      * @param relationName the name of the relation.
      */
     private void saveRelation(final String subject, final String object, final String predicate) {
-        
-        if ((subject==null) || (object==null)) return;
+
+        if ((subject == null) || (object == null)) {
+            return;
+        }
         if (predicate.equals("parentOf")) {
             append("<" + getClassName(subject) + " --> " + getClassName(object) + ">.\n");
         }
-        
+
 //        // get the entity ids for source and target
 //        long sourceEntityId = getEntityIdFromDb(sourceEntityName);
 //        long targetEntityId = getEntityIdFromDb(targetEntityName);
@@ -446,7 +443,7 @@ public class OWLInput extends PrintWriterInput {
         return entities.get(name);
     }
 
-  // ======== String manipulation methods ========
+    // ======== String manipulation methods ========
     /**
      * Format the XML tag. Takes as input the QName of the tag, and formats it
      * to a namespace:tagname format.
@@ -457,7 +454,7 @@ public class OWLInput extends PrintWriterInput {
     private String formatTag(QName qname) {
         String prefix = qname.getPrefix();
         String suffix = qname.getLocalPart();
-        if (prefix==null || prefix.length() == 0) {
+        if (prefix == null || prefix.length() == 0) {
             return suffix;
         } else {
             return prefix + ":" + suffix;
@@ -484,15 +481,14 @@ public class OWLInput extends PrintWriterInput {
         }
         return englishNameBuilder.toString();
     }
-    
+
     public static void main(String[] args) throws Exception {
         NAR n = new DefaultNARBuilder().build();
-        
-        new TextOutput(n, System.out);
-        
-        //new NARSwing(n);
 
+        new TextOutput(n, System.out);
+
+        //new NARSwing(n);
         n.addInput(new OWLInput("/home/me/Downloads/schemaorg.owl"));
-        
+
     }
 }

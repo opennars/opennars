@@ -18,7 +18,8 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * A singleton {@link StatsKey} implementation conforming to the null object pattern.
+ * A singleton {@link StatsKey} implementation conforming to the null object
+ * pattern.
  *
  * @author The Stajistics Project
  */
@@ -26,7 +27,8 @@ public final class NullStatsKey implements StatsKey {
 
     private static final NullStatsKey instance = new NullStatsKey();
 
-    private NullStatsKey() {}
+    private NullStatsKey() {
+    }
 
     /**
      * Get the sole instance of NullStatsKey.
@@ -74,8 +76,6 @@ public final class NullStatsKey implements StatsKey {
         return 0;
     }
 
-
-
 //    /**
 //     * @return {@link NullStatsKeyBuilder#getInstance()}
 //     */
@@ -83,7 +83,6 @@ public final class NullStatsKey implements StatsKey {
 //    public StatsKeyBuilder buildCopy() {
 //        return NullStatsKeyBuilder.getInstance();
 //    }
-
     /**
      * @return <tt>0</tt>.
      */
@@ -94,7 +93,7 @@ public final class NullStatsKey implements StatsKey {
 
     /**
      * @return <tt>true</tt> if <tt>obj</tt> is the same instance returned by
-     *         {@link #getInstance()}, <tt>false</tt> otherwise.
+     * {@link #getInstance()}, <tt>false</tt> otherwise.
      */
     @Override
     public boolean equals(final Object obj) {

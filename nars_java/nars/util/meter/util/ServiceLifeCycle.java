@@ -19,7 +19,8 @@ public interface ServiceLifeCycle {
         private volatile boolean initalized;
         private volatile boolean shutdown;
 
-        public Support() {}
+        public Support() {
+        }
 
         public synchronized void initialize(final Callable<Void> initCallable) {
             if (!initalized) {

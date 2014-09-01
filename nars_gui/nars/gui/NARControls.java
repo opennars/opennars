@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,8 +50,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import nars.core.EventEmitter.Observer;
+import nars.core.Memory;
+import nars.core.Memory.Events.MemoryCycleStop;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.core.state.LogicState;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
@@ -61,11 +66,9 @@ import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.core.Memory;
-import nars.core.monitor.LogicState;
 
 
-public class NARControls extends JPanel implements ActionListener, Runnable {
+public class NARControls extends JPanel implements ActionListener, Observer {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -298,8 +301,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         add(jp, BorderLayout.CENTER);
 
         init();
-
-        new Thread(this).start();
     }
 
     /**
@@ -338,33 +339,62 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         setSpeed(0);
         setSpeed(0);        //call twice to make it start as paused
         updateGUI();
+        nar.memory.event.on(MemoryCycleStop.class, this);
     }
 
-    /**
-     * Update timer and its display
-     */
-    final Runnable _updateGUI = new Runnable() {
-        @Override
-        public void run() {
-            speedSlider.repaint();
-            
-            long nowTime = nar.getTime();
-
-            if (lastTime != nowTime) {                
-                for (PLineChart c : charts) {
-                    c.update(new LogicState(nar));
-                }
-            }
-
-            lastTime = nowTime;
-            
+    final Runnable updateGUIRunnable = new Runnable() {
+        @Override public void run() {
+            updateGUI();
         }
     };
+    
+    /** in ms */
+    long lastUpdateTime = -1;
+    
+    /** in memory cycles */
+    long lastUpdateCycle = -1;
+    
+    AtomicBoolean updateScheduled = new AtomicBoolean(false);
+    
+    protected synchronized void updateGUI() {
+        
+        speedSlider.repaint();
 
-    protected void updateGUI() {
-        SwingUtilities.invokeLater(_updateGUI);
+        long nowTime = nar.getTime();
+
+        if (lastUpdateCycle != nowTime) {       
+            LogicState s = nar.memory.logic;
+            //s.print();
+
+            for (PLineChart c : charts) {
+                c.update(nar.getTime(), s);
+            }
+            
+            lastUpdateCycle = nowTime;
+            lastUpdateTime = System.currentTimeMillis();
+            updateScheduled.set(false);
+        }
+
+
+    }
+    
+
+    @Override
+    public void event(Class event, Object... arguments) {
+        if (event == MemoryCycleStop.class) {
+            
+            long now = System.currentTimeMillis();
+            long deltaTime = now - lastUpdateTime;
+            
+            if ((deltaTime > GUIUpdatePeriodMS) || (!updateScheduled.get())) {
+                nar.memory.updateLogicState();
+                SwingUtilities.invokeLater(updateGUIRunnable);
+                updateScheduled.set(true);
+            }
+        }
     }
 
+    
     /**
      * Handling button click
      *
@@ -546,27 +576,28 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         }
     }
 
-    long lastTime = -1;
 
-    @Override
-    public void run() {
-        
-
-        updateGUI();
-        
-        lastTime = nar.getTime();
-
-        while (true) {
-            try {
-                Thread.sleep(GUIUpdatePeriodMS);
-            } catch (InterruptedException ex) {
-            }
-
-
-            updateGUI();
-
-        }
-    }
+    
+//
+//    @Override
+//    public void run() {
+//        
+//
+//        updateGUI();
+//        
+//        lastTime = nar.getTime();
+//
+//        while (true) {
+//            try {
+//                Thread.sleep(GUIUpdatePeriodMS);
+//            } catch (InterruptedException ex) {
+//            }
+//
+//
+//            updateGUI();
+//
+//        }
+//    }
     
     /**
      * button that uses FontAwesome icon as a label

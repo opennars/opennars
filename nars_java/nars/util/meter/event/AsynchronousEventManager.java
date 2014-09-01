@@ -32,13 +32,12 @@ public class AsynchronousEventManager extends SynchronousEventManager {
 
     @Override
     public void fireEvent(final EventType eventType,
-                          final StatsKey key,
-                          final Object target) {
+            final StatsKey key,
+            final Object target) {
         taskService.submit(getClass(), new EventCallable(eventType, key, target));
     }
 
     /* INNER CLASSES */
-
     private class EventCallable implements Callable<Void> {
 
         private final EventType eventType;
@@ -46,8 +45,8 @@ public class AsynchronousEventManager extends SynchronousEventManager {
         private final Object target;
 
         EventCallable(final EventType eventType,
-                      final StatsKey key,
-                      final Object target) {
+                final StatsKey key,
+                final Object target) {
             //assertNotNull(eventType, "eventType");
             //assertNotNull(key, "key");
             //assertNotNull(target, "target");

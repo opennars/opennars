@@ -1,4 +1,4 @@
-package nars.core.monitor;
+package nars.core.state;
 
 /**
  * Awareness of available and consumed resources, such as:

@@ -16,7 +16,7 @@ package nars.util.meter.session;
 
 import java.io.Serializable;
 import java.util.List;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.event.EventType;
@@ -31,23 +31,25 @@ import nars.util.meter.recorder.DataRecorder;
 public interface StatsSession extends Serializable {
 
     /**
-     * Obtain the {@link String} that represents the target for which this session is
-     * storing data.
+     * Obtain the {@link String} that represents the target for which this
+     * session is storing data.
      *
      * @return A {@link String} instance, never <tt>null</tt>.
      */
     StatsKey getKey();
 
     /**
-     * Get a List of {@link DataRecorder}s that are associated with this session.
+     * Get a List of {@link DataRecorder}s that are associated with this
+     * session.
      *
      * @return A List of {@link DataRecorder}s, or an empty List if none exist.
      */
     List<DataRecorder> getDataRecorders();
 
     /**
-     * Get the number of hits, or the number of times a {@link Tracker} associated with
-     * this session's {@link String} has called {@link #track(Tracker, long)}.
+     * Get the number of hits, or the number of times a {@link Sensor}
+     * associated with this session's {@link String} has called
+     * {@link #track(Tracker, long)}.
      *
      * @return The positive number of hits to this session.
      */
@@ -56,20 +58,23 @@ public interface StatsSession extends Serializable {
     /**
      * Get the time stamp of the first hit to this session.
      *
-     * @return The time stamp in milliseconds of the first hit, or <tt>-1</tt> if not yet hit.
+     * @return The time stamp in milliseconds of the first hit, or <tt>-1</tt>
+     * if not yet hit.
      */
     long getFirstHitStamp();
 
     /**
      * Get the time stamp of the most recent hit to this session.
      *
-     * @return The time stamp in milliseconds of the last hit, or <tt>-1</tt> if not yet hit.
+     * @return The time stamp in milliseconds of the last hit, or <tt>-1</tt> if
+     * not yet hit.
      */
     long getLastHitStamp();
 
     /**
-     * Get the number of commits, or the number of time a {@link Tracker} associated with
-     * this session's {@link String} has called {@link #update(Tracker, long)}.
+     * Get the number of commits, or the number of time a {@link Sensor}
+     * associated with this session's {@link String} has called
+     * {@link #update(Tracker, long)}.
      *
      * @return The positive number of commits to ths session.
      */
@@ -119,9 +124,7 @@ public interface StatsSession extends Serializable {
      * @see Tracker#getValue()
      */
     double getSum();
-    
-   
-    
+
     /**
      * Obtain the value of a single field from this session.
      *
@@ -131,75 +134,93 @@ public interface StatsSession extends Serializable {
     Object getField(String name);
 
     /**
-     * Obtain a {@link DataSet} that is populated with all data collected for this session.
-     * The {@link DataSet} is populated with default data stored by this session, such as hits and
-     * commits, as well as data stored by the {@link DataRecorder}s associated with this session.
+     * Obtain a {@link DataSet} that is populated with all data collected for
+     * this session. The {@link DataSet} is populated with default data stored
+     * by this session, such as hits and commits, as well as data stored by the
+     * {@link DataRecorder}s associated with this session.
      *
      * @return A {@link DataSet} full of data, never <tt>null</tt>.
      */
     DataSet collectData();
 
     /**
-     * <p>Obtain a {@link DataSet} that is populated with all data collected for
+     * <p>
+     * Obtain a {@link DataSet} that is populated with all data collected for
      * this session and then clear the session. The {@link DataSet} is populated
      * with default data stored by this session, such as hits and commits, as
      * well as data stored by the {@link DataRecorder}s associated with this
      * session.</p>
      *
-     * <p>Fires a {@link EventType#SESSION_CLEARED} event.</p>
+     * <p>
+     * Fires a {@link EventType#SESSION_CLEARED} event.</p>
      *
      * @return A {@link DataSet} full of data, never <tt>null</tt>.
      */
     DataSet drainData();
 
     /**
-     * <p>Re-populate internal data fields and {@link DataRecorder}s using the given
+     * <p>
+     * Re-populate internal data fields and {@link DataRecorder}s using the
+     * given
      * <tt>dataSet</tt>. This will clear any previously recorded data.</p>
      *
-     * <p>Fires a {@link EventType#SESSION_RESTORED} event.</p>
+     * <p>
+     * Fires a {@link EventType#SESSION_RESTORED} event.</p>
      *
      * @param dataSet The data set with which to populate this session.
      */
     void restore(DataSet dataSet);
 
     /**
-     * <p>Do not call directly. Normally called by a {@link Tracker} implementation.
-     * Increments the hits for this session by one.</p>
+     * <p>
+     * Do not call directly. Normally called by a {@link Sensor}
+     * implementation. Increments the hits for this session by one.</p>
      *
-     * <p>Fires a {@link EventType#TRACKER_TRACKING} event for the passed <tt>tracker</tt>.</p>
+     * <p>
+     * Fires a {@link EventType#TRACKER_TRACKING} event for the passed
+     * <tt>tracker</tt>.</p>
      *
-     * @param tracker The {@link Tracker} that, after this call, will be tracking
-     *        data for this session.
-     * @param now The time stamp of the current time if known, otherwise <tt>-1</tt>.
+     * @param tracker The {@link Sensor} that, after this call, will be
+     * tracking data for this session.
+     * @param now The time stamp of the current time if known, otherwise
+     * <tt>-1</tt>.
      */
-    void track(Tracker tracker, long now);
+    void track(Sensor tracker, long now);
 
     /**
-     * <p>Do not call directly. Normally called by a {@link Tracker} implementation.
-     * Increments the commits for this session by one. The value reported by the given
+     * <p>
+     * Do not call directly. Normally called by a {@link Sensor}
+     * implementation. Increments the commits for this session by one. The value
+     * reported by the given
      * <tt>tracker</tt>'s {@link Tracker#getValue()} method is processed and
      * offered to the {@link DataRecorder}s associated with this session.</p>
      *
-     * <p>Fires a {@link EventType#TRACKER_COMMITTED} event for the passed <tt>tracker</tt>.</p>
+     * <p>
+     * Fires a {@link EventType#TRACKER_COMMITTED} event for the passed
+     * <tt>tracker</tt>.</p>
      *
-     * @param tracker The {@link Tracker} that collected the data for this update.
-     * @param now The time stamp of the current time if known, otherwise <tt>-1</tt>.
+     * @param tracker The {@link Sensor} that collected the data for this
+     * update.
+     * @param now The time stamp of the current time if known, otherwise
+     * <tt>-1</tt>.
      *
      * @see Tracker#getValue()
      * @see DataRecorder
      * @see #getDataRecorders()
      */
-    void update(Tracker tracker, long now);
+    void update(Sensor tracker, long now);
 
     /**
-     * <p>Clear all data recorded for this session. Resets all fields to initial values and
-     * calls {@link DataRecorder#clear()} on all {@link DataRecorder} associated with this session.</p>
+     * <p>
+     * Clear all data recorded for this session. Resets all fields to initial
+     * values and calls {@link DataRecorder#clear()} on all {@link DataRecorder}
+     * associated with this session.</p>
      *
-     * <p>Fires a {@link EventType#SESSION_CLEARED} event.</p>
+     * <p>
+     * Fires a {@link EventType#SESSION_CLEARED} event.</p>
      */
     void clear();
-    
+
     void setEventManager(EventManager e);
-    
 
 }

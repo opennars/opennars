@@ -12,28 +12,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import nars.util.meter.session.StatsSession;
 import sun.misc.Perf;
 
 /**
  * A tracker that tracks time duration with high precision. It uses
- * <code>sun.misc.Perf</code>, a high performance time measurement service.
- * The actual time is calculated as <code>(endTicks - startTicks) * 1000 / frequency</code>.
- * The value is stored as a fraction of milliseconds.
+ * <code>sun.misc.Perf</code>, a high performance time measurement service. The
+ * actual time is calculated as
+ * <code>(endTicks - startTicks) * 1000 / frequency</code>. The value is stored
+ * as a fraction of milliseconds.
  *
  * <p>
  * <b>Note:</b> This class uses proprietary Sun APIs, therefore it is not
- * guaranteed to work with future versions of the Sun VM, or other VMs. The safest way
- * to use this tracker is to create it using {@link TimeDurationTracker#FACTORY}
- * which safely selects the most precise method of time duration measurement available.
+ * guaranteed to work with future versions of the Sun VM, or other VMs. The
+ * safest way to use this tracker is to create it using
+ * {@link TimeDurationTracker#FACTORY} which safely selects the most precise
+ * method of time duration measurement available.
  *
  * @author The Stajistics Project
  */
 @SuppressWarnings("restriction")
 public class PerfTimeDurationTracker extends TimeDurationTracker {
-
 
     static {
 
@@ -44,13 +45,12 @@ public class PerfTimeDurationTracker extends TimeDurationTracker {
              * on the line below, for some reason it returns null when running unit tests 
              * from maven. How that is even possible, I have no idea.
              */
-
         } catch (ClassNotFoundException ex) {
             // Ignore
 
         }
     }
-    
+
     private static final Perf PERF = Perf.getPerf();
 
     private static final double CONVERSION = 1e3 / PERF.highResFrequency();

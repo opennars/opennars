@@ -18,9 +18,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import nars.util.meter.key.StatsKey;
-import nars.util.meter.util.ServiceLifeCycle;
 import nars.util.meter.key.StatsKeyMatcher;
-
+import nars.util.meter.util.ServiceLifeCycle;
 
 /**
  *
@@ -28,23 +27,23 @@ import nars.util.meter.key.StatsKeyMatcher;
  *
  * @author The Stajistics Project
  */
-public interface EventManager extends Serializable,ServiceLifeCycle {
+public interface EventManager extends Serializable, ServiceLifeCycle {
 
     Collection<EventHandler> getGlobalEventHandlers();
 
-    Map<StatsKey,Collection<EventHandler>> getEventHandlers();
+    Map<StatsKey, Collection<EventHandler>> getEventHandlers();
 
-    Map<StatsKey,Collection<EventHandler>> getEventHandlers(StatsKeyMatcher keyMatcher);
+    Map<StatsKey, Collection<EventHandler>> getEventHandlers(StatsKeyMatcher keyMatcher);
 
     void addGlobalEventHandler(EventHandler eventHandler);
 
     void addEventHandler(StatsKey key,
-                         EventHandler eventHandler);
+            EventHandler eventHandler);
 
     void removeGlobalEventHandler(EventHandler eventHandler);
 
     void removeEventHandler(StatsKey key,
-                            EventHandler eventHandler);
+            EventHandler eventHandler);
 
     void clearAllEventHandlers();
 
@@ -53,7 +52,7 @@ public interface EventManager extends Serializable,ServiceLifeCycle {
     void clearEventHandlers();
 
     void fireEvent(EventType eventType,
-                   StatsKey key,
-                   Object target);
+            StatsKey key,
+            Object target);
 
 }

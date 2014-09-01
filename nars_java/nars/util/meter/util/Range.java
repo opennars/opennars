@@ -22,17 +22,18 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
 @ThreadSafe
-public class Range implements Iterable<Double>,Serializable {
+public class Range implements Iterable<Double>, Serializable {
 
     protected static final boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
 
     private static final DecimalFormat DECIMAL_FORMAT;
+
     static {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
         dfs.setDecimalSeparator('.');
@@ -46,13 +47,13 @@ public class Range implements Iterable<Double>,Serializable {
     private final String name;
 
     public Range(final double begin,
-                 final double end) {
+            final double end) {
         this(begin, end, null);
     }
 
     public Range(final double begin,
-                 final double end,
-                 final String name) {
+            final double end,
+            final String name) {
 
         if (begin > end) {
             throw new IllegalArgumentException("begin must be <= end");
@@ -69,7 +70,7 @@ public class Range implements Iterable<Double>,Serializable {
     }
 
     public static String defaultName(final double begin,
-                                     final double end) {
+            final double end) {
         StringBuilder buf = new StringBuilder(32);
         buf.append(DECIMAL_FORMAT.format(begin));
         buf.append("..");
@@ -95,7 +96,7 @@ public class Range implements Iterable<Double>,Serializable {
     }
 
     public boolean contains(final double value,
-                            final boolean exclusiveRangeEnd) {
+            final boolean exclusiveRangeEnd) {
         if (value < begin) {
             return false;
         }
@@ -114,7 +115,7 @@ public class Range implements Iterable<Double>,Serializable {
     }
 
     public boolean contains(final Range range,
-                            final boolean exclusiveRangeEnd) {
+            final boolean exclusiveRangeEnd) {
         if (begin <= range.begin) {
             if (exclusiveRangeEnd) {
                 return range.end < end;
@@ -131,7 +132,7 @@ public class Range implements Iterable<Double>,Serializable {
     }
 
     public boolean overlaps(final Range other,
-                            final boolean exclusiveRangeEnd) {
+            final boolean exclusiveRangeEnd) {
         if (begin <= other.begin) {
             if (exclusiveRangeEnd) {
                 return other.begin < end;
@@ -157,13 +158,13 @@ public class Range implements Iterable<Double>,Serializable {
     }
 
     public Iterator<Double> iterator(final double increment,
-                                     final boolean exclusiveRangeEnd) {
+            final boolean exclusiveRangeEnd) {
         return new RangeItr(begin, end, increment, exclusiveRangeEnd);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof Range) && equals((Range)obj);
+        return (obj instanceof Range) && equals((Range) obj);
     }
 
     public boolean equals(final Range other) {
@@ -184,9 +185,9 @@ public class Range implements Iterable<Double>,Serializable {
 
     @Override
     public int hashCode() {
-        return (int)Double.doubleToLongBits(begin) ^ 
-               (int)Double.doubleToLongBits(end) ^ 
-               name.hashCode();
+        return (int) Double.doubleToLongBits(begin)
+                ^ (int) Double.doubleToLongBits(end)
+                ^ name.hashCode();
     }
 
     @Override
@@ -195,7 +196,6 @@ public class Range implements Iterable<Double>,Serializable {
     }
 
     /* NESTED CLASSES */
-
     protected static class RangeItr implements Iterator<Double> {
 
         private final double increment;
@@ -205,9 +205,9 @@ public class Range implements Iterable<Double>,Serializable {
         private double current;
 
         protected RangeItr(final double begin,
-                           final double end,
-                           final double increment,
-                           final boolean exclusiveRangeEnd) {
+                final double end,
+                final double increment,
+                final boolean exclusiveRangeEnd) {
             this.current = begin - increment;
             this.end = end;
             this.increment = increment;

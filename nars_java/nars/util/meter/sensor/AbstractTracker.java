@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.key.DefaultStatsKey;
@@ -28,14 +28,13 @@ import nars.util.meter.util.Range;
 import nars.util.meter.util.RangeList;
 
 /**
- * A convenience base implementation of {@link Tracker}.
+ * A convenience base implementation of {@link Sensor}.
  *
  * @author The Stajistics Project
  */
-public abstract class AbstractTracker implements Tracker {
+public abstract class AbstractTracker implements Sensor {
 
     //private static final Logger logger = Logger.getLogger(AbstractTracker.class.toString());
-
     protected final StatsSession session;
 
     protected double value = 0;
@@ -47,27 +46,26 @@ public abstract class AbstractTracker implements Tracker {
 
     public AbstractTracker(String id) {
         this(new ConcurrentSession(
-                new DefaultStatsKey("", id, new FastPutsArrayMap<String,Object>()), 
-                null, 
+                new DefaultStatsKey("", id, new FastPutsArrayMap<String, Object>()),
+                null,
                 new DistributionDataRecorder()));
     }
-    
+
     public AbstractTracker(String id, Range... ranges) {
         this(new ConcurrentSession(new DefaultStatsKey("", id, new FastPutsArrayMap<>()), null, new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
     }
-    
+
     public void setEventManager(EventManager e) {
         getSession().setEventManager(e);
     }
-    
-    
+
     @Override
     public double getValue() {
         return value;
     }
 
     @Override
-    public Tracker reset() {
+    public Sensor reset() {
         value = 0;
         return this;
     }
@@ -106,9 +104,9 @@ public abstract class AbstractTracker implements Tracker {
     public DataSet get() {
         return getSession().collectData();
     }
-    
+
     public DataSet getReset() {
         return getSession().drainData();
     }
-    
+
 }

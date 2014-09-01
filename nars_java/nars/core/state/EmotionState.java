@@ -1,4 +1,4 @@
-package nars.core.monitor;
+package nars.core.state;
 
 import java.io.Serializable;
 

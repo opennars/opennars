@@ -12,61 +12,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.session.StatsSession;
 
 /**
- * CPU Time, in milliseconds
- * @author The Stajistics Project
+ * Measures the period/interval duration between commit()'s, 
+ * in milliseconds
  */
-public class ThreadCPUTimeTracker extends AbstractThreadInfoSpanTracker {
+public class HitPeriodTracker extends AbstractSpanTracker {
 
-    private long startCPUTime; // nanos
+    private long lastHitStamp = -1;
 
-    
-    public ThreadCPUTimeTracker(final String id) {
-        super(id);
-
-        ensureCPUTimeMonitoringEnabled();
-    }
-    
-    public ThreadCPUTimeTracker(final StatsSession session) {
+    public HitPeriodTracker(final StatsSession session) {
         super(session);
+    }
 
-        ensureCPUTimeMonitoringEnabled();
+    public HitPeriodTracker(final String id) {
+        super(id);
     }
 
     @Override
     protected void startImpl(final long now) {
-        if (isCPUTimeMonitoringEnabled()) {
-            startCPUTime = getThreadMXBean().getCurrentThreadCpuTime();
-
-            super.startImpl(now);
-        }
+        super.startImpl(now);
     }
 
     @Override
     protected void stopImpl(final long now) {
-        if (isCPUTimeMonitoringEnabled()) {
-            long endCPUTime = getThreadMXBean().getCurrentThreadCpuTime();
-
-            value = (endCPUTime - startCPUTime) / 1000000d; // to millis
+        long nowNS = System.nanoTime();
+        
+        if (lastHitStamp > 0) {
+            
+            value = ((double)(nowNS - lastHitStamp))/1.0e6;
 
             session.update(this, now);
+            
         }
-               
+        
+        lastHitStamp = nowNS;
     }
+    
 
+    public void event() { 
+        start();
+        stop(); 
+    }
+    
     @Override
-    public Tracker reset() {
+    public Sensor reset() {
         super.reset();
-
-        startCPUTime = -1;
+        lastHitStamp = -1;
 
         return this;
     }
-
 
 }

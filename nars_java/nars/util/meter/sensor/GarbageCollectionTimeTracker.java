@@ -12,16 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.session.StatsSession;
 
 /**
- * TODO: This tracker currently depends on the ordering of ManagementFactory.getGarbageCollectorMXBeans(). Is that safe?
+ * TODO: This tracker currently depends on the ordering of
+ * ManagementFactory.getGarbageCollectorMXBeans(). Is that safe?
  *
  *
  * @author The Stajistics Project
@@ -95,7 +96,7 @@ public class GarbageCollectionTimeTracker extends AbstractSpanTracker {
     }
 
     @Override
-    public Tracker reset() {
+    public Sensor reset() {
         super.reset();
 
         startGCNames = null;

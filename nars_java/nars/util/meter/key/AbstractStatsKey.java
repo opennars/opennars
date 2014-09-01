@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-
 /**
  * A convenience base class for {@link StatsKey} implementations.
  *
@@ -42,12 +41,13 @@ public abstract class AbstractStatsKey implements StatsKey {
      * Construct a new instance.
      *
      * @param name The key name. Must not be null.
-     * @param keyFactory The factory that supports the creation of copies of this StatsKey instance.
+     * @param keyFactory The factory that supports the creation of copies of
+     * this StatsKey instance.
      *
      * @throws NullPointerException If <tt>name</tt> is <tt>null</tt>.
      */
     public AbstractStatsKey(final String namespace,
-                            final String name) {
+            final String name) {
         if (namespace == null) {
             this.namespace = StatsConstants.DEFAULT_NAMESPACE;
         } else {
@@ -113,11 +113,9 @@ public abstract class AbstractStatsKey implements StatsKey {
 //    public boolean hasParent() {
 //        return getHierarchyDepth() > StatsConstants.KEY_HIERARCHY_ROOT_DEPTH;
 //    }
-
-
     /**
-     * A convenience method to be called by subclass constructors
-     * to calculate the hash code value in the default manner.
+     * A convenience method to be called by subclass constructors to calculate
+     * the hash code value in the default manner.
      */
     protected void setHashCode() {
         int h = name.hashCode();
@@ -149,7 +147,7 @@ public abstract class AbstractStatsKey implements StatsKey {
         StatsKey otherKey;
         try {
             // This approach avoids an instanceof call in the normal case
-            otherKey = (StatsKey)other;
+            otherKey = (StatsKey) other;
         } catch (ClassCastException cce) {
             return false;
         }
@@ -179,8 +177,8 @@ public abstract class AbstractStatsKey implements StatsKey {
 
             if (i == 0) {
                 // Compare sorted attribute names
-                Map<String,Object> thisAttrs = this.getAttributes();
-                Map<String,Object> otherAttrs = other.getAttributes();
+                Map<String, Object> thisAttrs = this.getAttributes();
+                Map<String, Object> otherAttrs = other.getAttributes();
 
                 List<String> thisAttrKeys = new ArrayList<String>(thisAttrs.keySet());
                 List<String> otherAttrKeys = new ArrayList<String>(otherAttrs.keySet());
@@ -193,7 +191,7 @@ public abstract class AbstractStatsKey implements StatsKey {
 
                 while (thisItr.hasNext() && otherItr.hasNext()) {
                     i = thisItr.next()
-                               .compareTo(otherItr.next());
+                            .compareTo(otherItr.next());
                     if (i != 0) {
                         break;
                     }
@@ -201,9 +199,9 @@ public abstract class AbstractStatsKey implements StatsKey {
 
                 if (i == 0) {
                     // Compare attribute values
-                    for (Map.Entry<String,Object> entry : thisAttrs.entrySet()) {
+                    for (Map.Entry<String, Object> entry : thisAttrs.entrySet()) {
                         Object otherValue = otherAttrs.get(entry.getKey());
-                        i = ((Comparable)entry.getValue()).compareTo(otherValue);
+                        i = ((Comparable) entry.getValue()).compareTo(otherValue);
                         if (i != 0) {
                             break;
                         }
@@ -236,10 +234,11 @@ public abstract class AbstractStatsKey implements StatsKey {
     }
 
     /**
-     * A hook for subclasses to insert attribute values into the result
-     * of {@link #toString()} calls.
+     * A hook for subclasses to insert attribute values into the result of
+     * {@link #toString()} calls.
      *
      * @param buf The StringBuilder into which attributes should be appended.
      */
-    protected void appendAttributes(final StringBuilder buf) {}
+    protected void appendAttributes(final StringBuilder buf) {
+    }
 }

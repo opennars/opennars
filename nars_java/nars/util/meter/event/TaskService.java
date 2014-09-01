@@ -24,7 +24,7 @@ import nars.util.meter.util.ServiceLifeCycle;
  *
  * @author The Stajistics Project
  */
-public interface TaskService extends Serializable,ServiceLifeCycle {
+public interface TaskService extends Serializable, ServiceLifeCycle {
 
     void execute(Class<?> source, Runnable task);
 

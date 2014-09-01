@@ -20,14 +20,16 @@
  */
 package nars.core;
 
-import nars.core.monitor.EmotionState;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Random;
-import nars.operator.io.PauseInput;
+import nars.core.Memory.Events.MemoryCycleStart;
+import nars.core.Memory.Events.MemoryCycleStop;
+import nars.core.state.EmotionState;
+import nars.core.state.LogicState;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -89,6 +91,7 @@ import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.operator.io.PauseInput;
 import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
 
@@ -108,6 +111,17 @@ import nars.storage.BagObserver;
  */
 public class Memory implements Output, Serializable {
 
+    /** empty event classes for use with EventEmitter */
+    public static class Events {
+        
+        /** fired at the beginning of each Memory cycle */
+        public static class MemoryCycleStart { }
+        
+        /** fired at the endof each Memory cycle */
+        public static class MemoryCycleStop { }
+        
+    }
+    
     //public static Random randomNumber = new Random(1);
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
@@ -115,8 +129,10 @@ public class Memory implements Output, Serializable {
     public static void resetStatic() {
         randomNumber.setSeed(randomSeed);    
     }
-    private final ConceptProcessor model;
     
+    private final ConceptProcessor conceptProcessor;
+    
+    public final EventEmitter event = new EventEmitter();
     
     
 
@@ -258,7 +274,7 @@ public class Memory implements Output, Serializable {
     
     public final EmotionState emotion = new EmotionState();
     
-    
+    public final LogicState logic;
     
     
     
@@ -296,7 +312,7 @@ public class Memory implements Output, Serializable {
     public Memory(Param param, ConceptProcessor cycleControl, AbstractBag<Task> novelTasks, Operator[] initialOperators) {                
         
         this.param = param;
-        this.model = cycleControl;
+        this.conceptProcessor = cycleControl;
 
         
         this.novelTasks = novelTasks;
@@ -310,6 +326,8 @@ public class Memory implements Output, Serializable {
         // create self
         self = conceptualize(new Term(Symbols.SELF)).term;
         
+        logic = new LogicState(this);
+        
         for (Operator o : initialOperators)
             addOperator(o);
         
@@ -318,7 +336,7 @@ public class Memory implements Output, Serializable {
     }
 
     public void reset() {
-        model.clear();
+        conceptProcessor.clear();
         novelTasks.clear();
         newTasks.clear();        
         lastEvent = null;
@@ -369,7 +387,7 @@ public class Memory implements Output, Serializable {
      * @return a Concept or null
      */
     public Concept concept(final CharSequence name) {
-        return model.concept(name);
+        return conceptProcessor.concept(name);
     }
 
     /**
@@ -412,7 +430,7 @@ public class Memory implements Output, Serializable {
         Concept concept = concept(n);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
-            Concept newConcept = model.addConcept(term, this);
+            Concept newConcept = conceptProcessor.addConcept(term, this);
             if (newConcept == null) {
                 return null;
             } else {
@@ -446,7 +464,7 @@ public class Memory implements Output, Serializable {
      * @param b the new BudgetValue
      */
     public void conceptActivate(final Concept c, final BudgetValue b) {
-        model.conceptActivate(c, b);
+        conceptProcessor.conceptActivate(c, b);
     }
 
     /* ---------- new task entries ---------- */
@@ -806,12 +824,21 @@ public class Memory implements Output, Serializable {
      * @param clock The current time to be displayed
      */
     public void cycle() {
+        
+        event.emit(MemoryCycleStart.class);
+        
+        logic.MEMORY_CYCLE_RAM_USED.start();
+        logic.MEMORY_CYCLE_CPU_TIME.start();
+        
         if (working) {
+            
+            logic.MEMORY_CYCLE_WORKING.event();
+            
             if (recorder.isActive()) {            
                 recorder.onCycleStart(clock);
             }
 
-            model.cycle(this);
+            conceptProcessor.cycle(this);
                 
             //novelTasks.refresh();
 
@@ -825,6 +852,11 @@ public class Memory implements Output, Serializable {
 
             clock++;
         }
+        
+        logic.MEMORY_CYCLE_CPU_TIME.stop();
+        logic.MEMORY_CYCLE_RAM_USED.stop();
+        
+        event.emit(MemoryCycleStop.class);
     }
 
     /**
@@ -931,6 +963,8 @@ public class Memory implements Output, Serializable {
             conceptActivate(getCurrentConcept(), task.budget);
             getCurrentConcept().directProcess(task,this);
         }
+        
+        logic.TASK_IMMEDIATE_PROCESS.event();
     }
 
     
@@ -1013,7 +1047,7 @@ public class Memory implements Output, Serializable {
 
     /** returns a collection of all concepts */
     public Collection<? extends Concept> getConcepts() {
-        return model.getConcepts();
+        return conceptProcessor.getConcepts();
     }
 
     /**
@@ -1186,7 +1220,7 @@ public class Memory implements Output, Serializable {
     
     /** gets a next concept for processing */
     public Concept sampleNextConcept() {
-        return model.sampleNextConcept();
+        return conceptProcessor.sampleNextConcept();
     }
     
     /**
@@ -1216,5 +1250,31 @@ public class Memory implements Output, Serializable {
         }
         newTasks.add(newTask);
     }
+
+    /**
+     * Updates the LogicState measurements and returns the data     
+     */
+    public LogicState updateLogicState() {
+        double totalPriority = 0;        
+        int count = 0;
+        int totalQuestions = 0;
+        int totalBeliefs = 0;
+                
+        for (final Concept c : getConcepts()) {
+            totalQuestions += c.questions.size();        
+            totalBeliefs += c.beliefs.size();        
+            totalPriority += c.getPriority();
+            count++;
+        }
+        
+        logic.setConceptNum(count);
+        logic.setConceptBeliefsSum(totalBeliefs);
+        logic.setConceptQuestionsSum(totalQuestions);
+        logic.setConceptPrioritySum(totalPriority);
+        logic.setConceptPriorityMean(totalPriority / count);
+               
+        return logic.update();
+    }
+        
     
 }

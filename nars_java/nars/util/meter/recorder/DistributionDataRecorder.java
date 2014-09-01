@@ -16,7 +16,7 @@ package nars.util.meter.recorder;
 
 import java.util.Collections;
 import java.util.Set;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.AtomicDouble;
@@ -32,8 +32,8 @@ import nars.util.meter.util.ThreadSafe;
 @ThreadSafe
 public class DistributionDataRecorder implements DataRecorder {
 
-    private static final Set<String> SUPPORTED_FIELD_NAMES =
-        Collections.unmodifiableSet(Misc.getStaticFieldValues(Field.class, String.class));
+    private static final Set<String> SUPPORTED_FIELD_NAMES
+            = Collections.unmodifiableSet(Misc.getStaticFieldValues(Field.class, String.class));
 
     protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
     protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
@@ -46,8 +46,8 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void update(final StatsSession session,
-                       final Tracker tracker,
-                       final long now) {
+            final Sensor tracker,
+            final long now) {
 
         final double currentValue = tracker.getValue();
         double tmp;
@@ -77,7 +77,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public Object getField(final StatsSession session,
-                           String name) {
+            String name) {
         // Intern the name to allow fast reference equality checks
         name = name.intern();
 
@@ -111,19 +111,19 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void collectData(final StatsSession session, final DataSet dataSet) {
-        dataSet.setField(Field.PRODUCT, product.get());
-        dataSet.setField(Field.SUM_OF_SQUARES, sumOfSquares.get());
-        dataSet.setField(Field.SUM_OF_INVERSES, sumOfInverses.get());
-        dataSet.setField(Field.ARITHMETIC_MEAN,
-                         getArithmeticMean(session));
-        dataSet.setField(Field.GEOMETRIC_MEAN,
-                         getGeometricMean(session));
-        dataSet.setField(Field.HARMONIC_MEAN,
-                         getHarmonicMean(session));
-        dataSet.setField(Field.QUADRATIC_MEAN,
-                         getQuadraticMean(session));
-        dataSet.setField(Field.STANDARD_DEVIATION,
-                         getStandardDeviation(session));
+        dataSet.put(Field.PRODUCT, product.get());
+        dataSet.put(Field.SUM_OF_SQUARES, sumOfSquares.get());
+        dataSet.put(Field.SUM_OF_INVERSES, sumOfInverses.get());
+        dataSet.put(Field.ARITHMETIC_MEAN,
+                getArithmeticMean(session));
+        dataSet.put(Field.GEOMETRIC_MEAN,
+                getGeometricMean(session));
+        dataSet.put(Field.HARMONIC_MEAN,
+                getHarmonicMean(session));
+        dataSet.put(Field.QUADRATIC_MEAN,
+                getQuadraticMean(session));
+        dataSet.put(Field.STANDARD_DEVIATION,
+                getStandardDeviation(session));
     }
 
     @Override
@@ -189,8 +189,8 @@ public class DistributionDataRecorder implements DataRecorder {
     }
 
     /* NESTED CLASSES */
-
     public static interface Field {
+
         public static final String PRODUCT = "product";
         public static final String SUM_OF_INVERSES = "sumOfInverses";
         public static final String SUM_OF_SQUARES = "sumOfSquares";

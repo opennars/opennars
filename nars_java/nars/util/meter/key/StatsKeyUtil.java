@@ -25,10 +25,13 @@ import java.util.List;
  */
 public final class StatsKeyUtil {
 
-    private StatsKeyUtil() {}
+    private StatsKeyUtil() {
+    }
 
     /**
-     * Obtain the name of the parent key of <tt>keyName</tt>, or <tt>null</tt> if it doesn't have a parent.
+     * Obtain the name of the parent key of <tt>keyName</tt>, or <tt>null</tt>
+     * if it doesn't have a parent.
+     *
      * @param keyName
      * @return
      */
@@ -45,7 +48,9 @@ public final class StatsKeyUtil {
     }
 
     /**
-     * Get a list containing the key name hierarchy for the given <tt>keyName</tt>. 
+     * Get a list containing the key name hierarchy for the given
+     * <tt>keyName</tt>.
+     *
      * @param keyName
      * @return
      */
@@ -91,7 +96,6 @@ public final class StatsKeyUtil {
 //
 //        return result;
 //    }
-
 //    public static StatsKey keyForFailure(final StatsKey key,
 //                                         final Throwable failure) {
 //        if (key == null) {

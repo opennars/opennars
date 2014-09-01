@@ -13,18 +13,20 @@ import java.util.Set;
 /**
  * @author The Stajistics Project
  */
-public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializable {
+public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serializable {
 
-    private final transient LinkedEntry<K,V> header = new LinkedEntry<K,V>(null, null, null, null);
+    private final transient LinkedEntry<K, V> header = new LinkedEntry<K, V>(null, null, null, null);
+
     {
         header.next = header;
         header.prev = header;
     }
 
     private transient int size = 0;
-    private transient Set<Map.Entry<K,V>> entrySet = null;
+    private transient Set<Map.Entry<K, V>> entrySet = null;
 
-    public FastPutsLinkedMap() {}
+    public FastPutsLinkedMap() {
+    }
 
     public FastPutsLinkedMap(final Map<? extends K, ? extends V> map) {
         putAll(map);
@@ -33,9 +35,9 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
     public void compact() {
         int size = 0;
 
-        LinkedEntry<K,V> entry = header.next;
-        LinkedEntry<K,V> newerEntry;
-        LinkedEntry<K,V> next;
+        LinkedEntry<K, V> entry = header.next;
+        LinkedEntry<K, V> newerEntry;
+        LinkedEntry<K, V> next;
         while (entry != header) {
             size++;
             next = entry.next;
@@ -76,11 +78,9 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
         return size;
     }
 
-
-
     @Override
     public V get(final Object key) {
-        LinkedEntry<K,V> entry = getEntry(key);
+        LinkedEntry<K, V> entry = getEntry(key);
         if (entry != null) {
             return entry.getValue();
         }
@@ -90,7 +90,7 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
     @Override
     public V put(final K key, final V value) {
         size = 0; // reset
-        LinkedEntry<K,V> newEntry = new LinkedEntry<K,V>(key, value, header, header.prev);
+        LinkedEntry<K, V> newEntry = new LinkedEntry<K, V>(key, value, header, header.prev);
         newEntry.prev.next = newEntry;
         newEntry.next.prev = newEntry;
         return null;
@@ -105,7 +105,7 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
 
     @Override
     public V remove(final Object key) {
-        LinkedEntry<K,V> entry = getEntry(key);
+        LinkedEntry<K, V> entry = getEntry(key);
         if (entry != null) {
             size = 0; // reset
             final V value = entry.getValue();
@@ -118,8 +118,8 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
         return null;
     }
 
-    protected LinkedEntry<K,V> getEntry(final Object key) {
-        LinkedEntry<K,V> entry = header.prev;
+    protected LinkedEntry<K, V> getEntry(final Object key) {
+        LinkedEntry<K, V> entry = header.prev;
         while (entry != header) {
             if (entry.getKey().equals(key)) {
                 return entry;
@@ -130,7 +130,7 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
         return null;
     }
 
-    private void remove(final LinkedEntry<K,V> e) {
+    private void remove(final LinkedEntry<K, V> e) {
         if (e == header) {
             throw new NoSuchElementException();
         }
@@ -140,15 +140,15 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
     }
 
     @Override
-    public Set<Map.Entry<K,V>> entrySet() {
+    public Set<Map.Entry<K, V>> entrySet() {
         if (entrySet == null) {
-            entrySet = new AbstractSet<Map.Entry<K,V>>() {
+            entrySet = new AbstractSet<Map.Entry<K, V>>() {
                 @Override
                 public Iterator<Map.Entry<K, V>> iterator() {
                     compact();
 
-                    final List<Map.Entry<K,V>> list = new ArrayList<Map.Entry<K,V>>(size());
-                    for (LinkedEntry<K,V> entry = header.next; entry != null && entry != header; entry = entry.next) {
+                    final List<Map.Entry<K, V>> list = new ArrayList<Map.Entry<K, V>>(size());
+                    for (LinkedEntry<K, V> entry = header.next; entry != null && entry != header; entry = entry.next) {
                         list.add(entry);
                     }
                     return list.iterator();
@@ -165,13 +165,12 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
     }
 
     /* NESTED CLASSES */
+    public static final class LinkedEntry<K, V> extends SimpleEntry<K, V> {
 
-    public static final class LinkedEntry<K,V> extends SimpleEntry<K,V> {
+        private transient LinkedEntry<K, V> next;
+        private transient LinkedEntry<K, V> prev;
 
-        private transient LinkedEntry<K,V> next;
-        private transient LinkedEntry<K,V> prev;
-
-        private LinkedEntry(final K key, final V value, final LinkedEntry<K,V> next, final LinkedEntry<K,V> prev) {
+        private LinkedEntry(final K key, final V value, final LinkedEntry<K, V> next, final LinkedEntry<K, V> prev) {
             super(key, value);
             this.next = next;
             this.prev = prev;

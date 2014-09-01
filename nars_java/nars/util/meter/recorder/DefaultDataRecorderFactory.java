@@ -14,7 +14,6 @@
  */
 package nars.util.meter.recorder;
 
-
 /**
  * @author The Stajistics Project
  */
@@ -22,7 +21,8 @@ public class DefaultDataRecorderFactory implements DataRecorderFactory {
 
     private static final DefaultDataRecorderFactory INSTANCE = new DefaultDataRecorderFactory();
 
-    private DefaultDataRecorderFactory() {}
+    private DefaultDataRecorderFactory() {
+    }
 
     public static DefaultDataRecorderFactory getInstance() {
         return INSTANCE;
@@ -30,6 +30,6 @@ public class DefaultDataRecorderFactory implements DataRecorderFactory {
 
     @Override
     public DataRecorder[] createDataRecorders() {
-        return new DataRecorder[] { new DistributionDataRecorder() };
+        return new DataRecorder[]{new DistributionDataRecorder()};
     }
 }

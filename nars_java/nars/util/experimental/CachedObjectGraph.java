@@ -19,30 +19,31 @@ import org.jgrapht.graph.AbstractGraph;
 
 /**
  * EXPERIMENTAL
+ *
  * @author me
  */
-public class CachedObjectGraph extends AbstractGraph<Object, Object> implements DirectedGraph<Object,Object> {
+public class CachedObjectGraph extends AbstractGraph<Object, Object> implements DirectedGraph<Object, Object> {
 
-    
     private final Set<Object> items;
     private final Map<Object, Object> in = new HashMap();
     private final Map<Object, Object> out = new HashMap();
-    
+
     public CachedObjectGraph(Collection<Object> items) {
         super();
-        
+
         this.items = new HashSet(items);
-        
+
         update();
     }
-    
+
     protected void update() {
         in.clear();
         out.clear();
-        
+
         for (Object i : items) {
-            if (i instanceof Concept)
-                addConceptTermLinks((Concept)i);
+            if (i instanceof Concept) {
+                addConceptTermLinks((Concept) i);
+            }
         }
 
     }
@@ -54,96 +55,110 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public boolean addEdge(Object src, Object target, Object e) {
-        if (in.containsKey(e))
+        if (in.containsKey(e)) {
             return false;
-        
+        }
+
         in.put(e, src);
         out.put(e, target);
         return true;
     }
-    
+
     public void addConceptTermLinks(Concept c) {
-            final Term source = c.term;
-            
-            if (!containsVertex(c)) {
-                addVertex(c);
+        final Term source = c.term;
 
-                /*if (includeConceptTermLinks)*/ {
-                    for (TermLink t : c.termLinks.values()) {
-                        Term target = t.target;
-                        if (!containsVertex(target))  {
-                            addVertex(target);
-                        }
-                        addEdge(source, target, t);
-                    }
-                }
+        if (!containsVertex(c)) {
+            addVertex(c);
 
-                /*if (includeConceptTaskLinks)*/ {
-                    for (TaskLink t : c.taskLinks.values()) {
-                        Term target = t.target;
-                        if (!containsVertex(target))  {
-                            addVertex(target);
-                        }        
-                        addEdge(source, target, t);                    
-                    }            
-                }
-
-                /*if (includeConceptBeliefs)*/ {
-                    for (Sentence s : c.beliefs) {
-                        Term target = s.content;
-                        if (!containsVertex(target))
-                            addVertex(target);
-                        addEdge(source, target, s);
+            /*if (includeConceptTermLinks)*/ {
+                for (TermLink t : c.termLinks.values()) {
+                    Term target = t.target;
+                    if (!containsVertex(target)) {
+                        addVertex(target);
                     }
+                    addEdge(source, target, t);
                 }
-                
-                /*if (includeConceptQuestoins)*/ {
-                    for (Task t : c.questions) {
-                        Term target = t.getContent();
-                        if (!containsVertex(target))
-                            addVertex(target);
-                        addEdge(source, target, t);
-                    }
-                }
-                
-                
             }
-        
+
+            /*if (includeConceptTaskLinks)*/ {
+                for (TaskLink t : c.taskLinks.values()) {
+                    Term target = t.target;
+                    if (!containsVertex(target)) {
+                        addVertex(target);
+                    }
+                    addEdge(source, target, t);
+                }
+            }
+
+            /*if (includeConceptBeliefs)*/ {
+                for (Sentence s : c.beliefs) {
+                    Term target = s.content;
+                    if (!containsVertex(target)) {
+                        addVertex(target);
+                    }
+                    addEdge(source, target, s);
+                }
+            }
+
+            /*if (includeConceptQuestoins)*/ {
+                for (Task t : c.questions) {
+                    Term target = t.getContent();
+                    if (!containsVertex(target)) {
+                        addVertex(target);
+                    }
+                    addEdge(source, target, t);
+                }
+            }
+
+        }
+
     }
-    
+
     public interface IConcept {
+
         public Term getTerm();
+
         public List<Task> getQuestions();
+
         public List<Sentence> getBeliefs();
+
         public List<TermLink> getTermLinks();
+
         public List<TaskLink> getTaskLinks();
     }
-    
+
     public interface ITerm {
+
         public ArrayList<Term> getComponents();
-    
-        /** Set of all contained components, recursively */
+
+        /**
+         * Set of all contained components, recursively
+         */
         public Set<Term> getContainedTerms();
     }
-    
-    
-    /** form a concept from the surrounding neighborhood of any vertex */
+
+    /**
+     * form a concept from the surrounding neighborhood of any vertex
+     */
     public IConcept concept(String id) {
         return null;
     }
-    
-    /** form a Term from the surrounding neighborhood of any vertex */
+
+    /**
+     * form a Term from the surrounding neighborhood of any vertex
+     */
     public ITerm term(String term) {
         return null;
     }
-    
+
     @Override
     public Set<Object> getAllEdges(Object source, Object target) {
         Set<Object> edges = new HashSet();
         for (final Map.Entry<Object, Object> e : in.entrySet()) {
             if (e.getValue().equals(source)) {
-                if (out.get(e.getKey()).equals(target))
+                if (out.get(e.getKey()).equals(target)) {
                     edges.add(e.getKey());
+                }
             }
         }
         return edges;
@@ -151,11 +166,9 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     @Override
     public Object getEdge(Object source, Object target) {
-        
-       throw new UnsupportedOperationException("Not supported yet.");         
+
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-
-
 
     @Override
     public boolean containsEdge(Object e) {
@@ -178,8 +191,6 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
         e.addAll(outgoingEdgesOf(v));
         return e;
     }
-
-
 
     @Override
     public Set<Object> vertexSet() {
@@ -210,8 +221,9 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
     public Set<Object> incomingEdgesOf(Object v) {
         Set<Object> s = new HashSet();
         for (final Map.Entry<Object, Object> e : in.entrySet()) {
-            if (e.getValue().equals(v))
+            if (e.getValue().equals(v)) {
                 s.add(e.getKey());
+            }
         }
         return s;
     }
@@ -225,18 +237,14 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
     public Set<Object> outgoingEdgesOf(Object v) {
         Set<Object> s = new HashSet();
         for (final Map.Entry<Object, Object> e : out.entrySet()) {
-            if (e.getValue().equals(v))
+            if (e.getValue().equals(v)) {
                 s.add(e.getKey());
+            }
         }
         return s;
     }
-    
-    
-    
-    
-    
-    //UNMODIFIABLE -------
 
+    //UNMODIFIABLE -------
     @Override
     public EdgeFactory<Object, Object> getEdgeFactory() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -262,6 +270,4 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-    
 }

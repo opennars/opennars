@@ -14,9 +14,9 @@
  */
 package nars.util.meter.data;
 
-
 /**
- * 
+ *
  * @author The Stajistics Project
  */
-public interface MetaData extends DataContainer {}
+public interface MetaData extends DataContainer {
+}

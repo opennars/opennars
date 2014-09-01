@@ -16,14 +16,13 @@ package nars.util.meter.data;
 
 import java.util.Map;
 
-
 /**
  *
  * @author The Stajistics Project
  */
 class DefaultMetaData extends AbstractDataContainer implements MetaData {
 
-    DefaultMetaData(final Map<String,Object> dataMap) {
+    DefaultMetaData(final Map<String, Object> dataMap) {
         super(dataMap);
     }
 

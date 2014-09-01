@@ -2,15 +2,15 @@ package nars.test.util;
 
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
-import nars.util.meter.Tracker;
-import nars.util.meter.track.CompositeIncidentTracker;
-import nars.util.meter.track.CompositeSpanTracker;
-import nars.util.meter.track.DefaultIncidentTracker;
-import nars.util.meter.track.DefaultManualTracker;
-import nars.util.meter.track.HitFrequencyTracker;
-import nars.util.meter.track.MemoryUseTracker;
-import nars.util.meter.track.NanoTimeDurationTracker;
-import nars.util.meter.track.ThreadCPUTimeTracker;
+import nars.util.meter.Sensor;
+import nars.util.meter.sensor.CompositeIncidentTracker;
+import nars.util.meter.sensor.CompositeSpanTracker;
+import nars.util.meter.sensor.DefaultEventSensor;
+import nars.util.meter.sensor.EventValueSensor;
+import nars.util.meter.sensor.HitPeriodTracker;
+import nars.util.meter.sensor.MemoryUseTracker;
+import nars.util.meter.sensor.NanoTimeDurationTracker;
+import nars.util.meter.sensor.ThreadCPUTimeTracker;
 import nars.util.meter.util.Range;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class MeterTest {
                 new NanoTimeDurationTracker("NanoTimeDurationExample", 
                     new Range(0, 10), new Range(10, 50), new Range(50, 150)),
                 
-                new HitFrequencyTracker("HitFrequencyExample"),
+                new HitPeriodTracker("HitFrequencyExample"),
                 
                 new ThreadCPUTimeTracker("ThreadCPUExample"),
                 
@@ -45,7 +45,7 @@ public class MeterTest {
             }
             cst.commit();            
         }
-        for (Tracker x : cst.trackers) {
+        for (Sensor x : cst.trackers) {
             //System.err.println(x);        
             //System.out.println(" " + x.getSession().collectData());
         }
@@ -57,8 +57,8 @@ public class MeterTest {
     @Test
     public void testIncidentMeters() {
         CompositeIncidentTracker cst = new CompositeIncidentTracker(
-                new DefaultIncidentTracker("incidence1"),
-                new DefaultIncidentTracker("incidence2")
+                new DefaultEventSensor("incidence1"),
+                new DefaultEventSensor("incidence2")
         );
         
         for (int i= 0; i < 5; i++) {            
@@ -68,7 +68,7 @@ public class MeterTest {
             }
             cst.incident();            
         }
-        for (Tracker x : cst.trackers) {
+        for (Sensor x : cst.trackers) {
             //System.err.println(x);        
             //System.out.println(" " + x.getSession().collectData());
         }        
@@ -78,7 +78,7 @@ public class MeterTest {
     @Test
     public void testManualMeters() {
         
-        DefaultManualTracker dmt = new DefaultManualTracker("incidence1");
+        EventValueSensor dmt = new EventValueSensor("incidence1");
         
         for (int i= 0; i < 5; i++) {
             dmt.setValue(Math.random());
