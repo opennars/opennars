@@ -2,8 +2,8 @@ package nars.core.sense;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import nars.core.Memory;
 import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
@@ -55,7 +55,7 @@ public class LogicSense extends DefaultDataSet implements Serializable {
     
 
     public LogicSense(Memory memory) {
-        super(new LinkedHashMap());
+        super(new ConcurrentHashMap());
         this.memory = memory;
         
 

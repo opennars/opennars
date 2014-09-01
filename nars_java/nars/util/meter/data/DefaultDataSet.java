@@ -16,6 +16,7 @@ package nars.util.meter.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -36,7 +37,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
 
     public DefaultDataSet(final long collectionTimeStamp,
             final boolean drainedSession) {
-        this(collectionTimeStamp, drainedSession, new HashMap<String, Object>());
+        this(collectionTimeStamp, drainedSession, new ConcurrentHashMap<String, Object>());
     }
 
     public DefaultDataSet(final long collectionTimeStamp,
