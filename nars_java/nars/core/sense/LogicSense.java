@@ -1,4 +1,4 @@
-package nars.core.state;
+package nars.core.sense;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import nars.util.meter.sensor.EventSensor;
 import nars.util.meter.sensor.EventValueSensor;
 import nars.util.meter.sensor.HitPeriodTracker;
 import nars.util.meter.sensor.MemoryUseTracker;
+import nars.util.meter.sensor.NanoTimeDurationTracker;
 import nars.util.meter.sensor.SpanTracker;
 import nars.util.meter.sensor.ThreadCPUTimeTracker;
 
@@ -21,44 +22,56 @@ import nars.util.meter.sensor.ThreadCPUTimeTracker;
  */
 
 
-public class LogicState extends DefaultDataSet implements Serializable {
+public class LogicSense extends DefaultDataSet implements Serializable {
     
     final Map<String,Sensor> sensors = new HashMap<String,Sensor>();    
     
     private final Memory memory;
     long lastUpdate = -1;
     
-    int sensorDrainPeriodCycles = 64; //how often to reset sensors
+    int sensorDrainPeriodCycles = 2048; //how often to reset sensors
     
     
     //public final Sensor CONCEPT_FIRE;
-    //public final HitPeriodTracker IO_CYCLE;
-    public final HitPeriodTracker MEMORY_CYCLE_WORKING;
+    public final NanoTimeDurationTracker IO_CYCLE;    
+    public final NanoTimeDurationTracker MEMORY_CYCLE;
+    public final HitPeriodTracker CYCLE;
+    
     public final EventValueSensor TASK_IMMEDIATE_PROCESS_PRIORITY;
     public final HitPeriodTracker TASK_IMMEDIATE_PROCESS;
+    
+    public final EventValueSensor TASKLINK_FIRE;
+    public final NanoTimeDurationTracker TASKLINK_REASON; //both duration and count
+   
     public final MemoryUseTracker MEMORY_CYCLE_RAM_USED;
-    public final ThreadCPUTimeTracker MEMORY_CYCLE_CPU_TIME;
+    public final ThreadCPUTimeTracker CYCLE_CPU_TIME;
+    //public final ThreadBlockTimeTracker CYCLE_BLOCK_TIME;
     private Object conceptNum;
     private Object conceptPriorityMean;
     private Object conceptPrioritySum;
     private Object conceptBeliefsSum;
     private Object conceptQuestionsSum;
+    
+    
 
-    public LogicState(Memory memory) {
+    public LogicSense(Memory memory) {
         super(new LinkedHashMap());
         this.memory = memory;
         
 
         
-        add(MEMORY_CYCLE_WORKING = new HitPeriodTracker("memory.cycle.working"));
+        add(IO_CYCLE = new NanoTimeDurationTracker("io.cycle"));
+        add(MEMORY_CYCLE = new NanoTimeDurationTracker("memory.cycle"));
+        add(CYCLE = new HitPeriodTracker("cycle"));
         
         add(TASK_IMMEDIATE_PROCESS = new HitPeriodTracker("task.immediate_process"));
         add(TASK_IMMEDIATE_PROCESS_PRIORITY = new EventValueSensor("task.immediate_process.priority"));
         add(MEMORY_CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used"));
-        add(MEMORY_CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time"));
+        add(CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time"));
         
         //add(CONCEPT_FIRE = new DefaultEventSensor("concept.fire"));
-        
+        add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
+        add(TASKLINK_REASON = new NanoTimeDurationTracker("tasklink.reason"));
     }
     
     protected void add(Sensor s) { 
@@ -79,7 +92,7 @@ public class LogicState extends DefaultDataSet implements Serializable {
     }
 
     /** returns the same instance */
-    public LogicState update() {
+    public LogicSense update() {
         long time = memory.getTime();
         if (time == lastUpdate) {
             //already updated
@@ -89,8 +102,7 @@ public class LogicState extends DefaultDataSet implements Serializable {
         lastUpdate = time;                     
 
         put("concepts.count", conceptNum);
-        put("concepts.priority.mean", conceptPriorityMean);
-        put("concepts.priority.sum", conceptPrioritySum);
+        put("concepts.priority.mean", conceptPriorityMean);        
         put("concepts.beliefs.sum", conceptBeliefsSum);
         put("concepts.questions.sum", conceptQuestionsSum);
         
@@ -102,20 +114,35 @@ public class LogicState extends DefaultDataSet implements Serializable {
         put("emotion.busy", memory.emotion.busy());
 
         
+        DataSet cycle = CYCLE.get();
+        double cycleMean = cycle.mean();
         {
-            DataSet d = MEMORY_CYCLE_WORKING.get();
-            put("memory.cycle.working", d.hits() );
-            put("memory.cycle.working.period.mean.ms", d.mean()  );
-            
-            
+            put("cycle.frequency.hz", (cycleMean == 0) ? 0 : (1000.0 / cycleMean) );
+        }
+        {
+            DataSet d = IO_CYCLE.get();
+            put("io.cycle.period.mean.pct", d.mean() / cycleMean );
+        }
+        {
+            DataSet d = MEMORY_CYCLE.get();
+            put("memory.cycle.period.mean.pct", d.mean() / cycleMean );
         }
         {
             DataSet d = MEMORY_CYCLE_RAM_USED.get();
             put("memory.cycle.ram_use.delta_Kb", d.mean() );
         }
         {
-            DataSet d = MEMORY_CYCLE_CPU_TIME.get();
-            put("memory.cycle.cpu_time.ms", d.mean() );
+            DataSet d = CYCLE_CPU_TIME.get();
+            put("memory.cycle.cpu_time.pct", d.mean() / cycleMean );
+        }
+        {
+            DataSet fire = TASKLINK_FIRE.get();
+            DataSet reason = TASKLINK_REASON.get();
+            put("reason.fire.tasklink.priority.mean", fire.mean());
+            put("reason.fire.tasklink.delta_count", (double)TASKLINK_FIRE.getDeltaHits());
+            
+            put("reason.tasklink.period.pct", reason.mean() / cycleMean);
+            put("reason.tasklink.delta_count", (double)TASKLINK_REASON.getDeltaHits());
         }
         
         if (time % sensorDrainPeriodCycles == 0)

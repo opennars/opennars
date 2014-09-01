@@ -20,8 +20,12 @@
  */
 package nars.gui;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
@@ -87,6 +91,16 @@ public class NARSwing  {
     }
 
 
+    public static Font monofont;
+    static {
+        try {
+            monofont = Font.createFont(Font.TRUETYPE_FONT, NARSwing.class.getResourceAsStream("SVBasicPlus.ttf"));
+        } catch (FontFormatException ex) {
+            Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     
     /**

@@ -1,19 +1,19 @@
-package nars.core.state;
+package nars.core.sense;
 
 import java.io.Serializable;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
-public class EmotionState implements Serializable {
+public class EmotionSense implements Serializable {
 
     /** average desire-value */
     private float happy;
     /** average priority */
     private float busy;
 
-    public EmotionState() {
+    public EmotionSense() {
     }
 
-    public EmotionState(float happy, float busy) {
+    public EmotionSense(float happy, float busy) {
         set(happy, busy);
     }
 

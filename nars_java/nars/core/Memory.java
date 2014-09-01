@@ -28,8 +28,8 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import nars.core.Memory.Events.MemoryCycleStart;
 import nars.core.Memory.Events.MemoryCycleStop;
-import nars.core.state.EmotionState;
-import nars.core.state.LogicState;
+import nars.core.sense.EmotionSense;
+import nars.core.sense.LogicSense;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -272,9 +272,9 @@ public class Memory implements Output, Serializable {
     
 
     
-    public final EmotionState emotion = new EmotionState();
+    public final EmotionSense emotion = new EmotionSense();
     
-    public final LogicState logic;
+    public final LogicSense logic;
     
     
     
@@ -326,7 +326,7 @@ public class Memory implements Output, Serializable {
         // create self
         self = conceptualize(new Term(Symbols.SELF)).term;
         
-        logic = new LogicState(this);
+        logic = new LogicSense(this);
         
         for (Operator o : initialOperators)
             addOperator(o);
@@ -824,15 +824,15 @@ public class Memory implements Output, Serializable {
      * @param clock The current time to be displayed
      */
     public void cycle() {
-        
+                
         event.emit(MemoryCycleStart.class);
         
         logic.MEMORY_CYCLE_RAM_USED.start();
-        logic.MEMORY_CYCLE_CPU_TIME.start();
+        
         
         if (working) {
             
-            logic.MEMORY_CYCLE_WORKING.event();
+            
             
             if (recorder.isActive()) {            
                 recorder.onCycleStart(clock);
@@ -852,8 +852,7 @@ public class Memory implements Output, Serializable {
 
             clock++;
         }
-        
-        logic.MEMORY_CYCLE_CPU_TIME.stop();
+                
         logic.MEMORY_CYCLE_RAM_USED.stop();
         
         event.emit(MemoryCycleStop.class);
@@ -1254,7 +1253,7 @@ public class Memory implements Output, Serializable {
     /**
      * Updates the LogicState measurements and returns the data     
      */
-    public LogicState updateLogicState() {
+    public LogicSense updateLogicState() {
         double totalPriority = 0;        
         int count = 0;
         int totalQuestions = 0;
