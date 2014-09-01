@@ -115,7 +115,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     private boolean allowFullSpeed = true;
     public final InferenceLogger logger;
 
-    int chartHistoryLength = 32;
+    int chartHistoryLength = 128;
     
     /**
      * Constructor

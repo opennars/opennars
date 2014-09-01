@@ -104,7 +104,25 @@ public abstract class AbstractTracker implements Sensor {
         return buf.toString();
     }
 
+    int gets = 0;
+    int samplePeriod = 0;
+    
+    /** automatically drain after n cycles; set to 0 for no auto-drain */
+    public void setSamplePeriod(int s) {
+        this.samplePeriod = s;
+    }
+
+    public int getSamplePeriod() {
+        return samplePeriod;
+    }    
+
     public DataSet get() {
+        gets++;
+        if (samplePeriod > 0) {
+            if (gets % samplePeriod == 0)
+                return getReset();
+        }
+        
         return getSession().collectData();
     }
 

@@ -16,6 +16,8 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
     //private static final Logger logger = Logger.getLogger(AbstractSpanTracker.class.toString());
     protected long startTime = 0L;
     protected boolean tracking = false;
+    protected int sampleResolution = 1;
+    int cycle = 0;
 
     public AbstractSpanTracker(final StatsSession session) {
         super(session);
@@ -29,25 +31,47 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
         super(id, ranges);
     }
 
+    /**
+     * sample every Nth cycle; 1 = sample always, 2 = sample every other cycle, etc..
+     */
+    public void setSampleResolution(int resolutionDivisor) {
+        this.sampleResolution = resolutionDivisor;
+    }
+
+    public int getSampleResolution() {
+        return sampleResolution;
+    }
+
+    
     @Override
     public final SpanTracker start() {
+        cycle++;
+
         //try {
 
         if (tracking) {
             //logger.warning("track() called when already tracking: {} " + this);
-            throw new RuntimeException(this + " can not track() while already tracking");
+            //throw new RuntimeException(this + " can not track() while already tracking");
+            
+            //allow this to happen
         }
 
         tracking = true;
 
         startTime = System.currentTimeMillis();
 
-        startImpl(startTime);
+        if (cycle % sampleResolution == 0)
+            startImpl(startTime);
+        else {            
+            session.track(this, startTime);
+        }
+
 
         /*} catch (Exception e) {
          Misc.logHandledException(logger, e, "Caught Exception in track()");
          Misc.handleUncaughtException(getKey(), e);
          }*/
+        
         return this;
     }
 
@@ -55,6 +79,8 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
         session.track(this, now);
     }
 
+    private double lastActualValue;
+    
     @Override
     public void stop() {
         //try {
@@ -66,12 +92,21 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
 
         tracking = false;
 
-        stopImpl(-1);
+        if (cycle % sampleResolution == 0) {
+            stopImpl(-1);            
+            lastActualValue = value;
+        }
+        else {
+            //sampling prevented implementation from measuring, so re-use last value
+            value = lastActualValue;
+            session.update(this, -1);
+        }
 
         /*} catch (Exception e) {
          Misc.logHandledException(logger, e, "Caught Exception in commit()");
          Misc.handleUncaughtException(getKey(), e);
          }*/
+        
     }
 
     protected void stopImpl(final long now) {
