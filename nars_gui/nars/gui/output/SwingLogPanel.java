@@ -2,7 +2,6 @@ package nars.gui.output;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
@@ -15,6 +14,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import nars.gui.NARControls;
+import nars.gui.NARSwing;
 import nars.io.TextOutput;
 
 public class SwingLogPanel extends LogPanel {
@@ -60,7 +60,7 @@ public class SwingLogPanel extends LogPanel {
     }
 
     public static void setConsoleStyle(JTextComponent c, boolean invert) {
-        setConsoleStyle(c, invert, 16);
+        setConsoleStyle(c, invert, 32);
     }
 
     public static void setConsoleStyle(JTextComponent c, boolean invert, int fontSize) {
@@ -75,7 +75,8 @@ public class SwingLogPanel extends LogPanel {
 
         }
         c.setBorder(new EmptyBorder(0, 0, 0, 0));
-        c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
+        //c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
+        c.setFont(NARSwing.monofont.deriveFont(fontSize));
     }
 
     final static String COPY = "Copy";

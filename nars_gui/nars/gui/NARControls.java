@@ -110,13 +110,13 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     private double lastSpeed = 0;
     private final double defaultSpeed = 0.5;
 
-    private final int GUIUpdatePeriodMS = 100;
+    private final int GUIUpdatePeriodMS = 50;
     private NSlider volumeSlider;
 
     private boolean allowFullSpeed = true;
     public final InferenceLogger logger;
 
-    int chartHistoryLength = 128;
+    int chartHistoryLength = 32;
     
     /**
      * Constructor
@@ -358,7 +358,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         long nowTime = nar.getTime();
 
         if (lastUpdateCycle != nowTime) {       
-            chart.update();
+            chart.update(true);
             
             lastUpdateCycle = nowTime;
             lastUpdateTime = System.currentTimeMillis();

@@ -146,7 +146,7 @@ public class SwingLogText extends JTextPane {
     protected void print(final Class c, final Object o)  {        
         Color defaultColor = Color.WHITE;
 
-        float fontScale = 1.2f;
+        float fontScale = 2f;
         float priority = 1f;
         if (c!=OUT.class) {
             //pad the channel name to max 6 characters, right aligned

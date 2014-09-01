@@ -22,6 +22,7 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import static nars.entity.Stamp.make;
@@ -41,7 +42,6 @@ import nars.language.Term;
 import nars.operator.Operation;
 import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
-import nars.core.Memory;
 import nars.storage.NullBagObserver;
 
 
@@ -569,6 +569,8 @@ public class Concept extends Item {
     }
     
     protected void fire(TaskLink currentTaskLink) {
+        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.priority.getValue());
+        
         memory.setCurrentTaskLink(currentTaskLink);
         memory.setCurrentBeliefLink(null);
         if (memory.getRecorder().isActive()) {
@@ -590,7 +592,13 @@ public class Concept extends Item {
                         memory.getRecorder().append(" * Selected TermLink: " + termLink);
                     }
                     memory.setCurrentBeliefLink(termLink);
-                    reason(currentTaskLink, termLink, memory);
+                    
+                    memory.logic.TASKLINK_REASON.start();
+                    {
+                        reason(currentTaskLink, termLink, memory);
+                    }
+                    memory.logic.TASKLINK_REASON.stop();
+                    
                     termLinks.putBack(termLink);
                     termLinkCount--;
                 } else {

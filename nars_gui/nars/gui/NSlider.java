@@ -59,6 +59,8 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         addMouseListener(this);
         addMouseMotionListener(this);
         
+        setFont(NARSwing.monofont.deriveFont(12f));
+        
     }
 
     public double value() { return value.get().doubleValue(); }

@@ -327,22 +327,35 @@ public class NAR implements Runnable, Output {
             debugTime();            
         }
         
+        memory.logic.CYCLE.event();
+        memory.logic.CYCLE_CPU_TIME.start();
+        
         int inputCycles = memory.param.cycleInputTasks.get();
         int memCycles = memory.param.cycleMemory.get();
         
         try {
             
-            if (memory.getCyclesQueued()==0) {
-                
-                for (int i = 0; i < inputCycles; i++)
-                    cycleInput();
-                
-            }
+            //IO cycle
+            memory.logic.IO_CYCLE.start();
+            {            
+                if (memory.getCyclesQueued()==0) {                
+                    for (int i = 0; i < inputCycles; i++)
+                        cycleInput();                
+                }
+            }            
+            memory.logic.IO_CYCLE.stop();
+
 
             
-            for (int i = 0; i < memCycles; i++) {
-                memory.cycle();
+            //Memory working cycle
+            memory.logic.MEMORY_CYCLE.start();
+            {
+                for (int i = 0; i < memCycles; i++) {
+                    memory.cycle();
+                }
             }
+            memory.logic.MEMORY_CYCLE.stop();
+            
         }
         catch (Throwable e) {
             output(ERR.class, e);
@@ -350,6 +363,8 @@ public class NAR implements Runnable, Output {
             System.err.println(e);
             e.printStackTrace();
         }        
+        
+        memory.logic.CYCLE_CPU_TIME.stop();
     }
     
     

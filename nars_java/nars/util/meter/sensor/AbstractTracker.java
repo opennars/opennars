@@ -39,6 +39,8 @@ public abstract class AbstractTracker implements Sensor {
 
     protected double value = 0;
 
+    int lastHits = 0, currentHits = 0;
+
     public AbstractTracker(final StatsSession session) {
         //assertNotNull(session, "session");
         this.session = session;
@@ -67,6 +69,7 @@ public abstract class AbstractTracker implements Sensor {
     @Override
     public Sensor reset() {
         value = 0;
+        lastHits = currentHits = 0;
         return this;
     }
 
@@ -109,4 +112,10 @@ public abstract class AbstractTracker implements Sensor {
         return getSession().drainData();
     }
 
+    public double getDeltaHits() {
+        int deltaHits = currentHits - lastHits;
+        lastHits = currentHits;
+        currentHits = 0;
+        return deltaHits;
+    }    
 }

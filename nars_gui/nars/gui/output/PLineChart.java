@@ -2,21 +2,36 @@ package nars.gui.output;
 
 import com.hipposretribution.controlP5.ControlP5;
 import com.hipposretribution.controlP5.drawable.controller.single.chart.Chart;
+import com.hipposretribution.controlP5.drawable.controller.single.text.TextLabel;
 import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
+import nars.gui.NARSwing;
 import nars.util.meter.data.DataSet;
 import processing.core.PApplet;
+import processing.core.PFont;
 
 public class PLineChart extends PApplet {
 
+    //float motionBlur = 0.9f;
     private final int historySize;
     //private final int lineColor;
     //private final int chartType;
     private boolean autoRanging = true;
     private final DataSet data;
-    private final Map<String, Chart> charts = new HashMap();
+    final Map<String, Chart> charts = new HashMap();
+    final Map<String, TextLabel> labels = new HashMap();
+    //private final Map<String, JToggleButton> enable = new HashMap();
+    private final PFont monofont = new PFont(NARSwing.monofont.deriveFont(Font.PLAIN, 16f), true);
+    float yScale = 1.0f;
+    private int yOffset = 0;
     
     /**
      *
@@ -42,9 +57,9 @@ public class PLineChart extends PApplet {
         //smooth();
         
         cp5 = new ControlP5(this);
+        
 
         for (String f : data.keySet()) {
-
             addChart(f);
         }
 
@@ -55,15 +70,19 @@ public class PLineChart extends PApplet {
     protected Chart addChart(String f) {
         int chartType = Chart.AREA;
 
-        Chart ch = cp5.addChart(f)
+        Chart ch = cp5.addChart(f+".chart")
                 //.setPosition(50, 50)
                 //.setSize(200, 200)
-                //.setRange(-20, 20)
+                //.setRange(-20, 20)      
+                
                 .setView(chartType);
 
+        
+        TextLabel lh = cp5.addTextlabel(f+".label", f).setFont(monofont).setColourCaption(color(255f, 230f));
+        
         ch.getColour().setBackground(0);
-        ch.setCaptionLabel(f);
-        ch.setLabelVisible(true);
+        //ch.setCaptionLabel(f);
+        //ch.setLabelVisible(true);
         ch.addDataSet(f);
         
 
@@ -81,53 +100,31 @@ public class PLineChart extends PApplet {
         ch.setData(f, new float[historySize]);
 
         charts.put(f, ch);
+        labels.put(f, lh);
         
         return ch;
     }
     
     int frame = 0;
-    
-    public void draw() {
-        background(0);
 
+    @Override
+    public void draw() {
+        //fill(0, (1f - motionBlur)*255f  );
+        //rect(0,0,getWidth(),getHeight());
+        
+        background(0);
+        
+        //dont call super.draw() otherwise p5 will not draw
     }
 
-//    // Displays a simple line chart representing a time series.
-//    XYChart lineChart;
-//
-//// Loads data into the chart and customises its appearance.
-//    @Override
-//    public void setup() {
-//        noLoop();
-//        
-//        //size(500, 200);
-//        //textFont(createFont("Arial", 10), 10);
-//
-//        // Both x and y data set here. 
-//        lineChart = new XYChart(this);
-//        
-//        
-//        lineChart.setData(data);
-//        
-//        // Axis formatting and labels.
-//        lineChart.showXAxis(true);
-//        lineChart.showYAxis(true);
-//        //lineChart.setMinY(0);
-//
-//        //lineChart.setYFormat("$###,###");  // Monetary value in $US
-//        //lineChart.setXFormat("0000");      // Year
-//
-//        // Symbol colours
-//        lineChart.setPointColour(color(120, 120, 120, 100));
-//        lineChart.setPointSize(0);
-//        lineChart.setLineWidth(1);
-//        lineChart.setDecorations(redraw);
-//        lineChart.setAxisColour(Color.WHITE.getRGB());
-//        lineChart.setAxisValuesColour(Color.WHITE.getRGB());
-//        lineChart.setAxisLabelColour(Color.WHITE.getRGB());
-//        lineChart.setLineColour(lineColor);
-//    }
+    
+    
+    
+
     protected void addPoint(String f, Chart ch, float y) {
+
+        if (ch.size() >= historySize)
+            ch.removeData(0);
 
         // push: add data from right to left (last in)
         ch.push(f, y);
@@ -150,64 +147,108 @@ public class PLineChart extends PApplet {
             if (min == max) { max += 1f; }
             
             ch.setRange(min, max);
+            
+   
+            TextLabel lh = labels.get(f);
+            if (lh!=null) {
+                lh.setText(f + "\n current=" + y + ", min=" + min + ", max=" + max);
+            }
+                        
         }
 
-        //if (lineChart == null) return;
-        //lineChart.setData(data);
     }
-//    
-//// Draws the chart and a title.
-//    @Override
-//    public void draw() {
-//        background(0);
-//        textSize(9);
-//        
-//        fill(240f);
-//        lineChart.draw(15, 15, width - 30, height - 30);
-//
-//        // Draw a title over the top of the chart.
-//        
-//        textSize(16);        
-//        text(title, 40, 30);
-//        /*textSize(11);
-//        text("Gross domestic product measured in inflation-corrected $US",
-//                70, 45);*/
-//        
-//    }
 
     public JPanel newPanel() {
         JPanel p = new JPanel(new BorderLayout());
+        addMouseWheelListener(new MouseWheelListener() {
+
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                double r = e.getPreciseWheelRotation();
+                
+                if (r < 0) {
+                    yScale *= 0.9f;
+                }
+                else if (r > 0) {
+                    yScale *= 1.1f;
+                }
+                
+                update(false);
+            }
+        });
+        final MouseAdapter c;
+        addMouseMotionListener(c = new MouseAdapter() {
+            private Point startLocation;
+            private int startYOffset;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                startLocation = e.getPoint();
+                startYOffset = yOffset;
+            }
+
+            
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (startLocation==null) {
+                    startLocation = e.getPoint();
+                    return;
+                }
+                Point currentLocation = e.getPoint();
+                int deltaY  = currentLocation.y - startLocation.y;
+                yOffset = startYOffset + deltaY;
+                update(false);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                startLocation = null;
+            }
+            
+        });
+        addMouseListener(c);
+        
         p.add(this, BorderLayout.CENTER);
         init();
         return p;
     }
 
-    public void update() {
+    public void update(boolean addNextPoint) {
 
         int numCharts = data.size();
-        int y = 0;
+        int y = yOffset;
+        
+        int h = (int)(yScale * ((float)getHeight()) / ((float)numCharts));
         
         for (String f : data.keySet()) {
-            Chart ch = charts.get(f);
+            Chart ch = charts.get(f);            
+            TextLabel lh = labels.get(f);
+            
             if (ch==null) {
                 ch = addChart(f);                
             }
             
-            Object value = data.get(f);
+            if (addNextPoint) {
+                Object value = data.get(f);
+
+                if (value instanceof Double) {
+                    addPoint(f, ch, ((Number) value).floatValue());
+                }
+                if (value instanceof Float) {
+                    addPoint(f, ch, ((Number) value).floatValue());
+                }
+                if (value instanceof Integer) {
+                    addPoint(f, ch, ((Number) value).floatValue());
+                }
+            }            
             
-            if (value instanceof Double) {
-                addPoint(f, ch, ((Number) value).floatValue());
-            }
-            if (value instanceof Float) {
-                addPoint(f, ch, ((Number) value).floatValue());
-            }
-            if (value instanceof Integer) {
-                addPoint(f, ch, ((Number) value).floatValue());
-            }
-            
-            int h = (int)(getHeight()/numCharts);
             ch.setSize(getWidth(), h);
-            ch.setPosition(0, y);
+            ch.setPosition(0, y);            
+         
+            if (lh!=null) {
+                lh.setPosition(0, y);
+            }
+            
             y += h;
         
              
