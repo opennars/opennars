@@ -125,4 +125,14 @@ public final class NullDataSet implements DataSet {
     public void put(String name, Object value) {
     }
 
+    @Override
+    public double d(String fieldName) {
+        return 0;
+    }
+
+    @Override
+    public long i(String fieldName) {
+        return 0;
+    }
+
 }
