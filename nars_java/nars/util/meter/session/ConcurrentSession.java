@@ -141,7 +141,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     }
 
     @Override
-    public void update(final Sensor tracker, long now) {
+    public void update(final Sensor tracker, final long now) {
 
         final double currentValue = tracker.getValue();
         double tmp;
@@ -149,9 +149,9 @@ public class ConcurrentSession extends AbstractStatsSession {
         commits.incrementAndGet();
 
         // First
-        if (first.get() == null) {
+        //if (first.get() == null) {
             first.compareAndSet(null, currentValue);
-        }
+        //}
 
         // Last
         last = currentValue;

@@ -29,7 +29,7 @@ public class LogicSense extends DefaultDataSet implements Serializable {
     private final Memory memory;
     long lastUpdate = -1;
     
-    int sensorDrainPeriodCycles = 2048; //how often to reset sensors
+    int allSensorResetPeriodCycles = 2048; //how often to reset all sensors
     
     
     //public final Sensor CONCEPT_FIRE;
@@ -62,15 +62,23 @@ public class LogicSense extends DefaultDataSet implements Serializable {
         
         add(IO_CYCLE = new NanoTimeDurationTracker("io.cycle"));
         add(MEMORY_CYCLE = new NanoTimeDurationTracker("memory.cycle"));
+        
         add(CYCLE = new HitPeriodTracker("cycle"));
+        
         
         add(TASK_IMMEDIATE_PROCESS = new HitPeriodTracker("task.immediate_process"));
         add(TASK_IMMEDIATE_PROCESS_PRIORITY = new EventValueSensor("task.immediate_process.priority"));
         add(MEMORY_CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used"));
+        MEMORY_CYCLE_RAM_USED.setSampleResolution(8);
+        MEMORY_CYCLE_RAM_USED.setSamplePeriod(32);
+                
         add(CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time"));
-        
+        CYCLE_CPU_TIME.setSampleResolution(4);
+        CYCLE_CPU_TIME.setSamplePeriod(16);
+                
         //add(CONCEPT_FIRE = new DefaultEventSensor("concept.fire"));
         add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
+        TASKLINK_FIRE.setSamplePeriod(32);
         add(TASKLINK_REASON = new NanoTimeDurationTracker("tasklink.reason"));
     }
     
@@ -114,26 +122,26 @@ public class LogicSense extends DefaultDataSet implements Serializable {
         put("emotion.busy", memory.emotion.busy());
 
         
-        DataSet cycle = CYCLE.get();
-        double cycleMean = cycle.mean();
+        //DataSet cycle = CYCLE.get();
+        double cycleTimeMS = CYCLE.getValue();
         {
-            put("cycle.frequency.hz", (cycleMean == 0) ? 0 : (1000.0 / cycleMean) );
+            put("cycle.frequency.hz", (cycleTimeMS == 0) ? 0 : (1000.0 / cycleTimeMS) );
         }
         {
-            DataSet d = IO_CYCLE.get();
-            put("io.cycle.period.mean.pct", d.mean() / cycleMean );
+            //DataSet d = IO_CYCLE.get();
+            put("io.cycle.period.mean.pct", IO_CYCLE.getValue() / cycleTimeMS );
         }
         {
-            DataSet d = MEMORY_CYCLE.get();
-            put("memory.cycle.period.mean.pct", d.mean() / cycleMean );
+            //DataSet d = MEMORY_CYCLE.get();
+            put("memory.cycle.period.mean.pct", MEMORY_CYCLE.getValue() / cycleTimeMS );
         }
         {
-            DataSet d = MEMORY_CYCLE_RAM_USED.get();
-            put("memory.cycle.ram_use.delta_Kb", d.mean() );
+            //DataSet d = MEMORY_CYCLE_RAM_USED.get();
+            put("memory.cycle.ram_use.delta_Kb.sampled.mean", MEMORY_CYCLE_RAM_USED.get().mean());
         }
         {
-            DataSet d = CYCLE_CPU_TIME.get();
-            put("memory.cycle.cpu_time.pct", d.mean() / cycleMean );
+            //DataSet d = CYCLE_CPU_TIME.get();
+            put("memory.cycle.cpu_time.sampled.mean.pct", CYCLE_CPU_TIME.get().mean() / cycleTimeMS );
         }
         {
             DataSet fire = TASKLINK_FIRE.get();
@@ -141,11 +149,11 @@ public class LogicSense extends DefaultDataSet implements Serializable {
             put("reason.fire.tasklink.priority.mean", fire.mean());
             put("reason.fire.tasklink.delta_count", (double)TASKLINK_FIRE.getDeltaHits());
             
-            put("reason.tasklink.period.pct", reason.mean() / cycleMean);
+            put("reason.tasklink.period.pct", TASKLINK_REASON.getValue() / cycleTimeMS);
             put("reason.tasklink.delta_count", (double)TASKLINK_REASON.getDeltaHits());
         }
         
-        if (time % sensorDrainPeriodCycles == 0)
+        if (time % allSensorResetPeriodCycles == 0)
             updateSensors(true);
 
         return this;

@@ -202,7 +202,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
                         
         if (nameTableInsert) {
             final CharSequence newKey = newItem.getKey();
-            final E oldItem = nameTable.put(newKey, newItem);
+            final E oldItem = nameTable.put(newKey, newItem);            
             if (oldItem != null) {                  // merge duplications
                 outOfBase(oldItem);
                 newItem.merge(oldItem);
