@@ -53,6 +53,8 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
     protected void stopImpl(final long now) {
         value = (System.nanoTime() - nanoTime) / 1000000d;
 
+        currentHits++;
+        
         session.update(this, now);
     }
 
