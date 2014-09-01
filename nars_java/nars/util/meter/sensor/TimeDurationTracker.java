@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Range;
@@ -31,14 +31,13 @@ public abstract class TimeDurationTracker extends AbstractSpanTracker {
     public TimeDurationTracker(final StatsSession session) {
         super(session);
     }
-    
+
     public TimeDurationTracker(final String id) {
         super(id);
     }
-    
+
     public TimeDurationTracker(final String id, Range... ranges) {
         super(id, ranges);
     }
 
-    
 }

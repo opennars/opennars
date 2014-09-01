@@ -26,7 +26,7 @@ import nars.util.meter.key.StatsKey;
 public interface EventHandler extends Serializable {
 
     void handleStatsEvent(EventType eventType,
-                          StatsKey key,
-                          Object target);
+            StatsKey key,
+            Object target);
 
 }

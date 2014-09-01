@@ -21,13 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
 @ThreadSafe
-public class RangeList implements Iterable<Range>,Serializable {
+public class RangeList implements Iterable<Range>, Serializable {
 
     private final Range[] ranges;
 
@@ -40,13 +40,13 @@ public class RangeList implements Iterable<Range>,Serializable {
     public RangeList(final Range... ranges) {
         this(Arrays.asList(ranges));
     }
-    
+
     public RangeList(final List<Range> ranges) {
         this(ranges, Range.DEFAULT_EXCLUSIVE_RANGE_END);
     }
 
     public RangeList(final List<Range> ranges,
-                     final boolean exclusiveRangeEnd) {
+            final boolean exclusiveRangeEnd) {
 
         this.ranges = ranges.toArray(new Range[ranges.size()]);
         this.exclusiveRangeEnd = exclusiveRangeEnd;
@@ -107,7 +107,6 @@ public class RangeList implements Iterable<Range>,Serializable {
         return max;
     }
 
-
     public boolean isExclusiveRangeEnd() {
         return exclusiveRangeEnd;
     }
@@ -142,7 +141,7 @@ public class RangeList implements Iterable<Range>,Serializable {
     }
 
     public int indexOfRangeContaining(final double value,
-                                      int fromIndex) {
+            int fromIndex) {
         if (value < minBegin || value > maxEnd || (exclusiveRangeEnd && value == maxEnd)) {
             return -1;
         }
@@ -170,7 +169,7 @@ public class RangeList implements Iterable<Range>,Serializable {
     }
 
     public Range rangeContaining(final double value,
-                                 final int fromIndex) {
+            final int fromIndex) {
         Range range = null;
 
         int index = indexOfRangeContaining(value, fromIndex);
@@ -198,7 +197,7 @@ public class RangeList implements Iterable<Range>,Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof RangeList) && equals((RangeList)obj);
+        return (obj instanceof RangeList) && equals((RangeList) obj);
     }
 
     public boolean equals(final RangeList other) {
@@ -211,7 +210,6 @@ public class RangeList implements Iterable<Range>,Serializable {
     }
 
     /* NESTED CLASSES */
-
     public static class Builder {
 
         private final List<Range> ranges = new ArrayList<Range>();
@@ -220,16 +218,17 @@ public class RangeList implements Iterable<Range>,Serializable {
         private boolean beginningRangeAdded = false;
         private boolean endingRangeAdded = false;
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public Builder addRange(final double begin,
-                                final double end) {
+                final double end) {
             return addRange(begin, end, null);
         }
 
         public Builder addRange(final double begin,
-                                final double end,
-                                final String name) {
+                final double end,
+                final String name) {
             ranges.add(new Range(begin, end, name));
             return this;
         }
@@ -239,7 +238,7 @@ public class RangeList implements Iterable<Range>,Serializable {
         }
 
         public Builder addBeginningRange(final double end,
-                                         final String name) {
+                final String name) {
             if (beginningRangeAdded) {
                 throw new IllegalStateException("beginning range already added");
             }
@@ -254,7 +253,7 @@ public class RangeList implements Iterable<Range>,Serializable {
         }
 
         public Builder addEndingRange(final double begin,
-                                      final String name) {
+                final String name) {
             if (endingRangeAdded) {
                 throw new IllegalStateException("ending range already added");
             }

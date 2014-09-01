@@ -10,25 +10,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Optimised for very small data sets, allowing compact size and fast puts at the expense of O(n) lookups. This implementation
- * may store duplicate entries for the same key. TODO: explain more.
+ * Optimised for very small data sets, allowing compact size and fast puts at
+ * the expense of O(n) lookups. This implementation may store duplicate entries
+ * for the same key. TODO: explain more.
  *
  * @author The Stajistics Project
  */
-public class FastPutsArrayMap<K,V> extends AbstractMap<K,V> implements Serializable {
+public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Serializable {
 
     private static final int UNKNOWN_SIZE = 0; // Zero so that the size is unknown after deserialization
 
-    protected final ArrayList<Entry<K,V>> entries;
+    protected final ArrayList<Entry<K, V>> entries;
     protected transient int size = UNKNOWN_SIZE;
-    protected transient Set<Entry<K,V>> entrySet = null;
+    protected transient Set<Entry<K, V>> entrySet = null;
 
     public FastPutsArrayMap() {
         this(4);
     }
 
     public FastPutsArrayMap(final int initialCapacity) {
-        entries = new ArrayList<Entry<K,V>>(initialCapacity);
+        entries = new ArrayList<Entry<K, V>>(initialCapacity);
     }
 
     public FastPutsArrayMap(final Map<K, V> map) {
@@ -39,9 +40,9 @@ public class FastPutsArrayMap<K,V> extends AbstractMap<K,V> implements Serializa
     public void compact() {
 
         // Iterate forwards looking for duplicate entries and deleting the old ones
-        Entry<K,V> e;
-        Entry<K,V> possibleDup;
-        for (final Iterator<Entry<K,V>> itr = entries.iterator(); itr.hasNext(); ) {
+        Entry<K, V> e;
+        Entry<K, V> possibleDup;
+        for (final Iterator<Entry<K, V>> itr = entries.iterator(); itr.hasNext();) {
             e = itr.next();
             possibleDup = getEntry(e.getKey()); // Returns the newest entry
             if (possibleDup != null && e != possibleDup) {
@@ -102,15 +103,15 @@ public class FastPutsArrayMap<K,V> extends AbstractMap<K,V> implements Serializa
 
     @Override
     public V get(final Object key) {
-        Entry<K,V> e = getEntry(key);
+        Entry<K, V> e = getEntry(key);
         if (e != null) {
             return e.getValue();
         }
         return null;
     }
 
-    protected Entry<K,V> getEntry(final Object key) {
-        Entry<K,V> e;
+    protected Entry<K, V> getEntry(final Object key) {
+        Entry<K, V> e;
 
         // Search in reverse so we find the most up to date value in the event of duplicates
         for (int i = entries.size() - 1; i >= 0; i--) {
@@ -130,7 +131,7 @@ public class FastPutsArrayMap<K,V> extends AbstractMap<K,V> implements Serializa
         if (key == null) {
             throw new NullPointerException("key");
         }
-        entries.add(new SimpleEntry<K,V>(key, value));
+        entries.add(new SimpleEntry<K, V>(key, value));
         size = UNKNOWN_SIZE;
         return null;
     }
@@ -148,11 +149,11 @@ public class FastPutsArrayMap<K,V> extends AbstractMap<K,V> implements Serializa
             return null;
         }
 
-        Entry<K,V> e;
+        Entry<K, V> e;
         V value = null;
 
         // Search in reverse so we find the most up to date value in the event of duplicates
-        ListIterator<Entry<K,V>> itr = entries.listIterator(entries.size());
+        ListIterator<Entry<K, V>> itr = entries.listIterator(entries.size());
         while (itr.hasPrevious()) {
             e = itr.previous();
             if (e.getKey().equals(key)) {
@@ -177,7 +178,7 @@ public class FastPutsArrayMap<K,V> extends AbstractMap<K,V> implements Serializa
     @Override
     public Set<Entry<K, V>> entrySet() {
         if (entrySet == null) {
-            entrySet = new AbstractSet<Entry<K,V>>() {
+            entrySet = new AbstractSet<Entry<K, V>>() {
                 @Override
                 public Iterator<Entry<K, V>> iterator() {
                     compact();

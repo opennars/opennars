@@ -17,7 +17,8 @@ package nars.util.meter.util;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A wrapper to {@link AtomicLong} that performs the appropriate long/double conversion.
+ * A wrapper to {@link AtomicLong} that performs the appropriate long/double
+ * conversion.
  *
  * @author The Stajistics Project
  */
@@ -67,9 +68,9 @@ public class AtomicDouble extends Number {
     }
 
     public boolean compareAndSet(final double expect,
-                                 final double update) {
-        return this.value.compareAndSet(Double.doubleToLongBits(expect), 
-                                        Double.doubleToLongBits(update));
+            final double update) {
+        return this.value.compareAndSet(Double.doubleToLongBits(expect),
+                Double.doubleToLongBits(update));
     }
 
     public double incrementAndGet() {
@@ -117,17 +118,17 @@ public class AtomicDouble extends Number {
 
     @Override
     public float floatValue() {
-        return (float)get();
+        return (float) get();
     }
 
     @Override
     public int intValue() {
-        return (int)get();
+        return (int) get();
     }
 
     @Override
     public long longValue() {
-        return (long)get();
+        return (long) get();
     }
 
     @Override

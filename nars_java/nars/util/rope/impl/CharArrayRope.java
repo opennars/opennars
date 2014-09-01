@@ -52,7 +52,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         this.sequence = sequence;
         len = sequence.length;
     }
-    
+
     public CharArrayRope(final StringBuilder sb) {
         this(Texts.getCharArray(sb));
         len = sb.length();
@@ -170,7 +170,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         if (start < 0 || start > this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
         }
-        
+
         return new Iterator<Character>() {
             int current = start;
 

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author The Stajistics Project
  */
-public class CompositeIncidentTracker<T extends IncidentTracker> extends AbstractCompositeTracker<T>     {
+public class CompositeIncidentTracker<T extends EventSensor> extends AbstractCompositeTracker<T> {
 
     public CompositeIncidentTracker(final T... trackers) {
         super(trackers);
@@ -34,7 +34,7 @@ public class CompositeIncidentTracker<T extends IncidentTracker> extends Abstrac
     public CompositeIncidentTracker incident() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
-            trackers[i].incident();
+            trackers[i].event();
         }
         return this;
     }

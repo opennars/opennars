@@ -51,12 +51,12 @@ public class ThreadPoolTaskService implements TaskService {
     public ThreadPoolTaskService() {
         int noCPUs = Runtime.getRuntime().availableProcessors();
         int corePoolSize = StatsProperties.getIntegerProperty(PROP_CORE_POOL_SIZE,
-                                                              noCPUs + 1);
+                noCPUs + 1);
         int maxPoolSize = StatsProperties.getIntegerProperty(PROP_MAX_POOL_SIZE,
-                                                             Math.max(corePoolSize, DEFAULT_MAX_POOL_SIZE));
+                Math.max(corePoolSize, DEFAULT_MAX_POOL_SIZE));
 
         long keepAliveTime = StatsProperties.getIntegerProperty(PROP_KEEP_ALIVE_TIME_SECONDS,
-                                                                DEFAULT_KEEP_ALIVE_TIME_SECONDS);
+                DEFAULT_KEEP_ALIVE_TIME_SECONDS);
         TimeUnit keepAliveTimeUnit = TimeUnit.SECONDS;
 
         if (keepAliveTime < 0) {
@@ -65,11 +65,11 @@ public class ThreadPoolTaskService implements TaskService {
         }
 
         executor = new ThreadPoolExecutor(corePoolSize,
-                                          maxPoolSize,
-                                          keepAliveTime,
-                                          keepAliveTimeUnit,
-                                          createWorkQueue(),
-                                          createThreadFactory());
+                maxPoolSize,
+                keepAliveTime,
+                keepAliveTimeUnit,
+                createWorkQueue(),
+                createThreadFactory());
     }
 
     public ThreadPoolTaskService(final ThreadPoolExecutor executor) {
@@ -123,7 +123,7 @@ public class ThreadPoolTaskService implements TaskService {
 
     @Override
     public <T> Future<T> submit(final Class<?> source,
-                                final Callable<T> task) {
+            final Callable<T> task) {
         return executor.submit(task);
     }
 
@@ -131,58 +131,57 @@ public class ThreadPoolTaskService implements TaskService {
     public void execute(Class<?> source, Runnable task) {
         executor.execute(task);
     }
-    
-/**
- * @author The Stajistics Project
- */
-protected static class TaskServiceThreadFactory implements ThreadFactory {
 
-    private static final Logger logger = Logger.getLogger(TaskServiceThreadFactory.class.toString());
+    /**
+     * @author The Stajistics Project
+     */
+    protected static class TaskServiceThreadFactory implements ThreadFactory {
 
-    private static final String PROP_THREAD_PRIORITY = TaskServiceThreadFactory.class.getName() + ".threadPriority";
-    private static final int DEFAULT_THREAD_PRIORITY = Thread.NORM_PRIORITY;
+        private static final Logger logger = Logger.getLogger(TaskServiceThreadFactory.class.toString());
 
-    private static final AtomicInteger nextPoolId = new AtomicInteger(0);
-    private final AtomicInteger nextThreadId = new AtomicInteger(0);
+        private static final String PROP_THREAD_PRIORITY = TaskServiceThreadFactory.class.getName() + ".threadPriority";
+        private static final int DEFAULT_THREAD_PRIORITY = Thread.NORM_PRIORITY;
 
-    private final String namePrefix;
-    private final ThreadGroup threadGroup;
+        private static final AtomicInteger nextPoolId = new AtomicInteger(0);
+        private final AtomicInteger nextThreadId = new AtomicInteger(0);
 
-    public TaskServiceThreadFactory() {
-        namePrefix = TaskService.class.getSimpleName() + "-" + nextPoolId.incrementAndGet();
-        threadGroup = new ThreadGroup(namePrefix);
-    }
+        private final String namePrefix;
+        private final ThreadGroup threadGroup;
 
-    public ThreadGroup getThreadGroup() {
-        return threadGroup;
-    }
+        public TaskServiceThreadFactory() {
+            namePrefix = TaskService.class.getSimpleName() + "-" + nextPoolId.incrementAndGet();
+            threadGroup = new ThreadGroup(namePrefix);
+        }
 
-    @Override
-    public Thread newThread(final Runnable r) {
+        public ThreadGroup getThreadGroup() {
+            return threadGroup;
+        }
 
-        //final String threadName = namePrefix + "-worker-" + nextThreadId.incrementAndGet();
+        @Override
+        public Thread newThread(final Runnable r) {
 
-        Runnable wrapper = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //logger.debug("Thread started: {}", Thread.currentThread().getName());
+            //final String threadName = namePrefix + "-worker-" + nextThreadId.incrementAndGet();
+            Runnable wrapper = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //logger.debug("Thread started: {}", Thread.currentThread().getName());
 
-                    r.run();
-                } finally {
-                    //logger.debug("Thread destroyed: {}", Thread.currentThread().getName());
+                        r.run();
+                    } finally {
+                        //logger.debug("Thread destroyed: {}", Thread.currentThread().getName());
+                    }
                 }
-            }
-        };
+            };
 
-        Thread thread = new Thread(threadGroup, wrapper);//, threadName);
+            Thread thread = new Thread(threadGroup, wrapper);//, threadName);
 
-        int priority = StatsProperties.getIntegerProperty(PROP_THREAD_PRIORITY,
-                                                          DEFAULT_THREAD_PRIORITY);
-        thread.setPriority(priority);
-        thread.setDaemon(true);
+            int priority = StatsProperties.getIntegerProperty(PROP_THREAD_PRIORITY,
+                    DEFAULT_THREAD_PRIORITY);
+            thread.setPriority(priority);
+            thread.setDaemon(true);
 
-        return thread;
+            return thread;
+        }
     }
-}    
 }

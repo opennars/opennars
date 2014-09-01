@@ -17,7 +17,7 @@ package nars.util.meter.session;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.event.EventManager;
 import nars.util.meter.event.EventType;
@@ -27,21 +27,28 @@ import nars.util.meter.recorder.DataRecorders;
 import nars.util.meter.util.AtomicDouble;
 
 /**
- * <p>An implementation of {@link StatsSession} that reads and writes data fields atomically
- * without locking. This allows scalable updates that minimize the runtime overhead of statistics
- * collection. However, the cost of using this implementation is that the {@link DataSet} returned from
- * {@link #collectData()} may contain values that are not related to one another.
- * For example, the DataSet may contain all the data from update #1, but only half of the data
- * from update #2 (because update #2 is executing simultaneously to the {@link #collectData()} call).
- * For a {@link StatsSession} implementation that guarantees data integrity,
- * see {@link org.stajistics.session.AsynchronousSession}.</p>
+ * <p>
+ * An implementation of {@link StatsSession} that reads and writes data fields
+ * atomically without locking. This allows scalable updates that minimize the
+ * runtime overhead of statistics collection. However, the cost of using this
+ * implementation is that the {@link DataSet} returned from
+ * {@link #collectData()} may contain values that are not related to one
+ * another. For example, the DataSet may contain all the data from update #1,
+ * but only half of the data from update #2 (because update #2 is executing
+ * simultaneously to the {@link #collectData()} call). For a
+ * {@link StatsSession} implementation that guarantees data integrity, see
+ * {@link org.stajistics.session.AsynchronousSession}.</p>
  *
- * <p>Due to the concurrent nature of this session implementation, the associated {@link DataRecorder}s
- * must be thread safe. {@link DataRecorder}s that are passed into the constructor are passed through
- * the {@link DataRecorders#lockingIfNeeded(DataRecorder[])} method in order to ensure thread safe
- * usage. Note that if any {@link DataRecorder}s are wrapped in a locking decorator, it could
- * negatively impact performance of the client application. For optimal performance, use
- * {@link DataRecorder} implementations that are thread safe through the use of atomic primitives.</p>
+ * <p>
+ * Due to the concurrent nature of this session implementation, the associated
+ * {@link DataRecorder}s must be thread safe. {@link DataRecorder}s that are
+ * passed into the constructor are passed through the
+ * {@link DataRecorders#lockingIfNeeded(DataRecorder[])} method in order to
+ * ensure thread safe usage. Note that if any {@link DataRecorder}s are wrapped
+ * in a locking decorator, it could negatively impact performance of the client
+ * application. For optimal performance, use {@link DataRecorder}
+ * implementations that are thread safe through the use of atomic
+ * primitives.</p>
  *
  * @see org.stajistics.session.AsynchronousSession
  *
@@ -50,7 +57,6 @@ import nars.util.meter.util.AtomicDouble;
 public class ConcurrentSession extends AbstractStatsSession {
 
     //public static final Factory FACTORY = new Factory();
-
     private static final Logger logger = Logger.getLogger(ConcurrentSession.class.toString());
 
     protected final AtomicLong hits = new AtomicLong(DataSet.Field.Default.HITS);
@@ -64,22 +70,19 @@ public class ConcurrentSession extends AbstractStatsSession {
     protected volatile double last = DataSet.Field.Default.LAST;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
-    protected final AtomicDouble sum = new AtomicDouble(DataSet.Field.Default.SUM);    
+    protected final AtomicDouble sum = new AtomicDouble(DataSet.Field.Default.SUM);
 
     public ConcurrentSession(final StatsKey key,
-                                  final EventManager eventManager,
-                                  final DataRecorder... dataRecorders) {
+            final EventManager eventManager,
+            final DataRecorder... dataRecorders) {
         super(key,
-              eventManager,
-              DataRecorders.lockingIfNeeded(dataRecorders));
+                eventManager,
+                DataRecorders.lockingIfNeeded(dataRecorders));
     }
 
-    
-    
-    
     @Override
-    public void track(final Tracker tracker,
-                      long now) {
+    public void track(final Sensor tracker,
+            long now) {
         if (now < 0) {
             now = System.currentTimeMillis();
         }
@@ -92,9 +95,9 @@ public class ConcurrentSession extends AbstractStatsSession {
         lastHitStamp = now;
 
         //logger.info("Track: {}" + " " +  this);
-
-        if (eventManager!=null)
+        if (eventManager != null) {
             eventManager.fireEvent(EventType.TRACKER_TRACKING, key, tracker);
+        }
     }
 
     @Override
@@ -138,7 +141,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     }
 
     @Override
-    public void update(final Tracker tracker, long now) {
+    public void update(final Sensor tracker, long now) {
 
         final double currentValue = tracker.getValue();
         double tmp;
@@ -184,15 +187,15 @@ public class ConcurrentSession extends AbstractStatsSession {
             //try {
             dataRecorder.update(this, tracker, now);
             /*} catch (Exception e) {
-                Misc.logHandledException(logger, e, "Failed to update {}", dataRecorder);
-                Misc.handleUncaughtException(getKey(), e);
-            }*/
+             Misc.logHandledException(logger, e, "Failed to update {}", dataRecorder);
+             Misc.handleUncaughtException(getKey(), e);
+             }*/
         }
 
         //logger.info("Commit: {}" + " " + this);
-
-        if (eventManager!=null)
+        if (eventManager != null) {
             eventManager.fireEvent(EventType.TRACKER_COMMITTED, key, tracker);
+        }
     }
 
     @Override
@@ -254,7 +257,6 @@ public class ConcurrentSession extends AbstractStatsSession {
         return sum.get();
     }
 
-
     @Override
     protected void setSum(final double sum) {
         this.sum.set(sum);
@@ -268,9 +270,9 @@ public class ConcurrentSession extends AbstractStatsSession {
         restoreState(dataSet);
 
         //logger.trace("Restore: {}", this);
-
-        if (eventManager!=null)
+        if (eventManager != null) {
             eventManager.fireEvent(EventType.SESSION_RESTORED, key, this);
+        }
     }
 
     @Override
@@ -278,9 +280,9 @@ public class ConcurrentSession extends AbstractStatsSession {
         clearState();
 
         //logger.trace("Clear: {}", this);
-
-        if (eventManager!=null)
+        if (eventManager != null) {
             eventManager.fireEvent(EventType.SESSION_CLEARED, key, this);
+        }
     }
 
     @Override
@@ -303,5 +305,4 @@ public class ConcurrentSession extends AbstractStatsSession {
 //                                         dataRecorders);
 //        }
 //    }
-
 }

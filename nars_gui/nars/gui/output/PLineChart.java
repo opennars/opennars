@@ -3,10 +3,8 @@ package nars.gui.output;
 import com.hipposretribution.controlP5.ControlP5;
 import com.hipposretribution.controlP5.drawable.controller.single.chart.Chart;
 import java.awt.BorderLayout;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.JPanel;
-import nars.core.monitor.LogicState;
+import nars.util.meter.data.DataSet;
 import processing.core.PApplet;
 
 
@@ -118,9 +116,8 @@ public class PLineChart extends PApplet {
 //        lineChart.setLineColour(lineColor);
 //    }
 
-    public void addPoint(float x, float y) {
+    protected void addPoint(float x, float y) {
         
-
         // push: add data from right to left (last in)
 	chart.push("a", y);
         
@@ -164,11 +161,9 @@ public class PLineChart extends PApplet {
     }
     
 
-    public void update(LogicState state) {
-        try {
-        Map.Entry<Long, HashMap<String, Object>> entry = state.lastEntry();
-        long when = entry.getKey();
-        HashMap<String, Object> data = entry.getValue();
+    public void update(final long when, final DataSet data) {
+        if (chart == null)
+            return;
         
         Object value = data.get(title);
         if (value instanceof Double)
@@ -177,8 +172,7 @@ public class PLineChart extends PApplet {
            addPoint(when, ((Number)value).floatValue());
         if (value instanceof Integer)
            addPoint(when, ((Number)value).floatValue());
-        }
-        catch(Exception ex) {}
+        
     }
 
     /*

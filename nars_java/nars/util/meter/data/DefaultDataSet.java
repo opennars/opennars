@@ -17,7 +17,6 @@ package nars.util.meter.data;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  *
  *
@@ -31,14 +30,18 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
     private long collectionTimeStamp;
     private boolean drainedSession;
 
-    public DefaultDataSet(final long collectionTimeStamp,
-                          final boolean drainedSession) {
-        this(collectionTimeStamp, drainedSession, new HashMap<String,Object>());
+    public DefaultDataSet(final Map<String, Object> dataMap) {
+        this(0, false, dataMap);
     }
 
     public DefaultDataSet(final long collectionTimeStamp,
-                          final boolean drainedSession,
-                          final Map<String,Object> dataMap) {
+            final boolean drainedSession) {
+        this(collectionTimeStamp, drainedSession, new HashMap<String, Object>());
+    }
+
+    public DefaultDataSet(final long collectionTimeStamp,
+            final boolean drainedSession,
+            final Map<String, Object> dataMap) {
         super(dataMap);
         this.collectionTimeStamp = collectionTimeStamp;
         this.drainedSession = drainedSession;
@@ -59,8 +62,8 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
         return metaData != null && !metaData.isEmpty();
     }
 
-    protected Map<String,Object> createMetaDataMap() {
-        return new HashMap<String,Object>();
+    protected Map<String, Object> createMetaDataMap() {
+        return new HashMap<String, Object>();
     }
 
     @Override
@@ -92,7 +95,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
 
         DataSet other;
         try {
-            other = (DataSet)obj;
+            other = (DataSet) obj;
         } catch (ClassCastException cce) {
             return false;
         }
@@ -123,6 +126,16 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
     @Override
     public String toString() {
         return dataMap.toString();
+    }
+
+    @Override
+    public double d(final String fieldName) {
+        return getField(fieldName, Double.class);
+    }
+
+    @Override
+    public long i(final String fieldName) {
+        return getField(fieldName, Long.class);
     }
 
     

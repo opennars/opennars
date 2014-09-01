@@ -17,8 +17,8 @@ package nars.util.meter.util;
 import java.util.Collection;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */

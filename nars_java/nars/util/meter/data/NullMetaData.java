@@ -26,7 +26,8 @@ public class NullMetaData implements MetaData {
 
     private static final NullMetaData INSTANCE = new NullMetaData();
 
-    private NullMetaData() {}
+    private NullMetaData() {
+    }
 
     public static NullMetaData getInstance() {
         return INSTANCE;
@@ -36,7 +37,7 @@ public class NullMetaData implements MetaData {
      * @return <tt>null</tt>.
      */
     @Override
-    public Object getField(String name) {
+    public Object get(String name) {
         return null;
     }
 
@@ -59,7 +60,7 @@ public class NullMetaData implements MetaData {
      * @return An empty Set.
      */
     @Override
-    public Set<String> getFieldNames() {
+    public Set<String> keySet() {
         return Collections.emptySet();
     }
 
@@ -83,7 +84,8 @@ public class NullMetaData implements MetaData {
      * Does nothing.
      */
     @Override
-    public void clear() {}
+    public void clear() {
+    }
 
     /**
      * Does nothing.
@@ -99,6 +101,7 @@ public class NullMetaData implements MetaData {
      * Does nothing.
      */
     @Override
-    public void setField(String name, Object value) {}
+    public void put(String name, Object value) {
+    }
 
 }

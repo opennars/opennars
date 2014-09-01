@@ -25,8 +25,9 @@ public interface DataRecorderFactory extends Serializable {
 
     /**
      * Create an array of {@link DataRecorder} instances.
+     *
      * @return An array of {@link DataRecorder} instances, never <tt>null</tt>,
-     *         but possibly empty.
+     * but possibly empty.
      */
     DataRecorder[] createDataRecorders();
 

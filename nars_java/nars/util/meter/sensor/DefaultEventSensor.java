@@ -12,44 +12,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
-
-import java.util.logging.Logger;
 import nars.util.meter.session.StatsSession;
-import nars.util.meter.util.Misc;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class DefaultIncidentTracker extends AbstractTracker implements IncidentTracker {
+public class DefaultEventSensor extends AbstractTracker implements EventSensor {
 
-    private static final Logger logger = Logger.getLogger(DefaultIncidentTracker.class.toString());
-    
+    //private static final Logger logger = Logger.getLogger(DefaultEventSensor.class.toString());
 
-    public DefaultIncidentTracker(final StatsSession session) {
+    public DefaultEventSensor(final StatsSession session) {
         super(session);
     }
-    public DefaultIncidentTracker(final String id) {
+
+    public DefaultEventSensor(final String id) {
         super(id);
     }
 
     @Override
-    public IncidentTracker incident() {
-        try {
-            value = 1;
+    public EventSensor event() {
+        //try {
+        
+        value = 1;
 
-            final long now = System.currentTimeMillis();
+        final long now = System.currentTimeMillis();
+
+        session.track(this, now);
+        session.update(this, now);
             
-            session.track(this, now);
-            session.update(this, now);
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             Misc.logHandledException(logger, e, "Caught Exception in incident()");
             Misc.handleUncaughtException(getKey(), e);
-        }
+        }*/
 
         return this;
     }

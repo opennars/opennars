@@ -12,17 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import java.util.List;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 
 /**
  * A convenience base implementation of {@link CompositeTracker}.
  *
  * @author The Stajistic Project
  */
-public abstract class AbstractCompositeTracker<T extends Tracker> {
+public abstract class AbstractCompositeTracker<T extends Sensor> {
 
     public final T[] trackers;
 
@@ -33,14 +33,12 @@ public abstract class AbstractCompositeTracker<T extends Tracker> {
 
     @SuppressWarnings("unchecked")
     public AbstractCompositeTracker(final List<T> trackers) {
-        this(trackers.toArray((T[])new Tracker[trackers.size()]));
+        this(trackers.toArray((T[]) new Sensor[trackers.size()]));
     }
 
 //    public Collection<? extends T> composites() {
 //        return Collections.unmodifiableCollection(Arrays.asList(trackers));
 //    }
-
-
     public AbstractCompositeTracker reset() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
@@ -70,15 +68,14 @@ public abstract class AbstractCompositeTracker<T extends Tracker> {
 
         return buf.toString();
     }
-        
+
     //TODO create aggregation methods
     /*
-    public DataSet get() {
-        return getSession().collectData();
-    }
-    public DataSet getReset() {
-        return getSession().drainData();
-    }
-    */
-    
+     public DataSet get() {
+     return getSession().collectData();
+     }
+     public DataSet getReset() {
+     return getSession().drainData();
+     }
+     */
 }

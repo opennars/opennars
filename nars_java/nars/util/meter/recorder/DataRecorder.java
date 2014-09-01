@@ -16,10 +16,9 @@ package nars.util.meter.recorder;
 
 import java.io.Serializable;
 import java.util.Set;
-
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
-import nars.util.meter.Tracker;
 
 /**
  *
@@ -32,7 +31,8 @@ public interface DataRecorder extends Serializable {
     /**
      * Obtain a Set of field names on which this DataRecorder operates.
      *
-     * @return A Set of supported field names, never empty, and never <tt>null</tt>.
+     * @return A Set of supported field names, never empty, and never
+     * <tt>null</tt>.
      */
     Set<String> getSupportedFieldNames();
 
@@ -46,17 +46,18 @@ public interface DataRecorder extends Serializable {
     Object getField(StatsSession session, String name);
 
     /**
-     * Examine the tracker collected value, perform calculations, and store
-     * the new data.
+     * Examine the tracker collected value, perform calculations, and store the
+     * new data.
      *
      * @param session The session that owns this DataRecorder instance.
      * @param tracker The tracker that is triggering the update.
      * @param now The current time.
      */
-    void update(StatsSession session, Tracker tracker, long now);
+    void update(StatsSession session, Sensor tracker, long now);
 
     /**
-     * Populate internal data structures with the data provided in the given <tt>dataSet</tt>.
+     * Populate internal data structures with the data provided in the given
+     * <tt>dataSet</tt>.
      *
      * @param dataSet The DataSet from which to extract data.
      */
@@ -64,7 +65,8 @@ public interface DataRecorder extends Serializable {
 
     /**
      * Prepare recorded data and add data fields to the given <tt>dataSet</tt>.
-     * The data fields added defined by the Set returned by {@link #getSupportedFieldNames()}.
+     * The data fields added defined by the Set returned by
+     * {@link #getSupportedFieldNames()}.
      *
      * @param session The session that owns this DataRecorder instance.
      * @param dataSet The DataSet to populate with data fields.

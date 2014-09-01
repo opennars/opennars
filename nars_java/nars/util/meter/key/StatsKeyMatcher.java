@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 public abstract class StatsKeyMatcher implements Serializable {
 
     /* FACTORY METHODS */
-
     /**
      * Create a matcher that matches all keys.
      *
@@ -54,7 +53,8 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /**
-     * Create a matcher that matches only keys that equal the given <tt>key</tt>.
+     * Create a matcher that matches only keys that equal the given
+     * <tt>key</tt>.
      *
      * @param key The key for which equal keys should be matched.
      * @return An exact match matcher.
@@ -66,9 +66,11 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /**
-     * Create a matcher that matches keys that have names equal to the given <tt>keyName</tt>.
+     * Create a matcher that matches keys that have names equal to the given
+     * <tt>keyName</tt>.
      *
-     * @param keyName The key name for which keys having an equal name should be matched.
+     * @param keyName The key name for which keys having an equal name should be
+     * matched.
      *
      * @return A key name equality matcher.
      */
@@ -81,7 +83,7 @@ public abstract class StatsKeyMatcher implements Serializable {
      * the given <tt>attrName</tt>.
      *
      * @param attrName The key attribute name for which keys having an equal
-     *                 attribute name should be matched.
+     * attribute name should be matched.
      *
      * @return A key attribute name equality matcher.
      */
@@ -94,7 +96,7 @@ public abstract class StatsKeyMatcher implements Serializable {
      * the given <tt>attrValue</tt>.
      *
      * @param attrValue The key attribute value for which keys having an equal
-     *                  attribute value should be matched.
+     * attribute value should be matched.
      *
      * @return A key attribute value equality matcher.
      */
@@ -199,10 +201,9 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /* COMPOSITION METHODS */
-
     /**
-     * Create a new matcher that negates the result of calls to {@link #matches(StatsKey)}
-     * on this matcher.
+     * Create a new matcher that negates the result of calls to
+     * {@link #matches(StatsKey)} on this matcher.
      *
      * @return The inverse matcher of this matcher.
      */
@@ -211,9 +212,9 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /**
-     * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
-     * the conjunction of the results of the same method called on this and the
-     * passed <tt>matcher</tt>.
+     * Create a new composite matcher for which the {@link #matches(StatsKey)}
+     * method returns the conjunction of the results of the same method called
+     * on this and the passed <tt>matcher</tt>.
      *
      * @param matcher The matcher to conjunct with this matcher.
      *
@@ -224,9 +225,9 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /**
-     * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
-     * the disjunction of the results of the same method called on this and the
-     * passed <tt>matcher</tt>.
+     * Create a new composite matcher for which the {@link #matches(StatsKey)}
+     * method returns the disjunction of the results of the same method called
+     * on this and the passed <tt>matcher</tt>.
      *
      * @param matcher The matcher to disjunct with this matcher.
      *
@@ -237,9 +238,9 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /**
-     * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
-     * the exclusive disjunction of the results of the same method called on this and the
-     * passed <tt>matcher</tt>.
+     * Create a new composite matcher for which the {@link #matches(StatsKey)}
+     * method returns the exclusive disjunction of the results of the same
+     * method called on this and the passed <tt>matcher</tt>.
      *
      * @param matcher The matcher to exclusively disjunct with this matcher.
      *
@@ -250,7 +251,6 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /* FILTER METHODS */
-
     public void filter(final Collection<StatsKey> keys) {
         Iterator<StatsKey> itr = keys.iterator();
         while (itr.hasNext()) {
@@ -280,19 +280,19 @@ public abstract class StatsKeyMatcher implements Serializable {
         return Collections.unmodifiableSet(filteredSet);
     }
 
-    public <T> void filter(final Map<StatsKey,T> map) {
-        Iterator<Map.Entry<StatsKey,T>> itr = map.entrySet().iterator();
+    public <T> void filter(final Map<StatsKey, T> map) {
+        Iterator<Map.Entry<StatsKey, T>> itr = map.entrySet().iterator();
         while (itr.hasNext()) {
-            Map.Entry<StatsKey,T> entry = itr.next();
+            Map.Entry<StatsKey, T> entry = itr.next();
             if (!matches(entry.getKey())) {
                 itr.remove();
             }
         }
     }
 
-    public <T> Map<StatsKey,T> filterCopy(final Map<StatsKey,T> map) {
-        Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(map.size() / 2);
-        for (Map.Entry<StatsKey,T> entry : map.entrySet()) {
+    public <T> Map<StatsKey, T> filterCopy(final Map<StatsKey, T> map) {
+        Map<StatsKey, T> filteredMap = new HashMap<StatsKey, T>(map.size() / 2);
+        for (Map.Entry<StatsKey, T> entry : map.entrySet()) {
             if (matches(entry.getKey())) {
                 filteredMap.put(entry.getKey(), entry.getValue());
             }
@@ -300,9 +300,9 @@ public abstract class StatsKeyMatcher implements Serializable {
         return Collections.unmodifiableMap(filteredMap);
     }
 
-    public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
+    public <T> Collection<T> filterToCollection(final Map<StatsKey, T> map) {
         List<T> filteredList = new ArrayList<T>(map.size() / 2);
-        for (Map.Entry<StatsKey,T> entry : map.entrySet()) {
+        for (Map.Entry<StatsKey, T> entry : map.entrySet()) {
             if (matches(entry.getKey())) {
                 filteredList.add(entry.getValue());
             }
@@ -322,8 +322,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         return Collections.unmodifiableCollection(filteredList);
     }
 
-    public <T> Map<StatsKey,T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
-        Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(associations.size() / 2);
+    public <T> Map<StatsKey, T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
+        Map<StatsKey, T> filteredMap = new HashMap<StatsKey, T>(associations.size() / 2);
         StatsKey key;
         for (StatsKeyAssociation<T> ka : associations) {
             key = ka.getKey();
@@ -346,7 +346,7 @@ public abstract class StatsKeyMatcher implements Serializable {
             return false;
         }
 
-        return (obj instanceof StatsKeyMatcher) && equals((StatsKeyMatcher)obj);
+        return (obj instanceof StatsKeyMatcher) && equals((StatsKeyMatcher) obj);
     }
 
     public abstract boolean equals(StatsKeyMatcher matcher);
@@ -355,8 +355,8 @@ public abstract class StatsKeyMatcher implements Serializable {
     public abstract int hashCode();
 
     /* NESTED CLASSES */
-
     enum MatchTarget {
+
         KEY_NAME,
         ATTR_NAME,
         ATTR_VALUE
@@ -378,19 +378,20 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            return delegate.equals(((NegationMatcher)other).delegate);
+            return delegate.equals(((NegationMatcher) other).delegate);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * delegate.hashCode();
+            return getClass().hashCode()
+                    + 31 * delegate.hashCode();
         }
     }
 
     private static class CompositeMatcher extends StatsKeyMatcher {
 
         enum Op {
+
             AND,
             OR,
             XOR
@@ -401,8 +402,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final StatsKeyMatcher matcher2;
 
         CompositeMatcher(final Op op,
-                         final StatsKeyMatcher matcher1,
-                         final StatsKeyMatcher matcher2) {
+                final StatsKeyMatcher matcher1,
+                final StatsKeyMatcher matcher2) {
             //assertNotNull(op, "op");
             //assertNotNull(matcher1, "matcher1");
             //assertNotNull(matcher2, "matcher2");
@@ -415,14 +416,14 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             switch (op) {
-            case AND:
-                return matcher1.matches(key) && matcher2.matches(key);
+                case AND:
+                    return matcher1.matches(key) && matcher2.matches(key);
 
-            case OR:
-                return matcher1.matches(key) || matcher2.matches(key);
+                case OR:
+                    return matcher1.matches(key) || matcher2.matches(key);
 
-            case XOR:
-                return matcher1.matches(key) ^ matcher2.matches(key);
+                case XOR:
+                    return matcher1.matches(key) ^ matcher2.matches(key);
             }
 
             throw new Error();
@@ -430,16 +431,16 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            CompositeMatcher compositeMatcher = (CompositeMatcher)other;
-            return matcher1.equals(compositeMatcher.matcher1) &&
-                   matcher2.equals(compositeMatcher.matcher2);
+            CompositeMatcher compositeMatcher = (CompositeMatcher) other;
+            return matcher1.equals(compositeMatcher.matcher1)
+                    && matcher2.equals(compositeMatcher.matcher2);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * matcher1.hashCode() +
-                   31 * matcher2.hashCode();
+            return getClass().hashCode()
+                    + 31 * matcher1.hashCode()
+                    + 31 * matcher2.hashCode();
         }
     }
 
@@ -473,12 +474,12 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         @Override
-        public <T> Map<StatsKey,T> filterCopy(final Map<StatsKey,T> map) {
+        public <T> Map<StatsKey, T> filterCopy(final Map<StatsKey, T> map) {
             return Collections.unmodifiableMap(map);
         }
 
         @Override
-        public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
+        public <T> Collection<T> filterToCollection(final Map<StatsKey, T> map) {
             return Collections.unmodifiableCollection(new ArrayList<T>(map.values()));
         }
 
@@ -492,8 +493,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         @Override
-        public <T> Map<StatsKey,T> filterToMap(Collection<? extends StatsKeyAssociation<T>> associations) {
-            Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(associations.size());
+        public <T> Map<StatsKey, T> filterToMap(Collection<? extends StatsKeyAssociation<T>> associations) {
+            Map<StatsKey, T> filteredMap = new HashMap<StatsKey, T>(associations.size());
             for (StatsKeyAssociation<T> ka : associations) {
                 filteredMap.put(ka.getKey(), ka.getValue());
             }
@@ -531,7 +532,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         @Override
-        public <T> void filter(final Map<StatsKey,T> map) {
+        public <T> void filter(final Map<StatsKey, T> map) {
             map.clear();
         }
 
@@ -541,12 +542,12 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         @Override
-        public <T> Map<StatsKey,T> filterCopy(final Map<StatsKey,T> map) {
+        public <T> Map<StatsKey, T> filterCopy(final Map<StatsKey, T> map) {
             return Collections.emptyMap();
         }
 
         @Override
-        public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
+        public <T> Collection<T> filterToCollection(final Map<StatsKey, T> map) {
             return Collections.emptyList();
         }
 
@@ -556,7 +557,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         @Override
-        public <T> Map<StatsKey,T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
+        public <T> Map<StatsKey, T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
             return Collections.emptyMap();
         }
 
@@ -588,13 +589,13 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            return testKey.equals(((ExactMatcher)other).testKey);
+            return testKey.equals(((ExactMatcher) other).testKey);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * testKey.hashCode();
+            return getClass().hashCode()
+                    + 31 * testKey.hashCode();
         }
     }
 
@@ -614,22 +615,22 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             switch (target) {
-            case KEY_NAME:
-                return key.getName().equals(test);
-            case ATTR_NAME:
-                for (String attrName : key.getAttributes().keySet()) {
-                    if (attrName.equals(test)) {
-                        return true;
+                case KEY_NAME:
+                    return key.getName().equals(test);
+                case ATTR_NAME:
+                    for (String attrName : key.getAttributes().keySet()) {
+                        if (attrName.equals(test)) {
+                            return true;
+                        }
                     }
-                }
-                break;
-            case ATTR_VALUE:
-                for (Object attrValue : key.getAttributes().values()) {
-                    if (attrValue.equals(test)) {
-                        return true;
+                    break;
+                case ATTR_VALUE:
+                    for (Object attrValue : key.getAttributes().values()) {
+                        if (attrValue.equals(test)) {
+                            return true;
+                        }
                     }
-                }
-                break;
+                    break;
             }
 
             return false;
@@ -637,16 +638,16 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            EqualsMatcher equalsMatcher = (EqualsMatcher)other;
-            return target == equalsMatcher.target &&
-                   test.equals(equalsMatcher.test);
+            EqualsMatcher equalsMatcher = (EqualsMatcher) other;
+            return target == equalsMatcher.target
+                    && test.equals(equalsMatcher.test);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * target.hashCode() +
-                   31 * test.hashCode();
+            return getClass().hashCode()
+                    + 31 * target.hashCode()
+                    + 31 * test.hashCode();
         }
     }
 
@@ -666,22 +667,22 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             switch (target) {
-            case KEY_NAME:
-                return key.getName().startsWith(prefix);
-            case ATTR_NAME:
-                for (String attrName : key.getAttributes().keySet()) {
-                    if (attrName.startsWith(prefix)) {
-                        return true;
+                case KEY_NAME:
+                    return key.getName().startsWith(prefix);
+                case ATTR_NAME:
+                    for (String attrName : key.getAttributes().keySet()) {
+                        if (attrName.startsWith(prefix)) {
+                            return true;
+                        }
                     }
-                }
-                break;
-            case ATTR_VALUE:
-                for (Object attrValue : key.getAttributes().values()) {
-                    if (attrValue.toString().startsWith(prefix)) {
-                        return true;
+                    break;
+                case ATTR_VALUE:
+                    for (Object attrValue : key.getAttributes().values()) {
+                        if (attrValue.toString().startsWith(prefix)) {
+                            return true;
+                        }
                     }
-                }
-                break;
+                    break;
             }
 
             return false;
@@ -689,16 +690,16 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            PrefixMatcher prefixMatcher = (PrefixMatcher)other;
-            return target == prefixMatcher.target &&
-                   prefix.equals(prefixMatcher.prefix);
+            PrefixMatcher prefixMatcher = (PrefixMatcher) other;
+            return target == prefixMatcher.target
+                    && prefix.equals(prefixMatcher.prefix);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * target.hashCode() +
-                   31 * prefix.hashCode();
+            return getClass().hashCode()
+                    + 31 * target.hashCode()
+                    + 31 * prefix.hashCode();
         }
     }
 
@@ -734,22 +735,22 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             switch (target) {
-            case KEY_NAME:
-                return key.getName().endsWith(suffix);
-            case ATTR_NAME:
-                for (String attrName : key.getAttributes().keySet()) {
-                    if (attrName.endsWith(suffix)) {
-                        return true;
+                case KEY_NAME:
+                    return key.getName().endsWith(suffix);
+                case ATTR_NAME:
+                    for (String attrName : key.getAttributes().keySet()) {
+                        if (attrName.endsWith(suffix)) {
+                            return true;
+                        }
                     }
-                }
-                break;
-            case ATTR_VALUE:
-                for (Object attrValue : key.getAttributes().values()) {
-                    if (attrValue.toString().endsWith(suffix)) {
-                        return true;
+                    break;
+                case ATTR_VALUE:
+                    for (Object attrValue : key.getAttributes().values()) {
+                        if (attrValue.toString().endsWith(suffix)) {
+                            return true;
+                        }
                     }
-                }
-                break;
+                    break;
             }
 
             return false;
@@ -757,16 +758,16 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            SuffixMatcher suffixMatcher = (SuffixMatcher)other;
-            return target == suffixMatcher.target &&
-                   suffix.equals(suffixMatcher.suffix);
+            SuffixMatcher suffixMatcher = (SuffixMatcher) other;
+            return target == suffixMatcher.target
+                    && suffix.equals(suffixMatcher.suffix);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * target.hashCode() +
-                   31 * suffix.hashCode();
+            return getClass().hashCode()
+                    + 31 * target.hashCode()
+                    + 31 * suffix.hashCode();
         }
     }
 
@@ -786,22 +787,22 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             switch (target) {
-            case KEY_NAME:
-                return key.getName().indexOf(string) > -1;
-            case ATTR_NAME:
-                for (String attrName : key.getAttributes().keySet()) {
-                    if (attrName.indexOf(string) > -1) {
-                        return true;
+                case KEY_NAME:
+                    return key.getName().indexOf(string) > -1;
+                case ATTR_NAME:
+                    for (String attrName : key.getAttributes().keySet()) {
+                        if (attrName.indexOf(string) > -1) {
+                            return true;
+                        }
                     }
-                }
-                break;
-            case ATTR_VALUE:
-                for (Object attrValue : key.getAttributes().values()) {
-                    if (attrValue.toString().indexOf(string) > -1) {
-                        return true;
+                    break;
+                case ATTR_VALUE:
+                    for (Object attrValue : key.getAttributes().values()) {
+                        if (attrValue.toString().indexOf(string) > -1) {
+                            return true;
+                        }
                     }
-                }
-                break;
+                    break;
             }
 
             return false;
@@ -809,16 +810,16 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            ContainsMatcher containsMatcher = (ContainsMatcher)other;
-            return target == containsMatcher.target &&
-                    string.equals(containsMatcher.string);
+            ContainsMatcher containsMatcher = (ContainsMatcher) other;
+            return target == containsMatcher.target
+                    && string.equals(containsMatcher.string);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * target.hashCode() +
-                   31 * string.hashCode();
+            return getClass().hashCode()
+                    + 31 * target.hashCode()
+                    + 31 * string.hashCode();
         }
     }
 
@@ -854,13 +855,13 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            return depth == ((DepthMatcher)other).depth;
+            return depth == ((DepthMatcher) other).depth;
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * depth;
+            return getClass().hashCode()
+                    + 31 * depth;
         }
     }
 
@@ -887,13 +888,13 @@ public abstract class StatsKeyMatcher implements Serializable {
                 return false;
             }
 
-            return count == ((AttrCountMatcher)other).count;
+            return count == ((AttrCountMatcher) other).count;
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * count;
+            return getClass().hashCode()
+                    + 31 * count;
         }
     }
 
@@ -903,7 +904,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final int length;
 
         LengthMatcher(final MatchTarget target,
-                      int length) {
+                int length) {
             //assertNotNull(target, "target");
             if (length < 0) {
                 length = 0;
@@ -916,38 +917,38 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             switch (target) {
-            case KEY_NAME:
-                return key.getName().length() == length;
-            case ATTR_NAME:
-                for (String attrName : key.getAttributes().keySet()) {
-                    if (attrName.length() == length) {
-                        return true;
+                case KEY_NAME:
+                    return key.getName().length() == length;
+                case ATTR_NAME:
+                    for (String attrName : key.getAttributes().keySet()) {
+                        if (attrName.length() == length) {
+                            return true;
+                        }
                     }
-                }
-                break;
-            case ATTR_VALUE:
-                for (Object attrValue : key.getAttributes().values()) {
-                    if (attrValue.toString().length() == length) {
-                        return true;
+                    break;
+                case ATTR_VALUE:
+                    for (Object attrValue : key.getAttributes().values()) {
+                        if (attrValue.toString().length() == length) {
+                            return true;
+                        }
                     }
-                }
-                break;
+                    break;
             }
             return false;
         }
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            LengthMatcher lengthMatcher = (LengthMatcher)other;
-            return target == lengthMatcher.target &&
-                   length == lengthMatcher.length;
+            LengthMatcher lengthMatcher = (LengthMatcher) other;
+            return target == lengthMatcher.target
+                    && length == lengthMatcher.length;
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * target.hashCode() +
-                   31 * length;
+            return getClass().hashCode()
+                    + 31 * target.hashCode()
+                    + 31 * length;
         }
     }
 
@@ -957,7 +958,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final Pattern pattern;
 
         public RegExMatcher(final MatchTarget target,
-                            final Pattern pattern) {
+                final Pattern pattern) {
             //assertNotNull(target, "target");
             //assertNotNull(pattern, "pattern");
 
@@ -968,22 +969,22 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             switch (target) {
-            case KEY_NAME:
-                return pattern.matcher(key.getName()).matches();
-            case ATTR_NAME:
-                for (String attrName : key.getAttributes().keySet()) {
-                    if (pattern.matcher(attrName).matches()) {
-                        return true;
+                case KEY_NAME:
+                    return pattern.matcher(key.getName()).matches();
+                case ATTR_NAME:
+                    for (String attrName : key.getAttributes().keySet()) {
+                        if (pattern.matcher(attrName).matches()) {
+                            return true;
+                        }
                     }
-                }
-                break;
-            case ATTR_VALUE:
-                for (Object attrValue : key.getAttributes().values()) {
-                    if (pattern.matcher(attrValue.toString()).matches()) {
-                        return true;
+                    break;
+                case ATTR_VALUE:
+                    for (Object attrValue : key.getAttributes().values()) {
+                        if (pattern.matcher(attrValue.toString()).matches()) {
+                            return true;
+                        }
                     }
-                }
-                break;
+                    break;
             }
 
             return false;
@@ -991,16 +992,16 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            RegExMatcher regExMatcher = (RegExMatcher)other;
-            return target == regExMatcher.target &&
-                   pattern.equals(regExMatcher.pattern);
+            RegExMatcher regExMatcher = (RegExMatcher) other;
+            return target == regExMatcher.target
+                    && pattern.equals(regExMatcher.pattern);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() +
-                   31 * target.hashCode() +
-                   31 * pattern.hashCode();
+            return getClass().hashCode()
+                    + 31 * target.hashCode()
+                    + 31 * pattern.hashCode();
         }
     }
 }

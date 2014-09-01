@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -42,8 +42,6 @@ public abstract class AbstractThreadInfoSpanTracker extends AbstractSpanTracker 
     public AbstractThreadInfoSpanTracker(final String id) {
         super(id);
     }
-    
-    
 
     protected static ThreadMXBean getThreadMXBean() {
         return threadMXBean;
@@ -61,7 +59,7 @@ public abstract class AbstractThreadInfoSpanTracker extends AbstractSpanTracker 
 
             } else {
                 logger.warning("Thread contention monitoring is not supported in this JVM; "
-                          + "Thread contention related trackers will be silent");
+                        + "Thread contention related trackers will be silent");
             }
         }
     }
@@ -81,7 +79,7 @@ public abstract class AbstractThreadInfoSpanTracker extends AbstractSpanTracker 
                 logger.info("Enabling thread CPU time monitoring");
             } else {
                 logger.warning("Thread CPU time monitoring is not supported in this JVM; "
-                          + "Thread CPU time related trackers will be silent");
+                        + "Thread CPU time related trackers will be silent");
             }
         }
     }

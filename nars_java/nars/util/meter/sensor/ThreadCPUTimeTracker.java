@@ -12,49 +12,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.session.StatsSession;
 
 /**
- * 
- * 
+ * CPU Time, in milliseconds
  *
  * @author The Stajistics Project
  */
-public class HitFrequencyTracker extends AbstractSpanTracker {
+public class ThreadCPUTimeTracker extends AbstractThreadInfoSpanTracker {
 
-    private long lastHitStamp = -1;
+    private long startCPUTime; // nanos
 
-    public HitFrequencyTracker(final StatsSession session) {
-        super(session);
-    }
-    public HitFrequencyTracker(final String id) {
+    public ThreadCPUTimeTracker(final String id) {
         super(id);
+
+        ensureCPUTimeMonitoringEnabled();
     }
-    
+
+    public ThreadCPUTimeTracker(final StatsSession session) {
+        super(session);
+
+        ensureCPUTimeMonitoringEnabled();
+    }
 
     @Override
     protected void startImpl(final long now) {
-        lastHitStamp = session.getLastHitStamp();
+        if (isCPUTimeMonitoringEnabled()) {
+            startCPUTime = getThreadMXBean().getCurrentThreadCpuTime();
 
-        super.startImpl(now);
-    }
-
-    @Override
-    protected void stopImpl(final long now) {
-        if (lastHitStamp > 0) {
-            value = startTime - lastHitStamp;
-
-            session.update(this, now);
+            super.startImpl(now);
         }
     }
 
     @Override
-    public Tracker reset() {
+    protected void stopImpl(final long now) {
+        if (isCPUTimeMonitoringEnabled()) {
+            long endCPUTime = getThreadMXBean().getCurrentThreadCpuTime();
+
+            value = (endCPUTime - startCPUTime) / 1000000d; // to millis
+
+            session.update(this, now);
+        }
+
+    }
+
+    @Override
+    public Sensor reset() {
         super.reset();
-        lastHitStamp = -1;
+
+        startCPUTime = -1;
 
         return this;
     }

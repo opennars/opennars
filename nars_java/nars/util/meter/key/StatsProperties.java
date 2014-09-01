@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 import static nars.util.meter.util.Util.assertNotEmpty;
 
-
 /**
- * Provides access to configuration properties that are used by Stajistics internals.
+ * Provides access to configuration properties that are used by Stajistics
+ * internals.
  *
  * @author The Stajistics Project
  */
@@ -31,7 +31,8 @@ public abstract class StatsProperties {
 
     private static StatsProperties instance;
 
-    public StatsProperties() {}
+    public StatsProperties() {
+    }
 
     /**
      * Obtain the singleton instance of {@link StatsProperties}.
@@ -51,12 +52,13 @@ public abstract class StatsProperties {
     }
 
     /**
-     * Set the given StatsConfig <tt>instance</tt> as the singleton instance. After this call,
-     * calls to {@link #getInstance()} will return <tt>instance</tt>.
+     * Set the given StatsConfig <tt>instance</tt> as the singleton instance.
+     * After this call, calls to {@link #getInstance()} will return
+     * <tt>instance</tt>.
      *
-     * @param instance The {@link StatsProperties} instance to use, or <tt>null</tt> to have
-     *                 the default implementation loaded upon the next call to
-     *                 {@link #getInstance()}.
+     * @param instance The {@link StatsProperties} instance to use, or
+     * <tt>null</tt> to have the default implementation loaded upon the next
+     * call to {@link #getInstance()}.
      */
     public static void load(final StatsProperties instance) {
         StatsProperties.instance = instance;
@@ -65,13 +67,13 @@ public abstract class StatsProperties {
     protected abstract Object getPropertyImpl(String key, Object defaultValue);
 
     /* STRING */
-
     /**
      * Get a String property.
      *
      * @param key The key for which to return a value.
      *
-     * @return The String value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     * @return The String value for the given <tt>key</tt>, or <tt>null</tt> if
+     * not found.
      */
     public static String getProperty(final String key) {
         return getProperty(key, null);
@@ -81,24 +83,26 @@ public abstract class StatsProperties {
      * Get a String property.
      *
      * @param key The key for which to return a value.
-     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     * @param defaultValue The value to return when a value cannot be found for
+     * the given <tt>key</tt>.
      *
-     * @return The String value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     * @return The String value for the given <tt>key</tt>, or
+     * <tt>defaultValue</tt> if not found.
      */
     public static String getProperty(final String key,
-                                     final String defaultValue) {
+            final String defaultValue) {
         Object value = getInstance().getPropertyImpl(key, defaultValue);
         return (value != null) ? value.toString() : null;
     }
 
     /* BOOLEAN */
-
     /**
      * Get a Boolean property.
      *
      * @param key The key for which to return a value.
      *
-     * @return The Boolean value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     * @return The Boolean value for the given <tt>key</tt>, or <tt>null</tt> if
+     * not found.
      */
     public static Boolean getBooleanProperty(final String key) {
         return getBooleanProperty(key, null);
@@ -108,20 +112,22 @@ public abstract class StatsProperties {
      * Get a Boolean property.
      *
      * @param key The key for which to return a value.
-     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     * @param defaultValue The value to return when a value cannot be found for
+     * the given <tt>key</tt>.
      *
-     * @return The Boolean value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     * @return The Boolean value for the given <tt>key</tt>, or
+     * <tt>defaultValue</tt> if not found.
      */
     public static Boolean getBooleanProperty(final String key,
-                                             final Boolean defaultValue) {
+            final Boolean defaultValue) {
         Boolean value = defaultValue;
         Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
 
         if (objectValue != null) {
             if (objectValue instanceof Boolean) {
-                value = (Boolean)objectValue;
+                value = (Boolean) objectValue;
             } else if (objectValue instanceof String) {
-                value = Boolean.valueOf((String)objectValue);
+                value = Boolean.valueOf((String) objectValue);
             } else {
                 logger.severe("Failed to coerce property {}={} into a boolean " + key + " " + objectValue);
             }
@@ -131,13 +137,13 @@ public abstract class StatsProperties {
     }
 
     /* INTEGER */
-
     /**
      * Get an Integer property.
      *
      * @param key The key for which to return a value.
      *
-     * @return The Integer value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     * @return The Integer value for the given <tt>key</tt>, or <tt>null</tt> if
+     * not found.
      */
     public static Integer getIntegerProperty(final String key) {
         return getIntegerProperty(key, null);
@@ -147,26 +153,28 @@ public abstract class StatsProperties {
      * Get an Integer property.
      *
      * @param key The key for which to return a value.
-     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     * @param defaultValue The value to return when a value cannot be found for
+     * the given <tt>key</tt>.
      *
-     * @return The Integer value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     * @return The Integer value for the given <tt>key</tt>, or
+     * <tt>defaultValue</tt> if not found.
      */
     public static Integer getIntegerProperty(final String key,
-                                             final Integer defaultValue) {
+            final Integer defaultValue) {
         Integer value = defaultValue;
         Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
 
         if (objectValue != null) {
             if (objectValue instanceof Number) {
-                value = ((Number)objectValue).intValue();
+                value = ((Number) objectValue).intValue();
             } else if (objectValue instanceof String) {
                 try {
-                    value = Integer.parseInt((String)objectValue);
+                    value = Integer.parseInt((String) objectValue);
                 } catch (NumberFormatException nfe) {
                     logger.severe("Failed to parse string property {}={} into an integer " + key + ' ' + objectValue);
                 }
             } else {
-                logger.severe("Failed to coerce property {}={} into an integer " +  key + ' ' + objectValue);
+                logger.severe("Failed to coerce property {}={} into an integer " + key + ' ' + objectValue);
             }
         }
 
@@ -174,13 +182,13 @@ public abstract class StatsProperties {
     }
 
     /* LONG */
-
     /**
      * Get a Long property.
      *
      * @param key The key for which to return a value.
      *
-     * @return The Long value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     * @return The Long value for the given <tt>key</tt>, or <tt>null</tt> if
+     * not found.
      */
     public static Long getLongProperty(final String key) {
         return getLongProperty(key, null);
@@ -190,26 +198,28 @@ public abstract class StatsProperties {
      * Get a Long property.
      *
      * @param key The key for which to return a value.
-     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     * @param defaultValue The value to return when a value cannot be found for
+     * the given <tt>key</tt>.
      *
-     * @return The Long value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     * @return The Long value for the given <tt>key</tt>, or
+     * <tt>defaultValue</tt> if not found.
      */
     public static Long getLongProperty(final String key,
-                                       final Long defaultValue) {
+            final Long defaultValue) {
         Long value = defaultValue;
         Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
 
         if (objectValue != null) {
             if (objectValue instanceof Number) {
-                value = ((Number)objectValue).longValue();
+                value = ((Number) objectValue).longValue();
             } else if (objectValue instanceof String) {
                 try {
-                    value = Long.parseLong((String)objectValue);
+                    value = Long.parseLong((String) objectValue);
                 } catch (NumberFormatException nfe) {
                     logger.severe("Failed to parse string property {}={} into a long" + key + ' ' + objectValue);
                 }
             } else {
-                logger.severe("Failed to coerce property {}={} into a long" +  key + ' ' + objectValue);
+                logger.severe("Failed to coerce property {}={} into a long" + key + ' ' + objectValue);
             }
         }
 
@@ -217,13 +227,13 @@ public abstract class StatsProperties {
     }
 
     /* FLOAT */
-
     /**
      * Get a Float property.
      *
      * @param key The key for which to return a value.
      *
-     * @return The Float value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     * @return The Float value for the given <tt>key</tt>, or <tt>null</tt> if
+     * not found.
      */
     public static Double getFloatProperty(final String key) {
         return getDoubleProperty(key, null);
@@ -233,26 +243,28 @@ public abstract class StatsProperties {
      * Get a Float property.
      *
      * @param key The key for which to return a value.
-     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     * @param defaultValue The value to return when a value cannot be found for
+     * the given <tt>key</tt>.
      *
-     * @return The Float value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     * @return The Float value for the given <tt>key</tt>, or
+     * <tt>defaultValue</tt> if not found.
      */
     public static Float getFloatProperty(final String key,
-                                         final Float defaultValue) {
+            final Float defaultValue) {
         Float value = defaultValue;
         Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
 
         if (objectValue != null) {
             if (objectValue instanceof Number) {
-                value = ((Number)objectValue).floatValue();
+                value = ((Number) objectValue).floatValue();
             } else if (objectValue instanceof String) {
                 try {
-                    value = Float.parseFloat((String)objectValue);
+                    value = Float.parseFloat((String) objectValue);
                 } catch (NumberFormatException nfe) {
-                    logger.severe("Failed to parse string property {}={} into a float" +  key + ' ' + objectValue);
+                    logger.severe("Failed to parse string property {}={} into a float" + key + ' ' + objectValue);
                 }
             } else {
-                logger.severe("Failed to coerce property {}={} into a float" +  key + ' ' + objectValue);
+                logger.severe("Failed to coerce property {}={} into a float" + key + ' ' + objectValue);
             }
         }
 
@@ -260,13 +272,13 @@ public abstract class StatsProperties {
     }
 
     /* DOUBLE */
-
     /**
      * Get a Double property.
      *
      * @param key The key for which to return a value.
      *
-     * @return The Double value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     * @return The Double value for the given <tt>key</tt>, or <tt>null</tt> if
+     * not found.
      */
     public static Double getDoubleProperty(final String key) {
         return getDoubleProperty(key, null);
@@ -276,26 +288,28 @@ public abstract class StatsProperties {
      * Get a Double property.
      *
      * @param key The key for which to return a value.
-     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     * @param defaultValue The value to return when a value cannot be found for
+     * the given <tt>key</tt>.
      *
-     * @return The Double value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     * @return The Double value for the given <tt>key</tt>, or
+     * <tt>defaultValue</tt> if not found.
      */
     public static Double getDoubleProperty(final String key,
-                                           final Double defaultValue) {
+            final Double defaultValue) {
         Double value = defaultValue;
         Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
 
         if (objectValue != null) {
             if (objectValue instanceof Number) {
-                value = ((Number)objectValue).doubleValue();
+                value = ((Number) objectValue).doubleValue();
             } else if (objectValue instanceof String) {
                 try {
-                    value = Double.parseDouble((String)objectValue);
+                    value = Double.parseDouble((String) objectValue);
                 } catch (NumberFormatException nfe) {
-                    logger.severe("Failed to parse string property {}={} into a double" +  key + ' ' + objectValue);
+                    logger.severe("Failed to parse string property {}={} into a double" + key + ' ' + objectValue);
                 }
             } else {
-                logger.severe("Failed to coerce property {}={} into a double" +  key + ' ' + objectValue);
+                logger.severe("Failed to coerce property {}={} into a double" + key + ' ' + objectValue);
             }
         }
 
@@ -307,7 +321,6 @@ public abstract class StatsProperties {
     }
 
     /* NESTED CLASSES */
-
     /**
      * A {@link StatsProperties} implementation that retrieves properties from
      * System properties (a.k.a. JVM arguments).
@@ -318,15 +331,15 @@ public abstract class StatsProperties {
 
         @Override
         public Object getPropertyImpl(final String key,
-                                      final Object defaultValue) {
+                final Object defaultValue) {
             String strDefaultValue = (defaultValue == null) ? null : defaultValue.toString();
             return System.getProperty(key, strDefaultValue);
         }
     }
 
     /**
-     * A {@link StatsProperties} implementation that retrieves properties from
-     * a supplied {@link Map}.
+     * A {@link StatsProperties} implementation that retrieves properties from a
+     * supplied {@link Map}.
      */
     public static final class MapStatsProperties extends StatsProperties {
 
@@ -341,7 +354,7 @@ public abstract class StatsProperties {
 
         @Override
         protected Object getPropertyImpl(final String key,
-                                         final Object defaultValue) {
+                final Object defaultValue) {
             Object value = propertyMap.get(key);
             if (value == null) {
                 value = defaultValue;

@@ -6,12 +6,10 @@ import java.util.Iterator;
 import java.util.Objects;
 import nars.util.rope.Rope;
 
-
-
-/** 
- * Nearly complete implementation of Rope that surrounds some content with
- * a character prefix and suffix.  For example it can be used to represent:
- * '(' + 'text' + ')'
+/**
+ * Nearly complete implementation of Rope that surrounds some content with a
+ * character prefix and suffix. For example it can be used to represent: '(' +
+ * 'text' + ')'
  */
 public final class PrePostCharRope extends AbstractRope {
 

@@ -12,27 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
-
+package nars.util.meter.sensor;
 
 import java.util.logging.Logger;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Misc;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class DefaultManualTracker extends AbstractTracker implements ManualTracker {
+public class EventValueSensor extends AbstractTracker implements ManualTracker {
 
-    private static final Logger logger = Logger.getLogger(DefaultManualTracker.class.toString());    
+    private static final Logger logger = Logger.getLogger(EventValueSensor.class.toString());
 
-    public DefaultManualTracker(final StatsSession statsSession) {
+    public EventValueSensor(final StatsSession statsSession) {
         super(statsSession);
     }
-    public DefaultManualTracker(final String id) {
+
+    public EventValueSensor(final String id) {
         super(id);
     }
 
@@ -50,9 +50,9 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
 
     public void commit(double value) {
         setValue(value);
-        commit();              
+        commit();
     }
-            
+
     @Override
     public void commit() {
         try {
@@ -78,6 +78,4 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
 //            return ManualTracker.class;
 //        }
 //    }
-    
-    
 }

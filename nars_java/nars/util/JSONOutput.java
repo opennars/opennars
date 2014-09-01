@@ -37,13 +37,13 @@ public class JSONOutput extends TextOutput {
         super(reasoner);
         init(pretty);
     }
-    
+
     public JSONOutput(NAR reasoner, PrintStream ps, boolean pretty) {
         super(reasoner, ps);
-        
+
         init(pretty);
     }
-    
+
     protected void init(boolean pretty) {
         GsonBuilder builder = new GsonBuilder()
                 .addSerializationExclusionStrategy(new ExclusionStrategy() {
@@ -70,7 +70,7 @@ public class JSONOutput extends TextOutput {
             builder.setPrettyPrinting();
         }
         gson = builder.create();
-        
+
     }
 
     @Override

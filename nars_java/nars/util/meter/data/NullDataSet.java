@@ -26,7 +26,8 @@ public final class NullDataSet implements DataSet {
 
     private static final NullDataSet instance = new NullDataSet();
 
-    private NullDataSet() {}
+    private NullDataSet() {
+    }
 
     public static NullDataSet getInstance() {
         return instance;
@@ -56,7 +57,7 @@ public final class NullDataSet implements DataSet {
      * @return <tt>null</tt>.
      */
     @Override
-    public Object getField(String name) {
+    public Object get(String name) {
         return null;
     }
 
@@ -80,7 +81,7 @@ public final class NullDataSet implements DataSet {
      * @return An empty Set.
      */
     @Override
-    public Set<String> getFieldNames() {
+    public Set<String> keySet() {
         return Collections.emptySet();
     }
 
@@ -104,7 +105,8 @@ public final class NullDataSet implements DataSet {
      * Does nothing.
      */
     @Override
-    public void clear() {}
+    public void clear() {
+    }
 
     /**
      * Does nothing.
@@ -120,6 +122,7 @@ public final class NullDataSet implements DataSet {
      * Does nothing.
      */
     @Override
-    public void setField(String name, Object value) {}
+    public void put(String name, Object value) {
+    }
 
 }

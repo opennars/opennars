@@ -18,11 +18,10 @@
 package nars.test.util;
 
 import java.io.IOException;
-import java.util.HashMap;
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.build.DefaultNARBuilder;
 import static nars.test.util.Number1DInputTest.randomArray;
-import nars.core.monitor.LogicState;
+import nars.util.meter.data.DataSet;
 import org.junit.Test;
 
 /**
@@ -43,7 +42,7 @@ public class NARStateTest {
         n.finish(16);
         
         
-        HashMap<String, Object> d = new LogicState(n).measure();
+        DataSet d = n.memory.updateLogicState();
 
         assert(d.keySet().size() > 0);
         

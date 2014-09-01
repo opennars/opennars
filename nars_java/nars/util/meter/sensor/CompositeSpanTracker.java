@@ -12,10 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import java.util.List;
-
 
 /**
  *
@@ -41,7 +40,7 @@ public class CompositeSpanTracker<S extends SpanTracker> extends AbstractComposi
     public CompositeSpanTracker track() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
-            trackers[i].track();
+            trackers[i].start();
         }
         return this;
     }
@@ -54,7 +53,7 @@ public class CompositeSpanTracker<S extends SpanTracker> extends AbstractComposi
     public void commit() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
-            trackers[i].commit();
+            trackers[i].stop();
         }
     }
 

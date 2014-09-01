@@ -1,16 +1,16 @@
-
 package nars.util.rope.impl;
 
 import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * TODO write unit test for this, could be useful in several code areas 
+ * TODO write unit test for this, could be useful in several code areas
+ *
  * @author http://stackoverflow.com/a/9200304
  */
 public class CompoundIterator<T> implements Iterator<T> {
 
-    private final Iterator<T>[] iteratorQueue;    
+    private final Iterator<T>[] iteratorQueue;
     int q;
     private Iterator<T> current;
 
@@ -30,10 +30,11 @@ public class CompoundIterator<T> implements Iterator<T> {
             return curHasNext;
         }
     }
+
     private boolean iteratorQueueEmpty() {
         return q < iteratorQueue.length;
     }
-    
+
     private Iterator<T> pop() {
         return iteratorQueue[q++];
     }

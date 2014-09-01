@@ -102,19 +102,19 @@ public abstract class AbstractRope implements Rope {
                 final char y = rope.charAt(j);
                 if (x != y) {
                     return false;
-                }   
+                }
             }
 
             /*final Iterator<Character> i1 = this.iterator();
-            final Iterator<Character> i2 = rope.iterator();
+             final Iterator<Character> i2 = rope.iterator();
 
-            while (i1.hasNext()) {
-                final char a = i1.next();
-                final char b = i2.next();
-                if (a != b) {
-                    return false;
-                }
-            }*/
+             while (i1.hasNext()) {
+             final char a = i1.next();
+             final char b = i2.next();
+             if (a != b) {
+             return false;
+             }
+             }*/
             return true;
         }
         return false;
@@ -218,7 +218,7 @@ public abstract class AbstractRope implements Rope {
     public int indexOf(final CharSequence sequence, final int fromIndex) {
         final CharSequence me = this.getForSequentialAccess();
 
-		// Implementation of Boyer-Moore-Horspool algorithm with
+        // Implementation of Boyer-Moore-Horspool algorithm with
         // special support for unicode.
         // step 0. sanity check.
         final int length = sequence.length();

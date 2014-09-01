@@ -17,7 +17,7 @@ package nars.util.meter.recorder;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import nars.util.meter.Tracker;
+import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Decorator;
@@ -30,17 +30,20 @@ import nars.util.meter.util.ThreadSafe;
  */
 public final class DataRecorders {
 
-    private DataRecorders() {}
+    private DataRecorders() {
+    }
 
     /**
-     * Determine if the <tt>dataRecorder</tt> is annotated with {@link ThreadSafe}.
+     * Determine if the <tt>dataRecorder</tt> is annotated with
+     * {@link ThreadSafe}.
      *
      * @param dataRecorder The {@link DataRecorder} to test.
-     * @return <tt>true</tt> if <tt>dataRecorder</tt> is thread safe, <tt>false</tt> otherwise.
+     * @return <tt>true</tt> if <tt>dataRecorder</tt> is thread safe,
+     * <tt>false</tt> otherwise.
      */
     public static boolean isThreadSafe(final DataRecorder dataRecorder) {
         if (dataRecorder.getClass()
-                        .getAnnotation(ThreadSafe.class) != null) {
+                .getAnnotation(ThreadSafe.class) != null) {
             return true;
         }
 
@@ -48,12 +51,13 @@ public final class DataRecorders {
     }
 
     /**
-     * Decorate <tt>dataRecorder</tt> with a wrapper that implements locking on all method calls.
-     * This will create a new {@link Lock} instance to protect method calls. Equivalent
-     * to calling <tt>locking(DataRecorder, null)</tt>.
+     * Decorate <tt>dataRecorder</tt> with a wrapper that implements locking on
+     * all method calls. This will create a new {@link Lock} instance to protect
+     * method calls. Equivalent to calling <tt>locking(DataRecorder, null)</tt>.
      *
      * @param dataRecorder The {@link DataRecorder} to wrap.
-     * @return A new {@link DataRecorder} instance that wraps <tt>dataRecorder</tt>.
+     * @return A new {@link DataRecorder} instance that wraps
+     * <tt>dataRecorder</tt>.
      *
      * @see #locking(DataRecorder, Lock)
      */
@@ -62,29 +66,33 @@ public final class DataRecorders {
     }
 
     /**
-     * Decorate <tt>dataRecorder</tt> with a wrapper that implements locking on all method calls
-     * using the given <tt>lock</tt>.
+     * Decorate <tt>dataRecorder</tt> with a wrapper that implements locking on
+     * all method calls using the given <tt>lock</tt>.
      *
      * @param dataRecorder The {@link DataRecorder} to wrap.
-     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt> method calls.
-     *             May be <tt>null</tt> to create a new {@link Lock}.
-     * @return A new {@link DataRecorder} instance that wraps <tt>dataRecorder</tt>.
+     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt>
+     * method calls. May be <tt>null</tt> to create a new {@link Lock}.
+     * @return A new {@link DataRecorder} instance that wraps
+     * <tt>dataRecorder</tt>.
      *
      * @see #locking(DataRecorder)
      */
     public static DataRecorder locking(final DataRecorder dataRecorder,
-                                       final Lock lock) {
+            final Lock lock) {
         return new LockingDataRecorderDecorator(dataRecorder, lock);
     }
 
     /**
-     * A convenience method for wrapping all elements of <tt>dataRecorders</tt> in the same
-     * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}. This will
-     * create a new {@link Lock} instance for each <tt>dataRecorders</tt> element.
-     * Equivalent to calling <tt>locking(DataRecorder[], null)</tt>.
+     * A convenience method for wrapping all elements of <tt>dataRecorders</tt>
+     * in the same manner as {@link #locking(DataRecorder)} does for a single
+     * {@link DataRecorder}. This will create a new {@link Lock} instance for
+     * each <tt>dataRecorders</tt> element. Equivalent to calling
+     * <tt>locking(DataRecorder[], null)</tt>.
      *
-     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
-     * @return A new array of {@link DataRecorder}s that wrap the passed <tt>dataRecorders</tt>.
+     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped.
+     * This array will not be modified.
+     * @return A new array of {@link DataRecorder}s that wrap the passed
+     * <tt>dataRecorders</tt>.
      *
      * @see #locking(DataRecorder[], Lock)
      */
@@ -93,18 +101,22 @@ public final class DataRecorders {
     }
 
     /**
-     * A convenience method for wrapping all elements of <tt>dataRecorders</tt> in the same
-     * manner as {@link #locking(DataRecorder, Lock)} does for a single {@link DataRecorder}.
+     * A convenience method for wrapping all elements of <tt>dataRecorders</tt>
+     * in the same manner as {@link #locking(DataRecorder, Lock)} does for a
+     * single {@link DataRecorder}.
      *
-     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
-     * @param lock The shared {@link Lock} to use to lock all method calls of each <tt>dataRecorders</tt> element.
-     *             May be <tt>null</tt> to create a new {@link Lock} instance for each <tt>dataRecorders</tt> element.
-     * @return A new array of {@link DataRecorder}s that wrap the passed <tt>dataRecorders</tt>.
+     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped.
+     * This array will not be modified.
+     * @param lock The shared {@link Lock} to use to lock all method calls of
+     * each <tt>dataRecorders</tt> element. May be <tt>null</tt> to create a new
+     * {@link Lock} instance for each <tt>dataRecorders</tt> element.
+     * @return A new array of {@link DataRecorder}s that wrap the passed
+     * <tt>dataRecorders</tt>.
      *
      * @see #locking(DataRecorder[])
      */
     public static DataRecorder[] locking(final DataRecorder[] dataRecorders,
-                                         final Lock lock) {
+            final Lock lock) {
         if (dataRecorders == null) {
             return null;
         }
@@ -119,13 +131,17 @@ public final class DataRecorders {
     }
 
     /**
-     * Decorates the given <tt>dataRecorder</tt> using the {@link #locking(DataRecorder, Lock)} method
-     * but only if {@link #isThreadSafe(DataRecorder)} returns <tt>false</tt> for the <tt>dataRecorder</tt>.
-     * Equivalent to calling <tt>lockingIfNeeded(DataRecorder, null)</tt>.
+     * Decorates the given <tt>dataRecorder</tt> using the
+     * {@link #locking(DataRecorder, Lock)} method but only if
+     * {@link #isThreadSafe(DataRecorder)} returns <tt>false</tt> for the
+     * <tt>dataRecorder</tt>. Equivalent to calling
+     * <tt>lockingIfNeeded(DataRecorder, null)</tt>.
      *
-     * @param dataRecorder The {@link DataRecorder} to wrap if it is not thread safe.
-     * @return A new {@link DataRecorder} instance that wraps <tt>dataRecorder</tt> if it is not thread safe.
-     *         If <tt>dataRecorder</tt> is thread safe, it is returned untouched.
+     * @param dataRecorder The {@link DataRecorder} to wrap if it is not thread
+     * safe.
+     * @return A new {@link DataRecorder} instance that wraps
+     * <tt>dataRecorder</tt> if it is not thread safe. If <tt>dataRecorder</tt>
+     * is thread safe, it is returned untouched.
      *
      * @see #lockingIfNeeded(DataRecorder, Lock)
      */
@@ -134,19 +150,24 @@ public final class DataRecorders {
     }
 
     /**
-     * Decorates the given <tt>dataRecorder</tt> using the {@link #locking(DataRecorder, Lock)} method
-     * but only if {@link #isThreadSafe(DataRecorder)} returns <tt>false</tt> for the <tt>dataRecorder</tt>.
+     * Decorates the given <tt>dataRecorder</tt> using the
+     * {@link #locking(DataRecorder, Lock)} method but only if
+     * {@link #isThreadSafe(DataRecorder)} returns <tt>false</tt> for the
+     * <tt>dataRecorder</tt>.
      *
-     * @param dataRecorder The {@link DataRecorder} to wrap if it is not thread safe.
-     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt> method calls
-     *             if it is not thread safe. May be <tt>null</tt> to create a new {@link Lock}.
-     * @return A new {@link DataRecorder} instance that wraps <tt>dataRecorder</tt> if it is not thread safe.
-     *         If <tt>dataRecorder</tt> is thread safe, it is returned untouched.
+     * @param dataRecorder The {@link DataRecorder} to wrap if it is not thread
+     * safe.
+     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt>
+     * method calls if it is not thread safe. May be <tt>null</tt> to create a
+     * new {@link Lock}.
+     * @return A new {@link DataRecorder} instance that wraps
+     * <tt>dataRecorder</tt> if it is not thread safe. If <tt>dataRecorder</tt>
+     * is thread safe, it is returned untouched.
      *
      * @see #lockingIfNeeded(DataRecorder)
      */
     public static DataRecorder lockingIfNeeded(final DataRecorder dataRecorder,
-                                               final Lock lock) {
+            final Lock lock) {
         if (isThreadSafe(dataRecorder)) {
             return dataRecorder;
         }
@@ -155,14 +176,18 @@ public final class DataRecorders {
     }
 
     /**
-     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same
-     * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however,
-     * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns
-     * <tt>false</tt> for it. This will create a new {@link Lock} for each element that needs to be decorated.
-     * Equivalent to calling <tt>lockingIfNeeded(DataRecorder[], null)</tt>.
+     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in
+     * the same manner as {@link #locking(DataRecorder)} does for a single
+     * {@link DataRecorder}, however, an element will only be wrapped if
+     * {@link #isThreadSafe(DataRecorder)} returns
+     * <tt>false</tt> for it. This will create a new {@link Lock} for each
+     * element that needs to be decorated. Equivalent to calling
+     * <tt>lockingIfNeeded(DataRecorder[], null)</tt>.
      *
-     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
-     * @return A new array of {@link DataRecorder}s that wrap the passed <tt>dataRecorders</tt>.
+     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped.
+     * This array will not be modified.
+     * @return A new array of {@link DataRecorder}s that wrap the passed
+     * <tt>dataRecorders</tt>.
      *
      * @see #lockingIfNeeded(DataRecorder[], Lock)
      */
@@ -171,20 +196,24 @@ public final class DataRecorders {
     }
 
     /**
-     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same
-     * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however,
-     * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns
+     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in
+     * the same manner as {@link #locking(DataRecorder)} does for a single
+     * {@link DataRecorder}, however, an element will only be wrapped if
+     * {@link #isThreadSafe(DataRecorder)} returns
      * <tt>false</tt> for it.
      *
-     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
-     * @param lock The shared {@link Lock} to use to lock all method calls of each <tt>dataRecorders</tt> element.
-     *             May be <tt>null</tt> to create a new {@link Lock} instance for each <tt>dataRecorders</tt> element.
-     * @return A new array of {@link DataRecorder}s that wrap the passed <tt>dataRecorders</tt>.
+     * @param dataRecorders An array of {@link DataRecorder}s to be wrapped.
+     * This array will not be modified.
+     * @param lock The shared {@link Lock} to use to lock all method calls of
+     * each <tt>dataRecorders</tt> element. May be <tt>null</tt> to create a new
+     * {@link Lock} instance for each <tt>dataRecorders</tt> element.
+     * @return A new array of {@link DataRecorder}s that wrap the passed
+     * <tt>dataRecorders</tt>.
      *
      * @see #lockingIfNeeded(DataRecorder[])
      */
     public static DataRecorder[] lockingIfNeeded(final DataRecorder[] dataRecorders,
-                                                 final Lock lock) {
+            final Lock lock) {
         if (dataRecorders == null) {
             return null;
         }
@@ -199,16 +228,15 @@ public final class DataRecorders {
     }
 
     /* NESTED CLASSES */
-
     @ThreadSafe
     private static final class LockingDataRecorderDecorator
-            implements DataRecorder,Decorator<DataRecorder> {
+            implements DataRecorder, Decorator<DataRecorder> {
 
         private final DataRecorder delegate;
         private final Lock lock;
 
         private LockingDataRecorderDecorator(final DataRecorder delegate,
-                                             final Lock lock) {
+                final Lock lock) {
             //assertNotNull(delegate, "delegate");
             this.delegate = delegate;
 
@@ -236,7 +264,7 @@ public final class DataRecorders {
 
         @Override
         public Object getField(final StatsSession session,
-                               final String name) {
+                final String name) {
             lock.lock();
             try {
                 return delegate.getField(session, name);
@@ -247,7 +275,7 @@ public final class DataRecorders {
 
         @Override
         public void collectData(final StatsSession session,
-                                final DataSet dataSet) {
+                final DataSet dataSet) {
             lock.lock();
             try {
                 delegate.collectData(session, dataSet);
@@ -278,8 +306,8 @@ public final class DataRecorders {
 
         @Override
         public void update(final StatsSession session,
-                           final Tracker tracker,
-                           final long now) {
+                final Sensor tracker,
+                final long now) {
             lock.lock();
             try {
                 delegate.update(session, tracker, now);

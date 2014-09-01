@@ -12,15 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.util.meter.track;
+package nars.util.meter.sensor;
 
 import nars.util.meter.session.StatsSession;
 import nars.util.meter.util.Range;
 
 /**
- * A tracker that tracks time duration with nanosecond precision 
- * (but not necessarily nanosecond accuracy).
- * The value is stored as a fraction of milliseconds.
+ * A tracker that tracks time duration with nanosecond precision (but not
+ * necessarily nanosecond accuracy). The value is stored as a fraction of
+ * milliseconds.
  *
  * @see System#nanoTime()
  *
@@ -33,7 +33,7 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
     public NanoTimeDurationTracker(final StatsSession session) {
         super(session);
     }
-    
+
     public NanoTimeDurationTracker(final String id, Range... ranges) {
         super(id, ranges);
     }
@@ -55,6 +55,5 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
 
         session.update(this, now);
     }
-
 
 }

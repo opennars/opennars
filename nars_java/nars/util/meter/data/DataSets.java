@@ -17,14 +17,15 @@ package nars.util.meter.data;
 import java.util.Set;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
 public class DataSets {
 
-    private DataSets() {}
+    private DataSets() {
+    }
 
     public static DataSet unmodifiable(final DataSet dataSet) {
         if (dataSet.getClass() == ImmutableDataSetDecorator.class) {
@@ -35,7 +36,6 @@ public class DataSets {
     }
 
     /* NESTED CLASSES */
-
     private static final class ImmutableDataSetDecorator implements DataSet {
 
         private final DataSet delegate;
@@ -78,8 +78,8 @@ public class DataSets {
         }
 
         @Override
-        public Object getField(final String name) {
-            return delegate.getField(name);
+        public Object get(final String name) {
+            return delegate.get(name);
         }
 
         @Override
@@ -93,9 +93,9 @@ public class DataSets {
         }
 
         @Override
-        public Set<String> getFieldNames() {
+        public Set<String> keySet() {
             // Already unmodifiable
-            return delegate.getFieldNames();
+            return delegate.keySet();
         }
 
         @Override
@@ -109,7 +109,7 @@ public class DataSets {
         }
 
         @Override
-        public void setField(final String name, final Object value) {
+        public void put(final String name, final Object value) {
             throw new UnsupportedOperationException();
         }
 
@@ -117,7 +117,7 @@ public class DataSets {
         public int size() {
             return delegate.size();
         }
-        
+
     }
 
     private static final class ImmutableMetaDataDecorator implements MetaData {
@@ -135,8 +135,8 @@ public class DataSets {
         }
 
         @Override
-        public Object getField(final String name) {
-            return delegate.getField(name);
+        public Object get(final String name) {
+            return delegate.get(name);
         }
 
         @Override
@@ -150,9 +150,9 @@ public class DataSets {
         }
 
         @Override
-        public Set<String> getFieldNames() {
+        public Set<String> keySet() {
             // Already unmodifiable
-            return delegate.getFieldNames();
+            return delegate.keySet();
         }
 
         @Override
@@ -166,7 +166,7 @@ public class DataSets {
         }
 
         @Override
-        public void setField(final String name, final Object value) {
+        public void put(final String name, final Object value) {
             throw new UnsupportedOperationException();
         }
 

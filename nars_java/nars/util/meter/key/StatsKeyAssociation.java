@@ -15,7 +15,7 @@
 package nars.util.meter.key;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  * @param <T>

@@ -40,8 +40,7 @@ public class SynchronousEventManager implements EventManager {
 
     private List<EventHandler> globalEventHandlers = null;
 
-    private ConcurrentMap<StatsKey,List<EventHandler>> sessionEventHandlers = null;
-        
+    private ConcurrentMap<StatsKey, List<EventHandler>> sessionEventHandlers = null;
 
     private final Support lifeCycleSupport = new Support();
 
@@ -66,29 +65,30 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public Collection<EventHandler> getGlobalEventHandlers() {
-        if (globalEventHandlers == null)
+        if (globalEventHandlers == null) {
             return Collections.EMPTY_LIST;
+        }
         return Collections.unmodifiableCollection(globalEventHandlers);
     }
 
     @Override
-    public Map<StatsKey,Collection<EventHandler>> getEventHandlers() {
+    public Map<StatsKey, Collection<EventHandler>> getEventHandlers() {
         return getEventHandlers(StatsKeyMatcher.all());
     }
 
     @Override
-    public Map<StatsKey,Collection<EventHandler>> getEventHandlers(final StatsKeyMatcher keyMatcher) {
+    public Map<StatsKey, Collection<EventHandler>> getEventHandlers(final StatsKeyMatcher keyMatcher) {
         if (keyMatcher.equals(StatsKeyMatcher.none()) || (sessionEventHandlers == null)) {
             return Collections.emptyMap();
         }
 
-        Map<StatsKey,Collection<EventHandler>> matches =
-            new HashMap<StatsKey,Collection<EventHandler>>(sessionEventHandlers.size());
+        Map<StatsKey, Collection<EventHandler>> matches
+                = new HashMap<StatsKey, Collection<EventHandler>>(sessionEventHandlers.size());
 
-        for (Map.Entry<StatsKey,List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
+        for (Map.Entry<StatsKey, List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
             if (keyMatcher.matches(entry.getKey())) {
                 matches.put(entry.getKey(),
-                            Collections.unmodifiableCollection(new ArrayList<EventHandler>(entry.getValue())));
+                        Collections.unmodifiableCollection(new ArrayList<EventHandler>(entry.getValue())));
             }
         }
 
@@ -98,18 +98,20 @@ public class SynchronousEventManager implements EventManager {
     @Override
     public void addGlobalEventHandler(final EventHandler eventHandler) {
         //assertNotNull(eventHandler, "eventHandler");
-        if (globalEventHandlers == null)
-             globalEventHandlers = createEventHandlerList();
+        if (globalEventHandlers == null) {
+            globalEventHandlers = createEventHandlerList();
+        }
         globalEventHandlers.add(eventHandler);
     }
 
     @Override
     public void addEventHandler(final StatsKey key,
-                                final EventHandler eventHandler) {
+            final EventHandler eventHandler) {
         //assertNotNull(key, "key");
         //assertNotNull(eventHandler, "eventHandler");
-        if (sessionEventHandlers == null)
-            sessionEventHandlers = new ConcurrentHashMap<StatsKey,List<EventHandler>>();
+        if (sessionEventHandlers == null) {
+            sessionEventHandlers = new ConcurrentHashMap<StatsKey, List<EventHandler>>();
+        }
 
         List<EventHandler> eventHandlers = getEventHandlers(key, true);
         eventHandlers.add(eventHandler);
@@ -117,7 +119,9 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public void removeGlobalEventHandler(EventHandler eventHandler) {
-        if (globalEventHandlers == null) return;
+        if (globalEventHandlers == null) {
+            return;
+        }
         globalEventHandlers.remove(eventHandler);
     }
 
@@ -131,14 +135,18 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public void clearGlobalEventHandlers() {
-        if (globalEventHandlers == null) return;
+        if (globalEventHandlers == null) {
+            return;
+        }
         globalEventHandlers.clear();
     }
 
     @Override
     public void clearEventHandlers() {
-        if (sessionEventHandlers == null) return;
-        for (Map.Entry<StatsKey,List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
+        if (sessionEventHandlers == null) {
+            return;
+        }
+        for (Map.Entry<StatsKey, List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
             entry.getValue().clear();
         }
 
@@ -152,12 +160,14 @@ public class SynchronousEventManager implements EventManager {
     }
 
     private List<EventHandler> getEventHandlers(final StatsKey key,
-                                                final boolean create) {
+            final boolean create) {
 
-        if (sessionEventHandlers == null) return null;
-        
+        if (sessionEventHandlers == null) {
+            return null;
+        }
+
         List<EventHandler> eventHandlers = null;
-        
+
         if (key != null) {
             eventHandlers = sessionEventHandlers.get(key);
         }
@@ -174,13 +184,12 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public void fireEvent(final EventType eventType,
-                          final StatsKey key,
-                          final Object target) {
+            final StatsKey key,
+            final Object target) {
         //assertNotNull(eventType, "eventType");
         //assertNotNull(target, "target");
 
         //logger.info("Firing event: {}, key: {}" + eventType + ' ' + key);
-
         if (this.sessionEventHandlers != null) {
             List<EventHandler> eventHandlers = getEventHandlers(key, false);
             if (eventHandlers != null) {
@@ -188,15 +197,15 @@ public class SynchronousEventManager implements EventManager {
             }
         }
 
-        if (globalEventHandlers!=null) {
+        if (globalEventHandlers != null) {
             fireEvent(globalEventHandlers, eventType, key, target);
         }
     }
 
     protected void fireEvent(final Iterable<EventHandler> handlers,
-                             final EventType eventType,
-                             final StatsKey key,
-                             final Object target) {
+            final EventType eventType,
+            final StatsKey key,
+            final Object target) {
         for (final EventHandler handler : handlers) {
             try {
                 handler.handleStatsEvent(eventType, key, target);

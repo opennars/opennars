@@ -18,29 +18,32 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * A {@link StatsKey} implementation that stores attributes in a {@link Map}. Do not
- * instantiate this class directly. Instead use the {@link StatsKeyFactory} provided by
- * {@link StatsManager#getKeyFactory()}, or {@link StatsFactory#newKey(String)}, or
+ * A {@link StatsKey} implementation that stores attributes in a {@link Map}. Do
+ * not instantiate this class directly. Instead use the {@link StatsKeyFactory}
+ * provided by {@link StatsManager#getKeyFactory()}, or
+ * {@link StatsFactory#newKey(String)}, or
  * {@link StatsFactory#buildKey(String)}.
  *
  * @author The Stajistics Project
  */
 public class DefaultStatsKey extends AbstractStatsKey {
 
-    protected final Map<String,Object> attributes;
+    protected final Map<String, Object> attributes;
 
     /**
-     * Do not create instances directly; use a 
+     * Do not create instances directly; use a
      *
      * @param name The key name. Must not be <tt>null</tt>.
-     * @param keyFactory The factory that supports the creation of copies of this StatsKey instance.
-     * @param attributes The Map of attributes to be associated with this StatsKey instance. 
-     *                   Must not be <tt>null</tt>. This Map is not copied; it is referenced directly.
+     * @param keyFactory The factory that supports the creation of copies of
+     * this StatsKey instance.
+     * @param attributes The Map of attributes to be associated with this
+     * StatsKey instance. Must not be <tt>null</tt>. This Map is not copied; it
+     * is referenced directly.
      * @throws NullPointerException If <tt>attributes</tt> is <tt>null</tt>.
      */
     public DefaultStatsKey(final String namespace,
-                           final String name,
-                           final Map<String,Object> attributes) {
+            final String name,
+            final Map<String, Object> attributes) {
         super(namespace, name);
         //assertNotNull(attributes, "attributes");
 
@@ -55,7 +58,7 @@ public class DefaultStatsKey extends AbstractStatsKey {
     }
 
     @Override
-    public Map<String,Object> getAttributes() {
+    public Map<String, Object> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
 
@@ -75,7 +78,7 @@ public class DefaultStatsKey extends AbstractStatsKey {
         // so use their implementation if possible
         Class<?> keyClass = other.getClass();
         if (keyClass == SingleAttributeStatsKey.class) {
-            return ((AbstractStatsKey)other).areAttributesEqual(this);
+            return ((AbstractStatsKey) other).areAttributesEqual(this);
         }
 
         return attributes.equals(other.getAttributes());
