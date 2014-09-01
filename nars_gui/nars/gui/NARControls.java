@@ -58,7 +58,7 @@ import nars.gui.output.MemoryView;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
-import nars.gui.output.chart.PLineChart;
+import nars.gui.output.chart.ChartsPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -126,7 +126,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     TestChamber chamber=new TestChamber();
     private final JMenuItem internalExperienceItem;
     private final JMenuItem narsPlusItem;
-    private PLineChart chart;
+    private ChartsPanel chart;
     public NARControls(final NAR nar) {
         super(new BorderLayout());
         
@@ -710,7 +710,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         {
             
             
-            this.chart = new PLineChart(nar.memory.logic, chartHistoryLength);
+            this.chart = new ChartsPanel(nar.memory.logic, chartHistoryLength);
             //chartPanel.add(chart);
                         
         }

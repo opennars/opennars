@@ -1,13 +1,16 @@
 package nars.core.sense;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.TreeMap;
 import nars.core.Memory;
 import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.data.DefaultDataSet;
+import nars.util.meter.sensor.AbstractSpanTracker;
+import nars.util.meter.sensor.AbstractTracker;
 import nars.util.meter.sensor.EventSensor;
 import nars.util.meter.sensor.EventValueSensor;
 import nars.util.meter.sensor.HitPeriodTracker;
@@ -35,14 +38,18 @@ public class LogicSense extends DefaultDataSet implements Serializable {
     //public final Sensor CONCEPT_FIRE;
     public final NanoTimeDurationTracker IO_CYCLE;    
     public final NanoTimeDurationTracker MEMORY_CYCLE;
-    public final HitPeriodTracker CYCLE;
+    public final NanoTimeDurationTracker CYCLE;
     
     public final EventValueSensor TASK_IMMEDIATE_PROCESS_PRIORITY;
     public final HitPeriodTracker TASK_IMMEDIATE_PROCESS;
     
     public final EventValueSensor TASKLINK_FIRE;
     public final NanoTimeDurationTracker TASKLINK_REASON; //both duration and count
-   
+    
+    public final EventValueSensor OUTPUT_TASK;
+    
+    public final EventValueSensor CONCEPT_NEW;
+    
     public final MemoryUseTracker MEMORY_CYCLE_RAM_USED;
     public final ThreadCPUTimeTracker CYCLE_CPU_TIME;
     //public final ThreadBlockTimeTracker CYCLE_BLOCK_TIME;
@@ -53,32 +60,39 @@ public class LogicSense extends DefaultDataSet implements Serializable {
     private Object conceptQuestionsSum;
     
     
+    
 
     public LogicSense(Memory memory) {
-        super(new ConcurrentHashMap());
-        this.memory = memory;
+        super(Collections.synchronizedMap(new TreeMap()));
         
-
+        this.memory = memory;
         
         add(IO_CYCLE = new NanoTimeDurationTracker("io.cycle"));
         add(MEMORY_CYCLE = new NanoTimeDurationTracker("memory.cycle"));
         
-        add(CYCLE = new HitPeriodTracker("cycle"));
-        
+        add(CYCLE = new NanoTimeDurationTracker("cycle"));   
+        CYCLE.setSampleWindow(64);
         
         add(TASK_IMMEDIATE_PROCESS = new HitPeriodTracker("task.immediate_process"));
         add(TASK_IMMEDIATE_PROCESS_PRIORITY = new EventValueSensor("task.immediate_process.priority"));
         add(MEMORY_CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used"));
         MEMORY_CYCLE_RAM_USED.setSampleResolution(8);
-        MEMORY_CYCLE_RAM_USED.setSamplePeriod(32);
+        MEMORY_CYCLE_RAM_USED.setSampleWindow(32);
                 
         add(CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time"));
         CYCLE_CPU_TIME.setSampleResolution(4);
-        CYCLE_CPU_TIME.setSamplePeriod(16);
+        CYCLE_CPU_TIME.setSampleWindow(64);
                 
         //add(CONCEPT_FIRE = new DefaultEventSensor("concept.fire"));
         add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
-        TASKLINK_FIRE.setSamplePeriod(32);
+        TASKLINK_FIRE.setSampleWindow(32);
+        
+        add(OUTPUT_TASK = new EventValueSensor("output.task"));
+        OUTPUT_TASK.setSampleWindow(32);
+
+        add(CONCEPT_NEW = new EventValueSensor("concept.new"));
+        CONCEPT_NEW.setSampleWindow(32);
+        
         add(TASKLINK_REASON = new NanoTimeDurationTracker("tasklink.reason"));
     }
     
@@ -124,33 +138,39 @@ public class LogicSense extends DefaultDataSet implements Serializable {
         
         //DataSet cycle = CYCLE.get();
         double cycleTimeMS = CYCLE.getValue();
+        double cycleTimeMeanMS = CYCLE.get().mean();
         {
-            put("cycle.frequency.hz", (cycleTimeMS == 0) ? 0 : (1000.0 / cycleTimeMS) );
+            put("cycle.frequency.hz", (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMS) );
+            put("cycle.frequency.mean.hz", (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMeanMS) );
         }
         {
             //DataSet d = IO_CYCLE.get();
-            put("io.cycle.period.mean.pct", IO_CYCLE.getValue() / cycleTimeMS );
-        }
-        {
-            //DataSet d = MEMORY_CYCLE.get();
-            put("memory.cycle.period.mean.pct", MEMORY_CYCLE.getValue() / cycleTimeMS );
+            put("io_to_memory.period.ratio", IO_CYCLE.getValue() / MEMORY_CYCLE.getValue() );
         }
         {
             //DataSet d = MEMORY_CYCLE_RAM_USED.get();
-            put("memory.cycle.ram_use.delta_Kb.sampled.mean", MEMORY_CYCLE_RAM_USED.get().mean());
+            put("memory.cycle.ram_use.delta_Kb.sampled", MEMORY_CYCLE_RAM_USED.getValue());
         }
         {
             //DataSet d = CYCLE_CPU_TIME.get();
-            put("memory.cycle.cpu_time.sampled.mean.pct", CYCLE_CPU_TIME.get().mean() / cycleTimeMS );
+            put("memory.cycle.cpu_time.sampled", CYCLE_CPU_TIME.getValue() );
         }
         {
             DataSet fire = TASKLINK_FIRE.get();
             DataSet reason = TASKLINK_REASON.get();
             put("reason.fire.tasklink.priority.mean", fire.mean());
-            put("reason.fire.tasklink.delta_count", (double)TASKLINK_FIRE.getDeltaHits());
+            put("reason.fire.tasklinks.delta", (double)TASKLINK_FIRE.getDeltaHits());
             
             put("reason.tasklink.period.pct", TASKLINK_REASON.getValue() / cycleTimeMS);
-            put("reason.tasklink.delta_count", (double)TASKLINK_REASON.getDeltaHits());
+            put("reason.tasklinks", (double)TASKLINK_REASON.getHits());
+        }
+        {
+            put("output.tasks", OUTPUT_TASK.getHits());
+            put("output.tasks.budget.mean", OUTPUT_TASK.get().mean());
+        }
+        {
+            put("concept.new", CONCEPT_NEW.getHits());
+            put("concept.new.complexity.mean", CONCEPT_NEW.get().mean());
         }
         
         if (time % allSensorResetPeriodCycles == 0)
@@ -161,8 +181,13 @@ public class LogicSense extends DefaultDataSet implements Serializable {
     
     public void updateSensors(final boolean reset) {
         for (final Sensor s : sensors.values()) {
-            if (reset)
+            if (reset) {
+                if (s instanceof AbstractSpanTracker) {
+                    if (((AbstractTracker)s).getSampleWindow() > 0)
+                        continue;                
+                }
                 s.getSession().drainData();
+            }
             else
                 s.getSession().collectData();
         }        

@@ -322,15 +322,21 @@ public class Memory implements Output, Serializable {
         newTasks = new ArrayDeque<>();                
 
         this.operators = new HashMap<>();
+
+        logic = new LogicSense(this);
+
+        
+        //after this line begins actual inference, now that the essential data strucures are allocated
+        //------------------------------------ 
+        
+        
         
         // create self
         self = conceptualize(new Term(Symbols.SELF)).term;
-        
-        logic = new LogicSense(this);
-        
+
         for (Operator o : initialOperators)
             addOperator(o);
-        
+                
         reset();
 
     }
@@ -434,6 +440,8 @@ public class Memory implements Output, Serializable {
             if (newConcept == null) {
                 return null;
             } else {
+                logic.CONCEPT_NEW.commit(term.getComplexity());
+                        
                 if (recorder.isActive()) {
                     recorder.onConceptNew(concept);
                 }
@@ -548,6 +556,8 @@ public class Memory implements Output, Serializable {
         
         final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
         final float budget = t.budget.summary();       
+        
+        logic.OUTPUT_TASK.commit(budget);
         
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             output(OUT.class, t);
@@ -896,7 +906,7 @@ public class Memory implements Output, Serializable {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         
-                        // new concept formation
+                        // new concept formation                        
                         novelTasks.putIn(task);
                         
                     } else {

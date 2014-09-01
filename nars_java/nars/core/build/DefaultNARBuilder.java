@@ -1,6 +1,8 @@
 package nars.core.build;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.ConceptProcessor;
+import nars.core.Memory;
 import nars.core.NARBuilder;
 import nars.core.Param;
 import nars.core.Parameters;
@@ -13,8 +15,6 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
-import nars.core.Memory;
-import nars.core.ConceptProcessor;
 
 /**
  * Default set of NAR parameters which have been classically used for development.

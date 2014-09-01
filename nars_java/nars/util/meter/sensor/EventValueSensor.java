@@ -53,6 +53,7 @@ public class EventValueSensor extends AbstractTracker implements ManualTracker {
     }
 
     public void commit(double value) {
+        super.commit();
         setValue(value);
         commit();
     }

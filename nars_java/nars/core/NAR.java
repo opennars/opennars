@@ -327,7 +327,7 @@ public class NAR implements Runnable, Output {
             debugTime();            
         }
         
-        memory.logic.CYCLE.event();
+        memory.logic.CYCLE.start();
         memory.logic.CYCLE_CPU_TIME.start();
         
         int inputCycles = memory.param.cycleInputTasks.get();
@@ -365,6 +365,7 @@ public class NAR implements Runnable, Output {
         }        
         
         memory.logic.CYCLE_CPU_TIME.stop();
+        memory.logic.CYCLE.stop();
     }
     
     
