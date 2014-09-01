@@ -13,9 +13,11 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -41,7 +43,7 @@ import nars.io.Output;
  */
 public class MultiLogPanel extends JSplitPane implements Output, HierarchyListener {
 
-    final long decayPeriodNS = 100 * 1000 * 1000; //100ms
+    final long activityDecayPeriodNS = 100 * 1000 * 1000; //100ms
     
     /** extension of SwingLogText with functionality specific to MultiLogPanel */
     public class SwingLogTextM extends SwingLogText  implements ChangeListener {
@@ -53,12 +55,13 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
         public final JCheckBox enabler;
         final Object category;
         JPanel displayed = null;
+        private final String label;
 
         public SwingLogTextM(Object category) {
             super(nar);
             this.category = category;
             
-            String label;
+            
             if (category instanceof Task) {
                 label = ((Task)category).sentence.toString();
             }
@@ -68,8 +71,7 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
             
             this.enabler = new JCheckBox(label) {
 
-                @Override
-                public void paint(Graphics g) {
+                @Override public void paint(Graphics g) {
                     Color c = new Color(1f, 1f-activity/2f, 1f-activity/2f );
                     g.setColor(c);
                     g.fillRect(0, 0, getWidth(), getHeight());                    
@@ -179,7 +181,7 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
         decayActivities();
     }
 
-    public SwingLogText getLogPanel(Object category) {
+    public SwingLogTextM getLogPanel(Object category) {
         if (category == null) {
             return categories.get("Root");
         } else {
@@ -199,12 +201,27 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
 
     public JPanel showCategory(Object category) {
         String title = category.toString();
-        SwingLogText p = getLogPanel(category);
+        SwingLogTextM p = getLogPanel(category);
         int columnWidth = 400;
         SwingLogPanel.setConsoleStyle(p, true);
 
         JPanel x = new JPanel(new BorderLayout());
-        x.add(new JButton(title), BorderLayout.NORTH);
+        
+        JMenuBar headerMenu = new JMenuBar();
+        JMenu m = new JMenu(p.label);
+        m.add(new JMenuItem("Statement List"));
+        m.add(new JMenuItem("Log"));
+        m.add(new JMenuItem("Concept List"));
+        m.add(new JMenuItem("Concept Cloud"));        
+        m.add(new JMenuItem("Concepts Network"));
+        m.add(new JMenuItem("Statements Network"));
+        m.add(new JMenuItem("Truth vs. Confidence"));        
+        m.addSeparator();
+        m.add(new JMenuItem("Close"));
+        headerMenu.add(m);
+        
+                
+        x.add(headerMenu, BorderLayout.NORTH);
         
         //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
         JPanel ioTextWrap = new JPanel(new BorderLayout());
@@ -309,7 +326,7 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
     long lastDecayed = 0;
     protected void decayActivities() {
         long now = System.nanoTime();
-        if (now - lastDecayed > decayPeriodNS) {
+        if (now - lastDecayed > activityDecayPeriodNS) {
             for (SwingLogTextM c : categories.values()) {
                 c.decayActvity();
             }

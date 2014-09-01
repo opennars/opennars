@@ -44,7 +44,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
@@ -56,10 +55,10 @@ import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.MemoryView;
-import nars.gui.output.PLineChart;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
+import nars.gui.output.chart.PLineChart;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -707,18 +706,19 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         p.add(newIntSlider(memory.param.beliefForgettingRate, "Belief Forgetting Rate", 1, 99), c);
         p.add(newIntSlider(memory.param.conceptForgettingRate, "Concept Forgetting Rate", 1, 99), c);
 
-        JPanel chartPanel = new JPanel(new GridLayout(0,1));
+        //JPanel chartPanel = new JPanel(new GridLayout(0,1));
         {
             
             
             this.chart = new PLineChart(nar.memory.logic, chartHistoryLength);
-            chartPanel.add(chart.newPanel());
+            //chartPanel.add(chart);
                         
         }
         
         c.weighty = 1.0;
         c.fill = GridBagConstraints.BOTH;        
-        p.add(new JScrollPane(chartPanel), c);
+        //p.add(new JScrollPane(chartPanel), c);
+        p.add(chart, c);
 
         /*c.fill = c.BOTH;
         p.add(Box.createVerticalBox(), c);*/

@@ -20,6 +20,7 @@
  */
 package nars.gui;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.File;
@@ -162,6 +163,10 @@ public class NARSwing  {
     }
     */
 
+    public static Color getColor(final String s) {            
+        double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
+        return Color.getHSBColor((float)hue,0.7f,0.8f);
+    }
 
 
 

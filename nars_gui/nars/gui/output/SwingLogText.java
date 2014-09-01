@@ -20,6 +20,7 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.gui.NARSwing;
 import nars.io.Output.OUT;
 
 
@@ -28,7 +29,7 @@ public class SwingLogText extends JTextPane {
 
     /** # of messages to buffer in log */
     private int BufferLength = 512;
-    private final int baseFontSize;
+    private final float baseFontScale = 1.0f;
     
     public static class LogLine {
         public final Class c;
@@ -54,18 +55,20 @@ public class SwingLogText extends JTextPane {
         
         doc = (DefaultStyledDocument) getDocument();
         setEditable(false);
+        
         // Create and add the main document style
         Style defaultStyle = getStyle(StyleContext.DEFAULT_STYLE);
         mainStyle = doc.addStyle("MainStyle", defaultStyle);
+        
         //StyleConstants.setLeftIndent(mainStyle, 16);
         //StyleConstants.setRightIndent(mainStyle, 16);
         //StyleConstants.setFirstLineIndent(mainStyle, 16);
-        //StyleConstants.setFontFamily(mainStyle, "serif");
-        //StyleConstants.setFontSize(mainStyle, 12);
+        StyleConstants.setFontFamily(mainStyle, NARSwing.monofont.getFamily());
+        StyleConstants.setFontSize(mainStyle, 16);
+
         doc.setLogicalStyle(0, mainStyle);
         
-        this.baseFontSize = getFont().getSize();
-
+        
 
         
     }
@@ -93,24 +96,22 @@ public class SwingLogText extends JTextPane {
     public final Runnable update = new Runnable() {
         @Override public void run() {
             synchronized (pendingDisplay) {
-                for (LogLine l : pendingDisplay) {             
+                for (final LogLine l : pendingDisplay) {             
                     print(l.c, l.o);
-                }
+                }    
                 pendingDisplay.clear();
+                limitBuffer();
+                
             }
         }
     };
     
-    protected void print(final Color color, final String text, final boolean bold, float fontSize)  {                
-        fontSize *= baseFontSize;
-        
+    protected void print(final Color color, final String text)  {                
         StyleContext sc = StyleContext.getDefaultStyleContext();
-        MutableAttributeSet aset = getInputAttributes();
-        
+        MutableAttributeSet aset = getInputAttributes();        
         StyleConstants.setForeground(aset, color);
         StyleConstants.setBackground(aset, Color.BLACK);
-        StyleConstants.setFontSize(aset, (int)fontSize);
-        StyleConstants.setBold(aset, bold);
+        //StyleConstants.setBold(aset, bold);
 
         try {
             doc.insertString(doc.getLength(), text, aset);            
@@ -119,25 +120,11 @@ public class SwingLogText extends JTextPane {
         }
         
     }
-    protected void printColorBlock(final Color color, int num, float fontSize)  {                
-        fontSize *= baseFontSize;
-        
+    protected void printColorBlock(final Color color, String s)  {
         StyleContext sc = StyleContext.getDefaultStyleContext();
-        MutableAttributeSet aset = getInputAttributes();
-        
+        MutableAttributeSet aset = getInputAttributes();        
         StyleConstants.setBackground(aset, color);
-        StyleConstants.setFontSize(aset, (int)fontSize);        
-
-        String s;
-        switch (num) {
-            case 1: s = " "; break;
-            case 2: s = "  "; break;
-            case 3: s = "   "; break;
-                //TODO handle > 3
-            default: 
-                s = "    "; break;
-        }
-            
+                    
         try {
             doc.insertString(doc.getLength(), s, aset);            
         } catch (BadLocationException ex) {         }        
@@ -146,7 +133,6 @@ public class SwingLogText extends JTextPane {
     protected void print(final Class c, final Object o)  {        
         Color defaultColor = Color.WHITE;
 
-        float fontScale = 2f;
         float priority = 1f;
         if (c!=OUT.class) {
             //pad the channel name to max 6 characters, right aligned
@@ -162,25 +148,24 @@ public class SwingLogText extends JTextPane {
                 case 5: n = " " + n; break;                    
             }
             
-            print(LogPanel.getChannelColor(c), n, false, fontScale);        
+            print(LogPanel.getChannelColor(c), n);
         }
         
         else {
             if (o instanceof Task) {
                 Task t = (Task)o;
                 priority = t.budget.getPriority();
-                printColorBlock(LogPanel.getPriorityColor(priority), 2, fontScale);
+                printColorBlock(LogPanel.getPriorityColor(priority), "  ");
                 
                 Sentence s = t.sentence;
                 if (s!=null) {
                     TruthValue tv = s.truth;
                     if (tv!=null) {                    
-                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), 2, fontScale);
-                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), 2, fontScale);                        
+                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
+                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");                        
                     }
-                    else {
-                        
-                        printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), 4, fontScale);                   
+                    else {                        
+                        printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");                   
                     }
                 }
             }
@@ -188,21 +173,20 @@ public class SwingLogText extends JTextPane {
         
         float tc = 0.75f + 0.25f * priority;
         Color textColor = new Color(tc, tc, tc);
-        print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n', false, fontScale);
+        print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n');
     }
     
     
 
     public void print(Class c, Object o, boolean showStamp, NAR n) {        
-        //limitBuffer(nextOutput.baseLength());
-        limitBuffer(128);
+        //limitBuffer(nextOutput.baseLength());        
         out(c, o);        
     }
     
 
-    void limitBuffer(int incomingDataSize) {
+    void limitBuffer() {
         Document doc = getDocument();
-        int overLength = doc.getLength() + incomingDataSize - LogPanel.maxIOTextSize;
+        int overLength = doc.getLength() - LogPanel.maxIOTextSize;
         if (overLength > 0) {
             try {
                 doc.remove(0, overLength);

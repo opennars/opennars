@@ -76,7 +76,7 @@ public class SwingLogPanel extends LogPanel {
         }
         c.setBorder(new EmptyBorder(0, 0, 0, 0));
         //c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
-        c.setFont(NARSwing.monofont.deriveFont(fontSize));
+        c.setFont(NARSwing.monofont.deriveFont(1f*fontSize));
     }
 
     final static String COPY = "Copy";
@@ -153,7 +153,7 @@ public class SwingLogPanel extends LogPanel {
 
     @Override
     void limitBuffer(int incomingDataSize) {
-        ioText.limitBuffer(incomingDataSize);
+        ioText.limitBuffer();
     }
 
 }

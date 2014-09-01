@@ -55,7 +55,7 @@ public abstract class AbstractThreadInfoSpanTracker extends AbstractSpanTracker 
                 threadMXBean.setThreadContentionMonitoringEnabled(true);
                 contentionMonitoringEnabled = true;
 
-                logger.info("Enabling thread contention monitoring");
+                //logger.info("Enabling thread contention monitoring");
 
             } else {
                 logger.warning("Thread contention monitoring is not supported in this JVM; "
@@ -76,7 +76,7 @@ public abstract class AbstractThreadInfoSpanTracker extends AbstractSpanTracker 
                 threadMXBean.setThreadCpuTimeEnabled(true);
                 cpuTimeMonitoringEnabled = true;
 
-                logger.info("Enabling thread CPU time monitoring");
+                //logger.info("Enabling thread CPU time monitoring");
             } else {
                 logger.warning("Thread CPU time monitoring is not supported in this JVM; "
                         + "Thread CPU time related trackers will be silent");
