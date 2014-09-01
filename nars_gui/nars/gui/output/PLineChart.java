@@ -3,83 +3,95 @@ package nars.gui.output;
 import com.hipposretribution.controlP5.ControlP5;
 import com.hipposretribution.controlP5.drawable.controller.single.chart.Chart;
 import java.awt.BorderLayout;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JPanel;
 import nars.util.meter.data.DataSet;
 import processing.core.PApplet;
 
-
 public class PLineChart extends PApplet {
-    private final String title;
-    private final int historySize;
-    private final int lineColor;
-    private final int chartType;
-    private float minValue = 0;
-    private float maxValue = 1;
-    private boolean autoRanging = true;
 
+    private final int historySize;
+    //private final int lineColor;
+    //private final int chartType;
+    private boolean autoRanging = true;
+    private final DataSet data;
+    private final Map<String, Chart> charts = new HashMap();
+    
     /**
-     * 
+     *
      * @param title
      * @param historySize
-     * @param chartType  use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA, Chart.BAR_CENTERED
+     * @param chartType use Chart.BAR, Chart.LINE, Chart.PIE, Chart.AREA,
+     * Chart.BAR_CENTERED
      */
-    public PLineChart(String title, int historySize, int chartType) {
+    public PLineChart(DataSet data, int historySize) {
         super();
-        this.title = title;
+        this.data = data;
         this.historySize = historySize;
-        this.lineColor = papplet.getColor(title);
-        this.chartType = chartType;
+        //this.lineColor = papplet.getColor(title);
+        //this.chartType = chartType;
     }
 
+    private static final long serialVersionUID = -1260688258272923431L;
 
-	private static final long serialVersionUID = -1260688258272923431L;
+    ControlP5 cp5;
 
-	ControlP5 cp5;
-
-	Chart chart;
-
-	public void setup() {
-	  noLoop();
-	  //smooth();
-	  cp5 = new ControlP5(this);
-	  chart = cp5.addChart("_a")
-	               //.setPosition(50, 50)
-	               //.setSize(200, 200)
-	               //.setRange(-20, 20)
-	               .setView(chartType);
-
-	  chart.getColour().setBackground(0);
-          chart.setCaptionLabel(title);
-          chart.setLabelVisible(true);
-
-
-	  chart.addDataSet("a");
-          
-          
-          if (chartType == Chart.LINE) {
-              chart.setStrokeWeight(2f);
-              chart.setColors("a", lineColor);
-          }
-          else if (chartType == Chart.BAR) {              
-              chart.setColors("a", color(0.75f), lineColor);
-          }
-          else {
-              chart.setColors("a", lineColor);              
-          }
-	  chart.setData("a", new float[historySize]);
-          
-          
-          background(0);
-          
-	}
-
-
-	public void draw() {
-            chart.setSize(getWidth(), getHeight());
-	  background(0);
-	  
-	}
+    public void setup() {
+        noLoop();
+        //smooth();
         
+        cp5 = new ControlP5(this);
+
+        for (String f : data.keySet()) {
+
+            addChart(f);
+        }
+
+        background(0);
+
+    }
+
+    protected Chart addChart(String f) {
+        int chartType = Chart.AREA;
+
+        Chart ch = cp5.addChart(f)
+                //.setPosition(50, 50)
+                //.setSize(200, 200)
+                //.setRange(-20, 20)
+                .setView(chartType);
+
+        ch.getColour().setBackground(0);
+        ch.setCaptionLabel(f);
+        ch.setLabelVisible(true);
+        ch.addDataSet(f);
+        
+
+        int lineColor = papplet.getColor(f);
+
+        if (chartType == Chart.LINE) {
+            ch.setStrokeWeight(2f);
+            ch.setColors(f, lineColor);
+        } else if (chartType == Chart.BAR) {
+            ch.setColors(f, color(0.75f), lineColor);
+        } else {
+            ch.setColors(f, lineColor);
+        }
+
+        ch.setData(f, new float[historySize]);
+
+        charts.put(f, ch);
+        
+        return ch;
+    }
+    
+    int frame = 0;
+    
+    public void draw() {
+        background(0);
+
+    }
+
 //    // Displays a simple line chart representing a time series.
 //    XYChart lineChart;
 //
@@ -115,23 +127,33 @@ public class PLineChart extends PApplet {
 //        lineChart.setAxisLabelColour(Color.WHITE.getRGB());
 //        lineChart.setLineColour(lineColor);
 //    }
+    protected void addPoint(String f, Chart ch, float y) {
 
-    protected void addPoint(float x, float y) {
-        
         // push: add data from right to left (last in)
-	chart.push("a", y);
-        
+        ch.push(f, y);
+
         if (autoRanging) {
-            if (y < minValue) minValue = y;
-            if (y > maxValue) maxValue = y;
-            chart.setRange(minValue, maxValue);
+            float[] a = ch.getValuesFrom(f);
+            
+            float min = a[0];
+            float max = a[0];
+            for (int i = 1; i < a.length; i++) {
+                float x = a[i];
+                if (x < min) {
+                    min = ( x );
+                }
+                if (x > max) {
+                    max = ( x );
+                }                   
+            }
+            
+            if (min == max) { max += 1f; }
+            
+            ch.setRange(min, max);
         }
-        
+
         //if (lineChart == null) return;
-        
         //lineChart.setData(data);
-        
-        redraw();
     }
 //    
 //// Draws the chart and a title.
@@ -159,35 +181,55 @@ public class PLineChart extends PApplet {
         init();
         return p;
     }
-    
 
-    public void update(final long when, final DataSet data) {
-        if (chart == null)
-            return;
+    public void update() {
+
+        int numCharts = data.size();
+        int y = 0;
         
-        Object value = data.get(title);
-        if (value instanceof Double)
-           addPoint(when, ((Number)value).floatValue());
-        if (value instanceof Float)
-           addPoint(when, ((Number)value).floatValue());
-        if (value instanceof Integer)
-           addPoint(when, ((Number)value).floatValue());
+        for (String f : data.keySet()) {
+            Chart ch = charts.get(f);
+            if (ch==null) {
+                ch = addChart(f);                
+            }
+            
+            Object value = data.get(f);
+            
+            if (value instanceof Double) {
+                addPoint(f, ch, ((Number) value).floatValue());
+            }
+            if (value instanceof Float) {
+                addPoint(f, ch, ((Number) value).floatValue());
+            }
+            if (value instanceof Integer) {
+                addPoint(f, ch, ((Number) value).floatValue());
+            }
+            
+            int h = (int)(getHeight()/numCharts);
+            ch.setSize(getWidth(), h);
+            ch.setPosition(0, y);
+            y += h;
         
+             
+        }
+
+        redraw();
+        frame++;
+
     }
 
     /*
-    public static void main(String[] args) {
-        PLineChart p = new PLineChart("Average",10);
-        p.addPoint(2,2);
-        p.addPoint(4,4);
+     public static void main(String[] args) {
+     PLineChart p = new PLineChart("Average",10);
+     p.addPoint(2,2);
+     p.addPoint(4,4);
         
-        Window w = new Window("", p.newPanel());
+     Window w = new Window("", p.newPanel());
         
         
         
-        w.setSize(400,400);
-        w.setVisible(true);
-    }
-    */
-
+     w.setSize(400,400);
+     w.setVisible(true);
+     }
+     */
 }

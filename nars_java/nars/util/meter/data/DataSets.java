@@ -118,6 +118,16 @@ public class DataSets {
             return delegate.size();
         }
 
+        @Override
+        public double d(String fieldName) {
+            return delegate.d(fieldName);
+        }
+
+        @Override
+        public long i(String fieldName) {
+            return delegate.i(fieldName);
+        }
+
     }
 
     private static final class ImmutableMetaDataDecorator implements MetaData {

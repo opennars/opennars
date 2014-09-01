@@ -20,7 +20,6 @@
  */
 package nars.gui;
 
-import com.hipposretribution.controlP5.drawable.controller.single.chart.Chart;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FileDialog;
@@ -35,8 +34,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -55,7 +52,6 @@ import nars.core.Memory;
 import nars.core.Memory.Events.MemoryCycleStop;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.state.LogicState;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
@@ -114,12 +110,10 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     private double lastSpeed = 0;
     private final double defaultSpeed = 0.5;
 
-    private final int GUIUpdatePeriodMS = 256;
+    private final int GUIUpdatePeriodMS = 100;
     private NSlider volumeSlider;
 
-    private List<PLineChart> charts = new ArrayList();
-        
-    private boolean allowFullSpeed = false;
+    private boolean allowFullSpeed = true;
     public final InferenceLogger logger;
 
     int chartHistoryLength = 128;
@@ -133,6 +127,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     TestChamber chamber=new TestChamber();
     private final JMenuItem internalExperienceItem;
     private final JMenuItem narsPlusItem;
+    private PLineChart chart;
     public NARControls(final NAR nar) {
         super(new BorderLayout());
         
@@ -363,12 +358,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         long nowTime = nar.getTime();
 
         if (lastUpdateCycle != nowTime) {       
-            LogicState s = nar.memory.logic;
-            //s.print();
-
-            for (PLineChart c : charts) {
-                c.update(nar.getTime(), s);
-            }
+            chart.update();
             
             lastUpdateCycle = nowTime;
             lastUpdateTime = System.currentTimeMillis();
@@ -380,13 +370,13 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     
 
     @Override
-    public void event(Class event, Object... arguments) {
+    public void event(final Class event, final Object... arguments) {
         if (event == MemoryCycleStop.class) {
             
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
             
-            if ((deltaTime > GUIUpdatePeriodMS) || (!updateScheduled.get())) {
+            if ((deltaTime > GUIUpdatePeriodMS) && (!updateScheduled.get())) {
                 nar.memory.updateLogicState();
                 SwingUtilities.invokeLater(updateGUIRunnable);
                 updateScheduled.set(true);
@@ -721,48 +711,9 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         {
             
             
-            PLineChart chart0 = new PLineChart("concepts.Total", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart0.newPanel());
-            charts.add(chart0);
-            /*
-            ChartPanel chart0 = new ChartPanel("concepts.Total");
-            chart0.setPreferredSize(new Dimension(200, 150));
-            charts.add(chart0);
-            chartPanel.add(chart0);
-            */
-
-            PLineChart chart1 = new PLineChart("concepts.Mass", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart1.newPanel());
-            charts.add(chart1);
-            PLineChart chart2 = new PLineChart("concepts.AveragePriority", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart2.newPanel());
-            charts.add(chart2);
-            
-            PLineChart chart3 = new PLineChart("beliefs.Total", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart3.newPanel());
-            charts.add(chart3);
-            
-            PLineChart chart4 = new PLineChart("questions.Total", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart4.newPanel());
-            charts.add(chart4);
-
-            PLineChart chart5 = new PLineChart("novelTasks.Total", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart5.newPanel());
-            charts.add(chart5);
-
-            PLineChart chart6 = new PLineChart("newTasks.Total", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart6.newPanel());
-            charts.add(chart6);
-            
-            PLineChart chart7 = new PLineChart("emotion.happy", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart7.newPanel());
-            charts.add(chart7);
-
-            PLineChart chart8 = new PLineChart("emotion.busy", chartHistoryLength, Chart.AREA);
-            chartPanel.add(chart8.newPanel());
-            charts.add(chart8);
-            
-            
+            this.chart = new PLineChart(nar.memory.logic, chartHistoryLength);
+            chartPanel.add(chart.newPanel());
+                        
         }
         
         c.weighty = 1.0;
