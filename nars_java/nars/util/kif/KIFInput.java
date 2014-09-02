@@ -145,7 +145,7 @@ public class KIFInput extends PrintWriterInput implements Runnable {
                     case "subrelation":
                         //for now, use similarity+inheritance but more clear expression is possible
                         if (includeSubrelation) {
-                            emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
+                            //emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
                             emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
                         }
                         break;

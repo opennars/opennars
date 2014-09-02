@@ -1,15 +1,17 @@
 package nars.perf;
 
-import nars.core.build.ContinuousBagNARBuilder;
 import java.util.Collection;
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.newNAR;
 
 
-/** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load */
-public class NALTestPerf  {
+/** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load
+ *  useful for examining with a profiler.
+ */
+public class NALStressTest  {
     
     public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
         perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
@@ -41,6 +43,7 @@ public class NALTestPerf  {
                 
                 totalCycles += n.getTime();
             }
+                        
 
             @Override
             public Performance print() {                
