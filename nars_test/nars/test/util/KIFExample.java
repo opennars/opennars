@@ -19,9 +19,8 @@ package nars.test.util;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.RealTimeNARBuilder;
+import nars.core.build.ContinuousBagNARBuilder;
 import nars.gui.NARSwing;
-import nars.io.TextOutput;
 import nars.util.kif.KIFInput;
 
 /**
@@ -34,7 +33,7 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
         Parameters.DEFAULT_JUDGMENT_PRIORITY = 0.5f;
         
-        NAR n = new RealTimeNARBuilder(true)
+        NAR n = new ContinuousBagNARBuilder(true)
                 .setConceptBagSize(16192)
                 .build();
                 
@@ -45,24 +44,24 @@ public class KIFExample {
         k.setIncludeSubclass(true);
         k.setIncludeInstance(true);
         k.setIncludeSubrelation(true);
-        //k.setIncludeDisjoint(true);
         k.setIncludeRelatedInternalConcept(true);
+        //k.setIncludeDisjoint(true);
         
         
         //start before adding input to begin filling buffer
         k.start();
         n.addInput(k);
         
+        n.finish(1);
         
+        /*
         TextOutput t = new TextOutput(n, System.out);
         t.setErrors(true);
         t.setErrorStackTrace(true);
-
+        */
         
-        n.finish(4000);
-        //n.param().cycleMemory.set(512);
         
-        t.stop();
+        //t.stop();
         
         new NARSwing(n);
         

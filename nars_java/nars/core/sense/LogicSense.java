@@ -199,6 +199,7 @@ public class LogicSense extends DefaultDataSet implements Serializable {
                 s.getSession().collectData();
         }        
     }
+
      
     public static class UnknownSensorException extends RuntimeException {
 

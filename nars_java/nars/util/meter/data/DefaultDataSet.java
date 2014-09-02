@@ -16,6 +16,7 @@ package nars.util.meter.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -140,4 +141,28 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
     }
 
     
+    public double n(final String fieldName) {        
+        Object o = dataMap.get(fieldName);
+        if (o instanceof Double)
+            return ((Double)o).doubleValue();
+        if (o instanceof Float)
+            return ((Float)o).doubleValue();
+        if (o instanceof Integer)
+            return ((Integer)o).doubleValue();
+        return 0;
+    }
+    
+    public double[] toArray(double... extraFields) {
+        Set<String> k = keySet();
+        int s = k.size();
+        double d[] = new double[s + extraFields.length];
+        int i = 0;
+        for (String field : k) {
+            d[i++] = n(field);
+        }
+        for (double e : extraFields) {
+            d[i++] = e;
+        }
+        return d;
+    }
 }

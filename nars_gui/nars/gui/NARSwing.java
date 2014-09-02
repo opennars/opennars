@@ -163,9 +163,9 @@ public class NARSwing  {
     }
     */
 
-    public static Color getColor(final String s) {            
+    public static Color getColor(final String s, float saturation, float brightness) {            
         double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue,0.7f,0.8f);
+        return Color.getHSBColor((float)hue, saturation, brightness);
     }
 
 

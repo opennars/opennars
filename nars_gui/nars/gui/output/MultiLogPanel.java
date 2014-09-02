@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -215,6 +216,9 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
         m.add(new JMenuItem("Concepts Network"));
         m.add(new JMenuItem("Statements Network"));
         m.add(new JMenuItem("Truth vs. Confidence"));        
+        m.addSeparator();
+        m.add(new JButton("Priority +"));
+        m.add(new JButton("Priority -"));
         m.addSeparator();
         m.add(new JMenuItem("Close"));
         headerMenu.add(m);

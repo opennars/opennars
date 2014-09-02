@@ -9,14 +9,17 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import javax.swing.SwingUtilities;
 import nars.gui.NARSwing;
 import nars.util.meter.data.DataSet;
 
@@ -29,7 +32,7 @@ public class ChartsPanel extends Canvas {
     //private final int chartType;
     private boolean autoRanging = true;
     private final DataSet data;
-    final Map<String, TimeSeriesChart> charts = new HashMap();
+    final Map<String, TimeSeriesChart> charts = new TreeMap();
     
     //private final Map<String, JToggleButton> enable = new HashMap();
     private final Font monofontLarge = NARSwing.monofont.deriveFont(Font.PLAIN, 18f);
@@ -107,15 +110,37 @@ public class ChartsPanel extends Canvas {
         });
         addMouseListener(c);
         
-    
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                update(false);
+                addComponentListener(new ComponentAdapter() {
+
+                    @Override
+                    public void componentResized(ComponentEvent e) {
+                        update(false);
+                    }
+
+                });
+            }
+            
+        });
     }
+
+    @Override
+    public void paint(Graphics g) {
+        
+    }
+    
+    
     
 
     
     protected TimeSeriesChart addChart(String f) {
         //int chartType = TimeSeriesChart.AREA;
 
-        TimeSeriesChart ch = new TimeSeriesChart(f, NARSwing.getColor(f), historySize);
+        TimeSeriesChart ch = new TimeSeriesChart(f, NARSwing.getColor(f, 0.7f, 0.7f), historySize);
         charts.put(f, ch);
         
         
@@ -262,10 +287,10 @@ public class ChartsPanel extends Canvas {
             g.setPaint(Color.WHITE);
             
             g.setFont(monofontLarge);
-            g.drawString(f, 0, y+25);
+            g.drawString(f, 5, y+16);
             if (h > 25) {
                 g.setFont(monofontSmall);
-                g.drawString("  current=" + firstValue + ", min=" + min + ", max=" + max, 0, y+20+18);
+                g.drawString("  current=" + firstValue + ", min=" + min + ", max=" + max, 5, y+16+18);
             }
             
             y += h;
