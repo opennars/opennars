@@ -557,7 +557,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     ms = 1;
             }
             stopButton.setText(String.valueOf(FA_StopCharacter));
-            nar.setThreadYield(true);
+            //nar.setThreadYield(true);
             nar.start(ms);
         } else {
             stopButton.setText(String.valueOf(FA_PlayCharacter));

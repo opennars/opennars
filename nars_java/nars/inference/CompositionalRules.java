@@ -23,12 +23,24 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import static nars.inference.TruthFunctions.abduction;
+import static nars.inference.TruthFunctions.anonymousAnalogy;
+import static nars.inference.TruthFunctions.comparison;
+import static nars.inference.TruthFunctions.deduction;
+import static nars.inference.TruthFunctions.induction;
+import static nars.inference.TruthFunctions.intersection;
+import static nars.inference.TruthFunctions.negation;
+import static nars.inference.TruthFunctions.reduceConjunction;
+import static nars.inference.TruthFunctions.reduceConjunctionNeg;
+import static nars.inference.TruthFunctions.reduceDisjunction;
+import static nars.inference.TruthFunctions.union;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
@@ -42,16 +54,16 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.IntersectionExt;
 import nars.language.IntersectionInt;
-import static nars.language.Terms.*;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
+import static nars.language.Terms.ReduceTillLayer2;
+import static nars.language.Terms.reduceComponents;
+import static nars.language.Terms.unwrapNegation;
 import nars.language.Variable;
 import nars.language.Variables;
-import nars.core.Memory;
-import static nars.inference.TruthFunctions.*;
 
 /**
  * Compound term composition and decomposition rules, with two premises.
@@ -78,20 +90,34 @@ public final class CompositionalRules {
             return;
         }
         
-        Term term1 = sentence.content;
-        Term term2 = belief.content;
+        final Term term1 = sentence.content;
+        final boolean term1ContainVar = term1.containVar();
+        final boolean term1Conjunction = term1 instanceof Conjunction;
+
+        if (term1Conjunction)
+            if (term1ContainVar)
+                return;
+                    
+        final Term term2 = belief.content;
+        final boolean term2ContainVar = term2.containVar();
+        final boolean term2Conjunction = term2 instanceof Conjunction;
+
+        if (term2Conjunction)
+            if (term2ContainVar)
+                return;
         
         for (final Concept concept : memory.getConcepts()) {
 
             final List<Task> questions = concept.getQuestions();
+            
             for (int i = 0; i < questions.size(); i++) {
                 final Task question = questions.get(i);                                    
 
-                if(question==null) { assert(false); continue; }
+                //if(question==null) { assert(false); continue; }
 
                 Sentence qu=question.sentence;
 
-                if(qu==null) { assert(false); continue; }
+                //if(qu==null) { assert(false); continue; }
 
                 final Term pcontent = qu.content;
                 if (!(pcontent instanceof CompoundTerm))
@@ -102,40 +128,37 @@ public final class CompositionalRules {
                     continue;
                 }
 
-                if(!(term1 instanceof Conjunction) && !(term2 instanceof Conjunction)) {
-                    if(!(ctpcontent).containsTerm(term1) || !(ctpcontent).containsTerm(term2)) {
+                if(!term1Conjunction && !term2Conjunction) {
+                    if(!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
                         continue;
                     }
                 }
 
-                if(term1 instanceof Conjunction) {
-                    if(!(term2 instanceof Conjunction) && !ctpcontent.containsTerm(term2)) {
-                        continue;
-                    }
-                    if (term1.containVar()) {
-                        continue;                        
-                    }
-
+                if (term1Conjunction) {
+                    if(!term2Conjunction && !ctpcontent.containsTerm(term2))
+                        continue;                    
                     if (!ctpcontent.containsAllTermsOf(term1))
                         continue;                        
                 }
 
 
-                if (term2 instanceof Conjunction) {
-                    if (!(term1 instanceof Conjunction) && !ctpcontent.containsTerm(term1)) {
-                        continue;
-                    }
-                    if (term2.containVar()) {
-                        continue;
-                    }
+                if (term2Conjunction) {
+                    if (!term1Conjunction && !ctpcontent.containsTerm(term1))
+                        continue;                    
                     if (!ctpcontent.containsAllTermsOf(term2))
                         continue;
                 }
 
+                
                 Term conj = Conjunction.make(term1, term2, memory);
 
+                /*
+                since we already checked for term1 and term2 having a variable, the result
+                will not have a variable
+                
                 if (Variables.containVarDepOrIndep(conj.name()))
                     continue;
+                */
 
                 TruthValue truthT = memory.getCurrentTask().sentence.truth;
                 TruthValue truthB = memory.getCurrentBelief().truth;

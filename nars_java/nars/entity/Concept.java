@@ -593,11 +593,10 @@ public class Concept extends Item {
                     }
                     memory.setCurrentBeliefLink(termLink);
                     
-                    memory.logic.TASKLINK_REASON.start();
+                    memory.logic.TASKTERMLINK_REASON.commit(termLink.getPriority());
                     {
                         reason(currentTaskLink, termLink, memory);
                     }
-                    memory.logic.TASKLINK_REASON.stop();
                     
                     termLinks.putBack(termLink);
                     termLinkCount--;
@@ -606,6 +605,7 @@ public class Concept extends Item {
                 }
             }
         }        
+
     }
 
     /* ---------- display ---------- */

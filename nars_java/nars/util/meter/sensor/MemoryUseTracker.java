@@ -8,7 +8,7 @@ package nars.util.meter.sensor;
  */
 public class MemoryUseTracker extends AbstractSpanTracker {
 
-    long lastUsedMemory;
+    long lastUsedMemory = -1;
 
     public MemoryUseTracker(String id) {
         super(id);
@@ -19,17 +19,21 @@ public class MemoryUseTracker extends AbstractSpanTracker {
     }
 
     @Override
-    protected void startImpl(final long now) {
-        lastUsedMemory = getMemoryUsed();
+    protected void startImpl(final long now) {        
+        if (lastUsedMemory == -1)
+            lastUsedMemory = getMemoryUsed();        
 
         super.startImpl(now);
     }
 
     @Override
     protected void stopImpl(final long now) {
-        value = ((getMemoryUsed() - lastUsedMemory)/1024.0);
-
+        long currentlyUsed = getMemoryUsed();
+        value = ( (currentlyUsed - lastUsedMemory)/1024.0);
+        
         session.update(this, now);
+        
+        lastUsedMemory = currentlyUsed;
     }
 
 }

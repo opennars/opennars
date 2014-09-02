@@ -26,15 +26,17 @@ public class FastConcatenationRope extends ConcatenationRope {
         return hash;
     }
 
+    @Override
     public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
         if (!(other instanceof FastConcatenationRope)) {
             return false;
         }
 
         FastConcatenationRope o = (FastConcatenationRope) other;
-        if (other == this) {
-            return true;
-        }
 
         if (hashCode() != o.hashCode()) {
             return false;

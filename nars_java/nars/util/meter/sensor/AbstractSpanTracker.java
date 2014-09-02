@@ -16,7 +16,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
     //private static final Logger logger = Logger.getLogger(AbstractSpanTracker.class.toString());
     protected long startTime = 0L;
     protected boolean tracking = false;
-    protected int sampleResolution = 1;
+    protected int sampleResolution = 0;
     int cycle = 0;
 
     public AbstractSpanTracker(final StatsSession session) {
@@ -56,14 +56,17 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
             //allow this to happen
         }
 
-        tracking = true;
-
+        tracking = true;        
         startTime = System.currentTimeMillis();
 
-        if (cycle % sampleResolution == 0)
-            startImpl(startTime);
-        else {            
+        //start on cycle 1, then when we return to cycle 0, it will fall through to stop()
+        if ((sampleResolution > 0) && (cycle % sampleResolution != 1)) {
+            //skip sample and re-use existing value
             session.track(this, startTime);
+        }
+        else {            
+            //actually sample
+            startImpl(startTime);
         }
 
 
@@ -90,17 +93,18 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
             throw new RuntimeException(this + " can not commit(); not tracking");
         }
 
-        tracking = false;
 
-        if (cycle % sampleResolution == 0) {
-            stopImpl(-1);            
-            lastActualValue = value;
-        }
-        else {
+        if ((sampleResolution > 0) && (cycle % sampleResolution != 0)) {
             //sampling prevented implementation from measuring, so re-use last value
             value = lastActualValue;
             session.update(this, -1);
         }
+        else {
+            stopImpl(-1);            
+            lastActualValue = value;
+        }
+        
+        tracking = false;
         
         commit();
 

@@ -87,12 +87,18 @@ public abstract class AbstractRope implements Rope {
 
     @Override
     public boolean equals(final Object other) {
+        System.out.println(this.getClass() + " " + new Exception().getStackTrace());
+        
+        if (this == other) return true;
+
         if (other instanceof Rope) {
             final Rope rope = (Rope) other;
-            if (rope.hashCode() != this.hashCode()) {
+                        
+            if (rope.length() != this.length()) {
                 return false;
             }
-            if (rope.length() != this.length()) {
+
+            if (rope.hashCode() != this.hashCode()) {
                 return false;
             }
 

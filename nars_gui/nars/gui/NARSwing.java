@@ -29,7 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
 import nars.gui.output.MultiLogPanel;
@@ -114,10 +113,10 @@ public class NARSwing  {
  --silence <integer>
      */
     public static void main(String args[]) {
-        //NAR nar = new CommandLineNARBuilder(args).build();
+        NAR nar = new CommandLineNARBuilder(args).build();
         
         //temporary:
-        NAR nar = new ContinuousBagNARBuilder(false).build();
+        //NAR nar = new ContinuousBagNARBuilder(false).build();
         //NAR nar = new RealTimeNARBuilder(false).build();
         
         NARSwing swing = new NARSwing(nar);
