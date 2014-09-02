@@ -39,6 +39,7 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
 
     public final char[] sequence;
     int len;
+    int hash = 0;
 
     /**
      * Constructs a new rope from a character array. Does not make a copy but
@@ -83,6 +84,15 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         return 0;
     }
 
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = Arrays.hashCode(sequence);
+        }
+        return hash;
+    }
+
+    
     /*
      * Implementation Note: This is a reproduction of the AbstractRope
      * indexOf implementation. Calls to charAt have been replaced
@@ -191,6 +201,21 @@ public final class CharArrayRope extends AbstractRope implements FlatRope {
         };
     }
 
+    @Override
+    public boolean equals(final Object other) {
+        if (other == this) return true;
+
+        if (other instanceof CharArrayRope) {
+            CharArrayRope cother = (CharArrayRope)other;                        
+            
+            if (cother.length()!=len)
+                return false;
+            return Arrays.equals(sequence, cother.sequence);
+        }
+        return false;
+    }
+
+    
     @Override
     public int length() {
         return len;

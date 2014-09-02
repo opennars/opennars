@@ -196,13 +196,15 @@ public class ChartsPanel extends Canvas {
         xPoints[0] = xPoints[1];
         xPoints[xPoints.length-1] = xPoints[xPoints.length-2] = 0;
         
-        for (final String f : data.keySet()) {
+        for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
+            
             if (y + h < 0) {
                 y+=h;
                 continue;
             }
-            
-            TimeSeriesChart ch = charts.get(f);            
+
+            String f = e.getKey();            
+            TimeSeriesChart ch = e.getValue();
                         
             if (ch==null) {
                 ch = addChart(f);            

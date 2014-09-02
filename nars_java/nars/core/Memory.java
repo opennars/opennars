@@ -324,7 +324,7 @@ public class Memory implements Output, Serializable {
         this.operators = new HashMap<>();
 
         logic = new LogicSense(this);
-
+        
         
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
@@ -339,6 +339,7 @@ public class Memory implements Output, Serializable {
                 
         reset();
 
+        updateLogicState();
     }
 
     public void reset() {
@@ -835,10 +836,10 @@ public class Memory implements Output, Serializable {
      */
     public void cycle() {
                 
-        event.emit(MemoryCycleStart.class);
-        
         logic.MEMORY_CYCLE_RAM_USED.start();
-        
+        logic.CYCLE_REAL.event();
+
+        event.emit(MemoryCycleStart.class);
         
         if (working) {
             

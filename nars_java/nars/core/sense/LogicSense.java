@@ -1,7 +1,6 @@
 package nars.core.sense;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,20 +37,22 @@ public class LogicSense extends DefaultDataSet implements Serializable {
     //public final Sensor CONCEPT_FIRE;
     public final NanoTimeDurationTracker IO_CYCLE;    
     public final NanoTimeDurationTracker MEMORY_CYCLE;
-    public final NanoTimeDurationTracker CYCLE;
+    public final NanoTimeDurationTracker CYCLE; //the duration of the cycle
+    public final HitPeriodTracker CYCLE_REAL;  //the real time between each cycle
+    public final ThreadCPUTimeTracker CYCLE_CPU_TIME; //the cpu time of each cycle
     
     public final EventValueSensor TASK_IMMEDIATE_PROCESS_PRIORITY;
     public final HitPeriodTracker TASK_IMMEDIATE_PROCESS;
     
     public final EventValueSensor TASKLINK_FIRE;
-    public final NanoTimeDurationTracker TASKLINK_REASON; //both duration and count
+    public final EventValueSensor TASKTERMLINK_REASON; //both duration and count
     
     public final EventValueSensor OUTPUT_TASK;
     
     public final EventValueSensor CONCEPT_NEW;
     
     public final MemoryUseTracker MEMORY_CYCLE_RAM_USED;
-    public final ThreadCPUTimeTracker CYCLE_CPU_TIME;
+    
     //public final ThreadBlockTimeTracker CYCLE_BLOCK_TIME;
     private Object conceptNum;
     private Object conceptPriorityMean;
@@ -61,27 +62,30 @@ public class LogicSense extends DefaultDataSet implements Serializable {
     
     
     
+    
 
     public LogicSense(Memory memory) {
-        super(Collections.synchronizedMap(new TreeMap()));
-        
+        super(new TreeMap<>());
+    
         this.memory = memory;
         
         add(IO_CYCLE = new NanoTimeDurationTracker("io.cycle"));
         add(MEMORY_CYCLE = new NanoTimeDurationTracker("memory.cycle"));
         
         add(CYCLE = new NanoTimeDurationTracker("cycle"));   
+        add(CYCLE_REAL = new HitPeriodTracker("cycle"));   
         CYCLE.setSampleWindow(64);
+        
         
         add(TASK_IMMEDIATE_PROCESS = new HitPeriodTracker("task.immediate_process"));
         add(TASK_IMMEDIATE_PROCESS_PRIORITY = new EventValueSensor("task.immediate_process.priority"));
         add(MEMORY_CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used"));
-        MEMORY_CYCLE_RAM_USED.setSampleResolution(8);
-        MEMORY_CYCLE_RAM_USED.setSampleWindow(32);
+        MEMORY_CYCLE_RAM_USED.setSampleResolution(16);
+        MEMORY_CYCLE_RAM_USED.setSampleWindow(128);
                 
         add(CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time"));
-        CYCLE_CPU_TIME.setSampleResolution(4);
-        CYCLE_CPU_TIME.setSampleWindow(64);
+        CYCLE_CPU_TIME.setSampleResolution(16);
+        CYCLE_CPU_TIME.setSampleWindow(128);
                 
         //add(CONCEPT_FIRE = new DefaultEventSensor("concept.fire"));
         add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
@@ -93,7 +97,8 @@ public class LogicSense extends DefaultDataSet implements Serializable {
         add(CONCEPT_NEW = new EventValueSensor("concept.new"));
         CONCEPT_NEW.setSampleWindow(32);
         
-        add(TASKLINK_REASON = new NanoTimeDurationTracker("tasklink.reason"));
+        add(TASKTERMLINK_REASON = new EventValueSensor("tasklink.reason"));
+        TASKTERMLINK_REASON.setSampleWindow(32);
     }
     
     protected void add(Sensor s) { 
@@ -129,7 +134,7 @@ public class LogicSense extends DefaultDataSet implements Serializable {
         put("concepts.questions.sum", conceptQuestionsSum);
         
         put("memory.noveltasks.total", memory.novelTasks.size());
-        put("memory.newtasks.total", memory.newTasks.size());
+        //put("memory.newtasks.total", memory.newTasks.size()); //redundant with output.tasks below
 
         //TODO move to EmotionState
         put("emotion.happy", memory.emotion.happy());
@@ -140,29 +145,31 @@ public class LogicSense extends DefaultDataSet implements Serializable {
         double cycleTimeMS = CYCLE.getValue();
         double cycleTimeMeanMS = CYCLE.get().mean();
         {
-            put("cycle.frequency.hz", (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMS) );
-            put("cycle.frequency.mean.hz", (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMeanMS) );
+            put("cycle.frequency.hz", (1000.0 / CYCLE_REAL.getValue()) );
+            put("cycle.frequency_potential.mean.hz", (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMeanMS) );
         }
         {
             //DataSet d = IO_CYCLE.get();
-            put("io_to_memory.period.ratio", IO_CYCLE.getValue() / MEMORY_CYCLE.getValue() );
+            put("io.to_memory.ratio", IO_CYCLE.getValue() / MEMORY_CYCLE.getValue() );
         }
         {
             //DataSet d = MEMORY_CYCLE_RAM_USED.get();
-            put("memory.cycle.ram_use.delta_Kb.sampled", MEMORY_CYCLE_RAM_USED.getValue());
+            put("cycle.ram_use.delta_Kb.sampled", MEMORY_CYCLE_RAM_USED.getValue());
         }
         {
             //DataSet d = CYCLE_CPU_TIME.get();
-            put("memory.cycle.cpu_time.sampled", CYCLE_CPU_TIME.getValue() );
+            put("cycle.cpu_time.mean", CYCLE_CPU_TIME.get().mean() );
         }
         {
             DataSet fire = TASKLINK_FIRE.get();
-            DataSet reason = TASKLINK_REASON.get();
+            //DataSet reason = TASKLINK_REASON.get();
             put("reason.fire.tasklink.priority.mean", fire.mean());
             put("reason.fire.tasklinks.delta", (double)TASKLINK_FIRE.getDeltaHits());
             
-            put("reason.tasklink.period.pct", TASKLINK_REASON.getValue() / cycleTimeMS);
-            put("reason.tasklinks", (double)TASKLINK_REASON.getHits());
+            //only makes sense as a mean, since it occurs multiple times during a cycle
+            put("reason.tasktermlink.priority.mean", TASKTERMLINK_REASON.get().mean());
+            
+            put("reason.tasktermlinks", (double)TASKTERMLINK_REASON.getHits());
         }
         {
             put("output.tasks", OUTPUT_TASK.getHits());

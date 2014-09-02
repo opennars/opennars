@@ -58,6 +58,20 @@ public class FlatCharSequenceRope extends AbstractRope implements FlatRope {
     }
 
     @Override
+    public boolean equals(final Object other) {
+        if (other instanceof FlatCharSequenceRope) {
+            CharSequence otherSeq = ((FlatCharSequenceRope)other).sequence;            
+            if ((sequence.getClass() == String.class) && (otherSeq.getClass() == String.class)) {
+                return sequence.equals(otherSeq);
+            }
+            return super.equals(other);
+        }
+        return false;
+    }
+    
+    
+
+    @Override
     public Iterator<Character> iterator(final int start) {
         if (start < 0 || start > this.length()) {
             throw new IndexOutOfBoundsException("Rope index out of range: " + start);
