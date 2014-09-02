@@ -7,6 +7,8 @@ import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.RecoveringParseRunner;
+import org.parboiled.support.MatcherPath;
+import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 import org.parboiled.support.ParsingResult;
 
 /**
@@ -15,13 +17,13 @@ import org.parboiled.support.ParsingResult;
  */
 public class NarseseParser extends BaseParser<Object> {
 
-    Rule Task() {
+    public Rule Task() {
         //TODO separate goal into an alternate form "!" because it does not use a tense
         
         return sequence(
                 optional(Budget()),
                 WhiteSpace(),
-                Statement(),
+                Term(),
                 SentenceTypeChar(),
                 WhiteSpace(),
                 //optional(Tense())
@@ -46,19 +48,9 @@ public class NarseseParser extends BaseParser<Object> {
     }
     
 
-    Rule Statement() {
-           /* <statement> ::= "<"<term> <copula> <term>">"       // two terms related to each other
-                        | <term>                             // a term can name a statement
-                        | "(^"<word> {","<term>} ")"         // (an operation to be executed)   */        
-        return firstOf(
-            sequence("<", WhiteSpace(), Term(), WhiteSpace(), Copula(), WhiteSpace(), Term(), WhiteSpace(),">"),
-            Term(),
-            OperationExecution()
-        );
-    }
-    
     Rule OperationExecution() {
         //TODO
+        // "(^"<word> {","<term>} ")"         // (an operation to be executed)   */           
         return string("(^)");
     }
     
@@ -76,10 +68,13 @@ public class NarseseParser extends BaseParser<Object> {
                         | "</>"                              // (predictive equivalence)
                         | "<|>"                              // (concurrent equivalence)*/
         //TODO use separate rules for each so a parse can identify them
-        return firstOf(string("-->"), string("<->"));
+        return sequence("<", WhiteSpace(), Term(), WhiteSpace(), CopulaOperator(), WhiteSpace(), Term(), WhiteSpace(),">");        
     }
     
-    
+    Rule CopulaOperator() {
+        return firstOf(string("-->"), string("<->"));
+    }
+        
     Rule Term() {
         /*
                  <term> ::= <word>                             // an atomic constant term
@@ -87,20 +82,14 @@ public class NarseseParser extends BaseParser<Object> {
                         | <compound-term>                    // a term with internal structure
                         | <statement>                        // a statement can serve as a term
         */
-        return firstOf(Word(), Variable(), CompoundTerm(), Statement());
+        return firstOf(Literal(), QuotedLiteral(), Variable(), CompoundTerm(), Copula(), OperationExecution());
+    }
+       
+    Rule Literal() {
+        return oneOrMore(noneOf(" ,.!?<>-=|&()<>[]{}#$\""));
     }
     
-    Rule Word() {
-        return firstOf(Identifier(), EscapedIdentifier());        
-    }
-    
-    Rule Identifier() {
-        //any sequence of chars beginning with non-symbol character
-        //TODO add other reserved characters
-        return oneOrMore(noneOf(" ,.!?<>-=|&()<>[]{}"));
-    }
-    
-    Rule EscapedIdentifier() {
+    Rule QuotedLiteral() {
         return sequence("\"", AnyString(), "\"");
     }
     
@@ -119,9 +108,9 @@ public class NarseseParser extends BaseParser<Object> {
         return firstOf(IndependentVariable(), DependentVariable(), QueryVariable());
     }
     
-    Rule IndependentVariable() { return sequence("$", Identifier());     }
-    Rule DependentVariable() { return sequence("#", optional(Identifier())); }
-    Rule QueryVariable() { return sequence("?", optional(Identifier())); }
+    Rule IndependentVariable() { return sequence("$", Literal());     }
+    Rule DependentVariable() { return sequence("#", optional(Literal())); }
+    Rule QueryVariable() { return sequence("?", optional(Literal())); }
     
     Rule CompoundTerm() {
         /*
@@ -172,7 +161,8 @@ public class NarseseParser extends BaseParser<Object> {
         Scanner sc = new Scanner(System.in);
         while (true) {
             String input = sc.nextLine();
-            ParsingResult r = new RecoveringParseRunner(p.Task()).run(input);
+            RecoveringParseRunner rpr = new RecoveringParseRunner(p.Task());
+            ParsingResult r = rpr.run(input);
             System.out.println("valid? " + (r.matched && (r.parseErrors.size() == 0)) );
             for (Object e : r.parseErrors) {
                 if (e instanceof InvalidInputError) {
@@ -180,7 +170,9 @@ public class NarseseParser extends BaseParser<Object> {
                     System.err.println(e);
                     if (iie.getErrorMessage()!=null)
                         System.err.println(iie.getErrorMessage());
-                    System.err.println(" " + iie.getFailedMatchers());
+                    for (MatcherPath m : iie.getFailedMatchers()) {                        
+                        System.err.println("  ?-> " + m);
+                    }
                     System.err.println(" at: " + iie.getStartIndex() + " to " + iie.getEndIndex());
                 }
                 else {
@@ -188,6 +180,7 @@ public class NarseseParser extends BaseParser<Object> {
                 }
                 
             }
+            System.out.println(printNodeTree(r));
         }
         
     }
