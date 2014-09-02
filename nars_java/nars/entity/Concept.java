@@ -74,7 +74,7 @@ public class Concept extends Item {
      * Note: since this is iterated frequently, an array should be used. To
      * avoid iterator allocation, use .get(n) in a for-loop
      */
-    public final ArrayList<Task> questions;
+    public final List<Task> questions;
 
     /**
      * Pending Quests to be answered by new desire values
@@ -118,7 +118,9 @@ public class Concept extends Item {
         this.term = tm;
         this.memory = memory;
 
+        //this.questions = new ArrayList();
         this.questions = new ArrayList();
+        
         this.beliefs = new ArrayList();
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();       
@@ -269,10 +271,11 @@ public class Concept extends Item {
     protected void processQuestion(final Task task) {
 
         Sentence ques = task.sentence;
+        
         boolean newQuestion = true;
         for (final Task t : questions) {
             final Sentence q = t.sentence;
-            if (q.content.equals(ques.content)) {
+            if (q.equivalentContent(ques)) {
                 ques = q;
                 newQuestion = false;
                 break;
@@ -280,12 +283,13 @@ public class Concept extends Item {
         }
 
         if (newQuestion) {
-            questions.add(task);
+            if (questions.size()+1 > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
+                questions.remove(0);    // FIFO
+            }
+
+            questions.add(task);            
         }
 
-        if (questions.size() > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
-            questions.remove(0);    // FIFO
-        }
 
         final Sentence newAnswer = (ques.isQuestion()) ? 
                                        selectCandidate(ques, beliefs) :
@@ -674,8 +678,10 @@ public class Concept extends Item {
      * @param time The current time
      * @return The selected TermLink
      */    
-    protected TermLink selectTermLink(final TaskLink taskLink, final long time) {
-        for (int i = 0; i < Parameters.MAX_MATCHED_TERM_LINK; i++) {
+    protected TermLink selectTermLink(final TaskLink taskLink, final long time) {        
+        
+        int toMatch = Math.min(Parameters.MAX_MATCHED_TERM_LINK, termLinks.size());
+        for (int i = 0; i < toMatch; i++) {
             final TermLink termLink = termLinks.takeOut(false);
             if (termLink == null) {
                 return null;
@@ -727,13 +733,13 @@ public class Concept extends Item {
     }
 
     
-    public void discountConfidence(boolean onBeliefs) {
+    public void discountConfidence(final boolean onBeliefs) {
         if (onBeliefs) {
-            for (Sentence s : beliefs) {
+            for (final Sentence s : beliefs) {
                 s.discountConfidence();
             }
         } else {
-            for (Sentence s : desires) {
+            for (final Sentence s : desires) {
                 s.discountConfidence();
             }            
         }

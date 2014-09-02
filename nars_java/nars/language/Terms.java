@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import nars.entity.TermLink;
 import nars.core.Memory;
+import nars.entity.TermLink;
 
 /**
  * Static utility class for static methods related to Terms
@@ -362,12 +362,18 @@ public class Terms {
         return -1;
     }
 
-    //TODO move this to a utility method
-    public static <T> boolean containsAll(final T[] array, final T v) {
-        for (final T e : array) {
-            if (!v.equals(e)) {
+    /** compres a set of terms (assumed to be unique) with another set to find if their
+     * contents match. they can be in different order and still match.  this is useful for
+     * comparing whether compound terms in which order doesn't matter (ex: conjunction)
+     * are equivalent.
+     */ 
+    public static <T> boolean containsAll(final T[] a, final T[] b) {
+        if (a.length != b.length) {
+            return false;
+        }
+        for (final T ax : a) {
+            if (!contains(b, ax))
                 return false;
-            }
         }
         return true;
     }

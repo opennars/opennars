@@ -20,7 +20,7 @@
  */
 package nars.entity;
 
-import java.util.ArrayList;
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.inference.TruthFunctions;
@@ -34,7 +34,6 @@ import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -397,6 +396,10 @@ public class Sentence implements Cloneable {
         Term argTerm = Product.make(arg,mem);
         Term operation = Inheritance.make(argTerm, opTerm, mem);
         return operation;
+    }
+
+    boolean equivalentContent(final Sentence s) {
+        return content.equals(s.content);
     }
 
 }
