@@ -108,7 +108,7 @@ public final class CompositionalRules {
         
         for (final Concept concept : memory.getConcepts()) {
 
-            final List<Task> questions = concept.getQuestions();
+            final List<Task> questions = concept.questions;
             
             for (int i = 0; i < questions.size(); i++) {
                 final Task question = questions.get(i);                                    
@@ -120,33 +120,33 @@ public final class CompositionalRules {
                 //if(qu==null) { assert(false); continue; }
 
                 final Term pcontent = qu.content;
-                if (!(pcontent instanceof CompoundTerm))
+                if (!(pcontent instanceof Conjunction))
                     continue;
                 
-                final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
-                if (!(pcontent instanceof Conjunction) || ctpcontent.containVar()) {
+                final Conjunction ctpcontent = (Conjunction)pcontent;
+                if (ctpcontent.containVar())
                     continue;
-                }
+                
 
-                if(!term1Conjunction && !term2Conjunction) {
+                if (!term1Conjunction && !term2Conjunction) {
                     if(!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
                         continue;
                     }
                 }
+                else {
+                    if (term1Conjunction) {
+                        if(!term2Conjunction && !ctpcontent.containsTerm(term2))
+                            continue;                    
+                        if (!ctpcontent.containsAllTermsOf(term1))
+                            continue;                        
+                    }
 
-                if (term1Conjunction) {
-                    if(!term2Conjunction && !ctpcontent.containsTerm(term2))
-                        continue;                    
-                    if (!ctpcontent.containsAllTermsOf(term1))
-                        continue;                        
-                }
-
-
-                if (term2Conjunction) {
-                    if (!term1Conjunction && !ctpcontent.containsTerm(term1))
-                        continue;                    
-                    if (!ctpcontent.containsAllTermsOf(term2))
-                        continue;
+                    if (term2Conjunction) {
+                        if (!term1Conjunction && !ctpcontent.containsTerm(term1))
+                            continue;                    
+                        if (!ctpcontent.containsAllTermsOf(term2))
+                            continue;
+                    }
                 }
 
                 
@@ -162,10 +162,10 @@ public final class CompositionalRules {
 
                 TruthValue truthT = memory.getCurrentTask().sentence.truth;
                 TruthValue truthB = memory.getCurrentBelief().truth;
-                if(truthT==null || truthB==null) {
+                /*if(truthT==null || truthB==null) {
                     //continue; //<- should this be return and not continue?
                     return;
-                }
+                }*/
 
                 TruthValue truthAnd = intersection(truthT, truthB);
                 BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, memory);
