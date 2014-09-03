@@ -31,23 +31,22 @@ import static javax.swing.SwingUtilities.getWindowAncestor;
  *
  * @author kitfox
  */
-public class DockingRegionContainer extends JPanel
-        implements DockingContainer {
+public class DockingRegionContainer extends JPanel implements DockingContainer {
 
     private DockingChild root;
 
     JPanel panel_minimizeBar;
-    JPanel panel_workArea;
+    final JPanel panel_workArea;
 
-    ArrayList<MinMaxRecord> minimizedRecords = new ArrayList<>();
+    final ArrayList<MinMaxRecord> minimizedRecords = new ArrayList<>();
 
     MinMaxRecord maximizedRecord;
     private final DockingRegionRoot dockRoot;
 
     JComponent oldGlass;
-    DraggingOverlayPanel overlayPanel;
+    final DraggingOverlayPanel overlayPanel;
 
-    public DockingRegionContainer(DockingRegionRoot dockRoot) {
+    public DockingRegionContainer(final DockingRegionRoot dockRoot) {
         this.dockRoot = dockRoot;
         setLayout(new BorderLayout());
 

@@ -29,8 +29,7 @@ import javax.swing.SwingUtilities;
  *
  * @author kitfox
  */
-public class DockingRegionTabbed extends JTabbedPane
-        implements DockingChild {
+public class DockingRegionTabbed extends JTabbedPane implements DockingChild {
 
     private DockingContainer dockParent;
     HashMap<DockingContent, TabLayout> tabs = new HashMap<>();
@@ -58,7 +57,7 @@ public class DockingRegionTabbed extends JTabbedPane
         addTab(content, getTabCount());
     }
 
-    public void addTab(DockingContent content, int index) {
+    public TabbedPaneTitle addTab(DockingContent content, int index) {
 //        Component comp = content.getComponent();
 //        comp.setPreferredSize(new Dimension(4, 4));
         TabLayout layout = new TabLayout(content);
@@ -66,21 +65,31 @@ public class DockingRegionTabbed extends JTabbedPane
 
         insertTab(content.getTitle(), null, layout.component, null, index);
         int idx = indexOfComponent(layout.component);
-        setTabComponentAt(idx, new TabbedPaneTitle(this, content));
+        
+        TabbedPaneTitle tab = content.getTab();
+        if (tab==null)
+            tab = new TabbedPaneTitle(this, content);
+        
+        setTabComponentAt(idx, tab);
         content.setParent(this);
         content.setRestoreRecord(null);
+        content.setTab(tab);
+        
+        return tab;
     }
 
     public void selectTab(DockingContent content) {
         TabLayout layout = tabs.get(content);
-        setSelectedComponent(layout.component);
+        if (layout!=null)
+            setSelectedComponent(layout.component);
     }
 
     public void removeTab(DockingContent content) {
         TabLayout layout = tabs.remove(content);
 
         if (layout == null) {
-            throw new IllegalStateException("Content not part of this panel");
+            //throw new IllegalStateException("Content not part of this panel");
+            return;
         }
 
         RestoreRecord rec = new RestoreRecord(getPath(content),

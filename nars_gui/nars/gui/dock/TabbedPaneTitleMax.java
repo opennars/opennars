@@ -23,13 +23,12 @@ package nars.gui.dock;
 
 import nars.gui.FAButton;
 import static javax.swing.BorderFactory.createEmptyBorder;
-import nars.gui.NARSwing;
 
 /**
  *
  * @author kitfox
  */
-public class TabbedPaneTitleMax extends javax.swing.JPanel {
+@Deprecated public class TabbedPaneTitleMax extends javax.swing.JPanel {
 
     final DockingRegionMaximized tabPanel;
     final DockingContent content;

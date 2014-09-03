@@ -3,7 +3,10 @@ package nars.gui.output;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
@@ -12,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -24,14 +26,12 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
+import nars.gui.NARSwing;
 import nars.gui.dock.DockingContent;
 import nars.gui.dock.DockingRegionRoot;
 import nars.io.Output;
@@ -49,16 +49,17 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
     final long activityDecayPeriodNS = 100 * 1000 * 1000; //100ms
     
     /** extension of SwingLogText with functionality specific to MultiLogPanel */
-    public class SwingLogTextM extends SwingLogText  implements ChangeListener {
+    public class SwingLogTextM extends SwingLogText  implements ActionListener {
     
         final float activityIncrement = 0.5f;
         final float activityMomentum = 0.95f;
         
         float activity = 0;
-        public final JCheckBox enabler;
+        public final JButton enabler;
         final Object category;
         JPanel displayed = null;
         private final String label;
+        Color bgColor = Color.WHITE;
 
         public SwingLogTextM(Object category) {
             super(nar);
@@ -72,19 +73,18 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
                 label = category.toString();
             }
             
-            this.enabler = new JCheckBox(label) {
+            this.enabler = new JButton(label) {
 
                 @Override public void paint(Graphics g) {
-                    Color c = new Color(1f, 1f-activity/2f, 1f-activity/2f );
-                    g.setColor(c);
-                    g.fillRect(0, 0, getWidth(), getHeight());                    
+                    setBackground(bgColor);
+                    /*g.setColor(c);
+                    g.fillRect(0, 0, getWidth(), getHeight());                    */
                     super.paint(g);
                 }
                 
             };
-            enabler.setOpaque(false);
             
-            enabler.addChangeListener(this);
+            enabler.addActionListener(this);
             
         }
 
@@ -97,6 +97,8 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
         
         public void updateActivity(float newActivity) {
             if (activity!=newActivity) {
+                bgColor = new Color(1.0f, 0.5f + 0.5f * (1f-activity), 0.5f + 0.5f * activity );
+                
                 activity = newActivity;
                 if (activity > 1.0f) activity = 1.0f;
             }
@@ -106,21 +108,26 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
             updateActivity(activity * activityMomentum);
         }
 
-        
         @Override
-        public void stateChanged(ChangeEvent e) {
-            if (enabler.isSelected()) {
+        public void actionPerformed(ActionEvent e) {
+            if (!isShowing())
                 displayed = showCategory(category);                
-            }
-            else {                
-                hideCategory(displayed);
-                
-                displayed = null;
-            }
         }
 
+//        
+//        @Override
+//        public void stateChanged(ChangeEvent e) {
+//            if (enabler.isSelected()) {
+//            }
+//            else {                
+//                hideCategory(displayed);
+//                
+//                displayed = null;
+//            }
+//        }
+
         public void show() {
-            enabler.setSelected(true);
+            enabler.doClick();
         }
     }
     
@@ -129,7 +136,7 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
     private final NAR nar;    
     private final JPanel side;
     private final DefaultListModel categoriesListModel;
-    private final JCheckBoxList categoriesList;
+    private final JCategoryList categoriesList;
 
     public MultiOutputPanel(NARControls c) {
         super(new BorderLayout());
@@ -145,8 +152,9 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
         this.nar = c.nar;
 
         categoriesListModel = new DefaultListModel();
-        categoriesList = new JCheckBoxList(categoriesListModel);
         
+        categoriesList = new JCategoryList(categoriesListModel);
+        categoriesList.setBackground(Color.BLACK);
 
         side = new JPanel(new BorderLayout());
         side.add(categoriesList, BorderLayout.CENTER);
@@ -200,7 +208,7 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
             if (p == null) {
                 
                 p = new SwingLogTextM(category);
-                JCheckBox jc = p.enabler;
+                JButton jc = p.enabler;
                 
                 categories.put(category, p);
                                         
@@ -213,13 +221,14 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
     public JPanel showCategory(Object category) {
         String title = category.toString();
         SwingLogTextM p = getLogPanel(category);
-        int columnWidth = 400;
+        
+        
         SwingLogPanel.setConsoleStyle(p, true);
 
         JPanel x = new JPanel(new BorderLayout());
         
         JMenuBar headerMenu = new JMenuBar();
-        JMenu m = new JMenu(p.label);
+        JMenu m = new JMenu("[..]");
         m.add(new JMenuItem("Statement List"));
         m.add(new JMenuItem("Log"));
         m.add(new JMenuItem("Concept List"));
@@ -235,7 +244,7 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
         headerMenu.add(m);
         
                 
-        x.add(headerMenu, BorderLayout.NORTH);
+        
         
         //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
         JPanel ioTextWrap = new JPanel(new BorderLayout());
@@ -246,8 +255,10 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
 
 
         DockingContent cont = new DockingContent("view" + category, title, x);
-        dock.getDockingRoot().addDockContent(cont);
+        dock.addRootContent(cont);
         
+        cont.getTab().setLabel(p.label);
+        cont.getTab().add(headerMenu, 2);
         
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -264,18 +275,17 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
      * @author http://stackoverflow.com/questions/19766/how-do-i-make-a-list-with-checkboxes-in-java-swing
      */
     @SuppressWarnings("serial")
-    public static class JCheckBoxList extends JList<JCheckBox> {
+    public static class JCategoryList extends JList<JButton> {
 
         protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
-        public JCheckBoxList() {
+        public JCategoryList() {
             setCellRenderer(new CellRenderer());
             addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
                     int index = locationToIndex(e.getPoint());
                     if (index != -1) {
-                        JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
-                        checkbox.setSelected(!checkbox.isSelected());
+                        JButton checkbox = (JButton)getModel().getElementAt(index);
                         repaint();
                     }
                 }
@@ -283,30 +293,39 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         }
 
-        public JCheckBoxList(ListModel<JCheckBox> model) {
+        public JCategoryList(ListModel<JButton> model) {
             this();
             setModel(model);
         }
 
-        protected class CellRenderer implements ListCellRenderer<JCheckBox> {
+        protected class CellRenderer implements ListCellRenderer<JButton> {
 
+            Font f = NARSwing.fontMono(14);
+            private JButton lastCellFocus;
+            
             public Component getListCellRendererComponent(
-                    JList<? extends JCheckBox> list, JCheckBox value, int index,
+                    JList<? extends JButton> list, JButton value, int index,
                     boolean isSelected, boolean cellHasFocus) {
-                JCheckBox checkbox = value;
+                JButton b = value;
 
                 //Drawing checkbox, change the appearance here
-                checkbox.setBackground(isSelected ? getSelectionBackground()
-                        : getBackground());
-                checkbox.setForeground(isSelected ? getSelectionForeground()
-                        : getForeground());
-                checkbox.setEnabled(isEnabled());
-                checkbox.setFont(getFont());
-                checkbox.setFocusPainted(false);
-                checkbox.setBorderPainted(true);
-                checkbox.setBorder(isSelected ? UIManager
-                        .getBorder("List.focusCellHighlightBorder") : noFocusBorder);
-                return checkbox;
+//                checkbox.setBackground(isSelected ? getSelectionBackground()
+//                        : getBackground());
+//                checkbox.setForeground(isSelected ? getSelectionForeground()
+//                        : getForeground());
+                b.setContentAreaFilled(false);
+                b.setOpaque(true);
+                b.setHorizontalTextPosition(JButton.LEFT);
+                b.setHorizontalAlignment(JButton.LEFT);
+                b.setFont(getFont());                
+                b.setFocusPainted(false);
+                b.setBorderPainted(true);                
+                b.setFont(f);
+                if ((cellHasFocus) && (lastCellFocus!=b)) {
+                    b.doClick();
+                    lastCellFocus = b;
+                }
+                return b;
             }
         }
     }

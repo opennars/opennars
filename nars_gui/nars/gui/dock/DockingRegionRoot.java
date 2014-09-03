@@ -31,7 +31,7 @@ import javax.swing.JPanel;
 public class DockingRegionRoot extends JPanel
         implements WindowListener {
 
-    private final DockingRegionContainer dockingRoot;
+    public final DockingRegionContainer dockingRoot;
 
     ArrayList<DockingRegionWindow> floating
             = new ArrayList<>();
@@ -148,6 +148,10 @@ public class DockingRegionRoot extends JPanel
         }
 
         dockingRoot.closeAll();
+    }
+
+    public void addRootContent(DockingContent cont) {
+        getDockingRoot().addDockContent(cont);
     }
 
 }

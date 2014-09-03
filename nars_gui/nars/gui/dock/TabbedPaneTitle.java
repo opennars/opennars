@@ -23,6 +23,7 @@ package nars.gui.dock;
 
 import java.awt.event.MouseEvent;
 import static javax.swing.BorderFactory.createEmptyBorder;
+import javax.swing.JLabel;
 import javax.swing.TransferHandler;
 
 /**
@@ -235,4 +236,13 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
 //        }
     } //GEN-LAST:event_label_titleMouseReleased
 
+    public JLabel getLabel() {
+        return label_title;
+    }
+    public void setLabel(String text) {
+        label_title.setText(text);
+    }
+
+    
+    
 }

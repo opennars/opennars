@@ -36,6 +36,7 @@ public class DockingContent {
 
     //EventListenerList listenerList = new EventListenerList();
     PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private TabbedPaneTitle tab;
 
 
     /**
@@ -140,4 +141,14 @@ public class DockingContent {
 //    public JComponent getComponent();
 //
 //    public void setDockingParent(DockingRegionTabbed parent);
+
+    void setTab(TabbedPaneTitle tab) {
+        this.tab = tab;
+    }
+
+    public TabbedPaneTitle getTab() {
+        return tab;
+    }
+    
+    
 }
