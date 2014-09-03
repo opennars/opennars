@@ -29,7 +29,7 @@ import nars.gui.dock.DockingRegionContainer.MinMaxRecord;
  *
  * @author kitfox
  */
-public class MinimizeTitlePanel extends javax.swing.JPanel {
+@Deprecated public class MinimizeTitlePanel extends javax.swing.JPanel {
 
     final MinMaxRecord record;
 

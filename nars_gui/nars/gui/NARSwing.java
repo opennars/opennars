@@ -23,13 +23,11 @@ package nars.gui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javax.swing.JToggleButton;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
@@ -52,6 +50,7 @@ public class NARSwing  {
     public static final String WEBSITE =
             " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/";
+
 
 
     public final NAR nar;
@@ -181,6 +180,9 @@ public class NARSwing  {
         return Color.getHSBColor((float)hue, saturation, brightness);
     }
 
+    public static Font fontMono(float size) {
+        return monofont.deriveFont(size);
+    }
 
 
 }

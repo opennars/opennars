@@ -21,12 +21,13 @@ package nars.gui.dock;
  */
 abstract public class DockingPathRecord {
 
-    DockingPathRecord next;
+    final DockingPathRecord next;
 
     public DockingPathRecord() {
+        this.next = null;
     }
 
-    public DockingPathRecord(DockingPathRecord next) {
+    public DockingPathRecord(final DockingPathRecord next) {
         this.next = next;
     }
 
