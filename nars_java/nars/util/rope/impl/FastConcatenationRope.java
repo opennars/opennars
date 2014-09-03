@@ -1,7 +1,6 @@
 package nars.util.rope.impl;
 
 import java.util.Iterator;
-import java.util.Objects;
 import nars.util.rope.Rope;
 
 /**
@@ -12,7 +11,7 @@ import nars.util.rope.Rope;
  */
 public class FastConcatenationRope extends ConcatenationRope {
 
-    private int hash;
+    private int hash = 0;
 
     public FastConcatenationRope(Rope left, Rope right) {
         super(left, right);
@@ -20,8 +19,11 @@ public class FastConcatenationRope extends ConcatenationRope {
 
     @Override
     public int hashCode() {
-        if ((hash == 0) && (length() > 0)) {
-            hash = Objects.hash(left, right);
+        if (hash == 0) {
+            if (length() > 0)
+                hash = (31 + left.hashCode()) * 31 + right.hashCode();
+            else
+                hash = 1;                    
         }
         return hash;
     }
@@ -38,12 +40,13 @@ public class FastConcatenationRope extends ConcatenationRope {
 
         FastConcatenationRope o = (FastConcatenationRope) other;
 
-        if (hashCode() != o.hashCode()) {
-            return false;
-        }
         if (length() != o.length()) {
             return false;
         }
+        
+        if (hashCode() != o.hashCode()) {
+            return false;
+        }        
 
         if (!left.equals(o.left)) {
             return false;

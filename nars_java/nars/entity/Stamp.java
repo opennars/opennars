@@ -21,10 +21,10 @@
 package nars.entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.language.Tense;
@@ -32,7 +32,6 @@ import static nars.language.Tense.Future;
 import static nars.language.Tense.Past;
 import static nars.language.Tense.Present;
 import nars.language.Term;
-import nars.core.Memory;
 
 
 public class Stamp implements Cloneable {
@@ -81,9 +80,11 @@ public class Stamp implements Cloneable {
     /** caches hashcode value; only computed on-demand since stamp's hashcode does not seem used in inference (yet) */
     private final Integer hashCode = null;
     
-    /** caches evidentialBase as a set for comparisons and hashcode */
-    private Set<Long> evidentialSet; 
-    //TODO investigate using a BitVector
+    /** caches evidentialBase as a set for comparisons and hashcode.
+        stores the unique Long's in-order for efficiency
+     */    
+    private long[] evidentialSet = null;
+    //private Set<Long> evidentialSet; 
     
     /**
      * Generate a new stamp, with a new serial number, for a new Task
@@ -320,18 +321,46 @@ public class Stamp implements Cloneable {
         }
 
     }
+    
+    public static long[] toSetArray(final long[] x) {
+        if (x.length < 2)
+            return x.clone();
+        
+        //1. copy evidentialBse
+        //2. sort
+        //3. count duplicates
+        //4. create new array 
+        long[] set = x.clone();
+        Arrays.sort(set);
+        long lastValue = -1;
+        int j = 0; //# of unique items
+        for (int i = 0; i < set.length; i++) {
+            long v = set[i];
+            if (lastValue != v)
+                j++;                
+            lastValue = v;
+        }
+        lastValue = -1;
+        long[] sorted = new long[j];
+        j = 0;
+        for (int i = 0; i < set.length; i++) {
+            long v = set[i];
+            if (lastValue != v)
+                sorted[j++] = v;
+            lastValue = v;
+        }
+        return sorted;
+    }
 
     /**
      * Convert the evidentialBase into a set
      *
      * @return The TreeSet representation of the evidential base
      */
-    private Set<Long> toSet() {
-        if (evidentialSet == null) {
-            evidentialSet = new HashSet<>(evidentialBase.length);
-            for (final Long l : evidentialBase)
-                evidentialSet.add(l);
-        }
+    private long[] toSet() {        
+        if (evidentialSet == null)        
+            evidentialSet = toSetArray(evidentialBase);
+        
         return evidentialSet;
     }
 
@@ -343,6 +372,8 @@ public class Stamp implements Cloneable {
      */
     @Override
     public boolean equals(final Object that) {
+        if (this == that) return true;
+        
         if (!(that instanceof Stamp)) {
             return false;
         }
@@ -356,12 +387,10 @@ public class Stamp implements Cloneable {
             return false;
         */
         
-        //TODO see if there is a faster way than creating two set's
-        final Set<Long> set1 = toSet();
-        final Set<Long> set2 = s.toSet();
-
-        //return (set1.containsAll(set2) && set2.containsAll(set1));
-        return set1.equals(set2);
+        if (hashCode() != s.hashCode())
+            return false;
+        
+        return Arrays.equals(toSet(), s.toSet());
     }
 
     /**
@@ -373,7 +402,7 @@ public class Stamp implements Cloneable {
     public int hashCode() {
 //        return Objects.hash(toSet(), creationTime, occurrenceTime);
         //return Objects.hash(Arrays.hashCode(evidentialBase), creationTime, occurrenceTime);    
-        return toSet().hashCode();
+        return Arrays.hashCode(toSet());
     }
 
     public Stamp cloneToTime(long newTime) {

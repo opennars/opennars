@@ -454,6 +454,14 @@ public final class CompositionalRules {
         }
         memory.doublePremiseTask(content, truth, budget);
     }
+    
+    
+    static final Variable varInd1 = new Variable("$varInd1");
+    static final Variable varInd2 = new Variable("$varInd2");
+    static final Variable varDep = new Variable("#varDep");
+    static final Variable varDep2 = new Variable("#varDep2");
+    static final Variable depIndVar1 = new Variable("#depIndVar1");
+    static final Variable depIndVar2 = new Variable("#depIndVar2");    
 
     /* --------------- rules used for variable introduction --------------- */
     // forward inference only?
@@ -475,13 +483,11 @@ public final class CompositionalRules {
         
         
         
-        Variable varInd = new Variable("$varInd1");
-        Variable varInd2 = new Variable("$varInd2");
         Term term11, term12, term21, term22, commonTerm;
         HashMap<Term, Term> subs = new HashMap<>();
         if (index == 0) {
-            term11 = varInd;
-            term21 = varInd;
+            term11 = varInd1;
+            term21 = varInd1;
             term12 = taskContent.getPredicate();
             term22 = beliefContent.getPredicate();
             if ((term12 instanceof ImageExt) && (term22 instanceof ImageExt)) {
@@ -501,8 +507,8 @@ public final class CompositionalRules {
         } else {
             term11 = taskContent.getSubject();
             term21 = beliefContent.getSubject();
-            term12 = varInd;
-            term22 = varInd;
+            term12 = varInd1;
+            term22 = varInd1;
             if ((term11 instanceof ImageInt) && (term21 instanceof ImageInt)) {
                 commonTerm = ((ImageInt) term11).getTheOtherComponent();
                 if ((commonTerm == null) || !(/*(ImageInt)*/term21).containsTermRecursively(commonTerm)) {
@@ -548,7 +554,7 @@ public final class CompositionalRules {
         truth = comparison(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
-        Variable varDep = new Variable("#varDep");
+        
         if (index == 0) {
             state1 = Inheritance.make(varDep, taskContent.getPredicate(), memory);
             state2 = Inheritance.make(varDep, beliefContent.getPredicate(), memory);
@@ -597,7 +603,7 @@ public final class CompositionalRules {
         Sentence belief = memory.getCurrentBelief();
         
         HashMap<Term, Term> substitute = new HashMap<>();
-        substitute.put(commonTerm1, new Variable("#varDep2"));
+        substitute.put(commonTerm1, varDep2);
         CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound, memory);
         content.applySubstitute(substitute);
         TruthValue truth = intersection(taskSentence.truth, belief.truth);
@@ -605,9 +611,10 @@ public final class CompositionalRules {
         memory.doublePremiseTask(content, truth, budget);
         
         substitute.clear();        
-        substitute.put(commonTerm1, new Variable("$varInd1"));
+        
+        substitute.put(commonTerm1, varInd1);
         if (commonTerm2 != null) {
-            substitute.put(commonTerm2, new Variable("$varInd2"));
+            substitute.put(commonTerm2, varInd2);
         }
         content = Implication.make(premise1, oldCompound, memory);
         if (content == null)
@@ -864,17 +871,17 @@ public final class CompositionalRules {
                 return; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
-                Variable V = new Variable("#depIndVar1");
+                
                 CompoundTerm zw = (CompoundTerm) T.term[index].clone();
-                zw = (CompoundTerm) zw.setComponent(1, V, memory);
-                T2 = (CompoundTerm) T2.setComponent(1, V, memory);
+                zw = (CompoundTerm) zw.setComponent(1, depIndVar1, memory);
+                T2 = (CompoundTerm) T2.setComponent(1, depIndVar1, memory);
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
                 T = (CompoundTerm) T.setComponent(index, res, memory);
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
-                Variable V = new Variable("#depIndVar2");
+                
                 CompoundTerm zw = (CompoundTerm) T.term[index].clone();
-                zw = (CompoundTerm) zw.setComponent(0, V, memory);
-                T2 = (CompoundTerm) T2.setComponent(0, V, memory);
+                zw = (CompoundTerm) zw.setComponent(0, depIndVar2, memory);
+                T2 = (CompoundTerm) T2.setComponent(0, depIndVar2, memory);
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
                 T = (CompoundTerm) T.setComponent(index, res, memory);
             }

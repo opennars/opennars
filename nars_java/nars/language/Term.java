@@ -142,7 +142,7 @@ public class Term implements AbstractTerm {
             }
         }
         
-        if ((newName instanceof String) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
+        if ((newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) && (newName.getClass() == String.class)) {
             
             this.name = ((String)newName).intern();
         }

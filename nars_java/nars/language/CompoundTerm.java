@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import nars.core.Memory;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
@@ -34,7 +35,6 @@ import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import static nars.language.CompoundTerm.makeCompoundName;
-import nars.core.Memory;
 
 
 public abstract class CompoundTerm extends Term {
@@ -485,10 +485,14 @@ public abstract class CompoundTerm extends Term {
      * @param original The original component list
      * @return an identical and separate copy of the list
      */
-    public static Term[] cloneTermsAppend(boolean deep, final Term[] original, Term... additional) {
+    public static Term[] cloneTermsAppend(final boolean deep, final Term[] original, final Term... additional) {
         if (original == null) {
             return null;
         }        
+        //1. convert this to one for-loop
+        //2. create a non-vararg version of this
+        //3. return the input if total length == 0
+        //4. apply preventUnnecessaryDeepCopy to more cases
 
         final Term[] arr = new Term[original.length + additional.length];
         

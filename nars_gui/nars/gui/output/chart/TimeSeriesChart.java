@@ -1,27 +1,27 @@
 package nars.gui.output.chart;
 
 import java.awt.Color;
-import java.util.ArrayDeque;
-import java.util.Iterator;
 
 /**
  * Used by Chart, a chart data set is a container to store chart data.
  */
 @SuppressWarnings("serial")
-class TimeSeriesChart extends ArrayDeque<Double> {
+class TimeSeriesChart  {
 
+        final float[] values;
 	protected Color colour;
 	//protected float strokeWeight = 1;
 	//protected int[] colors = new int[0];
 
 	protected final String label;
         private final int historySize;
-        double min, max;
+        float min, max;
 
 	public TimeSeriesChart(String theName, Color color, int historySize) {
 		label = theName;
 		colour = color;
                 this.historySize = historySize;
+                values = new float[historySize];
 	}
 
 	public Color getColor() {
@@ -30,20 +30,13 @@ class TimeSeriesChart extends ArrayDeque<Double> {
         
 
 	public float[] getValues() {
-		float[] v = new float[size()];
-		int n = 0;
-		Iterator<Double> litr = iterator();
-		while (litr.hasNext()) {
-			v[n++] = litr.next().floatValue();
-		}
-		return v;
+            return values;            
 	}
 
         protected void updateRange() {
             
             int i = 0;
-            for (final Double d : this) {
-                final float f = d.floatValue();
+            for (final float f : values) {
                 if (i++ == 0) {
                     min = max = f;
                     continue;
@@ -59,28 +52,13 @@ class TimeSeriesChart extends ArrayDeque<Double> {
                         
         }
         
-        public void push(double d) {
-            if (!Double.isFinite(d))
-                d = 0;
-            
-            if (size() > historySize) {
-                removeLast();
-            } 
-            addFirst(d);
-            updateRange();
-            
-            
-            
-            if (size() == 1)
-                min = max = d;
-            else {
-                if (d < min) {
-                    min = ( d );
-                }
-                if (d > max) {
-                    max = ( d );
-                } 
-            }
+        public void push(float f) {
+//            if (!Double.isFinite(d))
+//                d = 0;
+
+            System.arraycopy(values, 0, values, 0, historySize-1);
+            values[0] = f;
+            updateRange();                                    
         }
 
 }
