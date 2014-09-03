@@ -93,13 +93,13 @@ public class Variables {
     public static boolean containVar(final CharSequence n) {
         final int l = n.length();
         for (int i = 0; i < l; i++) {
-            switch (n.charAt(i)) {
+            switch (n.charAt(i)) {                
                 case Symbols.VAR_INDEPENDENT:
                 case Symbols.VAR_DEPENDENT:
                 case Symbols.VAR_QUERY:
                     return true;
             }
-        }
+        }        
         return false;
     }
 

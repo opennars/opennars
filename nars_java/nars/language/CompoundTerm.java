@@ -39,10 +39,6 @@ import static nars.language.CompoundTerm.makeCompoundName;
 
 
 public abstract class CompoundTerm extends Term {
-    
-    @Deprecated private static final boolean preventUnnecessaryDeepCopy = true; //temporary, disables eliminating deep copy
-    //one reason why deepcopy is necessary is to eliminate cyclic clones 
-    
 
     /**
      * list of (direct) term
@@ -442,9 +438,10 @@ public abstract class CompoundTerm extends Term {
      *
      * @return The cloned component list
      */
-    public Term[] cloneTerms(boolean deep, Term... additional) {
+    protected Term[] cloneTerms(boolean deep, Term[] additional) {
         return cloneTermsAppend(deep, term, additional);
     }
+    
     
     public Term[] cloneTerms(Term... additional) {
         return cloneTerms(true, additional);
@@ -476,7 +473,7 @@ public abstract class CompoundTerm extends Term {
     }
     
 
-    public static Term[] cloneTermsAppend(final Term[] original, Term... additional) {
+    public static Term[] cloneTermsAppend(final Term[] original, Term[] additional) {
         return cloneTermsAppend(true, original, additional);
     }
     
@@ -486,45 +483,58 @@ public abstract class CompoundTerm extends Term {
      * @param original The original component list
      * @return an identical and separate copy of the list
      */
-    public static Term[] cloneTermsAppend(final boolean deep, final Term[] original, final Term... additional) {
+    public static Term[] cloneTermsAppend(final boolean deep, final Term[] original, final Term[] additional) {
         if (original == null) {
             return null;
         }        
-        //1. convert this to one for-loop
-        //2. create a non-vararg version of this
-        //3. return the input if total length == 0
-        //4. apply preventUnnecessaryDeepCopy to more cases
 
-        final Term[] arr = new Term[original.length + additional.length];
+        int L = original.length + additional.length;
+        if (L == 0)
+            return original;
+        
+        //TODO apply preventUnnecessaryDeepCopy to more cases
+        
+        final Term[] arr = new Term[L];
         
         int i;
-        for (i = 0; i < original.length; i++) {            
-            final Term t = original[i];      
+        int j = 0;
+        Term[] srcArray = original;
+        for (i = 0; i < L; i++) {            
+            if (i == original.length) {
+                srcArray = additional;
+                j = 0;
+            }
             
-            //experiental optimization
-            //if (allowNonDeepCopy && t.isConstant() && !t.containVar())
-            if (preventUnnecessaryDeepCopy && t.getClass() == Term.class)
-                arr[i] = t;
+            final Term t = srcArray[j++];
+                                    
+            if (deep && !mayShare(t))
+                arr[i] = t.clone();
             else
-                arr[i] = ( deep ? t.clone() : t );
+                arr[i] = t;
+        }
 
-            //arr[i] = ( deep ? (Term)t.clone() : t );
-        
-        }
-        for (int j = 0; j < additional.length; j++) {
-            final Term t = additional[j];                    
-            
-            //experiental optimization
-            if (preventUnnecessaryDeepCopy && t.getClass() == Term.class)
-                arr[i+j] = t;
-            else            
-                arr[i+j] = ( deep ? t.clone() : t );
-            
-            //arr[i+j] = ( deep ? (Term)t.clone() : t );
-        }
         return arr;
         
     }
+
+    /** determines whether we can avoid cloning something, and just re-use it */
+    protected static boolean mayShare(final Term t) {        
+        
+        if (t instanceof CompoundTerm) {
+            if (t instanceof Image)
+                if (((Image)t).containsPlaceHolder())
+                    return false;
+
+            return !(t.containVar());
+        }
+        
+        
+        return true;
+//        if (t instanceof Variable) return true;        
+//        if (t instanceof Interval) return true;
+//        if (t instanceof Operator) return true;
+    }
+
     
     public ArrayList<Term> cloneTermsList() {
         return cloneTermsList(true);
@@ -533,13 +543,10 @@ public abstract class CompoundTerm extends Term {
     public ArrayList<Term> cloneTermsList(boolean deep) {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
-             //experiental optimization
-            if (preventUnnecessaryDeepCopy && t.getClass() == Term.class)
-                l.add(t);
+            if (deep && !mayShare(t))
+                l.add(t.clone());
             else
-                l.add( deep ? t.clone() : t );  
-            
-            //l.add( deep ? (Term)t.clone() : t );
+                l.add(t);
         }
         return l;        
     }
