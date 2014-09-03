@@ -20,9 +20,8 @@
  */
 package nars.language;
 
-import nars.io.Symbols;
-import nars.io.Symbols.NativeOperator;
 import nars.core.Memory;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * An intension image.
@@ -82,7 +81,7 @@ public class ImageInt extends Image {
         Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {
-            if (argList[j].name().charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
+            if (isPlaceHolder(argList[j])) {
                 index = j - 1;
                 argument[n] = relation;
             } else {
