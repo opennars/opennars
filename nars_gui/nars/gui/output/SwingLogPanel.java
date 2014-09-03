@@ -49,11 +49,12 @@ public class SwingLogPanel extends LogPanel {
         }
     }
 
+    
     @Override
     protected void setFontSize(double v) {
-        ioText.setFont(ioText.getFont().deriveFont((float) v));
+        ioText.setFontSize(v);
     }
-
+    
     @Override
     protected void clearLog() {
         ioText.setText("");

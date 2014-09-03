@@ -64,11 +64,11 @@ public class SwingLogText extends JTextPane {
         //StyleConstants.setRightIndent(mainStyle, 16);
         //StyleConstants.setFirstLineIndent(mainStyle, 16);
         StyleConstants.setFontFamily(mainStyle, NARSwing.monofont.getFamily());
-        StyleConstants.setFontSize(mainStyle, 16);
+        //StyleConstants.setFontSize(mainStyle, 16);
 
         doc.setLogicalStyle(0, mainStyle);
         
-        
+        setFontSize(16);
 
         
     }
@@ -198,5 +198,9 @@ public class SwingLogText extends JTextPane {
             } catch (BadLocationException ex) {
             }
         }
+    }
+        
+    protected void setFontSize(double v) {        
+        setFont(getFont().deriveFont((float) v));
     }
 }
