@@ -3,9 +3,7 @@ package nars.gui.output;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
@@ -34,6 +32,8 @@ import javax.swing.event.ChangeListener;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
+import nars.gui.dock.DockingContent;
+import nars.gui.dock.DockingRegionRoot;
 import nars.io.Output;
 
 /**
@@ -42,8 +42,10 @@ import nars.io.Output;
  * 
  * @author me
  */
-public class MultiLogPanel extends JSplitPane implements Output, HierarchyListener {
+public class MultiOutputPanel extends JPanel implements Output, HierarchyListener {
 
+    DockingRegionRoot dock = new DockingRegionRoot();
+    
     final long activityDecayPeriodNS = 100 * 1000 * 1000; //100ms
     
     /** extension of SwingLogText with functionality specific to MultiLogPanel */
@@ -124,14 +126,21 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
     
     public Map<Object, SwingLogTextM> categories = new HashMap();
     private final SwingLogText rootTaskPanel;
-    private final NAR nar;
-    private final JPanel content;
+    private final NAR nar;    
     private final JPanel side;
     private final DefaultListModel categoriesListModel;
     private final JCheckBoxList categoriesList;
 
-    public MultiLogPanel(NARControls c) {
-        super(JSplitPane.HORIZONTAL_SPLIT);
+    public MultiOutputPanel(NARControls c) {
+        super(new BorderLayout());
+
+        JMenuBar menu = new JMenuBar();
+        add(menu, BorderLayout.NORTH);
+        
+        JSplitPane innerPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        
+        
+        
         
         this.nar = c.nar;
 
@@ -141,12 +150,14 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
 
         side = new JPanel(new BorderLayout());
         side.add(categoriesList, BorderLayout.CENTER);
-        add(new JScrollPane(side), 0);
+        
+        add(innerPanel, BorderLayout.CENTER);
+        
+        innerPanel.add(new JScrollPane(side), 0);
+        innerPanel.add(dock, 1);
+        innerPanel.setDividerLocation(0.25f);
 
-        content = new JPanel(new GridLayout(1, 0));
-        add(new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 1);
-
-        setDividerLocation(0.14);
+        
 
         rootTaskPanel = new SwingLogTextM("Root");
         
@@ -231,12 +242,12 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
         ioTextWrap.add(p);        
         x.add(new JScrollPane(ioTextWrap), BorderLayout.CENTER);
 
-        x.setMinimumSize(new Dimension(columnWidth, 0));
-        x.setMaximumSize(new Dimension(columnWidth, Integer.MAX_VALUE / 2));
-        x.setPreferredSize(new Dimension(columnWidth, 0));
         x.validate();
 
-        content.add(x);
+
+        DockingContent cont = new DockingContent("view" + category, title, x);
+        dock.getDockingRoot().addDockContent(cont);
+        
         
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -301,7 +312,8 @@ public class MultiLogPanel extends JSplitPane implements Output, HierarchyListen
     }
     
     public void hideCategory(JPanel p) {
-        content.remove(p);
+        dock.getDockingRoot().remove(p);
+        
         validate();
         repaint();
     }

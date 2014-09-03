@@ -22,8 +22,8 @@ import nars.entity.Sentence;
 import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
-import nars.gui.NARControls.FAButton;
-import nars.gui.NARControls.FAToggleButton;
+import nars.gui.FAButton;
+import nars.gui.AwesomeToggleButton;
 import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.gui.WrapLayout;
@@ -80,7 +80,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         menuTop.add(clearButton);
 
         final String defaultStreamButtonLabel = "Stream to File..";
-        final JToggleButton streamButton = new FAToggleButton('\uf0c7', '\uf052');
+        final JToggleButton streamButton = new AwesomeToggleButton('\uf0c7', '\uf052');
         streamButton.setToolTipText(defaultStreamButtonLabel);
         streamButton.addActionListener(new ActionListener() {
             @Override

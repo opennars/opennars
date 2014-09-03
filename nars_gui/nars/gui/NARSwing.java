@@ -23,15 +23,17 @@ package nars.gui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JToggleButton;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
-import nars.gui.output.MultiLogPanel;
+import nars.gui.output.MultiOutputPanel;
 import nars.io.TextInput;
 
 /**
@@ -76,7 +78,7 @@ public class NARSwing  {
         outputWindow.setVisible(true);
         */
         
-        Window outputWindow = new Window("Activity", new MultiLogPanel(narControls));
+        Window outputWindow = new Window("Activity", new MultiOutputPanel(narControls));
         outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
         outputWindow.setVisible(true);
         
@@ -103,6 +105,17 @@ public class NARSwing  {
         }
     }
     
+    public static Font FontAwesome;
+    static {        
+        try {
+            FontAwesome = Font.createFont(Font.TRUETYPE_FONT, NARSwing.class.getResourceAsStream("FontAwesome.ttf")).deriveFont(Font.PLAIN, 14);
+        } catch (FontFormatException ex) {
+            Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
     
     /**
      * The entry point of the standalone application.
