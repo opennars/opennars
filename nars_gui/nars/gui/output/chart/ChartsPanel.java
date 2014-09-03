@@ -137,7 +137,7 @@ public class ChartsPanel extends Canvas {
     
 
     
-    protected TimeSeriesChart addChart(String f) {
+    protected TimeSeriesChart addChart(final String f) {
         //int chartType = TimeSeriesChart.AREA;
 
         TimeSeriesChart ch = new TimeSeriesChart(f, NARSwing.getColor(f, 0.7f, 0.7f), historySize);
@@ -241,48 +241,47 @@ public class ChartsPanel extends Canvas {
                 if (value instanceof Double) {                    
                     ch.push(((Number) value).floatValue());
                 }
-                if (value instanceof Float) {
+                else if (value instanceof Float) {
                     ch.push(((Number) value).floatValue());
                 }
-                if (value instanceof Integer) {
+                else if (value instanceof Integer) {
                     ch.push(((Number) value).floatValue());
                 }
             }            
         
-            g.setPaint(ch.getColor());
-            
+            g.setPaint(ch.getColor());            
             
             float min = ch.min;
-            float max = ch.max;
-            if (!Double.isFinite(min)) min = 0;
-            if (!Double.isFinite(max)) max = min;
+            float max = ch.max;            
                     
             float range = max - min;
             
-            if (range == 0) {
-                range = 1;
-                max += 0.5;
-                min -= 0.5;
-            }
-            
-            int n = 0;
-            double firstValue = 0;
-            for (float d : ch.values) {
-                if (n == 0)
-                    firstValue = d;
-
-                d = (d - min) / (range);
+            double firstValue;
+            if (range != 0) {
+                //Draw Area chart
                 
-                int p = h - (int)(d*(h - verticalPadding));
-                if (p < 0) p = 0;
-                if (p > h) p = h;
-                yPoints[(n++)+1] = y + p;
-            }
-            Arrays.fill(yPoints, n, xPoints.length-1, y+h);
-            yPoints[0] = yPoints[xPoints.length-1] = y + h;
+                int n = 0;
+                firstValue = 0;
+                for (float d : ch.values) {
+                    if (n == 0)
+                        firstValue = d;
 
-            
-            g.fillPolygon(xPoints, yPoints, xPoints.length);
+                    d = (d - min) / (range);
+
+                    int p = h - (int)(d*(h - verticalPadding));
+                    if (p < 0) p = 0;
+                    if (p > h) p = h;
+                    yPoints[(n++)+1] = y + p;
+                }
+                Arrays.fill(yPoints, n, xPoints.length-1, y+h);
+                yPoints[0] = yPoints[xPoints.length-1] = y + h;
+
+
+                g.fillPolygon(xPoints, yPoints, xPoints.length);
+            }
+            else {                
+                firstValue = ch.values[0];
+            }
             
             g.setPaint(Color.WHITE);
             

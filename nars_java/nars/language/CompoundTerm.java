@@ -540,7 +540,7 @@ public abstract class CompoundTerm extends Term {
         return cloneTermsList(true);
     }
 
-    public ArrayList<Term> cloneTermsList(boolean deep) {
+    public ArrayList<Term> cloneTermsList(final boolean deep) {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
             if (deep && !mayShare(t))

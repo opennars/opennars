@@ -49,16 +49,21 @@ class TimeSeriesChart  {
                     max = ( f );
                 }                                   
             }
-                        
+
         }
         
-        public void push(float f) {
-//            if (!Double.isFinite(d))
-//                d = 0;
-
-            System.arraycopy(values, 0, values, 0, historySize-1);
+        public void push(final float f) {
+            //System.arraycopy(values, 0, values, 1, historySize-1);
+            min = max = f;
+                        
+            //update min/max while shifting up                                   
+            for (int i = historySize-1; i >= 1; i--) {
+                final float g = values[i] = values[i-1];                
+                if (g < min) min = g;
+                if (g > max) max = g;
+            }
+            
             values[0] = f;
-            updateRange();                                    
         }
 
 }

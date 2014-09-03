@@ -77,34 +77,37 @@ public class SwingLogText extends JTextPane {
     
     public void out(final Class c, final Object o) {
         final LogLine ll = new LogLine(c, o);
-        synchronized (nextOutput) {
-            nextOutput.offer(ll);
-            if (nextOutput.size() == BufferLength)
-                nextOutput.removeLast();
+        
+        boolean requireUpdate;
+        synchronized (pendingDisplay) {
+            requireUpdate = pendingDisplay.isEmpty();
+            pendingDisplay.add(ll);
         }
         
-        if (isVisible()) {
-            synchronized (pendingDisplay) {
-                pendingDisplay.add(ll);
-                if (pendingDisplay.size() == 1) {
-                    SwingUtilities.invokeLater(update);
-                }
-            }
-        }
+        if (requireUpdate) {
+            SwingUtilities.invokeLater(update);
+        }        
     }
     
     public final Runnable update = new Runnable() {
+        
+        List<LogLine> toDisplay = new ArrayList();
+        
         @Override public void run() {
+            limitBuffer();
+            
             synchronized (pendingDisplay) {
-                limitBuffer();
-
-                for (final LogLine l : pendingDisplay) {             
-                    print(l.c, l.o);
-                }    
+                toDisplay.addAll(pendingDisplay);
                 pendingDisplay.clear();
-                
-                repaint();
             }
+            int displayCount = toDisplay.size();
+            for (int i = 0; i < displayCount; i++) {
+                LogLine l = toDisplay.get(i);
+                print(l.c, l.o);
+            }
+            toDisplay.clear();                
+            repaint();
+            
         }
     };
     
