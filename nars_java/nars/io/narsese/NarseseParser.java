@@ -17,17 +17,22 @@ import org.parboiled.support.ParsingResult;
  */
 public class NarseseParser extends BaseParser<Object> {
 
+    public Rule Input() {
+        return sequence(zeroOrMore(Task()), WhiteSpace(), EOI);
+    }
+    
     public Rule Task() {
         //TODO separate goal into an alternate form "!" because it does not use a tense
         
         return sequence(
+                WhiteSpace(),
                 optional(Budget()),
                 WhiteSpace(),
                 Term(),
                 SentenceTypeChar(),
                 WhiteSpace(),
                 //optional(Tense())
-                optional(Truth()), EOI);
+                optional(Truth()));
     }
 
     Rule Budget() {
@@ -148,7 +153,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule WhiteSpace() {
-        return zeroOrMore(anyOf(" \t\f"));
+        return zeroOrMore(anyOf(" \t\f\n"));
     }
 
     public static NarseseParser newParser() {
@@ -161,7 +166,7 @@ public class NarseseParser extends BaseParser<Object> {
         Scanner sc = new Scanner(System.in);
         while (true) {
             String input = sc.nextLine();
-            RecoveringParseRunner rpr = new RecoveringParseRunner(p.Task());
+            RecoveringParseRunner rpr = new RecoveringParseRunner(p.Input());
             ParsingResult r = rpr.run(input);
             System.out.println("valid? " + (r.matched && (r.parseErrors.size() == 0)) );
             for (Object e : r.parseErrors) {
