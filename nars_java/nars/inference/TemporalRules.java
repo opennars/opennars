@@ -17,6 +17,7 @@
 package nars.inference;
 
 
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -34,9 +35,7 @@ import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.language.Variables;
 import nars.operator.Operation;
-import nars.core.Memory;
 
 /**
  *
@@ -148,6 +147,8 @@ public class TemporalRules {
         //return (a+b+c+d+e)/3 > 1;
     }
     
+    final static Variable var1 = new Variable("$0");
+    
     public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {
         if ((s1.truth==null) || (s2.truth==null))
             return;
@@ -170,7 +171,7 @@ public class TemporalRules {
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
 
-            Variable var1 = new Variable("$0");
+            
             Variable var2 = var1;
 
             if (ss1.getSubject().equals(ss2.getSubject())) {

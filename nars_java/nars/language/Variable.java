@@ -123,4 +123,8 @@ public class Variable extends Term {
     public final int compareTo(final AbstractTerm that) {
         return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
     }
+
+    boolean isQueryVariable() { return getType() == '?';    }
+    boolean isDependentVariable() { return getType() == '#';    }
+    boolean isIndependentVariable() { return getType() == '$';    }
 }
