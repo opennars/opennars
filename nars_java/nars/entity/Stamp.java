@@ -23,7 +23,8 @@ package nars.entity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
+import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -74,11 +75,9 @@ public class Stamp implements Cloneable {
      * deriving the conclusion c possible
      * Uses LinkedHashSet for optimal contains/indexOf performance.
      */
-    public final LinkedHashSet<Term> derivationChain;
+    public final ArrayList<Term> derivationChain;
 
 
-    /** caches hashcode value; only computed on-demand since stamp's hashcode does not seem used in inference (yet) */
-    private final Integer hashCode = null;
     
     /** caches evidentialBase as a set for comparisons and hashcode.
         stores the unique Long's in-order for efficiency
@@ -109,7 +108,7 @@ public class Stamp implements Cloneable {
             occurrenceTime = time;
         }
         
-        derivationChain = new LinkedHashSet<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
+        derivationChain = new ArrayList<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
     }
 
     /**
@@ -179,23 +178,26 @@ public class Stamp implements Cloneable {
         }
         
 
-        //TODO create Term[] getChainArray() method
-        final Term[] chain1 = first.getChain().toArray( new Term[ first.getChain().size() ]);        
-        final Term[] chain2 = second.getChain().toArray( new Term[ second.getChain().size() ]);
+        final ArrayList<Term> chain1 = first.getChain();
+        final ArrayList<Term> chain2 = second.getChain();
         
-        i1 = chain1.length - 1;
-        i2 = chain2.length - 1;
+        i1 = chain1.size() - 1;
+        i2 = chain2.size() - 1;
 
-        //take as long till the chain is full or all elements were taken out of chain1 and chain2:
-        LinkedHashSet<Term> derivationChain = new LinkedHashSet<>(baseLength); 
+        //set here is for fast contains() checking
+        Set<Term> added = new HashSet<>(baseLength); 
         
+        derivationChain = new ArrayList(baseLength);
+        
+        //take as long till the chain is full or all elements were taken out of chain1 and chain2:
         j = 0;
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
-                    final Term c1i1 = chain1[i1];                         
-                    if (!derivationChain.contains(c1i1)) {
+                    final Term c1i1 = chain1.get(i1);
+                    if (!added.contains(c1i1)) {
                         derivationChain.add(c1i1);
+                        added.add(c1i1);
                     } else {
                         j--; //was double, so we can add one more now
                     }
@@ -203,9 +205,10 @@ public class Stamp implements Cloneable {
                 }
             } else {
                 if (i2 >= 0) {
-                    final Term c2i2 = chain2[i2];
-                    if (!derivationChain.contains(c2i2)) {
+                    final Term c2i2 = chain2.get(i2);
+                    if (!added.contains(c2i2)) {
                         derivationChain.add(c2i2);
+                        added.add(c2i2);
                     } else {
                        j--; //was double, so we can add one more now
                     }
@@ -213,13 +216,11 @@ public class Stamp implements Cloneable {
                 }
             }
             j++;
-        } //ok but now the most important elements are at the beginning so let's change that:
-        
+        } 
+
+        //ok but now the most important elements are at the beginning so let's change that:       
         //reverse the linkedhashset
-        ArrayList<Term> reverseDerivation = new ArrayList(derivationChain);
-        Collections.reverse(reverseDerivation);
-        
-        this.derivationChain = new LinkedHashSet(reverseDerivation);
+        Collections.reverse(this.derivationChain);
 
         creationTime = time;
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
@@ -304,7 +305,7 @@ public class Stamp implements Cloneable {
      *
      * @return The evidentialBase of numbers
      */
-    public LinkedHashSet<Term> getChain() {
+    public ArrayList<Term> getChain() {
         return derivationChain;
     }
 
@@ -314,12 +315,11 @@ public class Stamp implements Cloneable {
      * @return The evidentialBase of numbers
      */
     public void addToChain(final Term T) {
-        derivationChain.add(T);
-        if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
-            Term next = derivationChain.iterator().next();
-            derivationChain.remove(next); //remove 0th
+        if (derivationChain.size()+1 > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
+            derivationChain.remove(0);
         }
 
+        derivationChain.add(T);
     }
     
     public static long[] toSetArray(final long[] x) {
