@@ -228,7 +228,11 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
         JPanel x = new JPanel(new BorderLayout());
         
         JMenuBar headerMenu = new JMenuBar();
-        JMenu m = new JMenu("[..]");
+        headerMenu.setOpaque(false);
+        headerMenu.setBorder(null);
+        
+        JMenu m = new JMenu("\uf085");
+        m.setFont(NARSwing.FontAwesome);
         m.add(new JMenuItem("Statement List"));
         m.add(new JMenuItem("Log"));
         m.add(new JMenuItem("Concept List"));
@@ -258,7 +262,8 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
         dock.addRootContent(cont);
         
         cont.getTab().setLabel(p.label);
-        cont.getTab().add(headerMenu, 2);
+        cont.getTab().setFont(NARSwing.fontMono(14));
+        cont.getTab().setMenuButton(headerMenu);
         
         SwingUtilities.invokeLater(new Runnable() {
             @Override

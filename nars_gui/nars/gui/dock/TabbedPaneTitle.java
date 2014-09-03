@@ -23,6 +23,7 @@ package nars.gui.dock;
 
 import java.awt.event.MouseEvent;
 import static javax.swing.BorderFactory.createEmptyBorder;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.TransferHandler;
 
@@ -37,6 +38,7 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
 
     DockingExportTransferHandler xferHandler;
     MouseEvent mouseBegin;
+    private JComponent menuButton;
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -94,10 +96,10 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
     private void initComponents() {
 
         setOpaque(false);
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 4, 0));
         label_title.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_title.setText("jLabel1");
-        label_title.setBorder(createEmptyBorder(0, 0, 0, 4));
+        label_title.setBorder(createEmptyBorder(4, 4, 4, 4));
         label_title.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -129,8 +131,8 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
                 bn_floatActionPerformed(evt);
             }
         });
-        add(bn_float);
         add(label_title);
+        add(bn_float);
         
 
 ////bn_maximize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/maximize.png"))); // NOI18N
@@ -240,8 +242,25 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
         return label_title;
     }
     public void setLabel(String text) {
+        int maxLabelLength = 24;
+        if (text.length() > maxLabelLength)
+            text = text.substring(0, maxLabelLength-2) + "..";
+            
         label_title.setText(text);
     }
+
+    public JComponent getMenuButton() {
+        return menuButton;
+    }
+    public JComponent removeMenuButton() {
+        remove(menuButton);
+        return menuButton;
+    }
+    public void setMenuButton(JComponent b) {        
+        add(b, 0);
+        this.menuButton = b;
+    }
+    
 
     
     

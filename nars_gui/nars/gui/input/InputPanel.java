@@ -195,7 +195,7 @@ public class InputPanel extends NPanel implements ActionListener {
 
         public boolean update(String input) {
 
-            ReportingParseRunner rpr = new ReportingParseRunner(p.Task());
+            ReportingParseRunner rpr = new ReportingParseRunner(p.Input());
             ParsingResult r = rpr.run(input);
 
             String s = "";

@@ -5,7 +5,6 @@ import java.awt.Color;
 /**
  * Used by Chart, a chart data set is a container to store chart data.
  */
-@SuppressWarnings("serial")
 class TimeSeriesChart  {
 
         final float[] values;
@@ -59,8 +58,10 @@ class TimeSeriesChart  {
             //update min/max while shifting up                                   
             for (int i = historySize-1; i >= 1; i--) {
                 final float g = values[i] = values[i-1];                
-                if (g < min) min = g;
-                if (g > max) max = g;
+                if (i > 1) {
+                    if (g < min) min = g;
+                    if (g > max) max = g;
+                }
             }
             
             values[0] = f;

@@ -66,9 +66,15 @@ public class DockingRegionTabbed extends JTabbedPane implements DockingChild {
         insertTab(content.getTitle(), null, layout.component, null, index);
         int idx = indexOfComponent(layout.component);
         
-        TabbedPaneTitle tab = content.getTab();
-        if (tab==null)
-            tab = new TabbedPaneTitle(this, content);
+        TabbedPaneTitle existing = content.getTab();
+        
+        TabbedPaneTitle tab = new TabbedPaneTitle(this, content);
+        if (existing!=null) {
+            tab.setLabel(existing.getLabel().getText());
+            JComponent menuButton = existing.removeMenuButton();
+            if (menuButton!=null)
+                tab.setMenuButton(menuButton);
+        }
         
         setTabComponentAt(idx, tab);
         content.setParent(this);
