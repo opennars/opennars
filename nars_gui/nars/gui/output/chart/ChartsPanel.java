@@ -239,25 +239,25 @@ public class ChartsPanel extends Canvas {
                 Object value = data.get(f);
 
                 if (value instanceof Double) {                    
-                    ch.push(((Number) value).doubleValue());
+                    ch.push(((Number) value).floatValue());
                 }
                 if (value instanceof Float) {
-                    ch.push(((Number) value).doubleValue());
+                    ch.push(((Number) value).floatValue());
                 }
                 if (value instanceof Integer) {
-                    ch.push(((Number) value).doubleValue());
+                    ch.push(((Number) value).floatValue());
                 }
             }            
         
             g.setPaint(ch.getColor());
             
             
-            double min = ch.min;
-            double max = ch.max;
+            float min = ch.min;
+            float max = ch.max;
             if (!Double.isFinite(min)) min = 0;
             if (!Double.isFinite(max)) max = min;
                     
-            double range = max - min;
+            float range = max - min;
             
             if (range == 0) {
                 range = 1;
@@ -267,7 +267,7 @@ public class ChartsPanel extends Canvas {
             
             int n = 0;
             double firstValue = 0;
-            for (Double d : ch) {
+            for (float d : ch.values) {
                 if (n == 0)
                     firstValue = d;
 

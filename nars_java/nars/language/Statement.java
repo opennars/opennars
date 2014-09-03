@@ -20,11 +20,12 @@
  */
 package nars.language;
 
+import nars.core.Memory;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
-import nars.core.Memory;
+import nars.io.Texts;
 
 /**
  * A statement is a compound term, consisting of a subject, a predicate, and a
@@ -215,9 +216,9 @@ public abstract class Statement extends CompoundTerm {
             .append(predicateName)
             .append(STATEMENT_CLOSER.ch);
             
-        //EITHER WORKS, but sb.toString() seems faster right now:
-        //return Texts.sequence(sb);
-        return sb.toString();
+        //EITHER WORKS, see which is faster.  but using the StringBuilder as-is should save memory:
+        return Texts.sequence(sb);
+        //return sb.toString();
         
     }
     
