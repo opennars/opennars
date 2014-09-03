@@ -22,9 +22,9 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Random;
 import nars.core.Memory.Events.MemoryCycleStart;
 import nars.core.Memory.Events.MemoryCycleStop;
@@ -596,7 +596,7 @@ public class Memory implements Output, Serializable {
             if(occurence2!=null && occurence2.getOccurenceTime()!=Stamp.ETERNAL) {
                 stamp.setOccurrenceTime(occurence2.getOccurenceTime());
             }
-            final LinkedHashSet<Term> chain = stamp.getChain();
+            final ArrayList<Term> chain = stamp.getChain();
             
             final Term currentTaskContent = getCurrentTask().getContent();
             

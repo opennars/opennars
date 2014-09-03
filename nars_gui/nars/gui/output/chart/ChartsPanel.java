@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -40,9 +41,10 @@ public class ChartsPanel extends Canvas {
     
     float yScale = 1.0f;
     private int yOffset = 0;
-    private int[] xPoints;
-    private int[] yPoints;
+    private Polygon p;
     private RenderingHints renderHints;
+    BufferedImage image = null;
+    Color backgroundClearColor = new Color(0,0,0,0.1f);
     
     /**
      *
@@ -147,7 +149,6 @@ public class ChartsPanel extends Canvas {
         return ch;
     }
     
-    BufferedImage image = null;
     
     private boolean updateDoubleBuffer()     {
         int w = getWidth();
@@ -174,7 +175,6 @@ public class ChartsPanel extends Canvas {
             return true;
     }
 
-    Color backgroundClearColor = new Color(0,0,0,0.1f);
     
     public void update(final boolean addNextPoint) {
 	
@@ -207,10 +207,13 @@ public class ChartsPanel extends Canvas {
         int verticalPadding = 2;
         int h = (int)(yScale * ((float)height) / ((float)numCharts));
         
-        if (xPoints == null) {
-            xPoints = new int[historySize+2];
-            yPoints = new int[historySize+2];
+        
+        if (p == null) {
+            p = new Polygon(new int[historySize+2], new int[historySize+2], historySize+2);
         }
+        final int[] xPoints = p.xpoints;
+        final int[] yPoints = p.ypoints;
+        
         
         float xp = getWidth();
         float dx = (float)Math.ceil(((float)getWidth()) / ((float)historySize));
@@ -276,8 +279,8 @@ public class ChartsPanel extends Canvas {
                 Arrays.fill(yPoints, n, xPoints.length-1, y+h);
                 yPoints[0] = yPoints[xPoints.length-1] = y + h;
 
-
-                g.fillPolygon(xPoints, yPoints, xPoints.length);
+                p.invalidate();                
+                g.fillPolygon(p);                
             }
             else {                
                 firstValue = ch.values[0];
