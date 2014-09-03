@@ -3,6 +3,7 @@ package nars.gui.output;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -32,6 +34,7 @@ import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
 import nars.gui.NARSwing;
+import nars.gui.NSlider;
 import nars.gui.dock.DockingContent;
 import nars.gui.dock.DockingRegionRoot;
 import nars.io.Output;
@@ -241,8 +244,25 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
         m.add(new JMenuItem("Statements Network"));
         m.add(new JMenuItem("Truth vs. Confidence"));        
         m.addSeparator();
-        m.add(new JButton("Priority +"));
-        m.add(new JButton("Priority -"));
+        
+        
+        final NSlider fontSlider = new NSlider(12 /*ioText.getFont().getSize()*/, 6, 40) {
+            @Override
+            public void onChange(double v) {
+                p.setFontSize(v);
+            }
+        };
+        JPanel fontPanel = new JPanel(new BorderLayout());        
+        fontSlider.setPrefix("Font size: ");
+        fontPanel.add(fontSlider);
+        m.add(fontPanel);
+        
+        JPanel priorityPanel = new JPanel(new FlowLayout());        
+        priorityPanel.add(new JButton("+"));
+        priorityPanel.add(new JLabel("Priority"));
+        priorityPanel.add(new JButton("-"));
+        m.add(priorityPanel);
+        
         m.addSeparator();
         m.add(new JMenuItem("Close"));
         headerMenu.add(m);
