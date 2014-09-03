@@ -1,9 +1,9 @@
 package nars.language;
 
 import java.util.HashMap;
+import nars.core.Memory;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.core.Memory;
 
 /**
  * Static utility class for static methods related to Variables
@@ -18,13 +18,15 @@ public class Variables {
 //            System.exit(1);
 //        }
 
+        final boolean term1Var = term1 instanceof Variable;
+        final boolean term2Var = term2 instanceof Variable;
         final boolean termsEqual = term1.equals(term2);
-        if (!(term1 instanceof Variable) && !(term2 instanceof Variable) && termsEqual) {
+        if (!term1Var && !term2Var && termsEqual) {
             return true;
         }
         
         Term t;                
-        if ((term1 instanceof Variable) && (((Variable) term1).getType() == type)) {
+        if (term1Var && (((Variable) term1).getType() == type)) {
             final Variable var1 = (Variable) term1;
             t = map1.get(var1);                        
             
@@ -37,20 +39,20 @@ public class Variables {
                     map2.put(term2, CommonVar);
                 } else {
                     map1.put(var1, term2);
-                    if (isCommonVariable(var1)) {
+                    if (var1.isIndependentVariable()) {
                         map2.put(var1, term2);
                     }
                 }
                 return true;
             }
-        } else if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
+        } else if (term2Var && (((Variable) term2).getType() == type)) {
             final Variable var2 = (Variable) term2;
             t = map2.get(var2);
             if (t != null) {
                 return findSubstitute(type, term1, t, map1, map2);
             } else {
                 map2.put(var2, term1);
-                if (isCommonVariable(var2)) {
+                if (var2.isIndependentVariable()) {
                     map1.put(var2, term1);
                 }
                 return true;
@@ -170,12 +172,6 @@ public class Variables {
         return new Variable(v1.toString() + v2.toString() + '$');
     }
 
-    public static boolean isCommonVariable(final Variable v) {
-        String s = v.toString();     
-        return s.charAt(s.length() - 1) == '$';
-    }
-
-
     public static boolean containVarDepOrIndep(final CharSequence n) {
         final int l = n.length();
         for (int i = 0; i < l; i++) {
@@ -209,8 +205,7 @@ public class Variables {
         if(!(T instanceof Inheritance) && !(T instanceof Similarity)) {
             return false;
         }
-        final CharSequence n=T.toString();
-        if(Variables.containVarIndep(T.toString())) {
+        if(Variables.containVarIndep(T.name())) {
             return true;
         }
         return false;

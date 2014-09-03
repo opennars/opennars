@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -687,6 +688,25 @@ public abstract class CompoundTerm extends Term {
         }
         isConstant = true;        
     }
+    
+    /** caches a static copy of commonly uesd index variables of each variable type */
+    public static final int maxCachedVariableIndex = 16;
+    public static final Variable[][] varCache = (Variable[][]) Array.newInstance(Variable.class, 3, maxCachedVariableIndex);
+    
+    public static Variable getIndexVariable(final char type, final int i) {
+        int typeI;
+        switch (type) {
+            case '#': typeI = 0; break;
+            case '$': typeI = 1; break;
+            case '?': typeI = 2; break;
+            default: throw new RuntimeException("Invalid variable type");
+        }
+        
+        Variable existing = varCache[typeI][i];
+        if (existing == null)
+            existing = varCache[typeI][i] = new Variable(type + String.valueOf(i));
+        return existing;
+    }
 
     /**
      * Recursively rename the variables in the compound
@@ -699,16 +719,17 @@ public abstract class CompoundTerm extends Term {
             for (int i = 0; i < term.length; i++) {
                 final Term term = this.term[i];
                 if (term instanceof Variable) {
+                    Variable termV = (Variable)term;
                     Variable var;                    
                     if (term.name().length() == 1) { // anonymous variable from input
-                        var = new Variable(term.name().charAt(0) + String.valueOf(map.size() + 1));
+                        var = getIndexVariable(termV.getType(), map.size()+1);
                     } else {
-                        var = map.get(term);
+                        var = map.get(termV);
                         if (var == null) {
-                            var = new Variable(term.name().charAt(0) + String.valueOf(map.size() + 1));
+                            var = getIndexVariable(termV.getType(), map.size() + 1);
                         }
                     }
-                    if (!term.equals(var)) {
+                    if (!termV.equals(var)) {
                         this.term[i] = var;
                         renamed = true;
                     }
