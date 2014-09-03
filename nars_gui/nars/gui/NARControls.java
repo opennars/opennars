@@ -24,27 +24,20 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
@@ -588,62 +581,6 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 //        }
 //    }
     
-    /**
-     * button that uses FontAwesome icon as a label
-     */
-    public static class FAButton extends JButton { 
-        static Font ttfReal = null;
-        static {
-            InputStream in = FAButton.class.getResourceAsStream("FontAwesome.ttf");
-            Font ttfBase;
-            try {
-                ttfBase = Font.createFont(Font.TRUETYPE_FONT, in);
-                ttfReal = ttfBase.deriveFont(Font.PLAIN, 14);
-            } catch (FontFormatException ex) {
-                Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        public FAButton(char faCode) {
-            super();
-            setFont(ttfReal);
-
-            setText(String.valueOf(faCode));
-        }
-    }    
-    public static class FAToggleButton extends JToggleButton {
-        private final char codeUnselected;
-        private final char codeSelected;
-        public FAToggleButton(char faCodeUnselected, char faCodeSelected) {
-            super();
-            this.codeUnselected = faCodeUnselected;
-            this.codeSelected = faCodeSelected;
-            setFont(FAButton.ttfReal);
-            setText(String.valueOf(faCodeUnselected));            
-        }
-
-        @Override
-        public void setSelected(boolean b) {
-            super.setSelected(b);
-        }
-
-        
-        @Override
-        public void paint(Graphics g) {
-            if (isSelected()) {
-                setText(String.valueOf(codeSelected));
-            }
-            else {
-                setText(String.valueOf(codeUnselected));
-            }
-            super.paint(g); //To change body of generated methods, choose Tools | Templates.
-        }
-        
-        
-        
-    }
     
     //http://astronautweb.co/snippet/font-awesome/
     private final char FA_PlayCharacter = '\uf04b';
