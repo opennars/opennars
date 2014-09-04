@@ -5,6 +5,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -107,8 +109,7 @@ public class MultiModePanel extends JPanel implements Output {
             label = object.toString();
         }
         
-        //setMode(new LogView());
-        setMode(new GraphView());
+        setMode(new LogView());
     }
     
     public void setMode(MultiViewMode mode) {
@@ -132,10 +133,27 @@ public class MultiModePanel extends JPanel implements Output {
         JMenu m = new JMenu("\uf085");
         m.setFont(NARSwing.FontAwesome);
         m.add(new JMenuItem("Statement List"));
-        m.add(new JMenuItem("Log"));
+        
+        JMenuItem log;
+        m.add(log = new JMenuItem("Log"));
+        log.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                setMode(new LogView());
+            }            
+        });
+
+        JMenuItem conceptNetwork;
+        m.add(conceptNetwork = new JMenuItem("Concepts Network"));
+        conceptNetwork.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                setMode(new GraphView());
+            }            
+        });
+        
+        
         m.add(new JMenuItem("Concept List"));
         m.add(new JMenuItem("Concept Cloud"));        
-        m.add(new JMenuItem("Concepts Network"));
+        
         m.add(new JMenuItem("Statements Network"));
         m.add(new JMenuItem("Truth vs. Confidence"));        
         
