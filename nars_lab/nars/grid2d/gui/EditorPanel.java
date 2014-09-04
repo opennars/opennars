@@ -177,6 +177,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "go-to", "");
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
             }
         });
 
@@ -184,6 +185,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "pick", "");
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
             }
         });
 
@@ -191,6 +193,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "activate", "");
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
             }
         });
 
@@ -198,6 +201,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "deactivate", "");
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
             }
         });
 

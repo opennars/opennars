@@ -62,6 +62,7 @@ public class TestChamber {
         //}
     }
     boolean invalid=false;
+    static boolean active=true;
     public void create(NAR nar) {
 //NAR n = new NAR();
         int w = 50;
@@ -205,11 +206,14 @@ public class TestChamber {
                                     }
                                     if("go-to".equals(opname)) {
                                         nar.addInput("<"+goal+" --> at>. :|:");
+                                        nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                                     }
                                 }
                             }
                             opname="";
                         } else {
+                            nar.stop();
+                            nar.step(1);
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
                             float cy = y;
