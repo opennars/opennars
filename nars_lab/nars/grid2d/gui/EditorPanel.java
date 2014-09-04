@@ -216,6 +216,7 @@ public class EditorPanel extends JPanel {
 
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 for (GridObject g : s.objects) {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
@@ -249,6 +250,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("be somewhere") {
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 s.cells.click("", "", "at");
             }
         });
@@ -256,6 +258,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("hold something") {
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 s.cells.click("", "", "hold");
             }
         });
@@ -263,6 +266,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("make switched on") {
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 s.cells.click("", "", "on");
             }
         });
@@ -270,6 +274,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("make switched off") {
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 s.cells.click("", "", "off");
             }
         });
@@ -277,6 +282,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("make opened") {
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 s.cells.click("", "", "opened");
             }
         });
@@ -284,6 +290,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("make closed") {
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 s.cells.click("", "", "closed");
             }
         });
@@ -291,6 +298,7 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("be chatty") {
             @Override
             public void run() {
+                s.nar.start(4); //swing doesnt cope up, in prolog1 branch use start(1)
                 s.nar.addInput("<<$1 --> on> <=> <(*,$1,SHOULD,BE,SWITCHED,ON) --> sentence>>.");
                 s.nar.addInput("<<$1 --> off> <=> <(*,$1,SHOULD,BE,OFF) --> sentence>>.");
                 s.nar.addInput("<<$1 --> opened> <=> <(*,$1,SHOULD,BE,OPENED) --> sentence>>.");
