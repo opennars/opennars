@@ -35,9 +35,8 @@ public class ChartsPanel extends Canvas {
     private final DataSet data;
     final Map<String, TimeSeriesChart> charts = new TreeMap();
     
-    //private final Map<String, JToggleButton> enable = new HashMap();
-    private final Font monofontLarge = NARSwing.monofont.deriveFont(Font.PLAIN, 18f);
-    private final Font monofontSmall = NARSwing.monofont.deriveFont(Font.PLAIN, 14f);
+    public static final Font monofontLarge = NARSwing.monofont.deriveFont(Font.PLAIN, 18f);
+    public static final Font monofontSmall = NARSwing.monofont.deriveFont(Font.PLAIN, 14f);
     
     float yScale = 1.0f;
     private int yOffset = 0;

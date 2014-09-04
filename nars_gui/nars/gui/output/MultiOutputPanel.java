@@ -3,24 +3,17 @@ package nars.gui.output;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -34,7 +27,6 @@ import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
 import nars.gui.NARSwing;
-import nars.gui.NSlider;
 import nars.gui.dock.DockingContent;
 import nars.gui.dock.DockingRegionRoot;
 import nars.io.Output;
@@ -51,91 +43,9 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
     
     final long activityDecayPeriodNS = 100 * 1000 * 1000; //100ms
     
-    /** extension of SwingLogText with functionality specific to MultiLogPanel */
-    public class SwingLogTextM extends SwingLogText  implements ActionListener {
     
-        final float activityIncrement = 0.5f;
-        final float activityMomentum = 0.95f;
-        
-        float activity = 0;
-        public final JButton enabler;
-        final Object category;
-        JPanel displayed = null;
-        private final String label;
-        Color bgColor = Color.WHITE;
-
-        public SwingLogTextM(Object category) {
-            super(nar);
-            this.category = category;
-            
-            
-            if (category instanceof Task) {
-                label = ((Task)category).sentence.toString();
-            }
-            else {
-                label = category.toString();
-            }
-            
-            this.enabler = new JButton(label) {
-
-                @Override public void paint(Graphics g) {
-                    setBackground(bgColor);
-                    /*g.setColor(c);
-                    g.fillRect(0, 0, getWidth(), getHeight());                    */
-                    super.paint(g);
-                }
-                
-            };
-            
-            enabler.addActionListener(this);
-            
-        }
-
-        @Override
-        public void out(Class c, Object o) {
-            super.out(c, o);
-            
-            updateActivity(activity + activityIncrement);
-        }
-        
-        public void updateActivity(float newActivity) {
-            if (activity!=newActivity) {
-                bgColor = new Color(1.0f, 0.5f + 0.5f * (1f-activity), 0.5f + 0.5f * activity );
-                
-                activity = newActivity;
-                if (activity > 1.0f) activity = 1.0f;
-            }
-        }
-        
-        public void decayActvity() {
-            updateActivity(activity * activityMomentum);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!isShowing())
-                displayed = showCategory(category);                
-        }
-
-//        
-//        @Override
-//        public void stateChanged(ChangeEvent e) {
-//            if (enabler.isSelected()) {
-//            }
-//            else {                
-//                hideCategory(displayed);
-//                
-//                displayed = null;
-//            }
-//        }
-
-        public void show() {
-            enabler.doClick();
-        }
-    }
-    
-    public Map<Object, SwingLogTextM> categories = new HashMap();
-    private final SwingLogText rootTaskPanel;
+    public Map<Object, MultiModePanel> categories = new HashMap();
+    private final MultiModePanel rootTaskPanel;
     private final NAR nar;    
     private final JPanel side;
     private final DefaultListModel categoriesListModel;
@@ -170,10 +80,9 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
 
         
 
-        rootTaskPanel = new SwingLogTextM("Root");
+        rootTaskPanel = getModePanel("Root");//new MultiModePanel(nar, "Root");
         
-        
-        getLogPanel("Root").show();
+        showCategory("Root");
     }
     
     protected void onShowing(boolean showing) {
@@ -196,23 +105,28 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
             category = null;
         }
                 
-        SwingLogText p = getLogPanel(category);
+        MultiModePanel p = getModePanel(category);
         if (p!=null)
-            p.out(channel, o);
+            p.output(channel, o);
         
         decayActivities();
     }
 
-    public SwingLogTextM getLogPanel(Object category) {
+    public MultiModePanel getModePanel(Object category) {
         if (category == null) {
             return categories.get("Root");
         } else {
-            SwingLogTextM p = categories.get(category);
+            MultiModePanel p = categories.get(category);
             if (p == null) {
                 
-                p = new SwingLogTextM(category);
-                JButton jc = p.enabler;
+                p = new MultiModePanel(nar, category);
+                JButton jc = p.newStatusButton();
                 
+                jc.addActionListener(new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        showCategory(category);
+                    }                    
+                });
                 categories.put(category, p);
                                         
                 categoriesListModel.addElement(jc);
@@ -223,66 +137,28 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
 
     public JPanel showCategory(Object category) {
         String title = category.toString();
-        SwingLogTextM p = getLogPanel(category);
         
-        
-        SwingLogPanel.setConsoleStyle(p, true);
-
-        JPanel x = new JPanel(new BorderLayout());
+        MultiModePanel p = getModePanel(category);
         
         JMenuBar headerMenu = new JMenuBar();
         headerMenu.setOpaque(false);
-        headerMenu.setBorder(null);
-        
-        JMenu m = new JMenu("\uf085");
-        m.setFont(NARSwing.FontAwesome);
-        m.add(new JMenuItem("Statement List"));
-        m.add(new JMenuItem("Log"));
-        m.add(new JMenuItem("Concept List"));
-        m.add(new JMenuItem("Concept Cloud"));        
-        m.add(new JMenuItem("Concepts Network"));
-        m.add(new JMenuItem("Statements Network"));
-        m.add(new JMenuItem("Truth vs. Confidence"));        
-        m.addSeparator();
-        
-        
-        final NSlider fontSlider = new NSlider(12 /*ioText.getFont().getSize()*/, 6, 40) {
-            @Override
-            public void onChange(double v) {
-                p.setFontSize(v);
-            }
-        };
-        JPanel fontPanel = new JPanel(new BorderLayout());        
-        fontSlider.setPrefix("Font size: ");
-        fontPanel.add(fontSlider);
-        m.add(fontPanel);
-        
-        JPanel priorityPanel = new JPanel(new FlowLayout());        
-        priorityPanel.add(new JButton("+"));
-        priorityPanel.add(new JLabel("Priority"));
-        priorityPanel.add(new JButton("-"));
-        m.add(priorityPanel);
-        
-        m.addSeparator();
-        m.add(new JMenuItem("Close"));
-        headerMenu.add(m);
-        
-                
-        
+        headerMenu.setBorder(null);        
+        headerMenu.add(p.newMenu());
         
         //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
         JPanel ioTextWrap = new JPanel(new BorderLayout());
         ioTextWrap.add(p);        
-        x.add(new JScrollPane(ioTextWrap), BorderLayout.CENTER);
 
+        JPanel x = new JPanel(new BorderLayout());
+        x.add(new JScrollPane(ioTextWrap), BorderLayout.CENTER);
         x.validate();
 
 
         DockingContent cont = new DockingContent("view" + category, title, x);
         dock.addRootContent(cont);
         
-        cont.getTab().setLabel(p.label);
-        cont.getTab().setFont(NARSwing.fontMono(14));
+        cont.getTab().setLabel(p.getLabel());
+        cont.getTab().setFont(NARSwing.fontMono(15));
         cont.getTab().setMenuButton(headerMenu);
         
         SwingUtilities.invokeLater(new Runnable() {
@@ -306,7 +182,7 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
 
         public JCategoryList() {
             setCellRenderer(new CellRenderer());
-            addMouseListener(new MouseAdapter() {
+            /*addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
                     int index = locationToIndex(e.getPoint());
                     if (index != -1) {
@@ -314,7 +190,7 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
                         repaint();
                     }
                 }
-            });
+            });*/
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         }
 
@@ -325,33 +201,31 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
 
         protected class CellRenderer implements ListCellRenderer<JButton> {
 
-            Font f = NARSwing.fontMono(14);
+            Font f = NARSwing.fontMono(16f);
             private JButton lastCellFocus;
-            
+
             public Component getListCellRendererComponent(
                     JList<? extends JButton> list, JButton value, int index,
                     boolean isSelected, boolean cellHasFocus) {
                 JButton b = value;
 
-                //Drawing checkbox, change the appearance here
-//                checkbox.setBackground(isSelected ? getSelectionBackground()
-//                        : getBackground());
-//                checkbox.setForeground(isSelected ? getSelectionForeground()
-//                        : getForeground());
+                
                 b.setContentAreaFilled(false);
-                b.setOpaque(true);
                 b.setHorizontalTextPosition(JButton.LEFT);
                 b.setHorizontalAlignment(JButton.LEFT);
-                b.setFont(getFont());                
+                b.setForeground(Color.WHITE);
                 b.setFocusPainted(false);
-                b.setBorderPainted(true);                
+                b.setBorderPainted(false);                                
                 b.setFont(f);
+                
                 if ((cellHasFocus) && (lastCellFocus!=b)) {
                     b.doClick();
                     lastCellFocus = b;
                 }
                 return b;
             }
+            
+            
         }
     }
     
@@ -386,7 +260,7 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
     protected void decayActivities() {
         long now = System.nanoTime();
         if (now - lastDecayed > activityDecayPeriodNS) {
-            for (SwingLogTextM c : categories.values()) {
+            for (MultiModePanel c : categories.values()) {
                 c.decayActvity();
             }
             lastDecayed = now;

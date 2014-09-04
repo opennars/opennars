@@ -35,18 +35,22 @@ import javax.swing.plaf.basic.BasicBorders;
  */
 public class NSlider extends JLabel implements MouseListener, MouseMotionListener {
     final AtomicReference<Double> value;
-    private final double min;
-    private final double max;
+    private float min;
+    private float max;
     private Color barColor = null;
     private boolean dragging;
     NumberFormat nf = NumberFormat.getInstance();
     private String prefix = "";
-     
-    public NSlider(double initialValue, double min, double max) {
-        this(new AtomicReference<Double>(initialValue), min, max);
+    
+    public NSlider() {
+        this(0,0,0);
     }
     
-    public NSlider(AtomicReference<Double> value, double min, double max) {
+    public NSlider(float initialValue, float min, float max) {
+        this(new AtomicReference<Double>((double)initialValue), min, max);
+    }
+    
+    public NSlider(AtomicReference<Double> value, float min, float max) {
         super();
         
         nf.setMaximumFractionDigits(3);
@@ -63,7 +67,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         
     }
 
-    public double value() { return value.get().doubleValue(); }
+    public float value() { return value.get().floatValue(); }
         
     @Override
     public void paint(Graphics g) {
@@ -71,7 +75,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         int h = getHeight();
         g.clearRect(0, 0, w, h);
 
-        double p = (value.get().doubleValue() - min) / (max-min);
+        float p = (value.get().floatValue() - min) / (max-min);
         if (barColor == null) {
             //Green->Yellow->Red
             //g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.9f));
@@ -82,7 +86,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
             g.setColor(barColor);
         }
         
-        int wp = (int)(((double)w) * p );
+        int wp = (int)(((float)w) * p );
         g.setColor(barColor);
         g.fillRect(0, 0, wp, h);
         super.paint(g);
@@ -99,7 +103,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     @Override
     public String getText() {
         if (value!=null)
-            return prefix + nf.format(value.get().doubleValue());
+            return prefix + nf.format(value.get().floatValue());
         return "";
     }
     
@@ -121,22 +125,42 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     */
 
     protected void updatePosition(int x) {
-        double p = ((double)x) / ((double)getWidth());
-        double v = p * (max-min) + min;
+        float p = ((float)x) / ((float)getWidth());
+        float v = p * (max-min) + min;
         v = Math.max(v, min);
         v = Math.min(v, max);        
         setValue(v);
         repaint();
     }
     
-    public void setValue(double v) {
-        if (v != value.get().doubleValue()) {
-            value.set( v );     
+    
+    
+    public void setValue(float v) {
+        if (v != value.get().floatValue()) {
+            value.set( (double)v );     
             onChange(v);
         }
     }
+
+    public void setMin(float min) {
+        this.min = min;
+    }
+
+    public void setMax(float max) {
+        this.max = max;
+    }
+
+    public float getMin() {
+        return min;
+    }
+
+    public float getMax() {
+        return max;
+    }
     
-    public void onChange(double v) {
+    
+    
+    public void onChange(float v) {
         
     }
     

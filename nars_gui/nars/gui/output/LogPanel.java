@@ -19,13 +19,12 @@ import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.entity.Sentence;
+import nars.gui.AwesomeToggleButton;
+import nars.gui.FAButton;
 import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
-import nars.gui.FAButton;
-import nars.gui.AwesomeToggleButton;
 import nars.gui.NPanel;
-import nars.gui.NSlider;
 import nars.gui.WrapLayout;
 import nars.io.Output;
 import nars.io.TextOutput;
@@ -39,7 +38,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
 
     protected final NAR nar;
-    public static final int maxIOTextSize = (int) 1E5;
+    public static final int maxIOTextSize = (int) 4E4;
     protected boolean showErrors = true;
     protected boolean showStamp = false;
     protected boolean showQuestions = true;
@@ -154,7 +153,8 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
         menuTop.add(Box.createHorizontalStrut(4));
 
-        final NSlider fontSlider = new NSlider(12 /*ioText.getFont().getSize()*/, 6, 40) {
+        /*
+        final NSlider fontSlider = new NSlider(12f, 6f, 40f) {
             @Override
             public void onChange(double v) {
                 setFontSize(v);
@@ -162,6 +162,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         };
         fontSlider.setPrefix("Font size: ");
         menuTop.add(fontSlider);
+                */
 
         //add(menuBottom, BorderLayout.SOUTH);
         add(menuTop, BorderLayout.NORTH);
@@ -179,7 +180,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
     }
     
-    abstract protected void setFontSize(double v);
+    abstract public void setFontSize(float v);
     abstract protected void clearLog();
 
     @Override

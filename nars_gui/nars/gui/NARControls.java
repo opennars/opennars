@@ -98,9 +98,9 @@ public class NARControls extends JPanel implements ActionListener, Observer {
      * @param lines The text lines to be displayed
      */
     private NSlider speedSlider;
-    private double currentSpeed = 0;
-    private double lastSpeed = 0;
-    private final double defaultSpeed = 0.5;
+    private float currentSpeed = 0;
+    private float lastSpeed = 0;
+    private final float defaultSpeed = 0.5f;
 
     private final int GUIUpdatePeriodMS = 50;
     private NSlider volumeSlider;
@@ -442,7 +442,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
     
     private NSlider newSpeedSlider() {
-        final NSlider s = new NSlider(0, 0, 1.0) {
+        final NSlider s = new NSlider(0, 0, 1.0f) {
 
             @Override
             public String getText() {
@@ -450,7 +450,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     return "";
                 }
 
-                double v = value();
+                float v = value();
 
                 String s = "@" + memory.getTime();
 
@@ -465,7 +465,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             }
 
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
                 setSpeed(v);
             }
 
@@ -484,7 +484,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     return "";
                 }
 
-                double v = value();
+                float v = value();
                 String s = "Volume: " + super.getText() + " (";
 
                 if (v == 0) {
@@ -502,13 +502,13 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             }
 
             @Override
-            public void setValue(double v) {
+            public void setValue(float v) {
                 super.setValue(Math.round(v));
                 repaint(); //needed to update when called from outside, as the 'focus' button does
             }
 
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
                 int level = (int) v;
                 nar.param().noiseLevel.set(level);
             }
@@ -518,8 +518,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         return s;
     }
 
-    public void setSpeed(double nextSpeed) {
-        final double maxPeriodMS = 1024.0;
+    public void setSpeed(float nextSpeed) {
+        final float maxPeriodMS = 1024.0f;
 
         if (nextSpeed == 0) {
             if (currentSpeed == 0) {
@@ -673,14 +673,14 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             }
 
             @Override
-            public void setValue(double v) {
+            public void setValue(float v) {
                 int i = (int) Math.round(v);
                 super.setValue(i);
                 x.set(i);
             }
 
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
             }
         };
 

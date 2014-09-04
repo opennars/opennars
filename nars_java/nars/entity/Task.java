@@ -191,9 +191,9 @@ public class Task extends AbstractTask {
      * @return The Task as a String
      */
     @Override
-    public String toString() {
+    public String toStringLong() {
         final StringBuilder s = new StringBuilder();
-        s.append(super.toString()).append(' ').append(sentence.stamp);
+        s.append(super.toString()).append(' ').append(sentence.stamp.name());
         if (parentTask != null) {
             s.append("  \n from task: ").append(parentTask.toStringBrief());
             if (parentBelief != null) {
