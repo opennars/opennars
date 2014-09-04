@@ -42,7 +42,8 @@ public class NARStateTest {
         n.finish(16);
         
         
-        DataSet d = n.memory.updateLogicState();
+        n.memory.logic.update(n.memory);
+        DataSet d = n.memory.logic;
 
         assert(d.keySet().size() > 0);
         

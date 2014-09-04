@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public abstract class AbstractDataContainer implements DataContainer {
 
-    protected final Map<String, Object> dataMap;
+    public final Map<String, Object> dataMap;
 
     protected AbstractDataContainer(final Map<String, Object> dataMap) {
         //assertNotNull(dataMap, "dataMap");
@@ -84,8 +84,7 @@ public abstract class AbstractDataContainer implements DataContainer {
     @Override
     public void put(final String name, final Object value) {
         //assertNotEmpty(name, "name");
-        //assertNotNull(value, "value");
-
+        //assertNotNull(value, "value");        
         dataMap.put(name, value);
     }
 

@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.StringJoiner;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -18,12 +20,15 @@ import nars.core.build.DefaultNARBuilder;
 import nars.io.TextInput;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.getExpectations;
+import nars.util.XORShiftRandom;
 import org.encog.Encog;
+import org.encog.mathutil.randomize.factory.RandomFactory;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.basic.BasicMLDataPair;
 import org.encog.ml.data.basic.BasicMLDataSet;
+import org.encog.ml.ea.species.Species;
 import org.encog.ml.ea.train.EvolutionaryAlgorithm;
 import org.encog.neural.neat.NEATNetwork;
 import org.encog.neural.neat.NEATPopulation;
@@ -38,6 +43,7 @@ import org.encog.util.simple.EncogUtility;
 public class NALTestPerformance {
 
     static int exampleNum = 0;
+    static int absTime = 0;
     
     static class Telemetry implements Runnable {
 
@@ -82,14 +88,17 @@ public class NALTestPerformance {
             fields.addAll(nar.memory.logic.keySet());
             fields.add("id");
             fields.add("time");
+            fields.add("absTime");
             fields.add("successes");
             fields.add("error");
             
             do {
                 double successRate = successes / ((double)expects.size());
-                logicState.add(nar.memory.updateLogicState().toArray(
+                nar.memory.logic.update(nar.memory);
+                logicState.add(nar.memory.logic.toArray(
                         exampleNum++,
                         nar.getTime(),
+                        absTime++,
                         successRate, 
                         error ? 1 : 0
                 ));
@@ -160,7 +169,7 @@ public class NALTestPerformance {
             int ins = in.length;
             int outs = out.length;
             
-            
+            int c = 0;
             for (double[] l : logicState) {
                 double[] i = new double[ins];
                 double[] o = new double[outs];
@@ -246,14 +255,18 @@ public class NALTestPerformance {
                NormalizeArray na = new NormalizeArray();
                na.setNormalizedLow(0);
                x = na.process( x  );
+               if (na.getStats().getActualLow() == na.getStats().getActualHigh())
+                   Arrays.fill(x, 0);
                normalizations.put(i, na );
                setIndex(true, i, x);
            }
            for (int i = 0; i < getIdealSize(); i++) {
                double[] x = getIndex(false, i);
                NormalizeArray na = new NormalizeArray();
-               na.setNormalizedLow(0);
+               na.setNormalizedLow(0);               
                x = na.process( x  );
+               if (na.getStats().getActualLow() == na.getStats().getActualHigh())
+                   Arrays.fill(x, 0);
                normalizations.put(-i, na );
                setIndex(false, i, x);
            }
@@ -284,7 +297,7 @@ public class NALTestPerformance {
         public static void printCSVLine(PrintStream out, List<String> o) {
             StringJoiner line = new StringJoiner(",", "", "");
             int n = 0;
-            line.add("cycle");            
+            line.add("absCycle");            
             for (String x : o) {
                 line.add(x + "_" + (n++));
             }
@@ -332,9 +345,15 @@ public class NALTestPerformance {
             /*t.printCSV(ps);
                     */
             
-            t.getDataPairs(
-                    ins,
-                    outs, results);
+            //all fields
+            if (ins == null) {
+                ins = new int[ t.fields.size() ];
+                for (int i = 0 ;i < ins.length; i++)
+                    ins[i] = i;
+                outs = new int[0];
+            }
+            
+            t.getDataPairs(ins, outs, results);
             
             if (testNum++ == tests)
                 break;
@@ -345,30 +364,48 @@ public class NALTestPerformance {
     }
 
     public static void main(String[] args) throws Exception {
-        int populationSize = 1000;
-        int tests = 3;
+        int populationSize = 2000;
+        int tests = 8;
+        double initialConnectionDensity = 0.5;
+        int additionalCycles = 2000;
 
-        int[] ins = new int[] { 0, 2, 13, 15, 16, 18 };
-        int[] outs = new int[] { 3, 10, 14 };
+        //int[] ins = new int[] { 0, 1, 2, 4, 13, 15, 16, 17, 19, 18 };
+        //int[] outs = new int[] { 3, 10, 14 };
+        int[] ins = null, outs = null;
         
-        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, 150, ins, outs);
+        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, additionalCycles, ins, outs);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);
         System.out.println(trainingSet.fields);
-        System.out.println("Training samples: " + trainingSet.getRecordCount());
-        for (int i : ins) 
-            System.out.println(" in: "  + trainingSet.allFields.get(i));
-        for (int i : outs) 
-            System.out.println("out: "  + trainingSet.allFields.get(i));
-        for (int i = 0; i < trainingSet.size(); i++)
-            System.out.println(trainingSet.get(i));
+        if (ins!=null) {
+            System.out.println("Training samples: " + trainingSet.getRecordCount());
+            for (int i : ins) 
+                System.out.println(" in: "  + trainingSet.allFields.get(i));
+            for (int i : outs) 
+                System.out.println("out: "  + trainingSet.allFields.get(i));
+        }
+        /*for (int i = 0; i < trainingSet.size(); i++)
+            System.out.println(trainingSet.get(i));*/
         trainingSet.toCSV("/tmp/nal.csv");
-
+        if (ins == null)
+            return;
         
         
         NEATPopulation pop = new NEATPopulation(trainingSet.getInputSize(), trainingSet.getIdealSize(), populationSize);
-        pop.setInitialConnectionDensity(1.0);// not required, but speeds training
+        pop.setInitialConnectionDensity(initialConnectionDensity);// not required, but speeds training
+        pop.setRandomNumberFactory(new RandomFactory() {
+            //for speed
+            
+            final Random x = new XORShiftRandom();
+            
+            @Override public Random factor() {
+                return x;
+            }
+            @Override public RandomFactory factorFactory() {
+                return this;
+            }
+        });
         pop.reset();
         
 
@@ -376,18 +413,33 @@ public class NALTestPerformance {
         // train the neural network
 
         final EvolutionaryAlgorithm train = NEATUtil.constructNEATTrainer(pop,score);
-
+        
         do {
                 train.iteration();
-                System.out.println("Epoch #" + train.getIteration() + " Error:" + train.getError()+ ", Species:" + pop.getSpecies().size());
-        } while(train.getError() > 0.02);
+                
+                double averageLinks = 0, averageNeurons = 0;
+                int count = pop.getSpecies().size();
+                for (Species s  : pop.getSpecies()) {                    
+                    NEATNetwork n = (NEATNetwork)train.getCODEC().decode(s.getLeader());
+                    averageLinks += n.getLinks().length;
+                    averageNeurons += n.getActivationFunctions().length;
+                    
+                }
+                averageLinks /= count;
+                averageNeurons /= count;
+                
+                System.out.println("Epoch #" + train.getIteration() + " Error:" + train.getError()+ ", Species:" + count + ", avgLinks=" + averageLinks + ", avgNeurons=" + averageNeurons);
+        } while(train.getError() > 0.01);
 
         NEATNetwork network = (NEATNetwork)train.getCODEC().decode(train.getBestGenome());
 
         // test the neural network
-        System.out.println("Neural Network Results:");
+        
+        //System.out.println("Neural Network Results:");
         EncogUtility.evaluate(network, trainingSet);
 
+        System.out.println("NEATLinks: " + network.getLinks().length);
+        
         Encog.getInstance().shutdown();
                 
     }

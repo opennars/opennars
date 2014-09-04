@@ -72,6 +72,5 @@ public class KIFExample {
         new TextInput(n, "$0.99;0.99$ <?x --> Human>?");*/
 
         
-        System.err.println(n.memory.updateLogicState());
     }
 }
