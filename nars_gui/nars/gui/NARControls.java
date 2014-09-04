@@ -98,8 +98,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
      * @param lines The text lines to be displayed
      */
     private NSlider speedSlider;
-    private float currentSpeed = 0;
-    private float lastSpeed = 0;
+    private float currentSpeed = 0f;
+    private float lastSpeed = 0f;
     private final float defaultSpeed = 0.5f;
 
     private final int GUIUpdatePeriodMS = 50;
@@ -442,16 +442,14 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
     
     private NSlider newSpeedSlider() {
-        final NSlider s = new NSlider(0, 0, 1.0f) {
+        final NSlider s = new NSlider(0f, 0f, 1.0f) {
 
             @Override
             public String getText() {
                 if (value == null) {
                     return "";
                 }
-
-                float v = value();
-
+                
                 String s = "@" + memory.getTime();
 
                 if (currentSpeed == 0) {
@@ -476,7 +474,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     }
 
     private NSlider newVolumeSlider() {
-        final NSlider s = this.volumeSlider = new NSlider(100, 0, 100) {
+        final NSlider s = this.volumeSlider = new NSlider(100f, 0, 100f) {
 
             @Override
             public String getText() {
@@ -540,7 +538,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         speedSlider.setValue(nextSpeed);
         currentSpeed = nextSpeed;
 
-        double logScale = 50;
+        float logScale = 50f;
         if (nextSpeed > 0) {
             int ms = (int) ((1.0 - Math.log(1+nextSpeed*logScale)/Math.log(1+logScale)) * maxPeriodMS);
             if (ms < 1) {
@@ -609,8 +607,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                setSpeed(1.0);
-                volumeSlider.setValue(20);
+                setSpeed(1.0f);
+                volumeSlider.setValue(20f);
                 
             }
 

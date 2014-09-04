@@ -112,7 +112,11 @@ public interface DataSet extends DataContainer {
     default public long hits() { return i("hits"); }
     
     default public double median() { return (max() + min())/2.0; }
-    default public double mean() { return (sum() / hits()); }
+    default public double mean() { 
+        long h = hits();
+        if (h == 0) return 0;
+        return (sum() / h); 
+    }
 
 
 }

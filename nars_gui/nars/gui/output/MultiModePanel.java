@@ -95,6 +95,13 @@ public class MultiModePanel extends JPanel implements Output {
         
     }
     
+    public class GraphView2 {
+        /*         Window w = new Window("Edit",new JGraphXGraphPanel(nar));
+        w.setVisible(true);
+        w.pack();
+            */
+    }
+    
 
     public MultiModePanel(NAR nar, Object object) {
         super(new BorderLayout());
@@ -109,7 +116,8 @@ public class MultiModePanel extends JPanel implements Output {
             label = object.toString();
         }
         
-        setMode(new LogView());
+        //Default View
+        setMode(new GraphView());
     }
     
     public void setMode(MultiViewMode mode) {

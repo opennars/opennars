@@ -164,12 +164,12 @@ public class LogicSense extends DefaultDataSet implements Serializable {
             DataSet fire = TASKLINK_FIRE.get();
             //DataSet reason = TASKLINK_REASON.get();
             put("reason.fire.tasklink.priority.mean", fire.mean());
-            put("reason.fire.tasklinks.delta", (double)TASKLINK_FIRE.getDeltaHits());
+            put("reason.fire.tasklinks.delta", TASKLINK_FIRE.getDeltaHits());
             
             //only makes sense as a mean, since it occurs multiple times during a cycle
             put("reason.tasktermlink.priority.mean", TASKTERMLINK_REASON.get().mean());
             
-            put("reason.tasktermlinks", (double)TASKTERMLINK_REASON.getHits());
+            put("reason.tasktermlinks", TASKTERMLINK_REASON.getHits());
         }
         {
             put("output.tasks", OUTPUT_TASK.getHits());
