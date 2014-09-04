@@ -44,6 +44,7 @@ import nars.core.Memory;
 import nars.core.Memory.Events.MemoryCycleStop;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.core.sense.MultiSense;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
@@ -120,11 +121,15 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     private final JMenuItem internalExperienceItem;
     private final JMenuItem narsPlusItem;
     private ChartsPanel chart;
+    private final MultiSense senses;
     public NARControls(final NAR nar) {
         super(new BorderLayout());
         
         this.nar = nar;
         memory = nar.memory;        
+        
+        senses = new MultiSense(memory.logic, memory.resource);
+        senses.update(memory);
         
         experienceWriter = new TextOutput(nar);
         conceptWin = new TermWindow(memory);
@@ -288,6 +293,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         add(jp, BorderLayout.CENTER);
 
         init();
+        
     }
 
     /**
@@ -369,7 +375,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             long deltaTime = now - lastUpdateTime;
             
             if ((deltaTime > GUIUpdatePeriodMS) && (!updateScheduled.get())) {
-                nar.memory.updateLogicState();
+                senses.update(memory);
+                
                 SwingUtilities.invokeLater(updateGUIRunnable);
                 updateScheduled.set(true);
             }
@@ -643,9 +650,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
         //JPanel chartPanel = new JPanel(new GridLayout(0,1));
         {
-            
-            
-            this.chart = new ChartsPanel(nar.memory.logic, chartHistoryLength);
+            this.chart = new ChartsPanel(senses, chartHistoryLength);
             //chartPanel.add(chart);
                         
         }

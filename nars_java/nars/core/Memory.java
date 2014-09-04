@@ -30,6 +30,7 @@ import nars.core.Memory.Events.MemoryCycleStart;
 import nars.core.Memory.Events.MemoryCycleStop;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
+import nars.core.sense.ResourceSense;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -275,6 +276,7 @@ public class Memory implements Output, Serializable {
     public final EmotionSense emotion = new EmotionSense();
     
     public final LogicSense logic;
+    public final ResourceSense resource;
     
     
     
@@ -323,7 +325,35 @@ public class Memory implements Output, Serializable {
 
         this.operators = new HashMap<>();
 
-        logic = new LogicSense(this);
+        logic = new LogicSense() {
+
+            @Override
+            public void sense(Memory memory) {
+                double totalPriority = 0;        
+                int count = 0;
+                int totalQuestions = 0;
+                int totalBeliefs = 0;
+
+                for (final Concept c : getConcepts()) {
+                    totalQuestions += c.questions.size();        
+                    totalBeliefs += c.beliefs.size();        
+                    totalPriority += c.getPriority();
+                    count++;
+                }
+
+                setConceptNum(count);
+                setConceptBeliefsSum(totalBeliefs);
+                setConceptQuestionsSum(totalQuestions);
+                //setConceptPrioritySum(totalPriority);
+                setConceptPriorityMean(count > 0  ? totalPriority / count : 0);
+                
+                super.sense(memory);
+            }
+
+        };
+        
+        
+        resource = new ResourceSense();
         
         
         //after this line begins actual inference, now that the essential data strucures are allocated
@@ -339,7 +369,6 @@ public class Memory implements Output, Serializable {
                 
         reset();
 
-        updateLogicState();
     }
 
     public void reset() {
@@ -836,8 +865,8 @@ public class Memory implements Output, Serializable {
      */
     public void cycle() {
                 
-        logic.MEMORY_CYCLE_RAM_USED.start();
-        logic.CYCLE_REAL.event();
+        resource.MEMORY_CYCLE_RAM_USED.start();
+        resource.CYCLE_REAL.event();
 
         event.emit(MemoryCycleStart.class);
         
@@ -864,7 +893,7 @@ public class Memory implements Output, Serializable {
             clock++;
         }
                 
-        logic.MEMORY_CYCLE_RAM_USED.stop();
+        resource.MEMORY_CYCLE_RAM_USED.stop();
         
         event.emit(MemoryCycleStop.class);
     }
@@ -1261,30 +1290,23 @@ public class Memory implements Output, Serializable {
         newTasks.add(newTask);
     }
 
-    /**
-     * Updates the LogicState measurements and returns the data     
-     */
-    public LogicSense updateLogicState() {
-        double totalPriority = 0;        
-        int count = 0;
-        int totalQuestions = 0;
-        int totalBeliefs = 0;
-                
-        for (final Concept c : getConcepts()) {
-            totalQuestions += c.questions.size();        
-            totalBeliefs += c.beliefs.size();        
-            totalPriority += c.getPriority();
-            count++;
-        }
-        
-        logic.setConceptNum(count);
-        logic.setConceptBeliefsSum(totalBeliefs);
-        logic.setConceptQuestionsSum(totalQuestions);
-        logic.setConceptPrioritySum(totalPriority);
-        logic.setConceptPriorityMean(totalPriority / count);
-               
-        return logic.update();
-    }
+//    /**
+//     * Updates the LogicState measurements and returns the data     
+//     */
+//    public LogicSense updateLogicSense() {
+//        logic.update(this);
+//        return logic;
+//    }
+//    
+//    public MultiSense updateSenses() {
+//        
+//        updateLogicSense();
+//        
+//        resource.update(this);
+//        
+//        return new MultiSense(logic, resource);
+//    }
+//
         
     
 }
