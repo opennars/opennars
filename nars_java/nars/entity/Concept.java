@@ -597,10 +597,7 @@ public class Concept extends Item {
                     }
                     memory.setCurrentBeliefLink(termLink);
                     
-                    memory.logic.TASKTERMLINK_REASON.commit(termLink.getPriority());
-                    {
-                        reason(currentTaskLink, termLink, memory);
-                    }
+                    reason(currentTaskLink, termLink, memory);                    
                     
                     termLinks.putBack(termLink);
                     termLinkCount--;

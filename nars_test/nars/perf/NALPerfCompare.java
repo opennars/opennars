@@ -5,7 +5,7 @@ import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.test.core.NALTest;
-import static nars.perf.NALStressTest.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
 import nars.core.build.ContinuousBagNARBuilder;
 
 /**
