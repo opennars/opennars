@@ -220,13 +220,16 @@ public class NALTestPerformance {
         
        
        public final Map<Integer, NormalizeArray> normalizations = new HashMap();
-       public final List<String> allFields;
        public final List<String> fields;
+        private final List<String> allFields;
         
        public NALControlMLDataSet(List<String> allFields, int[] ins, int[] outs, List<MLDataPair> r) {
             super(r);
             
-            this.allFields = allFields;
+            int n = 0;
+            this.allFields = new ArrayList();
+            for (String s : allFields)
+                this.allFields.add(s + (n++));
             
             fields = new ArrayList();
             for (int i : ins) {
@@ -351,6 +354,7 @@ public class NALTestPerformance {
         NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, 150, ins, outs);
         trainingSet.normalize();
 
+        System.out.println(trainingSet.allFields);
         System.out.println(trainingSet.fields);
         System.out.println("Training samples: " + trainingSet.getRecordCount());
         for (int i : ins) 

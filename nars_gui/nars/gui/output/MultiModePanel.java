@@ -117,7 +117,7 @@ public class MultiModePanel extends JPanel implements Output {
         }
         
         //Default View
-        setMode(new GraphView());
+        setMode(new LogView());
     }
     
     public void setMode(MultiViewMode mode) {
