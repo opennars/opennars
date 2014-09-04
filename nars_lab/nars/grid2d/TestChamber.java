@@ -205,11 +205,14 @@ public class TestChamber {
                                     }
                                     if("go-to".equals(opname)) {
                                         nar.addInput("<"+goal+" --> at>. :|:");
+                                        nar.start(1);
                                     }
                                 }
                             }
                             opname="";
                         } else {
+                            nar.stop();
+                            nar.step(1);
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
                             float cy = y;
