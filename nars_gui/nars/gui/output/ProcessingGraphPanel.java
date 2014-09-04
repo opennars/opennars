@@ -822,6 +822,8 @@ public class ProcessingGraphPanel extends NPanel {
         g.add(nar, newSelectedGraphFilter(), graphizer);                
         app.graph = g;
         
+        
+        
         needLayout = true;
         
     }

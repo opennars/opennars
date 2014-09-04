@@ -34,7 +34,7 @@ import javax.swing.plaf.basic.BasicBorders;
  * @author me
  */
 public class NSlider extends JLabel implements MouseListener, MouseMotionListener {
-    final AtomicReference<Double> value;
+    final AtomicReference<Float> value;
     private float min;
     private float max;
     private Color barColor = null;
@@ -47,10 +47,10 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     }
     
     public NSlider(float initialValue, float min, float max) {
-        this(new AtomicReference<Double>((double)initialValue), min, max);
+        this(new AtomicReference<Float>(initialValue), min, max);
     }
     
-    public NSlider(AtomicReference<Double> value, float min, float max) {
+    public NSlider(AtomicReference<Float> value, float min, float max) {
         super();
         
         nf.setMaximumFractionDigits(3);
@@ -109,20 +109,6 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     
 
     
-    
- /*
-    public static void main(String[] args) {
-        NSlider n = new NSlider(new AtomicDouble(5), 1, 10);
-        
-        //test
-        JFrame jf = new JFrame();
-        jf.setVisible(true);
-        jf.setSize(200, 100);
-        jf.getContentPane().add(n);
-        jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-    }
-    */
 
     protected void updatePosition(int x) {
         float p = ((float)x) / ((float)getWidth());
@@ -137,7 +123,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     
     public void setValue(float v) {
         if (v != value.get().floatValue()) {
-            value.set( (double)v );     
+            value.set( v );     
             onChange(v);
         }
     }
