@@ -3,7 +3,7 @@ package nars.perf;
 import java.util.Collection;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
-import static nars.perf.NALStressTest.perfNAL;
+import static nars.perf.NALStressMeasure.perfNAL;
 import nars.test.core.NALTest;
 
 /**

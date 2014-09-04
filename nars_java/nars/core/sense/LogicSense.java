@@ -20,7 +20,18 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final HitPeriodTracker TASK_IMMEDIATE_PROCESS;
     
     public final EventValueSensor TASKLINK_FIRE;
-    public final EventValueSensor TASKTERMLINK_REASON; //both duration and count
+    
+    /** triggered at beginning of StructuralRules.reason(), entry point of inference.
+        counts invocation and records priority of termlink parameter.
+     */
+    public final EventValueSensor REASON; 
+    
+    /**
+       triggered for each StructuralRules.contraposition().
+       counts invocation and records complexity of statement parameter      
+     */
+    public final EventValueSensor CONTRAPOSITION; 
+    
     
     public final EventValueSensor OUTPUT_TASK;
     
@@ -45,14 +56,17 @@ public class LogicSense extends AbstractSense implements Serializable {
         add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
         TASKLINK_FIRE.setSampleWindow(32);
         
-        add(OUTPUT_TASK = new EventValueSensor("output.task"));
+        add(OUTPUT_TASK = new EventValueSensor("task.output"));
         OUTPUT_TASK.setSampleWindow(32);
 
         add(CONCEPT_NEW = new EventValueSensor("concept.new"));
         CONCEPT_NEW.setSampleWindow(32);
         
-        add(TASKTERMLINK_REASON = new EventValueSensor("tasklink.reason"));
-        TASKTERMLINK_REASON.setSampleWindow(32);
+        add(REASON = new EventValueSensor("reason"));
+        REASON.setSampleWindow(32);
+        
+        add(CONTRAPOSITION = new EventValueSensor("reason.contraposition"));
+        CONTRAPOSITION.setSampleWindow(32);
     }
     
     @Override
@@ -76,14 +90,18 @@ public class LogicSense extends AbstractSense implements Serializable {
             put("reason.fire.tasklink.priority.mean", fire.mean());
             put("reason.fire.tasklinks.delta", TASKLINK_FIRE.getDeltaHits());
             
-            //only makes sense as a mean, since it occurs multiple times during a cycle
-            put("reason.tasktermlink.priority.mean", TASKTERMLINK_REASON.get().mean());
+            put("reason.tasktermlinks", REASON.getHits());
             
-            put("reason.tasktermlinks", TASKTERMLINK_REASON.getHits());
+            //only makes sense as a mean, since it occurs multiple times during a cycle
+            put("reason.tasktermlink.priority.mean", REASON.get().mean());                        
+        }
+        {            
+            put("reason.contrapositions", CONTRAPOSITION.getHits());
+            put("reason.contrapositions.complexity.mean", CONTRAPOSITION.get().mean());
         }
         {
-            put("output.tasks", OUTPUT_TASK.getHits());
-            put("output.tasks.budget.mean", OUTPUT_TASK.get().mean());
+            put("task.outputs", OUTPUT_TASK.getHits());
+            put("task.outputs.budget.mean", OUTPUT_TASK.get().mean());
         }
         {
             put("concept.new", CONCEPT_NEW.getHits());

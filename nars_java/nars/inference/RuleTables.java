@@ -20,12 +20,15 @@
  */
 package nars.inference;
 
-import nars.core.Parameters;
+import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import static nars.io.Symbols.VAR_DEPENDENT;
+import static nars.io.Symbols.VAR_INDEPENDENT;
+import static nars.io.Symbols.VAR_QUERY;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Disjunction;
@@ -38,10 +41,8 @@ import nars.language.SetInt;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
-import static nars.language.Terms.*;
-import static nars.io.Symbols.*;
+import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import static nars.language.Variables.unify;
-import nars.core.Memory;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -59,41 +60,29 @@ public class RuleTables {
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final Memory memory) {
         
+        memory.logic.REASON.commit(tLink.getPriority());
+        
         final Task task = memory.getCurrentTask();
         Sentence taskSentence = task.sentence;
         
         Term taskTerm = taskSentence.content.clone();         // cloning for substitution
         Term beliefTerm = bLink.target.clone();       // cloning for substitution
         
-        if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            double n=taskTerm.getComplexity() * Parameters.CONTRAPOSITION_PRIORITY; //don't let this rule apply every time, make it dependent on complexity
-            double w=1.0/n; //let's assume hierachical tuple (triangle numbers) amount for this
-            if(Memory.randomNumber.nextDouble()<w) { //so that NARS memory will not be spammed with contrapositions
-                StructuralRules.contraposition((Statement) taskTerm, taskSentence, memory); //before it was the linkage which did that
-            } //now we some sort "emulate" it.
+        if (taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
+            StructuralRules.contrapositionAttempts((Statement)taskTerm, taskSentence, memory); 
         }        
+
         
-        if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
-            double n=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
-            double w=1.0/((n*(n-1))/2.0); //let's assume hierachical tuple (triangle numbers) amount for this
-            if(Memory.randomNumber.nextDouble()<w) { //so that NARS memory will not be spammed with contrapositions
-                StructuralRules.contraposition((Statement) taskTerm, taskSentence, memory); //before it was the linkage which did that
-            } //now we some sort "emulate" it.
-        }
-        
-        
-        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm)) {
+        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
            return;
-        }
+        
         
         Concept beliefConcept = memory.concept(beliefTerm);
-        Sentence belief = null;
-        if (beliefConcept != null) {
-            belief = beliefConcept.getBelief(task);
-        }
+        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(task) : null;
+        
         memory.setCurrentBelief( belief );  // may be null
-        if (belief != null) {
-            
+        
+        if (belief != null) {            
             LocalRules.match(task, belief, memory);
             if (!memory.noResult()) {
                 return;

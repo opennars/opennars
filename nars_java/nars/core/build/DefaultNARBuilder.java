@@ -43,6 +43,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         p.taskForgettingRate.set(20);
         p.beliefForgettingRate.set(50);
         p.cycleInputTasks.set(1);
+        
+        p.contrapositionPriority.set(30);
                 
         
         //Experimental parameters - adjust at your own risk

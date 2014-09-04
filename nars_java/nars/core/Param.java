@@ -2,6 +2,7 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.util.meter.util.AtomicDouble;
 
 /**
  * NAR Parameters which can be changed during runtime.
@@ -31,6 +32,9 @@ public class Param implements Serializable {
 
     /** How many concepts to fire each cycle */
     public final AtomicInteger cycleConcepts = new AtomicInteger();
+    
+    /** contraposition should have much lower priority considering the flood of implications coming from temporal knowledge.  a lower value means more frequent, must be > 0 */    
+    public final AtomicDouble contrapositionPriority = new AtomicDouble(/*30 was the default*/);
     
 
     

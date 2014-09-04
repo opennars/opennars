@@ -157,9 +157,7 @@ public abstract class Statement extends CompoundTerm {
             return Equivalence.make(subj, pred, order, memory);
         }
         
-        System.err.println("Unrecognized type for Statement.make: " + statement.getClass().getSimpleName() + ", subj=" + subj + ", pred=" + pred + ", order=" + order);
-        
-        return null;
+        throw new RuntimeException("Unrecognized type for Statement.make: " + statement.getClass().getSimpleName() + ", subj=" + subj + ", pred=" + pred + ", order=" + order);        
     }
 
     /**

@@ -11,7 +11,7 @@ import static nars.test.core.NALTest.newNAR;
 /** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load
  *  useful for examining with a profiler.
  */
-public class NALStressTest  {
+public class NALStressMeasure  {
     
     public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
         perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
