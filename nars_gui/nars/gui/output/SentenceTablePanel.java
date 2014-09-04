@@ -125,9 +125,9 @@ public class SentenceTablePanel extends NPanel implements Output {
             nar.removeOutput(this);                
     }
 
-    private List<Sentence> getSelectedRows() {
+    private List<Object> getSelectedRows() {
         int[] selectedRows = t.getSelectedRows();
-        List<Sentence> l = new ArrayList(selectedRows.length);
+        List<Object> l = new ArrayList(selectedRows.length);
         for (int i : selectedRows) {            
             int selectedRow = t.convertRowIndexToModel(i);            
             l.add((Sentence)data.getValueAt(selectedRow, 0));

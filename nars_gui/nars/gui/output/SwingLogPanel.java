@@ -21,6 +21,8 @@ public class SwingLogPanel extends LogPanel {
 
     public final SwingLogText ioText;
 
+    static int defaultFontSize = 19;
+            
     public SwingLogPanel(NARControls narControls) {
         super(narControls);
 
@@ -50,8 +52,7 @@ public class SwingLogPanel extends LogPanel {
     }
 
     
-    @Override
-    protected void setFontSize(double v) {
+    public void setFontSize(float v) {
         ioText.setFontSize(v);
     }
     
@@ -61,7 +62,7 @@ public class SwingLogPanel extends LogPanel {
     }
 
     public static void setConsoleStyle(JTextComponent c, boolean invert) {
-        setConsoleStyle(c, invert, 32);
+        setConsoleStyle(c, invert, defaultFontSize);
     }
 
     public static void setConsoleStyle(JTextComponent c, boolean invert, int fontSize) {

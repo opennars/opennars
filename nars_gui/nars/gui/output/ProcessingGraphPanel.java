@@ -6,30 +6,28 @@ import com.mxgraph.model.mxGeometry;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -71,7 +69,6 @@ class papplet extends PApplet implements ActionListener
     public Button fetchMemory;
     Memory mem = null;
 
-    float frameRateFPS = 15f;
     public int mode = 0;
     
     boolean showBeliefs = false;
@@ -84,7 +81,7 @@ class papplet extends PApplet implements ActionListener
     float nodeSize = 90;
     
     NARGraph graph;
-    JGraphXAdapter layout;
+    JGraphXAdapter graphAdapter;
     public boolean updating;
     boolean drawn = false;
 
@@ -137,13 +134,13 @@ class papplet extends PApplet implements ActionListener
     @Override
     public void setup() {  
         
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {
-        }
+        noLoop();
+        //frameRate(this.frameRateFPS);
         
-        frameRate(this.frameRateFPS);
-        
+
+        //textFont(createFont("Arial",16,false)); 
+        textFont(createDefaultFont(14));
+        //textFont(new PFont(ChartsPanel.monofontSmall, false));
         
     }
 
@@ -182,10 +179,12 @@ class papplet extends PApplet implements ActionListener
         
         if (updating)
             return;
+        if (graph == null) return;
+        
         
 
-
-        try {
+        Set edges = graph.edgeSet();
+        if (edges!=null) {
             //  line(elem1.x, elem1.y, elem2.x, elem2.y);
             for (Object edge : graph.edgeSet()) {
 
@@ -196,10 +195,10 @@ class papplet extends PApplet implements ActionListener
 
 
                 Object sourceVertex = graph.getEdgeSource(edge);
-                mxGeometry sourcePoint = layout.getCellGeometry(layout.getVertexToCellMap().get(sourceVertex));
+                mxGeometry sourcePoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(sourceVertex));
 
                 Object targetVertex = graph.getEdgeTarget(edge);                          
-                mxGeometry targetPoint = layout.getCellGeometry(layout.getVertexToCellMap().get(targetVertex));
+                mxGeometry targetPoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(targetVertex));
 
                 if ((sourcePoint == null) || (targetPoint == null))
                     continue;
@@ -211,41 +210,51 @@ class papplet extends PApplet implements ActionListener
                 float cx = (x1 + x2) / 2.0f;
                 float cy = (y1 + y2) / 2.0f;
                 drawArrow(x1, y1, x2, y2);
-                text(edge.toString(), cx, cy);            
-            }
-
-            strokeWeight(0);        
-            for (Object vertex : graph.vertexSet()) {            
-                Object cell = layout.getVertexToCellMap().get(vertex);
-                mxGeometry b = layout.getCellGeometry(cell);            
-                if (b == null) continue;
-
-                int rgb = getColor(vertex.getClass().getSimpleName());
-                float vertexAlpha = getVertexAlpha(vertex);
-                fill(rgb, vertexAlpha*255/2);
-
-                float x = (float)b.getCenterY();
-                float y = (float)b.getCenterX();
-                double w = b.getWidth();
-                double h = b.getHeight();
-
-                float size = getVertexSize(vertex, nodeSize);
-                ellipse(x, y, size, size);            
-
-                fill(255,255,255);        
-                textSize(size/4.0f);
-                /*
-                pushMatrix();
-                translate(x, y);
-                rotate(radians(45));
-                */
-                text(vertex.toString(), x, y);
-                //popMatrix();
+                text(t(edge.toString()), cx, cy);            
             }
         }
-        catch (ConcurrentModificationException e) { }                    
-    }
+        
+        strokeWeight(0);        
+        for (Object vertex : graph.vertexSet()) {            
+            Object cell = graphAdapter.getVertexToCellMap().get(vertex);
+            mxGeometry b = graphAdapter.getCellGeometry(cell);            
+            if (b == null) continue;
 
+            int rgb = getColor(vertex.getClass().getSimpleName());
+            float vertexAlpha = getVertexAlpha(vertex);
+            fill(rgb, vertexAlpha*255/2);
+
+            float x = (float)b.getCenterY();
+            float y = (float)b.getCenterX();
+            double w = b.getWidth();
+            double h = b.getHeight();
+
+            float size = getVertexSize(vertex, nodeSize);
+            ellipse(x, y, size, size);            
+
+
+            fill(255,255,255);        
+            textSize(size/4.0f);
+            /*
+            pushMatrix();
+            translate(x, y);
+            rotate(radians(45));
+            */
+            text(t(vertex.toString()), x, y);
+            //popMatrix();
+        }
+    
+ 
+        
+    }
+    
+    public String t(String s) {
+         int maxLen = 32;
+         if (s.length() > maxLen) {
+             return s.substring(0,maxLen-2) + "..";
+         }
+         return s;
+     }
     
     public static float getVertexSize(Object o, float nodeSize) {
         if (o instanceof Sentence) {
@@ -299,7 +308,6 @@ class papplet extends PApplet implements ActionListener
                 public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     mouseScroll = -evt.getWheelRotation();
                     mouseScrolled();
-                    drawn = false;
                 }
             }
             );
@@ -348,6 +356,7 @@ class papplet extends PApplet implements ActionListener
                 savepy = mouseY;
             }
             drawn = false;            
+            redraw();
         }
         private final float camspeed = 20.0f;
         private final float scrollcammult = 0.92f;
@@ -401,6 +410,9 @@ class papplet extends PApplet implements ActionListener
             }
             difx = (difx) * (zoom / zoomBefore);
             dify = (dify) * (zoom / zoomBefore);
+            
+            drawn = false;
+            redraw();
         }
 
         void Transform() {
@@ -503,7 +515,7 @@ class papplet extends PApplet implements ActionListener
             hnav.Transform();
         }
 
-        void Update(int r, int g, int b) {
+        synchronized void Update(int r, int g, int b) {
             if (!drawn) {
 
                 background(r, g, b);
@@ -522,35 +534,39 @@ class papplet extends PApplet implements ActionListener
 
 }
 
-public class ProcessingGraphPanel extends JFrame {
+public class ProcessingGraphPanel extends NPanel {
 
     papplet app = null;
     private final NAR nar;
     float edgeDistance = 10;
     private boolean showSyntax;
     private DefaultGraphizer graphizer;
-    private final List<Sentence> sentences;
+    private final List<Object> items;
     private int sentenceIndex = -1;
     String layoutMode;
+    int maxItems = -1;
     
-
+    public ProcessingGraphPanel(NAR n) {
+        this(n, new ArrayList());
+    }
     
-    public ProcessingGraphPanel(NAR n, List<Sentence> sentences) {
-        super("NARS Graph");
+    public ProcessingGraphPanel(NAR n, List<Object> sentences) {
+        super();
         
         this.nar = n;
-        this.sentences = sentences;
+        this.items = sentences;
 
         app = new papplet();
         
 
         app.init();
+                
         
-        this.setSize(1000, 860);//initial size of the window
+        //this.setSize(1000, 860);//initial size of the window
         this.setVisible(true);
 
-        Container content = getContentPane();
-        content.setLayout(new BorderLayout());
+        
+        setLayout(new BorderLayout());
 
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
        
@@ -560,8 +576,9 @@ public class ProcessingGraphPanel extends JFrame {
         layoutSelect.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 layoutMode = layoutSelect.getSelectedItem().toString();
+                needLayout = true;
                 update();
-                app.drawn = false;
+                redraw();
             }
         });
         layoutMode = layoutSelect.getSelectedItem().toString();
@@ -571,17 +588,17 @@ public class ProcessingGraphPanel extends JFrame {
         beliefsEnable.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 showSyntax = beliefsEnable.isSelected();
-                ProcessingGraphPanel.this.update();
-                app.drawn = false;                                
+                update();                
+                redraw();
             }
         });
         menu.add(beliefsEnable);
         
         NSlider nodeSize = new NSlider(app.nodeSize, 1, app.maxNodeSize) {
             @Override
-            public void onChange(double v) {
-                app.nodeSize = (float)v;
-                app.drawn = false;                
+            public void onChange(float v) {
+                app.nodeSize = v;
+                redraw();
             }          
         };
         nodeSize.setPrefix("Node Size: ");
@@ -590,7 +607,7 @@ public class ProcessingGraphPanel extends JFrame {
 
         NSlider edgeDist = new NSlider(edgeDistance, 1, 100) {
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
                 edgeDistance = (float)v;
                 ProcessingGraphPanel.this.update();
             }          
@@ -599,7 +616,7 @@ public class ProcessingGraphPanel extends JFrame {
         edgeDist.setPreferredSize(new Dimension(125, 25));
         menu.add(edgeDist);        
         
-        
+        /*
         if (sentences.size() > 1) {
             final JTextField ssl = new JTextField();
             final JSlider indexSlider = new JSlider(-1, sentences.size()-1, -1);        
@@ -617,47 +634,99 @@ public class ProcessingGraphPanel extends JFrame {
                     }
                     else {
                         update();
-                        ssl.setText(ProcessingGraphPanel.this.sentences.get(i).toString());
+                        ssl.setText(ProcessingGraphPanel.this.items.get(i).toString());
                     }
                 }            
             });
             menu.add(indexSlider);
             menu.add(ssl);        
         }
+        */
 
-        content.add(menu, BorderLayout.NORTH);
-        content.add(app, BorderLayout.CENTER);
-
-        update();
+        if ((getWidth() > 0) && (getHeight() > 0))
+            app.setSize(getWidth(), getHeight());
         
-        addWindowListener(new WindowAdapter() {
+        add(menu, BorderLayout.NORTH);
+        add(app, BorderLayout.CENTER);
+        
+        validate();
+
+        addAncestorListener(new AncestorListener() {
 
             @Override
-            public void windowClosing(WindowEvent e) {            
-                app.stop();
-                app = null;
+            public void ancestorAdded(AncestorEvent event) {
+                redraw();                                  
+            }
+
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
+            }
+        });
+        addComponentListener(new ComponentAdapter() {
+
+            
+            @Override
+            public void componentShown(ComponentEvent e) {
+                redraw();
             }
             
-            //TODO stop when window becomes minimized, and restart when visible again
+            @Override
+            public void componentResized(ComponentEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {                         
+                        app.setSize(getWidth(), getHeight());
+                        redraw();                                  
+                    }
+                });                
+            }
             
         });
-        
-        
+    
+        update();
+        redraw();
+
+    }
+
+    @Override
+    protected void onShowing(boolean showing) {
+        if (!showing) {
+            //app.stop();
+            //app = null;
+        }
+        else {
+            //app = new papplet();
+        }
+    }
+    
+    
+    public void addItem(Object o) {
+        if ((maxItems > 0) && (items.size()+1 == maxItems)) {
+            items.remove(0);
+        }
+        items.add(o);
+        update();
+        redraw();
     }
     
     
     public NARGraph.Filter newSelectedGraphFilter() {
         
-        final List<Sentence> selected = getSentences();
+        final List<Object> selected = getItems();
 
         final Set<Term> include = new HashSet();
-        for (final Sentence s : selected) {
-            Term t = s.content;
-            include.add(t);
-            if (t instanceof CompoundTerm) {
-                CompoundTerm ct = (CompoundTerm)t;
-                include.addAll(ct.getContainedTerms());
-            }                        
+        for (final Object s : selected) {
+            if (s instanceof Sentence) {
+                Term t = ((Sentence)s).content;
+                include.add(t);
+                if (t instanceof CompoundTerm) {
+                    CompoundTerm ct = (CompoundTerm)t;
+                    include.addAll(ct.getContainedTerms());
+                }                        
+            }
         }
         
         return new NARGraph.Filter() {
@@ -678,60 +747,66 @@ public class ProcessingGraphPanel extends JFrame {
     }
     
 
-    public List<Sentence> getSentences() {
-        List<Sentence> displayed;
+    public List<Object> getItems() {
+        List<Object> displayed;
         if (sentenceIndex == -1) {
-            displayed = sentences;
+            displayed = items;
         }
         else {
             displayed = new ArrayList(1);
-            displayed.add(sentences.get(sentenceIndex));
+            displayed.add(items.get(sentenceIndex));
         }
-        return displayed;
+        return displayed;    
     }
 
+    public void setMaxItems(int maxItems) {
+        this.maxItems = maxItems;
+    }
+    
     public void update() {
-        app.drawn = false;
-        
         graphizer = new DefaultGraphizer(true,true,true,true,false) {
 
+            protected void addSentence(NARGraph g, Sentence s) {
+                Term t = s.content;
+                addTerm(g, t);
+                //g.addEdge(s, s.content, new NARGraph.SentenceContent());
+
+                if (t instanceof CompoundTerm) {
+                    CompoundTerm ct = ((CompoundTerm)t);
+                    Set<Term> contained = ct.getContainedTerms();
+
+                    for (Term x : contained) {                            
+                        addTerm(g, x);
+                        if (ct.containsTerm(x))
+                            g.addEdge(x, t, new NARGraph.TermContent());
+
+
+                        for (Term y : contained) {
+                            addTerm(g, y);
+
+                            if (x != y)
+                                if (x.containsTerm(y))
+                                    g.addEdge(y, x, new NARGraph.TermContent());
+                        }
+                    }
+                }                
+            }
+            
             @Override
             public void onTime(NARGraph g, long time) {
                 super.onTime(g, time);
+                    
+                for (Object o : getItems()) {                    
+                    
 
-               
-                    
-                for (Sentence s : getSentences()) {
-                    g.addVertex(s);
-                    
-                    Term t = s.content;
-                    addTerm(g, t);
-                    g.addEdge(s, s.content, new NARGraph.SentenceContent());
-                    
-                    if (t instanceof CompoundTerm) {
-                        CompoundTerm ct = ((CompoundTerm)t);
-                        Set<Term> contained = ct.getContainedTerms();
-                        
-                        for (Term x : contained) {                            
-                            addTerm(g, x);
-                            if (ct.containsTerm(x))
-                                g.addEdge(x, t, new NARGraph.TermContent());
-                            
-                            
-                            for (Term y : contained) {
-                                addTerm(g, y);
-                                
-                                if (x != y)
-                                    if (x.containsTerm(y))
-                                        g.addEdge(y, x, new NARGraph.TermContent());
-                            }
-                            
-                                
-                            
-                        }
+                    if (o instanceof Task) {
+                        g.addVertex(o);
+                        addSentence(g, ((Task)o).sentence);
+                    }                    
+                    else if (o instanceof Sentence) {
+                        g.addVertex(o);
+                        addSentence(g, (Sentence)o);
                     }
-                    
-                    
                 }
                 //add sentences
             }
@@ -747,31 +822,53 @@ public class ProcessingGraphPanel extends JFrame {
         g.add(nar, newSelectedGraphFilter(), graphizer);                
         app.graph = g;
         
-
-        // create a visualization using JGraph, via an adapter
-        JGraphXAdapter layout = new JGraphXAdapter(g);
-        app.layout = layout;
+        needLayout = true;
         
-       
-        /*
-         */
-        switch (layoutMode) {
-            case "Graph":
-                mxFastOrganicLayout l = new mxFastOrganicLayout(layout);
-                //new mxCompactTreeLayout(jgxAdapter);
-                //new mxCircleLayout(jgxAdapter);
-                l.setForceConstant(edgeDistance*10f);
-                l.execute(layout.getDefaultParent());
-                break;
-            case "Tree":
-                mxCompactTreeLayout layout2 =  new mxCompactTreeLayout(layout);
-                layout2.setUseBoundingBox(true);
-                layout2.setResizeParent(true);
-                layout2.setLevelDistance((int)(edgeDistance*1.5f));
-                layout2.setNodeDistance((int)(0.2f * edgeDistance*edgeDistance*2f));
-                layout2.setInvert(true);
-                layout2.execute(layout.getDefaultParent());
-                break;
+    }
+
+    boolean needLayout = true;
+    
+    public boolean redraw() {
+        if (app == null) return false;
+        if (app.graph == null) {
+            update();
+        }
+        
+        app.drawn = false;                
+
+        
+        if (needLayout) {
+            
+            needLayout = false;
+            
+            // create a visualization using JGraph, via an adapter
+            JGraphXAdapter graphAdapter = new JGraphXAdapter(app.graph);
+            app.graphAdapter = graphAdapter;
+
+
+            /*
+             */
+            switch (layoutMode) {
+                case "Graph":
+                    mxFastOrganicLayout l = new mxFastOrganicLayout(graphAdapter);
+                    //new mxCompactTreeLayout(jgxAdapter);
+                    //new mxCircleLayout(jgxAdapter);
+                    l.setForceConstant(edgeDistance*10f);                
+                    l.execute(graphAdapter.getDefaultParent());
+                    
+                    
+                    break;
+                case "Tree":
+                    mxCompactTreeLayout layout2 =  new mxCompactTreeLayout(graphAdapter);
+                    layout2.setUseBoundingBox(true);
+                    layout2.setResizeParent(true);
+                    layout2.setLevelDistance((int)(edgeDistance*1.5f));
+                    layout2.setNodeDistance((int)(0.2f * edgeDistance*edgeDistance*2f));
+                    layout2.setInvert(true);
+                    layout2.execute(graphAdapter.getDefaultParent());
+                    break;
+            }
+            
         }
         
         
@@ -786,29 +883,10 @@ public class ProcessingGraphPanel extends JFrame {
         layout.setEdgeLengthCostFactor(0.001);*/
 
         app.updating = false;
-                
         
+        app.redraw();
+        
+        return true;
     }
-        
-    
-//    public static void main(String[] args) throws Exception {
-//        NAR n = new NAR();
-//        
-//        /*
-//        new TextInput(n, "<a --> b>.");
-//        new TextInput(n, "<b --> c>.");
-//        new TextInput(n, "<d <-> c>. %0.75;0.90%");
-//        new TextInput(n, "<a --> c>?");      
-//        new TextInput(n, "<a --> d>?");
-//        n.run(12);
-//        */
-//        
-//        n.addInput("<0 --> num>. %1.00;0.90% {0 : 1}");
-//        n.addInput("<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2}"); 
-//        n.addInput("<(*,(*,(*,0))) --> num>?  {0 : 3}");
-//       
-//        n.run(500);
-//        
-//        new ProcessingGraphPanel(n);
-//    }
+
 }

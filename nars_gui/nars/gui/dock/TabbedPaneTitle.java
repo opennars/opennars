@@ -22,7 +22,6 @@
 package nars.gui.dock;
 
 import java.awt.event.MouseEvent;
-import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.TransferHandler;
@@ -99,7 +98,6 @@ public class TabbedPaneTitle extends TabbedPaneTitleMax  {
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 4, 0));
         label_title.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_title.setText("jLabel1");
-        label_title.setBorder(createEmptyBorder(4, 4, 4, 4));
         label_title.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {

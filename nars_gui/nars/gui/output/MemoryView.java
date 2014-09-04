@@ -17,6 +17,7 @@ import java.util.WeakHashMap;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -25,7 +26,6 @@ import nars.entity.TruthValue;
 import nars.gui.NSlider;
 import nars.gui.Window;
 import nars.language.Term;
-import nars.core.Memory;
 import nars.util.NARGraph;
 import nars.util.NARGraph.ExcludeBelowPriority;
 import processing.core.PApplet;
@@ -960,7 +960,7 @@ public class MemoryView extends Window {
         
         NSlider nodeSize = new NSlider(app.nodeSize, 1, app.maxNodeSize) {
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
                 app.nodeSize = (float)v;
                 app.drawn = false;
             }          
@@ -974,7 +974,7 @@ public class MemoryView extends Window {
         //final int numLevels = ((Bag<Concept>)n.memory.concepts).levels;
         NSlider maxLevels = new NSlider(1, 0, 1) {
             @Override
-            public void onChange(double v) {                
+            public void onChange(float v) {                
                 app.minPriority = (float)(1.0 - v);
                 app.setUpdateNext();
             }          
@@ -983,9 +983,9 @@ public class MemoryView extends Window {
         maxLevels.setPreferredSize(new Dimension(125, 25));
         menu.add(maxLevels);
 
-        NSlider nodeSpeed = new NSlider(app.nodeSpeed, 0.001, 0.99) {
+        NSlider nodeSpeed = new NSlider(app.nodeSpeed, 0.001f, 0.99f) {
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
                 app.nodeSpeed = (float)v;
                 app.drawn = false;
             }          
@@ -994,9 +994,9 @@ public class MemoryView extends Window {
         nodeSpeed.setPreferredSize(new Dimension(125, 25));
         menu.add(nodeSpeed);        
         
-        NSlider blur = new NSlider(0, 0, 1.0) {
+        NSlider blur = new NSlider(0, 0, 1.0f) {
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
                 app.motionBlur = (float)v;
                 app.drawn = false;
             }          

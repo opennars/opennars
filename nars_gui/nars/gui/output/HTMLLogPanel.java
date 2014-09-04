@@ -47,7 +47,7 @@ public class HTMLLogPanel extends LogPanel {
     }
 
     @Override
-    protected void setFontSize(double v) {
+    public void setFontSize(float v) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 

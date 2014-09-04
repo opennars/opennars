@@ -55,7 +55,7 @@ public class Stamp implements Cloneable {
 
     /**
      * estimated occurrence time of the event
-     * TODO: make this final
+     * TODO: make this final?
      */
     public long occurrenceTime;
 
@@ -84,6 +84,9 @@ public class Stamp implements Cloneable {
      */    
     private long[] evidentialSet = null;
     //private Set<Long> evidentialSet; 
+    
+    /** caches  */
+    transient CharSequence name = null;
     
     /**
      * Generate a new stamp, with a new serial number, for a new Task
@@ -320,6 +323,7 @@ public class Stamp implements Cloneable {
         }
 
         derivationChain.add(T);
+        name = null;
     }
     
     public static long[] toSetArray(final long[] x) {
@@ -452,46 +456,49 @@ public class Stamp implements Cloneable {
 
     public void setOccurrenceTime(final long time) {
         occurrenceTime = time;
+        name = null;
     }
 
 
     public CharSequence name() {
-        final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
+        if (name == null) {
+            final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
-        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
-        buffer.append(Symbols.STAMP_OPENER).append(creationTime);
-        if (occurrenceTime != ETERNAL) {
-            buffer.append('|').append(occurrenceTime);
-        }
-        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
-        for (int i = 0; i < baseLength; i++) {
-            buffer.append(Long.toString(evidentialBase[i]));
-            if (i < (baseLength - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
-            } else {
-                if (derivationChain.isEmpty()) {
-                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+            final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+            buffer.append(Symbols.STAMP_OPENER).append(creationTime);
+            if (occurrenceTime != ETERNAL) {
+                buffer.append('|').append(occurrenceTime);
+            }
+            buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+            for (int i = 0; i < baseLength; i++) {
+                buffer.append(Long.toString(evidentialBase[i]));
+                if (i < (baseLength - 1)) {
+                    buffer.append(Symbols.STAMP_SEPARATOR);
+                } else {
+                    if (derivationChain.isEmpty()) {
+                        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+                    }
                 }
             }
-        }
-        int i = 0;
-        for (Term t : derivationChain) {
-            buffer.append(t);
-            if (i < (derivationChain.size() - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
+            int i = 0;
+            for (Term t : derivationChain) {
+                buffer.append(t);
+                if (i < (derivationChain.size() - 1)) {
+                    buffer.append(Symbols.STAMP_SEPARATOR);
+                }
+                i++;
             }
-            i++;
-        }
-        buffer.append(Symbols.STAMP_CLOSER).append(' ');
+            buffer.append(Symbols.STAMP_CLOSER).append(' ');
 
-        //this is for estimating an initial size of the stringbuffer
-        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
-        return buffer;
+            //this is for estimating an initial size of the stringbuffer
+            //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
+            name = buffer;
+        }
+        return name;
     }
 
     @Override
-    public String toString() {
-        
+    public String toString() {        
         return name().toString();
     }
 

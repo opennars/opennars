@@ -1,9 +1,7 @@
 package nars.gui.output;
 
 import java.awt.Color;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,14 +19,14 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NARSwing;
+import nars.io.Output;
 import nars.io.Output.OUT;
 
 
-public class SwingLogText extends JTextPane {
+public class SwingLogText extends JTextPane implements Output {
     private final NAR nar;
 
     /** # of messages to buffer in log */
-    private int BufferLength = 512;
     private final float baseFontScale = 1.0f;
     
     public static class LogLine {
@@ -45,8 +43,7 @@ public class SwingLogText extends JTextPane {
     public boolean showStamp = false;
     
     private final DefaultStyledDocument doc;
-    private final Style mainStyle;
-    private Deque<LogLine> nextOutput = new ArrayDeque();
+    private final Style mainStyle;    
 
     public SwingLogText(NAR n) {        
         super(new DefaultStyledDocument(new StyleContext()));
@@ -68,14 +65,13 @@ public class SwingLogText extends JTextPane {
 
         doc.setLogicalStyle(0, mainStyle);
         
-        setFontSize(16);
 
         
     }
 
     final List<LogLine> pendingDisplay = new ArrayList();
     
-    public void out(final Class c, final Object o) {
+    public void output(final Class c, final Object o) {
         final LogLine ll = new LogLine(c, o);
         
         boolean requireUpdate;
@@ -136,7 +132,7 @@ public class SwingLogText extends JTextPane {
     }
     
     protected void print(final Class c, final Object o)  {        
-        Color defaultColor = Color.WHITE;
+        //Color defaultColor = Color.WHITE;
 
         float priority = 1f;
         if (c!=OUT.class) {
@@ -200,7 +196,7 @@ public class SwingLogText extends JTextPane {
         }
     }
         
-    protected void setFontSize(double v) {        
-        setFont(getFont().deriveFont((float) v));
+    public void setFontSize(float v) {        
+        setFont(NARSwing.monofont.deriveFont(v));
     }
 }

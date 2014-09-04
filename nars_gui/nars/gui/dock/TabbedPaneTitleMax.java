@@ -21,8 +21,8 @@
  */
 package nars.gui.dock;
 
-import nars.gui.FAButton;
 import static javax.swing.BorderFactory.createEmptyBorder;
+import nars.gui.FAButton;
 
 /**
  *
@@ -46,7 +46,6 @@ import static javax.swing.BorderFactory.createEmptyBorder;
     public TabbedPaneTitleMax(DockingContent content) {
         this.tabPanel = null;
         this.content = content;
-        
         initButtons();
     }
     
@@ -86,7 +85,7 @@ import static javax.swing.BorderFactory.createEmptyBorder;
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
         label_title.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         //label_title.setText("jLabel1");
-        label_title.setBorder(createEmptyBorder(0, 0, 0, 4));
+        label_title.setBorder(createEmptyBorder(0, 0, 0, 0));
         label_title.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -103,7 +102,7 @@ import static javax.swing.BorderFactory.createEmptyBorder;
         //bn_float.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/float.png"))); // NOI18N
         bn_float.setBorderPainted(false);
         bn_float.setContentAreaFilled(false);
-        bn_float.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        //bn_float.setMargin(new java.awt.Insets(0, 0, 0, 0));
         bn_float.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -127,7 +126,7 @@ import static javax.swing.BorderFactory.createEmptyBorder;
 //bn_close.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/close.png"))); // NOI18N
         bn_close.setBorderPainted(false);
         bn_close.setContentAreaFilled(false);
-        bn_close.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        //bn_close.setMargin(new java.awt.Insets(0, 0, 0, 0));
         bn_close.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
