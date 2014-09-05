@@ -17,7 +17,8 @@ import java.util.WeakHashMap;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import nars.core.Memory;
+import nars.core.EventEmitter.Observer;
+import nars.core.Memory.Events.MemoryCycleStop;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -27,7 +28,6 @@ import nars.gui.NSlider;
 import nars.gui.Window;
 import nars.language.Term;
 import nars.util.NARGraph;
-import nars.util.NARGraph.ExcludeBelowPriority;
 import processing.core.PApplet;
 
 
@@ -64,6 +64,10 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     public Button fetchMemory;
     NAR nar;
     
+    int maxNodesWithLabels = 300;
+    int maxNodes = 1000;
+    int maxEdgesWithArrows = 500;
+    int maxEdges = 1500;
     
     float minPriority = 0;
             
@@ -164,15 +168,15 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             return object.equals(obj);
         }
         
-        public void draw() {
+        public void draw(boolean text) {
             update();
             
             if (!visible) return;
              
-            if (stroke > 0) {
+            /*if (stroke > 0) {
               stroke(Color.WHITE.getRGB());
                 strokeWeight(stroke);
-            }
+            }*/
                         
             float r = (radius+boost*boostScale) * nodeSize / 2f;
             
@@ -180,16 +184,16 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
            
             ellipse(x, y, r, r);
 
-            if (label!=null) {
+            if (text && (label!=null)) {
                 fill(255,255,255,alpha*255*0.75f);
                 textSize(r/2);
                 text(label, x, y);            
             }
             
-            if (stroke > 0) {                
+            /*if (stroke > 0) {                
                 //reset stroke
                 noStroke();
-            }
+            }*/
         }
                
         protected void update() {            
@@ -256,7 +260,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     }
     
     
-    public VertexDisplay displayVertex(Object o) {
+    public VertexDisplay updateVertex(Object o) {
         VertexDisplay v = vertices.get(o);
         if (v!=null) {
             v.update(o);
@@ -309,150 +313,154 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         hamlib.mousePressed();
     }
 
-    @Override
-    public void draw() {
-        
-        
-        final Memory mem = nar.memory;
-        final Sentence currentBelief = mem.getCurrentBelief();
-        final Concept currentConcept = mem.getCurrentConcept();
-        final Task currentTask = mem.getCurrentTask();
-        
+    /** should be called from NAR update thread, not swing thread  */
+    public void updateGraph() {
+        final Sentence currentBelief = nar.memory.getCurrentBelief();
+        final Concept currentConcept = nar.memory.getCurrentConcept();
+        final Task currentTask = nar.memory.getCurrentTask();
+
         if ((nar.getTime() != lasttime) || (updateNext)) {
             updateNext = false;
             lasttime = nar.getTime();
             
 
 
-            deadVertices.clear();
-            deadVertices.addAll(vertices.keySet());
-            
-            try {
-                
-                
-                graph = new NARGraph();
-                graph.add(nar, new ExcludeBelowPriority(minPriority), 
-                        new NARGraph.DefaultGraphizer(showBeliefs, true, showBeliefs, true, false) {
+            synchronized (vertices) {
+                deadVertices.clear();
+                deadVertices.addAll(vertices.keySet());
 
-                    float level;
-                    float index = 0;
-                    int levelContents = 0;
-                    private float priority;
-                    Term lastTerm = null;
-                    VertexDisplay lastTermVertex = null;
-                    
-                    public void preLevel(NARGraph g, int l) {
-                        if (!compressLevels)
-                            level = l;
-                        
-                        levelContents = 0;
+                    try {
+                        graph = new NARGraph();
+                        graph.add(nar, new NARGraph.ExcludeBelowPriority(minPriority), 
+                                new NARGraph.DefaultGraphizer(showBeliefs, true, showBeliefs, true, false) {
 
-                        if (mode == 1)
-                            index = 0;
-                    }
+                            float level;
+                            float index = 0;
+                            int levelContents = 0;
+                            private float priority;
+                            Term lastTerm = null;
+                            VertexDisplay lastTermVertex = null;
 
-                    
-                    public void postLevel(NARGraph g, int l) {                        
-                        if (compressLevels) {
-                            if (levelContents > 0)
-                                level--;
-                        }                        
-                    }
-                    
-                    @Override
-                    public void onConcept(NARGraph g, Concept c) {
-                        super.onConcept(g, c);
+                            public void preLevel(NARGraph g, int l) {
+                                if (!compressLevels)
+                                    level = l;
 
-                        priority = c.getPriority();
-                        level = (float)(priority*100.0);
-                        
-                        if ((lastTerm!=null) && (c.term.equals(lastTerm))) {
-                            //terms equal to concept, ordinarily displayed as subsequent nodes
-                            //should just appear at the same position as the concept
-                            //lastTermVertex.visible = false;
-                            lastTermVertex.position(level, index, priority);
-                            lastTermVertex.visible = false;
-                        }
-                        else
-                        index++;
-                        
-                        VertexDisplay d = displayVertex(c);
-                        d.position(level, index, priority);
-                        deadVertices.remove(c);
+                                levelContents = 0;
 
-                        if (currentConcept!=null)
-                            if (c.equals(currentConcept))
-                                d.boost = 1.0f;                        
+                                if (mode == 1)
+                                    index = 0;
+                            }
 
-                        
-                        levelContents++;
-                                 
-                        lastTerm = null;
-                        lastTermVertex = null;
-                    }
 
-                    @Override
-                    public void onTerm(Term t) {
-                                
-                        index++;                                               
+                            public void postLevel(NARGraph g, int l) {                        
+                                if (compressLevels) {
+                                    if (levelContents > 0)
+                                        level--;
+                                }                        
+                            }
 
-                        VertexDisplay d = displayVertex(t);
-                        d.position(level, index, priority);
-                        deadVertices.remove(d);
+                            @Override
+                            public void onConcept(NARGraph g, Concept c) {
+                                super.onConcept(g, c);
 
-                        lastTerm = t;
-                        lastTermVertex = d;
-                        
-                        levelContents++;
-                       
-                    }
+                                priority = c.getPriority();
+                                level = (float)(priority*100.0);
 
-                    @Override
-                    public void onBelief(Sentence kb) {
-                        index+= 0.25f;
+                                if ((lastTerm!=null) && (c.term.equals(lastTerm))) {
+                                    //terms equal to concept, ordinarily displayed as subsequent nodes
+                                    //should just appear at the same position as the concept
+                                    //lastTermVertex.visible = false;
+                                    lastTermVertex.position(level, index, priority);
+                                    lastTermVertex.visible = false;
+                                }
+                                else
+                                    index++;
 
-                        VertexDisplay d = displayVertex(kb);
-                        d.position(level, index, priority);                    
-                        deadVertices.remove(kb);
-                        
-                        if (currentBelief!=null)
-                            if (kb.equals(currentBelief))
-                                d.boost = 1.0f;                        
-                    
-                        levelContents++;
-                    
-                        lastTerm = null;
-                        lastTermVertex = null;
-                    
-                    }
+                                VertexDisplay d = updateVertex(c);
+                                d.position(level, index, priority);
+                                deadVertices.remove(c);
 
-                    @Override
-                    public void onQuestion(Task t) {
-                        index+= 0.25f;
+                                if (currentConcept!=null)
+                                    if (c.equals(currentConcept))
+                                        d.boost = 1.0f;                        
 
-                        VertexDisplay d = displayVertex(t);
-                        d.position(level, index, priority);                    
-                        deadVertices.remove(t);
 
-                        if (currentTask!=null)
-                            if (t.equals(currentTask))
-                                d.boost = 1.0f;                        
+                                levelContents++;
 
-                        levelContents++;
-                    
-                        lastTerm = null;
-                        lastTermVertex = null;
-                    }
-                
-                
-                });
-            } catch (Exception e)  { System.err.println(e); } 
-                        
-            for (Object v : deadVertices)
-                vertices.remove(v);
+                                lastTerm = null;
+                                lastTermVertex = null;
+                            }
+
+                            @Override
+                            public void onTerm(Term t) {
+
+                                index++;                                               
+
+                                VertexDisplay d = updateVertex(t);
+                                d.position(level, index, priority);
+                                deadVertices.remove(d);
+
+                                lastTerm = t;
+                                lastTermVertex = d;
+
+                                levelContents++;
+
+                            }
+
+                            @Override
+                            public void onBelief(Sentence kb) {
+                                index+= 0.25f;
+
+                                VertexDisplay d = updateVertex(kb);
+                                d.position(level, index, priority);                    
+                                deadVertices.remove(kb);
+
+                                if (currentBelief!=null)
+                                    if (kb.equals(currentBelief))
+                                        d.boost = 1.0f;                        
+
+                                levelContents++;
+
+                                lastTerm = null;
+                                lastTermVertex = null;
+
+                            }
+
+                            @Override
+                            public void onQuestion(Task t) {
+                                index+= 0.25f;
+
+                                VertexDisplay d = updateVertex(t);
+                                d.position(level, index, priority);                    
+                                deadVertices.remove(t);
+
+                                if (currentTask!=null)
+                                    if (t.equals(currentTask))
+                                        d.boost = 1.0f;                        
+
+                                levelContents++;
+
+                                lastTerm = null;
+                                lastTermVertex = null;
+                            }
+
+
+                        });
+                    } catch (Exception e)  { System.err.println(e); } 
+
+
+                for (Object v : deadVertices)
+                    vertices.remove(v);
+            }
             
             drawn = false;
         }
+    }
+    
+    @Override
+    public void draw() {
+        
+                
         
         if (drawn)
             return;
@@ -470,33 +478,12 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         
         //pushMatrix();
         hnav.Transform();
-        hrend_DrawBegin();
-        drawit();
-        hrend_DrawEnd();
-        //popMatrix();
-        
-        hrend_DrawGUI();
-        
+        drawGraph();
+        //popMatrix();        
         
     }
 
 
-    void hrend_DrawBegin() {
-    }
-
-    void hrend_DrawEnd() {
-        //fill(0);
-        //text("Hamlib simulation system demonstration", 0, -5);
-        //stroke(255, 255, 255);
-        //noStroke();
-        /*if (lastclicked != null) {
-            fill(255, 0, 0);
-            ellipse(lastclicked.x, lastclicked.y, 10, 10);
-        }*/
-    }
-
-    public void hrend_DrawGUI() {
-    }
 
     @Override
     public void setup() {  
@@ -512,43 +499,52 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     }
 
 
-    public void drawit() {
+    public void drawGraph() {
                         
+        if (graph== null) return;
+
         //for speed:
         strokeCap(SQUARE);
         strokeJoin(PROJECT);
         
-            
-        
-        
-        for (final Object edge : graph.edgeSet()) {
+        synchronized (vertices) {
+            int numEdges = graph.edgeSet().size();
+            if (numEdges < maxEdges) {
+                for (final Object edge : graph.edgeSet()) {
 
-            
+                    final VertexDisplay elem1 = vertices.get(graph.getEdgeSource(edge));
+                    final VertexDisplay elem2 = vertices.get(graph.getEdgeTarget(edge));                
+                    if ((elem1 == null) || (elem2 == null))
+                        continue;
 
-            final VertexDisplay elem1 = vertices.get(graph.getEdgeSource(edge));
-            final VertexDisplay elem2 = vertices.get(graph.getEdgeTarget(edge));                
-            if ((elem1 == null) || (elem2 == null))
-                continue;
+                    stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f*lineAlpha );
+                    strokeWeight( (elem1.radius + elem2.radius)/2.0f / lineWidth );
 
-            
-            stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f*lineAlpha );
-            strokeWeight( (elem1.radius + elem2.radius)/2.0f / lineWidth );
+                    float x1 = elem1.x;
+                    float y1 = elem1.y;
+                    float x2 = elem2.x;
+                    float y2 = elem2.y;
+                    
+                    if (numEdges < maxEdgesWithArrows)
+                        drawArrow(x1, y1, x2, y2);     
+                    else
+                        drawLine(x1, y1, x2, y2);
 
-            float x1 = elem1.x;
-            float y1 = elem1.y;
-            float x2 = elem2.x;
-            float y2 = elem2.y;
-            float cx = (x1 + x2) / 2.0f;
-            float cy = (y1 + y2) / 2.0f;
-            drawArrow(x1, y1, x2, y2);     
-            //text(edge.toString(), cx, cy);
-        }
+                    //float cx = (x1 + x2) / 2.0f;
+                    //float cy = (y1 + y2) / 2.0f;
+                    //text(edge.toString(), cx, cy);
+                }
+            }
 
-        
-        noStroke();
-        for (final VertexDisplay d : vertices.values())
-            d.draw();
-        
+            noStroke();
+
+            int numNodes = vertices.size();
+            boolean text = numNodes < maxNodesWithLabels;
+            if (numNodes < maxNodes)
+                for (final VertexDisplay d : vertices.values())
+                    d.draw(text);
+
+        }   
     }
 
     
@@ -570,93 +566,10 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         
         drawArrowAngle(x1, y1, len, a);
     }    
+    void drawLine(final float x1, final float y1, final float x2, final float y2) {
+        line(x1,y1,x2,y2);
+    }
     
-
-//    public void take_from_mem() {
-//        if ((mem.getTime() != lasttime) || (updateNext)) {
-//            updateNext = false;
-//            lasttime = mem.getTime();
-//            
-//            hsim.obj.clear();
-//            E.clear();
-//            E2.clear();
-//            Sent_s.clear(); //derivation chain
-//            Sent_i.clear(); //derivation chain
-//            
-//            int x = 0;
-//            int cnt = 0;
-//            ConceptBag bag = mem.concepts;
-//            for (int i = bag.levels; i >= 1; i--) {
-//                if (!bag.emptyLevel(i - 1)) {
-//                    if (!bag.emptyLevel(i-1)) {
-//                        try {
-//                            for (final Concept c : Collections.unmodifiableCollection(bag.getLevel(i-1))) {
-//
-//                                final Term name = c.getTerm();
-//
-//
-//                                hsim.obj.add(new Vertex(x++, i, name, 0));
-//                                cnt++;
-//
-//                                float xsave = x;
-//
-//                                int bufcnt = cnt;
-//
-//                                if (showBeliefs) {
-//                                    for (int k = 0; k < c.beliefs.size(); k++) {
-//                                        Sentence kb = c.beliefs.get(k);
-//                                        Term name2 = kb.getContent();
-//
-//                                        hsim.obj.add(new Vertex(x++, i, name2, 0, kb.getStamp().creationTime));
-//                                        E.add(new Edge(bufcnt, cnt, kb.truth.getConfidence()));
-//                                        Sent_s.add(kb);
-//                                        Sent_i.add(cnt);
-//                                        cnt++;
-//
-//                                    }
-//                                }
-//
-//                                for (Task q : c.getQuestions()) {
-//                                    Term name2 = q.getContent();                            
-//                                    hsim.obj.add(new Vertex(x++, i, name2, 1));
-//                                    E.add(new Edge(bufcnt, cnt, q.getPriority()));
-//                                    cnt++;
-//
-//                                }
-//                            }
-//                        }
-//                        catch (ConcurrentModificationException e) { }
-//
-//                    }
-//                }
-//                
-//                if (mode == 1)
-//                    x = 0;
-//
-//            }
-//            for (int i = 0; i < hsim.obj.size(); i++) {
-//                final Vertex ho = (Vertex)hsim.obj.get(i);
-//                
-//                for (int j = 0; j < hsim.obj.size(); j++) {
-//                    Vertex target = (Vertex) hsim.obj.get(j);
-//                    try {
-//                        if ((ho).name.containsTermRecursively((target.name))) {
-//                            int alpha = (ho.name.getComplexity() + target.name.getComplexity())/2;
-//                            alpha = alpha * 10;
-//                            alpha += 75;
-//                            if (alpha > 255) alpha = 255;
-//                            E2.add(new Edge(i, j, alpha));
-//                        }
-//                    } catch (Exception ex) {
-//                    }
-//                }
-//            }
-//            //autofetch=false;
-//        }
-//    }
-
-
-
     void setUpdateNext() {
         updateNext = true;
         drawn = false;        
@@ -1009,6 +922,15 @@ public class MemoryView extends Window {
         content.add(app, BorderLayout.CENTER);
         
 
+        n.memory.event.on(MemoryCycleStop.class, new Observer() {
+            @Override
+            public void event(Class event, Object... arguments) {
+                if (app!=null)
+                    app.updateGraph();
+                else
+                    n.memory.event.off(MemoryCycleStop.class, this);
+            }  
+        });
     
     }
 

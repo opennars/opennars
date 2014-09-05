@@ -1,9 +1,10 @@
 package nars.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import nars.entity.AbstractTask;
 import nars.gui.NARControls;
 import nars.io.InPort;
@@ -92,9 +93,9 @@ public class NAR implements Runnable, Output {
         
         m.setOutput(this);                
         
-        //needs to be concurrent in case NARS makes changes to the channels while running
-        inputChannels = new CopyOnWriteArrayList<>();
-        outputChannels = new CopyOnWriteArrayList<>();
+        //needs to be concurrent in case we change this while running
+        inputChannels = Collections.synchronizedList(new ArrayList()); //new CopyOnWriteArrayList<>(); 
+        outputChannels = Collections.synchronizedList(new ArrayList()); //new CopyOnWriteArrayList<>();
     }
 
     /**
