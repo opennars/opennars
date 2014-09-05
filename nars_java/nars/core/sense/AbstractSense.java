@@ -45,8 +45,11 @@ abstract public class AbstractSense extends DefaultDataSet {
         return null;
     }
 
-    public void updateSensors(final boolean reset) {
+    public void updateSensors(final boolean reset, long cyclesSinceLastUpdate) {
         for (final Sensor s : sensors.values()) {
+            
+            s.setCyclesSinceLastUpdate(cyclesSinceLastUpdate);
+            
             if (reset) {
                 if (s instanceof AbstractSpanTracker) {
                     if (((AbstractTracker) s).getSampleWindow() > 0) {
@@ -54,8 +57,6 @@ abstract public class AbstractSense extends DefaultDataSet {
                     }
                 }
                 s.getSession().drainData();
-            } else {
-                s.getSession().collectData();
             }
         }
     }
@@ -86,10 +87,11 @@ abstract public class AbstractSense extends DefaultDataSet {
         
         sense(memory);
 
+        long timeSinceLastUpdate = time - lastUpdate;
+        
         lastUpdate = time;                     
         
-        if (time % allSensorResetPeriodCycles == 0)
-            updateSensors(true);
+        updateSensors((time % allSensorResetPeriodCycles == 0), timeSinceLastUpdate);
 
         return;
     }

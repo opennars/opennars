@@ -59,8 +59,7 @@ public class Parameters {
     public static final int NEW_TASK_FORGETTING_CYCLE = 10;
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public static final int MAX_MATCHED_TERM_LINK = 10;
-    /** Maximum TermLinks used in reasoning for each Task in Concept */
-    public static final int MAX_REASONED_TERM_LINK = 3;
+    
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. */

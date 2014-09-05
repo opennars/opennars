@@ -592,7 +592,7 @@ public class Concept extends Item {
             memory.setCurrentBelief(null);
             transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
         } else {
-            int termLinkCount = Parameters.MAX_REASONED_TERM_LINK;
+            int termLinkCount = memory.param.maxReasonedTermLink.get();
 //        while (memory.noResult() && (termLinkCount > 0)) {
             while (termLinkCount > 0) {
                 final TermLink termLink = selectTermLink(currentTaskLink, memory.getTime());

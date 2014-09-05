@@ -68,7 +68,7 @@ public class LogicSense extends AbstractSense implements Serializable {
         add(CONCEPT_NEW = new EventValueSensor("concept.new"));
         CONCEPT_NEW.setSampleWindow(32);
         
-        add(REASON = new EventValueSensor("reason"));
+        add(REASON = new EventValueSensor("reason.tasktermlinks"));
         REASON.setSampleWindow(32);
         
         add(CONTRAPOSITION = new EventValueSensor("reason.contraposition"));
@@ -114,20 +114,22 @@ public class LogicSense extends AbstractSense implements Serializable {
             put("reason.fire.tasklink.priority.mean", fire.mean());
             put("reason.fire.tasklinks", TASKLINK_FIRE.getHits());
             
-            put("reason.tasktermlinks", REASON.getHits());
+            putHits(REASON);
             
             //only makes sense as a mean, since it occurs multiple times during a cycle
             put("reason.tasktermlink.priority.mean", REASON.get().mean());                        
         }
         {            
-            put("reason.contrapositions", CONTRAPOSITION.getHits());
+            putHits(CONTRAPOSITION);
+            
             //put("reason.contrapositions.complexity.mean", CONTRAPOSITION.get().mean());
             
             put("reason.belief_revision", BELIEF_REVISION.getHits());
             put("reason.ded_2nd_layer_variable_unification_terms", DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.getHits());
             put("reason.ded_2nd_layer_variable_unification", DED_SECOND_LAYER_VARIABLE_UNIFICATION.getHits());
             put("reason.ded_conjunction_by_question", DED_CONJUNCTION_BY_QUESTION.getHits());
-            put("reason.analogy", ANALOGY.getHits());
+            
+            putHits(ANALOGY);
         }
         {
             put("task.add_new", TASK_ADD_NEW.getHits());
@@ -149,6 +151,10 @@ public class LogicSense extends AbstractSense implements Serializable {
             put("concept.new", CONCEPT_NEW.getHits());
             put("concept.new.complexity.mean", CONCEPT_NEW.get().mean());
         }        
+    }
+    
+    public void putHits(final EventValueSensor s) {
+        put(s.getName(), s.getHits());
     }
 
     public void setConceptBeliefsSum(long conceptBeliefsSum) {

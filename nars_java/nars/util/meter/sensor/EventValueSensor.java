@@ -14,7 +14,6 @@
  */
 package nars.util.meter.sensor;
 
-import java.util.logging.Logger;
 import nars.util.meter.Sensor;
 import nars.util.meter.session.StatsSession;
 
@@ -26,9 +25,10 @@ import nars.util.meter.session.StatsSession;
  */
 public class EventValueSensor extends AbstractTracker implements ManualTracker {
 
-    private static final Logger logger = Logger.getLogger(EventValueSensor.class.toString());
+    //private static final Logger logger = Logger.getLogger(EventValueSensor.class.toString());
 
     double lastValue = 0, currentDelta = 0;
+    long lastFirstcommit = -1;
     
     public EventValueSensor(final StatsSession statsSession) {
         super(statsSession);
@@ -59,34 +59,15 @@ public class EventValueSensor extends AbstractTracker implements ManualTracker {
     }
 
     @Override
-    public void commit() {
-        //try {
+    public void commit() {       
             
         final long now = System.currentTimeMillis();
         session.track(this, now);
         session.update(this, now);
-        currentHits++;
-        
-            
-        /*} catch (Exception e) {
-            Misc.logHandledException(logger, e, "Caught Exception in commit()");
-            Misc.handleUncaughtException(getKey(), e);
-        }*/
-    }
 
-//    public static class Factory implements TrackerFactory<ManualTracker> {
-//
-//        @Override
-//        public ManualTracker createTracker(final StatsKey key,
-//                                                final StatsSessionManager sessionManager) {
-//            return new DefaultManualTracker(sessionManager.getOrCreateSession(key));
-//        }
-//        
-//        @Override
-//        public Class<ManualTracker> getTrackerType() {
-//            return ManualTracker.class;
-//        }
-//    }
+        currentHits++;
+    }
+    
     
     /** difference in value from current to previous iteration */
     public double getDelta() {
@@ -99,6 +80,4 @@ public class EventValueSensor extends AbstractTracker implements ManualTracker {
         return super.reset();
     }
 
-
-    
 }

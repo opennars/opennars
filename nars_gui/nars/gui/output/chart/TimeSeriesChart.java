@@ -12,6 +12,7 @@ class TimeSeriesChart  {
 	//protected float strokeWeight = 1;
 	//protected int[] colors = new int[0];
 
+        boolean resetRangeEachCycle = false;
 	protected final String label;
         private final int historySize;
         float min, max;
@@ -53,7 +54,8 @@ class TimeSeriesChart  {
         
         public void push(final float f) {
             //System.arraycopy(values, 0, values, 1, historySize-1);
-            min = max = f;
+            if (resetRangeEachCycle)
+                min = max = f;
                         
             //update min/max while shifting up                                   
             for (int i = historySize-1; i >= 1; i--) {
