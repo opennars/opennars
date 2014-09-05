@@ -90,7 +90,8 @@ public abstract class AbstractSpanTracker extends AbstractTracker implements Spa
 
         if (!tracking) {
             //logger.warning("commit() called when not tracking: {} " + this);
-            throw new RuntimeException(this + " can not commit(); not tracking");
+            //throw new RuntimeException(this + " can not commit(); not tracking");
+            return;
         }
 
 

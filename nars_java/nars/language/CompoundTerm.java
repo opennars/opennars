@@ -706,7 +706,7 @@ public abstract class CompoundTerm extends Term {
             case '#': typeI = 0; break;
             case '$': typeI = 1; break;
             case '?': typeI = 2; break;
-            default: throw new RuntimeException("Invalid variable type");
+            default: throw new RuntimeException("Invalid variable type: " + type + ", index " + i);
         }
         
         Variable existing = varCache[typeI][i];
