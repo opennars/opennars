@@ -104,6 +104,9 @@ public class LocalRules {
         TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
         BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, memory);
         Term content = newBelief.content;
+        
+        memory.logic.BELIEF_REVISION.commit();
+        
         memory.doublePremiseTaskRevised(content, truth, budget);
     }
 

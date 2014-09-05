@@ -249,6 +249,9 @@ public class ChartsPanel extends Canvas {
                 else if (value instanceof Integer) {
                     ch.push(((Number) value).floatValue());
                 }
+                else if (value instanceof Long) {
+                    ch.push(((Number) value).floatValue());
+                }
             }            
         
             g.setPaint(ch.getColor());            

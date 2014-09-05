@@ -166,6 +166,8 @@ public final class CompositionalRules {
                     //continue; //<- should this be return and not continue?
                     return;
                 }*/
+                
+                memory.logic.DED_CONJUNCTION_BY_QUESTION.commit();                
 
                 TruthValue truthAnd = intersection(truthT, truthB);
                 BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, memory);
@@ -1040,8 +1042,8 @@ public final class CompositionalRules {
                 }
 
                 Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,memory.getTime());
-                dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,false);
-                dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond),taskSentence.truth, truthSecond,true);
+                dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_dependent, anonymousAnalogy(taskSentence.truth, truthSecond), taskSentence.truth, truthSecond,false);
+                dedSecondLayerVariableUnificationTerms(memory, taskSentence, task, second_belief, ss, terms_independent, deduction(taskSentence.truth, truthSecond), taskSentence.truth, truthSecond,true);
 
                 final int termsIndependent = terms_independent.size();
                 for(int i=0;i<termsIndependent;i++) {
@@ -1063,6 +1065,8 @@ public final class CompositionalRules {
                     Task dummy = new Task(second_belief, budget, task, null);
                     memory.setCurrentBelief(taskSentence);
                     memory.setCurrentTask(dummy);
+                    
+                    memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
                     memory.derivedTask(newTask, false, false, taskSentence, second_belief);
                     
                     unifiedAnything = true;
@@ -1107,6 +1111,7 @@ public final class CompositionalRules {
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
                 
+                memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
                 memory.derivedTask(newTask, false, false, taskSentence, second_belief);
             }    
     }

@@ -151,7 +151,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
             return ((Integer)o).doubleValue();
         return 0;
     }
-    
+     
     public double[] toArray(double... extraFields) {
         Set<String> k = keySet();
         int s = k.size();

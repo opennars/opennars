@@ -20,12 +20,22 @@
  */
 package nars.inference;
 
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import static nars.inference.TemporalRules.ORDER_BACKWARD;
+import static nars.inference.TemporalRules.ORDER_FORWARD;
+import static nars.inference.TemporalRules.ORDER_INVALID;
+import static nars.inference.TemporalRules.ORDER_NONE;
+import static nars.inference.TemporalRules.abdIndComOrder;
+import static nars.inference.TemporalRules.analogyOrder;
+import static nars.inference.TemporalRules.dedExeOrder;
+import static nars.inference.TemporalRules.resemblanceOrder;
+import static nars.inference.TemporalRules.reverseOrder;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
@@ -34,11 +44,9 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Statement;
 import nars.language.Term;
-import static nars.language.Terms.*;
-import static nars.inference.TemporalRules.*;
 import nars.language.Terms;
+import static nars.language.Terms.reduceComponents;
 import nars.language.Variables;
-import nars.core.Memory;
 
 
 /**
@@ -213,6 +221,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, memory);
         }
         
+        memory.logic.ANALOGY.commit();
         memory.doublePremiseTask( Statement.make(st, subj, pred, order, memory), truth, budget);
     }
 

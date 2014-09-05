@@ -1,5 +1,7 @@
 package nars.core.sense;
 
+import java.util.HashSet;
+import java.util.Set;
 import nars.core.Memory;
 
 /**
@@ -24,6 +26,17 @@ public class MultiSense extends AbstractSense {
             dataMap.putAll(s.dataMap);
         }
         
+    
     }
+
+    @Override
+    public Set<String> keySet() {
+        Set<String> keys = new HashSet();
+        for (AbstractSense s : senses) {
+            keys.addAll(s.keySet());
+        }
+        return keys;
+    }
+ 
     
 }

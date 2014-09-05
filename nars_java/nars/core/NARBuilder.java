@@ -14,13 +14,12 @@ import nars.storage.AbstractBag;
  * @author me
  */
 abstract public class NARBuilder extends Parameters  {
-
- 
-    
+     
     /** initial runtime parameters */
     abstract public Param newParam();
     abstract public AbstractBag<Task> newNovelTaskBag(Param p);
     abstract public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c);
+    abstract public ConceptBuilder getConceptBuilder();
     
     public NAR build() {
         Param p = newParam();
@@ -37,7 +36,6 @@ abstract public class NARBuilder extends Parameters  {
                 new Perception( new DefaultTextPerception(m) ));
     }
 
-    abstract public ConceptBuilder getConceptBuilder();
 
     
 }
