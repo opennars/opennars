@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EventEmitter {
     
-    public interface Observer<O> {
-        public void event(Class event, Object... arguments);
+    public interface Observer<C> {
+        public void event(Class<? extends C> event, Object... arguments);
     }
 
     private final Map<Class<?>, List<Observer>> events
@@ -44,12 +44,15 @@ public class EventEmitter {
  
     public void off(final Class<?> event, final Observer o) {
         if (null == event || null == o)
-            return;
+            throw new RuntimeException("Invalid parameter");
  
         if (!events.containsKey(event))
-            return;
+            throw new RuntimeException("Unknown event: " + event);
         
-        events.get(event).remove(o);
+        boolean removed = events.get(event).remove(o);
+        if (!removed) {
+            throw new RuntimeException("Observer " + o + " was not registered for events");
+        }
     }
  
 

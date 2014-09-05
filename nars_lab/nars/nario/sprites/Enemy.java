@@ -1,7 +1,6 @@
 package nars.nario.sprites;
 
 import java.awt.Graphics;
-
 import nars.nario.Art;
 import nars.nario.LevelScene;
 
@@ -411,5 +410,21 @@ public class Enemy extends Sprite
                 og.drawImage(sheet[wingTime / 4 % 2][4], xPixel + (xFlipPic ? wPic : 0) + (xFlipPic ? 10 : -10), yPixel + (yFlipPic ? hPic : 0) - 8, xFlipPic ? -wPic : wPic, yFlipPic ? -hPic : hPic, null);
             }
         }
+    }
+    
+    public String toString() {
+        switch (type) {
+            case 0:
+                return "ENEMY_RED_KOOPA";
+            case 1:
+                return "ENEMY_GREEN_KOOPA";
+            case 2:
+                return "ENEMY_GOOMBA";
+            case 3: 
+                return "ENEMY_SPIKY";
+            case 4:
+                return "ENEMY_FLOWER";
+        }
+        return super.toString();    
     }
 }

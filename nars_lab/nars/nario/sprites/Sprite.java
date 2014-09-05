@@ -2,12 +2,12 @@ package nars.nario.sprites;
 
 import java.awt.Graphics;
 import java.awt.Image;
-
 import nars.nario.level.SpriteTemplate;
 import nars.nario.sonar.SoundSource;
 
 public class Sprite implements SoundSource
 {
+    
     public static SpriteContext spriteContext;
     
     public float xOld, yOld, x, y, xa, ya;

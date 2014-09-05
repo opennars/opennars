@@ -31,8 +31,9 @@ import nars.util.meter.util.RangeList;
  * A convenience base implementation of {@link Sensor}.
  *
  * @author The Stajistics Project
+ * @author heavily modified for NARS
  */
-public abstract class AbstractTracker implements Sensor {
+public abstract class AbstractSensor implements Sensor {
 
     //private static final Logger logger = Logger.getLogger(AbstractTracker.class.toString());
     protected final StatsSession session;
@@ -43,19 +44,19 @@ public abstract class AbstractTracker implements Sensor {
     int lastHits = 0, currentHits = 0;
     private long lastFirstCommit;
 
-    public AbstractTracker(final StatsSession session) {
+    public AbstractSensor(final StatsSession session) {
         //assertNotNull(session, "session");
         this.session = session;
     }
 
-    public AbstractTracker(String id) {
+    public AbstractSensor(String id) {
         this(new ConcurrentSession(
                 new DefaultStatsKey("", id, new FastPutsArrayMap<String, Object>()),
                 null,
                 new DistributionDataRecorder()));
     }
 
-    public AbstractTracker(String id, Range... ranges) {
+    public AbstractSensor(String id, Range... ranges) {
         this(new ConcurrentSession(new DefaultStatsKey("", id, new FastPutsArrayMap<>()), null, new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
     }
 
@@ -145,6 +146,12 @@ public abstract class AbstractTracker implements Sensor {
     public double getHits() {        
         int hits = currentHits;
         currentHits = 0;
+        return hits;
+    }
+    
+    public double getHitRate() {
+        int hits = currentHits;
+        currentHits = 0;
         if (cyclesSinceLastUpdate == -1)
             return hits;
         else {
@@ -152,7 +159,7 @@ public abstract class AbstractTracker implements Sensor {
             cyclesSinceLastUpdate = -1;
             return h;
         }
-    }    
+    }
     
     public double getDeltaHits() {
         int deltaHits = currentHits - lastHits;

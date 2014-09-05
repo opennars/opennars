@@ -35,7 +35,7 @@ public class Mario extends Sprite
     private static float GROUND_INERTIA = 0.89f;
     private static float AIR_INERTIA = 0.89f;
 
-    public boolean[] keys;
+    public final boolean[] keys;
     private float runTime;
     boolean wasOnGround = false;
     boolean onGround = false;
@@ -507,7 +507,7 @@ public class Mario extends Sprite
 
         if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
         {
-            Mario.getCoin();
+            getCoin();
             world.sound.play(Art.samples[Art.SAMPLE_GET_COIN], new FixedSoundSource(x * 16 + 8, y * 16 + 8), 1, 1, 1);
             world.level.setBlock(x, y, (byte) 0);
             for (int xx = 0; xx < 2; xx++)
@@ -629,7 +629,7 @@ public class Mario extends Sprite
         }
         else
         {
-            Mario.getCoin();
+            getCoin();
             world.sound.play(Art.samples[Art.SAMPLE_GET_COIN], this, 1, 1, 1);
         }
     }
@@ -647,7 +647,7 @@ public class Mario extends Sprite
         }
         else
         {
-            Mario.getCoin();
+            getCoin();
             world.sound.play(Art.samples[Art.SAMPLE_GET_COIN], this, 1, 1, 1);
         }
     }
@@ -713,7 +713,7 @@ public class Mario extends Sprite
         }
     }
     
-    public static void getCoin()
+    public void getCoin()
     {
         coins++;
         if (coins==100)
@@ -722,4 +722,10 @@ public class Mario extends Sprite
             get1Up();
         }
     }
+
+    public boolean isInvincible() {
+        return invincible;
+    }
+    
+    
 }

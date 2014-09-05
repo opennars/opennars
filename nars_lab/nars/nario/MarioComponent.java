@@ -22,12 +22,12 @@ import nars.nario.sprites.Mario;
 public class MarioComponent extends JComponent implements Runnable, KeyListener, FocusListener
 {
     private static final long serialVersionUID = 739318775993206607L;
-    public static final int TICKS_PER_SECOND = 24;
+    public int TICKS_PER_SECOND = 24;
 
     private boolean running = false;
-    private GraphicsConfiguration graphicsConfiguration;
+    GraphicsConfiguration graphicsConfiguration;
     protected Scene scene;
-    private SonarSoundEngine sound;
+    SonarSoundEngine sound;
     private boolean focused = false;
     protected MapScene mapScene;
     private BufferedImage image;

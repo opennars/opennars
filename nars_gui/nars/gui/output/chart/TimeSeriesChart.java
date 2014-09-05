@@ -12,7 +12,7 @@ class TimeSeriesChart  {
 	//protected float strokeWeight = 1;
 	//protected int[] colors = new int[0];
 
-        boolean resetRangeEachCycle = false;
+        boolean resetRangeEachCycle = true;
 	protected final String label;
         private final int historySize;
         float min, max;

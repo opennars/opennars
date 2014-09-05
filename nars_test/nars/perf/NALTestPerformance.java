@@ -15,10 +15,8 @@ import java.util.Random;
 import java.util.StringJoiner;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.NARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.sense.MultiSense;
-import nars.io.TextInput;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.getExpectations;
 import nars.util.XORShiftRandom;
@@ -50,6 +48,8 @@ public class NALTestPerformance {
 
     static int exampleNum = 0;
     static int absTime = 0;
+    
+    public static void reset() { exampleNum = absTime = 0; }
     
     static class Telemetry implements Runnable {
 
@@ -86,7 +86,7 @@ public class NALTestPerformance {
                 expects.add((NALTest.Expect) nar.addOutput(e1));
             }
 
-            nar.addInput(new TextInput(input));
+            nar.addInput(input);
 
             boolean error = false;
             int successes = 0;
@@ -101,6 +101,7 @@ public class NALTestPerformance {
             fields.add("successes");
             fields.add("error");
             
+            additionalCycles += 1; //increased by one to guarantee completion
             
             do {
                 double successRate = successes / ((double)expects.size());
@@ -255,7 +256,7 @@ public class NALTestPerformance {
        
        public final Map<Integer, NormalizeArray> normalizations = new HashMap();
        public final List<String> fields;
-        private final List<String> allFields;
+        final List<String> allFields;
         
        public NALControlMLDataSet(List<String> allFields, int[] ins, int[] outs, List<MLDataPair> r) {
             super(r);
@@ -348,22 +349,36 @@ public class NALTestPerformance {
             
         }
     }
+    public static List<String> getExamplePaths() {
+        Collection c = NALTest.params();
+        List<String> l = new ArrayList();
+        for (Object o : c) {
+            String e = ((Object[])o)[0].toString();
+            e = e.substring(e.indexOf("nal/")+4, e.length());
+            l.add(e);
+        }
+        return l;        
+    }
             
-    public static NALControlMLDataSet test(NARBuilder n, int tests, int extraCycles, int[] ins, int[] outs, int historySize) throws Exception {
+    public static NALControlMLDataSet test(NAR n, int tests, int maxCycles, int extraCycles, int[] ins, int[] outs, int historySize) throws Exception {
 
+        
         Collection c = NALTest.params();
      
         
 
-        List<MLDataPair> results = new ArrayList(10000);
+        List<MLDataPair> results = new ArrayList(maxCycles * tests);
         
         
         int testNum = 0;
         Telemetry t = null;
         for (Object o : c) {
             String examplePath = (String) ((Object[]) o)[0];
-            t = new Telemetry(n.build(), examplePath, extraCycles, 2000);
+            
+            n.reset();
+            t = new Telemetry(n, examplePath, extraCycles, maxCycles);
             t.run();
+
           
             /*if (testNum++ == 0)
                 t.printCSVHeader(ps);*/
@@ -380,11 +395,13 @@ public class NALTestPerformance {
             
             t.getDataPairs(ins, outs, results, historySize);
             
+            
             if (testNum++ == tests)
                 break;
+            
         }
                         
-        NALControlMLDataSet nc = new NALControlMLDataSet(t.fields, ins, outs, results);
+        NALControlMLDataSet nc = new NALControlMLDataSet(t.fields, ins, outs, results);        
         return nc;
     }
 
@@ -403,7 +420,7 @@ public class NALTestPerformance {
         int[] outs = new int[] { 5 };
         //int[] ins = null, outs = null;
         
-        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, additionalCycles, ins, outs, historySize);
+        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder().build(), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);
@@ -492,7 +509,7 @@ public class NALTestPerformance {
         int[] outs = new int[] {  10 };
         //int[] ins = null, outs = null;
         
-        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, additionalCycles, ins, outs, historySize);
+        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder().build(), tests, 2000, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);
