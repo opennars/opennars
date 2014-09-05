@@ -13,12 +13,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import nars.core.EventEmitter.Observer;
-import nars.core.Memory.Events.MemoryCycleStop;
+import nars.core.Memory.Events.CycleStop;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -88,11 +87,11 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     private boolean updateNext;
     float nodeSize = 10;
     
-            float lineAlpha = 0.75f;
-            float lineWidth = 3.8f;
+    float lineAlpha = 0.75f;
+    float lineWidth = 3.8f;
     
     
-    WeakHashMap<Object,VertexDisplay> vertices = new WeakHashMap();
+    Map<Object,VertexDisplay> vertices = new HashMap();
     Set<Object> deadVertices = new HashSet();
     Map<Class,Integer> edgeColors = new HashMap(16);
     
@@ -503,11 +502,12 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         
         if (graph== null) return;
 
-        //for speed:
-        strokeCap(SQUARE);
-        strokeJoin(PROJECT);
         
         synchronized (vertices) {
+            //for speed:
+            strokeCap(SQUARE);
+            strokeJoin(PROJECT);
+
             int numEdges = graph.edgeSet().size();
             if (numEdges < maxEdges) {
                 for (final Object edge : graph.edgeSet()) {
@@ -922,13 +922,13 @@ public class MemoryView extends Window {
         content.add(app, BorderLayout.CENTER);
         
 
-        n.memory.event.on(MemoryCycleStop.class, new Observer() {
+        n.memory.event.on(CycleStop.class, new Observer() {
             @Override
             public void event(Class event, Object... arguments) {
                 if (app!=null)
                     app.updateGraph();
                 else
-                    n.memory.event.off(MemoryCycleStop.class, this);
+                    n.memory.event.off(CycleStop.class, this);
             }  
         });
     

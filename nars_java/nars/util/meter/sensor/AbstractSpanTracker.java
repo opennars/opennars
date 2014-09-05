@@ -11,7 +11,7 @@ import nars.util.meter.util.Range;
  *
  * @author The Stajistics Project
  */
-public abstract class AbstractSpanTracker extends AbstractTracker implements SpanTracker {
+public abstract class AbstractSpanTracker extends AbstractSensor implements SpanTracker {
 
     //private static final Logger logger = Logger.getLogger(AbstractSpanTracker.class.toString());
     protected long startTime = 0L;

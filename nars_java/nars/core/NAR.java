@@ -336,6 +336,8 @@ public class NAR implements Runnable, Output {
         
         try {
             
+            memory.event.emit(Memory.Events.CycleStart.class);
+            
             //IO cycle
             memory.resource.IO_CYCLE.start();
             {            
@@ -356,6 +358,8 @@ public class NAR implements Runnable, Output {
                 }
             }
             memory.resource.MEMORY_CYCLE.stop();
+
+            memory.event.emit(Memory.Events.CycleStop.class);
             
         }
         catch (Throwable e) {

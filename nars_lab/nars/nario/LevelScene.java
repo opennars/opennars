@@ -29,7 +29,7 @@ import nars.nario.sprites.SpriteContext;
 
 public class LevelScene extends Scene implements SpriteContext
 {
-    private List<Sprite> sprites = new ArrayList<Sprite>();
+    public final List<Sprite> sprites = new ArrayList<Sprite>();
     private List<Sprite> spritesToAdd = new ArrayList<Sprite>();
     private List<Sprite> spritesToRemove = new ArrayList<Sprite>();
 
@@ -111,7 +111,7 @@ public class LevelScene extends Scene implements SpriteContext
             Level bgLevel = BgLevelGenerator.createLevel(w / 32 + 1, h / 32 + 1, i == 0, levelType);
             bgLayer[i] = new BgRenderer(bgLevel, graphicsConfiguration, 320, 240, scrollSpeed);
         }
-        mario = new Mario(this);
+        mario = newMario(this);
         sprites.add(mario);
         startTime = 1;
         
@@ -119,6 +119,7 @@ public class LevelScene extends Scene implements SpriteContext
 
         tick = 0;
     }
+    
 
     public int fireballsOnScreen = 0;
 
@@ -139,8 +140,7 @@ public class LevelScene extends Scene implements SpriteContext
     public void tick()
     {
         timeLeft--;
-        if (timeLeft==0)
-        {
+        if ((timeLeft==0) && (!mario.isInvincible())) {
             mario.die();
         }
         xCamO = xCam;
@@ -514,7 +514,7 @@ public class LevelScene extends Scene implements SpriteContext
             }
             else
             {
-                Mario.getCoin();
+                mario.getCoin();
                 sound.play(Art.samples[Art.SAMPLE_GET_COIN], new FixedSoundSource(x * 16 + 8, y * 16 + 8), 1, 1, 1);
                 addSprite(new CoinAnim(x, y));
             }
@@ -543,7 +543,7 @@ public class LevelScene extends Scene implements SpriteContext
         byte block = level.getBlock(x, y);
         if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
         {
-            Mario.getCoin();
+            mario.getCoin();
             sound.play(Art.samples[Art.SAMPLE_GET_COIN], new FixedSoundSource(x * 16 + 8, y * 16 + 8), 1, 1, 1);
             level.setBlock(x, y, (byte) 0);
             addSprite(new CoinAnim(x, y + 1));
@@ -553,5 +553,9 @@ public class LevelScene extends Scene implements SpriteContext
         {
             sprite.bumpCheck(x, y);
         }
+    }
+
+    protected Mario newMario(LevelScene level) {
+        return new Mario(this);
     }
 }

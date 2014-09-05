@@ -23,7 +23,7 @@ import nars.util.meter.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class EventValueSensor extends AbstractTracker implements ManualTracker {
+public class EventValueSensor extends AbstractSensor implements ManualTracker {
 
     //private static final Logger logger = Logger.getLogger(EventValueSensor.class.toString());
 

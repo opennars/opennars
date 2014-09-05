@@ -41,7 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
-import nars.core.Memory.Events.MemoryCycleStop;
+import nars.core.Memory.Events.CycleStop;
 import nars.core.NAR;
 import nars.core.sense.MultiSense;
 import nars.grid2d.TestChamber;
@@ -331,7 +331,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         setSpeed(0);
         setSpeed(0);        //call twice to make it start as paused
         updateGUI();
-        nar.memory.event.on(MemoryCycleStop.class, this);
+        nar.memory.event.on(CycleStop.class, this);
     }
 
     final Runnable updateGUIRunnable = new Runnable() {
@@ -368,7 +368,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
     @Override
     public void event(final Class event, final Object... arguments) {
-        if (event == MemoryCycleStop.class) {
+        if (event == CycleStop.class) {
             
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;

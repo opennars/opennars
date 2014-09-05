@@ -114,11 +114,18 @@ public class Memory implements Output, Serializable {
 
     /** empty event classes for use with EventEmitter */
     public static class Events {
+
+        /** fired at the beginning of each main cycle */
+        public static class CycleStart { }
         
-        /** fired at the beginning of each Memory cycle */
+        /** fired at the end of each main cycle */
+        public static class CycleStop { }
+
+        
+        /** fired at the beginning of each individual Memory work cycle */
         public static class MemoryCycleStart { }
         
-        /** fired at the endof each Memory cycle */
+        /** fired at the end of each Memory individual cycle */
         public static class MemoryCycleStop { }
         
     }

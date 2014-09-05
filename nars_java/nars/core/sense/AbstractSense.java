@@ -8,7 +8,7 @@ import nars.core.sense.AbstractSense.UnknownSensorException;
 import nars.util.meter.Sensor;
 import nars.util.meter.data.DefaultDataSet;
 import nars.util.meter.sensor.AbstractSpanTracker;
-import nars.util.meter.sensor.AbstractTracker;
+import nars.util.meter.sensor.AbstractSensor;
 import nars.util.meter.sensor.EventSensor;
 import nars.util.meter.sensor.SpanTracker;
 
@@ -52,7 +52,7 @@ abstract public class AbstractSense extends DefaultDataSet {
             
             if (reset) {
                 if (s instanceof AbstractSpanTracker) {
-                    if (((AbstractTracker) s).getSampleWindow() > 0) {
+                    if (((AbstractSensor) s).getSampleWindow() > 0) {
                         continue;
                     }
                 }

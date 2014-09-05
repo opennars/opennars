@@ -48,6 +48,7 @@ public class TextOutput implements Output {
     private boolean showErrors = true;
     private boolean showStackTrace;
     private boolean showStamp = true;
+    private boolean showInput = true;
 
 
     public interface LineOutput {
@@ -105,9 +106,11 @@ public class TextOutput implements Output {
      */
     @Override
     public synchronized void output(final Class channel, final Object o) {
-        if ((!showErrors) && (channel == ERR.class))
+        if (!showErrors && (channel == ERR.class))
             return;
         
+        if (!showInput && (channel == IN.class))
+            return;
         
         if ((outExp!=null) || (outExp2!=null)) {
             final String s = process(channel, o);
@@ -131,6 +134,13 @@ public class TextOutput implements Output {
         this.showErrors = errors;
         return this;
     }    
+
+    public TextOutput setShowInput(boolean showInput) {
+        this.showInput = showInput;
+        return this;
+    }
+    
+    
     
     public TextOutput setErrorStackTrace(boolean b) {
         this.showStackTrace = true;
