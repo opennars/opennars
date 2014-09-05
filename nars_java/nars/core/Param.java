@@ -49,6 +49,9 @@ public class Param implements Serializable {
     public final AtomicInteger abbreviationMinComplexity = new AtomicInteger();
     public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
     
+    /** Maximum TermLinks used in reasoning for each Task in Concept */
+    public AtomicInteger maxReasonedTermLink = new AtomicInteger();
+    
 
     
     

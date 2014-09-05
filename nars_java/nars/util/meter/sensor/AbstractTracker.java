@@ -38,8 +38,10 @@ public abstract class AbstractTracker implements Sensor {
     protected final StatsSession session;
 
     protected double value = 0;
+    private long cyclesSinceLastUpdate = -1;
 
     int lastHits = 0, currentHits = 0;
+    private long lastFirstCommit;
 
     public AbstractTracker(final StatsSession session) {
         //assertNotNull(session, "session");
@@ -134,10 +136,22 @@ public abstract class AbstractTracker implements Sensor {
         return getSession().drainData();
     }
 
-    public double getHits() {
+    @Override
+    public void setCyclesSinceLastUpdate(final long cyclesSinceLastUpdate) {
+        //if (cyclesSinceLastUpdate == -1)
+        this.cyclesSinceLastUpdate = cyclesSinceLastUpdate;
+    }
+    
+    public double getHits() {        
         int hits = currentHits;
         currentHits = 0;
-        return hits;
+        if (cyclesSinceLastUpdate == -1)
+            return hits;
+        else {
+            double h = ((double)hits) / ((double)cyclesSinceLastUpdate);
+            cyclesSinceLastUpdate = -1;
+            return h;
+        }
     }    
     
     public double getDeltaHits() {
@@ -145,5 +159,10 @@ public abstract class AbstractTracker implements Sensor {
         lastHits = currentHits;
         currentHits = 0;
         return deltaHits;
+    }    
+    
+    
+    public String getName() {
+        return getKey().getName();
     }    
 }

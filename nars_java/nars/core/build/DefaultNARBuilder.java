@@ -52,6 +52,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         p.internalExperience.set(false);
         p.abbreviationMinComplexity.set(20);
         p.abbreviationMinQuality.set(0.9f);
+        
+        p.maxReasonedTermLink.set(3);
     
         
         

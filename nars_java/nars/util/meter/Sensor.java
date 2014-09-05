@@ -95,4 +95,6 @@ public interface Sensor extends Serializable {
     default public String name() {
         return getKey().getName();
     }
+
+    public void setCyclesSinceLastUpdate(long cyclesSinceLastUpdate);
 }
