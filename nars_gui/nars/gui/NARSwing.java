@@ -54,6 +54,8 @@ public class NARSwing  {
 
 
     public final NAR nar;
+    private final Window mainWindow;
+    private final NARControls narControls;
 
 
     public NARSwing(NAR nar) {
@@ -61,32 +63,13 @@ public class NARSwing  {
         
         this.nar = nar;                
         
-        NARControls narControls = new NARControls(nar);        
-        Window mainWindow = new Window(INFO, narControls);
+        narControls = new NARControls(nar);        
+        mainWindow = new Window(INFO, narControls);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setBounds(10, 10, 270, 600);
         mainWindow.setVisible(true);
         mainWindow.setVisible(true);
         
-        /*
-        LogPanel outputLog = 
-                new SwingLogPanel(narControls);
-                //new HTMLLogPanel(narControls);
-        Window outputWindow = new Window("Log", outputLog);        
-        outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
-        outputWindow.setVisible(true);
-        */
-        
-        Window outputWindow = new Window("Activity", new MultiOutputPanel(narControls));
-        outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
-        outputWindow.setVisible(true);
-        
-        
-        InputPanel inputPanel = new InputPanel(nar);
-        Window inputWindow = new Window("Text Input", inputPanel);
-        inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
-        inputWindow.setSize(800, 200);
-        inputWindow.setVisible(true);
 
                 
         
@@ -132,6 +115,27 @@ public class NARSwing  {
         //NAR nar = new RealTimeNARBuilder(false).build();
         
         NARSwing swing = new NARSwing(nar);
+
+        /*
+        LogPanel outputLog = 
+                new SwingLogPanel(narControls);
+                //new HTMLLogPanel(narControls);
+        Window outputWindow = new Window("Log", outputLog);        
+        outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
+        outputWindow.setVisible(true);
+        */
+        
+        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
+        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
+        outputWindow.setVisible(true);
+        
+        
+        InputPanel inputPanel = new InputPanel(nar);
+        Window inputWindow = new Window("Text Input", inputPanel);
+        inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
+        inputWindow.setSize(800, 200);
+        inputWindow.setVisible(true);
+        
         
         if (args.length > 0
                 && CommandLineNARBuilder.isReallyFile(args[0])) {
