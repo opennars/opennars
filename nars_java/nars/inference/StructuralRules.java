@@ -645,7 +645,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param memory Reference to the memory
      */
-    protected static void contraposition(Statement statement, Sentence sentence, Memory memory) {
+    protected static void contraposition(final Statement statement, final Sentence sentence, final Memory memory) {
         memory.logic.CONTRAPOSITION.commit(statement.complexity);
         
         Term subj = statement.getSubject();

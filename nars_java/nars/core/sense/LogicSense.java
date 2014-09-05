@@ -4,7 +4,6 @@ import java.io.Serializable;
 import nars.core.Memory;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.sensor.EventValueSensor;
-import nars.util.meter.sensor.HitPeriodTracker;
 
 /**
  *
@@ -16,8 +15,7 @@ public class LogicSense extends AbstractSense implements Serializable {
     
     //public final Sensor CONCEPT_FIRE;
     
-    public final EventValueSensor TASK_IMMEDIATE_PROCESS_PRIORITY;
-    public final HitPeriodTracker TASK_IMMEDIATE_PROCESS;
+    public final EventValueSensor TASK_IMMEDIATE_PROCESS;
     
     public final EventValueSensor TASKLINK_FIRE;
     
@@ -33,10 +31,16 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final EventValueSensor CONTRAPOSITION; 
     
     
-    public final EventValueSensor OUTPUT_TASK;
+    public final EventValueSensor TASK_ADD_NEW;
+    public final EventValueSensor TASK_DERIVED;
+    public final EventValueSensor TASK_EXECUTED;
     
     public final EventValueSensor CONCEPT_NEW;
     
+    public final EventValueSensor JUDGMENT_PROCESS;
+    public final EventValueSensor GOAL_PROCESS;
+    public final EventValueSensor QUESTION_PROCESS;
+    public final EventValueSensor LINK_TO_TASK;
     
     //public final ThreadBlockTimeTracker CYCLE_BLOCK_TIME;
     private long conceptNum;
@@ -44,21 +48,23 @@ public class LogicSense extends AbstractSense implements Serializable {
     //private Object conceptPrioritySum;
     private long conceptBeliefsSum;
     private long conceptQuestionsSum;               
+    
+    public final EventValueSensor BELIEF_REVISION;
+    public final EventValueSensor DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS;
+    public final EventValueSensor DED_SECOND_LAYER_VARIABLE_UNIFICATION;
+    public final EventValueSensor DED_CONJUNCTION_BY_QUESTION;
+    public final EventValueSensor ANALOGY;
+    
 
     public LogicSense() {
         super();
         
-        add(TASK_IMMEDIATE_PROCESS = new HitPeriodTracker("task.immediate_process"));
-        add(TASK_IMMEDIATE_PROCESS_PRIORITY = new EventValueSensor("task.immediate_process.priority"));
-
-                
-        //add(CONCEPT_FIRE = new DefaultEventSensor("concept.fire"));
+        add(TASK_IMMEDIATE_PROCESS = new EventValueSensor("task.immediate_process"));
+        TASK_IMMEDIATE_PROCESS.setSampleWindow(32);
+        
         add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
         TASKLINK_FIRE.setSampleWindow(32);
         
-        add(OUTPUT_TASK = new EventValueSensor("task.output"));
-        OUTPUT_TASK.setSampleWindow(32);
-
         add(CONCEPT_NEW = new EventValueSensor("concept.new"));
         CONCEPT_NEW.setSampleWindow(32);
         
@@ -67,14 +73,32 @@ public class LogicSense extends AbstractSense implements Serializable {
         
         add(CONTRAPOSITION = new EventValueSensor("reason.contraposition"));
         CONTRAPOSITION.setSampleWindow(32);
+
+        add(TASK_ADD_NEW = new EventValueSensor("task.add_new"));
+        TASK_ADD_NEW.setSampleWindow(32);
+        add(TASK_DERIVED = new EventValueSensor("task.derived"));
+        TASK_DERIVED.setSampleWindow(32);
+        add(TASK_EXECUTED = new EventValueSensor("task.executed"));
+        TASK_EXECUTED.setSampleWindow(32);
+
+        add(JUDGMENT_PROCESS = new EventValueSensor("judgment.process"));
+        add(GOAL_PROCESS = new EventValueSensor("goal.process"));
+        add(QUESTION_PROCESS = new EventValueSensor("question.process"));
+        add(LINK_TO_TASK = new EventValueSensor("task.link_to"));
+        
+        add(BELIEF_REVISION = new EventValueSensor("reason.belief_revision"));
+        add(DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS = new EventValueSensor("reason.ded2ndunifterms"));
+        add(DED_SECOND_LAYER_VARIABLE_UNIFICATION = new EventValueSensor("reason.ded2ndunif"));
+        add(DED_CONJUNCTION_BY_QUESTION = new EventValueSensor("reason.dedconjbyquestion"));
+        add(ANALOGY = new EventValueSensor("reason.analogy"));
     }
     
     @Override
     public void sense(Memory memory) {
-        put("concepts.count", conceptNum);
-        put("concepts.priority.mean", conceptPriorityMean);        
-        put("concepts.beliefs.sum", conceptBeliefsSum);
-        put("concepts.questions.sum", conceptQuestionsSum);
+        put("concept.count", conceptNum);
+        put("concept.priority.mean", conceptPriorityMean);
+        put("concept.beliefs.mean", conceptNum > 0 ? ((double)conceptBeliefsSum)/conceptNum : 0);
+        put("concept.questions.mean", conceptNum > 0 ? ((double)conceptQuestionsSum)/conceptNum : 0);
         
         put("memory.noveltasks.total", memory.novelTasks.size());
         //put("memory.newtasks.total", memory.newTasks.size()); //redundant with output.tasks below
@@ -88,7 +112,7 @@ public class LogicSense extends AbstractSense implements Serializable {
             DataSet fire = TASKLINK_FIRE.get();
             //DataSet reason = TASKLINK_REASON.get();
             put("reason.fire.tasklink.priority.mean", fire.mean());
-            put("reason.fire.tasklinks.delta", TASKLINK_FIRE.getDeltaHits());
+            put("reason.fire.tasklinks", TASKLINK_FIRE.getHits());
             
             put("reason.tasktermlinks", REASON.getHits());
             
@@ -97,11 +121,29 @@ public class LogicSense extends AbstractSense implements Serializable {
         }
         {            
             put("reason.contrapositions", CONTRAPOSITION.getHits());
-            put("reason.contrapositions.complexity.mean", CONTRAPOSITION.get().mean());
+            //put("reason.contrapositions.complexity.mean", CONTRAPOSITION.get().mean());
+            
+            put("reason.belief_revision", BELIEF_REVISION.getHits());
+            put("reason.ded_2nd_layer_variable_unification_terms", DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.getHits());
+            put("reason.ded_2nd_layer_variable_unification", DED_SECOND_LAYER_VARIABLE_UNIFICATION.getHits());
+            put("reason.ded_conjunction_by_question", DED_CONJUNCTION_BY_QUESTION.getHits());
+            put("reason.analogy", ANALOGY.getHits());
         }
         {
-            put("task.outputs", OUTPUT_TASK.getHits());
-            put("task.outputs.budget.mean", OUTPUT_TASK.get().mean());
+            put("task.add_new", TASK_ADD_NEW.getHits());
+            put("task.add_new.priority.mean", TASK_ADD_NEW.get().mean());
+            put("task.derived", TASK_DERIVED.getHits());
+            put("task.derived.priority.mean", TASK_DERIVED.get().mean());
+            put("task.executed", TASK_EXECUTED.getHits());
+            put("task.executed.priority.mean", TASK_EXECUTED.get().mean());
+            put("task.immediate_processed", TASK_IMMEDIATE_PROCESS.getHits());
+            //put("task.immediate_processed.priority.mean", TASK_IMMEDIATE_PROCESS.get().mean());
+        }
+        {
+            put("task.link_to", LINK_TO_TASK.getHits());
+            put("task.goal.process", GOAL_PROCESS.getHits());
+            put("task.judgment.process", JUDGMENT_PROCESS.getHits());
+            put("task.question.process", QUESTION_PROCESS.getHits());
         }
         {
             put("concept.new", CONCEPT_NEW.getHits());

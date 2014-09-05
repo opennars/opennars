@@ -46,6 +46,14 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         
         p.contrapositionPriority.set(30);
                 
+        //NAL9 experimental
+
+        p.experimentalNarsPlus.set(false);
+        p.internalExperience.set(false);
+        p.abbreviationMinComplexity.set(20);
+        p.abbreviationMinQuality.set(0.9f);
+    
+        
         
         //Experimental parameters - adjust at your own risk
         p.cycleMemory.set(1);                
@@ -61,13 +69,9 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     public ConceptBuilder getConceptBuilder() {
         return this;
     }
-    
-    
-    
 
     @Override
-    public Concept newConcept(final Term t, final Memory m) {
-        
+    public Concept newConcept(Term t, Memory m) {        
         AbstractBag<TaskLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskForgettingRate);
         AbstractBag<TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgettingRate);
         

@@ -17,13 +17,16 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.NARBuilder;
 import nars.core.build.DefaultNARBuilder;
+import nars.core.sense.MultiSense;
 import nars.io.TextInput;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.getExpectations;
 import nars.util.XORShiftRandom;
 import org.encog.Encog;
+import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.mathutil.randomize.factory.RandomFactory;
 import org.encog.ml.CalculateScore;
+import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.basic.BasicMLDataPair;
@@ -33,7 +36,10 @@ import org.encog.ml.ea.train.EvolutionaryAlgorithm;
 import org.encog.neural.neat.NEATNetwork;
 import org.encog.neural.neat.NEATPopulation;
 import org.encog.neural.neat.NEATUtil;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.training.TrainingSetScore;
+import org.encog.neural.networks.training.propagation.manhattan.ManhattanPropagation;
 import org.encog.util.arrayutil.NormalizeArray;
 import org.encog.util.simple.EncogUtility;
 
@@ -85,18 +91,22 @@ public class NALTestPerformance {
             boolean error = false;
             int successes = 0;
 
-            fields.addAll(nar.memory.logic.keySet());
+            MultiSense m = new MultiSense(nar.memory.logic, nar.memory.resource);
+            m.update(nar.memory);
+            
+            fields.addAll(m.keySet());
             fields.add("id");
             fields.add("time");
             fields.add("absTime");
             fields.add("successes");
             fields.add("error");
             
+            
             do {
                 double successRate = successes / ((double)expects.size());
-                nar.memory.logic.update(nar.memory);
-                logicState.add(nar.memory.logic.toArray(
-                        exampleNum++,
+                m.update(nar.memory);
+                logicState.add(m.toArray(
+                        exampleNum,
                         nar.getTime(),
                         absTime++,
                         successRate, 
@@ -126,6 +136,7 @@ public class NALTestPerformance {
 
             } while (nar.getTime() < maxCycles);
                         
+            exampleNum++;
 
             if (error) {
                 failAt = (int) nar.getTime();
@@ -165,20 +176,34 @@ public class NALTestPerformance {
             return x;            
         }
                 
-        public void getDataPairs(int[] in, int[] out, List<MLDataPair> data) {
-            int ins = in.length;
+        public void getDataPairs(int[] in, int[] out, List<MLDataPair> data, int historySize) {
+            int ins = in.length * (1 + historySize);
             int outs = out.length;
             
             int c = 0;
-            for (double[] l : logicState) {
+            for (int il = (1+historySize); il < logicState.size(); il++) {
+                double[] next = logicState.get(il);
+                double[] current = logicState.get(il-1);
+            
                 double[] i = new double[ins];
                 double[] o = new double[outs];
                 int ia = 0, oa = 0;
                 for (int x : in) {
-                    i[ia++] = l[x];
+                    i[ia++] = current[x];
                 }
+                
+                double currentTest = current[current.length-5];
+                
+                for (int h = 0; h < historySize; h++) {
+                    double[] prev = logicState.get(il-2-h);
+
+                    for (int x : in) {
+                        i[ia++] = prev[x];
+                    }    
+                }
+                
                 for (int x : out) {
-                    o[oa++] = l[x];
+                    o[oa++] = next[x];
                 }
                     
                 data.add(new BasicMLDataPair(new BasicMLData(i), new BasicMLData(o)));
@@ -324,7 +349,7 @@ public class NALTestPerformance {
         }
     }
             
-    public static NALControlMLDataSet test(NARBuilder n, int tests, int extraCycles, int[] ins, int[] outs) throws Exception {
+    public static NALControlMLDataSet test(NARBuilder n, int tests, int extraCycles, int[] ins, int[] outs, int historySize) throws Exception {
 
         Collection c = NALTest.params();
      
@@ -353,7 +378,7 @@ public class NALTestPerformance {
                 outs = new int[0];
             }
             
-            t.getDataPairs(ins, outs, results);
+            t.getDataPairs(ins, outs, results, historySize);
             
             if (testNum++ == tests)
                 break;
@@ -363,17 +388,22 @@ public class NALTestPerformance {
         return nc;
     }
 
-    public static void main(String[] args) throws Exception {
+    public void testNEAT() throws Exception {
         int populationSize = 2000;
-        int tests = 8;
-        double initialConnectionDensity = 0.5;
-        int additionalCycles = 2000;
-
-        //int[] ins = new int[] { 0, 1, 2, 4, 13, 15, 16, 17, 19, 18 };
-        //int[] outs = new int[] { 3, 10, 14 };
-        int[] ins = null, outs = null;
+        int tests = 128;
+        double initialConnectionDensity = 0.75;
+        int additionalCycles = 30;
+        int maxIterations = 300;
+        int historySize = 6;
         
-        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, additionalCycles, ins, outs);
+/*[emotion.happy0, task.derived1, task.executed.priority.mean2, reason.contrapositions.complexity.mean3, cycle.cpu_time.mean4, emotion.busy5, cycle.frequency.hz6, concepts.count7, goal.process8, reason.contrapositions9, judgment.process10, task.add_new.priority.mean11, io.to_memory.ratio12, reason.fire.tasklink.priority.mean13, concepts.beliefs.sum14, task.add_new15, reason.tasktermlinks16, concepts.priority.mean17, concept.new18, concept.new.complexity.mean19, concepts.questions.sum20, task.derived.priority.mean21, question.process22, cycle.frequency_potential.mean.hz23, task.link_to24, task.executed25, reason.fire.tasklinks.delta26, reason.tasktermlink.priority.mean27, cycle.ram_use.delta_Kb.sampled28, memory.noveltasks.total29, id30, time31, absTime32, successes33, error34]
+*/
+        //int[] ins = new int[] { 1, 8, 9, 22, 10, 15 };
+        int[] ins = new int[] { 1, 17, 11, 13 };
+        int[] outs = new int[] { 5 };
+        //int[] ins = null, outs = null;
+        
+        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, additionalCycles, ins, outs, historySize);
         trainingSet.normalize();
 
         System.out.println(trainingSet.allFields);
@@ -393,6 +423,8 @@ public class NALTestPerformance {
         
         
         NEATPopulation pop = new NEATPopulation(trainingSet.getInputSize(), trainingSet.getIdealSize(), populationSize);
+        pop.setActivationCycles(4);
+        pop.setSurvivalRate(0.2);        
         pop.setInitialConnectionDensity(initialConnectionDensity);// not required, but speeds training
         pop.setRandomNumberFactory(new RandomFactory() {
             //for speed
@@ -410,9 +442,10 @@ public class NALTestPerformance {
         
 
         CalculateScore score = new TrainingSetScore(trainingSet);
+        
         // train the neural network
 
-        final EvolutionaryAlgorithm train = NEATUtil.constructNEATTrainer(pop,score);
+        final EvolutionaryAlgorithm train = NEATUtil.constructNEATTrainer(pop,score);        
         
         do {
                 train.iteration();
@@ -427,9 +460,10 @@ public class NALTestPerformance {
                 }
                 averageLinks /= count;
                 averageNeurons /= count;
-                
-                System.out.println("Epoch #" + train.getIteration() + " Error:" + train.getError()+ ", Species:" + count + ", avgLinks=" + averageLinks + ", avgNeurons=" + averageNeurons);
-        } while(train.getError() > 0.01);
+                                
+                System.out.println("Epoch #" + train.getIteration() + " Error:" 
+                        + (train.getError()) + ", Species:" + count + ", avgLinks=" + averageLinks + ", avgNeurons=" + averageNeurons);
+        } while ((train.getError() > 0.00001) && (train.getIteration() < maxIterations));
 
         NEATNetwork network = (NEATNetwork)train.getCODEC().decode(train.getBestGenome());
 
@@ -444,4 +478,93 @@ public class NALTestPerformance {
                 
     }
 
+    /** Multilayer perceptron with backprop */
+    public static void testMLP() throws Exception {
+        int tests = 64;
+        int additionalCycles = 20;
+        int maxIterations = 5250;
+        int historySize = 6;
+        
+/*[emotion.happy0, task.derived1, task.executed.priority.mean2, reason.contrapositions.complexity.mean3, cycle.cpu_time.mean4, emotion.busy5, cycle.frequency.hz6, concepts.count7, goal.process8, reason.contrapositions9, judgment.process10, task.add_new.priority.mean11, io.to_memory.ratio12, reason.fire.tasklink.priority.mean13, concepts.beliefs.sum14, task.add_new15, reason.tasktermlinks16, concepts.priority.mean17, concept.new18, reason.fire.tasklinks19, concept.new.complexity.mean20, concepts.questions.sum21, task.derived.priority.mean22, question.process23, cycle.frequency_potential.mean.hz24, task.link_to25, task.executed26, reason.tasktermlink.priority.mean27, cycle.ram_use.delta_Kb.sampled28, memory.noveltasks.total29, id30, time31, absTime32, successes33, error34]
+*/
+        //int[] ins = new int[] { 1, 8, 9, 22, 10, 15 };
+        int[] ins = new int[] { 23, 10, 19 };
+        int[] outs = new int[] {  10 };
+        //int[] ins = null, outs = null;
+        
+        NALControlMLDataSet trainingSet = test(new DefaultNARBuilder(), tests, additionalCycles, ins, outs, historySize);
+        trainingSet.normalize();
+
+        System.out.println(trainingSet.allFields);
+        System.out.println(trainingSet.fields);
+        if (ins!=null) {
+            System.out.println("Training samples: " + trainingSet.getRecordCount());
+            for (int i : ins) 
+                System.out.println(" in: "  + trainingSet.allFields.get(i));
+            for (int i : outs) 
+                System.out.println("out: "  + trainingSet.allFields.get(i));
+        }
+        /*for (int i = 0; i < trainingSet.size(); i++)
+            System.out.println(trainingSet.get(i));*/
+        //trainingSet.toCSV("/tmp/nal.csv");
+        if (ins == null)
+            return;
+        
+
+        
+        // create a neural network, without using a factory
+        BasicNetwork network = new BasicNetwork();
+        int inputSize = trainingSet.getInputSize();
+        int outputSize = trainingSet.getIdealSize();
+        network.addLayer(new BasicLayer(null,true,inputSize));        
+        network.addLayer(new BasicLayer(new ActivationSigmoid(),true,(int)(inputSize/2)));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(),true,outputSize));
+        network.getStructure().finalizeStructure();        
+        network.reset();
+        
+        System.out.println("Network Structure: " + Arrays.toString(network.getFlat().getLayerCounts()));
+
+
+        
+        //final ResilientPropagation train = new ResilientPropagation(network, trainingSet);
+        //train.setBatchSize(5);
+        
+        final ManhattanPropagation train = new ManhattanPropagation(network, trainingSet, 0.01);
+        
+        //final Backpropagation train = new Backpropagation(network, trainingSet);
+        
+        //final NeuralPSO train = new NeuralPSO(network, trainingSet);
+        
+        int epoch = 1;
+
+        do {
+            
+                train.iteration();
+                System.out.println("Epoch #" + epoch + " Error:" + train.getError());
+                epoch++;
+        } while ((train.getError() > 0.00001) && (epoch < maxIterations));
+        train.finishTraining();
+
+        // test the neural network
+        
+        System.out.println("Neural Network Results:");
+        for(MLDataPair pair: trainingSet ) {
+                final MLData output = network.compute(pair.getInput());
+                //System.out.println(pair.getInput());
+                double myError = 0;
+                double[] i = pair.getIdealArray();
+                int j = 0;
+                for (double o : output.getData()) {
+                    myError += Math.abs(o - i[j++]);
+                }
+                System.out.println(myError + "  actual=" + Arrays.toString(output.getData()) + ",ideal=" + pair.getIdeal());
+        }
+        
+
+        Encog.getInstance().shutdown();        
+    }
+    
+    public static void main(String[] args) throws Exception {
+        testMLP();
+    }
 }

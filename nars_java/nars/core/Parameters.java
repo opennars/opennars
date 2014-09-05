@@ -42,16 +42,7 @@ public class Parameters {
     //internal experience has less quality?
     public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;
     
-    //let NARS use NARS+ ideas (counting etc.)
-    public static boolean ENABLE_EXPERIMENTAL_NARS_PLUS=false;
     
-    //let NARS use NAL9 operators to perceive its own mental actions
-    public static boolean ENABLE_INTERNAL_EXPERIENCE=false;
-   
-    //when a concept is important and exceeds a syntactic complexity, let NARS name it:
-    public static int TERM_COMPLEXITY_BEFORE_NAMING_IT=20;
-    //these two are AND-coupled
-    public static float TERM_QUALITY_BEFORE_NAMING_IT=0.9f;
     
     /* ---------- initial values of run-time adjustable parameters ---------- */
     /** Concept decay rate in ConceptBag, in [1, 99]. */

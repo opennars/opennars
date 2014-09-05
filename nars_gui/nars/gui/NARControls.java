@@ -43,7 +43,6 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
 import nars.core.Memory.Events.MemoryCycleStop;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.sense.MultiSense;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
@@ -406,11 +405,13 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             switch (label) {
                 case "Enable NARS+ Ideas":
                     narsPlusItem.setEnabled(false);
-                    Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
+                    nar.memory.param.experimentalNarsPlus.set(true);
+                    //Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
                     break;
                 case "Enable Internal Experience (NAL9)":
                     internalExperienceItem.setEnabled(false);
-                    Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
+                    nar.memory.param.internalExperience.set(true);
+                    //Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
                     break;
                 case "Load Experience":
                     openLoadFile();

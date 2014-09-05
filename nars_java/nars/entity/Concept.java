@@ -158,13 +158,16 @@ public class Concept extends Item {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
+                mem.logic.JUDGMENT_PROCESS.commit();
                 processJudgment(task);
                 break;
             case Symbols.GOAL_MARK:
+                mem.logic.GOAL_PROCESS.commit();
                 processGoal(task);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
+                mem.logic.QUESTION_PROCESS.commit();
                 processQuestion(task);
                 break;
             default:
@@ -172,13 +175,15 @@ public class Concept extends Item {
         }
 
         if (task.aboveThreshold()) {    // still need to be processed
+            mem.logic.LINK_TO_TASK.commit();
             linkToTask(task);
         }
+                
         if (entityObserver.isActive()) {
             entityObserver.refresh(displayContent());
         }
         
-        if(Parameters.ENABLE_INTERNAL_EXPERIENCE) {
+        if (mem.param.internalExperience.get()) {
             mem.rememberAction(task);
         }
     }
@@ -190,7 +195,7 @@ public class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processJudgment(final Task task) {
+    protected void processJudgment(final Task task) {        
         final Sentence judg = task.sentence;
         final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         if (oldBelief != null) {

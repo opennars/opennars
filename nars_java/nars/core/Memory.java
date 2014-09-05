@@ -510,7 +510,10 @@ public class Memory implements Output, Serializable {
      * add new task that waits to be processed in the next cycleMemory
      */
     protected void addNewTask(final Task t, final String reason) {
+        logic.TASK_ADD_NEW.commit(t.getPriority());
+                
         newTasks.add(t);
+        
         if (recorder.isActive()) {
             recorder.onTaskAdd(t, reason);
         }
@@ -573,7 +576,9 @@ public class Memory implements Output, Serializable {
      *
      * @param operation The operation just executed
      */
-    public void executedTask(Operation operation) {
+    public void executedTask(final Operation operation) {
+        logic.TASK_EXECUTED.commit(currentTask.budget.getPriority());
+        
         TruthValue truth = new TruthValue(1f,0.9999f);
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
@@ -581,13 +586,11 @@ public class Memory implements Output, Serializable {
         addNewTask(task, "Executed");
     }
 
-    public void output(Task t) {
+    public void output(final Task t) {
         if (output == null) return;
         
+        final float budget = t.budget.summary();
         final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
-        final float budget = t.budget.summary();       
-        
-        logic.OUTPUT_TASK.commit(budget);
         
         if (budget >= noiseLevel) {  // only report significant derived Tasks
             output(OUT.class, t);
@@ -595,7 +598,7 @@ public class Memory implements Output, Serializable {
     }
     
     @Override
-    public void output(Class c, Object signal) {
+    public void output(final Class c, final Object signal) {
         if (output!=null)
             output.output(c, signal);
     }
@@ -605,155 +608,168 @@ public class Memory implements Output, Serializable {
      *
      * @param task the derived task
      */
-    public void derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {                
-        if (task.budget.aboveThreshold()) {
-            if (task.sentence != null && task.sentence.truth != null) {
-                float conf = task.sentence.truth.getConfidence();                
-                if (conf == 0) { 
-                    //no confidence - we can delete the wrongs out that way.
+    public void derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
+        
+        logic.TASK_DERIVED.commit(task.budget.getPriority());
+
+        if (!task.budget.aboveThreshold()) {            
+            if (recorder.isActive()) {
+                recorder.onTaskRemove(task, "Ignored");
+            }            
+            return;            
+        }
+        
+        if (task.sentence != null && task.sentence.truth != null) {
+            float conf = task.sentence.truth.getConfidence();                
+            if (conf == 0) { 
+                //no confidence - we can delete the wrongs out that way.
+                if (recorder.isActive()) {
+                    recorder.onTaskRemove(task, "Ignored");
+                }
+                return;
+            }
+        }
+
+        final Stamp stamp = task.sentence.stamp;
+        if(occurence!=null && occurence.getOccurenceTime()!=Stamp.ETERNAL) {
+            stamp.setOccurrenceTime(occurence.getOccurenceTime());
+        }
+        if(occurence2!=null && occurence2.getOccurenceTime()!=Stamp.ETERNAL) {
+            stamp.setOccurrenceTime(occurence2.getOccurenceTime());
+        }
+        final ArrayList<Term> chain = stamp.getChain();
+
+        final Term currentTaskContent = getCurrentTask().getContent();
+
+        if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
+            final Term currentBeliefContent = getCurrentBelief().content;
+            if(chain.contains(currentBeliefContent)) {
+            //if(stamp.chainContainsInstance(currentBeliefContent)) {
+                chain.remove(currentBeliefContent);
+            }
+            stamp.addToChain(currentBeliefContent);
+        }
+
+
+        //workaround for single premise task issue:
+        if(currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
+            if(chain.contains(currentTaskContent)) {
+            //if(stamp.chainContainsInstance(currentTaskContent)) {
+                chain.remove(currentTaskContent);
+            }
+            stamp.addToChain(currentTaskContent);
+        }
+        //end workaround
+
+        if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
+            if(chain.contains(currentTaskContent)) {                
+            //if(stamp.chainContainsInstance(currentTaskContent)) {                    
+                chain.remove(currentTaskContent);
+            }
+            stamp.addToChain(currentTaskContent);
+        }
+
+
+        //its a inference rule, so we have to do the derivation chain check to hamper cycles
+        if (!revised) { 
+            
+            int i = 0;
+            for (Term chain1 : chain) {
+                if (task.sentence.isJudgment() && task.getContent().equals(chain1)) {
+                    if(task.getParentTask()==null || 
+                       (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
+                       !(task.getContent().equals(Negation.make(task.getParentTask().getContent(), this))))) {
                     if (recorder.isActive()) {
-                        recorder.onTaskRemove(task, "Ignored");
+                        recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
                     }
                     return;
+                    }
                 }
+                i++;                    
             }
-            
-            final Stamp stamp = task.sentence.stamp;
-            if(occurence!=null && occurence.getOccurenceTime()!=Stamp.ETERNAL) {
-                stamp.setOccurrenceTime(occurence.getOccurenceTime());
-            }
-            if(occurence2!=null && occurence2.getOccurenceTime()!=Stamp.ETERNAL) {
-                stamp.setOccurrenceTime(occurence2.getOccurenceTime());
-            }
-            final ArrayList<Term> chain = stamp.getChain();
-            
-            final Term currentTaskContent = getCurrentTask().getContent();
-            
-            if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
-                final Term currentBeliefContent = getCurrentBelief().content;
-                if(chain.contains(currentBeliefContent)) {
-                //if(stamp.chainContainsInstance(currentBeliefContent)) {
-                    chain.remove(currentBeliefContent);
-                }
-                stamp.addToChain(currentBeliefContent);
-            }
-            
-            
-            //workaround for single premise task issue:
-            if(currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
-                if(chain.contains(currentTaskContent)) {
-                //if(stamp.chainContainsInstance(currentTaskContent)) {
-                    chain.remove(currentTaskContent);
-                }
-                stamp.addToChain(currentTaskContent);
-            }
-            //end workaround
-        
-            if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
-                if(chain.contains(currentTaskContent)) {                
-                //if(stamp.chainContainsInstance(currentTaskContent)) {                    
-                    chain.remove(currentTaskContent);
-                }
-                stamp.addToChain(currentTaskContent);
-            }
-                          
-            
-            if (!revised) { //its a inference rule, we have to do the derivation chain check to hamper cycles
-                int i = 0;
-                for (Term chain1 : chain) {
-                    if (task.sentence.isJudgment() && task.getContent().equals(chain1)) {
-                        if(task.getParentTask()==null || 
-                           (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
-                           !(task.getContent().equals(Negation.make(task.getParentTask().getContent(), this))))) {
-                        if (recorder.isActive()) {
-                            recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
+        } else { //its revision, of course its cyclic, apply evidental base policy
+            final int stampLength = stamp.baseLength;
+            for (int i = 0; i < stampLength; i++) {
+                final long baseI = stamp.evidentialBase[i];
+
+                for (int j = 0; j < stampLength; j++) {
+                    if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
+                        if (recorder.isActive()) {                                
+                            recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
                         }
                         return;
-                        }
-                    }
-                    i++;                    
-                }
-            } else { //its revision, of course its cyclic, apply evidental base policy
-                final int stampLength = stamp.baseLength;
-                for (int i = 0; i < stampLength; i++) {
-                    final long baseI = stamp.evidentialBase[i];
-                    
-                    for (int j = 0; j < stampLength; j++) {
-                        if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
-                            if (recorder.isActive()) {                                
-                                recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
-                            }
-                            return;
-                        }
                     }
                 }
             }
+        }
+
+        //is it complex and also important? then give it a name:
+        if (!(task.sentence.content instanceof Operation) && 
+             (param.internalExperience.get()) && 
+             (task.sentence.content.getComplexity() > param.abbreviationMinComplexity.get()) &&
+             (task.budget.quality.getValue() > param.abbreviationMinQuality.get())) {
             
-            //is it complex and also important? then give it a name:
-            if(Parameters.ENABLE_INTERNAL_EXPERIENCE && task.sentence.content.getComplexity()>Parameters.TERM_COMPLEXITY_BEFORE_NAMING_IT) {
-                if(!(task.sentence.content instanceof Operation) && task.budget.quality.getValue() > Parameters.TERM_QUALITY_BEFORE_NAMING_IT) {
-                    Term opTerm = this.getOperator("^abbreviate");
-                    Term[] arg = new Term[1];
-                    arg[0]=task.sentence.content;
-                    Term argTerm = Product.make(arg,this);
-                    Term operation = Inheritance.make(argTerm, opTerm,this);
-                    TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            Term opTerm = this.getOperator("^abbreviate");
+            Term[] arg = new Term[1];
+            arg[0]=task.sentence.content;
+            Term argTerm = Product.make(arg,this);
+            Term operation = Inheritance.make(argTerm, opTerm,this);
+            TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            Stamp stampi = (Stamp) task.sentence.stamp.clone();
+            stamp.setOccurrenceTime(this.getTime());
+            Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
+            BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
+            Task newTask = new Task(j, budg,task);
+            if (getRecorder().isActive()) {
+                getRecorder().append("Named: " + j.toString());
+            }
+            output(newTask);
+            addNewTask(newTask, "Derived");
+        }
+
+        if(param.experimentalNarsPlus.get() && task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
+            //lets say we have <{...} --> M>.
+            if(task.sentence.content instanceof Inheritance) {
+                Inheritance inh=(Inheritance) task.sentence.content;
+                if(inh.getSubject() instanceof SetExt) {
+                    SetExt set_term=(SetExt) inh.getSubject();
+                    Integer cardinality=set_term.size();   //this gets the cardinality of M
+                    //now create term <(*,M,cardinality) --> CARDINALITY>.
+                    
+                    Term[] product_args = new Term[] { 
+                        inh.getPredicate(),
+                        new Term(cardinality.toString()) 
+                    };
+                    
+                    Term new_subject=Product.make(product_args, this);
+                    Term new_predicate=new Term("CARDINALITY"); //TODO this can be a static final instance shared by all
+                    Term new_term=Inheritance.make(new_subject, new_predicate, this);
+
+                    TruthValue truth = (TruthValue) task.sentence.truth.clone();
                     Stamp stampi = (Stamp) task.sentence.stamp.clone();
-                    stamp.setOccurrenceTime(this.getTime());
-                    Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
-                    BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
+                    Sentence j = new Sentence(new_term,Symbols.JUDGMENT_MARK, truth, stampi);
+                    BudgetValue budg=(BudgetValue) task.budget.clone();
                     Task newTask = new Task(j, budg,task);
                     if (getRecorder().isActive()) {
-                        getRecorder().append("Named: " + j.toString());
+                        this.recorder.append("Counted: " + j.toString());
                     }
                     output(newTask);
                     addNewTask(newTask, "Derived");
                 }
             }
-            
-            if(Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS && task.sentence.punctuation==Symbols.JUDGMENT_MARK) { //lets say we have <{...} --> M>.
-                if(task.sentence.content instanceof Inheritance) {
-                    Inheritance inh=(Inheritance) task.sentence.content;
-                    if(inh.getSubject() instanceof SetExt) {
-                        SetExt set_term=(SetExt) inh.getSubject();
-                        Integer cardinality=set_term.size();   //this gets the cardinality of M
-                        //now create term <(*,M,cardinality) --> CARDINALITY>.
-                        Term[] product_args=new Term[2];
-                        product_args[0]=inh.getPredicate();
-                        product_args[1]=new Term(cardinality.toString());
-                        Term new_subject=Product.make(product_args, this);
-                        Term new_predicate=new Term("CARDINALITY");
-                        Term new_term=Inheritance.make(new_subject, new_predicate, this);
-                        
-                        TruthValue truth = (TruthValue) task.sentence.truth.clone();
-                        Stamp stampi = (Stamp) task.sentence.stamp.clone();
-                        Sentence j = new Sentence(new_term,Symbols.JUDGMENT_MARK, truth, stampi);
-                        BudgetValue budg=(BudgetValue) task.budget.clone();
-                        Task newTask = new Task(j, budg,task);
-                        if (getRecorder().isActive()) {
-                            this.recorder.append("Counted: " + j.toString());
-                        }
-                        output(newTask);
-                        addNewTask(newTask, "Derived");
-                    }
-                }
-            }
-
-            if(task.sentence.content instanceof Operation) {
-                Operation op=(Operation) task.sentence.content;
-                if(op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
-                    return;
-                }
-            }
-            output(task);
-            
-            addNewTask(task, "Derived");
-            
-        } else {            
-            if (recorder.isActive()) {
-                recorder.onTaskRemove(task, "Ignored");
-            }            
         }
+
+        if(task.sentence.content instanceof Operation) {
+            Operation op=(Operation) task.sentence.content;
+            if(op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
+                return;
+            }
+        }
+        
+        output(task);
+
+        addNewTask(task, "Derived");
+            
     }
 
     /* --------------- new task building --------------- */
@@ -989,6 +1005,8 @@ public class Memory implements Output, Serializable {
      * @param task the task to be accepted
      */
     private void immediateProcess(final Task task) {
+        logic.TASK_IMMEDIATE_PROCESS.commit();
+
         setCurrentTask(task); // one of the two places where this variable is set
         
         if (recorder.isActive()) {
@@ -1003,7 +1021,6 @@ public class Memory implements Output, Serializable {
             getCurrentConcept().directProcess(task,this);
         }
         
-        logic.TASK_IMMEDIATE_PROCESS.event();
     }
 
     

@@ -1,6 +1,7 @@
 package nars.core;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.util.meter.util.AtomicDouble;
 
@@ -35,6 +36,18 @@ public class Param implements Serializable {
     
     /** contraposition should have much lower priority considering the flood of implications coming from temporal knowledge.  a lower value means more frequent, must be > 0 */    
     public final AtomicDouble contrapositionPriority = new AtomicDouble(/*30 was the default*/);
+
+    
+    //let NARS use NARS+ ideas (counting etc.)
+    public final AtomicBoolean experimentalNarsPlus = new AtomicBoolean();
+
+    //let NARS use NAL9 operators to perceive its own mental actions
+    public final AtomicBoolean internalExperience = new AtomicBoolean();
+    
+    //these two are AND-coupled:
+    //when a concept is important and exceeds a syntactic complexity, let NARS name it: 
+    public final AtomicInteger abbreviationMinComplexity = new AtomicInteger();
+    public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
     
 
     
