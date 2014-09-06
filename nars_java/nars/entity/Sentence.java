@@ -288,28 +288,31 @@ public class Sentence implements Cloneable {
         if (key == null) {
             final CharSequence contentName = content.name();
             
-            final String occurrenceTimeString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getOccurrenceTimeString() : "";
+            final boolean showOcurrenceTime = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
+            //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
             
-            final CharSequence truthString = truth != null ? truth.name() : null;
+            //final CharSequence truthString = truth != null ? truth.name() : null;
 
             int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
             if (truth != null) {
-                stringLength += occurrenceTimeString.length() + truthString.length();
+                stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
             }
 
             //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
             final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
 
             if (truth != null) {
-                suffix.append(' ').append(truthString);
+                suffix.append(' ');
+                truth.appendStringBrief(suffix);
             }
-            if (occurrenceTimeString.length() > 0) {
-                suffix.append(' ').append(occurrenceTimeString);
+            if (showOcurrenceTime) {
+                suffix.append(' ');
+                stamp.appendOcurrenceTime(suffix);
             }
 
             key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
-                    contentName.toString(), 
-                    suffix.toString());
+                    contentName,//.toString(), 
+                    suffix); //.toString());
             //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
 
         }

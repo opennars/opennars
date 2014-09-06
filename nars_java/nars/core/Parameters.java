@@ -48,8 +48,6 @@ public class Parameters {
     
 
     
-    /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
-    public static final int MAX_MATCHED_TERM_LINK = 10;
     
 
     /* ---------- logical parameters ---------- */
@@ -59,8 +57,9 @@ public class Parameters {
     public static final float RELIANCE = (float) 0.9;    // the same as default confidence
     /** Tense usage convention, how far away "past" and "future" is from "now". */
     public static final int DURATION = 5;    // the range of "now" is [-DURATION, DURATION];
-    /** Minimum expectation for a desire value. */
-    public static final float DECISION_THRESHOLD = (float) 0.30;    // the range of "now" is [-DURATION, DURATION];
+    
+    
+        
  
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted. */
@@ -111,13 +110,23 @@ public class Parameters {
     
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
-    /** Remember recently used TermLink on a Task */
-    public static final int TERM_LINK_RECORD_LENGTH = 10;
-    /** Maximum number of beliefs kept in a Concept */
-    public static final int MAXIMUM_BELIEF_LENGTH = 7;
-    /** Maximum number of goals kept in a Concept */
-    public static final int MAXIMUM_QUESTIONS_LENGTH = 5;
 
+    
+
+
+    /**
+     * The rate of confidence decrease in mental operations Doubt and Hesitate
+     * set to zero to disable this feature.
+     */
+    public static float DISCOUNT_RATE = 0.5f;    
+
+    
+    
+    
+    
+    
+    
+    //RUNTIME PERFORMANCE (should not affect logic): ----------------------------------
     
     /**
      * max length of a Term name for which it can be stored statically via String.intern().
@@ -125,16 +134,7 @@ public class Parameters {
      * The problem with indiscriminate use of intern() is that interned strings can not be garbage collected (i.e. permgen) - possible a memory leak if terms disappear.
      */
     public static int INTERNED_TERM_NAME_MAXLEN = 0;
-    
-    
-    
-
-    /**
-     * The rate of confidence decrease in mental operations Doubt and Hesitate
-     * set to zero to disable this feature.
-     */
-    public static float DISCOUNT_RATE = 0.5f;    
-    
+          
     /**
      * Determines when TermLink and TaskLink should use Rope implementation for its Key,
      * rather than String/StringBuilder.  

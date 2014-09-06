@@ -12,7 +12,7 @@ public class IncreasedMaxReasonTermLink {
     
     public static void main(String[] args) {
         NAR n = new DefaultNARBuilder().build();
-        n.param().maxReasonedTermLink.set(10);
+        n.param().termLinkMaxReasoned.set(10);
         
         new NARSwing(n);
         

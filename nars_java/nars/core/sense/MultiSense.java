@@ -2,6 +2,7 @@ package nars.core.sense;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 import nars.core.Memory;
 
 /**
@@ -14,7 +15,7 @@ public class MultiSense extends AbstractSense {
     private final AbstractSense[] senses;
 
     public MultiSense(AbstractSense... senses) {
-        super();
+        super(new TreeMap() /* alphabetic order */);
         this.senses = senses;
     }
 

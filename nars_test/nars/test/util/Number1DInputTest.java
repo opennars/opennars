@@ -55,7 +55,7 @@ public class Number1DInputTest {
                 setConceptBagSize(32367).
                 build();
                 
-        n.param().cycleConcepts.set(1024);
+        n.param().cycleConceptsFired.set(1024);
         
         
         Number1DInput v = new Number1DInput(n, "a", x, 4);

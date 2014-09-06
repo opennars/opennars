@@ -80,4 +80,8 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
         return super.reset();
     }
 
+//    public double getMean() {
+//        return get("hits","mean").mean();
+//    }
+
 }

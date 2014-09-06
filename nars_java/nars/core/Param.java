@@ -30,18 +30,26 @@ public class Param implements Serializable {
     public final AtomicInteger newTaskCyclesToForget = new AtomicInteger();
 
     
+    /** Minimum expectation for a desire value. 
+     *  the range of "now" is [-DURATION, DURATION]; */
+    public final AtomicDouble decisionThreshold = new AtomicDouble();
+    
     /** How many inputs to process each cycle */
     public final AtomicInteger cycleInputTasks = new AtomicInteger();
 
-    /** How many memory cycles to process each cycle */
+    /** How many memory working cycles to process each cycle */
     public final AtomicInteger cycleMemory = new AtomicInteger();
 
     /** How many concepts to fire each cycle */
-    public final AtomicInteger cycleConcepts = new AtomicInteger();
+    public final AtomicInteger cycleConceptsFired = new AtomicInteger();
     
     /** contraposition should have much lower priority considering the flood of implications coming from temporal knowledge.  a lower value means more frequent, must be > 0 */    
     public final AtomicDouble contrapositionPriority = new AtomicDouble(/*30 was the default*/);
 
+    
+    /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
+    public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
+            
     
     //let NARS use NARS+ ideas (counting etc.)
     public final AtomicBoolean experimentalNarsPlus = new AtomicBoolean();
@@ -55,9 +63,17 @@ public class Param implements Serializable {
     public final AtomicDouble abbreviationMinQuality = new AtomicDouble();
     
     /** Maximum TermLinks used in reasoning for each Task in Concept */
-    public AtomicInteger maxReasonedTermLink = new AtomicInteger();
-    
+    public final AtomicInteger termLinkMaxReasoned = new AtomicInteger();
 
+    /** Record-length for newly created TermLink's */
+    public final AtomicInteger termLinkRecordLength = new AtomicInteger();
+    
+    /** Maximum number of beliefs kept in a Concept */
+    public final AtomicInteger conceptBeliefsMax = new AtomicInteger();
+    
+    /** Maximum number of goals kept in a Concept */
+    public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
+    
     
     
 }

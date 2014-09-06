@@ -42,7 +42,7 @@ public abstract class AbstractSensor implements Sensor {
     private long cyclesSinceLastUpdate = -1;
 
     int lastHits = 0, currentHits = 0;
-    private long lastFirstCommit;
+    //private long lastFirstCommit;
 
     public AbstractSensor(final StatsSession session) {
         //assertNotNull(session, "session");
@@ -124,6 +124,17 @@ public abstract class AbstractSensor implements Sensor {
     }
 
     
+//    public <D> D get(D defaultValue, String... keys) {
+//        if (sampleWindow > 0) {
+//            if (gets % sampleWindow == 0)
+//                return getSession().drainData(defaultValue, keys);
+//        }
+//        
+//        return getSession().collectData(defaultValue, keys);
+//    }
+//    
+    
+    @Override
     public DataSet get() {
         if (sampleWindow > 0) {
             if (gets % sampleWindow == 0)

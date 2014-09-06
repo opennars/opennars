@@ -296,7 +296,7 @@ public class TestChamber2 extends TestChamber {
     public static void main(String[] arg) {
         NAR nar = new ContinuousBagNARBuilder(true).build();
         nar.param().cycleInputTasks.set(16);
-        nar.param().cycleConcepts.set(16);
+        nar.param().cycleConceptsFired.set(16);
         
         new TestChamber2(nar);
         

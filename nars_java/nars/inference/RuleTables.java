@@ -296,7 +296,7 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param memory Reference to the memory
      */
-    private static void asymmetricAsymmetric(Sentence taskSentence, Sentence belief, int figure, Memory memory) {
+    private static void asymmetricAsymmetric(final Sentence taskSentence, final Sentence belief, int figure, final Memory memory) {
         Statement taskStatement = (Statement) taskSentence.cloneContent();
         Statement beliefStatement = (Statement) belief.cloneContent();
         
