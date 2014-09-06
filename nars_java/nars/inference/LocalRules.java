@@ -357,7 +357,7 @@ public class LocalRules {
                 if(t instanceof Interval) {
                     Interval intv=(Interval) t;
                     long wait_steps=intv.getMagnitude();
-                    for(long i=0;i<wait_steps;i++) {
+                    for(long i=0;i<wait_steps*Parameters.DURATION;i++) {
                         mem.next_task.add(null);
                         mem.next_concept.add(null);
                         mem.next_content.add(null);
