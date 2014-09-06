@@ -44,6 +44,7 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
+import nars.inference.TruthFunctions;
 import nars.io.Output;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
@@ -82,6 +83,7 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.IntersectionExt;
 import nars.language.IntersectionInt;
+import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Product;
 import nars.language.SetExt;
@@ -269,8 +271,7 @@ public class Memory implements Output, Serializable {
 
     private Sentence currentBelief;
 
-    /** previous event, for temporal induction */
-    private Task lastEvent;
+    
 
     private Stamp newStamp;
 
@@ -306,11 +307,6 @@ public class Memory implements Output, Serializable {
     public final Param param;
     
     transient private Output output;
-
-    public BudgetValue getLastEventBudget() {
-        return lastEvent.budget;
-    }
-
 
     /* ---------- Constructor ---------- */
     /**
@@ -382,7 +378,7 @@ public class Memory implements Output, Serializable {
         conceptProcessor.clear();
         novelTasks.clear();
         newTasks.clear();        
-        lastEvent = null;
+        shortTermMemory=new ArrayList<Task>();
         clock = 0;
         stepsQueued = 0;
         working = true;
@@ -931,6 +927,9 @@ public class Memory implements Output, Serializable {
         event.emit(MemoryCycleStop.class);
     }
 
+    /** previous events, for temporal induction */
+    private ArrayList<Task> shortTermMemory=new ArrayList<Task>();
+    
     /**
      * Process the newTasks accumulated in the previous cycleMemory, accept
  addInput ones and those that corresponding to existing concepts, plus one
@@ -956,7 +955,7 @@ public class Memory implements Output, Serializable {
                         if ((newEvent == null)
                                 || (BudgetFunctions.rankBelief(newEvent.sentence)
                                 < BudgetFunctions.rankBelief(task.sentence))) {
-                            if((lastEvent==null || !equalSubTermsInRespectToImageAndProduct(lastEvent.getContent(),task.getContent()))) {
+                            if((shortTermMemory.isEmpty() || !equalSubTermsInRespectToImageAndProduct(shortTermMemory.get(shortTermMemory.size()-1).getContent(),task.getContent()))) {
                                 newEvent = task;
                             }
                         }
@@ -983,19 +982,60 @@ public class Memory implements Output, Serializable {
             }
         }
         if (newEvent != null && newEvent.isInput()) {
-                if (lastEvent != null) { //also here like in rule tables: we dont want to derive useless statements
-                    if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,lastEvent.sentence.content)) {
-                        return;
+            int n=shortTermMemory.size();
+            if (n!=0) { //also here like in rule tables: we dont want to derive useless statements
+                if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,shortTermMemory.get(n-1).sentence.content)) {
+                    return;
                 }
-                 setTheNewStamp(Stamp.make(newEvent.sentence.stamp, lastEvent.sentence.stamp, getTime()));
-                //if (getTheNewStamp() != null) {
-                    setCurrentTask(newEvent);
-                    setCurrentBelief(lastEvent.sentence);
-                    TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
-                //}
+                setTheNewStamp(Stamp.make(newEvent.sentence.stamp, shortTermMemory.get(n-1).sentence.stamp, getTime()));
+                setCurrentTask(newEvent);
+                setCurrentBelief(shortTermMemory.get(n-1).sentence);
+                
+                TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
+                ArrayList<Term> cur=new ArrayList<Term>();
+                for(int i=n-1;i>=0;i--) {
+                    if(n==1) {
+                        break;
+                    }
+                    cur.add(shortTermMemory.get(i).getContent());
+                    if(i>0) {
+                        int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
+                        if(diff>Parameters.DURATION) {
+                            cur.add(new Interval(diff));
+                        }
+                    }
+                   // if(i!=0)
+                   //     continue; //just use last one fow now
+
+                    setCurrentBelief(shortTermMemory.get(i).sentence);
+                    TruthValue val=shortTermMemory.get(i).sentence.truth;
+                    for(int j=i+1;j+1<n;j++) {
+                        val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
+                    }
+                    
+                    int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(n-1).getCreationTime());
+                    if(diff>Parameters.DURATION) {
+                        cur.add(0, new Interval(diff));
+                    }
+
+                    Term[] terms=new Term[cur.size()];
+                    for(int j=0;j<cur.size();j++) {
+                        terms[cur.size()-j-1]=cur.get(j);
+                    }
+                    
+                    Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
+                    val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+                    Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
+                    BudgetValue bud=BudgetFunctions.forward(val,this);
+                    this.doublePremiseTask(imp,val,bud);
+                }
             }
-            if(newEvent.isInput()) //only use input events for this heuristic
-                lastEvent = newEvent;
+            if(newEvent.isInput()) { //only use input events for this heuristic
+                shortTermMemory.add(newEvent);
+                if(shortTermMemory.size()>Parameters.SHORT_TERM_MEMORY_SIZE) {
+                    shortTermMemory.remove(0);
+                }
+            }
         }
     }
 
