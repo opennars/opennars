@@ -175,6 +175,8 @@ public class SwingLogText extends JTextPane implements Output {
         float tc = 0.75f + 0.25f * priority;
         Color textColor = new Color(tc, tc, tc);
         print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n');
+        setCaretPosition(getDocument().getLength());
+        
     }
     
     
