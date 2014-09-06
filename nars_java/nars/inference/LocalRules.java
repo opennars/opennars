@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import java.util.ArrayList;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -30,8 +31,10 @@ import nars.entity.TruthValue;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Inheritance;
+import nars.language.Interval;
 import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
@@ -304,13 +307,8 @@ public class LocalRules {
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
     
-    /** Add plausibility estimation */
-    public static void decisionMaking(Task task, Concept concept) {
-        Term content = concept.term;
-        TruthValue desireValue = concept.getDesire();
-        if (desireValue.getExpectation() < Parameters.DECISION_THRESHOLD) {
-            return;
-        }
+    public static void executeOperation(Term content, Concept concept, Task task)
+    {
         if (!(content instanceof Operation)) {
             return;
         }
@@ -325,5 +323,55 @@ public class LocalRules {
             oper.call(op, args.term, concept.memory);
             task.setPriority(0);
         }
+    }
+    
+    public static void Manage_Execution(Memory mem)
+    {
+        if(mem.next_task.isEmpty()) {
+            return;
+        }
+        Task task=mem.next_task.get(0);
+        mem.next_task.remove(0);
+        Concept concept=mem.next_concept.get(0);
+        mem.next_concept.remove(0);
+        Term content=mem.next_content.get(0);
+        mem.next_content.remove(0);
+        if(task==null) {
+            return; //we have to wait
+        }
+        //ok it is time for action:
+        executeOperation(content,concept,task);
+    }
+    
+    /** Add plausibility estimation */
+    public static void decisionMaking(Task task, Concept concept, Memory mem) {
+        Term content = concept.term;
+        TruthValue desireValue = concept.getDesire();
+        if (desireValue.getExpectation() < Parameters.DECISION_THRESHOLD) {
+            return;
+        }
+        if(content instanceof Conjunction && content.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+            //1. get first operator and execute it
+            CompoundTerm cont = (CompoundTerm) content;
+            for(Term t : cont.term) {
+                if(t instanceof Interval) {
+                    Interval intv=(Interval) t;
+                    long wait_steps=intv.getMagnitude();
+                    for(long i=0;i<wait_steps;i++) {
+                        mem.next_task.add(null);
+                        mem.next_concept.add(null);
+                        mem.next_content.add(null);
+                    }
+                }
+                else
+                if(t instanceof Operation) {
+                    mem.next_task.add(task);
+                    mem.next_concept.add(concept);
+                    mem.next_content.add(t);
+                }
+            }
+            return;
+        }
+        executeOperation(content,concept,task);
     }    
 }

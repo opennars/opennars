@@ -53,6 +53,10 @@ public class Interval extends Term {
         return (long) Math.ceil(Math.exp(magnitude));
     }
     
+    public long getMagnitude() {
+        return magnitude;
+    }
+    
     @Override
     public Interval clone() {
         return new Interval(magnitude, true);
