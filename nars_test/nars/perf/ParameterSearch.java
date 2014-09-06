@@ -62,6 +62,8 @@ public class ParameterSearch {
                 experiments.put(t, new TreeMap());
             experiments.get(t).put(experiment, testTimes.get(t));
         }
+  
+        trainingSet.toCSV("/tmp/" + experiment + ".csv");
         
         /*
         
