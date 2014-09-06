@@ -21,7 +21,6 @@
 package nars.inference;
 
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -306,10 +305,10 @@ public class LocalRules {
     }
     
     /** Add plausibility estimation */
-    public static void decisionMaking(Task task, Concept concept) {
+    public static void decisionMaking(final Task task, final Concept concept) {
         Term content = concept.term;
         TruthValue desireValue = concept.getDesire();
-        if (desireValue.getExpectation() < Parameters.DECISION_THRESHOLD) {
+        if (desireValue.getExpectation() < concept.memory.param.decisionThreshold.get()) {
             return;
         }
         if (!(content instanceof Operation)) {

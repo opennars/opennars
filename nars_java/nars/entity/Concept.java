@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NARRun;
-import nars.core.Parameters;
 import static nars.entity.Stamp.make;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
@@ -223,7 +222,7 @@ public class Concept extends Item {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 trySolution(judg, ques, memory);
             }
-            addToTable(judg, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
+            addToTable(judg, beliefs, memory.param.conceptBeliefsMax.get());
         }
     }
 
@@ -259,7 +258,9 @@ public class Concept extends Item {
                 trySolution(belief, task, memory);
 
             if (task.aboveThreshold()) {    // still worth pursuing
-                addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);
+                
+                addToTable(goal, desires, memory.param.conceptBeliefsMax.get());
+                
                 if (noRevision || (task.sentence.content instanceof Operation)) {
                     decisionMaking(task, this);
                 }
@@ -288,7 +289,7 @@ public class Concept extends Item {
         }
 
         if (newQuestion) {
-            if (questions.size()+1 > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
+            if (questions.size()+1 > memory.param.conceptQuestionsMax.get()) {
                 questions.remove(0);    // FIFO
             }
 
@@ -316,21 +317,32 @@ public class Concept extends Item {
      */
     protected void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
-        insertTaskLink(new TaskLink(task, null, taskBudget));  // link type: SELF
+        
+        insertTaskLink(new TaskLink(task, null, taskBudget, 
+                memory.param.termLinkRecordLength.get()));  // link type: SELF
+        
         if (term instanceof CompoundTerm) {
             if (!termLinkTemplates.isEmpty()) {
                 final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
                 if (subBudget.aboveThreshold()) {
-
-                    for (final TermLink termLink : termLinkTemplates) {
+                    
+                    for (int t = 0; t < termLinkTemplates.size(); t++) {
+                        TermLink termLink = termLinkTemplates.get(t);
+                        
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                         Term componentTerm = termLink.target;
+                        
                         Concept componentConcept = memory.conceptualize(componentTerm);
+                        
                         if (componentConcept != null) {
-                            componentConcept.insertTaskLink(new TaskLink(task, termLink, subBudget));
+                            
+                            componentConcept.insertTaskLink(
+                                new TaskLink(task, termLink, subBudget, 
+                                        memory.param.termLinkRecordLength.get()));
                         }
 //                        }
                     }
+                    
                     buildTermLinks(taskBudget);  // recursively insert TermLink
                 }
             }
@@ -592,7 +604,7 @@ public class Concept extends Item {
             memory.setCurrentBelief(null);
             transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
         } else {
-            int termLinkCount = memory.param.maxReasonedTermLink.get();
+            int termLinkCount = memory.param.termLinkMaxReasoned.get();
 //        while (memory.noResult() && (termLinkCount > 0)) {
             while (termLinkCount > 0) {
                 final TermLink termLink = selectTermLink(currentTaskLink, memory.getTime());
@@ -682,7 +694,7 @@ public class Concept extends Item {
      */    
     protected TermLink selectTermLink(final TaskLink taskLink, final long time) {        
         
-        int toMatch = Math.min(Parameters.MAX_MATCHED_TERM_LINK, termLinks.size());
+        int toMatch = Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; i < toMatch; i++) {
             final TermLink termLink = termLinks.takeOut(false);
             if (termLink == null) {

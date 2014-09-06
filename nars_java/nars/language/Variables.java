@@ -121,8 +121,8 @@ public class Variables {
      * @param type The type of variable that can be substituted
      * @param t1 The first term to be unified
      * @param t2 The second term to be unified
-     * @param compound1 The compound containing the first term
-     * @param compound2 The compound containing the second term
+     * @param compound1 The compound containing the first term, possibly modified
+     * @param compound2 The compound containing the second term, possibly modified
      * @return Whether the unification is possible
      */
     public static boolean unify(final char type, final Term t1, final Term t2, final Term compound1, final Term compound2) {

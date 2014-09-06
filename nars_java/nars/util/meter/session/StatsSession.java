@@ -158,6 +158,12 @@ public interface StatsSession extends Serializable {
      */
     DataSet drainData();
 
+//    /** drain only one key, for faster use than draining everything */
+//    <D> D drainData(D defaultValue, String... keys);
+//    
+//    /** collect only one key, for faster use than collecting everything */
+//    <D> D collectData(D defaultValue, String... keys);
+    
     /**
      * <p>
      * Re-populate internal data fields and {@link DataRecorder}s using the
@@ -222,5 +228,6 @@ public interface StatsSession extends Serializable {
     void clear();
 
     void setEventManager(EventManager e);
+
 
 }

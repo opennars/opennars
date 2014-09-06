@@ -2,11 +2,10 @@ package nars.perf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import org.encog.ml.data.MLDataPair;
@@ -27,7 +26,7 @@ public class ParameterSearch {
         
         int tests = 200; //all        
         int additionalCycles = 0;
-        int maxCyclesPerTest = 200;
+        int maxCyclesPerTest = 500;
         
 /*[emotion.happy0, task.derived1, task.executed.priority.mean2, cycle.cpu_time.mean3, emotion.busy4, reason.ded_2nd_layer_variable_unification5, concept.priority.mean6, cycle.frequency.hz7, reason.ded_2nd_layer_variable_unification_terms8, task.judgment.process9, concept.count10, concept.questions.mean11, task.add_new.priority.mean12, task.immediate_processed13, io.to_memory.ratio14, reason.fire.tasklink.priority.mean15, task.add_new16, reason.tasktermlinks17, reason.contraposition18, concept.new19, reason.fire.tasklinks20, concept.new.complexity.mean21, reason.analogy22, task.derived.priority.mean23, task.question.process24, cycle.frequency_potential.mean.hz25, task.link_to26, task.executed27, concept.beliefs.mean28, task.goal.process29, reason.tasktermlink.priority.mean30, cycle.ram_use.delta_Kb.sampled31, reason.ded_conjunction_by_question32, memory.noveltasks.total33, reason.belief_revision34, id35, time36, absTime37, successes38, error39]
 */
@@ -84,14 +83,17 @@ public class ParameterSearch {
         Map<String, Integer> bestCount = new TreeMap();
         Map<String, Integer> worstCount = new TreeMap();
         
+        System.out.println("Experiment Comparison:");
+        
         for (int i : experiments.keySet())  {
             Map<String, Integer> e = experiments.get(i);
-            int min = Integer.MAX_VALUE;
-            int max = 0;
             
-            System.out.print("experiment " + ep.get(i) + ": ");
             
-            Set<Integer> cyclesUnique = new HashSet(e.values());
+            System.out.print("  " + ep.get(i) + ": ");
+            
+            TreeSet<Integer> cyclesUnique = new TreeSet(e.values());
+            int min = cyclesUnique.first();
+            int max = cyclesUnique.last();
             if (cyclesUnique.size() == 1) {
                 System.out.println("tie @ " + cyclesUnique.iterator().next() + " cycles");
             }
@@ -101,7 +103,7 @@ public class ParameterSearch {
                 for (Map.Entry<String, Integer> es : e.entrySet()) {
                     int time = es.getValue();
                     String exp = es.getKey();
-                    if (time < min)  {
+                    if (time == min)  {
                         best.add(exp);                   
                         try {
                             bestCount.put(exp, bestCount.get(exp) + 1);                            
@@ -109,17 +111,15 @@ public class ParameterSearch {
                         catch (NullPointerException nn) {
                             bestCount.put(exp, 1);
                         }
-                        min = time;                    
                     }
-                    else if (time > max) {
+                    if (time == max) {
                         worst.add(exp);
                         try {
-                            worstCount.put(exp, worstCount.get(exp) + 1);                            
+                            worstCount.put(exp, worstCount.get(exp) + 1); 
                         }
                         catch (NullPointerException nn) {
                             worstCount.put(exp, 1);
                         }                        
-                        max = time;
                     }
                 }                
                 System.out.println("range=" + min + ".." + max + " cycles by winners=" + best );
@@ -133,42 +133,84 @@ public class ParameterSearch {
         for (String k : bestCount.keySet()) {
             System.out.println("  " + k + " " + bestCount.get(k));
         }
+        System.out.println();
+        System.out.println();
+        
         
         //this isnt helpful since a test can fail it wont even appear in worst, so for now, don't show
         //System.out.println("worst: " + worstCount);
     }
     
     public static void main(String[] args) throws Exception {
-        
+
+        //p.termLinkRecordLength.set(10);
         experiments.clear();
-        for (int i = 0; i < 15; i++) {
+        for (int i = 1; i < 15; i++) {
             NAR a = new DefaultNARBuilder().build();
             
-            //a.param().contrapositionPriority.set(i);
-            //System.out.println("contraposition priority=" + i + " = " + score(a));            
+            a.param().termLinkRecordLength.set(i);
+            score("termLinkRecordLength_" + String.format("%03d", i), a);
+        }
+        report();
+        
+        
+        //p.termLinkMaxMatched.set(10);        
+        experiments.clear();        
+        for (int i = 1; i < 13; i++) {
+            NAR a = new DefaultNARBuilder().build();
             
-            a.param().taskCyclesToForget.set(i);
-            score("taskForgettingRate_" + String.format("%03d", i), a);
-            
-            //a.param().maxReasonedTermLink.set(i);
-            //score("maxReasonedTermLink_" + i, a);
+            a.param().termLinkMaxMatched.set(i);
+            score("termLinkMaxMatched_" + String.format("%03d", i), a);
         }
         report();
 
+        //p.termLinkMaxReasoned.set(3);
         experiments.clear();
-        for (int i = 0; i < 100; i+=5) {
+        for (int i = 1; i < 13; i++) {
             NAR a = new DefaultNARBuilder().build();
             
-            //a.param().contrapositionPriority.set(i);
-            //System.out.println("contraposition priority=" + i + " = " + score(a));            
-            
-            a.param().beliefCyclesToForget.set(i);
-            score("beliefForgettingRate_" + String.format("%03d", i), a);
-            
-            //a.param().maxReasonedTermLink.set(i);
-            //score("maxReasonedTermLink_" + i, a);
+            a.param().termLinkMaxReasoned.set(i);
+            score("termLinkMaxReasoned_" + String.format("%03d", i), a);
         }
         report();
+        
+        
+        
+//        
+//        
+//        
+//        experiments.clear();
+//        for (int i = 0; i < 15; i++) {
+//            NAR a = new DefaultNARBuilder().build();
+//            
+//            //a.param().contrapositionPriority.set(i);
+//            //System.out.println("contraposition priority=" + i + " = " + score(a));            
+//            
+//            a.param().taskCyclesToForget.set(i);
+//            score("taskForgettingRate_" + String.format("%03d", i), a);
+//            
+//            //a.param().maxReasonedTermLink.set(i);
+//            //score("maxReasonedTermLink_" + i, a);
+//        }
+//        report();
+//        
+//              
+//        
+//
+//        experiments.clear();
+//        for (int i = 0; i < 100; i+=5) {
+//            NAR a = new DefaultNARBuilder().build();
+//            
+//            //a.param().contrapositionPriority.set(i);
+//            //System.out.println("contraposition priority=" + i + " = " + score(a));            
+//            
+//            a.param().beliefCyclesToForget.set(i);
+//            score("beliefForgettingRate_" + String.format("%03d", i), a);
+//            
+//            //a.param().maxReasonedTermLink.set(i);
+//            //score("maxReasonedTermLink_" + i, a);
+//        }
+//        report();
         
     }
 }

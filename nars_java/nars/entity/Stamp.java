@@ -422,6 +422,16 @@ public class Stamp implements Cloneable {
         return occurrenceTime;
     }
 
+    
+    public StringBuilder appendOcurrenceTime(StringBuilder sb) {
+        if (occurrenceTime != ETERNAL) {
+            int estTimeLength = 8; /* # digits */
+            sb.ensureCapacity(estTimeLength + 1 + 1);
+            sb.append('[').append(occurrenceTime).append(']').toString();
+        }
+        return sb;
+    }
+            
     /**
      * Get the occurrenceTime of the truth-value
      *
@@ -431,8 +441,7 @@ public class Stamp implements Cloneable {
         if (occurrenceTime == ETERNAL) {
             return "";
         } else {
-            String ot = String.valueOf(occurrenceTime);
-            return new StringBuilder(ot.length()+2).append('[').append(ot).append(']').toString();
+            return appendOcurrenceTime(new StringBuilder()).toString();
         }
     }
 

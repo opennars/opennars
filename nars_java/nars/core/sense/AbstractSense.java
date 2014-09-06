@@ -2,13 +2,12 @@ package nars.core.sense;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import nars.core.Memory;
 import nars.core.sense.AbstractSense.UnknownSensorException;
 import nars.util.meter.Sensor;
 import nars.util.meter.data.DefaultDataSet;
-import nars.util.meter.sensor.AbstractSpanTracker;
 import nars.util.meter.sensor.AbstractSensor;
+import nars.util.meter.sensor.AbstractSpanTracker;
 import nars.util.meter.sensor.EventSensor;
 import nars.util.meter.sensor.SpanTracker;
 
@@ -20,7 +19,10 @@ abstract public class AbstractSense extends DefaultDataSet {
     int allSensorResetPeriodCycles = 2048; //how often to reset all sensors
 
     public AbstractSense() {
-        super(new TreeMap<>());
+        this(new HashMap<>());
+    }
+    public AbstractSense(Map<String,Object> map) {
+        super(map);
     }
 
     abstract public void sense(Memory memory);

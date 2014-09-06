@@ -20,7 +20,6 @@
  */
 package nars.entity;
 
-import nars.core.Parameters;
 import nars.language.Term;
 
 /**
@@ -57,7 +56,7 @@ public class TaskLink extends TermLink {
      * @param template The TermLink template
      * @param v The budget
      */
-    public TaskLink(final Task t, final TermLink template, final BudgetValue v) {
+    public TaskLink(final Task t, final TermLink template, final BudgetValue v, int recordLength) {
         super(v,                 
                 template == null ? 
                         TermLink.SELF : 
@@ -69,8 +68,8 @@ public class TaskLink extends TermLink {
         );
         
         targetTask = t;
-        recordedLinks = new CharSequence[Parameters.TERM_LINK_RECORD_LENGTH];
-        recordingTime = new long[Parameters.TERM_LINK_RECORD_LENGTH];
+        recordedLinks = new CharSequence[recordLength];
+        recordingTime = new long[recordLength];
         counter = 0;
         setKey(t.getKey());   // as defined in TermLink
         
@@ -102,10 +101,13 @@ public class TaskLink extends TermLink {
         }
         CharSequence linkKey = termLink.getKey();
         int next, i;
+        
+        final int recordLength = recordedLinks.length; //Parameters.TERM_LINK_RECORD_LENGTH;
+        
         for (i = 0; i < counter; i++) {
-            next = i % Parameters.TERM_LINK_RECORD_LENGTH;
+            next = i % recordLength;
             if (linkKey.equals(recordedLinks[next])) {
-                if (currentTime < recordingTime[next] + Parameters.TERM_LINK_RECORD_LENGTH) {
+                if (currentTime < recordingTime[next] + recordLength) {
                     return false;
                 } else {
                     recordingTime[next] = currentTime;
@@ -113,10 +115,10 @@ public class TaskLink extends TermLink {
                 }
             }
         }
-        next = i % Parameters.TERM_LINK_RECORD_LENGTH;
+        next = i % recordLength;
         recordedLinks[next] = linkKey;       // add knowledge reference to recordedLinks
         recordingTime[next] = currentTime;
-        if (counter < Parameters.TERM_LINK_RECORD_LENGTH) { // keep a constant length
+        if (counter < recordLength) { // keep a constant length
             counter++;
         }
         return true;

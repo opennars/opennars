@@ -20,16 +20,6 @@ import nars.storage.Bag;
 public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     
-    /* ---------- initial values of run-time adjustable parameters ---------- */
-    /** Concept decay rate in ConceptBag, in [1, 99]. */
-    private static final int CONCEPT_CYCLES_TO_FORGET = 10;
-    /** TaskLink decay rate in TaskLinkBag, in [1, 99]. */
-    private static final int TASK_LINK_CYCLES_TO_FORGET = 20;
-    /** TermLink decay rate in TermLinkBag, in [1, 99]. */
-    private static final int TERM_LINK_CYCLES_TO_FORGET = 50;        
-    /** Task decay rate in TaskBuffer, in [1, 99]. */
-    private static final int NEW_TASK_FORGETTING_CYCLE = 10;
-    
     public int taskLinkBagLevels;
     
     /** Size of TaskLinkBag */
@@ -67,28 +57,36 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         Param p = new Param();
         p.noiseLevel.set(100);
         
-        p.conceptCyclesToForget.set(CONCEPT_CYCLES_TO_FORGET);             
-        p.taskCyclesToForget.set(TASK_LINK_CYCLES_TO_FORGET);
-        p.beliefCyclesToForget.set(TERM_LINK_CYCLES_TO_FORGET);
-        p.newTaskCyclesToForget.set(NEW_TASK_FORGETTING_CYCLE);
-        
+        //Cycle control
+        p.cycleMemory.set(1);
         p.cycleInputTasks.set(1);
+
+        p.decisionThreshold.set(0.30);
+        
+        p.conceptCyclesToForget.set(10);             
+        p.taskCyclesToForget.set(20);
+        p.beliefCyclesToForget.set(50);
+        p.newTaskCyclesToForget.set(10);
+                
+        p.conceptBeliefsMax.set(7);
+        p.conceptQuestionsMax.set(5);
+        
         
         p.contrapositionPriority.set(30);
                 
+        p.termLinkMaxReasoned.set(3);
+        p.termLinkMaxMatched.set(10);
+        p.termLinkRecordLength.set(10);
+        
         //NAL9 experimental
-
         p.experimentalNarsPlus.set(false);
         p.internalExperience.set(false);
         p.abbreviationMinComplexity.set(20);
         p.abbreviationMinQuality.set(0.9f);
         
-        p.maxReasonedTermLink.set(3);
-    
         
         
-        //Experimental parameters - adjust at your own risk
-        p.cycleMemory.set(1);                
+        
         return p;
     }
     
@@ -220,4 +218,15 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         }
     }
     
+
+    /* ---------- initial values of run-time adjustable parameters ---------- */
+//    /** Concept decay rate in ConceptBag, in [1, 99]. */
+//    private static final int CONCEPT_CYCLES_TO_FORGET = 10;
+//    /** TaskLink decay rate in TaskLinkBag, in [1, 99]. */
+//    private static final int TASK_LINK_CYCLES_TO_FORGET = 20;
+//    /** TermLink decay rate in TermLinkBag, in [1, 99]. */
+//    private static final int TERM_LINK_CYCLES_TO_FORGET = 50;        
+//    /** Task decay rate in TaskBuffer, in [1, 99]. */
+//    private static final int NEW_TASK_FORGETTING_CYCLE = 10;
+
 }
