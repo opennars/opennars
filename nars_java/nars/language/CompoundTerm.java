@@ -417,7 +417,7 @@ public abstract class CompoundTerm extends Term {
      *
      * @return the size of the component list
      */
-    public int size() {
+    final public int size() {
         return term.length;
     }
 

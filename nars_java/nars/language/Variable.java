@@ -127,4 +127,10 @@ public class Variable extends Term {
     boolean isQueryVariable() { return getType() == '?';    }
     boolean isDependentVariable() { return getType() == '#';    }
     boolean isIndependentVariable() { return getType() == '$';    }
+
+    boolean isCommon() {
+        String s = toString();
+        return s.charAt(s.length() - 1) == '$';
+    }
+    
 }

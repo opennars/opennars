@@ -31,7 +31,8 @@ import javax.swing.JFrame;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
-import nars.gui.output.MultiOutputPanel;
+import nars.gui.output.LogPanel;
+import nars.gui.output.SwingLogPanel;
 import nars.io.TextInput;
 
 /**
@@ -116,18 +117,16 @@ public class NARSwing  {
         
         NARSwing swing = new NARSwing(nar);
 
-        /*
-        LogPanel outputLog = 
-                new SwingLogPanel(narControls);
-                //new HTMLLogPanel(narControls);
-        Window outputWindow = new Window("Log", outputLog);        
-        outputWindow.setLocation(mainWindow.getLocation().x + mainWindow.getWidth(), mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
-        outputWindow.setVisible(true);
-        */
         
-        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
-        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
+        LogPanel outputLog = new SwingLogPanel(swing.narControls); //new HTMLLogPanel(narControls);
+        Window outputWindow = new Window("Log", outputLog);        
+        outputWindow.setLocation(swing.narControls.getLocation().x + swing.narControls.getWidth(), swing.narControls.getLocation().y);        outputWindow.setSize(800, 400);
         outputWindow.setVisible(true);
+        
+        
+//        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
+//        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
+//        outputWindow.setVisible(true);
         
         
         InputPanel inputPanel = new InputPanel(nar);
