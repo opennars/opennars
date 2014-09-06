@@ -136,26 +136,30 @@ public class ShortFloat implements Cloneable {
         }
     }
 
+    public boolean equalsOne() {
+        return (value+50) >= 10000;
+    }
+    
     /**
      * Round the value into a short String
      * @return The String representation, with 2 digits accuracy
      */
     public String toStringBrief() {        
-        if ((value+50) >= 10000) {
+        if (equalsOne()) {
             return "1.00";
         } else {
             final String s = String.valueOf(value+50);
             
-
             final int sl = s.length();
             switch(sl) {
                 case 4: return "0." + s.substring(0,2);
                 case 3: return "0.0" + s.charAt(0);
-                case 2: return "0.00";
-                case 1: return "0.00";
+                default: return "0.00";
+                /*case 2: return "0.00";
+                case 1: return "0.00";*/
             }
             
-            return null;
+            //return null;
         }                
     }
     

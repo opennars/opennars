@@ -34,21 +34,27 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     private int tick;
     private int renderedFrames;
     boolean antialias = false;
+    private boolean soundEnabled = false;
 
 
-    public MarioComponent()
-    {
+    public MarioComponent()     {
         this.setFocusable(true);
         this.setEnabled(true);
 
 
-        try
-        {
-            sound = new SonarSoundEngine(16);
+        if (soundEnabled) {
+
+            try
+            {
+                    sound = new SonarSoundEngine(16);
+            }
+            catch (LineUnavailableException e)
+            {
+                e.printStackTrace();
+                sound = new FakeSoundEngine();
+            }
         }
-        catch (LineUnavailableException e)
-        {
-            e.printStackTrace();
+        else {
             sound = new FakeSoundEngine();
         }
 

@@ -219,17 +219,12 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         }*/
         
         sb.ensureCapacity(11);
-        sb.append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);
-        
-        String s2 = confidence.toStringBrief();
-        if (s2.equals("1.00")) {
-            sb.append("0.99");
-        } else {
-            sb.append(s2);
-        }
-        
-        sb.append(DELIMITER);        
-        return sb;
+        return sb
+            .append(DELIMITER)
+            .append(frequency.toStringBrief())
+            .append(SEPARATOR)
+            .append(confidence.equalsOne() ? "0.99" : confidence.toStringBrief())
+            .append(DELIMITER);        
     }
 
     public CharSequence name() {
@@ -239,9 +234,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
     
     public String toStringBrief() {
-        //1 + 4 + 1 + 4 + 1
-        StringBuilder sb =  new StringBuilder(11);
-        return appendStringBrief(sb).toString();
+        return name().toString();
     }
 
     

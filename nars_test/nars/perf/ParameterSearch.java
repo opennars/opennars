@@ -43,7 +43,7 @@ public class ParameterSearch {
         int totalTests = 0;
         Map<Integer, Integer> testTimes = new TreeMap();
         
-        System.out.println("running: " + experiment);
+        System.out.print(experiment + " ");
         
         for (int i = 0; i < trainingSet.size(); i++) {            
             MLDataPair g = trainingSet.get(i);
@@ -83,19 +83,19 @@ public class ParameterSearch {
         Map<String, Integer> bestCount = new TreeMap();
         Map<String, Integer> worstCount = new TreeMap();
         
-        System.out.println("Experiment Comparison:");
+        System.out.println("\nExperiment Comparison:");
         
         for (int i : experiments.keySet())  {
             Map<String, Integer> e = experiments.get(i);
             
             
-            System.out.print("  " + ep.get(i) + ": ");
+            //System.out.print("  " + ep.get(i) + ": ");
             
             TreeSet<Integer> cyclesUnique = new TreeSet(e.values());
             int min = cyclesUnique.first();
             int max = cyclesUnique.last();
             if (cyclesUnique.size() == 1) {
-                System.out.println("tie @ " + cyclesUnique.iterator().next() + " cycles");
+                //System.out.println("tie @ " + cyclesUnique.iterator().next() + " cycles");
             }
             else if (cyclesUnique.size() > 2) {
                 List<String> best = new ArrayList(4);
@@ -122,14 +122,14 @@ public class ParameterSearch {
                         }                        
                     }
                 }                
-                System.out.println("range=" + min + ".." + max + " cycles by winners=" + best );
+                //System.out.println("range=" + min + ".." + max + " cycles by winners=" + best );
             }
             else {
-                System.out.println("no result");
+                //System.out.println("no result");
             }        
         }
         
-        System.out.println("bests count:");
+        System.out.println("Winnings:");
         for (String k : bestCount.keySet()) {
             System.out.println("  " + k + " " + bestCount.get(k));
         }
@@ -150,6 +150,36 @@ public class ParameterSearch {
             
             a.param().termLinkRecordLength.set(i);
             score("termLinkRecordLength_" + String.format("%03d", i), a);
+        }
+        report();
+
+        //p.beliefCyclesToForget.set(50);
+        experiments.clear();
+        for (int i = 2; i < 100; i+=4) {
+            NAR a = new DefaultNARBuilder().build();
+            
+            a.param().beliefCyclesToForget.set(i);
+            score("beliefCyclesToForget_" + String.format("%03d", i), a);
+        }
+        report();
+        
+        //p.conceptCyclesToForget.set(10);             
+        experiments.clear();
+        for (int i = 2; i < 20; i++) {
+            NAR a = new DefaultNARBuilder().build();
+            
+            a.param().conceptCyclesToForget.set(i);
+            score("conceptCyclesToForget_" + String.format("%03d", i), a);
+        }
+        report();
+
+        //p.taskCyclesToForget.set(20);
+        experiments.clear();
+        for (int i = 2; i < 40; i+=2) {
+            NAR a = new DefaultNARBuilder().build();
+            
+            a.param().taskCyclesToForget.set(i);
+            score("taskCyclesToForget_" + String.format("%03d", i), a);
         }
         report();
         
