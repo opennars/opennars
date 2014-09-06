@@ -620,11 +620,21 @@ public class Memory implements Output, Serializable {
         logic.TASK_DERIVED.commit(task.budget.getPriority());
 
         if (!task.budget.aboveThreshold()) {            
-            if (recorder.isActive()) {
-                recorder.onTaskRemove(task, "Ignored");
-            }            
+            if (recorder.isActive())
+                recorder.onTaskRemove(task, "Ignored (insufficient budget)");
             return;            
         }
+        
+        if (task.sentence != null && task.sentence.truth != null) {
+              float conf = task.sentence.truth.getConfidence();                
+              if (conf == 0) { 
+                  //no confidence - we can delete the wrongs out that way.
+                  if (recorder.isActive())
+                      recorder.onTaskRemove(task, "Ignored (zero confidence)");
+                  return;
+              }
+        }
+                
         
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();                

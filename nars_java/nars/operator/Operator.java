@@ -23,11 +23,11 @@ package nars.operator;
 
 import java.util.Arrays;
 import java.util.List;
+import nars.core.Memory;
 import nars.entity.Task;
 import nars.io.Output.EXE;
 import nars.language.Statement;
 import nars.language.Term;
-import nars.core.Memory;
 
 /**
  * An individual operator that can be execute by the system, which can be either
@@ -65,12 +65,11 @@ public abstract class Operator extends Term {
     public void call(final Operation operation, final Term[] args, final Memory memory) {
         try {
             List<Task> feedback = execute(operation, args, memory);            
+            memory.executedTask(operation);
             reportExecution(operation, args, feedback, memory);
 
 
             if (feedback!=null) {
-                memory.executedTask(operation);
-
                 for (Task t : feedback) {
                     memory.inputTask(t);
                 }            
