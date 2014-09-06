@@ -521,11 +521,12 @@ public abstract class CompoundTerm extends Term {
     protected static boolean mayShare(final Term t) {        
         
         if (t instanceof CompoundTerm) {
-            if (t instanceof Image)
+            /*if (t instanceof Image)
                 if (((Image)t).containsPlaceHolder())
-                    return false;
+                    return false;*/
 
-            return !(t.containVar());
+            return false;
+            //return !(t.containVar());
         }
         
         
