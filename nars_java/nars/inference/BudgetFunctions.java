@@ -209,7 +209,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion
      * @return The budget value of the conclusion
      */
-    static BudgetValue forward(final TruthValue truth, final Memory memory) {
+    public static BudgetValue forward(final TruthValue truth, final Memory memory) {
         return budgetInference(truthToQuality(truth), 1, memory);
     }
 

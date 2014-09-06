@@ -177,7 +177,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "go-to", "");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -185,7 +185,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "pick", "");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -193,7 +193,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "activate", "");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -201,7 +201,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "deactivate", "");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -242,7 +242,7 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<Self --> [curious]>!");
                 s.nar.addInput("<Self --> [exploring]>!");
                 s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
-                s.nar.start(1);
+                s.nar.start(100);
             }
 
         });
@@ -251,7 +251,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "", "at");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -259,7 +259,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "", "hold");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -267,7 +267,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "", "on");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -275,7 +275,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "", "off");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -283,7 +283,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "", "opened");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -291,7 +291,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "", "closed");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
@@ -314,7 +314,7 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<I --> chatty>!");
                 s.nar.addInput("<I --> chatty>!");
                 s.nar.addInput("<I --> chatty>!");
-                s.nar.start(1);
+                s.nar.start(100);
             }
         });
 
