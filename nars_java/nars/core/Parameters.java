@@ -43,20 +43,11 @@ public class Parameters {
     public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;
     
     
-    
-    /* ---------- initial values of run-time adjustable parameters ---------- */
-    /** Concept decay rate in ConceptBag, in [1, 99]. */
-    public static final int CONCEPT_FORGETTING_CYCLE = 10;
-    /** TaskLink decay rate in TaskLinkBag, in [1, 99]. */
-    public static final int TASK_LINK_FORGETTING_CYCLE = 20;
-    /** TermLink decay rate in TermLinkBag, in [1, 99]. */
-    public static final int TERM_LINK_FORGETTING_CYCLE = 50;
+
     
     
 
-    /* ---------- time management ---------- */
-    /** Task decay rate in TaskBuffer, in [1, 99]. */
-    public static final int NEW_TASK_FORGETTING_CYCLE = 10;
+    
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public static final int MAX_MATCHED_TERM_LINK = 10;
     
@@ -110,8 +101,7 @@ public class Parameters {
     public static final float BAG_THRESHOLD = 0.1f;
     
 
-    /** Size of TaskBuffer */
-    public static final int TASK_BUFFER_SIZE = 10;
+    
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */

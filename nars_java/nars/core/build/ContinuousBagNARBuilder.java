@@ -1,15 +1,13 @@
 package nars.core.build;
 
-import nars.core.build.DefaultNARBuilder;
+import nars.core.Memory;
 import nars.core.Param;
-import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.core.Memory;
 import nars.storage.ContinuousBag;
 
 
@@ -26,19 +24,19 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
 
     @Override
     public AbstractBag<Task> newNovelTaskBag(Param p) {
-        return new ContinuousBag<>(Parameters.TASK_BUFFER_SIZE, Parameters.NEW_TASK_FORGETTING_CYCLE, randomRemoval);
+        return new ContinuousBag<>(getTaskBufferSize(), p.taskCyclesToForget, randomRemoval);
     }
 
     @Override
     public AbstractBag<Concept> newConceptBag(Param p) {
-        return new ContinuousBag<>(getConceptBagSize(), Parameters.CONCEPT_FORGETTING_CYCLE, randomRemoval);
+        return new ContinuousBag<>(getConceptBagSize(), p.conceptCyclesToForget, randomRemoval);
     }
     
     @Override
     public Concept newConcept(final Term t, final Memory m) {
         
-        AbstractBag<TaskLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), m.param.taskForgettingRate, randomRemoval);
-        AbstractBag<TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), m.param.beliefForgettingRate, randomRemoval);
+        AbstractBag<TaskLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, randomRemoval);
+        AbstractBag<TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, randomRemoval);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }
