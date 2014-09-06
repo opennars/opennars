@@ -27,7 +27,7 @@ public class ParameterSearch {
         
         int tests = 200; //all        
         int additionalCycles = 0;
-        int maxCyclesPerTest = 1500;
+        int maxCyclesPerTest = 200;
         
 /*[emotion.happy0, task.derived1, task.executed.priority.mean2, cycle.cpu_time.mean3, emotion.busy4, reason.ded_2nd_layer_variable_unification5, concept.priority.mean6, cycle.frequency.hz7, reason.ded_2nd_layer_variable_unification_terms8, task.judgment.process9, concept.count10, concept.questions.mean11, task.add_new.priority.mean12, task.immediate_processed13, io.to_memory.ratio14, reason.fire.tasklink.priority.mean15, task.add_new16, reason.tasktermlinks17, reason.contraposition18, concept.new19, reason.fire.tasklinks20, concept.new.complexity.mean21, reason.analogy22, task.derived.priority.mean23, task.question.process24, cycle.frequency_potential.mean.hz25, task.link_to26, task.executed27, concept.beliefs.mean28, task.goal.process29, reason.tasktermlink.priority.mean30, cycle.ram_use.delta_Kb.sampled31, reason.ded_conjunction_by_question32, memory.noveltasks.total33, reason.belief_revision34, id35, time36, absTime37, successes38, error39]
 */
@@ -147,7 +147,7 @@ public class ParameterSearch {
             //a.param().contrapositionPriority.set(i);
             //System.out.println("contraposition priority=" + i + " = " + score(a));            
             
-            a.param().taskForgettingRate.set(i);
+            a.param().taskCyclesToForget.set(i);
             score("taskForgettingRate_" + String.format("%03d", i), a);
             
             //a.param().maxReasonedTermLink.set(i);
@@ -162,7 +162,7 @@ public class ParameterSearch {
             //a.param().contrapositionPriority.set(i);
             //System.out.println("contraposition priority=" + i + " = " + score(a));            
             
-            a.param().beliefForgettingRate.set(i);
+            a.param().beliefCyclesToForget.set(i);
             score("beliefForgettingRate_" + String.format("%03d", i), a);
             
             //a.param().maxReasonedTermLink.set(i);

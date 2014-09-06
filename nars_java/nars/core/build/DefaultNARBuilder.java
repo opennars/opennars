@@ -1,11 +1,9 @@
 package nars.core.build;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.core.NARBuilder;
 import nars.core.Param;
-import nars.core.Parameters;
 import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -22,6 +20,33 @@ import nars.storage.Bag;
 public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     
+    /* ---------- initial values of run-time adjustable parameters ---------- */
+    /** Concept decay rate in ConceptBag, in [1, 99]. */
+    private static final int CONCEPT_CYCLES_TO_FORGET = 10;
+    /** TaskLink decay rate in TaskLinkBag, in [1, 99]. */
+    private static final int TASK_LINK_CYCLES_TO_FORGET = 20;
+    /** TermLink decay rate in TermLinkBag, in [1, 99]. */
+    private static final int TERM_LINK_CYCLES_TO_FORGET = 50;        
+    /** Task decay rate in TaskBuffer, in [1, 99]. */
+    private static final int NEW_TASK_FORGETTING_CYCLE = 10;
+    
+    public int taskLinkBagLevels;
+    
+    /** Size of TaskLinkBag */
+    public int taskLinkBagSize;
+    
+    public int termLinkBagLevels;
+    
+    /** Size of TermLinkBag */
+    public int termLinkBagSize;
+    
+    /** determines maximum number of concepts */
+    private int conceptBagSize;    
+
+    /** Size of TaskBuffer */
+    private int taskBufferSize = 10;
+    
+    
     public DefaultNARBuilder() {
         super();
         
@@ -33,15 +58,20 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
         setTermLinkBagLevels(100);
         setTermLinkBagSize(100);
+        
+        setTaskBufferSize(10);
     }
 
     @Override
     public Param newParam() {
         Param p = new Param();
         p.noiseLevel.set(100);
-        p.conceptForgettingRate.set(10);             
-        p.taskForgettingRate.set(20);
-        p.beliefForgettingRate.set(50);
+        
+        p.conceptCyclesToForget.set(CONCEPT_CYCLES_TO_FORGET);             
+        p.taskCyclesToForget.set(TASK_LINK_CYCLES_TO_FORGET);
+        p.beliefCyclesToForget.set(TERM_LINK_CYCLES_TO_FORGET);
+        p.newTaskCyclesToForget.set(NEW_TASK_FORGETTING_CYCLE);
+        
         p.cycleInputTasks.set(1);
         
         p.contrapositionPriority.set(30);
@@ -74,34 +104,24 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Memory m) {        
-        AbstractBag<TaskLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskForgettingRate);
-        AbstractBag<TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgettingRate);
+        AbstractBag<TaskLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskCyclesToForget);
+        AbstractBag<TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefCyclesToForget);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }
 
     
     protected AbstractBag<Concept> newConceptBag(Param p) {
-        return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgettingRate);
+        return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptCyclesToForget);
     }
 
     @Override
     public AbstractBag<Task> newNovelTaskBag(Param p) {
-        return new Bag<>(getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE, new AtomicInteger(Parameters.NEW_TASK_FORGETTING_CYCLE));
+        return new Bag<>(getConceptBagLevels(), getTaskBufferSize(), p.newTaskCyclesToForget);
     }
  
-    public int taskLinkBagLevels;
     
-    /** Size of TaskLinkBag */
-    public int taskLinkBagSize;
     
-    public int termLinkBagLevels;
-    
-    /** Size of TermLinkBag */
-    public int termLinkBagSize;
-    
-    /** determines maximum number of concepts */
-    private int conceptBagSize;    
     public int getConceptBagSize() { return conceptBagSize; }    
     public DefaultNARBuilder setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
@@ -116,11 +136,21 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     public int getTaskLinkBagLevels() {
         return taskLinkBagLevels;
     }
-
+       
     public DefaultNARBuilder setTaskLinkBagLevels(int taskLinkBagLevels) {
         this.taskLinkBagLevels = taskLinkBagLevels;
         return this;
     }
+
+    public void setTaskBufferSize(int taskBufferSize) {
+        this.taskBufferSize = taskBufferSize;
+    }
+
+    public int getTaskBufferSize() {
+        return taskBufferSize;
+    }
+    
+    
 
     public int getTaskLinkBagSize() {
         return taskLinkBagSize;

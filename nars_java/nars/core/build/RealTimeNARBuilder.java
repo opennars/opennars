@@ -1,15 +1,14 @@
 package nars.core.build;
 
+import nars.core.ConceptProcessor;
+import nars.core.Memory;
 import nars.core.Param;
-import nars.core.Parameters;
 import nars.core.control.RealTimeFloodCycle;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.core.Memory;
-import nars.core.ConceptProcessor;
 import nars.storage.ContinuousBag;
 
 /**
@@ -29,12 +28,12 @@ public class RealTimeNARBuilder extends DefaultNARBuilder {
 
     @Override
     public AbstractBag<Task> newNovelTaskBag(Param p) {
-        return new ContinuousBag<>(Parameters.TASK_BUFFER_SIZE, Parameters.NEW_TASK_FORGETTING_CYCLE, randomRemoval);
+        return new ContinuousBag<>(getTaskBufferSize(), p.newTaskCyclesToForget, randomRemoval);
     }
 
     @Override
     public AbstractBag<Concept> newConceptBag(Param p) {
-        return new ContinuousBag<>(getConceptBagSize(), Parameters.CONCEPT_FORGETTING_CYCLE, randomRemoval);
+        return new ContinuousBag<>(getConceptBagSize(), p.conceptCyclesToForget, randomRemoval);
     }
     
     @Override
