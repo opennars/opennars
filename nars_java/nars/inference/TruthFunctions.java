@@ -76,7 +76,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue revision(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue revision(final TruthValue v1, final TruthValue v2) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();
@@ -157,7 +157,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue abduction(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue abduction(final TruthValue v1, final TruthValue v2) {
         if (v1.getAnalytic() || v2.getAnalytic()) {
             return new TruthValue(0.5f, 0f);
         }
@@ -193,7 +193,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue induction(final TruthValue v1, final TruthValue v2) {
+    static final TruthValue induction(final TruthValue v1, final TruthValue v2) { 
         return abduction(v2, v1);
     }
 

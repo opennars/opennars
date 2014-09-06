@@ -35,6 +35,8 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
+    public static int SHORT_TERM_MEMORY_SIZE=5; //up to n events in short term memory
+    
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
     //internal experience has less priority?
