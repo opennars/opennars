@@ -39,7 +39,7 @@ public class Variables {
                     map2.put(term2, CommonVar);
                 } else {
                     map1.put(var1, term2);
-                    if (var1.isIndependentVariable()) {
+                    if (var1.isCommon()) {
                         map2.put(var1, term2);
                     }
                 }
@@ -52,7 +52,7 @@ public class Variables {
                 return findSubstitute(type, term1, t, map1, map2);
             } else {
                 map2.put(var2, term1);
-                if (var2.isIndependentVariable()) {
+                if (var2.isCommon()) {
                     map1.put(var2, term1);
                 }
                 return true;

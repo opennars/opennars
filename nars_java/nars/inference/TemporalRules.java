@@ -146,8 +146,7 @@ public class TemporalRules {
         return t.containedTemporalRelations() > 1;
         //return (a+b+c+d+e)/3 > 1;
     }
-    
-    final static Variable var1 = new Variable("$0");
+        
     
     public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {
         if ((s1.truth==null) || (s2.truth==null))
@@ -172,6 +171,7 @@ public class TemporalRules {
             Statement ss2 = (Statement) t2;
 
             
+            Variable var1 = new Variable("$0");
             Variable var2 = var1;
 
             if (ss1.getSubject().equals(ss2.getSubject())) {
