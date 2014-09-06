@@ -205,7 +205,7 @@ public class TestChamber {
                                     }
                                     if("go-to".equals(opname)) {
                                         nar.addInput("<"+goal+" --> at>. :|:");
-                                        nar.start(1);
+                                        nar.start(100);
                                     }
                                 }
                             }
