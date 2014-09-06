@@ -42,6 +42,7 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
+import nars.inference.LocalRules;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Output;
@@ -110,6 +111,11 @@ import nars.operator.Operator;
  */
 public class Memory implements Output, Serializable {
 
+    //memory for faster execution of &/ statements (experiment)
+    public ArrayList<Task> next_task=new ArrayList<Task>();
+    public ArrayList<Concept> next_concept=new ArrayList<Concept>();
+    public ArrayList<Term> next_content=new ArrayList<Term>();
+    
     //public static Random randomNumber = new Random(1);
     public static long randomSeed = 1;
     public static Random randomNumber = new Random(randomSeed);
@@ -371,8 +377,11 @@ public class Memory implements Output, Serializable {
     public void reset() {
         model.clear();
         novelTasks.clear();
-        newTasks.clear();        
-        shortTermMemory=new ArrayList<Task>();
+        newTasks.clear();     
+        next_task.clear();
+        next_concept.clear();
+        next_content.clear();
+        shortTermMemory.clear();
         clock = 0;
         stepsQueued = 0;
         working = true;
@@ -872,7 +881,9 @@ public class Memory implements Output, Serializable {
             
             if (stepsQueued > 0) {
                 stepsQueued--;
-            }            
+            }      
+            
+            LocalRules.Manage_Execution(this);
 
             clock++;
         }
@@ -974,11 +985,13 @@ public class Memory implements Output, Serializable {
                         terms[cur.size()-j-1]=cur.get(j);
                     }
                     
-                    Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
-                    val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-                    Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
-                    BudgetValue bud=BudgetFunctions.forward(val,this);
-                    this.doublePremiseTask(imp,val,bud);
+                    if(terms.length>1) {
+                        Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
+                        val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+                        Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
+                        BudgetValue bud=BudgetFunctions.forward(val,this);
+                        this.doublePremiseTask(imp,val,bud);
+                    }
                 }
             }
             if(newEvent.isInput()) { //only use input events for this heuristic

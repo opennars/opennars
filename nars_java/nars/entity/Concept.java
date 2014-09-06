@@ -27,16 +27,20 @@ import nars.core.Parameters;
 import static nars.entity.Stamp.make;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
-import static nars.inference.LocalRules.decisionMaking;
+import nars.inference.LocalRules;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
+import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.storage.AbstractBag;
@@ -253,8 +257,8 @@ public class Concept extends Item {
 
             if (task.aboveThreshold()) {    // still worth pursuing
                 addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);
-                if (noRevision || (task.sentence.content instanceof Operation)) {
-                    decisionMaking(task, this);
+                if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
+                    LocalRules.decisionMaking(task, this, memory); //hm or conjunction in time and temporal order forward
                 }
             }
         }
