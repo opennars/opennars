@@ -96,6 +96,10 @@ public class InPort<X> implements Iterator<X> {
         return n;
     }
     
+    public int getItemsBuffered() {
+        return buffer.size();
+    }
+    
     //public float getMass(X input) // allows variable weighting of input items; default=1.0
     
     //public double getInputMassRate(double windowSeconds); // calculates throughput rate in mass/sec within a given past window size, using an internal histogram of finite resolution
