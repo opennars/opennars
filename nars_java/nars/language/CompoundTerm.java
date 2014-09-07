@@ -39,7 +39,7 @@ import static nars.language.CompoundTerm.makeCompoundName;
 
 
 public abstract class CompoundTerm extends Term {
-
+    
     /**
      * list of (direct) term
      */
@@ -507,10 +507,12 @@ public abstract class CompoundTerm extends Term {
             
             final Term t = srcArray[j++];
                                     
-            if (deep && !mayShare(t))
-                arr[i] = t.clone();
-            else
+            if (deep && !mayShare(t)) {
+                arr[i] = t.clone();                
+            }
+            else {
                 arr[i] = t;
+            }
         }
 
         return arr;
@@ -519,21 +521,20 @@ public abstract class CompoundTerm extends Term {
 
     /** determines whether we can avoid cloning something, and just re-use it */
     protected static boolean mayShare(final Term t) {        
-        
-        if (t instanceof CompoundTerm) {
-            /*if (t instanceof Image)
-                if (((Image)t).containsPlaceHolder())
-                    return false;*/
-
-            return false;
-            //return !(t.containVar());
-        }
-        
-        
-        return true;
-//        if (t instanceof Variable) return true;        
-//        if (t instanceof Interval) return true;
-//        if (t instanceof Operator) return true;
+        return false;        
+//        if (t instanceof CompoundTerm) {
+//            /*if (t instanceof Image)
+//                if (((Image)t).containsPlaceHolder())
+//                    return false;*/
+//
+//            if (t.containVar()) return false;
+//            
+//            return true;
+//            //return !(t.containVar());
+//        }
+//        
+//        
+//        return true;
     }
 
     

@@ -16,19 +16,16 @@
  */
 package nars.test.core;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.TreeSet;
-
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Concept;
 import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Term;
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -197,4 +194,6 @@ public class TermTest {
             assertEquals(s, unescaped);
         }
     }
+
+
 }

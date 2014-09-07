@@ -132,5 +132,17 @@ public class Variable extends Term {
         String s = toString();
         return s.charAt(s.length() - 1) == '$';
     }
+
+//    @Override
+//    protected boolean setName(CharSequence newName) {
+//        if (this.name!=null) {
+//            //if (!this.name.equals(newName)) {
+//                throw new RuntimeException("Variable renamed");
+//            //}
+//        }
+//
+//        return super.setName(newName); 
+//    }
+    
     
 }
