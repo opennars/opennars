@@ -6,6 +6,7 @@ import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.ShortFloat;
 import nars.gui.NARSwing;
+import nars.io.Output;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.Enemy;
@@ -28,6 +29,7 @@ public class NARio extends Run {
     int cycle = 0;
     int gotCoin = 0;
     private Mario mario;
+    int cycleSamples = 3;
 
     public NARio(NAR n) {
         super();
@@ -62,9 +64,20 @@ public class NARio extends Run {
 
             @Override public void event(Class event, Object... arguments) {
                 
-//                if (((cycle++) % cycleSamples) != 0) {
-//                    return;
+                if (((cycle++) % cycleSamples) != 0) {
+                    return;
+                }
+                
+//                if (cycle % 100 == 1) {
+//                    System.out.println("Inports: " + nar.getInPorts().size());
 //                }
+                if (cycle % 100 == 0) {
+                    int flushed = nar.flushInput(Output.NullOutput);
+                    //System.out.println("Inports: " + nar.getInPorts().size()); 
+                    System.out.println("Flushed: " + flushed);
+                }
+                
+                
                 if (cycle == 0) {
                     nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
                     nar.addInput("<?y --> space>? :/:");
@@ -217,7 +230,7 @@ public class NARio extends Run {
         
         new NARSwing(nar); 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.start(50);
+        nar.start(30);
 
         NARio nario = new NARio(nar);
         nario.TICKS_PER_SECOND = 12;

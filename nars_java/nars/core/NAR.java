@@ -441,5 +441,34 @@ public class NAR implements Runnable, Output {
         }
         return null;
     }
+
+    /** stops ad empties all input channels into a receiver. this
+        results in no pending input. 
+        @return total number of items flushed
+        */
+    public int flushInput(Output receiver) {
+        int total = 0;
+        for (InPort c : inputChannels) {
+            total += flushInput(c, receiver);
+        }
+        return total;
+    }
     
+    /** stops and empties an input channel into a receiver. 
+     * this results in no pending input from this channel. */
+    public int flushInput(InPort i, Output receiver) {
+        int total = 0;
+        i.finish();
+        
+        while (i.hasNext()) {
+            receiver.output(IN.class, i.next());
+            total++;
+        }        
+        
+        return total;
+    }
+
+    public List<InPort> getInPorts() {
+        return inputChannels;
+    }
 }

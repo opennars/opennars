@@ -1,6 +1,7 @@
 package nars.io;
 
 import java.io.IOException;
+import java.util.Iterator;
 import nars.core.Perception;
 import nars.io.buffer.Buffer;
 
@@ -9,7 +10,7 @@ import nars.io.buffer.Buffer;
  * An attached Input, Buffer, and Attention Allocation State
  * @author me
  */
-public class InPort<X> {
+public class InPort<X> implements Iterator<X> {
     public final Input<X> input;
     public final Buffer<X> buffer;
     private float attention;
@@ -71,6 +72,10 @@ public class InPort<X> {
     public float getAttention() {
         return attention;
     }        
+    
+    public boolean finish() {
+        return input.finished(true);
+    }
     
     public boolean finished() {
         if (buffer!=null)
