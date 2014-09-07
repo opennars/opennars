@@ -98,7 +98,7 @@ public class PrologQueryOperator extends Operator {
         //memory.output(Prolog.class, query + " | " + result);
        
         // set result values
-        Term[] resultTerms = getResultVariablesFromPrologVariables(resolvedVariableValues, args);
+        Term[] resultTerms = getResultVariablesFromPrologVariables(resolvedVariableValues, args, memory);
        
         // create evaluation result
         int i;
@@ -171,63 +171,16 @@ public class PrologQueryOperator extends Operator {
     }
     
     
-    static private Term[] getResultVariablesFromPrologVariables(nars.prolog.Term[] prologVariables, Term[] args) {
+    static private Term[] getResultVariablesFromPrologVariables(nars.prolog.Term[] prologVariables, Term[] args, Memory memory) {
         int numberOfVariables = (args.length - 2) / 2;
         int variableI;
        
         Term[] resultTerms = new Term[numberOfVariables];
        
         for( variableI = 0; variableI < numberOfVariables; variableI++ ) {
-            if( prologVariables[variableI] instanceof Int ) {
-                Int prologIntegerTerm = (Int)prologVariables[variableI];
-               
-                resultTerms[variableI] = new Term(String.valueOf(prologIntegerTerm.intValue()));
-               
-                continue;
-            }
-            else if( prologVariables[variableI] instanceof nars.prolog.Double ) {
-                nars.prolog.Double prologDoubleTerm = (nars.prolog.Double)prologVariables[variableI];
-                
-                resultTerms[variableI] = new Term(String.valueOf(prologDoubleTerm.floatValue()));
-                
-                continue;
-            }
-            else if( prologVariables[variableI] instanceof nars.prolog.Float ) {
-                nars.prolog.Float prologFloatTerm = (nars.prolog.Float)prologVariables[variableI];
-               
-                resultTerms[variableI] = new Term(String.valueOf(prologFloatTerm.floatValue()));
-               
-                continue;
-            }
-            else if( prologVariables[variableI] instanceof Struct ) {
-                Struct structTerm = (Struct)prologVariables[variableI];
-                
-                // check if it is a string (has arity 0) or a list/struct (arity == 2 because lists are composed out of 2 tuples)
-                if (structTerm.getArity() == 0) {
-                    String variableAsString = structTerm.getName();
-                    
-                    resultTerms[variableI] = new Term("\"" + variableAsString + "\"");
-                    
-                    continue;
-                }
-                else if (structTerm.getArity() == 2) {
-                    // convert the result array to a nars thingy
-                    ArrayList<nars.prolog.Term> structAsList = convertChainedStructToList(structTerm);
-                    
-                    // TODO
-                    
-                    continue;
-                }
-                else {
-                    throw new RuntimeException("Unhandled Struct!");
-                }
-                
-                // unreachable
-            }
-           
-            throw new RuntimeException("Unhandled type of result variable");
+            resultTerms[variableI] = convertPrologTermToNarsTermRecursive(prologVariables[variableI], memory);
         }
-       
+        
         return resultTerms;
     }
     
@@ -286,7 +239,58 @@ public class PrologQueryOperator extends Operator {
         
         return resultArray;
     }
-   
+    
+    // tries to convert a prolog term to a nars term
+    // a chained Prolog Struct List will be converted to a Nars-Product (because it maps good to a list and nars can kinda understand it)
+    // throws a exception if the term type is not handable
+    static private Term convertPrologTermToNarsTermRecursive(nars.prolog.Term prologTerm, Memory memory) {
+        if( prologTerm instanceof Int ) {
+            Int prologIntegerTerm = (Int)prologTerm;
+
+            return new Term(String.valueOf(prologIntegerTerm.intValue()));
+        }
+        else if( prologTerm instanceof nars.prolog.Double ) {
+            nars.prolog.Double prologDoubleTerm = (nars.prolog.Double)prologTerm;
+
+            return new Term(String.valueOf(prologDoubleTerm.floatValue()));
+        }
+        else if( prologTerm instanceof nars.prolog.Float ) {
+            nars.prolog.Float prologFloatTerm = (nars.prolog.Float)prologTerm;
+
+            return new Term(String.valueOf(prologFloatTerm.floatValue()));
+        }
+        else if( prologTerm instanceof Struct ) {
+            Struct structTerm = (Struct)prologTerm;
+
+            // check if it is a string (has arity 0) or a list/struct (arity == 2 because lists are composed out of 2 tuples)
+            if (structTerm.getArity() == 0) {
+                String variableAsString = structTerm.getName();
+
+                return new Term("\"" + variableAsString + "\"");
+            }
+            else if (structTerm.getArity() == 2) {
+                // convert the result array to a nars thingy
+                ArrayList<nars.prolog.Term> structAsList = convertChainedStructToList(structTerm);
+                
+                // convert the list to a nars product wth the cconverted elements
+                Term[] innerProductTerms = new Term[structAsList.size()];
+                
+                for (int i = 0; i < structAsList.size(); i++) {
+                    innerProductTerms[i] = convertPrologTermToNarsTermRecursive(structAsList.get(i), memory);
+                }
+                
+                return Product.make(innerProductTerms, memory);
+            }
+            else {
+                throw new RuntimeException("Unhandled Struct!");
+            }
+
+            // unreachable
+        }
+
+        throw new RuntimeException("Unhandled type of result variable");
+    }
+    
     // tries to get a variable from a term by name
     // returns null if it wasn't found
     static private nars.prolog.Var getVariableByNameRecursive(nars.prolog.Term term, String name) {
