@@ -971,9 +971,9 @@ public class Memory implements Output, Serializable {
 
                     setCurrentBelief(shortTermMemory.get(i).sentence);
                     TruthValue val=shortTermMemory.get(i).sentence.truth;
-                    for(int j=i+1;j+1<n;j++) {
+                    /*for(int j=i+1;j+1<n;j++) { 
                         val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
-                    }
+                    }*///lets let it abduction instead
                     
                     int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(n-1).getCreationTime());
                     if(diff>Parameters.DURATION) {
