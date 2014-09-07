@@ -45,7 +45,7 @@ import nars.storage.BagObserver;
 /**
  * JWindow display the priority distribution of items within a given bag
  */
-public class BagWindow<E extends Item> extends Window implements ActionListener, AdjustmentListener,
+@Deprecated public class BagWindow<E extends Item> extends Window implements ActionListener, AdjustmentListener,
         BagObserver<E> {
 
     /**
@@ -118,13 +118,13 @@ public class BagWindow<E extends Item> extends Window implements ActionListener,
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source == playButton) {
-            bag.play();
-        } else if (source == stopButton) {
-            bag.stop();
-        } else if (source == closeButton) {
-            close();
-        }
+//        if (source == playButton) {
+//            bag.play();
+//        } else if (source == stopButton) {
+//            bag.stop();
+//        } else if (source == closeButton) {
+//            close();
+//        }
     }
 
     /**
@@ -132,7 +132,7 @@ public class BagWindow<E extends Item> extends Window implements ActionListener,
      */
     @Override
     protected void close() {
-        bag.stop();
+//        bag.stop();
         dispose();
         counter--;
     }
@@ -147,8 +147,8 @@ public class BagWindow<E extends Item> extends Window implements ActionListener,
         if (e.getSource() == valueBar) {
             int showLevel = valueBar.getValue();
             adjustLabelAndCursor(showLevel);
-            bag.setShowLevel(showLevel);
-            bag.play();
+//            bag.setShowLevel(showLevel);
+//            bag.play();
         }
     }
 
