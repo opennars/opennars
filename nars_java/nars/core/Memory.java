@@ -418,8 +418,8 @@ public class Memory implements Output, Serializable {
      *
      * @return Whether the newTasks list is empty
      */
-    public boolean noResult() {
-        return newTasks.isEmpty();
+    public int getNewTaskCount() {
+        return newTasks.size();
     }
 
     /* ---------- conversion utilities ---------- */
@@ -894,28 +894,26 @@ public class Memory implements Output, Serializable {
 
         //IO cycle
         resource.IO_CYCLE.start();
-        
+
         logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
         
-        {            
-            if (getCyclesQueued()==0) {                
-                for (int i = 0; i < inputCycles; i++) {
-                    AbstractTask t = taskSource.nextTask();
-                    if (t!=null)
-                        inputTask(t);
-                }
+        if (getCyclesQueued()==0) {                
+            for (int i = 0; i < inputCycles; i++) {
+                AbstractTask t = taskSource.nextTask();
+                if (t!=null)
+                    inputTask(t);
             }
-        }            
+        }
         resource.IO_CYCLE.stop();
 
-
+        
+        
+        //Memory working 
         resource.MEMORY_CYCLE.start();
-        if (working) {
-            //Memory working cycle
-            
+        if (working) {            
             for (int i = 0; i < memCycles; i++) {
                 cycleWork();                
-            }
+            }            
         }
         resource.MEMORY_CYCLE.stop();
         
@@ -941,21 +939,21 @@ public class Memory implements Output, Serializable {
         
         event.emit(WorkCycleStart.class);
         
-        if (recorder.isActive())
+        boolean recorderActive = recorder.isActive();
+        if (recorderActive)
             recorder.onCycleStart(clock);
 
-        { //--------
+        //--------m-a-i-n-----l-o-o-p--------
             
-            conceptProcessor.cycle(this);
+        conceptProcessor.cycle(this);
             
-        } //--------
+        //--------m-a-i-n-----l-o-o-p--------
 
-        if (recorder.isActive())
+        if (recorderActive)
             recorder.onCycleEnd(clock);
 
-        if (stepsQueued > 0) {
-            stepsQueued--;
-        }            
+        if (stepsQueued > 0)
+            stepsQueued--;         
 
         clock++;
                 
@@ -966,20 +964,30 @@ public class Memory implements Output, Serializable {
     /** previous events, for temporal induction */
     private ArrayList<Task> shortTermMemory=new ArrayList<Task>();
     
+    
     /**
      * Process the newTasks accumulated in the previous cycleMemory, accept
  addInput ones and those that corresponding to existing concepts, plus one
- from the buffer.
+ from the buffer. 
+        @return number of tasks processed
      */
-    public void processNewTasks() {        
+    public int processNewTasks() {        
+        return processNewTasks(newTasks.size());
+    }
+    
+    /** Processes a specific number of new tasks */
+    public int processNewTasks(int maxTasks) {        
         
+        int processed = 0;
         // don't include new tasks produced in the current cycleMemory
-        int counter = newTasks.size();       
+        int counter = Math.min(maxTasks, newTasks.size());
         
         Task newEvent = null;
         while (counter-- > 0) {
             
             final Task task = newTasks.removeFirst();
+            processed++;
+            
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
             
             if (task.isInput()  || concept(task.getContent())!=null || (task!=null && task.getContent()!=null && task.sentence!=null && 
@@ -1018,11 +1026,12 @@ public class Memory implements Output, Serializable {
                 }
             }
         }
+        
         if (newEvent != null && newEvent.isInput()) {
             int n=shortTermMemory.size();
             if (n!=0) { //also here like in rule tables: we dont want to derive useless statements
                 if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,shortTermMemory.get(n-1).sentence.content)) {
-                    return;
+                    return processed;
                 }
                 setTheNewStamp(Stamp.make(newEvent.sentence.stamp, shortTermMemory.get(n-1).sentence.stamp, getTime()));
                 setCurrentTask(newEvent);
@@ -1078,6 +1087,8 @@ public class Memory implements Output, Serializable {
                 }
             }
         }
+        
+        return processed;
     }
 
     

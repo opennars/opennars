@@ -86,7 +86,7 @@ public class RuleTables {
         
         if (belief != null) {            
             LocalRules.match(task, belief, memory);
-            if (!memory.noResult()) {
+            if (!(memory.getNewTaskCount() == 0)) {
                 return;
             }
         }
@@ -99,7 +99,7 @@ public class RuleTables {
         memory.setCurrentBelief(buf1);
         memory.setCurrentTask(buf2);
         
-        if (!memory.noResult() && task.sentence.isJudgment()) {
+        if (!(memory.getNewTaskCount() == 0) && task.sentence.isJudgment()) {
             return;
         }
         

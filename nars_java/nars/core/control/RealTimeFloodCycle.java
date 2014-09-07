@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import nars.core.ConceptProcessor;
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -16,8 +18,6 @@ import nars.entity.TermLink;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.core.Memory;
-import nars.core.ConceptProcessor;
 import nars.storage.ContinuousBag;
 
 /**
@@ -131,16 +131,9 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         
         m.processNewTasks();
 
-        if (m.noResult()) {       // necessary?
-            m.processNovelTask();
-        }
+        m.processNovelTask();
 
-        //if (m.noResult()) {       // necessary?
-            //processConcepts(m);
-        //}
-        
         processConcepts(m);
-
     }
 
     public void processConcepts(Memory m) {
