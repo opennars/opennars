@@ -221,7 +221,7 @@ public class TemporalRules {
         long timeDiff = time2 - time1;
         Interval interval;
         if (Math.abs(timeDiff) > Parameters.DURATION) {
-            interval = new Interval(Math.abs(timeDiff));
+            interval = Interval.intervalTime(Math.abs(timeDiff));
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD, memory);
                 if(t11!=null) {

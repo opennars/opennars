@@ -51,10 +51,14 @@ public class Parameters {
     
 
     /* ---------- logical parameters ---------- */
-    /** Evidential Horizon, the amount of future evidence to be considered. */
-    public static final int HORIZON = 1;    // or 2, can be float
+    /** Evidential Horizon, the amount of future evidence to be considered. 
+     * Must be >=1.0, usually 1 .. 2
+     */
+    public static final float HORIZON = 1;
+    
     /** Reliance factor, the empirical confidence of analytical truth. */
     public static final float RELIANCE = (float) 0.9;    // the same as default confidence
+    
     /** Tense usage convention, how far away "past" and "future" is from "now". */
     public static final int DURATION = 5;    // the range of "now" is [-DURATION, DURATION];
     

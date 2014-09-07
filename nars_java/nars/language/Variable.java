@@ -25,6 +25,9 @@ package nars.language;
  */
 public class Variable extends Term {
 
+    /** caches the type character for faster lookup than charAt(0) */
+    private transient char type = 0;
+    
     public Variable() {
         super();
     }
@@ -39,6 +42,16 @@ public class Variable extends Term {
         super(s);
     }
 
+    @Override
+    protected boolean setName(CharSequence newName) {
+        if (super.setName(newName)) {
+            type = newName.charAt(0);
+            return true;
+        }
+        return false;
+    }
+
+    
     /**
      * Clone a Variable
      *
@@ -48,6 +61,7 @@ public class Variable extends Term {
     public Variable clone() {
         Variable v = new Variable();
         v.name = name(); //apply name directly, no need to invoke setName()
+        v.type = type;
         return v;
     }
 
@@ -57,7 +71,9 @@ public class Variable extends Term {
      * @return The variable type
      */
     public char getType() {
-        return name().charAt(0);
+        if (type == 0)
+            type = name().charAt(0);
+        return type;
     }
     
 
