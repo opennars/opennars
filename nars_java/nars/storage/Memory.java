@@ -955,42 +955,46 @@ public class Memory implements Output, Serializable {
                 
                 TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
                 ArrayList<Term> cur=new ArrayList<Term>();
-                for(int i=n-1;i>=0;i--) {
-                    if(n==1) {
-                        break;
-                    }
-                    cur.add(shortTermMemory.get(i).getContent());
-                    if(i>0) {
-                        int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
-                        if(diff>Parameters.DURATION) {
-                            cur.add(new Interval(diff));
+                if(!(newEvent.sentence.content instanceof Operation)) {
+                    for(int i=n-1;i>=0;i--) {
+                        cur.add(shortTermMemory.get(i).getContent());
+                        if(i>0) {
+                            int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
+                            if(diff>Parameters.DURATION) {
+                                cur.add(new Interval(diff));
+                            }
                         }
-                    }
-                   // if(i!=0)
-                   //     continue; //just use last one fow now
+                        if(i!=0)
+                            continue; //just use last one fow now
 
-                    setCurrentBelief(shortTermMemory.get(i).sentence);
-                    TruthValue val=shortTermMemory.get(i).sentence.truth;
-                    /*for(int j=i+1;j+1<n;j++) { 
-                        val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
-                    }*///lets let it abduction instead
-                    
-                    int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(n-1).getCreationTime());
-                    if(diff>Parameters.DURATION) {
-                        cur.add(0, new Interval(diff));
-                    }
+                        setCurrentBelief(shortTermMemory.get(i).sentence);
+                        TruthValue val=shortTermMemory.get(i).sentence.truth;
+                        /*for(int j=i+1;j+1<n;j++) { 
+                            val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
+                        }*///lets let it abduction instead
 
-                    Term[] terms=new Term[cur.size()];
-                    for(int j=0;j<cur.size();j++) {
-                        terms[cur.size()-j-1]=cur.get(j);
-                    }
-                    
-                    if(terms.length>1) {
-                        Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
-                        val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-                        Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
-                        BudgetValue bud=BudgetFunctions.forward(val,this);
-                        this.doublePremiseTask(imp,val,bud);
+                        int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(n-1).getCreationTime());
+                        if(diff>Parameters.DURATION) {
+                            cur.add(0, new Interval(diff));
+                        }
+
+                        while(cur.size()<Parameters.SHORT_TERM_MEMORY_SIZE) {
+                            Interval inti=new Interval(1,true);
+                            cur.add(inti);
+                        }
+
+                        Term[] terms=new Term[cur.size()];
+                        for(int j=0;j<cur.size();j++) {
+                            terms[cur.size()-j-1]=cur.get(j);
+                        }
+
+                        if(terms.length>1) {
+                            Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
+                            val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+                            Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
+                            BudgetValue bud=BudgetFunctions.forward(val,this);
+                            this.doublePremiseTask(imp,val,bud);
+                        }
                     }
                 }
             }

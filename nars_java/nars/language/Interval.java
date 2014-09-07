@@ -38,7 +38,7 @@ public class Interval extends Term {
     /** this constructor has an extra unused argument to differentiate it from the other one,
      * for specifying magnitude directly.
      */
-    protected Interval(final int magnitude, boolean yesMagnitude) {
+    public Interval(final int magnitude, boolean yesMagnitude) {
         super();
         this.magnitude = magnitude;
         setName(Symbols.INTERVAL_PREFIX + String.valueOf(magnitude));        

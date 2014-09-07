@@ -353,6 +353,10 @@ public class LocalRules {
         if(content instanceof Conjunction && content.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
             //1. get first operator and execute it
             CompoundTerm cont = (CompoundTerm) content;
+            int lenu=cont.term.length;
+            if(cont.term.length!=Parameters.SHORT_TERM_MEMORY_SIZE) { //only allow the long plans here
+                return;
+            }
             for(Term t : cont.term) {
                 if(t instanceof Interval) {
                     Interval intv=(Interval) t;
