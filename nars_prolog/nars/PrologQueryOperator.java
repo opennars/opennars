@@ -193,26 +193,24 @@ public class PrologQueryOperator extends Operator {
                 continue;
             }
             else if( prologVariables[variableI] instanceof Struct ) {
-                Struct compoundTerm = (Struct)prologVariables[variableI];
-               
-                ArrayList<nars.prolog.Term> compundConvertedToArray = convertChainedCompoundTermToList(compoundTerm);
-               
-                try {
-                    String variableAsString = tryToConvertPrologListToString(compundConvertedToArray);
-                   
+                Struct structTerm = (Struct)prologVariables[variableI];
+                
+                // check if it is a string (has arity 0) or a list/struct (arity > 0)
+                if (structTerm.getArity() == 0) {
+                    String variableAsString = structTerm.getName();
+                    
                     resultTerms[variableI] = new Term("\"" + variableAsString + "\"");
-               
-                    continue; // for debugging
+                    
+                    continue;
                 }
-                catch( PrologTheoryStringOperator.ConversionFailedException conversionFailedException ) {
-                    // the alternative is a product of numbers
-                    // ASK< this may be not 100% correct, because prolog lists can be in lists etc >
-                   
-                    // TODO
-                   
+                else {
+                    // TODO< convert the result array to a nars thingy >
                     throw new RuntimeException("TODO");
+                    
+                    // uncommented because with TODO its unreachable
+                    //continue;
                 }
-               
+                
                 // unreachable
             }
            
