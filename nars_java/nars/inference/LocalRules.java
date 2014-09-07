@@ -307,10 +307,13 @@ public class LocalRules {
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
     
-    public static void executeOperation(Term content, Concept concept, Task task)
+    public static void executeOperation(Term content, Concept concept, Task task, boolean masterplan, Memory mem)
     {
         if (!(content instanceof Operation)) {
             return;
+        }
+        if(!masterplan && mem.next_task.isEmpty()==false) {
+            return; //already executing sth
         }
         Operation op = (Operation) content;
         Term opi=op.getPredicate();
@@ -340,7 +343,7 @@ public class LocalRules {
             return; //we have to wait
         }
         //ok it is time for action:
-        executeOperation(content,concept,task);
+        executeOperation(content,concept,task,true,mem);
     }
     
     /** Add plausibility estimation */
@@ -353,7 +356,6 @@ public class LocalRules {
         if(content instanceof Conjunction && content.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
             //1. get first operator and execute it
             CompoundTerm cont = (CompoundTerm) content;
-            int lenu=cont.term.length;
             if(cont.term.length!=Parameters.SHORT_TERM_MEMORY_SIZE) { //only allow the long plans here
                 return;
             }
@@ -376,6 +378,6 @@ public class LocalRules {
             }
             return;
         }
-        executeOperation(content,concept,task);
+        executeOperation(content,concept,task,false,mem);
     }    
 }
