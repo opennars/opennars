@@ -1,5 +1,6 @@
 package nars.grid2d;
 
+import java.util.ArrayList;
 import java.util.List;
 import nars.core.NAR;
 import nars.grid2d.Cell.Logic;
@@ -15,6 +16,7 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.grid2d.operator.Say;
+import nars.storage.Memory;
 import processing.core.PVector;
 
 public class TestChamber {
@@ -64,6 +66,7 @@ public class TestChamber {
     boolean invalid=false;
     public static boolean active=true;
     public static boolean executed=false;
+    public static boolean curious=false;
     public void create(NAR nar) {
 //NAR n = new NAR();
         int w = 50;
@@ -100,6 +103,30 @@ public class TestChamber {
                         if(executed) {
                             break;
                         }
+                    }
+                    if(!executed) { //we didnt do anything, time for random action
+                        List<String> actions=new ArrayList<String>();
+                        for (GridObject g : space.objects) {
+                            if (g instanceof LocalGridObject) {
+                                LocalGridObject obi = (LocalGridObject) g;
+                                if (obi instanceof Key) {
+                                    actions.add("(^go-to," + obi.doorname + ")!");
+                                    actions.add("(^pick," + obi.doorname + ")!");
+                                }
+                            }
+                        }
+                        for (int i = 0; i < space.cells.w; i++) {
+                            for (int j = 0; j < space.cells.h; j++) {
+                                if (space.cells.readCells[i][j].name.startsWith("switch") || space.cells.readCells[i][j].name.startsWith("place")) {
+                                    actions.add("(^go-to," + space.cells.readCells[i][j].name + ")!");
+                                }
+                                if (space.cells.readCells[i][j].logic == Logic.SWITCH || space.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
+                                    actions.add("(^activate," + space.cells.readCells[i][j].name + ")!");
+                                    actions.add("(^deactivate," + space.cells.readCells[i][j].name + ")!");
+                                }
+                            }
+                        }
+                        nar.addInput(actions.get(Memory.randomNumber.nextInt(actions.size())));
                     }
                 }
 // int a = 0;
@@ -224,7 +251,7 @@ public class TestChamber {
                             opname="";
                         } else {
                             active=false;
-                            nar.step(1);
+                            //nar.step(1);
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
                             float cy = y;
