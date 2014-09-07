@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
@@ -41,14 +42,12 @@ import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
-import static nars.language.Statement.make;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.language.Variable;
 import static nars.language.Variables.containVar;
 import static nars.operator.Operation.make;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  * Processes text input
@@ -194,7 +193,9 @@ public class TextPerception {
             String str = buffer.toString().trim();
             int last = str.length() - 1;
             char punc = str.charAt(last);
-            Stamp stamp = new Stamp(memory.getTime(), tense, memory.newStampSerial());
+            
+            Stamp stamp = new Stamp(memory.getTime(), tense, memory.newStampSerial(), memory.param.duration.get());
+            
             TruthValue truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last));
             if (content == null) throw new InvalidInputException("Content term missing");
@@ -475,7 +476,7 @@ public class TextPerception {
         
         char c = s.charAt(0);
         if (c == Symbols.INTERVAL_PREFIX) {
-            return new Interval(s);
+            return Interval.interval(s);
         }
  
         if (containVar(s)) {

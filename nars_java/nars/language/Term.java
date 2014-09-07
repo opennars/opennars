@@ -82,6 +82,7 @@ public class Term implements AbstractTerm {
      */
     @Override
     public boolean equals(final Object that) {
+        if (that == this) return true;
         if (!(that instanceof Term)) return false;
         Term t = (Term)that;
         if (t.hashCode()!=hashCode()) {
@@ -142,7 +143,7 @@ public class Term implements AbstractTerm {
             }
         }
         
-        if ((newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN) && (newName.getClass() == String.class)) {
+        if ((newName.getClass() == String.class) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
             
             this.name = ((String)newName).intern();
         }

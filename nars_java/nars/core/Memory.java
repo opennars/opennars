@@ -1046,8 +1046,8 @@ public class Memory implements Output, Serializable {
                     cur.add(shortTermMemory.get(i).getContent());
                     if(i>0) {
                         int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
-                        if(diff>Parameters.DURATION) {
-                            cur.add(new Interval(diff));
+                        if(diff > param.duration.get()) {
+                            cur.add(Interval.intervalTime(diff));
                         }
                     }
                    // if(i!=0)
@@ -1060,8 +1060,8 @@ public class Memory implements Output, Serializable {
                     }
                     
                     int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(n-1).getCreationTime());
-                    if(diff>Parameters.DURATION) {
-                        cur.add(0, new Interval(diff));
+                    if(diff > param.duration.get() ) {
+                        cur.add(0, Interval.intervalTime(diff));
                     }
 
                     Term[] terms=new Term[cur.size()];

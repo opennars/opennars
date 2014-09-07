@@ -21,7 +21,6 @@
 package nars.inference;
 
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -302,7 +301,7 @@ public final class SyllogisticRules {
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = memory.getTime();
             }
-            long inc = order * Parameters.DURATION;
+            long inc = order * memory.param.duration.get();
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
             memory.getTheNewStamp().setOccurrenceTime(time);
         }
