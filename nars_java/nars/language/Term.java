@@ -33,7 +33,7 @@ import nars.io.Texts;
  */
 public class Term implements AbstractTerm {
 
-    protected CharSequence name = "";
+    protected CharSequence name = null;
     
     /**
      * Default constructor that build an internal Term

@@ -689,10 +689,10 @@ public class Memory implements Output, Serializable {
                 for (int i = 0; i < stampLength; i++) {
                     final long baseI = stamp.evidentialBase[i];
 
-                    for (int j = 0; j < stampLength; j++) {
+                    for (int j = 0; j < stampLength; j++) {     
                         if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
                             if (recorder.isActive()) {                                
-                                recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
+                                recorder.onTaskRemove(task, "Overlapping Evidence on Revision: " + i + "," + j + " in " + stamp.toString());
                             }
                             return;
                         }
@@ -721,7 +721,7 @@ public class Memory implements Output, Serializable {
                     getRecorder().append("Named: " + j.toString());
                 }
                 output(newTask);
-                addNewTask(newTask, "Derived");
+                addNewTask(newTask, "Derived (abbreviated)");
             }
 
             if(param.experimentalNarsPlus.get() && task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
@@ -751,7 +751,7 @@ public class Memory implements Output, Serializable {
                             this.recorder.append("Counted: " + j.toString());
                         }
                         output(newTask);
-                        addNewTask(newTask, "Derived");
+                        addNewTask(newTask, "Derived (cardinality)");
                     }
                 }
             }
