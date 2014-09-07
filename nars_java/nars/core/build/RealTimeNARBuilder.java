@@ -43,7 +43,7 @@ public class RealTimeNARBuilder extends DefaultNARBuilder {
     }
 
     @Override
-    public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c) {
+    public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
         return new RealTimeFloodCycle();
     }
     

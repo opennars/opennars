@@ -1,8 +1,11 @@
 package nars.core.build;
 
+import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.core.Param;
+import nars.core.control.BalancedSequentialMemoryCycle;
 import nars.entity.Concept;
+import nars.entity.ConceptBuilder;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -31,12 +34,12 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     public AbstractBag<Concept> newConceptBag(Param p) {
         return new ContinuousBag<>(getConceptBagSize(), p.conceptCyclesToForget, randomRemoval);
     }
-    
-//    @Override
-//    public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c) {
-//        return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
-//    }
 
+    @Override
+    public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
+        return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
+    }
+    
     @Override
     public Concept newConcept(final Term t, final Memory m) {
         
