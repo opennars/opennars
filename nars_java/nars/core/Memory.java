@@ -1014,12 +1014,16 @@ public class Memory implements Output, Serializable {
                     for(int j=0;j<cur.size();j++) {
                         terms[cur.size()-j-1]=cur.get(j);
                     }
+               
                     
-                    Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
-                    val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-                    Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
-                    BudgetValue bud=BudgetFunctions.forward(val,this);
-                    this.doublePremiseTask(imp,val,bud);
+                    Term c = Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
+                    if (c instanceof Conjunction) {
+                        Conjunction subj=(Conjunction) c;
+                        val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+                        Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
+                        BudgetValue bud=BudgetFunctions.forward(val,this);
+                        this.doublePremiseTask(imp,val,bud);
+                    }
                 }
             }
             if(newEvent.isInput()) { //only use input events for this heuristic
@@ -1112,7 +1116,7 @@ public class Memory implements Output, Serializable {
      */
     public void taskBuffersStartPlay(final BagObserver<Task> bagObserver, final String s) {
         bagObserver.setBag(novelTasks);
-        novelTasks.addBagObserver(bagObserver, s);
+        //novelTasks.addBagObserver(bagObserver, s);
     }
 
 

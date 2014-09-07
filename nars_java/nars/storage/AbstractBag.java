@@ -16,8 +16,9 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      */
     private final float RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
     
-    protected AtomicInteger forgettingRate = null;
-    protected BagObserver<E> bagObserver = null;
+    protected AtomicInteger forgettingRate; //may be final
+    
+    //protected BagObserver<E> bagObserver = null;
     
     abstract public void clear();
 
@@ -99,21 +100,6 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
         return takeOut(true);
     }
         
-
-    /**
-     * To start displaying the Bag in a BagWindow; {@link nars.gui.BagWindow}
-     * implements interface {@link BagObserver};
-     *
-     * @param bagObserver BagObserver to set
-     * @param title The title of the window
-     */
-    public void addBagObserver(BagObserver<E> bagObserver, String title) {
-        this.bagObserver = bagObserver;
-        bagObserver.post(toString());
-        bagObserver.setTitle(title);
-        bagObserver.setBag(this);
-    }
-
     /**
      * Get the item decay rate, which differs in difference subclass, and can be
      * changed in run time by the user, so not a constant.
@@ -127,29 +113,47 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
         return -1;
     }
 
-    /**
-     * Resume display
-     */
-    public void play() {
-        if (bagObserver != null) {
-            bagObserver.post(toString());
-        }
-    }
+    
 
+//    /**
+//     * To start displaying the Bag in a BagWindow; {@link nars.gui.BagWindow}
+//     * implements interface {@link BagObserver};
+//     *
+//     * @param bagObserver BagObserver to set
+//     * @param title The title of the window
+//     */
+//    public void addBagObserver(BagObserver<E> bagObserver, String title) {
+//        this.bagObserver = bagObserver;
+//        bagObserver.post(toString());
+//        bagObserver.setTitle(title);
+//        bagObserver.setBag(this);
+//    }
+
+    
+//    /**
+//     * Resume display
+//     */
+//    public void play() {
+//        if (bagObserver != null) {
+//            bagObserver.post(toString());
+//        }
+//    }
+
+
+//    /**
+//     * Stop display
+//     */
+//    public void stop() {
+//        if (bagObserver != null) {
+//            bagObserver.stop();
+//        }
+//    }
+    
     /** called when an item is inserted or re-inserted */
     protected void reprocess(E x) {
         int r = forgetRate();
         if (r > 0) {
             BudgetFunctions.forget(x.budget, forgetRate(), RELATIVE_THRESHOLD);
-        }
-    }
-
-    /**
-     * Stop display
-     */
-    public void stop() {
-        if (bagObserver != null) {
-            bagObserver.stop();
         }
     }
 

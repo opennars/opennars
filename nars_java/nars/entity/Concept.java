@@ -99,8 +99,8 @@ public class Concept extends Item {
      * The display window
      */
 
-    private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
-    private EntityObserver entityObserver = defaultNullEntityObserver;
+    @Deprecated private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
+    @Deprecated private EntityObserver entityObserver = defaultNullEntityObserver;
     public final CharSequence key;
 
 
@@ -640,14 +640,14 @@ public class Concept extends Item {
      * @param showLinks Whether to display the task links
      */
     @SuppressWarnings("unchecked")
-    public void startPlay(EntityObserver entityObserver, boolean showLinks) {
+    @Deprecated public void startPlay(EntityObserver entityObserver, boolean showLinks) {
         this.entityObserver = entityObserver;
         entityObserver.startPlay(this, showLinks);
         entityObserver.post(displayContent());
-        if (showLinks) {
-            taskLinks.addBagObserver(entityObserver.createBagObserver(), "Task Links in " + term);
-            termLinks.addBagObserver(entityObserver.createBagObserver(), "Term Links in " + term);
-        }
+//        if (showLinks) {
+//            taskLinks.addBagObserver(entityObserver.createBagObserver(), "Task Links in " + term);
+//            termLinks.addBagObserver(entityObserver.createBagObserver(), "Term Links in " + term);
+//        }
     }
 
     /**
