@@ -46,7 +46,7 @@ public class Activate extends Operator {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          
-        
+        TestChamber.executed=true;
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
