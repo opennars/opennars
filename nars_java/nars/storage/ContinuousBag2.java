@@ -1,6 +1,7 @@
 package nars.storage;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,11 +9,11 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Memory;
 import nars.entity.Item;
-import nars.util.SortedItemList;
+import nars.util.sort.IndexedTreeSet;
 
 
 
-public class ContinuousBag<E extends Item> extends AbstractBag<E> {
+public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Comparator<E> {
      
     final float MASS_EPSILON = 1e-5f;
     
@@ -24,7 +25,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     /**
      * array of lists of items, for items on different level
      */
-    public final SortedItemList<E> items;
+    public final IndexedTreeSet<E> items;
     
     /**
      * defined in different bags
@@ -49,55 +50,12 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     /** current removal index x, between 0..1.0.  set automatically */
     private float x;
     
-    public static class ContinuousBagSortedList<E extends Item> extends SortedItemList<E> {
-            
-        public ContinuousBagSortedList(int capacity) {
-            super(null,capacity);
-        }
 
-        @Override
-        public int positionOf(final E o) {
-            final int y = o.budget.getPriorityShort();
-            final int s = size();
-            if (s > 0)  {
-
-                //binary search
-                int low = 0;
-                int high = s-1;
-
-                while (low <= high) {
-                    int mid = (low + high) >>> 1;
-
-                    E midVal = get(mid);
-
-                    final int x = midVal.budget.getPriorityShort();
-                    int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   
-
-                    if (cmp < 0)
-                        low = mid + 1;
-                    else if (cmp > 0)
-                        high = mid - 1;
-                    else {
-                        // key found, insert after it
-                        return mid;
-                    }
-                }
-                return low;
-            }
-            else {
-                return 0;
-            }
-        }
-            
-    }
-
-    
-
-    public ContinuousBag(int capacity, int forgetRate, boolean randomRemoval) {
+    public ContinuousBag2(int capacity, int forgetRate, boolean randomRemoval) {
         this(capacity, new AtomicInteger(forgetRate), randomRemoval);
     }
     
-    public ContinuousBag(int capacity, AtomicInteger forgetRate, boolean randomRemoval) {
+    public ContinuousBag2(int capacity, AtomicInteger forgetRate, boolean randomRemoval) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
@@ -109,11 +67,30 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
-        items = new ContinuousBagSortedList<>(capacity);
+        items = new IndexedTreeSet<E>(this);
+            
         
         this.forgettingRate = forgetRate;
         this.mass = 0;
     }
+
+    //cache the first parameter which is mostly invariant
+    E lastComparedY = null;
+    int lastComparedBudget = 0;
+
+    @Override public int compare(final E ey, final E ex) {
+        final int y;
+        if (lastComparedY == ey)
+            y = lastComparedBudget;
+        else {
+            lastComparedBudget = y = ey.budget.getPriorityShort();
+            lastComparedY = ey;                    
+        }
+
+        int x = ex.budget.getPriorityShort();
+
+        return (x < y) ? -1 : ((x == y) ? 0 : 1);                   
+    }            
     
 
     @Override
@@ -218,6 +195,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         return selected;
     }
     
+    
     /** distributor function */
     public int nextRemovalIndex() {      
         final int s = size();
@@ -314,14 +292,13 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * @param level The current level
      * @return The first Item
      */
-    private E takeOutIndex(final int index, final boolean removeFromNameTable) {
-        //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
-        final E selected = items.remove(index);        
-        addToMass(-(selected.budget.getPriority()));
-                
-        if (removeFromNameTable) {
+    private E takeOutIndex(final int index, boolean removeFromNameTable) {        
+        final E selected = items.remove(index);
+        
+        if (removeFromNameTable)
             nameTable.remove(selected.getKey());
-        }
+        
+        addToMass(-(selected.budget.getPriority()));
         
         return selected;
     }

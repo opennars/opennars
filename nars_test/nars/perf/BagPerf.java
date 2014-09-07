@@ -17,7 +17,6 @@
 
 package nars.perf;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,6 +24,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.AbstractBag;
 import nars.storage.ContinuousBag;
+import nars.storage.ContinuousBag2;
 import nars.storage.DefaultBag;
 
 /**
@@ -185,12 +185,13 @@ public class BagPerf {
         
         
         int capacityPerLevel = 10;
-        int repeats = 2;
-        int warmups = 0;
+        int repeats = 3;
+        int warmups = 1;
         double totalDiff = 0;
+        double totalTimeA = 0, totalTimeB = 0;
         final int iterations = 1;
-        for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
-            for (int levels = 1; levels <= 150; levels += 2) {
+        for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.2f) {
+            for (int levels = 1; levels <= 500; levels += 10) {
 
                 final int bagCapacity = levels*capacityPerLevel;
                 int randomAccesses = 64 * bagCapacity;
@@ -200,7 +201,8 @@ public class BagPerf {
                 
                 a = compare("A", new BagBuilder() {
                     @Override public AbstractBag newBag() {
-                        return new DefaultBag<Item>(_levels, bagCapacity, forgetRate) {
+                        
+                        /*return new DefaultBag<Item>(_levels, bagCapacity, forgetRate) {
                           @Override
                           protected Deque<Item> newLevel() {
                               //return new LinkedList<>();
@@ -208,8 +210,12 @@ public class BagPerf {
                               //return new FastTable<>();
                               //return new GapList<>(1+capacity/levels);
                               //return new CircularArrayList<>(Item.class, 1+bagCapacity); //yes this allocates many
+                              
+                              
                           }                        
-                        };
+                        };*/
+                        
+                        return new ContinuousBag2<Item>(bagCapacity, forgetRate, true);
                     }                    
                 }, iterations, randomAccesses, insertRatio, repeats, warmups);
                 
@@ -229,7 +235,7 @@ public class BagPerf {
                         };
                         */     
                         
-                        return new ContinuousBag<Item>(bagCapacity, forgetRate, false);
+                        return new ContinuousBag<Item>(bagCapacity, forgetRate, true);
 
                     
                     }                    
@@ -240,12 +246,16 @@ public class BagPerf {
                 System.out.print(insertRatio+", "+levels+", "+ bagCapacity+", ");                
                 System.out.println( (a-b)/((a+b)/2.0) );
                 totalDiff += (a-b);
+                totalTimeA += a;
+                totalTimeB += b;
             }
         }
         
         if (totalDiff > 0) System.out.print("B faster: ");
-        else System.out.print("A faster: ");
+        else System.out.print("A faster: ");        
         System.out.println("total difference (ms): " + totalDiff);
+        System.out.println("  A time=" + totalTimeA);
+        System.out.println("  B time=" + totalTimeB);
         
     }
     
