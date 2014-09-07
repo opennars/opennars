@@ -521,20 +521,19 @@ public abstract class CompoundTerm extends Term {
 
     /** determines whether we can avoid cloning something, and just re-use it */
     protected static boolean mayShare(final Term t) {        
-        return false;        
-//        if (t instanceof CompoundTerm) {
+        if (t instanceof CompoundTerm) {
 //            /*if (t instanceof Image)
 //                if (((Image)t).containsPlaceHolder())
 //                    return false;*/
 //
-//            if (t.containVar()) return false;
+            if (t.containVar()) return false;
 //            
 //            return true;
 //            //return !(t.containVar());
-//        }
+        }
 //        
 //        
-//        return true;
+        return true;
     }
 
     

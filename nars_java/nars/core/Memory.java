@@ -585,7 +585,7 @@ public class Memory implements Output, Serializable {
         TruthValue truth = new TruthValue(1f,0.9999f);
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
-        Task task = new Task(sentence, currentTask.budget, operation.getTask());
+        Task task = new Task(sentence, currentTask.budget/*, operation.getTask()*/);
         addNewTask(task, "Executed");
     }
 
@@ -929,7 +929,8 @@ public class Memory implements Output, Serializable {
     public void processNewTasks() {        
         
         // don't include new tasks produced in the current cycleMemory
-        int counter = newTasks.size();
+        int counter = newTasks.size();       
+        
         Task newEvent = null;
         while (counter-- > 0) {
             
