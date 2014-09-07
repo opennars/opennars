@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
-import nars.core.Memory.Events.MemoryCycleStart;
-import nars.core.Memory.Events.MemoryCycleStop;
+import nars.core.Memory.Events.WorkCycleStart;
+import nars.core.Memory.Events.WorkCycleStop;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
@@ -125,11 +125,15 @@ public class Memory implements Output, Serializable {
 
         
         /** fired at the beginning of each individual Memory work cycle */
-        public static class MemoryCycleStart { }
+        public static class WorkCycleStart { }
         
         /** fired at the end of each Memory individual cycle */
-        public static class MemoryCycleStop { }
+        public static class WorkCycleStop { }
         
+    }
+    
+    public static interface TaskSource {
+        public AbstractTask nextTask();
     }
     
     //public static Random randomNumber = new Random(1);
@@ -874,6 +878,51 @@ public class Memory implements Output, Serializable {
         derivedTask(newTask, false, true, null, null);
     }
 
+    
+    public void cycle(final TaskSource taskSource) {
+        
+        resource.CYCLE.start();
+        resource.CYCLE_CPU_TIME.start();
+        resource.CYCLE_RAM_USED.start();
+
+        int inputCycles = param.cycleInputTasks.get();
+        int memCycles = param.cycleMemory.get();
+
+        event.emit(Memory.Events.CycleStart.class);
+
+        //IO cycle
+        resource.IO_CYCLE.start();
+        {            
+            if (getCyclesQueued()==0) {                
+                for (int i = 0; i < inputCycles; i++) {
+                    AbstractTask t = taskSource.nextTask();
+                    if (t!=null)
+                        inputTask(t);
+                }
+            }
+        }            
+        resource.IO_CYCLE.stop();
+
+
+        resource.MEMORY_CYCLE.start();
+        if (working) {
+            //Memory working cycle
+            
+            for (int i = 0; i < memCycles; i++) {
+                cycleWork();                
+            }
+        }
+        resource.MEMORY_CYCLE.stop();
+        
+
+        event.emit(Memory.Events.CycleStop.class);
+        
+        resource.CYCLE_RAM_USED.stop();
+        resource.CYCLE_CPU_TIME.stop();
+        resource.CYCLE.stop();
+    }
+    
+    
     /* ---------- system working cycleMemory ---------- */
     /**
      * An atomic working cycle of the system: process new Tasks, then fire a
@@ -883,39 +932,30 @@ public class Memory implements Output, Serializable {
      *
      * @param clock The current time to be displayed
      */
-    public void cycle() {
-                
-        resource.MEMORY_CYCLE_RAM_USED.start();
-        resource.CYCLE_REAL.event();
-
-        event.emit(MemoryCycleStart.class);
+    public void cycleWork() {
         
-        if (working) {
-            
-            
-            
-            if (recorder.isActive()) {            
-                recorder.onCycleStart(clock);
-            }
+        event.emit(WorkCycleStart.class);
+        
+        if (recorder.isActive())
+            recorder.onCycleStart(clock);
 
+        { //--------
+            
             conceptProcessor.cycle(this);
-                
-            //novelTasks.refresh();
-
-            if (recorder.isActive()) {            
-                recorder.onCycleEnd(clock);
-            }       
             
-            if (stepsQueued > 0) {
-                stepsQueued--;
-            }            
+        } //--------
 
-            clock++;
-        }
+        if (recorder.isActive())
+            recorder.onCycleEnd(clock);
+
+        if (stepsQueued > 0) {
+            stepsQueued--;
+        }            
+
+        clock++;
                 
-        resource.MEMORY_CYCLE_RAM_USED.stop();
+        event.emit(WorkCycleStop.class);      
         
-        event.emit(MemoryCycleStop.class);
     }
 
     /** previous events, for temporal induction */
