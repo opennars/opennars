@@ -54,6 +54,7 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final EventValueSensor DED_SECOND_LAYER_VARIABLE_UNIFICATION;
     public final EventValueSensor DED_CONJUNCTION_BY_QUESTION;
     public final EventValueSensor ANALOGY;
+    public final EventValueSensor IO_INPUTS_BUFFERED;
     
 
     public LogicSense() {
@@ -91,6 +92,9 @@ public class LogicSense extends AbstractSense implements Serializable {
         add(DED_SECOND_LAYER_VARIABLE_UNIFICATION = new EventValueSensor("reason.ded2ndunif"));
         add(DED_CONJUNCTION_BY_QUESTION = new EventValueSensor("reason.dedconjbyquestion"));
         add(ANALOGY = new EventValueSensor("reason.analogy"));
+        
+        add(IO_INPUTS_BUFFERED = new EventValueSensor("io.inputs.buffered"));
+        
     }
     
     @Override
@@ -118,6 +122,9 @@ public class LogicSense extends AbstractSense implements Serializable {
             
             //only makes sense as a mean, since it occurs multiple times during a cycle
             put("reason.tasktermlink.priority.mean", REASON.get().mean());                        
+        }
+        {
+            putValue(IO_INPUTS_BUFFERED);
         }
         {            
             putHits(CONTRAPOSITION);
@@ -153,8 +160,14 @@ public class LogicSense extends AbstractSense implements Serializable {
         }        
     }
     
+    public void putValue(final EventValueSensor s) {
+        put(s.getName(), s.getValue());
+    }
     public void putHits(final EventValueSensor s) {
         put(s.getName(), s.getHits());
+    }
+    public void putMean(final EventValueSensor s) {
+        put(s.getName(), s.get().mean());
     }
 
     public void setConceptBeliefsSum(long conceptBeliefsSum) {

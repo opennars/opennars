@@ -309,10 +309,15 @@ public class NAR implements Runnable, Output, TaskSource {
         /** no available inputs */
         return null;
     }
-    
 
+    @Override
+    public int getInputItemsBuffered() {
+        int total = 0;
+        for (InPort i : inputChannels)
+            total += i.getItemsBuffered();
+        return total;
+    }
 
-    
 
     /**
      * A clock tick, consisting of 1) processing input, 2) one cycleMemory.

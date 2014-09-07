@@ -134,6 +134,8 @@ public class Memory implements Output, Serializable {
     
     public static interface TaskSource {
         public AbstractTask nextTask();
+
+        public int getInputItemsBuffered();
     }
     
     //public static Random randomNumber = new Random(1);
@@ -892,6 +894,9 @@ public class Memory implements Output, Serializable {
 
         //IO cycle
         resource.IO_CYCLE.start();
+        
+        logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
+        
         {            
             if (getCyclesQueued()==0) {                
                 for (int i = 0; i < inputCycles; i++) {

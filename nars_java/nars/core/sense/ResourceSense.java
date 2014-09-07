@@ -17,6 +17,7 @@ public class ResourceSense extends AbstractSense {
     public final NanoTimeDurationTracker MEMORY_CYCLE; //duration of the working component of cycle
     public final NanoTimeDurationTracker CYCLE; //the duration of the cycle
     
+    
 
     public ResourceSense() {
         super();
@@ -63,5 +64,6 @@ public class ResourceSense extends AbstractSense {
         }
         
     }
+
     
 }
