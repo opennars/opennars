@@ -2,8 +2,9 @@ package nars.test.util;
 
 import nars.perf.BagPerf.NullItem;
 import nars.storage.Bag;
-import nars.storage.DefaultBag;
 import nars.storage.ContinuousBag;
+import nars.storage.ContinuousBag2;
+import nars.storage.DefaultBag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -67,6 +68,34 @@ public class ContinuousBagTest {
         assert(f.getMass() == 0);
     }
 
+    public void testFastBag2(boolean random) {
+        ContinuousBag2<NullItem> f = new ContinuousBag2(4, 10, random);
+        
+        f.putIn(new NullItem(.25f));
+        assert(f.size() == 1);
+        assert(f.getMass() > 0);
+        
+        f.putIn(new NullItem(.9f));
+        f.putIn(new NullItem(.75f));
+        
+        //System.out.println(f);
+        
+        //sorted
+        assert(f.items.exact(0).getPriority() < f.items.exact(1).getPriority());
+
+        assert(f.size() == 3);
+        f.takeOut();
+        
+        assert(f.size() == 2);
+        f.takeOut();
+        assert(f.size() == 1);
+        f.takeOut();
+        assert(f.size() == 0);
+        
+        assert(f.getMass() == 0);
+        assert(f.items.size() == f.nameTable.size());
+    }
+    
     public void testFastBagCapacityLimit(boolean random) {
         ContinuousBag<NullItem> f = new ContinuousBag(4, 10, random);
         f.putIn(new NullItem());

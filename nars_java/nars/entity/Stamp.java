@@ -93,7 +93,7 @@ public class Stamp implements Cloneable {
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time, final Tense tense, final long serial) {        
+    public Stamp(final long time, final Tense tense, final long serial, final int duration) {        
         baseLength = 1;
         evidentialBase = new long[baseLength];
         evidentialBase[0] = serial;
@@ -102,9 +102,9 @@ public class Stamp implements Cloneable {
         if (tense == null) {
             occurrenceTime = ETERNAL;
         } else if (tense == Past) {
-            occurrenceTime = time - Parameters.DURATION;
+            occurrenceTime = time - duration;
         } else if (tense == Future) {
-            occurrenceTime = time + Parameters.DURATION;
+            occurrenceTime = time + duration;
         } else if (tense == Present) {
             occurrenceTime = time;
         } else {
@@ -255,7 +255,7 @@ public class Stamp implements Cloneable {
     }
 
     public Stamp(final Memory memory, final Tense tense) {
-        this(memory.getTime(), tense, memory.newStampSerial());
+        this(memory.getTime(), tense, memory.newStampSerial(), memory.param.duration.get());
     }
 
     public Stamp(final Memory memory) {
@@ -445,7 +445,7 @@ public class Stamp implements Cloneable {
         }
     }
 
-    public String getTense(final long currentTime) {
+    public String getTense(final long currentTime, final int duration) {
         
         if (occurrenceTime == Stamp.ETERNAL) {
             return "";
@@ -453,9 +453,9 @@ public class Stamp implements Cloneable {
 
         long timeDiff = occurrenceTime - currentTime;
         
-        if (timeDiff > Parameters.DURATION) {
+        if (timeDiff > duration) {
             return Symbols.TENSE_FUTURE;
-        } else if (timeDiff < -Parameters.DURATION) {
+        } else if (timeDiff < -duration) {
             return  Symbols.TENSE_PAST;
         } else {
             return Symbols.TENSE_PRESENT;

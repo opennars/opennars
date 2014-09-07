@@ -18,7 +18,6 @@ package nars.inference;
 
 
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -216,12 +215,13 @@ public class TemporalRules {
         if (Statement.invalidStatement(t1, t2)) {
             return;
         }
+        final int duration = memory.param.duration.get();
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
         long timeDiff = time2 - time1;
         Interval interval;
-        if (Math.abs(timeDiff) > Parameters.DURATION) {
-            interval = new Interval(Math.abs(timeDiff));
+        if (Math.abs(timeDiff) > duration) {
+            interval = Interval.intervalTime(Math.abs(timeDiff));
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD, memory);
                 if(t11!=null) {
@@ -235,9 +235,9 @@ public class TemporalRules {
             }
         }
         int order;
-        if (timeDiff > Parameters.DURATION) {
+        if (timeDiff > duration) {
             order = TemporalRules.ORDER_FORWARD;
-        } else if (timeDiff < -Parameters.DURATION) {
+        } else if (timeDiff < -duration) {
             order = TemporalRules.ORDER_BACKWARD;
         } else {
             order = TemporalRules.ORDER_CONCURRENT;

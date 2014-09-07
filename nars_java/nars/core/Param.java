@@ -74,6 +74,9 @@ public class Param implements Serializable {
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
     
-    
+    /** Tense usage convention, how far away "past" and "future" is from "now", in cycles. 
+        The range of "now" is [-DURATION, DURATION];      */
+    public final AtomicInteger duration = new AtomicInteger();
+        
     
 }

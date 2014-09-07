@@ -71,17 +71,16 @@ public class NARio extends Run {
 //                if (cycle % 100 == 1) {
 //                    System.out.println("Inports: " + nar.getInPorts().size());
 //                }
-                if (cycle % 100 == 0) {
+                if (cycle % 400 == 0) {
                     int flushed = nar.flushInput(Output.NullOutput);
                     //System.out.println("Inports: " + nar.getInPorts().size()); 
                     System.out.println("Flushed: " + flushed);
-                }
-                
-                
-                if (cycle == 0) {
+
                     nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
                     nar.addInput("<?y --> space>? :/:");
                 }
+                
+                
                 
                 //float sightPriority = 0.75f;
                 //float movementPriority = 0.60f;

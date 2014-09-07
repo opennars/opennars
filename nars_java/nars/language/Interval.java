@@ -28,12 +28,43 @@ import nars.io.Symbols;
  * @author peiwang
  */
 public class Interval extends Term {
+    
+    static final int INTERVAL_POOL_SIZE = 16;
+    static Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
+    static long[] MAGNITUDE_TIMES = new long[INTERVAL_POOL_SIZE];    
+    static {
+        for (int i = 0; i < INTERVAL_POOL_SIZE; i++)
+            MAGNITUDE_TIMES[i] = magnitudeToTime(i);
+    }
+    
+    public static Interval interval(String i) {
+        return intervalMagnitude(Integer.parseInt(i.substring(1)));
+    }
+    
+    public static Interval intervalTime(final long time) {
+        return intervalMagnitude( (int) Math.log(time) );
+    }
+    
+    public static Interval intervalMagnitude(final int magnitude) {
+        if (magnitude >= INTERVAL_POOL_SIZE)
+            return new Interval(magnitude, true);
+        
+        Interval existing = INTERVAL[magnitude];
+        if (existing == null) {
+            existing = new Interval(magnitude, true);
+            INTERVAL[magnitude] = existing;
+        }
+        return existing;            
+    }
+    
+    
     private final int magnitude;
 
     // time is a positive integer
-    public Interval(final long time) {
+    protected Interval(final long time) {
         this((int) Math.log(time), true);
     }
+    
     
     /** this constructor has an extra unused argument to differentiate it from the other one,
      * for specifying magnitude directly.
@@ -44,17 +75,26 @@ public class Interval extends Term {
         setName(Symbols.INTERVAL_PREFIX + String.valueOf(magnitude));        
     }
     
-    public Interval(final String s) {
-        magnitude = Integer.parseInt(s.substring(1));
-        setName(s);
+//    protected Interval(final String s) {
+//        magnitude = Integer.parseInt(s.substring(1));
+//        setName(s);
+//    }
+
+    public static long magnitudeToTime(int magnitude) {
+        return (long) Math.ceil(Math.exp(magnitude));
     }
     
     public long getTime() {
-        return (long) Math.ceil(Math.exp(magnitude));
+        //use a lookup table for this
+        if (magnitude < INTERVAL_POOL_SIZE)
+            return MAGNITUDE_TIMES[magnitude];
+        return magnitudeToTime(magnitude);
     }
     
     @Override
     public Interval clone() {
-        return new Interval(magnitude, true);
+        //can return this as its own clone since it's immutable.
+        //originally: return new Interval(magnitude, true);        
+        return this;
     }
 }
