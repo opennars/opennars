@@ -3,7 +3,7 @@ package nars.nario;
 import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.ContinuousBagNARBuilder;
 import nars.entity.ShortFloat;
 import nars.gui.NARSwing;
 import nars.io.Output;
@@ -217,8 +217,8 @@ public class NARio extends Run {
     
     
     public static void main(String[] arg) {
-        //NAR nar = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
-        NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
+        //NAR nar = new DefaultNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
         nar.param().beliefCyclesToForget.set(30);
         nar.param().conceptCyclesToForget.set(7);

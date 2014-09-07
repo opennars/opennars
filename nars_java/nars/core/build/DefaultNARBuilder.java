@@ -91,7 +91,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     }
     
     @Override
-    public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c) {
+    public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
         return new SequentialMemoryCycle(newConceptBag(p), c);
     }
 

@@ -18,13 +18,13 @@ abstract public class NARBuilder extends Parameters  {
     /** initial runtime parameters */
     abstract public Param newParam();
     abstract public AbstractBag<Task> newNovelTaskBag(Param p);
-    abstract public ConceptProcessor newMemoryModel(Param p, ConceptBuilder c);
+    abstract public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c);
     abstract public ConceptBuilder getConceptBuilder();
     
     public NAR build() {
         Param p = newParam();
         Operator[] operators = DefaultOperators.get();
-        Memory m = new Memory(p, newMemoryModel(p, getConceptBuilder()), newNovelTaskBag(p), operators);
+        Memory m = new Memory(p, newConceptProcessor(p, getConceptBuilder()), newNovelTaskBag(p), operators);
         
         for (Operator o : ExampleOperators.get()) {
             m.addOperator(o);
