@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import nars.core.Memory.TaskSource;
 import nars.entity.AbstractTask;
 import nars.gui.NARControls;
 import nars.io.InPort;
@@ -26,7 +27,7 @@ import nars.language.Term;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Runnable, Output {
+public class NAR implements Runnable, Output, TaskSource {
 
     
     private Thread thread = null;
@@ -199,8 +200,7 @@ public class NAR implements Runnable, Output {
         final boolean wasRunning = running;
         running = true;
         for (int i = 0; i < cycles; i++) {
-            cycle();
-            
+            cycle();            
         }
         running = wasRunning;
     }
@@ -264,56 +264,50 @@ public class NAR implements Runnable, Output {
      * Processes the next input from each input channel.  Removes channels that have finished.
      * @return whether to finish the reasoner afterward, which is true if any input exists.
      */
-    protected boolean cycleInput() {
-        boolean inputPerceived = false;
+    @Override
+    public AbstractTask nextTask() {
+        if ((!inputting) || (inputChannels.isEmpty()))
+           return null;        
         
-        if ((inputting) && (!inputChannels.isEmpty())) {
-            
-            int remainingInputTasks = memory.param.cycleInputTasks.get();
-            int remainingChannels = inputChannels.size(); //remaining # of channels to poll
-                        
-            while ((remainingChannels > 0) && (remainingInputTasks >0) && (inputChannels.size() > 0)) {
-                inputSelected %= inputChannels.size();
-                 
-                final InPort i = inputChannels.get(inputSelected);
-                if (i.finished()) {
-                    inputChannels.remove(i);
-                    continue;
-                }
-                
-                try {
-                    i.update();
-                } catch (IOException ex) {                    
-                    output(ERR.class, ex);
-                }                
-                
-                if (i.hasNext()) {
-                    try {
-                        Object input = i.next();
-                            
-                        AbstractTask task = perception.perceive(input);
+        int remainingChannels = inputChannels.size(); //remaining # of channels to poll
 
-                        if (task!=null) {
-                            memory.inputTask(task);
-                            remainingInputTasks--;
-                            inputPerceived = true;
-                        }
-                    }
-                    catch (IOException e) {
-                        output(ERR.class, e);
-                    }
-                    
-                }
-                
-                
-                inputSelected++;
-                
-                remainingChannels--;
-            }
+        while ((remainingChannels > 0) && (inputChannels.size() > 0)) {
+            inputSelected %= inputChannels.size();
+
+            final InPort i = inputChannels.get(inputSelected++);
+            remainingChannels--;
             
-                    
-        }    
-        return inputPerceived;
+            if (i.finished()) {
+                inputChannels.remove(i);
+                continue;
+            }
+
+            try {
+                i.update();
+            } catch (IOException ex) {                    
+                output(ERR.class, ex);
+            }                
+
+            if (i.hasNext()) {
+                try {
+                    Object input = i.next();
+
+                    AbstractTask task = perception.perceive(input);
+
+                    if (task!=null) {
+                        return task;
+                    }
+                }
+                catch (IOException e) {
+                    output(ERR.class, e);
+                }
+
+            }
+
+        }
+            
+        /** no available inputs */
+        return null;
     }
     
 
@@ -328,39 +322,9 @@ public class NAR implements Runnable, Output {
             debugTime();            
         }
         
-        memory.resource.CYCLE.start();
-        memory.resource.CYCLE_CPU_TIME.start();
-        
-        int inputCycles = memory.param.cycleInputTasks.get();
-        int memCycles = memory.param.cycleMemory.get();
-        
+                
         try {
-            
-            memory.event.emit(Memory.Events.CycleStart.class);
-            
-            //IO cycle
-            memory.resource.IO_CYCLE.start();
-            {            
-                if (memory.getCyclesQueued()==0) {                
-                    for (int i = 0; i < inputCycles; i++)
-                        cycleInput();                
-                }
-            }            
-            memory.resource.IO_CYCLE.stop();
-
-
-            
-            //Memory working cycle
-            memory.resource.MEMORY_CYCLE.start();
-            {
-                for (int i = 0; i < memCycles; i++) {
-                    memory.cycle();
-                }
-            }
-            memory.resource.MEMORY_CYCLE.stop();
-
-            memory.event.emit(Memory.Events.CycleStop.class);
-            
+            memory.cycle(this);
         }
         catch (Throwable e) {
             output(ERR.class, e);
@@ -369,8 +333,6 @@ public class NAR implements Runnable, Output {
             e.printStackTrace();
         }        
         
-        memory.resource.CYCLE_CPU_TIME.stop();
-        memory.resource.CYCLE.stop();
     }
     
     
