@@ -130,7 +130,7 @@ public class TemporalRules {
     }
     
     //helper function for temporal induction to not produce wrong terms, only one temporal operator is allowed
-    public static boolean tooMuchTemporalStatements(Term t) {
+    public static boolean tooMuchTemporalStatements(final Term t) {
         if(t==null) {
             return true;
         }
