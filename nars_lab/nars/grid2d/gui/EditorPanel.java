@@ -218,34 +218,32 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 TestChamber.active=true;
-                TestChamber.curious=true;
-                s.nar.addInput("<I --> [curious]>.");
-               /* for (GridObject g : s.objects) {
+                for (GridObject g : s.objects) {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <I --> [curious]>>.");
-                            s.nar.addInput("<(^pick," + obi.doorname + ") =/> <I --> [curious]>>.");
+                            s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
                         }
                     }
                 }
                 for (int i = 0; i < s.cells.w; i++) {
                     for (int j = 0; j < s.cells.h; j++) {
                         if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
-                            s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <I --> [curious]>>.");
+                            s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            s.nar.addInput("<(^activate," + s.cells.readCells[i][j].name + ") =/> <I --> [curious]>>.");
-                            s.nar.addInput("<(^deactivate," + s.cells.readCells[i][j].name + ") =/> <I --> [curious]>>.");
+                            s.nar.addInput("<(^activate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(^deactivate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                         }
                     }
                 }
-                s.nar.addInput("<<I --> [curious]> =/> <I --> [exploring]>>.");
-                s.nar.addInput("<<I --> [curious]> =/> <I --> [exploring]>>.");
-                s.nar.addInput("<I --> [curious]>!");
-                s.nar.addInput("<I --> [curious]>!");
-                s.nar.addInput("<I --> [exploring]>!");
-                s.nar.addInput("<I --> [exploring]>!"); //testing with multiple goals */
+                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
+                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
+                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [exploring]>!");
+                s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
             }
 
         });
