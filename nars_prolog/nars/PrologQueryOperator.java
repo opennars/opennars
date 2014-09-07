@@ -212,7 +212,7 @@ public class PrologQueryOperator extends Operator {
                 }
                 else if (structTerm.getArity() == 2) {
                     // convert the result array to a nars thingy
-                    ArrayList<nars.prolog.Term> structAsList = convertChainedCompoundTermToList(structTerm);
+                    ArrayList<nars.prolog.Term> structAsList = convertChainedStructToList(structTerm);
                     
                     // TODO
                     
@@ -321,7 +321,7 @@ public class PrologQueryOperator extends Operator {
     }
    
     // converts a chained compound term (which contains oher compound terms) to a list
-    static private ArrayList<nars.prolog.Term> convertChainedCompoundTermToList(Struct structTerm) {
+    static private ArrayList<nars.prolog.Term> convertChainedStructToList(Struct structTerm) {
         ArrayList<nars.prolog.Term> result = new ArrayList<>();
        
         Struct currentCompundTerm = structTerm;
