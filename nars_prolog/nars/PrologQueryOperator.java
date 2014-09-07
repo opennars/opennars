@@ -202,7 +202,7 @@ public class PrologQueryOperator extends Operator {
             else if( prologVariables[variableI] instanceof Struct ) {
                 Struct structTerm = (Struct)prologVariables[variableI];
                 
-                // check if it is a string (has arity 0) or a list/struct (arity > 0)
+                // check if it is a string (has arity 0) or a list/struct (arity == 2 because lists are composed out of 2 tuples)
                 if (structTerm.getArity() == 0) {
                     String variableAsString = structTerm.getName();
                     
@@ -210,12 +210,16 @@ public class PrologQueryOperator extends Operator {
                     
                     continue;
                 }
-                else {
-                    // TODO< convert the result array to a nars thingy >
-                    throw new RuntimeException("TODO");
+                else if (structTerm.getArity() == 2) {
+                    // convert the result array to a nars thingy
+                    ArrayList<nars.prolog.Term> structAsList = convertChainedCompoundTermToList(structTerm);
                     
-                    // uncommented because with TODO its unreachable
-                    //continue;
+                    // TODO
+                    
+                    continue;
+                }
+                else {
+                    throw new RuntimeException("Unhandled Struct!");
                 }
                 
                 // unreachable
@@ -317,10 +321,10 @@ public class PrologQueryOperator extends Operator {
     }
    
     // converts a chained compound term (which contains oher compound terms) to a list
-    static private ArrayList<nars.prolog.Term> convertChainedCompoundTermToList(Struct compoundTerm) {
+    static private ArrayList<nars.prolog.Term> convertChainedCompoundTermToList(Struct structTerm) {
         ArrayList<nars.prolog.Term> result = new ArrayList<>();
        
-        Struct currentCompundTerm = compoundTerm;
+        Struct currentCompundTerm = structTerm;
        
         for(;;) {
             if( currentCompundTerm.getArity() == 0 ) {
@@ -335,19 +339,19 @@ public class PrologQueryOperator extends Operator {
            
             nars.prolog.Term arg2 = currentCompundTerm.getArg(1);
             
-            if ( arg2.isAtom()) {
+            if (arg2.isAtom()) {
                 Struct atomTerm = (Struct)arg2;
                
-                /*if( !atomTerm.value.equals("[]") ) {
-                    throw new RuntimeException("[] AtomTerm excepted!");
-                }*/
+                if (!atomTerm.getName().equals("[]")) {
+                    throw new RuntimeException("[] Struct excepted!");
+                }
                
                 // this is the last element of the list, we are done
                 break;
             }
            
-            if( !(arg2 instanceof Struct) ) {
-                throw new RuntimeException("Second argument of Compound term is expected to be a compound term!");
+            if (!(arg2 instanceof Struct)) {
+                throw new RuntimeException("Second argument of Struct term is expected to be a Struct term!");
             }
            
             currentCompundTerm = (Struct)(arg2);
