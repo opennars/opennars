@@ -185,6 +185,13 @@ public class PrologQueryOperator extends Operator {
                
                 continue;
             }
+            else if( prologVariables[variableI] instanceof nars.prolog.Double ) {
+                nars.prolog.Double prologDoubleTerm = (nars.prolog.Double)prologVariables[variableI];
+                
+                resultTerms[variableI] = new Term(String.valueOf(prologDoubleTerm.floatValue()));
+                
+                continue;
+            }
             else if( prologVariables[variableI] instanceof nars.prolog.Float ) {
                 nars.prolog.Float prologFloatTerm = (nars.prolog.Float)prologVariables[variableI];
                
