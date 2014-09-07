@@ -29,4 +29,8 @@ public interface Output {
      */
     public void output(Class channel, Object signal);
 
+    public static final Output NullOutput = new Output() {
+        @Override public void output(Class channel, Object signal) { }
+    };
+
 }
