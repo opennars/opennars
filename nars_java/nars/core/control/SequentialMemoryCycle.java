@@ -33,24 +33,23 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     @Override
     public void cycle(Memory m) {
         m.processNewTasks();
-
-        if (m.noResult()) {       // necessary?
+        
+        if (m.getNewTaskCount() == 0) {       // necessary?
             m.processNovelTask();
         }
 
-        if (m.noResult()) {       // necessary?
-            processConcepts(m);
+        if (m.getNewTaskCount() == 0) {       // necessary?
+            processConcept(m);
         }
 
     }
     
     /**
-     * Select a concept to fire.
+     * Select and fire the next concept.
      */
-    public void processConcepts(Memory m) {
+    public void processConcept(Memory m) {
         Concept currentConcept = concepts.processNext();
-        if (currentConcept != null) {
-            
+        if (currentConcept != null) {            
             
             if (m.getRecorder().isActive()) {
                 m.getRecorder().append("Concept Selected: " + currentConcept.term);
