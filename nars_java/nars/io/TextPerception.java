@@ -41,7 +41,6 @@ import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
-import static nars.language.Statement.make;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.language.Variable;
@@ -475,7 +474,7 @@ public class TextPerception {
         
         char c = s.charAt(0);
         if (c == Symbols.INTERVAL_PREFIX) {
-            return new Interval(s);
+            return Interval.interval(s);
         }
  
         if (containVar(s)) {
