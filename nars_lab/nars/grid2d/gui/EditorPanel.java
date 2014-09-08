@@ -12,6 +12,7 @@ import nars.grid2d.Cell.Logic;
 import nars.grid2d.Grid2DSpace;
 import nars.grid2d.GridObject;
 import nars.grid2d.LocalGridObject;
+import nars.grid2d.TestChamber;
 import nars.grid2d.object.Key;
 
 /**
@@ -177,7 +178,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "go-to", "");
-                s.nar.start(100);
+                TestChamber.active=true;
             }
         });
 
@@ -185,7 +186,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "pick", "");
-                s.nar.start(100);
+                TestChamber.active=true;
             }
         });
 
@@ -193,7 +194,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "activate", "");
-                s.nar.start(100);
+                TestChamber.active=true;
             }
         });
 
@@ -201,7 +202,7 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 s.cells.click("", "deactivate", "");
-                s.nar.start(100);
+                TestChamber.active=true;
             }
         });
 
@@ -216,12 +217,17 @@ public class EditorPanel extends JPanel {
 
             @Override
             public void run() {
+                TestChamber.active=true;
+                String command="(&/";
+                int cnt=0;
                 for (GridObject g : s.objects) {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
+                            command+=",(^go-to," + obi.doorname + "),"+"(^pick," + obi.doorname + ")";
                             s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            cnt+=2;
                         }
                     }
                 }
@@ -229,12 +235,28 @@ public class EditorPanel extends JPanel {
                     for (int j = 0; j < s.cells.h; j++) {
                         if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
                             s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            command+=",(^go-to," + s.cells.readCells[i][j].name + ")";
+                            cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
+                            command+=",(^activate," + s.cells.readCells[i][j].name + "),"+"(^deactivate," + s.cells.readCells[i][j].name + ")";
                             s.nar.addInput("<(^activate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^deactivate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            cnt+=2;
                         }
                     }
+                }
+                
+                if(!command.equals("(&/")) {
+                    while(cnt< s.nar.param().shortTermMemorySize.get()) {
+                        command+=",+1";
+                        cnt++;
+                    }
+                    command+=")";
+                    
+                    s.nar.addInput(command+"!");
+                    //s.nar.addInput("<"+command+" =/> <Self --> [exploring]>>.");
+                    //s.nar.addInput("<"+command+" =/> <Self --> [curious]>>.");
                 }
                 s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
                 s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
@@ -242,7 +264,6 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<Self --> [curious]>!");
                 s.nar.addInput("<Self --> [exploring]>!");
                 s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
-                s.nar.start(100);
             }
 
         });
@@ -250,54 +271,55 @@ public class EditorPanel extends JPanel {
         goalMenu.add(new EditorMode("be somewhere") {
             @Override
             public void run() {
+                TestChamber.active=true;
                 s.cells.click("", "", "at");
-                s.nar.start(100);
             }
         });
 
         goalMenu.add(new EditorMode("hold something") {
             @Override
             public void run() {
+                TestChamber.active=true;
                 s.cells.click("", "", "hold");
-                s.nar.start(100);
             }
         });
 
         goalMenu.add(new EditorMode("make switched on") {
             @Override
             public void run() {
+                TestChamber.active=true;
                 s.cells.click("", "", "on");
-                s.nar.start(100);
             }
         });
 
         goalMenu.add(new EditorMode("make switched off") {
             @Override
             public void run() {
+                TestChamber.active=true;
                 s.cells.click("", "", "off");
-                s.nar.start(100);
             }
         });
 
         goalMenu.add(new EditorMode("make opened") {
             @Override
             public void run() {
+                TestChamber.active=true;
                 s.cells.click("", "", "opened");
-                s.nar.start(100);
             }
         });
 
         goalMenu.add(new EditorMode("make closed") {
             @Override
             public void run() {
+                TestChamber.active=true;
                 s.cells.click("", "", "closed");
-                s.nar.start(100);
             }
         });
 
         goalMenu.add(new EditorMode("be chatty") {
             @Override
             public void run() {
+                TestChamber.active=true;
                 s.nar.addInput("<<$1 --> on> <=> <(*,$1,SHOULD,BE,SWITCHED,ON) --> sentence>>.");
                 s.nar.addInput("<<$1 --> off> <=> <(*,$1,SHOULD,BE,OFF) --> sentence>>.");
                 s.nar.addInput("<<$1 --> opened> <=> <(*,$1,SHOULD,BE,OPENED) --> sentence>>.");
@@ -314,7 +336,6 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<I --> chatty>!");
                 s.nar.addInput("<I --> chatty>!");
                 s.nar.addInput("<I --> chatty>!");
-                s.nar.start(100);
             }
         });
 
