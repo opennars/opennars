@@ -62,6 +62,8 @@ public class TestChamber {
         //}
     }
     boolean invalid=false;
+    public static boolean active=true;
+    public static boolean executed=false;
     public void create(NAR nar) {
 //NAR n = new NAR();
         int w = 50;
@@ -90,6 +92,16 @@ public class TestChamber {
 
             @Override
             public void update(Effect nextEffect) {
+                if(active) {
+                    nar.stop();
+                    executed=false;
+                    for(int i=0;i<5;i++) { //make thinking in testchamber bit faster
+                        nar.step(1);
+                        if(executed) {
+                            break;
+                        }
+                    }
+                }
 // int a = 0;
 // if (Math.random() < 0.4) {
 // int randDir = (int)(Math.random()*4);
@@ -128,7 +140,7 @@ public class TestChamber {
                             keyn=-1;
                         }
                         if (path.size() <= 1) {
-                            //nar.step(1);
+                            nar.step(1);
                             //System.out.println("at destination; didnt need to find path");
                             if (getfeedback && !"".equals(goal) && current.equals(target)) {
                                  getfeedback = false;
@@ -205,14 +217,14 @@ public class TestChamber {
                                     }
                                     if("go-to".equals(opname)) {
                                         nar.addInput("<"+goal+" --> at>. :|:");
-                                        nar.start(100);
+                                        active=true;
                                     }
                                 }
                             }
                             opname="";
                         } else {
-                            nar.stop();
-                            nar.step(1);
+                            active=false;
+                            //nar.step(1);
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
                             float cy = y;
