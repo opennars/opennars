@@ -44,8 +44,6 @@ public class Parameters {
     
     
 
-    public static int SHORT_TERM_MEMORY_SIZE=5; //5 events
-    
 
     
     

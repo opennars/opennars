@@ -48,7 +48,7 @@ public class NALStressMeasure  {
             @Override
             public Performance print() {                
                 super.print();
-                System.out.print(", " + df.format(getCycleTimeMS() / totalCycles * 1000.0) + " ns/cycle, " + (((float)totalCycles)/(warmups+repeats)) + " cycles/run");
+                System.out.print(", " + df.format(getCycleTimeMS() / totalCycles * 1000.0) + " uS/cycle, " + (((float)totalCycles)/(warmups+repeats)) + " cycles/run");
                 return this;
                 
             }

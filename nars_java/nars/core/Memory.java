@@ -43,6 +43,7 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
+import nars.inference.LocalRules;
 import nars.inference.TemporalRules;
 import nars.inference.TruthFunctions;
 import nars.io.Output;
@@ -265,6 +266,12 @@ public class Memory implements Output, Serializable {
      * cycle
      */
     public final ArrayDeque<Task> newTasks;
+    
+    //memory for faster execution of &/ statements (experiment)
+    public ArrayList<Task> next_task=new ArrayList<Task>();
+    public ArrayList<Concept> next_concept=new ArrayList<Concept>();
+    public ArrayList<Term> next_content=new ArrayList<Term>();
+        
 
     public Term currentTerm;
 
@@ -287,8 +294,7 @@ public class Memory implements Output, Serializable {
     
 
     
-    public final EmotionSense emotion = new EmotionSense();
-    
+    public final EmotionSense emotion = new EmotionSense();    
     public final LogicSense logic;
     public final ResourceSense resource;
     
@@ -383,8 +389,13 @@ public class Memory implements Output, Serializable {
     public void reset() {
         conceptProcessor.clear();
         novelTasks.clear();
-        newTasks.clear();        
-        shortTermMemory=new ArrayList<Task>();
+        
+        newTasks.clear();     
+        next_task.clear();
+        next_concept.clear();
+        next_content.clear();
+        shortTermMemory.clear();
+        
         clock = 0;
         stepsQueued = 0;
         working = true;
@@ -955,6 +966,8 @@ public class Memory implements Output, Serializable {
         if (stepsQueued > 0)
             stepsQueued--;         
 
+        LocalRules.Manage_Execution(this);
+        
         clock++;
                 
         event.emit(WorkCycleStop.class);      
@@ -1027,62 +1040,75 @@ public class Memory implements Output, Serializable {
             }
         }
         
+        
         if (newEvent != null && newEvent.isInput()) {
-            int n=shortTermMemory.size();
-            if (n!=0) { //also here like in rule tables: we dont want to derive useless statements
-                if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,shortTermMemory.get(n-1).sentence.content)) {
+            final int maxStmSize =  param.shortTermMemorySize.get();
+            int stmSize = shortTermMemory.size();
+            
+            if (stmSize!=0) { //also here like in rule tables: we dont want to derive useless statements
+                if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,shortTermMemory.get(stmSize-1).sentence.content)) {
                     return processed;
                 }
-                setTheNewStamp(Stamp.make(newEvent.sentence.stamp, shortTermMemory.get(n-1).sentence.stamp, getTime()));
+                setTheNewStamp(Stamp.make(newEvent.sentence.stamp, shortTermMemory.get(stmSize-1).sentence.stamp, getTime()));
                 setCurrentTask(newEvent);
-                setCurrentBelief(shortTermMemory.get(n-1).sentence);
+                setCurrentBelief(shortTermMemory.get(stmSize-1).sentence);
                 
                 TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
+                
+                
                 ArrayList<Term> cur=new ArrayList<Term>();
-                for(int i=n-1;i>=0;i--) {
-                    if(n==1) {
-                        break;
-                    }
-                    cur.add(shortTermMemory.get(i).getContent());
-                    if(i>0) {
-                        int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
-                        if(diff > param.duration.get()) {
-                            cur.add(Interval.intervalTime(diff));
+                
+                if(!(newEvent.sentence.content instanceof Operation)) {
+                    
+                    final int duration = param.duration.get();
+                    
+                    
+                    for(int i=stmSize-1;i>=0;i--) {
+                        cur.add(shortTermMemory.get(i).getContent());
+                        if(i>0) {
+                            int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
+                            if(diff > duration ) {
+                                cur.add( Interval.intervalTime(diff) );
+                            }
                         }
-                    }
-                   // if(i!=0)
-                   //     continue; //just use last one fow now
+                        if(i!=0)
+                            continue; //just use last one fow now
 
-                    setCurrentBelief(shortTermMemory.get(i).sentence);
-                    TruthValue val=shortTermMemory.get(i).sentence.truth;
-                    for(int j=i+1;j+1<n;j++) {
-                        val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
-                    }
-                    
-                    int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(n-1).getCreationTime());
-                    if(diff > param.duration.get() ) {
-                        cur.add(0, Interval.intervalTime(diff));
-                    }
+                        setCurrentBelief(shortTermMemory.get(i).sentence);
+                        TruthValue val=shortTermMemory.get(i).sentence.truth;
+                        /*for(int j=i+1;j+1<n;j++) { 
+                            val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
+                        }*///lets let it abduction instead
 
-                    Term[] terms=new Term[cur.size()];
-                    for(int j=0;j<cur.size();j++) {
-                        terms[cur.size()-j-1]=cur.get(j);
-                    }
-               
-                    
-                    Term c = Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
-                    if (c instanceof Conjunction) {
-                        Conjunction subj=(Conjunction) c;
-                        val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-                        Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
-                        BudgetValue bud=BudgetFunctions.forward(val,this);
-                        this.doublePremiseTask(imp,val,bud);
+                        int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(stmSize-1).getCreationTime());
+                        if(diff > duration) {
+                            cur.add(0, Interval.intervalTime(diff) );
+                        }
+
+                        while(cur.size() < maxStmSize) {                           
+                            Interval inti = Interval.intervalMagnitude(i);
+                            cur.add(inti);
+                        }
+
+                        Term[] terms=new Term[cur.size()];
+                        for(int j=0;j<cur.size();j++) {
+                            terms[cur.size()-j-1]=cur.get(j);
+                        }
+
+                        if(terms.length>1) {
+                            Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
+                            val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+                            Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
+                            BudgetValue bud=BudgetFunctions.forward(val,this);
+                            this.doublePremiseTask(imp,val,bud);
+                        }
                     }
                 }
             }
+            
             if(newEvent.isInput()) { //only use input events for this heuristic
                 shortTermMemory.add(newEvent);
-                if(shortTermMemory.size()>Parameters.SHORT_TERM_MEMORY_SIZE) {
+                if(shortTermMemory.size()>maxStmSize) {
                     shortTermMemory.remove(0);
                 }
             }

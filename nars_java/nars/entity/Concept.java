@@ -27,16 +27,18 @@ import nars.core.NARRun;
 import static nars.entity.Stamp.make;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
-import static nars.inference.LocalRules.decisionMaking;
+import nars.inference.LocalRules;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
+import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.storage.AbstractBag;
@@ -238,12 +240,15 @@ public class Concept extends Item {
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean noRevision = true;
+        
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
+            
             if (newStamp.equals(oldStamp)) {
                 return;
             }
+            
             if (revisible(goal, oldGoal)) {
                 memory.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
                 if (memory.getTheNewStamp() != null) {
@@ -252,18 +257,24 @@ public class Concept extends Item {
                 }
             }
         }
+        
         if (task.aboveThreshold()) {
+            
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+            
             if (belief!=null)
                 trySolution(belief, task, memory);
 
-            if (task.aboveThreshold()) {    // still worth pursuing
+            
+            // still worth pursuing?
+            if (task.aboveThreshold()) {    
                 
                 addToTable(goal, desires, memory.param.conceptBeliefsMax.get());
                 
-                if (noRevision || (task.sentence.content instanceof Operation)) {
-                    decisionMaking(task, this);
-                }
+                if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
+                    //hm or conjunction in time and temporal order forward
+                    LocalRules.decisionMaking(task, this, memory); 
+               }
             }
         }
     }
