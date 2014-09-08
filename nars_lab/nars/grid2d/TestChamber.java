@@ -140,7 +140,7 @@ public class TestChamber {
                             keyn=-1;
                         }
                         if (path.size() <= 1) {
-                            //nar.step(1);
+                            nar.step(1);
                             //System.out.println("at destination; didnt need to find path");
                             if (getfeedback && !"".equals(goal) && current.equals(target)) {
                                  getfeedback = false;
@@ -224,7 +224,7 @@ public class TestChamber {
                             opname="";
                         } else {
                             active=false;
-                            nar.step(1);
+                            //nar.step(1);
                             int numSteps = Math.min(10, path.size());
                             float cx = x;
                             float cy = y;
