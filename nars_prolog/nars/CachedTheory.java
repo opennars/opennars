@@ -2,16 +2,9 @@
 package nars;
 
 public class CachedTheory {
-    public enum EnumOrigin {
-        FILE,
-        URL
-    }
-    
-    public CachedTheory(EnumOrigin origin, String content) {
-        this.origin = origin;
+    public CachedTheory(String content) {
         this.content = content;
     }
     
-    public EnumOrigin origin;
     public String content;
 }
