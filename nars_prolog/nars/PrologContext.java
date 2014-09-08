@@ -1,5 +1,6 @@
 package nars;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import nars.core.NAR;
@@ -14,6 +15,10 @@ public class PrologContext {
     
     /** maps a NARS term to the coresponding prolog interpreter istance */
     public final Map<Term, Prolog> prologInterpreters = new WeakHashMap();
+    
+    // cache for all theories
+    public final Map<String, CachedTheory> theoryCache = new HashMap();
+    
     private final NAR nar;
     
     public PrologContext(NAR n) {

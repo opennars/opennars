@@ -51,6 +51,7 @@ public class PrologTheoryStringOperator extends nars.operator.Operator {
         
         // TODO< map somehow the theory name to the theory itself and reload if overwritten >
         // NOTE< theoryName is not used >
+        // NOTE< theory is not cached >
         try {
             prologInterpreter.addTheory(new Theory(theoryContent));
         }
