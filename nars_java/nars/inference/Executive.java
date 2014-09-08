@@ -299,13 +299,15 @@ public class Executive {
         //for this heuristic, only use input events & task effects of operations
         if (actionable) { 
             shortTermMemory.add(newEvent);
+            
             if(shortTermMemory.size()>maxStmSize) {
                 shortTermMemory.removeFirst();
             }
         
+            return true;
         }
         
-        return true;
+        return false;
     }
     
     public boolean isActionable(final Task newEvent) {

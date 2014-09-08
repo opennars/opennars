@@ -154,20 +154,20 @@ public class Concept extends Item {
      *
      * @param task The task to be processed
      */
-    public void directProcess(final Task task,Memory mem) {
+    public void directProcess(final Task task) {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
-                mem.logic.JUDGMENT_PROCESS.commit();
+                memory.logic.JUDGMENT_PROCESS.commit();
                 processJudgment(task);
                 break;
             case Symbols.GOAL_MARK:
-                mem.logic.GOAL_PROCESS.commit();
+                memory.logic.GOAL_PROCESS.commit();
                 processGoal(task);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
-                mem.logic.QUESTION_PROCESS.commit();
+                memory.logic.QUESTION_PROCESS.commit();
                 processQuestion(task);
                 break;
             default:
@@ -175,7 +175,7 @@ public class Concept extends Item {
         }
 
         if (task.aboveThreshold()) {    // still need to be processed
-            mem.logic.LINK_TO_TASK.commit();
+            memory.logic.LINK_TO_TASK.commit();
             linkToTask(task);
         }
                 
@@ -183,8 +183,8 @@ public class Concept extends Item {
             entityObserver.refresh(displayContent());
         }
         
-        if (mem.param.internalExperience.get()) {
-            mem.rememberAction(task);
+        if (memory.param.internalExperience.get()) {
+            memory.rememberAction(task);
         }
     }
 
