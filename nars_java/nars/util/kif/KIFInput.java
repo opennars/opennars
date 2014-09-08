@@ -102,6 +102,28 @@ public class KIFInput extends PrintWriterInput implements Runnable {
 
                 List<String> a = f.argumentsToArrayList(1);
 
+/**
+ * 
+ * 
+ * https://github.com/opencog/opencog/blob/04db8e557a2d67da9025fe455095d2cda0261ea7/opencog/python/sumo/sumo.py
+ * def special_link_type(predicate):
+mapping = {
+'=>':types.ImplicationLink,
+'<=>':types.EquivalenceLink,
+'and':types.AndLink,
+'or':types.OrLink,
+'not':types.NotLink,
+'instance':types.MemberLink,
+# This might break some of the formal precision of SUMO, but who cares
+'attribute':types.InheritanceLink,
+'member':types.MemberLink,
+'subclass':types.InheritanceLink,
+'exists':types.ExistsLink,
+'forall':types.ForAllLink,
+'causes':types.PredictiveImplicationLink
+* 
+                 */
+                
                 switch (root) {
                     case "subclass":
                         if (includeSubclass) {

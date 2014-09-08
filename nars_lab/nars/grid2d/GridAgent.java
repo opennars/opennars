@@ -56,7 +56,13 @@ abstract public class GridAgent extends LocalGridObject {
         space.pushMatrix();
         space.translate(cx, cy);
         space.scale(scale*0.8f);
-        space.fill(Color.ORANGE.getRGB(), 255);
+        
+        if(!(nar.memory.next_task.isEmpty())) {
+            space.fill(Color.RED.getRGB(), 255);
+        } else {
+            space.fill(Color.ORANGE.getRGB(), 255);
+        }
+         
         space.ellipse(0,0, 1, 1);
         
         //eyes

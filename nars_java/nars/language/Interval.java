@@ -58,7 +58,7 @@ public class Interval extends Term {
     }
     
     
-    private final int magnitude;
+    public final int magnitude;
 
     // time is a positive integer
     protected Interval(final long time) {

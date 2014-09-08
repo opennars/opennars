@@ -29,8 +29,10 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Inheritance;
+import nars.language.Interval;
 import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
@@ -304,16 +306,17 @@ public class LocalRules {
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
     
-    /** Add plausibility estimation */
-    public static void decisionMaking(final Task task, final Concept concept) {
-        Term content = concept.term;
-        TruthValue desireValue = concept.getDesire();
-        if (desireValue.getExpectation() < concept.memory.param.decisionThreshold.get()) {
-            return;
-        }
+    
+    public static void executeOperation(final Term content, final Concept concept, final Task task, final boolean masterplan, final Memory mem) {
+
         if (!(content instanceof Operation)) {
             return;
         }
+        
+        if(!masterplan && mem.next_task.isEmpty()==false) {
+            return; //already executing sth
+        }
+        
         Operation op = (Operation) content;
         Term opi=op.getPredicate();
         if(!(opi instanceof Operator)) {
@@ -326,5 +329,72 @@ public class LocalRules {
             oper.call(op, args.term, concept.memory);
             task.setPriority(0);
         }
-    }    
+    
+    
+    }
+    
+    public static void Manage_Execution(Memory mem)  {
+        if(mem.next_task.isEmpty()) {
+            return;
+        }
+        Task task=mem.next_task.get(0);
+        mem.next_task.remove(0);
+        Concept concept=mem.next_concept.get(0);
+        mem.next_concept.remove(0);
+        Term content=mem.next_content.get(0);
+        mem.next_content.remove(0);
+        if(task==null) {
+            return; //we have to wait
+        }
+        //ok it is time for action:
+        executeOperation(content,concept,task,true,mem);
+    }
+    
+    /** Add plausibility estimation */
+    public static void decisionMaking(final Task task, final Concept concept, final Memory mem) {
+        
+        Term content = concept.term;
+        TruthValue desireValue = concept.getDesire();
+        
+        if (desireValue.getExpectation() < mem.param.decisionThreshold.get()) {
+            return;
+        }
+        
+        if(content instanceof Conjunction && content.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+            //1. get first operator and execute it
+            CompoundTerm cont = (CompoundTerm) content;
+            
+            //only allow the long plans here
+            if(cont.term.length!= mem.param.shortTermMemorySize.get()) { 
+                return;
+            }
+            
+            final int duration = mem.param.duration.get();
+            
+            for (final Term t : cont.term) {
+                
+                if(t instanceof Interval) {
+                    Interval intv=(Interval) t;
+                    
+                    long wait_steps = intv.magnitude;
+                    
+                    for(long i=0;i<wait_steps * duration; i++) {
+                        mem.next_task.add(null);
+                        mem.next_concept.add(null);
+                        mem.next_content.add(null);
+                    }
+                }
+                else if(t instanceof Operation) {
+                    mem.next_task.add(task);
+                    mem.next_concept.add(concept);
+                    mem.next_content.add(t);
+                }
+            }
+            
+            return;           
+        }
+        
+        executeOperation(content,concept,task,false,mem);
+    }
+
 }

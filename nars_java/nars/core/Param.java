@@ -79,4 +79,8 @@ public class Param implements Serializable {
     public final AtomicInteger duration = new AtomicInteger();
         
     
+    /** # of events, can be dynamically adjusted */
+    public final AtomicInteger shortTermMemorySize = new AtomicInteger();
+    
+    
 }
