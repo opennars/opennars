@@ -27,7 +27,6 @@ import nars.core.NARRun;
 import static nars.entity.Stamp.make;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
-import nars.inference.LocalRules;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
@@ -273,7 +272,7 @@ public class Concept extends Item {
                 
                 if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
                     //hm or conjunction in time and temporal order forward
-                    LocalRules.decisionMaking(task, this, memory); 
+                    memory.executive.decisionMaking(task, this);
                }
             }
         }
