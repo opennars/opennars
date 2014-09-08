@@ -21,13 +21,12 @@
 package nars.grid2d.operator;
  
 import java.util.List;
+import nars.core.Memory;
 import nars.entity.Task;
-import nars.grid2d.Grid2DSpace;
 import nars.grid2d.TestChamber;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  *  A class used as a template for Operator definition.
@@ -46,7 +45,7 @@ public class Activate extends Operator {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          
-        
+        TestChamber.executed=true;
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
@@ -65,4 +64,3 @@ public class Activate extends Operator {
     }
 
 }
-

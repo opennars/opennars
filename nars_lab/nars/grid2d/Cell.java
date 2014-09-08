@@ -217,20 +217,23 @@ public class Cell {
         s.textSize(1);
          if(logic==Logic.SWITCH || logic==Logic.OFFSWITCH)
         {
-            s.fill(state.cr, state.cg, state.cb, state.ca);
+            s.fill(state.cr+30, state.cg+30, 0, state.ca+30);
             s.ellipse(0.5f, 0.5f, 1.0f, 1.0f);
         }
         else
         if(logic!=Logic.BRIDGE && logic!=Logic.NotALogicBlock && logic!=Logic.WIRE) {
-            s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
+            //s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
+            s.fill(state.cr+30, state.cg+30, 0, state.ca+30);
             s.triangle(0.25f, 1.0f, 0.5f, 0.5f, 0.75f, 1.0f);
             s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
-            s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
             s.rect(0, 0.3f, 1, 0.4f);
         }
          else
         if(logic==Logic.WIRE || logic==Logic.BRIDGE) {
             s.fill(state.cr, state.cg, state.cb, state.ca);
+            if(logic==Logic.BRIDGE) {
+                s.fill(state.cr+30, state.cg+30, 0, state.ca+30);
+            }
             s.rect(0, 0.3f, 1, 0.4f);
             s.rect(0.3f, 0, 0.4f, 1);
         }

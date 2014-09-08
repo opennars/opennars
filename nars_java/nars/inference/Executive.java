@@ -31,46 +31,61 @@ public class Executive {
     public final Memory memory;
     
     /** previous events, for temporal induction */
-    public final Deque<Task> shortTermMemory = new ArrayDeque<Task>();
+    public final Deque<Task> shortTermMemory = new ArrayDeque<>();
 
-    //memory for faster execution of &/ statements (experiment)
-    public final Deque<Task> nextTask = new ArrayDeque<Task>();
-    public final Deque<Concept> nextConcept = new ArrayDeque<Concept>();
-    public final Deque<Term> nextContent = new ArrayDeque<Term>();
+    /** memory for faster execution of &/ statements (experiment) */
+    public final Deque<TaskConceptContent> next = new ArrayDeque<>();
 
+    public static class TaskConceptContent {
+        
+        public final Task task;
+        public final Concept concept;
+        public final Term content;
+
+        public static TaskConceptContent NULL = new TaskConceptContent();
+        
+        /** null placeholder */
+        protected TaskConceptContent() {
+            this.task = null;
+            this.concept = null;
+            this.content = null;
+        }
+
+        public TaskConceptContent(Task task, Concept concept, Term content) {
+            this.task = task;
+            this.concept = concept;
+            this.content = content;
+        }
+        
+    }
+    
     
     public Executive(Memory mem) {
         this.memory = mem;        
     }
 
     public void reset() {
-        nextTask.clear();
-        nextConcept.clear();
-        nextContent.clear();
+        next.clear();
         shortTermMemory.clear();        
     }   
     
 
     public void manageExecution()  {
         
-        if (nextTask.isEmpty()) {
+        if (next.isEmpty()) {
             return;
         }
         
-        Task task=nextTask.pollFirst();
-        
-        Concept concept=nextConcept.pollFirst();
-        
-        Term content=nextContent.pollFirst();
+        TaskConceptContent n = next.pollFirst();
         
         
-        if(task==null) {
+        if (n.task==null) {
             //we have to wait
             return; 
         }
         
         //ok it is time for action:
-        executeOperation(content, concept, task, true);
+        executeOperation(n.content, n.concept, n.task, true);
     }    
 
     public void executeOperation(final Term content, final Concept concept, final Task task, final boolean masterplan) {
@@ -79,7 +94,7 @@ public class Executive {
             return;
         }
         
-        if ((!masterplan) && (!nextTask.isEmpty())) {
+        if ((!masterplan) && (!next.isEmpty())) {
             return; //already executing sth
         }
         
@@ -130,15 +145,11 @@ public class Executive {
                     long wait_steps = intv.magnitude;
                                         
                     for(long i=0;i<wait_steps * duration; i++) {
-                        nextTask.addLast(null);
-                        nextConcept.addLast(null);
-                        nextContent.addLast(null);
+                        next.addLast(TaskConceptContent.NULL);
                     }
                 }
                 else if(t instanceof Operation) {
-                    nextTask.addLast(task);
-                    nextConcept.addLast(concept);
-                    nextContent.addLast(t);
+                    next.addLast(new TaskConceptContent(task, concept, t));
                 }
             }
             
