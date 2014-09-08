@@ -57,7 +57,7 @@ abstract public class GridAgent extends LocalGridObject {
         space.translate(cx, cy);
         space.scale(scale*0.8f);
         
-        if(!(nar.memory.executive.next_task.isEmpty())) {
+        if(!(nar.memory.executive.nextTask.isEmpty())) {
             space.fill(Color.RED.getRGB(), 255);
         } else {
             space.fill(Color.ORANGE.getRGB(), 255);
