@@ -1019,6 +1019,11 @@ public final class CompositionalRules {
                     BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
+                    
+                    if(sEqualsP(newTask.sentence.content)) {
+                        return false;
+                    }
+                    
                     memory.setCurrentBelief(taskSentence);
                     memory.setCurrentTask(dummy);
                     memory.derivedTask(newTask, false, false, taskSentence, second_belief);
@@ -1037,7 +1042,16 @@ public final class CompositionalRules {
         return true;
     }
     
-
+    public static boolean sEqualsP(Term T) {
+        if(T instanceof Statement) {
+            Statement st=(Statement) T;
+            if(st.getSubject().equals(st.getPredicate())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private static void dedSecondLayerVariableUnificationTerms(Memory memory, Sentence taskSentence, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
         
             Stamp sx = new Stamp(taskSentence.stamp, memory.getTime(), s);
@@ -1064,6 +1078,10 @@ public final class CompositionalRules {
                 
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
+                
+                if(sEqualsP(newTask.sentence.content)) {
+                    return;
+                }
                 
                 memory.derivedTask(newTask, false, false, taskSentence, second_belief);
             }    
