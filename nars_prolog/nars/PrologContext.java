@@ -21,6 +21,7 @@ public class PrologContext {
         
         nar.memory.addOperator(new PrologTheoryStringOperator(this));
         nar.memory.addOperator(new PrologQueryOperator(this));
+        nar.memory.addOperator(new PrologTheoryFileOperator(this));
         
     }
 }
