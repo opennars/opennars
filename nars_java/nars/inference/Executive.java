@@ -256,8 +256,8 @@ public class Executive {
                     }
 
                     while (cur.size() < maxStmSize) {
-                        //cur.add( Interval.intervalMagnitude(i) );
-                        cur.add( Interval.intervalTime(i) );
+                        cur.add( Interval.intervalMagnitude(i) );
+                        //cur.add( Interval.intervalTime(i) );
                     }
 
                     //if (cur.size() > 1) {
