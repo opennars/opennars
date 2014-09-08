@@ -10,6 +10,7 @@ import nars.language.Term;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
+import nars.prolog.lib.BasicLibrary;
 
 /**
  * Prolog operator which loads a theory from a file
@@ -42,16 +43,8 @@ public class PrologTheoryFileOperator extends nars.operator.Operator {
         String theoryName = args[1].name().toString(); // ASK< correct? >
         String theoryPath = PrologQueryOperator.getStringOfTerm(args[2]);
         
-        Prolog prologInterpreter;
-        
-        boolean prologInterpreterKnown = context.prologInterpreters.containsKey(prologInterpreterKey);
-        if (prologInterpreterKnown) {
-            prologInterpreter = context.prologInterpreters.get(prologInterpreterKey);
-        }
-        else {
-            prologInterpreter = new Prolog();
-            context.prologInterpreters.put(prologInterpreterKey, prologInterpreter);
-        }
+        // NOTE< throws exception, we just don't catch it and let nars handle it >
+        Prolog prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
         
         FileInputStream theoryFile;
         try {
