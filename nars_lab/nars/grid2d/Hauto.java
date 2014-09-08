@@ -224,9 +224,30 @@ public class Hauto {
             if(selected.material==Material.Door) {
                 doorname=name;
             }
-            nar.addInput("<"+name+" --> "+Klass+">.");
-            readCells[(int) x][(int) y].name = name;
-            writeCells[(int) x][(int) y].name = name;
+            
+            //if it has name already, dont allow overwrite
+
+            if(readCells[(int) x][(int) y].name.equals("")) {
+                nar.addInput("<"+name+" --> "+Klass+">.");
+                if(selected.logic==Logic.OFFSWITCH) {
+                    nar.addInput("<"+name+" --> "+"off>. :|:");
+                }
+                if(selected.logic==Logic.SWITCH) {
+                    nar.addInput("<"+name+" --> "+"on>. :|:");
+                }
+                readCells[(int) x][(int) y].name = name;
+                writeCells[(int) x][(int) y].name = name;
+            }
+            else
+            {
+                if(selected.logic==Logic.OFFSWITCH) { //already has a name so use this one
+                    nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"off>. :|:");
+                }
+                if(selected.logic==Logic.SWITCH) {
+                    nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"on>. :|:");
+                }
+            }
+            
             entityID++;
         }
     }
