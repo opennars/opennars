@@ -29,4 +29,14 @@ public class PrologContext {
         nar.memory.addOperator(new PrologTheoryFileOperator(this));
         
     }
+    
+    // theoryInCache is a reference which gets the result, is the theory allready in the cache?
+    public CachedTheory getCachedTheoryIfCached(String theoryName, BooleanHolder theoryInCache) {
+        theoryInCache.value = theoryCache.containsKey(theoryName);
+        if (theoryInCache.value) {
+            return theoryCache.get(theoryName);
+        }
+        
+        return null;
+    }
 }

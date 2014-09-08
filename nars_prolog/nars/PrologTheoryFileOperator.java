@@ -46,29 +46,51 @@ public class PrologTheoryFileOperator extends nars.operator.Operator {
         // NOTE< throws exception, we just don't catch it and let nars handle it >
         Prolog prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
         
-        FileInputStream theoryFile;
-        try {
-            theoryFile = new FileInputStream(theoryPath);
+        // assignment because of java happyness
+        BooleanHolder theoryInCache = new BooleanHolder(false);
+        
+        // try to find the theory in the cache
+        // if it was not found we try to load it from the file and store it in the cache
+        CachedTheory foundCachedTheory = context.getCachedTheoryIfCached(theoryName, theoryInCache);
+        
+        String theoryContent;
+        
+        if (theoryInCache.value) {
+            theoryContent = foundCachedTheory.content;
         }
-        catch (FileNotFoundException exception) {
-            // TODO< report error >
-            return null;
+        else {
+            FileInputStream theoryFile;
+            try {
+                theoryFile = new FileInputStream(theoryPath);
+            }
+            catch (FileNotFoundException exception) {
+                // TODO< report error >
+                return null;
+            }
+            
+            try {
+                theoryContent = Utilities.readStringFromInputStream(theoryFile);
+            }
+            catch (IOException exception) {
+                // TODO< report error >
+                return null;
+            }
+            
+            // store the theory in the cache
+            context.theoryCache.put(theoryName, new CachedTheory(theoryContent));
         }
         
         
         // TODO< map somehow the theory name to the theory itself and reload if overwritten >
         // NOTE< theoryName is not used >
         try {
-            prologInterpreter.addTheory(new Theory(theoryFile));
+            prologInterpreter.addTheory(new Theory(theoryContent));
         }
         catch (InvalidTheoryException exception) {
             // TODO< report error >
             return null;
         }
-        catch (IOException exception) {
-            // TODO< report error >
-            return null;
-        }
+        
         
         memory.output(Prolog.class, prologInterpreterKey + "=" + theoryPath );
 
