@@ -1076,12 +1076,12 @@ public final class CompositionalRules {
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
                 
-                memory.setCurrentBelief(taskSentence);
-                memory.setCurrentTask(dummy);
-                
                 if(sEqualsP(newTask.sentence.content)) {
                     return;
                 }
+                
+                memory.setCurrentBelief(taskSentence);
+                memory.setCurrentTask(dummy);
                 
                 memory.derivedTask(newTask, false, false, taskSentence, second_belief);
             }    
