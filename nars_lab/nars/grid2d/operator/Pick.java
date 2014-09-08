@@ -45,10 +45,10 @@ public class Pick extends Operator {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          
-        
-        //System.out.println("Executed: " + this);
+        TestChamber.executed=true;
+        System.out.println("Executed: " + this);
         for (Term t : args) {
-            //System.out.println(" --- " + t);
+            System.out.println(" --- " + t);
             chamb.operateObj(t.toString(),"pick");
         }
         
@@ -64,4 +64,3 @@ public class Pick extends Operator {
     }
 
 }
-
