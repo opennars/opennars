@@ -220,13 +220,13 @@ public class Executive {
 
             TemporalRules.temporalInduction(newEvent.sentence, currentBelief, memory);
 
-            ArrayList<Term> cur=new ArrayList<Term>();
 
             if(!(newEvent.sentence.content instanceof Operation)) {
 
                 final int duration = memory.param.duration.get();
 
 
+                ArrayList<Term> cur=new ArrayList<Term>();
                 
                 Iterator<Task> t = shortTermMemory.descendingIterator();
                 Task curT = t.next(), nextT = null;
@@ -272,19 +272,20 @@ public class Executive {
                     }
 
                     //if (cur.size() > 1) {
-                        Term[] terms=new Term[cur.size()];
-                        for(int j=0;j<cur.size();j++) {
-                            terms[cur.size()-j-1]=cur.get(j);
-                        }
-                        
-                        Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
-                        val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-                        
-                        Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
-                        
-                        BudgetValue bud=BudgetFunctions.forward(val, memory);
-                        
-                        memory.doublePremiseTask(imp,val,bud);
+                    //term = reverse of cur
+                    Term[] terms=new Term[cur.size()];
+                    for(int j=0;j<cur.size();j++) {
+                        terms[cur.size()-j-1]=cur.get(j);
+                    }
+
+                    Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
+                    val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+
+                    Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
+
+                    BudgetValue bud=BudgetFunctions.forward(val, memory);
+
+                    memory.doublePremiseTask(imp,val,bud);
                     //}
                     
                     
@@ -299,7 +300,7 @@ public class Executive {
         if (actionable) { 
             shortTermMemory.add(newEvent);
             if(shortTermMemory.size()>maxStmSize) {
-                shortTermMemory.remove(0);
+                shortTermMemory.removeFirst();
             }
         
         }

@@ -307,6 +307,7 @@ public class Struct extends Term {
         //return(name.equals(":-") && arity == 2 && arg[0].getTerm() instanceof Struct);
     }    
     
+    @Override
     public Term getTerm() {
         return this;
     }

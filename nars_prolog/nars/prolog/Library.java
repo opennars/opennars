@@ -196,10 +196,10 @@ public abstract class Library implements Serializable, IPrimitives {
                 Class<?>[] clist = mlist[i].getParameterTypes();
                 Class<?> rclass = mlist[i].getReturnType();
                 String returnTypeName = rclass.getName();
-                
+                                
                 int type;
                 if (returnTypeName.equals("boolean")) type = PrimitiveInfo.PREDICATE;
-                else if (returnTypeName.equals("alice.tuprolog.Term")) type = PrimitiveInfo.FUNCTOR;
+                else if (returnTypeName.equals("nars.prolog.Term")) type = PrimitiveInfo.FUNCTOR;
                 else if (returnTypeName.equals("void")) type = PrimitiveInfo.DIRECTIVE;
                 else continue;
                 
