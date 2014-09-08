@@ -46,19 +46,12 @@ public class PrologTheoryStringOperator extends nars.operator.Operator {
         String theoryName = args[1].name().toString(); // ASK< correct? >
         String theoryContent = PrologQueryOperator.getStringOfTerm(args[2]);
         
-        Prolog prologInterpreter;
-        
-        boolean prologInterpreterKnown = context.prologInterpreters.containsKey(prologInterpreterKey);
-        if (prologInterpreterKnown) {
-            prologInterpreter = context.prologInterpreters.get(prologInterpreterKey);
-        }
-        else {
-            prologInterpreter = new Prolog();
-            context.prologInterpreters.put(prologInterpreterKey, prologInterpreter);
-        }
+        // NOTE< throws exception, we just don't catch it and let nars handle it >
+        Prolog prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
         
         // TODO< map somehow the theory name to the theory itself and reload if overwritten >
         // NOTE< theoryName is not used >
+        // NOTE< theory is not cached >
         try {
             prologInterpreter.addTheory(new Theory(theoryContent));
         }
