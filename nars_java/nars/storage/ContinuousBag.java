@@ -295,7 +295,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     private E intoBase(E newItem) {
         E oldItem = null;
         
-        if (size() > capacity) {      // the bag is full            
+        if (size() >= capacity) {      // the bag is full            
             oldItem = takeOutIndex(0, true);
         }
         

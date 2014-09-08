@@ -26,7 +26,7 @@ package nars.entity;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item {
+public abstract class Item implements Comparable {
 
     
     /** The budget of the Item, consisting of 3 numbers */
@@ -169,4 +169,10 @@ public abstract class Item {
     	return toString();
     }
 
+    //default:
+    @Override
+    public int compareTo(Object o) {
+        return System.identityHashCode(this) - System.identityHashCode(o);
+    }
+    
 }

@@ -1,6 +1,7 @@
 package nars.test.util;
 
 import nars.perf.BagPerf.NullItem;
+import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.storage.ContinuousBag;
 import nars.storage.ContinuousBag2;
@@ -20,12 +21,13 @@ public class ContinuousBagTest {
     @Test 
     public void testContinuousBag() {
         testFastBag(false);
-        testFastBag(true);
+        testFastBag(true);        
         
-        testFastBagCapacityLimit(false);
-        testFastBagCapacityLimit(true);
+        testFastBag2(false);
+        testFastBag2(true);
         
-        
+        testFastBagCapacityLimit();
+
         
         testRemovalDistribution(4, false);
         testRemovalDistribution(4, true);
@@ -77,38 +79,67 @@ public class ContinuousBagTest {
         
         f.putIn(new NullItem(.9f));
         f.putIn(new NullItem(.75f));
+        assert(f.size() == 3);
         
         //System.out.println(f);
-        
-        //sorted
-        assert(f.items.exact(0).getPriority() < f.items.exact(1).getPriority());
 
-        assert(f.size() == 3);
-        f.takeOut();
+        //sorted
+        assert(f.items.first().getPriority() < f.items.last().getPriority());
+        assert(f.items.first().getPriority() < f.items.exact(1).getPriority());
+
+        assert(f.items.size() == f.nameTable.size());
         
+        assert(f.size() == 3);
+        
+        f.takeOut();
         assert(f.size() == 2);
+        assert(f.items.size() == f.nameTable.size());        
+        
         f.takeOut();
         assert(f.size() == 1);
+        assert(f.items.size() == f.nameTable.size());        
+        assert(f.getMass() > 0);
+        
         f.takeOut();
         assert(f.size() == 0);
-        
         assert(f.getMass() == 0);
-        assert(f.items.size() == f.nameTable.size());
+        assert(f.items.size() == f.nameTable.size());                
+        
     }
     
-    public void testFastBagCapacityLimit(boolean random) {
-        ContinuousBag<NullItem> f = new ContinuousBag(4, 10, random);
-        f.putIn(new NullItem());
-        f.putIn(new NullItem());
-        f.putIn(new NullItem());
-        boolean a = f.putIn(new NullItem());
+    public void testFastBagCapacityLimit(AbstractBag f) {
+        
+        NullItem four = new NullItem(.4f);
+        NullItem five = new NullItem(.5f);
+        
+        f.putIn(four);
+        f.putIn(five);
+        f.putIn(new NullItem(.6f));
+        boolean a = f.putIn(new NullItem(.7f));
         assert(a);
-        f.putIn(new NullItem()); //limit
-        assert(f.size() == 4);
-        f.putIn(new NullItem()); //limit
-        assert(f.size() == 4);
+        
+        f.putIn(new NullItem(.6f)); //limit
 
+        assertEquals(4, f.size());
+
+        assertEquals(f.size(), f.keySet().size());
+        
+        assertTrue(f.contains(five));    //5 should be in lowest position
+        assertTrue(!f.contains(four)); //4 should get removed
+        
+        
+        f.putIn(new NullItem(.8f)); //limit
+        assertEquals(4, f.size());
     }
+    
+    public void testFastBagCapacityLimit() {
+        testFastBagCapacityLimit(new ContinuousBag(4, 10, true));
+        testFastBagCapacityLimit(new ContinuousBag(4, 10, false));
+        testFastBagCapacityLimit(new ContinuousBag2(4, 10, true));
+        testFastBagCapacityLimit(new ContinuousBag2(4, 10, false));
+    }
+    
+    
     
     public void testRemovalDistribution(int N, boolean random) {
         int samples = 256 * N;

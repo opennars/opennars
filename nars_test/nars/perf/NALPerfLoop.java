@@ -18,6 +18,7 @@ public class NALPerfLoop {
         int extraCycles = 2048;
         
         NAR n = new DefaultNARBuilder().build();
+        //NAR n = new ContinuousBagNARBuilder().build();
         
         Collection c = NALTest.params();
         while (true) {
