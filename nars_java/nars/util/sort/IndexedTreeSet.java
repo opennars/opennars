@@ -275,16 +275,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
     public boolean remove(final Object o) {
         return m.remove(o) == PRESENT;
     }
-    public E remove(final int index) {
-        final IndexedTreeMap im = (IndexedTreeMap) m;
-        IndexedTreeMap.Entry<E,?> e = im.exactEntry(index);
-        
-        if (e == null) 
-            return null;
-        
-        im.removeEntry(e);
-        return e.getKey();
-    }    
+
     
 
     /**

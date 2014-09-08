@@ -74,22 +74,11 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
         this.mass = 0;
     }
 
-    //cache the first parameter which is mostly invariant
-    E lastComparedY = null;
-    int lastComparedBudget = 0;
-
-    @Override public int compare(final E ey, final E ex) {
-        final int y;
-        if (lastComparedY == ey)
-            y = lastComparedBudget;
-        else {
-            lastComparedBudget = y = ey.budget.getPriorityShort();
-            lastComparedY = ey;                    
-        }
-
+    @Override public int compare(final E ex, final E ey) {
+        int y = ey.budget.getPriorityShort();
         int x = ex.budget.getPriorityShort();
-
-        return (x < y) ? -1 : ((x == y) ? 0 : 1);                   
+        
+        return (x < y) ? -1 : ((x == y) ? (((Comparable)ex).compareTo(ey)) : 1);                   
     }            
     
 
@@ -270,10 +259,10 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
      * @param newItem The Item to put in
      * @return The overflow Item
      */
-    private E intoBase(E newItem) {
+    private E intoBase(final E newItem) {
         E oldItem = null;
         
-        if (size() > capacity) {      // the bag is full            
+        if (size() >= capacity) {      // the bag is full            
             oldItem = takeOutIndex(0, true);
         }
         
@@ -292,15 +281,16 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
      * @param level The current level
      * @return The first Item
      */
-    private E takeOutIndex(final int index, boolean removeFromNameTable) {        
-        final E selected = items.remove(index);
+    private E takeOutIndex(final int index, final boolean removeFromNameTable) {        
+        E e = items.exact(index);
+        boolean removed = items.remove(e);
         
         if (removeFromNameTable)
-            nameTable.remove(selected.getKey());
+            nameTable.remove(e.getKey());
         
-        addToMass(-(selected.budget.getPriority()));
+        addToMass(-(e.budget.getPriority()));
         
-        return selected;
+        return e;
     }
 
     /**

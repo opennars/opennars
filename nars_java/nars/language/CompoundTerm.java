@@ -698,7 +698,7 @@ public abstract class CompoundTerm extends Term {
     }
     
     /** caches a static copy of commonly uesd index variables of each variable type */
-    public static final int maxCachedVariableIndex = 16;
+    public static final int maxCachedVariableIndex = 32;
     public static final Variable[][] varCache = (Variable[][]) Array.newInstance(Variable.class, 3, maxCachedVariableIndex);
     
     public static Variable getIndexVariable(final char type, final int i) {
@@ -710,10 +710,14 @@ public abstract class CompoundTerm extends Term {
             default: throw new RuntimeException("Invalid variable type: " + type + ", index " + i);
         }
         
-        Variable existing = varCache[typeI][i];
-        if (existing == null)
-            existing = varCache[typeI][i] = new Variable(type + String.valueOf(i));
-        return existing;
+        if (i < maxCachedVariableIndex) {
+            Variable existing = varCache[typeI][i];
+            if (existing == null)
+                existing = varCache[typeI][i] = new Variable(type + String.valueOf(i));
+            return existing;
+        }
+        else
+            return new Variable(type + String.valueOf(i));
     }
 
     /**
