@@ -43,9 +43,7 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.InferenceRecorder;
-import nars.inference.LocalRules;
 import nars.inference.TemporalRules;
-import nars.inference.TruthFunctions;
 import nars.io.Output;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
@@ -84,14 +82,12 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.IntersectionExt;
 import nars.language.IntersectionInt;
-import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
-import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -114,6 +110,7 @@ import nars.storage.BagObserver;
  * Memory is serializable so it can be persisted and transported.
  */
 public class Memory implements Output, Serializable {
+    public final Executive executive;
 
     /** empty event classes for use with EventEmitter */
     public static class Events {
@@ -267,11 +264,6 @@ public class Memory implements Output, Serializable {
      */
     public final ArrayDeque<Task> newTasks;
     
-    //memory for faster execution of &/ statements (experiment)
-    public ArrayList<Task> next_task=new ArrayList<Task>();
-    public ArrayList<Concept> next_concept=new ArrayList<Concept>();
-    public ArrayList<Term> next_content=new ArrayList<Term>();
-        
 
     public Term currentTerm;
 
@@ -330,17 +322,15 @@ public class Memory implements Output, Serializable {
         
         this.param = param;
         this.conceptProcessor = cycleControl;
-
         
-        this.novelTasks = novelTasks;
-        
-        recorder = NullInferenceRecorder.global;
-        
-        newTasks = new ArrayDeque<>();                
-
+        this.novelTasks = novelTasks;                
+        this.newTasks = new ArrayDeque<>();
         this.operators = new HashMap<>();
+        
+        this.executive = new Executive(this);
 
-        logic = new LogicSense() {
+        this.resource = new ResourceSense();
+        this.logic = new LogicSense() {
 
             @Override
             public void sense(Memory memory) {
@@ -365,11 +355,11 @@ public class Memory implements Output, Serializable {
                 super.sense(memory);
             }
 
-        };
+        };                
         
         
-        resource = new ResourceSense();
-        
+        recorder = NullInferenceRecorder.global;
+
         
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
@@ -389,12 +379,9 @@ public class Memory implements Output, Serializable {
     public void reset() {
         conceptProcessor.clear();
         novelTasks.clear();
-        
         newTasks.clear();     
-        next_task.clear();
-        next_concept.clear();
-        next_content.clear();
-        shortTermMemory.clear();
+        
+        executive.reset();
         
         clock = 0;
         stepsQueued = 0;
@@ -602,7 +589,10 @@ public class Memory implements Output, Serializable {
         TruthValue truth = new TruthValue(1f,0.9999f);
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
-        Task task = new Task(sentence, currentTask.budget/*, operation.getTask()*/);
+        
+        Task task = new Task(sentence, currentTask.budget, operation.getTask());
+        task.setCause(operation);
+        
         addNewTask(task, "Executed");
     }
 
@@ -957,6 +947,8 @@ public class Memory implements Output, Serializable {
         //--------m-a-i-n-----l-o-o-p--------
             
         conceptProcessor.cycle(this);
+
+        executive.manageExecution();
             
         //--------m-a-i-n-----l-o-o-p--------
 
@@ -965,8 +957,6 @@ public class Memory implements Output, Serializable {
 
         if (stepsQueued > 0)
             stepsQueued--;         
-
-        LocalRules.Manage_Execution(this);
         
         clock++;
                 
@@ -974,8 +964,7 @@ public class Memory implements Output, Serializable {
         
     }
 
-    /** previous events, for temporal induction */
-    private ArrayList<Task> shortTermMemory=new ArrayList<Task>();
+    
     
     
     /**
@@ -1008,17 +997,10 @@ public class Memory implements Output, Serializable {
                 
                 // new addInput or existing concept
                 immediateProcess(task);
-                if (task.sentence.stamp.getOccurrenceTime() != Stamp.ETERNAL) {
-                    if (task.sentence.isJudgment()) {
-                        if ((newEvent == null)
-                                || (BudgetFunctions.rankBelief(newEvent.sentence)
-                                < BudgetFunctions.rankBelief(task.sentence))) {
-                            if((shortTermMemory.isEmpty() || !equalSubTermsInRespectToImageAndProduct(shortTermMemory.get(shortTermMemory.size()-1).getContent(),task.getContent()))) {
-                                newEvent = task;
-                            }
-                        }
-                    }
-                }
+                
+                if (executive.isActionable(task, newEvent))
+                    newEvent = task;
+                
                 
             } else {
                 final Sentence s = task.sentence;
@@ -1040,83 +1022,10 @@ public class Memory implements Output, Serializable {
             }
         }
         
-        
-        if (newEvent != null && newEvent.isInput()) {
-            final int maxStmSize =  param.shortTermMemorySize.get();
-            int stmSize = shortTermMemory.size();
-            
-            if (stmSize!=0) { //also here like in rule tables: we dont want to derive useless statements
-                if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,shortTermMemory.get(stmSize-1).sentence.content)) {
-                    return processed;
-                }
-                setTheNewStamp(Stamp.make(newEvent.sentence.stamp, shortTermMemory.get(stmSize-1).sentence.stamp, getTime()));
-                setCurrentTask(newEvent);
-                setCurrentBelief(shortTermMemory.get(stmSize-1).sentence);
+        executive.planShortTerm(newEvent);
                 
-                TemporalRules.temporalInduction(newEvent.sentence, getCurrentBelief(), this);
-                
-                
-                ArrayList<Term> cur=new ArrayList<Term>();
-                
-                if(!(newEvent.sentence.content instanceof Operation)) {
-                    
-                    final int duration = param.duration.get();
-                    
-                    
-                    for(int i=stmSize-1;i>=0;i--) {
-                        cur.add(shortTermMemory.get(i).getContent());
-                        if(i>0) {
-                            int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
-                            if(diff > duration ) {
-                                cur.add( Interval.intervalTime(diff) );
-                            }
-                        }
-                        if(i!=0)
-                            continue; //just use last one fow now
-
-                        setCurrentBelief(shortTermMemory.get(i).sentence);
-                        TruthValue val=shortTermMemory.get(i).sentence.truth;
-                        /*for(int j=i+1;j+1<n;j++) { 
-                            val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
-                        }*///lets let it abduction instead
-
-                        int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(stmSize-1).getCreationTime());
-                        if(diff > duration) {
-                            cur.add(0, Interval.intervalTime(diff) );
-                        }
-
-                        while(cur.size() < maxStmSize) {                           
-                            Interval inti = Interval.intervalMagnitude(i);
-                            cur.add(inti);
-                        }
-
-                        Term[] terms=new Term[cur.size()];
-                        for(int j=0;j<cur.size();j++) {
-                            terms[cur.size()-j-1]=cur.get(j);
-                        }
-
-                        if(terms.length>1) {
-                            Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, this);
-                            val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-                            Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, this);
-                            BudgetValue bud=BudgetFunctions.forward(val,this);
-                            this.doublePremiseTask(imp,val,bud);
-                        }
-                    }
-                }
-            }
-            
-            if(newEvent.isInput()) { //only use input events for this heuristic
-                shortTermMemory.add(newEvent);
-                if(shortTermMemory.size()>maxStmSize) {
-                    shortTermMemory.remove(0);
-                }
-            }
-        }
-        
         return processed;
     }
-
     
     /**
      * Select a novel task to process.

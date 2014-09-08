@@ -21,6 +21,7 @@
 package nars.entity;
 
 import nars.language.Term;
+import nars.operator.Operation;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue
@@ -43,7 +44,10 @@ public class Task extends AbstractTask {
      * For Question and Goal: best solution found so far
      */
     private Sentence bestSolution;
+    
     private final CharSequence key;
+    
+    private Operation cause;
     
     /**
      * Constructor for input task
@@ -220,6 +224,16 @@ public class Task extends AbstractTask {
         } while (p!=null);
         return p;
     }
+
+    public void setCause(final Operation op) {
+        this.cause = op;
+    }
+
+    /** the causing Operation, or null if not applicable. */
+    public Operation getCause() {
+        return cause;
+    }
+    
 
     
 }
