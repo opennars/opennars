@@ -20,6 +20,7 @@
  */
 package nars.core;
 
+import nars.inference.Executive;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;

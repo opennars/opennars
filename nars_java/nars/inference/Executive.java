@@ -1,16 +1,17 @@
-package nars.core;
+package nars.inference;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.rankBelief;
-import nars.inference.TemporalRules;
-import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Implication;
@@ -22,47 +23,50 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 
 /**
- * Operation execution and planning support.  Strengthens and accelerates goal-reaching activity
+ * Operation execution and planning support.  
+ * Strengthens and accelerates goal-reaching activity
  */
 public class Executive {
     
     public final Memory memory;
     
     /** previous events, for temporal induction */
-    public final ArrayList<Task> shortTermMemory=new ArrayList<Task>();
+    public final Deque<Task> shortTermMemory = new ArrayDeque<Task>();
 
     //memory for faster execution of &/ statements (experiment)
-    public final ArrayList<Task> next_task=new ArrayList<Task>();
-    public final ArrayList<Concept> next_concept=new ArrayList<Concept>();
-    public final ArrayList<Term> next_content=new ArrayList<Term>();
+    public final Deque<Task> nextTask = new ArrayDeque<Task>();
+    public final Deque<Concept> nextConcept = new ArrayDeque<Concept>();
+    public final Deque<Term> nextContent = new ArrayDeque<Term>();
 
     
     public Executive(Memory mem) {
-        this.memory = mem;
+        this.memory = mem;        
     }
 
     public void reset() {
-        next_task.clear();
-        next_concept.clear();
-        next_content.clear();
+        nextTask.clear();
+        nextConcept.clear();
+        nextContent.clear();
         shortTermMemory.clear();        
     }   
     
 
     public void manageExecution()  {
         
-        if (next_task.isEmpty()) {
+        if (nextTask.isEmpty()) {
             return;
         }
         
-        Task task=next_task.get(0);
-        next_task.remove(0);
-        Concept concept=next_concept.get(0);
-        next_concept.remove(0);
-        Term content=next_content.get(0);
-        next_content.remove(0);
+        Task task=nextTask.pollFirst();
+        
+        Concept concept=nextConcept.pollFirst();
+        
+        Term content=nextContent.pollFirst();
+        
+        
         if(task==null) {
-            return; //we have to wait
+            //we have to wait
+            return; 
         }
         
         //ok it is time for action:
@@ -75,19 +79,21 @@ public class Executive {
             return;
         }
         
-        if(!masterplan && next_task.isEmpty()==false) {
+        if ((!masterplan) && (!nextTask.isEmpty())) {
             return; //already executing sth
         }
         
         Operation op = (Operation) content;
-        Term opi=op.getPredicate();
+        Term opi = op.getPredicate();
         if(!(opi instanceof Operator)) {
             return;
         }
+        
         op.setTask(task);
+        
         Operator oper = (Operator) opi;
-        if((op.getSubject() instanceof Product)) {
-            Product args=(Product) op.getSubject();
+        if (op.getSubject() instanceof Product) {
+            Product args = (Product)op.getSubject();
             oper.call(op, args.term, concept.memory);
             task.setPriority(0);
         }
@@ -104,7 +110,8 @@ public class Executive {
             return;
         }
         
-        if(content instanceof Conjunction && content.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+        if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
+            
             //1. get first operator and execute it
             CompoundTerm cont = (CompoundTerm) content;
             
@@ -121,17 +128,17 @@ public class Executive {
                     Interval intv=(Interval) t;
                     
                     long wait_steps = intv.magnitude;
-                    
+                                        
                     for(long i=0;i<wait_steps * duration; i++) {
-                        next_task.add(null);
-                        next_concept.add(null);
-                        next_content.add(null);
+                        nextTask.addLast(null);
+                        nextConcept.addLast(null);
+                        nextContent.addLast(null);
                     }
                 }
                 else if(t instanceof Operation) {
-                    next_task.add(task);
-                    next_concept.add(concept);
-                    next_content.add(t);
+                    nextTask.addLast(task);
+                    nextConcept.addLast(concept);
+                    nextContent.addLast(t);
                 }
             }
             
@@ -159,7 +166,7 @@ public class Executive {
                 ((shortTermMemory.isEmpty()                     
                     ||                    
                 !equalSubTermsInRespectToImageAndProduct(
-                            shortTermMemory.get(shortTermMemory.size()-1).getContent(),
+                            shortTermMemory.getLast().getContent(),
                             task.getContent()))
             );
         }        
@@ -181,16 +188,22 @@ public class Executive {
         final int maxStmSize =  memory.param.shortTermMemorySize.get();
         int stmSize = shortTermMemory.size();
 
-        if (stmSize!=0) { //also here like in rule tables: we dont want to derive useless statements
-            if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,shortTermMemory.get(stmSize-1).sentence.content)) {
+        if (stmSize!=0) { 
+            //also here like in rule tables: we dont want to derive useless statements
+                        
+            Task stmLast = shortTermMemory.getLast();
+
+            if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,stmLast.sentence.content)) {
                 return false;
             }
             
-            memory.setTheNewStamp(Stamp.make(newEvent.sentence.stamp, shortTermMemory.get(stmSize-1).sentence.stamp, memory.getTime()));
+            
+            memory.setTheNewStamp(Stamp.make(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.getTime()));
             
             memory.setCurrentTask(newEvent);
                         
-            Sentence currentBelief = shortTermMemory.get(stmSize-1).sentence;
+            
+            Sentence currentBelief = stmLast.sentence;
             
             memory.setCurrentBelief(currentBelief);
 
@@ -203,46 +216,56 @@ public class Executive {
                 final int duration = memory.param.duration.get();
 
 
-                for(int i=stmSize-1; i>=0; i--) {
+                
+                Iterator<Task> t = shortTermMemory.descendingIterator();
+                Task curT = t.next(), nextT = null;
+                int i = stmSize;
+                do {
+                    i--;
                     
-                    cur.add(shortTermMemory.get(i).getContent());
+                    if (t.hasNext())
+                        nextT = t.next();
+                    else
+                        nextT = null;
                     
-                    if(i>0) {
-                        int diff=(int) (shortTermMemory.get(i).getCreationTime()-shortTermMemory.get(i-1).getCreationTime());
+                    cur.add(curT.getContent());
+                    
+                    if (nextT!=null) {
+                        long diff = curT.getCreationTime() - nextT.getCreationTime();
                         
                         if (diff > duration) {
                             cur.add( Interval.intervalTime(diff) );
                         }
                     }
                     
-                    if(i!=0)
+                    if (t.hasNext())
                         continue; //just use last one fow now
 
-                    memory.setCurrentBelief(shortTermMemory.get(i).sentence);
+                    memory.setCurrentBelief(curT.sentence);
                     
-                    TruthValue val=shortTermMemory.get(i).sentence.truth;
+                    TruthValue val = curT.sentence.truth;
                     
                     /*for(int j=i+1;j+1<n;j++) { 
                         val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
                     }*///lets let it abduction instead
 
-                    int diff=(int) (newEvent.getCreationTime()-shortTermMemory.get(stmSize-1).getCreationTime());
+                    long diff = newEvent.getCreationTime() - stmLast.getCreationTime();
                     
-                    if(diff > duration) {
+                    if (diff > duration) {
                         cur.add(0, Interval.intervalTime(diff) );
                     }
 
-                    while (cur.size() < maxStmSize) {                           
-                        Interval inti = Interval.intervalMagnitude(i);
-                        cur.add(inti);
+                    while (cur.size() < maxStmSize) {
+                        //cur.add( Interval.intervalMagnitude(i) );
+                        cur.add( Interval.intervalTime(i) );
                     }
 
-                    Term[] terms=new Term[cur.size()];
-                    for(int j=0;j<cur.size();j++) {
-                        terms[cur.size()-j-1]=cur.get(j);
-                    }
-
-                    if(terms.length>1) {
+                    //if (cur.size() > 1) {
+                        Term[] terms=new Term[cur.size()];
+                        for(int j=0;j<cur.size();j++) {
+                            terms[cur.size()-j-1]=cur.get(j);
+                        }
+                        
                         Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
                         val=TruthFunctions.abduction(val, newEvent.sentence.truth);
                         
@@ -251,8 +274,13 @@ public class Executive {
                         BudgetValue bud=BudgetFunctions.forward(val, memory);
                         
                         memory.doublePremiseTask(imp,val,bud);
-                    }
-                }
+                    //}
+                    
+                    
+                    curT = nextT;
+                                        
+                } while (curT!=null);
+                
             }
         }
 
