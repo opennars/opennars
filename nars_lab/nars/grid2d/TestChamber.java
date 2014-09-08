@@ -140,6 +140,7 @@ public class TestChamber {
                             keyn=-1;
                         }
                         if (path.size() <= 1) {
+                            active=true;
                             nar.step(1);
                             //System.out.println("at destination; didnt need to find path");
                             if (getfeedback && !"".equals(goal) && current.equals(target)) {
