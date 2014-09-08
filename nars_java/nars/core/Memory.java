@@ -20,7 +20,6 @@
  */
 package nars.core;
 
-import nars.inference.Executive;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -43,6 +42,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
+import nars.inference.Executive;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
@@ -1009,6 +1009,8 @@ public class Memory implements Output, Serializable {
                     final double exp = s.truth.getExpectation();
                     if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
                         
+                        logic.TASK_ADD_NOVEL.commit();
+                        
                         // new concept formation                        
                         novelTasks.putIn(task);
                         
@@ -1023,7 +1025,9 @@ public class Memory implements Output, Serializable {
             }
         }
         
-        executive.planShortTerm(newEvent);
+        boolean stmUpdated = executive.planShortTerm(newEvent);
+        if (stmUpdated)
+            logic.SHORT_TERM_MEMORY_UPDATE.commit();
                 
         return processed;
     }
@@ -1063,7 +1067,7 @@ public class Memory implements Output, Serializable {
         
         if (getCurrentConcept() != null) {
             conceptActivate(getCurrentConcept(), task.budget);
-            getCurrentConcept().directProcess(task,this);
+            getCurrentConcept().directProcess(task);
         }
         
     }

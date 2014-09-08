@@ -94,7 +94,7 @@ public class RealTimeFloodCycle implements ConceptProcessor {
             this.lastFired = memory.getTime();
             
             while (!pendingTasks.isEmpty()) {
-                super.directProcess(pendingTasks.remove(),memory);
+                super.directProcess(pendingTasks.remove());
             }
             
             super.fire();
@@ -109,7 +109,7 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         }
 
         @Override
-        public void directProcess(Task task, Memory mem) {
+        public void directProcess(Task task) {
             pendingTasks.add(task);
         }
         
