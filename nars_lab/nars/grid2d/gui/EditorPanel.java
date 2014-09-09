@@ -15,6 +15,7 @@ import nars.grid2d.GridObject;
 import nars.grid2d.LocalGridObject;
 import nars.grid2d.TestChamber;
 import nars.grid2d.object.Key;
+import nars.grid2d.object.Pizza;
 import nars.language.Interval;
 
 /**
@@ -239,6 +240,11 @@ public class EditorPanel extends JPanel {
                             s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=2;
+                        }
+                        if (obi instanceof Pizza) {
+                            command+=",(^go-to," + obi.doorname + ")";
+                            s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            cnt+=1;
                         }
                     }
                 }
