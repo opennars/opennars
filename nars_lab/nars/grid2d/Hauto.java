@@ -13,6 +13,7 @@ import static nars.grid2d.Cell.Logic.XOR;
 import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.object.Key;
+import nars.grid2d.object.Pizza;
 
 public class Hauto {
     private final NAR nar;
@@ -195,7 +196,18 @@ public class Hauto {
             doorname="";
             return;
         }
-        if(!(selected.material==Material.Door))
+        if(selected.material==Material.Pizza) {
+            doorname+="pizza"+entityID.toString();
+        }
+           
+        if(!"".equals(doorname) && selected.material==Material.Pizza) {
+            space.add(new Pizza((int)x, (int)y, doorname));
+            nar.addInput("<"+doorname+entityID.toString()+" --> pizza>.");
+            entityID++;
+            doorname="";
+            return;
+        }
+        if(!(selected.material==Material.Door) && !(selected.material==Material.Pizza))
             doorname="";
         
         readCells[(int) x][(int) y].charge = selected.charge;
@@ -207,7 +219,7 @@ public class Hauto {
         readCells[(int) x][(int) y].machine = selected.machine;
         writeCells[(int) x][(int) y].machine = selected.machine;
         
-        if(selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH || selected.machine==Machine.Light || selected.machine==Machine.Turret) //or other entity...
+        if(selected.material==Material.Pizza || selected.material==Material.Door || selected.logic==Logic.OFFSWITCH || selected.logic==Logic.SWITCH || selected.machine==Machine.Light || selected.machine==Machine.Turret) //or other entity...
         {
             String name="";
             if(selected.material==Material.Door) {
@@ -331,6 +343,11 @@ public class Hauto {
             selected.setLogic(Cell.Logic.OFFSWITCH, 0);
         }
 
+        if("Pizza".equals(label)) {
+            selected.logic = Logic.NotALogicBlock;
+            selected.material = Material.Pizza;
+            selected.is_solid=false;
+        }
         if("Door".equals(label)) {
             selected.logic = Logic.NotALogicBlock;
             selected.charge=0;
