@@ -130,10 +130,11 @@ public class Executive {
             //1. get first operator and execute it
             CompoundTerm cont = (CompoundTerm) content;
             
+            
             //only allow the long plans here
-            if(cont.term.length!= memory.param.shortTermMemorySize.get()) { 
+            /*if(cont.term.length!= memory.param.shortTermMemorySize.get()) { 
                 return;
-            }
+            }*/
             
             final int duration = memory.param.duration.get();
             
@@ -142,9 +143,9 @@ public class Executive {
                 if(t instanceof Interval) {
                     Interval intv=(Interval) t;
                     
-                    long wait_steps = intv.magnitude;
-                                        
-                    for(long i=0;i<wait_steps * duration; i++) {
+                    long wait_steps = intv.getTime(duration);
+                           
+                    for(long i=0;i<wait_steps; i++) {
                         next.addLast(TaskConceptContent.NULL);
                     }
                 }
@@ -244,50 +245,57 @@ public class Executive {
                     if (nextT!=null) {
                         long diff = curT.getCreationTime() - nextT.getCreationTime();
                         
-                        if (diff > duration) {
-                            cur.add( Interval.intervalTime(diff) );
+                        if (diff >= duration) {
+                            cur.add( Interval.intervalTime(diff, duration) );
                         }
                     }
                     
-                    if (t.hasNext())
+                    if (t.hasNext()) {
+                        curT = nextT;
                         continue; //just use last one fow now
-
-                    memory.setCurrentBelief(curT.sentence);
-                    
-                    TruthValue val = curT.sentence.truth;
-                    
-                    /*for(int j=i+1;j+1<n;j++) { 
-                        val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
-                    }*///lets let it abduction instead
-
-                    long diff = newEvent.getCreationTime() - stmLast.getCreationTime();
-                    
-                    if (diff > duration) {
-                        cur.add(0, Interval.intervalTime(diff) );
                     }
+                    else {
+                        //Finalize
+                        
+                        memory.setCurrentBelief(curT.sentence);
 
-                    while (cur.size() < maxStmSize) {
-                        cur.add( Interval.intervalMagnitude(i) );
-                        //cur.add( Interval.intervalTime(i) );
+                        TruthValue val = curT.sentence.truth;
+
+                        /*for(int j=i+1;j+1<n;j++) { 
+                            val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
+                        }*///lets let it abduction instead
+
+                        long diff = newEvent.getCreationTime() - stmLast.getCreationTime();
+
+                        if (diff >= duration) {
+                            cur.add(0, Interval.intervalTime(diff, duration) );
+                        }
+
+                        /*while (cur.size() < maxStmSize) {
+                            cur.add( Interval.intervalMagnitude(i) );
+                            //cur.add( Interval.intervalTime(i) );
+                        }*/
+
+                        //if (cur.size() > 1) {
+                        //term = reverse of cur
+                        Term[] terms=new Term[cur.size()];
+                        for(int j=0;j<cur.size();j++) {
+                            terms[cur.size()-j-1]=cur.get(j);
+                        }
+
+                        if (terms.length > 1) {
+
+                            Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
+                            val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+
+                            Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
+
+                            BudgetValue bud=BudgetFunctions.forward(val, memory);
+
+                            memory.doublePremiseTask(imp,val,bud);
+                        }
+
                     }
-
-                    //if (cur.size() > 1) {
-                    //term = reverse of cur
-                    Term[] terms=new Term[cur.size()];
-                    for(int j=0;j<cur.size();j++) {
-                        terms[cur.size()-j-1]=cur.get(j);
-                    }
-
-                    Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
-                    val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-
-                    Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
-
-                    BudgetValue bud=BudgetFunctions.forward(val, memory);
-
-                    memory.doublePremiseTask(imp,val,bud);
-                    //}
-                    
                     
                     curT = nextT;
                                         
