@@ -30,8 +30,11 @@ public class Pizza extends LocalGridObject {
         space.translate(cx, cy);
         space.pushMatrix();
         space.scale(scale * 0.8f);
+        space.fill(Color.ORANGE.getRGB(), 255);
+        space.ellipse(0, 0, 1.0f, 1.0f);
         space.fill(Color.YELLOW.getRGB(), 255);
-        space.ellipse(0, 0, 1, 1);
+        space.ellipse(0, 0, 0.8f, 0.8f);
+        
         space.popMatrix();
         if (!"".equals(doorname)) {
             space.textSize(0.2f);
@@ -40,6 +43,16 @@ public class Pizza extends LocalGridObject {
             space.text(doorname, 0, 0);
             space.popMatrix();
         }
+        
+        //eyes
+        space.fill(Color.RED.getRGB(), 255);
+        space.rotate((float)(Math.PI/180f * cheading));
+        space.ellipse(-0.15f,0.2f,0.1f,0.1f);
+        space.ellipse(0.15f,0.2f,0.1f,0.1f);
+        space.ellipse(-0.2f,-0.2f,0.1f,0.1f);
+        space.ellipse(0.2f,-0.2f,0.1f,0.1f);
+        space.ellipse(0.0f,-0.0f,0.1f,0.1f);
+        
         space.popMatrix();
     }
 }
