@@ -47,6 +47,7 @@ public class Goto extends Operator {
         //Operator op = content.getOperator();
          
         TestChamber.executed=true;
+        TestChamber.executed_going=true;
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
