@@ -38,14 +38,14 @@ public class Interval extends Term {
     }
     
     public static Interval interval(String i) {
-        return intervalMagnitude(Integer.parseInt(i.substring(1)));
+        return intervalMagnitude( Integer.parseInt(i.substring(1)) );
     }
     
-    public static Interval intervalTime(final long time) {
-        return intervalMagnitude( (int) Math.log(time) );
+    public static Interval intervalTime(final long time, final int duration) {
+        return intervalMagnitude( timeToMagnitude( time, duration ) );
     }
     
-    public static Interval intervalMagnitude(final int magnitude) {
+    protected static Interval intervalMagnitude(final int magnitude) {
         if (magnitude >= INTERVAL_POOL_SIZE)
             return new Interval(magnitude, true);
         
@@ -61,8 +61,8 @@ public class Interval extends Term {
     public final int magnitude;
 
     // time is a positive integer
-    protected Interval(final long time) {
-        this((int) Math.log(time), true);
+    protected Interval(final long timeDiff, final int duration) {
+        this(timeToMagnitude(timeDiff, duration), true);
     }
     
     
@@ -80,15 +80,23 @@ public class Interval extends Term {
 //        setName(s);
 //    }
 
+    public static int timeToMagnitude(long timeDiff, int duration) {
+        return (int) Math.round(Math.log(  ((double)timeDiff)/((double)duration)  ));
+    }
+    
+    public static long magnitudeToTime(int magnitude, int duration) {
+        return magnitudeToTime(magnitude) * duration;
+    }
+    
     public static long magnitudeToTime(int magnitude) {
         return (long) Math.ceil(Math.exp(magnitude));
     }
     
-    public long getTime() {
+    public long getTime(int duration) {
         //use a lookup table for this
         if (magnitude < INTERVAL_POOL_SIZE)
-            return MAGNITUDE_TIMES[magnitude];
-        return magnitudeToTime(magnitude);
+            return MAGNITUDE_TIMES[magnitude] * duration;
+        return magnitudeToTime(magnitude, duration);
     }
     
     @Override

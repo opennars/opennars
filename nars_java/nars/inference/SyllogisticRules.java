@@ -429,14 +429,17 @@ public final class SyllogisticRules {
             newCondition = oldCondition.setComponent(index, newComponent, memory);
         }
         Term content;
+        
         long delta = 0;
+        final int duration = memory.param.duration.get();
+        
         if (newCondition != null) {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
-                 delta = ((Interval) newCondition).getTime();
+                 delta = ((Interval) newCondition).getTime(duration);
              } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
                  Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
-                 delta = interval.getTime();
+                 delta = interval.getTime(duration);
                  newCondition = ((CompoundTerm)newCondition).setComponent(0, null, memory);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
              } else {

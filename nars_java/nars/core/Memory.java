@@ -580,7 +580,7 @@ public class Memory implements Output, Serializable {
     }
     
     /**
-     * ExecutedTask called in Operator.reportExecution
+     * ExecutedTask called in Operator.call
      *
      * @param operation The operation just executed
      */
