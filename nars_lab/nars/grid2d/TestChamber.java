@@ -67,7 +67,7 @@ public class TestChamber {
     public static boolean active=true;
     public static boolean executed=false;
     public static boolean needpizza=false;
-    public static int hungry=100;
+    public static int hungry=250;
     public List<PVector> path=null;
 
     public void create(NAR nar) {
@@ -112,7 +112,7 @@ public class TestChamber {
                     if(needpizza) {
                         hungry--;
                         if(hungry<0) {
-                            hungry=100;
+                            hungry=250;
                             //nar.addInput("<#1 --> eat>!"); //also works but better:
                             for(GridObject obj : space.objects) {
                                 if(obj instanceof Pizza) {
