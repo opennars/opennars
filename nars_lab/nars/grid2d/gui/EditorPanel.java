@@ -55,6 +55,15 @@ public class EditorPanel extends JPanel {
 
         DefaultMutableTreeNode knowMenu = new DefaultMutableTreeNode("Predefine knowledge");
         root.add(knowMenu);
+        
+        DefaultMutableTreeNode resourceMenu = new DefaultMutableTreeNode("Need of Resources");
+        root.add(resourceMenu);
+        
+       /* DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
+        root.add(load);
+        
+        DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
+        root.add(save); */
 
        // DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
        // root.add(extraMenu);
@@ -367,6 +376,21 @@ public class EditorPanel extends JPanel {
             }
         });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
 
+        
+        resourceMenu.add(new EditorMode("need pizza") {
+            @Override
+            public void run() {
+                s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>.");
+            }
+        });
+        
+        resourceMenu.add(new EditorMode("pizza") {
+            @Override
+            public void run() {
+                s.cells.click("Pizza", "", "");
+            }
+        });
+        
         /* knowMenu.add(new EditorMode("every key opens a door") {  
          @Override public void run() { }
          });  
