@@ -16,6 +16,7 @@ import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.grid2d.operator.Say;
 import processing.core.PVector;
+import nars.grid2d.object.Pizza;
 
 public class TestChamber {
 
@@ -23,6 +24,7 @@ public class TestChamber {
     static boolean getfeedback = false;
     static PVector target = new PVector(25, 25); //need to be init equal else feedback will
     public PVector lasttarget = new PVector(5, 25); //not work
+    public static boolean executed_going=false;
     static String goal = "";
     static String opname="";
     public static LocalGridObject inventorybag=null;  
@@ -64,6 +66,10 @@ public class TestChamber {
     boolean invalid=false;
     public static boolean active=true;
     public static boolean executed=false;
+    public static boolean needpizza=false;
+    public static int hungry=250;
+    public List<PVector> path=null;
+    
     public void create(NAR nar) {
 //NAR n = new NAR();
         int w = 50;
@@ -95,10 +101,24 @@ public class TestChamber {
                 if(active) {
                     nar.stop();
                     executed=false;
-                    for(int i=0;i<5;i++) { //make thinking in testchamber bit faster
-                        nar.step(1);
-                        if(executed) {
-                            break;
+                    if(path==null || path.size()<=0 && !executed_going) {
+                        for (int i = 0; i < 5; i++) { //make thinking in testchamber bit faster
+                            nar.step(1);
+                            if (executed) {
+                                break;
+                            }
+                        }
+                    }
+                    if(needpizza) {
+                        hungry--;
+                        if(hungry<0) {
+                            hungry=250;
+                            //nar.addInput("<#1 --> eat>!"); //also works but better:
+                            for (GridObject obj : space.objects) {
+                                if (obj instanceof Pizza) {
+                                    nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
+                                }
+                            }
                         }
                     }
                 }
@@ -126,9 +146,12 @@ public class TestChamber {
                 PVector current = new PVector(x, y);
                // System.out.println(nextEffect);
                 if (nextEffect == null) {
-                    List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, target);
+                    path = Grid2DSpace.Shortest_Path(space, this, current, target);
                     actions.clear();
                    // System.out.println(path);
+                    if(path==null) {
+                        executed_going=false;
+                    }
                     if (path != null) {
                         if(inventorybag!=null) {
                             inventorybag.x=(int)current.x;
@@ -140,9 +163,10 @@ public class TestChamber {
                             keyn=-1;
                         }
                         if (path.size() <= 1) {
-                            nar.step(1);
+                            active=true;
+                            executed_going=false;
                             //System.out.println("at destination; didnt need to find path");
-                            if (getfeedback && !"".equals(goal) && current.equals(target)) {
+                            if (!"".equals(goal) && current.equals(target)) {
                                  getfeedback = false;
                                 //--nar.step(6);
                                 GridObject obi=null;
@@ -216,13 +240,34 @@ public class TestChamber {
                                         }
                                     }
                                     if("go-to".equals(opname)) {
+                                        executed_going=false;
                                         nar.addInput("<"+goal+" --> at>. :|:");
+                                        if (goal.startsWith("pizza")) {
+                                            GridObject ToRemove = null;
+                                            for (GridObject obj : space.objects) { //remove pizza
+                                                if (obj instanceof LocalGridObject) {
+                                                    LocalGridObject obo = (LocalGridObject) obj;
+                                                    if (obo.doorname.equals(goal)) {
+                                                        ToRemove = obj;
+                                                    }
+                                                }
+                                            }
+                                            if (ToRemove != null) {
+                                                space.objects.remove(ToRemove);
+                                            }
+                                            hungry=500;
+                                            //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
+                                            nar.addInput("<"+goal+" --> at>. :|:");
+                                        }
                                         active=true;
                                     }
                                 }
                             }
                             opname="";
+                            if(!executed && !executed_going)
+                                nar.step(1);
                         } else {
+                            executed_going=true;
                             active=false;
                             //nar.step(1);
                             int numSteps = Math.min(10, path.size());

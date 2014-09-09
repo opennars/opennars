@@ -14,6 +14,7 @@ import nars.grid2d.GridObject;
 import nars.grid2d.LocalGridObject;
 import nars.grid2d.TestChamber;
 import nars.grid2d.object.Key;
+import nars.grid2d.object.Pizza;
 
 /**
  *
@@ -54,6 +55,13 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode knowMenu = new DefaultMutableTreeNode("Predefine knowledge");
         root.add(knowMenu);
 
+        DefaultMutableTreeNode resourceMenu = new DefaultMutableTreeNode("Need of Resources");
+        root.add(resourceMenu);
+        /* DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
+        root.add(load);
+        DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
+        root.add(save); */
+        
        // DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
        // root.add(extraMenu);
         
@@ -213,7 +221,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
-        goalMenu.add(new EditorMode("Be curious") {
+        EditorMode wu=new EditorMode("Be curious") {
 
             @Override
             public void run() {
@@ -228,6 +236,11 @@ public class EditorPanel extends JPanel {
                             s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=2;
+                        }
+                        if (obi instanceof Pizza) {
+                            command+=",(^go-to," + obi.doorname + ")";
+                            s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            cnt+=1;
                         }
                     }
                 }
@@ -265,8 +278,8 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<Self --> [exploring]>!");
                 s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
             }
-
-        });
+        };
+        goalMenu.add(wu);
 
         goalMenu.add(new EditorMode("be somewhere") {
             @Override
@@ -365,6 +378,22 @@ public class EditorPanel extends JPanel {
             }
         });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
 
+        resourceMenu.add(new EditorMode("need pizza") {
+            @Override
+            public void run() {
+                wu.run();
+                //s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
+                s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>.");
+                TestChamber.needpizza=true;
+            }
+        });
+        resourceMenu.add(new EditorMode("pizza") {
+            @Override
+            public void run() {
+                s.cells.click("Pizza", "", "");
+            }
+        });
+        
         /* knowMenu.add(new EditorMode("every key opens a door") {  
          @Override public void run() { }
          });  

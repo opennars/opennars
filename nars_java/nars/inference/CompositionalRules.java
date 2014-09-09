@@ -893,6 +893,16 @@ public final class CompositionalRules {
         }
     }
 
+    public static boolean sEqualsP(Term T) {
+        if(T instanceof Statement) {
+            Statement st=(Statement) T;
+            if(st.getSubject().equals(st.getPredicate())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     static boolean dedSecondLayerVariableUnification(Task task, Memory memory)     {
         boolean unifiedAnything = false;
         
@@ -1063,6 +1073,11 @@ public final class CompositionalRules {
                     BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
+                    
+                    if(sEqualsP(newTask.sentence.content)) {
+                        return false;
+                    }
+                    
                     memory.setCurrentBelief(taskSentence);
                     memory.setCurrentTask(dummy);
                     
@@ -1107,6 +1122,10 @@ public final class CompositionalRules {
                 
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
+                
+                if(sEqualsP(newTask.sentence.content)) {
+                    return;
+                }
                 
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
