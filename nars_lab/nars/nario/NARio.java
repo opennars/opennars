@@ -29,7 +29,7 @@ public class NARio extends Run {
     int cycle = 0;
     int gotCoin = 0;
     private Mario mario;
-    int cycleSamples = 3;
+    int cycleSamples = 16;
 
     public NARio(NAR n) {
         super();
@@ -71,13 +71,21 @@ public class NARio extends Run {
 //                if (cycle % 100 == 1) {
 //                    System.out.println("Inports: " + nar.getInPorts().size());
 //                }
-                if (cycle % 400 == 0) {
+                if ((cycle/cycleSamples) % 16 == 0) {
                     int flushed = nar.flushInput(Output.NullOutput);
                     //System.out.println("Inports: " + nar.getInPorts().size()); 
                     System.out.println("Flushed: " + flushed);
 
-                    nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
-                    nar.addInput("<?y --> space>? :/:");
+                    //nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
+                    //nar.addInput("<?y --> space>? :/:");
+                    nar.addInput("<(*,0,0) <-> center>.");
+                    nar.addInput("<(*,-1,0) <-> left>.");
+                    nar.addInput("<(*,1,0) <-> right>.");
+                    nar.addInput("<(*,0,1) <-> up>.");
+                    nar.addInput("<(*,0,-1) <-> down>.");
+                    //nar.addInput("<solid <-> empty>. %0.00;0.99%");
+                    nar.addInput("<up <-> down>. %0.00;0.99%");
+                    nar.addInput("<left <-> right>. %0.00;0.99%");
                 }
                 
                 
@@ -129,10 +137,20 @@ public class NARio extends Run {
                                     ((block & Level.BIT_BLOCK_LOWER) > 0) ||
                                     ((block & Level.BIT_BLOCK_UPPER) > 0);
                             
-                            String s = " <(*," + 
-                                            (blocked ? "solid" : "empty") +
-                                            "," + data + ",(*," + i + "," + j + 
-                                            ")) --> space>. :|:";
+//                            String s = " <(*," + 
+//                                            (blocked ? "solid" : "empty") +
+//                                            "," + data + ",(*," + i + "," + j + 
+//                                            ")) --> space>. :|:";
+                            
+                            String direction = "<(*," + i + "," + j + ")";
+                            if ((i == 0) && (j == -1)) direction = "down";
+                            else if ((i == 0) && (j == 1)) direction = "up";
+                            else if ((i == -1) && (j == 0)) direction = "left";
+                            else if ((i == 1) && (j == 0)) direction = "right";
+                            else continue; //ignore diagonal for now
+                            
+                            String s = " <" + direction + " --> " + (blocked ? "solid" : "empty") + ">. :|:";
+                                    
                             
                             if ((sight[k]!=null) && (sight[k].equals(s)))
                                 continue;
@@ -158,42 +176,40 @@ public class NARio extends Run {
                         nar.addInput("<(*,right," + (mario.keys[Mario.KEY_RIGHT] ? "on" : "off") + ") --> input>. :|:");
                 }
                 
-                if (Math.random() < 0.2) {
-                    for (Sprite s : level.sprites) {
-                        if (s instanceof Mario) continue;
-                        if ((s instanceof Sparkle) || (s instanceof Particle)) {
-                            continue;
-                            //priority/=2f;
-                        }
-
-                        double senseRadius = 4;
-                        double dist = Math.sqrt( (x-s.x)*(x-s.x) + (y-s.y)*(y-s.y) )/16.0;
-                        if (dist <= senseRadius) {
-                            double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
-
-                            //sparkles are common and not important
-
-                            ShortFloat sv = new ShortFloat((float)priority);
-
-
-                            String type = s.getClass().getSimpleName();
-                            if (s instanceof Enemy)
-                                type = s.toString();
-
-                            int dx = Math.round((x - s.x)/16);
-                            int dy = Math.round((y - s.y)/16);
-
-                            nar.addInput(/*"$" + sightPriority + "$" +*/ 
-                                    " <(*," + 
-                                            type +
-                                            ",(*," + dx + "," + dy + 
-                                            ")) --> space>. :|:");
-
-                            //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
-                        }
-
-
+                for (Sprite s : level.sprites) {
+                    if (s instanceof Mario) continue;
+                    if ((s instanceof Sparkle) || (s instanceof Particle)) {
+                        continue;
+                        //priority/=2f;
                     }
+
+                    double senseRadius = 4;
+                    double dist = Math.sqrt( (x-s.x)*(x-s.x) + (y-s.y)*(y-s.y) )/16.0;
+                    if (dist <= senseRadius) {
+                        double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
+
+                        //sparkles are common and not important
+
+                        ShortFloat sv = new ShortFloat((float)priority);
+
+
+                        String type = s.getClass().getSimpleName();
+                        if (s instanceof Enemy)
+                            type = s.toString();
+
+                        int dx = Math.round((x - s.x)/16);
+                        int dy = Math.round((y - s.y)/16);
+
+                        nar.addInput(/*"$" + sightPriority + "$" +*/ 
+                                " <(*," + 
+                                        type +
+                                        ",(*," + dx + "," + dy + 
+                                        ")) --> space>. :|:");
+
+                        //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
+                    }
+
+
                 }
                 
                 lastKeys = mario.keys.clone();
@@ -229,6 +245,9 @@ public class NARio extends Run {
         
         new NARSwing(nar); 
         //new TextOutput(nar, System.out).setShowInput(true);
+        nar.param().duration.set(20);
+        nar.param().shortTermMemorySize.set(80);
+        
         nar.start(30);
 
         NARio nario = new NARio(nar);
