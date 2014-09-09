@@ -225,7 +225,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
-        goalMenu.add(new EditorMode("Be curious") {
+        EditorMode wu=new EditorMode("Be curious") {
 
             @Override
             public void run() {
@@ -283,7 +283,8 @@ public class EditorPanel extends JPanel {
                 s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
             }
 
-        });
+        };
+        goalMenu.add(wu);
 
         goalMenu.add(new EditorMode("be somewhere") {
             @Override
@@ -386,8 +387,10 @@ public class EditorPanel extends JPanel {
         resourceMenu.add(new EditorMode("need pizza") {
             @Override
             public void run() {
-                s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>.");
-                TestChamber.needpizza=!TestChamber.needpizza;
+                wu.run();
+                //s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
+                s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>.");
+                TestChamber.needpizza=true;
             }
         });
         
