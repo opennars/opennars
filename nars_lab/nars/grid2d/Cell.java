@@ -30,7 +30,8 @@ public class Cell {
         Door, 
         Empty, DirtWall,
         Machine,
-        Water
+        Water,
+        Pizza
         //case Tile.Upstairs:
         //case Tile.Downstairs:
         //case Tile.Chest:        

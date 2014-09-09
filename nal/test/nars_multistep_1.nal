@@ -1,20 +1,19 @@
 '****** Mixed inference
 <swan --> bird>.
 <swan --> swimmer>.
-5
-<bird --> swimmer>?
 50
+<bird --> swimmer>?
+80
 <gull --> bird>.
 <gull --> swimmer>.
-50
+80
 <bird --> [feathered]>.
 <robin --> [feathered]>.
-20
+80
 <robin --> bird>?
-50
+100
 <robin --> swimmer>?
-2000
-
+4000
 ''outputMustContain('<bird --> swimmer>. %1.00;0.45%')
 ''outputMustContain('<bird --> swimmer>. %1.00;0.45%')
 ''outputMustContain('<bird --> swimmer>. %1.00;0.62%')

@@ -268,7 +268,7 @@ public class PrologQueryOperator extends Operator {
 
                 return new Term("\"" + variableAsString + "\"");
             }
-            else if (structTerm.getArity() == 2) {
+            else if (structTerm.getArity() == 2 && structTerm.getName().equals(".")) {
                 // convert the result array to a nars thingy
                 ArrayList<nars.prolog.Term> structAsList = convertChainedStructToList(structTerm);
                 
@@ -279,10 +279,41 @@ public class PrologQueryOperator extends Operator {
                     innerProductTerms[i] = convertPrologTermToNarsTermRecursive(structAsList.get(i), memory);
                 }
                 
-                return Product.make(innerProductTerms, memory);
+                // is wraped up in a inheritance because there can also exist operators
+                // and it is better understandable by nars or other operators
+                return Inheritance.make(
+                    Product.make(innerProductTerms, memory),
+                    new Term("prolog_list"),
+                    memory
+                );
             }
             else {
-                throw new RuntimeException("Unhandled Struct!");
+                // must be a operation
+                // so we convert the operation to a nars term
+                // in the form
+                // <(*, operationName, param0, param1) --> prolog_operation>
+                
+                String operationName = structTerm.getName();
+                
+                // convert the result array to a nars thingy
+                ArrayList<nars.prolog.Term> parametersAsList = convertChainedStructToList(structTerm);
+                
+                // convert the list to a nars product wth the cconverted elements
+                Term[] innerProductTerms = new Term[1+parametersAsList.size()];
+                
+                for (int i = 0; i < parametersAsList.size(); i++) {
+                    innerProductTerms[i+1] = convertPrologTermToNarsTermRecursive(parametersAsList.get(i), memory);
+                }
+                
+                innerProductTerms[0] = new Term(operationName);
+                
+                // is wraped up in a inheritance because there can also exist operators
+                // and it is better understandable by nars or other operators
+                return Inheritance.make(
+                    Product.make(innerProductTerms, memory),
+                    new Term("prolog_operation"),
+                    memory
+                );
             }
 
             // unreachable
@@ -346,12 +377,19 @@ public class PrologQueryOperator extends Operator {
             if (arg2.isAtom()) {
                 Struct atomTerm = (Struct)arg2;
                
-                if (!atomTerm.getName().equals("[]")) {
-                    throw new RuntimeException("[] Struct excepted!");
+                if (atomTerm.getName().equals("[]")) {
+                    // this is the last element of the list, we are done
+                    break;
                 }
-               
-                // this is the last element of the list, we are done
-                break;
+                else {
+                    // we are here if we converted a parameterlist of a function to a list, append the last argument which is this
+                    // and return
+                    
+                    result.add(atomTerm);
+                    
+                    break;
+                }
+                
             }
            
             if (!(arg2 instanceof Struct)) {
