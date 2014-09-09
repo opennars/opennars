@@ -10,6 +10,7 @@ import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
+import nars.grid2d.object.Pizza;
 import nars.grid2d.operator.Activate;
 import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
@@ -112,7 +113,12 @@ public class TestChamber {
                         hungry--;
                         if(hungry<0) {
                             hungry=100;
-                            nar.addInput("<#1 --> eat>!");
+                            //nar.addInput("<#1 --> eat>!"); //also works but better:
+                            for(GridObject obj : space.objects) {
+                                if(obj instanceof Pizza) {
+                                    nar.addInput("<"+((Pizza)obj).doorname+"--> at>!");
+                                }
+                            }
                         }
                     }
                 }
@@ -249,8 +255,9 @@ public class TestChamber {
                                             if(ToRemove!=null) {
                                                 space.objects.remove(ToRemove);
                                             }
-                                            hungry=1000;
-                                            nar.addInput("<"+goal+" --> eat>. :|:");
+                                            hungry=500;
+                                            //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
+                                            nar.addInput("<"+goal+" --> at>. :|:");
                                         }
                                         active=true;
                                     }
