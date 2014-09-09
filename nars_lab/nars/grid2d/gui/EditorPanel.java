@@ -1,6 +1,11 @@
 package nars.grid2d.gui;
 
 import java.awt.BorderLayout;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -15,6 +20,7 @@ import nars.grid2d.LocalGridObject;
 import nars.grid2d.TestChamber;
 import nars.grid2d.object.Key;
 import nars.grid2d.object.Pizza;
+import org.parboiled.common.FileUtils;
 
 /**
  *
@@ -57,10 +63,46 @@ public class EditorPanel extends JPanel {
 
         DefaultMutableTreeNode resourceMenu = new DefaultMutableTreeNode("Need of Resources");
         root.add(resourceMenu);
-        /* DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
+        
+        
+        DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
         root.add(load);
         DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
-        root.add(save); */
+        root.add(save);
+        
+        File f = new File("."); // current directory
+
+        File[] files = f.listFiles();
+        for (File file : files) {
+            boolean is_file=false;
+            if (!file.isDirectory()) {
+                if(file.getName().endsWith(".lvl")) {
+                    try {
+                        String path=file.getCanonicalPath();
+                        String name=file.getName();
+                        
+                        load.add(new EditorMode(name) {
+                            @Override
+                            public void run() {
+                                String allText = FileUtils.readAllText(path);
+                                //todo: fill level according to read text
+                                
+                            }
+                        });
+                        
+                    } catch (IOException ex) {
+                        System.out.println("not able to get path of "+file.getName());
+                    }
+                }
+            }
+        }
+        
+        save.add(new EditorMode("Save") {
+            @Override
+            public void run() {
+                //todo save to new file with file name dummy_i
+            }
+        });
         
        // DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
        // root.add(extraMenu);
@@ -393,14 +435,6 @@ public class EditorPanel extends JPanel {
                 s.cells.click("Pizza", "", "");
             }
         });
-        
-        /* knowMenu.add(new EditorMode("every key opens a door") {  
-         @Override public void run() { }
-         });  
-        
-         knowMenu.add(new EditorMode("for every door there exists a key which opens the door") {  
-         @Override public void run() { s.nar.addInput(""); }
-         });  */
     }
 
 }
