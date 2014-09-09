@@ -22,6 +22,7 @@ public class TestChamber {
     static Grid2DSpace space;
     static boolean getfeedback = false;
     static PVector target = new PVector(25, 25); //need to be init equal else feedback will
+    public static boolean executed_going=false;
     public PVector lasttarget = new PVector(5, 25); //not work
     static String goal = "";
     static String opname="";
@@ -66,6 +67,7 @@ public class TestChamber {
     public static boolean executed=false;
     public static boolean needpizza=false;
     public static int hungry=100;
+    public List<PVector> path=null;
 
     public void create(NAR nar) {
 //NAR n = new NAR();
@@ -98,10 +100,12 @@ public class TestChamber {
                 if(active) {
                     nar.stop();
                     executed=false;
-                    for(int i=0;i<5;i++) { //make thinking in testchamber bit faster
-                        nar.step(1);
-                        if(executed) {
-                            break;
+                    if(path==null || path.size()<=0 && !executed_going) {
+                        for(int i=0;i<5;i++) { //make thinking in testchamber bit faster
+                            nar.step(1);
+                            if(executed) {
+                                break;
+                            }
                         }
                     }
                     if(needpizza) {
@@ -136,9 +140,12 @@ public class TestChamber {
                 PVector current = new PVector(x, y);
                // System.out.println(nextEffect);
                 if (nextEffect == null) {
-                    List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, target);
+                    path = Grid2DSpace.Shortest_Path(space, this, current, target);
                     actions.clear();
                    // System.out.println(path);
+                    if(path==null) {
+                        executed_going=false;
+                    }
                     if (path != null) {
                         if(inventorybag!=null) {
                             inventorybag.x=(int)current.x;
@@ -151,9 +158,9 @@ public class TestChamber {
                         }
                         if (path.size() <= 1) {
                             active=true;
-                            nar.step(1);
+                            executed_going=false;
                             //System.out.println("at destination; didnt need to find path");
-                            if (getfeedback && !"".equals(goal) && current.equals(target)) {
+                            if (!"".equals(goal) && current.equals(target)) {
                                  getfeedback = false;
                                 //--nar.step(6);
                                 GridObject obi=null;
@@ -227,6 +234,7 @@ public class TestChamber {
                                         }
                                     }
                                     if("go-to".equals(opname)) {
+                                        executed_going=false;
                                         nar.addInput("<"+goal+" --> at>. :|:");
                                         if(goal.startsWith("pizza")) {
                                             GridObject ToRemove=null;
@@ -249,7 +257,10 @@ public class TestChamber {
                                 }
                             }
                             opname="";
+                            if(!executed && !executed_going)
+                                nar.step(1);
                         } else {
+                            executed_going=true;
                             active=false;
                             //nar.step(1);
                             int numSteps = Math.min(10, path.size());
