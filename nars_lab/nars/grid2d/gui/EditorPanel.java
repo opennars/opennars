@@ -380,7 +380,8 @@ public class EditorPanel extends JPanel {
         resourceMenu.add(new EditorMode("need pizza") {
             @Override
             public void run() {
-                s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>.");
+                s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>.");
+                TestChamber.needpizza=!TestChamber.needpizza;
             }
         });
         

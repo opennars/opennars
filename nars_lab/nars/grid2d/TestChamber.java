@@ -64,6 +64,9 @@ public class TestChamber {
     boolean invalid=false;
     public static boolean active=true;
     public static boolean executed=false;
+    public static boolean needpizza=false;
+    public static int hungry=100;
+
     public void create(NAR nar) {
 //NAR n = new NAR();
         int w = 50;
@@ -99,6 +102,13 @@ public class TestChamber {
                         nar.step(1);
                         if(executed) {
                             break;
+                        }
+                    }
+                    if(needpizza) {
+                        hungry--;
+                        if(hungry<0) {
+                            hungry=100;
+                            nar.addInput("<#1 --> eat>!");
                         }
                     }
                 }
@@ -218,6 +228,22 @@ public class TestChamber {
                                     }
                                     if("go-to".equals(opname)) {
                                         nar.addInput("<"+goal+" --> at>. :|:");
+                                        if(goal.startsWith("pizza")) {
+                                            GridObject ToRemove=null;
+                                            for(GridObject obj : space.objects) { //remove pizza
+                                                if(obj instanceof LocalGridObject) {
+                                                    LocalGridObject obo=(LocalGridObject) obj;
+                                                    if(obo.doorname.equals(goal)) {
+                                                        ToRemove=obj;
+                                                    }
+                                                }
+                                            }
+                                            if(ToRemove!=null) {
+                                                space.objects.remove(ToRemove);
+                                            }
+                                            hungry=1000;
+                                            nar.addInput("<"+goal+" --> eat>. :|:");
+                                        }
                                         active=true;
                                     }
                                 }

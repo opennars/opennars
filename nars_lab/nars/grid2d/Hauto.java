@@ -202,7 +202,7 @@ public class Hauto {
            
         if(!"".equals(doorname) && selected.material==Material.Pizza) {
             space.add(new Pizza((int)x, (int)y, doorname));
-            nar.addInput("<"+doorname+entityID.toString()+" --> pizza>.");
+            nar.addInput("<"+doorname+" --> pizza>.");
             entityID++;
             doorname="";
             return;
