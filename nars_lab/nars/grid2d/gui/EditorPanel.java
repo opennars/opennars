@@ -229,6 +229,7 @@ public class EditorPanel extends JPanel {
 
             @Override
             public void run() {
+                TestChamber.curiousity=true;
                 TestChamber.active=true;
                 String command="(&/";
                 int cnt=0;

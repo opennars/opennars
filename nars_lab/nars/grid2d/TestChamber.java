@@ -20,6 +20,7 @@ import processing.core.PVector;
 
 public class TestChamber {
 
+    public static boolean curiousity=false;
     static Grid2DSpace space;
     static boolean getfeedback = false;
     static PVector target = new PVector(25, 25); //need to be init equal else feedback will
