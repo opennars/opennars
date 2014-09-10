@@ -151,9 +151,12 @@ public class Hauto {
             return;
         
         if(oper.equals("perceive")) {
-             readCells[(int) x][(int) y].name = "place"+entityID.toString();
+            readCells[(int) x][(int) y].name = "place"+entityID.toString();
             writeCells[(int) x][(int) y].name = "place"+entityID.toString();
             nar.addInput("<"+"place"+entityID.toString()+" --> place>.");
+            if(TestChamber.curiousity) {
+                space.nar.addInput("<(^go-to," + "place"+entityID.toString() + ") =/> <Self --> [curious]>>.");
+            }
             entityID++;
             return;
         }
@@ -193,6 +196,10 @@ public class Hauto {
         if(!"".equals(doorname) && selected.material==Material.Door) {
             space.add(new Key((int)x, (int)y, doorname.replace("door", "key")));
             nar.addInput("<"+doorname.replace("door", "key")+" --> key>.");
+            if(TestChamber.curiousity) {
+                space.nar.addInput("<(^go-to," +doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
+                space.nar.addInput("<(^pick," + doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
+            }
             doorname="";
             return;
         }
@@ -203,6 +210,9 @@ public class Hauto {
         if(!"".equals(doorname) && selected.material==Material.Pizza) {
             space.add(new Pizza((int)x, (int)y, doorname));
             nar.addInput("<"+doorname+" --> pizza>.");
+            if(TestChamber.curiousity) {
+                space.nar.addInput("<(^go-to," + doorname + ") =/> <Self --> [curious]>>.");
+            }
             entityID++;
             doorname="";
             return;
@@ -240,22 +250,42 @@ public class Hauto {
             
             if(readCells[(int) x][(int) y].name.equals("")) {
                 nar.addInput("<"+name+" --> "+Klass+">.");
+                readCells[(int) x][(int) y].name = name;
+                writeCells[(int) x][(int) y].name = name;
                 if(selected.logic==Logic.OFFSWITCH) {
                     nar.addInput("<"+name+" --> "+"off>. :|:");
+                    if(TestChamber.curiousity) {
+                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                    }
                 }
                 if(selected.logic==Logic.SWITCH) {
                     nar.addInput("<"+name+" --> "+"on>. :|:");
+                    if(TestChamber.curiousity) {
+                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                    }
                 }
-                readCells[(int) x][(int) y].name = name;
-                writeCells[(int) x][(int) y].name = name;
             }
             else
             {
                 if(selected.logic==Logic.OFFSWITCH) { //already has a name so use this one
                     nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"off>. :|:");
+                    if(TestChamber.curiousity) {
+                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                    }
                 }
                 if(selected.logic==Logic.SWITCH) {
                     nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"on>. :|:");
+                    if(TestChamber.curiousity) {
+                        space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                        space.nar.addInput("<(^deactivate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
+                    }
                 }
             }
             entityID++;
