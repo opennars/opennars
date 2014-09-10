@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -101,6 +102,14 @@ public class EditorPanel extends JPanel {
             @Override
             public void run() {
                 //todo save to new file with file name dummy_i
+                String filename= JOptionPane.showInputDialog("What is the name of the level?: ")+".lvl";
+                /* todo 
+                String write="";
+                for(int i=0;i<s.cells.h;i++) {
+                    for(int j=0;j<s.cells.w;j++) {
+                        
+                    }
+                }*/
             }
         });
         
@@ -267,6 +276,7 @@ public class EditorPanel extends JPanel {
 
             @Override
             public void run() {
+                TestChamber.curiousity=true;
                 TestChamber.active=true;
                 String command="(&/";
                 int cnt=0;
