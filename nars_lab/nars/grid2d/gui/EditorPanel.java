@@ -2,8 +2,11 @@ package nars.grid2d.gui;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -15,7 +18,10 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import nars.grid2d.Cell.Logic;
+import nars.grid2d.Cell.Machine;
+import nars.grid2d.Cell.Material;
 import nars.grid2d.Grid2DSpace;
+import nars.grid2d.GridAgent;
 import nars.grid2d.GridObject;
 import nars.grid2d.LocalGridObject;
 import nars.grid2d.TestChamber;
@@ -37,7 +43,7 @@ public class EditorPanel extends JPanel {
 
         abstract public void run();
     }
-
+    
     public EditorPanel(final Grid2DSpace s) {
         super(new BorderLayout());
 
@@ -87,6 +93,77 @@ public class EditorPanel extends JPanel {
                             public void run() {
                                 String allText = FileUtils.readAllText(path);
                                 //todo: fill level according to read text
+                                String[] values=allText.split("OBJECTS:")[0].split(";");
+                                for(String cell : values) {
+                                    String[] c=cell.split(",");
+                                    if(c.length<14) {
+                                        continue;
+                                    }
+                                    int i=Integer.valueOf(c[0]);
+                                    int j=Integer.valueOf(c[1]);
+                                    s.cells.readCells[i][j].charge=Float.valueOf(c[2]);
+                                    s.cells.writeCells[i][j].charge=Float.valueOf(c[2]);
+                                    
+                                    s.cells.readCells[i][j].chargeFront=Boolean.valueOf(c[3]);
+                                    s.cells.writeCells[i][j].chargeFront=Boolean.valueOf(c[3]);
+                                    
+                                    s.cells.readCells[i][j].conductivity=Float.valueOf(c[4]);
+                                    s.cells.writeCells[i][j].conductivity=Float.valueOf(c[4]);
+                                    
+                                    s.cells.readCells[i][j].height=Float.valueOf(c[5]);
+                                    s.cells.writeCells[i][j].height=Float.valueOf(c[5]);
+                                    
+                                    s.cells.readCells[i][j].is_solid=Boolean.valueOf(c[6]);
+                                    s.cells.writeCells[i][j].is_solid=Boolean.valueOf(c[6]);
+                                    
+                                    s.cells.readCells[i][j].light=Float.valueOf(c[7]);
+                                    s.cells.writeCells[i][j].light=Float.valueOf(c[7]);
+                                    
+                                    s.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
+                                    s.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
+                                    
+                                    s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+                                    s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+                                    
+                                    s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
+                                    s.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
+
+                                    s.cells.readCells[i][j].name=c[11];
+                                    s.cells.writeCells[i][j].name=c[11];
+                                    
+                                    s.cells.readCells[i][j].value=Float.valueOf(c[12]);
+                                    s.cells.writeCells[i][j].value=Float.valueOf(c[12]);
+                                    
+                                    s.cells.readCells[i][j].value2=Float.valueOf(c[13]);
+                                    s.cells.writeCells[i][j].value2=Float.valueOf(c[13]);
+                                }
+                                String[] objs=allText.split("OBJECTS:")[1].split(";");
+                                ArrayList<GridObject> newobj=new ArrayList<GridObject>(); //new ArrayList we have to fill
+                                for(String obj : objs) {
+                                    String[] val=obj.split(";");
+                                    String name=val[1];
+                                    float cx=Integer.valueOf(val[2]);
+                                    float cy=Integer.valueOf(val[3]); 
+                                    int x=Integer.valueOf(val[5]); 
+                                    int y=Integer.valueOf(val[6]); 
+                                    if(val[0].equals("GridAgent")) {
+                                        for(GridObject z : s.objects) {
+                                            if(z instanceof GridAgent) {
+                                                ((GridAgent)z).cx=cx;
+                                                ((GridAgent)z).cy=cy;
+                                                ((GridAgent)z).x=x;
+                                                ((GridAgent)z).y=y;
+                                                newobj.add(z);
+                                            }
+                                        }
+                                    }
+                                    if(val[0].equals("Key")) {
+                                        newobj.add(new Key(x,y,name));
+                                    }
+                                    if(val[0].equals("Pizza")) {
+                                        newobj.add(new Pizza(x,y,name));
+                                    }
+                                }
                                 
                             }
                         });
@@ -103,13 +180,56 @@ public class EditorPanel extends JPanel {
             public void run() {
                 //todo save to new file with file name dummy_i
                 String filename= JOptionPane.showInputDialog("What is the name of the level?: ")+".lvl";
-                /* todo 
                 String write="";
-                for(int i=0;i<s.cells.h;i++) {
+                for(int i=0;i<s.cells.h;i++) { //its not python, we have to export it to file ourselves:
                     for(int j=0;j<s.cells.w;j++) {
-                        
+                        write+=String.valueOf(i)+","; //also store coordinates, for case we may change size one day
+                        write+=String.valueOf(j)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].charge)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].chargeFront)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].conductivity)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].height)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].is_solid)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].light)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].logic.ordinal())+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].machine.ordinal())+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].material.ordinal())+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].name)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].value)+",";
+                        write+=String.valueOf(s.cells.readCells[i][j].value2)+";";
                     }
-                }*/
+                }
+                write+="OBJECTS:";
+                for(GridObject s : s.objects) {
+                    if(s instanceof LocalGridObject) {
+                        LocalGridObject toSave=(LocalGridObject) s;
+                        boolean export=false;
+                        if(s instanceof GridAgent) {
+                            export=true;
+                            write+="GridAgent"+",";
+                        }
+                        if(s instanceof Key) {
+                            export=true;
+                            write+="Key"+",";
+                        }
+                        if(s instanceof Pizza) {
+                            export=true;
+                            write+="Pizza"+",";
+                        }
+                        write+=String.valueOf(toSave.doorname)+",";
+                        write+=String.valueOf(toSave.cx)+",";
+                        write+=String.valueOf(toSave.cy)+",";
+                        write+=String.valueOf(toSave.cheading)+",";
+                        write+=String.valueOf(toSave.x)+",";
+                        write+=String.valueOf(toSave.y)+";";
+                    }
+                }
+                try {
+                    PrintWriter outw = new PrintWriter(filename);
+                    outw.write(write);
+                } catch (FileNotFoundException ex) {
+                    System.out.println("impossible");
+                }
             }
         });
         
