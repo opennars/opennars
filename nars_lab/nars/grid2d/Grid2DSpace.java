@@ -33,6 +33,9 @@ public class Grid2DSpace extends PApplet {
 
     public static boolean world_used=false;
 
+    public PVector target = new PVector(25, 25); //need to be init equal else feedback will
+    public PVector current=new PVector(0, 0);
+    
     ///////////////HAMLIB
     //processingjs compatibility layer
     int mouseScroll = 0;
