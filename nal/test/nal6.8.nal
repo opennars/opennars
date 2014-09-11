@@ -9,6 +9,6 @@
 3
 
 'I guess that a tiger is a bird.
-''outputMustContain('<tiger --> bird>. %1.00;0.45%')
+''outputMustContain('<tiger --> bird>. %1.00;0.81%')
 
 

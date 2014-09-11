@@ -7,4 +7,4 @@
 
 10
 
-''outputMustContain('<<(*,John,room_101) --> enter> =\> (&/,<(*,John,door_101) --> open>,+1)>. :|: %1.00;0.45%')
+''outputMustContain('<<(*,John,room_101) --> enter> =\> (&/,<(*,John,door_101) --> open>,+2)>. :|: %1.00;0.45%')
