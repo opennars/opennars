@@ -31,6 +31,7 @@ import javax.swing.JFrame;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
+import nars.gui.output.BubbleChart;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.face.NARFacePanel;
@@ -52,6 +53,7 @@ public class NARSwing  {
     public static final String WEBSITE =
             " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/";
+
 
 
 
@@ -142,6 +144,11 @@ public class NARSwing  {
         w.setSize(250,400);
         w.setVisible(true);
         
+        BubbleChart bc = new BubbleChart(nar);
+        Window wbc = new Window("Freq vs. Conf", bc);
+        wbc.setSize(250,250);
+        wbc.setVisible(true);
+        
         if (args.length > 0
                 && CommandLineNARBuilder.isReallyFile(args[0])) {
 
@@ -187,10 +194,27 @@ public class NARSwing  {
     
 
     public static Color getColor(final String s, float saturation, float brightness) {            
-        double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue, saturation, brightness);
+        float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
+        return Color.getHSBColor(hue, saturation, brightness);
     }
-
+    public static Color getColor(final Color c, float alpha) {
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(255.0 * alpha));
+    }
+    public static Color getColor(final String s, float sat, float bright, float alpha) {
+        return getColor(getColor(s, sat, bright), alpha);
+    }
+    
+//    //NOT WORKING YET
+//    public static Color getColor(final String s, float saturation, float brightness, float alpha) {            
+//        float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
+//        int a = (int)(255.0*alpha);
+//        
+//        int c = Color.HSBtoRGB(hue, saturation, brightness);
+//        c |= (a << 24);
+//        
+//        return new Color(c, true);
+//    }
+    
     public static Font fontMono(float size) {
         return monofont.deriveFont(size);
     }
