@@ -20,8 +20,8 @@
  */
 package nars.language;
 
-import nars.io.Symbols.NativeOperator;
 import nars.core.Memory;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * A negation of a statement.
@@ -64,6 +64,7 @@ public class Negation extends CompoundTerm {
     public Negation clone() {
         return new Negation(name(), cloneTerms(), isConstant(), complexity);
     }
+    
 
     /**
      * Try to make a Negation of one component. Called by the inference rules.

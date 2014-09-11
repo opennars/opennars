@@ -28,7 +28,7 @@ public class InferenceTracer implements InferenceRecorder {
         }
         for (int i = 1; i < alertDepth; i++) {
             //look for a series of equal (TODO: or cyclic) method names
-            if (!methodname.equals(st[i].getMethodName())) {
+            if (!st[i].getMethodName().contains(methodname)) {
                 return false;
             }
         }

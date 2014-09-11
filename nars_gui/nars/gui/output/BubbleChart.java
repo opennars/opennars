@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -20,6 +21,7 @@ import nars.gui.NPanel;
 public class BubbleChart extends NPanel implements Observer {
     private final NAR nar;
     private BufferedImage buffer;
+    private boolean needsPaint;
 
     public enum Dimension {
         One, Time, Frequency, Confidence, Priority, Complexity
@@ -133,7 +135,17 @@ public class BubbleChart extends NPanel implements Observer {
                 g.fillOval(border+minX-padding, border+minY-padding, cw, ch);
             }
         }
-        repaint();
+        if (!needsPaint) {
+            needsPaint = true;
+            SwingUtilities.invokeLater(paintLater);
+        }
     }
+    
+    final Runnable paintLater = new Runnable() {
+            @Override public void run() { 
+                repaint(); 
+                needsPaint = false;
+            }           
+    };
     
 }

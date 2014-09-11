@@ -20,8 +20,8 @@
  */
 package nars.language;
 
-import nars.io.Symbols.NativeOperator;
 import nars.core.Memory;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * A Statement about a Similarity relation.
@@ -56,6 +56,7 @@ public class Similarity extends Statement {
     public Similarity clone() {
         return new Similarity(name(), cloneTerms(), isConstant(), containVar(), complexity);
     }
+
 
     /**
      * Try to make a new compound from two term. Called by the inference rules.

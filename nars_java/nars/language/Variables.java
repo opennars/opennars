@@ -125,17 +125,17 @@ public class Variables {
      * @param compound2 The compound containing the second term, possibly modified
      * @return Whether the unification is possible
      */
-    public static boolean unify(final char type, final Term t1, final Term t2, final Term compound1, final Term compound2) {
+    public static boolean unify(final char type, final Term t1, final Term t2, Term compound1, Term compound2) {
         final HashMap<Term, Term> map1 = new HashMap<>(4);
         final HashMap<Term, Term> map2 = new HashMap<>(4);
         final boolean hasSubs = findSubstitute(type, t1, t2, map1, map2);
         if (hasSubs) {
             if (!map1.isEmpty()) {
-                ((CompoundTerm) compound1).applySubstitute(map1);
+                compound1 = ((CompoundTerm) compound1).applySubstitute(map1);
                 compound1.renameVariables();
             }
             if (!map2.isEmpty()) {
-                ((CompoundTerm) compound2).applySubstitute(map2);
+                compound2 = ((CompoundTerm) compound2).applySubstitute(map2);
                 compound2.renameVariables();
             }
         }

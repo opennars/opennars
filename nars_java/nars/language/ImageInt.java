@@ -47,13 +47,13 @@ public class ImageInt extends Image {
     /**
      * Constructor with full values, called by clone
      * @param n The name of the term
-     * @param cs Component list
+     * @param arg Component list
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      * @param index The index of relation in the component list
      */
-    private ImageInt(final CharSequence n, final Term[] cs, final boolean con, final short complexity, final short index) {
-        super(n, cs, con, complexity, index);
+    private ImageInt(final CharSequence n, final Term[] arg, final boolean con, final short complexity, final short index) {
+        super(n, arg, con, complexity, index);
     }
     
     /**

@@ -23,9 +23,11 @@ package nars.language;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import nars.core.Memory;
@@ -49,7 +51,7 @@ public abstract class CompoundTerm extends Term {
      * syntactic complexity of the compound, the sum of those of its term
  plus 1
      */
-    public final short complexity;
+    public short complexity;
     
     /** Whether the term names a concept */
     private boolean isConstant;
@@ -71,6 +73,13 @@ public abstract class CompoundTerm extends Term {
      * @return A clone of the compound term
      */
     @Override public abstract CompoundTerm clone();
+    
+    public final CompoundTerm clone(Term[] replaced) {
+        CompoundTerm c = clone();
+        System.arraycopy(replaced, 0, c.term, 0, replaced.length);
+        c.refresh();
+        return c;
+    }
 
     
     
@@ -119,6 +128,12 @@ public abstract class CompoundTerm extends Term {
         this.isConstant = !hasVar;
     }
 
+    /** call this after changing Term[] contents */
+    public void refresh() {
+        this.complexity = calcComplexity();
+        setName(makeName());
+        this.isConstant = !hasVar;
+    }
 
 
 // --Commented out by Inspection START (8/15/14 2:37 AM):
@@ -176,6 +191,8 @@ public abstract class CompoundTerm extends Term {
  
  @Override
     public boolean equals(final Object that) {       
+        if (this == that) return true;
+        
         if (!(that instanceof CompoundTerm))
             return false;
         
@@ -522,9 +539,9 @@ public abstract class CompoundTerm extends Term {
     /** determines whether we can avoid cloning something, and just re-use it */
     protected static boolean mayShare(final Term t) {        
         if (t instanceof CompoundTerm) {
-//            /*if (t instanceof Image)
-//                if (((Image)t).containsPlaceHolder())
-//                    return false;*/
+            /*if (t instanceof Image)
+                if (((Image)t).containsPlaceHolder())
+                    return false;*/
 //
             if (t.containVar()) return false;
 //            
@@ -761,30 +778,57 @@ public abstract class CompoundTerm extends Term {
         return false;
     }
 
+    /** NOT TESTED YET */
+    public boolean containsAnyTermsOf(final Collection<Term> c) {
+        return Terms.containsAny(term, c);
+    }
+    
     /**
      * Recursively apply a substitute to the current CompoundTerm
      *
      * @param subs
      */
-    public void applySubstitute(final HashMap<Term, Term> subs) {                
-        for (int i = 0; i < term.length; i++) {
-            Term t1 = term[i];
+    public CompoundTerm applySubstitute(final Map<Term, Term> subs) {   
+        if (subs.size()==0) {            
+            return this;
+        }
+        //if (!containsAnyTermsOf(subs.keySet()))
+            //return this;
+        Term[] tt = new Term[term.length];
+        boolean modified = false;
+        
+        for (int i = 0; i < tt.length; i++) {
+            Term t1 = tt[i] = term[i];            
+            
             if (subs.containsKey(t1)) {
                 Term t2 = subs.get(t1);                            
                 while (subs.containsKey(t2)) {
                     t2 = subs.get(t2);
                 }
                 //prevents infinite recursion
-                if (!t2.containsTerm(t1))
-                    term[i] = t2.clone();
+                if (!t2.containsTerm(t1)) {
+                    tt[i] = t2.clone();
+                    modified = true;
+                }
             } else if (t1 instanceof CompoundTerm) {
-                ((CompoundTerm) t1).applySubstitute(subs);
+                /*if (InferenceTracer.guardStack(50, "applySubstitute", this, t1, subs)) {
+                    System.err.println(i + " "  + this + " " + t1 + " " + subs);
+                    //new Exception().printStackTrace();;
+                    //System.exit(1);
+                }*/
+                tt[i] = ((CompoundTerm) t1).applySubstitute(subs);
+                if (tt[i] != term[i])
+                    modified = true;
             }            
         }
+        if (!modified)
+            return this;
+        
         if (this.isCommutative()) {         
-            Arrays.sort(term);
+            Arrays.sort(tt);
         }
-        setName( makeName() );
+        
+        return this.clone(tt);
     }
 
     /* ----- link CompoundTerm and its term ----- */
