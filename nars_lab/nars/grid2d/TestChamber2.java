@@ -18,6 +18,7 @@ import nars.grid2d.operator.Pick;
 import nars.grid2d.operator.Say;
 import nars.gui.NARSwing;
 import nars.core.build.ContinuousBagNARBuilder;
+import static nars.grid2d.TestChamber.space;
 import processing.core.PVector;
 
 public class TestChamber2 extends TestChamber {
@@ -44,7 +45,7 @@ public class TestChamber2 extends TestChamber {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
                     if(opname.equals("go-to"))
-                        target = new PVector(i, j);
+                        space.target = new PVector(i, j);
                 }
             }
         }
@@ -53,7 +54,7 @@ public class TestChamber2 extends TestChamber {
                 if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                     LocalGridObject gridu=(LocalGridObject) gridi;
                     if(opname.equals("go-to"))
-                        target = new PVector(gridu.x, gridu.y);
+                        space.target = new PVector(gridu.x, gridu.y);
                 }
             }
         //}
@@ -109,15 +110,11 @@ public class TestChamber2 extends TestChamber {
 /*if (Math.random() < 0.2) {
                  forward(1);
                  }*/
-                if (!target.equals(lasttarget) || target.equals(lasttarget) && ("pick".equals(opname) ||
-                        "activate".equals(opname) || "deactivate".equals(opname))) {
-                    getfeedback = true;
-                }
-                lasttarget = target;
+                lasttarget = space.target;
                 PVector current = new PVector(x, y);
                // System.out.println(nextEffect);
                 if (nextEffect == null) {
-                    List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, target);
+                    List<PVector> path = Grid2DSpace.Shortest_Path(space, this, current, space.target);
                     actions.clear();
                    // System.out.println(path);
                     if (path != null) {
@@ -133,8 +130,7 @@ public class TestChamber2 extends TestChamber {
                         if (path.size() <= 1) {
                             //nar.step(1);
                             //System.out.println("at destination; didnt need to find path");
-                            if (getfeedback && !"".equals(goal) && current.equals(target)) {
-                                 getfeedback = false;
+                            if (!"".equals(goal) && current.equals(space.target)) {
                                 //--nar.step(6);
                                 GridObject obi=null;
                                 if(!"".equals(opname)) {
