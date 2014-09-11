@@ -107,28 +107,29 @@ public class Variables {
      * To unify two terms
      *
      * @param type The type of variable that can be substituted
-     * @param t1 The first term
-     * @param t2 The second term
-     * @return Whether the unification is possible
+     * @param t The first and second term as an array, which will have been modified upon returning true
+     * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term t1, final Term t2) {
-        return unify(type, t1, t2, t1, t2);
+    public static boolean unify(final char type, final Term[] t) {
+        return unify(type, t[0], t[1], t);
     }
 
+ 
     /**
      * To unify two terms
      *
      * @param type The type of variable that can be substituted
-     * @param t1 The first term to be unified
-     * @param t2 The second term to be unified
      * @param compound1 The compound containing the first term, possibly modified
      * @param compound2 The compound containing the second term, possibly modified
-     * @return Whether the unification is possible
+     * @param t The first and second term as an array, which will have been modified upon returning true
+     * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term t1, final Term t2, Term compound1, Term compound2) {
+    public static boolean unify(final char type, final Term t1, final Term t2, Term[] compound) {
         final HashMap<Term, Term> map1 = new HashMap<>(4);
         final HashMap<Term, Term> map2 = new HashMap<>(4);
         final boolean hasSubs = findSubstitute(type, t1, t2, map1, map2);
+        Term compound1 = compound[0];
+        Term compound2 = compound[1];
         if (hasSubs) {
             if (!map1.isEmpty()) {
                 compound1 = ((CompoundTerm) compound1).applySubstitute(map1);
@@ -139,8 +140,12 @@ public class Variables {
                 compound2.renameVariables();
             }
         }
- 
-        return hasSubs;
+        if (hasSubs) {            
+            compound[0] = compound1;
+            compound[1] = compound2;
+            return true;
+        }
+        return false;
     }
 
 

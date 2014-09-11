@@ -61,11 +61,13 @@ public class LocalRules {
     public static void match(final Task task, final Sentence belief, final Memory memory) {
         Sentence sentence = (Sentence) task.sentence.clone();
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), belief.getTemporalOrder())) {
+            Term[] u = new Term[] { sentence.content, belief.content.clone() };
+            
             if (sentence.isJudgment()) {
                 if (revisible(sentence, belief)) {
                     revision(sentence, belief, true, memory);
                 }
-            } else if (Variables.unify(Symbols.VAR_QUERY, sentence.content, belief.content.clone())) {
+            } else if (Variables.unify(Symbols.VAR_QUERY, u)) {
                 trySolution(belief, task, memory);
             }
         }
@@ -133,7 +135,9 @@ public class LocalRules {
             }
             Term content = belief.cloneContent();
             if (Variables.containVarIndep(content.name())) {
-                Variables.unify(Symbols.VAR_INDEPENDENT, content, problem.cloneContent());
+                Term u[] = new Term[] { content, problem.cloneContent() };
+                Variables.unify(Symbols.VAR_INDEPENDENT, u);
+                content = u[0];                
                 belief = belief.clone(content);
                 Stamp st = new Stamp(belief.stamp, memory.getTime());
                 st.addToChain(belief.content);
