@@ -431,7 +431,7 @@ public final class SyllogisticRules {
         Term content;
         
         long delta = 0;
-        final int duration = memory.param.duration.get();
+        final Interval.AtomicDuration duration = memory.param.duration;
         
         if (newCondition != null) {
              if (newCondition instanceof Interval) {

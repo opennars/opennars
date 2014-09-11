@@ -16,6 +16,7 @@ import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
+import nars.language.Interval.AtomicDuration;
 import nars.language.Product;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -136,7 +137,7 @@ public class Executive {
                 return;
             }*/
             
-            final int duration = memory.param.duration.get();
+            final AtomicDuration duration = memory.param.duration;
             
             for (final Term t : cont.term) {
                 
@@ -224,7 +225,7 @@ public class Executive {
 
             if(!(newEvent.sentence.content instanceof Operation)) {
 
-                final int duration = memory.param.duration.get();
+                final AtomicDuration duration = memory.param.duration;
 
 
                 ArrayList<Term> cur=new ArrayList<Term>();
@@ -245,7 +246,7 @@ public class Executive {
                     if (nextT!=null) {
                         long diff = curT.getCreationTime() - nextT.getCreationTime();
                         
-                        if (diff >= duration) {
+                        if (diff >= duration.get()) {
                             cur.add( Interval.intervalTime(diff, duration) );
                         }
                     }
@@ -267,7 +268,7 @@ public class Executive {
 
                         long diff = newEvent.getCreationTime() - stmLast.getCreationTime();
 
-                        if (diff >= duration) {
+                        if (diff >= duration.get()) {
                             cur.add(0, Interval.intervalTime(diff, duration) );
                         }
 

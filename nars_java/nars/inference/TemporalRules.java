@@ -215,12 +215,15 @@ public class TemporalRules {
         if (Statement.invalidStatement(t1, t2)) {
             return;
         }
-        final int duration = memory.param.duration.get();
+        
+        final Interval.AtomicDuration duration = memory.param.duration;
+        int durationCycles = duration.get();
+        
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
         long timeDiff = time2 - time1;
         Interval interval;
-        if (Math.abs(timeDiff) > duration) {
+        if (Math.abs(timeDiff) > durationCycles) {
             interval = Interval.intervalTime(Math.abs(timeDiff), duration);
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD, memory);
@@ -235,9 +238,9 @@ public class TemporalRules {
             }
         }
         int order;
-        if (timeDiff > duration) {
+        if (timeDiff > durationCycles) {
             order = TemporalRules.ORDER_FORWARD;
-        } else if (timeDiff < -duration) {
+        } else if (timeDiff < -durationCycles) {
             order = TemporalRules.ORDER_BACKWARD;
         } else {
             order = TemporalRules.ORDER_CONCURRENT;

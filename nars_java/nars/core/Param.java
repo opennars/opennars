@@ -3,6 +3,7 @@ package nars.core;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.language.Interval.AtomicDuration;
 import nars.util.meter.util.AtomicDouble;
 
 /**
@@ -76,7 +77,7 @@ public class Param implements Serializable {
     
     /** Tense usage convention, how far away "past" and "future" is from "now", in cycles. 
         The range of "now" is [-DURATION, DURATION];      */
-    public final AtomicInteger duration = new AtomicInteger();
+    public final AtomicDuration duration = new AtomicDuration();
         
     
     /** # of events, can be dynamically adjusted */
