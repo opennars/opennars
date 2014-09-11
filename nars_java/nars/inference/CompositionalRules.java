@@ -666,12 +666,13 @@ public final class CompositionalRules {
     }
     
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final Memory memory) {
-        Term T1=sentence.content.clone();
-        Term T2=belief.content.clone();
-        Term S1=((Statement)T2).getSubject();
-        Term P1=((Statement)T2).getPredicate();
-        Term S2=((Statement)T1).getSubject();
-        Term P2=((Statement)T1).getPredicate();
+        Statement T1 = (Statement)sentence.content.clone();
+        Statement T2 = (Statement)belief.content.clone();
+
+        Term S1 = T2.getSubject();
+        Term S2 = T1.getSubject();
+        Term P1 = T2.getPredicate();
+        Term P2 = T1.getPredicate();
         
         HashMap<Term,Term> res1=new HashMap<>();
         HashMap<Term,Term> res2=new HashMap<>();
@@ -682,8 +683,10 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
-            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement)T2.applySubstitute(res1);            
+            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            
             if(S1 instanceof Conjunction) {
                 //try to unify P2 with a component
                 for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
@@ -726,8 +729,10 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
-            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement)T2.applySubstitute(res1);            
+            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            
             if(S2 instanceof Conjunction) {
                 //try to unify P1 with a component
                 for(final Term s1 : ((CompoundTerm)S2).cloneTerms()) {
@@ -770,8 +775,10 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
-            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement)T2.applySubstitute(res1);            
+            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            
             if(P1 instanceof Conjunction) {
                 //try to unify P2 with a component
                 for(final Term s1 : ((CompoundTerm)P1).cloneTerms()) {
@@ -815,8 +822,10 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
-            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement)T2.applySubstitute(res1);            
+            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            
             if(S1 instanceof Conjunction) {
                 //try to unify S2 with a component
                 for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
@@ -938,7 +947,7 @@ public final class CompositionalRules {
                     break;
                 }
                 
-                if (second.equals(taskterm))
+                if (second.term.equals(taskterm))
                     continue;
                 
                 

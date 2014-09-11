@@ -36,4 +36,17 @@ public class ApplySubstituteTest {
         assertTrue(!c.equals(ab));
         
     }
+    
+    @Test
+    public void test2() {
+        //substituting:  <(*,$1) --> num>.  with $1 ==> 0
+        NAR n = new DefaultNARBuilder().build();
+            
+        Map<Term,Term> h = new HashMap();
+        h.put(n.term("$1"), n.term("0"));        
+        CompoundTerm c = ((CompoundTerm)n.term("<(*,$1) --> num>")).applySubstitute(h);
+        System.out.println(c);
+        
+        assertTrue(c!=null);
+    }
 }
