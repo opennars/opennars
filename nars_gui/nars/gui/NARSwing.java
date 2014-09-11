@@ -33,6 +33,7 @@ import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
+import nars.gui.output.face.NARFacePanel;
 import nars.io.TextInput;
 
 /**
@@ -135,6 +136,11 @@ public class NARSwing  {
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);
         
+   
+        NARFacePanel f = new NARFacePanel(nar);
+        Window w = new Window("Face", f);
+        w.setSize(250,400);
+        w.setVisible(true);
         
         if (args.length > 0
                 && CommandLineNARBuilder.isReallyFile(args[0])) {
