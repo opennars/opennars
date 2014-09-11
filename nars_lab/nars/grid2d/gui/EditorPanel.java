@@ -28,6 +28,7 @@ import nars.grid2d.TestChamber;
 import nars.grid2d.object.Key;
 import nars.grid2d.object.Pizza;
 import org.parboiled.common.FileUtils;
+import processing.core.PVector;
 
 /**
  *
@@ -93,7 +94,7 @@ public class EditorPanel extends JPanel {
                             public void run() {
                                 String allText = FileUtils.readAllText(path);
                                 //todo: fill level according to read text
-                                String[] values=allText.split("OBJECTS:")[0].split(";");
+                                String[] values=allText.split("OBJECTS")[0].split(";");
                                 for(String cell : values) {
                                     String[] c=cell.split(",");
                                     if(c.length<14) {
@@ -122,8 +123,10 @@ public class EditorPanel extends JPanel {
                                     s.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
                                     s.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
                                     
-                                    s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
-                                    s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+                                    if(!c[9].equals("")) {
+                                        s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+                                        s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+                                    }
                                     
                                     s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
                                     s.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
@@ -137,13 +140,16 @@ public class EditorPanel extends JPanel {
                                     s.cells.readCells[i][j].value2=Float.valueOf(c[13]);
                                     s.cells.writeCells[i][j].value2=Float.valueOf(c[13]);
                                 }
-                                String[] objs=allText.split("OBJECTS:")[1].split(";");
+                                String[] objs=allText.split("OBJECTS")[1].split(";");
                                 ArrayList<GridObject> newobj=new ArrayList<GridObject>(); //new ArrayList we have to fill
                                 for(String obj : objs) {
-                                    String[] val=obj.split(";");
+                                    String[] val=obj.split(",");
+                                    if(val.length==0) {
+                                        continue;
+                                    }
                                     String name=val[1];
-                                    float cx=Integer.valueOf(val[2]);
-                                    float cy=Integer.valueOf(val[3]); 
+                                    float cx=Float.valueOf(val[2]);
+                                    float cy=Float.valueOf(val[3]); 
                                     int x=Integer.valueOf(val[5]); 
                                     int y=Integer.valueOf(val[6]); 
                                     if(val[0].equals("GridAgent")) {
@@ -154,17 +160,23 @@ public class EditorPanel extends JPanel {
                                                 ((GridAgent)z).x=x;
                                                 ((GridAgent)z).y=y;
                                                 newobj.add(z);
+                                                s.target=new PVector(x,y);
+                                                s.current=new PVector(x,y);
                                             }
                                         }
                                     }
                                     if(val[0].equals("Key")) {
-                                        newobj.add(new Key(x,y,name));
+                                        Key addu=new Key(x,y,name);
+                                        addu.space=s;
+                                        newobj.add(addu);
                                     }
                                     if(val[0].equals("Pizza")) {
-                                        newobj.add(new Pizza(x,y,name));
+                                        Pizza addu=new Pizza(x,y,name);
+                                        addu.space=s;
+                                        newobj.add(addu);
                                     }
                                 }
-                                
+                                s.objects=newobj;
                             }
                         });
                         
@@ -180,53 +192,59 @@ public class EditorPanel extends JPanel {
             public void run() {
                 //todo save to new file with file name dummy_i
                 String filename= JOptionPane.showInputDialog("What is the name of the level?: ")+".lvl";
-                String write="";
+                StringBuilder wr=new StringBuilder();
                 for(int i=0;i<s.cells.h;i++) { //its not python, we have to export it to file ourselves:
                     for(int j=0;j<s.cells.w;j++) {
-                        write+=String.valueOf(i)+","; //also store coordinates, for case we may change size one day
-                        write+=String.valueOf(j)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].charge)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].chargeFront)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].conductivity)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].height)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].is_solid)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].light)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].logic.ordinal())+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].machine.ordinal())+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].material.ordinal())+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].name)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].value)+",";
-                        write+=String.valueOf(s.cells.readCells[i][j].value2)+";";
+                        wr.append(String.valueOf(i)).append(","); //also store coordinates, for case we may change size one day
+                        wr.append(String.valueOf(j)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].charge)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].chargeFront)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].conductivity)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].height)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].is_solid)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].light)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].logic.ordinal())).append(",");
+                        if(s.cells.readCells[i][j].machine!=null) { //wtf enum can be null? kk its java..
+                            wr.append(String.valueOf(s.cells.readCells[i][j].machine.ordinal())).append(",");
+                        }
+                        else
+                            wr.append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].material.ordinal())).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].name)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].value)).append(",");
+                        wr.append(String.valueOf(s.cells.readCells[i][j].value2)).append(";");
                     }
                 }
-                write+="OBJECTS:";
+                wr.append("OBJECTS");
                 for(GridObject s : s.objects) {
                     if(s instanceof LocalGridObject) {
                         LocalGridObject toSave=(LocalGridObject) s;
                         boolean export=false;
                         if(s instanceof GridAgent) {
                             export=true;
-                            write+="GridAgent"+",";
+                            wr.append("GridAgent"+",");
                         }
                         if(s instanceof Key) {
                             export=true;
-                            write+="Key"+",";
+                            wr.append("Key"+",");
                         }
                         if(s instanceof Pizza) {
                             export=true;
-                            write+="Pizza"+",";
+                            wr.append("Pizza"+",");
                         }
-                        write+=String.valueOf(toSave.doorname)+",";
-                        write+=String.valueOf(toSave.cx)+",";
-                        write+=String.valueOf(toSave.cy)+",";
-                        write+=String.valueOf(toSave.cheading)+",";
-                        write+=String.valueOf(toSave.x)+",";
-                        write+=String.valueOf(toSave.y)+";";
+                        wr.append(String.valueOf(toSave.doorname)).append(",");
+                        wr.append(String.valueOf(toSave.cx)).append(",");
+                        wr.append(String.valueOf(toSave.cy)).append(",");
+                        wr.append(String.valueOf(toSave.cheading)).append(",");
+                        wr.append(String.valueOf(toSave.x)).append(",");
+                        wr.append(String.valueOf(toSave.y)).append(";");
                     }
                 }
                 try {
                     PrintWriter outw = new PrintWriter(filename);
-                    outw.write(write);
+                    outw.write(wr.toString());
+                    outw.flush();
+                    outw.close();
                 } catch (FileNotFoundException ex) {
                     System.out.println("impossible");
                 }

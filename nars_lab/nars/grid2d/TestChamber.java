@@ -22,8 +22,7 @@ public class TestChamber {
 
     public static boolean curiousity=false;
     static Grid2DSpace space;
-    static boolean getfeedback = false;
-    static PVector target = new PVector(25, 25); //need to be init equal else feedback will
+    
     public PVector lasttarget = new PVector(5, 25); //not work
     public static boolean executed_going=false;
     static String goal = "";
@@ -50,7 +49,7 @@ public class TestChamber {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
                     if(opname.equals("go-to"))
-                        target = new PVector(i, j);
+                        space.target = new PVector(i, j);
                 }
             }
         }
@@ -59,7 +58,7 @@ public class TestChamber {
                 if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                     LocalGridObject gridu=(LocalGridObject) gridi;
                     if(opname.equals("go-to"))
-                        target = new PVector(gridu.x, gridu.y);
+                        space.target = new PVector(gridu.x, gridu.y);
                 }
             }
         //}
@@ -139,15 +138,11 @@ public class TestChamber {
 /*if (Math.random() < 0.2) {
                  forward(1);
                  }*/
-                if (!target.equals(lasttarget) || target.equals(lasttarget) && ("pick".equals(opname) ||
-                        "activate".equals(opname) || "deactivate".equals(opname))) {
-                    getfeedback = true;
-                }
-                lasttarget = target;
-                PVector current = new PVector(x, y);
+                lasttarget = space.target;
+                space.current = new PVector(x, y);
                // System.out.println(nextEffect);
                 if (nextEffect == null) {
-                    path = Grid2DSpace.Shortest_Path(space, this, current, target);
+                    path = Grid2DSpace.Shortest_Path(space, this, space.current, space.target);
                     actions.clear();
                    // System.out.println(path);
                     if(path==null) {
@@ -155,10 +150,10 @@ public class TestChamber {
                     }
                     if (path != null) {
                         if(inventorybag!=null) {
-                            inventorybag.x=(int)current.x;
-                            inventorybag.y=(int)current.y;
-                            inventorybag.cx=(int)current.x;
-                            inventorybag.cy=(int)current.y;
+                            inventorybag.x=(int)space.current.x;
+                            inventorybag.y=(int)space.current.y;
+                            inventorybag.cx=(int)space.current.x;
+                            inventorybag.cy=(int)space.current.y;
                         }
                         if(inventorybag==null || !(inventorybag instanceof Key)) {
                             keyn=-1;
@@ -167,27 +162,26 @@ public class TestChamber {
                             active=true;
                             executed_going=false;
                             //System.out.println("at destination; didnt need to find path");
-                            if (!"".equals(goal) && current.equals(target)) {
-                                 getfeedback = false;
+                            if (!"".equals(goal) && space.current.equals(space.target)) {
                                 //--nar.step(6);
                                 GridObject obi=null;
                                 if(!"".equals(opname)) {
                                     for(GridObject gridi : space.objects) {
                                         if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal) &&
-                                          ((LocalGridObject)gridi).x==(int)current.x &&
-                                               ((LocalGridObject)gridi).y==(int)current.y ) {
+                                          ((LocalGridObject)gridi).x==(int)space.current.x &&
+                                               ((LocalGridObject)gridi).y==(int)space.current.y ) {
                                             obi=gridi;
                                             break;
                                         }
                                     }
                                 }
-                                if(obi!=null || cells.readCells[(int)current.x][(int)current.y].name.equals(goal)) { //only possible for existing ones
+                                if(obi!=null || cells.readCells[(int)space.current.x][(int)space.current.y].name.equals(goal)) { //only possible for existing ones
                                     if("pick".equals(opname)) {
                                         if(inventorybag!=null && inventorybag instanceof LocalGridObject) {
                                             //we have to drop it
                                             LocalGridObject ob=(LocalGridObject) inventorybag;
-                                            ob.x=(int)current.x;
-                                            ob.y=(int)current.y;
+                                            ob.x=(int)space.current.x;
+                                            ob.y=(int)space.current.y;
                                             space.objects.add(ob);
                                         }
                                         inventorybag=(LocalGridObject)obi;
