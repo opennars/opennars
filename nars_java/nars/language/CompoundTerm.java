@@ -817,7 +817,7 @@ public abstract class CompoundTerm extends Term {
                     //System.exit(1);
                 }*/
                 tt[i] = ((CompoundTerm) t1).applySubstitute(subs);
-                if (tt[i] != term[i])
+                if (!tt[i].equals(term[i]))
                     modified = true;
             }            
         }

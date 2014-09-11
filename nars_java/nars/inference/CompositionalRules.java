@@ -558,11 +558,11 @@ public final class CompositionalRules {
         memory.doublePremiseTask(content, truth, budget);
         
         if (index == 0) {
-            state1 = Inheritance.make(varDep, taskContent.getPredicate(), memory);
-            state2 = Inheritance.make(varDep, beliefContent.getPredicate(), memory);
+            state1 = Inheritance.make(varDep, term12, memory);
+            state2 = Inheritance.make(varDep, term22, memory);
         } else {
-            state1 = Inheritance.make(taskContent.getSubject(), varDep, memory);
-            state2 = Inheritance.make(beliefContent.getSubject(), varDep, memory);
+            state1 = Inheritance.make(term11, varDep, memory);
+            state2 = Inheritance.make(term22, varDep, memory);
         }
         content = Conjunction.make(state1, state2, memory);
         truth = intersection(truthT, truthB);
