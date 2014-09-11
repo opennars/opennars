@@ -21,8 +21,8 @@
 
 package nars.language;
 
-import nars.io.Symbols.NativeOperator;
 import nars.core.Memory;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * A Product is a sequence of 1 or more terms.
@@ -62,6 +62,7 @@ public class Product extends CompoundTerm {
     public Product clone() {
         return new Product(name(), cloneTerms(), isConstant(), containVar(), complexity);
     }
+
 
      /**
      * Try to make a new compound. Called by StringParser.

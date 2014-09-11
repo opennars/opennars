@@ -51,8 +51,8 @@ public class ImageExt extends Image {
      * @param complexity Syntactic complexity of the compound
      * @param index The index of relation in the component list
      */
-    protected ImageExt(final CharSequence n, final Term[] cs, final boolean con, final short complexity, final short index) {
-        super(n, cs, con, complexity, index);
+    protected ImageExt(final CharSequence n, final Term[] arg, final boolean con, final short complexity, final short index) {
+        super(n, arg, con, complexity, index);
     }
 
     /**

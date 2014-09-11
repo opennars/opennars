@@ -1,6 +1,7 @@
 package nars.language;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -376,6 +377,21 @@ public class Terms {
                 return false;
         }
         return true;
+    }
+    
+    /** a contains any of b  NOT TESTED YET */
+    public static boolean containsAny(final Term[] a, final Collection<Term> b) {
+        for (final Term bx : b) {
+            if (contains(a, bx))
+                return true;
+        }
+        for (final Term ax : a) {
+            if (ax instanceof CompoundTerm)
+                if (containsAny(((CompoundTerm)ax).term, b))
+                    return true;
+        }
+        
+        return false;
     }
 
     public static <T> boolean contains(final T[] array, final T v) {

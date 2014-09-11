@@ -20,9 +20,9 @@
  */
 package nars.language;
 
+import nars.core.Memory;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
-import nars.core.Memory;
 
 /**
  * A Statement about an Equivalence relation.
@@ -63,6 +63,7 @@ public class Equivalence extends Statement {
     public Equivalence clone() {
         return new Equivalence(name(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
+
 
     /**
      * Try to make a new compound from two term. Called by the inference

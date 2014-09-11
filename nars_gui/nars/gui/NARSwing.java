@@ -31,10 +31,8 @@ import javax.swing.JFrame;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.InputPanel;
-import nars.gui.output.BubbleChart;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
-import nars.gui.output.face.NARFacePanel;
 import nars.io.TextInput;
 
 /**
@@ -138,7 +136,7 @@ public class NARSwing  {
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);
         
-   
+   /*
         NARFacePanel f = new NARFacePanel(nar);
         Window w = new Window("Face", f);
         w.setSize(250,400);
@@ -148,6 +146,7 @@ public class NARSwing  {
         Window wbc = new Window("Freq vs. Conf", bc);
         wbc.setSize(250,250);
         wbc.setVisible(true);
+        */
         
         if (args.length > 0
                 && CommandLineNARBuilder.isReallyFile(args[0])) {

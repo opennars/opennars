@@ -502,8 +502,8 @@ public final class CompositionalRules {
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((CompoundTerm) term12).applySubstitute(subs);
-                    ((CompoundTerm) term22).applySubstitute(subs);
+                    term12 = ((CompoundTerm) term12).applySubstitute(subs);
+                    term22 = ((CompoundTerm) term22).applySubstitute(subs);
                 }
             }
         } else {
@@ -521,8 +521,8 @@ public final class CompositionalRules {
                 }
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    ((CompoundTerm) term11).applySubstitute(subs);
-                    ((CompoundTerm) term21).applySubstitute(subs);
+                    term11 = ((CompoundTerm) term11).applySubstitute(subs);
+                    term21 = ((CompoundTerm) term21).applySubstitute(subs);
                 }
             }
         }
@@ -607,7 +607,7 @@ public final class CompositionalRules {
         HashMap<Term, Term> substitute = new HashMap<>();
         substitute.put(commonTerm1, varDep2);
         CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound, memory);
-        content.applySubstitute(substitute);
+        content = content.applySubstitute(substitute);
         TruthValue truth = intersection(taskSentence.truth, belief.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
         memory.doublePremiseTask(content, truth, budget);
@@ -621,7 +621,7 @@ public final class CompositionalRules {
         content = Implication.make(premise1, oldCompound, memory);
         if (content == null)
             return;
-        content.applySubstitute(substitute);
+        content = content.applySubstitute(substitute);
         if (premise1.equals(taskSentence.content)) {
             truth = induction(belief.truth, taskSentence.truth);
         } else {
@@ -682,17 +682,17 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
-            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
                 //try to unify P2 with a component
                 for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -708,9 +708,9 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)P2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -726,17 +726,17 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
-            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = ((CompoundTerm) T2).applySubstitute(res1);
             if(S2 instanceof Conjunction) {
                 //try to unify P1 with a component
                 for(final Term s1 : ((CompoundTerm)S2).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -752,9 +752,9 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -770,17 +770,17 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
-            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = ((CompoundTerm) T2).applySubstitute(res1);
             if(P1 instanceof Conjunction) {
                 //try to unify P2 with a component
                 for(final Term s1 : ((CompoundTerm)P1).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;                            
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if ((!s2.equals(s1)) && (sentence.truth!=null) && (belief.truth!=null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -796,10 +796,10 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)P2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -815,18 +815,18 @@ public final class CompositionalRules {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
-            ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
-            ((CompoundTerm) T2).applySubstitute(res1);
+            T1 = ((CompoundTerm) T1).applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = ((CompoundTerm) T2).applySubstitute(res1);
             if(S1 instanceof Conjunction) {
                 //try to unify S2 with a component
                 for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -842,10 +842,10 @@ public final class CompositionalRules {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(final Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
-                            ((CompoundTerm) s2).applySubstitute(res3);
+                            s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, memory);
@@ -993,7 +993,7 @@ public final class CompositionalRules {
                     
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,smap)) {
                         CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                        taskterm_subs.applySubstitute(Values);
+                        taskterm_subs = taskterm_subs.applySubstitute(Values);
                         taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                         if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                             terms_dependent.add(taskterm_subs);
@@ -1006,7 +1006,7 @@ public final class CompositionalRules {
                     
                     if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2, smap)) {
                         CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                        taskterm_subs.applySubstitute(Values2);
+                        taskterm_subs = taskterm_subs.applySubstitute(Values2);
                         taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                         if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                             
@@ -1028,7 +1028,7 @@ public final class CompositionalRules {
                             if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3, smap)) {
                                 //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
                                 CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                                taskterm_subs.applySubstitute(Values3);
+                                taskterm_subs = taskterm_subs.applySubstitute(Values3);
                                 taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                                 if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                     terms_dependent.add(taskterm_subs);
@@ -1041,7 +1041,7 @@ public final class CompositionalRules {
                             if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4, smap)) {
                                 //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
                                 CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
-                                taskterm_subs.applySubstitute(Values4);
+                                taskterm_subs = taskterm_subs.applySubstitute(Values4);
                                 taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                                 if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                     terms_independent.add(taskterm_subs);
