@@ -394,16 +394,21 @@ public final class SyllogisticRules {
         if (index2 >= 0) {
             index = (short) index2;
         } else {
-            boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
+            Term[] u = new Term[] { premise1, premise2 };            
+            boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u);
+            premise1 = (Implication) u[0]; premise2 = u[1];
+            
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
             
                 CompoundTerm compoundCommonComponent = ((CompoundTerm) commonComponent);
                 
                 if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index))
+                    u = new Term[] { premise1, premise2 };
                     match = Variables.unify(Symbols.VAR_INDEPENDENT, 
                             oldCondition.term[index], 
                             compoundCommonComponent.term[index], 
-                            premise1, premise2);
+                            u);
+                    premise1 = (Implication) u[0]; premise2 = u[1];
                 
             }
             if (!match) {
@@ -527,9 +532,14 @@ public final class SyllogisticRules {
         }
         Conjunction oldCondition = (Conjunction) tm;
 
-        boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, premise1, premise2);
+        Term[] u = new Term[] { premise1, premise2 };
+        boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u);
+        premise1 = (Equivalence) u[0]; premise2 = u[1];
+        
         if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
-            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], premise1, premise2);
+            u = new Term[] { premise1, premise2 };
+            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], u);
+            premise1 = (Equivalence) u[0]; premise2 = u[1];
         }
         if (!match) {
             return;

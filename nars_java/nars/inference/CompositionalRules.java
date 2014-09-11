@@ -947,10 +947,9 @@ public final class CompositionalRules {
                     break;
                 }
                 
+                //prevent unification with itself
                 if (second.term.equals(taskterm))
                     continue;
-                
-                
                 
                 if (memory.getRecorder().isActive()) {
                     memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term);
