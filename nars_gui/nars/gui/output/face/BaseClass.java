@@ -256,15 +256,23 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
    
     public void run()   
     {   
+        final long cycleDelay = 30L;
         try   
         {   
             double d = 0.0D;   
             do   
             {   
-                if(r.width != bounds().width || r.height != bounds().height)   
+                width = getWidth();
+                height = getHeight();
+                if ((width == 0) || (height == 0)) {
+                    Thread.sleep(cycleDelay);   
+                    continue;
+                }
+                
+                if(r.width != width || r.height != height)   
                 {   
                     
-                    db = new BufferedImage(width = bounds().width, height = bounds().height, BufferedImage.TYPE_INT_ARGB);
+                    db = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                     buffer = db.getGraphics();   
                     /*((Graphics2D)buffer).setRenderingHint(RenderingHints.KEY_ANTIALIASING, // Anti-alias!
         RenderingHints.VALUE_ANTIALIAS_ON);*/
@@ -284,7 +292,7 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
 
   
                 repaint();   
-                Thread.sleep(30L);   
+                Thread.sleep(cycleDelay);
                 d += 0.10000000000000001D;   
             } while(true);   
         }   
@@ -315,8 +323,7 @@ public abstract class BaseClass extends JPanel implements Runnable, KeyListener,
    
     public void stop()   
     {   
-        if(t != null)   
-        {   
+        if(t != null) {   
             t.stop();   
             t = null;   
         }   
