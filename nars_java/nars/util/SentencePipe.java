@@ -19,6 +19,7 @@ package nars.util;
 import java.util.concurrent.ArrayBlockingQueue;
 import nars.core.NAR;
 import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.io.Input;
 import nars.io.Output;
 
@@ -51,9 +52,9 @@ public class SentencePipe implements Input, Output {
     @Override
     public void output(Class channel, Object o) {
         if (channel == OUT.class) {
-            if (o instanceof Sentence) {
+            if (o instanceof Task) {
                 //TODO avoid converting to string and instead insert directly to target's memory
-                Sentence s = (Sentence) o;
+                Sentence s = ((Task) o).sentence;
                 s = (Sentence) s.clone();
                 s = process(s);
                 //TODO: <statement_from_other_nars --> narsinput>.
