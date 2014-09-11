@@ -15,14 +15,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import nars.core.NAR;
 import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NPanel;
 import nars.io.Output;
 
-/**
- *
- * @author me
- */
 
 
 public class SentenceTablePanel extends NPanel implements Output {
@@ -49,6 +46,12 @@ public class SentenceTablePanel extends NPanel implements Output {
                 graphButton.setEnabled(t.getSelectedRowCount() > 0);
             }
         });
+        t.getColumn("Type").setMaxWidth(48);
+        t.getColumn("Frequency").setMaxWidth(64);
+        t.getColumn("Confidence").setMaxWidth(64);
+        t.getColumn("Priority").setMaxWidth(64);
+        t.getColumn("Complexity").setMaxWidth(64);
+        t.getColumn("Time").setMaxWidth(72);
         
         add(new JScrollPane(t), BorderLayout.CENTER);
         
@@ -78,12 +81,14 @@ public class SentenceTablePanel extends NPanel implements Output {
     
     public DefaultTableModel newModel() {
         DefaultTableModel data = new DefaultTableModel();
-        data.addColumn("Sentence");
         data.addColumn("Time");
-        data.addColumn("Punctuation");
+        data.addColumn("Sentence");
+        data.addColumn("Type");
         data.addColumn("Frequency");
         data.addColumn("Confidence");        
         data.addColumn("Complexity");
+        data.addColumn("Priority");
+        data.addColumn("ParentTask");       
         data.fireTableStructureChanged();
         return data;
     }
@@ -95,8 +100,11 @@ public class SentenceTablePanel extends NPanel implements Output {
     
     @Override
     public void output(Class channel, Object o) {
-        if (o instanceof Sentence) {
-            Sentence s = (Sentence)o;
+        if (o instanceof Task) {
+            Task t = (Task)o;
+            float priority = t.getPriority();
+            
+            Sentence s = (Sentence)t.sentence;
             
             float freq = -1;
             float conf = -1;
@@ -106,13 +114,18 @@ public class SentenceTablePanel extends NPanel implements Output {
                 conf = truth.getConfidence();
             }
             
+            String parentTask = (t.parentTask!=null) ? t.parentTask.toStringBrief() : ""; 
+            
             //TODO use table sort instead of formatting numbers with leading '0's
             data.addRow(new Object[] {
+                String.format("%08d",  nar.getTime()), 
                 s,
-                String.format("%08d",  nar.getTime()), s.punctuation,
+                s.punctuation,
                 freq == -1 ? "" : freq,
                 conf == -1 ? "" : conf,
-                String.format("%03d",  s.content.getComplexity())     
+                String.format("%03d",  s.content.getComplexity()),
+                priority,
+                parentTask
             });
         }
     }
