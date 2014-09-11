@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized;
 public class NALTestSome extends NALTest {
 
    public static boolean include(String filename) {
-       return filename.startsWith("nars_multistep_3");
+       return filename.startsWith("nal6.22");
    }
 
    
