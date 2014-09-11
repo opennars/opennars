@@ -21,8 +21,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import nars.io.Symbols;
 
 /**
- * This stores the magnitude of a time difference, which is the logarithm of the 
- * @author peiwang
+ * This stores the magnitude of a time difference, which is the logarithm of the time difference
+ * in base D=duration ( @see Param.java ).  The actual printed value is +1 more than the stored
+ * magnitude, so for example, it will have name() "+1" if magnitude=0, and "+2" if magnitude=1.
+ * 
+ * @author peiwang / SeH
  */
 public class Interval extends Term {
     
@@ -54,7 +57,7 @@ public class Interval extends Term {
     static Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
     
     public static Interval interval(String i) {
-        return intervalMagnitude( Integer.parseInt(i.substring(1)) );
+        return intervalMagnitude( Integer.parseInt(i.substring(1)) - 1);
     }
     
     public static Interval intervalTime(final long time, AtomicDuration duration) {
