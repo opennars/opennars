@@ -29,13 +29,16 @@ public class IntervalTest {
         Interval i2 = Interval.intervalTime(2, dur5);
         assertTrue(i2.magnitude == 0);
         assertTrue(i2.name().toString().equals("+1"));
-        System.out.println(i2.getTime(dur5));
         assertEquals(i2.getTime(dur5), 1); //the best the precision can do
         
         Interval i5 = Interval.intervalTime(5, dur5);
         assertTrue(i5.magnitude == 1);
         assertTrue(i5.name().toString().equals("+2"));
         assertTrue(i5.getTime(dur5) == 5);
+        
+        /*for (int i = 0; i < 100; i++) {
+            System.out.println(i + " " + Interval.intervalTime(i, dur5));
+        }*/
         
     }
 }
