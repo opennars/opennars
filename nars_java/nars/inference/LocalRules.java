@@ -112,6 +112,8 @@ public class LocalRules {
         throw new RuntimeException("Moved to TemporalRules.java");
     }
     
+    public interface Solve { }
+    
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
@@ -142,6 +144,8 @@ public class LocalRules {
                 Stamp st = new Stamp(belief.stamp, memory.getTime());
                 st.addToChain(belief.content);
             }
+            
+            memory.output(Solve.class, task.sentence + ": " + belief);
             task.setBestSolution(belief);
             
             if (problem.isGoal()) {

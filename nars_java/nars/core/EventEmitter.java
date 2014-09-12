@@ -1,10 +1,10 @@
 
 package nars.core;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
@@ -35,7 +35,7 @@ public class EventEmitter {
         if (events.containsKey(event))
             events.get(event).add(o);
         else {
-            ArrayList a = new ArrayList<Observer>(4);
+            List a = new CopyOnWriteArrayList<Observer>();
             a.add(o);
             events.put(event, a);
         }
@@ -64,7 +64,7 @@ public class EventEmitter {
         if (observers == null) return;
         if (observers.size() == 0) return;
 
-        int n = observers.size();
+        int n = observers.size();        
         for (int i = 0; i < n; i++) {
             final Observer m = observers.get(i);
             m.event(eventClass, params);
