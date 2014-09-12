@@ -1,0 +1,47 @@
+//example1:
+<example1 --> (*,triangle,left,up)>.
+<example1 --> (*,triangle,right,up)>.
+<example1 --> (*,triangle,left,down)>.
+<example1 --> (*,square,right,down)>.
+
+//example2:
+<example2 --> (*,square,left,up)>.
+<example2 --> (*,triangle,right,up)>.
+<example2 --> (*,triangle,left,down)>.
+<example2 --> (*,triangle,right,down)>.
+
+//example3:
+<example3 --> (*,triangle,left,up)>.
+<example3 --> (*,triangle,right,up)>.
+<example3 --> (*,square,left,down)>.
+<example3 --> (*,triangle,right,down)>.
+
+//example4:
+<example4 --> (*,triangle,left,up)>.
+<example4 --> (*,square,right,up)>.
+<example4 --> (*,triangle,left,down)>.
+<example4 --> (*,triangle,right,down)>.
+
+//example5:
+<example5 --> (*,triangle,left,up)>.
+<example5 --> (*,triangle,right,up)>.
+<example5 --> (*,square,left,down)>.
+<example5 --> (*,square,right,down)>.
+
+<example1 --> example>.
+<example2 --> example>.
+<example3 --> example>.
+
+<example4 --> example>?
+<example5 --> example>?
+
+output:
+
+OUT: <example4 --> example>. %1.00;0.40% {1506 : 22;8;12<example3 --> (*,triangle,leftup)>;<example4 --> (*,triangle,leftup)>;(&&,<example3 --> #1>,<example4 --> #1>);<example3 --> (|,(*,square,leftdown),(*,triangle,leftup))>;<<example3 --> $1> <=> <example4 --> $1>>;<example3 --> example2>;<example3 --> example>;<example3 <-> example4>} 
+
+OUT: <example5 --> example>. %1.00;0.40% {1705 : 20;19;3<example5 --> (*,square,rightdown)>;<example1 --> (*,square,rightdown)>;<example1 --> example3>;<example1 <-> example5>;<<example5 --> $1> ==> <example1 --> $1>>;<example1 --> example2>;<(|,example1,example5) --> (*,square,rightdown)>;<(&,example1,example5) --> (*,square,rightdown)>;<example1 --> example>;(&&,<example1 --> #1>,<example5 --> #1>)} 
+
+OUT: <example5 --> example>. %1.00;0.40% {17911 : 20;19;3;19;18;10;7;11;2;6<example2 --> (*,triangle,rightdown)>;<example1 --> (*,triangle,rightup)>;<example3 --> (*,triangle,rightdown)>;<(|,example1,example2) --> (*,triangle,leftdown)>;<example1 --> example2>;<example3 --> example2>;(&&,<example1 --> #1>,<example3 --> #1>);<example3 --> (*,square,rightdown)>;<example5 --> (*,square,rightdown)>;<example1 --> (*,square,rightdown)>;<example1 --> example>;<example1 <-> example5>} 
+
+OUT: <example4 --> example>. %1.00;0.44% {20653 : 22;8;12;20;19;3;17;11;7;9;5;15<(|,example1,example5) --> (*,square,rightdown)>;<example3 --> (*,triangle,leftup)>;<example5 --> (*,triangle,rightup)>;<example4 --> (*,triangle,leftup)>;<(&,example1,example5) --> (*,square,rightdown)>;(&&,<example3 --> #1>,<example4 --> #1>);<example4 --> (*,triangle,rightup)>;<example3 --> (|,(*,square,leftdown),(*,triangle,leftup))>;<example1 --> example>;<<example3 --> $1> <=> <example4 --> $1>>;<(&,example4,example5) --> (*,triangle,rightup)>;<example3 --> example2>;(&&,<example1 --> #1>,<example5 --> #1>);<example3 --> example>;<(|,example4,example5) --> (*,triangle,rightup)>;<example3 <-> example4>;<example5 --> example>;(&&,<example4 --> #1>,<example5 --> #1>);<example4 --> example>} 
+
