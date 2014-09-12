@@ -45,7 +45,6 @@ public class ApplySubstituteTest {
         Map<Term,Term> h = new HashMap();
         h.put(n.term("$1"), n.term("0"));        
         CompoundTerm c = ((CompoundTerm)n.term("<(*,$1) --> num>")).applySubstitute(h);
-        System.out.println(c);
         
         assertTrue(c!=null);
     }
