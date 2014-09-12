@@ -442,10 +442,10 @@ public class EditorPanel extends JPanel {
                             cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            command+=",(^activate," + s.cells.readCells[i][j].name + "),"+"(^deactivate," + s.cells.readCells[i][j].name + ")";
+                            command+=",(^activate," + s.cells.readCells[i][j].name + ")";
                             s.nar.addInput("<(^activate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^deactivate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
-                            cnt+=2;
+                            cnt+=1;
                         }
                     }
                 }
