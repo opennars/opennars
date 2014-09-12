@@ -84,9 +84,13 @@ public class Stamp implements Cloneable {
      */    
     private long[] evidentialSet = null;
     //private Set<Long> evidentialSet; 
+
+    public final long latency;
+
     
     /** caches  */
     transient CharSequence name = null;
+    
     
     /**
      * Generate a new stamp, with a new serial number, for a new Task
@@ -98,6 +102,7 @@ public class Stamp implements Cloneable {
         evidentialBase = new long[baseLength];
         evidentialBase[0] = serial;
         creationTime = time;
+        latency = 0;
         
         if (tense == null) {
             occurrenceTime = ETERNAL;
@@ -120,11 +125,7 @@ public class Stamp implements Cloneable {
      * @param old The stamp to be cloned
      */
     private Stamp(final Stamp old) {
-        this.baseLength = old.baseLength;
-        this.evidentialBase = old.evidentialBase;
-        this.creationTime = old.creationTime;
-        this.occurrenceTime = old.getOccurrenceTime();
-        this.derivationChain = old.getChain();
+        this(old, old.creationTime);
     }
 
     /**
@@ -137,11 +138,7 @@ public class Stamp implements Cloneable {
      * @param creationTim The current time
      */
     public Stamp(final Stamp old, final long creationTime) {
-        this.baseLength = old.baseLength;
-        this.evidentialBase = old.evidentialBase;
-        this.creationTime = creationTime;
-        this.occurrenceTime = old.getOccurrenceTime();
-        this.derivationChain = old.getChain();
+        this(old, creationTime, old);
     }
 
     public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {        
@@ -150,6 +147,7 @@ public class Stamp implements Cloneable {
         this.creationTime = creationTime;
         this.occurrenceTime = old.getOccurrenceTime();
         this.derivationChain = old.getChain();
+        this.latency = this.creationTime - old.latency;
     }
     
     /**
@@ -171,6 +169,9 @@ public class Stamp implements Cloneable {
         final long[] secondBase = second.evidentialBase;     
         int firstLength = firstBase.length;
         int secondLength = secondBase.length;
+        
+        //calculate latency as the time difference between now and the last created of the 2 input stamps
+        this.latency = time - Math.max(first.creationTime, second.creationTime);
         
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
         while (i2 < secondLength && j < baseLength) {

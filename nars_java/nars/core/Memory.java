@@ -642,6 +642,10 @@ public class Memory implements Output, Serializable {
             if(occurence2!=null && occurence2.getOccurenceTime()!=Stamp.ETERNAL) {
                 stamp.setOccurrenceTime(occurence2.getOccurenceTime());
             }
+            if (stamp.latency > 0) {
+                logic.DERIVATION_LATENCY.commit(stamp.latency);
+            }
+            
             final ArrayList<Term> chain = stamp.getChain();
 
             final Term currentTaskContent = getCurrentTask().getContent();
