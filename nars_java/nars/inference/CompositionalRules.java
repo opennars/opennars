@@ -556,13 +556,13 @@ public final class CompositionalRules {
         truth = comparison(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
-        
+
         if (index == 0) {
             state1 = Inheritance.make(varDep, term12, memory);
             state2 = Inheritance.make(varDep, term22, memory);
         } else {
             state1 = Inheritance.make(term11, varDep, memory);
-            state2 = Inheritance.make(term22, varDep, memory);
+            state2 = Inheritance.make(term21, varDep, memory);
         }
         content = Conjunction.make(state1, state2, memory);
         truth = intersection(truthT, truthB);
