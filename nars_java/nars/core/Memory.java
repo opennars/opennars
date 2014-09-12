@@ -572,9 +572,9 @@ public class Memory implements Output, Serializable {
     public void activatedTask(final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
         final Task task = new Task(sentence, budget, getCurrentTask(), sentence, candidateBelief);
 
-        if (sentence.isQuestion()) {
-            output(task);
-        }
+        //if (sentence.isQuestion()) {
+        output(task);
+        //}
 
         addNewTask(task, "Activated");
     }
