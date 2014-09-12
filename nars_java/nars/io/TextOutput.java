@@ -238,7 +238,9 @@ public class TextOutput implements Output {
         }
         else if (signal instanceof Task) {
             Task t = (Task)signal;
-            Sentence s = t.sentence;
+            Sentence s = t.getBestSolution();
+            if (s == null)
+                s = t.sentence;
 
             buffer.append(s.toString(nar, showStamp));
         }            
