@@ -17,18 +17,22 @@ abstract public class AbstractSense extends DefaultDataSet {
     final Map<String, Sensor> sensors = new HashMap<String, Sensor>();
     long lastUpdate = -1;
     int allSensorResetPeriodCycles = 2048; //how often to reset all sensors
+    boolean active = false;
+
+    public AbstractSense(Map<String,Object> map) {
+        super(map);
+        setActive(false); //default, set inactive
+    }
 
     public AbstractSense() {
         this(new HashMap<>());
-    }
-    public AbstractSense(Map<String,Object> map) {
-        super(map);
     }
 
     abstract public void sense(Memory memory);
     
     protected void add(Sensor s) {
         sensors.put(s.name(), s);
+        s.setActive(active);
     }
 
     public SpanTracker getSensorSpan(final String name) {
@@ -47,7 +51,7 @@ abstract public class AbstractSense extends DefaultDataSet {
         return null;
     }
 
-    public void updateSensors(final boolean reset, long cyclesSinceLastUpdate) {
+    protected void updateSensors(final boolean reset, long cyclesSinceLastUpdate) {
         for (final Sensor s : sensors.values()) {
             
             s.setCyclesSinceLastUpdate(cyclesSinceLastUpdate);
@@ -81,6 +85,9 @@ abstract public class AbstractSense extends DefaultDataSet {
     
     /** returns the same instance */
     public void update(final Memory memory) {
+        if (!active)
+            return;
+        
         long time = memory.getTime();
         if (time == lastUpdate) {
             //already updated
@@ -108,5 +115,10 @@ abstract public class AbstractSense extends DefaultDataSet {
         
     }
     
+    public void setActive(final boolean b) {
+        this.active = b;
+        for (final Sensor s : sensors.values())
+            s.setActive(b);
+    }
     
 }

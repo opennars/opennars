@@ -43,10 +43,11 @@ public abstract class AbstractSensor implements Sensor {
 
     int lastHits = 0, currentHits = 0;
     //private long lastFirstCommit;
+    protected boolean active = false;
 
     public AbstractSensor(final StatsSession session) {
         //assertNotNull(session, "session");
-        this.session = session;
+        this.session = session;        
     }
 
     public AbstractSensor(String id) {
@@ -183,4 +184,8 @@ public abstract class AbstractSensor implements Sensor {
     public String getName() {
         return getKey().getName();
     }    
+    
+    public void setActive(boolean a) {
+        this.active = a;
+    }
 }

@@ -45,6 +45,9 @@ public abstract class AbstractSpanTracker extends AbstractSensor implements Span
     
     @Override
     public final SpanTracker start() {
+        if (!active)
+            return this;
+        
         cycle++;
 
         //try {
@@ -86,6 +89,9 @@ public abstract class AbstractSpanTracker extends AbstractSensor implements Span
     
     @Override
     public void stop() {
+        if (!active)
+            return;
+        
         //try {
 
         if (!tracking) {

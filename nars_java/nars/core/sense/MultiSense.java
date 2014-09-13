@@ -5,10 +5,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import nars.core.Memory;
 
-/**
- *
- * @author me
- */
 
 
 public class MultiSense extends AbstractSense {
@@ -17,6 +13,7 @@ public class MultiSense extends AbstractSense {
     public MultiSense(AbstractSense... senses) {
         super(new TreeMap() /* alphabetic order */);
         this.senses = senses;
+        setActive(active); //refresh after setting this.senses
     }
 
     
@@ -39,5 +36,12 @@ public class MultiSense extends AbstractSense {
         return keys;
     }
  
-    
+    @Override public void setActive(final boolean b) {        
+        this.active = b;
+        if (senses!=null)
+            for (AbstractSense s : senses) {
+                s.setActive(active);
+            }
+    }
+
 }

@@ -128,6 +128,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         memory = nar.memory;        
         
         senses = new MultiSense(memory.logic, memory.resource);
+        senses.setActive(true);
         senses.update(memory);
         
         experienceWriter = new TextOutput(nar);

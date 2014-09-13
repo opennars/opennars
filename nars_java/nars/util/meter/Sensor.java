@@ -97,4 +97,6 @@ public interface Sensor extends Serializable {
     }
 
     public void setCyclesSinceLastUpdate(long cyclesSinceLastUpdate);
+    
+    abstract public void setActive(boolean b);
 }
