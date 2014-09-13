@@ -20,7 +20,7 @@
  */
 package nars.inference;
 
-import java.util.ArrayList;
+import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -75,7 +75,7 @@ public final class StructuralRules {
         }*/
         Term sub = statement.getSubject();
         Term pred = statement.getPredicate();
-        ArrayList<Term> components = compound.cloneTermsList();
+        List<Term> components = compound.cloneTermsList();
         if (((side == 0) && components.contains(pred)) || ((side == 1) && components.contains(sub))) {
             return;
         }

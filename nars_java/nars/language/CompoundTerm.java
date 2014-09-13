@@ -349,7 +349,7 @@ public abstract class CompoundTerm extends Term {
         return t;
     }
     public static List<Term> termList(final Term... t) {
-        return Arrays.asList(t);
+        return Arrays.asList((Term[])t);
     }
     
     
@@ -459,28 +459,20 @@ public abstract class CompoundTerm extends Term {
      *
      * @return The cloned component list
      */
-    protected Term[] cloneTerms(boolean deep, Term[] additional) {
-        return cloneTermsAppend(deep, term, additional);
+    public Term[] cloneTerms(final Term... additional) {
+        return cloneTermsAppend(term, additional);
     }
     
-    
-    public Term[] cloneTerms(Term... additional) {
-        return cloneTerms(true, additional);
-    }
-    
-    public Term[] cloneTermsExcept(boolean requireModification, final Term... toRemove) {
-        return cloneTermsExcept(true, requireModification, toRemove);
-    }
 
     /**
      * Cloned array of Terms, except for one or more Terms.
      * @param toRemove
      * @return the cloned array with the missing terms removed, OR null if no terms were actually removed when requireModification=true
      */
-    private Term[] cloneTermsExcept(boolean deep, boolean requireModification, final Term... toRemove) {
+    public Term[] cloneTermsExcept(final boolean requireModification, final Term[] toRemove) {
         //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
         
-        List<Term> l = cloneTermsList(deep);
+        List<Term> l = cloneTermsList();
         boolean removed = false;
                 
         for (final Term t : toRemove) {
@@ -494,9 +486,6 @@ public abstract class CompoundTerm extends Term {
     }
     
 
-    public static Term[] cloneTermsAppend(final Term[] original, Term[] additional) {
-        return cloneTermsAppend(true, original, additional);
-    }
     
     /**
      * Deep clone an array list of terms
@@ -504,7 +493,7 @@ public abstract class CompoundTerm extends Term {
      * @param original The original component list
      * @return an identical and separate copy of the list
      */
-    public static Term[] cloneTermsAppend(final boolean deep, final Term[] original, final Term[] additional) {
+    public static Term[] cloneTermsAppend(final Term[] original, final Term[] additional) {
         if (original == null) {
             return null;
         }        
@@ -533,16 +522,8 @@ public abstract class CompoundTerm extends Term {
         
     }
 
-    public ArrayList<Term> cloneTermsList() {
-        return cloneTermsList(true);
-    }
-
-    public ArrayList<Term> cloneTermsList(final boolean deep) {
-        ArrayList<Term> l = new ArrayList(term.length);
-        for (final Term t : term) {
-            l.add(t);
-        }
-        return l;        
+    public List<Term> cloneTermsList() {        
+        return new ArrayList(Arrays.asList((Term[])term));
     }
   
     /** forced deep clone of terms */
@@ -649,15 +630,16 @@ public abstract class CompoundTerm extends Term {
      * @return The new compound
      */
     public Term setComponent(final int index, final Term t, final Memory memory) {
-        List<Term> list = cloneTermsListDeep();
+        List<Term> list = cloneTermsList();//Deep();
         list.remove(index);
         if (t != null) {
             if (getClass() != t.getClass()) {
                 list.add(index, t);
             } else {
-                final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
-                for (int i = 0; i < list2.size(); i++) {
-                    list.add(index + i, list2.get(i));
+                //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
+                Term[] tt = ((CompoundTerm)t).term;
+                for (int i = 0; i < tt.length; i++) {
+                    list.add(index + i, tt[i]);
                 }
             }
         }
