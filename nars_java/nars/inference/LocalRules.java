@@ -112,7 +112,6 @@ public class LocalRules {
         throw new RuntimeException("Moved to TemporalRules.java");
     }
     
-    public interface Solve { }
     
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
@@ -145,16 +144,16 @@ public class LocalRules {
                 st.addToChain(belief.content);
             }
             
-            memory.output(Solve.class, task.sentence + ": " + belief);
             task.setBestSolution(belief);
             
             if (problem.isGoal()) {
                 memory.emotion.adjustHappy(newQ, task.getPriority());
             }
             
-            if (task.isInput()) {    // moved from Sentence                
+            //if (task.isInput()) {    // moved from Sentence                            
                 memory.output(task);
-            }
+            //}
+
             BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
             if ((budget != null) && budget.aboveThreshold()) {
                 memory.activatedTask(budget, belief, task.getParentBelief());
