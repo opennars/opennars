@@ -525,7 +525,7 @@ public abstract class CompoundTerm extends Term {
             
             final Term t = srcArray[j++];
                                     
-            if (deep && !mayShare(t)) {
+            if (deep && !t.mayShare()) {
                 arr[i] = t.clone();                
             }
             else {
@@ -538,20 +538,8 @@ public abstract class CompoundTerm extends Term {
     }
 
     /** determines whether we can avoid cloning something, and just re-use it */
-    protected static boolean mayShare(final Term t) {        
-        if (t instanceof CompoundTerm) {
-            /*if (t instanceof Image)
-                if (((Image)t).containsPlaceHolder())
-                    return false;*/
-//
-            if (t.containVar()) return false;
-//            
-//            return true;
-//            //return !(t.containVar());
-        }
-//        
-//        
-        return true;
+    @Override protected boolean mayShare() {        
+        return !(containVar());
     }
 
     
@@ -562,7 +550,7 @@ public abstract class CompoundTerm extends Term {
     public ArrayList<Term> cloneTermsList(final boolean deep) {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
-            if (deep && !mayShare(t))
+            if (deep && !mayShare())
                 l.add(t.clone());
             else
                 l.add(t);

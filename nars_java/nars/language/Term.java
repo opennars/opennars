@@ -116,13 +116,13 @@ public class Term implements AbstractTerm {
     }
     
 
+    /** whether this instance may be shared among other objects rather than need to be deep cloned.  once all of the code is using immutable objects, this condition will always be true and this function unnecessary. */
+    protected boolean mayShare() {
+        return true;
+    }    
 
-    /**
-     * Blank method to be override in CompoundTerm
-     */
-    public void renameVariables() {
-    }
-
+    public void renameVariables() { }
+         
     /**
      * The syntactic complexity, for constant atomic Term, is 1.
      *
