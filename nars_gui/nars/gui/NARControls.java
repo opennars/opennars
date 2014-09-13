@@ -400,7 +400,11 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
             
+<<<<<<< HEAD
             if ((deltaTime >= GUIUpdatePeriodMS) && (!updateScheduled.get())) {
+=======
+            if ((deltaTime > GUIUpdatePeriodMS) || (!updateScheduled.get())) {
+>>>>>>> origin/prolog1
                 senses.update(memory);
                 
                 SwingUtilities.invokeLater(updateGUIRunnable);
