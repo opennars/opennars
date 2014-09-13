@@ -94,6 +94,7 @@ public class NAR implements Runnable, Output, TaskSource {
     private boolean threadYield;
     
     private int inputSelected = 0; //counter for the current selected input channel
+    private boolean inputsChanged;
     
 
     public NAR(Memory m, Perception p) {
@@ -115,17 +116,18 @@ public class NAR implements Runnable, Output, TaskSource {
      * Reset the system with an empty memory and reset clock. Called locally and
      * from {@link NARControls}.
      */     
-    public void reset() {
-        for (InPort port : inputChannels) {
+    public synchronized void reset() {
+        int numInputs = inputChannels.size();
+        for (int i = 0; i < numInputs; i++) {
+            InPort port = inputChannels.get(i);
             port.input.finished(true);
         }
         inputChannels.clear();        
         newInputChannels.clear();
         newOutputChannels.clear();
         oldOutputChannels.clear();
-        
-        memory.reset();
-        
+        inputsChanged = false;
+        memory.reset();        
     }
 
     /** Convenience method for creating a TextInput and adding as Input Channel */
@@ -145,7 +147,7 @@ public class NAR implements Runnable, Output, TaskSource {
         } catch (IOException ex) {                    
             output(ERR.class, ex);
         }
-        
+        inputsChanged = true;
         return channel;
     }
 
@@ -159,12 +161,14 @@ public class NAR implements Runnable, Output, TaskSource {
     /** Adds an output channel */
     public Output addOutput(Output channel) {
         newOutputChannels.add(channel);
+        inputsChanged = true;
         return channel;
     }
 
     /** Removes an output channel */
     public Output removeOutput(Output channel) {
         oldOutputChannels.remove(channel);
+        inputsChanged = true;
         return channel;
     }
 
@@ -230,10 +234,10 @@ public class NAR implements Runnable, Output, TaskSource {
         running = true;
 
         //clear input
-        do {
+        while (!inputChannels.isEmpty()) {
             step(1);
         }
-        while (!inputChannels.isEmpty());
+        
         
         //queue additional cycles
         memory.stepLater(cycles);
@@ -275,12 +279,7 @@ public class NAR implements Runnable, Output, TaskSource {
         //}
     }
 
-    /**     
-     * Processes the next input from each input channel.  Removes channels that have finished.
-     * @return whether to finish the reasoner afterward, which is true if any input exists.
-     */
-    @Override
-    public AbstractTask nextTask() {
+    protected void updatePorts() {
         if (!newInputChannels.isEmpty()) {
             for (final InPort n : newInputChannels)
                 inputChannels.add(n);
@@ -297,7 +296,14 @@ public class NAR implements Runnable, Output, TaskSource {
             newOutputChannels.clear();
         }
         
-        
+    }
+    
+    /**     
+     * Processes the next input from each input channel.  Removes channels that have finished.
+     * @return whether to finish the reasoner afterward, which is true if any input exists.
+     */
+    @Override
+    public AbstractTask nextTask() {                
         if ((!inputting) || (inputChannels.isEmpty()))
            return null;        
         
@@ -359,6 +365,10 @@ public class NAR implements Runnable, Output, TaskSource {
             debugTime();            
         }
         
+        if (inputsChanged) {
+            inputsChanged = false;
+            updatePorts();
+        }
                 
         try {
             memory.cycle(this);
