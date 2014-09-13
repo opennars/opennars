@@ -74,12 +74,6 @@ public abstract class CompoundTerm extends Term {
      */
     @Override public abstract CompoundTerm clone();
     
-    public final CompoundTerm clone(Term[] replaced) {
-        CompoundTerm c = clone();
-        System.arraycopy(replaced, 0, c.term, 0, replaced.length);
-        c.refresh();
-        return c;
-    }
 
     
     
@@ -133,6 +127,13 @@ public abstract class CompoundTerm extends Term {
         this.complexity = calcComplexity();
         setName(makeName());
         this.isConstant = !hasVar;
+    }
+    
+    public final CompoundTerm clone(final Term[] replaced) {
+        CompoundTerm c = clone();
+        System.arraycopy(replaced, 0, c.term, 0, replaced.length);
+        c.refresh();
+        return c;
     }
 
 
