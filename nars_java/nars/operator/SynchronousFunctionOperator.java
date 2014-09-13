@@ -1,7 +1,9 @@
 package nars.operator;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Arrays;
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;
@@ -9,7 +11,6 @@ import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.core.Memory;
 
 
 /** 
@@ -72,13 +73,15 @@ public abstract class SynchronousFunctionOperator extends Operator {
                     },
                 m), this, m);
         
-  
-        
         Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange(), m);
         m.output(Task.class, resultInheritance);
-        ArrayList<Task> results = new ArrayList<>(1);
-        results.add(m.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()));
-        return results;
+        
+        return Lists.newArrayList( 
+                m.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 
+                        1f, 0.99f, 
+                        Parameters.DEFAULT_JUDGMENT_PRIORITY, 
+                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask())
+        );    
     }
 
 }

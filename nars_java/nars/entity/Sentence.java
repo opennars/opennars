@@ -364,7 +364,7 @@ public class Sentence implements Cloneable {
         truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
     }
 
-    public Term toTerm(Memory mem) {
+    public Term toTerm(final Memory mem) {
         String opName;
         switch (punctuation) {
             case Symbols.JUDGMENT_MARK:

@@ -14,7 +14,7 @@
 'intermediate tests:
 ''outputMustContain('<0 --> (/,num,_)>. %1.00;0.81%')
 'previous equivalent: outputMustContain('<(/,(*,0),_) --> (/,num,_)>. %1.00;0.73%')
-''outputMustContain('<(*,(*,0)) --> (/,num,_)>. %1.00;0.32%')
+''outputMustContain('<(*,(*,0)) --> (/,num,_)>. %1.00;0.66%')
 
 
 ''outputMustContain('<(*,(*,0)) --> num>. %1.00;0.73')
@@ -22,6 +22,6 @@
 1500
 
 'I guess 3 is a number
-''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.32%')                     
+''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.66%')                     
 
 550

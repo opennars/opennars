@@ -174,9 +174,7 @@ public abstract class CompoundTerm extends Term {
         }
         return false;
     }
-    
-    
-    
+            
 
     /**
      * The complexity of the term is the sum of those of the term plus 1
@@ -528,26 +526,13 @@ public abstract class CompoundTerm extends Term {
                 j = 0;
             }
             
-            final Term t = srcArray[j++];
-                                    
-            if (deep && !t.mayShare()) {
-                arr[i] = t.clone();                
-            }
-            else {
-                arr[i] = t;
-            }
+            arr[i] = srcArray[j++];
         }
 
         return arr;
         
     }
 
-    /** determines whether we can avoid cloning something, and just re-use it */
-    @Override protected boolean mayShare() {        
-        return !(containVar());
-    }
-
-    
     public ArrayList<Term> cloneTermsList() {
         return cloneTermsList(true);
     }
@@ -555,10 +540,7 @@ public abstract class CompoundTerm extends Term {
     public ArrayList<Term> cloneTermsList(final boolean deep) {
         ArrayList<Term> l = new ArrayList(term.length);
         for (final Term t : term) {
-            if (deep && !mayShare())
-                l.add(t.clone());
-            else
-                l.add(t);
+            l.add(t);
         }
         return l;        
     }
@@ -693,21 +675,6 @@ public abstract class CompoundTerm extends Term {
         return hasVar;
     }
 
-    /**
-     * Rename the variables in the compound, called from Sentence constructors
-     * This method may modify the instance. do not use from outside to maintain immutability.
-     */
-    @Override
-    protected void normalizeVariableNames() {
-        if (containVar()) {
-            //int existingComponents = term.length;
-            boolean b = renameVariables(new HashMap<>());
-            if (b) {
-                setName(makeName());                
-            }
-        }
-        isConstant = true;        
-    }
     
     /** caches a static copy of commonly uesd index variables of each variable type */
     public static final int maxCachedVariableIndex = 32;
@@ -732,19 +699,41 @@ public abstract class CompoundTerm extends Term {
             return new Variable(type + String.valueOf(i));
     }
 
+
+    /**
+     * Rename the variables in the compound, called from Sentence constructors
+     * This method may modify the instance. do not use from outside to maintain 
+     * a degree of immutability.
+     */
+    @Override
+    protected void normalizeVariableNames() {
+        if (containVar()) {
+            //int existingComponents = term.length;
+            boolean b = normalizeVariableNames(new HashMap<>());
+            if (b) {
+                setName(makeName());                
+            }
+        }
+        isConstant = true;        
+    }
+
+    
     /**
      * Recursively rename the variables in the compound
      *
      * @param map The substitution established so far
      */
-    private boolean renameVariables(final HashMap<Variable, Variable> map) {
+    private boolean normalizeVariableNames(final HashMap<Variable, Variable> map) {
         if (containVar()) {
             boolean renamed = false;
             for (int i = 0; i < term.length; i++) {
                 final Term term = this.term[i];
+                
                 if (term instanceof Variable) {
+                    
                     Variable termV = (Variable)term;
-                    Variable var;                    
+                    Variable var;
+                    
                     if (term.name().length() == 1) { // anonymous variable from input
                         var = getIndexVariable(termV.getType(), map.size()+1);
                     } else {
@@ -757,11 +746,12 @@ public abstract class CompoundTerm extends Term {
                         this.term[i] = var;
                         renamed = true;
                     }
-                    map.put((Variable) term, var);
+                    
+                    map.put(termV, var);
                     
                 } else if (term instanceof CompoundTerm) {
                     CompoundTerm ct = (CompoundTerm)term;
-                    boolean r = ct.renameVariables(map);
+                    boolean r = ct.normalizeVariableNames(map);
                     if (r) {
                         ct.setName(ct.makeName());
                         renamed = true;
