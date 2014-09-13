@@ -11,24 +11,24 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.AbstractBag;
+import nars.storage.Bag;
 import nars.storage.ContinuousBag2;
-import nars.storage.ContinuousBag2.BagCurve;
 
-
-public class ContinuousBagNARBuilder extends DefaultNARBuilder {
+/** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
+public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     private final boolean randomRemoval;
 
-    public ContinuousBagNARBuilder() {
+    public DiscretinuousBagNARBuilder() {
         this(true);
     }
-    public ContinuousBagNARBuilder(boolean randomRemoval) {
+    public DiscretinuousBagNARBuilder(boolean randomRemoval) {
         super();
         this.randomRemoval = randomRemoval;
     }
-    
-    //final static BagCurve curve = new ContinuousBag2.DefaultBagCurve();
-    final static BagCurve curve = new ContinuousBag2.CubicBagCurve();
 
+    //final static BagCurve curve = new ContinuousBag2.DefaultBagCurve();
+    final static ContinuousBag2.BagCurve curve = new ContinuousBag2.CubicBagCurve();
+    
     @Override
     public AbstractBag<Task> newNovelTaskBag(Param p) {
         return new ContinuousBag2<>(getTaskBufferSize(), p.taskCyclesToForget, curve, randomRemoval);
@@ -36,12 +36,11 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
 
     @Override
     public AbstractBag<Concept> newConceptBag(Param p) {
-        return new ContinuousBag2<>(getConceptBagSize(), p.conceptCyclesToForget, curve, randomRemoval);
+        return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptCyclesToForget);
     }
 
     @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
-        //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
         return new SequentialMemoryCycle(newConceptBag(p), c);
     }
     

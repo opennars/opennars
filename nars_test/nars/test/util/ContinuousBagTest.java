@@ -71,7 +71,7 @@ public class ContinuousBagTest {
     }
 
     public void testFastBag2(boolean random) {
-        ContinuousBag2<NullItem> f = new ContinuousBag2(4, 10, random);
+        ContinuousBag2<NullItem> f = new ContinuousBag2(4, 10, new ContinuousBag2.DefaultBagCurve(), random);
         
         f.putIn(new NullItem(.25f));
         assert(f.size() == 1);
@@ -135,8 +135,8 @@ public class ContinuousBagTest {
     public void testFastBagCapacityLimit() {
         testFastBagCapacityLimit(new ContinuousBag(4, 10, true));
         testFastBagCapacityLimit(new ContinuousBag(4, 10, false));
-        testFastBagCapacityLimit(new ContinuousBag2(4, 10, true));
-        testFastBagCapacityLimit(new ContinuousBag2(4, 10, false));
+        testFastBagCapacityLimit(new ContinuousBag2(4, 10, new ContinuousBag2.DefaultBagCurve(), true));
+        testFastBagCapacityLimit(new ContinuousBag2(4, 10, new ContinuousBag2.DefaultBagCurve(),false));
     }
     
     

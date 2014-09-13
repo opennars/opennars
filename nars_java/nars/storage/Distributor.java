@@ -73,7 +73,7 @@ public final class Distributor {
      * @param index The current index
      * @return the random value
      */
-    public short pick(final int index) {
+    public final short pick(final int index) {
         return order[index];
     }
 
@@ -82,7 +82,7 @@ public final class Distributor {
      * @param index The current index
      * @return the next index
      */
-    public int next(final int index) {
+    public final int next(final int index) {
         return (index + 1) % capacity;
     }
 }
