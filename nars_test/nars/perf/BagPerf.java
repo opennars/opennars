@@ -17,9 +17,8 @@
 
 package nars.perf;
 
-import java.util.Deque;
+import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.LinkedList;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.AbstractBag;
@@ -58,10 +57,10 @@ public class BagPerf {
                 DefaultBag<NullItem> b = new DefaultBag<NullItem>(levels, capacity, forgetRate) {
 
                     @Override
-                    protected Deque<NullItem> newLevel() {
-                        if (arraylist)                                                    
+                    protected ArrayDeque<NullItem> newLevel() {
+                        //if (arraylist)                                                    
                             return super.newLevel();
-                        return new LinkedList<>();
+                        //return new LinkedList<>();
                     }
                     
                 };
