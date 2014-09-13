@@ -17,14 +17,18 @@
 
 package nars.operator.mental;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.*;
-import nars.language.*;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
+import nars.entity.Task;
 import nars.io.Symbols;
+import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  * Operator that creates a quest with a given statement
@@ -47,10 +51,9 @@ public class Evaluate extends Operator {
         
         Sentence sentence = new Sentence(content, Symbols.QUEST_MARK, null, new Stamp(memory));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUEST_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
-        Task task = new Task(sentence, budget);
-        ArrayList<Task> feedback = new ArrayList<>(1);
-        feedback.add(task);
-        return feedback;
+        
+        return Lists.newArrayList( new Task(sentence, budget) );        
+
     }
         
 }

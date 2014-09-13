@@ -16,14 +16,23 @@
  */
 package nars.operator.mental;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.*;
+import nars.entity.BudgetValue;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
+import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
-import nars.language.*;
+import nars.language.Inheritance;
+import nars.language.SetExt;
+import nars.language.SetInt;
+import nars.language.Tense;
+import nars.language.Term;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  * Feeling common operations
@@ -55,9 +64,8 @@ public abstract class Feel extends Operator {
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
-        Task task = new Task(sentence, budget);
-        ArrayList<Task> feedback = new ArrayList<>(1);
-        feedback.add(task);
-        return feedback;
+        
+        return Lists.newArrayList( new Task(sentence, budget) );        
+
     }
 }

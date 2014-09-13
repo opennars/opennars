@@ -1110,7 +1110,7 @@ public final class CompositionalRules {
     private static void dedSecondLayerVariableUnificationTerms(Memory memory, Sentence taskSentence, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
         
             Stamp sx = new Stamp(taskSentence.stamp, memory.getTime(), s);
-            
+                        
             for(int i=0;i<terms_dependent.size();i++) {
                 final CompoundTerm result = terms_dependent.get(i);
                
@@ -1128,13 +1128,16 @@ public final class CompositionalRules {
                 Sentence newSentence=new Sentence(result, mark, truth, sx);                     
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, memory);
                 
-                Task newTask = new Task(newSentence, budget, task, null);
-                Task dummy = new Task(second_belief, budget, task, null);
-                
-                if(sEqualsP(newTask.sentence.content)) {
-                    return;
+                //check this after compoundForward, seems the earliest it can exit loop
+                if(sEqualsP(newSentence.content)) {
+                    //changed this from return to continue, 
+                    //to allow processing terms_dependent when it has > 1 items
+                    continue;
                 }
                 
+                Task newTask = new Task(newSentence, budget, task, null);
+                Task dummy = new Task(second_belief, budget, task, null);
+
                 memory.setCurrentBelief(taskSentence);
                 memory.setCurrentTask(dummy);
                 
