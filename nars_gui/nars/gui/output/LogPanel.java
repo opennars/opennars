@@ -135,7 +135,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         showStampBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showStamp = showStampBox.isSelected();
+                setShowStamp(showStampBox.isSelected());
             }
         });
         menuTop.add(showStampBox);
@@ -232,23 +232,25 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         return Color.GRAY;
     }
 
-    static Color getPriorityColor(float priority) {
+    final static Color getPriorityColor(final float priority) {
         return new Color(priority, priority, priority);
     }
-    static Color getFrequencyColor(float frequency) {
+    final static Color getFrequencyColor(final float frequency) {
         return new Color(1.0f - frequency, frequency, 0);
     }
-    static Color getConfidenceColor(float confidence) {
+    final static Color getConfidenceColor(final float confidence) {
         return new Color(0,0,confidence);
     }
 
-    static Color getStatementColor(char punctuation, float priority) {
+    final static Color getStatementColor(final char punctuation, final float priority) {
         
         float r = 1f, g = 1f, b = 1f;
         switch (punctuation) {
             case '!': r = 1f; g = 0.75f; b = 0f; break;
             case '?': b = 1f; r = 0.3f; g = 0f; break;
+            case '=': r = 0.2f; g = 1f; b = 0.2f; break; //solution
             case '.': break;
+                
         }        
         r *= 0.25f + 0.75f*priority;
         g *= 0.25f + 0.75f*priority;
@@ -304,5 +306,10 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         }
     }
 
+    public void setShowStamp(boolean showStamp) {
+        this.showStamp = showStamp;
+    }
+
+    
  
 }

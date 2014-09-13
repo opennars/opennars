@@ -27,6 +27,8 @@ public class SwingLogPanel extends LogPanel {
         super(narControls);
 
         ioText = new SwingLogText(narControls.nar);
+        
+        
 
         //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
         JPanel ioTextWrap = new JPanel(new BorderLayout());
@@ -40,6 +42,13 @@ public class SwingLogPanel extends LogPanel {
 
         setBackground(Color.BLACK);
     }
+
+    @Override
+    public void setShowStamp(boolean showStamp) {
+        ioText.showStamp = showStamp;
+    }
+    
+    
 
     @Override
     void print(final Class c, final Object o) {

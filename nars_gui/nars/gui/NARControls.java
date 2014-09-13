@@ -46,12 +46,14 @@ import nars.core.NAR;
 import nars.core.sense.MultiSense;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
+import nars.gui.output.BubbleChart;
 import nars.gui.output.LogPanel;
 import nars.gui.output.MemoryView;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
 import nars.gui.output.chart.ChartsPanel;
+import nars.gui.output.face.NARFacePanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -217,6 +219,30 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             });
             m.add(st);
 
+            JMenuItem fc = new JMenuItem("+ Freq. vs Confidence");
+            fc.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    BubbleChart bc = new BubbleChart(nar);
+                    Window wbc = new Window("Freq vs. Conf", bc);
+                    wbc.setSize(250,250);
+                    wbc.setVisible(true);
+                }
+            });
+            m.add(fc);
+            
+            JMenuItem hf = new JMenuItem("+ Humanoid Face");
+            hf.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    NARFacePanel f = new NARFacePanel(nar);
+                    Window w = new Window("Face", f);
+                    w.setSize(250,400);
+                    w.setVisible(true);
+                }
+            });
+            m.add(hf);
+            
             /*JMenuItem ct = new JMenuItem("+ Concepts");
             ct.addActionListener(new ActionListener() {
                 @Override
@@ -347,9 +373,9 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     /** in memory cycles */
     long lastUpdateCycle = -1;
     
-    AtomicBoolean updateScheduled = new AtomicBoolean(false);
+    AtomicBoolean updateScheduled = new AtomicBoolean(true);
     
-    protected synchronized void updateGUI() {
+    protected void updateGUI() {
         
         speedSlider.repaint();
 

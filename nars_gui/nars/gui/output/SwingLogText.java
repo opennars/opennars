@@ -71,6 +71,7 @@ public class SwingLogText extends JTextPane implements Output {
 
     final List<LogLine> pendingDisplay = new ArrayList();
     
+    @Override
     public void output(final Class c, final Object o) {
         final LogLine ll = new LogLine(c, o);
         
@@ -164,6 +165,9 @@ public class SwingLogText extends JTextPane implements Output {
                     if (tv!=null) {                    
                         printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
                         printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");                        
+                    }
+                    else if ( t.getBestSolution()!=null) {
+                        printColorBlock(LogPanel.getStatementColor('=', priority), "    ");
                     }
                     else {                        
                         printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");                   

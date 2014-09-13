@@ -4,12 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -17,43 +14,36 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.gui.NPanel;
-import nars.io.Output;
 
 
 
-public class SentenceTablePanel extends NPanel implements Output {
-    private final NAR nar;
-    
-    DefaultTableModel data;
+public class SentenceTablePanel extends TablePanel {
     private final JButton graphButton;
-    private final JTable t;
 
     public SentenceTablePanel(NAR nar) {
-        super();
-        this.nar = nar;
+        super(nar);
         
         setLayout(new BorderLayout());        
         
         data = newModel();
-        
-        t = new JTable(data);        
-        t.setAutoCreateRowSorter(true);       
-        t.validate();
-        t.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                
+        table.setModel(data);
+        table.setAutoCreateRowSorter(true);       
+        table.validate();
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                graphButton.setEnabled(t.getSelectedRowCount() > 0);
+                graphButton.setEnabled(table.getSelectedRowCount() > 0);
             }
         });
-        t.getColumn("Type").setMaxWidth(48);
-        t.getColumn("Frequency").setMaxWidth(64);
-        t.getColumn("Confidence").setMaxWidth(64);
-        t.getColumn("Priority").setMaxWidth(64);
-        t.getColumn("Complexity").setMaxWidth(64);
-        t.getColumn("Time").setMaxWidth(72);
+        table.getColumn("Type").setMaxWidth(48);
+        table.getColumn("Frequency").setMaxWidth(64);
+        table.getColumn("Confidence").setMaxWidth(64);
+        table.getColumn("Priority").setMaxWidth(64);
+        table.getColumn("Complexity").setMaxWidth(64);
+        table.getColumn("Time").setMaxWidth(72);
         
-        add(new JScrollPane(t), BorderLayout.CENTER);
+        add(new JScrollPane(table), BorderLayout.CENTER);
         
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         {
@@ -70,7 +60,7 @@ public class SentenceTablePanel extends NPanel implements Output {
             clearButton.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
                     data = newModel();
-                    t.setModel(data);
+                    table.setModel(data);
                 }
             });
             menu.add(clearButton);
@@ -104,7 +94,7 @@ public class SentenceTablePanel extends NPanel implements Output {
             Task t = (Task)o;
             float priority = t.getPriority();
             
-            Sentence s = (Sentence)t.sentence;
+            Sentence s = t.sentence;
             
             float freq = -1;
             float conf = -1;
@@ -130,23 +120,6 @@ public class SentenceTablePanel extends NPanel implements Output {
         }
     }
 
-    @Override
-    protected void onShowing(boolean showing) {
-        if (showing)
-            nar.addOutput(this);        
-        else
-            nar.removeOutput(this);                
-    }
-
-    private List<Object> getSelectedRows() {
-        int[] selectedRows = t.getSelectedRows();
-        List<Object> l = new ArrayList(selectedRows.length);
-        for (int i : selectedRows) {            
-            int selectedRow = t.convertRowIndexToModel(i);            
-            l.add((Sentence)data.getValueAt(selectedRow, 0));
-        }
-        return l;        
-    }
     
     
 }

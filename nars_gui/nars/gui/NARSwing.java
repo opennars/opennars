@@ -136,17 +136,6 @@ public class NARSwing  {
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);
         
-   /*
-        NARFacePanel f = new NARFacePanel(nar);
-        Window w = new Window("Face", f);
-        w.setSize(250,400);
-        w.setVisible(true);
-        
-        BubbleChart bc = new BubbleChart(nar);
-        Window wbc = new Window("Freq vs. Conf", bc);
-        wbc.setSize(250,250);
-        wbc.setVisible(true);
-        */
         
         if (args.length > 0
                 && CommandLineNARBuilder.isReallyFile(args[0])) {
