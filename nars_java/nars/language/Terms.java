@@ -149,7 +149,7 @@ public class Terms {
         if (t1.getClass() == t2.getClass()) {
             list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
         } else {
-            list = t1.cloneTermsExcept(true, t2);
+            list = t1.cloneTermsExcept(true, new Term[] { t2 });
         }
         if (list != null) {
             if (list.length > 1) {
@@ -169,7 +169,7 @@ public class Terms {
         if (t1.getClass() == t2.getClass()) {
             list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
         } else {
-            list = t1.cloneTermsExcept(true, t2);
+            list = t1.cloneTermsExcept(true, new Term[] { t2 });
         }
         if (list != null) {
             if (list.length > 1) {
