@@ -550,6 +550,9 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, Memory memory) {
+        if(originalMainSentence==null)  {
+            return;
+        }
         Sentence mainSentence = (Sentence) originalMainSentence.clone();   // for substitution
         Statement statement = (Statement) mainSentence.content;
         Term component = statement.term[index];
