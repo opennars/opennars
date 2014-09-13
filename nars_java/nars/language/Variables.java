@@ -124,31 +124,29 @@ public class Variables {
      * @param t The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term t1, final Term t2, Term[] compound) {
+    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) {
         final HashMap<Term, Term> map1 = new HashMap<>(4);
         final HashMap<Term, Term> map2 = new HashMap<>(4);
         final boolean hasSubs = findSubstitute(type, t1, t2, map1, map2);
-        Term compound1 = compound[0];
-        Term compound2 = compound[1];
-        if (hasSubs) {
-            if (!map1.isEmpty()) {
-                compound1 = ((CompoundTerm) compound1).applySubstitute(map1);
-                compound1.renameVariables();
-            }
-            if (!map2.isEmpty()) {
-                compound2 = ((CompoundTerm) compound2).applySubstitute(map2);
-                compound2.renameVariables();
-            }
-        }
         if (hasSubs) {            
-            compound[0] = compound1;
-            compound[1] = compound2;
+            compound[0] = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map1);
+            compound[1] = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map2);
             return true;
         }
         return false;
     }
 
-
+    /** appliesSubstitute and renameVariables, resulting in a cloned object, 
+     *  will not change this instance  */
+    private static CompoundTerm applySubstituteAndRenameVariables(CompoundTerm t, HashMap<Term, Term> subs) {
+        if (subs.isEmpty())
+            return t; //no change needed
+        
+        CompoundTerm r = t.applySubstitute(subs);
+        if (r == t) r = (CompoundTerm)t.clone();
+        r.normalizeVariableNames();
+        return r;
+    }
     
     /**
      * Check whether a string represent a name of a term that contains a query
