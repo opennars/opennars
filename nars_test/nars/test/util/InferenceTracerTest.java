@@ -3,6 +3,7 @@ package nars.test.util;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.util.InferenceTracer;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -25,8 +26,9 @@ public class InferenceTracerTest {
         //tracer.printTime(System.out);                
         //System.out.println(tracer.concept);
         
-        assert(tracer.time.size() >= 3); 
-        assert(tracer.time.get(1L).size() >= 0);
+        System.out.println(tracer.time);
+        assertTrue(tracer.time.size() >= 3); 
+        assertTrue(tracer.time.get(1L).size() >= 0);
         
         //assert(tracer.concept.size() == 3);
     
