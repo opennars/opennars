@@ -74,14 +74,12 @@ public class SwingLogText extends JTextPane implements Output {
     @Override
     public void output(final Class c, final Object o) {
         final LogLine ll = new LogLine(c, o);
-        
-        boolean requireUpdate;
-        synchronized (pendingDisplay) {
-            requireUpdate = pendingDisplay.isEmpty();
+                
+        synchronized (pendingDisplay) {            
             pendingDisplay.add(ll);
         }
         
-        if (requireUpdate) {
+        if (pendingDisplay.size() == 1) {
             SwingUtilities.invokeLater(update);
         }        
     }

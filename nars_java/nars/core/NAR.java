@@ -94,7 +94,7 @@ public class NAR implements Runnable, Output, TaskSource {
     private boolean threadYield;
     
     private int inputSelected = 0; //counter for the current selected input channel
-    private boolean inputsChanged;
+    private boolean ioChanged;
     
 
     public NAR(Memory m, Perception p) {
@@ -124,9 +124,9 @@ public class NAR implements Runnable, Output, TaskSource {
         }
         inputChannels.clear();        
         newInputChannels.clear();
-        newOutputChannels.clear();
-        oldOutputChannels.clear();
-        inputsChanged = false;
+        //newOutputChannels.clear();
+        //oldOutputChannels.clear();
+        ioChanged = false;
         memory.reset();        
     }
 
@@ -138,7 +138,7 @@ public class NAR implements Runnable, Output, TaskSource {
     }
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
-    public Input addInput(Input channel) {
+    public Input addInput(final Input channel) {
         InPort i = new InPort(perception, channel, new FIFO(), 1.0f);
                
         try {
@@ -147,7 +147,7 @@ public class NAR implements Runnable, Output, TaskSource {
         } catch (IOException ex) {                    
             output(ERR.class, ex);
         }
-        inputsChanged = true;
+        ioChanged = true;
         return channel;
     }
 
@@ -159,16 +159,16 @@ public class NAR implements Runnable, Output, TaskSource {
 //    }
 
     /** Adds an output channel */
-    public Output addOutput(Output channel) {
+    public Output addOutput(final Output channel) {
         newOutputChannels.add(channel);
-        inputsChanged = true;
+        ioChanged = true;
         return channel;
     }
 
     /** Removes an output channel */
-    public Output removeOutput(Output channel) {
+    public Output removeOutput(final Output channel) {
         oldOutputChannels.remove(channel);
-        inputsChanged = true;
+        ioChanged = true;
         return channel;
     }
 
@@ -365,8 +365,8 @@ public class NAR implements Runnable, Output, TaskSource {
             debugTime();            
         }
         
-        if (inputsChanged) {
-            inputsChanged = false;
+        if (ioChanged) {
+            ioChanged = false;
             updatePorts();
         }
                 
