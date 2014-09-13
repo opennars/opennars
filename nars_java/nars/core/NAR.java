@@ -2,9 +2,9 @@ package nars.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.Memory.TaskSource;
 import nars.entity.AbstractTask;
 import nars.gui.NARControls;
@@ -53,7 +53,14 @@ public class NAR implements Runnable, Output, TaskSource {
     /** The output channels of the reasoner     */
     protected List<Output> outputChannels;
     
-        
+    /** pending input and output channels to add on the next cycle. */
+    private final List<InPort> newInputChannels;
+    private final List<Output> newOutputChannels;
+    
+    /** pending niput and output channels to remove on the next cycle */
+    //protected final List<InPort> oldInputChannels;
+    protected final List<Output> oldOutputChannels;
+
     
     /**
      * Flag for running continuously
@@ -87,6 +94,7 @@ public class NAR implements Runnable, Output, TaskSource {
     private boolean threadYield;
     
     private int inputSelected = 0; //counter for the current selected input channel
+    
 
     public NAR(Memory m, Perception p) {
         this.memory = m;
@@ -95,8 +103,12 @@ public class NAR implements Runnable, Output, TaskSource {
         m.setOutput(this);                
         
         //needs to be concurrent in case we change this while running
-        inputChannels = Collections.synchronizedList(new ArrayList()); //new CopyOnWriteArrayList<>(); 
-        outputChannels = Collections.synchronizedList(new ArrayList()); //new CopyOnWriteArrayList<>();
+        inputChannels = new ArrayList();
+        newInputChannels = new CopyOnWriteArrayList();
+        //oldInputChannels = new ArrayList();
+        outputChannels = new ArrayList();
+        newOutputChannels = new CopyOnWriteArrayList();
+        oldOutputChannels = new CopyOnWriteArrayList();
     }
 
     /**
@@ -104,11 +116,13 @@ public class NAR implements Runnable, Output, TaskSource {
      * from {@link NARControls}.
      */     
     public void reset() {
-            
         for (InPort port : inputChannels) {
             port.input.finished(true);
         }
-        inputChannels.clear();               
+        inputChannels.clear();        
+        newInputChannels.clear();
+        newOutputChannels.clear();
+        oldOutputChannels.clear();
         
         memory.reset();
         
@@ -127,7 +141,7 @@ public class NAR implements Runnable, Output, TaskSource {
                
         try {
             i.update();
-            inputChannels.add(i);
+            newInputChannels.add(i);
         } catch (IOException ex) {                    
             output(ERR.class, ex);
         }
@@ -144,13 +158,13 @@ public class NAR implements Runnable, Output, TaskSource {
 
     /** Adds an output channel */
     public Output addOutput(Output channel) {
-        outputChannels.add(channel);
+        newOutputChannels.add(channel);
         return channel;
     }
 
     /** Removes an output channel */
     public Output removeOutput(Output channel) {
-        outputChannels.remove(channel);
+        oldOutputChannels.remove(channel);
         return channel;
     }
 
@@ -216,9 +230,10 @@ public class NAR implements Runnable, Output, TaskSource {
         running = true;
 
         //clear input
-        while (!inputChannels.isEmpty()) {
+        do {
             step(1);
         }
+        while (!inputChannels.isEmpty());
         
         //queue additional cycles
         memory.stepLater(cycles);
@@ -266,6 +281,23 @@ public class NAR implements Runnable, Output, TaskSource {
      */
     @Override
     public AbstractTask nextTask() {
+        if (!newInputChannels.isEmpty()) {
+            for (final InPort n : newInputChannels)
+                inputChannels.add(n);
+            newInputChannels.clear();
+        }
+        if (!oldOutputChannels.isEmpty()) {
+            for (final Output n : oldOutputChannels)
+                outputChannels.remove(n);
+            oldOutputChannels.clear();
+        }
+        if (!newOutputChannels.isEmpty()) {
+            for (final Output n : newOutputChannels)
+                outputChannels.add(n);
+            newOutputChannels.clear();
+        }
+        
+        
         if ((!inputting) || (inputChannels.isEmpty()))
            return null;        
         
