@@ -600,10 +600,19 @@ public class Memory implements Output, Serializable {
     public void output(final Task t) {
         if (output == null) return;
         
-        final float budget = t.budget.summary();
-        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
-        
-        if (budget >= noiseLevel) {  // only report significant derived Tasks
+        boolean emit = false;
+        if ((t.getBestSolution()!=null) && (t.isInput())) {
+            //report all solutions
+            emit = true;
+        }
+        else {
+            // only report significant Tasks
+            final float budget = t.budget.summary();
+            final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
+            emit = budget >= noiseLevel;            
+        }
+            
+        if (emit) {  
             output(OUT.class, t);
         }        
     }

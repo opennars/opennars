@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.gui.InferenceLogger;
 import nars.io.Output;
 import nars.io.TextInput;
@@ -124,9 +124,9 @@ public class NALTest  {
     }
     
     public static NAR newNAR() {
-        //return new DefaultNARBuilder().build();
+        return new DefaultNARBuilder().build();
         //return new ContinuousBagNARBuilder().build();
-        return new DiscretinuousBagNARBuilder().build();
+        //return new DiscretinuousBagNARBuilder().build();
     }
     
     @Parameterized.Parameters
