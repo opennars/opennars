@@ -572,9 +572,9 @@ public class Memory implements Output, Serializable {
     public void activatedTask(final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
         final Task task = new Task(sentence, budget, getCurrentTask(), sentence, candidateBelief);
 
-        //if (sentence.isQuestion()) {
-        output(task);
-        //}
+        if (sentence.isQuestion()) {
+            output(task);
+        }
 
         addNewTask(task, "Activated");
     }
@@ -600,19 +600,10 @@ public class Memory implements Output, Serializable {
     public void output(final Task t) {
         if (output == null) return;
         
-        boolean emit = false;
-        if ((t.getBestSolution()!=null) && (t.isInput())) {
-            //report all solutions
-            emit = true;
-        }
-        else {
-            // only report significant Tasks
-            final float budget = t.budget.summary();
-            final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
-            emit = budget >= noiseLevel;            
-        }
-            
-        if (emit) {  
+        final float budget = t.budget.summary();
+        final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
+        
+        if (budget >= noiseLevel) {  // only report significant derived Tasks
             output(OUT.class, t);
         }        
     }

@@ -26,6 +26,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.io.Output.OUT;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
@@ -150,14 +151,12 @@ public class LocalRules {
                 memory.emotion.adjustHappy(newQ, task.getPriority());
             }
             
+            if (task.isInput()) {    // moved from Sentence                
+                memory.output(OUT.class, task);
+            }
             BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
             if ((budget != null) && budget.aboveThreshold()) {
                 memory.activatedTask(budget, belief, task.getParentBelief());
-            }
-            else {
-                //if (task.isInput()) {    // moved from Sentence                            
-                    memory.output(task);
-                //}                
             }
         }
     }
