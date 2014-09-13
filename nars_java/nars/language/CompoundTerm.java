@@ -406,8 +406,13 @@ public abstract class CompoundTerm extends Term {
     }
 
     /**
-     * check if the term contains free variable
-     *
+     * isConstant means if the term contains free variable, which implies it can name a Concept
+     * True if:
+     *   has zero variables, or
+     *   uses several instances of the same variable
+     * False if it uses one instance of a variable ("free" like a "free radical" in chemistry).
+     * Therefore it may be considered Constant, yet actually contain variables.
+     * 
      * @return if the term is a constant
      */
     @Override
@@ -690,9 +695,10 @@ public abstract class CompoundTerm extends Term {
 
     /**
      * Rename the variables in the compound, called from Sentence constructors
+     * This method may modify the instance. do not use from outside to maintain immutability.
      */
     @Override
-    public void renameVariables() {
+    protected void normalizeVariableNames() {
         if (containVar()) {
             //int existingComponents = term.length;
             boolean b = renameVariables(new HashMap<>());

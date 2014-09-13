@@ -103,11 +103,17 @@ public class Term implements AbstractTerm {
 
     /**
      * Check whether the current Term can name a Concept.
-     *
+     * isConstant means if the term contains free variable
+     * True if:
+     *   has zero variables, or
+     *   uses several instances of the same variable
+     * False if it uses one instance of a variable ("free" like a "free radical" in chemistry).
+     * Therefore it may be considered Constant, yet actually contain variables.
+     * 
      * @return A Term is constant by default
      */
     @Override
-    public boolean isConstant() {
+    public boolean isConstant() {        
         return true;
     }
     
@@ -121,7 +127,8 @@ public class Term implements AbstractTerm {
         return true;
     }    
 
-    public void renameVariables() { }
+    /** this method may modify the instance. do not use from outside to maintain immutability. */
+    protected void normalizeVariableNames() { }
          
     /**
      * The syntactic complexity, for constant atomic Term, is 1.
@@ -217,6 +224,12 @@ public class Term implements AbstractTerm {
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Term text(String t) {
         return new Term(Texts.escape('"' + t + '"').toString());
+    }
+
+    public Term cloneWithVariablesRenamed() {
+        Term c = clone();
+        c.normalizeVariableNames();
+        return c;
     }
 
     
