@@ -119,13 +119,7 @@ public class Term implements AbstractTerm {
     
     public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
-    }
-    
-
-    /** whether this instance may be shared among other objects rather than need to be deep cloned.  once all of the code is using immutable objects, this condition will always be true and this function unnecessary. */
-    protected boolean mayShare() {
-        return true;
-    }    
+    }   
 
     /** this method may modify the instance. do not use from outside to maintain immutability. */
     protected void normalizeVariableNames() { }

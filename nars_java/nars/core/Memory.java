@@ -722,10 +722,12 @@ public class Memory implements Output, Serializable {
                 Term[] arg = new Term[1];
                 arg[0]=task.sentence.content;
                 Term argTerm = Product.make(arg,this);
+                
                 Term operation = Inheritance.make(argTerm, opTerm,this);
                 TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 Stamp stampi = (Stamp) task.sentence.stamp.clone();
                 stamp.setOccurrenceTime(this.getTime());
+                
                 Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
                 BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
                 Task newTask = new Task(j, budg,task);
@@ -756,7 +758,7 @@ public class Memory implements Output, Serializable {
 
                         TruthValue truth = (TruthValue) task.sentence.truth.clone();
                         Stamp stampi = (Stamp) task.sentence.stamp.clone();
-                        Sentence j = new Sentence(new_term,Symbols.JUDGMENT_MARK, truth, stampi);
+                        Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
                         BudgetValue budg=(BudgetValue) task.budget.clone();
                         Task newTask = new Task(j, budg,task);
                         if (getRecorder().isActive()) {
@@ -797,7 +799,7 @@ public class Memory implements Output, Serializable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void doublePremiseTaskRevised(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
+    public void doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         if (newContent != null) {
             Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
             Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
@@ -860,7 +862,7 @@ public class Memory implements Output, Serializable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void singlePremiseTask(Term newContent, char punctuation, TruthValue newTruth, BudgetValue newBudget) {
+    public void singlePremiseTask(final Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
         Task parentTask = getCurrentTask().getParentTask();
                 
         if (parentTask != null) {
