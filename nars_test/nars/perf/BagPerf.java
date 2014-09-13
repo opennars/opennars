@@ -17,7 +17,6 @@
 
 package nars.perf;
 
-import java.util.ArrayDeque;
 import java.util.Iterator;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
@@ -56,12 +55,12 @@ public class BagPerf {
             public void run(boolean warmup) {
                 DefaultBag<NullItem> b = new DefaultBag<NullItem>(levels, capacity, forgetRate) {
 
-                    @Override
-                    protected ArrayDeque<NullItem> newLevel() {
-                        //if (arraylist)                                                    
-                            return super.newLevel();
-                        //return new LinkedList<>();
-                    }
+//                    @Override
+//                    protected ArrayDeque<NullItem> newLevel() {
+//                        //if (arraylist)                                                    
+//                            return super.newLevel();
+//                        //return new LinkedList<>();
+//                    }
                     
                 };
                 randomBagIO(b, randomAccesses, insertRatio);
@@ -216,7 +215,7 @@ public class BagPerf {
                           }                        
                         };*/
                         
-                        return new ContinuousBag2<Item>(bagCapacity, forgetRate, true);
+                        return new ContinuousBag2<Item>(bagCapacity, forgetRate, new ContinuousBag2.DefaultBagCurve(), true);
                     }                    
                 }, iterations, randomAccesses, insertRatio, repeats, warmups);
                 

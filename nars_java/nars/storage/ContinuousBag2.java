@@ -48,17 +48,70 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
     final float scanningRate = -1.0f;
     
     /** current removal index x, between 0..1.0.  set automatically */
-    private float x;
+    private double x;
+    private final BagCurve curve;
     
 
-    public ContinuousBag2(int capacity, int forgetRate, boolean randomRemoval) {
-        this(capacity, new AtomicInteger(forgetRate), randomRemoval);
+    /**
+     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
+     * @param x input mappig value
+     * @return 
+     */
+    public interface BagCurve {
+        public double y(double x);        
     }
     
-    public ContinuousBag2(int capacity, AtomicInteger forgetRate, boolean randomRemoval) {
+    public static class CubicBagCurve implements BagCurve {
+
+        @Override
+        public final double y(final double x) {
+            //1.0 - ((1.0-x)^2)
+            // a function which has domain and range between 0..1.0 but
+            //   will result in values above 0.5 more often than not.  see the curve:        
+            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-        
+            return (x*x*x);
+        }
+        
+    }
+    
+    /** estimates probability curve of DefaultBag */
+    public static class DefaultBagCurve implements BagCurve {
+
+        final static double a = 4.61484E-8;
+        final static double b = 4.34690E-6;
+        final static double c = 0.00025931;
+        
+        @Override final public double y(double x) {
+            //probability curve
+            //return a*x*x*x - b*x*x + c*x;
+            
+            double y = 0;
+            
+            y += c*x; //^1
+            x*=x; 
+            y += b*x; //^2
+            x*=x; 
+            y += a*x; //^3
+            
+            //multiply by x for each term to convert mapping to a probability:
+            y*=x;
+            
+            return y;
+        }
+        
+    }
+    
+    
+    
+    public ContinuousBag2(int capacity, int forgetRate, BagCurve curve, boolean randomRemoval) {
+        this(capacity, new AtomicInteger(forgetRate), curve, randomRemoval);
+    }
+    
+    public ContinuousBag2(int capacity, AtomicInteger forgetRate, BagCurve curve, boolean randomRemoval) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
+        this.curve = curve;
         
         if (randomRemoval)
             x = Memory.randomNumber.nextFloat();
@@ -189,6 +242,7 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
     public int nextRemovalIndex() {      
         final int s = size();
         if (randomRemoval) {
+            //uniform random distribution on 0..1.0
             x = Memory.randomNumber.nextFloat();            
         }
         else {
@@ -199,7 +253,7 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
                 x = x + 1.0f;
         }
         
-        float y = getFocus(x);
+        double y = curve.y(x);
         
         int result = (int)fastRound((1.0-y) * (s-1));            
         if (result == s) {
@@ -209,20 +263,6 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
         return result;
     }
     
-    /**
-     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
-     * @param x
-     * @return 
-     */
-    public float getFocus(float x) {
-        //1.0 - ((1.0-x)^2)
-        // a function which has domain and range between 0..1.0 but
-        //   will result in values above 0.5 more often than not.  see the curve:        
-        //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-        
-        return (x*x*x);
-    }
-    
-
 
     
     public static long fastRound(final double d) {

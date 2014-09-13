@@ -150,13 +150,14 @@ public class LocalRules {
                 memory.emotion.adjustHappy(newQ, task.getPriority());
             }
             
-            //if (task.isInput()) {    // moved from Sentence                            
-                memory.output(task);
-            //}
-
             BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
             if ((budget != null) && budget.aboveThreshold()) {
                 memory.activatedTask(budget, belief, task.getParentBelief());
+            }
+            else {
+                //if (task.isInput()) {    // moved from Sentence                            
+                    memory.output(task);
+                //}                
             }
         }
     }

@@ -1151,11 +1151,7 @@ public class Memory implements Output, Serializable {
                 + item.toString();
     }
 
-    
 
-    private void onTaskAdd(Task t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     /** returns a collection of all concepts */
     public Collection<? extends Concept> getConcepts() {
