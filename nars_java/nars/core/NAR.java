@@ -342,10 +342,10 @@ public class NAR implements Runnable, Output, TaskSource {
         return null;
     }
 
-    @Override
-    public int getInputItemsBuffered() {
+    /** count of how many items are buffered */
+    @Override public int getInputItemsBuffered() {
         int total = 0;
-        for (InPort i : inputChannels)
+        for (final InPort i : inputChannels)
             total += i.getItemsBuffered();
         return total;
     }

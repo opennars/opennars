@@ -189,7 +189,7 @@ public class Stamp implements Cloneable {
         i2 = chain2.size() - 1;
 
         //set here is for fast contains() checking
-        Set<Term> added = new HashSet<>(baseLength); 
+        Set<Term> added = new HashSet<>(baseLength * 2); 
         
         derivationChain = new ArrayList(baseLength);
         

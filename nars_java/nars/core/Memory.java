@@ -901,7 +901,8 @@ public class Memory implements Output, Serializable {
         //IO cycle
         resource.IO_CYCLE.start();
 
-        logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
+        if (logic.IO_INPUTS_BUFFERED.isActive())
+            logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
         
         if (getCyclesQueued()==0) {                
             for (int i = 0; i < inputCycles; i++) {

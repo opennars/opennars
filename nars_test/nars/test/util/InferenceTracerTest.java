@@ -26,7 +26,6 @@ public class InferenceTracerTest {
         //tracer.printTime(System.out);                
         //System.out.println(tracer.concept);
         
-        System.out.println(tracer.time);
         assertTrue(tracer.time.size() >= 3); 
         assertTrue(tracer.time.get(1L).size() >= 0);
         

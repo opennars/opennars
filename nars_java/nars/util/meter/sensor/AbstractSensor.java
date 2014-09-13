@@ -188,4 +188,9 @@ public abstract class AbstractSensor implements Sensor {
     public void setActive(boolean a) {
         this.active = a;
     }
+
+    public boolean isActive() {
+        return active;
+    }
+    
 }
