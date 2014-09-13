@@ -867,7 +867,10 @@ public class Memory implements Output, Serializable {
                 
         if (parentTask != null) {
             if (parentTask.getContent() == null)
-                return;            
+                return;     
+            if(newContent==null) {
+                return;
+            }
             if (newContent.equals(parentTask.getContent())) // circular structural inference
                 return;            
         }
