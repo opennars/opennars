@@ -40,12 +40,16 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
 
     @Override
     public ManualTracker addValue(final double value) {
+        if (!active) return this;
+        
         setValue(this.value + value);
         return this;
     }
 
     @Override
     public ManualTracker setValue(final double newValue) {
+        if (!active) return this;
+        
         currentDelta = newValue - lastValue;
         lastValue = this.value;
         this.value = newValue;        
@@ -53,6 +57,8 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
     }
 
     public void commit(double value) {
+        if (!active) return;
+
         super.commit();
         setValue(value);
         commit();
@@ -60,7 +66,8 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
 
     @Override
     public void commit() {       
-            
+        if (!active) return;
+        
         final long now = System.currentTimeMillis();
         session.track(this, now);
         session.update(this, now);
