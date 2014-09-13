@@ -13,8 +13,8 @@ public class NALPerfLoop {
     
     public static void main(String[] args) {
        
-        int repeats = 4;
-        int warmups = 1;
+        int repeats = 1;
+        int warmups = 0;
         int extraCycles = 2048;
         
         NAR n = new DefaultNARBuilder().build();

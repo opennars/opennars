@@ -222,6 +222,23 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         final Deque<E> level = itemTable[l];
         return (level == null) || (level.isEmpty());
     }
+
+    
+    final public int nextNonEmptyLevel(int levelIndex) {
+        //group this code into one function so it hopefully gets inlined */
+        final int distributorLength = DISTRIBUTOR.length;
+        Deque<E> currentTable;
+        int cl = currentLevel;
+        
+        do {
+            cl = DISTRIBUTOR[((levelIndex++)%distributorLength)];
+            currentTable = itemTable[cl];
+        } while ((currentTable==null) || (currentTable.isEmpty())); //levelEmpty(currentLevel));
+        
+        currentLevel = cl; //write to object outside of the loop
+        
+        return levelIndex;
+    }
     
     protected void nextNonEmptyLevel() {
         // look for a non-empty level
@@ -229,18 +246,13 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
             //optimized case: only one item - just find the next non-empty level
             int levelsTraversed = 0;
             do {
-                currentLevel++;    
-                if (currentLevel == levels) currentLevel = 0; //modulo
+                currentLevel = (currentLevel + 1) % levels;    
                 levelsTraversed++;
             } while (levelEmpty(currentLevel));
             levelIndex = (levelIndex + levelsTraversed) % DISTRIBUTOR.length;
         }   
         else {
-            final int distributorLength = DISTRIBUTOR.length;
-            do {
-                currentLevel = DISTRIBUTOR[levelIndex++];
-                if (levelIndex == distributorLength) levelIndex = 0; //modulo        
-            } while (levelEmpty(currentLevel));
+            levelIndex = nextNonEmptyLevel(levelIndex);
         }
 
         if (currentLevel < THRESHOLD) { // for dormant levels, take one item
