@@ -41,7 +41,8 @@ public class NARStateTest {
         //new Number1DInput(n, "x", x, 2);
         n.finish(16);
         
-        
+
+        n.memory.logic.setActive(true);
         n.memory.logic.update(n.memory);
         DataSet d = n.memory.logic;
 
