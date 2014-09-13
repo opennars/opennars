@@ -288,7 +288,7 @@ public class Stamp implements Cloneable {
      * @return The cloned stamp
      */
     @Override
-    public Object clone() {
+    public Stamp clone() {
         return new Stamp(this);
     }
 
@@ -465,8 +465,10 @@ public class Stamp implements Cloneable {
     }
 
     public void setOccurrenceTime(final long time) {
-        occurrenceTime = time;
-        name = null;
+        if (occurrenceTime!=time) {
+            occurrenceTime = time;
+            name = null;
+        }
     }
 
 
@@ -510,6 +512,12 @@ public class Stamp implements Cloneable {
     @Override
     public String toString() {        
         return name().toString();
+    }
+
+    public Stamp cloneAt(final long newOcurrenceTime) {
+        Stamp s = clone();
+        s.setOccurrenceTime(newOcurrenceTime);
+        return s;
     }
 
 

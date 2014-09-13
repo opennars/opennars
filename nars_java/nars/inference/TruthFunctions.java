@@ -21,8 +21,6 @@
 package nars.inference;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.abs;
-import static java.lang.Math.abs;
 import nars.entity.TruthValue;
 
 /**
@@ -389,7 +387,7 @@ public final class TruthFunctions extends UtilityFunctions {
         return new TruthValue(f1, c);
     }
     
-    public static final float temporalProjection(long sourceTime, long targetTime, long currentTime) {
+    public static final float temporalProjection(final long sourceTime, final long targetTime, final long currentTime) {
         return abs(sourceTime - targetTime) / (float) (abs(sourceTime - currentTime) + abs(targetTime - currentTime));
     }
 }

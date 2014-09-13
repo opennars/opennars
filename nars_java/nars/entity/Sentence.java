@@ -150,19 +150,15 @@ public class Sentence implements Cloneable {
      * @return The clone
      */
     @Override
-    public Object clone() {
-        if (truth == null) {
-            return new Sentence(content.clone(), punctuation, null, (Stamp) stamp.clone());
-        }
-        return new Sentence(content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
+    public Sentence clone() {
+        return clone(content);
     }
 
     /** Clone with a different Term */    
-    public Sentence clone(Term t) {
-        if (truth == null) {
-            return new Sentence(t, punctuation, null, (Stamp) stamp.clone());
-        }
-        return new Sentence(t, punctuation, new TruthValue(truth), (Stamp) stamp.clone());
+    public Sentence clone(final Term t) {
+        return new Sentence(t, punctuation, 
+                truth!=null ? new TruthValue(truth) : null, 
+                stamp.clone());
     }
     
     /**
@@ -172,9 +168,12 @@ public class Sentence implements Cloneable {
       * @param currentTime The current time as a reference
       * @return The projected belief
       */    
-    public Sentence projection(long targetTime, long currentTime) {
+    public Sentence projection(final long targetTime, final long currentTime) {
+        
         TruthValue newTruth = new TruthValue(truth);
+        
         boolean eternalizing = false;
+        
         if (stamp.getOccurrenceTime() != Stamp.ETERNAL) {
             newTruth = TruthFunctions.eternalization(truth);
             eternalizing = true;
@@ -188,13 +187,10 @@ public class Sentence implements Cloneable {
                 }
             }
         }
-        Stamp newStamp = (Stamp) stamp.clone();
-        if (eternalizing) {
-            newStamp.setOccurrenceTime(Stamp.ETERNAL);
-        }
         
-        Sentence newSentence = new Sentence(content.clone(), punctuation, newTruth, newStamp);
-        return newSentence;
+        Stamp newStamp = eternalizing ? stamp.cloneAt(Stamp.ETERNAL) : stamp.clone();
+        
+        return new Sentence(content, punctuation, newTruth, newStamp);
     }
 
 
