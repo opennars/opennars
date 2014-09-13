@@ -368,10 +368,10 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     };
     
     /** in ms */
-    long lastUpdateTime = -1;
+    long lastUpdateTime = System.currentTimeMillis();
     
     /** in memory cycles */
-    long lastUpdateCycle = -1;
+    long lastUpdateCycle = 0;
     
     AtomicBoolean updateScheduled = new AtomicBoolean(true);
     
@@ -400,7 +400,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
             
-            if ((deltaTime > GUIUpdatePeriodMS) && (!updateScheduled.get())) {
+            if ((deltaTime >= GUIUpdatePeriodMS) && (!updateScheduled.get())) {
                 senses.update(memory);
                 
                 SwingUtilities.invokeLater(updateGUIRunnable);
