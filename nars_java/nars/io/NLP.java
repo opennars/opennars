@@ -19,6 +19,7 @@ package nars.io;
 
 import java.util.ArrayList;
 import nars.core.NAR;
+import static nars.io.Texts.levenshteinDistance;
 
 /**
  *
@@ -32,10 +33,11 @@ public class NLP {
         return false;
     }
     
+    public static ArrayList<String> wordmem=new ArrayList<String>();
     public static void processInput(String s, NAR nar) {
         //to keep NLP overhead as small as possible we will here use a heuristic which directly
         
-        s=s.replace("go to","go-to");
+        s=s.replace("go to","go-to").replace("should be","is");
         
         String punct="."; //translates to Narsese whenever it can, and use general sentence form else
         if(s.endsWith("?")) {
@@ -46,7 +48,7 @@ public class NLP {
             punct="!";
         }
         
-        s=s.replace("?","").replace("!","").replace("\\.","").replace("\\,","");
+        s=s.replace("?","").replace("!","").replace(".","").replace(",","");
         s=s.replace("who ","?1 ").replace("what ","?1 ").replace("when ","?1 ").replace("where ","?1 ");
         s=s.replace("somewhere","#1").replace("something","#1");
 
@@ -55,9 +57,28 @@ public class NLP {
         for(int i=0;i<words.length;i++) {
             if(!(words[i].equals("a") || words[i].equals("an") || words[i].equals("the"))) {
                 realwords.add(words[i]);
+                if(!wordmem.contains(words[i])) {
+                    wordmem.add(words[i]);
+                }
             }
         }
         words=realwords.toArray(new String[realwords.size()]);
+        
+        for(String word : words) { //now add the similar words
+            for(String mword : wordmem) {
+                if(word.equals(mword)) {
+                    continue;
+                }
+                int difference=levenshteinDistance(word.replace("ing",""),mword.replace("ing",""));
+                //get longer word:
+                int longerword=Math.max(word.length(), mword.length());
+                double perc=((double)difference)/((double)longerword);
+                if(perc<0.3) {
+                    nar.addInput("<"+word+" <-> "+mword+">.");
+                    nar.step(1);
+                }
+            }
+        }
         
         String sentence="";
         
@@ -128,5 +149,6 @@ public class NLP {
                 nar.step(1);
             }
         }
+        //int wu=levenshteinDistance("","");
     }
 }
