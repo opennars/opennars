@@ -81,20 +81,32 @@ public class NLP {
                     contains_is=true;
                     String left="<(*";
                     String right="(*";
+                    int leftcnt=0;
+                    int rightcnt=0;
                     for(int j=0;j<i;j++) {
                         if(words[j].equals("at") || words[i].equals("on") || words[i].equals("in")) {
                             break;
                         }
+                        leftcnt++;
                         left+=","+words[j];
                     }
                     for(int j=i+1;j<words.length;j++) {
                         if(words[j].equals("at") || words[i].equals("on") || words[i].equals("in")) {
                             break;
                         }
+                        rightcnt++;
                         right+=","+words[j];
                     }
                     left+=")";
                     right+=")>";
+                    if(rightcnt==1) {
+                        right=right.replace("(*,", "");
+                        right=right.replace(")", "");
+                    }
+                    if(leftcnt==1) {
+                        left=left.replace("(*,", "");
+                        left=left.replace(")", "");
+                    }
                     sentence=left+" --> "+right+punct+" :|:";
                 }
             }
