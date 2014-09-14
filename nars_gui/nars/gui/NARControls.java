@@ -173,12 +173,12 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         m = new JMenu("Windows");
         {
             
-            JMenuItem mv3 = new JMenuItem("+ Text Input");
+            JMenuItem mv3 = new JMenuItem("+ Input");
             mv3.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     InputPanel inputPanel = new InputPanel(nar);
-                    Window inputWindow = new Window("Text Input", inputPanel);                    
+                    Window inputWindow = new Window("Input", inputPanel);                    
                     inputWindow.setSize(800, 200);
                     inputWindow.setVisible(true);        
                 }
@@ -262,14 +262,14 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             });
             m.add(bt);*/
             
-            JMenuItem cct = new JMenuItem("+ Concept Content");
+            /*JMenuItem cct = new JMenuItem("+ Concept Content");
             cct.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     conceptWin.setVisible(true);                
                 }                
             });
-            m.add(cct);
+            m.add(cct);*/
             
             
             
