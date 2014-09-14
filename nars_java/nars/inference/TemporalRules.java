@@ -289,7 +289,7 @@ public class TemporalRules {
                     s2.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
                 //if((s1.content instanceof Inheritance || s1.content instanceof Similarity) && s2.content instanceof Implication &&
                 //        s2.getTemporalOrder()==ORDER_FORWARD) {
-                    //temporalInduction(s1,s2,mem);
+                    temporalInduction(s1,s2,mem);
                 //}
             } //comment grey part out if only allowing restricted time inference
         }
