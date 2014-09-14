@@ -20,6 +20,7 @@
  */
 package nars.operator;
 
+import nars.core.Memory;
 import nars.entity.Task;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
@@ -27,7 +28,6 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
-import nars.core.Memory;
 
 /**
  * An operation is interpreted as an Inheritance relation.
@@ -119,7 +119,7 @@ public class Operation extends Inheritance {
     }
 
     
-    public static CharSequence makeName(final CharSequence op, Term[] arg) {
+    public static CharSequence makeName(final CharSequence op, final Term[] arg) {
         final StringBuilder nameBuilder = new StringBuilder(16) //estimate
                 .append(COMPOUND_TERM_OPENER.ch).append(op);
         
