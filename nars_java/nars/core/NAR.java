@@ -338,7 +338,7 @@ public class NAR implements Runnable, Output, TaskSource {
                 try {
                     Object input = i.next();
 
-                    AbstractTask task = perception.perceive(input);
+                    AbstractTask task = perception.perceive(input,this);
 
                     if (task!=null) {
                         return task;
