@@ -48,7 +48,7 @@ public class NLP {
             punct="!";
         }
         
-        s=s.replace("?","").replace("!","").replace("\\.","").replace("\\,","");
+        s=s.replace("?","").replace("!","").replace(".","").replace(",","");
         s=s.replace("who ","?1 ").replace("what ","?1 ").replace("when ","?1 ").replace("where ","?1 ");
         s=s.replace("somewhere","#1").replace("something","#1");
 
