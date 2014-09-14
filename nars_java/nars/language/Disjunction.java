@@ -79,15 +79,15 @@ public class Disjunction extends CompoundTerm {
     public static Term make(Term term1, Term term2, Memory memory) {
         TreeSet<Term> set;
         if (term1 instanceof Disjunction) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             if (term2 instanceof Disjunction) {
-                set.addAll(((CompoundTerm) term2).cloneTermsList());
+                set.addAll(((CompoundTerm) term2).getTermList());
             } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
                 set.add(term2.clone());
             }                          // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof Disjunction) {
-            set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term2).getTermList());
             set.add(term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();
