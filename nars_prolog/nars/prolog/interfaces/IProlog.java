@@ -4,6 +4,7 @@ import nars.prolog.InvalidLibraryException;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Library;
 import nars.prolog.NoMoreSolutionException;
+import nars.prolog.PrologTermIterator;
 import nars.prolog.SolveInfo;
 import nars.prolog.Term;
 import nars.prolog.Theory;
@@ -39,7 +40,7 @@ public interface IProlog {
 	 * @throws InvalidTheoryException if the new theory is not valid
          * @return the solved theory goal, or null if not successful
 	 */
-	SolveInfo addTheory(Theory th) throws Exception;
+	SolveInfo addTheory(PrologTermIterator th) throws Exception;
 	
 	/**
 	 * Clears current theory

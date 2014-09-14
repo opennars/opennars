@@ -16,8 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.prolog;
-import    java.io.*;
+import    java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Iterator;
+
 
 /**
  * This class represents prolog theory which can be provided
@@ -30,8 +33,10 @@ import java.util.Iterator;
  *
  */
 @SuppressWarnings("serial")
-public class Theory implements Serializable {
+public class Theory implements Serializable, PrologTermIterator {
 
+
+    
     private String theory;
     private Struct clauseList;
 
@@ -76,6 +81,7 @@ public class Theory implements Serializable {
         this.clauseList = clauseList;
     }
     
+    @Override
     public Iterator<? extends Term> iterator(Prolog engine) {
         if (isTextual())
             return new Parser(engine.getOperatorManager(), theory).iterator();

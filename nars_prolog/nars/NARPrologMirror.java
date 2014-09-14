@@ -9,7 +9,7 @@ import nars.io.TextOutput;
 import nars.language.Inheritance;
 import nars.language.Term;
 import nars.prolog.InvalidTheoryException;
-import nars.prolog.Theory;
+import nars.prolog.Struct;
 
 /**
  * Causes a NARProlog to mirror certain activity of a NAR
@@ -33,7 +33,7 @@ public class NARPrologMirror implements Output {
                 Sentence s = task.sentence;
                 if (s.isJudgment()) {
                     try {
-                        Theory th = newJudgmentTheory(s);
+                        Struct th = newJudgmentTheory(s);
                         System.out.println("Prolog Theory: " + th.toString());
                         if (th!=null) 
                             prolog.addTheory(th);
@@ -48,30 +48,28 @@ public class NARPrologMirror implements Output {
             }
         }
     }
+    
     /** creates a theory from a judgment Statement */
-    private Theory newJudgmentTheory(final Sentence judgment) throws InvalidTheoryException {
-        //TODO directly construct the theory objects, instead of creating a String
-        Term term = judgment.content;
-        CharSequence s = termString(term);
+    private Struct newJudgmentTheory(final Sentence judgment) throws InvalidTheoryException {
+        //TODO directly construct the theory objects, instead of creating a String        
+        return pterm(judgment.content);
+    }
 
-        return new Theory(s.toString());
+    //NARS term -> Prolog term
+    public Struct pterm(Term term) {
+        
+        //CharSequence s = termString(term);
+        if (term instanceof Inheritance) {
+            Inheritance i = (Inheritance)term;
+            return new Struct("inheritance", pterm(i.getSubject()), pterm(i.getPredicate()));
+        }
+        else if (term instanceof Term) {
+            return new Struct(term.name().toString());
+        }
+        
+        return null;        
     }
     
-    public CharSequence termString(final Term t) {
-        
-        if (t instanceof Inheritance) {
-            Inheritance i = (Inheritance)t;
-            StringBuilder sb = new StringBuilder();
-            sb.append("inheritance(");
-            sb.append(i.getSubject().name()).append(',').append(i.getPredicate().name());
-            sb.append(").");
-            return sb;
-        }
-        else if (t instanceof Term) {
-            return t.name();
-        }
-        return "";
-    }
 
 
     
