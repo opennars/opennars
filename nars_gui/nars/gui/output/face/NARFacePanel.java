@@ -18,8 +18,8 @@ public class NARFacePanel extends HumanoidFacePanel {
 
     @Override
     public void update(double t) {
-        happy = nar.memory.emotion.happy() > 0.2;
-        busy = nar.memory.emotion.busy() > 0.7;
+        happy = nar.memory.emotion.happy() > 0.6;
+        busy = nar.memory.emotion.busy() > 0.95;
         
         super.update(t);        
     }

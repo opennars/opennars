@@ -95,6 +95,7 @@ public class HumanoidFacePanel extends NPanel {
             face.setFlex('t');
             face.setFlex(':');
             face.setFlex('_');
+            face.setFlex('c');
         }
         
         if (happy) {
