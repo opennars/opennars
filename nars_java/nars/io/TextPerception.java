@@ -2,11 +2,13 @@ package nars.io;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
+import static java.lang.String.valueOf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
@@ -36,12 +38,14 @@ import static nars.io.Symbols.VALUE_SEPARATOR;
 import static nars.io.Symbols.getCloser;
 import static nars.io.Symbols.getOpener;
 import static nars.io.Symbols.getOperator;
+import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getRelation;
 import static nars.io.Symbols.isRelation;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
+import static nars.language.Statement.make;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.language.Variable;
@@ -86,7 +90,7 @@ public class TextPerception {
         this.parsers = parsers;        
     }
     
-    public AbstractTask perceive(String line) {
+    public AbstractTask perceive(String line, NAR nar) {
 
         for (TextReaction p : parsers) {            
             
@@ -101,7 +105,13 @@ public class TextPerception {
         }        
 
         //not handled, so respond with some signal
-        memory.output(Output.ERR.class, "Invalid input: " + line);
+        if(NLP.isNLPStatement(line)) {
+            NLP.processInput(line, nar);
+        }
+        else
+        {
+            memory.output(Output.ERR.class, "Invalid input: " + line);
+        }
         return null;
     }
         
