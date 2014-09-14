@@ -285,7 +285,8 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @throws InvalidTheoryException if the new theory is not valid
 	 * @see Theory
 	 */
-	public SolveInfo addTheory(Theory th) throws InvalidTheoryException {	//no syn
+        @Override
+	public SolveInfo addTheory(final PrologTermIterator th) throws InvalidTheoryException {	//no syn
 		Theory oldTh = getTheory();
 		theoryManager.consult(th, true, null);
 		SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
@@ -293,7 +294,17 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 		TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);    
 		this.notifyChangedTheory(ev);
                 return theoryGoal;
-	}    
+	}
+        
+	public SolveInfo addTheory(final Struct s) throws InvalidTheoryException {	//no syn
+		Theory oldTh = getTheory();
+		theoryManager.consult(s, true, null);
+		SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
+		Theory newTh = getTheory();
+		TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);    
+		this.notifyChangedTheory(ev);
+                return theoryGoal;
+	}        
 
 	/**
 	 * Gets current theory
@@ -308,15 +319,15 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 		}
 	}
 
-
-	/**
-	 * Gets last consulted theory, with the original textual format
-	 *  
-	 * @return theory
-	 */
-	public Theory getLastConsultedTheory() {	//no syn
-		return theoryManager.getLastConsultedTheory();
-	}
+//
+//	/**
+//	 * Gets last consulted theory, with the original textual format
+//	 *  
+//	 * @return theory
+//	 */
+//	public Theory getLastConsultedTheory() {	//no syn
+//		return theoryManager.getLastConsultedTheory();
+//	}
 
 
 	/**

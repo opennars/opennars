@@ -53,13 +53,13 @@ public class TheoryManager implements Serializable {
 	private Prolog engine;
 	private PrimitiveManager primitiveManager;
 	private Stack<Term> startGoalStack;
-	Theory lastConsultedTheory;
+	//Theory lastConsultedTheory;
 
 	public void initialize(Prolog vm) {
 		dynamicDBase = new ClauseDatabase();
 		staticDBase = new ClauseDatabase();
 		retractDBase = new ClauseDatabase();
-		lastConsultedTheory = new Theory();
+//		lastConsultedTheory = new Theory();
 		engine = vm;
 		primitiveManager = engine.getPrimitiveManager();
 	}
@@ -201,33 +201,33 @@ public class TheoryManager implements Serializable {
 	 * @param dynamicTheory if it is true, then the clauses are marked as dynamic
 	 * @param libName       if it not null, then the clauses are marked to belong to the specified library
 	 */
-	public synchronized void consult(Theory theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-		startGoalStack = new Stack<Term>();
-		/*Castagna 06/2011*/   	
-		int clause = 1;
-		/**/
-		// iterate all clauses in theory and assert them
-		try {
-			for (Iterator<? extends Term> it = theory.iterator(engine); it.hasNext();) {
-				/*Castagna 06/2011*/
-				clause++;
-				/**/	
-				Struct d = (Struct) it.next();
-				if (!runDirective(d))
-					assertZ(d, dynamicTheory, libName, true);
-			}
-		} catch (InvalidTermException e) {
-			/*Castagna 06/2011*/
-			//throw new InvalidTheoryException(e.getMessage());
-			throw new InvalidTheoryException(e.getMessage(), clause, e.line, e.pos);
-			/**/
-		}
-
-		if (libName == null)
-			//lastConsultedTheory.append(theory);
-			lastConsultedTheory = theory;
+	public synchronized void consult(PrologTermIterator theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+            startGoalStack = new Stack<Term>();
+            int clause = 1;
+            /**/
+            // iterate and assert all clauses in theory
+            try {
+                    for (Iterator<? extends Term> it = theory.iterator(engine); it.hasNext();) {
+                            clause++;
+                            Struct d = (Struct) it.next();
+                            if (!runDirective(d))
+                                    assertZ(d, dynamicTheory, libName, true);
+                    }
+            } catch (InvalidTermException e) {
+                    throw new InvalidTheoryException(e.getMessage(), clause, e.line, e.pos);
+            }
 	}
-
+        
+	public synchronized void consult(final Struct theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+            startGoalStack = new Stack<Term>();            
+            try {                
+                if (!runDirective(theory))
+                        assertZ(theory, dynamicTheory, libName, true);
+            } catch (InvalidTermException e) {
+                    throw new InvalidTheoryException(e.getMessage(), 0, e.line, e.pos);
+            }
+	}
+        
 	/**
 	 * Binds clauses in the database with the corresponding
 	 * primitive predicate, if any
@@ -349,13 +349,13 @@ public class TheoryManager implements Serializable {
 		return buffer.toString();
 	}
 
-	/**
-	 * Gets last consulted theory
-	 * @return  last theory
-	 */
-	public synchronized Theory getLastConsultedTheory() {
-		return lastConsultedTheory;
-	}
+//	/**
+//	 * Gets last consulted theory
+//	 * @return  last theory
+//	 */
+//	public synchronized Theory getLastConsultedTheory() {
+//		return lastConsultedTheory;
+//	}
 	
 	public void clearRetractDB() {
 		this.retractDBase=new ClauseDatabase();
