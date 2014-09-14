@@ -131,11 +131,11 @@ public class Executive {
             //1. get first operator and execute it
             CompoundTerm cont = (CompoundTerm) content;
             
-            
-            //only allow the long plans here
-            /*if(cont.term.length!= memory.param.shortTermMemorySize.get()) { 
-                return;
-            }*/
+            for (final Term t : cont.term) {
+                if(!(t instanceof Operation) && !(t instanceof Interval)) {
+                    return;
+                }
+            }
             
             final AtomicDuration duration = memory.param.duration;
             
@@ -253,7 +253,7 @@ public class Executive {
                     
                     if (t.hasNext()) {
                         curT = nextT;
-                        continue; //just use last one fow now
+                        continue; //just use last one
                     }
                     else {
                         //Finalize
@@ -283,25 +283,40 @@ public class Executive {
                         for(int j=0;j<cur.size();j++) {
                             terms[cur.size()-j-1]=cur.get(j);
                         }
-
-                        if (terms.length > 1) {
-
-                            Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
-                            val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-
-                            Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
-
-                            BudgetValue bud=BudgetFunctions.forward(val, memory);
-
-                            memory.doublePremiseTask(imp,val,bud);
+                        int u=0, o=0;
+                        for(int j=0;j<terms.length;j++) {
+                            if(terms[j] instanceof Operation  || terms[j] instanceof Interval) {
+                                u++;
+                            }
                         }
+                        
+                        if(u!=0) {
+                            Term[] terms_temp=new Term[u];
+                            for(int j=0;j<terms.length;j++) { //only for operator/wait chains
+                                if(terms[j] instanceof Operation || terms[j] instanceof Interval) {
+                                    terms_temp[o]=terms[j];
+                                    o++;
+                                }
+                            }
+                            terms=terms_temp;
 
+                            if (terms.length > 1) {
+
+                                Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
+                                val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+
+                                Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
+
+                                BudgetValue bud=BudgetFunctions.forward(val, memory);
+
+                                memory.doublePremiseTask(imp,val,bud);
+                            }
+                        }
                     }
                     
                     curT = nextT;
                                         
                 } while (curT!=null);
-                
             }
         }
 
