@@ -21,6 +21,7 @@ public class HumanoidFacePanel extends NPanel {
     public boolean shake = false;
     public boolean busy = false;
     public boolean happy = false;
+    public static int talk=-1;
 
     
     public HumanoidFacePanel()   {   
@@ -57,8 +58,17 @@ public class HumanoidFacePanel extends NPanel {
         
     }   
     
-    
     public void update(double t) {
+        
+        
+        if(talk==0 || talk==-1) {
+            face.setFlex('m');
+            talk=-1;
+        }
+        if(talk!=-1) {
+            talk--;
+            face.setFlex('o');
+        }
         
         face.setFlex('_'); //neutral brows
         face.setFlex('a');
