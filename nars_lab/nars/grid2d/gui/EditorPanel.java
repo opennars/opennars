@@ -122,15 +122,56 @@ public class EditorPanel extends JPanel {
                                     
                                     s.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
                                     s.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
+                                    if(s.cells.readCells[i][j].logic==Logic.SWITCH) {
+                                        s.nar.addInput("<"+name+" --> switch>.");
+                                        if(s.cells.readCells[i][j].light==1.0f) {
+                                            s.nar.addInput("<"+name+" --> on>.");
+                                        }
+                                        else {
+                                            s.nar.addInput("<"+name+" --> off>.");
+                                        }
+                                    }
+                                    if(s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
+                                        s.nar.addInput("<"+name+" --> switch>.");
+                                        if(s.cells.readCells[i][j].light==1.0f) {
+                                            s.nar.addInput("<"+name+" --> on>. :|:");
+                                        }
+                                        else {
+                                            s.nar.addInput("<"+name+" --> off>. :|:");
+                                        }
+                                    }
                                     
                                     if(!c[9].equals("")) {
                                         s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
                                         s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+                                        if(s.cells.readCells[i][j].machine==Machine.Turret) {
+                                            s.nar.addInput("<"+name+" --> firework>.");
+                                            if(s.cells.readCells[i][j].light==1.0f) {
+                                                s.nar.addInput("<"+name+" --> on>. :|:");
+                                            }
+                                            else {
+                                                s.nar.addInput("<"+name+" --> off>. :|:");
+                                            }
+                                        }
+                                        if(s.cells.readCells[i][j].machine==Machine.Light) {
+                                            s.nar.addInput("<"+name+" --> light>.");
+                                            if(s.cells.readCells[i][j].light==1.0f) {
+                                                s.nar.addInput("<"+name+" --> on>. :|:");
+                                            }
+                                            else {
+                                                s.nar.addInput("<"+name+" --> off>. :|:");
+                                            }
+                                        }
                                     }
                                     
                                     s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
                                     s.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
 
+                                    if(s.cells.readCells[i][j].material==Material.Door) {
+                                        s.nar.addInput("<"+name+" --> door>.");
+                                        s.nar.addInput("<"+name+" --> closed>. :|:");
+                                    }
+                                    
                                     s.cells.readCells[i][j].name=c[11];
                                     s.cells.writeCells[i][j].name=c[11];
                                     
@@ -167,11 +208,13 @@ public class EditorPanel extends JPanel {
                                     }
                                     if(val[0].equals("Key")) {
                                         Key addu=new Key(x,y,name);
+                                        s.nar.addInput("<"+name+" --> Key>.");
                                         addu.space=s;
                                         newobj.add(addu);
                                     }
                                     if(val[0].equals("Pizza")) {
                                         Pizza addu=new Pizza(x,y,name);
+                                        s.nar.addInput("<"+name+" --> Pizza>.");
                                         addu.space=s;
                                         newobj.add(addu);
                                     }
