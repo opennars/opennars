@@ -251,7 +251,7 @@ public class TermLink extends Item {
      * @param i The index level
      * @return The index value
      */
-    public short getIndex(final int i) {
+    public final short getIndex(final int i) {
         if ((index != null) && (i < index.length)) {
             return index[i];
         } else {
