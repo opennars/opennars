@@ -131,7 +131,7 @@ public class NARSwing  {
         
         
         InputPanel inputPanel = new InputPanel(nar);
-        Window inputWindow = new Window("Text Input", inputPanel);
+        Window inputWindow = new Window("Input", inputPanel);
         inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);

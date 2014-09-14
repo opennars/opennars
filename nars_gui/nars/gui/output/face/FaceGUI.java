@@ -393,7 +393,7 @@ public class FaceGUI extends BaseClass {
 
         try {
             boolean flag = firstTime;
-            float f1 = 0.5019608F;
+            float f1 = 0.9019608F;
             super.bgcolor = isVectors ? Color.white : new Color(f1, f1, f1);
             if (firstTime) {
                 firstTime = false;
