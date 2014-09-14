@@ -93,7 +93,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement make(final NativeOperator o, final Term subject, final Term predicate, final Memory memory) {
+    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, final Memory memory) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
@@ -142,7 +142,7 @@ public abstract class Statement extends CompoundTerm {
 //        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
 //    }
     
-    public static Statement make(final Statement statement, final Term subj, final Term pred, int order, final Memory memory) {
+    final public static Statement make(final Statement statement, final Term subj, final Term pred, int order, final Memory memory) {
 
         if (statement instanceof Inheritance) {
             return Inheritance.make(subj, pred, memory);
@@ -171,7 +171,7 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order, final Memory memory) {
+    final public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order, final Memory memory) {
         if (statement instanceof Inheritance) {
             return Similarity.make(subj, pred, memory);
         }
@@ -202,7 +202,7 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+    final protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
         final CharSequence subjectName = subject.name();
         final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
@@ -227,7 +227,7 @@ public abstract class Statement extends CompoundTerm {
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
-    public static boolean invalidStatement(final Term subject, final Term predicate) {
+    final public static boolean invalidStatement(final Term subject, final Term predicate) {
         if (subject.equals(predicate)) {
             return true;
         }
@@ -241,9 +241,9 @@ public abstract class Statement extends CompoundTerm {
             final Statement s1 = (Statement) subject;
             final Statement s2 = (Statement) predicate;
             final Term t11 = s1.getSubject();
+            final Term t22 = s2.getPredicate();
             final Term t12 = s1.getPredicate();
             final Term t21 = s2.getSubject();
-            final Term t22 = s2.getPredicate();
             if (t11.equals(t22) && t12.equals(t21)) {
                 return true;
             }

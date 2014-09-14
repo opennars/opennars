@@ -75,7 +75,7 @@ public final class StructuralRules {
         }*/
         Term sub = statement.getSubject();
         Term pred = statement.getPredicate();
-        List<Term> components = compound.cloneTermsList();
+        List<Term> components = compound.getTermList();
         if (((side == 0) && components.contains(pred)) || ((side == 1) && components.contains(sub))) {
             return;
         }

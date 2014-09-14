@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 import nars.core.Memory;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
@@ -472,7 +473,7 @@ public abstract class CompoundTerm extends Term {
     public Term[] cloneTermsExcept(final boolean requireModification, final Term[] toRemove) {
         //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
         
-        List<Term> l = cloneTermsList();
+        List<Term> l = getTermList();
         boolean removed = false;
                 
         for (final Term t : toRemove) {
@@ -522,8 +523,10 @@ public abstract class CompoundTerm extends Term {
         
     }
 
-    public List<Term> cloneTermsList() {        
-        return new ArrayList(Arrays.asList((Term[])term));
+    public List<Term> getTermList() {        
+        ArrayList l = new ArrayList(term.length);
+        addTermsTo(l);
+        return l;
     }
   
     /** forced deep clone of terms */
@@ -630,7 +633,7 @@ public abstract class CompoundTerm extends Term {
      * @return The new compound
      */
     public Term setComponent(final int index, final Term t, final Memory memory) {
-        List<Term> list = cloneTermsList();//Deep();
+        List<Term> list = getTermList();//Deep();
         list.remove(index);
         if (t != null) {
             if (getClass() != t.getClass()) {
@@ -812,6 +815,17 @@ public abstract class CompoundTerm extends Term {
         //so use it as an initial size for the array list
         final ArrayList<TermLink> componentLinks = new ArrayList<>( getComplexity() );              
         return Terms.prepareComponentLinks(componentLinks, this);
+    }
+
+    final public void addTermsTo(final Collection<Term> c) {
+        for (final Term t : term)
+            c.add(t);
+    }
+
+    public final TreeSet<Term> getTermTreeSet() {
+        TreeSet<Term> set = new TreeSet<>();
+        addTermsTo(set);
+        return set;        
     }
 
 
