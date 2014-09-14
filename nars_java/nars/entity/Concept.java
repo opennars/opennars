@@ -291,7 +291,7 @@ public class Concept extends Item {
         boolean newQuestion = true;
         for (final Task t : questions) {
             final Sentence q = t.sentence;
-            if (q.equivalentContent(ques)) {
+            if (q.equalsContent(ques)) {
                 ques = q;
                 newQuestion = false;
                 break;
