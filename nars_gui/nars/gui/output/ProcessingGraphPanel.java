@@ -34,15 +34,10 @@ import nars.language.Term;
 import nars.util.NARGraph;
 import nars.util.NARGraph.DefaultGraphizer;
 import org.jgrapht.ext.JGraphXAdapter;
-import processing.core.PApplet;
-import static processing.core.PConstants.DOWN;
-import static processing.core.PConstants.LEFT;
-import static processing.core.PConstants.RIGHT;
-import static processing.core.PConstants.UP;
 
 
 
-class papplet extends PApplet implements ActionListener 
+class papplet extends PPanel implements ActionListener 
 {
 //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
     
