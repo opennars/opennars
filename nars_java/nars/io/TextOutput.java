@@ -31,6 +31,7 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.gui.output.face.HumanoidFacePanel;
 import nars.language.Statement;
 import nars.operator.Operator;
 
@@ -174,6 +175,9 @@ public class TextOutput implements Output {
             }                            
         }        
         else if (channel == OUT.class) {
+            if(HumanoidFacePanel.talk==-1) {
+                HumanoidFacePanel.talk=5;
+            }
             if (signal instanceof Task) {
                 Task t = (Task)signal;
                 Sentence s = t.getBestSolution();
