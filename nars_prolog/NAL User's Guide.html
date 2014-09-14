@@ -1,0 +1,74 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Pei Wang">
+   <title>NAL User's Guide</title>
+</head>
+<body>
+
+<center><h2>User's Guide of NAL</h2></center>
+
+<h3>Input/Output Language</h3>
+
+In this demonstration, NAL implements the following formal language, Narsese.
+The input and output of the system are Narsese judgments.
+<pre>
+           &lt;judgment&gt; ::= [&lt;statement&gt; [frequency-value, confidence-value]]
+          &lt;statement&gt; ::= &lt;relation&gt;(&lt;term&gt;, &lt;term&gt;)
+                        | &lt;compound-statement&gt;
+                        | &lt;term&gt;
+               &lt;term&gt; ::= &lt;word&gt;
+                        | &lt;variable&gt;
+                        | &lt;compound-term&gt;
+                        | &lt;statement&gt;
+           &lt;variable&gt; ::= &lt;independent-variable&gt;
+                        | &lt;dependent-variable&gt;(&lt;independent-variable&gt;<sup>*</sup>)
+           &lt;relation&gt; ::= inheritance
+                        | similarity
+                        | implication
+                        | equivalence
+                        | instance
+                        | property
+                        | inst_prop                                // instance-property
+ &lt;compound-statement&gt; ::= negation(&lt;statement&gt;)
+                        | conjunction([&lt;statement&gt;, &lt;statement&gt;<sup>+</sup>]) 
+                        | disjunction([&lt;statement&gt;, &lt;statement&gt;<sup>+</sup>]) 
+      &lt;compound-term&gt; ::= ext_set([&lt;term&gt;<sup>+</sup>])                       // extensional set
+                        | int_set([&lt;term&gt;<sup>+</sup>])                       // intensional set
+                        | ext_intersection([&lt;term&gt;, &lt;term&gt;<sup>+</sup>])      // extensional intersection
+                        | int_intersection([&lt;term&gt;, &lt;term&gt;<sup>+</sup>])      // intensional intersection
+                        | ext_difference(&lt;term&gt;, &lt;term&gt;)           // extensional difference
+                        | int_difference(&lt;term&gt;, &lt;term&gt;)           // intensional difference
+                        | product([&lt;term&gt;, &lt;term&gt;<sup>+</sup>])
+                        | ext_image(&lt;term&gt;, &lt;term&gt;)                // extensional image
+                        | int_image(&lt;term&gt;, &lt;term&gt;)                // intensional image
+</pre>
+The frequency-value is a real number in [0, 1]; the confidence-value a real number in (0, 1). 
+
+<h3>User Interface</h3>
+
+The program can be invoked in the following ways:
+<ul>
+<li>
+<tt>revision(J1, J2, J).</tt><br>
+Judgment <tt>J</tt> is the result of a revision between judgments <tt>J1</tt> and <tt>J2</tt>.
+The three judgments all have the same statement in them.
+</li>
+<li>
+<tt>choice(J1, J2, J).</tt><br>
+Judgment <tt>J</tt> is the result of a choice between judgments <tt>J1</tt> and <tt>J2</tt>.
+</li>
+<li>
+<tt>inference(J1, J2, J).</tt><br>
+Judgment <tt>J</tt> is the conclusion derived from judgments <tt>J1</tt> and <tt>J2</tt>
+as premises.
+</li>
+<li>
+<tt>inference(J1, J).</tt><br>
+Judgment <tt>J</tt> is the conclusion derived from judgment <tt>J1</tt> as single premise.
+</li>
+</ul>
+
+</body>
+</html>

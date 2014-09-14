@@ -4,13 +4,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
-import nars.prolog.lib.BasicLibrary;
 
 /**
  * Prolog operator which loads a theory from a file
@@ -47,7 +47,7 @@ public class PrologTheoryFileOperator extends nars.operator.Operator {
         Prolog prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
         
         // assignment because of java happyness
-        BooleanHolder theoryInCache = new BooleanHolder(false);
+        AtomicBoolean theoryInCache = new AtomicBoolean(false);
         
         // try to find the theory in the cache
         // if it was not found we try to load it from the file and store it in the cache
@@ -55,7 +55,7 @@ public class PrologTheoryFileOperator extends nars.operator.Operator {
         
         String theoryContent;
         
-        if (theoryInCache.value) {
+        if (theoryInCache.get()) {
             theoryContent = foundCachedTheory.content;
         }
         else {
