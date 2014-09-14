@@ -60,16 +60,17 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static void match(final Task task, final Sentence belief, final Memory memory) {
-        Sentence sentence = (Sentence) task.sentence.clone();
+        Sentence sentence = task.sentence;
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), belief.getTemporalOrder())) {
-            Term[] u = new Term[] { sentence.content, belief.content.clone() };
-            
             if (sentence.isJudgment()) {
                 if (revisible(sentence, belief)) {
                     revision(sentence, belief, true, memory);
                 }
-            } else if (Variables.unify(Symbols.VAR_QUERY, u)) {
-                trySolution(belief, task, memory);
+            } else {
+                Term[] u = new Term[] { sentence.content, belief.content.clone() };
+                if (Variables.unify(Symbols.VAR_QUERY, u)) {
+                    trySolution(belief, task, memory);
+                }
             }
         }
     }
@@ -82,7 +83,7 @@ public class LocalRules {
      * @return If revision is possible between the two sentences
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
-        return (s1.content.equals(s2.content) && s1.getRevisible()
+        return (s1.equalsContent(s2) && s1.getRevisible()
                 && TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
     }
 

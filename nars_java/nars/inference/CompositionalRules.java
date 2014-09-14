@@ -867,9 +867,8 @@ public final class CompositionalRules {
         }
     }
     
-    static void IntroVarSameSubjectOrPredicate(Sentence originalMainSentence, Sentence subSentence, Term component, Term content, int index, Memory memory) {
-        Sentence cloned = (Sentence) originalMainSentence.clone();
-        Term T1 = cloned.content;
+    static void IntroVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final Memory memory) {
+        Term T1 = originalMainSentence.content;
         if (!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
             return;
         }
@@ -902,7 +901,7 @@ public final class CompositionalRules {
         }
     }
 
-    public static boolean sEqualsP(Term T) {
+    public static boolean sEqualsP(final Term T) {
         if(T instanceof Statement) {
             Statement st=(Statement) T;
             if(st.getSubject().equals(st.getPredicate())) {

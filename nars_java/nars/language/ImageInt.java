@@ -141,10 +141,10 @@ public class ImageInt extends Image {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(final Term[] argument, final short index, final Memory memory) {
+    public static ImageInt make(final Term[] argument, final short index, final Memory memory) {
         CharSequence name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
         Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new ImageInt(name, argument, index);
+        return (t != null) ? ((ImageInt)t) : new ImageInt(name, argument, index);
     }
     
 

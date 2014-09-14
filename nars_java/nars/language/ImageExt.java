@@ -138,10 +138,10 @@ public class ImageExt extends Image {
      * @param index The index of the place-holder in the new Image
      * @return the Term generated from the arguments
      */
-    public static Term make(final Term[] argument, final short index, final Memory memory) {
+    public static ImageExt make(final Term[] argument, final short index, final Memory memory) {
         CharSequence name = makeImageName(NativeOperator.IMAGE_EXT, argument, index);
         Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new ImageExt(name, argument, index);
+        return (t != null) ? ((ImageExt)t) : new ImageExt(name, argument, index);
     }
 
 
