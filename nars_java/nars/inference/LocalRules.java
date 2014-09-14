@@ -135,9 +135,9 @@ public class LocalRules {
                     return;
                 }
             }
-            Term content = belief.cloneContent();
+            Term content = belief.content;
             if (Variables.containVarIndep(content.name())) {
-                Term u[] = new Term[] { content, problem.cloneContent() };
+                Term u[] = new Term[] { content, problem.content };
                 Variables.unify(Symbols.VAR_INDEPENDENT, u);
                 content = u[0];                
                 belief = belief.clone(content);
