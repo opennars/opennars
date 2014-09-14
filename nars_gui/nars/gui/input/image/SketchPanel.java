@@ -51,7 +51,9 @@ public class SketchPanel extends PPanel {
     }
 
     public void draw() {
-        background(204);
+        //background(204);
+        fill(255);
+        rect(0,0,800,50);
         recorder.update();
         recorder.draw();
 

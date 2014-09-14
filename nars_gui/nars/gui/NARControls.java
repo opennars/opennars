@@ -46,6 +46,7 @@ import nars.core.NAR;
 import nars.core.sense.MultiSense;
 import nars.grid2d.TestChamber;
 import nars.gui.input.InputPanel;
+import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.BubbleChart;
 import nars.gui.output.LogPanel;
 import nars.gui.output.MemoryView;
@@ -185,6 +186,17 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             });
             m.add(mv3);
             
+            JMenuItem cct4 = new JMenuItem("+ Input Drawing");
+            cct4.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Window w = new Window("Sketch", new SketchPointCloudPanel(nar));
+                    w.setSize(500,500);
+                    w.setVisible(true);
+                }                
+            });
+            m.add(cct4);
+            
             JMenuItem ml = new JMenuItem("+ Log");
             ml.addActionListener(new ActionListener() {
                 @Override
@@ -243,6 +255,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             });
             m.add(hf);
             
+            
             /*JMenuItem ct = new JMenuItem("+ Concepts");
             ct.addActionListener(new ActionListener() {
                 @Override
@@ -299,12 +312,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 }                
             });
             m.add(cct2);
-            
         }
         menuBar.add(m);
-        
-        
-       
 
         m = new JMenu("Help");
         //addJMenuItem(m, "Related Information");

@@ -19,16 +19,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import nars.core.NAR;
 import nars.gui.Window;
 
 public class SketchPointCloudPanel extends Panel implements MouseListener, MouseMotionListener, ActionListener {
 
     public static void main(String[] args) {
-        Window w = new Window("Sketch", new SketchPointCloudPanel());
+        Window w = new Window("Sketch", new SketchPointCloudPanel(null));
         w.setSize(500, 500);
         w.setVisible(true);
     }
 
+    public NAR nar;
     static final int GESTURE_PROCESSED = 0;
     static final int STROKE_COMPLETE = 2;
     static final int STROKE_IN_PROGRESS = 1;
@@ -43,17 +45,18 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
     Button deleteUserDefined = new Button();
     Button addUserDefined = new Button();
     Button addStandard = new Button();
+    Button addInput = new Button("Add Input");
     TextField userDefinedName = new TextField();
     Choice standardNames = new Choice();
     String name = "";
     double score = 0;
     Image offScreen;
     Color[] lineColors = new Color[30];
-    Color defaultColor = new Color(0f, 0f, 0f);
+    Color defaultColor = Color.WHITE;
 
-    public SketchPointCloudPanel() {
+    public SketchPointCloudPanel(NAR nar) {
         super(new BorderLayout());
-        
+        this.nar=nar;
         for (int i = 0; i < lineColors.length; i++) {
             lineColors[i] = new Color((float) Math.random(), (float) Math.random(), (float) Math.random());
         }
@@ -68,9 +71,13 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         Panel tempContainer = new Panel();
         tempContainer.setLayout(new BorderLayout());
         tempContainer.add(caption, BorderLayout.CENTER);
-        caption.setBackground(Color.YELLOW);
+        caption.setBackground(Color.BLACK);
         clearCanvas.setLabel("Clear");
         clearCanvas.addActionListener(this);
+        tempContainer.add(addInput,BorderLayout.LINE_START);
+        
+        addInput.addActionListener(this);
+        
         tempContainer.add(clearCanvas, BorderLayout.EAST);
         add(tempContainer, BorderLayout.NORTH);
 
@@ -79,13 +86,14 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
         Panel veryTempContainer = new Panel();
         veryTempContainer.setLayout(new FlowLayout());
-        veryTempContainer.add(new Label("Add as example of existing type:"));
-        veryTempContainer.add(standardNames);
-        addStandard.setLabel("Add");
-        addStandard.setEnabled(false);
-        addStandard.addActionListener(this);
-        veryTempContainer.add(addStandard);
-        tempContainer.add(veryTempContainer);
+        //veryTempContainer.add(new Label("Add as example of existing type:"));
+        //veryTempContainer.add(standardNames);
+        //addStandard.setLabel("Add");
+        //addStandard.setEnabled(false);
+       // addStandard.addActionListener(this);
+        //veryTempContainer.add(addStandard);
+      //  veryTempContainer.add(addInput);
+        //tempContainer.add(veryTempContainer);
 
         veryTempContainer = new Panel();
         veryTempContainer.setLayout(new FlowLayout());
@@ -115,10 +123,16 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         addMouseMotionListener(this);
     }
 
+    public String drawing="";
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == clearCanvas) {
             clearCanvas();
             return;
+        }
+        
+        if(e.getSource() == addInput && !drawing.equals("")) {
+            nar.addInput("<"+drawing.replace(" ","-")+" --> drawn>. :|:");
+            nar.step(1);
         }
 
         if (e.getSource() == deleteUserDefined) {
@@ -204,6 +218,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 score = r.getScore();
                 caption.setForeground(defaultColor);
                 caption.setText("Result: " + name + " (" + round(score, 2) + ")");
+                drawing=name;
                 state = GESTURE_PROCESSED;
                 _currentStrokeId = 0;
                 addUserDefined.setEnabled(true);
