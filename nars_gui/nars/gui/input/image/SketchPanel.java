@@ -1,4 +1,4 @@
-package nars.gui.input;
+package nars.gui.input.image;
 
 import java.util.Stack;
 import nars.gui.Window;

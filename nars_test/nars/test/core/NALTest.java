@@ -294,6 +294,7 @@ public class NALTest  {
         /** returns true if condition was satisfied */
         abstract public boolean condition(Class channel, Object signal);
 
+        @Override
         public String toString() {            
             return  getClass().getSimpleName() + " " + (realized ? "OK: " + exact : getFailureReason());
         }
@@ -303,19 +304,22 @@ public class NALTest  {
     
     public static class ExpectOutputEmpty extends Expect {
 
+        List<String> output = new LinkedList();
+        
         public ExpectOutputEmpty(NAR nar) {
             super(nar);
             realized = true;
         }
 
         public String getFailureReason() {
-            return "FAIL: output exists";
+            return "FAIL: output exists but should not: " + output;
         }
          
         @Override
         public boolean condition(Class channel, Object signal) {
             //any OUT or ERR output is a failure
             if ((channel == OUT.class) || (channel == ERR.class)) {
+                output.add(channel.getSimpleName().toString() + ": " + signal.toString());
                 realized = false;
                 return false;
             }
@@ -335,6 +339,7 @@ public class NALTest  {
             this.saveSimilar = saveSimilar;
         }
 
+        @Override
         public String getFailureReason() {
             String s = "FAIL: No substring match: " + containing;
             if (!almost.isEmpty()) {
