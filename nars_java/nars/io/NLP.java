@@ -37,7 +37,7 @@ public class NLP {
     public static void processInput(String s, NAR nar) {
         //to keep NLP overhead as small as possible we will here use a heuristic which directly
         
-        s=s.replace("go to","go-to");
+        s=s.replace("go to","go-to").replace("should be","is");
         
         String punct="."; //translates to Narsese whenever it can, and use general sentence form else
         if(s.endsWith("?")) {
