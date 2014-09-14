@@ -13,7 +13,7 @@ import nars.gui.NARSwing;
 public class ContinuousNARSwing {
 
     public static void main(String[] arg) {
-        NAR cn = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
+        NAR cn = new ContinuousBagNARBuilder(true).setConceptBagSize(8192).build();
         
         NARSwing w = new NARSwing(cn);
     }

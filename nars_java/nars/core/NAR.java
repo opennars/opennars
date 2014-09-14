@@ -233,6 +233,8 @@ public class NAR implements Runnable, Output, TaskSource {
         DEBUG = debug; 
         running = true;
 
+        updatePorts();
+        
         //clear input
         while (!inputChannels.isEmpty()) {
             step(1);
@@ -280,6 +282,12 @@ public class NAR implements Runnable, Output, TaskSource {
     }
 
     protected void updatePorts() {
+        if (!ioChanged) {
+            return;
+        }
+        
+        ioChanged = false;        
+        
         if (!newInputChannels.isEmpty()) {
             for (final InPort n : newInputChannels)
                 inputChannels.add(n);
@@ -363,13 +371,10 @@ public class NAR implements Runnable, Output, TaskSource {
     private void cycle() {
         if (DEBUG) {
             debugTime();            
-        }
+        }        
+
+        updatePorts();
         
-        if (ioChanged) {
-            ioChanged = false;
-            updatePorts();
-        }
-                
         try {
             memory.cycle(this);
         }
@@ -391,7 +396,10 @@ public class NAR implements Runnable, Output, TaskSource {
      * @param o 
      */
     @Override
-    public void output(final Class channel, final Object o) {       
+    public void output(final Class channel, final Object o) {
+        
+        updatePorts();
+        
 //        if (o instanceof Sentence) {
 //            System.err.println("output should receive Task, not a Sentence");
 //            new Exception().printStackTrace();;

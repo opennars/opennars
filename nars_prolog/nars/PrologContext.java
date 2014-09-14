@@ -3,6 +3,7 @@ package nars;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.NAR;
 import nars.language.Term;
 import nars.prolog.Prolog;
@@ -31,9 +32,9 @@ public class PrologContext {
     }
     
     // theoryInCache is a reference which gets the result, is the theory allready in the cache?
-    public CachedTheory getCachedTheoryIfCached(String theoryName, BooleanHolder theoryInCache) {
-        theoryInCache.value = theoryCache.containsKey(theoryName);
-        if (theoryInCache.value) {
+    public CachedTheory getCachedTheoryIfCached(String theoryName, AtomicBoolean theoryInCache) {
+        theoryInCache.set( theoryCache.containsKey(theoryName) );
+        if (theoryInCache.get()) {
             return theoryCache.get(theoryName);
         }
         

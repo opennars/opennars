@@ -11,11 +11,11 @@ import org.junit.Test;
  */
 
 
-public class DistributorTest {
+public class DistributorAnalyzer {
 
     @Test public void testDistributorProbabilities() {
         
-        int levels = 100;
+        int levels = 20;
         Distributor d = Distributor.get(levels);
         int[] count = new int[levels];
         
