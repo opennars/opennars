@@ -54,9 +54,8 @@ public class SentencePipe implements Input, Output {
         if (channel == OUT.class) {
             if (o instanceof Task) {
                 //TODO avoid converting to string and instead insert directly to target's memory
-                Sentence s = ((Task) o).sentence;
-                s = (Sentence) s.clone();
-                s = process(s);
+                Sentence s = ((Task) o).sentence;                
+                s = process(s.clone());
                 //TODO: <statement_from_other_nars --> narsinput>.
                 if (s != null) {
                     buffer.add(s);

@@ -396,8 +396,8 @@ public class Sentence implements Cloneable {
         return operation;
     }
 
-    boolean equivalentContent(final Sentence s) {
-        return content.equals(s.content);
+    final public boolean equalsContent(final Sentence s2) {
+        return content.equals(s2.content);
     }
 
 }

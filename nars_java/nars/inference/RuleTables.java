@@ -532,7 +532,7 @@ public class RuleTables {
         if(originalMainSentence==null)  {
             return;
         }
-        Sentence mainSentence = (Sentence) originalMainSentence.clone();   // for substitution
+        Sentence mainSentence = originalMainSentence;   // for substitution
         Statement statement = (Statement) mainSentence.content;
         Term component = statement.term[index];
         Term content = subSentence.content;

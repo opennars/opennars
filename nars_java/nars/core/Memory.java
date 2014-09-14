@@ -77,6 +77,7 @@ import nars.language.DifferenceExt;
 import nars.language.DifferenceInt;
 import nars.language.Disjunction;
 import nars.language.Equivalence;
+import nars.language.Image;
 import nars.language.ImageExt;
 import nars.language.ImageInt;
 import nars.language.Implication;
@@ -162,9 +163,9 @@ public class Memory implements Output, Serializable {
      */
     public Term term(final CompoundTerm compound, final Term[] components) {
         if (compound instanceof ImageExt) {
-            return ImageExt.make(components, ((ImageExt) compound).relationIndex, this);
+            return ImageExt.make(components, ((Image) compound).relationIndex, this);
         } else if (compound instanceof ImageInt) {
-            return ImageInt.make(components, ((ImageInt) compound).relationIndex, this);
+            return ImageInt.make(components, ((Image) compound).relationIndex, this);
         } else {
             return term(compound.operator(), components);
         }
