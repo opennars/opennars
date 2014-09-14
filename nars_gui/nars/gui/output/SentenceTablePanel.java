@@ -14,6 +14,7 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.gui.Window;
 
 
 
@@ -85,7 +86,10 @@ public class SentenceTablePanel extends TablePanel {
 
     
     public void newSelectedGraphPanel() {
-        new ProcessingGraphPanel(nar, getSelectedRows());        
+        ProcessingGraphPanel pgp = new ProcessingGraphPanel(nar, getSelectedRows(1));        
+        Window w = new Window("", pgp);
+        w.setSize(400,400);
+        w.setVisible(true);
     }
     
     @Override

@@ -5,7 +5,6 @@ import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import nars.core.NAR;
-import nars.entity.Sentence;
 import nars.gui.NPanel;
 import nars.io.Output;
 
@@ -31,12 +30,12 @@ public abstract class TablePanel extends NPanel implements Output {
         }
     }
 
-    protected List<Object> getSelectedRows() {
+    protected List<Object> getSelectedRows(int column) {
         int[] selectedRows = table.getSelectedRows();
         List<Object> l = new ArrayList(selectedRows.length);
         for (int i : selectedRows) {
             int selectedRow = table.convertRowIndexToModel(i);
-            l.add((Sentence) data.getValueAt(selectedRow, 0));
+            l.add(data.getValueAt(selectedRow, column));
         }
         return l;
     }
