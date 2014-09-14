@@ -84,14 +84,14 @@ public class NLP {
                     int leftcnt=0;
                     int rightcnt=0;
                     for(int j=0;j<i;j++) {
-                        if(words[j].equals("at") || words[i].equals("on") || words[i].equals("in")) {
+                        if(words[j].equals("at") || words[j].equals("on") || words[j].equals("in")) {
                             break;
                         }
                         leftcnt++;
                         left+=","+words[j];
                     }
                     for(int j=i+1;j<words.length;j++) {
-                        if(words[j].equals("at") || words[i].equals("on") || words[i].equals("in")) {
+                        if(words[j].equals("at") || words[j].equals("on") || words[j].equals("in")) {
                             break;
                         }
                         rightcnt++;
