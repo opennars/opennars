@@ -15,14 +15,14 @@ public class Perception {
     }
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    public AbstractTask perceive(final Object o) throws IOException {        
+    public AbstractTask perceive(final Object o, NAR nar) throws IOException {        
         AbstractTask t;
         if (o instanceof String) {
-            t = text.perceive((String) o);
+            t = text.perceive((String) o, nar);
         } else if (o instanceof Sentence) {
             //TEMPORARY
             Sentence s = (Sentence) o;
-            t = text.perceive(s.content.toString() + s.punctuation + " " + s.truth.toString());
+            t = text.perceive(s.content.toString() + s.punctuation + " " + s.truth.toString(),nar);
         } else {
             throw new IOException("Unrecognized input (" + o.getClass() + "): " + o);
         }
