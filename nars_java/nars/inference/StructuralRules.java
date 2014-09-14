@@ -231,6 +231,9 @@ public final class StructuralRules {
 //        if (!memory.getCurrentTask().sentence.isJudgment()) {
 //            return;
 //        }
+        if(index >= compound.term.length) {
+            return;
+        }
         Term component = compound.term[index];
         Task task = memory.getCurrentTask();
         Sentence sentence = task.sentence;
