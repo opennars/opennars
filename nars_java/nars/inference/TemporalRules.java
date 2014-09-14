@@ -49,7 +49,7 @@ public class TemporalRules {
     public static final int ORDER_BACKWARD = -1;
     public static final int ORDER_INVALID = -2;
 
-    public static int reverseOrder(int order) {
+    public final static int reverseOrder(final int order) {
         if (order == ORDER_NONE) {
             return ORDER_NONE;
         } else {
@@ -57,11 +57,11 @@ public class TemporalRules {
         }
     }
 
-    public static boolean matchingOrder(int order1, int order2) {
+    public final static boolean matchingOrder(final int order1, final int order2) {
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }
 
-    public static int dedExeOrder(int order1, int order2) {
+    public final static int dedExeOrder(final int order1, final int order2) {
         int order = ORDER_INVALID;
         if ((order1 == order2) || (order2 == TemporalRules.ORDER_NONE)) {
             order = order1;
@@ -73,7 +73,7 @@ public class TemporalRules {
         return order;
     }
 
-    public static int abdIndComOrder(int order1, int order2) {
+    public final static int abdIndComOrder(final int order1, final int order2) {
         int order = ORDER_INVALID;
         if (order2 == TemporalRules.ORDER_NONE) {
             order = order1;
@@ -85,7 +85,7 @@ public class TemporalRules {
         return order;
     }
 
-    public static int analogyOrder(int order1, int order2, int figure) {
+    public final static int analogyOrder(final int order1, final int order2, final int figure) {
         int order = ORDER_INVALID;
         if ((order2 == TemporalRules.ORDER_NONE) || (order2 == TemporalRules.ORDER_CONCURRENT)) {
             order = order1;
@@ -103,7 +103,7 @@ public class TemporalRules {
         return order;
     }
 
-    public static int resemblanceOrder(int order1, int order2, int figure) {
+    public static final int resemblanceOrder(final int order1, final int order2, final int figure) {
         int order = ORDER_INVALID;
         if ((order2 == TemporalRules.ORDER_NONE)) {
             order = (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
@@ -117,7 +117,7 @@ public class TemporalRules {
         return order;
     }
 
-    public static int composeOrder(int order1, int order2) {
+    public static final int composeOrder(final int order1, final int order2) {
         int order = ORDER_INVALID;
         if (order2 == TemporalRules.ORDER_NONE) {
             order = order1;
@@ -130,30 +130,21 @@ public class TemporalRules {
     }
     
     //helper function for temporal induction to not produce wrong terms, only one temporal operator is allowed
-    public static boolean tooMuchTemporalStatements(final Term t) {
+    public final static boolean tooMuchTemporalStatements(final Term t) {
         if(t==null) {
             return true;
         }
-//        String s=t.toString();
-//        int a=s.length() - s.replace("=/>", "").length(); //how often the substring is contained in s (times 3 because its 3 chars)
-//        int b=s.length() - s.replace("=|>", "").length();
-//        int c=s.length() - s.replace("=\\>", "").length();
-//        int d=s.length() - s.replace("</>", "").length();
-//        int e=s.length() - s.replace("<|>", "").length();
-        
-        //System.out.println(t.containedTemporalRelations() + " " + ((a+b+c+d+e)/3 > 1));
-        
         return t.containedTemporalRelations() > 1;
-        //return (a+b+c+d+e)/3 > 1;
     }
         
+    static final Variable varInd0 = new Variable("$0");
     
     public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {
         if ((s1.truth==null) || (s2.truth==null))
             return;
         
-        Term t1 = s1.cloneContent();
-        Term t2 = s2.cloneContent();
+        Term t1 = s1.content;
+        Term t2 = s2.content;
         Term t11=null;
         Term t22=null;
         
@@ -171,7 +162,8 @@ public class TemporalRules {
             Statement ss2 = (Statement) t2;
 
             
-            Variable var1 = new Variable("$0");
+            
+            Variable var1 = varInd0;
             Variable var2 = var1;
 
             if (ss1.getSubject().equals(ss2.getSubject())) {
@@ -189,14 +181,14 @@ public class TemporalRules {
                     Term ss2_term = ((Operation)ss2).getSubject();
                     if(ss2_term instanceof Product) {
                         Product ss2_prod=(Product) ss2_term;
-                        for(Term t : ss2_prod.term)
+                        for(final Term t : ss2_prod.term)
                         {
                             if(t.equals(comp)) {
                                 anyone=true;
                             }
                         }
                         if(anyone && !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT)) { //only if there is one and it isnt a variable already
-                            Term[] ars=ss2_prod.term.clone();
+                            Term[] ars = ss2_prod.term;
                             for(int i=0;i<ars.length;i++) {
                                 if(ars[i].equals(comp)) {
                                     ars[i]=var1;
@@ -308,6 +300,8 @@ public class TemporalRules {
         }
         TruthValue truth = solution.truth;
         if (problem.getOccurenceTime() != solution.getOccurenceTime()) {
+            //TODO avoid creating entire Sentence; 
+            //only calculate TruthValue which is all that is useful here
             Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.getTime());
             truth = cloned.truth;
         }
