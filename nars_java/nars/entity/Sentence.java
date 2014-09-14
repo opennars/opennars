@@ -155,12 +155,12 @@ public class Sentence implements Cloneable {
     }
 
     /** Clone with a different Term */    
-    public Sentence clone(final Term t) {
+    public final Sentence clone(final Term t) {
         return new Sentence(t, punctuation, 
                 truth!=null ? new TruthValue(truth) : null, 
                 stamp.clone());
     }
-    
+
     /**
       * project a judgment to a difference occurrence time
       *
@@ -187,6 +187,7 @@ public class Sentence implements Cloneable {
                 }
             }
         }
+        
         
         Stamp newStamp = eternalizing ? stamp.cloneAt(Stamp.ETERNAL) : stamp.clone();
         

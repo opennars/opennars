@@ -288,7 +288,7 @@ public class RuleTables {
      * @param link2 The link to the second premise
      * @return The figure of the syllogism, one of the four: 11, 12, 21, or 22
      */
-    private static int indexToFigure(TermLink link1, TermLink link2) {
+    private static final  int indexToFigure(final TermLink link1, final TermLink link2) {
         return (link1.getIndex(0) + 1) * 10 + (link2.getIndex(0) + 1);
     }
 
@@ -301,8 +301,8 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void asymmetricAsymmetric(final Sentence taskSentence, final Sentence belief, int figure, final Memory memory) {
-        Statement taskStatement = (Statement) taskSentence.cloneContent();
-        Statement beliefStatement = (Statement) belief.cloneContent();
+        Statement taskStatement = (Statement) taskSentence.content;
+        Statement beliefStatement = (Statement) belief.content;
         
         Term t1, t2;
         Term[] u = new Term[] { taskStatement, beliefStatement };
@@ -394,9 +394,9 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param memory Reference to the memory
      */
-    private static void asymmetricSymmetric(Sentence asym, Sentence sym, int figure, Memory memory) {
-        Statement asymSt = (Statement) asym.cloneContent();
-        Statement symSt = (Statement) sym.cloneContent();
+    private static void asymmetricSymmetric(final Sentence asym, final Sentence sym, final int figure, final Memory memory) {
+        Statement asymSt = (Statement) asym.content;
+        Statement symSt = (Statement) sym.content;
         Term t1, t2;
         Term[] u = new Term[] { asymSt, symSt };
         switch (figure) {
@@ -405,12 +405,7 @@ public class RuleTables {
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getPredicate();
                     
-                    asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {
-                        
-                        asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                        
+                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                         
                     } else {
@@ -424,14 +419,8 @@ public class RuleTables {
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getSubject();
                     
-                    asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                    
                     if (Variables.unify(VAR_QUERY, t1, t2, u)) {
-                        
-                        asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                        
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
-                        
                     } else {
                         SyllogisticRules.analogy(t2, t1, asym, sym, figure, memory);
                     }
@@ -442,14 +431,8 @@ public class RuleTables {
                     t1 = asymSt.getSubject();
                     t2 = symSt.getPredicate();
                     
-                    asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {
-                        
-                        asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                        
+                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
-                        
                     } else {
                         SyllogisticRules.analogy(t1, t2, asym, sym, figure, memory);
                     }
@@ -458,16 +441,10 @@ public class RuleTables {
             case 22:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), u)) {
                     t1 = asymSt.getSubject();
-                    t2 = symSt.getSubject();
+                    t2 = symSt.getSubject();                    
                     
-                    asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                    
-                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {
-                        
-                        asymSt = (Statement) u[0];  symSt = (Statement) u[1];
-                        
+                    if (Variables.unify(VAR_QUERY, t1, t2, u)) {                        
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
-                        
                     } else {
                         SyllogisticRules.analogy(t1, t2, asym, sym, figure, memory);
                     }
@@ -485,8 +462,8 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void symmetricSymmetric(final Sentence belief, final Sentence taskSentence, int figure, final Memory memory) {
-        Statement s1 = (Statement) belief.cloneContent();
-        Statement s2 = (Statement) taskSentence.cloneContent();
+        Statement s1 = (Statement) belief.content;
+        Statement s2 = (Statement) taskSentence.content;
         
         Term ut1, ut2;  //parameters for unify()
         Term rt1, rt2;  //parameters for resemblance()
