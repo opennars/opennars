@@ -11,7 +11,7 @@ import nars.gui.Window;
 public class HumanoidFacePanel extends NPanel {   
     private static final long serialVersionUID = 1L;   
     GraphApp g;   
-    private final FaceGUI face;
+    protected final FaceGUI face;
 
     double nextSpin = 0;
     double nextNod = 0;
@@ -21,7 +21,7 @@ public class HumanoidFacePanel extends NPanel {
     public boolean shake = false;
     public boolean busy = false;
     public boolean happy = false;
-    public static int talk=-1;
+    public int talk=-1;
 
     
     public HumanoidFacePanel()   {   
