@@ -967,6 +967,7 @@ public class BasicLibrary extends Library {
 
     // throw/1
     public boolean throw_1(Term error) throws PrologError {
+        System.err.println("throw_1: " + error);
         throw new PrologError(error);
     }
 

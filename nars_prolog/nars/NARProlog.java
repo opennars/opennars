@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import nars.io.Output;
 import nars.prolog.NoSolutionException;
 import nars.prolog.Prolog;
+import nars.prolog.SolveInfo;
 import nars.prolog.Theory;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
@@ -56,8 +57,9 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
         
         //TEMPORARY
         try {
-            System.out.println("Question:  " + e.getSolveInfo().getQuery() + " ?");
-            System.out.println("  Answer:  " + e.getSolveInfo().getSolution());
+            SolveInfo s = e.getSolveInfo();            
+            System.out.println("Question:  " + s.getQuery() + " ?");
+            System.out.println("  Answer:  " + s.getSolution());
         } catch (NoSolutionException ex) {
             //No solution
             System.out.println("  Answer: none.");
