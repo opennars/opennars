@@ -18,7 +18,7 @@ public class PrologTestCase extends TestCase {
 	
 	public void testLoadLibraryAsString() throws InvalidLibraryException {
 		Prolog engine = new Prolog();
-		engine.loadLibrary("alice.tuprolog.StringLibrary");
+		engine.loadLibrary("nars.prolog.StringLibrary");
 		assertNotNull(engine.getLibrary("nars.prolog.StringLibrary"));
 	}
 	

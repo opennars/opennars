@@ -30,10 +30,10 @@ public class ISOIOLibraryTestCase {
 		{	
 			engine = new Prolog(new String[] {
 					"nars.prolog.lib.BasicLibrary",
-					//"nars.prolog.lib.IOLibrary",
+					"nars.prolog.lib.IOLibrary",
 			"nars.prolog.lib.ISOIOLibrary"});
 
-			File file = new File(".");
+			File file = new File("/tmp");
 			writePath = file.getCanonicalPath() 
 					+ File.separator + "test"
 					+ File.separator + "unit"

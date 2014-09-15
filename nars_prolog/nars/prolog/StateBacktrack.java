@@ -19,7 +19,7 @@ package nars.prolog;
 
 import java.util.*;
 
-import alice.util.OneWayList;
+import nars.prolog.util.OneWayList;
 
 
 /**

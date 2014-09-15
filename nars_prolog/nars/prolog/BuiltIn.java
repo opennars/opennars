@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import nars.prolog.util.Tools;
 
 /**
  * Library of built-in predicates
@@ -263,7 +264,7 @@ public class BuiltIn extends Library {
 	        Iterator<? extends Term> it = list.listIterator();
 	        int count = 0;
 	        while (it.hasNext()) {
-	        	String path = alice.util.Tools.removeApices(it.next().toString());
+	        	String path = Tools.removeApices(it.next().toString());
 	            args[count++] = path;
 	        }
 	        return args;
@@ -609,7 +610,7 @@ public class BuiltIn extends Library {
 	 public void include_1(Term theory) throws FileNotFoundException,
 	 InvalidTheoryException, IOException {
 		 theory = theory.getTerm();
-         String path = alice.util.Tools.removeApices(theory.toString());
+         String path = Tools.removeApices(theory.toString());
          if(! new File(path).isAbsolute()) {
             path = engine.getCurrentDirectory()  + File.separator + path;
          }

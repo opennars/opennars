@@ -7,6 +7,10 @@ public class TestCounter {
 	public void update() {
 		value++;
 	}
+        
+        public void inc() {
+		value++;
+	}
 	
 	public int getValue() {
 		return value;

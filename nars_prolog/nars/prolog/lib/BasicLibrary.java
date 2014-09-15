@@ -29,6 +29,7 @@ import nars.prolog.Struct;
 import nars.prolog.Term;
 import nars.prolog.Theory;
 import nars.prolog.Var;
+import nars.prolog.util.Tools;
 
 /**
  * This class defines a set of basic built-in predicates for the tuProlog engine
@@ -116,7 +117,7 @@ public class BasicLibrary extends Library {
 //        libName = libName.getTerm();
 //        try {
 //            Library lib = getEngine().loadLibrary(
-//                    alice.util.Tools.removeApices(clName.getName()));
+//                    Tools.removeApices(clName.getName()));
 //            return unify(libName, new Struct(lib.getName()));
 //        } catch (Exception ex) {
 //            return false;
@@ -177,7 +178,7 @@ public class BasicLibrary extends Library {
                     th);
         Struct theory = (Struct) th;
         try {
-            new Agent(alice.util.Tools.removeApices(theory.toString())).spawn();
+            new Agent(Tools.removeApices(theory.toString())).spawn();
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -206,7 +207,7 @@ public class BasicLibrary extends Library {
         Struct theory = (Struct) th;
         Struct goal = (Struct) g;
         try {
-            new Agent(alice.util.Tools.removeApices(theory.toString()), goal
+            new Agent(Tools.removeApices(theory.toString()), goal
                     .toString()
                     + ".").spawn();
             return true;
@@ -802,7 +803,7 @@ public class BasicLibrary extends Library {
             return unify(arg0, new Struct(arg1.toString()));
         } else {
             try {
-                String text = alice.util.Tools.removeApices(arg0.toString());
+                String text = Tools.removeApices(arg0.toString());
                 return unify(arg1, getEngine().toTerm(text));
             } catch (Exception ex) {
                 return false;

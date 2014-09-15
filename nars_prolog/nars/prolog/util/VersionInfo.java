@@ -1,4 +1,4 @@
-package alice.util;
+package nars.prolog.util;
 
 public class VersionInfo 
 {

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import nars.prolog.ClauseInfo;
 import nars.prolog.Struct;
-import alice.util.OneWayList;
+import nars.prolog.util.OneWayList;
 
 /**
  * @author Alex Benini

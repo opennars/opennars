@@ -33,6 +33,7 @@ import nars.prolog.PrologError;
 import nars.prolog.Struct;
 import nars.prolog.Term;
 import nars.prolog.Var;
+import nars.prolog.util.Tools;
 
 /**
  * This class provides basic I/O predicates.
@@ -402,14 +403,15 @@ public class IOLibrary extends Library {
 
     public boolean print_1(Term arg0) throws PrologError {
         arg0 = arg0.getTerm();
-        if (arg0 instanceof Var)
+        if (arg0 instanceof Var) {
             throw PrologError.instantiation_error(engine.getEngineManager(), 1);
+        }
         if (outputStreamName.equals(STDOUT_NAME)) { /* Changed from "stdout" to STDOUT_NAME */
             getEngine().stdOutput(
-                    alice.util.Tools.removeApices(arg0.toString()));
+                    Tools.removeApices(arg0.toString()));
         } else {
             try {
-                outputStream.write(alice.util.Tools.removeApices(
+                outputStream.write(Tools.removeApices(
                         arg0.toString()).getBytes());
             } catch (IOException e) {
                 throw PrologError.permission_error(engine.getEngineManager(),
@@ -454,12 +456,12 @@ public class IOLibrary extends Library {
                     file_name);
         Struct fileName = (Struct) file_name.getTerm();
         Struct goal = null;
-        String path = alice.util.Tools.removeApices(((Struct) fileName).toString());
+        String path = Tools.removeApices(((Struct) fileName).toString());
         if(! new File(path).isAbsolute()) {
             path = engine.getCurrentDirectory()  + File.separator + path;
         }
         try {
-            goal = new Struct(alice.util.Tools.loadText(path));
+            goal = new Struct(Tools.loadText(path));
         } catch (IOException e) {
             throw PrologError.existence_error(engine.getEngineManager(), 1,
                     "stream", file_name, new Struct(e.getMessage()));

@@ -241,13 +241,18 @@ public class Struct extends Term {
         arg[index] = argument;
     }
     
+    void setArg(Term[] newArgs) {
+        this.arity = newArgs.length;
+        this.arg = newArgs;
+    }
+    
     /**
      * Gets the i-th element of this structure
      *
      * No bound check is done. It is equivalent to
      * <code>getArg(index).getTerm()</code>
      */
-    public Term getTerm(int index) {
+    public Term getTerm(final int index) {
             if (!(arg[index] instanceof Var))
                 return arg[index];
             return arg[index].getTerm();
@@ -275,7 +280,7 @@ public class Struct extends Term {
     // check type services
     
     public boolean isAtomic() {
-        return  arity == 0;
+        return arity == 0;
     }
     
     public boolean isCompound() {
@@ -287,7 +292,7 @@ public class Struct extends Term {
     }
     
     public boolean isList() {
-        return (name.equals(".") && arity == 2 && arg[1].isList()) || isEmptyList();
+        return (arity == 2 && name.equals(".") &&  arg[1].isList()) || isEmptyList();
     }
     
     public boolean isGround() {
@@ -528,7 +533,7 @@ public class Struct extends Term {
      * Is this structure an empty list?
      */
     public boolean isEmptyList() {
-        return name.equals("[]") && arity == 0;
+        return (arity == 0) && (name.equals("[]"));
     }
     
     /**
@@ -668,7 +673,8 @@ public class Struct extends Term {
      * @param vl2 list of variables unified
      * @return true if the term is unifiable with this one
      */
-    public boolean unify(List<Var> vl1,List<Var> vl2,Term t) {
+        @Override
+    public boolean unify(final List<Var> vl1, final List<Var> vl2, Term t) {
         // In fase di unificazione bisogna annotare tutte le variabili della struct completa.
         t = t.getTerm();
         if (t instanceof Struct) {

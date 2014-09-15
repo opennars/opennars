@@ -42,7 +42,7 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
     
     @Override
     public void onWarning(WarningEvent e) {
-        output.output(Prolog.class, e.getMsg());
+        output.output(Prolog.class, e.getMsg() + ", from " + e.getSource());
     }
 
     @Override
@@ -56,9 +56,12 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
         
         //TEMPORARY
         try {
-            System.out.println("SOLUTION:  " + e.getSolveInfo().getQuery() + " :: "+ e.getSolveInfo().getSolution());
+            System.out.println("Question:  " + e.getSolveInfo().getQuery() + " ?");
+            System.out.println("  Answer:  " + e.getSolveInfo().getSolution());
         } catch (NoSolutionException ex) {
-            Logger.getLogger(NARProlog.class.getName()).log(Level.SEVERE, null, ex);
+            //No solution
+            System.out.println("  Answer: none.");
+            //Logger.getLogger(NARProlog.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }

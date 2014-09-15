@@ -31,6 +31,7 @@ import nars.prolog.PrologError;
 import nars.prolog.Struct;
 import nars.prolog.Term;
 import nars.prolog.Var;
+import nars.prolog.util.Tools;
 
 /**
  * This class provides basic ISO I/O predicates.
@@ -1642,7 +1643,7 @@ public class ISOIOLibrary extends Library{
                      if(quoted == true){ //per scrivere sull'output devo richiamare l'output dell'Engine nel caso di stdio,
                                                         //altrimenti utilizzando write() il risultato lo stampa sulla console Java.
                                                         //Nel caso in cui l'output e' un file write e' corretto.
-                         getEngine().stdOutput((alice.util.Tools.removeApices(out_term.toString())));
+                         getEngine().stdOutput((Tools.removeApices(out_term.toString())));
                      }
                      else{
                          getEngine().stdOutput((out_term.toString()));
@@ -1650,7 +1651,7 @@ public class ISOIOLibrary extends Library{
                  } 
                  else {
                          if(quoted == true){
-                         output.write((alice.util.Tools.removeApices(out_term.toString())).getBytes());
+                         output.write((Tools.removeApices(out_term.toString())).getBytes());
                      }
                      else{
                          output.write((out_term.toString()).getBytes());
@@ -1665,7 +1666,7 @@ public class ISOIOLibrary extends Library{
                 
                 if (output_name.equals("stdout")) {
                     if(quoted == true){ 
-                         getEngine().stdOutput((alice.util.Tools.removeApices(out_term.toString())+" "));
+                         getEngine().stdOutput((Tools.removeApices(out_term.toString())+" "));
                     }
                     else{
                          getEngine().stdOutput((out_term.toString()+" "));
@@ -1673,7 +1674,7 @@ public class ISOIOLibrary extends Library{
                 } 
                  else {
                          if(quoted == true){
-                        output.write((alice.util.Tools.removeApices(out_term.toString())+" ").getBytes());
+                        output.write((Tools.removeApices(out_term.toString())+" ").getBytes());
                     }
                     else{
                         output.write((out_term.toString()+" ").getBytes());
@@ -1761,7 +1762,7 @@ public class ISOIOLibrary extends Library{
                             return term.toString();
                         }
                         else{
-                            result += alice.util.Tools.removeApices(arg.toString()); 
+                            result += Tools.removeApices(arg.toString()); 
                         }
                     }
                     continue;
@@ -1824,14 +1825,14 @@ public class ISOIOLibrary extends Library{
                     
                 else{
                     if(ignore_ops == false){
-                        result += alice.util.Tools.removeApices(arg.toString());
+                        result += Tools.removeApices(arg.toString());
                         if(i%2 == 0 && operator != ""){
                             result +=" "+operator+" ";
                         }
                         continue;
                     }
                     else{
-                        result += alice.util.Tools.removeApices(arg.toString());
+                        result += Tools.removeApices(arg.toString());
                     }
                 }
             }

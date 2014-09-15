@@ -542,7 +542,7 @@ public class Memory implements Output, Serializable {
     public void inputTask(final AbstractTask t) {                                                 
         if (t instanceof PauseInput) {
             int c = ((PauseInput)t).cycles;
-            output(IN.class, c);
+            output(PauseInput.class, c);
             stepLater(Math.max(0,c));
         }
         else if (t instanceof Task) {                                       

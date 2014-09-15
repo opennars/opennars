@@ -2,7 +2,7 @@ package nars.prolog;
 
 import java.util.*;
 
-import alice.util.OneWayList;
+import nars.prolog.util.OneWayList;
 
 /**
  * A list of clauses belonging to the same family as a goal. A family is

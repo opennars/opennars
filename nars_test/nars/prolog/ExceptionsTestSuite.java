@@ -2,10 +2,9 @@ package nars.prolog;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({	BasicLibraryExceptionsTestCase.class, 
+@Suite.SuiteClasses(value={	BasicLibraryExceptionsTestCase.class, 
 				BuiltInExceptionsTestCase.class, 
 				DCGLibraryExceptionsTestCase.class,
 				IOLibraryExceptionsTestCase.class, 

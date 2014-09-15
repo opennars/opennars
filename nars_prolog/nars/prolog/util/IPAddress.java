@@ -7,7 +7,7 @@
  * Use is subject to license terms.
  *
  */
-package alice.util;
+package nars.prolog.util;
 
 /**
  * this class defines services useful for
