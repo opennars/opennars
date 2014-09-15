@@ -56,7 +56,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         }
 
         @Override
-        public int positionOf(final E o) {
+        public final int positionOf(final E o) {
             final int y = o.budget.getPriorityShort();
             final int s = size();
             if (s > 0)  {
@@ -71,16 +71,11 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
                     E midVal = get(mid);
 
                     final int x = midVal.budget.getPriorityShort();
-                    int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   
-
-                    if (cmp < 0)
-                        low = mid + 1;
-                    else if (cmp > 0)
-                        high = mid - 1;
-                    else {
-                        // key found, insert after it
-                        return mid;
-                    }
+                    
+                    if (x < y) low = mid + 1;
+                    else if (x == y) return mid;
+                    else if (x > y) high = mid - 1;                    
+                    
                 }
                 return low;
             }

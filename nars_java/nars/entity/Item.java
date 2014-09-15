@@ -172,7 +172,8 @@ public abstract class Item implements Comparable {
     //default:
     @Override
     public int compareTo(Object o) {
-        return System.identityHashCode(this) - System.identityHashCode(o);
+        //return System.identityHashCode(this) - System.identityHashCode(o);
+        return hashCode() - o.hashCode();
     }
     
 }
