@@ -34,7 +34,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
     static final int GESTURE_PROCESSED = 0;
     static final int STROKE_COMPLETE = 2;
     static final int STROKE_IN_PROGRESS = 1;
-    static final String DEFAULT_USER_DEFINED_STRING = "Type name here...";
+    static final String DEFAULT_USER_DEFINED_STRING = "";
     int state = GESTURE_PROCESSED;
 
     int _currentStrokeId = 0;
@@ -97,7 +97,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
         veryTempContainer = new Panel();
         veryTempContainer.setLayout(new FlowLayout());
-        veryTempContainer.add(new Label("Add as example of custom type:"));
+        veryTempContainer.add(new Label("Add as example of type:"));
+        userDefinedName.setColumns(10);
         userDefinedName.setText(DEFAULT_USER_DEFINED_STRING);
         veryTempContainer.add(userDefinedName);
         addUserDefined.setLabel("Add");
@@ -108,7 +109,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
         veryTempContainer = new Panel();
         veryTempContainer.setLayout(new FlowLayout());
-        veryTempContainer.add(new Label("Delete all user-defined gestures:"));
+        veryTempContainer.add(new Label("Delete all types:"));
         veryTempContainer.add(new Label("                    "));
         deleteUserDefined.setLabel("Delete");
         deleteUserDefined.addActionListener(this);
