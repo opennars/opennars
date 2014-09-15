@@ -69,25 +69,25 @@ public class IntersectionExt extends CompoundTerm {
     public static Term make(Term term1, Term term2, Memory memory) {
         TreeSet<Term> set;
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
-            set.addAll(((CompoundTerm) term2).cloneTermsList());        // set union
+            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
+            set.addAll(((CompoundTerm) term2).getTermList());        // set union
             return SetInt.make(set, memory);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
-            set.retainAll(((CompoundTerm) term2).cloneTermsList());     // set intersection
+            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
+            set.retainAll(((CompoundTerm) term2).getTermList());     // set intersection
             return SetExt.make(set, memory);
         }
         if (term1 instanceof IntersectionExt) {
-            set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             if (term2 instanceof IntersectionExt) {
-                set.addAll(((CompoundTerm) term2).cloneTermsList());
+                set.addAll(((CompoundTerm) term2).getTermList());
             }               // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
             else {
                 set.add(term2.clone());
             }               // (&,(&,P,Q),R) = (&,P,Q,R)
         } else if (term2 instanceof IntersectionExt) {
-            set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
+            set = new TreeSet<>(((CompoundTerm) term2).getTermList());
             set.add(term1.clone());    // (&,R,(&,P,Q)) = (&,P,Q,R)
         } else {
             set = new TreeSet<>();
