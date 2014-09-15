@@ -351,6 +351,9 @@ public class PrologQueryOperator extends Operator {
         else if( term instanceof Int ) {
             return null;
         }
+        else if( term instanceof nars.prolog.Double ) {
+            return null;
+        }
        
         throw new RuntimeException("Internal Error: Unknown prolog term!");
     }
