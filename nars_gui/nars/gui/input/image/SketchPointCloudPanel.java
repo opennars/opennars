@@ -201,6 +201,12 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
     public void mouseClicked(MouseEvent e) //mouse pressed-depressed (no motion in between), if there's motion -> mouseDragged
     {
+        if(e.getButton()==MouseEvent.BUTTON3) {
+            _currentStrokeId++;
+        }
+        if(e.getButton()==MouseEvent.BUTTON2) {
+            _currentStrokeId++;
+        }
     }
 
     public void update(MouseEvent e) {
@@ -224,7 +230,6 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         switch (button) {
             case MouseEvent.BUTTON1: {
                 if (state == GESTURE_PROCESSED) {
-                    _currentStrokeId++;
                     //_currentGesture = new ArrayList<PointCloudPoint>();
                     lastcoordx=coordx;
                     lastcoordy=coordy;
@@ -240,6 +245,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
             }
 
             case MouseEvent.BUTTON3: {
+                _currentStrokeId++;
                 if (state != STROKE_COMPLETE) {
                     return;
                 }
@@ -257,10 +263,12 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 _currentStrokeId = 0;
                 addUserDefined.setEnabled(true);
                 addStandard.setEnabled(true);
+                _currentStrokeId++;
                 return;
             }
 
             default: {
+                _currentStrokeId++;
                 return;
             }
         }
@@ -268,18 +276,18 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
     public void mouseReleased(MouseEvent e) {
         int button = e.getButton();
-
+        _currentStrokeId++;
         switch (button) {
             case MouseEvent.BUTTON1: {
                 state = STROKE_COMPLETE;
                 caption.setForeground(lineColors[_currentStrokeId]);
                 caption.setText("Stroke " + (_currentStrokeId + 1) + " recorded");
                 update(e);
-                _currentStrokeId++;
                 return;
             }
 
             default: {
+                _currentStrokeId++;
                 return;
             }
         }
@@ -291,6 +299,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
     public void mouseDragged(MouseEvent e) {
         state = STROKE_IN_PROGRESS;
         update(e);
+        if(e.getButton()==MouseEvent.BUTTON3 || e.getButton()==MouseEvent.BUTTON2)
+            _currentStrokeId++;
     }
 
     public void paint(Graphics _g) {
@@ -309,8 +319,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
             PointCloudPoint p1 = _currentGesture.get(i);
             PointCloudPoint p2 = _currentGesture.get(i + 1);
             if (p1.getID() == p2.getID()) {
-                //g.drawLine((int) p1.getX(), (int) p1.getY(), (int) p2.getX(), (int) p2.getY());
-                g.drawOval((int) p1.getX(), (int) p1.getY(), 4, 4); //only works like this, others one creates a wrong line
+                g.drawLine((int) p1.getX(), (int) p1.getY(), (int) p2.getX(), (int) p2.getY());
+                //g.drawOval((int) p1.getX(), (int) p1.getY(), 4, 4); //only works like this, others one creates a wrong line
             } else {
                 i++;
                 g.setColor(lineColors[++lineColorIndex]);
