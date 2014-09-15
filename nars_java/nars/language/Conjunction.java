@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import static java.lang.System.arraycopy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeSet;
@@ -39,13 +40,13 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    private Conjunction(CharSequence name, Term[] arg, int order) {
+    private Conjunction(final CharSequence name, final Term[] arg, final int order) {
         super(name, arg);
         temporalOrder = order;
     }
 
     @Override
-    public int getMinimumRequiredComponents() {
+    final public int getMinimumRequiredComponents() {
         return 1;
     }
 
@@ -57,7 +58,7 @@ public class Conjunction extends CompoundTerm {
      * @param con Whether the term is a constant
      * @param i Syntactic complexity of the compound
      */
-    private Conjunction(CharSequence n, Term[] arg, boolean con, short i, int order) {
+    private Conjunction(final CharSequence n, final Term[] arg, final boolean con, final short i, final int order) {
         super(n, arg, con, i);
         temporalOrder = order;
     }
@@ -106,7 +107,7 @@ public class Conjunction extends CompoundTerm {
      * @param argList the list of arguments
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argList, final Memory memory) {
+    final public static Term make(final Term[] argList, final Memory memory) {
         return make(argList, TemporalRules.ORDER_NONE, memory);
     }
 
@@ -118,7 +119,7 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(Term[] argList, int temporalOrder, final Memory memory) {
+    final public static Term make(final Term[] argList, final int temporalOrder, final Memory memory) {
         if (argList.length == 0) {
             return null;
         }                         // special case: single component
@@ -130,8 +131,8 @@ public class Conjunction extends CompoundTerm {
             final Term t = memory.conceptTerm(name);
             return (t != null) ? t : new Conjunction(name, argList, temporalOrder);
         } else {
-            final TreeSet<Term> set = new TreeSet<>(); // sort/merge arguments
-            set.addAll(Arrays.asList(argList));
+            // sort/merge arguments
+            final TreeSet<Term> set = new TreeSet<>(Arrays.asList(argList));             
             return make(set, temporalOrder, memory);
         }
     }
@@ -144,7 +145,7 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    private static Term make(final TreeSet<Term> set, int temporalOrder, final Memory memory) {
+    final private static Term make(final TreeSet<Term> set, int temporalOrder, final Memory memory) {
         Term[] argument = set.toArray(new Term[set.size()]);
         final CharSequence name;
         if (temporalOrder == TemporalRules.ORDER_NONE) {
@@ -165,48 +166,64 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term term1, final Term term2, final Memory memory) {
+    final public static Term make(final Term term1, final Term term2, final Memory memory) {
         return make(term1, term2, TemporalRules.ORDER_NONE, memory);
     }
 
-    public static Term make(final Term term1, final Term term2, int temporalOrder, final Memory memory) {
+    final public static Term make(final Term term1, final Term term2, int temporalOrder, final Memory memory) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            final ArrayList<Term> list;
+            
+            final Term[] components;
+            
             if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                list = new ArrayList<>(((CompoundTerm) term1).cloneTermsList());
-                if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                    list.addAll(((CompoundTerm) term2).cloneTermsList());
-                } // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
+                
+                CompoundTerm cterm1 = (CompoundTerm) term1;
+                
+                ArrayList<Term> list = new ArrayList<>(cterm1.size());
+                cterm1.addTermsTo(list);
+                        
+                if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) { 
+                    // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
+                    ((CompoundTerm) term2).addTermsTo(list);
+                } 
                 else {
-                    list.add(term2.clone());
-                }                          // (&,(&,P,Q),R) = (&,P,Q,R)
+                    // (&,(&,P,Q),R) = (&,P,Q,R)
+                    list.add(term2);
+                }
+                
+                components = list.toArray(new Term[list.size()]);
+                
             } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                list = new ArrayList<>(((CompoundTerm) term2).size() + 1);
-                list.add(term1.clone());
-                list.addAll(((CompoundTerm) term2).cloneTermsList()); // (&,R,(&,P,Q)) = (&,P,Q,R)
+                CompoundTerm cterm2 = (CompoundTerm) term2;
+                components = new Term[((CompoundTerm) term2).size() + 1];
+                components[0] = term1;
+                arraycopy(cterm2.term, 0, components, 1, cterm2.size());
             } else {
-                list = new ArrayList<>(2);
-                list.add(term1.clone());
-                list.add(term2.clone());
+                components = new Term[] { term1, term2 };
             }
-            return make(list.toArray(new Term[list.size()]), temporalOrder, memory);
+            return make(components, temporalOrder, memory);
+            
         } else {
+            
             final TreeSet<Term> set;
-            if (term1 instanceof Conjunction) {
-                set = new TreeSet<>(((CompoundTerm) term1).cloneTermsList());
-                if (term2 instanceof Conjunction) {
-                    set.addAll(((CompoundTerm) term2).cloneTermsList());
-                } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+            if (term1 instanceof Conjunction) {                
+                set = ((CompoundTerm) term1).getTermTreeSet();
+                if (term2 instanceof Conjunction) {                    
+                    // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+                    ((CompoundTerm) term2).addTermsTo(set);
+                } 
                 else {
-                    set.add(term2.clone());
-                }                          // (&,(&,P,Q),R) = (&,P,Q,R)
+                    // (&,(&,P,Q),R) = (&,P,Q,R)
+                    set.add(term2);
+                }                          
+                
             } else if (term2 instanceof Conjunction) {
-                set = new TreeSet<>(((CompoundTerm) term2).cloneTermsList());
-                set.add(term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
+                set = ((CompoundTerm) term2).getTermTreeSet();
+                set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
             } else {
                 set = new TreeSet<>();
-                set.add(term1.clone());
-                set.add(term2.clone());
+                set.add(term1);
+                set.add(term2);
             }
             return make(set, temporalOrder, memory);
         }
