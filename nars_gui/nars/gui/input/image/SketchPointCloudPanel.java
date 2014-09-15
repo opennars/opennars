@@ -109,7 +109,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
         veryTempContainer = new Panel();
         veryTempContainer.setLayout(new FlowLayout());
-        veryTempContainer.add(new Label("Delete all gestures:"));
+        veryTempContainer.add(new Label("Delete all types:"));
         veryTempContainer.add(new Label("                    "));
         deleteUserDefined.setLabel("Delete");
         deleteUserDefined.addActionListener(this);
