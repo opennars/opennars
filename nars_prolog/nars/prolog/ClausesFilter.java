@@ -5,7 +5,7 @@
 
 package nars.prolog;
 
-import alice.util.OneWayList;
+import nars.prolog.util.OneWayList;
 import java.util.List;
 
 /**

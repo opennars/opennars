@@ -17,13 +17,12 @@
  */
 package nars.prolog;
 
-import alice.util.OneWayList;
+import nars.prolog.util.OneWayList;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import nars.language.AbstractTerm;
 
@@ -70,7 +69,7 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
      * the isEqual method.
      *
      */
-    public boolean equals(Object t) {
+    public boolean equals(final Object t) {
         if (!(t instanceof Term))
             return false;
         return isEqual((Term) t);
@@ -187,12 +186,12 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
      * @param t1 the term to unify
      * @return true if the term is unifiable with this one
      */
-    public boolean unify(Prolog mediator, Term t1) {
+    public boolean unify(final Prolog mediator, final Term t1) {
         EngineManager engine = mediator.getEngineManager();
         resolveTerm();
         t1.resolveTerm();
-        List<Var> v1 = new LinkedList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
-        List<Var> v2 = new LinkedList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
+        List<Var> v1 = new ArrayList<Var>();
+        List<Var> v2 = new ArrayList<Var>(); 
         boolean ok = unify(v1,v2,t1);
         if (ok) {
             ExecutionContext ec = engine.getCurrentContext();
@@ -202,7 +201,7 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
                 ec.trailingVars = new OneWayList<List<Var>>(v1,ec.trailingVars);
                 // Renaming after unify because its utility regards not the engine but the user
                 int count = 0;
-                for(Var v:v1){
+                for(final Var v:v1){
                     v.rename(id,count);
                     if(id>=0){
                         id++;
@@ -210,7 +209,7 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
                         count++;
                     }
                 }
-                for(Var v:v2){
+                for(final Var v:v2){
                     v.rename(id,count);
                     if(id>=0){
                         id++;
@@ -239,8 +238,8 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
     public boolean match(Term t) {
         resolveTerm();
         t.resolveTerm();
-        List<Var> v1 = new LinkedList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
-        List<Var> v2 = new LinkedList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
+        List<Var> v1 = new ArrayList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
+        List<Var> v2 = new ArrayList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
         boolean ok = unify(v1,v2,t);
         Var.free(v1);
         Var.free(v2);
@@ -265,17 +264,10 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
      * @return the term represented by the string
      * @throws InvalidTermException if the string does not represent a valid term
      */
-    public static Term createTerm(String st) {
+    public static Term createTerm(final String st) {
         return Parser.parseSingleTerm(st);
     }
-    
-    /**
-     * @deprecated Use {@link Term#createTerm(String)} instead.
-     */
-    public static Term parse(String st) {
-        return Term.createTerm(st);
-    }
-    
+
     /**
      * Static service to create a Term from a string, providing an
      * external operator manager.
@@ -288,12 +280,7 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
         return Parser.parseSingleTerm(st, op);
     }
     
-    /**
-     * @deprecated Use {@link Term#createTerm(String, OperatorManager)} instead.
-     */
-    public static Term parse(String st, OperatorManager op) {
-        return Term.createTerm(st, op);
-    }
+
     
     /**
      * Gets an iterator providing

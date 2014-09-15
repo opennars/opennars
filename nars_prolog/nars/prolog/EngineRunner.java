@@ -4,8 +4,8 @@
  */
 package nars.prolog;
 
-import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Condition;
@@ -112,7 +112,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
         semaphore = new Object();
     }
     
-    void spy(String action, Engine env) {
+    void spy(String action, Engine env) {        
         mediator.spy(action,env);
     }
     
@@ -120,17 +120,15 @@ public class EngineRunner implements java.io.Serializable, Runnable{
         mediator.warn(message);
     }
     
-    /*Castagna 06/2011*/
-        void exception(String message) {
-                mediator.exception(message);
-        }
-        /**/
+    void exception(String message) {
+        mediator.exception(message);
+    }
         
-        public void detach(){
+    public void detach(){
         detached = true;
     }
     
-        public boolean isDetached(){
+    public boolean isDetached(){
         return detached;
     }
         

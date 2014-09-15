@@ -2,7 +2,6 @@ package nars.io;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
-import static java.lang.String.valueOf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +36,6 @@ import static nars.io.Symbols.TRUTH_VALUE_MARK;
 import static nars.io.Symbols.VALUE_SEPARATOR;
 import static nars.io.Symbols.getCloser;
 import static nars.io.Symbols.getOpener;
-import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getRelation;
 import static nars.io.Symbols.isRelation;

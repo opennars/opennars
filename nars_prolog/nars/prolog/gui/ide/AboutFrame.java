@@ -32,7 +32,7 @@ public class AboutFrame extends GenericFrame
         //String platformMessage = " " + alice.util.VersionInfo.getPlatform();
         //platformMessage += " platform version ";
         //platformMessage += alice.util.VersionInfo.getCompleteVersion();
-        JLabel versionIDE=new JLabel(" tuProlog for " + alice.util.VersionInfo.getPlatform() + " version " + alice.util.VersionInfo.getCompleteVersion() + "   ");
+        JLabel versionIDE=new JLabel(" tuProlog for " + nars.prolog.util.VersionInfo.getPlatform() + " version " + nars.prolog.util.VersionInfo.getCompleteVersion() + "   ");
         
         JLabel copyright=new JLabel(" Copyright 2001-2013 ");
         JLabel unibo=new JLabel(" Universita' di Bologna, Italy.");

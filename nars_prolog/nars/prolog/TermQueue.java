@@ -1,15 +1,15 @@
 package nars.prolog;
 
 
-import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.ArrayDeque;
+import java.util.Iterator;
 
 public class TermQueue {
 
-	private LinkedList<Term> queue;
+	private ArrayDeque<Term> queue;
 	
 	public TermQueue(){
-		queue=new LinkedList<Term>();
+		queue=new ArrayDeque<Term>();
 	}
 	
 	public synchronized boolean get(Term t, Prolog engine, EngineRunner er){
@@ -33,7 +33,7 @@ public class TermQueue {
 	private synchronized boolean search(Term t, Prolog engine, boolean remove){
 		boolean found=false;
 		Term msg=null;
-		ListIterator<Term> it=queue.listIterator();
+		Iterator<Term> it=queue.iterator();
 		while (!found){
 			if (it.hasNext()){
 				msg=it.next();

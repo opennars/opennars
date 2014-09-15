@@ -43,7 +43,7 @@ public class JavaLibraryTestCase extends TestCase {
 		Prolog engine = new Prolog();
 		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.prolog.lib.JavaLibrary");
 		String theory = "demo(C) :- \n" +
-				"java_object('alice.tuprolog.TestCounter', [], C), \n" +
+				"java_object('nars.prolog.TestCounter', [], C), \n" +
 				"C <- update, \n" +
 				"C <- update. \n";			
 		engine.setTheory(new Theory(theory));
@@ -160,7 +160,7 @@ public class JavaLibraryTestCase extends TestCase {
 
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
-		assertEquals(true, info.isSuccess());
+		assertEquals(info.toString(), true, info.isSuccess());
 		nars.prolog.Number resultInt = (nars.prolog.Number) info.getVarValue("Value");
 		assertEquals(10, resultInt.intValue());
 

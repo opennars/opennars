@@ -229,7 +229,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * Gets the current version of the tuProlog system
 	 */
 	public static String getVersion() {
-		return alice.util.VersionInfo.getEngineVersion();
+		return nars.prolog.util.VersionInfo.getEngineVersion();
 	}
 
     /**
@@ -621,7 +621,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	/**
 	 * Notifies a spy information event
 	 */
-	protected synchronized void spy(String s) {
+	protected synchronized void spy(final String s) {
 		if (spy) {
 			notifySpy(new SpyEvent(this, s));
 		}

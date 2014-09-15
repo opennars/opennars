@@ -17,7 +17,6 @@
  */
 package nars.prolog;
 
-import alice.util.Tools;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+import nars.prolog.util.Tools;
 
 /**
  * This class defines the Theory Manager who manages the clauses/theory often referred to as the Prolog database.
@@ -77,13 +77,14 @@ public class TheoryManager implements Serializable {
 			}
 		} else
 			staticDBase.addFirst(key, d);
-		engine.spy("INSERTA: " + d.getClause() + "\n");
+                if (engine.isSpy())
+                    engine.spy("INSERTA: " + d.getClause() + "\n");
 	}
 
 	/**
 	 * inserting of a clause at the end of the dbase
 	 */
-	public synchronized void assertZ(Struct clause, boolean dyn, String libName, boolean backtrackable) {
+	public synchronized void assertZ(final Struct clause, final boolean dyn, final String libName, final boolean backtrackable) {
 		ClauseInfo d = new ClauseInfo(toClause(clause), libName);
 		String key = d.getHead().getPredicateIndicator();
 		if (dyn) {
@@ -93,7 +94,8 @@ public class TheoryManager implements Serializable {
 			}
 		} else
 			staticDBase.addLast(key, d);
-		engine.spy("INSERTZ: " + d.getClause() + "\n");
+                if (engine.isSpy())
+                    engine.spy("INSERTZ: " + d.getClause() + "\n");
 	}
 
 	/**
@@ -139,7 +141,8 @@ public class TheoryManager implements Serializable {
 			ClauseInfo d = i.next();
 			if (clause.match(d.getClause())) {
 				i.remove();
-				engine.spy("DELETE: " + d.getClause() + "\n");
+                                if (engine.isSpy())
+                                    engine.spy("DELETE: " + d.getClause() + "\n");
 				return new ClauseInfo(d.getClause(), null);
 			}
 		}
@@ -161,6 +164,7 @@ public class TheoryManager implements Serializable {
 		String key =  arg0 + "/" + arg1;
 		List<ClauseInfo> abolished = dynamicDBase.abolish(key); /* Reviewed by Paolo Contessi: LinkedList -> List */
 		if (abolished != null)
+                    if (engine.isSpy())
 			engine.spy("ABOLISHED: " + key + " number of clauses=" + abolished.size() + "\n");
 		return true;
 	}
@@ -267,19 +271,29 @@ public class TheoryManager implements Serializable {
 	}
 
 
-	private boolean runDirective(Struct c) {
-		if ("':-'".equals(c.getName()) || ":-".equals(c.getName()) && c.getArity() == 1 && c.getTerm(0) instanceof Struct) {
-			Struct dir = (Struct) c.getTerm(0);
-			try {
-				if (!primitiveManager.evalAsDirective(dir))
-					engine.warn("The directive " + dir.getPredicateIndicator() + " is unknown.");
-			} catch (Throwable t) {
-				engine.warn("An exception has been thrown during the execution of the " +
-						dir.getPredicateIndicator() + " directive.\n" + t.getMessage());
-			}
-			return true;
-		}
-		return false;
+	private boolean runDirective(final Struct c) {
+            if (c.getArity()!=1)
+                return false;
+            Term t = c.getTerm(0);
+            if (!(t instanceof Struct))
+                return false;
+            
+            Struct dir = (Struct)t;
+            
+            if ("':-'".equals(c.getName()) || ":-".equals(c.getName())) {
+
+
+                    try {
+                            if (!primitiveManager.evalAsDirective(dir))
+                                    engine.warn("The directive " + dir.getPredicateIndicator() + " is unknown.");
+                    } catch (Throwable th) {
+                            engine.warn("An exception has been thrown during the execution of the " +
+                                            dir.getPredicateIndicator() + " directive.\n" + th.getMessage());
+                    }
+
+                    return true;
+            }
+            return false;
 	}
 
 	/**
@@ -289,7 +303,7 @@ public class TheoryManager implements Serializable {
 		// TODO bad, slow way of cloning. requires approx twice the time necessary
 		t = (Struct) Term.createTerm(t.toString(), this.engine.getOperatorManager());
 		if (!t.isClause())
-			t = new Struct(":-", t, new Struct("true"));
+			t = new Struct(":-", t, Struct.TRUE /* new Struct("true") */);
 		primitiveManager.identifyPredicate(t);
 		return t;
 	}

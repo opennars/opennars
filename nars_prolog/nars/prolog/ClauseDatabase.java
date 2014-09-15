@@ -46,9 +46,9 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 		family.addLast(d);
 	}
 
-	FamilyClausesList abolish(String key) 
+	FamilyClausesList abolish(final String key) 
 	{
-		return (FamilyClausesList) remove(key);
+		return remove(key);
 	}
 
 	/**
@@ -58,8 +58,8 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 	 * @param headt The goal
 	 * @return  The list of matching-compatible predicates
 	 */
-	List<ClauseInfo> getPredicates(Term headt) {
-		FamilyClausesList family = (FamilyClausesList) get(((Struct) headt).getPredicateIndicator());
+	List<ClauseInfo> getPredicates(final Term headt) {
+		FamilyClausesList family = get(((Struct) headt).getPredicateIndicator());
 		if (family == null){
 			return Collections.EMPTY_LIST;
 		}
@@ -72,27 +72,29 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 	 * @param key   Goal's Predicate Indicator
 	 * @return      The family clauses
 	 */
-	List<ClauseInfo> getPredicates(String key){
-		FamilyClausesList family = (FamilyClausesList) get(key);
+	List<ClauseInfo> getPredicates(final String key){
+		FamilyClausesList family = get(key);
 		if(family == null){
 			return Collections.EMPTY_LIST;
 		}
 		return Collections.unmodifiableList(family);
 	}
 
+        @Override
 	public Iterator<ClauseInfo> iterator() {
 		return new CompleteIterator(this);
 	}
 
 	private static class CompleteIterator implements Iterator<ClauseInfo> {
-		Iterator<FamilyClausesList> values;
+		final Iterator<FamilyClausesList> values;
 		Iterator<ClauseInfo> workingList;
 		//private boolean busy = false;
 
-		public CompleteIterator(ClauseDatabase clauseDatabase) {
+		public CompleteIterator(final ClauseDatabase clauseDatabase) {
 			values = clauseDatabase.values().iterator();
 		}
 
+                @Override
 		public boolean hasNext() {
 			if (workingList != null && workingList.hasNext())
 				return true;
@@ -103,12 +105,14 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 			return false;
 		}
 
+                @Override
 		public synchronized ClauseInfo next() {
 			if (workingList.hasNext())
 				return workingList.next();
 			else return null;
 		}
 
+                @Override
 		public void remove() {
 			workingList.remove();
 		}

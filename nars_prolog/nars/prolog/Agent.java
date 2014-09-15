@@ -17,10 +17,10 @@
  */
 package nars.prolog;
 
-import alice.util.Tools;
 import java.io.InputStream;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
+import nars.prolog.util.Tools;
 
 /**
  * Provides a prolog virtual machine embedded in a separate thread.
