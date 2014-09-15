@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;
@@ -11,18 +12,17 @@ import nars.io.Texts;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Term;
+import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.prolog.Int;
-import nars.prolog.InvalidTheoryException;
 import nars.prolog.NoSolutionException;
+import nars.prolog.Parser;
 import nars.prolog.Prolog;
 import nars.prolog.SolveInfo;
 import nars.prolog.Struct;
 import nars.prolog.Theory;
 import nars.prolog.Var;
-import nars.core.Memory;
-import nars.prolog.MalformedGoalException;
 
 /**
  * 
@@ -37,7 +37,16 @@ import nars.prolog.MalformedGoalException;
 public class PrologQueryOperator extends Operator {
     private final PrologContext context;
 
-    
+    private static class VariableInfo {
+        public nars.prolog.Term boundValue;
+        
+        public String variableName; // only valid if it is not bound
+        
+        // is the variable bound to a value? if false then it is a asked value which the operator should fill in
+        public boolean isBound() {
+            return boundValue != null;
+        }
+    }
     
     public PrologQueryOperator(PrologContext context) {
         super("^prologQuery");
@@ -86,19 +95,19 @@ public class PrologQueryOperator extends Operator {
         
         // get all variablenames
         // prolog must resolve the variables and assign values to them
-        String[] variableNames = getVariableNamesOfArgs(args);
+        VariableInfo[] variableInfos = translateNarsArgumentsToQueryVariableInfos(args);
         
         // execute
-        nars.prolog.Term[] resolvedVariableValues = prologParseAndExecuteAndDereferenceInput(prologInterpreter, query, variableNames);
-       
-       
-       
+        prologParseAndExecuteAndDereferenceInput(prologInterpreter, query, variableInfos);
+        
+        
+        
         // TODO< convert the result from the prolog to strings >
         memory.output(Prolog.class, query + " | TODO");
         //memory.output(Prolog.class, query + " | " + result);
        
         // set result values
-        Term[] resultTerms = getResultVariablesFromPrologVariables(resolvedVariableValues, args, memory);
+        Term[] resultTerms = getResultVariablesFromPrologVariables(variableInfos, memory);
        
         // create evaluation result
         int i;
@@ -152,7 +161,67 @@ public class PrologQueryOperator extends Operator {
        
         return variableNames;
     }
-   
+    
+    static private VariableInfo[] translateNarsArgumentsToQueryVariableInfos(Term[] args) {
+        int numberOfVariables = (args.length - 2) / 2;
+        int variableI;
+        
+        VariableInfo[] resultVariableInfos = new VariableInfo[numberOfVariables];
+        
+        for( variableI = 0; variableI < numberOfVariables; variableI++ ) {
+            resultVariableInfos[variableI] = new VariableInfo();
+        }
+        
+        for( variableI = 0; variableI < numberOfVariables; variableI++ ) {
+            Term currentTerm = args[2+2*variableI];
+            Term valueOrVariableNarsTerm = args[2+2*variableI+1];
+            
+            if( !(currentTerm instanceof Term) ) {
+                throw new RuntimeException("Result or Query Variable Name is not an term!");
+            }
+            
+            resultVariableInfos[variableI].variableName = getStringOfTerm(currentTerm);
+            
+            // following term can be a variable(if it is requested) or a term[with a constant](if it is given)
+            // we only branch for the constant case, because
+            // in the variable case it then not bound, which means that its a variable
+            if( !(valueOrVariableNarsTerm instanceof Variable) ) {
+                resultVariableInfos[variableI].boundValue = convertConstantNarsTermToPrologTerm(valueOrVariableNarsTerm);
+            }
+        }
+        
+        return resultVariableInfos;
+    }
+    
+    static private nars.prolog.Term convertConstantNarsTermToPrologTerm(Term term) {
+        String termAsString = term.name().toString();
+        
+        if (termAsString.length() == 0) {
+            throw new RuntimeException("term length was zero!");
+        }
+        
+        if (termAsString.charAt(0) == '"') {
+            // it is a string
+            String stringOfNarsTerm = getStringOfTerm(term);
+            
+            // now we translate the string into a prolog string
+            return new nars.prolog.Struct(stringOfNarsTerm);
+        }
+        
+        // if we are here it must be a number, either a double or a integer
+        if (containsDot(termAsString)) {
+            double doubleValue = Double.parseDouble(termAsString);
+            
+            return new nars.prolog.Double(doubleValue);
+        }
+        else {
+            int intValue = Integer.parseInt(termAsString);
+            
+            return new nars.prolog.Int(intValue);
+        }
+    }
+    
+    
     // tries to convert the Term (which must be a string) to a string with the content
     static public String getStringOfTerm(Term term) {
         // escape sign codes
@@ -171,33 +240,33 @@ public class PrologQueryOperator extends Operator {
     }
     
     
-    static private Term[] getResultVariablesFromPrologVariables(nars.prolog.Term[] prologVariables, Term[] args, Memory memory) {
-        int numberOfVariables = (args.length - 2) / 2;
+    static private Term[] getResultVariablesFromPrologVariables(VariableInfo[] variableInfos, Memory memory) {
         int variableI;
        
-        Term[] resultTerms = new Term[numberOfVariables];
+        Term[] resultTerms = new Term[variableInfos.length];
        
-        for( variableI = 0; variableI < numberOfVariables; variableI++ ) {
-            resultTerms[variableI] = convertPrologTermToNarsTermRecursive(prologVariables[variableI], memory);
+        for( variableI = 0; variableI < variableInfos.length; variableI++ ) {
+            resultTerms[variableI] = convertPrologTermToNarsTermRecursive(variableInfos[variableI].boundValue, memory);
         }
         
         return resultTerms;
     }
     
     // TODO< return status/ error/sucess >
-    private nars.prolog.Term[] prologParseAndExecuteAndDereferenceInput(Prolog prolog, String goal, String[] dereferencingVariableNames) {
+    private void prologParseAndExecuteAndDereferenceInput(Prolog prolog, String goal, VariableInfo[] variableInfos) {
         SolveInfo solution;
         
-        try {
-            solution = prolog.solve(goal);
-        }
-        catch (MalformedGoalException exception) {
-            // TODO< error handing >
-            throw new RuntimeException("MalformedGoalException");
-        }
+        // parse, fill in known variables
+        nars.prolog.Parser parser = new nars.prolog.Parser(prolog.getOperatorManager(), goal);
+        
+        nars.prolog.Term queryTerm = parser.nextTerm(true);
+        
+        queryTerm = replaceBoundVariablesOfPrologTermRecursive(queryTerm, variableInfos);
+        
+        solution = prolog.solve(queryTerm);
         
         if (solution == null ) {
-            return null; // TODO error
+            return; // TODO error
         }
         
         if (!solution.isSuccess()) {
@@ -213,31 +282,74 @@ public class PrologQueryOperator extends Operator {
             throw new RuntimeException("Query had no solution");
         }
         
-        nars.prolog.Term[] resultArray;
-
-        resultArray = new nars.prolog.Term[dereferencingVariableNames.length];
-        
-
         int variableI;
+        
+        for( variableI = 0; variableI < variableInfos.length; variableI++ ) {
+            // we don't to lookup a allready bound variable
+            if (variableInfos[variableI].isBound()) {
+                continue;
+            }
 
-        for( variableI = 0; variableI < dereferencingVariableNames.length; variableI++ ) {
             // get variable and dereference
             //  get the variable which has the name
-            Var variableTerm = getVariableByNameRecursive(solutionTerm, dereferencingVariableNames[variableI]);
+            Var variableTerm = getVariableByNameRecursive(solutionTerm, variableInfos[variableI].variableName);
 
             if( variableTerm == null )
             {
-                return null; // error
+                return; // error
             }
 
             variableTerm.resolveTerm();
             nars.prolog.Term dereferencedTerm = variableTerm.getTerm();
-
-            resultArray[variableI] = dereferencedTerm;
+            
+            variableInfos[variableI].boundValue = dereferencedTerm;
+        }
+    }
+    
+    // sets unbound variables inside the term
+    // so for example the term a(X,6,Y) with X=7 in VariablesInfos gets rewritten to
+    // a(7,6,Y)
+    static private nars.prolog.Term replaceBoundVariablesOfPrologTermRecursive(nars.prolog.Term term, VariableInfo[] variableInfos) {
+        if (term instanceof nars.prolog.Struct) {
+            nars.prolog.Struct termAsStruct = (nars.prolog.Struct)term;
+            
+            nars.prolog.Term[] replacedArguments = new nars.prolog.Term[termAsStruct.getArity()];
+            
+            int childrenI;
+            
+            // iterate over childrens
+            for (childrenI = 0; childrenI < termAsStruct.getArity(); childrenI++) {
+                replacedArguments[childrenI] = replaceBoundVariablesOfPrologTermRecursive(termAsStruct.getTerm(childrenI), variableInfos);
+            }
+            
+            return new nars.prolog.Struct(termAsStruct.getName(), replacedArguments);
+        }
+        else if (term instanceof nars.prolog.Var) {
+            nars.prolog.Var termAsVar = (nars.prolog.Var)term;
+                    
+            for(VariableInfo iterationVariableInfo: variableInfos) {
+                if (!iterationVariableInfo.isBound()) {
+                    continue;
+                }
+                
+                if (termAsVar.getName().equals(iterationVariableInfo.variableName)) {
+                    return iterationVariableInfo.boundValue;
+                }
+            }
+            
+            return term;
+        }
+        else if( term instanceof nars.prolog.Int ) {
+            return term;
+        }
+        else if( term instanceof nars.prolog.Double ) {
+            return term;
+        }
+        else if( term instanceof nars.prolog.Float ) {
+            return term;
         }
         
-        
-        return resultArray;
+        throw new RuntimeException("Internal Error: Unknown prolog term!");
     }
     
     // tries to convert a prolog term to a nars term
@@ -436,5 +548,7 @@ public class PrologQueryOperator extends Operator {
         return text.replace("\\\"", "\"");
     }   
     
-    
+    static private boolean containsDot(String string) {
+        return string.contains(".");
+    }
 }
