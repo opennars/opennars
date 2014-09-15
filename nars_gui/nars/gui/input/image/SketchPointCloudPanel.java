@@ -123,6 +123,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         addMouseMotionListener(this);
     }
 
+    public String lastdrawing="";
     public String drawing="";
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == clearCanvas) {
@@ -132,6 +133,20 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         
         if(e.getSource() == addInput && !drawing.equals("")) {
             nar.addInput("<"+drawing.replace(" ","-")+" --> drawn>. :|:");
+            if(lastdrawing!=null && !lastdrawing.equals("")) {
+                if(Math.abs(coordx-lastcoordx)>10) {
+                    String direction=coordx-lastcoordx > 0 ? "left" : "right"; 
+                    String opdirection=coordx-lastcoordx > 0 ? "right" : "left"; 
+                    nar.addInput("<(*,"+drawing.replace(" ","-")+","+lastdrawing.replace(" ","-")+") --> "+direction+">. :|:");
+                    nar.addInput("<(*,"+lastdrawing.replace(" ","-")+","+drawing.replace(" ","-")+") --> "+opdirection+">. :|:");
+                }
+                if(Math.abs(coordy-lastcoordy)>10) {
+                    String direction=coordy-lastcoordy > 0 ? "up" : "down"; 
+                    String opdirection=coordy-lastcoordy > 0 ? "down" : "up"; 
+                    nar.addInput("<(*,"+drawing.replace(" ","-")+","+lastdrawing.replace(" ","-")+") --> "+direction+">. :|:");
+                    nar.addInput("<(*,"+lastdrawing.replace(" ","-")+","+drawing.replace(" ","-")+") --> "+opdirection+">. :|:");
+                }
+            }
             nar.step(1);
         }
 
@@ -169,6 +184,11 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         addUserDefined.setEnabled(false);
         addStandard.setEnabled(false);
         repaint();
+        coordx=0;
+        coordy=0;
+        lastcoordx=-1;
+        lastcoordy=-1;
+        lastdrawing="";
     }
 
     public void mouseEntered(MouseEvent e) //mouse entered canvas
@@ -184,19 +204,32 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
     }
 
     public void update(MouseEvent e) {
+       // if(e.getX()<coordx) {
+            coordx=e.getX();
+            coordy=e.getY();
+       // }
         PointCloudPoint p = new PointCloudPoint(e.getX(), e.getY(), _currentStrokeId);
         _currentGesture.add(p);
         repaint();
         e.consume();
     }
 
+    int coordx=0;
+    int coordy=0;
+    int lastcoordx=-1;
+    int lastcoordy=-1;
     public void mousePressed(MouseEvent e) {
         int button = e.getButton();
 
         switch (button) {
             case MouseEvent.BUTTON1: {
                 if (state == GESTURE_PROCESSED) {
-                    _currentGesture = new ArrayList<PointCloudPoint>();
+                    _currentStrokeId++;
+                    //_currentGesture = new ArrayList<PointCloudPoint>();
+                    lastcoordx=coordx;
+                    lastcoordy=coordy;
+                    coordx=0;
+                    coordy=0;
                 }
 
                 state = STROKE_IN_PROGRESS;
@@ -210,7 +243,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 if (state != STROKE_COMPLETE) {
                     return;
                 }
-
+                 
                 PointCloud c = new PointCloud("input gesture", _currentGesture);
                 ArrayList<PointCloudPoint> pts = c.getPoints();
                 PointCloudMatchResult r = _library.originalRecognize(c);
@@ -218,6 +251,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                 score = r.getScore();
                 caption.setForeground(defaultColor);
                 caption.setText("Result: " + name + " (" + round(score, 2) + ")");
+                lastdrawing=drawing;
                 drawing=name;
                 state = GESTURE_PROCESSED;
                 _currentStrokeId = 0;
@@ -275,7 +309,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
             PointCloudPoint p1 = _currentGesture.get(i);
             PointCloudPoint p2 = _currentGesture.get(i + 1);
             if (p1.getID() == p2.getID()) {
-                g.drawLine((int) p1.getX(), (int) p1.getY(), (int) p2.getX(), (int) p2.getY());
+                //g.drawLine((int) p1.getX(), (int) p1.getY(), (int) p2.getX(), (int) p2.getY());
+                g.drawOval((int) p1.getX(), (int) p1.getY(), 4, 4); //only works like this, others one creates a wrong line
             } else {
                 i++;
                 g.setColor(lineColors[++lineColorIndex]);
