@@ -45,7 +45,7 @@ public class FaceGUI extends BaseClass {
     long lastTime;
     int frameCount;
     int dispCount;
-    Vector colorVector;
+    Vector<Color> colorVector;
     Vector flexNamesVector;
     Vector flexVector;
     Vector flx;
@@ -56,7 +56,12 @@ public class FaceGUI extends BaseClass {
     Vector face;
     Vector typeVector;
     Vector vertexVector;
+    public final int pupil;
+    public final int eyeBall;
+    private float eyeballSize = 16;
+    private float pupilSize = 8;
 
+    
     public FaceGUI() {
         super();
         firstVertices = true;
@@ -119,8 +124,8 @@ public class FaceGUI extends BaseClass {
         polygons(.50, .50, .50, "54,53,55,57");
         polygons(0, 0, 0, "18,27 28,20");
         polygons(0, 0, 0, "11,12,13,14");
-        circles(.9, 0, 0, "24,25");
-        circles(.9, 0, 0, "24,26");
+        eyeBall = circles(.9, .9, .9, "24,25");
+        pupil = circles(0, 0, 0, "24,26");
         polygons(.56, .56, .56, "16,29,11");
         polygons(.50, .50, .50, "13,12,9,8 12,11,10,9 5,43 5,4,43");
         polygons(0, 0, 0, "6,7,9,10 7,8,9");
@@ -193,6 +198,15 @@ public class FaceGUI extends BaseClass {
 
     }
 
+    public void setPupil(float radius, float r, float g, float b, float a) {
+        colorVector.set(pupil, new Color(r, g, b, a));
+        pupilSize = radius;
+    }
+    public void setEyeball(float radius, float r, float g, float b, float a) {
+        colorVector.set(eyeBall, new Color(r, g, b, a));
+        eyeballSize = radius;
+    }
+    
     public void map(String s, String s1, double d) {
         for (int i = 0; i < flexNamesVector.size(); i++) {
             if (((String) flexNamesVector.elementAt(i)).equals(s1)) {
@@ -224,16 +238,16 @@ public class FaceGUI extends BaseClass {
         noRotateIndex = vertexVector.size() / 3;
     }
 
-    public void polygons(double d, double d1, double d2, String s) {
-        addFaces(0, d, d1, d2, s);
+    public int polygons(double d, double d1, double d2, String s) {
+        return addFaces(0, d, d1, d2, s);
     }
 
     public void polylines(double d, double d1, double d2, String s) {
         addFaces(1, d, d1, d2, s);
     }
 
-    public void circles(double d, double d1, double d2, String s) {
-        addFaces(2, d, d1, d2, s);
+    public int circles(double d, double d1, double d2, String s) {
+        return addFaces(2, d, d1, d2, s);
     }
 
     public void vertices(String s) {
@@ -271,8 +285,8 @@ public class FaceGUI extends BaseClass {
         return (Vector) shapesVector.elementAt(i);
     }
 
-    public void addFaces(int i, double d, double d1, double d2,
-            String s) {
+    public int addFaces(int i, double d, double d1, double d2, String s) {
+        int index = typeVector.size();
         typeVector.addElement(new Integer(i));
         colorVector.addElement(new Color((float) d, (float) d1, (float) d2));
         shapesVector.addElement(shapeVector = new Vector());
@@ -283,6 +297,7 @@ public class FaceGUI extends BaseClass {
             }
 
         }
+        return index;
     }
 
     public void assymetric() {
@@ -597,16 +612,29 @@ public class FaceGUI extends BaseClass {
                                         break;
 
                                     case 2: // '\002'   
-                                        if (Math.abs(d6) > 2D || d6 > 0.90000000000000002D && j1 == 0 || d6 < -0.90000000000000002D && j1 == 1) {
+                                        /*if (Math.abs(d6) > 2D || d6 > 0.90000000000000002D && j1 == 0 || d6 < -0.90000000000000002D && j1 == 1) {
                                             break;
-                                        }
+                                        }*/
                                         int k3 = ai[0] - ai[1];
                                         int i4 = ai1[0] - ai1[1];
-                                        byte byte0 = ((byte) (k3 * k3 + i4 * i4 < 51 ? 6 : 12));
+
+
+                                        //byte byte0 = ((byte) (k3 * k3 + i4 * i4 < 51 ? 6 : 12));
+                                        //HACK remove the ear circles, whatever they are
+                                        if ((l1!=13) && (l1!=14)) continue;
+                                        
+                                        float radius = l1 == 14 ? pupilSize : eyeballSize;
+                                        
+                                        
+                                        float rscale = super.height/220f;
+                                        int cr = (int)(radius * rscale);
+                                                         
+                                        int cx = ai[0] - cr/2;
+                                        int cy = ai1[0] - cr/2;
                                         if (flag) {
-                                            g.drawOval(ai[0] - byte0, ai1[0] - byte0, 2 * byte0, 2 * byte0);
+                                            g.drawOval(cx, cy, cr, cr);
                                         } else {
-                                            g.fillOval(ai[0] - byte0, ai1[0] - byte0, 2 * byte0, 2 * byte0);
+                                            g.fillOval(cx, cy, cr, cr);
                                         }
                                         break;
 
