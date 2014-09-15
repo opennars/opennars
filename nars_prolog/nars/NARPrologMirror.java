@@ -55,6 +55,8 @@ public class NARPrologMirror implements Output {
                         if (qh!=null) {
                             //System.out.println("Question: " + qh.toString() + " ?");
                             SolveInfo si = prolog.solve(qh);
+                            while (prolog.hasOpenAlternatives())
+                                prolog.solveNext();
                             //System.out.println("  Answer: " + si);
                         }
                     } catch (Exception ex) {

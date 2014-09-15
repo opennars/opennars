@@ -17,9 +17,10 @@
  */
 package nars.prolog;
 
-import java.util.*;
-
-import nars.prolog.Struct;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * @author Alex Benini
@@ -388,7 +389,7 @@ public class StateEnd extends State {
 	    				Struct t1 = ((Struct)t);
 	    				//System.out.println("RESVAR BAG LINK � STRUCT "+t1);
 	    				//uso lista temporanea per aggiustare ordine, dalla struct con findvar escono al contrario
-	    				ArrayList<String> l_temp=new ArrayList<String>();
+	    				List<String> l_temp=new ArrayList<String>();
 	    				l_temp= findVar(t1,l_temp);
 	    				for(int w=l_temp.size()-1; w>=0;w--){
 	    					lSolVar.add(l_temp.get(w));
@@ -421,7 +422,7 @@ public class StateEnd extends State {
 	    	Term goalBOvalue = goalBO.getLink();
 	    	if(goalBOvalue instanceof Struct){
 	    		Struct t1 = ((Struct)goalBOvalue);
-	    		ArrayList<String> l_temp=new ArrayList<String>();
+	    		List<String> l_temp=new ArrayList<String>();
 	    		l_temp= findVar(t1,l_temp);
 	    		for(int w=l_temp.size()-1; w>=0;w--){
 	    			lgoalBOVar.add(l_temp.get(w));
@@ -678,31 +679,34 @@ public class StateEnd extends State {
     }
 
     
-    public ArrayList<String> findVar (Struct s, ArrayList<String> l){ 
-    	ArrayList<String> allVar=new ArrayList<String>();
+    public List<String> findVar (Struct s, List<String> l){ 
+    	
     	if(s.getArity()>0){
-			Term t = s.getArg(0);
-			Term tt;
-			if(s.getArity()>1) {
-				tt=s.getArg(1);
-				//System.out.println("---Termine "+t+" e termine "+tt);
-				if(tt instanceof Var){
-					allVar.add(((Var)tt).getName());
-				}
-				else if(tt instanceof Struct){
-					ArrayList<String> l1 = findVar((Struct)tt,l);
-					allVar.addAll(l1);
-				}
-			}
-			if(t instanceof Var){
-				allVar.add(((Var)t).getName());
-			}
-			else if(t instanceof Struct){
-				ArrayList<String> l1 = findVar((Struct)t,l);
-				allVar.addAll(l1);
-			}
+            ArrayList<String> allVar=new ArrayList<String>(s.getArity());
+            Term t = s.getArg(0);
+            Term tt;
+            if(s.getArity()>1) {
+                    tt=s.getArg(1);
+                    //System.out.println("---Termine "+t+" e termine "+tt);
+                    if(tt instanceof Var){
+                            allVar.add(((Var)tt).getName());
+                    }
+                    else if(tt instanceof Struct){
+                            List<String> l1 = findVar((Struct)tt,l);
+                            allVar.addAll(l1);
+                    }
+            }
+            if(t instanceof Var){
+                    allVar.add(((Var)t).getName());
+            }
+            else if(t instanceof Struct){
+                    List<String> l1 = findVar((Struct)t,l);
+                    allVar.addAll(l1);
+            }
+            return allVar;
     	}
-    	return allVar;
+        
+        return Collections.EMPTY_LIST;
     }
     
     public Struct substituteVar (Struct s, ArrayList<String> lSol, ArrayList<String> lgoal){ 	
