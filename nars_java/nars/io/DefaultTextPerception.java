@@ -1,14 +1,15 @@
 package nars.io;
 
+import static com.google.common.collect.Iterators.singletonIterator;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.AbstractTask;
-import nars.entity.Task;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
-import static nars.io.narsese.Narsese.possiblyNarsese;
 import nars.io.nlp.Englisch;
 import nars.operator.io.PauseInput;
 
@@ -23,6 +24,8 @@ public class DefaultTextPerception  {
     
     public final Narsese narsese;    
     public final Englisch englisch;
+    private boolean enableEnglisch = true;
+    private boolean enableNarsese = true;
     
     public DefaultTextPerception(final NAR nar) {
         super();
@@ -155,16 +158,17 @@ public class DefaultTextPerception  {
             @Override
             public Object react(String input) {
 
-
-                char c = input.charAt(0);
-                if (c != Symbols.COMMENT_MARK) {
-                    try {
-                        Task task = narsese.parseNarsese(new StringBuilder(input));
-                        if (task != null) {
-                            return task;
+                if (enableNarsese) {
+                    char c = input.charAt(0);
+                    if (c != Symbols.COMMENT_MARK) {
+                        try {
+                            AbstractTask task = narsese.parseNarsese(new StringBuilder(input));
+                            if (task != null) {
+                                return task;
+                            }
+                        } catch (InvalidInputException ex) {
+                            return ex;
                         }
-                    } catch (InvalidInputException ex) {
-                        return ex;
                     }
                 }
                 return null;
@@ -175,13 +179,13 @@ public class DefaultTextPerception  {
         parsers.add(new TextReaction() {
             @Override
             public Object react(String line) {
-
-                //not handled, so respond with some signal
-                if(possiblyNarsese(line)) {                    
-                    try {
-                        return englisch.processInput(line, narsese);
-                    } catch (InvalidInputException ex) {
-                        return ex;
+                
+                if (enableEnglisch) {
+                    /*if (!possiblyNarsese(line))*/ {                    
+                        List<AbstractTask> l = englisch.parse(line, narsese, true);
+                        if ((l == null) || (l.isEmpty())) 
+                            return null;
+                        return l;
                     }
                 }
                 return null;            
@@ -191,16 +195,23 @@ public class DefaultTextPerception  {
                    
     }
     
-    public AbstractTask perceive(String line, NAR nar) {
+    public Iterator<AbstractTask> perceive(final String line) {
 
         Exception lastException = null;
         
-        for (TextReaction p : parsers) {            
+        for (final TextReaction p : parsers) {            
             
             Object result = p.react(line);
+            
             if (result!=null) {
+                if (result instanceof Iterator) {
+                    return (Iterator<AbstractTask>)result;
+                }
+                if (result instanceof Collection) {
+                    return ((Collection<AbstractTask>)result).iterator();
+                }
                 if (result instanceof AbstractTask) {
-                    return (AbstractTask)result;
+                    return singletonIterator((AbstractTask)result);
                 }
                 else if (result.equals(Boolean.TRUE)) {
                     return null;
@@ -213,11 +224,21 @@ public class DefaultTextPerception  {
 
         String errorMessage = "Invalid input: \'" + line + "\'";
         if (lastException!=null) {
-            errorMessage += " : " + lastException.toString();
+            errorMessage += " : " + lastException.toString(); 
         }
+        
         memory.output(Output.ERR.class, errorMessage);
         return null;
     }
 
+    public void enableEnglisch(boolean enableEnglisch) {
+        this.enableEnglisch = enableEnglisch;
+    }
+
+    public void enableNarsese(boolean enableNarsese) {
+        this.enableNarsese = enableNarsese;
+    }
+
+    
     
 }

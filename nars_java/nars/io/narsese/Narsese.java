@@ -161,31 +161,26 @@ public class Narsese {
      */    
     public Task parseTask(String s) throws InvalidInputException {
         StringBuilder buffer = new StringBuilder(Texts.escape(s));
-        try {
-            
-            String budgetString = getBudgetString(buffer);
-            String truthString = getTruthString(buffer);
-            Tense tense = parseTense(buffer);
-            String str = buffer.toString().trim();
-            int last = str.length() - 1;
-            char punc = str.charAt(last);
-            
-            Stamp stamp = new Stamp(memory.getTime(), tense, memory.newStampSerial(), memory.param.duration.get());
-            
-            TruthValue truth = parseTruth(truthString, punc);
-            Term content = parseTerm(str.substring(0, last));
-            if (content == null) throw new InvalidInputException("Content term missing");
-            Sentence sentence = new Sentence(content, punc, truth, stamp);
-            //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
-            //    sentence.setRevisible(false);
-            //}
-            BudgetValue budget = parseBudget(budgetString, punc, truth);
-            Task task = new Task(sentence, budget);
-            return task;
-        }
-        catch (InvalidInputException e) {
-            throw new InvalidInputException(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());         
-        }
+        
+        String budgetString = getBudgetString(buffer);
+        String truthString = getTruthString(buffer);
+        Tense tense = parseTense(buffer);
+        String str = buffer.toString().trim();
+        int last = str.length() - 1;
+        char punc = str.charAt(last);
+
+        Stamp stamp = new Stamp(memory.getTime(), tense, memory.newStampSerial(), memory.param.duration.get());
+
+        TruthValue truth = parseTruth(truthString, punc);
+        Term content = parseTerm(str.substring(0, last));
+        if (content == null) throw new InvalidInputException("Content term missing");
+        Sentence sentence = new Sentence(content, punc, truth, stamp);
+        //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
+        //    sentence.setRevisible(false);
+        //}
+        BudgetValue budget = parseBudget(budgetString, punc, truth);
+        Task task = new Task(sentence, budget);
+        return task;
 
     }
 
@@ -371,56 +366,44 @@ public class Narsese {
      * @param memory Reference to the memory
      * @return the Term generated from the String
      */
-    public Term _parseTerm(String s) throws InvalidInputException {
+    public Term _parseTerm(final String s) throws InvalidInputException {
         
-        try {
-            
-            
-            
+        int index = s.length() - 1;
+        char first = s.charAt(0);
+        char last = s.charAt(index);
 
-            
-                                   
-
-            int index = s.length() - 1;
-            char first = s.charAt(0);
-            char last = s.charAt(index);
-            
-            NativeOperator opener = getOpener(first);
-            if (opener!=null) {
-                switch (opener) {
-                    case COMPOUND_TERM_OPENER:
-                        if (last == COMPOUND_TERM_CLOSER.ch) {
-                           return parseCompoundTerm(s.substring(1, index));
-                        } else {
-                            throw new InvalidInputException("missing CompoundTerm closer");
-                        }
-                    case SET_EXT_OPENER:
-                        if (last == SET_EXT_CLOSER.ch) {
-                            return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
-                        } else {
-                            throw new InvalidInputException("missing ExtensionSet closer");
-                        }                    
-                    case SET_INT_OPENER:
-                        if (last == SET_INT_CLOSER.ch) {
-                            return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
-                        } else {
-                            throw new InvalidInputException("missing IntensionSet closer");
-                        }   
-                    case STATEMENT_OPENER:
-                        if (last == STATEMENT_CLOSER.ch) {
-                            return parseStatement(s.substring(1, index));
-                        } else {
-                            throw new InvalidInputException("missing Statement closer");
-                        }
-                }
+        NativeOperator opener = getOpener(first);
+        if (opener!=null) {
+            switch (opener) {
+                case COMPOUND_TERM_OPENER:
+                    if (last == COMPOUND_TERM_CLOSER.ch) {
+                       return parseCompoundTerm(s.substring(1, index));
+                    } else {
+                        throw new InvalidInputException("missing CompoundTerm closer");
+                    }
+                case SET_EXT_OPENER:
+                    if (last == SET_EXT_CLOSER.ch) {
+                        return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
+                    } else {
+                        throw new InvalidInputException("missing ExtensionSet closer");
+                    }                    
+                case SET_INT_OPENER:
+                    if (last == SET_INT_CLOSER.ch) {
+                        return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
+                    } else {
+                        throw new InvalidInputException("missing IntensionSet closer");
+                    }   
+                case STATEMENT_OPENER:
+                    if (last == STATEMENT_CLOSER.ch) {
+                        return parseStatement(s.substring(1, index));
+                    } else {
+                        throw new InvalidInputException("missing Statement closer");
+                    }
             }
-            
-            //if no opener, parse the term            
-            return parseAtomicTerm(s);
-
-        } catch (InvalidInputException e) {
-            throw new InvalidInputException(" !!! INVALID INPUT: parseTerm: " + s + " --- " + e.getMessage());
         }
+
+        //if no opener, parse the term            
+        return parseAtomicTerm(s);
 
     }
 

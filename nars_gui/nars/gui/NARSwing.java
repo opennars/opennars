@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
-import nars.gui.input.InputPanel;
+import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
 import nars.io.TextInput;
@@ -130,7 +130,7 @@ public class NARSwing  {
 //        outputWindow.setVisible(true);
         
         
-        InputPanel inputPanel = new InputPanel(nar);
+        TextInputPanel inputPanel = new TextInputPanel(nar);
         Window inputWindow = new Window("Input", inputPanel);
         inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
         inputWindow.setSize(800, 200);

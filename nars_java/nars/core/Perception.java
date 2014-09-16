@@ -1,31 +1,49 @@
 package nars.core;
 
+import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
+import java.util.Iterator;
 import nars.entity.AbstractTask;
 import nars.entity.Sentence;
-import nars.io.narsese.Narsese;
+import nars.io.DefaultTextPerception;
+import nars.io.Output.ERR;
+import nars.operator.io.Speak;
 
 
 public class Perception {
 
-    final Narsese text;
+    private DefaultTextPerception text = null;
+    private NAR nar;
 
-    public Perception(Narsese textPerception) {
-        this.text = textPerception;
+    public void start(NAR n) {
+        this.nar = n;
+        this.text = new DefaultTextPerception(n);
     }
 
     /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    public AbstractTask perceive(final Object o, NAR nar) throws IOException {        
-        AbstractTask t;
-        if (o instanceof String) {
-            t = text.perceive((String) o, nar);
-        } else if (o instanceof Sentence) {
-            //TEMPORARY
-            Sentence s = (Sentence) o;
-            t = text.perceive(s.content.toString() + s.punctuation + " " + s.truth.toString(),nar);
-        } else {
-            throw new IOException("Unrecognized input (" + o.getClass() + "): " + o);
+    public Iterator<AbstractTask> perceive(final Object o) {
+                
+        Exception error;
+        try {
+            if (o instanceof String) {
+                return text.perceive((String) o);
+            } else if (o instanceof Sentence) {
+                //TEMPORARY
+                Sentence s = (Sentence) o;
+                return text.perceive(s.content.toString() + s.punctuation + " " + s.truth.toString());
+            }
+            error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + "]");
         }
-        return t;
+        catch (Exception e) {
+            error = e;
+        }
+        
+        return singletonIterator( new Speak(ERR.class, error) );
     }
+
+    public DefaultTextPerception getText() {        
+        return text;
+    }
+    
+    
 }

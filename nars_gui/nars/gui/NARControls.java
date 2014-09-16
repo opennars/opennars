@@ -45,7 +45,7 @@ import nars.core.Memory.Events.CycleStop;
 import nars.core.NAR;
 import nars.core.sense.MultiSense;
 import nars.grid2d.TestChamber;
-import nars.gui.input.InputPanel;
+import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.BubbleChart;
 import nars.gui.output.LogPanel;
@@ -178,7 +178,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             mv3.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    InputPanel inputPanel = new InputPanel(nar);
+                    TextInputPanel inputPanel = new TextInputPanel(nar);
                     Window inputWindow = new Window("Input", inputPanel);                    
                     inputWindow.setSize(800, 200);
                     inputWindow.setVisible(true);        
