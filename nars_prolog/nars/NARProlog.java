@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.io.Output;
-import nars.prolog.NoSolutionException;
 import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
 import nars.prolog.Theory;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
@@ -53,6 +51,7 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
     
     @Override
     public void newQueryResultAvailable(QueryEvent e) {
+        /*
         output.output(Prolog.class, e.getSolveInfo());
         
         //TEMPORARY
@@ -65,6 +64,7 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
             System.out.println("  Answer: none.");
             //Logger.getLogger(NARProlog.class.getName()).log(Level.SEVERE, null, ex);
         }
+                */
         
     }
 

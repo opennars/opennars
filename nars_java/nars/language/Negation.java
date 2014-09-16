@@ -75,7 +75,7 @@ public class Negation extends CompoundTerm {
      */
     public static Term make(final Term t, final Memory memory) {
         if (t instanceof Negation) {
-            return ((Negation) t).cloneTerms()[0];
+            return ((Negation) t).term[0];
         }         // (--,(--,P)) = P
         return make(new Term[] { t }, memory);
     }
