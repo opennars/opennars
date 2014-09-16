@@ -46,7 +46,7 @@ public class Term implements AbstractTerm {
      *
      * @param name A String as the name of the Term
      */
-    public Term(final String name) {
+    public Term(final CharSequence name) {
         setName(name);
     }
 
