@@ -911,8 +911,12 @@ public class Memory implements Output, Serializable {
             logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
         
         if (getCyclesQueued()==0) {                
+            final int duration = param.duration.get();
             for (int i = 0; i < inputCycles; i++) {
                 AbstractTask t = taskSource.nextTask();
+                if (t instanceof Task) {
+                    ((Task)t).sentence.stamp.setCreationTime(getTime(), duration);
+                }
                 if (t!=null)
                     inputTask(t);
             }

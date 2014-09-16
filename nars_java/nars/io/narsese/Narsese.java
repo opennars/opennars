@@ -42,7 +42,6 @@ import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Statement;
-import static nars.language.Statement.make;
 import nars.language.Tense;
 import nars.language.Term;
 import nars.language.Variable;
@@ -169,7 +168,7 @@ public class Narsese {
         int last = str.length() - 1;
         char punc = str.charAt(last);
 
-        Stamp stamp = new Stamp(memory.getTime(), tense, memory.newStampSerial(), memory.param.duration.get());
+        Stamp stamp = new Stamp(0 /* this will be set right beforethe Task is input */, tense, memory.newStampSerial(), memory.param.duration.get());
 
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
