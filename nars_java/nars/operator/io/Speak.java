@@ -7,19 +7,19 @@ import nars.entity.AbstractTask;
  * @author me
  */
 public class Speak extends AbstractTask {
-    public final String text;
+    public final Object signal;
     public final Class channel;
 
-    public Speak(Class channel, String text) {
+    public Speak(Class channel, Object signal) {
         super();
         this.channel = channel;
-        this.text = text;
+        this.signal = signal;
     }
 
     
     @Override
     public CharSequence getKey() {
-        return "Echo";
+        return channel.getSimpleName() + ": " + signal.hashCode();
     }
     
 }

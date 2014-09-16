@@ -2,7 +2,6 @@ package nars.io;
 
 import java.io.IOException;
 import java.util.Iterator;
-import nars.core.Perception;
 import nars.io.buffer.Buffer;
 
 
@@ -10,30 +9,32 @@ import nars.io.buffer.Buffer;
  * An attached Input, Buffer, and Attention Allocation State
  * @author me
  */
-public class InPort<X> implements Iterator<X> {
+abstract public class InPort<X,Y> implements Iterator<Y> {
     public final Input<X> input;
-    public final Buffer<X> buffer;
+    public final Buffer<Y> buffer;
     private float attention;
-    private final Perception perception;
+    
     
 //    /** initializes with default FIFO and attention=1.0 */
 //    public InPort(Input<X> input, float initialAttention) {        
 //        this(input, new FIFO(), 1.0);
 //    }
     
-    public InPort(Perception p, Input<X> input, Buffer<X> buffer, float initialAttention) {
+    public InPort(Input<X> input, Buffer<Y> buffer, float initialAttention) {
         super();
-        this.perception = p;
         this.input = input;
         this.buffer = buffer;
         this.attention = initialAttention;
     }
  
     /** add a task to the end of the buffer */
-    public boolean queue(X task) {
-        return buffer.add(task);
+    protected boolean queue(Y task) {
+        if (task!=null)
+            return buffer.add(task);
+        return false;
     }
      
+    @Override
     public boolean hasNext() {
         if (buffer == null) {
             return !input.finished(false);
@@ -42,30 +43,37 @@ public class InPort<X> implements Iterator<X> {
         return buffer.size() > 0;
     }
     
-    protected X nextXDirect() {
-        try {
-            if (input.finished(false))
-                return null;
-            
-            X x = input.next();
-            if (x == null)
-                return null;
-            return x;
-        }
-        catch (IOException e) {
-            return null;
-        }
-            
-    }
+//    protected X nextXDirect() {
+//        try {
+//            if (input.finished(false))
+//                return null;
+//            
+//            X x = input.next();
+//            if (x == null)
+//                return null;
+//            return x;
+//        }
+//        catch (IOException e) {
+//            return null;
+//        }
+//            
+//    }
+    
+    abstract public Iterator<Y> process(X x);
     
     public void update() throws IOException {
         if (buffer == null) return;
         
         while (!input.finished(false) && (buffer.available() > 0) ) {            
             X x = input.next();
-            if (x != null) {
-                queue(x);
-            }
+            if (x == null)
+                continue;
+            
+            Iterator<Y> yy = process(x);
+            if (yy!=null) {
+                while (yy.hasNext())
+                    queue(yy.next());
+            }            
         }
     }
 
@@ -85,11 +93,11 @@ public class InPort<X> implements Iterator<X> {
         return input.finished(false);
     }
     
-    public X next() {
-        if (buffer == null)
-            return nextXDirect();
+    public Y next() {
+        /*if (buffer == null)
+            return nextXDirect();*/
         
-        X n = buffer.poll();
+        Y n = buffer.poll();
         
         //TODO update statistics
         

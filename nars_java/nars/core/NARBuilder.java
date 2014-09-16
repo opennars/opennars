@@ -2,7 +2,6 @@ package nars.core;
 
 import nars.entity.ConceptBuilder;
 import nars.entity.Task;
-import nars.io.DefaultTextPerception;
 import nars.operator.DefaultOperators;
 import nars.operator.ExampleOperators;
 import nars.operator.Operator;
@@ -30,12 +29,7 @@ abstract public class NARBuilder extends Parameters  {
             m.addOperator(o);
         }
         
-        
-        
-        return new NAR(m,                 
-                new Perception( new DefaultTextPerception(m) ));
+        return new NAR(m, new Perception());
     }
-
-
     
 }

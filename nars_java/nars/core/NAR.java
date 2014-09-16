@@ -1,8 +1,10 @@
 package nars.core;
 
+import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.Memory.TaskSource;
@@ -12,9 +14,11 @@ import nars.io.InPort;
 import nars.io.Input;
 import nars.io.Output;
 import nars.io.TextInput;
-import nars.io.narsese.Narsese;
+import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
+import nars.io.narsese.Narsese;
 import nars.language.Term;
+import nars.operator.io.Speak;
 
 
 /**
@@ -48,7 +52,7 @@ public class NAR implements Runnable, Output, TaskSource {
     
     
     /** The addInput channels of the reasoner     */
-    protected final List<InPort> inputChannels;
+    protected final List<InPort<Object,AbstractTask>> inputChannels;
     
     /** The output channels of the reasoner     */
     protected List<Output> outputChannels;
@@ -87,7 +91,7 @@ public class NAR implements Runnable, Output, TaskSource {
     
     
 
-    private final Perception perception;
+    public final Perception perception;
     
     
     private boolean inputting = true;
@@ -110,6 +114,9 @@ public class NAR implements Runnable, Output, TaskSource {
         outputChannels = new ArrayList();
         newOutputChannels = new CopyOnWriteArrayList();
         oldOutputChannels = new CopyOnWriteArrayList();
+    
+        this.perception.start(this);
+
     }
 
     /**
@@ -137,9 +144,26 @@ public class NAR implements Runnable, Output, TaskSource {
         return i;
     }
     
+    final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
+
+        public ObjectTaskInPort(Input input, Buffer buffer, float initialAttention) {
+            super(input, buffer, initialAttention);
+        }
+
+        @Override
+        public Iterator<AbstractTask> process(final Object x) {
+            try {
+                return perception.perceive(x);
+            }
+            catch (Throwable e) {
+                return singletonIterator(new Speak(ERR.class, e));
+            }
+        }
+    }
+    
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
     public Input addInput(final Input channel) {
-        InPort i = new InPort(perception, channel, new FIFO(), 1.0f);
+        InPort i = new ObjectTaskInPort(channel, new FIFO(), 1.0f);
                
         try {
             i.update();
@@ -320,7 +344,7 @@ public class NAR implements Runnable, Output, TaskSource {
         while ((remainingChannels > 0) && (inputChannels.size() > 0)) {
             inputSelected %= inputChannels.size();
 
-            final InPort i = inputChannels.get(inputSelected++);
+            final InPort<Object,AbstractTask> i = inputChannels.get(inputSelected++);
             remainingChannels--;
             
             if (i.finished()) {
@@ -335,19 +359,10 @@ public class NAR implements Runnable, Output, TaskSource {
             }                
 
             if (i.hasNext()) {
-                try {
-                    Object input = i.next();
-
-                    AbstractTask task = perception.perceive(input,this);
-
-                    if (task!=null) {
-                        return task;
-                    }
+                AbstractTask task = i.next();
+                if (task!=null) {
+                    return task;
                 }
-                catch (IOException e) {
-                    output(ERR.class, e);
-                }
-
             }
 
         }
@@ -452,7 +467,7 @@ public class NAR implements Runnable, Output, TaskSource {
     /** parses and returns a Term from a string; or null if parsing error */
     public Term term(final String s) {        
         try {
-            return perception.text.parseTerm(s);
+            return perception.getText().narsese.parseTerm(s);
         } catch (Narsese.InvalidInputException ex) {
             output(ERR.class, ex);
         }
@@ -485,7 +500,7 @@ public class NAR implements Runnable, Output, TaskSource {
         return total;
     }
 
-    public List<InPort> getInPorts() {
+    public List<InPort<Object, AbstractTask>> getInPorts() {
         return inputChannels;
     }
 }
