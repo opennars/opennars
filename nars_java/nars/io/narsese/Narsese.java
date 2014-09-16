@@ -1,21 +1,19 @@
-package nars.io;
+package nars.io.narsese;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
-import nars.core.NAR;
 import nars.core.Parameters;
-import nars.entity.AbstractTask;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.truthToQuality;
+import nars.io.Symbols;
 import static nars.io.Symbols.ARGUMENT_SEPARATOR;
 import static nars.io.Symbols.BUDGET_VALUE_MARK;
 import static nars.io.Symbols.GOAL_MARK;
@@ -39,6 +37,7 @@ import static nars.io.Symbols.getOpener;
 import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getRelation;
 import static nars.io.Symbols.isRelation;
+import nars.io.Texts;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
@@ -52,17 +51,18 @@ import static nars.operator.Operation.make;
 import nars.operator.Operator;
 
 /**
- * Processes text input
+ * Utility methods for working and reacting to Narsese input.
+ * This will eventually be integrated with NarseseParser for systematic
+ * parsing and prediction of input.
  */
-public class TextPerception {
+public class Narsese {
     
     public final Memory memory;
+            
         
     //an index of known, but non-conceptualized Terms
     final Map<CharSequence,Term> unconceptualized = new HashMap();
-    
-    public final List<TextReaction> parsers;
-    
+        
     
     /**
      * All kinds of invalid addInput lines
@@ -71,7 +71,6 @@ public class TextPerception {
 
         /**
          * An invalid addInput line.
-         *
          * @param s type of error
          */
         InvalidInputException(String s) {
@@ -79,41 +78,10 @@ public class TextPerception {
         }
     }    
     
-    public TextPerception(Memory memory) {
-        this(memory, new ArrayList());
-    }
-
-    public TextPerception(Memory memory, List<TextReaction> parsers) {
+    public Narsese(Memory memory) {        
         this.memory = memory;
-        this.parsers = parsers;        
     }
-    
-    public AbstractTask perceive(String line, NAR nar) {
 
-        for (TextReaction p : parsers) {            
-            
-            Object result = p.react(line);
-            if (result!=null) {
-                if (result instanceof AbstractTask) {
-                    return (AbstractTask)result;
-                }
-                else if (result.equals(Boolean.TRUE))
-                    return null;
-            }
-        }        
-
-        //not handled, so respond with some signal
-        if(NLP.isNLPStatement(line)) {
-            NLP.processInput(line, nar);
-        }
-        else
-        {
-            memory.output(Output.ERR.class, "Invalid input: " + line);
-        }
-        return null;
-    }
-        
-    
     
 
     /**
@@ -673,5 +641,13 @@ public class TextPerception {
         
         return i < 2 || !isRelation(s.substring(i - 2, i + 1));
     }
+
+    public static boolean possiblyNarsese(String s) {
+        if(!s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">")) {
+            return true;
+        }
+        return false;
+    }
+            
     
 }

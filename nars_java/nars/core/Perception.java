@@ -3,14 +3,14 @@ package nars.core;
 import java.io.IOException;
 import nars.entity.AbstractTask;
 import nars.entity.Sentence;
-import nars.io.TextPerception;
+import nars.io.narsese.Narsese;
 
 
 public class Perception {
 
-    final TextPerception text;
+    final Narsese text;
 
-    public Perception(TextPerception textPerception) {
+    public Perception(Narsese textPerception) {
         this.text = textPerception;
     }
 

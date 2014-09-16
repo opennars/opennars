@@ -1,17 +1,36 @@
 package nars.io;
 
-import nars.operator.io.PauseInput;
-import nars.entity.Task;
+import java.util.ArrayList;
+import java.util.List;
 import nars.core.Memory;
+import nars.core.NAR;
+import nars.entity.AbstractTask;
+import nars.entity.Task;
+import nars.io.narsese.Narsese;
+import nars.io.narsese.Narsese.InvalidInputException;
+import static nars.io.narsese.Narsese.possiblyNarsese;
+import nars.io.nlp.Englisch;
+import nars.operator.io.PauseInput;
 
 /**
  *  Default handlers for text perception
  */
-public class DefaultTextPerception extends TextPerception {
+public class DefaultTextPerception  {
     
-    public DefaultTextPerception(Memory memory) {
     
-        super(memory);
+    public final List<TextReaction> parsers;
+    private final Memory memory;
+    
+    public final Narsese narsese;    
+    public final Englisch englisch;
+    
+    public DefaultTextPerception(final NAR nar) {
+        super();
+        
+        this.memory = nar.memory;
+        this.narsese = new Narsese(memory);
+        this.englisch = new Englisch();
+        this.parsers = new ArrayList();
         
         //integer, # of cycles to step
         parsers.add(new TextReaction() {
@@ -140,20 +159,64 @@ public class DefaultTextPerception extends TextPerception {
                 char c = input.charAt(0);
                 if (c != Symbols.COMMENT_MARK) {
                     try {
-                        Task task = parseNarsese(new StringBuilder(input));
+                        Task task = narsese.parseNarsese(new StringBuilder(input));
                         if (task != null) {
                             return task;
                         }
                     } catch (InvalidInputException ex) {
-                        /*System.err.println(ex.toString());
-                        ex.printStackTrace();*/
+                        return ex;
                     }
                 }
                 return null;
             }
         });             
 
+        //englisch
+        parsers.add(new TextReaction() {
+            @Override
+            public Object react(String line) {
+
+                //not handled, so respond with some signal
+                if(possiblyNarsese(line)) {                    
+                    try {
+                        return englisch.processInput(line, narsese);
+                    } catch (InvalidInputException ex) {
+                        return ex;
+                    }
+                }
+                return null;            
+            }
+        });             
+        
                    
+    }
+    
+    public AbstractTask perceive(String line, NAR nar) {
+
+        Exception lastException = null;
+        
+        for (TextReaction p : parsers) {            
+            
+            Object result = p.react(line);
+            if (result!=null) {
+                if (result instanceof AbstractTask) {
+                    return (AbstractTask)result;
+                }
+                else if (result.equals(Boolean.TRUE)) {
+                    return null;
+                }
+                else if (result instanceof Exception) {
+                    lastException = (Exception)result;
+                }
+            }
+        }
+
+        String errorMessage = "Invalid input: \'" + line + "\'";
+        if (lastException!=null) {
+            errorMessage += " : " + lastException.toString();
+        }
+        memory.output(Output.ERR.class, errorMessage);
+        return null;
     }
 
     

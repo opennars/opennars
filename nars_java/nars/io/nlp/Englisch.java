@@ -15,31 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.io;
+package nars.io.nlp;
 
 import java.util.ArrayList;
-import nars.core.NAR;
+import nars.entity.Task;
 import static nars.io.Texts.levenshteinDistance;
+import nars.io.narsese.Narsese;
 
 /**
- *
+ * "Englisch" (nearly-English) Input Perception
+    To keep NLP overhead as small as possible we will here use a heuristic which directly 
+    translates to Narsese whenever it can, and use general sentence form     
  * @author tc
  */
-public class NLP {
-    public static boolean isNLPStatement(String s) {
-        if(!s.contains("(") && !s.contains(")") && !s.contains("<") && !s.contains(">")) {
-            return true;
-        }
-        return false;
+public class Englisch {
+    
+    
+    public ArrayList<String> wordmem=new ArrayList<String>();
+
+    public Englisch() {
+        
     }
     
-    public static ArrayList<String> wordmem=new ArrayList<String>();
-    public static void processInput(String s, NAR nar) {
-        //to keep NLP overhead as small as possible we will here use a heuristic which directly
+    public Task processInput(String s, Narsese narsese) throws Narsese.InvalidInputException {
+        
+        StringBuilder result = new StringBuilder();
         
         s=s.replace("go to","go-to").replace("should be","is");
         
-        String punct="."; //translates to Narsese whenever it can, and use general sentence form else
+        String punct="."; 
+        
         if(s.endsWith("?")) {
             punct="?";
         }
@@ -74,8 +79,7 @@ public class NLP {
                 int longerword=Math.max(word.length(), mword.length());
                 double perc=((double)difference)/((double)longerword);
                 if(perc<0.3) {
-                    nar.addInput("<"+word+" <-> "+mword+">.");
-                    nar.step(1);
+                    result.append("<"+word+" <-> "+mword+">.").append('\n');
                 }
             }
         }
@@ -141,14 +145,14 @@ public class NLP {
                 sentence+=") --> sentence>"+punct+" :|:";
             }
         }
-        nar.addInput(sentence);
-        nar.step(1);
+        result.append(sentence).append("\n");
         for(int i=0;i<words.length-1;i++) {
             if(words[i].equals("at") || words[i].equals("on") || words[i].equals("in")) {
-                nar.addInput("<"+words[i+1]+" --> place>.");
-                nar.step(1);
+                result.append("<"+words[i+1]+" --> place>.").append('\n');
             }
         }
         //int wu=levenshteinDistance("","");
+        
+        return narsese.parseNarsese(result);
     }
 }
