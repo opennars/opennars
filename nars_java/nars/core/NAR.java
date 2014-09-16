@@ -12,7 +12,7 @@ import nars.io.InPort;
 import nars.io.Input;
 import nars.io.Output;
 import nars.io.TextInput;
-import nars.io.TextPerception;
+import nars.io.narsese.Narsese;
 import nars.io.buffer.FIFO;
 import nars.language.Term;
 
@@ -453,7 +453,7 @@ public class NAR implements Runnable, Output, TaskSource {
     public Term term(final String s) {        
         try {
             return perception.text.parseTerm(s);
-        } catch (TextPerception.InvalidInputException ex) {
+        } catch (Narsese.InvalidInputException ex) {
             output(ERR.class, ex);
         }
         return null;

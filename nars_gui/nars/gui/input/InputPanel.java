@@ -22,7 +22,8 @@ package nars.gui.input;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -31,15 +32,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.TreeModel;
@@ -49,6 +50,7 @@ import nars.gui.FileTreeModel;
 import nars.gui.NARSwing;
 import nars.gui.NPanel;
 import static nars.gui.output.SwingLogPanel.setConsoleStyle;
+import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
 import nars.io.narsese.NarseseParser;
@@ -59,6 +61,9 @@ import org.parboiled.support.ParsingResult;
 
 
 public class InputPanel extends NPanel /*implements ActionListener*/ {
+    private ReactionPanel infoPane;
+    private final JMenuBar menu;
+    private JSplitPane mainSplit;
 
     public interface InputAction {
         public String getLabel();
@@ -182,7 +187,7 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
 
         @Override
         public void getActions(List<InputAction> actionsCollected) {
-            if (input.length() == 0) {
+            if (input.length() > 0) {
                 actionsCollected.add(clear);
             }
             actionsCollected.add(library);
@@ -203,6 +208,9 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
 
         @Override
         public String getInterpretation() {
+            if (input.length() == 0)
+                return null;
+            
             ReportingParseRunner rpr = new ReportingParseRunner(p.Input());
             ParsingResult r = rpr.run(input);
 
@@ -286,7 +294,6 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
             
             actionsCollected.add(step);
             
-            
             /*
             Other Actions:
                 Ask - direct input a question, and create a solution window to watch for answers
@@ -346,8 +353,7 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
         
         centerPanel = new JPanel(new BorderLayout());
 
-        JPanel menu = new JPanel();
-        menu.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        menu = new JMenuBar();
 
         menu.setOpaque(false);
         setBackground(Color.BLACK);
@@ -372,19 +378,27 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
 //    }
 
     public class ReactionPanel extends JPanel {
+        private SwingText comments;
+        
 
         /**
          * List with buttons (instant invoke) and checkboxes with 'All' at the top when two or more are selected
          * 
          */
-        private final JPanel list;
+        //private final JPanel list;
 
         public ReactionPanel() {
             super(new BorderLayout());
 
-            list = new JPanel();
-            list.setLayout(new BoxLayout(list, BoxLayout.PAGE_AXIS));
-            add(new JScrollPane(list), BorderLayout.CENTER);
+            //list = new JPanel(new GridBagLayout());
+            //add(new JScrollPane(list), BorderLayout.CENTER);
+            comments = new SwingText();
+            comments.setEditable(false);
+            setConsoleStyle(comments, true);
+            
+            /*JPanel pj = new JPanel(new BorderLayout());
+            pj.add(j, BorderLayout.CENTER);*/
+            add(new JScrollPane(comments), BorderLayout.CENTER);
         }
 
         public void update(final String input) {
@@ -403,19 +417,77 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
                 t.getActions(actions);                
             }
             
-            list.removeAll();
+            /*
+            GridBagConstraints gc = new GridBagConstraints();
+            gc.weightx = 1.0;
+            gc.weighty = 0.0;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.gridx = 1;
+            gc.gridy = 1;
+            */
+            
+            
+            menu.removeAll();
+            
+            
+            
+            String text = "";
             for (String[] i : interpretations) {
-                Color c = NARSwing.getColor(i[0], 0.9f, 0.25f);
-                JLabel j = new JLabel(i[0] + ": " + i[1]);
-                j.setBackground(c);
-                list.add(j);
+                Color c = NARSwing.getColor(i[0], 0.5f, 0.3f);
+                text += (i[0] + ": " + i[1]) + "\n\n";
+                comments.print(Color.WHITE, c, text);                
             }
-            for (InputAction a : actions) {
-                JButton b = new JButton(a.getLabel());
-                list.add(b);                
-            }
-            list.validate();
+            comments.setText(text);
 
+
+            
+            if (text.length() > 0) {
+                if (!isVisible()) {
+                    int ll = mainSplit.getLastDividerLocation();
+                    if (ll <= 0)
+                        ll = (int)(getWidth() * 0.75);
+                    if (getWidth() == 0) {
+                        //component hasnt been instantiated yet, guessing at size
+                        //TODO use actual planned size
+                        ll = 500;
+                    }
+                    mainSplit.setDividerLocation(ll);
+                    mainSplit.setLastDividerLocation(ll);
+                    setVisible(true);
+                }                
+            }
+            else {                
+                if (isVisible()) {                    
+                    mainSplit.setLastDividerLocation(mainSplit.getDividerLocation());
+                    setVisible(false);
+                }
+            }
+            
+            for (InputAction a : actions) {
+                
+                JButton b = new JButton(a.getLabel());
+                b.addActionListener(new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override public void run() {
+                                //TODO catch error around run() ?
+                                String result = a.run();
+                                if (result!=null) {
+                                    inputText.setText(result);
+                                }
+                            }
+                        });
+                    }
+                });
+                                
+                menu.add(b);
+            }
+
+            menu.validate();
+            menu.repaint();
+            
+            validate();
+            repaint();
 
         }
 
@@ -423,9 +495,9 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
 
     //TODO move this to its own class
     public JComponent newTextInput() {
-        JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-
-        ReactionPanel infoPane = new ReactionPanel();
+        mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);        
+        
+        infoPane = new ReactionPanel();
 
         //setConsoleStyle(infoPane, true, 16);
 
@@ -457,16 +529,10 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
 //                else {
 //                    show = false;
 //                }
-                show = true;
+                //show = true;
                 
-                if (show) {
-                    infoPane.setVisible(true);
-                    p.setDividerLocation(0.5f);
-                } else {
-                    infoPane.setVisible(false);
-                    p.setDividerLocation(1.0f);
-                }
-                infoPane.update(t);
+                
+                updateContext();
             }
         };
         inputText.getDocument().addDocumentListener(documentListener);
@@ -484,13 +550,22 @@ public class InputPanel extends NPanel /*implements ActionListener*/ {
         });
         setConsoleStyle(inputText, true, 19);
 
-        p.add(new JScrollPane(inputText), 0);
+        mainSplit.add(new JScrollPane(inputText), 0);
 
-        infoPane.setVisible(true);
-        p.add(infoPane, 1);
-        p.setDividerLocation(1.0f);
+        infoPane.setVisible(false);
+        mainSplit.add(infoPane, 1);
 
-        return p;
+        updateContext();
+        
+        return mainSplit;
+    }
+
+    protected void updateContext() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                infoPane.update(inputText.getText());        
+            }            
+        });
     }
 
     /**

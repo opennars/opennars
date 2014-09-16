@@ -12,7 +12,7 @@ import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 import org.parboiled.support.ParsingResult;
 
 /**
- *
+ * NARese, syntax and language for interacting with a NAR in NARS.
  * @see https://code.google.com/p/open-nars/wiki/InputOutputFormat
  */
 public class NarseseParser extends BaseParser<Object> {
