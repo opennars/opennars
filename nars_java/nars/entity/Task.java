@@ -114,7 +114,7 @@ public class Task extends AbstractTask {
      * @return The creation time of the sentence
      */
     public long getCreationTime() {
-        return sentence.stamp.creationTime;
+        return sentence.stamp.getCreationTime();
     }
 
     /**

@@ -51,13 +51,13 @@ public class Stamp implements Cloneable {
     /**
      * creation time of the stamp
      */
-    public final long creationTime;
+    private long creationTime;
 
     /**
      * estimated occurrence time of the event
      * TODO: make this final?
      */
-    public long occurrenceTime;
+    private long occurrenceTime;
 
     /**
      * default for atemporal events
@@ -90,19 +90,31 @@ public class Stamp implements Cloneable {
     
     /** caches  */
     transient CharSequence name = null;
+    private Tense tense;
     
+    /** used for when the ocrrence time will be set later */
+    public Stamp(final Tense tense, final long serial) {
+        this.baseLength = 1;
+        this.evidentialBase = new long[baseLength];
+        this.evidentialBase[0] = serial;
+        this.tense = tense;
+        this.latency = 0;
+                
+        derivationChain = new ArrayList<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);        
+    }
     
     /**
      * Generate a new stamp, with a new serial number, for a new Task
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time, final Tense tense, final long serial, final int duration) {        
-        baseLength = 1;
-        evidentialBase = new long[baseLength];
-        evidentialBase[0] = serial;
+    public Stamp(final long time, final Tense tense, final long serial, final int duration) {            this(tense, serial);    
+        setCreationTime(time, duration);        
+    }
+    
+    /** sets the creation time; used to set input tasks with the actual time they enter Memory */
+    public void setCreationTime(long time, int duration) {
         creationTime = time;
-        latency = 0;
         
         if (tense == null) {
             occurrenceTime = ETERNAL;
@@ -116,7 +128,6 @@ public class Stamp implements Cloneable {
             occurrenceTime = time;
         }
         
-        derivationChain = new ArrayList<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
     }
 
     /**
@@ -477,7 +488,7 @@ public class Stamp implements Cloneable {
             final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
             final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
-            buffer.append(Symbols.STAMP_OPENER).append(creationTime);
+            buffer.append(Symbols.STAMP_OPENER).append(getCreationTime());
             if (occurrenceTime != ETERNAL) {
                 buffer.append('|').append(occurrenceTime);
             }
@@ -518,6 +529,13 @@ public class Stamp implements Cloneable {
         Stamp s = clone();
         s.setOccurrenceTime(newOcurrenceTime);
         return s;
+    }
+
+    /**
+     * @return the creationTime
+     */
+    public long getCreationTime() {
+        return creationTime;
     }
 
 
