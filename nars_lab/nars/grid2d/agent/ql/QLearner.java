@@ -18,7 +18,7 @@ public class QLearner  {
     }
     
     private Action[] qaction;
-    private Brain brain;
+    public Brain brain;
     double nextReward;
     double[] sensor;
     double[] action;
@@ -52,7 +52,7 @@ public class QLearner  {
                 for (int i = 0; i < sensor.length; i++)
                     setNextValue(sensor[i]);        
             }
-        }, qaction );
+        }, qaction, hiddenNeurons );
         
         /*
         brain = new Brain(new DAPerception(sensor, 4) {
