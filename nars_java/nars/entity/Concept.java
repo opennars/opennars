@@ -600,7 +600,7 @@ public class Concept extends Item {
     }
     
     protected void fire(TaskLink currentTaskLink) {
-        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.priority.getValue());
+        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
         
         memory.setCurrentTaskLink(currentTaskLink);
         memory.setCurrentBeliefLink(null);

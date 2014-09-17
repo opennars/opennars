@@ -57,7 +57,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
 
         @Override
         public final int positionOf(final E o) {
-            final int y = o.budget.getPriorityShort();
+            final float y = o.budget.getPriority();
             final int s = size();
             if (s > 0)  {
 
@@ -70,7 +70,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
 
                     E midVal = get(mid);
 
-                    final int x = midVal.budget.getPriorityShort();
+                    final float x = midVal.budget.getPriority();
                     
                     if (x < y) low = mid + 1;
                     else if (x == y) return mid;

@@ -4,7 +4,6 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.ContinuousBagNARBuilder;
-import nars.entity.ShortFloat;
 import nars.gui.NARSwing;
 import nars.io.Output;
 import nars.nario.level.Level;
@@ -190,7 +189,6 @@ public class NARio extends Run {
 
                         //sparkles are common and not important
 
-                        ShortFloat sv = new ShortFloat((float)priority);
 
 
                         String type = s.getClass().getSimpleName();

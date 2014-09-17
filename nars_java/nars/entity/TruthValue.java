@@ -22,6 +22,7 @@ package nars.entity;
 
 import nars.core.Parameters;
 import nars.io.Symbols;
+import nars.io.Texts;
 
 
 public class TruthValue implements Cloneable { // implements Cloneable {
@@ -37,11 +38,11 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     /**
      * The frequency factor of the truth value
      */
-    private final ShortFloat frequency;
+    private float frequency;
     /**
      * The confidence factor of the truth value
      */
-    private final ShortFloat confidence;
+    private float confidence;
     /**
      * Whether the truth value is derived from a definition
      */
@@ -65,12 +66,9 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      *
      */
     public TruthValue(final float f, final float c, final boolean b) {
-        frequency = new ShortFloat(f);
-        
-        //if (c < 0) c = 0;
-        confidence = (c < 1) ? new ShortFloat(c) : new ShortFloat(0.9999f);
-        
-        analytic = b;
+        setFrequency(f);                
+        setConfidence(c);        
+        setAnalytic(b);
     }
 
     /**
@@ -79,8 +77,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @param v The truth value to be cloned
      */
     public TruthValue(final TruthValue v) {
-        frequency = new ShortFloat(v.getFrequency());
-        confidence = new ShortFloat(v.getConfidence());
+        frequency = v.getFrequency();
+        confidence = v.getConfidence();
         analytic = v.getAnalytic();
     }
 
@@ -90,7 +88,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The frequency value
      */
     public float getFrequency() {
-        return frequency.getValue();
+        return frequency;
     }
 
     /**
@@ -99,7 +97,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The confidence value
      */
     public float getConfidence() {
-        return confidence.getValue();
+        return confidence;
     }
 
     /**
@@ -124,7 +122,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The expectation value
      */
     public float getExpectation() {
-        return (float) (confidence.getValue() * (frequency.getValue() - 0.5) + 0.5);
+        return (float) (confidence * (frequency - 0.5) + 0.5);
     }
 
     /**
@@ -176,17 +174,17 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
     
     public TruthValue setFrequency(float f) {
-        frequency.setValue(f);
+        frequency = f;
         return this;
     }
     
-    public TruthValue setConfidence(float f) {
-        confidence.setValue(f);
+    public TruthValue setConfidence(float c) {
+        confidence = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
         return this;
     }
     
-    public TruthValue setAnalytic(boolean b) {
-        this.analytic = b;
+    public TruthValue setAnalytic(boolean a) {
+        analytic = a;
         return this;
     }
 
@@ -201,8 +199,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
         
         //1 + 6 + 1 + 6 + 1
-        return new StringBuilder(15).append(DELIMITER).append(frequency.toString())
-                     .append(SEPARATOR).append(confidence.toString()).append(DELIMITER).toString();
+        return new StringBuilder(15).append(DELIMITER).append(Texts.n4(frequency))
+                     .append(SEPARATOR).append(Texts.n4(confidence)).append(DELIMITER).toString();
     }
 
     /**
@@ -221,9 +219,9 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         sb.ensureCapacity(11);
         return sb
             .append(DELIMITER)
-            .append(frequency.toStringBrief())
+            .append(Texts.n2(frequency))
             .append(SEPARATOR)
-            .append(confidence.equalsOne() ? "0.99" : confidence.toStringBrief())
+            .append(Texts.n2(confidence))
             .append(DELIMITER);        
     }
 
