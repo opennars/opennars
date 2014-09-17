@@ -44,6 +44,11 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
         super(id);
         setActive(active);
     }
+    public EventValueSensor(final String id, boolean active, int windowSize) {
+        super(id);
+        setActive(active);
+        setSampleWindow(windowSize);
+    }
     
     public EventValueSensor(final String id) {
         super(id);

@@ -1,7 +1,9 @@
 package nars.test.util;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -28,6 +30,7 @@ import nars.util.meter.sensor.EventValueSensor;
 public class TestQController {
     
     final static String cpm = "concept.priority.mean";
+    final static String td = "task.derived";
     
     public static abstract class AbstractController implements Observer {
         public final NAR nar;
@@ -86,6 +89,12 @@ public class TestQController {
         }
         double min, max;
         private double value;
+        private boolean autoRange;
+        
+        public NumericRange() {
+            min = max = Double.NaN;
+            autoRange = true;            
+        }
         
         public NumericRange(double center) {
             min = max = center;
@@ -98,8 +107,25 @@ public class TestQController {
             set(center);
         }
 
-        public void set(double value) {
+        public void set(final double value) {            
             this.value = value;
+            if (autoRange) {
+                if ((Double.isNaN(min)) && !(Double.isNaN(value))) {
+                    //first input
+                    min = value;
+                    max = value;
+                }
+                else {
+                    if (value < min)  {
+                        //System.out.println(this + "autorange update min: " + value + " -> " + min);
+                        min = value;
+                    }
+                    if (value > max) {
+                        //System.out.println(this + "autorange update max: " + value + " -> " + min);
+                        max = value;
+                    }
+                }
+            }
         }
 
         public double get() {
@@ -121,7 +147,9 @@ public class TestQController {
         /** normalize to proportional value in range 0..1 */
         public double proportion(final double v) {
             if (max == min)
-                return 0;
+                return 0.5;
+            if (Double.isNaN(v))
+                return 0.5;
             
             return (v - min) / (max-min);
         }
@@ -149,6 +177,28 @@ public class TestQController {
             int p = proportionDiscrete(v, steps);            
             target[index + p] = 1;
         }
+        public void vectorizeSmooth(double[] target, int index, double v, final int steps) {
+            set(v);
+            v = proportion(v);
+            if (Double.isNaN(v)) {
+                v = 0.5;
+            }
+            else {
+                v = Math.min(1, v);
+                v = Math.max(0, v);
+            }
+            
+            final double stepScale = 1.0 / (steps-1);
+            for (int p = 0; p < steps; p++) {
+                double pp = ((double)p)* stepScale;                
+                double d = 1.0 - Math.abs( pp - v) / stepScale;                
+                d = Math.max(d, 0);
+                //d = Math.min(d, 1.0);
+                //System.out.println(v + " " + pp + " " + d);
+                target[index + p] = d;
+            }
+            
+        }
 
         private NumericRange add(double v) {
             value += v;
@@ -157,79 +207,244 @@ public class TestQController {
             return this;
         }
         
+        /** shrinks the distance between min and max around a target value to increase the 'contrast' gradually over time as seen by whatever uses this result */
+        public void adaptiveContrast(double rate, double target) {
+            min = (1.0 - rate) * min + (rate) * target;
+            max = (1.0 - rate) * max + (rate) * target;
+        }
     }
     
-    public static class QController extends AbstractController {
+    public static abstract class ControlSensor {
+        
+        public final NumericRange range;
+        public final int quantization;
+        
+        
+        public ControlSensor(int quantization) {
+            this.range = new NumericRange();
+            this.quantization = quantization;
+        }
+        
+        public ControlSensor(double min, double max, int quantization) {
+            this.range = new NumericRange( (min + max) / 2, (max-min)/2 );
+            this.quantization = quantization;
+        }
+        
+        //called each cycle
+        abstract public void update();
+        
+        //called during learning cycle to get the value
+        abstract public double get();
+        
+        /** returns next index */
+        public int vectorize(double[] d, int index) {            
+            range.vectorizeSmooth(d, index, get(), quantization);
+            return quantization;
+        }
+        
+        public void adaptContrast(double rate, double center) {
+            range.adaptiveContrast(rate, center);
+        }
+        
+    }
+    public static class NControlSensor extends ControlSensor {
+        private final Number a;
 
-        EventValueSensor meanConceptPriorityMean = new EventValueSensor("meanConceptPriorityMean", true);
-        public NumericRange nextConceptCyclesToForget;
-        public NumericRange nextTaskCyclesToForget;
-        public NumericRange nextBeliefCyclesToForget;
-        private NumericRange uniformRange = new NumericRange(0.5, 0.5);
+        public NControlSensor(Number a, int quantization) {
+            super(quantization);
+            this.a = a;
+            range.set(a.doubleValue());
+        }
         
-        private final QLearner q;
+        public NControlSensor(Number a, double min, double max, int quantization) {
+            super(min, max, quantization);
+            this.a = a;
+        }
         
-        int numParams = 3;
-        
-        int paramQuant = 5;
-        private int inputQuant = 21;
-        
-        int numInputs =  inputQuant + paramQuant * numParams;
-        int numOutputs = 2 * numParams + 1;
-        private double conceptPriority;
-        
-
-        public QController(NAR n, int period) {
-            super(n, period);
-                        
-            Param p = nar.param();
-            q = new QLearner();
-            q.init(numInputs, numOutputs);
-            
-            nextConceptCyclesToForget = new NumericRange(p.conceptCyclesToForget.get(), 4);
-            nextTaskCyclesToForget = new NumericRange(p.taskCyclesToForget.get(), 4);
-            nextBeliefCyclesToForget = new NumericRange(p.beliefCyclesToForget.get(), 4);
+        public NControlSensor(Number a, double radius, int quantization) {
+            this(a, a.doubleValue() - radius, a.doubleValue() + radius, quantization);
         }
 
+        @Override public void update() {       }
+
+        @Override public double get() {
+            double aa = a.doubleValue();;
+            range.set(aa);
+            return aa;
+        }
+                
+    }
+    
+    
+    abstract public static class QController extends AbstractController {
+        private final QLearner q;
+        public List<ControlSensor> inputs = new ArrayList();
+        private int actions;
+        private int numInputs;
+        private double[] a;
+        private double[] s;
+        private boolean active;
+
+        public QController(NAR nar, int updatePeriod) {
+            super(nar, updatePeriod);
+            this.q = new QLearner();            
+        }
+        
+        public <C extends ControlSensor> C add(C s) { inputs.add(s); return s; }
+        
+        public void init(int actions) {
+            actions = actions;
+            
+            numInputs = 0;            
+            for (ControlSensor cs : inputs) {
+                numInputs += cs.quantization;
+            }
+
+            System.out.println("Inputs=" + numInputs + ", Outputs=" + actions);            
+            q.init(numInputs, actions, getFeedForwardLayers(numInputs));
+        }
+        
+        abstract protected int[] getFeedForwardLayers(int inputSize);
+        
+        abstract protected void act(int action);
+        
+        abstract public double reward();
+        
         @Override
-        public void getSensors() {
-            meanConceptPriorityMean.commit(nar.memory.logic.d(cpm, 0));
+        public void getSensors() {            
+            for (ControlSensor cs : inputs)
+                cs.update();
         }
 
         @Override
         public void setParameters() {
-            conceptPriority = meanConceptPriorityMean.getReset().mean();
-            
-            //learn
-            double[] qIn = q.getSensor();
-            Arrays.fill(qIn, 0);
             int i = 0;
-            uniformRange.vectorize(qIn, i, conceptPriority, inputQuant);  i += inputQuant;
-            nextConceptCyclesToForget.vectorize(qIn, i, paramQuant); i += paramQuant;
-            nextTaskCyclesToForget.vectorize(qIn, i, paramQuant); i += paramQuant;
-            nextTaskCyclesToForget.vectorize(qIn, i, paramQuant); i += paramQuant;
             
-            
-            System.out.println(" input: " + Arrays.toString(qIn));
-        
-            q.step(reward());
-            
-            double[] a = q.getAction();
-            //System.out.println("out: " + Arrays.toString(a) + " " + nextConceptCyclesToForget.get());
-            if (a[0] > 0)
-                nextConceptCyclesToForget.add(-1);
-            if (a[2] > 0)
-                nextConceptCyclesToForget.add(1);
-                                    
-            nar.param().conceptCyclesToForget.set((int)nextConceptCyclesToForget.get());
-            nar.param().taskCyclesToForget.set((int)nextTaskCyclesToForget.get());
-            nar.param().beliefCyclesToForget.set((int)nextBeliefCyclesToForget.get());
+            //even when not active, vectorize inputs because it may affect sensor readings that determine reward, which we may want to evaluate
+            s = q.getSensor();
+            for (ControlSensor cs : inputs) {
+                i += cs.vectorize(s, i);
+            }
+
+            if (active) {
+                q.step(reward());
+
+                a = q.getAction();
+                for (int j = 0; j < a.length; j++)
+                    if (a[j] > 0)
+                        act(j);
+            }
+                    
+        }
+
+        public double[] getInput() {
+            return s;
+        }
+
+        public double[] getOutput() {
+            return a;
         }
         
+        public void setActive(boolean b) {
+            this.active = b;
+        }
+        
+    }
+    
+    public static class TestController extends QController {
+
+                
+                
+        private double conceptPriority;
+        private double taskDerivedMean;
+        private double conceptNewMean;
+        
+        public TestController(NAR n, int period) {
+            super(n, period);
+                        
+            Param p = nar.param();
+            
+            add(new NControlSensor(p.conceptCyclesToForget, 2));
+            add(new NControlSensor(p.beliefCyclesToForget, 2));
+            add(new NControlSensor(p.taskCyclesToForget, 2));
+            
+            add(new ControlSensor(4) {
+                EventValueSensor meanConceptPriorityMean = 
+                        new EventValueSensor("a", true);
+                
+                @Override public void update() {
+                    meanConceptPriorityMean.commit(nar.memory.logic.d(cpm, 0));
+                }
+
+                @Override public double get() {
+                    conceptPriority = meanConceptPriorityMean.getReset().mean();
+                    adaptContrast(0.002, conceptPriority);                    
+                    return conceptPriority;
+                }                
+            });
+            add(new ControlSensor(4) {
+                EventValueSensor taskDerived = 
+                        new EventValueSensor("a", true, 2);
+                
+                
+                @Override public void update() {
+                    taskDerived.commit(nar.memory.logic.d(td, 0));                    
+                }
+
+                @Override public double get() {
+                    taskDerivedMean = taskDerived.get().mean();
+                    adaptContrast(0.002, taskDerivedMean);
+                    return taskDerivedMean;
+                }
+            });
+            add(new ControlSensor(4) {
+                EventValueSensor conceptNew = 
+                        new EventValueSensor("a", true, 2);
+                
+                
+                @Override public void update() {
+                    conceptNew.commit(nar.memory.logic.d("concept.new", 0));                    
+                }
+
+                @Override public double get() {
+                    conceptNewMean = conceptNew.get().mean();
+                    adaptContrast(0.002, conceptNewMean);
+                    return conceptNewMean;
+                }
+            });
+            
+            init(7);
+        }
+
+        @Override
+        protected int[] getFeedForwardLayers(int inputSize) {
+            return new int[0];
+        }
+
+        @Override
+        protected void act(int action) {
+            Param p = nar.param();
+            switch (action) {
+                case 0: p.conceptCyclesToForget.set(12);  break;
+                case 1: p.conceptCyclesToForget.set(10);   break;
+                case 2: p.taskCyclesToForget.set(22);  break;
+                case 3: p.taskCyclesToForget.set(20);   break;
+                case 4: p.beliefCyclesToForget.set(52);  break;
+                case 5: p.beliefCyclesToForget.set(50);   break;
+                case 6: 
+                    //final input: do nothing                    
+                    break;
+            }
+        }        
+        
+        @Override
         public double reward() {
             //maximize concept priority
-            return conceptPriority;
+            //return conceptPriority;
+            return taskDerivedMean + conceptNewMean;
         }
+
+
     }
 
     public static void input(String example, NAR... n) {
@@ -238,34 +453,41 @@ public class TestQController {
     }
     
     public static void main(String[] arg) {
-        
-//n has controller
+                
         NAR n = new DefaultNARBuilder().build();        
-        QController q = new QController(n, 8);
+        TestController qn = new TestController(n, 2);
         
-        //m has no controller
-        NAR m = new DefaultNARBuilder().build();        
-        m.memory.logic.setActive(true);
+        //m has controller deactivated
+        NAR m = new DefaultNARBuilder().build();
+        TestController qm = new TestController(m, 2);
+        qm.setActive(false);
 
         input("nal/Examples/Example-MultiStep-edited.txt", n, m);
         input("nal/test/nars_multistep_1.nal", n, m);
         input("nal/test/nars_multistep_2.nal", n, m);
         
+        
+        double mm = 0, nn = 0;
+        int displayCycles = 100;
         while (true ) {
             n.step(1);
             
             m.step(1);
             m.memory.logic.update(m.memory);
             
-            double mm = m.memory.logic.d(cpm);
-            double nn = n.memory.logic.d(cpm);
+            mm += qm.reward();
+            nn += qn.reward();
             
-            System.out.println(
-                    (int)((nn-mm)/((nn+mm)/2.0)*100.0) + "%: " + 
-                            mm + " | " + nn + " <-- [" +
-                            q.nextConceptCyclesToForget.get() + " " + 
-                            q.nextBeliefCyclesToForget.get() + " " + 
-                            q.nextTaskCyclesToForget.get() + "]");
+            if (n.getTime() % displayCycles == 0) {
+                System.out.println(
+                        //((nn-mm)/((nn+mm)/2.0)*100.0) + " , " + 
+                                n.getTime() + ", " +
+                                mm + " , " + nn + " , " +
+                                Arrays.toString(qn.getInput()) + " , " + 
+                                Arrays.toString(qn.getOutput())
+                                );
+                mm = nn = 0;
+            }
         }
                 
     }
