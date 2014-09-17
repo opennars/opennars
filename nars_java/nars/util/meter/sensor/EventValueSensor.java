@@ -30,10 +30,21 @@ public class EventValueSensor extends AbstractSensor implements ManualTracker {
     double lastValue = 0, currentDelta = 0;
     long lastFirstcommit = -1;
     
-    public EventValueSensor(final StatsSession statsSession) {
+    public EventValueSensor(final StatsSession statsSession, boolean active) {
         super(statsSession);
+        setActive(active);
     }
 
+    /** active defaults to false */
+    public EventValueSensor(final StatsSession statsSession) {
+        this(statsSession, false);
+    }
+    
+    public EventValueSensor(final String id, boolean active) {
+        super(id);
+        setActive(active);
+    }
+    
     public EventValueSensor(final String id) {
         super(id);
     }

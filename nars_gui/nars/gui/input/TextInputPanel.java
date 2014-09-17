@@ -192,6 +192,9 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         public void getActions(List<InputAction> actionsCollected) {
             if (input.length() > 0) {
                 actionsCollected.add(clear);
+                //TODO concept search
+                //TODO operator search
+                
             }
             actionsCollected.add(library);
         }
@@ -296,6 +299,8 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                 actionsCollected.add(inputDirect);
             
             actionsCollected.add(step);
+            //TODO reset
+            
             
             /*
             Other Actions:
@@ -510,12 +515,13 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             double maxStrength = 0;
             for (InputAction a : actions) {
                 JButton b = new JButton(a.getLabel());
-
+                
                 double strength = a.getStrength();
                 if (strength > maxStrength) {
                     defaultButton = b;
                     maxStrength = strength;
                 }
+                b.setFont(b.getFont().deriveFont((float)(b.getFont().getSize() * (0.5f + 0.5f * strength))));
                         
                 b.addActionListener(new ActionListener() {
                     @Override public void actionPerformed(ActionEvent e) {

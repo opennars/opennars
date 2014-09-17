@@ -129,7 +129,14 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
     public String toString() {
         return dataMap.toString();
     }
-
+    
+    public double d(final String fieldName, final double defaultValue) {
+        Double value = getField(fieldName, Double.class);
+        if (value == null)
+            return defaultValue;
+        return value;
+    }
+    
     @Override
     public double d(final String fieldName) {
         return getField(fieldName, Double.class);

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import nars.core.EventEmitter.Observer;
 import nars.core.Memory.TaskSource;
 import nars.entity.AbstractTask;
 import nars.gui.NARControls;
@@ -142,6 +143,16 @@ public class NAR implements Runnable, Output, TaskSource {
         final TextInput i = new TextInput(text);
         addInput(i);
         return i;
+    }
+
+    /** attach event handler */
+    public void on(Class c, Observer o) {
+        memory.event.on(c, o);
+    }
+    
+    /** remove event handler */
+    public void off(Class c, Observer o) {
+        memory.event.on(c, o);
     }
     
     final class ObjectTaskInPort extends InPort<Object,AbstractTask> {

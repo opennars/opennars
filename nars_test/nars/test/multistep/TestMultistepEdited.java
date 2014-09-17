@@ -1,7 +1,7 @@
 package nars.test.multistep;
 
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.build.DefaultNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.test.core.NALTest;
@@ -22,7 +22,7 @@ public class TestMultistepEdited {
         n.memory.setRecorder(logger);*/
 
         
-        n.finish(10000);
+        n.finish(1000);
         //System.out.println(n.memory.concepts);
         
     }
