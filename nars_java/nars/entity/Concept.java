@@ -367,7 +367,7 @@ public class Concept extends Item {
      * @param table The table to be revised
      * @param capacity The capacity of the table
      */
-    private void addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    private static void addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
         final float rank1 = rankBelief(newSentence);    // for the new isBelief
         float rank2;
         int i = 0;

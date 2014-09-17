@@ -57,6 +57,11 @@ public class TemporalRules {
         }
     }
 
+    public final static boolean matchingOrder(final Sentence a, final Sentence b) {
+        return matchingOrder(a.getTemporalOrder(), b.getTemporalOrder());
+    }
+    
+
     public final static boolean matchingOrder(final int order1, final int order2) {
         return (order1 == order2) || (order1 == ORDER_NONE) || (order2 == ORDER_NONE);
     }

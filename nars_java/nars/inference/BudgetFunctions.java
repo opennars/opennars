@@ -23,6 +23,7 @@ package nars.inference;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -32,7 +33,6 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.language.Term;
-import nars.core.Memory;
 
 /**
  * Budget functions for resources allocation
@@ -60,7 +60,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param judg The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
      */
-    public static float rankBelief(final Sentence judg) {        
+    public final static float rankBelief(final Sentence judg) {        
         final float confidence = judg.truth.getConfidence();
         final float originality = 1.0f / (judg.stamp.evidentialBase.length + 1);
         return or(confidence, originality);
