@@ -882,14 +882,14 @@ public final class CompositionalRules {
             }
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
                 
-                CompoundTerm zw = (CompoundTerm) T.term[index].clone();
+                CompoundTerm zw = (CompoundTerm) T.term[index];
                 zw = (CompoundTerm) zw.setComponent(1, depIndVar1, memory);
                 T2 = (CompoundTerm) T2.setComponent(1, depIndVar1, memory);
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);
                 T = (CompoundTerm) T.setComponent(index, res, memory);
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
                 
-                CompoundTerm zw = (CompoundTerm) T.term[index].clone();
+                CompoundTerm zw = (CompoundTerm) T.term[index];
                 zw = (CompoundTerm) zw.setComponent(0, depIndVar2, memory);
                 T2 = (CompoundTerm) T2.setComponent(0, depIndVar2, memory);
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2, memory);

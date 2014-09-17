@@ -197,15 +197,15 @@ public class Sentence implements Cloneable {
 
 
 
-    /**
-     * Clone the content of the sentence
-     *
-     * @return A clone of the content Term
-     */
-    public Term cloneContent() {
-        return content.clone();
-    }
-
+//    /**
+//     * Clone the content of the sentence
+//     *
+//     * @return A clone of the content Term
+//     */
+//    public Term cloneContent() {
+//        return content.clone();
+//    }
+//
 
 
     /**
