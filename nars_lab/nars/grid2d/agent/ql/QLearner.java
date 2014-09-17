@@ -23,7 +23,7 @@ public class QLearner  {
     double[] sensor;
     double[] action;
 
-    public void init(int sensors, int actions) {
+    public void init(int sensors, int actions, int... hiddenNeurons) {
         qaction = new Action[actions];
         for (int i = 0; i < actions; i++) {
             final int I = i;
