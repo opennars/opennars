@@ -104,7 +104,7 @@ public class TestQController {
                     p.beliefCyclesToForget.set(50);
                     p.termLinkMaxMatched.set(10);
                     break;
-                case 2: 
+                case 2:
                     p.conceptCyclesToForget.set(9);   
                     p.taskCyclesToForget.set(19);
                     p.beliefCyclesToForget.set(49);

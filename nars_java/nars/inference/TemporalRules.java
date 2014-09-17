@@ -295,7 +295,7 @@ public class TemporalRules {
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
-        if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
+        if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0F;
         }
         TruthValue truth = solution.truth;

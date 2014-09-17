@@ -759,9 +759,10 @@ public abstract class CompoundTerm extends Term {
      * @param subs
      */
     public CompoundTerm applySubstitute(final Map<Term, Term> subs) {   
-        if (subs.size()==0) {            
+        if ((subs == null) || (subs.isEmpty())) {            
             return this;
         }
+        
         //if (!containsAnyTermsOf(subs.keySet()))
             //return this;
         Term[] tt = new Term[term.length];

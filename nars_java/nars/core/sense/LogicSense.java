@@ -58,6 +58,7 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final EventValueSensor TASK_ADD_NOVEL;
     public final EventValueSensor SHORT_TERM_MEMORY_UPDATE;
     public final EventValueSensor DERIVATION_LATENCY;
+    public final EventValueSensor SOLUTION_BEST;
     
 
     public LogicSense() {
@@ -104,6 +105,8 @@ public class LogicSense extends AbstractSense implements Serializable {
         
         add(DERIVATION_LATENCY = new EventValueSensor("reason.derivation.latency"));
         DERIVATION_LATENCY.setSampleWindow(64);
+        
+        add(SOLUTION_BEST = new EventValueSensor("taks.solution.best"));
     }
     
     @Override
@@ -181,6 +184,9 @@ public class LogicSense extends AbstractSense implements Serializable {
         }
         
         putHits(SHORT_TERM_MEMORY_UPDATE);
+        
+        putHits(SOLUTION_BEST);
+        put("task.solution.best.priority.mean", SOLUTION_BEST.get().mean());
     }
     
     public void putValue(final EventValueSensor s) {
