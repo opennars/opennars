@@ -233,9 +233,9 @@ public final class CompositionalRules {
                 termOr = Disjunction.make(componentT, componentB, memory);
                 termAnd = Conjunction.make(componentT, componentB, memory);
             }
-            processComposed(taskContent, componentCommon.clone(), termOr, order, truthOr, memory);
-            processComposed(taskContent, componentCommon.clone(), termAnd, order, truthAnd, memory);
-            processComposed(taskContent, componentCommon.clone(), termDif, order, truthDif, memory);
+            processComposed(taskContent, componentCommon, termOr, order, truthOr, memory);
+            processComposed(taskContent, componentCommon, termAnd, order, truthAnd, memory);
+            processComposed(taskContent, componentCommon, termDif, order, truthDif, memory);
         } else {    // index == 1
             if (taskContent instanceof Inheritance) {
                 termOr = IntersectionExt.make(componentT, componentB, memory);
@@ -253,9 +253,9 @@ public final class CompositionalRules {
                 termOr = Conjunction.make(componentT, componentB, memory);
                 termAnd = Disjunction.make(componentT, componentB, memory);
             }
-            processComposed(taskContent, termOr, componentCommon.clone(), order, truthOr, memory);
-            processComposed(taskContent, termAnd, componentCommon.clone(), order, truthAnd, memory);
-            processComposed(taskContent, termDif, componentCommon.clone(), order, truthDif, memory);
+            processComposed(taskContent, termOr, componentCommon, order, truthOr, memory);
+            processComposed(taskContent, termAnd, componentCommon, order, truthAnd, memory);
+            processComposed(taskContent, termDif, componentCommon, order, truthDif, memory);
         }
     }
 
@@ -268,7 +268,7 @@ public final class CompositionalRules {
      * @param truth TruthValue of the contentInd
      * @param memory Reference to the memory
      */
-    private static void processComposed(Statement statement, Term subject, Term predicate, int order, TruthValue truth, Memory memory) {
+    private static void processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final TruthValue truth, final Memory memory) {
         if ((subject == null) || (predicate == null)) {
             return;
         }
@@ -666,8 +666,8 @@ public final class CompositionalRules {
     }
     
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final Memory memory) {
-        Statement T1 = (Statement)sentence.content.clone();
-        Statement T2 = (Statement)belief.content.clone();
+        Statement T1 = (Statement)sentence.content;
+        Statement T2 = (Statement)belief.content;
 
         Term S1 = T2.getSubject();
         Term S2 = T1.getSubject();
@@ -689,11 +689,11 @@ public final class CompositionalRules {
             
             if(S1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S1).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -707,11 +707,11 @@ public final class CompositionalRules {
             }
             if(P2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(final Term s1 : ((CompoundTerm)P2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P2).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -735,11 +735,11 @@ public final class CompositionalRules {
             
             if(S2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(final Term s1 : ((CompoundTerm)S2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S2).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -753,11 +753,11 @@ public final class CompositionalRules {
             }
             if(P1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(final Term s1 : ((CompoundTerm)P1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P1).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if(!s2.equals(s1)) {
@@ -781,11 +781,11 @@ public final class CompositionalRules {
             
             if(P1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(final Term s1 : ((CompoundTerm)P1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P1).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;                            
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
                             if ((!s2.equals(s1)) && (sentence.truth!=null) && (belief.truth!=null)) {
@@ -799,11 +799,11 @@ public final class CompositionalRules {
             }
             if(P2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(final Term s1 : ((CompoundTerm)P2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)P2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)P2).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -828,11 +828,11 @@ public final class CompositionalRules {
             
             if(S1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(final Term s1 : ((CompoundTerm)S1).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S1).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -847,11 +847,11 @@ public final class CompositionalRules {
             }
             if(S2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(final Term s1 : ((CompoundTerm)S2).cloneTerms()) {
+                for(final Term s1 : ((CompoundTerm)S2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).cloneTerms()) {
+                        for(Term s2 : ((CompoundTerm)S2).term) {
                             if (!(s2 instanceof CompoundTerm)) continue;
                             
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
@@ -873,7 +873,7 @@ public final class CompositionalRules {
             return;
         }
         CompoundTerm T = (CompoundTerm) T1;
-        CompoundTerm T2 = (CompoundTerm) content.clone();
+        CompoundTerm T2 = (CompoundTerm) content;
         if ((component instanceof Inheritance && content instanceof Inheritance)
                 || (component instanceof Similarity && content instanceof Similarity)) {
             //CompoundTerm result = T;
@@ -901,7 +901,7 @@ public final class CompositionalRules {
         }
     }
 
-    public static boolean sEqualsP(final Term T) {
+    public static final boolean sEqualsP(final Term T) {
         if(T instanceof Statement) {
             Statement st=(Statement) T;
             if(st.getSubject().equals(st.getPredicate())) {

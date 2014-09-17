@@ -26,6 +26,8 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import static nars.inference.TemporalRules.matchingOrder;
+import static nars.inference.TemporalRules.reverseOrder;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -61,18 +63,20 @@ public class LocalRules {
      */
     public static void match(final Task task, final Sentence belief, final Memory memory) {
         Sentence sentence = task.sentence;
-        if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), belief.getTemporalOrder())) {
-            if (sentence.isJudgment()) {
-                if (revisible(sentence, belief)) {
-                    revision(sentence, belief, true, memory);
-                }
-            } else {
+        
+        if (sentence.isJudgment()) {
+            if (revisible(sentence, belief)) {
+                revision(sentence, belief, true, memory);
+            }
+        } else {
+            if (matchingOrder(sentence, belief)) {
                 Term[] u = new Term[] { sentence.content, belief.content };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
                     trySolution(belief, task, memory);
                 }
             }
         }
+        
     }
 
     /**
@@ -84,7 +88,7 @@ public class LocalRules {
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
         return (s1.equalsContent(s2) && s1.getRevisible()
-                && TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
+                && matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
     }
 
     /**
@@ -121,43 +125,52 @@ public class LocalRules {
      */
     public static void trySolution(Sentence belief, final Task task, final Memory memory) {
         Sentence problem = task.sentence;
-        if (TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
-            Sentence oldBest = task.getBestSolution();
-            float newQ = TemporalRules.solutionQuality(problem, belief, memory);
-            if (oldBest != null) {
-                float oldQ = TemporalRules.solutionQuality(problem, oldBest, memory);
-                if (oldQ >= newQ) {
-                    if (problem.isGoal()) {
-                        memory.emotion.adjustHappy(oldQ, task.getPriority());
-                    }
-                    return;
+        
+        if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
+            //System.out.println("Unsolved: Temporal order not matching");
+            return;
+        }
+        
+        Sentence oldBest = task.getBestSolution();
+        float newQ = TemporalRules.solutionQuality(problem, belief, memory);
+        if (oldBest != null) {
+            float oldQ = TemporalRules.solutionQuality(problem, oldBest, memory);
+            if (oldQ >= newQ) {
+                if (problem.isGoal()) {
+                    memory.emotion.adjustHappy(oldQ, task.getPriority());
                 }
-            }
-            Term content = belief.content;
-            if (Variables.containVarIndep(content.name())) {
-                Term u[] = new Term[] { content, problem.content };
-                Variables.unify(Symbols.VAR_INDEPENDENT, u);
-                content = u[0];                
-                belief = belief.clone(content);
-                Stamp st = new Stamp(belief.stamp, memory.getTime());
-                st.addToChain(belief.content);
-            }
-            
-            task.setBestSolution(belief);
-            memory.logic.SOLUTION_BEST.commit(task.getPriority());
-            
-            if (problem.isGoal()) {
-                memory.emotion.adjustHappy(newQ, task.getPriority());
-            }
-            
-            if (task.isInput()) {    // moved from Sentence                
-                memory.output(OUT.class, task);
-            }
-            BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
-            if ((budget != null) && budget.aboveThreshold()) {
-                memory.activatedTask(budget, belief, task.getParentBelief());
+                //System.out.println("Unsolved: Solution of lesser quality");
+                return;
             }
         }
+        Term content = belief.content;
+        if (Variables.containVarIndep(content.name())) {
+            Term u[] = new Term[] { content, problem.content };
+            Variables.unify(Symbols.VAR_INDEPENDENT, u);
+            content = u[0];                
+            belief = belief.clone(content);
+            Stamp st = new Stamp(belief.stamp, memory.getTime());
+            st.addToChain(belief.content);
+        }
+
+        task.setBestSolution(belief);
+        memory.logic.SOLUTION_BEST.commit(task.getPriority());
+
+        if (problem.isGoal()) {
+            memory.emotion.adjustHappy(newQ, task.getPriority());
+        }
+
+        if (task.isInput()) {    // moved from Sentence                
+            memory.output(OUT.class, task);
+        }
+        BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
+        if ((budget != null) && budget.aboveThreshold()) {
+            //System.out.println("Solved: Solution activated");
+            memory.activatedTask(budget, belief, task.getParentBelief());
+        }
+        /*else {
+            System.out.println("Solved: Solution not activated");
+        }*/
     }
 
 
@@ -171,8 +184,7 @@ public class LocalRules {
         Task task = memory.getCurrentTask();
         Sentence belief = memory.getCurrentBelief();
         Sentence sentence = task.sentence;
-        if (TemporalRules.matchingOrder(sentence.getTemporalOrder(),
-                TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
+        if (matchingOrder(sentence.getTemporalOrder(), reverseOrder(belief.getTemporalOrder()))) {
             if (sentence.isJudgment()) {
                 inferToSym(sentence, belief, memory);
             } else {
@@ -305,5 +317,6 @@ public class LocalRules {
         
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
+
     
 }
