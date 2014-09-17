@@ -1,4 +1,4 @@
-package nars.test.util;
+package nars.gui;
 
 import nars.core.NAR;
 import nars.core.build.ContinuousBagNARBuilder;
