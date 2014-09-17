@@ -717,7 +717,7 @@ public class Memory implements Output, Serializable {
             if (!(task.sentence.content instanceof Operation) && 
                  (param.internalExperience.get()) && 
                  (task.sentence.content.getComplexity() > param.abbreviationMinComplexity.get()) &&
-                 (task.budget.quality.getValue() > param.abbreviationMinQuality.get())) {
+                 (task.budget.getQuality() > param.abbreviationMinQuality.get())) {
 
                 Term opTerm = this.getOperator("^abbreviate");
                 Term[] arg = new Term[1];

@@ -1,6 +1,8 @@
 package nars.io;
 
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
 import nars.util.rope.Rope;
@@ -291,4 +293,10 @@ public class Texts {
     public static CharSequence sequence(StringBuilder b) {
         return new CharArrayRope(b);
     }
+
+    final static Format fourDecimal = new DecimalFormat("0.0000");
+    public static final String n4(final float x) { return fourDecimal.format(x);     }
+
+    final static Format twoDecimal = new DecimalFormat("0.00");    
+    public static final String n2(final float x) { return twoDecimal.format(x);     }
 }

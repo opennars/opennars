@@ -20,6 +20,7 @@
  */
 package nars.core;
 
+
 /**
  * NAR operating parameters.
  * All static values will be removed so that this is an entirely dynamic class.
@@ -43,7 +44,7 @@ public class Parameters {
     public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;
     
     
-
+    public static float MAX_CONFIDENCE = 0.9999f;
 
     
     

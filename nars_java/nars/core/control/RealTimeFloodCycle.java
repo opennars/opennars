@@ -142,7 +142,7 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         int fired = 0;
         for (int i = 0; i < conceptList.size(); i++) {
             final RTConcept c = conceptList.get(i);            
-            final float activity = c.budget.priority.getValue();
+            final float activity = c.budget.getPriority();
             final float firingAge = now - c.getLastFired();
             if (firingAge >= latencyThreshold && (activity >= activityThreshold)) {
                 c.fire();

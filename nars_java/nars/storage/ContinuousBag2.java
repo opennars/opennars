@@ -128,8 +128,8 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
     }
 
     @Override public final int compare(final E ex, final E ey) {
-        int y = ey.budget.getPriorityShort();
-        int x = ex.budget.getPriorityShort();
+        float y = ey.budget.getPriority();
+        float x = ex.budget.getPriority();
         
         return (x < y) ? -1 : ((x == y) ? (ex.compareTo(ey)) : 1);                   
     }            

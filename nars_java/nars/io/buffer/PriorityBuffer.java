@@ -15,7 +15,7 @@ public class PriorityBuffer<B> extends SortedItemList<B> implements Buffer<B> {
     public static class ItemPriorityComparator<I extends Item> implements Comparator<I> {
         @Override public int compare(I a, I b) {
             //TODO check ordering
-            return Short.compare( a.budget.getPriorityShort(), b.budget.getPriorityShort() );
+            return Double.compare( a.budget.getPriority(), b.budget.getPriority() );
         }        
     }
     

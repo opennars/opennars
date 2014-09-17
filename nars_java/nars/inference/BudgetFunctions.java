@@ -197,9 +197,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param a The budget adjustValue doing the adjusting
      */
     public static void merge(final BudgetValue b, final BudgetValue a) {        
-        b.priority.setValue((short)max(b.getPriorityShort(), a.getPriorityShort()));
-        b.durability.setValue((short)max(b.durability.getShortValue(), a.durability.getShortValue()));
-        b.quality.setValue((short)max(b.quality.getShortValue(), a.quality.getShortValue()));
+        b.setPriority(max(b.getPriority(), a.getPriority()));
+        b.setDurability(max(b.getDurability(), a.getDurability()));
+        b.setQuality(max(b.getQuality(), a.getQuality()));
     }
 
     /* ----- Task derivation in LocalRules and SyllogisticRules ----- */
