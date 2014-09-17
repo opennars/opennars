@@ -801,11 +801,9 @@ public class Memory implements Output, Serializable {
      * @param newBudget The budget value in task
      */
     public void doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
-        if (newContent != null) {
-            Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-            Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-            derivedTask(newTask, true, false, null, null);
-        }
+        Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+        derivedTask(newTask, true, false, null, null);
     }
 
     /**

@@ -67,7 +67,7 @@ public class LocalRules {
                     revision(sentence, belief, true, memory);
                 }
             } else {
-                Term[] u = new Term[] { sentence.content, belief.content.clone() };
+                Term[] u = new Term[] { sentence.content, belief.content };
                 if (Variables.unify(Symbols.VAR_QUERY, u)) {
                     trySolution(belief, task, memory);
                 }
@@ -98,6 +98,8 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static void revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final Memory memory) {
+        if (newBelief.content==null) return;
+        
         TruthValue newTruth = newBelief.truth;
         TruthValue oldTruth = oldBelief.truth;
         TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
@@ -109,12 +111,7 @@ public class LocalRules {
         memory.doublePremiseTaskRevised(content, truth, budget);
     }
 
-    @Deprecated public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
-        //moved to BudgetFunctions.java
-        throw new RuntimeException("Moved to TemporalRules.java");
-    }
-    
-    
+
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
@@ -147,6 +144,7 @@ public class LocalRules {
             }
             
             task.setBestSolution(belief);
+            memory.logic.SOLUTION_BEST.commit(task.getPriority());
             
             if (problem.isGoal()) {
                 memory.emotion.adjustHappy(newQ, task.getPriority());

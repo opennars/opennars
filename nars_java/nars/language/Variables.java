@@ -1,6 +1,7 @@
 package nars.language;
 
 import java.util.HashMap;
+import java.util.Map;
 import nars.core.Memory;
 import nars.io.Symbols;
 import nars.io.Texts;
@@ -10,57 +11,67 @@ import nars.io.Texts;
  */
 public class Variables {
     
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final HashMap<Term, Term> map1, final HashMap<Term, Term> map2) {
-
-//        System.out.println(type + " " + term1.getClass() + " " + term2.getClass() + " " + map1 + " " + map2);       
-//        if (InferenceTracer.guardStack(20, "findSubstitute", type, term1, term2, map1, map2)) {
-//            System.out.println("findSubstitute LOOPING");            
-//            System.exit(1);
-//        }
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2) {
+        return findSubstitute(type, term1, term2, new Map[] { map1, map2 });
+    }
+    
+    /** map is a 2-element array of HashMap<Term,Term>. it may be null, in which case
+     * the maps will be instantiated as necessary.  
+     * this is to delay the instantiation of the 2 HashMap until necessary to avoid
+     * wasting them if they are not used.
+     */
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map) {
 
         final boolean term1Var = term1 instanceof Variable;
         final boolean term2Var = term2 instanceof Variable;
         final boolean termsEqual = term1.equals(term2);
         if (!term1Var && !term2Var && termsEqual) {
             return true;
-        }
+        }       
         
         Term t;                
         if (term1Var && (((Variable) term1).getType() == type)) {
-            final Variable var1 = (Variable) term1;
-            t = map1.get(var1);                        
+            final Variable var1 = (Variable) term1;            
+            t = map[0]!=null ? map[0].get(var1) : null;
             
             if (t != null) {
-                return findSubstitute(type, t, term2, map1, map2);
+                return findSubstitute(type, t, term2, map);
             } else {
+                
+                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+                
                 if ((term2 instanceof Variable) && (((Variable) term2).getType() == type)) {
-                    Variable CommonVar = makeCommonVariable(term1, term2);
-                    map1.put(var1, CommonVar);
-                    map2.put(term2, CommonVar);
+                    Variable CommonVar = makeCommonVariable(term1, term2);                    
+                    map[0].put(var1, CommonVar);
+                    map[1].put(term2, CommonVar);
                 } else {
-                    map1.put(var1, term2);
+                    map[0].put(var1, term2);
                     if (var1.isCommon()) {
-                        map2.put(var1, term2);
+                        map[1].put(var1, term2);
                     }
                 }
                 return true;
             }
         } else if (term2Var && (((Variable) term2).getType() == type)) {
-            final Variable var2 = (Variable) term2;
-            t = map2.get(var2);
+            final Variable var2 = (Variable) term2;            
+            t = map[1]!=null ? map[1].get(var2) : null;
+            
             if (t != null) {
-                return findSubstitute(type, term1, t, map1, map2);
+                return findSubstitute(type, term1, t, map);
             } else {
-                map2.put(var2, term1);
+                
+                if (map[0] == null) {  map[0] = new HashMap(); map[1] = new HashMap(); }
+                
+                map[1].put(var2, term1);
                 if (var2.isCommon()) {
-                    map1.put(var2, term1);
+                    map[0].put(var2, term1);
                 }
                 return true;
             }
         } else if ((term1 instanceof CompoundTerm) && term1.getClass().equals(term2.getClass())) {
             final CompoundTerm cTerm1 = (CompoundTerm) term1;
             final CompoundTerm cTerm2 = (CompoundTerm) term2;
-            if (cTerm1.size() != (cTerm2).size()) {
+            if (cTerm1.size() != cTerm2.size()) {
                 return false;
             }
             if ((cTerm1 instanceof ImageExt) && (((ImageExt) cTerm1).relationIndex != ((ImageExt) cTerm2).relationIndex) || (cTerm1 instanceof ImageInt) && (((ImageInt) cTerm1).relationIndex != ((ImageInt) cTerm2).relationIndex)) {
@@ -73,12 +84,13 @@ public class Variables {
             for (int i = 0; i < cTerm1.size(); i++) {
                 Term t1 = list[i];
                 Term t2 = cTerm2.term[i];
-                if (!findSubstitute(type, t1, t2, map1, map2)) {
+                if (!findSubstitute(type, t1, t2, map)) {
                     return false;
                 }
             }
             return true;
         }
+        
         return termsEqual;        
     }
 
@@ -124,13 +136,13 @@ public class Variables {
      * @param t The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) {
-        final HashMap<Term, Term> map1 = new HashMap<>(4);
-        final HashMap<Term, Term> map2 = new HashMap<>(4);
-        final boolean hasSubs = findSubstitute(type, t1, t2, map1, map2);
-        if (hasSubs) {            
-            compound[0] = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map1);
-            compound[1] = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map2);
+    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound) {        
+        final Map<Term, Term> map[] = new Map[2]; //begins empty: null,null
+        
+        final boolean hasSubs = findSubstitute(type, t1, t2, map);
+        if (hasSubs) {                        
+            compound[0] = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
+            compound[1] = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
             return true;
         }
         return false;
@@ -138,12 +150,12 @@ public class Variables {
 
     /** appliesSubstitute and renameVariables, resulting in a cloned object, 
      *  will not change this instance  */
-    private static CompoundTerm applySubstituteAndRenameVariables(CompoundTerm t, HashMap<Term, Term> subs) {
-        if (subs.isEmpty())
+    private static CompoundTerm applySubstituteAndRenameVariables(CompoundTerm t, Map<Term, Term> subs) {
+        if ((subs == null) || (subs.isEmpty()))
             return t; //no change needed
         
         CompoundTerm r = t.applySubstitute(subs);
-        if (r == t) r = (CompoundTerm)t.clone();
+        if (r == t) r = t.clone();
         r.normalizeVariableNames();
         return r;
     }
