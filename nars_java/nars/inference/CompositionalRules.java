@@ -1001,7 +1001,7 @@ public final class CompositionalRules {
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
             Term[] components_level1 = ((CompoundTerm)taskterm).term;            
-            Term secterm_unwrap=unwrapNegation(secterm).clone();
+            Term secterm_unwrap=unwrapNegation(secterm);
 
 
 
@@ -1012,7 +1012,7 @@ public final class CompositionalRules {
                 smap.clear();
 
                 if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,smap)) {
-                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm);
                     taskterm_subs = taskterm_subs.applySubstitute(Values);
                     taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                     if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {

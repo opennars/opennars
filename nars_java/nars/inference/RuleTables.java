@@ -65,8 +65,8 @@ public class RuleTables {
         final Task task = memory.getCurrentTask();
         Sentence taskSentence = task.sentence;
         
-        Term taskTerm = taskSentence.content.clone();         // cloning for substitution
-        Term beliefTerm = bLink.target.clone();       // cloning for substitution
+        Term taskTerm = taskSentence.content;         // cloning for substitution
+        Term beliefTerm = bLink.target;       // cloning for substitution
         
         
         //CONTRAPOSITION
@@ -86,20 +86,22 @@ public class RuleTables {
         
         if (belief != null) {            
             LocalRules.match(task, belief, memory);
-            if (!(memory.getNewTaskCount() == 0)) {
+            if (memory.getNewTaskCount() > 0) {
+                //new tasks resulted from the match, so return
                 return;
             }
         }
         
-        Sentence buf1=memory.getCurrentBelief();
-        Task buf2=memory.getCurrentTask();
         
         // to be invoked by the corresponding links 
         CompositionalRules.dedSecondLayerVariableUnification(task,memory);
-        memory.setCurrentBelief(buf1);
-        memory.setCurrentTask(buf2);
+
         
-        if (!(memory.getNewTaskCount() == 0) && task.sentence.isJudgment()) {
+        //current belief and task may have changed, so set again:
+        memory.setCurrentBelief(belief);
+        memory.setCurrentTask(task);
+        
+        if ((memory.getNewTaskCount() > 0) && task.sentence.isJudgment()) {
             return;
         }
         

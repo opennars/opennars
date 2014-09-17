@@ -73,6 +73,23 @@ public class NARSwing  {
         mainWindow.setVisible(true);
         
 
+        LogPanel outputLog = new SwingLogPanel(narControls); //new HTMLLogPanel(narControls);
+        Window outputWindow = new Window("Log", outputLog);        
+        outputWindow.setLocation(narControls.getLocation().x + narControls.getWidth(), narControls.getLocation().y);        outputWindow.setSize(800, 400);
+        outputWindow.setVisible(true);
+        
+        
+//        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
+//        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
+//        outputWindow.setVisible(true);
+        
+        
+        TextInputPanel inputPanel = new TextInputPanel(nar);
+        Window inputWindow = new Window("Input", inputPanel);
+        inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
+        inputWindow.setSize(800, 200);
+        inputWindow.setVisible(true);
+        
                 
         
     }
@@ -118,23 +135,6 @@ public class NARSwing  {
         
         NARSwing swing = new NARSwing(nar);
 
-        
-        LogPanel outputLog = new SwingLogPanel(swing.narControls); //new HTMLLogPanel(narControls);
-        Window outputWindow = new Window("Log", outputLog);        
-        outputWindow.setLocation(swing.narControls.getLocation().x + swing.narControls.getWidth(), swing.narControls.getLocation().y);        outputWindow.setSize(800, 400);
-        outputWindow.setVisible(true);
-        
-        
-//        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
-//        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
-//        outputWindow.setVisible(true);
-        
-        
-        TextInputPanel inputPanel = new TextInputPanel(nar);
-        Window inputWindow = new Window("Input", inputPanel);
-        inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
-        inputWindow.setSize(800, 200);
-        inputWindow.setVisible(true);
         
         
         if (args.length > 0
