@@ -1025,7 +1025,7 @@ public final class CompositionalRules {
                 smap.clear();
 
                 if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2, smap)) {
-                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                    CompoundTerm taskterm_subs= (CompoundTerm)taskterm;
                     taskterm_subs = taskterm_subs.applySubstitute(Values2);
                     taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                     if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -1042,14 +1042,14 @@ public final class CompositionalRules {
                     Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
 
                     for(final Term T2 : components_level2) {
-                        Term T2_unwrap=unwrapNegation(T2).clone(); 
+                        Term T2_unwrap=unwrapNegation(T2);
 
                         Values3.clear(); //we are only interested in first variables
                         smap.clear();
 
                         if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                            CompoundTerm taskterm_subs=(CompoundTerm)taskterm;
                             taskterm_subs = taskterm_subs.applySubstitute(Values3);
                             taskterm_subs=ReduceTillLayer2(taskterm_subs,secterm,memory);
                             if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -1062,7 +1062,7 @@ public final class CompositionalRules {
 
                         if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs=((CompoundTerm)taskterm.clone());
+                            CompoundTerm taskterm_subs=(CompoundTerm)taskterm;
                             taskterm_subs = taskterm_subs.applySubstitute(Values4);
                             taskterm_subs = ReduceTillLayer2(taskterm_subs,secterm,memory);
                             if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {

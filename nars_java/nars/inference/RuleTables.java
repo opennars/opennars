@@ -728,7 +728,7 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     public static void transformTask(TaskLink tLink, Memory memory) {
-        CompoundTerm content = (CompoundTerm) memory.getCurrentTask().getContent().clone();
+        CompoundTerm content = (CompoundTerm) memory.getCurrentTask().getContent();
         short[] indices = tLink.index;
         Term inh = null;
         if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>

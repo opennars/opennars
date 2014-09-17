@@ -22,9 +22,9 @@ package nars.language;
 
 import java.util.Collection;
 import java.util.TreeSet;
+import nars.core.Memory;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
-import nars.core.Memory;
 
 /** 
  * A disjunction of Statements.
@@ -81,18 +81,21 @@ public class Disjunction extends CompoundTerm {
         if (term1 instanceof Disjunction) {
             set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             if (term2 instanceof Disjunction) {
+                // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
                 set.addAll(((CompoundTerm) term2).getTermList());
-            } // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+            } 
             else {
-                set.add(term2.clone());
-            }                          // (&,(&,P,Q),R) = (&,P,Q,R)
+                // (&,(&,P,Q),R) = (&,P,Q,R)
+                set.add(term2);
+            }                          
         } else if (term2 instanceof Disjunction) {
+            // (&,R,(&,P,Q)) = (&,P,Q,R)
             set = new TreeSet<>(((CompoundTerm) term2).getTermList());
-            set.add(term1.clone());                              // (&,R,(&,P,Q)) = (&,P,Q,R)
+            set.add(term1);                              
         } else {
             set = new TreeSet<>();
-            set.add(term1.clone());
-            set.add(term2.clone());
+            set.add(term1);
+            set.add(term2);
         }
         return make(set, memory);
     }

@@ -22,8 +22,8 @@ package nars.language;
 
 import java.util.Collection;
 import java.util.TreeSet;
-import nars.io.Symbols.NativeOperator;
 import nars.core.Memory;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * A compound term whose extension is the intersection of the extensions of its term
@@ -81,18 +81,21 @@ public class IntersectionExt extends CompoundTerm {
         if (term1 instanceof IntersectionExt) {
             set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             if (term2 instanceof IntersectionExt) {
+                // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
                 set.addAll(((CompoundTerm) term2).getTermList());
-            }               // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
+            }               
             else {
-                set.add(term2.clone());
-            }               // (&,(&,P,Q),R) = (&,P,Q,R)
+                // (&,(&,P,Q),R) = (&,P,Q,R)
+                set.add(term2);
+            }               
         } else if (term2 instanceof IntersectionExt) {
+            // (&,R,(&,P,Q)) = (&,P,Q,R)
             set = new TreeSet<>(((CompoundTerm) term2).getTermList());
-            set.add(term1.clone());    // (&,R,(&,P,Q)) = (&,P,Q,R)
+            set.add(term1);    
         } else {
             set = new TreeSet<>();
-            set.add(term1.clone());
-            set.add(term2.clone());
+            set.add(term1);
+            set.add(term2);
         }
         return make(set, memory);
     }
