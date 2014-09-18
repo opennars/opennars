@@ -165,12 +165,12 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */
-    public boolean putBack(final E oldItem, boolean insertIntoNameTable) {        
+    public final boolean putBack(final E oldItem, final boolean insertIntoNameTable) {        
         reprocess(oldItem);
         return putIn(oldItem, insertIntoNameTable);
     }
     
-    public boolean putBack(final E oldItem) {
+    public final boolean putBack(final E oldItem) {
         return putBack(oldItem, true);
     }
     
