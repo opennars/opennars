@@ -1,10 +1,10 @@
 package nars.grid2d.agent.curiosity;
 
-import nars.grid2d.agent.ql.Brain;
+import nars.grid2d.agent.ql.QBrain;
 import nars.grid2d.agent.ql.QLearner.Action;
 
 
-public class CuriousBrain extends Brain {
+public class CuriousBrain extends QBrain {
 	private static final long serialVersionUID = 1L;
 	private Curiosity curiosity;
 
