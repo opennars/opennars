@@ -27,16 +27,16 @@ public class ContinuousNARSwing {
             Param p = nar.param();
             //int c = (int)Math.sqrt(numConcepts);
             int c = numConcepts;
-            p.conceptCyclesToForget.set(10+c);             
-            p.taskCyclesToForget.set(20+c);
-            p.beliefCyclesToForget.set(50+c);
-            p.newTaskCyclesToForget.set(10+c);
+            p.conceptCyclesToForget.set(10+c/2);             
+            p.taskCyclesToForget.set(20);
+            p.beliefCyclesToForget.set(50);
+            p.newTaskCyclesToForget.set(10);
         }
         
     }
     public static void main(String[] arg) {
         NAR cn = new DiscretinuousBagNARBuilder(true).setConceptBagSize(8192).build();
-        new Remeber(cn);
+        //new Remeber(cn);
         
         NARSwing w = new NARSwing(cn);
         

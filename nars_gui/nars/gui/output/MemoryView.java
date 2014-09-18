@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,6 +28,7 @@ import nars.gui.NSlider;
 import nars.gui.Window;
 import nars.language.Term;
 import nars.util.NARGraph;
+import nars.util.sort.IndexedTreeSet;
 import processing.core.PApplet;
 
 
@@ -141,18 +143,23 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         public void position(float level, float index, float priority) {
             float LEVELRAD = maxNodeSize * 2.5f;
             
-            if (mode == 1) {
+            if (mode == 2) {
                 tx = ((float)Math.sin(index/10d) * LEVELRAD) * 5 * ((10+index)/20);
                 //ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
                 ty = (1.0f - priority) * LEVELRAD * 150;
             }
-            else if (mode == 0) {
+            else if (mode == 1) {
 
                 //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
                 double radius = (1.0 - priority) * LEVELRAD + 8;
                 float angle = index; //TEMPORARY
                 tx = (float)(Math.cos(angle/3.0) * radius) * LEVELRAD;
                 ty = (float)(Math.sin(angle/3.0) * radius) * LEVELRAD;
+            }
+            else if (mode == 0) {
+                //gridsort
+                tx = index * LEVELRAD;
+                ty = (1.0f - priority) * LEVELRAD * 100;
             }
             
         }
@@ -317,6 +324,11 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         final Sentence currentBelief = nar.memory.getCurrentBelief();
         final Concept currentConcept = nar.memory.getCurrentConcept();
         final Task currentTask = nar.memory.getCurrentTask();
+        final IndexedTreeSet<Concept> concepts = new IndexedTreeSet(new Comparator<Concept>() {
+            @Override public int compare(Concept o1, Concept o2) {
+                return o1.getKey().toString().compareTo(o2.getKey().toString());
+            }            
+        });
 
         if ((nar.getTime() != lasttime) || (updateNext)) {
             updateNext = false;
@@ -326,6 +338,11 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
             synchronized (vertices) {
                 deadVertices.clear();
+                
+                if (mode == 0) {
+                    //index concepts
+                    concepts.addAll(nar.memory.getConcepts());              
+                }
                 deadVertices.addAll(vertices.keySet());
 
                     try {
@@ -365,15 +382,20 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                                 priority = c.getPriority();
                                 level = (float)(priority*100.0);
 
-                                if ((lastTerm!=null) && (c.term.equals(lastTerm))) {
-                                    //terms equal to concept, ordinarily displayed as subsequent nodes
-                                    //should just appear at the same position as the concept
-                                    //lastTermVertex.visible = false;
-                                    lastTermVertex.position(level, index, priority);
-                                    lastTermVertex.visible = false;
+                                if (mode == 0) {
+                                    index = concepts.entryIndex(c);                                    
                                 }
-                                else
-                                    index++;
+                                else {
+                                    if ((lastTerm!=null) && (c.term.equals(lastTerm))) {
+                                        //terms equal to concept, ordinarily displayed as subsequent nodes
+                                        //should just appear at the same position as the concept
+                                        //lastTermVertex.visible = false;
+                                        lastTermVertex.position(level, index, priority);
+                                        lastTermVertex.visible = false;
+                                    }
+                                    else
+                                        index++;
+                                }
 
                                 VertexDisplay d = updateVertex(c);
                                 d.position(level, index, priority);
@@ -834,17 +856,13 @@ public class MemoryView extends Window {
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
         final JComboBox modeSelect = new JComboBox();
+        modeSelect.addItem("GridSort");
         modeSelect.addItem("Circle");
         modeSelect.addItem("Grid");
         modeSelect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (modeSelect.getSelectedIndex() == 0) {
-                    app.mode = 0;
-                }
-                else {
-                    app.mode = 1;
-                }
+                app.mode = modeSelect.getSelectedIndex();
                 app.setUpdateNext();
             }            
         });
