@@ -123,21 +123,21 @@ public class EditorPanel extends JPanel {
                                     s.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
                                     s.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
                                     if(s.cells.readCells[i][j].logic==Logic.SWITCH) {
-                                        s.nar.addInput("<"+name+" --> switch>.");
+                                        s.nar.addInput("<"+c[11]+" --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
-                                            s.nar.addInput("<"+name+" --> on>.");
+                                            s.nar.addInput("<"+c[11]+" --> on>.");
                                         }
                                         else {
-                                            s.nar.addInput("<"+name+" --> off>.");
+                                            s.nar.addInput("<"+c[11]+" --> off>.");
                                         }
                                     }
                                     if(s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
-                                        s.nar.addInput("<"+name+" --> switch>.");
+                                        s.nar.addInput("<"+c[11]+" --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
-                                            s.nar.addInput("<"+name+" --> on>. :|:");
+                                            s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                         }
                                         else {
-                                            s.nar.addInput("<"+name+" --> off>. :|:");
+                                            s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                         }
                                     }
                                     
@@ -145,21 +145,21 @@ public class EditorPanel extends JPanel {
                                         s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
                                         s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
                                         if(s.cells.readCells[i][j].machine==Machine.Turret) {
-                                            s.nar.addInput("<"+name+" --> firework>.");
+                                            s.nar.addInput("<"+c[11]+" --> firework>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
-                                                s.nar.addInput("<"+name+" --> on>. :|:");
+                                                s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                             }
                                             else {
-                                                s.nar.addInput("<"+name+" --> off>. :|:");
+                                                s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
                                         if(s.cells.readCells[i][j].machine==Machine.Light) {
-                                            s.nar.addInput("<"+name+" --> light>.");
+                                            s.nar.addInput("<"+c[11]+" --> light>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
-                                                s.nar.addInput("<"+name+" --> on>. :|:");
+                                                s.nar.addInput("<"+c[11]+" --> on>. :|:");
                                             }
                                             else {
-                                                s.nar.addInput("<"+name+" --> off>. :|:");
+                                                s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
                                     }
@@ -168,8 +168,8 @@ public class EditorPanel extends JPanel {
                                     s.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
 
                                     if(s.cells.readCells[i][j].material==Material.Door) {
-                                        s.nar.addInput("<"+name+" --> door>.");
-                                        s.nar.addInput("<"+name+" --> closed>. :|:");
+                                        s.nar.addInput("<"+c[11]+" --> door>.");
+                                        s.nar.addInput("<"+c[11]+" --> closed>. :|:");
                                     }
                                     
                                     s.cells.readCells[i][j].name=c[11];
