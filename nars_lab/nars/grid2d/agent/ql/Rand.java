@@ -1,4 +1,6 @@
 package nars.grid2d.agent.ql;
+import static java.lang.Math.abs;
+import static java.lang.Math.abs;
 import java.util.Random;
 /**
  * Useful class for obtaining various random numbers
@@ -10,6 +12,8 @@ public class Rand {
 	private static final int arrPercentSize = 97397;
 	private static double arrPercent[];
 	static Random random=null;
+    private static int iPerc = 0;
+    private static int kPerc = 0;
 	static {
 		random = new Random();
 		arrPercent = new double[arrPercentSize];
@@ -26,7 +30,7 @@ public class Rand {
 	
 	private static void setArrPercent() {
 		for (int i = 0; i < arrPercent.length; i++) {
-			arrPercent[i] = Rand.d(100);
+			arrPercent[i] = d(100);
 		}
 	}
 
@@ -42,7 +46,7 @@ public class Rand {
 	 */
 	public static int i(int from, int to) {
 		if(to<from) return 0;
-		return (Math.abs(random.nextInt())%(to-from))+from;
+		return (abs(random.nextInt())%(to-from))+from;
 	}
 
 	/**
@@ -57,8 +61,6 @@ public class Rand {
 	public static double d(double max) {
 		return random.nextDouble()*max;
 	}
-	private static int iPerc=0;
-	private static int kPerc=0;
 
 	public static double gauss() {
 		double nextGaussian = random.nextGaussian();
@@ -87,6 +89,6 @@ public class Rand {
 	}
 
 	public static double gaussAbs(double scale, double offset) {
-		return Math.abs(gauss(scale)+offset);
+		return abs(gauss(scale)+offset);
 	}
 }

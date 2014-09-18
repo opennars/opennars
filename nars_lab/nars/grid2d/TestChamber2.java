@@ -2,6 +2,7 @@ package nars.grid2d;
 
 import java.util.List;
 import nars.core.NAR;
+import nars.core.build.ContinuousBagNARBuilder;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
@@ -9,6 +10,7 @@ import static nars.grid2d.Hauto.DOWN;
 import static nars.grid2d.Hauto.LEFT;
 import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
+import static nars.grid2d.TestChamber.space;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
 import nars.grid2d.operator.Activate;
@@ -17,8 +19,6 @@ import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.grid2d.operator.Say;
 import nars.gui.NARSwing;
-import nars.core.build.ContinuousBagNARBuilder;
-import static nars.grid2d.TestChamber.space;
 import processing.core.PVector;
 
 public class TestChamber2 extends TestChamber {
@@ -167,7 +167,7 @@ public class TestChamber2 extends TestChamber {
                                                 }
                                             }
                                         }
-                                        nar.addInput("<"+goal+" --> hold>. :|:");
+                                        nar.addInput("(*,hold,"+goal+"). :|:");
                                     }
                                     else
                                     if("deactivate".equals(opname)) {
@@ -179,7 +179,7 @@ public class TestChamber2 extends TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.OFFSWITCH;
                                                         cells.readCells[i][j].charge=0.0f;
                                                         cells.writeCells[i][j].charge=0.0f;
-                                                        nar.addInput("<"+goal+" --> off>. :|:");
+                                                        nar.addInput("(off,"+goal+"). :|:");
                                                     }
                                                 }
                                             }
@@ -196,14 +196,14 @@ public class TestChamber2 extends TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.SWITCH;
                                                         cells.readCells[i][j].charge=1.0f;
                                                         cells.writeCells[i][j].charge=1.0f;
-                                                        nar.addInput("<"+goal+" --> on>. :|:");
+                                                        nar.addInput("(*,on,"+goal+"). :|:");
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                     if("go-to".equals(opname)) {
-                                        nar.addInput("<"+goal+" --> at>. :|:");
+                                        nar.addInput("(*,at,"+goal+"). :|:");
                                     }
                                 }
                             }
@@ -252,7 +252,7 @@ public class TestChamber2 extends TestChamber {
                 if (actionParam == null) actionParam = "";
                 if (actionParam.length() != 0) actionParam = "(*," + actionParam + ")";
                 
-                nar.addInput("$0.60$ <(*,Self," + action + "," + actionParam + "," + success +") --> effect>. :|:");
+                nar.addInput("$0.60$ (*,effect," + action + "," + actionParam + "," + success +"). :|:");
                 
                 final int SightPeriod = 32;
                 if ((e.action instanceof Forward) || (space.getTime()%SightPeriod == 0)) {
@@ -265,7 +265,7 @@ public class TestChamber2 extends TestChamber {
                     seeing += this.cellAbsolute(270).material + ")";
 
 
-                    nar.addInput("$0.50$ <(*,Self," + seeing + ") --> see>. :|:");
+                    nar.addInput("$0.50$ (*,see," + seeing + "). :|:");
                 }
                 
             }

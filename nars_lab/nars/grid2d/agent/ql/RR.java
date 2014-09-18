@@ -1,5 +1,8 @@
 package nars.grid2d.agent.ql;
 
+import static nars.grid2d.agent.ql.Rand.d;
+import static nars.grid2d.agent.ql.Rand.i;
+
 
 
 /**
@@ -12,7 +15,7 @@ public class RR {
 	 * Simply returns a random object from given array. 
 	 */
 	public static Object pickRandom(Object[] arr) {
-		return arr[Rand.i(arr.length)];
+		return arr[i(arr.length)];
 	}
 
 	/**
@@ -28,7 +31,7 @@ public class RR {
 			}
 			sum += evaluate;
 		}
-		double randomPick = Rand.d(sum);
+		double randomPick = d(sum);
 		sum = 0.0;
 		for(int i= 0; i<arr.length; i++) {
 			sum += arr[i];	
@@ -36,6 +39,6 @@ public class RR {
 				return i;
 			}
 		}
-		return Rand.i(arr.length);
+		return i(arr.length);
 	}
 }

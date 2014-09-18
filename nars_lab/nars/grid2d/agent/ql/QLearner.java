@@ -6,23 +6,29 @@
 
 package nars.grid2d.agent.ql;
 
+import static java.lang.Double.MAX_VALUE;
+import static java.lang.Double.MIN_VALUE;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import java.util.Arrays;
+import static java.util.Arrays.fill;
 
 /**
  *
  * @author me
  */
 public class QLearner  {
-    public abstract static class Action {
-        abstract public int execute();
-    }
     
     private Action[] qaction;
-    public Brain brain;
+    public QBrain brain;
     double nextReward;
     double[] sensor;
     double[] action;
 
+
+    double minReward = MAX_VALUE;
+    double maxReward = MIN_VALUE;
+    
     public void init(int sensors, int actions, int... hiddenNeurons) {
         qaction = new Action[actions];
         for (int i = 0; i < actions; i++) {
@@ -35,7 +41,7 @@ public class QLearner  {
         sensor = new double[sensors];
         action = new double[actions];
         
-        brain = new Brain(new Perception() {
+        brain = new QBrain(new Perception() {
 
             @Override
             public boolean isUnipolar() {
@@ -56,38 +62,32 @@ public class QLearner  {
         
         /*
         brain = new Brain(new DAPerception(sensor, 4) {
-
-            @Override
-            public boolean isUnipolar() {
-                return true;
-            }
-
-            @Override
-            public double getReward() {
-                return nextReward;
-            }
-            
+        
+        @Override
+        public boolean isUnipolar() {
+        return true;
+        }
+        
+        @Override
+        public double getReward() {
+        return nextReward;
+        }
+        
         }, qaction ); 
         */
                 
         brain.reset();
     }
 
-    double minReward = Double.MAX_VALUE;
-    double maxReward = Double.MIN_VALUE;
-    
     public int step(double reward) {
-        maxReward = Math.max(reward, maxReward);
-        minReward = Math.min(reward, minReward);
+        maxReward = max(reward, maxReward);
+        minReward = min(reward, minReward);
         this.nextReward = (reward - minReward)/(maxReward-minReward)-0.5;
-        
         brain.getPerception().perceive();
         brain.count();
-        
-        Arrays.fill(action, 0.0);
+        fill(action, 0.0);
         int a = brain.getAction();
         action[a] = 1.0;
-        
         //brain.printStats();
         //System.out.println(reward + " " + a);
         //Util.printArray(brain.getInput());
@@ -103,6 +103,11 @@ public class QLearner  {
 
     public double[] getAction() {
         return action;
+    }
+    
+    public static abstract class Action {
+
+        abstract public int execute();
     }
     
 }

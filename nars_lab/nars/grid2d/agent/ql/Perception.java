@@ -1,6 +1,9 @@
 package nars.grid2d.agent.ql;
 
 import java.io.Serializable;
+import static nars.grid2d.agent.ql.Mat.sigmoidBi;
+import static nars.grid2d.agent.ql.Mat.sigmoidUni;
+import static nars.grid2d.agent.ql.Rand.d;
 
 
 /**
@@ -8,9 +11,9 @@ import java.io.Serializable;
  * @author Elser
  */
 public abstract class Perception implements Serializable{
-        boolean rawInput = false;
 	private static final double NEURON_ON = 0.85;
 	private static final long serialVersionUID = 1;
+        boolean rawInput = false;
 	protected double[] output;
 	private int outputIter;
 	private boolean addRandomInput = false;
@@ -40,7 +43,7 @@ public abstract class Perception implements Serializable{
 	public void perceive() {
 		outputIter = 0;
 		if (addRandomInput) {
-			setNextValue(Rand.d(-2, 2)); // random value
+			setNextValue(d(-2, 2)); // random value
 		}
 		updateInputValues();
 	}
@@ -66,9 +69,9 @@ public abstract class Perception implements Serializable{
                         output[outputIter] = input;
                     else {
 			if(isUnipolar()) {
-				output[outputIter] = Mat.sigmoidUni(input);
+				output[outputIter] = sigmoidUni(input);
 			} else {
-				output[outputIter] = Mat.sigmoidBi(input);
+				output[outputIter] = sigmoidBi(input);
 			}
                     }
 		}

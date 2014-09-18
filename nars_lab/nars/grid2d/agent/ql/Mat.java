@@ -1,5 +1,7 @@
 package nars.grid2d.agent.ql;
 
+import static java.lang.Math.exp;
+
 /**
  * Some helpful math methods. 
  * Contains methods returning precomputed values of sigmoid function
@@ -13,7 +15,7 @@ public class Mat {
 		sigmoPrecomputed = new double[800];
 		for (int i = 0; i < sigmoPrecomputed.length; i++) {
 			double d = SIGMO_RANGE*(i-sigmoPrecomputed.length/2)/sigmoPrecomputed.length;
-			sigmoPrecomputed[i] = 1.0/(1.0 + Math.exp(-d ));
+			sigmoPrecomputed[i] = 1.0/(1.0 + exp(-d ));
 		}
 	}
 	/**
@@ -38,13 +40,13 @@ public class Mat {
 	 * Bipolar sigmoid function.
 	 */
 	public static double sigmoidBi(double d) {
-		return 2.0/(1.0 + Math.exp(-d))-1.0;
+		return 2.0/(1.0 + exp(-d))-1.0;
 	}
 	/**
 	 * Unipolar sigmoid function.
 	 */
 	public static double sigmoidUni(double d) {
-		return 1.0/(1.0 + Math.exp(-d));
+		return 1.0/(1.0 + exp(-d));
 	}
 	/**
 	 * @param x

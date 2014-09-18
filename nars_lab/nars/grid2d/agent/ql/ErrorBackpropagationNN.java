@@ -7,6 +7,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
+import static java.lang.System.arraycopy;
+import static nars.grid2d.agent.ql.Mat.sigmoidBi;
+import static nars.grid2d.agent.ql.Mat.sigmoidUni;
+import static nars.grid2d.agent.ql.Rand.b;
+import static nars.grid2d.agent.ql.Rand.d;
+import static nars.grid2d.agent.ql.Rand.successWithPercent;
 
 
 
@@ -18,6 +26,8 @@ import java.io.Serializable;
  */
 public class ErrorBackpropagationNN implements Serializable{
 	private static final long serialVersionUID = 1L;
+    private static final double ALPHA_DEFAULT = 0.4;
+    private static final double MAX_WEIGHT_DEFAULT = 0.5;
 	/**
 	 * Neuron activation function mode
 	 */
@@ -51,12 +61,10 @@ public class ErrorBackpropagationNN implements Serializable{
 	 * Learning rate
 	 */
 	private double alpha;
-	private static final double ALPHA_DEFAULT = 0.4;
 	/**
 	 * Maximum initial weight of neuron connection
 	 */
 	private double maxWeight;
-	private static final double MAX_WEIGHT_DEFAULT = 0.5;
 	
 	private int[] neuronsNo;
 	private double[][][] wBackup;
@@ -83,7 +91,7 @@ public class ErrorBackpropagationNN implements Serializable{
 		this.alpha = alpha;
 		this.maxWeight = maxWeight;
 		neuronsNo = new int[hiddenNeuronsNo.length+1];
-            System.arraycopy(hiddenNeuronsNo, 0, neuronsNo, 0, hiddenNeuronsNo.length);
+            arraycopy(hiddenNeuronsNo, 0, neuronsNo, 0, hiddenNeuronsNo.length);
 		neuronsNo[neuronsNo.length-1] = desiredOutput.length;
 		activation = createActivationTable(neuronsNo);
 		output = activation[activation.length - 1];
@@ -159,7 +167,7 @@ public class ErrorBackpropagationNN implements Serializable{
 				}
 			}
 		}
-		this.error = Math.sqrt(sumSqrError) / desiredOutput.length;
+		this.error = sqrt(sumSqrError) / desiredOutput.length;
 	}
 	/**
 	 * Randomizes all the weights of neurons' connections.
@@ -178,7 +186,7 @@ public class ErrorBackpropagationNN implements Serializable{
 	 * @return random weight value
 	 */
 	private double randWeight() {
-		return Rand.d(-maxWeight, maxWeight);
+		return d(-maxWeight, maxWeight);
 	}
 	
 	/**
@@ -196,9 +204,9 @@ public class ErrorBackpropagationNN implements Serializable{
 					weightedSum += wli[j] * layerInput[l][j];
 				}
 				if(unipolar) {
-					activation[l][i] = Mat.sigmoidUni(weightedSum);
+					activation[l][i] = sigmoidUni(weightedSum);
 				} else {
-					activation[l][i] = Mat.sigmoidBi(weightedSum);
+					activation[l][i] = sigmoidBi(weightedSum);
 				}
 			}
 		}
@@ -214,7 +222,7 @@ public class ErrorBackpropagationNN implements Serializable{
 			for (int i = 0; i < w[l].length; i++) {
 				for (int j = 0; j < w[l][i].length; j++) {
 					wDelta[l][i][j] = alpha * g[l][i] * layerInput[l][j] + momentum * wDelta[l][i][j];
-					w[l][i][j] = w[l][i][j] + wDelta[l][i][j];
+					w[l][i][j] += wDelta[l][i][j];
 				}
 			}
 		}
@@ -230,7 +238,7 @@ public class ErrorBackpropagationNN implements Serializable{
 		for (int l = 0; l < w.length; l++) {
 			for (int i = 0; i < w[l].length; i++) {
 				for (int j = 0; j < w[l][i].length; j++) {
-					if(Rand.successWithPercent(percent)) {
+					if(successWithPercent(percent)) {
 						w[l][i][j] = randWeight();
 					}
 				}
@@ -243,7 +251,7 @@ public class ErrorBackpropagationNN implements Serializable{
 		for (int l = 0; l < w.length; l++) {
 			for (int i = 0; i < w[l].length; i++) {
 				for (int j = 0; j < w[l][i].length; j++) {
-					if(mother==null || Rand.b()) {
+					if(mother==null || b()) {
 						w[l][i][j] = father.w[l][i][j];
 					} else {
 						w[l][i][j] = mother.w[l][i][j];
@@ -338,7 +346,7 @@ public class ErrorBackpropagationNN implements Serializable{
 		for (int l = 0; l < w.length; l++) {
 			for (int i = 0; i < w[l].length; i++) {
 				for (int j = 0; j < w[l][i].length; j++) {
-					ret += Math.abs(w[l][i][j]);
+					ret += abs(w[l][i][j]);
 					no++;
 				}
 			}
@@ -352,7 +360,7 @@ public class ErrorBackpropagationNN implements Serializable{
 		}
 		for (int l = 0; l < w.length; l++) {
 			for (int i = 0; i < w[l].length; i++) {
-                            System.arraycopy(w[l][i], 0, wBackup[l][i], 0, w[l][i].length);
+                            arraycopy(w[l][i], 0, wBackup[l][i], 0, w[l][i].length);
 			}
 		}
 	}
@@ -361,7 +369,7 @@ public class ErrorBackpropagationNN implements Serializable{
 		if(wBackup!=null) {
 			for (int l = 0; l < w.length; l++) {
 				for (int i = 0; i < w[l].length; i++) {
-                                    System.arraycopy(wBackup[l][i], 0, w[l][i], 0, w[l][i].length);
+                                    arraycopy(wBackup[l][i], 0, w[l][i], 0, w[l][i].length);
 				}
 			}
 		}
@@ -370,7 +378,7 @@ public class ErrorBackpropagationNN implements Serializable{
 	public void set(ErrorBackpropagationNN brain) {
 		for (int l = 0; l < w.length; l++) {
 			for (int i = 0; i < w[l].length; i++) {
-                            System.arraycopy(brain.w[l][i], 0, w[l][i], 0, w[l][i].length);
+                            arraycopy(brain.w[l][i], 0, w[l][i], 0, w[l][i].length);
 			}
 		}
 	}
