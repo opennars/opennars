@@ -16,7 +16,7 @@ public class PauseInput extends AbstractTask {
 
     @Override
     public CharSequence getKey() {
-        return "PuaseInput(" + cycles + ')';
+        return "PauseInput(" + cycles + ')';
     }
     
     

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
+import nars.core.Memory.Events.ResetPost;
+import nars.core.Memory.Events.ResetPre;
 import nars.core.Memory.Events.WorkCycleStart;
 import nars.core.Memory.Events.WorkCycleStop;
 import nars.core.sense.EmotionSense;
@@ -93,7 +95,10 @@ import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
+import nars.operator.io.Reset;
+import nars.operator.io.SetVolume;
 import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
 
@@ -129,6 +134,12 @@ public class Memory implements Output, Serializable {
         
         /** fired at the end of each Memory individual cycle */
         public static class WorkCycleStop { }
+                
+        /** called before memory.reset() proceeds */
+        public static class ResetPre { }
+        
+        /** called after memory.reset() proceeds */
+        public static class ResetPost { }
         
     }
     
@@ -382,16 +393,13 @@ public class Memory implements Output, Serializable {
                 super.sense(memory);
             }
 
-        };                
-        
+        };
         
         recorder = NullInferenceRecorder.global;
-
         
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
-        
-        
+                
         
         // create self
         self = conceptualize(new Term(Symbols.SELF)).term;
@@ -404,6 +412,8 @@ public class Memory implements Output, Serializable {
     }
 
     public void reset() {
+        event.emit(ResetPre.class);
+        
         conceptProcessor.clear();
         novelTasks.clear();
         newTasks.clear();     
@@ -415,7 +425,9 @@ public class Memory implements Output, Serializable {
         working = true;
         
         emotion.set(0.5f, 0.5f);
-
+        
+        event.emit(ResetPost.class);
+       
         if (getRecorder().isActive()) {
             getRecorder().append("Reset");
         }
@@ -565,15 +577,10 @@ public class Memory implements Output, Serializable {
      * @param task The addInput task
      */
     public void inputTask(final AbstractTask t) {                                                 
-        if (t instanceof PauseInput) {
-            int c = ((PauseInput)t).cycles;
-            output(PauseInput.class, c);
-            stepLater(Math.max(0,c));
-        }
-        else if (t instanceof Task) {                                       
+        if (t instanceof Task) {                                       
             Task task = (Task)t;
 
-            output(Output.IN.class, task);
+            output(IN.class, task);
 
             if (task.budget.aboveThreshold()) {
                 addNewTask(task, "Perceived");
@@ -582,8 +589,26 @@ public class Memory implements Output, Serializable {
                     recorder.onTaskRemove(task, "Neglected");
                 }
             }
-
-        }                                
+        }
+        else if (t instanceof PauseInput) {            
+            stepLater(((PauseInput)t).cycles);            
+            output(IN.class, t);
+        }
+        else if (t instanceof Reset) {
+            reset();
+            output(IN.class, t);
+        }
+        else if (t instanceof Echo) {
+            Echo e = (Echo)t;
+            output(e.channel, e.signal);
+        }
+        else if (t instanceof SetVolume) {            
+            param.noiseLevel.set(((SetVolume)t).volume);
+            output(IN.class, t);
+        }            
+        else {
+            output(IN.class, "Unrecognized Input Task: " + t);
+        }
     }
 
     /**

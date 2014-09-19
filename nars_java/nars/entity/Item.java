@@ -45,7 +45,10 @@ public abstract class Item implements Comparable {
      * @param budget The initial budget
      */
     protected Item(final BudgetValue budget) {
-        this.budget = new BudgetValue(budget);  // clone, not assignment
+        if (budget!=null)
+            this.budget = new BudgetValue(budget);  // clone, not assignment
+        else
+            this.budget = null;
     }
 
 
@@ -151,7 +154,8 @@ public abstract class Item implements Comparable {
     @Override
     public String toString() {        
         //return budget + " " + key ;
-        String budgetStr = budget.toString();
+        
+        String budgetStr = budget!=null ? budget.toString() : "";
         return new StringBuilder(budgetStr.length()+getKey().length()+1).append(budgetStr).append(' ').append(getKey()).toString();
     }
 

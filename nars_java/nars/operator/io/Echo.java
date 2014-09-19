@@ -6,11 +6,11 @@ import nars.entity.AbstractTask;
  * TODO wrap as operator
  * @author me
  */
-public class Speak extends AbstractTask {
+public class Echo extends AbstractTask {
     public final Object signal;
     public final Class channel;
 
-    public Speak(Class channel, Object signal) {
+    public Echo(Class channel, Object signal) {
         super();
         this.channel = channel;
         this.signal = signal;
@@ -19,7 +19,7 @@ public class Speak extends AbstractTask {
     
     @Override
     public CharSequence getKey() {
-        return channel.getSimpleName() + ": " + signal.hashCode();
+        return channel.getSimpleName() + ": " + signal.toString();
     }
     
 }

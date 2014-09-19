@@ -3,6 +3,7 @@ package nars.io;
 import java.io.IOException;
 import java.util.Iterator;
 import nars.io.buffer.Buffer;
+import nars.operator.io.Reboot;
 
 
 /**
@@ -29,6 +30,11 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
  
     /** add a task to the end of the buffer */
     protected boolean queue(Y task) {
+        if (task instanceof Reboot) {
+            buffer.clear();
+            return false;
+        }
+            
         if (task!=null)
             return buffer.add(task);
         return false;
@@ -104,6 +110,11 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
         return n;
     }
     
+    /** empties the buffer */
+    public void reset() {        
+        buffer.clear();
+    }
+
     public int getItemsBuffered() {
         return buffer.size();
     }
@@ -111,6 +122,7 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
     //public float getMass(X input) // allows variable weighting of input items; default=1.0
     
     //public double getInputMassRate(double windowSeconds); // calculates throughput rate in mass/sec within a given past window size, using an internal histogram of finite resolution
+
 
     
     
