@@ -19,7 +19,7 @@ import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
-import nars.operator.io.Speak;
+import nars.operator.io.Echo;
 
 
 /**
@@ -101,6 +101,8 @@ public class NAR implements Runnable, Output, TaskSource {
     private int inputSelected = 0; //counter for the current selected input channel
     private boolean ioChanged;
     
+    private long lastTime = -1; //last cycle's time, for detecting a reset
+    
 
     public NAR(Memory m, Perception p) {
         this.memory = m;
@@ -167,7 +169,7 @@ public class NAR implements Runnable, Output, TaskSource {
                 return perception.perceive(x);
             }
             catch (Throwable e) {
-                return singletonIterator(new Speak(ERR.class, e));
+                return singletonIterator(new Echo(ERR.class, e));
             }
         }
     }
@@ -316,6 +318,12 @@ public class NAR implements Runnable, Output, TaskSource {
         //}
     }
 
+    protected void resetPorts() {
+        for (InPort<Object, AbstractTask> i : getInPorts()) {
+            i.reset();
+        }
+    }
+    
     protected void updatePorts() {
         if (!ioChanged) {
             return;
@@ -398,6 +406,16 @@ public class NAR implements Runnable, Output, TaskSource {
         if (DEBUG) {
             debugTime();            
         }        
+
+        //Detect reset
+        long t = memory.getTime();
+        if (t <= lastTime) {
+            resetPorts();
+            lastTime = -1;
+        }
+        lastTime = t;
+        
+        
 
         updatePorts();
         

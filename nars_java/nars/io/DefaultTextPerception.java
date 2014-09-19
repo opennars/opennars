@@ -8,10 +8,15 @@ import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.AbstractTask;
+import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Englisch;
+import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
+import nars.operator.io.Reboot;
+import nars.operator.io.Reset;
+import nars.operator.io.SetVolume;
 
 /**
  *  Default handlers for text perception
@@ -43,62 +48,66 @@ public class DefaultTextPerception  {
             public Object react(String input) {
                 try {
                     input = input.trim();
-                    
-                    
-                    if (input.startsWith(spref)) {
-                        input = input.substring(spref.length());
-                    }
-                    
+                    if (input.startsWith(spref))
+                        input = input.substring(spref.length());                    
                     int cycles = Integer.parseInt(input);
                     return new PauseInput(cycles);                    
                 }
-                catch (NumberFormatException e) {
-                }
+                catch (NumberFormatException e) {                }
                 return null;
             }
         });
         
         //reset
         parsers.add(new TextReaction() {
-            @Override
-            public Object react(String input) {                
-                if (input.equals(Symbols.RESET_COMMAND)) {
+            @Override public Object react(String input) {                
+                if (input.equals(Symbols.RESET_COMMAND))
+                    return new Reset();
+                return null;
+            }
+        });
+        //reboot
+        parsers.add(new TextReaction() {
+            @Override public Object react(String input) {                
+                if (input.equals(Symbols.REBOOT_COMMAND)) {
+                    //immediately reset the memory
+                    memory.output(IN.class, "reboot");
                     memory.reset();
-                    memory.output(Output.IN.class, input);
-                    return Boolean.TRUE;                    
+                    return new Reboot();
                 }
                 return null;
             }
         });
-        
-        //stop
-        parsers.add(new TextReaction() {
-            @Override
-            public Object react(String input) {
-                if (!memory.isWorking())  {
-                    if (input.equals(Symbols.STOP_COMMAND)) {
-                        memory.output(Output.IN.class, input);
-                        memory.setWorking(false);
-                        return Boolean.TRUE;                        
-                    }
-                }
-                return null;                
-            }
-        });    
-        
-        //start
-        parsers.add(new TextReaction() {
-            @Override public Object react(String input) {                
-                if (memory.isWorking()) {
-                    if (input.equals(Symbols.START_COMMAND)) {
-                        memory.setWorking(true);
-                        memory.output(Output.IN.class, input);
-                        return Boolean.TRUE;                        
-                    }
-                }
-                return null;                
-            }
-        });
+
+//      TODO implement these with AbstractTask's        
+//        //stop
+//        parsers.add(new TextReaction() {
+//            @Override
+//            public Object react(String input) {
+//                if (!memory.isWorking())  {
+//                    if (input.equals(Symbols.STOP_COMMAND)) {
+//                        memory.output(Output.IN.class, input);
+//                        memory.setWorking(false);
+//                        return Boolean.TRUE;                        
+//                    }
+//                }
+//                return null;                
+//            }
+//        });    
+//        
+//        //start
+//        parsers.add(new TextReaction() {
+//            @Override public Object react(String input) {                
+//                if (memory.isWorking()) {
+//                    if (input.equals(Symbols.START_COMMAND)) {
+//                        memory.setWorking(true);
+//                        memory.output(Output.IN.class, input);
+//                        return Boolean.TRUE;                        
+//                    }
+//                }
+//                return null;                
+//            }
+//        });
         
         //silence
         parsers.add(new TextReaction() {
@@ -106,10 +115,8 @@ public class DefaultTextPerception  {
                 if (input.indexOf(Symbols.SET_NOISE_LEVEL_COMMAND)==0) {
                     String[] p = input.split("=");
                     if (p.length == 2) {
-                        int noiseLevel = Integer.parseInt(p[1]);
-                        memory.param.noiseLevel.set(noiseLevel);                        
-                        memory.output(Output.IN.class, input);
-                        return Boolean.TRUE;                        
+                        int noiseLevel = Integer.parseInt(p[1].trim());
+                        return new SetVolume(noiseLevel);
                     }
                 }
                 return null;                
@@ -141,13 +148,11 @@ public class DefaultTextPerception  {
                 char c = input.charAt(0);
                 if (c == Symbols.ECHO_MARK) {            
                     String echoString = input.substring(1);
-                    memory.output(Output.ECHO.class, '\"' + echoString + '\"');
-                    return Boolean.TRUE;
+                    return new Echo(Echo.class, echoString);
                 }
                 final String it = input.trim();
                 if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("***") ) {
-                    memory.output(Output.ECHO.class, input);
-                    return Boolean.TRUE;
+                    return new Echo(Echo.class, input);
                 }
                 return null;                
             }
