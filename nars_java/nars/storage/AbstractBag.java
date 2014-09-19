@@ -10,7 +10,11 @@ import nars.inference.BudgetFunctions;
 
 
 public abstract class AbstractBag<E extends Item> implements Iterable<E> {
-
+    public enum EnumProcessNextForget {
+        NO,
+        YES
+    }
+    
     /**
      * relative threshold, only calculate once
      */
@@ -177,12 +181,13 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     /** x = takeOut(), then putBack(x) - without removing 'x' from nameTable 
      *  @return the variable that was updated, or null if none was taken out
      */
-    public E processNext(boolean forget) {
+    public E processNext(EnumProcessNextForget forget) {
         final E x = takeOut(false);
         if (x!=null) {
             //putBack():
-            if (forget)
+            if (forget == EnumProcessNextForget.YES) {
                 forget(x);
+            }
             
             boolean r = putIn(x, false);
             if (!r) {
@@ -190,8 +195,9 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
             }
             return x;
         }
-        else
+        else {
             return null;
+        }
     }
 
     abstract public Collection<E> values();
