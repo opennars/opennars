@@ -482,7 +482,7 @@ public class Concept extends Item {
     @Override
     public String toString() {  // called from concept bag
         //return (super.toStringBrief() + " " + key);
-        return super.toStringBrief();
+        return super.toStringExternal();
     }
 
     /**
@@ -490,7 +490,7 @@ public class Concept extends Item {
      */
     @Override
     public String toStringLong() {
-        String res = toStringBrief() + " " + key
+        String res = toStringExternal() + " " + key
                 + toStringIfNotNull(termLinks, "termLinks")
                 + toStringIfNotNull(taskLinks, "taskLinks");
         res += toStringIfNotNull(null, "questions");

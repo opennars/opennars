@@ -100,8 +100,6 @@ public class Sentence implements Cloneable {
     public boolean equals(final Object that) {
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            if (hashCode()!=t.hashCode())
-                return false;
             return getKey().equals(t.getKey());
             /*
             return content.equals(t.content) && 
@@ -298,7 +296,7 @@ public class Sentence implements Cloneable {
 
             if (truth != null) {
                 suffix.append(' ');
-                truth.appendStringBrief(suffix);
+                truth.appendString(suffix, false);
             }
             if (showOcurrenceTime) {
                 suffix.append(' ');
@@ -326,7 +324,7 @@ public class Sentence implements Cloneable {
         final long t = nar.memory.getTime();
 
         final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.param.duration.get()) : "";
-        final String truthString = (truth != null) ? truth.toStringBrief() : null;
+        final String truthString = (truth != null) ? truth.toStringExternal() : null;
  
         CharSequence stampString = showStamp ? stamp.name() : null;
         

@@ -21,12 +21,15 @@
 package nars.entity;
 
 import nars.core.Parameters;
+import static nars.core.Parameters.TRUTH_EPSILON;
+import static nars.core.Parameters.TRUTH_PRECISION;
 import nars.io.Symbols;
 import nars.io.Texts;
 
 
 public class TruthValue implements Cloneable { // implements Cloneable {
 
+    
     /**
      * The character that marks the two ends of a truth value
      */
@@ -122,7 +125,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The expectation value
      */
     public float getExpectation() {
-        return (float) (confidence * (frequency - 0.5) + 0.5);
+        return (confidence * (frequency - 0.5f) + 0.5f);
     }
 
     /**
@@ -153,9 +156,14 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     @Override
     public boolean equals(final Object that) {
-        return ((that instanceof TruthValue)
-                && (getFrequency() == ((TruthValue) that).getFrequency())
-                && (getConfidence() == ((TruthValue) that).getConfidence()));
+        //TODO equals true if difference less than an epsilon parameter
+                
+        if (that instanceof TruthValue) {
+            float dFreq = getFrequency() - ((TruthValue) that).getFrequency();
+            float dConf = getConfidence() - ((TruthValue) that).getConfidence();
+            return (dFreq < TRUTH_EPSILON) && (dConf < TRUTH_EPSILON);
+        }
+        return false;
     }
 
     /**
@@ -169,45 +177,33 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
 
     @Override
-    public Object clone() {
+    public TruthValue clone() {
         return new TruthValue(getFrequency(), getConfidence(), getAnalytic());
     }
     
-    public TruthValue setFrequency(float f) {
-        frequency = f;
+    public TruthValue setFrequency(final float f) {
+        frequency = Math.round(f * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return this;
     }
     
     public TruthValue setConfidence(float c) {
-        confidence = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
+        c = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
+        confidence = Math.round(c * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return this;
     }
     
-    public TruthValue setAnalytic(boolean a) {
+    public TruthValue setAnalytic(final boolean a) {
         analytic = a;
         return this;
     }
 
     
-    /**
-     * The String representation of a TruthValue
-     *
-     * @return The String
-     */
-    @Override
-    public String toString() {
-        //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
-        
-        //1 + 6 + 1 + 6 + 1
-        return new StringBuilder(15).append(DELIMITER).append(Texts.n4(frequency))
-                     .append(SEPARATOR).append(Texts.n4(confidence)).append(DELIMITER).toString();
-    }
 
     /**
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
      */
-    public StringBuilder appendStringBrief(final StringBuilder sb) {
+    public StringBuilder appendString(final StringBuilder sb, boolean external) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -216,22 +212,37 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             return s1 + s2 + DELIMITER;
         }*/
         
-        sb.ensureCapacity(11);
+        sb.ensureCapacity(external ? 11 : 15);
         return sb
             .append(DELIMITER)
-            .append(Texts.n2(frequency))
+            .append(external ? Texts.n2(frequency) : Texts.n2(frequency))
             .append(SEPARATOR)
-            .append(Texts.n2(confidence))
+            .append(external ? Texts.n2(confidence) : Texts.n2(confidence))
             .append(DELIMITER);        
     }
 
     public CharSequence name() {
         //1 + 4 + 1 + 4 + 1
-        StringBuilder sb =  new StringBuilder(11);
-        return appendStringBrief(sb);
+        StringBuilder sb =  new StringBuilder();
+        return appendString(sb, false);
     }
-    
-    public String toStringBrief() {
+
+    /** output representation */
+    public String toStringExternal() {
+        //return name().toString();
+        StringBuilder sb =  new StringBuilder();
+        return appendString(sb, true).toString();
+    }
+    /**
+     * The String representation of a TruthValue, as used internally by the system
+     *
+     * @return The String
+     */
+    @Override
+    public String toString() {
+        //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
+        
+        //1 + 6 + 1 + 6 + 1
         return name().toString();
     }
 

@@ -299,4 +299,8 @@ public class Texts {
 
     final static Format twoDecimal = new DecimalFormat("0.00");    
     public static final String n2(final float x) { return twoDecimal.format(x);     }
+
+    final static Format oneDecimal = new DecimalFormat("0.0");    
+    public static final String n1(final float x) { return oneDecimal.format(x);     }
+    
 }
