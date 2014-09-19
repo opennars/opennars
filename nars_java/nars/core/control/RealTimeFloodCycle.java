@@ -208,7 +208,6 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         }
 
         Concept x = conceptList.get(nextSample++);
-        forget(x);
         return x;
     }
     

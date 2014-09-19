@@ -48,7 +48,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
      * Select and fire the next concept.
      */
     public void processConcept(Memory m) {
-        Concept currentConcept = concepts.processNext();
+        Concept currentConcept = concepts.processNext(true);
         if (currentConcept != null) {            
             
             if (m.getRecorder().isActive()) {
@@ -95,7 +95,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
 
     @Override
     public Concept sampleNextConcept() {
-        return concepts.processNext();
+        return concepts.processNext(false);
     }
     
     
