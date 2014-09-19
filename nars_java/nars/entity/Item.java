@@ -159,9 +159,9 @@ public abstract class Item implements Comparable {
      * Return a String representation of the Item after simplification
      * @return A simplified String representation of the content
      */
-    public String toStringBrief() {        
+    public String toStringExternal() {        
         //return budget.toStringBrief() + " " + key ;
-        final String briefBudget = budget.toStringBrief();
+        final String briefBudget = budget.toStringExternal();
         return new StringBuilder(briefBudget.length()+getKey().length()+1).append(briefBudget).append(' ').append(getKey()).toString();
     }
     

@@ -336,23 +336,48 @@ public class Memory implements Output, Serializable {
 
             @Override
             public void sense(Memory memory) {
-                double totalPriority = 0;        
+                double prioritySum = 0;        
+                double prioritySumSq = 0;
                 int count = 0;
                 int totalQuestions = 0;
                 int totalBeliefs = 0;
+                int histogramBins = 4;
+                double[] histogram = new double[histogramBins];
 
                 for (final Concept c : getConcepts()) {
+                    double p = c.getPriority();
                     totalQuestions += c.questions.size();        
                     totalBeliefs += c.beliefs.size();        
-                    totalPriority += c.getPriority();
+                    prioritySum += p;
+                    prioritySumSq += p*p;
+                    
+                    if (p > 0.75) histogram[0]++;
+                    else if (p > 0.5) histogram[1]++;
+                    else if (p > 0.25) histogram[2]++;
+                    else histogram[3]++;
+                    
                     count++;
+                }
+                double mean, variance;
+                if (count > 0) {
+                    mean = prioritySum / count;
+                    
+                    //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+                    variance = (prioritySumSq - ((prioritySum*prioritySum)/count))/(count-1);
+                    for (int i = 0; i < histogram.length; i++)
+                        histogram[i]/=count;
+                }
+                else {
+                    mean = variance = 0;
                 }
 
                 setConceptNum(count);
                 setConceptBeliefsSum(totalBeliefs);
                 setConceptQuestionsSum(totalQuestions);
                 //setConceptPrioritySum(totalPriority);
-                setConceptPriorityMean(count > 0  ? totalPriority / count : 0);
+                setConceptPriorityMean(mean);
+                setConceptPriorityVariance(variance);
+                setConceptPriorityHistogram(histogram);
                 
                 super.sense(memory);
             }

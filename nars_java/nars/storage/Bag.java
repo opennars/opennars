@@ -427,7 +427,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
             if (itemTable[i]!=null && !itemTable[i].isEmpty()) {
                 buf.append("\n --- Level ").append((i+1)).append(":\n");
                 for (final E e : itemTable[i]) {
-                    buf.append(e.toStringBrief()).append('\n');
+                    buf.append(e.toStringExternal()).append('\n');
                 }
             }
         }

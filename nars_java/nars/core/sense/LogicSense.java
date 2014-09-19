@@ -59,6 +59,8 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final EventValueSensor SHORT_TERM_MEMORY_UPDATE;
     public final EventValueSensor DERIVATION_LATENCY;
     public final EventValueSensor SOLUTION_BEST;
+    private double conceptVariance;
+    private double[] conceptHistogram;
     
 
     public LogicSense() {
@@ -112,7 +114,14 @@ public class LogicSense extends AbstractSense implements Serializable {
     @Override
     public void sense(Memory memory) {
         put("concept.count", conceptNum);
+        
         put("concept.priority.mean", conceptPriorityMean);
+        put("concept.priority.variance", conceptVariance);
+        
+        //in order; 0= top 25%, 1 = 50%..75%.., etc
+        for (int n = 0; n < conceptHistogram.length; n++)
+            put("concept.priority.hist." + n, conceptHistogram[n]);
+        
         put("concept.beliefs.mean", conceptNum > 0 ? ((double)conceptBeliefsSum)/conceptNum : 0);
         put("concept.questions.mean", conceptNum > 0 ? ((double)conceptQuestionsSum)/conceptNum : 0);
         
@@ -218,6 +227,15 @@ public class LogicSense extends AbstractSense implements Serializable {
     public void setConceptQuestionsSum(long conceptQuestionsSum) {
         this.conceptQuestionsSum = conceptQuestionsSum;
     }
+
+    public void setConceptPriorityVariance(double variance) {
+        this.conceptVariance = variance;
+    }
+
+    public void setConceptPriorityHistogram(double[] histogram) {
+        this.conceptHistogram = histogram;
+    }
+
     
     
 }

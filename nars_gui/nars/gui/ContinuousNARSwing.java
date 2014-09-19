@@ -9,10 +9,10 @@ import nars.inference.AbstractController;
 
 public class ContinuousNARSwing {
 
-    public static class Remeber extends AbstractController {
+    public static class PriorityMultiplier extends AbstractController {
         private int numConcepts;
 
-        public Remeber(NAR n) {
+        public PriorityMultiplier(NAR n) {
             super(n, 1);
         }
 

@@ -199,7 +199,7 @@ public class Task extends AbstractTask {
         final StringBuilder s = new StringBuilder();
         s.append(super.toString()).append(' ').append(sentence.stamp.name());
         if (parentTask != null) {
-            s.append("  \n from task: ").append(parentTask.toStringBrief());
+            s.append("  \n from task: ").append(parentTask.toStringExternal());
             if (parentBelief != null) {
                 s.append("  \n from belief: ").append(parentBelief.toString());
             }

@@ -117,7 +117,7 @@ public class InferenceTracer implements InferenceRecorder {
 
         @Override
         public String toString() {
-            return "Task " + type + " (" + reason + "): " + task.toStringBrief() + " " + stack;
+            return "Task " + type + " (" + reason + "): " + task.toStringExternal() + " " + stack;
         }
     }
 

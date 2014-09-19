@@ -66,7 +66,7 @@ public class TimePanel extends NPanel implements Observer {
         //TODO realtime stamp
         for (Task task : nar.memory.executive.shortTermMemory) {
             if (task.getCreationTime() == cycle)
-                t += "STM Task: " + task.toStringBrief() + "\n";
+                t += "STM Task: " + task.toStringExternal() + "\n";
         }
         
         String cs = cycleSummary.get(cycle);

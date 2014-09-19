@@ -220,8 +220,6 @@ public class BudgetValue implements Cloneable {
      */
     @Override
     public String toString() {
-        
-        
         return MARK + Texts.n4(priority) + SEPARATOR + Texts.n4(durability) + SEPARATOR + Texts.n4(quality) + MARK;
     }
 
@@ -229,7 +227,7 @@ public class BudgetValue implements Cloneable {
      * Briefly display the BudgetValue
      * @return String representation of the value with 2-digit accuracy
      */
-    public String toStringBrief() {
+    public String toStringExternal() {
         //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
 
         final String priorityString = Texts.n2(priority);

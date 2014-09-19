@@ -60,8 +60,15 @@ public class Parameters {
     
 
     
-        
- 
+    /** determines the internal precision used for TruthValue calculations.
+     *  a value of 0.01 gives 100 truth value states between 0 and 1.0.
+     *  other values may be used, for example, 0.02 for 50, 0.10 for 10, etc.
+     *  Change at your own risk
+     */
+    public static final float TRUTH_EPSILON = 0.01f;
+    public static final float TRUTH_PRECISION = 1.0f / TRUTH_EPSILON;
+
+    
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted. */
     public static final float BUDGET_THRESHOLD = (float) 0.01;
