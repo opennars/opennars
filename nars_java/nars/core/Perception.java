@@ -7,7 +7,7 @@ import nars.entity.AbstractTask;
 import nars.entity.Sentence;
 import nars.io.DefaultTextPerception;
 import nars.io.Output.ERR;
-import nars.operator.io.Speak;
+import nars.operator.io.Echo;
 
 
 public class Perception {
@@ -38,7 +38,7 @@ public class Perception {
             error = e;
         }
         
-        return singletonIterator( new Speak(ERR.class, error) );
+        return singletonIterator(new Echo(ERR.class, error) );
     }
 
     public DefaultTextPerception getText() {        
