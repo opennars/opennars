@@ -500,7 +500,7 @@ public class EditorPanel extends JPanel {
                     }
                     command+=")";
                     
-                    s.nar.addInput(command+"!");
+                   // s.nar.addInput(command+"!");
                     //s.nar.addInput("<"+command+" =/> <Self --> [exploring]>>.");
                     //s.nar.addInput("<"+command+" =/> <Self --> [curious]>>.");
                 }
