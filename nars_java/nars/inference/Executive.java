@@ -330,7 +330,7 @@ public class Executive {
         
             return true;
         }
-        
+        shortTermMemory.clear();
         return false;
     }
     
