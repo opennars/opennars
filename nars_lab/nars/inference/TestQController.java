@@ -33,16 +33,22 @@ public class TestQController {
     
     final static String cpm = "concept.priority.mean";
     final static String td = "task.derived";
-    
+    final static String cpv = "concept.priority.variance";
+    final static String cph0 = "concept.priority.hist.0";
+    final static String cph1 = "concept.priority.hist.1";
+    final static String cph2 = "concept.priority.hist.2";
+    final static String cph3 = "concept.priority.hist.3";
+    final static String nt = "task.novel.total";
     
     
     public static class TestController extends QController {
 
                 
-                
-        private double conceptPriority;
-        private double taskDerivedMean;
         private double conceptNewMean;
+        private double taskDerivedMean;
+        
+        final int minCycleToForget = 2;
+        final int maxCycleToForget = 40;
         
         public TestController(NAR n, int period) {
             super(n, period);
@@ -50,21 +56,22 @@ public class TestQController {
             
             Param p = nar.param();
             
-            add(new NControlSensor(p.conceptCyclesToForget, 2));
+            add(new NControlSensor(p.conceptCyclesToForget, 3));
             //add(new NControlSensor(p.beliefCyclesToForget, 2));
             //add(new NControlSensor(p.taskCyclesToForget, 2));
             //add(new NControlSensor(p.termLinkMaxMatched, 2));
             
-            add(new EventValueControlSensor(nar, cpm, 5, 1, 0.0001) {
-                @Override public double get() {
-                    return conceptPriority = super.get();
-                }                
-            });
+            add(new EventValueControlSensor(nar, cpm, 0, 1, 7));            
+            add(new EventValueControlSensor(nar, cph0, 0, 1, 3));
+            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
+            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
+            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
+            add(new EventValueControlSensor(nar, cpv, 5, 4, 0.0001));
             add(new EventValueControlSensor(nar, td, 5, 4, 0.0001) {
                 @Override public double get() {
                     return taskDerivedMean = super.get();
                 }                
-            });
+            });            
             add(new EventValueControlSensor(nar, "concept.new", 5, 2, 0.0001) {
                 @Override public double get() {
                     return conceptNewMean = super.get();
@@ -74,8 +81,8 @@ public class TestQController {
             add(new EventValueControlSensor(nar, "task.question.process", 5, 8, 0.0001));
             
             init(3);
-            q.brain.setUseBoltzmann(true);
-            q.brain.setRandActions(0.5);
+            //q.brain.setUseBoltzmann(true);
+            //q.brain.setRandActions(0.25);
         }
 
         @Override
@@ -84,33 +91,27 @@ public class TestQController {
             //return new int[ (int)Math.ceil(inputSize * 2) ];
             
             //return new int[ ] { 18 }; //fixed # of hidden
-            return new int[] {24,8 }; //no hidden            
+            return new int[] { 20 };
         }
 
         @Override
         protected void act(int action) {
             Param p = nar.param();
+            
+            
             switch (action) {
                 case 0: 
-                    p.conceptCyclesToForget.set(11);  
-                    p.taskCyclesToForget.set(21);
-                    p.beliefCyclesToForget.set(51);
-                    p.termLinkMaxMatched.set(10);
+                    p.conceptCyclesToForget.set(5);
                     break;
                 case 1: 
-                    //DEFAULTS
-                    p.conceptCyclesToForget.set(10);   
-                    p.taskCyclesToForget.set(20);
-                    p.beliefCyclesToForget.set(50);
-                    p.termLinkMaxMatched.set(10);
+                    p.conceptCyclesToForget.set(10);
                     break;
                 case 2:
-                    p.conceptCyclesToForget.set(9);   
-                    p.taskCyclesToForget.set(19);
-                    p.beliefCyclesToForget.set(49);
-                    p.termLinkMaxMatched.set(21); // <--- 
+                    p.conceptCyclesToForget.set(15);
                     break;
             }
+            
+            
 //            switch (action) {
 //                case 0: p.conceptCyclesToForget.set(14);  break;
 //                case 1: p.conceptCyclesToForget.set(10);   break;
@@ -130,7 +131,9 @@ public class TestQController {
         public double reward() {
             //maximize concept priority
             //return conceptPriority;
-            return taskDerivedMean;// + conceptNewMean;
+            // + conceptNewMean;
+            
+            return conceptNewMean + taskDerivedMean + 1* nar.memory.logic.d("task.solution.best");            
         }
 
 
@@ -177,7 +180,7 @@ public class TestQController {
         double[] nAction = new double[qn.getNumActions()];
         long startupPeriod = 2000;
         int resetPeriod = 50000;
-        
+        double avgCycleToForget = 0;
         int time = 0;
         while (true ) {
             
@@ -201,12 +204,15 @@ public class TestQController {
                     for (int i = 0; i < nAction.length; i++)
                         nAction[i] += oqn[i] / displayCycles;
                 }                
+             
+                
             }
             
             n.step(1);            
             m.step(1);
             r.step(1);
             
+            avgCycleToForget += ((double)n.param().conceptCyclesToForget.get()) / displayCycles;
             mm += qm.reward();
             nn += qn.reward();
             rr += qr.reward();
@@ -219,9 +225,10 @@ public class TestQController {
                                 df.format(mm) + " , " + df.format(nn) + " , " + df.format(rr) + " , ");
                           
                 //System.out.println();
+                System.out.print(avgCycleToForget + ", ");
                 printCSVLine(System.out, nAction);
                 
-                mm = nn = rr = 0;
+                mm = nn = rr = avgCycleToForget = 0;
                 Arrays.fill(nAction, 0);
             }
             time++;

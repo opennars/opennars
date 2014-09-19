@@ -108,7 +108,7 @@ public class LogicSense extends AbstractSense implements Serializable {
         add(DERIVATION_LATENCY = new EventValueSensor("reason.derivation.latency"));
         DERIVATION_LATENCY.setSampleWindow(64);
         
-        add(SOLUTION_BEST = new EventValueSensor("taks.solution.best"));
+        add(SOLUTION_BEST = new EventValueSensor("task.solution.best"));
     }
     
     @Override

@@ -19,6 +19,13 @@ public class EventValueControlSensor extends ControlSensor {
         this.logicSensor = logicSensor;
         this.adaptContrast = adaptContrast;
     }
+    public EventValueControlSensor(NAR n, String logicSensor, int min, int max, int quantization, int sampleWindow) {
+        super(min, max, quantization);
+        e = new EventValueSensor("_", true, sampleWindow);
+        this.nar = n;
+        this.logicSensor = logicSensor;
+        this.adaptContrast = 0;
+    }
 
     @Override
     public void update() {
