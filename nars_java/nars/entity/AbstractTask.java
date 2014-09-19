@@ -6,7 +6,7 @@ package nars.entity;
 abstract public class AbstractTask extends Item {
 
     public AbstractTask() {
-        super();
+        super(null);
     }
     
     public AbstractTask(BudgetValue b) {

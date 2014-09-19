@@ -235,9 +235,10 @@ public class Symbols {
 
     /* control commands */
     public static final String RESET_COMMAND = "*reset";
+    public static final String REBOOT_COMMAND = "*reboot";
     public static final String STOP_COMMAND = "*stop";
     public static final String START_COMMAND = "*start";
-    public static final String SET_NOISE_LEVEL_COMMAND = "*silence";
+    public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
     
     
     /* Stamp, display only */
