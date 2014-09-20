@@ -26,7 +26,6 @@ public class Run extends MarioComponent {
         frame.setVisible(true);
         
         
-        start();
     }
     
     public static void main(String[] args)     {

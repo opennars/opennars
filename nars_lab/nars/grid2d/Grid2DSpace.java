@@ -261,9 +261,14 @@ public class Grid2DSpace extends PApplet {
 
     @Override
     public void setup() {
-        frameRate(FrameRate);
+        if (FrameRate == 0)
+            noLoop();
+        else
+            frameRate(FrameRate);
+        
         particles = new ParticleSystem(this);
     }
+    
     int time = 0;
     float rendersize = 1;
 
