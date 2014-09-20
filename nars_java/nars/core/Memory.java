@@ -1042,7 +1042,7 @@ public class Memory implements Output, Serializable {
     }
     
     /** Processes a specific number of new tasks */
-    public int processNewTasks(int maxTasks) {        
+    public int processNewTasks(int maxTasks) {
         
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory

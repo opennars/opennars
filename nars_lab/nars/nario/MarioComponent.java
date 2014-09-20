@@ -35,6 +35,12 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     private int renderedFrames;
     boolean antialias = false;
     private boolean soundEnabled = false;
+    private double time;
+    private double now;
+    private double averagePassedTime;
+    private boolean naiveTiming;
+    private Graphics og;
+    private float alpha;
 
 
     public MarioComponent()     {
@@ -150,7 +156,14 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 
                 @Override
                 public void run() {
-                    repaint();
+                    try {
+                        scene.render(og, alpha);
+                        update();
+                        repaint();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();;
+                    }
                 }
                 
     };
@@ -158,6 +171,9 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     public void ready() {
         toTitle();        
     }
+    
+    int lastTick = -1;
+    int fps = 0;
     
     public void run()     {
         graphicsConfiguration = getGraphicsConfiguration();
@@ -170,33 +186,40 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         Art.init(graphicsConfiguration, sound);
 
         updateDoubleBuffer(320,240);
-        Graphics og = image.getGraphics();
+        og = image.getGraphics();
 
-        int lastTick = -1;
         //        double lastNow = 0;
         renderedFrames = 0;
-        int fps = 0;
 
         //        double now = 0;
         //        double startTime = System.nanoTime() / 1000000000.0; 
         //        double timePerFrame = 0; 
-        double time = System.nanoTime() / 1000000000.0;
-        double now = time;
-        double averagePassedTime = 0;
+        time = System.nanoTime() / 1000000000.0;
+        now = time;
+        averagePassedTime = 0;
+        naiveTiming = true;
 
         addKeyListener(this);
         addFocusListener(this);
 
-        boolean naiveTiming = true;
 
         ready();
 
-        while (running)
-        {
+//        while (running)
+//        {
+//            cycle();
+//        }
+//
+//        Art.stopMusic();
+
+    }
+    
+    public void cycle(double passedTime) {
+        if (passedTime == 0) {
+            //calculate on realtime
             double lastTime = time;
             time = System.nanoTime() / 1000000000.0;
-            double passedTime = time - lastTime;
-
+            passedTime = time - lastTime;
             if (passedTime < 0) naiveTiming = false; // Stop relying on nanotime if it starts skipping around in time (ie running backwards at least once). This sometimes happens on dual core amds.
             averagePassedTime = averagePassedTime * 0.9 + passedTime * 0.1;
 
@@ -208,6 +231,12 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
             {
                 now += averagePassedTime;
             }
+
+        }
+        else {
+            now += passedTime;
+        }
+
 
             tick = (int) (now * TICKS_PER_SECOND);
             if (lastTick == -1) lastTick = tick;
@@ -223,7 +252,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
                 }
             }
 
-            float alpha = (float) (now * TICKS_PER_SECOND - tick);
+            alpha = (float) (now * TICKS_PER_SECOND - tick);
             sound.clientTick(alpha);
 
             //int x = (int) (Math.sin(now) * 16 + 160);
@@ -232,9 +261,6 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
             //og.setColor(Color.WHITE);
             //og.fillRect(0, 0, 320, 240);
 
-            scene.render(og, alpha);
-            
-            update();
             
             /*if (!this.hasFocus() && tick/4%2==0)             {
                 String msg = "CLICK TO PLAY";
@@ -244,17 +270,9 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
             }*/
 
             SwingUtilities.invokeLater(repaintRun);
+   
             
-            try             {
-                Thread.sleep(5);
-            }
-            catch (InterruptedException e)
-            {
-            }
-            
-        }
-
-        Art.stopMusic();
+        
     }
 
     protected void update()  { }

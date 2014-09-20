@@ -1,7 +1,11 @@
 package nars.grid2d;
 
 import java.util.List;
+import nars.core.EventEmitter.Observer;
+import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.NARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import static nars.grid2d.Hauto.DOWN;
@@ -10,17 +14,47 @@ import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
 import nars.grid2d.map.Maze;
 import nars.grid2d.object.Key;
+import nars.grid2d.object.Pizza;
 import nars.grid2d.operator.Activate;
 import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.grid2d.operator.Say;
+import nars.gui.NARSwing;
 import processing.core.PVector;
-import nars.grid2d.object.Pizza;
 
 public class TestChamber {
 
+    //TIMING
+    static int narUpdatePeriod = 5; /*milliseconds */
+    int drawPeriod = 2;
+    int automataPeriod = 4;
+    int agentPeriod = 16;
+    
+    //OPTIONS
     public static boolean curiousity=false;
+
+    
+    public static void main(String[] args) {
+        NARBuilder builder = new DefaultNARBuilder();
+        
+        //set NAR architecture parameters:
+        //builder...
+        
+        NAR nar = builder.build();
+        
+        //set NAR runtime parmeters: 
+        //nar.param()...
+        
+        new NARSwing(nar);
+
+        new TestChamber(nar);
+                
+        nar.start(narUpdatePeriod);        
+    }
+
+    
+    
     static Grid2DSpace space;
     
     public PVector lasttarget = new PVector(5, 25); //not work
@@ -29,6 +63,7 @@ public class TestChamber {
     static String opname="";
     public static LocalGridObject inventorybag=null;  
     public static int keyn=-1;
+
     
     public static String getobj(int x,int y) {
         for(GridObject gridi : space.objects) {
@@ -69,9 +104,14 @@ public class TestChamber {
     public static boolean needpizza=false;
     public static int hungry=250;
     public List<PVector> path=null;
+
+    public TestChamber() {
+        super();        
+    }
     
-    public void create(NAR nar) {
-//NAR n = new NAR();
+    public TestChamber(NAR nar) {
+        super();
+
         int w = 50;
         int h = 50;
         int water_threshold = 30;
@@ -91,7 +131,21 @@ public class TestChamber {
         });
         
         Maze.buildMaze(cells, 3, 3, 23, 23);
+        
         space = new Grid2DSpace(cells, nar);
+        space.FrameRate = 0;
+        space.automataPeriod = automataPeriod/drawPeriod;
+        space.agentPeriod = agentPeriod/drawPeriod;
+
+        nar.memory.event.on(Memory.Events.CycleStop.class, new Observer() {
+            @Override
+            public void event(Class event, Object... arguments) {                           
+                if (nar.getTime() % drawPeriod == 0)
+                    space.redraw();
+            }
+        });
+
+        
         space.newWindow(1000, 800, true);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         GridAgent a = new GridAgent(17, 17, nar) {
@@ -99,11 +153,11 @@ public class TestChamber {
             @Override
             public void update(Effect nextEffect) {
                 if(active) {
-                    nar.stop();
+                    //nar.stop();
                     executed=false;
                     if(path==null || path.size()<=0 && !executed_going) {
                         for (int i = 0; i < 5; i++) { //make thinking in testchamber bit faster
-                            nar.step(1);
+                            //nar.step(1);
                             if (executed) {
                                 break;
                             }
@@ -259,8 +313,8 @@ public class TestChamber {
                                 }
                             }
                             opname="";
-                            if(!executed && !executed_going)
-                                nar.step(1);
+                            /*if(!executed && !executed_going)
+                                nar.step(1);*/
                         } else {
                             executed_going=true;
                             active=false;
@@ -307,10 +361,7 @@ public class TestChamber {
         Say waaaa = new Say(this, "^say");
         nar.memory.addOperator(waaaa);
         space.add(a);
-        
-//space.add(new QLAgent(10,20));
-       // space.add(new Key(20, 20));
-//space.add(new RayVision(a, 45, 10, 8));
+
     }
 
 
