@@ -27,10 +27,11 @@ public class TestChamber {
 
     //TIMING
     static int narUpdatePeriod = 5; /*milliseconds */
-    int drawPeriod = 2;
+    int gridUpdatePeriod = 2;
     int automataPeriod = 4;
     int agentPeriod = 16;
-    
+    static long guiUpdateTime = 25; /* milliseconds */
+        
     //OPTIONS
     public static boolean curiousity=false;
 
@@ -134,14 +135,23 @@ public class TestChamber {
         
         space = new Grid2DSpace(cells, nar);
         space.FrameRate = 0;
-        space.automataPeriod = automataPeriod/drawPeriod;
-        space.agentPeriod = agentPeriod/drawPeriod;
+        space.automataPeriod = automataPeriod/gridUpdatePeriod;
+        space.agentPeriod = agentPeriod/gridUpdatePeriod;
 
         nar.memory.event.on(Memory.Events.CycleStop.class, new Observer() {
+            private long lastDrawn = 0;
+            
             @Override
             public void event(Class event, Object... arguments) {                           
-                if (nar.getTime() % drawPeriod == 0)
-                    space.redraw();
+                if (nar.getTime() % gridUpdatePeriod == 0) {
+                    space.update();
+                    
+                    long now = System.nanoTime();
+                    if (now - lastDrawn > guiUpdateTime*1e6) {
+                        space.redraw();                    
+                        lastDrawn = now;
+                    }
+                }
             }
         });
 
