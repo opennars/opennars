@@ -18,11 +18,12 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
+import nars.core.Memory;
 import nars.entity.*;
 import nars.language.*;
+import nars.operator.NullOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  * Register a new operator when the system is running
@@ -41,8 +42,8 @@ public class Register extends Operator {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term operator = args[0];
-        memory.addOperator((Operator) operator);  // add error checking
+        Operator op=new NullOperator(args[0].toString());
+        memory.addOperator(op);  // add error checking
         return null;
     }
     
