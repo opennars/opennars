@@ -16,6 +16,7 @@ import nars.operator.mental.Remind;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
 import nars.operator.software.Javascript;
+import nars.operator.software.NumericCertainty;
 import nars.operators.math.Count;
 
 
@@ -55,7 +56,7 @@ public class DefaultOperators {
         operators.add(new Add());
 
         operators.add(new Javascript());   // javascript evaluation
-                
+        operators.add(new NumericCertainty());
         
         return operators.toArray(new Operator[operators.size()]);
 
