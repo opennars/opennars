@@ -44,7 +44,6 @@ public class Parameters {
     public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;
     
     
-    public static float MAX_CONFIDENCE = 0.9999f;
 
     
     
@@ -67,6 +66,7 @@ public class Parameters {
      */
     public static final float TRUTH_EPSILON = 0.01f;
     public static final float TRUTH_PRECISION = 1.0f / TRUTH_EPSILON;
+    public static float MAX_CONFIDENCE = 1.0f - TRUTH_EPSILON;
 
     
     /* ---------- budget thresholds ---------- */
