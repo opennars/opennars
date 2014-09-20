@@ -89,12 +89,6 @@ public class Operation extends Inheritance {
             return null;
         }
         
-        CharSequence name = makeName(oper.name(), arg);
-        Term t = memory.conceptTerm(name);
-        if (t != null) {
-            return (Operation) t;
-        }
-        
         Term productArg[];
         if (addSelf) {            
             productArg = new Term[arg.length+1];
@@ -103,7 +97,13 @@ public class Operation extends Inheritance {
         }
         else {
             productArg = arg;
-        }        
+        }   
+        
+        CharSequence name = makeName(oper.name(), arg);
+        Term t = memory.conceptTerm(name);
+        if (t != null) {
+            return (Operation) t;
+        }
                 
         return new Operation(name, 
                 termArray(Product.make(productArg, memory), oper)
