@@ -103,6 +103,7 @@ public class NAR implements Runnable, Output, TaskSource {
     
     private long lastTime = -1; //last cycle's time, for detecting a reset
     
+    
 
     public NAR(Memory m, Perception p) {
         this.memory = m;
@@ -398,11 +399,12 @@ public class NAR implements Runnable, Output, TaskSource {
         return total;
     }
 
-
+    
     /**
      * A clock tick, consisting of 1) processing input, 2) one cycleMemory.
      */
     private void cycle() {
+        
         if (DEBUG) {
             debugTime();            
         }        
