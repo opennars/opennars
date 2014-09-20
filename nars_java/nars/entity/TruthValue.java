@@ -22,7 +22,6 @@ package nars.entity;
 
 import nars.core.Parameters;
 import static nars.core.Parameters.TRUTH_EPSILON;
-import static nars.core.Parameters.TRUTH_PRECISION;
 import nars.io.Symbols;
 import nars.io.Texts;
 
@@ -91,6 +90,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The frequency value
      */
     public float getFrequency() {
+        //return Math.round(frequency * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return frequency;
     }
 
@@ -100,9 +100,20 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The confidence value
      */
     public float getConfidence() {
+        //return Math.round(confidence * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return confidence;
     }
 
+    public TruthValue setFrequency(final float f) {
+        this.frequency = f;
+        return this;
+    }
+    
+    public TruthValue setConfidence(float c) {
+        this.confidence = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
+        return this;
+    }
+    
     /**
      * Get the isAnalytic flag
      *
@@ -178,19 +189,9 @@ public class TruthValue implements Cloneable { // implements Cloneable {
 
     @Override
     public TruthValue clone() {
-        return new TruthValue(getFrequency(), getConfidence(), getAnalytic());
+        return new TruthValue(frequency, confidence, getAnalytic());
     }
     
-    public TruthValue setFrequency(final float f) {
-        frequency = Math.round(f * TRUTH_PRECISION) / TRUTH_PRECISION; 
-        return this;
-    }
-    
-    public TruthValue setConfidence(float c) {
-        c = (c < Parameters.MAX_CONFIDENCE) ? c : Parameters.MAX_CONFIDENCE;
-        confidence = Math.round(c * TRUTH_PRECISION) / TRUTH_PRECISION; 
-        return this;
-    }
     
     public TruthValue setAnalytic(final boolean a) {
         analytic = a;
