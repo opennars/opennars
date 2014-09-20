@@ -118,6 +118,7 @@ import nars.storage.BagObserver;
  */
 public class Memory implements Output, Serializable {
     public final Executive executive;
+    private boolean enabled = true;
 
     /** empty event classes for use with EventEmitter */
     public static class Events {
@@ -940,6 +941,17 @@ public class Memory implements Output, Serializable {
         derivedTask(newTask, false, true, null, null);
     }
 
+    /** enable/disable all I/O and memory processing.  CycleStart and CycleStop events will 
+     continue to be generated, allowing the memory to be used as a clock tick while disabled. */
+    public void setEnabled(boolean e) {
+        this.enabled = e;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    
     
     public void cycle(final TaskSource taskSource) {
         
@@ -947,41 +959,45 @@ public class Memory implements Output, Serializable {
         resource.CYCLE_CPU_TIME.start();
         resource.CYCLE_RAM_USED.start();
 
-        int inputCycles = param.cycleInputTasks.get();
-        int memCycles = param.cycleMemory.get();
-
         event.emit(Memory.Events.CycleStart.class);
 
-        //IO cycle
-        resource.IO_CYCLE.start();
+        if (enabled) {
 
-        if (logic.IO_INPUTS_BUFFERED.isActive())
-            logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
-        
-        if (getCyclesQueued()==0) {                
-            final int duration = param.duration.get();
-            for (int i = 0; i < inputCycles; i++) {
-                AbstractTask t = taskSource.nextTask();
-                if (t instanceof Task) {
-                    ((Task)t).sentence.stamp.setCreationTime(getTime(), duration);
+            int inputCycles = param.cycleInputTasks.get();
+            int memCycles = param.cycleMemory.get();
+
+
+            //IO cycle
+            resource.IO_CYCLE.start();
+
+            if (logic.IO_INPUTS_BUFFERED.isActive())
+                logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
+
+            if (getCyclesQueued()==0) {                
+                final int duration = param.duration.get();
+                for (int i = 0; i < inputCycles; i++) {
+                    AbstractTask t = taskSource.nextTask();
+                    if (t instanceof Task) {
+                        ((Task)t).sentence.stamp.setCreationTime(getTime(), duration);
+                    }
+                    if (t!=null)
+                        inputTask(t);
                 }
-                if (t!=null)
-                    inputTask(t);
             }
-        }
-        resource.IO_CYCLE.stop();
+            resource.IO_CYCLE.stop();
 
-        
-        
-        //Memory working 
-        resource.MEMORY_CYCLE.start();
-        if (working) {            
-            for (int i = 0; i < memCycles; i++) {
-                cycleWork();                
-            }            
+
+
+            //Memory working 
+            resource.MEMORY_CYCLE.start();
+            if (working) {            
+                for (int i = 0; i < memCycles; i++) {
+                    cycleWork();                
+                }            
+            }
+            resource.MEMORY_CYCLE.stop();
+
         }
-        resource.MEMORY_CYCLE.stop();
-        
 
         event.emit(Memory.Events.CycleStop.class);
         
