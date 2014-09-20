@@ -310,9 +310,9 @@ public class NARio extends Run {
 
         new NARSwing(nar);
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(8);
+        nar.param().duration.set(50);
         nar.param().noiseLevel.set(25);
-        nar.param().shortTermMemorySize.set(25);
+        nar.param().shortTermMemorySize.set(35);
 
         nar.start(20);
 

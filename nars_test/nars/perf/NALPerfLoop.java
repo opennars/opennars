@@ -13,11 +13,11 @@ public class NALPerfLoop {
     
     public static void main(String[] args) {
        
-        int repeats = 1;
-        int warmups = 0;
+        int repeats = 4;
+        int warmups = 1;
         int extraCycles = 2048;
         int maxConcepts = 4096;
-        
+                
         //NAR n = new DefaultNARBuilder().setConceptBagSize(maxConcepts).build();
         NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
         

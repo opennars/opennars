@@ -168,7 +168,8 @@ public class Narsese {
         int last = str.length() - 1;
         char punc = str.charAt(last);
 
-        Stamp stamp = new Stamp(0 /* this will be set right beforethe Task is input */, tense, memory.newStampSerial(), memory.param.duration.get());
+        Stamp stamp = new Stamp(-1 /* if -1, will be set right before the Task is input */, 
+                tense, memory.newStampSerial(), memory.param.duration.get());
 
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
