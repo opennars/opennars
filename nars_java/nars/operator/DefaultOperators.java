@@ -1,5 +1,6 @@
 package nars.operator;
 
+import java.util.ArrayList;
 import nars.operator.math.Add;
 import nars.operator.mental.Abbreviate;
 import nars.operator.mental.Believe;
@@ -19,57 +20,53 @@ import nars.operators.math.Count;
 
 
 public class DefaultOperators {
-    
-    
     /**
      * Default set of Operator's for core functionality.
      * An operator name should contain at least two characters after '^'.
-     *     
-     */    
+     *
+     */
     public static Operator[] get() {
+        ArrayList<Operator> operators = new ArrayList<Operator>();
         
-        return new Operator[] {
-            //new Wait(),            
-            new NullOperator(),
-            new Believe(),  // accept a statement with a default truth-value
-            new Want(),     // accept a statement with a default desire-value
-            new Wonder(),   // find the truth-value of a statement
-            new Evaluate(), // find the desire-value of a statement
+        //new Wait(),                    // wait for a certain number of clock cycle
+        operators.add(new NullOperator());
+        operators.add(new Believe());    // accept a statement with a default truth-value
+        operators.add(new Want());       // accept a statement with a default desire-value
+        operators.add(new Wonder());     // find the truth-value of a statement
+        operators.add(new Evaluate());   // find the desire-value of a statement
             
-            //concept operations for internal perceptions
-            new Remind(),   // create/activate a concept
-            new Consider(),  // find the most active concept            
-            new Name(),         // turn a compount term into an atomic term
-            new Abbreviate(),
-            new Register(),
+        // concept operations for internal perceptions
+        operators.add(new Remind());     // create/activate a concept
+        operators.add(new Consider());   // find the most active concept            
+        operators.add(new Name());       // turn a compount term into an atomic term
+        operators.add(new Abbreviate());
+        operators.add(new Register());
             
-            // truth-value operations
-            new Doubt(),        // decrease the confidence of a belief
-            new Hesitate(),      // decrease the confidence of a goal
+        // truth-value operations
+        operators.add(new Doubt());        // decrease the confidence of a belief
+        operators.add(new Hesitate());     // decrease the confidence of a goal
 
-            // feeling operations
-            new FeelHappy(),
-            new FeelBusy(),
+        // feeling operations
+        operators.add(new FeelHappy());    // the overall happyness, average solution quality, and predictions
+        operators.add(new FeelBusy());     // the overall business
 
-            // math operations
-            new Count(),
-            new Add(),
+        // math operations
+        operators.add(new Count());
+        operators.add(new Add());
 
-            new Javascript()      // javascript evaluation
+        operators.add(new Javascript());   // javascript evaluation
                 
-                
-                
-         /* 
-+         *          I/O operations under consideration
-+         * observe          // get the most active input (Channel ID: optional?)
-+         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
-+         * tell             // output a judgment (Channel ID: optional?)
-+         * ask              // output a question/quest (Channel ID: optional?)
-+         * demand           // output a goal (Channel ID: optional?)
-+         */
-                
-//        new Wait()              // wait for a certain number of clock cycle
         
+        return operators.toArray(new Operator[operators.size()]);
+
+        /* 
+         *          I/O operations under consideration
+         * observe          // get the most active input (Channel ID: optional?)
+         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
+         * tell             // output a judgment (Channel ID: optional?)
+         * ask              // output a question/quest (Channel ID: optional?)
+         * demand           // output a goal (Channel ID: optional?)
+         */
         
         /*
          * -think            // carry out a working cycle
@@ -79,8 +76,6 @@ public class DefaultOperators {
          * doubt            // decrease the confidence of a belief
          * hesitate         // decrease the confidence of a goal
          *
-         * feel             // the overall happyness, average solution quality, and predictions
-         * busy             // the overall business
          *
         
         
@@ -92,9 +87,7 @@ public class DefaultOperators {
          * comparisons      // < = >
          * inference        // binary inference
          *
-        
-        
-        
+
          * -assume           // local assumption ???
          * 
          * observe          // get the most active input (Channel ID: optional?)
@@ -103,9 +96,8 @@ public class DefaultOperators {
          * ask              // output a question/quest (Channel ID: optional?)
          * demand           // output a goal (Channel ID: optional?)        
         
-
-        * name             // turn a compount term into an atomic term ???
-         * -???              // rememberAction the history of the system? excutions of operatons?
+         * name             // turn a compount term into an atomic term ???
+         * -???              // rememberAction the history of the system? excutions of operations?
          */
                 
         /* operators for testing examples */
@@ -116,9 +108,5 @@ public class DefaultOperators {
 //        table.put("^drop", new Drop("^drop"));
 //        table.put("^throw", new Throw("^throw"));
 //        table.put("^strike", new Strike("^strike"));
-            
-        };
-        
-    } 
-    
+    }
 }
