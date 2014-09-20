@@ -781,7 +781,7 @@ public class Memory implements Output, Serializable {
                 
                 Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
                 BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
-                Task newTask = new Task(j, budg,task);
+                Task newTask = new Task(j, budg,Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
                 if (getRecorder().isActive()) {
                     getRecorder().append("Named: " + j.toString());
                 }
@@ -1408,7 +1408,7 @@ public class Memory implements Output, Serializable {
                 task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                 task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                 task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
-        Task newTask = new Task(j, (BudgetValue) newbudget,task);
+        Task newTask = new Task(j, (BudgetValue) newbudget,Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
         if (getRecorder().isActive()) {
             recorder.append("Remembered: " + j.toString());
         }
