@@ -660,7 +660,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSpeed(1.0f);
-                volumeSlider.setValue(20f);
+                volumeSlider.setValue(0.0f);
                 
             }
 
