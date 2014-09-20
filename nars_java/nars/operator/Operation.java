@@ -85,9 +85,14 @@ public class Operation extends Inheritance {
         addSelf = false; //FALSE untli understand when SELF should apply
         
         
+        
         if (oper == null) {
             return null;
         }
+        
+//        if (Variables.containVar(arg)) {
+//            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
+//        }
         
         Term productArg[];
         if (addSelf) {            

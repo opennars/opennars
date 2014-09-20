@@ -193,7 +193,7 @@ public class TemporalRules {
                             }
                         }
                         if(anyone && !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT)) { //only if there is one and it isnt a variable already
-                            Term[] ars = ss2_prod.term;
+                            Term[] ars = ss2_prod.cloneTerms();
                             for(int i=0;i<ars.length;i++) {
                                 if(ars[i].equals(comp)) {
                                     ars[i]=var1;
