@@ -409,7 +409,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
             
-            if ((deltaTime >= GUIUpdatePeriodMS) || (!updateScheduled.get())) {
+            if ((deltaTime >= GUIUpdatePeriodMS) /*&& (!updateScheduled.get())*/) {
                 
                 lastUpdateTime = System.currentTimeMillis();
                 

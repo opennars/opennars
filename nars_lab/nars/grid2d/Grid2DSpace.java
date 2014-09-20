@@ -182,26 +182,7 @@ public class Grid2DSpace extends PApplet {
             cells.Exec();        
     }
     
-    @Override
-    public void draw() {
-        background(0, 0, 0/*, 0.001f*/);
-        pushMatrix();
-         
-        hnav.Transform();
-        hrend_DrawBegin();
-        
-        drawGround();        
-        drawObjects();
-        drawParticles();
-        
-        hrend_DrawEnd();
-        //popMatrix();
-       
-        
-        
-        popMatrix();
-        hrend_DrawGUI();
-
+    public void update() {
         realtime = System.nanoTime() / 1.0e9;
         
         if (time % automataPeriod == 0) {
@@ -229,6 +210,29 @@ public class Grid2DSpace extends PApplet {
             catch(Exception ex)
             {}
         } 
+        
+    }
+    
+    @Override
+    public void draw() {
+        background(0, 0, 0/*, 0.001f*/);
+        pushMatrix();
+         
+        hnav.Transform();
+        hrend_DrawBegin();
+        
+        drawGround();        
+        drawObjects();
+        drawParticles();
+        
+        hrend_DrawEnd();
+        //popMatrix();
+       
+        
+        
+        popMatrix();
+        hrend_DrawGUI();
+
     
     }
 
