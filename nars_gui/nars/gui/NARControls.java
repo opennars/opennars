@@ -43,6 +43,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
 import nars.core.Memory.Events.CycleStop;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.sense.MultiSense;
 import nars.grid2d.TestChamber;
 import nars.gui.input.TextInputPanel;
@@ -122,6 +123,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     TestChamber chamber=new TestChamber();
     private final JMenuItem internalExperienceItem;
     private final JMenuItem narsPlusItem;
+    private final JMenuItem fullInternalExp;
     private ChartsPanel chart;
     private final MultiSense senses;
     public NARControls(final NAR nar) {
@@ -150,6 +152,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         m.addSeparator();
         
         internalExperienceItem = addJMenuItem(m, "Enable Internal Experience (NAL9)");
+        fullInternalExp = addJMenuItem(m, "Enable Full Internal Experience");
         narsPlusItem = addJMenuItem(m, "Enable NARS+ Ideas");
         m.addActionListener(this);
         menuBar.add(m);
@@ -441,6 +444,11 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
             switch (label) {
+                case "Enable Full Internal Experience":
+                    fullInternalExp.setEnabled(false);
+                    Parameters.INTERNAL_EXPERIENCE_FULL=true;
+                    //Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
+                    break;
                 case "Enable NARS+ Ideas":
                     narsPlusItem.setEnabled(false);
                     nar.memory.param.experimentalNarsPlus.set(true);
