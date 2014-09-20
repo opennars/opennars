@@ -41,6 +41,8 @@ public abstract class Operator extends Term {
     
     protected Operator(String name) {
         super(name);
+        if (!name.startsWith("^"))
+            throw new RuntimeException("Operator name needs ^ prefix");
     }
     
     /**
