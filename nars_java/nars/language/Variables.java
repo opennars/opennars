@@ -114,6 +114,14 @@ public class Variables {
         }        
         return false;
     }
+    
+    public static final boolean containVar(final Term[] t) {
+        for (final Term x : t)
+            if (x instanceof Variable)
+                return true;
+        return false;
+    }
+    
 
     /**
      * To unify two terms
