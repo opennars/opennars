@@ -99,7 +99,7 @@ public class Operation extends Inheritance {
             productArg = arg;
         }   
         
-        CharSequence name = makeName(oper.name(), arg);
+        CharSequence name = makeName(oper.name(), productArg);
         Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Operation) t;
