@@ -187,12 +187,12 @@ public class Executive {
         return false;        
     }
     
-    public boolean planShortTerm(final Task newEvent) {
+    public boolean planShortTerm(final Task newEvent, Memory mem) {
                 
         if (newEvent == null)
             return false;
         
-        boolean actionable = isActionable(newEvent);
+        boolean actionable = isActionable(newEvent,mem);
         
         if (!actionable) {
             return false;
@@ -333,8 +333,18 @@ public class Executive {
         return false;
     }
     
-    public boolean isActionable(final Task newEvent) {
-        return ( (newEvent.isInput()) || (newEvent.getCause()!=null) );
+    public boolean isActionable(final Task newEvent, Memory mem) {
+        if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
+            return false;
+        }
+        Term newcontent=newEvent.sentence.content;
+        if(newcontent instanceof Operation) {
+            Term pred=((Operation)newcontent).getPredicate();
+            if(pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
+                return false;
+            }
+        }
+        return true;
     }
     
 }

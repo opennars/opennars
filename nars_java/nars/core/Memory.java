@@ -1088,7 +1088,7 @@ public class Memory implements Output, Serializable {
             }
         }
         
-        boolean stmUpdated = executive.planShortTerm(newEvent);
+        boolean stmUpdated = executive.planShortTerm(newEvent,this);
         if (stmUpdated)
             logic.SHORT_TERM_MEMORY_UPDATE.commit();
                 
