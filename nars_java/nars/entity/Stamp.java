@@ -99,7 +99,7 @@ public class Stamp implements Cloneable {
         this.evidentialBase[0] = serial;
         this.tense = tense;
         this.latency = 0;
-                
+        this.creationTime = -1;
         derivationChain = new ArrayList<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);        
     }
     
@@ -108,7 +108,7 @@ public class Stamp implements Cloneable {
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time, final Tense tense, final long serial, final int duration) {            this(tense, serial);    
+    public Stamp(final long time, final Tense tense, final long serial, final int duration) {               this(tense, serial);    
         setCreationTime(time, duration);        
     }
     

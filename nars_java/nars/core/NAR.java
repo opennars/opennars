@@ -1,5 +1,7 @@
 package nars.core;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.EventEmitter.Observer;
 import nars.core.Memory.TaskSource;
 import nars.entity.AbstractTask;
+import nars.entity.Task;
 import nars.gui.NARControls;
 import nars.io.InPort;
 import nars.io.Input;
@@ -141,10 +144,22 @@ public class NAR implements Runnable, Output, TaskSource {
         memory.reset();        
     }
 
-    /** Convenience method for creating a TextInput and adding as Input Channel */
+    /** Convenience method for creating a TextInput and adding as Input Channel.
+     the creationTime will be set to the current memory cycle time, but may be processed
+     by memory later according to the length of the input queue. */
     public TextInput addInput(final String text) {
+        return addInput(text, getTime());
+    }
+    
+    /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
+    public TextInput addInput(final String text, long creationTime) {
         final TextInput i = new TextInput(text);
-        addInput(i);
+        
+        ObjectTaskInPort ip = addInput(i);
+        
+        if (creationTime!=-1)
+            ip.setCreationTimeOverride(creationTime);
+        
         return i;
     }
 
@@ -159,6 +174,7 @@ public class NAR implements Runnable, Output, TaskSource {
     }
     
     final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
+        private long creationTime = -1;
 
         public ObjectTaskInPort(Input input, Buffer buffer, float initialAttention) {
             super(input, buffer, initialAttention);
@@ -167,17 +183,41 @@ public class NAR implements Runnable, Output, TaskSource {
         @Override
         public Iterator<AbstractTask> process(final Object x) {
             try {
-                return perception.perceive(x);
+                Iterator<AbstractTask> at = perception.perceive(x);
+                if (creationTime == -1)
+                    return at;
+                else {                    
+                    //Process tasks with overrides                    
+                    final int duration = memory.param.duration.get();
+                    
+                    return Iterators.filter(at, new Predicate<AbstractTask>() {
+                        @Override public boolean apply(AbstractTask at) {
+                            if (at instanceof Task) {
+                                Task t = (Task)at;
+                                if (t.sentence!=null)
+                                    if (t.sentence.stamp!=null)
+                                        t.sentence.stamp.setCreationTime(creationTime, duration);
+                            }
+                            return true;
+                        }                        
+                    });
+                }
             }
             catch (Throwable e) {
                 return singletonIterator(new Echo(ERR.class, e));
             }
         }
+
+        /** sets the 'creationTime' override for new Tasks.  sets the stamp to a particular
+         * value upon its exit from the queue.          */
+        public void setCreationTimeOverride(final long creationTime) {
+            this.creationTime = creationTime;
+        }
     }
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
-    public Input addInput(final Input channel) {
-        InPort i = new ObjectTaskInPort(channel, new FIFO(), 1.0f);
+    public ObjectTaskInPort addInput(final Input channel) {
+        ObjectTaskInPort i = new ObjectTaskInPort(channel, new FIFO(), 1.0f);
                
         try {
             i.update();
@@ -186,7 +226,7 @@ public class NAR implements Runnable, Output, TaskSource {
             output(ERR.class, ex);
         }
         ioChanged = true;
-        return channel;
+        return i;
     }
 
 //    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */

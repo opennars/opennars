@@ -978,7 +978,9 @@ public class Memory implements Output, Serializable {
                 for (int i = 0; i < inputCycles; i++) {
                     AbstractTask t = taskSource.nextTask();
                     if (t instanceof Task) {
-                        ((Task)t).sentence.stamp.setCreationTime(getTime(), duration);
+                        Stamp s = ((Task)t).sentence.stamp;                        
+                        if (s.getCreationTime()==-1)
+                            s.setCreationTime(getTime(), duration);
                     }
                     if (t!=null)
                         inputTask(t);

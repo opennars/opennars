@@ -123,7 +123,6 @@ abstract public class InPort<X,Y> implements Iterator<Y> {
     
     //public double getInputMassRate(double windowSeconds); // calculates throughput rate in mass/sec within a given past window size, using an internal histogram of finite resolution
 
-
     
     
     

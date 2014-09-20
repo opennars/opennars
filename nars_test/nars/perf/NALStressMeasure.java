@@ -35,6 +35,7 @@ public class NALStressMeasure  {
                 try {
                     n.reset();
                     n.addInput(example);
+                    n.step(1);
                     n.finish(extraCycles);
                 }
                 catch (Throwable e) {
