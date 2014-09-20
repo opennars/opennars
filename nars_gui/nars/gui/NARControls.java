@@ -45,7 +45,6 @@ import nars.core.Memory.Events.CycleStop;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.sense.MultiSense;
-import nars.grid2d.TestChamber;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.BubbleChart;
@@ -120,7 +119,6 @@ public class NARControls extends JPanel implements ActionListener, Observer {
      * @param nar
      * @param title
      */
-    TestChamber chamber=new TestChamber();
     private final JMenuItem internalExperienceItem;
     private final JMenuItem narsPlusItem;
     private final JMenuItem fullInternalExp;
@@ -304,19 +302,19 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         }
         menuBar.add(m);
         
-        m = new JMenu("Demos");
-        {
-            JMenuItem cct2 = new JMenuItem("+ Test Chamber");
-            cct2.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    
-                    chamber.create(nar);
-                }                
-            });
-            m.add(cct2);
-        }
-        menuBar.add(m);
+//        m = new JMenu("Demos");
+//        {
+//            JMenuItem cct2 = new JMenuItem("+ Test Chamber");
+//            cct2.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    
+//                    chamber.create(nar);
+//                }                
+//            });
+//            m.add(cct2);
+//        }
+//        menuBar.add(m);
 
         m = new JMenu("Help");
         //addJMenuItem(m, "Related Information");
