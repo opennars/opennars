@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,6 +16,10 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.Window;
+import nars.language.CompoundTerm;
+import nars.language.Term;
+import nars.util.NARGraph;
+import org.jgrapht.graph.DirectedMultigraph;
 
 
 
@@ -86,7 +91,70 @@ public class SentenceTablePanel extends TablePanel {
 
     
     public void newSelectedGraphPanel() {
-        ProcessingGraphPanel pgp = new ProcessingGraphPanel(nar, getSelectedRows(1));        
+        ProcessingGraphPanel pgp = new ProcessingGraphPanel(getSelectedRows(1)) {
+            
+        @Override public DirectedMultigraph getGraph() {
+            
+            NARGraph.DefaultGraphizer graphizer = new NARGraph.DefaultGraphizer(true,true,true,true,false) {
+                
+                protected void addSentence(NARGraph g, Sentence s) {
+                    Term t = s.content;
+                    addTerm(g, t);
+                    //g.addEdge(s, s.content, new NARGraph.SentenceContent());
+
+                    if (t instanceof CompoundTerm) {
+                        CompoundTerm ct = ((CompoundTerm)t);
+                        Set<Term> contained = ct.getContainedTerms();
+                        
+                        for (Term x : contained) {                            
+                            addTerm(g, x);
+                            if (ct.containsTerm(x))
+                                g.addEdge(x, t, new NARGraph.TermContent());
+                            
+                            
+                            for (Term y : contained) {
+                                addTerm(g, y);
+
+                                if (x != y)
+                                    if (x.containsTerm(y))
+                                        g.addEdge(y, x, new NARGraph.TermContent());
+                            }
+                        }
+                    }                
+                }
+
+                @Override
+                public void onTime(NARGraph g, long time) {
+                    super.onTime(g, time);
+                    
+                    for (Object o : getItems()) {
+                        
+                        
+                        if (o instanceof Task) {
+                            g.addVertex(o);
+                            addSentence(g, ((Task)o).sentence);
+                        }                    
+                        else if (o instanceof Sentence) {
+                            g.addVertex(o);
+                            addSentence(g, (Sentence)o);
+                        }
+                    }
+                    //add sentences
+                }
+
+            };
+        
+        
+        app.updating = true;
+        
+        graphizer.setShowSyntax(showSyntax);
+        
+        NARGraph g = new NARGraph();
+        g.add(nar, newSelectedGraphFilter(), graphizer);
+        return g;
+    }
+            
+        };        
         Window w = new Window("", pgp);
         w.setSize(400,400);
         w.setVisible(true);

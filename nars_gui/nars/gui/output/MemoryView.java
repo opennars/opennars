@@ -238,22 +238,22 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 Task ta = (Task)o;
                 radius = 2.0f + ta.getPriority()*2.0f;
                 alpha = ta.getDurability();
-                color = papplet.getColor(o);
+                color = PGraphPanel.getColor(o);
              }            
              else if (o instanceof Concept) {
                 Concept co = (Concept)o;
                 Term t = co.term;
                 
                 radius = (float)(2 + 6 * co.budget.summary() * nodeSize);
-                alpha = papplet.getVertexAlpha(o);                             
-                color = papplet.getColor(t);
+                alpha = PGraphPanel.getVertexAlpha(o);                             
+                color = PGraphPanel.getColor(t);
                 stroke = 5;
              }
              else if (o instanceof Term) {
                 Term t = (Term)o;                
                 radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
-                alpha = papplet.getVertexAlpha(o);                             
-                color = papplet.getColor(o);
+                alpha = PGraphPanel.getVertexAlpha(o);                             
+                color = PGraphPanel.getColor(o);
              }
         }
 
@@ -284,7 +284,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     public int getEdgeColor(Object e) {
         Integer i = edgeColors.get(e.getClass());
         if (i == null) {
-            i = papplet.getColor(e.getClass().getSimpleName());
+            i = PGraphPanel.getColor(e.getClass().getSimpleName());
             edgeColors.put(e.getClass(), i);
         }
         return i;

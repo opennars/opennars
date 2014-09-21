@@ -1,5 +1,6 @@
 package nars.nario;
 
+import java.util.ArrayList;
 import java.util.List;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
@@ -8,6 +9,8 @@ import nars.core.NAR;
 import nars.core.build.ContinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
+import nars.gui.Window;
+import nars.gui.output.ImplicationGraphPanel;
 import nars.io.Output;
 import nars.language.Term;
 import nars.nario.level.Level;
@@ -19,6 +22,7 @@ import nars.nario.sprites.Sparkle;
 import nars.nario.sprites.Sprite;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
+import nars.util.graph.ImplicationGraph;
 
 /**
  *
@@ -32,9 +36,9 @@ public class NARio extends Run {
     private float lastY = -1;
     int cycle = 0;
     int gotCoin = 0;
-    private Mario mario;
-    int cyclesPerInput = 4;
+    private Mario mario;    
     int cyclesPerMario = 4;
+    private ImplicationGraph implications;
 
     public NARio(NAR n) {
         super();
@@ -90,19 +94,21 @@ public class NARio extends Run {
         mario.setInvincible(true);
                    
         axioms();
-                    
+        
+        new Window("Implications", new ImplicationGraphPanel(nar)).show(500,500);
+                
         nar.memory.event.on(Events.CycleStop.class, new Observer() {
             private int[] keyTime = new int[256];
 
             @Override
             public void event(Class event, Object... arguments) {
 
-                if (cycle % cyclesPerMario == 0) {
+                /*if (cycle % cyclesPerMario == 0)*/ {
                     cycle(0.05);
                 }
 
-                if ((cycle % cyclesPerInput) == 0) {
-
+                {
+                    
 //                if (cycle % 100 == 1) {
 //                    System.out.println("Inports: " + nar.getInPorts().size());
 //                }
@@ -248,7 +254,8 @@ public class NARio extends Run {
                     }
                     
 
-                    for (Sprite s : level.sprites) {
+                    ArrayList<Sprite> sprites = new ArrayList(level.sprites);
+                    for (Sprite s : sprites) {
                         if (s instanceof Mario) {
                             continue;
                         }
@@ -286,19 +293,7 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
                 
-                /*if (cycle % 1000 == 1) {
-                    
-                    ImplicationGraph ig = new ImplicationGraph(nar);
-                    System.out.println("Implications Graph");
-                    for (Sentence  s : ig.edgeSet())
-                        System.out.println(s);
-                    for (Term t : ig.vertexSet())
-                        System.out.println(t);
-                    
-                    JGraphXGraphPanel j = new JGraphXGraphPanel(ig);
-                    new Window("Implication Graph", j).show(400,400);
-                }
-                cycle++;*/
+                cycle++;
             }
             
 
