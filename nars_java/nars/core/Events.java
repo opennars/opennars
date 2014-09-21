@@ -15,7 +15,11 @@ public class Events {
                 ConceptAdd.class,
                 ConceptRemove.class,
                 ConceptBeliefAdd.class,
-                ConceptBeliefRemove.class
+                ConceptBeliefRemove.class,
+                ConceptGoalAdd.class,
+                ConceptGoalRemove.class,
+                ConceptQuestionAdd.class,
+                ConceptQuestionRemove.class
         );
     }
 
@@ -47,4 +51,8 @@ public class Events {
     public static class ConceptRemove { }
     public static class ConceptBeliefAdd { }
     public static class ConceptBeliefRemove { }
+    public static class ConceptGoalAdd { }
+    public static class ConceptGoalRemove { }
+    public static class ConceptQuestionAdd { }
+    public static class ConceptQuestionRemove { }
 }

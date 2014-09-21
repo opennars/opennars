@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
+import nars.core.Events.ConceptGoalAdd;
+import nars.core.Events.ConceptGoalRemove;
+import nars.core.Events.ConceptQuestionAdd;
+import nars.core.Events.ConceptQuestionRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
 import static nars.entity.Stamp.make;
@@ -225,16 +229,24 @@ public class Concept extends Item {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 trySolution(judg, ques, memory);
             }
-            int preSize = beliefs.size();
-            Sentence removed = addToTable(judg, beliefs, memory.param.conceptBeliefsMax.get());
-            if (removed!=null)
-                memory.event.emit(ConceptBeliefRemove.class, this, removed);
-            if (preSize!=beliefs.size())
-                memory.event.emit(ConceptBeliefAdd.class, this, judg);
             
+            addToTable(judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);            
         }
     }
 
+    protected void addToTable(final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
+        int preSize = table.size();
+
+        Sentence removed = addToTable(newSentence, table, max);
+        
+        if (removed!=null)
+            memory.event.emit(eventRemove, this, removed);
+        if (preSize!=table.size())
+            memory.event.emit(eventAdd, this, newSentence);        
+    }
+    
+    
+    
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
@@ -276,7 +288,7 @@ public class Concept extends Item {
             // still worth pursuing?
             if (task.aboveThreshold()) {    
                 
-                addToTable(goal, desires, memory.param.conceptBeliefsMax.get());
+                addToTable(goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
                     //hm or conjunction in time and temporal order forward
@@ -308,10 +320,12 @@ public class Concept extends Item {
 
         if (newQuestion) {
             if (questions.size()+1 > memory.param.conceptQuestionsMax.get()) {
-                questions.remove(0);    // FIFO
+                Task removed = questions.remove(0);    // FIFO
+                memory.event.emit(ConceptQuestionRemove.class, this, removed);
             }
 
             questions.add(task);            
+            memory.event.emit(ConceptQuestionAdd.class, this, task);
         }
 
 
@@ -366,6 +380,8 @@ public class Concept extends Item {
             }
         }
     }
+    
+    
 
     /**
      * Add a new belief (or goal) into the table Sort the beliefs/desires by
@@ -729,6 +745,7 @@ public class Concept extends Item {
         }
         return null;        
     }
+
 
     static final class NullEntityObserver implements EntityObserver {
 
