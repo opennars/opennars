@@ -96,7 +96,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     }
 
     public void paint(Graphics g)    {
-            
+
             /*          drawString(og, "FPS: " + fps, 5, 5, 0);
              drawString(og, "FPS: " + fps, 4, 4, 7);*/
 
@@ -253,7 +253,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
             }
 
             alpha = (float) (now * TICKS_PER_SECOND - tick);
-            sound.clientTick(alpha);
+            //sound.clientTick(alpha);
 
             //int x = (int) (Math.sin(now) * 16 + 160);
             //int y = (int) (Math.cos(now) * 16 + 120);

@@ -272,7 +272,7 @@ public class NARGraph extends DirectedMultigraph {
 
         private final boolean includeTermContent;
         private final boolean includeDerivations;
-        private int includeSyntax; //how many recursive levels to decompose per Term
+        @Deprecated protected int includeSyntax; //how many recursive levels to decompose per Term
 
         public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax) {
             this(includeBeliefs, includeDerivations, includeQuestions, includeTermContent, includeSyntax ? 2 : 0);

@@ -20,6 +20,8 @@ import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.NSlider;
 import nars.io.Output;
+import nars.util.NARGraph;
+import org.jgrapht.graph.DirectedMultigraph;
 
 /**
  *
@@ -60,11 +62,15 @@ public class MultiModePanel extends JPanel implements Output {
     
     public class GraphView extends ProcessingGraphPanel implements MultiViewMode, Runnable {
 
-        public GraphView() {
-            super(nar);
-            
+        @Override
+        public DirectedMultigraph getGraph() {
+            //TODO udpate this
+            return new NARGraph().add(nar, NARGraph.IncludeEverything,
+                    new NARGraph.DefaultGraphizer(true,true,true,true,false) 
+            );
         }
 
+        
         
         @Override
         public void setFontSize(float newSize) {

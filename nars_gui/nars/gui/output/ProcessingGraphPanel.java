@@ -23,21 +23,19 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import nars.core.Memory;
-import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.entity.Task;
 import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.util.NARGraph;
-import nars.util.NARGraph.DefaultGraphizer;
 import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.DirectedMultigraph;
 
 
 
-class papplet extends PPanel implements ActionListener 
+class PGraphPanel extends PPanel implements ActionListener 
 {
 //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
     
@@ -75,7 +73,7 @@ class papplet extends PPanel implements ActionListener
     private boolean updateNext;
     float nodeSize = 90;
     
-    NARGraph graph;
+    DirectedMultigraph graph;
     JGraphXAdapter graphAdapter;
     public boolean updating;
     boolean drawn = false;
@@ -183,13 +181,15 @@ class papplet extends PPanel implements ActionListener
             //  line(elem1.x, elem1.y, elem2.x, elem2.y);
             for (Object edge : graph.edgeSet()) {
 
+                if (edge == null) continue;
+
                 int rgb = getColor(edge.getClass().getSimpleName());
                 stroke(rgb, 230f);            
                 strokeWeight(linkWeight);                
 
-
-
                 Object sourceVertex = graph.getEdgeSource(edge);
+                if (sourceVertex == null) continue;
+                
                 mxGeometry sourcePoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(sourceVertex));
 
                 Object targetVertex = graph.getEdgeTarget(edge);                          
@@ -529,29 +529,27 @@ class papplet extends PPanel implements ActionListener
 
 }
 
-public class ProcessingGraphPanel extends NPanel {
+abstract public class ProcessingGraphPanel extends NPanel {
 
-    papplet app = null;
-    private final NAR nar;
+    PGraphPanel app = null;
     float edgeDistance = 10;
-    private boolean showSyntax;
-    private DefaultGraphizer graphizer;
+    protected boolean showSyntax;
+    
     private final List<Object> items;
     private int sentenceIndex = -1;
     String layoutMode;
     int maxItems = -1;
     
-    public ProcessingGraphPanel(NAR n) {
-        this(n, new ArrayList());
+    public ProcessingGraphPanel() {
+        this(new ArrayList());
     }
     
-    public ProcessingGraphPanel(NAR n, List<Object> sentences) {
+    @Deprecated public ProcessingGraphPanel(List<Object> sentences) {
         super();
         
-        this.nar = n;
         this.items = sentences;
 
-        app = new papplet();
+        app = new PGraphPanel();
         
 
         app.init();
@@ -757,65 +755,11 @@ public class ProcessingGraphPanel extends NPanel {
     public void setMaxItems(int maxItems) {
         this.maxItems = maxItems;
     }
+
+    abstract public DirectedMultigraph getGraph();
     
     public void update() {
-        graphizer = new DefaultGraphizer(true,true,true,true,false) {
-
-            protected void addSentence(NARGraph g, Sentence s) {
-                Term t = s.content;
-                addTerm(g, t);
-                //g.addEdge(s, s.content, new NARGraph.SentenceContent());
-
-                if (t instanceof CompoundTerm) {
-                    CompoundTerm ct = ((CompoundTerm)t);
-                    Set<Term> contained = ct.getContainedTerms();
-
-                    for (Term x : contained) {                            
-                        addTerm(g, x);
-                        if (ct.containsTerm(x))
-                            g.addEdge(x, t, new NARGraph.TermContent());
-
-
-                        for (Term y : contained) {
-                            addTerm(g, y);
-
-                            if (x != y)
-                                if (x.containsTerm(y))
-                                    g.addEdge(y, x, new NARGraph.TermContent());
-                        }
-                    }
-                }                
-            }
-            
-            @Override
-            public void onTime(NARGraph g, long time) {
-                super.onTime(g, time);
-                    
-                for (Object o : getItems()) {                    
-                    
-
-                    if (o instanceof Task) {
-                        g.addVertex(o);
-                        addSentence(g, ((Task)o).sentence);
-                    }                    
-                    else if (o instanceof Sentence) {
-                        g.addVertex(o);
-                        addSentence(g, (Sentence)o);
-                    }
-                }
-                //add sentences
-            }
-            
-        };
-        
-        
-        app.updating = true;
-        
-        graphizer.setShowSyntax(showSyntax);
-        
-        NARGraph g = new NARGraph();
-        g.add(nar, newSelectedGraphFilter(), graphizer);                
-        app.graph = g;
+        app.graph = getGraph();
         
         
         
