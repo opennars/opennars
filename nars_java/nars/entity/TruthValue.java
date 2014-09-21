@@ -166,12 +166,11 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return Whether the two are equivalent
      */
     @Override
-    public boolean equals(final Object that) {
-        //TODO equals true if difference less than an epsilon parameter
-                
+    public boolean equals(final Object that) { 
         if (that instanceof TruthValue) {
-            float dFreq = getFrequency() - ((TruthValue) that).getFrequency();
-            float dConf = getConfidence() - ((TruthValue) that).getConfidence();
+            final TruthValue t = ((TruthValue) that);
+            float dFreq = Math.abs(getFrequency() - t.getFrequency());
+            float dConf = Math.abs(getConfidence() - t.getConfidence());
             return (dFreq < TRUTH_EPSILON) && (dConf < TRUTH_EPSILON);
         }
         return false;

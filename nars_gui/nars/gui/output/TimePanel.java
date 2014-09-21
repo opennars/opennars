@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import nars.core.EventEmitter.Observer;
-import nars.core.Memory.Events.CycleStop;
+import nars.core.Events.CycleStop;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;

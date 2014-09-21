@@ -1,6 +1,7 @@
 package nars.inference;
 
 import nars.core.EventEmitter;
+import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 
@@ -22,7 +23,7 @@ public abstract class AbstractController implements EventEmitter.Observer {
     /** adjust parameter values */
 
     public void start() {
-        nar.on(Memory.Events.CycleStop.class, this);
+        nar.on(Events.CycleStop.class, this);
     }
 
     /** read sensor values as input */
@@ -46,6 +47,6 @@ public abstract class AbstractController implements EventEmitter.Observer {
     }
 
     public void stop() {
-        nar.off(Memory.Events.CycleStop.class, this);
+        nar.off(Events.CycleStop.class, this);
     }
 }

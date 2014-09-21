@@ -371,12 +371,13 @@ public class Concept extends Item {
         final float rank1 = rankBelief(newSentence);    // for the new isBelief
         float rank2;
         int i = 0;
+        
         for (final Sentence judgment2 : table) {
             rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
                     return;
-                }
+                }                                
                 table.add(i, newSentence);
                 break;
             }
@@ -386,7 +387,7 @@ public class Concept extends Item {
             while (table.size() > capacity) {
                 table.remove(table.size() - 1);
             }
-        } else if (i == table.size()) {
+        } else if (i == table.size()) {            
             table.add(newSentence);
         }
     }
