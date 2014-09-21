@@ -22,6 +22,8 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import nars.core.Events.ConceptBeliefAdd;
+import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
 import static nars.entity.Stamp.make;
@@ -223,7 +225,13 @@ public class Concept extends Item {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 trySolution(judg, ques, memory);
             }
-            addToTable(judg, beliefs, memory.param.conceptBeliefsMax.get());
+            int preSize = beliefs.size();
+            Sentence removed = addToTable(judg, beliefs, memory.param.conceptBeliefsMax.get());
+            if (removed!=null)
+                memory.event.emit(ConceptBeliefRemove.class, this, removed);
+            if (preSize!=beliefs.size())
+                memory.event.emit(ConceptBeliefAdd.class, this, judg);
+            
         }
     }
 
@@ -366,17 +374,17 @@ public class Concept extends Item {
      * @param newSentence The judgment to be processed
      * @param table The table to be revised
      * @param capacity The capacity of the table
+     * @return whether table was modified
      */
-    private static void addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    private static Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
         final float rank1 = rankBelief(newSentence);    // for the new isBelief
         float rank2;
         int i = 0;
-        
         for (final Sentence judgment2 : table) {
             rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
-                    return;
+                    return null;
                 }                                
                 table.add(i, newSentence);
                 break;
@@ -384,12 +392,14 @@ public class Concept extends Item {
             i++;
         }
         if (table.size() >= capacity) {
-            while (table.size() > capacity) {
-                table.remove(table.size() - 1);
+            if (table.size() > capacity) {
+                Sentence removed = table.remove(table.size() - 1);
+                return removed;
             }
         } else if (i == table.size()) {            
-            table.add(newSentence);
+            table.add(newSentence);            
         }
+        return null;
     }
 
     /**

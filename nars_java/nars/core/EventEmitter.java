@@ -1,6 +1,7 @@
 
 package nars.core;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,16 +12,34 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class EventEmitter {
     
+    /** Observes events emitted by EventEmitter */
     public interface Observer<C> {
         public void event(Class<? extends C> event, Object... arguments);
     }
 
-    private final Map<Class<?>, List<Observer>> events
-            = new ConcurrentHashMap<Class<?>, List<Observer>>();
- 
-    //private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
-    //private final ExecutorService executorService = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, queue);
+    private final Map<Class<?>, List<Observer>> events;
+            
 
+    /** EventEmitter that allows unknown events; must use concurrent collection
+     *  for multithreading since new event classes may be added at any time.
+     */
+    public EventEmitter() {
+        events = new ConcurrentHashMap<Class<?>, List<Observer>>();
+    }
+
+    /** EventEmitter with a fixed set of known events; the 'events' map
+     *  can then be made unmodifiable and non-concurrent for speed.    */
+    public EventEmitter(Class... eventClasses) {
+        events = new HashMap(eventClasses.length);
+        for (Class c : eventClasses) {
+            events.put(c, newObserverList());
+        }
+    }
+
+    protected List<Observer> newObserverList() {
+        return new CopyOnWriteArrayList<Observer>();
+    }
+    
     public boolean hasAnyOn(final Class event) {
         if (events.get(event)!=null)
             if (events.get(event).size() > 0)
@@ -35,7 +54,7 @@ public class EventEmitter {
         if (events.containsKey(event))
             events.get(event).add(o);
         else {
-            List a = new CopyOnWriteArrayList<Observer>();
+            List<Observer> a = newObserverList();
             a.add(o);
             events.put(event, a);
         }
@@ -57,12 +76,9 @@ public class EventEmitter {
  
 
     public void emit(final Class eventClass, final Object... params) {
-        if (events.get(eventClass)==null) return;
-        
         List<Observer> observers = events.get(eventClass);
         
-        if (observers == null) return;
-        if (observers.size() == 0) return;
+        if ((observers == null) || (observers.isEmpty())) return;
 
         int n = observers.size();        
         for (int i = 0; i < n; i++) {

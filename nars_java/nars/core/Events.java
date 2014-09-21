@@ -3,6 +3,22 @@ package nars.core;
 /** empty event classes for use with EventEmitter */
 public class Events {
 
+    public static EventEmitter newEventEmitter() {
+        //TODO use reflection to get all subclasses
+        return new EventEmitter(
+                CycleStart.class,
+                CycleStop.class,
+                WorkCycleStart.class,
+                WorkCycleStop.class,
+                ResetPre.class,
+                ResetPost.class,
+                ConceptAdd.class,
+                ConceptRemove.class,
+                ConceptBeliefAdd.class,
+                ConceptBeliefRemove.class
+        );
+    }
+
     /** fired at the beginning of each main cycle */
     public static class CycleStart {
     }
@@ -29,5 +45,6 @@ public class Events {
     
     public static class ConceptAdd { }
     public static class ConceptRemove { }
-    public static class ConceptUpdate { }
+    public static class ConceptBeliefAdd { }
+    public static class ConceptBeliefRemove { }
 }

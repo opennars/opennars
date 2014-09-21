@@ -187,7 +187,7 @@ public class Sentence implements Cloneable {
         }
         
         
-        Stamp newStamp = eternalizing ? stamp.cloneAt(Stamp.ETERNAL) : stamp.clone();
+        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.clone();
         
         return new Sentence(content, punctuation, newTruth, newStamp);
     }
