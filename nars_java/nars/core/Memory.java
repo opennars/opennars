@@ -137,7 +137,7 @@ public class Memory implements Output, Serializable {
     
     private final ConceptProcessor conceptProcessor;
     
-    public final EventEmitter event = new EventEmitter();
+    public final EventEmitter event = Events.newEventEmitter();
     
     
 

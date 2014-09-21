@@ -339,14 +339,16 @@ public class Stamp implements Cloneable {
     }
     
     public static long[] toSetArray(final long[] x) {
+        long[] set = x.clone();
+        
         if (x.length < 2)
-            return x.clone();
+            return set;
         
         //1. copy evidentialBse
         //2. sort
         //3. count duplicates
         //4. create new array 
-        long[] set = x.clone();
+        
         Arrays.sort(set);
         long lastValue = -1;
         int j = 0; //# of unique items
@@ -403,9 +405,6 @@ public class Stamp implements Cloneable {
             return false;
         */
         
-        if (hashCode() != s.hashCode())
-            return false;
-        
         return Arrays.equals(toSet(), s.toSet());
     }
 
@@ -415,14 +414,17 @@ public class Stamp implements Cloneable {
      * @return The hash code
      */
     @Override
-    public int hashCode() {
-//        return Objects.hash(toSet(), creationTime, occurrenceTime);
-        //return Objects.hash(Arrays.hashCode(evidentialBase), creationTime, occurrenceTime);    
+    public final int hashCode() {
         return Arrays.hashCode(toSet());
     }
 
-    public Stamp cloneToTime(long newTime) {
-        return new Stamp(this, newTime);
+    public Stamp cloneWithNewCreationTime(long newCreationTime) {
+        return new Stamp(this, newCreationTime);
+    }
+    public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime) {
+        Stamp s = clone();
+        s.setOccurrenceTime(newOcurrenceTime);
+        return s;
     }
 
     /**
@@ -435,7 +437,7 @@ public class Stamp implements Cloneable {
     }
 
     
-    public StringBuilder appendOcurrenceTime(StringBuilder sb) {
+    public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
         if (occurrenceTime != ETERNAL) {
             int estTimeLength = 8; /* # digits */
             sb.ensureCapacity(estTimeLength + 1 + 1);
@@ -525,11 +527,6 @@ public class Stamp implements Cloneable {
         return name().toString();
     }
 
-    public Stamp cloneAt(final long newOcurrenceTime) {
-        Stamp s = clone();
-        s.setOccurrenceTime(newOcurrenceTime);
-        return s;
-    }
 
     /**
      * @return the creationTime
