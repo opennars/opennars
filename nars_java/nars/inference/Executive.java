@@ -160,8 +160,8 @@ public class Executive {
             return;           
         }
         //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
-        
-        executeOperation(content, concept, task, false);
+        if(next.isEmpty())
+            executeOperation(content, concept, task, false);
     }
     
     
