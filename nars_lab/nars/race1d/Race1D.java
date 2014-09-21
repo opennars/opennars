@@ -70,9 +70,9 @@ public class Race1D {
         List<String> s = new ArrayList();
         for (int i : solution) {
             if (i == -1) 
-                s.add("^left!");
+                s.add("(^left,x)!");
             else if (i == 1)
-                s.add("^right!");
+                s.add("(^right,x)!");
         }
         return s;
     } 
@@ -137,12 +137,12 @@ public class Race1D {
             @Override public void output(Class channel, Object signal) {
                 if (channel != IN.class) {
                     String x = signal.toString();
-                    //if (x.contains("!"))
+                    if (x.contains("!"))
                         System.out.println(x);
-                    if (x.contains("^left!")) {
+                    if (x.contains("(^left,x)!")) {
                         nextOut.set(-1);
                     }
-                    else if (x.contains("^right!")) {
+                    else if (x.contains("(^right,x)!")) {
                         nextOut.set(1);
                     }
                 }
@@ -194,16 +194,17 @@ public class Race1D {
 
     
     public static void main(String[] args) {
-        Race1D r = new Race1D(4, 8);
+        Race1D r = new Race1D(5, 16);
         
         
         NAR n = new DefaultNARBuilder().build();
         r.addOperations(n);
         
-        int trainingCycles = 3;
+        int trainingCycles = 10;
         for (int i = 0; i < trainingCycles; i++) {
             r.train(n);
         }
+
         r.evaluate(n);
         
         n.step(1);

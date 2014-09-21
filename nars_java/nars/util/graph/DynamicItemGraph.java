@@ -1,4 +1,4 @@
-package nars.util.experimental;
+package nars.util.graph;
 
 /**
  *

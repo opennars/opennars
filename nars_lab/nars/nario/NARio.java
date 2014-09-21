@@ -284,8 +284,23 @@ public class NARio extends Run {
                     lastY = y;
                     gotCoin = 0;
                 }
-                cycle++;
+                
+                /*if (cycle % 1000 == 1) {
+                    
+                    ImplicationGraph ig = new ImplicationGraph(nar);
+                    System.out.println("Implications Graph");
+                    for (Sentence  s : ig.edgeSet())
+                        System.out.println(s);
+                    for (Term t : ig.vertexSet())
+                        System.out.println(t);
+                    System.out.println(ig.vertexSet());
+                    
+                    JGraphXGraphPanel j = new JGraphXGraphPanel(ig);
+                    new Window("Implication Graph", j).show(400,400);
+                }
+                cycle++;*/
             }
+            
 
         });
 

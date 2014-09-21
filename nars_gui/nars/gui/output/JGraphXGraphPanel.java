@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import nars.core.NAR;
 import nars.util.NARGraph;
 import static nars.util.NARGraph.IncludeEverything;
+import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 
 /**
@@ -19,12 +20,9 @@ public class JGraphXGraphPanel extends JPanel {
     private final JGraphXAdapter jgxAdapter;
     
 
-    public JGraphXGraphPanel(NAR n) {
+    public JGraphXGraphPanel(Graph g) {
         super(new BorderLayout());
-
         
-        NARGraph g = new NARGraph();
-        g.add(n, IncludeEverything, new NARGraph.DefaultGraphizer(true,true,true,true,true));        
 
         // create a visualization using JGraph, via an adapter
         jgxAdapter = new JGraphXAdapter(g) {
@@ -78,6 +76,11 @@ public class JGraphXGraphPanel extends JPanel {
         jgxAdapter.setCellsDisconnectable(false);
         jgxAdapter.setEdgeLabelsMovable(false);
         //jgxAdapter.setCellsLocked(true);
+        
+    }
+    
+    public JGraphXGraphPanel(NAR n) {
+        this(new NARGraph().add(n, IncludeEverything, new NARGraph.DefaultGraphizer(true,true,true,true,true)));
     }
     
 //    public static void main(String[] args) {
