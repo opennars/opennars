@@ -1,5 +1,6 @@
 package nars.util.graph;
 
+import nars.core.EventEmitter;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
@@ -19,9 +20,13 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> implements Observer {
 
+    public static class GraphChange { }
+    
     private NAR nar;
     private boolean needInitialConcepts;
-
+    private boolean started;
+    public final EventEmitter event = new EventEmitter( GraphChange.class );
+    
     public SentenceGraph() {
         super(/*null*/new EdgeFactory() {
 
@@ -44,6 +49,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }
     
     public void start() {
+        if (started) return;        
+        started = true;
         nar.memory.event.on(Events.CycleStop.class, this);
         nar.memory.event.on(Events.ConceptRemove.class, this);
         nar.memory.event.on(Events.ConceptBeliefAdd.class, this);
@@ -51,6 +58,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }
     
     public void stop() {
+        if (!started) return;
+        started = false;
         nar.memory.event.off(Events.CycleStop.class, this);        
         nar.memory.event.off(Events.ConceptRemove.class, this);
         nar.memory.event.off(Events.ConceptBeliefAdd.class, this);
@@ -106,12 +115,12 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     abstract public boolean allow(Statement st);    
     
     public void remove(final Sentence s) {
-        removeEdge(s);
+        boolean r = removeEdge(s);
+        if (r)
+            event.emit(GraphChange.class, null, s);
     }
     
-    public void add(final Sentence s) {
-        boolean include = false;
-        
+    public void add(final Sentence s) {       
         
         if (s.content instanceof CompoundTerm) {
             CompoundTerm cs = (CompoundTerm)s.content;
@@ -125,6 +134,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
                     addVertex(subject);
                     addVertex(predicate);
                     addEdge(subject, predicate, s);                    
+                 
+                    event.emit(GraphChange.class, st, null);
                 }
             }
                 

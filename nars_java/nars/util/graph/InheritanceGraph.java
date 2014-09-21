@@ -11,12 +11,12 @@ import nars.language.Statement;
  */
 
 
-public class ImplicationGraph extends SentenceGraph {
+public class InheritanceGraph extends SentenceGraph {
 
     float minConfidence = 0.01f;
     float minFreq = 0.01f;
 
-    public ImplicationGraph(NAR nar) {
+    public InheritanceGraph(NAR nar) {
         super(nar);
     }
     
@@ -32,7 +32,7 @@ public class ImplicationGraph extends SentenceGraph {
     @Override
     public boolean allow(final Statement st) {
         Symbols.NativeOperator o = st.operator();
-        if ((o == Symbols.NativeOperator.IMPLICATION_WHEN) || (o == Symbols.NativeOperator.IMPLICATION_BEFORE)) {
+        if (o == Symbols.NativeOperator.INHERITANCE) {
             return true;
         }
         return false;
