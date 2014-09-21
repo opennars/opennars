@@ -129,7 +129,7 @@ public class Executive {
         if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
             
             //1. get first operator and execute it
-            CompoundTerm cont = (CompoundTerm) content;
+           /* CompoundTerm cont = (CompoundTerm) content;
             
             for (final Term t : cont.term) {
                 if(!(t instanceof Operation) && !(t instanceof Interval)) {
@@ -153,7 +153,7 @@ public class Executive {
                 else if(t instanceof Operation) {
                     next.addLast(new TaskConceptContent(task, concept, t));
                 }
-            }
+            }*/
             
             return;           
         }
@@ -223,7 +223,7 @@ public class Executive {
             TemporalRules.temporalInduction(newEvent.sentence, currentBelief, memory);
 
 
-            if(!(newEvent.sentence.content instanceof Operation)) {
+            /*if(!(newEvent.sentence.content instanceof Operation)) {
 
                 final AtomicDuration duration = memory.param.duration;
 
@@ -262,9 +262,9 @@ public class Executive {
 
                         TruthValue val = curT.sentence.truth;
 
-                        /*for(int j=i+1;j+1<n;j++) { 
-                            val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
-                        }*///lets let it abduction instead
+                        //for(int j=i+1;j+1<n;j++) { 
+                        //    val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
+                        // ///lets let it abduction instead
 
                         long diff = newEvent.getCreationTime() - stmLast.getCreationTime();
 
@@ -272,10 +272,10 @@ public class Executive {
                             cur.add(0, Interval.intervalTime(diff, duration) );
                         }
 
-                        /*while (cur.size() < maxStmSize) {
-                            cur.add( Interval.intervalMagnitude(i) );
-                            //cur.add( Interval.intervalTime(i) );
-                        }*/
+                        //while (cur.size() < maxStmSize) {
+                        //    cur.add( Interval.intervalMagnitude(i) );
+                        //    //cur.add( Interval.intervalTime(i) );
+                        //
 
                         //if (cur.size() > 1) {
                         //term = reverse of cur
@@ -317,7 +317,7 @@ public class Executive {
                     curT = nextT;
                                         
                 } while (curT!=null);
-            }
+            }*/
         }
 
         //for this heuristic, only use input events & task effects of operations
