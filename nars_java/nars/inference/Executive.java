@@ -126,10 +126,11 @@ public class Executive {
             return;
         }
         
+        //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
         if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
             
             //1. get first operator and execute it
-           /* CompoundTerm cont = (CompoundTerm) content;
+            CompoundTerm cont = (CompoundTerm) content;
             
             for (final Term t : cont.term) {
                 if(!(t instanceof Operation) && !(t instanceof Interval)) {
@@ -153,10 +154,12 @@ public class Executive {
                 else if(t instanceof Operation) {
                     next.addLast(new TaskConceptContent(task, concept, t));
                 }
-            }*/
+            }
+            //END FASTER EXECUTION OF ACTION SEQUENCE
             
             return;           
         }
+        //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
         
         executeOperation(content, concept, task, false);
     }
@@ -222,8 +225,8 @@ public class Executive {
 
             TemporalRules.temporalInduction(newEvent.sentence, currentBelief, memory);
 
-
-            /*if(!(newEvent.sentence.content instanceof Operation)) {
+            //SHORT TERM MEMORY: REMEMBER OWN ACTION SEQUENCES
+            if(!(newEvent.sentence.content instanceof Operation)) {
 
                 final AtomicDuration duration = memory.param.duration;
 
@@ -317,7 +320,8 @@ public class Executive {
                     curT = nextT;
                                         
                 } while (curT!=null);
-            }*/
+            }
+            //END SHORT TERM MEMORY
         }
 
         //for this heuristic, only use input events & task effects of operations
