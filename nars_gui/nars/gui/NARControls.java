@@ -47,7 +47,7 @@ import nars.core.Parameters;
 import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
-import nars.gui.output.BubbleChart;
+import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.LogPanel;
 import nars.gui.output.MemoryView;
 import nars.gui.output.SentenceTablePanel;

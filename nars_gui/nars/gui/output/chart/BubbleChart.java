@@ -1,4 +1,4 @@
-package nars.gui.output;
+package nars.gui.output.chart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
