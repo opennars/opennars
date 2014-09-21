@@ -41,7 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Memory;
-import nars.core.Memory.Events.CycleStop;
+import nars.core.Events.CycleStop;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.sense.MultiSense;

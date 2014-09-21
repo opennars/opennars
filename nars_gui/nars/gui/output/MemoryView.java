@@ -18,7 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import nars.core.EventEmitter.Observer;
-import nars.core.Memory.Events.CycleStop;
+import nars.core.Events.CycleStop;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;

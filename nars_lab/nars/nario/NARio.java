@@ -2,6 +2,7 @@ package nars.nario;
 
 import java.util.List;
 import nars.core.EventEmitter.Observer;
+import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.ContinuousBagNARBuilder;
@@ -90,7 +91,7 @@ public class NARio extends Run {
                    
         axioms();
                     
-        nar.memory.event.on(Memory.Events.CycleStop.class, new Observer() {
+        nar.memory.event.on(Events.CycleStop.class, new Observer() {
             private int[] keyTime = new int[256];
 
             @Override
@@ -293,7 +294,6 @@ public class NARio extends Run {
                         System.out.println(s);
                     for (Term t : ig.vertexSet())
                         System.out.println(t);
-                    System.out.println(ig.vertexSet());
                     
                     JGraphXGraphPanel j = new JGraphXGraphPanel(ig);
                     new Window("Implication Graph", j).show(400,400);

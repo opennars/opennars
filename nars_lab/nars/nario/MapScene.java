@@ -510,9 +510,11 @@ public class MapScene extends Scene
         tick++;
         int x = xMario / 16;
         int y = yMario / 16;
-        if (level[x][y] == TILE_ROAD)
-        {
-            data[x][y] = 0;
+        if ((x > 0) && (y > 0)) {
+            if (level[x][y] == TILE_ROAD)
+            {
+                data[x][y] = 0;
+            }
         }
 
         if (moveTime > 0)

@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
-import nars.core.Memory.Events.ResetPost;
-import nars.core.Memory.Events.ResetPre;
-import nars.core.Memory.Events.WorkCycleStart;
-import nars.core.Memory.Events.WorkCycleStop;
+import nars.core.Events.ResetPost;
+import nars.core.Events.ResetPre;
+import nars.core.Events.WorkCycleStart;
+import nars.core.Events.WorkCycleStop;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
@@ -120,29 +120,6 @@ public class Memory implements Output, Serializable {
     public final Executive executive;
     private boolean enabled = true;
 
-    /** empty event classes for use with EventEmitter */
-    public static class Events {
-
-        /** fired at the beginning of each main cycle */
-        public static class CycleStart { }
-        
-        /** fired at the end of each main cycle */
-        public static class CycleStop { }
-
-        
-        /** fired at the beginning of each individual Memory work cycle */
-        public static class WorkCycleStart { }
-        
-        /** fired at the end of each Memory individual cycle */
-        public static class WorkCycleStop { }
-                
-        /** called before memory.reset() proceeds */
-        public static class ResetPre { }
-        
-        /** called after memory.reset() proceeds */
-        public static class ResetPost { }
-        
-    }
     
     public static interface TaskSource {
         public AbstractTask nextTask();
@@ -959,7 +936,7 @@ public class Memory implements Output, Serializable {
         resource.CYCLE_CPU_TIME.start();
         resource.CYCLE_RAM_USED.start();
 
-        event.emit(Memory.Events.CycleStart.class);
+        event.emit(Events.CycleStart.class);
 
         if (enabled) {
 
@@ -1001,7 +978,7 @@ public class Memory implements Output, Serializable {
 
         }
 
-        event.emit(Memory.Events.CycleStop.class);
+        event.emit(Events.CycleStop.class);
         
         resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
