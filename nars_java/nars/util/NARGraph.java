@@ -213,7 +213,7 @@ public class NARGraph extends DirectedMultigraph {
 
     public List<Concept> currentLevel = new ArrayList();
 
-    public void add(NAR n, Filter filter, Graphize graphize) {
+    public NARGraph add(NAR n, Filter filter, Graphize graphize) {
         graphize.onTime(this, n.getTime());
 
         //TODO support AbstractBag
@@ -239,6 +239,7 @@ public class NARGraph extends DirectedMultigraph {
         }
 
         graphize.onFinish(this);
+        return this;
 
     }
 
