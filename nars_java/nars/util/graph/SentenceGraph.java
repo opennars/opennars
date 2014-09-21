@@ -12,10 +12,6 @@ import nars.language.Term;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 
-/**
- *
- * @author me
- */
 
 
 abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> implements Observer {
@@ -115,7 +111,19 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     abstract public boolean allow(Statement st);    
     
     public void remove(final Sentence s) {
+        if (!containsEdge(s))
+            return;
+        
+        Term from = getEdgeSource(s);
+        Term to = getEdgeTarget(s);
+        
+        
         boolean r = removeEdge(s);
+        
+        
+        if (inDegreeOf(from)+outDegreeOf(from) == 0)  removeVertex(from);
+        if (inDegreeOf(to)+outDegreeOf(to) == 0)  removeVertex(to);                
+
         if (r)
             event.emit(GraphChange.class, null, s);
     }
@@ -126,9 +134,11 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             CompoundTerm cs = (CompoundTerm)s.content;
         
             if (cs instanceof Statement) {
+                
+                
                 Statement st = (Statement)cs;
                 if (allow(st)) {
-                    
+                                        
                     Term subject = st.getSubject();
                     Term predicate = st.getPredicate();
                     addVertex(subject);

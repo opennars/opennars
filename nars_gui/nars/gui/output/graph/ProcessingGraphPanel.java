@@ -29,12 +29,9 @@ import nars.util.NARGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DirectedMultigraph;
 
+abstract public class ProcessingGraphPanel<V,E> extends NPanel {
 
-
-
-abstract public class ProcessingGraphPanel extends NPanel {
-
-    public PGraphPanel app = null;
+    public PGraphPanel<V,E> app = null;
     float edgeDistance = 10;
     protected boolean showSyntax;
     
@@ -52,7 +49,20 @@ abstract public class ProcessingGraphPanel extends NPanel {
         
         this.items = sentences;
 
-        app = new PGraphPanel();
+        app = new PGraphPanel<V,E>() {
+
+            @Override public int edgeColor(E edge) {
+                return ProcessingGraphPanel.this.edgeColor(edge);
+            }
+
+            @Override public float edgeWeight(E edge) {
+                return ProcessingGraphPanel.this.edgeWeight(edge);
+            }
+
+            @Override public int vertexColor(V vertex) {
+                return ProcessingGraphPanel.this.vertexColor(vertex);
+            }            
+        };
         
 
         app.init();
@@ -187,8 +197,11 @@ abstract public class ProcessingGraphPanel extends NPanel {
 
     }
 
-    @Override
-    protected void onShowing(boolean showing) {
+    abstract public int edgeColor(E edge);
+    abstract public float edgeWeight(E edge);
+    abstract public int vertexColor(V vertex);
+
+    @Override protected void onShowing(boolean showing) {
         if (!showing) {
             //app.stop();
             //app = null;
@@ -296,10 +309,9 @@ abstract public class ProcessingGraphPanel extends NPanel {
                 case "Graph":
                     mxFastOrganicLayout l = new mxFastOrganicLayout(graphAdapter);
                     //new mxCompactTreeLayout(jgxAdapter);
-                    //new mxCircleLayout(jgxAdapter);
+                    //new mxCircleLayout(jgxAdapter);                    
                     l.setForceConstant(edgeDistance*10f);                
                     l.execute(graphAdapter.getDefaultParent());
-                    
                     
                     break;
                 case "Tree":

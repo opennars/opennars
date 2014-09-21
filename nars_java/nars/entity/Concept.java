@@ -239,7 +239,7 @@ public class Concept extends Item {
         
         if (removed!=null)
             memory.event.emit(eventRemove, this, removed);
-        if (preSize!=table.size())
+        if ((preSize!=table.size()) || (removed!=null))
             memory.event.emit(eventAdd, this, newSentence);        
     }
     
