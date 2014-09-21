@@ -3,7 +3,7 @@ package nars.util.graph;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
-import nars.core.NAR;
+import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.language.CompoundTerm;
@@ -15,10 +15,10 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 
 abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> implements Observer {
+    private Memory memory;
 
     public static class GraphChange { }
     
-    private NAR nar;
     private boolean needInitialConcepts;
     private boolean started;
     public final EventEmitter event = new EventEmitter( GraphChange.class );
@@ -33,10 +33,10 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         });
     }    
 
-    public SentenceGraph(NAR nar) {
+    public SentenceGraph(Memory memory) {
         this();
         
-        this.nar = nar;
+        this.memory = memory;
         
         reset();
 
@@ -47,19 +47,19 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     public void start() {
         if (started) return;        
         started = true;
-        nar.memory.event.on(Events.CycleStop.class, this);
-        nar.memory.event.on(Events.ConceptRemove.class, this);
-        nar.memory.event.on(Events.ConceptBeliefAdd.class, this);
-        nar.memory.event.on(Events.ConceptBeliefRemove.class, this);        
+        memory.event.on(Events.CycleEnd.class, this);
+        memory.event.on(Events.ConceptRemove.class, this);
+        memory.event.on(Events.ConceptBeliefAdd.class, this);
+        memory.event.on(Events.ConceptBeliefRemove.class, this);        
     }
     
     public void stop() {
         if (!started) return;
         started = false;
-        nar.memory.event.off(Events.CycleStop.class, this);        
-        nar.memory.event.off(Events.ConceptRemove.class, this);
-        nar.memory.event.off(Events.ConceptBeliefAdd.class, this);
-        nar.memory.event.off(Events.ConceptBeliefRemove.class, this);        
+        memory.event.off(Events.CycleEnd.class, this);        
+        memory.event.off(Events.ConceptRemove.class, this);
+        memory.event.off(Events.ConceptBeliefAdd.class, this);
+        memory.event.off(Events.ConceptBeliefRemove.class, this);        
     }
 
     @Override
@@ -82,7 +82,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             Sentence s = (Sentence)a[1];
             remove(s);
         }
-        else if (event == Events.CycleStop.class) {
+        else if (event == Events.CycleEnd.class) {
             if (needInitialConcepts)
                 getInitialConcepts();
         }
@@ -98,7 +98,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     private void getInitialConcepts() {
         needInitialConcepts = false;
 
-        for (Concept c : nar.memory.getConcepts()) {
+        for (Concept c : memory.getConcepts()) {
             for (Sentence s : c.beliefs) {
                 if (allow(s))
                     add(s);

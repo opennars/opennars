@@ -17,7 +17,7 @@ public class InheritanceGraph extends SentenceGraph {
     
 
     public InheritanceGraph(NAR nar) {
-        super(nar);
+        super(nar.memory);
     }
     
     @Override

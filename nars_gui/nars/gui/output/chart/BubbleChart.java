@@ -40,10 +40,10 @@ public class BubbleChart extends NPanel implements Observer {
     @Override
     protected void onShowing(boolean showing) {
         if (showing) {
-            nar.memory.event.on(Events.CycleStop.class, this);
+            nar.memory.event.on(Events.CycleEnd.class, this);
         }
         else {
-            nar.memory.event.off(Events.CycleStop.class, this);
+            nar.memory.event.off(Events.CycleEnd.class, this);
         }
     }
 

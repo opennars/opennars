@@ -7,11 +7,11 @@ public class Events {
         //TODO use reflection to get all subclasses
         return new EventEmitter(
                 CycleStart.class,
-                CycleStop.class,
+                CycleEnd.class,
                 WorkCycleStart.class,
-                WorkCycleStop.class,
-                ResetPre.class,
-                ResetPost.class,
+                WorkCycleEnd.class,
+                ResetStart.class,
+                ResetEnd.class,
                 ConceptAdd.class,
                 ConceptRemove.class,
                 ConceptBeliefAdd.class,
@@ -28,7 +28,7 @@ public class Events {
     }
 
     /** fired at the end of each main cycle */
-    public static class CycleStop {
+    public static class CycleEnd {
     }
 
     /** fired at the beginning of each individual Memory work cycle */
@@ -36,15 +36,15 @@ public class Events {
     }
 
     /** fired at the end of each Memory individual cycle */
-    public static class WorkCycleStop {
+    public static class WorkCycleEnd {
     }
 
     /** called before memory.reset() proceeds */
-    public static class ResetPre {
+    public static class ResetStart {
     }
 
     /** called after memory.reset() proceeds */
-    public static class ResetPost {
+    public static class ResetEnd {
     }
     
     public static class ConceptAdd { }

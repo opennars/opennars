@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import nars.core.EventEmitter.Observer;
-import nars.core.Events.CycleStop;
+import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
@@ -83,10 +83,10 @@ public class TimePanel extends NPanel implements Observer {
     protected void onShowing(boolean showing) {
      
         if (showing) {
-            nar.memory.event.on(CycleStop.class, this);
+            nar.memory.event.on(CycleEnd.class, this);
         }
         else {
-            nar.memory.event.off(CycleStop.class, this);
+            nar.memory.event.off(CycleEnd.class, this);
         }                    
     }
     

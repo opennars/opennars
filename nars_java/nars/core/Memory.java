@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
-import nars.core.Events.ResetPost;
-import nars.core.Events.ResetPre;
+import nars.core.Events.ResetEnd;
+import nars.core.Events.ResetStart;
 import nars.core.Events.WorkCycleStart;
-import nars.core.Events.WorkCycleStop;
+import nars.core.Events.WorkCycleEnd;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
@@ -390,7 +390,7 @@ public class Memory implements Output, Serializable {
     }
 
     public void reset() {
-        event.emit(ResetPre.class);
+        event.emit(ResetStart.class);
         
         conceptProcessor.clear();
         novelTasks.clear();
@@ -404,7 +404,7 @@ public class Memory implements Output, Serializable {
         
         emotion.set(0.5f, 0.5f);
         
-        event.emit(ResetPost.class);
+        event.emit(ResetEnd.class);
        
         if (getRecorder().isActive()) {
             getRecorder().append("Reset");
@@ -978,7 +978,7 @@ public class Memory implements Output, Serializable {
 
         }
 
-        event.emit(Events.CycleStop.class);
+        event.emit(Events.CycleEnd.class);
         
         resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
@@ -1019,7 +1019,7 @@ public class Memory implements Output, Serializable {
         
         clock++;
                 
-        event.emit(WorkCycleStop.class);      
+        event.emit(WorkCycleEnd.class);      
         
     }
 
