@@ -18,7 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import nars.core.EventEmitter.Observer;
-import nars.core.Events.CycleStop;
+import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -941,13 +941,13 @@ public class MemoryView extends Window {
         content.add(app, BorderLayout.CENTER);
         
 
-        n.memory.event.on(CycleStop.class, new Observer() {
+        n.memory.event.on(CycleEnd.class, new Observer() {
             @Override
             public void event(Class event, Object... arguments) {
                 if (app!=null)
                     app.updateGraph();
                 else
-                    n.memory.event.off(CycleStop.class, this);
+                    n.memory.event.off(CycleEnd.class, this);
             }  
         });
     

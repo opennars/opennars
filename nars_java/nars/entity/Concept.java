@@ -228,19 +228,19 @@ public class Concept extends Item {
                 trySolution(judg, ques, memory);
             }
             
-            addToTable(judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);            
+            addToTable(task, judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);            
         }
     }
 
-    protected void addToTable(final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
+    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
         int preSize = table.size();
 
         Sentence removed = addToTable(newSentence, table, max);
         
         if (removed!=null)
-            memory.event.emit(eventRemove, this, removed);
+            memory.event.emit(eventRemove, this, removed, task);
         if ((preSize!=table.size()) || (removed!=null))
-            memory.event.emit(eventAdd, this, newSentence);        
+            memory.event.emit(eventAdd, this, newSentence, task);        
     }
     
     
@@ -286,7 +286,7 @@ public class Concept extends Item {
             // still worth pursuing?
             if (task.aboveThreshold()) {    
                 
-                addToTable(goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+                addToTable(task, goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
                     //hm or conjunction in time and temporal order forward

@@ -1,5 +1,6 @@
 package nars.util.graph;
 
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.Symbols;
@@ -16,7 +17,10 @@ public class ImplicationGraph extends SentenceGraph {
     float minConfidence = 0.01f;
 
     public ImplicationGraph(NAR nar) {
-        super(nar);
+        super(nar.memory);
+    }
+    public ImplicationGraph(Memory memory) {
+        super(memory);
     }
     
     @Override

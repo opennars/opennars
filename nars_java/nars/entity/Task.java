@@ -94,6 +94,10 @@ public class Task extends AbstractTask {
         this.bestSolution = solution;
     }
 
+    public Task clone() {
+        return new Task(sentence, budget, parentTask, parentBelief, bestSolution);
+    }
+    
     @Override public CharSequence getKey() {
         return key;
     }

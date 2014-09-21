@@ -16,6 +16,7 @@ abstract public class SortedItemList<E> extends FastTable<E> {
 
     public SortedItemList(Comparator<E> c, int capacity) {
         super();
+        this.comparator = c;
         this.capacity = capacity;
     }
 

@@ -5,7 +5,7 @@ import java.awt.Color;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
-import nars.core.Events.CycleStop;
+import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.gui.NPanel;
@@ -83,19 +83,19 @@ public class SentenceGraphPanel extends NPanel implements Observer {
     protected void onShowing(boolean showing) {
         if (showing) {
             sentence.event.on(GraphChange.class, this);
-            nar.on(Events.CycleStop.class, this);
+            nar.on(Events.CycleEnd.class, this);
             this.sentence.start();
         }
         else {
             sentence.event.off(GraphChange.class, this);
-            nar.off(Events.CycleStop.class, this);
+            nar.off(Events.CycleEnd.class, this);
             this.sentence.stop();
         }
     }
     
     @Override
     public void event(Class event, Object[] arguments) {
-        if ((event == CycleStop.class) && (changed) && (sentence!=null)) {
+        if ((event == CycleEnd.class) && (changed) && (sentence!=null)) {
             changed = false;
             
             long now = System.currentTimeMillis();

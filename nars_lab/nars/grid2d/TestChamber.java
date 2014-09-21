@@ -139,7 +139,7 @@ public class TestChamber {
         space.automataPeriod = automataPeriod/gridUpdatePeriod;
         space.agentPeriod = agentPeriod/gridUpdatePeriod;
 
-        nar.memory.event.on(Events.CycleStop.class, new Observer() {
+        nar.memory.event.on(Events.CycleEnd.class, new Observer() {
             private long lastDrawn = 0;
             
             @Override

@@ -23,7 +23,7 @@ public abstract class AbstractController implements EventEmitter.Observer {
     /** adjust parameter values */
 
     public void start() {
-        nar.on(Events.CycleStop.class, this);
+        nar.on(Events.CycleEnd.class, this);
     }
 
     /** read sensor values as input */
@@ -47,6 +47,6 @@ public abstract class AbstractController implements EventEmitter.Observer {
     }
 
     public void stop() {
-        nar.off(Events.CycleStop.class, this);
+        nar.off(Events.CycleEnd.class, this);
     }
 }

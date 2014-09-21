@@ -10,8 +10,7 @@ import nars.core.NAR;
 import nars.core.build.ContinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.gui.Window;
-import nars.gui.output.graph.SentenceGraphPanel;
+import nars.inference.GraphExecutive;
 import nars.io.Output;
 import nars.language.Term;
 import nars.nario.level.Level;
@@ -24,7 +23,6 @@ import nars.nario.sprites.Sprite;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
 import nars.util.graph.ImplicationGraph;
-import nars.util.graph.InheritanceGraph;
 
 /**
  *
@@ -97,18 +95,23 @@ public class NARio extends Run {
                    
         axioms();
   
+        
+        
+        new GraphExecutive(nar.memory);
+        
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 //new Window("Implications", new SentenceGraphPanel(nar, new ImplicationGraph(nar))).show(500,500);
-                new Window("Inheritance", new SentenceGraphPanel(nar, new InheritanceGraph(nar))).show(500,500);
+                //new Window("Inheritance", new SentenceGraphPanel(nar, new InheritanceGraph(nar))).show(500,500);
                 
             }
             
         });
                 
-        nar.memory.event.on(Events.CycleStop.class, new Observer() {
+        nar.memory.event.on(Events.CycleEnd.class, new Observer() {
             private int[] keyTime = new int[256];
 
             @Override
