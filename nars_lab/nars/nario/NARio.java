@@ -2,6 +2,7 @@ package nars.nario;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
@@ -95,9 +96,17 @@ public class NARio extends Run {
         mario.setInvincible(true);
                    
         axioms();
-        
-        //new Window("Implications", new SentenceGraphPanel(new ImplicationGraph(nar))).show(500,500);
-        new Window("Inheritance", new SentenceGraphPanel(new InheritanceGraph(nar))).show(500,500);
+  
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                //new Window("Implications", new SentenceGraphPanel(nar, new ImplicationGraph(nar))).show(500,500);
+                new Window("Inheritance", new SentenceGraphPanel(nar, new InheritanceGraph(nar))).show(500,500);
+                
+            }
+            
+        });
                 
         nar.memory.event.on(Events.CycleStop.class, new Observer() {
             private int[] keyTime = new int[256];
@@ -320,18 +329,16 @@ public class NARio extends Run {
          nar.param().cycleInputTasks.set(1);
          nar.param().cycleMemory.set(1);*/
 
-        new NARSwing(nar);
         //new TextOutput(nar, System.out).setShowInput(true);
         nar.param().duration.set(50);
         nar.param().noiseLevel.set(25);
         nar.param().shortTermMemorySize.set(35);
 
-        nar.start(20);
 
         NARio nario = new NARio(nar);
-//        nario.TICKS_PER_SECOND = 12;
 
-        //nar.param().noiseLevel.set(50);
+        new NARSwing(nar);
+        nar.start(20);
     }
 
 }

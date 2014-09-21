@@ -1,7 +1,6 @@
 
 package nars.gui.output;
 
-import nars.gui.output.graph.ProcessingGraphPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -20,6 +19,7 @@ import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.NSlider;
+import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.io.Output;
 import nars.util.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -95,6 +95,24 @@ public class MultiModePanel extends JPanel implements Output {
         public void run() {
             needsUpdate = false;
             redraw();
+        }
+
+        
+        //TODO ------------
+        
+        @Override
+        public int edgeColor(Object edge) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public float edgeWeight(Object edge) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public int vertexColor(Object vertex) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         

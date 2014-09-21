@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import nars.nario.level.BgLevelGenerator;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
@@ -29,7 +30,7 @@ import nars.nario.sprites.SpriteContext;
 
 public class LevelScene extends Scene implements SpriteContext
 {
-    public final List<Sprite> sprites = new ArrayList<Sprite>();
+    public final List<Sprite> sprites = new CopyOnWriteArrayList<Sprite>();
     private List<Sprite> spritesToAdd = new ArrayList<Sprite>();
     private List<Sprite> spritesToRemove = new ArrayList<Sprite>();
 

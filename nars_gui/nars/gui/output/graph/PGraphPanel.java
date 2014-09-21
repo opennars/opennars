@@ -10,6 +10,7 @@ import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.gui.NARSwing;
 import nars.gui.output.PPanel;
 import nars.language.Term;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -18,13 +19,9 @@ import static processing.core.PApplet.radians;
 import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.UP;
 
-/**
- *
- * @author me
- */
 
 
-public class PGraphPanel extends PPanel implements ActionListener  {
+abstract public class PGraphPanel<V,E> extends PPanel implements ActionListener  {
 //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
     
 ///////////////HAMLIB
@@ -61,11 +58,16 @@ public class PGraphPanel extends PPanel implements ActionListener  {
     private boolean updateNext;
     float nodeSize = 90;
     
-    DirectedMultigraph graph;
+    DirectedMultigraph<V,E> graph;
     JGraphXAdapter graphAdapter;
     public boolean updating;
     boolean drawn = false;
 
+    public PGraphPanel() {
+        super();
+    }
+
+    
     public void mouseScrolled() {
         hamlib.mouseScrolled();
     }
@@ -146,12 +148,24 @@ public class PGraphPanel extends PPanel implements ActionListener  {
         drawArrowAngle(x1, y1, len, a);
     }
     
-    public static int getColor(Object o) {
-        return getColor(o.getClass().getSimpleName());
+    abstract public int edgeColor(E edge);
+    abstract public float edgeWeight(E edge);
+    abstract public int vertexColor(V vertex);
+        //return getColor(o.getClass().getSimpleName());
+    
+
+    public static int getColor(final String s, final float alpha) {
+        double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
+        return NARSwing.getColor(Color.getHSBColor((float)hue,0.7f,0.8f), alpha).getRGB();        
     }
     
 
-    public static int getColor(String s) {            
+    public static int getColor(final Class c) {            
+        double hue = (((double)c.hashCode()) / Integer.MAX_VALUE);
+        return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();                
+    }
+    
+    public static int getColor(final String s) {            
         double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
         return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();        
     }
@@ -167,44 +181,47 @@ public class PGraphPanel extends PPanel implements ActionListener  {
         Set edges = graph.edgeSet();
         if (edges!=null) {
             //  line(elem1.x, elem1.y, elem2.x, elem2.y);
-            for (Object edge : graph.edgeSet()) {
+            for (E edge : graph.edgeSet()) {
 
-                if (edge == null) continue;
+                try {
+                    if (edge == null) continue;
 
-                int rgb = getColor(edge.getClass().getSimpleName());
-                stroke(rgb, 230f);            
-                strokeWeight(linkWeight);                
+                    int rgb = edgeColor(edge);
+                    float linkWeight = edgeWeight(edge);
+                    stroke(rgb, 230f);            
+                    strokeWeight(linkWeight);                
 
-                Object sourceVertex = graph.getEdgeSource(edge);
-                if (sourceVertex == null) continue;
-                
-                mxGeometry sourcePoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(sourceVertex));
+                    V sourceVertex = graph.getEdgeSource(edge);
+                    if (sourceVertex == null) continue;
 
-                Object targetVertex = graph.getEdgeTarget(edge);                          
-                mxGeometry targetPoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(targetVertex));
+                    mxGeometry sourcePoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(sourceVertex));
 
-                if ((sourcePoint == null) || (targetPoint == null))
-                    continue;
+                    V targetVertex = graph.getEdgeTarget(edge);                          
+                    mxGeometry targetPoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(targetVertex));
 
-                float x1 = (float)sourcePoint.getCenterY();
-                float y1 = (float)sourcePoint.getCenterX();
-                float x2 = (float)targetPoint.getCenterY();
-                float y2 = (float)targetPoint.getCenterX();
-                float cx = (x1 + x2) / 2.0f;
-                float cy = (y1 + y2) / 2.0f;
-                drawArrow(x1, y1, x2, y2);
-                text(t(edge.toString()), cx, cy);            
+                    if ((sourcePoint == null) || (targetPoint == null))
+                        continue;
+
+                    float x1 = (float)sourcePoint.getCenterY();
+                    float y1 = (float)sourcePoint.getCenterX();
+                    float x2 = (float)targetPoint.getCenterY();
+                    float y2 = (float)targetPoint.getCenterX();
+                    float cx = (x1 + x2) / 2.0f;
+                    float cy = (y1 + y2) / 2.0f;
+                    drawArrow(x1, y1, x2, y2);
+                    text(t(edge.toString()), cx, cy);            
+                }                catch (Exception e) {}
             }
         }
         
         strokeWeight(0);        
-        for (Object vertex : graph.vertexSet()) {            
+        for (V vertex : graph.vertexSet()) {            
             Object cell = graphAdapter.getVertexToCellMap().get(vertex);
             mxGeometry b = graphAdapter.getCellGeometry(cell);            
             if (b == null) continue;
 
-            int rgb = getColor(vertex.getClass().getSimpleName());
-            float vertexAlpha = getVertexAlpha(vertex);
+            int rgb = vertexColor(vertex);
+            float vertexAlpha = vertexAlpha(vertex);
             fill(rgb, vertexAlpha*255/2);
 
             float x = (float)b.getCenterY();
@@ -258,7 +275,7 @@ public class PGraphPanel extends PPanel implements ActionListener  {
         return nodeSize;
     }
     
-    public static float getVertexAlpha(Object o) {
+    public static float vertexAlpha(Object o) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
             if (s.truth!=null)
@@ -267,7 +284,6 @@ public class PGraphPanel extends PPanel implements ActionListener  {
         return 1.0f;
     }    
     
-    private static final float linkWeight = 6.0f;
 
 
     @Override

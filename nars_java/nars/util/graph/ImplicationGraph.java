@@ -14,20 +14,19 @@ import nars.language.Statement;
 public class ImplicationGraph extends SentenceGraph {
 
     float minConfidence = 0.01f;
-    float minFreq = 0.01f;
 
     public ImplicationGraph(NAR nar) {
         super(nar);
     }
     
     @Override
-    public boolean allow(final Sentence s) {
-        float freq = s.truth.getFrequency();
+    public boolean allow(final Sentence s) {        
         float conf = s.truth.getConfidence();
-        if ((freq > minFreq) && (conf > minConfidence))
+        if (conf > minConfidence)
             return true;
         return false;
     }
+
 
     @Override
     public boolean allow(final Statement st) {

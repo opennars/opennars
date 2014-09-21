@@ -1,6 +1,5 @@
 package nars.gui.output;
 
-import nars.gui.output.graph.PGraphPanel;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
@@ -27,6 +26,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NSlider;
 import nars.gui.Window;
+import nars.gui.output.graph.PGraphPanel;
 import nars.language.Term;
 import nars.util.NARGraph;
 import nars.util.sort.IndexedTreeSet;
@@ -239,22 +239,22 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 Task ta = (Task)o;
                 radius = 2.0f + ta.getPriority()*2.0f;
                 alpha = ta.getDurability();
-                color = PGraphPanel.getColor(o);
+                color = PGraphPanel.getColor(o.getClass());
              }            
              else if (o instanceof Concept) {
                 Concept co = (Concept)o;
                 Term t = co.term;
                 
                 radius = (float)(2 + 6 * co.budget.summary() * nodeSize);
-                alpha = PGraphPanel.getVertexAlpha(o);                             
-                color = PGraphPanel.getColor(t);
+                alpha = PGraphPanel.vertexAlpha(o);                             
+                color = PGraphPanel.getColor(t.getClass());
                 stroke = 5;
              }
              else if (o instanceof Term) {
                 Term t = (Term)o;                
                 radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
-                alpha = PGraphPanel.getVertexAlpha(o);                             
-                color = PGraphPanel.getColor(o);
+                alpha = PGraphPanel.vertexAlpha(o);                             
+                color = PGraphPanel.getColor(o.getClass());
              }
         }
 
@@ -285,7 +285,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     public int getEdgeColor(Object e) {
         Integer i = edgeColors.get(e.getClass());
         if (i == null) {
-            i = PGraphPanel.getColor(e.getClass().getSimpleName());
+            i = PGraphPanel.getColor(e.getClass());
             edgeColors.put(e.getClass(), i);
         }
         return i;
