@@ -5,6 +5,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.entity.Concept;
+import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.language.CompoundTerm;
 import nars.language.Statement;
@@ -72,12 +73,12 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             }
         }
         else if (event == Events.ConceptBeliefAdd.class) {
-            //Concept c = (Concept)a[0];
+            Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            add(s);
+            add(s, c);
         }
         else if (event == Events.ConceptBeliefRemove.class) {
-            //Concept c = (Concept)a[0];
+            Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
             remove(s);
         }
@@ -107,9 +108,9 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     private void getInitialConcepts() {
         needInitialConcepts = false;
 
-        for (Concept c : memory.getConcepts()) {
-            for (Sentence s : c.beliefs) {                
-                add(s);
+        for (final Concept c : memory.getConcepts()) {
+            for (final Sentence s : c.beliefs) {                
+                add(s, c);
             }
         }        
     }
@@ -136,12 +137,12 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             event.emit(GraphChange.class, null, s);
     }
     
-    public synchronized void add(final Sentence s) {       
+    public boolean add(final Sentence s, final Item c) {
         if (containsEdge(s))
-            return;
+            return false;
         
         if (!allow(s))
-            return;
+            return false;
             
         
         if (s.content instanceof CompoundTerm) {
@@ -153,17 +154,20 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
                 Statement st = (Statement)cs;
                 if (allow(st)) {
                                 
-                    if (add(s, st))
+                    if (add(s, st, c)) {
                         event.emit(GraphChange.class, st, null);
+                        return true;
+                    }
                 }
             }
                 
         }        
         
+        return false;
     }    
     
     /** default behavior, may override in subclass */
-    public boolean add(Sentence s, CompoundTerm ct) {
+    public boolean add(Sentence s, CompoundTerm ct, Item c) {
         if (ct instanceof Statement) {
             Statement st = (Statement)ct;
             Term subject = st.getSubject();

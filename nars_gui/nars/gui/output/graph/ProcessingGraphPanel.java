@@ -65,7 +65,11 @@ abstract public class ProcessingGraphPanel<V,E> extends NPanel {
         };
         
 
-        app.init();
+        try {
+            app.init();
+        }
+        catch (Throwable t) { /* ignore this */ } 
+              
                 
         
         //this.setSize(1000, 860);//initial size of the window

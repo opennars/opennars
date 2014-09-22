@@ -2,6 +2,7 @@ package nars.util.graph;
 
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
@@ -19,7 +20,7 @@ import nars.operator.Operator;
  */
 
 
-public class ImplicationGraph extends SentenceGraph {
+public class ImplicationGraph extends SentenceItemGraph {
 
     float minConfidence = 0.1f;
     float minFreq = 0.6f;
@@ -32,16 +33,20 @@ public class ImplicationGraph extends SentenceGraph {
     }
     
     public static class UniqueInterval extends Interval {
+        private static int _id = 0;
+        
         public final Implication parent;
+        private final int id;
     
         public UniqueInterval(Implication parent, Interval i) {
             super(i.magnitude, true);    
             this.parent = parent;
+            this.id = _id++;
         }
 
         @Override
         public int hashCode() {
-            return parent.hashCode() * 37  + super.hashCode();
+            return id + parent.hashCode() * 37  + super.hashCode();
         }
 
         @Override
@@ -50,7 +55,7 @@ public class ImplicationGraph extends SentenceGraph {
             
             if (that instanceof UniqueInterval) {
                 UniqueInterval ui = (UniqueInterval)that;
-                return (ui.parent.equals(parent) && ui.magnitude == magnitude);
+                return (ui.id == id && ui.parent.equals(parent) && ui.magnitude == magnitude);
             }
             return false;
         }
@@ -59,7 +64,7 @@ public class ImplicationGraph extends SentenceGraph {
     }
     
     @Override
-    public boolean add(Sentence s, CompoundTerm ct) {
+    public boolean add(Sentence s, CompoundTerm ct, Item c) {
 //        if (ct.operator() == NativeOperator.SEQUENCE) {
 //            Conjunction c = (Conjunction)ct;
 //            System.out.println(c);
@@ -94,17 +99,18 @@ public class ImplicationGraph extends SentenceGraph {
                         addVertex(a);
                         if (prev!=null) {
                             Implication imp = new Implication(prev, a, TemporalRules.ORDER_FORWARD);
-                            if (imp!=null) {
-                                Sentence impSent = new Sentence(imp, '.', s.truth, s.stamp);
-                                addEdge(prev, a, impSent);
-                            }
+                            Sentence impSent = new Sentence(imp, '.', s.truth, s.stamp);
+                            addEdge(prev, a, impSent);
+                            concepts.put(impSent, c);
                         }
                         prev = a;
                     }
                     addVertex(predicate);
                     
-                    Implication impFinal = new Implication(prev, predicate, TemporalRules.ORDER_FORWARD);
-                    addEdge(prev, predicate, new Sentence(impFinal, '.', s.truth, s.stamp));
+                    Implication impFinal = new Implication(prev, predicate, TemporalRules.ORDER_FORWARD);                    
+                    Sentence impFinalSentence = new Sentence(impFinal, '.', s.truth, s.stamp);
+                    addEdge(prev, predicate, impFinalSentence);
+                    concepts.put(impFinalSentence, c);
                     return true;
                 }
             }
@@ -157,9 +163,10 @@ public class ImplicationGraph extends SentenceGraph {
     @Override
     public double getEdgeWeight(Sentence e) {
         float freq = e.truth.getFrequency();
-        float conf = e.truth.getConfidence();
+        float conf = e.truth.getConfidence();        
+        float conceptPriority = concepts.get(e).getPriority();
         //weight = cost = distance
-        return 1.0 / (freq * conf);        
+        return 1.0 / (freq * conf * conceptPriority);
     }
     
     
