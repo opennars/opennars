@@ -152,6 +152,9 @@ public class LevelScene extends Scene implements SpriteContext
             startTime++;
         }
 
+        if (mario == null) {
+            return;
+        }
         float targetXCam = mario.x - 160;
 
         xCam = targetXCam;

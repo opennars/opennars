@@ -522,7 +522,12 @@ abstract public class PGraphPanel<V,E> extends PPanel implements ActionListener 
                 Camera();
                 hrend_DrawBegin();
                 //hsim.Simulate();
-                drawit();
+                try {
+                    drawit();
+                }
+                catch (Exception e) {
+                    System.err.println(e);
+                }
                 hrend_DrawEnd();
                 //popMatrix();
                 
