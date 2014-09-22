@@ -8,18 +8,21 @@ import nars.core.Events.ConceptGoalAdd;
 import nars.core.Events.ConceptGoalRemove;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.io.buffer.PriorityBuffer;
+import nars.language.Conjunction;
 import nars.language.Implication;
+import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.util.graph.ImplicationGraph;
 import org.jgrapht.graph.EdgeReversedGraph;
 import org.jgrapht.traverse.ClosestFirstIterator;
-
-
 
 public class GraphExecutive implements Observer {
 
@@ -27,115 +30,171 @@ public class GraphExecutive implements Observer {
     PriorityBuffer<Task> tasks;
     int numTasks = 32;
     private final Memory memory;
-    
-    public GraphExecutive(Memory memory) {        
+
+    public GraphExecutive(Memory memory) {
         super();
-        
+
         this.memory = memory;
         tasks = new PriorityBuffer(new Comparator<Task>() {
-            @Override public final int compare(final Task a, final Task b) {
+            @Override
+            public final int compare(final Task a, final Task b) {
                 float bp = b.getPriority();
                 float ap = a.getPriority();
-                if (bp!=ap)
+                if (bp != ap) {
                     return Float.compare(bp, ap);
-                else {
+                } else {
                     float ad = a.getDurability();
                     float bd = b.getDurability();
                     return Float.compare(bd, ad);
                 }
-                     
-            }            
+
+            }
         }, numTasks);
-                
+
         implication = new ImplicationGraph(memory);
         memory.event.on(CycleEnd.class, this);
         memory.event.on(ConceptGoalAdd.class, this);
         memory.event.on(ConceptGoalRemove.class, this);
     }
 
-    /** Add plausibility estimation */
-    public void decisionMaking(final Task task, final Concept concept) {    
+    /**
+     * Add plausibility estimation
+     */
+    public void decisionMaking(final Task task, final Concept concept) {
         tasks.add(task.clone());
         System.out.println("decisionMaking: " + task + " from " + concept);
     }
-    
+
     @Override
     public void event(Class event, Object[] a) {
-        
+
         if (event == ConceptGoalAdd.class) {
-            Task t = (Task)a[2];
-            /*if (!t.isInput())*/ {
-                System.out.println("Goal add: " + a[0] + " " + a[1] +  " " + t.budget.getPriority());
-                tasks.add(t.clone());
+            Task t = (Task) a[2];
+            /*if (!t.isInput())*/ 
+            {
+            System.out.println("Goal add: " + a[0] + " " + a[1] + " " + t.budget.getPriority());
+            tasks.add(t.clone());
+            
+            
             }
-        }
-        else if (event == ConceptGoalRemove.class) {
-            Task t = (Task)a[2];
-            System.out.println("Goal rem: " + a[0] + " " + a[1] +  " " + t.budget);
+            
+        } else if (event == ConceptGoalRemove.class) {
+            Task t = (Task) a[2];
+            System.out.println("Goal rem: " + a[0] + " " + a[1] + " " + t.budget);
             tasks.remove(t);
-        }
-        else if (event == CycleEnd.class) {
+        } else if (event == CycleEnd.class) {
 //            if (tasks.size() > 0) {
 //                plan();
 //            }
         }
     }
-    
-    protected void plan(Task task, Task newEvent) {
-        System.out.println("plan: task=" + task + " newEvent=" + newEvent);        
-                
-        //implication.add(task.sentence);
+
+    protected void plan(Task task, Term target) {
+
+        //Traverse graph from target
+        //System.out.println("TRAVERSING to : " + target);
+        if (!implication.containsVertex(target))
+            return;
+
+        double maxRadius = 32;
+
+        ClosestFirstIterator<Term, Sentence> cfi = new ClosestFirstIterator<Term, Sentence>(new EdgeReversedGraph(implication), target, maxRadius);
+
+        //TODO use a sorted list of furthest candidates
+        double furthestDistance = 0;
+        Term furthestTerm = null;
+        while (cfi.hasNext()) {
+            Term v = cfi.next();
+
+            double length = cfi.getShortestPathLength(v);
+            if (length > furthestDistance) {
+                furthestDistance = length;
+                furthestTerm = v;
+            }
+
+        }
+
+        //System.out.println("  from: " + furthestTerm + " via " + cfi.getSpanningTreeEdge(furthestTerm) + ", length=" + furthestDistance);
+
+        //calculate path back to target: TODO make as method of a ClosestFirstIterator subclass
+        List<Term> path = new ArrayList();
+        Term current = furthestTerm;
+        Sentence currentEdge = null;
+        int operations = 0;
+        while (current != target) {
+
+            boolean isOperation = (current instanceof Operation);
+            if (isOperation)
+                operations++;
+
+            //only include Operations and Intervals
+            if (isOperation || (current instanceof Interval)) {
+                path.add(current);
+                System.out.println(" ++ " + current);
+            }
+
+            currentEdge = cfi.getSpanningTreeEdge(current);
+            if (currentEdge == null) {
+                System.err.println("wtf " + current + " has no spanning edge to " + target);
+                return;
+            }
+            current = implication.getEdgeTarget(currentEdge);
+        }
+        //path.add(current);
+
+        if (operations == 0)
+            return;
+
+        //if (currentEdge != null) {
+        //    memory.setTheNewStamp(Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime()));
+        //} else {
+            memory.setTheNewStamp(new Stamp(memory));
+        //}
+
+        memory.setCurrentTask(task);
+
+        System.out.println("Path=" + path + " -> " + target);
+
+        Conjunction subj = (Conjunction) Conjunction.make(path.toArray(new Term[path.size()]), TemporalRules.ORDER_FORWARD, memory);
+        TruthValue val = task.sentence.truth;
+        //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+
+        Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD, memory);
+
+        BudgetValue bud = BudgetFunctions.forward(val, memory);
+
+        memory.doublePremiseTask(imp, val, bud);
+
         
+    }
+    
+    protected void plan(Task task, Task __not_used_newEvent) {
+
         Term t = task.getContent();
-        if ((t!=null) && (t instanceof Implication)) {
-            Implication i = (Implication)t;
+        if (t == null) return;
+        
+        if ((t instanceof Implication) && (t.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
+            
+            System.out.println("plan: task=" + task + " newEvent=" + __not_used_newEvent);
+
+            Implication i = (Implication) t;
             Term target;
+            
+            //implication.add(task.sentence);
+
             if (i.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                 target = i.getPredicate();
-            }
-            else {
+            } else {
                 //TODO reverse it
                 target = i.getSubject();
             }
-            
-            if (target!=null) {
-                double maxRadius = 16;
-                
-                //Traverse graph from target
-                System.out.println("TRAVERSING to : " + target);
-                ClosestFirstIterator<Term,Sentence> cfi = new ClosestFirstIterator<Term,Sentence>(new EdgeReversedGraph(implication), target, maxRadius);
-                
-                //TODO use a sorted list of furthest candidates
-                double furthestDistance = 0;
-                Term furthestTerm = null;
-                while (cfi.hasNext()) {
-                    Term v = cfi.next();
-                    
-                    double length = cfi.getShortestPathLength(v);
-                    if (length > furthestDistance) {
-                        furthestDistance = length;
-                        furthestTerm = v;
-                    }
-                    
-                }
-                
-                System.out.println("  from: " + furthestTerm + " via " + cfi.getSpanningTreeEdge(furthestTerm) + ", length=" + furthestDistance);
-                
-                //calculate path back to target: TODO make as method of a ClosestFirstIterator subclass
-                List<Term> path = new ArrayList();
-                Term current = furthestTerm;
-                while (current!=target) {
-                    path.add(current);
-                    current = implication.getEdgeTarget(cfi.getSpanningTreeEdge(current));
-                }
-                path.add(current);
-                
-                System.out.println("Path=" + path);
-                
-            
+
+            if (target != null) {
+
+                plan(task, target);
             }
         }
-        
+
 //        System.out.println("Goals");        
 //        for (Task t : tasks) {
 //            System.out.println(t + " " + t.getParentBelief());
@@ -143,8 +202,7 @@ public class GraphExecutive implements Observer {
 //        }
 //        System.out.println();        
     }
-            
-    
+
 //    public String getImplicationPath(Sentence s) {
 //        Term t = s.content;
 //        if (t instanceof Implication) {
@@ -161,7 +219,6 @@ public class GraphExecutive implements Observer {
 //        
 //    }
 //    
-
     public void reset() {
     }
 
@@ -170,38 +227,36 @@ public class GraphExecutive implements Observer {
 
     public boolean isActionable(final Task newEvent, Memory mem) {
         /*if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
-            return false;
-        }*/
-        
-        Term newcontent=newEvent.sentence.content;
-        if(newcontent instanceof Operation) {
-            Term pred=((Operation)newcontent).getPredicate();
-            if(pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
+         return false;
+         }*/
+
+        Term newcontent = newEvent.sentence.content;
+        if (newcontent instanceof Operation) {
+            Term pred = ((Operation) newcontent).getPredicate();
+            if (pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
                 return false;
             }
         }
-                
-        plan(newEvent, null);
-        
+
+        plan(newEvent, (Task)null);
+
         return true;
     }
 
     public boolean isActionable(final Task task, final Task newEvent) {
-                
-        plan(task, newEvent);        
+
+        plan(task, newEvent);
         return true;
-        
+
         /*
-        if (task.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL) {
-            return false;
-        }
+         if (task.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL) {
+         return false;
+         }
         
-        if (!task.sentence.isJudgment()) {
-            return false;
-        }
-        */
-            
-        
+         if (!task.sentence.isJudgment()) {
+         return false;
+         }
+         */
 //        if ((newEvent == null)
 //                || (rankBelief(newEvent.sentence) < rankBelief(task.sentence))) {
 //            
@@ -216,13 +271,12 @@ public class GraphExecutive implements Observer {
 //            );
 //                    */
 //        }        
-        
         //return false;        
     }
 
     public boolean planShortTerm(Task newEvent, Memory aThis) {
-        
+
         return true;
     }
-    
+
 }

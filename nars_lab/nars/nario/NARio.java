@@ -22,7 +22,6 @@ import nars.nario.sprites.Sparkle;
 import nars.nario.sprites.Sprite;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
-import nars.util.graph.ImplicationGraph;
 
 /**
  *
@@ -38,7 +37,6 @@ public class NARio extends Run {
     int gotCoin = 0;
     private Mario mario;    
     int cyclesPerMario = 4;
-    private ImplicationGraph implications;
     final boolean random = false;
     
     public NARio(NAR n) {
@@ -353,7 +351,7 @@ public class NARio extends Run {
 
         //new TextOutput(nar, System.out).setShowInput(true);
         nar.param().duration.set(50);
-        nar.param().noiseLevel.set(0);
+        nar.param().noiseLevel.set(10);
         nar.param().shortTermMemorySize.set(35);
 
 
