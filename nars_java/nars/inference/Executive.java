@@ -127,7 +127,7 @@ public class Executive {
         }
         
         //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
-       /* if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
+        if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
             
             //1. get first operator and execute it
             CompoundTerm cont = (CompoundTerm) content;
@@ -158,7 +158,7 @@ public class Executive {
             //END FASTER EXECUTION OF ACTION SEQUENCE
             
             return;           
-        }*/
+        }
         //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
         if(next.isEmpty())
             executeOperation(content, concept, task, false);
@@ -226,7 +226,7 @@ public class Executive {
             TemporalRules.temporalInduction(newEvent.sentence, currentBelief, memory);
 
             //SHORT TERM MEMORY: REMEMBER OWN ACTION SEQUENCES
-            /*if(!(newEvent.sentence.content instanceof Operation)) {
+            if(!(newEvent.sentence.content instanceof Operation)) {
 
                 final AtomicDuration duration = memory.param.duration;
 
@@ -320,7 +320,7 @@ public class Executive {
                     curT = nextT;
                                         
                 } while (curT!=null);
-            }*/
+            }
             //END SHORT TERM MEMORY
         }
 
@@ -337,8 +337,6 @@ public class Executive {
         return false;
     }
     
-    public boolean isActionable(final Task newEvent, Memory mem) {
-        if(!((newEvent.isInput()))) {
     public static boolean isActionable(final Task newEvent, Memory mem) {
         if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
             return false;
