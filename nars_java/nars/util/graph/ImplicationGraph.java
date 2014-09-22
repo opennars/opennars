@@ -9,7 +9,9 @@ import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Implication;
+import nars.language.Interval;
 import nars.language.Term;
+import nars.operator.Operator;
 
 /**
  *
@@ -26,6 +28,33 @@ public class ImplicationGraph extends SentenceGraph {
     }
     public ImplicationGraph(Memory memory) {
         super(memory);
+    }
+    
+    public static class UniqueInterval extends Interval {
+        public final Implication parent;
+    
+        public UniqueInterval(Implication parent, Interval i) {
+            super(i.magnitude, true);    
+            this.parent = parent;
+        }
+
+        @Override
+        public int hashCode() {
+            return parent.hashCode() * 37  + super.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == this) return true;
+            
+            if (that instanceof UniqueInterval) {
+                UniqueInterval ui = (UniqueInterval)that;
+                return (ui.parent.equals(parent) && ui.magnitude == magnitude);
+            }
+            return false;
+        }
+        
+        
     }
     
     @Override
@@ -53,6 +82,14 @@ public class ImplicationGraph extends SentenceGraph {
                 if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
                     Term prev = null;
                     for (Term a : seq.term) {
+                        
+                        if (!((a instanceof Operator) || (a instanceof Interval))) {
+                            //..
+                        }
+                        if (a instanceof Interval) {
+                            a = new UniqueInterval(st, (Interval)a);
+                        }
+                        
                         addVertex(a);
                         if (prev!=null) {
                             Implication imp = Implication.make(prev,a, TemporalRules.ORDER_FORWARD, memory);
@@ -65,6 +102,7 @@ public class ImplicationGraph extends SentenceGraph {
                     
                     Implication impFinal = Implication.make(prev, predicate, TemporalRules.ORDER_FORWARD, memory);
                     addEdge(prev, predicate, new Sentence(impFinal, '.', s.truth, null));
+                    return true;
                 }
             }
             else if (predicate instanceof Conjunction) {

@@ -1,7 +1,10 @@
 package nars.test.multistep;
 
+import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.gui.Window;
+import nars.gui.output.JGraphXGraphPanel;
 import nars.io.TextOutput;
 import org.junit.Test;
 
@@ -11,9 +14,10 @@ public class GraphPlanTest {
 
     static String input = "";
     static {
-        input += "<(&/,<a --> b>,+1,(^pick,test),+3,<c --> d>) =/> <goal --> reached>>.\n";
-        input += "<(&/,(^pick,test2),+2) =/> <a --> b>>.\n";
-        input += "<(&/,(^pick,test3),+1) =/> <c --> d>>.\n";        
+        input += "<(&/,<a --> b>,+1,(^pick,Y),+3,<c --> d>) =/> <goal --> reached>>.\n";
+        input += "<(&/,(^pick,X),+2) =/> <a --> b>>.\n";
+        input += "<(&/,(^pick,Z),+1) =/> <c --> d>>.\n";    
+        input += "<goal --> reached>!\n";
     }
     
     @Test
@@ -23,12 +27,20 @@ public class GraphPlanTest {
         new TextOutput(n, System.out);
         n.addInput(input);
         
-        for (int i = 0; i < 130; i++) {
+        
+        for (int i = 0; i < 30; i++) {
         
             n.step(1);
         }
+        
+        new Window("Implications", new JGraphXGraphPanel(n.memory.executive.graph.implication)).show(500,500);
     }
     
+    
+    public static void main(String[] args) throws IOException {
+        new GraphPlanTest().testGraphPlan();
+        System.in.read();
+    }
     /*
     @Test 
     public void testNAL8() {
@@ -41,8 +53,8 @@ public class GraphPlanTest {
      
         //expected plan:
      
-        //(^pick,test2),+2,+1,(^pick,test),+3,(^pick,test3),+1
-        //OUT: <(&/,(^pick,test2),+2,+1,(^pick,test),+3,<c --> d>) =/> <goal --> reached>>. %1.00;0.81% {94 : 1;0<(&/,(^pick,test2),+2) =/> <a --> b>>;<(&/,<a --> b>,+1,(^pick,test),+3,<c --> d>) =/> <goal --> reached>>} 
+        //(^pick,X),+2,+1,(^pick,Y),+3,(^pick,Z),+1
+    
     }*/
     
     
