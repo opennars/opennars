@@ -307,6 +307,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 
     public void levelFailed()
     {
+        
         scene = mapScene;
         mapScene.startMusic();
         Mario.lives--;
@@ -314,6 +315,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         {
             lose();
         }
+        
     }
 
     public void keyTyped(KeyEvent arg0)
@@ -354,9 +356,12 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     
     public void lose()
     {
+        run();
+        /*
         scene = new LoseScene(this);
         scene.setSound(sound);
         scene.init();
+                */
     }
 
     public void startGame()

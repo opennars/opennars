@@ -93,7 +93,7 @@ public class ImplicationGraph extends SentenceGraph {
                         addVertex(a);
                         if (prev!=null) {
                             Implication imp = Implication.make(prev,a, TemporalRules.ORDER_FORWARD, memory);
-                            Sentence impSent = new Sentence(imp, '.', s.truth, null);
+                            Sentence impSent = new Sentence(imp, '.', s.truth, s.stamp);
                             addEdge(prev, a, impSent);
                         }
                         prev = a;
@@ -101,7 +101,7 @@ public class ImplicationGraph extends SentenceGraph {
                     addVertex(predicate);
                     
                     Implication impFinal = Implication.make(prev, predicate, TemporalRules.ORDER_FORWARD, memory);
-                    addEdge(prev, predicate, new Sentence(impFinal, '.', s.truth, null));
+                    addEdge(prev, predicate, new Sentence(impFinal, '.', s.truth, s.stamp));
                     return true;
                 }
             }
