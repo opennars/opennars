@@ -123,7 +123,7 @@ public class Executive {
     /** Add plausibility estimation */
     public void decisionMaking(final Task task, final Concept concept) {
         
-        System.out.println("decision making: " + task + " c=" + concept);
+        //System.out.println("decision making: " + task + " c=" + concept);
         
         Term content = concept.term;
         TruthValue desireValue = concept.getDesire();
@@ -132,6 +132,7 @@ public class Executive {
             return;
         }
         
+        graph.decisionMaking(task, concept);
         
         //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
        /* if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
@@ -216,7 +217,7 @@ public class Executive {
         
         
         //GRAPH PLANNING ENABLE:
-        //graph.plan(newEvent, (Task)null);
+        graph.plan(newEvent, (Task)null);
         
         
         

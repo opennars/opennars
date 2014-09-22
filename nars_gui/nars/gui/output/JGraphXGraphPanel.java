@@ -2,7 +2,9 @@ package nars.gui.output;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
 import java.awt.BorderLayout;
+import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nars.core.NAR;
@@ -30,6 +32,21 @@ public class JGraphXGraphPanel extends JPanel {
 
           
         };
+        jgxAdapter.setMultigraph(true);
+        jgxAdapter.setEdgeLabelsMovable(false);
+        jgxAdapter.setVertexLabelsMovable(false);
+        
+        //System.out.println(jgxAdapter.getStylesheet().getDefaultEdgeStyle());
+        
+        //{perimeter=com.mxgraph.view.mxPerimeter$1@7b3300e5, shape=rectangle, fontColor=#774400, strokeColor=#6482B9, fillColor=#C3D9FF, align=center, verticalAlign=middle}
+        Map<String, Object> vstyle = jgxAdapter.getStylesheet().getDefaultVertexStyle();
+        vstyle.put("fillColor", "#CCCCCC");
+        //{endArrow=classic, shape=connector, fontColor=#446299, strokeColor=#6482B9, align=center, verticalAlign=middle}
+        Map<String, Object> estyle = jgxAdapter.getStylesheet().getDefaultEdgeStyle();
+        estyle.put("strokeColor", "#333333");
+        estyle.put("fontColor", "#333333");
+        estyle.put(mxConstants.STYLE_STROKEWIDTH, 2);
+        
         
 
         mxGraphComponent mxc = new mxGraphComponent(jgxAdapter) {
@@ -43,6 +60,7 @@ public class JGraphXGraphPanel extends JPanel {
         mxc.setTextAntiAlias(true);
 
         
+                
         add(new JScrollPane(mxc), BorderLayout.CENTER);
 
 
@@ -51,7 +69,7 @@ public class JGraphXGraphPanel extends JPanel {
                 //new mxCompactTreeLayout(jgxAdapter);
                 new mxFastOrganicLayout(jgxAdapter);
                 //new mxCircleLayout(jgxAdapter);        
-        layout.setForceConstant(150);
+        layout.setForceConstant(100);
         layout.execute(jgxAdapter.getDefaultParent());
         
 

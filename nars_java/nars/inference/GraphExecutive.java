@@ -3,6 +3,7 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.ConceptGoalAdd;
 import nars.core.Events.ConceptGoalRemove;
@@ -26,7 +27,7 @@ import org.jgrapht.traverse.ClosestFirstIterator;
 
 public class GraphExecutive implements Observer {
 
-    ImplicationGraph implication;
+    public final ImplicationGraph implication;
     PriorityBuffer<Task> tasks;
     int numTasks = 32;
     private final Memory memory;
@@ -62,7 +63,9 @@ public class GraphExecutive implements Observer {
      */
     public void decisionMaking(final Task task, final Concept concept) {
         tasks.add(task.clone());
-        System.out.println("decisionMaking: " + task + " from " + concept);
+        System.out.println("\n" + memory.getTime() + " decisionMaking: " + task + " from " + concept);
+        plan(task, task.getContent());
+        System.out.println("\n");
     }
 
     @Override
@@ -89,13 +92,7 @@ public class GraphExecutive implements Observer {
         }
     }
 
-    protected void plan(Task task, Term target) {
-
-        //Traverse graph from target
-        //System.out.println("TRAVERSING to : " + target);
-        if (!implication.containsVertex(target))
-            return;
-
+    protected List<Term> plan(Term target) {
         double maxRadius = 32;
 
         ClosestFirstIterator<Term, Sentence> cfi = new ClosestFirstIterator<Term, Sentence>(new EdgeReversedGraph(implication), target, maxRadius);
@@ -107,11 +104,17 @@ public class GraphExecutive implements Observer {
             Term v = cfi.next();
 
             double length = cfi.getShortestPathLength(v);
+            if (length == 0) continue;
+            
+            //System.out.println("  --" + v + " dist=" + length + " spanEdge=" + cfi.getSpanningTreeEdge(v));
+            
             if (length > furthestDistance) {
                 furthestDistance = length;
                 furthestTerm = v;
+                
             }
-
+            
+            
         }
 
         //System.out.println("  from: " + furthestTerm + " via " + cfi.getSpanningTreeEdge(furthestTerm) + ", length=" + furthestDistance);
@@ -130,21 +133,50 @@ public class GraphExecutive implements Observer {
             //only include Operations and Intervals
             if (isOperation || (current instanceof Interval)) {
                 path.add(current);
-                System.out.println(" ++ " + current);
+                //System.out.println(" ++ " + current);
+            }
+            else if (!current.equals(target)) {
+                //transclude best subpath iff vertex has other preconditions
+                Set<Sentence> preconditions = implication.incomingEdgesOf(current);
+                for (Sentence s : preconditions) {
+                    if (s!=currentEdge) {
+                        //System.out.println("  precondition: " + current + " = " + s);
+                        Term preconditionSource = implication.getEdgeSource(s);
+                        List<Term> preconditionPlan = plan(preconditionSource);
+                        path.addAll(preconditionPlan);
+                        path.add(preconditionSource);
+                        
+                    }
+                    
+                }
+                //path.add(current);
             }
 
             currentEdge = cfi.getSpanningTreeEdge(current);
             if (currentEdge == null) {
-                System.err.println("wtf " + current + " has no spanning edge to " + target);
-                return;
+                //Should mean we have returned to target
+                //System.err.println(current + " has no spanning edge to " + target);
+                break;
             }
             current = implication.getEdgeTarget(currentEdge);
         }
         //path.add(current);
 
         if (operations == 0)
+            return null;
+
+        return path;
+    }
+
+    protected void plan(Task task, Term target) {
+
+        if (!implication.containsVertex(target))
             return;
 
+        List<Term> path = plan(target);
+        if (path == null)
+            return;
+        
         //if (currentEdge != null) {
         //    memory.setTheNewStamp(Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime()));
         //} else {
@@ -153,7 +185,7 @@ public class GraphExecutive implements Observer {
 
         memory.setCurrentTask(task);
 
-        System.out.println("Path=" + path + " -> " + target);
+        System.out.println(" -> Graph PATH: " + path + " -> " + target);
 
         Conjunction subj = (Conjunction) Conjunction.make(path.toArray(new Term[path.size()]), TemporalRules.ORDER_FORWARD, memory);
         TruthValue val = task.sentence.truth;
@@ -162,6 +194,8 @@ public class GraphExecutive implements Observer {
         Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD, memory);
 
         BudgetValue bud = BudgetFunctions.forward(val, memory);
+        
+        System.out.println("  -> Graph OUT: " + imp);
 
         memory.doublePremiseTask(imp, val, bud);
 
