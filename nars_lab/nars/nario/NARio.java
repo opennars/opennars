@@ -61,7 +61,6 @@ public class NARio extends Run {
         nar.param().shortTermMemorySize.set(1);
 
         NARio nario = new NARio(nar);
-
         new NARSwing(nar);
         nar.start(10);
     }
