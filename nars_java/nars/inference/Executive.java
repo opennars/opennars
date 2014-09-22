@@ -216,10 +216,6 @@ public class Executive {
         }*/
         
         
-        //GRAPH PLANNING ENABLE:
-        graph.plan(newEvent, (Task)null);
-        
-        
         
 
         final int maxStmSize =  memory.param.shortTermMemorySize.get();

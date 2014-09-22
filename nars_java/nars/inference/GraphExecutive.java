@@ -1,9 +1,14 @@
 package nars.inference;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.ConceptGoalAdd;
 import nars.core.Events.ConceptGoalRemove;
@@ -15,6 +20,8 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.gui.Window;
+import nars.gui.output.JGraphXGraphPanel;
 import nars.io.buffer.PriorityBuffer;
 import nars.language.Conjunction;
 import nars.language.Implication;
@@ -63,9 +70,7 @@ public class GraphExecutive implements Observer {
      */
     public void decisionMaking(final Task task, final Concept concept) {
         tasks.add(task.clone());
-        System.out.println("\n" + memory.getTime() + " decisionMaking: " + task + " from " + concept);
         plan(task, task.getContent());
-        System.out.println("\n");
     }
 
     @Override
@@ -93,13 +98,23 @@ public class GraphExecutive implements Observer {
     }
 
     protected List<Term> plan(Term target) {
-        double maxRadius = 32;
+        return plan(target, null);
+    }
+    
+    protected List<Term> plan(Term target, List<Term> parentPath) {
+        
+        double maxRadius = 8;
 
         ClosestFirstIterator<Term, Sentence> cfi = new ClosestFirstIterator<Term, Sentence>(new EdgeReversedGraph(implication), target, maxRadius);
 
+        if (parentPath == null)
+            parentPath = Collections.EMPTY_LIST;
+        
         //TODO use a sorted list of furthest candidates
+        
         double furthestDistance = 0;
         Term furthestTerm = null;
+        
         while (cfi.hasNext()) {
             Term v = cfi.next();
 
@@ -108,22 +123,28 @@ public class GraphExecutive implements Observer {
             
             //System.out.println("  --" + v + " dist=" + length + " spanEdge=" + cfi.getSpanningTreeEdge(v));
             
-            if (length > furthestDistance) {
+            if ((length > furthestDistance) && (!v.equals(target)) && (!parentPath.contains(v))) {
                 furthestDistance = length;
                 furthestTerm = v;
                 
             }
             
-            
+                        
         }
+        
+        if (furthestTerm == null)
+            return Collections.EMPTY_LIST;
+        if (furthestTerm == target)
+            return Collections.EMPTY_LIST;
 
-        //System.out.println("  from: " + furthestTerm + " via " + cfi.getSpanningTreeEdge(furthestTerm) + ", length=" + furthestDistance);
 
-        //calculate path back to target: TODO make as method of a ClosestFirstIterator subclass
+        //Calculate path back to target
         List<Term> path = new ArrayList();
         Term current = furthestTerm;
         Sentence currentEdge = null;
         int operations = 0;
+        Set<Term> preconditionsSatisfied = new HashSet();
+        
         while (current != target) {
 
             boolean isOperation = (current instanceof Operation);
@@ -133,37 +154,64 @@ public class GraphExecutive implements Observer {
             //only include Operations and Intervals
             if (isOperation || (current instanceof Interval)) {
                 path.add(current);
-                //System.out.println(" ++ " + current);
             }
-            else if (!current.equals(target)) {
-                //transclude best subpath iff vertex has other preconditions
+            //but if it's something else, we need to transclude it because it may indicate other  necessar ypreconditions
+            else if ((!current.equals(target))) {
+                
+                //Transclude best subpath iff vertex has other preconditions
+                
+                //TODO should the precondition branches be sorted, maybe shortest first?
+                
                 Set<Sentence> preconditions = implication.incomingEdgesOf(current);
                 for (Sentence s : preconditions) {
-                    if (s!=currentEdge) {
+                    if (!s.equals(currentEdge)) {
                         //System.out.println("  precondition: " + current + " = " + s);
                         Term preconditionSource = implication.getEdgeSource(s);
-                        List<Term> preconditionPlan = plan(preconditionSource);
-                        path.addAll(preconditionPlan);
-                        path.add(preconditionSource);
                         
+                        if (parentPath!=null) {
+                            if (parentPath.contains(preconditionSource))
+                                continue;
+                        }
+                        
+                        if (!preconditionSource.equals(target) ) {
+                            try {
+                                List<Term> preconditionPlan = plan(preconditionSource, path);
+                                if ((preconditionPlan.size() == 0) || (preconditionPlan == null))
+                                    continue;
+                                path.addAll(preconditionPlan);
+                                path.add(preconditionSource);                        
+                                preconditionsSatisfied.add(preconditionSource);
+                            }
+                            catch (Throwable e) {
+                                
+                                System.err.println(e + " "  +target + " " + furthestTerm + " " + furthestDistance + " " + preconditionSource + " " + preconditionsSatisfied);
+                                new Window("Implications", new JGraphXGraphPanel(memory.executive.graph.implication)).show(500,500);
+                                try {
+                                    System.in.read();
+                                } catch (IOException ex) {
+                                    Logger.getLogger(GraphExecutive.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                                    
+                                    //System.exit(1);
+                                    //return Collections.EMPTY_LIST;
+                                
+                            }
+                        }
                     }
                     
-                }
-                //path.add(current);
+                }                
             }
 
             currentEdge = cfi.getSpanningTreeEdge(current);
             if (currentEdge == null) {
                 //Should mean we have returned to target
-                //System.err.println(current + " has no spanning edge to " + target);
                 break;
             }
             current = implication.getEdgeTarget(currentEdge);
         }
-        //path.add(current);
 
         if (operations == 0)
-            return null;
+            return Collections.EMPTY_LIST;
 
         return path;
     }
@@ -176,12 +224,20 @@ public class GraphExecutive implements Observer {
         List<Term> path = plan(target);
         if (path == null)
             return;
+        if (path.size() < 2) 
+            return;
+
+        System.out.println("\n@" + memory.getTime() + " plan: " + task);
         
-        //if (currentEdge != null) {
-        //    memory.setTheNewStamp(Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime()));
-        //} else {
-            memory.setTheNewStamp(new Stamp(memory));
-        //}
+        //final incoming edge of the path, for getting the stamp
+        Sentence currentEdge = implication.getEdge(path.get(path.size()-2), path.get(path.size()-1));
+        
+        if (currentEdge == null) {
+            System.err.println("No leading edge for path: " + path);
+            return;
+        }
+            
+        memory.setTheNewStamp(Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime()));
 
         memory.setCurrentTask(task);
 
@@ -195,7 +251,7 @@ public class GraphExecutive implements Observer {
 
         BudgetValue bud = BudgetFunctions.forward(val, memory);
         
-        System.out.println("  -> Graph OUT: " + imp);
+        //System.out.println("  -> Graph OUT: " + imp);
 
         memory.doublePremiseTask(imp, val, bud);
 
