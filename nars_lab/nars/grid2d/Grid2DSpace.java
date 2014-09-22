@@ -182,13 +182,13 @@ public class Grid2DSpace extends PApplet {
             cells.Exec();        
     }
     
-    public void update() {
+    public void update(TestChamber s) {
         realtime = System.nanoTime() / 1.0e9;
         
-        if (time % automataPeriod == 0) {
+        if (time % automataPeriod == 0 || s.executed) {
             updateAutomata();
         }
-        if (time % agentPeriod == 0) {
+        if (time % agentPeriod == 0 || s.executed) {
             try
             {
                 for (GridObject g : objects) {
@@ -210,7 +210,7 @@ public class Grid2DSpace extends PApplet {
             catch(Exception ex)
             {}
         } 
-        
+        s.executed=false;
     }
     
     @Override
