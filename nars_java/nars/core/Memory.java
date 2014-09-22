@@ -44,7 +44,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.inference.GraphExecutive;
+import nars.inference.Executive;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
@@ -117,7 +117,9 @@ import nars.storage.BagObserver;
  * Memory is serializable so it can be persisted and transported.
  */
 public class Memory implements Output, Serializable {
-    public final GraphExecutive executive;
+    
+    public final Executive executive;
+    
     private boolean enabled = true;
 
     
@@ -318,7 +320,7 @@ public class Memory implements Output, Serializable {
         this.newTasks = new ArrayDeque<>();
         this.operators = new HashMap<>();
         
-        this.executive = new GraphExecutive(this);
+        this.executive = new Executive(this);
 
         this.resource = new ResourceSense();
         this.logic = new LogicSense() {

@@ -23,7 +23,7 @@ public class GraphPlanTest {
         new TextOutput(n, System.out);
         n.addInput(input);
         
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 130; i++) {
         
             n.step(1);
         }

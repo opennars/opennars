@@ -1,22 +1,15 @@
 package nars.inference;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.Iterator;
 import nars.core.Memory;
-import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.rankBelief;
-import nars.language.CompoundTerm;
-import nars.language.Conjunction;
 import nars.language.Implication;
-import nars.language.Interval;
-import nars.language.Interval.AtomicDuration;
 import nars.language.Product;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
@@ -29,6 +22,8 @@ import nars.operator.Operator;
  */
 public class Executive {
     
+    public final GraphExecutive graph;
+    
     public final Memory memory;
     
     /** previous events, for temporal induction */
@@ -37,6 +32,8 @@ public class Executive {
     /** memory for faster execution of &/ statements (experiment) */
     public final Deque<TaskConceptContent> next = new ArrayDeque<>();
 
+    
+    
     public static class TaskConceptContent {
         
         public final Task task;
@@ -63,6 +60,7 @@ public class Executive {
     
     public Executive(Memory mem) {
         this.memory = mem;        
+        this.graph = new GraphExecutive(mem);
     }
 
     public void reset() {
@@ -85,6 +83,8 @@ public class Executive {
             return; 
         }
         
+        System.out.println("manageExecution: " + n.task);
+        
         //ok it is time for action:
         executeOperation(n.content, n.concept, n.task, true);
     }    
@@ -105,6 +105,8 @@ public class Executive {
             return;
         }
         
+        System.out.println("executeOperation: " + task);
+        
         op.setTask(task);
         
         Operator oper = (Operator) opi;
@@ -113,11 +115,15 @@ public class Executive {
             oper.call(op, args.term, concept.memory);
             task.setPriority(0);
         }
+
+        
         
     }
     
     /** Add plausibility estimation */
     public void decisionMaking(final Task task, final Concept concept) {
+        
+        System.out.println("decision making: " + task + " c=" + concept);
         
         Term content = concept.term;
         TruthValue desireValue = concept.getDesire();
@@ -125,6 +131,7 @@ public class Executive {
         if (desireValue.getExpectation() < memory.param.decisionThreshold.get()) {
             return;
         }
+        
         
         //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
        /* if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
@@ -167,6 +174,9 @@ public class Executive {
     
     public boolean isActionable(final Task task, final Task newEvent) {
         
+        if ((task.sentence!=null) && (task.sentence.content!=null) && (task.sentence.content instanceof Implication))
+            return true;
+        
         if (task.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL) {
             return false;
         }
@@ -174,6 +184,7 @@ public class Executive {
         if (!task.sentence.isJudgment()) {
             return false;
         }
+
             
         if ((newEvent == null)
                 || (rankBelief(newEvent.sentence) < rankBelief(task.sentence))) {
@@ -191,15 +202,24 @@ public class Executive {
     }
     
     public boolean planShortTerm(final Task newEvent, Memory mem) {
-                
+
         if (newEvent == null)
             return false;
         
-        boolean actionable = isActionable(newEvent,mem);
-        
+                
+        //boolean actionable = isActionable(newEvent,mem);
+        boolean actionable = true;
+        /*
         if (!actionable) {
             return false;
-        }
+        }*/
+        
+        
+        //GRAPH PLANNING ENABLE:
+        //graph.plan(newEvent, (Task)null);
+        
+        
+        
 
         final int maxStmSize =  memory.param.shortTermMemorySize.get();
         int stmSize = shortTermMemory.size();
