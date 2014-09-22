@@ -21,7 +21,8 @@ import nars.operator.Operator;
 
 public class ImplicationGraph extends SentenceGraph {
 
-    float minConfidence = 0.01f;
+    float minConfidence = 0.1f;
+    float minFreq = 0.6f;
 
     public ImplicationGraph(NAR nar) {
         this(nar.memory);
@@ -92,15 +93,17 @@ public class ImplicationGraph extends SentenceGraph {
                         
                         addVertex(a);
                         if (prev!=null) {
-                            Implication imp = Implication.make(prev,a, TemporalRules.ORDER_FORWARD, memory);
-                            Sentence impSent = new Sentence(imp, '.', s.truth, s.stamp);
-                            addEdge(prev, a, impSent);
+                            Implication imp = new Implication(prev, a, TemporalRules.ORDER_FORWARD);
+                            if (imp!=null) {
+                                Sentence impSent = new Sentence(imp, '.', s.truth, s.stamp);
+                                addEdge(prev, a, impSent);
+                            }
                         }
                         prev = a;
                     }
                     addVertex(predicate);
                     
-                    Implication impFinal = Implication.make(prev, predicate, TemporalRules.ORDER_FORWARD, memory);
+                    Implication impFinal = new Implication(prev, predicate, TemporalRules.ORDER_FORWARD);
                     addEdge(prev, predicate, new Sentence(impFinal, '.', s.truth, s.stamp));
                     return true;
                 }
@@ -108,7 +111,7 @@ public class ImplicationGraph extends SentenceGraph {
             else if (predicate instanceof Conjunction) {
                 //TODO?
             }
-            
+                        
             addVertex(subject);
             addVertex(predicate);
             addEdge(subject, predicate, s);
@@ -121,7 +124,8 @@ public class ImplicationGraph extends SentenceGraph {
     @Override
     public boolean allow(final Sentence s) {        
         float conf = s.truth.getConfidence();
-        if (conf > minConfidence)
+        float freq = s.truth.getFrequency();
+        if ((conf > minConfidence) && (freq > minFreq))
             return true;
         return false;
     }
@@ -148,6 +152,14 @@ public class ImplicationGraph extends SentenceGraph {
             x.append("  " + v.toString() + ",");
         x.append("\n\n");
         return x.toString();
+    }
+
+    @Override
+    public double getEdgeWeight(Sentence e) {
+        float freq = e.truth.getFrequency();
+        float conf = e.truth.getConfidence();
+        //weight = cost = distance
+        return 1.0 / (freq * conf);        
     }
     
     

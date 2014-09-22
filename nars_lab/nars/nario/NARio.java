@@ -1,5 +1,6 @@
 package nars.nario;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -10,6 +11,8 @@ import nars.core.NAR;
 import nars.core.build.ContinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
+import nars.gui.Window;
+import nars.gui.output.graph.SentenceGraphPanel;
 import nars.inference.GraphExecutive;
 import nars.io.Output;
 import nars.language.Term;
@@ -33,11 +36,12 @@ public class NARio extends Run {
     private LevelScene level;
     private float lastX = -1;
     private float lastY = -1;
-    int cycle = 0;
     int gotCoin = 0;
     private Mario mario;
-    int cyclesPerMario = 4;
+    int cyclesPerMario = 1;
     final boolean random = false;
+    int healthStatusCycle = 32;
+    final float gameTimePerMemoryCycle = 0.02f;
 
     public static void main(String[] arg) {
         NAR nar = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
@@ -52,9 +56,9 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(50*4);
+        nar.param().duration.set(50);
         nar.param().noiseLevel.set(10);
-        nar.param().shortTermMemorySize.set(35);
+        nar.param().shortTermMemorySize.set(1);
 
         NARio nario = new NARio(nar);
 
@@ -62,6 +66,17 @@ public class NARio extends Run {
         nar.start(10);
     }
 
+    @Override
+    public void keyReleased(KeyEvent e) {
+        super.keyReleased(e);
+        if (e.getKeyChar() == 'i') {
+            //new Window("Implications", new JGraphXGraphPanel(nar.memory.executive.graph.implication)).show(500,500);            
+            new Window("Implications", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500,500);
+        }
+    }
+
+
+    
     
     public NARio(NAR n) {
         super();
@@ -90,14 +105,13 @@ public class NARio extends Run {
             @Override
             public void event(Class event, Object... arguments) {
 
-                if (nar.getTime() % cyclesPerMario != 0)
-                    return;
                 
-                /*if (cycle % cyclesPerMario == 0)*/ {
+                
+                if (nar.getTime() % cyclesPerMario == 0) {
                     if (scene != null) {
                         try {
                             
-                                cycle(0.05);
+                                cycle(gameTimePerMemoryCycle);
                         } catch (NullPointerException n) {
                             //HACK sick of debugging mario brothers
                             return;
@@ -106,6 +120,9 @@ public class NARio extends Run {
                         return;
                     }
 
+                    if (level == null)                         return;
+                    if (level.mario == null)                        return;
+                    
 //                if (cycle % 100 == 1) {
 //                    System.out.println("Inports: " + nar.getInPorts().size());
 //                }
@@ -117,11 +134,13 @@ public class NARio extends Run {
                     boolean movement = false;
 
                     if (lastX != -1) {
-                        int dx = Math.round((x - lastX) / 16);
-                        int dy = Math.round((y - lastY) / 16);
+                        float dx = ((x - lastX) / 16.0f);
+                        float dy = ((y - lastY) / 16.0f);
 
+                        float minMove = 0.25f; //in blocks
+                        
                         //if no movement, decrease priority of sense
-                        if ((dx == 0) && (dy == 0)) {
+                        if ((dx < minMove) && (dy < minMove)) {
                             //sightPriority/=2.0f;
                             //movementPriority/=2.0f;
                             cyclesWithoutMove++;
@@ -137,14 +156,16 @@ public class NARio extends Run {
                             cyclesWithoutXMove = 0;
                         }
 
+                        int idx = (int)Math.round(dx);
+                        int idy = (int)Math.round(dy);
                         if (movement) {
-                            nar.addInput(/*"$" + movementPriority + "$"*/"<(*," + dx + "," + dy + ") --> moved>. :\\:");
+                            nar.addInput(/*"$" + movementPriority + "$"*/"<(*," + idx + "," + idy + ") --> moved>. :\\:");
                         }
 
                     }
     
                     //health status report
-                    if (cycle % 10 == 0) {
+                    if (nar.getTime() % healthStatusCycle == 0) {
                         float dead = 0.0f;
                         //consider self dead when no movement
                         if (cyclesWithoutMove > 0) {
@@ -159,7 +180,8 @@ public class NARio extends Run {
                             nar.addInput("<nario --> alive>. :|: %1.00;0.50%");
                         }
                         else {
-                            nar.addInput("<nario --> dead>. :|: %1.00;" + dead + "%");
+                            nar.addInput("<nario --> alive>. :|: %0.00;" + dead + "%");
+                            nar.addInput("<nario --> alive>!");
                         }
                     }
                     
@@ -304,10 +326,18 @@ public class NARio extends Run {
                             int dx = Math.round((x - s.x) / 16);
                             int dy = Math.round((y - s.y) / 16);
 
-                            nar.addInput(/*"$" + sightPriority + "$" +*/
-                                    " <" + type + " --> (*," + dx + "," + dy + ")>. :|:");
+                            //prevent repeat inputs
+                            if ((s.ix == Integer.MAX_VALUE) || ((s.ix != dx) || (s.iy != dy))) {
+                                s.ix = dx;
+                                s.iy = dy;
+                                nar.addInput(/*"$" + sightPriority + "$" +*/
+                                        " <" + type + " --> (*," + dx + "," + dy + ")>. :|:");
+                            }
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
+                        }
+                        else {
+                            s.ix = s.iy = Integer.MAX_VALUE;
                         }
 
                     }
@@ -318,7 +348,7 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
 
-                cycle++;
+                
             }
 
         });

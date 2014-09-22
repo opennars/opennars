@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -28,6 +27,7 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.util.graph.ImplicationGraph;
 import org.jgrapht.graph.EdgeReversedGraph;
 import org.jgrapht.traverse.ClosestFirstIterator;
@@ -80,7 +80,7 @@ public class GraphExecutive implements Observer {
             Task t = (Task) a[2];
             /*if (!t.isInput())*/ 
             {
-            System.out.println("Goal add: " + a[0] + " " + a[1] + " " + t.budget.getPriority());
+            //System.out.println("Goal add: " + a[0] + " " + a[1] + " " + t.budget.getPriority());
             tasks.add(t.clone());
             
             
@@ -88,7 +88,7 @@ public class GraphExecutive implements Observer {
             
         } else if (event == ConceptGoalRemove.class) {
             Task t = (Task) a[2];
-            System.out.println("Goal rem: " + a[0] + " " + a[1] + " " + t.budget);
+            //System.out.println("Goal rem: " + a[0] + " " + a[1] + " " + t.budget);
             tasks.remove(t);
         } else if (event == CycleEnd.class) {
 //            if (tasks.size() > 0) {
@@ -97,20 +97,39 @@ public class GraphExecutive implements Observer {
         }
     }
 
-    protected List<Term> plan(Term target) {
-        return plan(target, null);
+    protected List<Term> plan(Term target)  {        
+        double[] d = new double[1];
+        
+        List<Term> p = plan(target, 32, null, d);
+        
+        if (!p.isEmpty())
+            System.out.println("plan: " + target + " , dist=" + d[0]);
+        return p;
     }
     
-    protected List<Term> plan(Term target, List<Term> parentPath) {
+    
+    public boolean validPlanComponent(Term t) {
+        return ((t instanceof Interval) || (t instanceof Operator));
+    }
+    
+    protected List<Term> plan(Term target, double remainingDistance, List<Term> parentPath, double[] distResult) {
         
-        double maxRadius = 8;
+        if (remainingDistance <= 0)
+            return Collections.EMPTY_LIST;
+        
+        double initialRemainingDistance = remainingDistance;
 
-        ClosestFirstIterator<Term, Sentence> cfi = new ClosestFirstIterator<Term, Sentence>(new EdgeReversedGraph(implication), target, maxRadius);
+        ClosestFirstIterator<Term, Sentence> cfi = new ClosestFirstIterator<Term, Sentence>(new EdgeReversedGraph(implication), target, remainingDistance);
 
+        
+        
         if (parentPath == null)
             parentPath = Collections.EMPTY_LIST;
         
+        
+
         //TODO use a sorted list of furthest candidates
+        
         
         double furthestDistance = 0;
         Term furthestTerm = null;
@@ -129,21 +148,26 @@ public class GraphExecutive implements Observer {
                 
             }
             
-                        
+
         }
-        
+                
         if (furthestTerm == null)
             return Collections.EMPTY_LIST;
         if (furthestTerm == target)
             return Collections.EMPTY_LIST;
 
+        remainingDistance -= furthestDistance;
+        
+        if (remainingDistance < 0)
+            return Collections.EMPTY_LIST;
 
+        
         //Calculate path back to target
+        
         List<Term> path = new ArrayList();
         Term current = furthestTerm;
         Sentence currentEdge = null;
         int operations = 0;
-        Set<Term> preconditionsSatisfied = new HashSet();
         
         while (current != target) {
 
@@ -155,10 +179,15 @@ public class GraphExecutive implements Observer {
             if (isOperation || (current instanceof Interval)) {
                 path.add(current);
             }
-            //but if it's something else, we need to transclude it because it may indicate other  necessar ypreconditions
+            //but if it's something else, we need to transclude it because it may indicate other  necessary preconditions
             else if ((!current.equals(target))) {
                 
                 //Transclude best subpath iff vertex has other preconditions
+                
+                /*if (implication.outgoingEdgesOf(current).size() > 1) {
+                    //ignore a preconditon with a postcondition
+                    continue;
+                }*/
                 
                 //TODO should the precondition branches be sorted, maybe shortest first?
                 
@@ -169,34 +198,48 @@ public class GraphExecutive implements Observer {
                         Term preconditionSource = implication.getEdgeSource(s);
                         
                         if (parentPath!=null) {
-                            if (parentPath.contains(preconditionSource))
-                                continue;
+                            /*if (!parentPath.contains(preconditionSource))*/ {
+                                if (!preconditionSource.equals(target) ) {
+                                    List<Term> preconditionPlan = null;
+                                    try {
+                                        double[] d = new double[1];
+                                        preconditionPlan = plan(preconditionSource, remainingDistance, path, d);
+                                        
+                                        if (!((preconditionPlan.size() == 0) || (preconditionPlan == null))) {
+                                            if (remainingDistance - d[0] > 0) {
+                                                if (!preconditionPlan.contains(preconditionSource)) {                                                    path.addAll(preconditionPlan);
+                                                    if (validPlanComponent(preconditionSource))
+                                                        path.add(preconditionSource);
+                                                }
+                                                remainingDistance -= d[0];
+                                            }
+                                            else {
+                                                //ignore this condition sequence because it would exceed the search distance
+                                                return Collections.EMPTY_LIST;
+                                                
+                                            }
+                                        }
+                                    }
+                                    catch (Throwable e) {
+
+                                        System.err.println(e + " "  +target + " " + path + " " + preconditionSource + " " + parentPath);
+                                        System.err.println("   " + preconditionPlan);
+                                        new Window("Implications", new JGraphXGraphPanel(memory.executive.graph.implication)).show(500,500);
+                                        try {
+                                            System.in.read();
+                                        } catch (IOException ex) {
+                                            Logger.getLogger(GraphExecutive.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+
+                                            //System.exit(1);
+                                            //return Collections.EMPTY_LIST;
+
+                                    }
+                                }
+                             
+                            }
                         }
                         
-                        if (!preconditionSource.equals(target) ) {
-                            try {
-                                List<Term> preconditionPlan = plan(preconditionSource, path);
-                                if ((preconditionPlan.size() == 0) || (preconditionPlan == null))
-                                    continue;
-                                path.addAll(preconditionPlan);
-                                path.add(preconditionSource);                        
-                                preconditionsSatisfied.add(preconditionSource);
-                            }
-                            catch (Throwable e) {
-                                
-                                System.err.println(e + " "  +target + " " + furthestTerm + " " + furthestDistance + " " + preconditionSource + " " + preconditionsSatisfied);
-                                new Window("Implications", new JGraphXGraphPanel(memory.executive.graph.implication)).show(500,500);
-                                try {
-                                    System.in.read();
-                                } catch (IOException ex) {
-                                    Logger.getLogger(GraphExecutive.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                                    
-                                    //System.exit(1);
-                                    //return Collections.EMPTY_LIST;
-                                
-                            }
-                        }
                     }
                     
                 }                
@@ -213,6 +256,8 @@ public class GraphExecutive implements Observer {
         if (operations == 0)
             return Collections.EMPTY_LIST;
 
+        //System.out.println("  path=" + path);
+        distResult[0] = initialRemainingDistance - remainingDistance;
         return path;
     }
 
@@ -227,15 +272,23 @@ public class GraphExecutive implements Observer {
         if (path.size() < 2) 
             return;
 
-        System.out.println("\n@" + memory.getTime() + " plan: " + task);
+        System.out.println("@" + memory.getTime() + " plan: " + task);
         
-        //final incoming edge of the path, for getting the stamp
-        Sentence currentEdge = implication.getEdge(path.get(path.size()-2), path.get(path.size()-1));
+        
+        //final incoming edge of the path, for the stamp for derivation
+        Term ultimateTerm = path.get(path.size()-1);
+        Sentence currentEdge = implication.getEdge(path.get(path.size()-2), ultimateTerm);
         
         if (currentEdge == null) {
-            System.err.println("No leading edge for path: " + path);
-            return;
+            
+            //choose one sentence involving the final edge
+            currentEdge = implication.edgesOf(ultimateTerm).iterator().next();
+            if (currentEdge == null) {
+                System.err.println("No leading edge for path: " + path);
+                return;
+            }
         }
+        
             
         memory.setTheNewStamp(Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime()));
 

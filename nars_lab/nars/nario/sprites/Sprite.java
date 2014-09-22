@@ -12,6 +12,8 @@ public class Sprite implements SoundSource
     
     public float xOld, yOld, x, y, xa, ya;
     
+    public int ix = Integer.MAX_VALUE, iy = Integer.MAX_VALUE; //when last seen by input
+    
     public int xPic, yPic;
     public int wPic = 32;
     public int hPic = 32;

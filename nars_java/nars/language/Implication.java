@@ -20,9 +20,9 @@
  */
 package nars.language;
 
+import nars.core.Memory;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
-import nars.core.Memory;
 
 /**
  * A Statement about an Inheritance copula.
@@ -34,9 +34,13 @@ public class Implication extends Statement {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    private Implication(CharSequence name, Term[] arg, int order) {
+    public Implication(CharSequence name, Term[] arg, int order) {
         super(name, arg);
         temporalOrder = order;
+    }
+    
+    public Implication(Term subject, Term predicate, int order) {
+        this(makeName(subject, order, predicate), new Term[] { subject, predicate }, order);
     }
 
     /**
@@ -72,17 +76,8 @@ public class Implication extends Statement {
     public static Implication make(final Term subject, final Term predicate, final Memory memory) {
         return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
     }
-    
-    public static Implication make(final Term subject, final Term predicate, int temporalOrder, final Memory memory) {
-        if ((subject == null) || (predicate == null)) {
-            return null;
-        }
-        if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence)) {
-            return null;
-        }
-        if (invalidStatement(subject, predicate)) {
-            return null;
-        }
+
+    public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
         NativeOperator copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
@@ -97,7 +92,20 @@ public class Implication extends Statement {
             default:
                 copula = NativeOperator.IMPLICATION;
         }                
-        final CharSequence name = makeStatementName(subject, copula, predicate);
+        return makeStatementName(subject, copula, predicate);
+    }
+    
+    public static Implication make(final Term subject, final Term predicate, int temporalOrder, final Memory memory) {
+        if ((subject == null) || (predicate == null)) {
+            return null;
+        }
+        if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence)) {
+            return null;
+        }
+        if (invalidStatement(subject, predicate)) {
+            return null;
+        }
+        final CharSequence name = makeName(subject, temporalOrder, predicate);
         final Term t = memory.conceptTerm(name);
         if (t != null) {            
             if (t.getClass()!=Implication.class) {                
