@@ -353,14 +353,14 @@ public class NARio extends Run {
 
         //new TextOutput(nar, System.out).setShowInput(true);
         nar.param().duration.set(50);
-        nar.param().noiseLevel.set(25);
-        nar.param().shortTermMemorySize.set(25);
+        nar.param().noiseLevel.set(0);
+        nar.param().shortTermMemorySize.set(35);
 
 
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(20);
+        nar.start(100);
     }
 
 }

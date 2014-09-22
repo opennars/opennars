@@ -415,15 +415,15 @@ public class Enemy extends Sprite
     public String toString() {
         switch (type) {
             case 0:
-                return "ENEMY_RED_KOOPA";
+                return "ENEMY";//ENEMY_RED_KOOPA";
             case 1:
-                return "ENEMY_GREEN_KOOPA";
+                return "ENEMY";//"ENEMY_GREEN_KOOPA";
             case 2:
-                return "ENEMY_GOOMBA";
+                return "ENEMY";//"ENEMY_GOOMBA";
             case 3: 
-                return "ENEMY_SPIKY";
+                return "ENEMY";//"ENEMY_SPIKY";
             case 4:
-                return "ENEMY_FLOWER";
+                return "ENEMY";//"ENEMY_FLOWER";
         }
         return super.toString();    
     }
