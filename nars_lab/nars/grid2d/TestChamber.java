@@ -138,14 +138,14 @@ public class TestChamber {
         space.FrameRate = 0;
         space.automataPeriod = automataPeriod/gridUpdatePeriod;
         space.agentPeriod = agentPeriod/gridUpdatePeriod;
-
+        TestChamber into=this;
         nar.memory.event.on(Events.CycleEnd.class, new Observer() {
             private long lastDrawn = 0;
             
             @Override
             public void event(Class event, Object... arguments) {                           
                 if (nar.getTime() % gridUpdatePeriod == 0) {
-                    space.update();
+                    space.update(into);
                     
                     long now = System.nanoTime();
                     if (now - lastDrawn > guiUpdateTime*1e6) {
