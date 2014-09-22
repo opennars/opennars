@@ -307,20 +307,24 @@ public class NAR implements Runnable, Output, TaskSource {
     }
     
     /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
-    public void finish(final int cycles, final boolean debug) {
+    public void finish(int cycles, final boolean debug) {
         DEBUG = debug; 
         running = true;
 
         updatePorts();
-        
-        //clear input
-        while (!inputChannels.isEmpty()) {
+
+        //clear existing input
+        int cyclesCompleted = 0;
+        do {
             step(1);
+            cyclesCompleted++;
         }
-        
-        
-        //queue additional cycles
-        memory.stepLater(cycles);
+        while (!inputChannels.isEmpty());
+                        
+        //queue additional cycles, 
+        cycles -= cyclesCompleted;
+        if (cycles > 0)
+            memory.stepLater(cycles);
         
         //finish all remaining cycles
         while (memory.getCyclesQueued() > 0) {

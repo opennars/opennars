@@ -3,8 +3,13 @@ package nars.util.graph;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Sentence;
+import nars.inference.TemporalRules;
 import nars.io.Symbols;
-import nars.language.Statement;
+import nars.io.Symbols.NativeOperator;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.Implication;
+import nars.language.Term;
 
 /**
  *
@@ -17,11 +22,63 @@ public class ImplicationGraph extends SentenceGraph {
     float minConfidence = 0.01f;
 
     public ImplicationGraph(NAR nar) {
-        super(nar.memory);
+        this(nar.memory);
     }
     public ImplicationGraph(Memory memory) {
         super(memory);
     }
+    
+    @Override
+    public boolean add(Sentence s, CompoundTerm ct) {
+//        if (ct.operator() == NativeOperator.SEQUENCE) {
+//            Conjunction c = (Conjunction)ct;
+//            System.out.println(c);
+//            return true;
+//        }
+        if (ct instanceof Implication) {
+            Implication st = (Implication)ct;
+            Term subject, predicate;
+            if (st.operator() == NativeOperator.IMPLICATION_BEFORE) {
+                //reverse temporal order
+                subject = st.getPredicate();
+                predicate = st.getSubject();            
+            }
+            else {
+                subject = st.getSubject();
+                predicate = st.getPredicate();            
+            }            
+            
+            if (subject instanceof Conjunction) {
+                Conjunction seq = (Conjunction)subject;
+                if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
+                    Term prev = null;
+                    for (Term a : seq.term) {
+                        addVertex(a);
+                        if (prev!=null) {
+                            Implication imp = Implication.make(prev,a, TemporalRules.ORDER_FORWARD, memory);
+                            Sentence impSent = new Sentence(imp, '.', s.truth, null);
+                            addEdge(prev, a, impSent);
+                        }
+                        prev = a;
+                    }
+                    addVertex(predicate);
+                    
+                    Implication impFinal = Implication.make(prev, predicate, TemporalRules.ORDER_FORWARD, memory);
+                    addEdge(prev, predicate, new Sentence(impFinal, '.', s.truth, null));
+                }
+            }
+            else if (predicate instanceof Conjunction) {
+                //TODO?
+            }
+            
+            addVertex(subject);
+            addVertex(predicate);
+            addEdge(subject, predicate, s);
+            return true;
+        }
+        return false;
+    }
+
     
     @Override
     public boolean allow(final Sentence s) {        
@@ -33,13 +90,28 @@ public class ImplicationGraph extends SentenceGraph {
 
 
     @Override
-    public boolean allow(final Statement st) {
+    public boolean allow(final CompoundTerm st) {
         Symbols.NativeOperator o = st.operator();
-        if ((o == Symbols.NativeOperator.IMPLICATION_WHEN) || (o == Symbols.NativeOperator.IMPLICATION_BEFORE)) {
+        if ((o == Symbols.NativeOperator.IMPLICATION_WHEN) || (o == Symbols.NativeOperator.IMPLICATION_BEFORE) || (o == Symbols.NativeOperator.IMPLICATION_AFTER)) {
             return true;
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder x = new StringBuilder();
+        x.append(getClass().toString() + "\n");
+        x.append("Terms:\n");
+        for (Term v : vertexSet())
+            x.append("  " + v.toString() + ",");
+        x.append("\nImplications:\n");
+        for (Sentence v : edgeSet())
+            x.append("  " + v.toString() + ",");
+        x.append("\n\n");
+        return x.toString();
+    }
+    
     
     
 }

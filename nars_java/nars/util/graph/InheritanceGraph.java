@@ -3,12 +3,8 @@ package nars.util.graph;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.io.Symbols;
-import nars.language.Statement;
+import nars.language.CompoundTerm;
 
-/**
- *
- * @author me
- */
 
 
 public class InheritanceGraph extends SentenceGraph {
@@ -29,7 +25,7 @@ public class InheritanceGraph extends SentenceGraph {
     }
 
     @Override
-    public boolean allow(final Statement st) {
+    public boolean allow(final CompoundTerm st) {
         Symbols.NativeOperator o = st.operator();
         if (o == Symbols.NativeOperator.INHERITANCE) {
             return true;

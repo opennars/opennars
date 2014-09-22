@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Random;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
-import nars.core.Events.WorkCycleStart;
 import nars.core.Events.WorkCycleEnd;
+import nars.core.Events.WorkCycleStart;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
@@ -44,7 +44,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.inference.Executive;
+import nars.inference.GraphExecutive;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
@@ -117,7 +117,7 @@ import nars.storage.BagObserver;
  * Memory is serializable so it can be persisted and transported.
  */
 public class Memory implements Output, Serializable {
-    public final Executive executive;
+    public final GraphExecutive executive;
     private boolean enabled = true;
 
     
@@ -287,7 +287,7 @@ public class Memory implements Output, Serializable {
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
-    private int stepsQueued;
+    private int cyclesQueued;
 
     
     /**
@@ -318,7 +318,7 @@ public class Memory implements Output, Serializable {
         this.newTasks = new ArrayDeque<>();
         this.operators = new HashMap<>();
         
-        this.executive = new Executive(this);
+        this.executive = new GraphExecutive(this);
 
         this.resource = new ResourceSense();
         this.logic = new LogicSense() {
@@ -399,7 +399,7 @@ public class Memory implements Output, Serializable {
         executive.reset();
         
         clock = 0;
-        stepsQueued = 0;
+        cyclesQueued = 0;
         working = true;
         
         emotion.set(0.5f, 0.5f);
@@ -1014,8 +1014,8 @@ public class Memory implements Output, Serializable {
         if (recorderActive)
             recorder.onCycleEnd(clock);
 
-        if (stepsQueued > 0)
-            stepsQueued--;         
+        if (cyclesQueued > 0)
+            cyclesQueued--;         
         
         clock++;
                 
@@ -1082,7 +1082,7 @@ public class Memory implements Output, Serializable {
                 }
             }
         }
-        
+                
         boolean stmUpdated = executive.planShortTerm(newEvent,this);
         if (stmUpdated)
             logic.SHORT_TERM_MEMORY_UPDATE.commit();
@@ -1315,7 +1315,7 @@ public class Memory implements Output, Serializable {
     }
 
     public int getCyclesQueued() {
-        return stepsQueued;
+        return cyclesQueued;
     }
 
 
@@ -1355,7 +1355,7 @@ public class Memory implements Output, Serializable {
      * @param cycles The number of inference steps
      */
     public void stepLater(final int cycles) {
-        stepsQueued += cycles;
+        cyclesQueued += cycles;
     }    
 
     /** convenience method for forming a new Task from a term */
