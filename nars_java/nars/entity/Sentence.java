@@ -298,7 +298,7 @@ public class Sentence implements Cloneable {
                 suffix.append(' ');
                 truth.appendString(suffix, false);
             }
-            if (showOcurrenceTime) {
+            if ((showOcurrenceTime) && (stamp!=null)) {
                 suffix.append(' ');
                 stamp.appendOcurrenceTime(suffix);
             }

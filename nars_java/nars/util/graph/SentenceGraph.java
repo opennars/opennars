@@ -15,7 +15,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 
 abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> implements Observer {
-    private Memory memory;
+    public final Memory memory;
 
     public static class GraphChange { }
     
@@ -23,7 +23,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     private boolean started;
     public final EventEmitter event = new EventEmitter( GraphChange.class );
     
-    public SentenceGraph() {
+    public SentenceGraph(Memory memory) {
         super(/*null*/new EdgeFactory() {
 
             @Override public Object createEdge(Object v, Object v1) {
@@ -31,10 +31,6 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             }
             
         });
-    }    
-
-    public SentenceGraph(Memory memory) {
-        this();
         
         this.memory = memory;
         
@@ -51,6 +47,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         memory.event.on(Events.ConceptRemove.class, this);
         memory.event.on(Events.ConceptBeliefAdd.class, this);
         memory.event.on(Events.ConceptBeliefRemove.class, this);        
+        //memory.event.on(Events.ConceptGoalAdd.class, this);
+        //memory.event.on(Events.ConceptGoalRemove.class, this);        
     }
     
     public void stop() {
@@ -60,6 +58,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         memory.event.off(Events.ConceptRemove.class, this);
         memory.event.off(Events.ConceptBeliefAdd.class, this);
         memory.event.off(Events.ConceptBeliefRemove.class, this);        
+        //memory.event.off(Events.ConceptGoalAdd.class, this);
+        //memory.event.off(Events.ConceptGoalRemove.class, this);        
     }
 
     @Override
@@ -74,14 +74,23 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         else if (event == Events.ConceptBeliefAdd.class) {
             //Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            if (allow(s))
-                add(s);
+            add(s);
         }
         else if (event == Events.ConceptBeliefRemove.class) {
             //Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
             remove(s);
         }
+//        else if (event == Events.ConceptGoalAdd.class) {
+//            //Concept c = (Concept)a[0];
+//            Sentence s = (Sentence)a[1];
+//            add(s);
+//        }
+//        else if (event == Events.ConceptGoalRemove.class) {
+//            //Concept c = (Concept)a[0];
+//            Sentence s = (Sentence)a[1];
+//            remove(s);
+//        }
         else if (event == Events.CycleEnd.class) {
             if (needInitialConcepts)
                 getInitialConcepts();
@@ -99,16 +108,15 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         needInitialConcepts = false;
 
         for (Concept c : memory.getConcepts()) {
-            for (Sentence s : c.beliefs) {
-                if (allow(s))
-                    add(s);
+            for (Sentence s : c.beliefs) {                
+                add(s);
             }
         }        
     }
         
     abstract public boolean allow(Sentence s);
     
-    abstract public boolean allow(Statement st);    
+    abstract public boolean allow(CompoundTerm st);    
     
     public void remove(final Sentence s) {
         if (!containsEdge(s))
@@ -128,7 +136,13 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             event.emit(GraphChange.class, null, s);
     }
     
-    public void add(final Sentence s) {       
+    public synchronized void add(final Sentence s) {       
+        if (containsEdge(s))
+            return;
+        
+        if (!allow(s))
+            return;
+            
         
         if (s.content instanceof CompoundTerm) {
             CompoundTerm cs = (CompoundTerm)s.content;
@@ -138,19 +152,29 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
                 
                 Statement st = (Statement)cs;
                 if (allow(st)) {
-                                        
-                    Term subject = st.getSubject();
-                    Term predicate = st.getPredicate();
-                    addVertex(subject);
-                    addVertex(predicate);
-                    addEdge(subject, predicate, s);                    
-                 
-                    event.emit(GraphChange.class, st, null);
+                                
+                    if (add(s, st))
+                        event.emit(GraphChange.class, st, null);
                 }
             }
                 
         }        
         
     }    
+    
+    /** default behavior, may override in subclass */
+    public boolean add(Sentence s, CompoundTerm ct) {
+        if (ct instanceof Statement) {
+            Statement st = (Statement)ct;
+            Term subject = st.getSubject();
+            Term predicate = st.getPredicate();
+            addVertex(subject);
+            addVertex(predicate);
+            addEdge(subject, predicate, s);        
+            return true;
+        }
+        return false;
+        
+    }
     
 }

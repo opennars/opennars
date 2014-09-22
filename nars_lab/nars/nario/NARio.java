@@ -39,7 +39,8 @@ public class NARio extends Run {
     private Mario mario;    
     int cyclesPerMario = 4;
     private ImplicationGraph implications;
-
+    final boolean random = false;
+    
     public NARio(NAR n) {
         super();
         this.nar = n;
@@ -70,6 +71,19 @@ public class NARio extends Run {
                         //nar.addInput("<left <-> right>. %0.00;0.99%");
         
     }
+
+    @Override
+    public void levelWon() {
+        ready();
+    }
+
+    @Override
+    public void lose() {
+        ready();
+    }
+    
+    
+    
     
     @Override
     public void ready() {
@@ -222,7 +236,7 @@ public class NARio extends Run {
                                         Task parent = task.getParentTask();
                                         Task root = task.getRootTask();
                                         
-                                        System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief() + ", parent=" + parent);
+                                        System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief().toString(nar, true) + ", parent=" + parent);
                                         
                                         if (parent!=root) {
                                             System.out.println(", root=" + root);
@@ -230,8 +244,13 @@ public class NARio extends Run {
                                         else {
                                             System.out.println();
                                         }
-                                        
-                                        mario.keys[k] = state.equals("on");
+                                     
+                                        if (random) {
+                                            mario.keys[(int)(Math.random() * 6)] = Math.random() < 0.5 ? false : true;
+                                        }
+                                        else {
+                                            mario.keys[k] = state.equals("on");
+                                        }
                                     }
 
                                     return super.execute(operation, args, memory);
@@ -335,7 +354,7 @@ public class NARio extends Run {
         //new TextOutput(nar, System.out).setShowInput(true);
         nar.param().duration.set(50);
         nar.param().noiseLevel.set(25);
-        nar.param().shortTermMemorySize.set(35);
+        nar.param().shortTermMemorySize.set(25);
 
 
         NARio nario = new NARio(nar);

@@ -337,7 +337,7 @@ public class Executive {
         return false;
     }
     
-    public boolean isActionable(final Task newEvent, Memory mem) {
+    public static boolean isActionable(final Task newEvent, Memory mem) {
         if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
             return false;
         }
