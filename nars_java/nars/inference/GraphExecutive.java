@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,8 +47,8 @@ public class GraphExecutive implements Observer {
     private final Memory memory;
     
     
-    float searchDepth = 64;
-    int particles = 512;
+    float searchDepth = 32;
+    int particles = 128;
 
     public GraphExecutive(Memory memory) {
         super();
@@ -96,7 +98,7 @@ public class GraphExecutive implements Observer {
             
             //EXPERIMENTAL
             if (implication.containsVertex(t.getContent()))
-                plan(t, t.getContent(), searchDepth, '.');
+                plan(t, t.getContent(), searchDepth, '!');
             }
             
         } else if (event == ConceptGoalRemove.class) {
@@ -110,12 +112,8 @@ public class GraphExecutive implements Observer {
         }
     }
 
-    protected List<Term> plan(Term target, double distance, int particles)  {        
-                
-        List<Term> p = planParticle(target, distance, particles);
-        
-        if (!p.isEmpty())
-            System.out.println("plan: " + target);
+    protected List<Term> plan(Term target, double distance, int particles)  {                
+        List<Term> p = planParticle(target, distance, particles);        
         return p;
     }
     
@@ -298,6 +296,7 @@ public class GraphExecutive implements Observer {
 
 
             System.out.println(path + " " + root + " in " + roots);
+            
             distResult[0] = initialRemainingDistance - remainingDistance;
             return path;
         }
@@ -343,6 +342,9 @@ public class GraphExecutive implements Observer {
     protected List<Term> planParticle(final Term target, final double distance, final int iterations) {
         PostCondition targetPost = new PostCondition(target);
         
+        if (!implication.containsVertex(targetPost))
+            return Collections.EMPTY_LIST;
+        
         //TODO can this be persistent across different plannings if activation decays gradually
         Map<Term, ParticlePath> termPaths = new HashMap();
         
@@ -365,14 +367,28 @@ public class GraphExecutive implements Observer {
             
             while (energy > 0) {
                 
-                Set<Sentence> incomingEdges = implication.incomingEdgesOf(current);
+                Set<Sentence> incomingEdges = new HashSet(implication.incomingEdgesOf(current));
+                
+                
+                //remove edges which loop to the target goal precondition OR postcondition
+                List<Sentence> toRemove = new LinkedList();
+                for (final Sentence s : incomingEdges) {
+                    Term etarget = implication.getEdgeSource(s);
+                    if (etarget.equals(targetPost) || etarget.equals(target)) {
+                        toRemove.add(s);
+                    }
+                }
+                incomingEdges.removeAll(toRemove);
+                    
+                
                 if (incomingEdges.isEmpty()) {
                     break;
                 }                
                 
                 Sentence nextEdge = null;
-                if (incomingEdges.size() == 1)
-                    nextEdge = incomingEdges.iterator().next();
+                if (incomingEdges.size() == 1) {
+                    nextEdge = incomingEdges.iterator().next();                    
+                }
                 else {
                     //choose edge; prob = 1/weight
                     
@@ -396,7 +412,10 @@ public class GraphExecutive implements Observer {
                     choicesAvailable = true;
                 }
                 
-                energy -= implication.getEdgeWeight(nextEdge);
+                double weight = implication.getEdgeWeight(nextEdge);                
+                
+                energy -= weight;
+                
                 currentPath.add(nextEdge);
                 
                 current = implication.getEdgeSource(nextEdge);
@@ -444,6 +463,8 @@ public class GraphExecutive implements Observer {
                         
             //Calculate path back to target
             Implication imp;
+            boolean nonIntervalAdded = false;
+            long accumulatedDelay = 0;
             for (int i = path.length-1; i >=0; i--) {
                 Sentence s = path[i];
                 Term t = s.content;
@@ -453,18 +474,47 @@ public class GraphExecutive implements Observer {
                 imp = (Implication)t;
                 Term subj = imp.getSubject();
                 
-                if (validPlanComponent(subj))
-                    seq.add(subj);
+                if (validPlanComponent(subj)) {                    
+                    boolean isInterval = subj instanceof Interval;
+                    if (!isInterval) {
+                        nonIntervalAdded = true;
+                        if (accumulatedDelay > 0) {
+                            seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
+                            accumulatedDelay = 0;
+                        }
+                        seq.add(subj);
+                    }
+                    else {
+                        //prevent prefix intervals
+                        if (nonIntervalAdded) {
+                            Interval in = (Interval)subj;
+                            long time = in.getTime(memory);
+                            accumulatedDelay += time;
+                        }
+                    }                    
+                }
+                else {
+                    if (nonIntervalAdded) { ////prevent prefix intervals                        
+                        accumulatedDelay++;
+                    }
+                }
                 
                 if (subj instanceof Operation)
                     operations++;
-            }
-            
+            }            
+                    
             if (operations == 0)
                 return Collections.EMPTY_LIST;
             
+            if (accumulatedDelay > 0) {
+                //add suffix delay
+                seq.add( Interval.intervalTime(accumulatedDelay, memory)  );                
+            }
+            
             if (seq.size() < 2)
                 continue;
+
+            System.out.println("  cause: " + Arrays.toString(path));
 
             return seq;
         }
@@ -480,27 +530,26 @@ public class GraphExecutive implements Observer {
         List<Term> path = plan(target, distance, particles);
         if (path == null)
             return;
-        if (path.size() < 2) 
+        if (path.size() < 1) 
             return;
-
-        System.out.println("@" + memory.getTime() + " plan: " + task);
         
-        
-        //final incoming edge of the path, for the stamp for derivation
-        Term ultimateTerm = path.get(path.size()-1);
-        Sentence currentEdge = implication.getEdge(path.get(path.size()-2), ultimateTerm);
-        
-        if (currentEdge == null) {
-            
-            //choose one sentence involving the final edge
-            currentEdge = implication.edgesOf(ultimateTerm).iterator().next();
-            if (currentEdge == null) {
-                System.err.println("No leading edge for path: " + path);
-                return;
+        Sentence currentEdge = null;
+        //final incoming edge of the path, for the stamp for derivation; must search backwards because the suffix may be a newly created interval which will not exist in the graph itself. so it's effectively searching for the last operator term
+        for (int pp = path.size()-1; pp>=0; pp--) {
+            Term ultimateTerm = path.get(pp);
+            if (implication.containsVertex(ultimateTerm)) {
+                //just getting any sentence that involves this vertex may be incorrect
+                //we may be able to get a more accurate derivation origin by using 
+                //the last Sentence in the path (sequences of edges) the planner function had.
+                //to do this will involve using a PlanResult return object
+                currentEdge = implication.edgesOf(ultimateTerm).iterator().next();
+                if (currentEdge != null)
+                    break;
             }
         }
-        
-            
+        if (currentEdge == null)
+            throw new RuntimeException("No leading edge for path: " + path);
+
         Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime());
         //memory.setTheNewStamp(stamp);
 
@@ -524,8 +573,10 @@ public class GraphExecutive implements Observer {
 
         Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD, memory);
 
-        if (imp == null)
+        if (imp == null) {
+            System.err.println("Invalid implication: " + subj + " =\\> " + target);
             return;
+        }
         
         BudgetValue bud = BudgetFunctions.forward(val, memory);
         

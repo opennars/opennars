@@ -18,6 +18,7 @@
 package nars.language;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.Memory;
 import nars.io.Symbols;
 
 /**
@@ -60,7 +61,11 @@ public class Interval extends Term {
         return intervalMagnitude( Integer.parseInt(i.substring(1)) - 1);
     }
     
-    public static Interval intervalTime(final long time, AtomicDuration duration) {
+    public static Interval intervalTime(final long time, final Memory memory) {
+        return intervalMagnitude( timeToMagnitude( time, memory.param.duration ) );
+    }
+    
+    public static Interval intervalTime(final long time, final AtomicDuration duration) {
         return intervalMagnitude( timeToMagnitude( time, duration ) );
     }
     
@@ -111,9 +116,13 @@ public class Interval extends Term {
         return (long) Math.ceil(Math.exp(magnitude));
     }
     
-    public long getTime(final AtomicDuration duration) {
+    public final long getTime(final AtomicDuration duration) {
         //TODO use a lookup table for this
         return magnitudeToTime(magnitude, duration);
+    }
+    
+    public final long getTime(final Memory memory) {        
+        return getTime(memory.param.duration);
     }
     
     @Override
