@@ -80,7 +80,7 @@ public class Operation extends Inheritance {
      * @param addSelf include SELF term at end of product terms
      * @return A compound generated or null
      */
-    public static Operation make(Operator oper, final Term[] arg, boolean addSelf, final Memory memory) {        
+    public static Operation make(final Operator oper, final Term[] arg, boolean addSelf, final Memory memory) {        
         
         addSelf = false; //FALSE untli understand when SELF should apply
         
@@ -116,6 +116,10 @@ public class Operation extends Inheritance {
         
     }
 
+    public Operator getOperator() {
+        return (Operator)getPredicate();
+    }
+    
     @Override
     protected CharSequence makeName() {
         if(getSubject() instanceof Product && getPredicate() instanceof Operator)
@@ -147,12 +151,16 @@ public class Operation extends Inheritance {
     }*/
 
     /** stores the currently executed task, which can be accessed by Operator execution */
-    public void setTask(Task task) {
+    public void setTask(final Task task) {
         this.task = task;
     }
 
     public Task getTask() {
         return task;
+    }
+
+    public Product getArguments() {
+        return (Product)getSubject();
     }
     
 }

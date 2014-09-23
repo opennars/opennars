@@ -41,8 +41,8 @@ public class NARio extends Run {
     private Mario mario;
     int cyclesPerMario = 1;
     final boolean random = false;
-    int healthStatusCycle = 512;
-    final float gameTimePerMemoryCycle = 0.02f;
+    int healthStatusCycle = 256;
+    final float gameTimePerMemoryCycle = 0.01f;
 
     public static void main(String[] arg) {
         NAR nar = new DiscretinuousBagNARBuilder(true).setConceptBagSize(1024).build();
@@ -57,7 +57,7 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(10);
+        nar.param().duration.set(8);
         nar.param().noiseLevel.set(10);
         nar.param().shortTermMemorySize.set(1);
 
