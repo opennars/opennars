@@ -3,6 +3,8 @@ package nars.test.multistep;
 import java.io.IOException;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.gui.Window;
+import nars.gui.output.graph.SentenceGraphPanel;
 import nars.io.TextOutput;
 import org.junit.Test;
 
@@ -27,13 +29,13 @@ public class GraphPlanTest {
 
         //new Window("Implications", new JGraphXGraphPanel(n.memory.executive.graph.implication)).show(500,500);
         
-        //new Window("Implications", new SentenceGraphPanel(n, n.memory.executive.graph.implication)).show(500,500);
         
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 3; i++) {
         
             n.step(1);
             //System.in.read();
         }
+        new Window("Implications", new SentenceGraphPanel(n, n.memory.executive.graph.implication)).show(500,500);
         
     }
     

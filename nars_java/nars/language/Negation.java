@@ -37,6 +37,14 @@ public class Negation extends CompoundTerm {
     private Negation(final CharSequence name, final Term[] arg) {
         super(name, arg);
     }
+    
+    public Negation(final CharSequence name, final Term t) {
+        this(name, new Term[] { t } );
+    }
+    
+    public Negation(final Term t) {
+        this(makeCompoundName(NativeOperator.NEGATION, t), t );
+    }
 
     /**
      * Constructor with full values, called by clone

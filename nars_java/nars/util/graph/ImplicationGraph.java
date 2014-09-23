@@ -11,13 +11,10 @@ import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
+import nars.language.Negation;
 import nars.language.Term;
-import nars.operator.Operator;
+import nars.operator.Operation;
 
-/**
- *
- * @author me
- */
 
 
 public class ImplicationGraph extends SentenceItemGraph {
@@ -63,69 +60,93 @@ public class ImplicationGraph extends SentenceItemGraph {
         
     }
     
+    static class PostCondition extends Negation {
+
+        public PostCondition(Term t) {
+            super("~" + t.name(), t);
+        }
+        
+    }
+    
     @Override
-    public boolean add(Sentence s, CompoundTerm ct, Item c) {
-//        if (ct.operator() == NativeOperator.SEQUENCE) {
-//            Conjunction c = (Conjunction)ct;
-//            System.out.println(c);
-//            return true;
-//        }
-        if (ct instanceof Implication) {
-            Implication st = (Implication)ct;
-            Term subject, predicate;
-            if (st.operator() == NativeOperator.IMPLICATION_BEFORE) {
-                //reverse temporal order
-                subject = st.getPredicate();
-                predicate = st.getSubject();            
-            }
-            else {
-                subject = st.getSubject();
-                predicate = st.getPredicate();            
-            }            
-            
-            if (subject instanceof Conjunction) {
-                Conjunction seq = (Conjunction)subject;
-                if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
-                    Term prev = null;
-                    for (Term a : seq.term) {
-                        
-                        if (!((a instanceof Operator) || (a instanceof Interval))) {
-                            //..
-                        }
-                        if (a instanceof Interval) {
-                            a = new UniqueInterval(st, (Interval)a);
-                        }
-                        
+    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
+        if (!(ct instanceof Implication)) {
+            return false;
+        }
+        
+        final Implication st = (Implication)ct;
+        
+        final Term subject, predicate;
+        
+        if (st.operator() == NativeOperator.IMPLICATION_BEFORE) {
+            //reverse temporal order
+            subject = st.getPredicate();
+            predicate = st.getSubject();            
+        }
+        else {
+            subject = st.getSubject();
+            predicate = st.getPredicate();            
+        }            
+
+        final Term precondition = predicate;
+        final Term postcondition = new PostCondition(precondition);
+        addVertex(precondition);
+        addVertex(postcondition);
+
+        if (subject instanceof Conjunction) {
+            Conjunction seq = (Conjunction)subject;
+            if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
+                Term prev = precondition;
+                for (Term a : seq.term) {
+
+
+                    if (a instanceof Interval) {
+                        a = new UniqueInterval(st, (Interval)a);
+                    }
+                    if ((a instanceof Operation) || (a instanceof Interval)) {
                         addVertex(a);
-                        if ((prev!=null) && (!prev.equals(a))) {                            
-                            Implication imp = new Implication(prev, a, TemporalRules.ORDER_FORWARD);
-                            Sentence impSent = new Sentence(imp, '.', s.truth, s.stamp);
-                            addEdge(prev, a, impSent);
-                            concepts.put(impSent, c);
+                        if (!prev.equals(a)) {
+                            newImplicationEdge(prev, a, c, s);
                         }
                         prev = a;
                     }
-                    addVertex(predicate);
-                    
-                    Implication impFinal = new Implication(prev, predicate, TemporalRules.ORDER_FORWARD);                    
-                    Sentence impFinalSentence = new Sentence(impFinal, '.', s.truth, s.stamp);
-                    addEdge(prev, predicate, impFinalSentence);
-                    concepts.put(impFinalSentence, c);
-                    return true;
+                    else {
+                        //separate the term into a disconnected pre and post condition
+                        Term pre = a;
+                        Term post = new PostCondition(a);
+                        addVertex(pre);
+                        addVertex(post);
+                        newImplicationEdge(prev, a, c, s); //leading edge from previous only                            
+                        prev = post;
+                    }
+
                 }
+
+                newImplicationEdge(prev, postcondition, c, s);
+                return true;
             }
-            else if (predicate instanceof Conjunction) {
-                //TODO?
+            else if (seq.operator() == Symbols.NativeOperator.PARALLEL) {
+                //TODO
             }
-                        
-            addVertex(subject);
-            addVertex(predicate);
-            addEdge(subject, predicate, s);
-            return true;
         }
-        return false;
+        else {
+            addVertex(subject);
+            newImplicationEdge(precondition, subject, c, s);
+            newImplicationEdge(subject, postcondition, c, s);
+        }
+
+        return true;
     }
 
+    public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
+        Implication impFinal = new Implication(source, target, TemporalRules.ORDER_FORWARD);                    
+        Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
+        addEdge(source, target, impFinalSentence);
+        concepts.put(impFinalSentence, c);
+        
+        return impFinalSentence;
+    }
+    
     
     @Override
     public boolean allow(final Sentence s) {        
