@@ -29,13 +29,13 @@ public class GraphPlanTest {
 
         //new Window("Implications", new JGraphXGraphPanel(n.memory.executive.graph.implication)).show(500,500);
         
-        
-        for (int i = 0; i < 4; i++) {
+        new Window("Implications", new SentenceGraphPanel(n, n.memory.executive.graph.implication)).show(500,500);
+        for (int i = 0; i < 25; i++) {
         
             n.step(1);
-            //System.in.read();
+            System.in.read();
         }
-        new Window("Implications", new SentenceGraphPanel(n, n.memory.executive.graph.implication)).show(500,500);
+        
         
     }
     
