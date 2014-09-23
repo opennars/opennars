@@ -97,7 +97,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                         }
                         
                         addVertex(a);
-                        if (prev!=null) {
+                        if ((prev!=null) && (!prev.equals(a))) {                            
                             Implication imp = new Implication(prev, a, TemporalRules.ORDER_FORWARD);
                             Sentence impSent = new Sentence(imp, '.', s.truth, s.stamp);
                             addEdge(prev, a, impSent);

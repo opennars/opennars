@@ -295,6 +295,9 @@ public final class SyllogisticRules {
         Sentence taskSentence = memory.getCurrentTask().sentence;
         Sentence beliefSentence = memory.getCurrentBelief();
         
+        if (beliefSentence == null)
+            return;
+        
         int order = statement.getTemporalOrder();
         if ((order != ORDER_NONE) && !taskSentence.isGoal() && !taskSentence.isQuest()) {
             long baseTime = subSentence.getOccurenceTime();
@@ -305,6 +308,7 @@ public final class SyllogisticRules {
             long time = (side == 0) ? baseTime+inc : baseTime-inc;
             memory.getTheNewStamp().setOccurrenceTime(time);
         }
+
         
         TruthValue beliefTruth = beliefSentence.truth;
         TruthValue truth1 = mainSentence.truth;
