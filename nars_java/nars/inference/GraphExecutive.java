@@ -166,6 +166,137 @@ public class GraphExecutive implements Observer {
         
     }
     
+    public static class ParticleActivation {
+        private final ImplicationGraph graph;
+        
+        Map<Term, ParticlePath> termPaths = new HashMap();
+
+        public ParticleActivation(ImplicationGraph graph) {
+            this.graph = graph;            
+        }
+        
+        public SortedSet<ParticlePath> activate(final Term source, final boolean forward, int iterations, double distance) {
+
+            SortedSet<ParticlePath> roots = new TreeSet();
+            
+            double particleActivation = 1.0 / iterations;
+
+            List<Sentence> currentPath = new ArrayList(8);            
+
+            for (int i = 0; i < iterations; i++) {            
+
+                currentPath.clear();
+
+                double energy = distance;
+                Term current = source;
+
+                boolean choicesAvailable = false;
+
+                while (energy > 0) {
+
+                    Set<Sentence> _nextEdges = forward ? 
+                            graph.outgoingEdgesOf(current) : 
+                            graph.incomingEdgesOf(current);
+                    
+                    Set<Sentence> nextEdges = new HashSet(_nextEdges);
+
+
+                    //remove edges which loop to the target goal precondition OR postcondition
+                    List<Sentence> toRemove = new LinkedList();
+                    for (final Sentence s : nextEdges) {
+                        Term etarget = graph.getEdgeSource(s);
+                        if (etarget.equals(source)/* || etarget.equals(target)*/) {
+                            toRemove.add(s);
+                        }
+                    }
+                    nextEdges.removeAll(toRemove);
+
+
+                    if (nextEdges.isEmpty()) {
+                        break;
+                    }                
+
+                    Sentence nextEdge = null;
+                    if (nextEdges.size() == 1) {
+                        nextEdge = nextEdges.iterator().next();                    
+                    }
+                    else {
+                        //choose edge; prob = 1/weight
+
+                        //TODO disallow edge that completes cycle back to target or traversed edge?
+                        //  probably an option to allow cycles
+
+                        double totalProb = 0;
+                        for (Sentence s : nextEdges) {
+                            totalProb += 1.0 / graph.getEdgeWeight(s);
+                        }                    
+                        double r = Math.random() * totalProb;
+
+                        for (Sentence s : nextEdges) {
+                            nextEdge = s;
+                            r -= 1.0 / graph.getEdgeWeight(s);
+                            if (r <= 0) {
+                                break;
+                            }                            
+                        }
+
+                        choicesAvailable = true;
+                    }
+
+                    double weight = graph.getEdgeWeight(nextEdge);                
+
+                    energy -= weight;
+
+                    currentPath.add(nextEdge);
+
+                    current = forward ? graph.getEdgeTarget(nextEdge) : graph.getEdgeSource(nextEdge);
+
+                    if ((current == null) || (!graph.containsVertex(current)))
+                        break;
+                }
+
+                if (currentPath.isEmpty())
+                    continue;                        
+
+                ParticlePath ppath = termPaths.get(current);
+                if (ppath == null) {
+                    ppath = new ParticlePath(source, currentPath, distance - energy);
+                    termPaths.put(current, ppath);
+                }
+                else {
+                    ppath.addPath(currentPath, distance - energy);
+                }
+
+                if (choicesAvailable) {                
+                    ppath.activation += particleActivation;
+                }
+                else {
+                    //we've found the only path, so it gets all activation and we dont need to iterate any further
+                    ppath.activation = 1;
+                    break;
+                }
+
+            }
+
+            //normalize activations to maxValue=1.0
+            double maxAct = 0;
+            for (ParticlePath p : termPaths.values())
+                if (p.activation > maxAct)
+                    maxAct = p.activation;
+            if (maxAct > 0)
+                for (ParticlePath p : termPaths.values())
+                    p.activation /= maxAct;            
+
+
+            roots.addAll(termPaths.values());
+            
+            return roots;
+        }
+                
+        //public void reset()
+        
+    }
+    
     public static class ParticlePlan {
         Sentence[] path;
         List<Term> sequence;
@@ -177,7 +308,10 @@ public class GraphExecutive implements Observer {
             this.sequence = sequence;
             this.activation = activation;
             this.distance = distance;
-        }
+        }        
+    }
+    
+    protected void predictParticle(final Term source, final double distance, final int iterations) {
         
     }
     
@@ -187,119 +321,9 @@ public class GraphExecutive implements Observer {
         if (!implication.containsVertex(targetPost))
             return null;
         
-        //TODO can this be persistent across different plannings if activation decays gradually
-        Map<Term, ParticlePath> termPaths = new HashMap();
+        ParticleActivation act = new ParticleActivation(implication);
+        SortedSet<ParticlePath> roots = act.activate(targetPost, false, particles, distance);
         
-                
-        SortedSet<ParticlePath> roots = new TreeSet();
-
-                
-        double particleActivation = 1.0 / iterations;
-        
-        List<Sentence> currentPath = new ArrayList(8);            
-        
-        for (int i = 0; i < iterations; i++) {            
-        
-            currentPath.clear();
-            
-            double energy = distance;
-            Term current = targetPost;
-            
-            boolean choicesAvailable = false;
-            
-            while (energy > 0) {
-                
-                Set<Sentence> incomingEdges = new HashSet(implication.incomingEdgesOf(current));
-                
-                
-                //remove edges which loop to the target goal precondition OR postcondition
-                List<Sentence> toRemove = new LinkedList();
-                for (final Sentence s : incomingEdges) {
-                    Term etarget = implication.getEdgeSource(s);
-                    if (etarget.equals(targetPost) || etarget.equals(target)) {
-                        toRemove.add(s);
-                    }
-                }
-                incomingEdges.removeAll(toRemove);
-                    
-                
-                if (incomingEdges.isEmpty()) {
-                    break;
-                }                
-                
-                Sentence nextEdge = null;
-                if (incomingEdges.size() == 1) {
-                    nextEdge = incomingEdges.iterator().next();                    
-                }
-                else {
-                    //choose edge; prob = 1/weight
-                    
-                    //TODO disallow edge that completes cycle back to target or traversed edge?
-                    //  probably an option to allow cycles
-                    
-                    double totalProb = 0;
-                    for (Sentence s : incomingEdges) {
-                        totalProb += 1.0 / implication.getEdgeWeight(s);                        
-                    }                    
-                    double r = Math.random() * totalProb;
-                    
-                    for (Sentence s : incomingEdges) {
-                        nextEdge = s;
-                        r -= 1.0 / implication.getEdgeWeight(s);
-                        if (r <= 0) {
-                            break;
-                        }                            
-                    }
-                    
-                    choicesAvailable = true;
-                }
-                
-                double weight = implication.getEdgeWeight(nextEdge);                
-                
-                energy -= weight;
-                
-                currentPath.add(nextEdge);
-                
-                current = implication.getEdgeSource(nextEdge);
-                
-                if ((current == null) || (!implication.containsVertex(current)))
-                    break;
-            }
-            
-            if (currentPath.isEmpty())
-                continue;                        
-            
-            ParticlePath source = termPaths.get(current);
-            if (source == null) {
-                source = new ParticlePath(targetPost, currentPath, distance - energy);
-                termPaths.put(current, source);
-            }
-            else {
-                source.addPath(currentPath, distance - energy);
-            }
-            
-            if (choicesAvailable) {                
-                source.activation += particleActivation;
-            }
-            else {
-                //we've found the only path, so it gets all activation and we dont need to iterate any further
-                source.activation = 1;
-                break;
-            }
-                
-        }
-        
-        //normalize activations to maxValue=1.0
-        double maxAct = 0;
-        for (ParticlePath p : termPaths.values())
-            if (p.activation > maxAct)
-                maxAct = p.activation;
-        if (maxAct > 0)
-            for (ParticlePath p : termPaths.values())
-                p.activation /= maxAct;            
-        
-        
-        roots.addAll(termPaths.values());
 
 //        System.out.println("Particle paths for " + target);
 //        for (ParticlePath pp : roots) {
@@ -411,7 +435,7 @@ public class GraphExecutive implements Observer {
         //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
 
         double planDistance = Math.min(plan.distance, searchDistance);
-        double confidence = plan.activation * planDistance/searchDistance;
+        double confidence = plan.activation; // * planDistance/searchDistance;
         TruthValue val = new TruthValue(1.0f, (float)confidence);
         
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);

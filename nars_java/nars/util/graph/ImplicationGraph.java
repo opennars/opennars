@@ -114,8 +114,9 @@ public class ImplicationGraph extends SentenceItemGraph {
                         }
                     }
                     if (GraphExecutive.validPlanComponent(a)) {
-                        addVertex(a);
                         if (!prev.equals(a)) {
+                            addVertex(prev);                        
+                            addVertex(a);
                             newImplicationEdge(prev, a, c, s);
                             if (!(a instanceof Interval))
                                 addedNonInterval = true;
@@ -130,8 +131,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                         addVertex(post);
                         
                         addVertex(prev);
-                        addVertex(a);
-                        newImplicationEdge(prev, a, c, s); //leading edge from previous only         
+                        newImplicationEdge(prev, pre, c, s); //leading edge from previous only         
                         if (!(a instanceof Interval))
                             addedNonInterval = true;                   
                         prev = post;
