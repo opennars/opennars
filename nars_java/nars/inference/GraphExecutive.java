@@ -33,6 +33,7 @@ import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.util.graph.ImplicationGraph;
+import nars.util.graph.ImplicationGraph.PostCondition;
 import org.jgrapht.graph.EdgeReversedGraph;
 import org.jgrapht.traverse.ClosestFirstIterator;
 
@@ -341,7 +342,8 @@ public class GraphExecutive implements Observer {
         
     }
     
-    protected List<Term> planParticle(final Term target, final double distance, int iterations) {
+    protected List<Term> planParticle(Term target, final double distance, int iterations) {
+        target = new PostCondition(target);
         
         //TODO can this be continuous but decay the activation
         Map<Term, ParticlePath> termPaths = new HashMap();
@@ -397,7 +399,6 @@ public class GraphExecutive implements Observer {
                 }
                 
                 energy -= implication.getEdgeWeight(nextEdge);
-                
                 currentPath.add(nextEdge);
                 
                 current = implication.getEdgeSource(nextEdge);
@@ -428,10 +429,10 @@ public class GraphExecutive implements Observer {
         
         roots.addAll(termPaths.values());
 
-        System.out.println("Particle paths for " + target);
-        for (ParticlePath pp : roots) {
-            System.out.println("  " + pp);
-        }
+//        System.out.println("Particle paths for " + target);
+//        for (ParticlePath pp : roots) {
+//            System.out.println("  " + pp);
+//        }
 
         
         for (final ParticlePath pp : roots) {
@@ -453,11 +454,15 @@ public class GraphExecutive implements Observer {
                 if (!(t instanceof Implication))
                     throw new RuntimeException("Unknown type: " + t + " in sequence generation of " + this);
                 imp = (Implication)t;
-                Term subj = imp.getSubject();                    
-                seq.add(subj);
+                Term subj = imp.getSubject();
+                
+                if (validPlanComponent(subj))
+                    seq.add(subj);
+                
                 if (subj instanceof Operation)
                     operations++;
             }
+            
             
             //the last (first) predicate should be the target
 //            if (imp!=null) {

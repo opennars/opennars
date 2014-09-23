@@ -4,6 +4,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
+import nars.inference.GraphExecutive;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -13,7 +14,6 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Term;
-import nars.operator.Operation;
 
 
 
@@ -60,12 +60,10 @@ public class ImplicationGraph extends SentenceItemGraph {
         
     }
     
-    static class PostCondition extends Negation {
-
-        public PostCondition(Term t) {
+    public static class PostCondition extends Negation {
+        public PostCondition(final Term t) {
             super("~" + t.name(), t);
         }
-        
     }
     
     @Override
@@ -103,7 +101,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                     if (a instanceof Interval) {
                         a = new UniqueInterval(st, (Interval)a);
                     }
-                    if ((a instanceof Operation) || (a instanceof Interval)) {
+                    if (GraphExecutive.validPlanComponent(a)) {
                         addVertex(a);
                         if (!prev.equals(a)) {
                             newImplicationEdge(prev, a, c, s);
@@ -130,9 +128,19 @@ public class ImplicationGraph extends SentenceItemGraph {
             }
         }
         else {
-            addVertex(subject);
-            newImplicationEdge(precondition, subject, c, s);
-            newImplicationEdge(subject, postcondition, c, s);
+            if (GraphExecutive.validPlanComponent(subject)) {
+                addVertex(subject);
+                newImplicationEdge(precondition, subject, c, s);
+                newImplicationEdge(subject, postcondition, c, s);
+            }
+            else {
+                //separate into pre/post
+                PostCondition postSubject = new PostCondition(subject);
+                addVertex(subject);
+                addVertex(postSubject);
+                newImplicationEdge(precondition, subject, c, s);
+                newImplicationEdge(postSubject, postcondition, c, s);
+            }
         }
 
         return true;
@@ -183,6 +191,10 @@ public class ImplicationGraph extends SentenceItemGraph {
 
     @Override
     public double getEdgeWeight(Sentence e) {
+        //transitions to PostCondition vertices are free
+        if (getEdgeTarget(e) instanceof PostCondition)
+            return 0;
+        
         float freq = e.truth.getFrequency();
         float conf = e.truth.getConfidence();        
         float conceptPriority = concepts.get(e).getPriority();
