@@ -118,6 +118,10 @@ public class ImplicationGraph extends SentenceItemGraph {
                     }
                     else {
                         //separate the term into a disconnected pre and post condition
+                        if (a == null)
+                            throw new RuntimeException();
+                        if (prev == null)
+                            throw new RuntimeException();
                         Term pre = a;
                         Term post = new PostCondition(a);
                         addVertex(pre);
@@ -201,9 +205,9 @@ public class ImplicationGraph extends SentenceItemGraph {
 
     @Override
     public double getEdgeWeight(Sentence e) {
-        //transitions to PostCondition vertices are free
+        //transitions to PostCondition vertices are free or low-cost
         if (getEdgeTarget(e) instanceof PostCondition)
-            return 0;
+            return 1.0;
         
         float freq = e.truth.getFrequency();
         float conf = e.truth.getConfidence();        

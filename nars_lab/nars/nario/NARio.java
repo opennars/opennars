@@ -178,7 +178,7 @@ public class NARio extends Run {
 //                            }
 //                            else {                                
                                 nar.addInput(/*"$" + movementPriority + "$"*/
-                                        "<(*," + idx + "," + idy + "," + idist + ") --> moved>. :|:");
+                                        "<(*," + idx + "," + idy + /*"," + idist +*/ ") --> moved>. :|:");
 //                            }
                         }
 
@@ -259,7 +259,7 @@ public class NARio extends Run {
                     }
 
                     if (gotCoin > 0) {
-                        nar.addInput("<(*,0,0,0) --> gotCoin>. :|:");
+                        nar.addInput("<(*,0,0) --> gotCoin>. :|:");
                         nar.addInput("<nario --> alive>. :|:");
                     }
 
@@ -358,7 +358,7 @@ public class NARio extends Run {
                                 s.ix = dx;
                                 s.iy = dy;
                                 nar.addInput("$" + sightPriority + "$" +
-                                        " <(*," + dx + "," + dy + "," + idist + ") --> " + type + ">. :|:");
+                                        " <(*," + dx + "," + dy + /*"," + idist +*/ ") --> " + type + ">. :|:");
                             }
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
