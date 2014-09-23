@@ -57,7 +57,7 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(8);
+        nar.param().duration.set(16);
         nar.param().noiseLevel.set(10);
         nar.param().shortTermMemorySize.set(1);
 
