@@ -2,10 +2,9 @@ package nars.inference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +37,7 @@ public class GraphExecutive implements Observer {
     private final Memory memory;
     
     
-    float searchDepth = 16;
+    float searchDepth = 24;
     int particles = 64;
 
     public GraphExecutive(Memory memory) {
@@ -177,12 +176,12 @@ public class GraphExecutive implements Observer {
         
         public SortedSet<ParticlePath> activate(final Term source, final boolean forward, int iterations, double distance) {
 
-            SortedSet<ParticlePath> roots = new TreeSet();
-            
             double particleActivation = 1.0 / iterations;
 
-            List<Sentence> currentPath = new ArrayList(8);            
+            List<Sentence> currentPath = new ArrayList();
 
+            List<Sentence> nextEdges = new ArrayList();
+            
             for (int i = 0; i < iterations; i++) {            
 
                 currentPath.clear();
@@ -194,22 +193,19 @@ public class GraphExecutive implements Observer {
 
                 while (energy > 0) {
 
-                    Set<Sentence> _nextEdges = forward ? 
+                    Set<Sentence> graphEdges = forward ? 
                             graph.outgoingEdgesOf(current) : 
                             graph.incomingEdgesOf(current);
                     
-                    Set<Sentence> nextEdges = new HashSet(_nextEdges);
-
+                    nextEdges.clear();
 
                     //remove edges which loop to the target goal precondition OR postcondition
-                    List<Sentence> toRemove = new LinkedList();
-                    for (final Sentence s : nextEdges) {
+                    for (final Sentence s : graphEdges) {
                         Term etarget = graph.getEdgeSource(s);
-                        if (etarget.equals(source)/* || etarget.equals(target)*/) {
-                            toRemove.add(s);
+                        if (!etarget.equals(source)/* || etarget.equals(target)*/) {
+                            nextEdges.add(s);
                         }
                     }
-                    nextEdges.removeAll(toRemove);
 
 
                     if (nextEdges.isEmpty()) {
@@ -218,23 +214,26 @@ public class GraphExecutive implements Observer {
 
                     Sentence nextEdge = null;
                     if (nextEdges.size() == 1) {
-                        nextEdge = nextEdges.iterator().next();                    
+                        nextEdge = nextEdges.get(0);
                     }
                     else {
+                        int numEdges = nextEdges.size();
+                        
                         //choose edge; prob = 1/weight
 
                         //TODO disallow edge that completes cycle back to target or traversed edge?
                         //  probably an option to allow cycles
 
                         double totalProb = 0;
-                        for (Sentence s : nextEdges) {
-                            totalProb += 1.0 / graph.getEdgeWeight(s);
-                        }                    
-                        double r = Math.random() * totalProb;
+                        for (int j = 0; j < numEdges; j++) {
+                            totalProb += 1.0 / graph.getEdgeWeight(nextEdges.get(j));
+                        }
+                        
+                        double r = Memory.randomNumber.nextDouble();
 
-                        for (Sentence s : nextEdges) {
-                            nextEdge = s;
-                            r -= 1.0 / graph.getEdgeWeight(s);
+                        for (int j = 0; j < numEdges; j++) {
+                            nextEdge = nextEdges.get(j);
+                            r -= 1.0 / graph.getEdgeWeight(nextEdge);
                             if (r <= 0) {
                                 break;
                             }                            
@@ -259,9 +258,9 @@ public class GraphExecutive implements Observer {
                     continue;                        
 
                 ParticlePath ppath = termPaths.get(current);
-                if (ppath == null) {
-                    ppath = new ParticlePath(source, currentPath, distance - energy);
-                    termPaths.put(current, ppath);
+                if (ppath == null) {                    
+                    termPaths.put(current, 
+                            ppath = new ParticlePath(source, currentPath, distance - energy));
                 }
                 else {
                     ppath.addPath(currentPath, distance - energy);
@@ -278,21 +277,22 @@ public class GraphExecutive implements Observer {
 
             }
 
+            Collection<ParticlePath> paths = termPaths.values();
+                 
+            
             //normalize activations to maxValue=1.0
             double maxAct = 0;
-            for (ParticlePath p : termPaths.values())
+            for (final ParticlePath p : paths)
                 if (p.activation > maxAct)
                     maxAct = p.activation;
             if (maxAct > 0)
-                for (ParticlePath p : termPaths.values())
+                for (final ParticlePath p : paths)
                     p.activation /= maxAct;            
 
 
-            roots.addAll(termPaths.values());
-            
-            return roots;
+            return new TreeSet(paths);
         }
-                
+        
         //public void reset()
         
     }
@@ -435,8 +435,8 @@ public class GraphExecutive implements Observer {
         //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
 
         double planDistance = Math.min(plan.distance, searchDistance);
-        double confidence = plan.activation; // * planDistance/searchDistance;
-        TruthValue val = new TruthValue(1.0f, (float)confidence);
+        float confidence = (float)plan.activation; // * planDistance/searchDistance;
+        TruthValue val = new TruthValue(1.0f, confidence);
         
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
 
@@ -447,6 +447,7 @@ public class GraphExecutive implements Observer {
         }
         
         BudgetValue bud = BudgetFunctions.forward(val, memory);
+        bud.andPriority(confidence);
         
         Task t = new Task(new Sentence(imp, punctuation, val, stamp), bud);
         

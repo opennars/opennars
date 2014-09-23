@@ -116,6 +116,11 @@ public class BudgetValue implements Cloneable {
         priority = or(priority, v);
     }
 
+    /** AND's (multiplies) priority with another value */
+    public void andPriority(final float v) {
+        priority = and(priority, v);
+    }
+
     /**
      * Decrease priority value by a percentage of the remaining range
      * @param v The decreasing percent
@@ -241,4 +246,5 @@ public class BudgetValue implements Cloneable {
             .append(MARK)
             .toString();                
     }
+
 }
