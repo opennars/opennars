@@ -80,6 +80,9 @@ public class ImplicationGraph extends SentenceItemGraph {
         
         final Implication st = (Implication)ct;
         
+        if (st.getTemporalOrder() == TemporalRules.ORDER_NONE)
+            return false;
+
         final Term subject, predicate;
         
         if (st.operator() == NativeOperator.IMPLICATION_BEFORE) {
@@ -166,7 +169,8 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
 
     public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
-        Implication impFinal = new Implication(source, target, TemporalRules.ORDER_FORWARD);                    
+        Implication impParent = (Implication)parent.content;
+        Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
         addEdge(source, target, impFinalSentence);
         concepts.put(impFinalSentence, c);

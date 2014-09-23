@@ -24,15 +24,21 @@ abstract public class SentenceItemGraph extends SentenceGraph {
     public boolean add(final Sentence s, final Item c) {
         if (super.add(s, c)) {
             concepts.put(s, c);
+            //System.out.println(vertexSet().size() + ":" + edgeSet().size() + " add: " + s + " ");
             return true;
         }
         return false;
     }
 
     @Override
-    public void remove(final Sentence s) {
-        super.remove(s);
-        concepts.remove(s);
+    public boolean remove(final Sentence s) {
+        if (super.remove(s)) {
+            concepts.remove(s);
+            //System.out.println(System.identityHashCode(this) + ": " +vertexSet().size() + ":" + edgeSet().size() + " add: " + s + " ");
+            
+            return true;
+        }
+        return false;
     }
     
     

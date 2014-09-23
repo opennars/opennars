@@ -14,7 +14,6 @@ import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.Window;
 import nars.gui.output.graph.SentenceGraphPanel;
-import nars.inference.GraphExecutive;
 import nars.io.Output;
 import nars.language.Term;
 import nars.nario.level.Level;
@@ -89,8 +88,6 @@ public class NARio extends Run {
     public NARio(NAR n) {
         super();
         this.nar = n;
-
-        new GraphExecutive(nar.memory);
 
         SwingUtilities.invokeLater(new Runnable() {
 
