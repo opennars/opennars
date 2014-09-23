@@ -2,6 +2,7 @@ package nars.inference;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,7 +32,6 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
-import nars.operator.Operator;
 import nars.util.graph.ImplicationGraph;
 import org.jgrapht.graph.EdgeReversedGraph;
 import org.jgrapht.traverse.ClosestFirstIterator;
@@ -42,7 +42,10 @@ public class GraphExecutive implements Observer {
     PriorityBuffer<Task> tasks;
     int numTasks = 32;
     private final Memory memory;
-    float searchDepth = 8;
+    
+    
+    float searchDepth = 64;
+    int particles = 512;
 
     public GraphExecutive(Memory memory) {
         super();
@@ -76,7 +79,7 @@ public class GraphExecutive implements Observer {
     public void decisionMaking(final Task task, final Concept concept) {
         tasks.add(task.clone());
         
-        plan(task, task.getContent(), searchDepth);
+        plan(task, task.getContent(), searchDepth, '!');
         
     }
 
@@ -92,8 +95,7 @@ public class GraphExecutive implements Observer {
             
             //EXPERIMENTAL
             if (implication.containsVertex(t.getContent()))
-                planParticle(t.getContent(), searchDepth);
-            
+                plan(t, t.getContent(), searchDepth, '.');
             }
             
         } else if (event == ConceptGoalRemove.class) {
@@ -107,9 +109,9 @@ public class GraphExecutive implements Observer {
         }
     }
 
-    protected List<Term> plan(Term target, double distance)  {        
+    protected List<Term> plan(Term target, double distance, int particles)  {        
                 
-        List<Term> p = planParticle(target, distance);
+        List<Term> p = planParticle(target, distance, particles);
         
         if (!p.isEmpty())
             System.out.println("plan: " + target);
@@ -117,8 +119,8 @@ public class GraphExecutive implements Observer {
     }
     
     
-    public boolean validPlanComponent(Term t) {
-        return ((t instanceof Interval) || (t instanceof Operator));
+    public static boolean validPlanComponent(final Term t) {
+        return ((t instanceof Interval) || (t instanceof Operation));
     }
     
     public static class CandidateSequenceRoot implements Comparable {
@@ -308,11 +310,11 @@ public class GraphExecutive implements Observer {
     public static class ParticlePath implements Comparable<ParticlePath> {
         double activation = 0;
         Term target;
-        List<Sentence> path;
+        Sentence[] path;
         
         public ParticlePath(Term target, List<Sentence> path) {
             this.target = target;
-            this.path = path;
+            this.path = path.toArray(new Sentence[path.size()]);
         }
 
         @Override
@@ -322,14 +324,56 @@ public class GraphExecutive implements Observer {
 
         @Override
         public String toString() {
-            return activation + "|" /*+ target */ + " <- " + path.toString() ;
+            return activation + "|" /*+ target */ + " <- " + Arrays.toString(path);
+        }
+
+        public List<Term> getSequence() {
+            if (path.length == 0) return Collections.EMPTY_LIST;
+            
+            int operations = 0;
+            
+            List<Term> seq = new ArrayList(path.length);
+                        
+            //Calculate path back to target
+            Implication imp = null;
+            for (int i = path.length-1; i >=0; i--) {
+                Sentence s = path[i];
+                Term t = s.content;
+                
+                if (t instanceof Implication) {
+                    imp = (Implication)t;
+                    Term subj = subj = imp.getSubject();
+                    if (GraphExecutive.validPlanComponent(subj))
+                        seq.add(subj);
+                    if (subj instanceof Operation)
+                        operations++;
+                }
+                else {
+                    System.err.println("Unknown type: " + t + " in sequence generation of " + this);
+                }                    
+            }
+            
+            //the last (first) predicate should be the target
+//            if (imp!=null) {
+//                Term pred = imp.getPredicate();
+//                if (GraphExecutive.validPlanComponent(pred))
+//                    seq.add(pred);
+//                if (pred instanceof Operation)
+//                    operations++;
+//            }
+             
+            
+            if (operations == 0)
+                return Collections.EMPTY_LIST;
+            
+            return seq;
         }
         
         
         
     }
     
-    protected List<Term> planParticle(Term target, double distance) {
+    protected List<Term> planParticle(Term target, double distance, int iterations) {
         
         //TODO can this be continuous but decay the activation
         Map<Term, ParticlePath> termPaths = new HashMap();
@@ -337,23 +381,25 @@ public class GraphExecutive implements Observer {
                 
         SortedSet<ParticlePath> roots = new TreeSet();
 
-        
-        int iterations = 100;
+                
         double particleActivation = 1.0 / iterations;
         
+        List<Sentence> currentPath = new ArrayList(8);            
+        
         for (int i = 0; i < iterations; i++) {            
+        
+            currentPath.clear();
             
             double energy = distance;
             Term current = target;
-            List<Sentence> path = new ArrayList(8);            
+            
             
             while (energy > 0) {
                 
                 Set<Sentence> incomingEdges = implication.incomingEdgesOf(current);
                 if (incomingEdges.isEmpty()) {
                     break;
-                }        
-                
+                }                
                 
                 Sentence nextEdge = null;
                 if (incomingEdges.size() == 1)
@@ -381,17 +427,17 @@ public class GraphExecutive implements Observer {
                 
                 energy -= implication.getEdgeWeight(nextEdge);
                 
-                path.add(nextEdge);
+                currentPath.add(nextEdge);
                 
                 current = implication.getEdgeSource(nextEdge);
             }
             
-            if (path.isEmpty())
+            if (currentPath.isEmpty())
                 continue;
             
             ParticlePath source = termPaths.get(current);
             if (source == null) {
-                source = new ParticlePath(target, path);
+                source = new ParticlePath(target, currentPath);
                 termPaths.put(current, source);
             }
             
@@ -400,46 +446,31 @@ public class GraphExecutive implements Observer {
         
         roots.addAll(termPaths.values());
 
-        System.out.println("Particle paths for " + target);
-        for (ParticlePath pp : roots) {
-            System.out.println("  " + pp);
-        }
+//        System.out.println("Particle paths for " + target);
+//        for (ParticlePath pp : roots) {
+//            System.out.println("  " + pp);
+//        }
 
         
         for (final ParticlePath pp : roots) {
-            
-            List<Sentence> edges = pp.path;
-            List<Term> path = new ArrayList(edges.size());
-            
-            
-            //Calculate path back to target
+                        
+            List<Term> path = pp.getSequence();
 
-            //Term current = path.get(0).content;
-            
-            Sentence currentEdge = null;
-            int operations = 0;
-
-
-
-            if (operations == 0)
-                continue;
             if (path.size() < 2)
                 continue;
 
-
-            //System.out.println(path + " " + root + " in " + roots);
             return path;
         }
         
         return Collections.EMPTY_LIST;
     }
 
-    protected void plan(Task task, Term target, double distance) {
+    protected void plan(Task task, Term target, double distance, char punctuation) {
 
         if (!implication.containsVertex(target))
             return;
 
-        List<Term> path = plan(target, distance);
+        List<Term> path = plan(target, distance, particles);
         if (path == null)
             return;
         if (path.size() < 2) 
@@ -495,7 +526,7 @@ public class GraphExecutive implements Observer {
 
         //memory.doublePremiseTask(imp, val, bud);
         memory.inputTask(
-                new Task(new Sentence(imp, '.', val, stamp), bud)
+                new Task(new Sentence(imp, punctuation, val, stamp), bud)
         );
 
         

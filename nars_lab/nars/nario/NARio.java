@@ -45,7 +45,7 @@ public class NARio extends Run {
     final float gameTimePerMemoryCycle = 0.02f;
 
     public static void main(String[] arg) {
-        NAR nar = new DiscretinuousBagNARBuilder(true).setConceptBagSize(2048).build();
+        NAR nar = new DiscretinuousBagNARBuilder(true).setConceptBagSize(1024).build();
         //NAR nar = new DefaultNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
@@ -166,6 +166,7 @@ public class NARio extends Run {
 
                         int idx = (int)Math.round(dx);
                         int idy = (int)Math.round(dy);
+                        int idist = (int)Math.round(Math.sqrt(dx*dx+dy*dy));
                         if (movement) {
 //                            if ((idx==0) && (idy==0)) {
 //                                //create a fractional movement for <1 nudges
@@ -176,14 +177,16 @@ public class NARio extends Run {
 //                                nar.addInput("<(*," + idx + "," + idy + ") --> moved>. :|: %1.00;0." + conf + "%");
 //                            }
 //                            else {                                
-                                nar.addInput(/*"$" + movementPriority + "$"*/"<(*," + idx + "," + idy + ") --> moved>. :|:");
+                                nar.addInput(/*"$" + movementPriority + "$"*/
+                                        "<(*," + idx + "," + idy + "," + idist + ") --> moved>. :|:");
 //                            }
                         }
 
                     }
     
+                    boolean statusUpdate = nar.getTime() % healthStatusCycle == 0;
                     //health status report
-                    if (nar.getTime() % healthStatusCycle == 0) {
+                    if (statusUpdate) {
                         float dead = 0.0f;
                         //consider self dead when no movement
                         if (cyclesWithoutMove > 0) {
@@ -238,9 +241,12 @@ public class NARio extends Run {
                                 } else {
                                     continue; //ignore diagonal for now
                                 }
-                                String s = "<" + (blocked ? "solid" : "empty") + " --> " + direction + ">. :|:";
+                                /*String s = "<" + (blocked ? "solid" : "empty") + " --> " + 
+                                        direction + ">. :|:";*/
+                                String s = "<" + direction + " --> " + 
+                                        (blocked ? "solid" : "empty") + ">. :|:";
 
-                                if ((sight[k] != null) && (sight[k].equals(s))) {
+                                if (((sight[k] != null) && (sight[k].equals(s))) && (!statusUpdate)) {
                                     continue;
                                 }
 
@@ -253,7 +259,7 @@ public class NARio extends Run {
                     }
 
                     if (gotCoin > 0) {
-                        nar.addInput("<gotCoin --> (*,0,0)>. :|:");
+                        nar.addInput("<(*,0,0,0) --> gotCoin>. :|:");
                         nar.addInput("<nario --> alive>. :|:");
                     }
 
@@ -332,10 +338,11 @@ public class NARio extends Run {
                             //priority/=2f;
                         }
 
-                        double senseRadius = 6;
+                        double senseRadius = 4;
                         double dist = Math.sqrt((x - s.x) * (x - s.x) + (y - s.y) * (y - s.y)) / 16.0;
+                        int idist = (int)Math.round(dist);
                         if (dist <= senseRadius) {
-                            double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
+                            double sightPriority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
 
                             //sparkles are common and not important
                             String type = s.getClass().getSimpleName();
@@ -350,8 +357,8 @@ public class NARio extends Run {
                             if ((s.ix == Integer.MAX_VALUE) || ((s.ix != dx) || (s.iy != dy))) {
                                 s.ix = dx;
                                 s.iy = dy;
-                                nar.addInput(/*"$" + sightPriority + "$" +*/
-                                        " <" + type + " --> (*," + dx + "," + dy + ")>. :|:");
+                                nar.addInput("$" + sightPriority + "$" +
+                                        " <(*," + dx + "," + dy + "," + idist + ") --> " + type + ">. :|:");
                             }
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
@@ -390,12 +397,12 @@ public class NARio extends Run {
         nar.addInput("$0.99;0.99$ (--,<nario --> dead>)!");
         nar.addInput("<alive <-> dead>. %0.00;0.99%");        
         nar.addInput("<?y --> space>? :/:");
-        nar.addInput("<{(*,0,0),(*,0,1),(*,1,0),(*,-1,0),(*,0,-1)} <-> direction>.");
-        nar.addInput("<(*,0,0) <-> center>.");
-        nar.addInput("<(*,-1,0) <-> left>.");
-        nar.addInput("<(*,1,0) <-> right>.");
-        nar.addInput("<(*,0,1) <-> up>.");
-        nar.addInput("<(*,0,-1) <-> down>.");
+        //nar.addInput("<{(*,0,0),(*,0,1),(*,1,0),(*,-1,0),(*,0,-1)} <-> direction>.");
+        nar.addInput("<(*,0,0,0) <-> center>. %1.00;0.99%");
+        nar.addInput("<(*,-1,0,1) <-> left>. %1.00;0.99%");
+        nar.addInput("<(*,1,0,1) <-> right>. %1.00;0.99%");
+        nar.addInput("<(*,0,1,1) <-> up>. %1.00;0.99%");
+        nar.addInput("<(*,0,-1,1) <-> down>. %1.00;0.99%");
                         //nar.addInput("<solid <-> empty>. %0.00;0.99%");
         //nar.addInput("<up <-> down>. %0.00;0.99%");
         //nar.addInput("<left <-> right>. %0.00;0.99%");

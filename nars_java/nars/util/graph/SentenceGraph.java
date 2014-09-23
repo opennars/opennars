@@ -48,8 +48,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         memory.event.on(Events.ConceptRemove.class, this);
         memory.event.on(Events.ConceptBeliefAdd.class, this);
         memory.event.on(Events.ConceptBeliefRemove.class, this);        
-        //memory.event.on(Events.ConceptGoalAdd.class, this);
-        //memory.event.on(Events.ConceptGoalRemove.class, this);        
+        memory.event.on(Events.ConceptGoalAdd.class, this);
+        memory.event.on(Events.ConceptGoalRemove.class, this);        
     }
     
     public void stop() {
@@ -59,8 +59,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         memory.event.off(Events.ConceptRemove.class, this);
         memory.event.off(Events.ConceptBeliefAdd.class, this);
         memory.event.off(Events.ConceptBeliefRemove.class, this);        
-        //memory.event.off(Events.ConceptGoalAdd.class, this);
-        //memory.event.off(Events.ConceptGoalRemove.class, this);        
+        memory.event.off(Events.ConceptGoalAdd.class, this);
+        memory.event.off(Events.ConceptGoalRemove.class, this);        
     }
 
     @Override
@@ -82,16 +82,16 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             Sentence s = (Sentence)a[1];
             remove(s);
         }
-//        else if (event == Events.ConceptGoalAdd.class) {
-//            //Concept c = (Concept)a[0];
-//            Sentence s = (Sentence)a[1];
-//            add(s);
-//        }
-//        else if (event == Events.ConceptGoalRemove.class) {
-//            //Concept c = (Concept)a[0];
-//            Sentence s = (Sentence)a[1];
-//            remove(s);
-//        }
+        else if (event == Events.ConceptGoalAdd.class) {
+            Concept c = (Concept)a[0];
+            Sentence s = (Sentence)a[1];
+            //add(s, c);
+        }
+        else if (event == Events.ConceptGoalRemove.class) {
+            Concept c = (Concept)a[0];
+            Sentence s = (Sentence)a[1];
+            //remove(s);
+        }
         else if (event == Events.CycleEnd.class) {
             if (needInitialConcepts)
                 getInitialConcepts();

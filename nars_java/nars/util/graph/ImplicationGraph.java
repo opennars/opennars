@@ -166,7 +166,8 @@ public class ImplicationGraph extends SentenceItemGraph {
         float conf = e.truth.getConfidence();        
         float conceptPriority = concepts.get(e).getPriority();
         //weight = cost = distance
-        return 1.0 / (freq * conf * conceptPriority);
+        //return 1.0 / (freq * conf * conceptPriority);
+        return 1.0 / (freq * conf * (0.5f + 0.5f * conceptPriority));
     }
     
     
