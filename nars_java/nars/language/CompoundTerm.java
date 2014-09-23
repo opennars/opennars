@@ -373,7 +373,7 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final NativeOperator op, final Term[] arg) {
+    protected static String makeCompoundName(final NativeOperator op, final Term... arg) {
         final int sizeEstimate = 12 * arg.length;
         
         final StringBuilder n = new StringBuilder(sizeEstimate)

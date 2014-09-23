@@ -311,14 +311,23 @@ public class GraphExecutive implements Observer {
         double activation = 0;
         Term target;
         Sentence[] path;
+        double distance;
         
-        public ParticlePath(Term target, List<Sentence> path) {
+        public ParticlePath(Term target, List<Sentence> path, double distance) {
             this.target = target;
-            this.path = path.toArray(new Sentence[path.size()]);
+            this.distance = Double.MAX_VALUE;
+            addPath(path, distance);
+        }
+        
+        public void addPath(final List<Sentence> path, final double dist) {
+            if (dist < distance) {
+                this.path = path.toArray(new Sentence[path.size()]);
+                this.distance = dist;
+            }
         }
 
         @Override
-        public int compareTo(ParticlePath o) {
+        public final int compareTo(final ParticlePath o) {
             return Double.compare(o.activation, activation);
         }
 
@@ -327,53 +336,12 @@ public class GraphExecutive implements Observer {
             return activation + "|" /*+ target */ + " <- " + Arrays.toString(path);
         }
 
-        public List<Term> getSequence() {
-            if (path.length == 0) return Collections.EMPTY_LIST;
-            
-            int operations = 0;
-            
-            List<Term> seq = new ArrayList(path.length);
-                        
-            //Calculate path back to target
-            Implication imp = null;
-            for (int i = path.length-1; i >=0; i--) {
-                Sentence s = path[i];
-                Term t = s.content;
-                
-                if (t instanceof Implication) {
-                    imp = (Implication)t;
-                    Term subj = subj = imp.getSubject();
-                    if (GraphExecutive.validPlanComponent(subj))
-                        seq.add(subj);
-                    if (subj instanceof Operation)
-                        operations++;
-                }
-                else {
-                    System.err.println("Unknown type: " + t + " in sequence generation of " + this);
-                }                    
-            }
-            
-            //the last (first) predicate should be the target
-//            if (imp!=null) {
-//                Term pred = imp.getPredicate();
-//                if (GraphExecutive.validPlanComponent(pred))
-//                    seq.add(pred);
-//                if (pred instanceof Operation)
-//                    operations++;
-//            }
-             
-            
-            if (operations == 0)
-                return Collections.EMPTY_LIST;
-            
-            return seq;
-        }
         
         
         
     }
     
-    protected List<Term> planParticle(Term target, double distance, int iterations) {
+    protected List<Term> planParticle(final Term target, final double distance, int iterations) {
         
         //TODO can this be continuous but decay the activation
         Map<Term, ParticlePath> termPaths = new HashMap();
@@ -393,6 +361,7 @@ public class GraphExecutive implements Observer {
             double energy = distance;
             Term current = target;
             
+            boolean choicesAvailable = false;
             
             while (energy > 0) {
                 
@@ -423,6 +392,8 @@ public class GraphExecutive implements Observer {
                             break;
                         }                            
                     }
+                    
+                    choicesAvailable = true;
                 }
                 
                 energy -= implication.getEdgeWeight(nextEdge);
@@ -433,33 +404,82 @@ public class GraphExecutive implements Observer {
             }
             
             if (currentPath.isEmpty())
-                continue;
+                continue;                        
             
             ParticlePath source = termPaths.get(current);
             if (source == null) {
-                source = new ParticlePath(target, currentPath);
+                source = new ParticlePath(target, currentPath, distance - energy);
                 termPaths.put(current, source);
             }
+            else {
+                source.addPath(currentPath, distance - energy);
+            }
             
-            source.activation += particleActivation;
+            if (choicesAvailable) {                
+                source.activation += particleActivation;
+            }
+            else {
+                //we've found the only path, so it gets all activation and we dont need to iterate any further
+                source.activation = 1;
+                break;
+            }
+                
         }
         
         roots.addAll(termPaths.values());
 
-//        System.out.println("Particle paths for " + target);
-//        for (ParticlePath pp : roots) {
-//            System.out.println("  " + pp);
-//        }
+        System.out.println("Particle paths for " + target);
+        for (ParticlePath pp : roots) {
+            System.out.println("  " + pp);
+        }
 
         
         for (final ParticlePath pp : roots) {
-                        
-            List<Term> path = pp.getSequence();
 
-            if (path.size() < 2)
+            Sentence[] path = pp.path;
+            
+            if (path.length == 0) return Collections.EMPTY_LIST;
+            
+            int operations = 0;
+            
+            List<Term> seq = new ArrayList(path.length);
+                        
+            //Calculate path back to target
+            Implication imp = null;
+            for (int i = path.length-1; i >=0; i--) {
+                Sentence s = path[i];
+                Term t = s.content;
+                
+                if (!(t instanceof Implication))
+                    throw new RuntimeException("Unknown type: " + t + " in sequence generation of " + this);
+                imp = (Implication)t;
+                Term subj = imp.getSubject();                    
+                seq.add(subj);
+                if (subj instanceof Operation)
+                    operations++;
+            }
+            
+            //the last (first) predicate should be the target
+//            if (imp!=null) {
+//                Term pred = imp.getPredicate();
+//                if (GraphExecutive.validPlanComponent(pred))
+//                    seq.add(pred);
+//                if (pred instanceof Operation)
+//                    operations++;
+//            }
+             
+            
+            if (operations == 0)
+                return Collections.EMPTY_LIST;
+            
+            
+
+            //if (GraphExecutive.validPlanComponent(subj))
+            
+            if (seq.size() < 2)
                 continue;
 
-            return path;
+            return seq;
         }
         
         return Collections.EMPTY_LIST;
