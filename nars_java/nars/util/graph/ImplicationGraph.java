@@ -30,20 +30,20 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
     
     public static class UniqueInterval extends Interval {
-        private static int _id = 0;
+
         
         public final Implication parent;
-        private final int id;
+        private final int order;
     
-        public UniqueInterval(Implication parent, Interval i) {
+        public UniqueInterval(Implication parent, Interval i, int order) {
             super(i.magnitude, true);    
             this.parent = parent;
-            this.id = _id++;
+            this.order = order;
         }
 
         @Override
         public int hashCode() {
-            return id + parent.hashCode() * 37  + super.hashCode();
+            return order + parent.hashCode() * 37  + super.hashCode();
         }
 
         @Override
@@ -52,7 +52,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             
             if (that instanceof UniqueInterval) {
                 UniqueInterval ui = (UniqueInterval)that;
-                return (ui.id == id && ui.parent.equals(parent) && ui.magnitude == magnitude);
+                return (ui.order == order && ui.parent.equals(parent) && ui.magnitude == magnitude);
             }
             return false;
         }
@@ -95,16 +95,24 @@ public class ImplicationGraph extends SentenceItemGraph {
             Conjunction seq = (Conjunction)subject;
             if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
                 Term prev = precondition;
+                boolean addedNonInterval = false;
+                int intervalNum = 0;
+                
                 for (Term a : seq.term) {
 
 
                     if (a instanceof Interval) {
-                        a = new UniqueInterval(st, (Interval)a);
+                        if (addedNonInterval) {
+                            //eliminate prefix intervals
+                            a = new UniqueInterval(st, (Interval)a, intervalNum++);
+                        }
                     }
                     if (GraphExecutive.validPlanComponent(a)) {
                         addVertex(a);
                         if (!prev.equals(a)) {
                             newImplicationEdge(prev, a, c, s);
+                            if (!(a instanceof Interval))
+                                addedNonInterval = true;
                         }
                         prev = a;
                     }
@@ -114,7 +122,9 @@ public class ImplicationGraph extends SentenceItemGraph {
                         Term post = new PostCondition(a);
                         addVertex(pre);
                         addVertex(post);
-                        newImplicationEdge(prev, a, c, s); //leading edge from previous only                            
+                        newImplicationEdge(prev, a, c, s); //leading edge from previous only         
+                        if (!(a instanceof Interval))
+                            addedNonInterval = true;                   
                         prev = post;
                     }
 
@@ -131,7 +141,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             if (GraphExecutive.validPlanComponent(subject)) {
                 addVertex(subject);
                 newImplicationEdge(precondition, subject, c, s);
-                newImplicationEdge(subject, postcondition, c, s);
+                newImplicationEdge(subject, postcondition, c, s);                
             }
             else {
                 //separate into pre/post

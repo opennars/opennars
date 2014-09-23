@@ -309,12 +309,13 @@ public class GraphExecutive implements Observer {
     
     
     public static class ParticlePath implements Comparable<ParticlePath> {
+        final public Term target;
+        
         double activation = 0;
-        Term target;
         Sentence[] path;
         double distance;
         
-        public ParticlePath(Term target, List<Sentence> path, double distance) {
+        public ParticlePath(final Term target, final List<Sentence> path, final double distance) {
             this.target = target;
             this.distance = Double.MAX_VALUE;
             addPath(path, distance);
@@ -336,16 +337,13 @@ public class GraphExecutive implements Observer {
         public String toString() {
             return activation + "|" /*+ target */ + " <- " + Arrays.toString(path);
         }
-
-        
-        
         
     }
     
-    protected List<Term> planParticle(Term target, final double distance, int iterations) {
-        target = new PostCondition(target);
+    protected List<Term> planParticle(final Term target, final double distance, final int iterations) {
+        PostCondition targetPost = new PostCondition(target);
         
-        //TODO can this be continuous but decay the activation
+        //TODO can this be persistent across different plannings if activation decays gradually
         Map<Term, ParticlePath> termPaths = new HashMap();
         
                 
@@ -361,7 +359,7 @@ public class GraphExecutive implements Observer {
             currentPath.clear();
             
             double energy = distance;
-            Term current = target;
+            Term current = targetPost;
             
             boolean choicesAvailable = false;
             
@@ -409,7 +407,7 @@ public class GraphExecutive implements Observer {
             
             ParticlePath source = termPaths.get(current);
             if (source == null) {
-                source = new ParticlePath(target, currentPath, distance - energy);
+                source = new ParticlePath(targetPost, currentPath, distance - energy);
                 termPaths.put(current, source);
             }
             else {
@@ -433,7 +431,6 @@ public class GraphExecutive implements Observer {
 //        for (ParticlePath pp : roots) {
 //            System.out.println("  " + pp);
 //        }
-
         
         for (final ParticlePath pp : roots) {
 
@@ -446,7 +443,7 @@ public class GraphExecutive implements Observer {
             List<Term> seq = new ArrayList(path.length);
                         
             //Calculate path back to target
-            Implication imp = null;
+            Implication imp;
             for (int i = path.length-1; i >=0; i--) {
                 Sentence s = path[i];
                 Term t = s.content;
@@ -463,23 +460,8 @@ public class GraphExecutive implements Observer {
                     operations++;
             }
             
-            
-            //the last (first) predicate should be the target
-//            if (imp!=null) {
-//                Term pred = imp.getPredicate();
-//                if (GraphExecutive.validPlanComponent(pred))
-//                    seq.add(pred);
-//                if (pred instanceof Operation)
-//                    operations++;
-//            }
-             
-            
             if (operations == 0)
                 return Collections.EMPTY_LIST;
-            
-            
-
-            //if (GraphExecutive.validPlanComponent(subj))
             
             if (seq.size() < 2)
                 continue;
