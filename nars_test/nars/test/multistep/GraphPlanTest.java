@@ -30,7 +30,7 @@ public class GraphPlanTest {
         //new Window("Implications", new JGraphXGraphPanel(n.memory.executive.graph.implication)).show(500,500);
         
         
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
         
             n.step(1);
             //System.in.read();
