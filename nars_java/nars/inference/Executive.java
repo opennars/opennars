@@ -10,7 +10,6 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.language.Implication;
-import nars.language.Product;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
@@ -81,42 +80,33 @@ public class Executive {
         if (n.task==null) {
             //we have to wait
             return; 
+        }                
+        
+        if (!(n.content instanceof Operation)) {
+            throw new RuntimeException("manageExecution: Term content is not Operation: " + n.content); 
         }
         
         System.out.println("manageExecution: " + n.task);
-        
+
         //ok it is time for action:
-        executeOperation(n.content, n.concept, n.task, true);
+        execute((Operation)n.content, n.concept, n.task, true);
     }    
 
-    public void executeOperation(final Term content, final Concept concept, final Task task, final boolean masterplan) {
-
-        if (!(content instanceof Operation)) {
-            return;
-        }
+    protected void execute(final Operation op, final Concept concept, final Task task, final boolean masterplan) {
         
         if ((!masterplan) && (!next.isEmpty())) {
             return; //already executing sth
         }
+                
+        Operator oper = op.getOperator();
         
-        Operation op = (Operation) content;
-        Term opi = op.getPredicate();
-        if(!(opi instanceof Operator)) {
-            return;
-        }
-        
-        System.out.println("executeOperation: " + task);
+        System.out.println("exe: " + task.getExplanation().trim());
         
         op.setTask(task);
+                        
+        oper.call(op, memory);
         
-        Operator oper = (Operator) opi;
-        if (op.getSubject() instanceof Product) {
-            Product args = (Product)op.getSubject();
-            oper.call(op, args.term, concept.memory);
-            task.setPriority(0);
-        }
-
-        
+        task.setPriority(0);
         
     }
     
@@ -124,15 +114,16 @@ public class Executive {
     public void decisionMaking(final Task task, final Concept concept) {
         
         //System.out.println("decision making: " + task + " c=" + concept);
-        
+                
         Term content = concept.term;
+        
+        
         TruthValue desireValue = concept.getDesire();
         
         if (desireValue.getExpectation() < memory.param.decisionThreshold.get()) {
             return;
         }
         
-        graph.decisionMaking(task, concept);
         
         //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
        /* if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
@@ -168,8 +159,13 @@ public class Executive {
             return;           
         }*/
         //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
+        if (!(content instanceof Operation)) {
+            //throw new RuntimeException("decisionMaking: Term content is not Operation: " + content);          
+            return;
+        }
+        
         if(next.isEmpty())
-            executeOperation(content, concept, task, false);
+            execute((Operation)content, concept, task, false);
     }
     
     

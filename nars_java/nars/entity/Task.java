@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import com.google.common.base.Strings;
 import nars.language.Term;
 import nars.operator.Operation;
 
@@ -236,6 +237,37 @@ public class Task extends AbstractTask {
     /** the causing Operation, or null if not applicable. */
     public Operation getCause() {
         return cause;
+    }
+
+    public String getExplanation() {
+        String x = toString() + "\n";
+        if (cause!=null)
+            x += "  cause=" + cause + "\n";
+        if (bestSolution!=null) {
+            if (!getContent().equals(bestSolution.content))
+                x += "  solution=" + bestSolution + "\n";
+        }
+        if (parentBelief!=null)
+            x += "  parentBelief=" + parentBelief + "\n";
+        if (parentTask!=null) {
+            x += "  parentTask=" + parentTask + "\n";
+        
+            int indentLevel = 1;
+            Task p=getParentTask();
+            do {            
+                indentLevel++;
+                Task n = p.getParentTask();
+                if (n!=null) {
+                    x += Strings.repeat("  ",indentLevel) + n.toString();
+                    p = n;
+                }
+                else
+                    break;
+                
+            } while (p!=null);
+        }
+        
+        return x;
     }
     
 

@@ -26,6 +26,7 @@ import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
 import nars.io.Output.EXE;
+import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
 
@@ -63,8 +64,9 @@ public abstract class Operator extends Term {
     * @param op The operator to be executed
     * @param args The arguments to be taken by the operator
     * @param memory The memory on which the operation is executed
+    * @return true if successful, false if an error occurred
     */
-    public void call(final Operation operation, final Term[] args, final Memory memory) {
+    public boolean call(final Operation operation, final Term[] args, final Memory memory) {
         try {
             List<Task> feedback = execute(operation, args, memory);            
             memory.executedTask(operation);
@@ -72,14 +74,16 @@ public abstract class Operator extends Term {
 
 
             if (feedback!=null) {
-                for (Task t : feedback) {
+                for (final Task t : feedback) {
                     memory.inputTask(t);
                 }            
             }
+            return true;
         }
         catch (Exception e) {
             reportExecution(operation, args, e, memory);
         }
+        return false;
         
     }
     
@@ -126,6 +130,11 @@ public abstract class Operator extends Term {
         
         //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
         memory.output(EXE.class, operator + "(" + Arrays.toString(args) + ")=" + feedback);
+    }
+
+    public boolean call(final Operation op, final Memory memory) {
+        Product args = op.getArguments();
+        return call(op, args.term, memory);
     }
     
 

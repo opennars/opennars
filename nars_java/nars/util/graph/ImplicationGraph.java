@@ -21,6 +21,12 @@ public class ImplicationGraph extends SentenceItemGraph {
 
     float minConfidence = 0.1f;
     float minFreq = 0.6f;
+    
+    /** how much a completely dormant concept's priority will contribute to the weight calculation.
+     *  any value between 0 and 1.0 is valid.  
+     *  factor = dormantConceptInfluence + (1.0 - dormantConceptInfluence) * concept.priority
+     */
+    float dormantConceptInfluence = 0.1f; 
 
     public ImplicationGraph(NAR nar) {
         this(nar.memory);
@@ -118,14 +124,13 @@ public class ImplicationGraph extends SentenceItemGraph {
                     }
                     else {
                         //separate the term into a disconnected pre and post condition
-                        if (a == null)
-                            throw new RuntimeException();
-                        if (prev == null)
-                            throw new RuntimeException();
                         Term pre = a;
                         Term post = new PostCondition(a);
                         addVertex(pre);
                         addVertex(post);
+                        
+                        addVertex(prev);
+                        addVertex(a);
                         newImplicationEdge(prev, a, c, s); //leading edge from previous only         
                         if (!(a instanceof Interval))
                             addedNonInterval = true;                   
@@ -214,7 +219,8 @@ public class ImplicationGraph extends SentenceItemGraph {
         float conceptPriority = concepts.get(e).getPriority();
         //weight = cost = distance
         //return 1.0 / (freq * conf * conceptPriority);
-        return 1.0 / (freq * conf * (0.5f + 0.5f * conceptPriority));
+        
+        return 1.0 / (freq * conf * (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority));
     }
     
     
