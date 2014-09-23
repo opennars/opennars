@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.core.EventEmitter.Observer;
@@ -38,6 +42,7 @@ public class GraphExecutive implements Observer {
     PriorityBuffer<Task> tasks;
     int numTasks = 32;
     private final Memory memory;
+    float searchDepth = 8;
 
     public GraphExecutive(Memory memory) {
         super();
@@ -70,7 +75,9 @@ public class GraphExecutive implements Observer {
      */
     public void decisionMaking(final Task task, final Concept concept) {
         tasks.add(task.clone());
-        plan(task, task.getContent());
+        
+        plan(task, task.getContent(), searchDepth);
+        
     }
 
     @Override
@@ -83,6 +90,9 @@ public class GraphExecutive implements Observer {
             //System.out.println("Goal add: " + a[0] + " " + a[1] + " " + t.budget.getPriority());
             tasks.add(t.clone());
             
+            //EXPERIMENTAL
+            if (implication.containsVertex(t.getContent()))
+                planParticle(t.getContent(), searchDepth);
             
             }
             
@@ -97,13 +107,12 @@ public class GraphExecutive implements Observer {
         }
     }
 
-    protected List<Term> plan(Term target)  {        
-        double[] d = new double[1];
-        
-        List<Term> p = plan(target, 32, null, d);
+    protected List<Term> plan(Term target, double distance)  {        
+                
+        List<Term> p = planParticle(target, distance);
         
         if (!p.isEmpty())
-            System.out.println("plan: " + target + " , dist=" + d[0]);
+            System.out.println("plan: " + target);
         return p;
     }
     
@@ -112,161 +121,325 @@ public class GraphExecutive implements Observer {
         return ((t instanceof Interval) || (t instanceof Operator));
     }
     
-    protected List<Term> plan(Term target, double remainingDistance, List<Term> parentPath, double[] distResult) {
+    public static class CandidateSequenceRoot implements Comparable {
+        public final Term root;
+        public final double distance;
+
+        public CandidateSequenceRoot(Term root, double distance) {
+            this.root = root;
+            this.distance = distance;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if (o instanceof CandidateSequenceRoot) {
+                CandidateSequenceRoot csr = (CandidateSequenceRoot)o;
+                return Double.compare(csr.distance, distance);
+            }
+            return -1;
+        }
+
+        @Override
+        public String toString() {
+            return root.toString() + "|" + distance;
+        }
+        
+        
+    }
+
+    protected List<Term> planExhaustive(Term target, double remainingDistance, List<Term> parentPath, double[] distResult) {
         
         if (remainingDistance <= 0)
             return Collections.EMPTY_LIST;
-        
-        double initialRemainingDistance = remainingDistance;
-
+                
         ClosestFirstIterator<Term, Sentence> cfi = new ClosestFirstIterator<Term, Sentence>(new EdgeReversedGraph(implication), target, remainingDistance);
 
         
-        
         if (parentPath == null)
             parentPath = Collections.EMPTY_LIST;
-        
-        
-
-        //TODO use a sorted list of furthest candidates
-        
-        
-        double furthestDistance = 0;
-        Term furthestTerm = null;
+                
+        SortedSet<CandidateSequenceRoot> roots = new TreeSet();
         
         while (cfi.hasNext()) {
             Term v = cfi.next();
 
             double length = cfi.getShortestPathLength(v);
             if (length == 0) continue;
-            
-            //System.out.println("  --" + v + " dist=" + length + " spanEdge=" + cfi.getSpanningTreeEdge(v));
-            
-            if ((length > furthestDistance) && (!v.equals(target)) && (!parentPath.contains(v))) {
-                furthestDistance = length;
-                furthestTerm = v;
-                
-            }
-            
-
-        }
-                
-        if (furthestTerm == null)
-            return Collections.EMPTY_LIST;
-        if (furthestTerm == target)
-            return Collections.EMPTY_LIST;
-
-        remainingDistance -= furthestDistance;
-        
-        if (remainingDistance < 0)
-            return Collections.EMPTY_LIST;
-
-        
-        //Calculate path back to target
-        
-        List<Term> path = new ArrayList();
-        Term current = furthestTerm;
-        Sentence currentEdge = null;
-        int operations = 0;
-        
-        while (current != target) {
-
-            boolean isOperation = (current instanceof Operation);
-            if (isOperation)
-                operations++;
-
-            //only include Operations and Intervals
-            if (isOperation || (current instanceof Interval)) {
-                path.add(current);
-            }
-            //but if it's something else, we need to transclude it because it may indicate other  necessary preconditions
-            else if ((!current.equals(target))) {
-                
-                //Transclude best subpath iff vertex has other preconditions
-                
-                /*if (implication.outgoingEdgesOf(current).size() > 1) {
-                    //ignore a preconditon with a postcondition
-                    continue;
-                }*/
-                
-                //TODO should the precondition branches be sorted, maybe shortest first?
-                
-                Set<Sentence> preconditions = implication.incomingEdgesOf(current);
-                for (Sentence s : preconditions) {
-                    if (!s.equals(currentEdge)) {
-                        //System.out.println("  precondition: " + current + " = " + s);
-                        Term preconditionSource = implication.getEdgeSource(s);
                         
-                        if (parentPath!=null) {
-                            /*if (!parentPath.contains(preconditionSource))*/ {
-                                if (!preconditionSource.equals(target) ) {
-                                    List<Term> preconditionPlan = null;
-                                    try {
-                                        double[] d = new double[1];
-                                        preconditionPlan = plan(preconditionSource, remainingDistance, path, d);
-                                        
-                                        if (!((preconditionPlan.size() == 0) || (preconditionPlan == null))) {
-                                            if (remainingDistance - d[0] > 0) {
-                                                if (!preconditionPlan.contains(preconditionSource)) {                                                    path.addAll(preconditionPlan);
-                                                    if (validPlanComponent(preconditionSource))
-                                                        path.add(preconditionSource);
-                                                }
-                                                remainingDistance -= d[0];
-                                            }
-                                            else {
-                                                //ignore this condition sequence because it would exceed the search distance
-                                                return Collections.EMPTY_LIST;
-                                                
-                                            }
-                                        }
-                                    }
-                                    catch (Throwable e) {
+            
+            //dont settle for 1-edge hop from target, we need further
+            if (implication.getEdgeTarget( cfi.getSpanningTreeEdge(v) ).equals(target) ) {
+                //System.out.println(v + " " + cfi.getSpanningTreeEdge(v) + " ==? " + target);
+                continue;
+            }
+            
+            if ((!v.equals(target)) /*&& (!parentPath.contains(v))*/) {
+                //ignore intervals as roots
+                if (!(v instanceof Interval))
+                    roots.add(new CandidateSequenceRoot(v, length));                
+            }
+        }
+        if (roots.isEmpty())
+            return Collections.EMPTY_LIST;
+        
+        double initialRemainingDistance = remainingDistance;
+        
+        
+        for (final CandidateSequenceRoot csroot : roots) {
+            final Term root = csroot.root;
+            if (root == target) continue;
+            
+            remainingDistance = initialRemainingDistance - csroot.distance;
+            if (remainingDistance < 0)
+                continue;
+            
+            //Calculate path back to target
 
-                                        System.err.println(e + " "  +target + " " + path + " " + preconditionSource + " " + parentPath);
-                                        System.err.println("   " + preconditionPlan);
-                                        new Window("Implications", new JGraphXGraphPanel(memory.executive.graph.implication)).show(500,500);
+            List<Term> path = new ArrayList();
+            Term current = root;
+            Sentence currentEdge = null;
+            int operations = 0;
+
+            while (current != target) {
+
+                boolean isOperation = (current instanceof Operation);
+                if (isOperation)
+                    operations++;
+
+                //only include Operations and Intervals
+                if (isOperation || (current instanceof Interval)) {
+                    path.add(current);
+                }
+                //but if it's something else, we need to transclude it because it may indicate other  necessary preconditions
+                else if ((!current.equals(target))) {
+
+                    //Transclude best subpath iff vertex has other preconditions
+
+                    /*if (implication.outgoingEdgesOf(current).size() > 1) {
+                        //ignore a preconditon with a postcondition
+                        continue;
+                    }*/
+
+                    //TODO should the precondition branches be sorted, maybe shortest first?
+
+                    boolean goodPreconditions = true;
+                    Set<Sentence> preconditions = implication.incomingEdgesOf(current);
+                    for (Sentence s : preconditions) {
+                        if (!s.equals(currentEdge)) {
+                            //System.out.println("  precondition: " + current + " = " + s);
+                            Term preconditionSource = implication.getEdgeSource(s);
+
+                            if (parentPath!=null) {
+                                /*if (!parentPath.contains(preconditionSource))*/ {
+                                    if (!preconditionSource.equals(target) ) {
+                                        List<Term> preconditionPlan = null;
                                         try {
-                                            System.in.read();
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(GraphExecutive.class.getName()).log(Level.SEVERE, null, ex);
+                                            double[] d = new double[1];
+                                            preconditionPlan = planExhaustive(preconditionSource, remainingDistance, path, d);
+
+                                            if (!((preconditionPlan.size() == 0) || (preconditionPlan == null))) {
+                                                if (remainingDistance - d[0] > 0) {
+                                                    if (!preconditionPlan.contains(preconditionSource)) {                                                    path.addAll(preconditionPlan);
+                                                        if (validPlanComponent(preconditionSource))
+                                                            path.add(preconditionSource);
+                                                    }
+                                                    remainingDistance -= d[0];
+                                                }
+                                                else {
+                                                    //ignore this condition sequence because it would exceed the search distance                                
+                                                    System.out.println("  excess subpath: " + remainingDistance + " " + d[0] + " " + preconditionPlan);
+                                                    goodPreconditions = false;
+                                                    break;
+
+                                                }
+                                            }
                                         }
+                                        catch (Throwable e) {
 
-                                            //System.exit(1);
-                                            //return Collections.EMPTY_LIST;
+                                            System.err.println(e + " "  +target + " " + path + " " + preconditionSource + " " + parentPath);
+                                            System.err.println("   " + preconditionPlan);
+                                            new Window("Implications", new JGraphXGraphPanel(memory.executive.graph.implication)).show(500,500);
+                                            try {
+                                                System.in.read();
+                                            } catch (IOException ex) {
+                                                Logger.getLogger(GraphExecutive.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
 
+                                        }
+                                        
                                     }
+
                                 }
-                             
                             }
+
                         }
-                        
-                    }
+
+                    }                
                     
-                }                
+                    if (!goodPreconditions)
+                        break;
+                }
+
+                currentEdge = cfi.getSpanningTreeEdge(current);
+                if (currentEdge == null) {
+                    //Should mean we have returned to target
+                    break;
+                }
+                current = implication.getEdgeTarget(currentEdge);
             }
 
-            currentEdge = cfi.getSpanningTreeEdge(current);
-            if (currentEdge == null) {
-                //Should mean we have returned to target
-                break;
-            }
-            current = implication.getEdgeTarget(currentEdge);
+            if (operations == 0)
+                continue;
+            if (path.size() < 2)
+                continue;
+
+
+            System.out.println(path + " " + root + " in " + roots);
+            distResult[0] = initialRemainingDistance - remainingDistance;
+            return path;
+        }
+        
+        return Collections.EMPTY_LIST;
+    }
+    
+    
+    
+    
+    public static class ParticlePath implements Comparable<ParticlePath> {
+        double activation = 0;
+        Term target;
+        List<Sentence> path;
+        
+        public ParticlePath(Term target, List<Sentence> path) {
+            this.target = target;
+            this.path = path;
         }
 
-        if (operations == 0)
-            return Collections.EMPTY_LIST;
+        @Override
+        public int compareTo(ParticlePath o) {
+            return Double.compare(o.activation, activation);
+        }
 
-        //System.out.println("  path=" + path);
-        distResult[0] = initialRemainingDistance - remainingDistance;
-        return path;
+        @Override
+        public String toString() {
+            return activation + "|" /*+ target */ + " <- " + path.toString() ;
+        }
+        
+        
+        
+    }
+    
+    protected List<Term> planParticle(Term target, double distance) {
+        
+        //TODO can this be continuous but decay the activation
+        Map<Term, ParticlePath> termPaths = new HashMap();
+        
+                
+        SortedSet<ParticlePath> roots = new TreeSet();
+
+        
+        int iterations = 100;
+        double particleActivation = 1.0 / iterations;
+        
+        for (int i = 0; i < iterations; i++) {            
+            
+            double energy = distance;
+            Term current = target;
+            List<Sentence> path = new ArrayList(8);            
+            
+            while (energy > 0) {
+                
+                Set<Sentence> incomingEdges = implication.incomingEdgesOf(current);
+                if (incomingEdges.isEmpty()) {
+                    break;
+                }        
+                
+                
+                Sentence nextEdge = null;
+                if (incomingEdges.size() == 1)
+                    nextEdge = incomingEdges.iterator().next();
+                else {
+                    //choose edge; prob = 1/weight
+                    
+                    //TODO disallow edge that completes cycle back to target or traversed edge?
+                    //  probably an option to allow cycles
+                    
+                    double totalProb = 0;
+                    for (Sentence s : incomingEdges) {
+                        totalProb += 1.0 / implication.getEdgeWeight(s);                        
+                    }                    
+                    double r = Math.random() * totalProb;
+                    
+                    for (Sentence s : incomingEdges) {
+                        nextEdge = s;
+                        r -= 1.0 / implication.getEdgeWeight(s);
+                        if (r <= 0) {
+                            break;
+                        }                            
+                    }
+                }
+                
+                energy -= implication.getEdgeWeight(nextEdge);
+                
+                path.add(nextEdge);
+                
+                current = implication.getEdgeSource(nextEdge);
+            }
+            
+            if (path.isEmpty())
+                continue;
+            
+            ParticlePath source = termPaths.get(current);
+            if (source == null) {
+                source = new ParticlePath(target, path);
+                termPaths.put(current, source);
+            }
+            
+            source.activation += particleActivation;
+        }
+        
+        roots.addAll(termPaths.values());
+
+        System.out.println("Particle paths for " + target);
+        for (ParticlePath pp : roots) {
+            System.out.println("  " + pp);
+        }
+
+        
+        for (final ParticlePath pp : roots) {
+            
+            List<Sentence> edges = pp.path;
+            List<Term> path = new ArrayList(edges.size());
+            
+            
+            //Calculate path back to target
+
+            //Term current = path.get(0).content;
+            
+            Sentence currentEdge = null;
+            int operations = 0;
+
+
+
+            if (operations == 0)
+                continue;
+            if (path.size() < 2)
+                continue;
+
+
+            //System.out.println(path + " " + root + " in " + roots);
+            return path;
+        }
+        
+        return Collections.EMPTY_LIST;
     }
 
-    protected void plan(Task task, Term target) {
+    protected void plan(Task task, Term target, double distance) {
 
         if (!implication.containsVertex(target))
             return;
 
-        List<Term> path = plan(target);
+        List<Term> path = plan(target, distance);
         if (path == null)
             return;
         if (path.size() < 2) 
@@ -290,23 +463,40 @@ public class GraphExecutive implements Observer {
         }
         
             
-        memory.setTheNewStamp(Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime()));
+        Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime());
+        //memory.setTheNewStamp(stamp);
 
-        memory.setCurrentTask(task);
+        //memory.setCurrentTask(task);
+        
+        //remove final element from path if it's equal to target
+        if (path.get(path.size()-1).equals(target)) {
+            path.remove(path.size()-1);
+        }
 
-        System.out.println(" -> Graph PATH: " + path + " -> " + target);
+        Term subj = path.size() > 1 ?
+            (Conjunction) Conjunction.make(path.toArray(new Term[path.size()]), TemporalRules.ORDER_FORWARD, memory)
+                :
+            path.get(0);
+        
+        
+        //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
 
-        Conjunction subj = (Conjunction) Conjunction.make(path.toArray(new Term[path.size()]), TemporalRules.ORDER_FORWARD, memory);
         TruthValue val = task.sentence.truth;
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
 
         Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD, memory);
 
+        if (imp == null)
+            return;
+        
         BudgetValue bud = BudgetFunctions.forward(val, memory);
         
-        //System.out.println("  -> Graph OUT: " + imp);
+        System.out.println("  -> Graph OUT: " + imp);
 
-        memory.doublePremiseTask(imp, val, bud);
+        //memory.doublePremiseTask(imp, val, bud);
+        memory.inputTask(
+                new Task(new Sentence(imp, '.', val, stamp), bud)
+        );
 
         
     }
@@ -333,8 +523,9 @@ public class GraphExecutive implements Observer {
             }
 
             if (target != null) {
-
-                plan(task, target);
+                System.err.println("plan: " + target);
+                System.exit(1);
+                ///plan(task, target, ...);
             }
         }
 

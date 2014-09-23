@@ -2,13 +2,14 @@ package nars.nario;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.Window;
@@ -40,11 +41,11 @@ public class NARio extends Run {
     private Mario mario;
     int cyclesPerMario = 1;
     final boolean random = false;
-    int healthStatusCycle = 32;
+    int healthStatusCycle = 512;
     final float gameTimePerMemoryCycle = 0.02f;
 
     public static void main(String[] arg) {
-        NAR nar = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
+        NAR nar = new DiscretinuousBagNARBuilder(true).setConceptBagSize(2048).build();
         //NAR nar = new DefaultNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
@@ -56,18 +57,26 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(50);
+        nar.param().duration.set(10);
         nar.param().noiseLevel.set(10);
         nar.param().shortTermMemorySize.set(1);
 
         NARio nario = new NARio(nar);
         new NARSwing(nar);
-        nar.start(10);
+        //nar.start(10);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
+        if (e.getKeyChar() == '[') {
+            System.out.println("Autonomy Disabled; Learning");
+            nar.param().decisionThreshold.set(1.0);
+        }
+        if (e.getKeyChar() == ']') {
+            System.out.println("Autonomy Enabled");
+            nar.param().decisionThreshold.set(0.3);
+        }
         if (e.getKeyChar() == 'i') {
             //new Window("Implications", new JGraphXGraphPanel(nar.memory.executive.graph.implication)).show(500,500);            
             new Window("Implications", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500,500);
@@ -136,7 +145,7 @@ public class NARio extends Run {
                         float dx = ((x - lastX) / 16.0f);
                         float dy = ((y - lastY) / 16.0f);
 
-                        float minMove = 0.25f; //in blocks
+                        float minMove = 0.5f; //in blocks
                         
                         //if no movement, decrease priority of sense
                         if ((dx < minMove) && (dy < minMove)) {
@@ -158,7 +167,17 @@ public class NARio extends Run {
                         int idx = (int)Math.round(dx);
                         int idy = (int)Math.round(dy);
                         if (movement) {
-                            nar.addInput(/*"$" + movementPriority + "$"*/"<(*," + idx + "," + idy + ") --> moved>. :\\:");
+//                            if ((idx==0) && (idy==0)) {
+//                                //create a fractional movement for <1 nudges
+//                                idx = (int)Math.ceil(dx);
+//                                idy = (int)Math.ceil(dy);
+//                                int conf = (int)(100.0 * 0.9 * Math.sqrt( dx*dx + dy*dy ));
+//                                if (conf > 99) conf = 99;
+//                                nar.addInput("<(*," + idx + "," + idy + ") --> moved>. :|: %1.00;0." + conf + "%");
+//                            }
+//                            else {                                
+                                nar.addInput(/*"$" + movementPriority + "$"*/"<(*," + idx + "," + idy + ") --> moved>. :|:");
+//                            }
                         }
 
                     }
@@ -176,7 +195,7 @@ public class NARio extends Run {
                         }
                         
                         if (dead == 0) {
-                            nar.addInput("<nario --> alive>. :|: %1.00;0.50%");
+                            //nar.addInput("<nario --> alive>. :|: %1.00;0.50%");
                         }
                         else {
                             nar.addInput("<nario --> alive>. :|: %0.00;" + dead + "%");
@@ -254,13 +273,15 @@ public class NARio extends Run {
                                         Task parent = task.getParentTask();
                                         Task root = task.getRootTask();
 
-                                        System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief().toString(nar, true) + ", parent=" + parent);
+                                        //System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief().toString(nar, true) + ", parent=" + parent);
 
+                                        /*
                                         if (parent != root) {
                                             System.out.println(", root=" + root);
                                         } else {
                                             System.out.println();
                                         }
+                                        */
 
                                         if (random) {
                                             mario.keys[(int) (Math.random() * 6)] = Math.random() < 0.5 ? false : true;
@@ -385,6 +406,11 @@ public class NARio extends Run {
     public void ready() {
         //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
 
+        //reset keys
+        if (mario!=null)
+            if (mario.keys!=null)
+                Arrays.fill(mario.keys, false);
+        
         axioms();
 
         

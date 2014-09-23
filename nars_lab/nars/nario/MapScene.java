@@ -578,6 +578,11 @@ public class MapScene extends Scene
             }
             canEnterLevel = !keys[Mario.KEY_JUMP];
 
+            //left + right cancel each other
+            if (keys[Mario.KEY_LEFT] && keys[Mario.KEY_RIGHT]) {
+                keys[Mario.KEY_LEFT] = keys[Mario.KEY_RIGHT] = false;
+            }
+                
             if (keys[Mario.KEY_LEFT])
             {
                 keys[Mario.KEY_LEFT] = false;
@@ -601,7 +606,7 @@ public class MapScene extends Scene
         }
     }
 
-    public void tryWalking(int xd, int yd)
+    public void tryWalking(final int xd, final int yd)
     {
         int x = xMario / 16;
         int y = yMario / 16;
