@@ -97,14 +97,20 @@ public class NARSwing  {
 
     public static Font monofont;
     static {
+        monofont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        /*
         try {
-            monofont = Font.createFont(Font.TRUETYPE_FONT, NARSwing.class.getResourceAsStream("Inconsolata-Regular.ttf"));
+            //monofont = Font.createFont(Font.TRUETYPE_FONT, NARSwing.class.getResourceAsStream("Inconsolata-Regular.ttf"));
+            
+            
         } catch (FontFormatException ex) {
             Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
     }
+        
     
     public static Font FontAwesome;
     static {        
