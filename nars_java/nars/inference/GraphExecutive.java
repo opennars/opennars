@@ -31,10 +31,12 @@ import nars.util.graph.ImplicationGraph.PostCondition;
 
 public class GraphExecutive implements Observer {
 
+    private final Memory memory;
     public final ImplicationGraph implication;
+    
     PriorityBuffer<Task> tasks;
     int numTasks = 32;
-    private final Memory memory;
+    
     
     
     float searchDepth = 24;
@@ -95,6 +97,12 @@ public class GraphExecutive implements Observer {
 //            if (tasks.size() > 0) {
 //                plan();
 //            }
+            if (memory.getCurrentBelief()!=null) {
+                Term currentTerm = memory.getCurrentBelief().content;
+                if (implication.containsVertex(currentTerm)) {
+                    particlePredict(currentTerm, 12, particles);
+                }                
+            }
         }
     }
 
@@ -102,34 +110,6 @@ public class GraphExecutive implements Observer {
     public static boolean validPlanComponent(final Term t) {
         return ((t instanceof Interval) || (t instanceof Operation));
     }
-    
-    public static class CandidateSequenceRoot implements Comparable {
-        public final Term root;
-        public final double distance;
-
-        public CandidateSequenceRoot(Term root, double distance) {
-            this.root = root;
-            this.distance = distance;
-        }
-
-        @Override
-        public int compareTo(Object o) {
-            if (o instanceof CandidateSequenceRoot) {
-                CandidateSequenceRoot csr = (CandidateSequenceRoot)o;
-                return Double.compare(csr.distance, distance);
-            }
-            return -1;
-        }
-
-        @Override
-        public String toString() {
-            return root.toString() + "|" + distance;
-        }
-        
-        
-    }
-
-    
     
     
     
@@ -176,6 +156,8 @@ public class GraphExecutive implements Observer {
         
         public SortedSet<ParticlePath> activate(final Term source, final boolean forward, int iterations, double distance) {
 
+            //TODO cache pathways in the graph for faster traversal. must store source leading edge, destination(s) and their distances
+            
             double particleActivation = 1.0 / iterations;
 
             List<Sentence> currentPath = new ArrayList();
@@ -187,6 +169,7 @@ public class GraphExecutive implements Observer {
                 currentPath.clear();
 
                 double energy = distance;
+
                 Term current = source;
 
                 boolean choicesAvailable = false;
@@ -201,7 +184,10 @@ public class GraphExecutive implements Observer {
 
                     //remove edges which loop to the target goal precondition OR postcondition
                     for (final Sentence s : graphEdges) {
-                        Term etarget = graph.getEdgeSource(s);
+                        Term etarget = forward ?
+                                graph.getEdgeTarget(s) :
+                                graph.getEdgeSource(s);
+                        
                         if (!etarget.equals(source)/* || etarget.equals(target)*/) {
                             nextEdges.add(s);
                         }
@@ -311,11 +297,15 @@ public class GraphExecutive implements Observer {
         }        
     }
     
-    protected void predictParticle(final Term source, final double distance, final int iterations) {
+    protected void particlePredict(final Term source, final double distance, final int particles) {
+        ParticleActivation act = new ParticleActivation(implication);
+        SortedSet<ParticlePath> paths = act.activate(source, true, particles, distance);
+        if (!paths.isEmpty())
+            System.out.println(source + " predicts: " + paths);
         
     }
     
-    protected ParticlePlan planParticle(final Term target, final double distance, final int iterations) {
+    protected ParticlePlan particlePlan(final Term target, final double distance, final int particles) {
         PostCondition targetPost = new PostCondition(target);
         
         if (!implication.containsVertex(targetPost))
@@ -373,8 +363,15 @@ public class GraphExecutive implements Observer {
                     }                    
                 }
                 else {
-                    if (nonIntervalAdded) { ////prevent prefix intervals                        
-                        accumulatedDelay++;
+                    if (nonIntervalAdded) { ////ignore prefix intervals                        
+                        int temporal = (s.content).getTemporalOrder();
+                                                
+                        //only accumulate delay if the temporal rule involves time difference
+                        if ((temporal == TemporalRules.ORDER_FORWARD) || (temporal == TemporalRules.ORDER_BACKWARD)) {
+                            
+                            accumulatedDelay++;
+                        }
+                        
                     }
                 }
                 
@@ -406,7 +403,7 @@ public class GraphExecutive implements Observer {
         if (!implication.containsVertex(target))
             return;
 
-        ParticlePlan plan = planParticle(target, searchDistance, particles);
+        ParticlePlan plan = particlePlan(target, searchDistance, particles);
         if (plan == null)
             return;
         Sentence[] path = plan.path;
@@ -567,6 +564,36 @@ public class GraphExecutive implements Observer {
     }
 
 //    /** doesnt work yet and may not be necessary */
+//
+//    @Deprecated public static class CandidateSequenceRoot implements Comparable {
+//        public final Term root;
+//        public final double distance;
+//
+//        public CandidateSequenceRoot(Term root, double distance) {
+//            this.root = root;
+//            this.distance = distance;
+//        }
+//
+//        @Override
+//        public int compareTo(Object o) {
+//            if (o instanceof CandidateSequenceRoot) {
+//                CandidateSequenceRoot csr = (CandidateSequenceRoot)o;
+//                return Double.compare(csr.distance, distance);
+//            }
+//            return -1;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return root.toString() + "|" + distance;
+//        }
+//        
+//        
+//    }
+//
+//    
+//    
+
 //    @Deprecated protected List<Term> planExhaustive(Term target, double remainingDistance, List<Term> parentPath, double[] distResult) {
 //        
 //        if (remainingDistance <= 0)

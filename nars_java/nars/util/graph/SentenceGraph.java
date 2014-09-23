@@ -119,9 +119,9 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     
     abstract public boolean allow(CompoundTerm st);    
     
-    public void remove(final Sentence s) {
+    public boolean remove(final Sentence s) {
         if (!containsEdge(s))
-            return;
+            return false;
         
         Term from = getEdgeSource(s);
         Term to = getEdgeTarget(s);
@@ -135,6 +135,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
 
         if (r)
             event.emit(GraphChange.class, null, s);
+        return true;
     }
     
     public boolean add(final Sentence s, final Item c) {
