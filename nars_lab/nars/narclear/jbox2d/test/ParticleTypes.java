@@ -1,7 +1,7 @@
 package nars.narclear.jbox2d.test;
 
-import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;

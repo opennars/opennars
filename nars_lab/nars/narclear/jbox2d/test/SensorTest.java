@@ -26,6 +26,8 @@
  */
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.common.Settings;
@@ -36,13 +38,13 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.contacts.Contact;
-import org.jbox2d.testbed.framework.TestbedSettings;
-import org.jbox2d.testbed.framework.TestbedTest;
+
+
 
 /**
  * @author Daniel Murphy
  */
-public class SensorTest extends TestbedTest {
+public class SensorTest extends PhysicsModel {
 
   class BoolWrapper {
     boolean tf;

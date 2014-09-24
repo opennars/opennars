@@ -1,5 +1,7 @@
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
@@ -9,10 +11,10 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 import org.jbox2d.particle.ParticleGroupDef;
-import org.jbox2d.testbed.framework.TestbedSettings;
-import org.jbox2d.testbed.framework.TestbedTest;
 
-public class WaveMachine extends TestbedTest {
+
+
+public class WaveMachine extends PhysicsModel {
 
   RevoluteJoint m_joint;
   float m_time;

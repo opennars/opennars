@@ -26,6 +26,8 @@
  */
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -33,40 +35,19 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.PulleyJoint;
 import org.jbox2d.dynamics.joints.PulleyJointDef;
-import org.jbox2d.testbed.framework.TestbedSettings;
-import org.jbox2d.testbed.framework.TestbedTest;
+
+
 
 /**
  * @author Daniel Murphy
  */
-public class Pulleys extends TestbedTest {
+public class Pulleys extends PhysicsModel {
   private static final long JOINT_TAG = 2;
 
   PulleyJoint m_joint1;  
 
-  @Override
-  public Long getTag(Joint joint) {
-    if (joint == m_joint1)
-      return JOINT_TAG;
-    return super.getTag(joint);
-  }
-
-  @Override
-  public void processJoint(Joint joint, Long tag) {
-    if (tag == JOINT_TAG) {
-      m_joint1 = (PulleyJoint) joint;
-    } else {
-      super.processJoint(joint, tag);
-    }
-  }
-
-  @Override
-  public boolean isSaveLoadEnabled() {
-    return true;
-  }
 
   @Override
   public void initTest(boolean deserialized) {

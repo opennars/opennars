@@ -1,5 +1,7 @@
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
@@ -11,10 +13,10 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.joints.MotorJoint;
 import org.jbox2d.dynamics.joints.MotorJointDef;
-import org.jbox2d.testbed.framework.TestbedSettings;
-import org.jbox2d.testbed.framework.TestbedTest;
 
-public class MotorTest extends TestbedTest {
+
+
+public class MotorTest extends PhysicsModel {
   MotorJoint m_joint;
   float m_time;
   boolean m_go;

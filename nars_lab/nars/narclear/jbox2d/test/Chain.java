@@ -26,6 +26,7 @@
  */
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -34,17 +35,13 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
-import org.jbox2d.testbed.framework.TestbedTest;
+
 
 /**
  * @author Daniel Murphy
  */
-public class Chain extends TestbedTest {
+public class Chain extends PhysicsModel {
 
-  @Override
-  public boolean isSaveLoadEnabled() {
-    return true;
-  }
 
   @Override
   public void initTest(boolean deserialized) {

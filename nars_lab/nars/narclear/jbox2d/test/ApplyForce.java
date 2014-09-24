@@ -26,6 +26,8 @@
  */
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.MathUtils;
@@ -37,13 +39,13 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.joints.FrictionJointDef;
-import org.jbox2d.testbed.framework.TestbedSettings;
-import org.jbox2d.testbed.framework.TestbedTest;
+
+
 
 /**
  * @author Daniel Murphy
  */
-public class ApplyForce extends TestbedTest {
+public class ApplyForce extends PhysicsModel {
   private static final long BODY_TAG = 12;
 
   Body m_body;
@@ -210,26 +212,6 @@ public class ApplyForce extends TestbedTest {
     }
   }
 
-  @Override
-  public boolean isSaveLoadEnabled() {
-    return true;
-  }
-
-  @Override
-  public Long getTag(Body body) {
-    if (body == m_body) {
-      return BODY_TAG;
-    }
-    return super.getTag(body);
-  }
-
-  @Override
-  public void processBody(Body body, Long tag) {
-    if (tag == BODY_TAG) {
-      m_body = body;
-    }
-    super.processBody(body, tag);
-  }
 
   @Override
   public String getTestName() {
