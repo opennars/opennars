@@ -23,11 +23,11 @@
  ******************************************************************************/
 package nars.narclear.jbox2d;
 
-import nars.narclear.PhysicsModel;
 import com.google.common.collect.Lists;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+import nars.narclear.PhysicsModel;
 import org.jbox2d.common.IViewportTransform;
 import org.jbox2d.common.Vec2;
 
@@ -37,8 +37,9 @@ import org.jbox2d.common.Vec2;
  * 
  * @author Daniel Murphy
  */
-public class TestbedController implements Runnable {
-  private static final Logger log = Logger.getLogger(TestbedController.class.toString());
+public class PhysicsController implements Runnable {
+  private static final Logger log = Logger.getLogger(PhysicsController.class.toString());
+
 
   public static enum UpdateBehavior {
     UPDATE_CALLED, UPDATE_IGNORED
@@ -55,7 +56,7 @@ public class TestbedController implements Runnable {
 
   private long startTime;
   private long frameCount;
-  private int targetFrameRate;
+  private float targetFrameRate;
   private float frameRate = 0;
   private boolean animating = false;
   private Thread animator;
@@ -73,7 +74,7 @@ public class TestbedController implements Runnable {
   private float viewportHalfHeight;
   private float viewportHalfWidth;
 
-  public TestbedController(TestbedState argModel, UpdateBehavior behavior,
+  public PhysicsController(TestbedState argModel, UpdateBehavior behavior,
       MouseBehavior mouseBehavior, TestbedErrorHandler errorHandler) {
     model = argModel;
     inputQueue = Lists.newLinkedList();
@@ -302,7 +303,7 @@ public class TestbedController implements Runnable {
     model.setCurrTestIndex(argIndex);
   }
 
-  public void setFrameRate(int fps) {
+  public void setFrameRate(float fps) {
     if (fps <= 0) {
       throw new IllegalArgumentException("Fps cannot be less than or equal to zero");
     }
@@ -310,7 +311,7 @@ public class TestbedController implements Runnable {
     frameRate = fps;
   }
 
-  public int getFrameRate() {
+  public float getFrameRate() {
     return targetFrameRate;
   }
 
@@ -330,9 +331,13 @@ public class TestbedController implements Runnable {
     return animating;
   }
 
+    public void ready() {
+        frameCount = 0;
+        playTest(0);                
+    }
+  
   public synchronized void start() {
     if (animating != true) {
-      frameCount = 0;
       animator.start();
     } else {
       log.severe("Animation is already animating.");
@@ -343,16 +348,10 @@ public class TestbedController implements Runnable {
     animating = false;
   }
 
-  public void run() {
-    long beforeTime, afterTime, updateTime, timeDiff, sleepTime, timeSpent;
-    float timeInSecs;
-    beforeTime = startTime = updateTime = System.nanoTime();
-    sleepTime = 0;
-
-    animating = true;
-    loopInit();
-    while (animating) {
-
+  float timeInSecs;
+  long beforeTime, afterTime, updateTime, timeDiff, sleepTime, timeSpent;
+       
+  public void cycle() {
       if (nextTest != null) {
         initTest(nextTest);
         model.setRunningTest(nextTest);
@@ -381,11 +380,25 @@ public class TestbedController implements Runnable {
         panel.paintScreen();
       }
       frameCount++;
+      
+  }
+  
+  public void run() {
+   
+    beforeTime = startTime = updateTime = System.nanoTime();
+    sleepTime = 0;
 
+    animating = true;
+    loopInit();
+    while (animating) {
+
+
+        cycle();
+        
       afterTime = System.nanoTime();
 
       timeDiff = afterTime - beforeTime;
-      sleepTime = (1000000000 / targetFrameRate - timeDiff) / 1000000;
+      sleepTime = (long) ((1000000000f / targetFrameRate - timeDiff) / 1000000f);
       if (sleepTime > 0) {
         try {
           Thread.sleep(sleepTime);

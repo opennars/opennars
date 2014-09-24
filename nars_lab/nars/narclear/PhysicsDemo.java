@@ -11,6 +11,6 @@ import nars.narclear.jbox2d.test.LiquidTimer;
 public class PhysicsDemo extends LiquidTimer {
     
    public static void main(String[] args) {
-        new PhysicsRun(new PhysicsDemo());
+        new PhysicsRun(new PhysicsDemo()).start(30);
     }    
 }

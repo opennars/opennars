@@ -31,9 +31,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import nars.narclear.jbox2d.TestbedController;
-import nars.narclear.jbox2d.TestbedController.MouseBehavior;
-import nars.narclear.jbox2d.TestbedController.UpdateBehavior;
+import nars.narclear.jbox2d.PhysicsController;
+import nars.narclear.jbox2d.PhysicsController.MouseBehavior;
+import nars.narclear.jbox2d.PhysicsController.UpdateBehavior;
 import nars.narclear.jbox2d.TestbedErrorHandler;
 import nars.narclear.jbox2d.TestbedState;
 import nars.narclear.jbox2d.j2d.DebugDrawJ2D;
@@ -46,6 +46,7 @@ import nars.narclear.jbox2d.j2d.TestbedSidePanel;
  * @author Daniel Murphy
  */
 public class PhysicsRun {
+    public final PhysicsController controller;
     // private static final Logger log = LoggerFactory.getLogger(TestbedMain.class);
 
     public PhysicsRun(PhysicsModel... tests) {
@@ -56,15 +57,14 @@ public class PhysicsRun {
         // + "Hopefully you're on a mac so the window isn't ugly as crap.");
         // }
         TestbedState model = new TestbedState();
-        final TestbedController controller
-                = new TestbedController(model, UpdateBehavior.UPDATE_CALLED, MouseBehavior.NORMAL,
-                        new TestbedErrorHandler() {
-                            @Override
-                            public void serializationError(Exception e, String message) {
-                                JOptionPane.showMessageDialog(null, message, "Serialization Error",
-                                        JOptionPane.ERROR_MESSAGE);
-                            }
-                        });
+        controller = new PhysicsController(model, UpdateBehavior.UPDATE_CALLED, MouseBehavior.NORMAL,
+            new TestbedErrorHandler() {
+                @Override
+                public void serializationError(Exception e, String message) {
+                    JOptionPane.showMessageDialog(null, message, "Serialization Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            });
         TestPanelJ2D panel = new TestPanelJ2D(model, controller);
         model.setPanel(panel);
         model.setDebugDraw(new DebugDrawJ2D(panel, true));
@@ -73,25 +73,30 @@ public class PhysicsRun {
             model.addTest(test);
         }
 
-        JFrame testbed = new JFrame();
-        testbed.setTitle("NAR Physics");
-        testbed.setLayout(new BorderLayout());
+        JFrame window = new JFrame();
+        window.setTitle("NAR Physics");
+        window.setLayout(new BorderLayout());
         TestbedSidePanel side = new TestbedSidePanel(model, controller);
-        testbed.add((Component) panel, "Center");
-        testbed.add(new JScrollPane(side), "East");
-        testbed.pack();
-        testbed.setVisible(true);
-        testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.add((Component) panel, "Center");
+        window.add(new JScrollPane(side), "East");
+        window.pack();
+        window.setVisible(true);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        controller.ready();
+    }
 
+    public void start(final int fps) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                controller.playTest(0);
+                controller.setFrameRate(fps);
                 controller.start();
             }
-        });
-
+        });        
     }
-
- 
+    
+    public void cycle() {        
+        controller.cycle();
+    }
 }
