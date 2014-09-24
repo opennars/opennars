@@ -193,12 +193,17 @@ public class GraphExecutive implements Observer {
         tasks.remove(t);
     }
     
-    protected void updatePriorities() {
+    protected void updateTasks() {
         List<TaskConcept> t = new ArrayList(tasks);
         tasks.clear();
         for (TaskConcept x : t) {
-            if ((x.getDesire() > 0) && (x.getPriority() > 0))
+            if ((x.getDesire() > 0) && (x.getPriority() > 0)) {
                 tasks.add(x);
+                if ((x.delayUntil!=-1) && (x.delayUntil <= memory.getTime())) {
+                    //restore motivation so task can resume processing
+                    x.motivationFactor = 1.0f;
+                }
+            }
         }
     }
 
@@ -251,7 +256,7 @@ public class GraphExecutive implements Observer {
         /*if (tasks.size() > 0)
             System.out.println("Tasks (pre): " + tasks);*/
         
-        updatePriorities();
+        updateTasks();
 
         if (tasks.size() == 0)
             return;
