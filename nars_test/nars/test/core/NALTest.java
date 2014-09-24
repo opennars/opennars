@@ -61,7 +61,7 @@ public class NALTest  {
         for (String s : lines) {
             s = s.trim();
 
-            final String expectOutContains = "*expect.outContains('";
+            final String expectOutContains = "''expect.outContains('";
 
             if (s.indexOf(expectOutContains)==0) {
 
@@ -88,7 +88,7 @@ public class NALTest  {
                 expects.add((Expect)n.addOutput(ex));
             }                
             
-            final String expectOutEmpty = "*expect.outEmpty";
+            final String expectOutEmpty = "''expect.outEmpty";
             if (s.indexOf(expectOutEmpty)==0) {                
                 Expect ex = new ExpectOutputEmpty(n);
                 expects.add((Expect)n.addOutput(ex));

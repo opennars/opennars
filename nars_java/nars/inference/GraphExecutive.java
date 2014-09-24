@@ -90,7 +90,7 @@ public class GraphExecutive implements Observer {
     private boolean isPlannable(final Term goal) {
         /** must be in the graph and have at least one incoming edge */
         if (implication.containsVertex(goal)) {
-            return implication.inDegreeOf(goal) > 0;
+            return implication.inDegreeOf(new PostCondition(goal)) > 0;
         }
         return false;
     }
