@@ -139,8 +139,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }
     
     public boolean add(final Sentence s, final Item c) {
-        if (containsEdge(s))
-            return false;
+        /*if (containsEdge(s))
+            return false;*/
         
         if (!allow(s))
             return false;
@@ -168,7 +168,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }    
     
     /** default behavior, may override in subclass */
-    public boolean add(Sentence s, CompoundTerm ct, Item c) {
+    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
         if (ct instanceof Statement) {
             Statement st = (Statement)ct;
             Term subject = st.getSubject();
