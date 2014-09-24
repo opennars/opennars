@@ -158,6 +158,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             else {
                 //separate into pre/post
                 PostCondition postSubject = new PostCondition(subject);
+                addVertex(precondition);
                 addVertex(subject);
                 addVertex(postSubject);
                 newImplicationEdge(precondition, subject, c, s);
@@ -172,8 +173,13 @@ public class ImplicationGraph extends SentenceItemGraph {
         Implication impParent = (Implication)parent.content;
         Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
-        addEdge(source, target, impFinalSentence);
-        concepts.put(impFinalSentence, c);
+        try {
+            addEdge(source, target, impFinalSentence);
+            concepts.put(impFinalSentence, c);
+        }
+        catch (IllegalArgumentException e) {
+            throw new RuntimeException(this + " Unable to create edge: source=" + source + ", target=" + target);
+        }
         
         return impFinalSentence;
     }
