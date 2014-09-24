@@ -46,6 +46,7 @@
 
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.MathUtils;
@@ -55,19 +56,15 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.joints.ConstantVolumeJointDef;
-import org.jbox2d.testbed.framework.TestbedTest;
 
-public class BlobTest4 extends TestbedTest {
+
+public class BlobTest4 extends PhysicsModel {
 
   @Override
   public float getDefaultCameraScale() {
     return 20;
   }
 
-  @Override
-  public boolean isSaveLoadEnabled() {
-    return true;
-  }
 
   @Override
   public void initTest(boolean deserialized) {

@@ -23,6 +23,8 @@
  ******************************************************************************/
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedSettings;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
@@ -34,10 +36,10 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
-import org.jbox2d.testbed.framework.TestbedSettings;
-import org.jbox2d.testbed.framework.TestbedTest;
 
-public class RayCastTest extends TestbedTest {
+
+
+public class RayCastTest extends PhysicsModel {
 
   public static final int e_maxBodies = 256;
 

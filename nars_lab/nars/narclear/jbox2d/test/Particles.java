@@ -1,5 +1,6 @@
 package nars.narclear.jbox2d.test;
 
+import nars.narclear.PhysicsModel;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -8,9 +9,9 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.particle.ParticleGroupDef;
 import org.jbox2d.particle.ParticleType;
-import org.jbox2d.testbed.framework.TestbedTest;
 
-public class Particles extends TestbedTest {
+
+public class Particles extends PhysicsModel {
   @Override
   public String getTestName() {
     return "Particles";
