@@ -1,5 +1,8 @@
 package nars.util.graph;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
@@ -86,7 +89,8 @@ public class ImplicationGraph extends SentenceItemGraph {
 
         final Term subject, predicate;
         
-        if (st.operator() == NativeOperator.IMPLICATION_BEFORE) {
+        boolean reverse = st.operator() == NativeOperator.IMPLICATION_BEFORE;
+        if (reverse) {
             //reverse temporal order
             subject = st.getPredicate();
             predicate = st.getSubject();            
@@ -108,8 +112,11 @@ public class ImplicationGraph extends SentenceItemGraph {
                 boolean addedNonInterval = false;
                 
                 
-                for (Term a : seq.term) {
-
+                List<Term>al = Arrays.asList(seq.term);
+                if (reverse)
+                     Collections.reverse(al);
+                
+                for (Term a : al) {
 
                     if (a instanceof Interval) {
                         if (addedNonInterval) {
