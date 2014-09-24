@@ -1008,8 +1008,6 @@ public class Memory implements Output, Serializable {
         //--------m-a-i-n-----l-o-o-p--------
             
         conceptProcessor.cycle(this);
-
-        executive.manageExecution();
             
         //--------m-a-i-n-----l-o-o-p--------
 

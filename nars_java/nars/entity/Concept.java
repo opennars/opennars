@@ -38,14 +38,11 @@ import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
-import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
-import nars.language.Conjunction;
 import nars.language.Term;
-import nars.operator.Operation;
 import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
 import nars.storage.NullBagObserver;
@@ -232,15 +229,15 @@ public class Concept extends Item {
         }
     }
 
-    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
+    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, Object... extraEventArguments) {
         int preSize = table.size();
 
         Sentence removed = addToTable(newSentence, table, max);
         
         if (removed!=null)
-            memory.event.emit(eventRemove, this, removed, task);
+            memory.event.emit(eventRemove, this, removed, task, extraEventArguments);
         if ((preSize!=table.size()) || (removed!=null))
-            memory.event.emit(eventAdd, this, newSentence, task);        
+            memory.event.emit(eventAdd, this, newSentence, task, extraEventArguments);        
     }
     
     
@@ -256,7 +253,7 @@ public class Concept extends Item {
     protected void processGoal(final Task task) {
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
-        boolean noRevision = true;
+        boolean revised = false;
         
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
@@ -270,7 +267,7 @@ public class Concept extends Item {
                 memory.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
                 if (memory.getTheNewStamp() != null) {
                     revision(goal, oldGoal, false, memory);
-                    noRevision = false;
+                    revised = true;
                 }
             }
         }
@@ -286,12 +283,15 @@ public class Concept extends Item {
             // still worth pursuing?
             if (task.aboveThreshold()) {    
                 
-                addToTable(task, goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
-                if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
-                    //hm or conjunction in time and temporal order forward
-                    memory.executive.decisionMaking(task, this);
-               }
+                addToTable(task, goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class, revised);
+                
+//                if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
+//                    //hm or conjunction in time and temporal order forward
+//                    
+//                    memory.executive.decisionMaking(task, this);
+//               }
+                
             }
         }
     }

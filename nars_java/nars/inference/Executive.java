@@ -73,29 +73,29 @@ public class Executive {
     }   
     
 
-    public void manageExecution()  {
-        
-        if (next.isEmpty()) {
-            return;
-        }
-        
-        TaskConceptContent n = next.pollFirst();
-        
-        
-        if (n.task==null) {
-            //we have to wait
-            return; 
-        }                
-        
-        if (!(n.content instanceof Operation)) {
-            throw new RuntimeException("manageExecution: Term content is not Operation: " + n.content); 
-        }
-        
-        System.out.println("manageExecution: " + n.task);
-
-        //ok it is time for action:
-        execute((Operation)n.content, n.concept, n.task, true);
-    }    
+//    public void manageExecution()  {
+//        
+//        if (next.isEmpty()) {
+//            return;
+//        }
+//        
+//        TaskConceptContent n = next.pollFirst();
+//        
+//        
+//        if (n.task==null) {
+//            //we have to wait
+//            return; 
+//        }                
+//        
+//        if (!(n.content instanceof Operation)) {
+//            throw new RuntimeException("manageExecution: Term content is not Operation: " + n.content); 
+//        }
+//        
+//        System.out.println("manageExecution: " + n.task);
+//
+//        //ok it is time for action:
+//        execute((Operation)n.content, n.concept, n.task, true);
+//    }    
 
     protected void execute(final Operation op, final Concept concept, final Task task, final boolean masterplan) {
         
@@ -169,8 +169,8 @@ public class Executive {
             return;
         }
         
-        if(next.isEmpty())
-            execute((Operation)content, concept, task, false);
+        /*if(next.isEmpty())
+            execute((Operation)content, concept, task, false);*/
     }
     
       /** Add plausibility estimation */

@@ -16,16 +16,20 @@ import nars.core.Events.ConceptGoalRemove;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.io.Symbols.NativeOperator;
+import nars.io.Texts;
 import nars.io.buffer.PriorityBuffer;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
+import nars.operator.Operator;
 import nars.util.graph.ImplicationGraph;
 import nars.util.graph.ImplicationGraph.PostCondition;
 
@@ -34,33 +38,49 @@ public class GraphExecutive implements Observer {
     private final Memory memory;
     public final ImplicationGraph implication;
     
-    PriorityBuffer<Task> tasks;
-    int numTasks = 32;
+    PriorityBuffer<TaskConcept> tasks;
+    
+    
+    int numTasks = 4;
     
     
     
-    float searchDepth = 24;
-    int particles = 64;
-    Executive exec;
+    float searchDepth = 64;
+    int particles = 256;
+    
+    @Deprecated Executive exec;
+    
     public GraphExecutive(Memory memory, Executive exec) {
         super();
         this.exec=exec;
         this.memory = memory;
-        tasks = new PriorityBuffer(new Comparator<Task>() {
+        tasks = new PriorityBuffer<TaskConcept>(new Comparator<TaskConcept>() {
             @Override
-            public final int compare(final Task a, final Task b) {
-                float bp = b.getPriority();
-                float ap = a.getPriority();
+            public final int compare(final TaskConcept a, final TaskConcept b) {
+                float bp = b.getMotivation();
+                float ap = a.getMotivation();
                 if (bp != ap) {
                     return Float.compare(bp, ap);
                 } else {
-                    float ad = a.getDurability();
-                    float bd = b.getDurability();
-                    return Float.compare(bd, ad);
+                    float ad = a.getPriority();
+                    float bd = b.getPriority();
+                    if (ad!=bd)
+                        return Float.compare(bd, ad);
+                    else {
+                        float add = a.getDurability();
+                        float bdd = b.getDurability();
+                        return Float.compare(bdd, add);                        
+                    }
                 }
 
             }
-        }, numTasks);
+        }, numTasks) {
+
+            @Override protected void reject(final TaskConcept t) {
+                removeTask(t.t);
+            }
+            
+        };
 
         implication = new ImplicationGraph(memory);
         memory.event.on(CycleEnd.class, this);
@@ -68,47 +88,214 @@ public class GraphExecutive implements Observer {
         memory.event.on(ConceptGoalRemove.class, this);
     }
 
-    /**
-     * Add plausibility estimation
-     */
+    public static class TaskConcept {
+        public final Concept c;
+        public final Task t;
+        public int sequence;
+        public long delay = 0;
+        
+        public TaskConcept(final Concept c, final Task t) {
+            this.c = c;
+            this.t = t;
+        }
 
+        @Override public boolean equals(final Object obj) {
+            if (obj instanceof TaskConcept) {
+                return ((TaskConcept)obj).t.equals(t);
+            }
+            return false;
+        }
+        
+        public final float getDesire() { return c.getDesire().getExpectation();         }
+        public final float getPriority() { return t.getPriority();         }
+        public final float getDurability() { return t.getDurability(); }
+        public final float getMotivation() { return getDesire() * getPriority();         }
+
+        @Override public int hashCode() {            return t.hashCode();         }
+
+        @Override
+        public String toString() {
+            return "!" + Texts.n2(getMotivation()) + "! " + t.toString();
+        }
+
+        
+
+        
+    }
+    
+    protected void addTask(final Concept c, final Task t) {
+        if (tasks.add(new TaskConcept(c, t))) {
+            //added successfully
+        }
+    }
+    protected void removeTask(final Task t) {
+        //since TaskContent will equal according to its task, it will match 't' even though it's not a TaskContent
+        tasks.remove(t);
+    }
+    
+    protected void updatePriorities() {
+        List<TaskConcept> t = new ArrayList(tasks);
+        tasks.clear();
+        for (TaskConcept x : t) {
+            if ((x.getDesire() > 0) && (x.getPriority() > 0))
+                tasks.add(x);
+        }
+    }
 
     @Override
-    public void event(Class event, Object[] a) {
+    public void event(final Class event, final Object[] a) {
 
         if (event == ConceptGoalAdd.class) {
+            Concept concept = (Concept)a[0];
             Task t = (Task) a[2];
+            boolean revised = (Boolean)(((Object[])a[3])[0]);
             
-            tasks.add(t.clone());
-            
-            Term c = t.getContent();
-            if (!(c instanceof Operation)) {
-                System.out.println("Goal: " + t);
-                if (implication.containsVertex(t.getContent())) {                    
-                    plan(t, t.getContent(), searchDepth, '!');
+            if (concept.getDesire().getExpectation() < memory.param.decisionThreshold.get()) {
+                return;
+            }
+
+            if (!revised && !tasks.contains(t)) {
+                //incoming task
+                Term c = t.getContent();
+                if ((c instanceof Operation) || isSequenceConjunction(c))  {
+                    addTask(concept, t);
+                }
+                else {
+                    boolean plannable = implication.containsVertex(t.getContent());
+                    System.out.println("Goal: " + t + " plannable=" + plannable);
+                    if (plannable) {                    
+                        plan(concept, t, t.getContent(), searchDepth, '!');
+                    }
                 }
             }
             
         } else if (event == ConceptGoalRemove.class) {
             Task t = (Task) a[2];
+            //removeTask(t);
             //System.out.println("Goal rem: " + a[0] + " " + a[1] + " " + t.budget);
-            tasks.remove(t);
         } else if (event == CycleEnd.class) {
 //            if (tasks.size() > 0) {
 //                plan();
 //            }
-            if (memory.getCurrentBelief()!=null) {
-                Term currentTerm = memory.getCurrentBelief().content;
-                if (implication.containsVertex(currentTerm)) {
-                    particlePredict(currentTerm, 12, particles);
-                }                
-            }
+
+            cycle();
+            
         }
     }
 
+    public boolean isSequenceConjunction(Term c) {
+        if (c instanceof Conjunction) {
+            if ( ((Conjunction)c).operator() == NativeOperator.SEQUENCE  )
+                return true;
+        }
+        return false;
+    }
+    protected void execute(final Operation op, final Task task) {
+        
+        Operator oper = op.getOperator();
+        
+        System.out.println("ex2: " + op + " from " + task.toString());
+        
+        op.setTask(task);
+                        
+        oper.call(op, memory);
+        
+        
+    }
+    
+    
+    protected void cycle() {
+        /*if (tasks.size() > 0)
+            System.out.println("Tasks (pre): " + tasks);*/
+        
+        updatePriorities();
+
+        if (tasks.size() == 0)
+            return;
+        
+        System.out.println("Tasks @ " + memory.getTime());
+        for (TaskConcept tcc : tasks)
+            System.out.println("  " + tcc.toString());
+        
+        TaskConcept topConcept = tasks.getFirst();
+        Task top = topConcept.t;
+        Term term = top.getContent();
+        if (term instanceof Operation) {            
+            execute((Operation)term, top); //directly execute
+            top.setPriority(0);
+        }
+        else if (term instanceof Conjunction) {
+            Conjunction c = (Conjunction)term;
+            if (c.operator() == NativeOperator.SEQUENCE) {
+                executeConjunctionSequence(topConcept, c);
+            }
+            
+        }
+        else if (term instanceof Implication) {
+            Implication it = (Implication)term;
+            if (it.getSubject() instanceof Conjunction) {
+                Conjunction c = (Conjunction)it.getSubject();
+                if (c.operator() == NativeOperator.SEQUENCE) {
+                    executeConjunctionSequence(topConcept, c);
+                    return;
+                }
+            }
+            else if (it.getSubject() instanceof Operation) {
+                execute((Operation)it.getSubject(), top); //directly execute
+                top.setPriority(0);
+                return;
+            }
+            throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
+        }
+        
+//        //Example prediction
+//        if (memory.getCurrentBelief()!=null) {
+//            Term currentTerm = memory.getCurrentBelief().content;
+//            if (implication.containsVertex(currentTerm)) {
+//                particlePredict(currentTerm, 12, particles);
+//            }                
+//        }
+    }
     
     public static boolean validPlanComponent(final Term t) {
         return ((t instanceof Interval) || (t instanceof Operation));
+    }
+
+    private void executeConjunctionSequence(final TaskConcept task, final Conjunction c) {
+        int s = task.sequence;
+        Term currentTerm = c.term[s];
+        if (currentTerm instanceof Operation) {
+            execute((Operation)currentTerm, task.t);
+            s++;
+        }
+        else if (currentTerm instanceof Interval) {
+            Interval ui = (Interval)currentTerm;
+
+            if (task.delay == 0) {
+                task.delay = Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
+            }
+            else {
+                task.delay--;
+                System.out.print("  delay " + task.delay);                
+                if (task.delay == 0)
+                    s++;
+            }
+        }        
+        else {
+            s++;
+            System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c);
+        }
+
+        if (s == c.term.length) {
+            //end of task
+            System.out.println("  Completed " + task);
+            task.t.setPriority(0);
+            removeTask(task.t);
+        }
+        else {                  
+            System.out.println("  ...continuing at index" + s);
+            task.sequence = s;//update new value for next cycle
+        }
     }
     
     
@@ -308,13 +495,19 @@ public class GraphExecutive implements Observer {
     protected ParticlePlan particlePlan(final Term target, final double distance, final int particles) {
         PostCondition targetPost = new PostCondition(target);
         
-        if (!implication.containsVertex(targetPost))
+        if (!implication.containsVertex(targetPost)) {
+            System.out.println("  plan for " + target + ": missing postCondition vertex");
             return null;
+        }
         
         ParticleActivation act = new ParticleActivation(implication);
         SortedSet<ParticlePath> roots = act.activate(targetPost, false, particles, distance);
         
 
+        if (roots == null) {
+            System.out.println("  plan fail: no roots");
+            return null;
+        }
 //        System.out.println("Particle paths for " + target);
 //        for (ParticlePath pp : roots) {
 //            System.out.println("  " + pp);
@@ -387,7 +580,7 @@ public class GraphExecutive implements Observer {
                 seq.add( Interval.intervalTime(accumulatedDelay, memory)  );                
             }
             
-            if (seq.size() < 2)
+            if (seq.isEmpty())
                 continue;
 
             System.out.println("  cause: " + Arrays.toString(path));
@@ -395,21 +588,27 @@ public class GraphExecutive implements Observer {
             return new ParticlePlan(path, seq, pp.activation, pp.distance);
         }
         
+        System.out.println("  no eligible roots: " + roots.size());
+        
         return null;
     }
 
-    protected void plan(Task task, Term target, double searchDistance, char punctuation) {
+    protected void plan(Concept c, Task task, Term target, double searchDistance, char punctuation) {
 
         if (!implication.containsVertex(target))
             return;
 
         ParticlePlan plan = particlePlan(target, searchDistance, particles);
-        if (plan == null)
+        if (plan == null) {
+            System.out.println("  plan failure, vert degree=" + implication.inDegreeOf(target) + "|" + implication.outDegreeOf(target));
             return;
+        }
         Sentence[] path = plan.path;
         List<Term> seq = plan.sequence;
-        if (seq.size() < 1) 
+        if (seq.isEmpty()) {
+            System.out.println("  plan failure: sequence empty");
             return;
+        }
         
         Sentence currentEdge = path[path.length-1];
 
@@ -424,14 +623,14 @@ public class GraphExecutive implements Observer {
         }
 
         Term subj = seq.size() > 1 ?
-            (Conjunction) Conjunction.make(seq.toArray(new Term[seq.size()]), TemporalRules.ORDER_FORWARD, memory)
+            Conjunction.make(seq.toArray(new Term[seq.size()]), TemporalRules.ORDER_FORWARD, memory)
                 :
             seq.get(0);
         
         
         //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
 
-        double planDistance = Math.min(plan.distance, searchDistance);
+        //double planDistance = Math.min(plan.distance, searchDistance);
         float confidence = (float)plan.activation; // * planDistance/searchDistance;
         TruthValue val = new TruthValue(1.0f, confidence);
         
@@ -452,8 +651,10 @@ public class GraphExecutive implements Observer {
 
         //memory.doublePremiseTask(imp, val, bud);
         //memory.inputTask(t);
-        exec.decisionMaking2(t);
         
+        //exec.decisionMaking2(t);
+        
+        addTask(c, t);
     }
     
     protected void plan(Task task, Task __not_used_newEvent) {

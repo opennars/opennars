@@ -93,7 +93,7 @@ public class Interval extends Term {
     /** this constructor has an extra unused argument to differentiate it from the other one,
      * for specifying magnitude directly.
      */
-    protected Interval(final int magnitude, boolean yesMagnitude) {
+    protected Interval(final int magnitude, final boolean yesMagnitude) {
         super();
         this.magnitude = magnitude;
         setName(Symbols.INTERVAL_PREFIX + String.valueOf(1+magnitude));        
@@ -104,12 +104,24 @@ public class Interval extends Term {
 //        setName(s);
 //    }
 
-    public static int timeToMagnitude(long timeDiff, AtomicDuration duration) {
+    public static int timeToMagnitude(final long timeDiff, final AtomicDuration duration) {
         return (int) Math.round(Math.log(timeDiff) / duration.getLog());
     }
     
-    public static long magnitudeToTime(int magnitude, AtomicDuration duration) {
-        return (long)( Math.round(Math.exp(magnitude * duration.getLog())));
+    public static double magnitudeToTime(final double magnitude, final AtomicDuration duration) {
+        if (magnitude <= 0)
+            return 1;
+        return Math.exp(magnitude * duration.getLog());
+    }
+    public static long magnitudeToTime(final int magnitude, final AtomicDuration duration) {
+        return (long)Math.round(magnitudeToTime((double)magnitude, duration));
+    }
+    /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude */
+    public static long magnitudeToTimeHalfRadius(final int magnitude, final AtomicDuration duration) {
+        //TODO cache this result because it will be equal for all similar integer magnitudes
+        double magMin = magnitude - 0.5;
+        double magMax = magnitude + 0.5;
+        return (long)Math.round((magnitudeToTime(magMin,duration) + magnitudeToTime(magMax, duration))/2.0);
     }
     
     @Deprecated public static long magnitudeToTime(int magnitude) {
