@@ -34,7 +34,7 @@ import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
-import nars.narclear.jbox2d.TestbedController;
+import nars.narclear.jbox2d.PhysicsController;
 import nars.narclear.jbox2d.TestbedState;
 import nars.narclear.jbox2d.TestbedPanel;
 
@@ -56,9 +56,9 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
   private int panelWidth;
   private int panelHeight;
 
-  private final TestbedController controller;
+  private final PhysicsController controller;
 
-  public TestPanelJ2D(final TestbedState model, final TestbedController controller) {
+  public TestPanelJ2D(final TestbedState model, final PhysicsController controller) {
     this.controller = controller;
     setBackground(Color.black);
     setPreferredSize(new Dimension(INIT_WIDTH, INIT_HEIGHT));

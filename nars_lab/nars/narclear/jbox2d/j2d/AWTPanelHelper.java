@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.jbox2d.common.Vec2;
 import nars.narclear.jbox2d.TestbedCamera.ZoomType;
-import nars.narclear.jbox2d.TestbedController;
+import nars.narclear.jbox2d.PhysicsController;
 import nars.narclear.jbox2d.TestbedState;
 import nars.narclear.PhysicsModel;
 
@@ -26,7 +26,7 @@ public class AWTPanelHelper {
    * Adds common help text and listeners for awt-based testbeds.
    */
   public static void addHelpAndPanelListeners(Component panel, final TestbedState model,
-      final TestbedController controller, final int screenDragButton) {
+      final PhysicsController controller, final int screenDragButton) {
     final Vec2 oldDragMouse = new Vec2();
     final Vec2 mouse = new Vec2();
     List<String> help = Lists.newArrayList();
