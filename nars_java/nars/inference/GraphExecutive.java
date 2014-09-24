@@ -41,10 +41,10 @@ public class GraphExecutive implements Observer {
     
     float searchDepth = 24;
     int particles = 64;
-
-    public GraphExecutive(Memory memory) {
+    Executive exec;
+    public GraphExecutive(Memory memory, Executive exec) {
         super();
-
+        this.exec=exec;
         this.memory = memory;
         tasks = new PriorityBuffer(new Comparator<Task>() {
             @Override
@@ -451,8 +451,8 @@ public class GraphExecutive implements Observer {
         System.out.println("  -> Plan: " + t);
 
         //memory.doublePremiseTask(imp, val, bud);
-        memory.inputTask(t);
-
+        //memory.inputTask(t);
+        exec.decisionMaking2(t);
         
     }
     
