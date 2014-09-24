@@ -225,7 +225,7 @@ public class Executive {
     }
     
     
-    public boolean isActionable(final Task task, final Task newEvent) {
+    @Deprecated public boolean isActionable(final Task task, final Task newEvent) {
         
         if ((task.sentence!=null) && (task.sentence.content!=null) && (task.sentence.content instanceof Implication))
             return true;
@@ -253,8 +253,28 @@ public class Executive {
         
         return false;        
     }
+
+    public boolean isActionable(final Task task) {
+        
+        if ((task.sentence!=null) && (task.sentence.content!=null) && (task.sentence.content instanceof Implication))
+            return true;
+        
+        if (task.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL) {
+            return false;
+        }
+        
+        if (!task.sentence.isJudgment()) {
+            return false;
+        }
+
+        return false;        
+    }
     
-    public boolean planShortTerm(final Task newEvent, Memory mem) {
+//    public boolean planShortTerm(final Concept concept, final Task task, final Memory mem) {
+//        return graph.inputTask(concept, task);
+//    }
+    
+    public boolean planShortTermOLD(final Task newEvent, Memory mem) {
 
         if (newEvent == null)
             return false;

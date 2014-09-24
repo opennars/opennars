@@ -1043,7 +1043,6 @@ public class Memory implements Output, Serializable {
         // don't include new tasks produced in the current cycleMemory
         int counter = Math.min(maxTasks, newTasks.size());
         
-        Task newEvent = null;
         while (counter-- > 0) {
             
             final Task task = newTasks.removeFirst();
@@ -1051,15 +1050,17 @@ public class Memory implements Output, Serializable {
             
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
             
-            if (task.isInput()  || concept(task.getContent())!=null || (task!=null && task.getContent()!=null && task.sentence!=null && 
-                    task.getContent() instanceof Operation && task.sentence.isGoal() && conceptualize(task.getContent()) != null)) {
+            if (  task.isInput()  || 
+                  concept(task.getContent())!=null || 
+                  (   task.sentence!=null && 
+                      task.getContent()!=null && 
+                      task.getContent() instanceof Operation && 
+                      task.sentence.isGoal() && 
+                      concept(task.getContent()) != null)
+               ) {
                 
                 // new addInput or existing concept
-                immediateProcess(task);
-                
-                if (executive.isActionable(task, newEvent))
-                    newEvent = task;
-                
+                immediateProcess(task);                               
                 
             } else {
                 final Sentence s = task.sentence;
@@ -1082,11 +1083,7 @@ public class Memory implements Output, Serializable {
                 }
             }
         }
-                
-        boolean stmUpdated = executive.planShortTerm(newEvent,this);
-        if (stmUpdated)
-            logic.SHORT_TERM_MEMORY_UPDATE.commit();
-                
+                 
         return processed;
     }
     

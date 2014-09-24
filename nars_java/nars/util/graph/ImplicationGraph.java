@@ -26,7 +26,7 @@ public class ImplicationGraph extends SentenceItemGraph {
      *  any value between 0 and 1.0 is valid.  
      *  factor = dormantConceptInfluence + (1.0 - dormantConceptInfluence) * concept.priority
      */
-    float dormantConceptInfluence = 0.1f; 
+    float dormantConceptInfluence = 0.5f; 
 
     public ImplicationGraph(NAR nar) {
         this(nar.memory);
@@ -117,7 +117,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                         }
                     }
                     if (GraphExecutive.validPlanComponent(a)) {
-                        if (!prev.equals(a)) {
+                        /*if (!prev.equals(a))*/ {
                             addVertex(prev);                        
                             addVertex(a);
                             newImplicationEdge(prev, a, c, s);
@@ -173,12 +173,14 @@ public class ImplicationGraph extends SentenceItemGraph {
         Implication impParent = (Implication)parent.content;
         Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
+
         try {
             addEdge(source, target, impFinalSentence);
             concepts.put(impFinalSentence, c);
         }
         catch (IllegalArgumentException e) {
-            throw new RuntimeException(this + " Unable to create edge: source=" + source + ", target=" + target);
+            //throw new RuntimeException(this + " Unable to create edge: source=" + source + ", target=" + target);
+            return null;
         }
         
         return impFinalSentence;

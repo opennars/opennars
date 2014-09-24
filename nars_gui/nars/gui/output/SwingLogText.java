@@ -121,13 +121,13 @@ public class SwingLogText extends SwingText implements Output {
         float tc = 0.75f + 0.25f * priority;
         Color textColor = new Color(tc, tc, tc);
         print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n');
-        try {
-            setCaretPosition(getDocument().getLength());
-        }
-        catch (Throwable e) { }
-        
+        SwingUtilities.invokeLater(scrollBottom);        
     }
     
-    
+    final Runnable scrollBottom = new Runnable() {
+        @Override public void run() {
+            setCaretPosition(getDocument().getLength());
+        }        
+    };
 
 }
