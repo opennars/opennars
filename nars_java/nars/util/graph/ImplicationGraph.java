@@ -84,16 +84,18 @@ public class ImplicationGraph extends SentenceItemGraph {
         
         final Implication st = (Implication)ct;
         
-        if (st.getTemporalOrder() == TemporalRules.ORDER_NONE)
+        if ((st.getTemporalOrder() == TemporalRules.ORDER_NONE) || (st.operator() == NativeOperator.IMPLICATION_BEFORE))
             return false;
+        
 
         final Term subject, predicate;
         
-        boolean reverse = st.operator() == NativeOperator.IMPLICATION_BEFORE;
+        boolean reverse = false;
         if (reverse) {
+            return false;
             //reverse temporal order
-            subject = st.getPredicate();
-            predicate = st.getSubject();            
+            //subject = st.getPredicate();
+            //predicate = st.getSubject();            
         }
         else {
             subject = st.getSubject();
