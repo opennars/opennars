@@ -36,20 +36,21 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
     
     public static class UniqueInterval extends Interval {
-
         
-        public final Implication parent;
-        private final int order;
+        public final Implication parent;        
+        private final Term prev;
+        private final String id;
     
-        public UniqueInterval(Implication parent, Interval i, int order) {
+        public UniqueInterval(Implication parent, Interval i, Term previous) {
             super(i.magnitude, true);    
+            this.id = parent.name() + "/" + previous.name() + "/" + i.name();
             this.parent = parent;
-            this.order = order;
+            this.prev = previous;
         }
 
         @Override
         public int hashCode() {
-            return order + parent.hashCode() * 37  + super.hashCode();
+            return id.hashCode();
         }
 
         @Override
@@ -58,7 +59,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             
             if (that instanceof UniqueInterval) {
                 UniqueInterval ui = (UniqueInterval)that;
-                return (ui.order == order && ui.parent.equals(parent) && ui.magnitude == magnitude);
+                return (ui.id.equals(id));
             }
             return false;
         }
@@ -105,7 +106,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
                 Term prev = precondition;
                 boolean addedNonInterval = false;
-                int intervalNum = 0;
+                
                 
                 for (Term a : seq.term) {
 
@@ -113,7 +114,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                     if (a instanceof Interval) {
                         if (addedNonInterval) {
                             //eliminate prefix intervals
-                            a = new UniqueInterval(st, (Interval)a, intervalNum++);
+                            a = new UniqueInterval(st, (Interval)a, prev);
                         }
                     }
                     if (GraphExecutive.validPlanComponent(a)) {

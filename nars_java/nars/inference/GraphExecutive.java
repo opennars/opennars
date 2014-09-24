@@ -88,9 +88,11 @@ public class GraphExecutive implements Observer {
 
     /** whether the Term is currently a valid goal for the implication graph to plan for */
     private boolean isPlannable(final Term goal) {
+        PostCondition goalPostCondition = new PostCondition(goal);
+        
         /** must be in the graph and have at least one incoming edge */
-        if (implication.containsVertex(goal)) {
-            return implication.inDegreeOf(new PostCondition(goal)) > 0;
+        if (implication.containsVertex(goalPostCondition)) {
+            return implication.inDegreeOf(goalPostCondition) > 0;
         }
         return false;
     }
@@ -381,6 +383,7 @@ public class GraphExecutive implements Observer {
         private final ImplicationGraph graph;
         
         Map<Term, ParticlePath> termPaths = new HashMap();
+        boolean avoidCycles = true;
 
         public ParticleActivation(ImplicationGraph graph) {
             this.graph = graph;            
@@ -421,11 +424,18 @@ public class GraphExecutive implements Observer {
                                 graph.getEdgeTarget(s) :
                                 graph.getEdgeSource(s);
                         
-                        if (!etarget.equals(source)/* || etarget.equals(target)*/) {
-                            nextEdges.add(s);
+                        if ((avoidCycles) && (etarget.equals(source)))
+                            continue;
+                           
+                        if (!validVertex(etarget)) {
+                            continue;
                         }
-                        if (etarget instanceof Operation) {
-                            operationTraversed = true;
+                        
+                        if (!etarget.equals(source)) {
+                            nextEdges.add(s);
+                            if (etarget instanceof Operation) {
+                                operationTraversed = true;
+                            }
                         }
                     }
 
@@ -517,6 +527,9 @@ public class GraphExecutive implements Observer {
             return new TreeSet(paths);
         }
         
+        public boolean validVertex(final Term x) {
+            return true;
+        }
         //public void reset()
         
     }
@@ -551,7 +564,12 @@ public class GraphExecutive implements Observer {
             return null;
         }
         
-        ParticleActivation act = new ParticleActivation(implication);
+        ParticleActivation act = new ParticleActivation(implication) {
+            @Override public boolean validVertex(final Term x) {
+                //additional restriction on path's vertices
+                return !target.equals(x);
+            }            
+        };
         SortedSet<ParticlePath> roots = act.activate(targetPost, false, particles, distance);
         
 
