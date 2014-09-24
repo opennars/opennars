@@ -9,7 +9,12 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.rankBelief;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Implication;
+import nars.language.Interval;
+import nars.language.Interval.AtomicDuration;
+import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
@@ -59,7 +64,7 @@ public class Executive {
     
     public Executive(Memory mem) {
         this.memory = mem;        
-        this.graph = new GraphExecutive(mem);
+        this.graph = new GraphExecutive(mem,this);
     }
 
     public void reset() {
@@ -166,6 +171,57 @@ public class Executive {
         
         if(next.isEmpty())
             execute((Operation)content, concept, task, false);
+    }
+    
+      /** Add plausibility estimation */
+    public void decisionMaking2(final Task task) {
+        
+        //System.out.println("decision making: " + task + " c=" + concept);
+                
+        Term content = ((Statement)task.sentence.content).getSubject();
+        
+    
+        
+        
+        //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
+        if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
+            
+            //1. get first operator and execute it
+            CompoundTerm cont = (CompoundTerm) content;
+            
+            for (final Term t : cont.term) {
+                if(!(t instanceof Operation) && !(t instanceof Interval)) {
+                    return;
+                }
+            }
+            
+            final AtomicDuration duration = memory.param.duration;
+            
+            for (final Term t : cont.term) {
+                
+                if(t instanceof Interval) {
+                    Interval intv=(Interval) t;
+                    
+                    long wait_steps = intv.getTime(duration);
+                           
+                    for(long i=0;i<wait_steps; i++) {
+                        next.addLast(TaskConceptContent.NULL);
+                    }
+                }
+                else if(t instanceof Operation) {
+                    next.addLast(new TaskConceptContent(task, null, t));
+                }
+            }
+            return;           
+        }
+        //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
+        if (!(content instanceof Operation)) {
+            //throw new RuntimeException("decisionMaking: Term content is not Operation: " + content);          
+            return;
+        }
+        
+        if(next.isEmpty())
+            execute((Operation)content, null, task, false);
     }
     
     
