@@ -229,7 +229,7 @@ public class Concept extends Item {
         }
     }
 
-    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, Object... extraEventArguments) {
+    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         int preSize = table.size();
 
         Sentence removed = addToTable(newSentence, table, max);

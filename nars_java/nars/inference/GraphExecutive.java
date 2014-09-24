@@ -39,7 +39,8 @@ public class GraphExecutive implements Observer {
     public final ImplicationGraph implication;
     
     PriorityBuffer<TaskConcept> tasks;
-    
+
+    boolean planningEnabled = true;
     
     int numTasks = 16;
             
@@ -97,6 +98,46 @@ public class GraphExecutive implements Observer {
         return false;
     }
 
+    public boolean decisionMaking(final Task t, final Concept concept, final boolean revised) {
+
+        if (!(!revised || (t.sentence.content instanceof Operation || (t.sentence.content instanceof Conjunction && t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))))
+            return false;
+        
+        if (concept != null) {
+            if (concept.getDesire()!=null)
+                if (concept.getDesire().getExpectation() < memory.param.decisionThreshold.get()) {
+                    return false;
+                }
+        }
+            
+
+        if (!tasks.contains(t)) {
+            //incoming task
+            Term c = t.getContent();
+            if ((c instanceof Operation) || isSequenceConjunction(c))  {
+                addTask(concept, t);
+                //return true;
+            }
+            else {
+                if (planningEnabled) {
+                    boolean plannable = isPlannable(t.getContent());
+                    System.out.println("Goal: " + t + " plannable=" + plannable + ", implgraph=" 
+                            + implication.vertexSet().size() + "|" + implication.edgeSet().size());
+                    if (plannable) {                    
+                        plan(concept, t, t.getContent(), searchDepth, '.');
+                        return true;
+                    }
+                }
+            }
+        }
+        else {
+            System.err.println("Duplicate task: " + t);
+        }
+        return false;
+        
+        
+    }
+
     public static class TaskConcept {
         /** may be null for input tasks */
         public final Concept c;
@@ -140,34 +181,6 @@ public class GraphExecutive implements Observer {
         
     }
 
-    public boolean inputTask(Concept concept, Task t) {
-        if (concept != null) {
-            if (concept.getDesire()!=null)
-                if (concept.getDesire().getExpectation() < memory.param.decisionThreshold.get()) {
-                    return false;
-                }
-        }
-            
-
-        if (!tasks.contains(t)) {
-            //incoming task
-            Term c = t.getContent();
-            if ((c instanceof Operation) || isSequenceConjunction(c))  {
-                addTask(concept, t);
-                //return true;
-            }
-            /*else*/ {
-                boolean plannable = isPlannable(t.getContent());
-                System.out.println("Goal: " + t + " plannable=" + plannable + ", implgraph=" 
-                        + implication.vertexSet().size() + "|" + implication.edgeSet().size());
-                if (plannable) {                    
-                    plan(concept, t, t.getContent(), searchDepth, '!');
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     
     
     protected void addTask(final Concept c, final Task t) {
@@ -194,12 +207,10 @@ public class GraphExecutive implements Observer {
 
         if (event == ConceptGoalAdd.class) {
             Concept concept = (Concept)a[0];
-            Task t = (Task) a[2];
-            
+            Task task = (Task) a[2];            
             boolean revised = (Boolean)(((Object[])a[3])[0]);
             
-            //if (!revised)
-                inputTask(concept, t);
+            decisionMaking(task, concept, revised);
                         
         } else if (event == ConceptGoalRemove.class) {
             Task t = (Task) a[2];
@@ -462,7 +473,6 @@ public class GraphExecutive implements Observer {
                         }
                         
                         double r = Memory.randomNumber.nextDouble() * totalProb;
-                        System.out.print(totalProb + " " + r);
 
                         int j;
                         for (j = 0; j < numEdges; j++) {
@@ -714,17 +724,16 @@ public class GraphExecutive implements Observer {
         BudgetValue bud = BudgetFunctions.forward(val, memory);
         //bud.andPriority(confidence);
         
-        Task t = new Task(new Sentence(imp, punctuation, val, stamp), bud);
+        Task newTask = new Task(new Sentence(imp, punctuation, val, stamp), bud, task);
         
-        System.out.println("  -> Plan: " + t);
+        System.out.println("  -> Plan: " + newTask);
 
         //memory.doublePremiseTask(imp, val, bud);
         //memory.inputTask(t);
         
         //exec.decisionMaking2(t);
         
-        addTask(c, t);
-        //memory.inputTask(t);
+        memory.derivedTask(task, false, true, null, null);
     }
     
     protected void plan(Task task, Task __not_used_newEvent) {
