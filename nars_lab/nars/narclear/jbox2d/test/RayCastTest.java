@@ -142,9 +142,10 @@ public class RayCastTest extends PhysicsModel {
 
   // pooling
   Vec2 point1 = new Vec2();
+  Vec2 point2 = new Vec2();
   Vec2 d = new Vec2();
   Vec2 pooledHead = new Vec2();
-  Vec2 point2 = new Vec2();
+  
 
   @Override
   public void step(TestbedSettings settings) {

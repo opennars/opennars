@@ -60,7 +60,7 @@ public class DebugDrawJ2D extends DebugDraw {
   public DebugDrawJ2D(TestPanelJ2D argTestPanel, boolean yFlip) {
     panel = argTestPanel;
     this.yFlip = yFlip;
-    stroke = new BasicStroke(0);
+    stroke = new BasicStroke(2);
     circle = new Ellipse2D.Float(-1, -1, 2, 2);
   }
 
