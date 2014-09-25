@@ -168,7 +168,7 @@ public abstract class CompoundTerm extends Term {
     }
 
     @Override
-    protected final boolean setName(CharSequence name) {
+    protected boolean setName(CharSequence name) {
         if (super.setName(name)) {
             this.hasVar = Variables.containVar(name());
             return true;
@@ -180,7 +180,7 @@ public abstract class CompoundTerm extends Term {
     /**
      * The complexity of the term is the sum of those of the term plus 1
      */
-    private short calcComplexity() {
+    protected short calcComplexity() {
         int c = 1;
         for (final Term t : term) {
             c += t.getComplexity();        
