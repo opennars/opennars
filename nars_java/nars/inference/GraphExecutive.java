@@ -699,6 +699,13 @@ public class GraphExecutive implements Observer {
         Sentence currentEdge = path[path.length-1];
 
         Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime());
+        
+        //add all terms to derivation chain
+        for(Term T : seq) {
+            stamp.derivationChain.add(T); //todo: if too long kick out the first n terms
+        }
+        //todo: evidental base hm
+        
         //memory.setTheNewStamp(stamp);
 
         //memory.setCurrentTask(task);
@@ -717,9 +724,17 @@ public class GraphExecutive implements Observer {
         //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
 
         //double planDistance = Math.min(plan.distance, searchDistance);
-        float confidence = (float)plan.activation; // * planDistance/searchDistance;
-        TruthValue val = new TruthValue(1.0f, confidence);
-        
+        //float confidence = (float)plan.activation; // * planDistance/searchDistance;
+        //TruthValue val = new TruthValue(1.0f, confidence);
+        TruthValue truth=null; //use truth value according to NAL instead:
+        for(Sentence s : path) {
+            if(truth==null) {
+                truth=s.truth; //truth of first element
+            }
+            else {
+                truth=TruthFunctions.deduction(truth, truth);
+            }
+        }
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
 
         Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD, memory);
@@ -728,10 +743,10 @@ public class GraphExecutive implements Observer {
             throw new RuntimeException("Invalid implication: " + subj + " =\\> " + target);
         }
         
-        BudgetValue bud = BudgetFunctions.forward(val, memory);
+        BudgetValue bud = BudgetFunctions.forward(truth, memory);
         //bud.andPriority(confidence);
         
-        Task newTask = new Task(new Sentence(imp, punctuation, val, stamp), bud, task);
+        Task newTask = new Task(new Sentence(imp, punctuation, truth, stamp), bud, task);
         
         System.out.println("  -> Plan: " + newTask);
 
