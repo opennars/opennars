@@ -563,6 +563,18 @@ public class GraphExecutive implements Observer {
             this.activation = activation;
             this.distance = distance;
         }        
+
+        public float getMinConfidence() {
+            if (path.length == 0) return 0;
+            
+            float min = Float.MAX_VALUE;
+            for (final Sentence s : path) {
+                float c = s.truth.getConfidence();
+                if (c < min)
+                    min = c;
+            }
+            return min;
+        }
     }
     
     protected void particlePredict(final Term source, final double distance, final int particles) {
@@ -724,7 +736,7 @@ public class GraphExecutive implements Observer {
         //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
 
         //double planDistance = Math.min(plan.distance, searchDistance);
-        //float confidence = (float)plan.activation; // * planDistance/searchDistance;
+        float confidence = plan.getMinConfidence();
         //TruthValue val = new TruthValue(1.0f, confidence);
         TruthValue truth=null; //use truth value according to NAL instead:
         for(Sentence s : path) {
@@ -744,7 +756,7 @@ public class GraphExecutive implements Observer {
         }
         
         BudgetValue bud = BudgetFunctions.forward(truth, memory);
-        //bud.andPriority(confidence);
+        bud.andPriority(confidence);
         
         Task newTask = new Task(new Sentence(imp, punctuation, truth, stamp), bud, task);
         

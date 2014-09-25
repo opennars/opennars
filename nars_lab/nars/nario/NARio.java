@@ -63,14 +63,14 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(10);
+        nar.param().duration.set(100);
         nar.param().noiseLevel.set(10);
         nar.param().shortTermMemorySize.set(1);
         nar.param().decisionThreshold.set(0.3);
 
         NARio nario = new NARio(nar);
         new NARSwing(nar, false);
-        nar.start(30f,10);
+        nar.start(30f,300);
     }
 
     @Override
