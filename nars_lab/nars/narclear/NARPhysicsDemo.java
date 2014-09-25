@@ -147,6 +147,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
             System.out.println("AUTONOMOUS");
             System.out.println(); System.out.println(); System.out.println(); System.out.println();
             autonomous = true;
+            nar.param().decisionThreshold.set(0.3);
         }
         
 //        if (Math.random() < 0.1f) {
@@ -174,6 +175,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     public static void main(String[] args) {
         NAR n = new DefaultNARBuilder().build();
         n.param().duration.set(50);
+        n.param().decisionThreshold.set(0);
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();
         
