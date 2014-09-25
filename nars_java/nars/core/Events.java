@@ -6,6 +6,8 @@ public class Events {
     public static EventEmitter newEventEmitter() {
         //TODO use reflection to get all subclasses
         return new EventEmitter(
+                FrameStart.class,
+                FrameEnd.class,
                 CycleStart.class,
                 CycleEnd.class,
                 WorkCycleStart.class,
@@ -23,13 +25,17 @@ public class Events {
         );
     }
 
-    /** fired at the beginning of each main cycle */
-    public static class CycleStart {
-    }
-
-    /** fired at the end of each main cycle */
-    public static class CycleEnd {
-    }
+    /** fired at the beginning of each NAR frame */
+    public static class FrameStart {     } 
+    
+    /** fired at the end of each NAR frame */
+    public static class FrameEnd {     }
+    
+    /** fired at the beginning of each memory cycle */
+    public static class CycleStart {     } 
+    
+    /** fired at the end of each memory cycle */
+    public static class CycleEnd {     }
 
     /** fired at the beginning of each individual Memory work cycle */
     public static class WorkCycleStart {

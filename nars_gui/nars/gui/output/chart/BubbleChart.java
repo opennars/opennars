@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
-import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -40,10 +39,10 @@ public class BubbleChart extends NPanel implements Observer {
     @Override
     protected void onShowing(boolean showing) {
         if (showing) {
-            nar.memory.event.on(Events.CycleEnd.class, this);
+            nar.memory.event.on(Events.FrameEnd.class, this);
         }
         else {
-            nar.memory.event.off(Events.CycleEnd.class, this);
+            nar.memory.event.off(Events.FrameEnd.class, this);
         }
     }
 

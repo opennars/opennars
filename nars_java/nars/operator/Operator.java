@@ -66,7 +66,7 @@ public abstract class Operator extends Term {
     * @param memory The memory on which the operation is executed
     * @return true if successful, false if an error occurred
     */
-    public boolean call(final Operation operation, final Term[] args, final Memory memory) {
+    public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
         try {
             List<Task> feedback = execute(operation, args, memory);            
             memory.executedTask(operation);
@@ -132,7 +132,7 @@ public abstract class Operator extends Term {
         memory.output(EXE.class, operator + "(" + Arrays.toString(args) + ")=" + feedback);
     }
 
-    public boolean call(final Operation op, final Memory memory) {
+    public final boolean call(final Operation op, final Memory memory) {
         Product args = op.getArguments();
         return call(op, args.term, memory);
     }

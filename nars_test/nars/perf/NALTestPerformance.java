@@ -123,7 +123,7 @@ public class NALTestPerformance {
                 }
                 
                 try {
-                    nar.step(1);
+                    nar.cycle(1);
                 } catch (Exception e) {
                     error = true;
                 }

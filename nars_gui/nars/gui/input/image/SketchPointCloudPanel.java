@@ -148,7 +148,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
                     nar.addInput("<(*,"+lastdrawing.replace(" ","-")+","+drawing.replace(" ","-")+") --> "+opdirection+">. :|:");
                 }
             }
-            nar.step(1);
+            nar.cycle(1);
         }
 
         if (e.getSource() == deleteUserDefined) {

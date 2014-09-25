@@ -3,7 +3,6 @@ package nars.grid2d;
 import java.util.List;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
-import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.NARBuilder;
 import nars.core.build.DefaultNARBuilder;
@@ -139,7 +138,7 @@ public class TestChamber {
         space.automataPeriod = automataPeriod/gridUpdatePeriod;
         space.agentPeriod = agentPeriod/gridUpdatePeriod;
         TestChamber into=this;
-        nar.memory.event.on(Events.CycleEnd.class, new Observer() {
+        nar.memory.event.on(Events.FrameEnd.class, new Observer() {
             private long lastDrawn = 0;
             
             @Override

@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.EventEmitter.Observer;
+import nars.core.Events.FrameEnd;
+import nars.core.Events.FrameStart;
 import nars.core.Memory.TaskSource;
 import nars.entity.AbstractTask;
 import nars.entity.Task;
@@ -105,6 +107,7 @@ public class NAR implements Runnable, Output, TaskSource {
     private boolean ioChanged;
     
     private long lastTime = -1; //last cycle's time, for detecting a reset
+    private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
     
 
@@ -171,6 +174,10 @@ public class NAR implements Runnable, Output, TaskSource {
     /** remove event handler */
     public void off(Class c, Observer o) {
         memory.event.on(c, o);
+    }
+
+    public int getCyclesPerFrame() {
+        return cyclesPerFrame;
     }
     
     final class ObjectTaskInPort extends InPort<Object,AbstractTask> {
@@ -250,8 +257,20 @@ public class NAR implements Runnable, Output, TaskSource {
         return channel;
     }
 
+    public void start(final float targetFPS, int memoryCyclesPerCycle) {
+        long cycleTime = (long)(1000f / targetFPS);
+        start(cycleTime, memoryCyclesPerCycle);
+    }
     
-    
+    public void start(final long minCyclePeriodMS, int memoryCyclesPerCycle) {
+        this.minCyclePeriodMS = minCyclePeriodMS;
+        this.cyclesPerFrame = memoryCyclesPerCycle;
+        if (thread == null) {
+            thread = new Thread(this, "Inference");
+            thread.start();
+        }
+        running = true;        
+    }
     
     /**
      * Repeatedly execute NARS working cycle in a new thread.
@@ -259,12 +278,7 @@ public class NAR implements Runnable, Output, TaskSource {
      * @param minCyclePeriodMS minimum cycle period (milliseconds).
      */    
     public void start(final long minCyclePeriodMS) {
-        if (thread == null) {
-            thread = new Thread(this, "Inference");
-            thread.start();
-        }        
-        this.minCyclePeriodMS = minCyclePeriodMS;
-        running = true;
+        start(minCyclePeriodMS, 1);
     }
 
 
@@ -283,11 +297,13 @@ public class NAR implements Runnable, Output, TaskSource {
             thread.interrupt();
             thread = null;
         }
+        this.cyclesPerFrame = 1;
         running = false;
     }    
     
-    /** Execute a fixed number of cycles. */
-    public void step(final int cycles) {
+    /** Execute a fixed number of cycles. 
+     * may execute more than requested cycles if cyclesPerFrame > 1 */
+    public void cycle(final int cycles) {
         if (thread!=null) {
             memory.stepLater(cycles);
             return;
@@ -295,8 +311,9 @@ public class NAR implements Runnable, Output, TaskSource {
         
         final boolean wasRunning = running;
         running = true;
-        for (int i = 0; i < cycles; i++) {
-            cycle();            
+        long startTime = getTime();
+        while (getTime() - startTime < cycles) {
+            frame();
         }
         running = wasRunning;
     }
@@ -316,7 +333,7 @@ public class NAR implements Runnable, Output, TaskSource {
         //clear existing input
         int cyclesCompleted = 0;
         do {
-            step(1);
+            cycle(1);
             cyclesCompleted++;
         }
         while (!inputChannels.isEmpty());
@@ -328,7 +345,7 @@ public class NAR implements Runnable, Output, TaskSource {
         
         //finish all remaining cycles
         while (memory.getCyclesQueued() > 0) {
-            step(1);
+            cycle(1);
         }
         running = false;
     }
@@ -339,7 +356,7 @@ public class NAR implements Runnable, Output, TaskSource {
         
         while (running) {      
             
-            cycle();
+            frame();
                         
             if (minCyclePeriodMS > 0) {
                 try {
@@ -445,9 +462,9 @@ public class NAR implements Runnable, Output, TaskSource {
 
     
     /**
-     * A clock tick, consisting of 1) processing input, 2) one cycleMemory.
+     * A frame, consisting of one or more NAR memory cycles
      */
-    private void cycle() {
+    private void frame() {
         
         if (DEBUG) {
             debugTime();            
@@ -462,18 +479,22 @@ public class NAR implements Runnable, Output, TaskSource {
         lastTime = t;
         
         
+        memory.event.emit(FrameStart.class);
 
         updatePorts();
         
         try {
-            memory.cycle(this);
+            for (int i = 0; i < cyclesPerFrame; i++)
+                memory.cycle(this);
         }
         catch (Throwable e) {
             output(ERR.class, e);
 
             System.err.println(e);
             e.printStackTrace();
-        }        
+        }
+        
+        memory.event.emit(FrameEnd.class);
         
     }
     

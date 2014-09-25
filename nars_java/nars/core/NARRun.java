@@ -96,7 +96,7 @@ public class NARRun {
                         + " " + nar.inputChannels.size());
             
 
-            nar.step(1);
+            nar.cycle(1);
             
             
             if (logging)

@@ -42,10 +42,10 @@ public class GraphExecutive implements Observer {
 
     boolean planningEnabled = true;
     
-    int numTasks = 16;
+    int numTasks = 8;
             
-    float searchDepth = 16;
-    int particles = 128;
+    float searchDepth = 64;
+    int particles = 256;
     
     @Deprecated Executive exec;
     
@@ -261,13 +261,15 @@ public class GraphExecutive implements Observer {
         if (tasks.size() == 0)
             return;
         
-        if (tasks.size() > 1) {
-            System.out.println("Tasks @ " + memory.getTime());
-            for (TaskConcept tcc : tasks)
-                System.out.println("  " + tcc.toString());
-        }
-        else {
-            System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
+        if (tasks.get(0).delayUntil==-1) {
+            if (tasks.size() > 1)  {
+                System.out.println("Tasks @ " + memory.getTime());
+                for (TaskConcept tcc : tasks)
+                    System.out.println("  " + tcc.toString());
+            }
+            else {
+                System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
+            }
         }
         
         

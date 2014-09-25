@@ -40,19 +40,19 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
+import nars.core.Events.FrameEnd;
 import nars.core.Memory;
-import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
-import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.LogPanel;
 import nars.gui.output.MemoryView;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
+import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
 import nars.io.TextInput;
@@ -368,7 +368,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         setSpeed(0);
         setSpeed(0);        //call twice to make it start as paused
         updateGUI();
-        nar.memory.event.on(CycleEnd.class, this);
+        nar.memory.event.on(FrameEnd.class, this);
     }
 
     final Runnable updateGUIRunnable = new Runnable() {
@@ -404,7 +404,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
     @Override
     public void event(final Class event, final Object... arguments) {
-        if (event == CycleEnd.class) {
+        if (event == FrameEnd.class) {
             
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
@@ -436,7 +436,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 updateGUI();
             } else if (obj == walkButton) {
                 nar.stop();
-                nar.step(1);
+                nar.cycle(1);
                 updateGUI();
             }
         } else if (obj instanceof JMenuItem) {
@@ -601,7 +601,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             }
             stopButton.setText(String.valueOf(FA_StopCharacter));
             //nar.setThreadYield(true);
-            nar.start(ms);
+            nar.start(ms, nar.getCyclesPerFrame());
         } else {
             stopButton.setText(String.valueOf(FA_PlayCharacter));
             nar.stop();
