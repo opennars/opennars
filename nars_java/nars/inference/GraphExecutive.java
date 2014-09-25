@@ -740,7 +740,7 @@ public class GraphExecutive implements Observer {
         
         //exec.decisionMaking2(t);
         
-        memory.derivedTask(task, false, true, null, null);
+        memory.derivedTask(newTask, false, true, null, null);
     }
     
     protected void plan(Task task, Task __not_used_newEvent) {
