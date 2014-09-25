@@ -35,7 +35,8 @@ public class SwingLogPanel extends LogPanel {
         ioTextWrap.add(ioText);
         JScrollPane ioTextScroll = new JScrollPane(ioTextWrap);
         add(ioTextScroll, BorderLayout.CENTER);
-
+	
+                    
         addPopupMenu();
 
         setConsoleStyle(ioText, true);
@@ -58,6 +59,8 @@ public class SwingLogPanel extends LogPanel {
         if (logFile != null) {
             logFile.println(s);
         }
+        
+        ioText.scrollBottom.run();
     }
 
     

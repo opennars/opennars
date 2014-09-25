@@ -1,6 +1,7 @@
 package nars.gui.output;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -46,7 +47,7 @@ public class SwingLogText extends SwingText implements Output {
             pendingDisplay.add(ll);
         }
         
-        if (pendingDisplay.size() == 1) {
+        if (pendingDisplay.size() >= 1) {
             SwingUtilities.invokeLater(update);
         }        
     }
@@ -67,8 +68,7 @@ public class SwingLogText extends SwingText implements Output {
                 LogLine l = toDisplay.get(i);
                 print(l.c, l.o);
             }
-            toDisplay.clear();                
-            repaint();
+            toDisplay.clear();
             
         }
     };
@@ -121,12 +121,14 @@ public class SwingLogText extends SwingText implements Output {
         float tc = 0.75f + 0.25f * priority;
         Color textColor = new Color(tc, tc, tc);
         print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n');
-        SwingUtilities.invokeLater(scrollBottom);        
+
+        
     }
     
     final Runnable scrollBottom = new Runnable() {
+        final Rectangle bottom = new Rectangle(0,Integer.MAX_VALUE-1,1,1);
         @Override public void run() {
-            setCaretPosition(getDocument().getLength());
+            scrollRectToVisible(bottom);
         }        
     };
 

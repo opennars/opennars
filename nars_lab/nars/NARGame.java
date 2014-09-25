@@ -13,29 +13,26 @@ abstract public class NARGame implements Observer {
 
     public NARGame(NAR nar) {        
         this.nar = nar;        
-        nar.memory.event.on(Events.CycleEnd.class, this);
-        new NARSwing(nar);
+        nar.memory.event.on(Events.FrameEnd.class, this);
+        new NARSwing(nar,false);
     }
     
     abstract public void init();
     abstract public void cycle();
     
     
-    public void start(float fps) {
-        nar.start(fpsToMS(fps));
+    public void start(float fps, int cyclesPerFrame) {
+        nar.start(fps, cyclesPerFrame);
     }
     
     public void stop() {
         nar.stop();
     }
 
-    private long fpsToMS(float fps) {
-        return (long)(1000.0f/fps);
-    }
 
     @Override
     public void event(Class event, Object[] arguments) {
-        if (event == Events.CycleEnd.class) {
+        if (event == Events.FrameEnd.class) {
             cycle();
         }
     }

@@ -34,6 +34,7 @@ import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
 import nars.io.TextInput;
+import nars.io.TextOutput;
 
 /**
  * The main Swing GUI class of the open-nars project.  
@@ -59,8 +60,11 @@ public class NARSwing  {
     private final Window mainWindow;
     private final NARControls narControls;
 
-
     public NARSwing(NAR nar) {
+        this(nar, true);
+    }
+
+    public NARSwing(NAR nar, boolean logPanel) {
         super();
         
         this.nar = nar;                
@@ -73,10 +77,15 @@ public class NARSwing  {
         mainWindow.setVisible(true);
         
 
-        LogPanel outputLog = new SwingLogPanel(narControls); //new HTMLLogPanel(narControls);
-        Window outputWindow = new Window("Log", outputLog);        
-        outputWindow.setLocation(narControls.getLocation().x + narControls.getWidth(), narControls.getLocation().y);        outputWindow.setSize(800, 400);
-        outputWindow.setVisible(true);
+        if (logPanel) {
+            LogPanel outputLog = new SwingLogPanel(narControls); //new HTMLLogPanel(narControls);
+            Window outputWindow = new Window("Log", outputLog);        
+            outputWindow.setLocation(narControls.getLocation().x + narControls.getWidth(), narControls.getLocation().y);        outputWindow.setSize(800, 400);
+            outputWindow.setVisible(true);
+        }
+        else {
+            new TextOutput(nar, System.out);
+        }
         
         
 //        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
@@ -86,7 +95,7 @@ public class NARSwing  {
         
         TextInputPanel inputPanel = new TextInputPanel(nar);
         Window inputWindow = new Window("Input", inputPanel);
-        inputWindow.setLocation(outputWindow.getLocation().x, outputWindow.getLocation().y+outputWindow.getHeight());
+        inputWindow.setLocation(narControls.getLocation().x + narControls.getWidth(), narControls.getLocation().y);
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);
         
@@ -212,6 +221,7 @@ public class NARSwing  {
     public static Font fontMono(float size) {
         return monofont.deriveFont(size);
     }
+
 
 
 }

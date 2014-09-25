@@ -32,7 +32,7 @@ public class GraphPlanTest {
         new Window("Implications", new SentenceGraphPanel(n, n.memory.executive.graph.implication)).show(500,500);
         for (int i = 0; i < 25; i++) {
         
-            n.step(1);
+            n.cycle(1);
             System.in.read();
         }
         

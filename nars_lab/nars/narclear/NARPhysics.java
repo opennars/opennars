@@ -20,9 +20,9 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame {
     }
 
     @Override
-    public void start(float fps) {
+    public void start(float fps, int cyclesPerFrame) {
         phy.controller.setFrameRate((int)fps);        
-        super.start(fps);        
+        super.start(fps, cyclesPerFrame);        
     }
     
     public P getModel() { return model; }

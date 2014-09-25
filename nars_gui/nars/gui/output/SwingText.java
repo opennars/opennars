@@ -17,6 +17,7 @@ import nars.gui.NARSwing;
 public class SwingText extends JTextPane {
 
     /** # of messages to buffer in log */
+    int maxLineWidth = 120;
     protected final float baseFontScale = 1.0f;
     protected final DefaultStyledDocument doc;
     protected final Style mainStyle;
@@ -45,14 +46,21 @@ public class SwingText extends JTextPane {
         print(color, null, text);
     }
 
-    public void print(final Color color, final Color bgColor, final String text) {
+    
+    
+    public void print(final Color color, final Color bgColor, String text) {
+        if (text.length() > maxLineWidth)
+            text = text.substring(maxLineWidth);
+        
         StyleContext sc = StyleContext.getDefaultStyleContext();
         MutableAttributeSet aset = getInputAttributes();
         StyleConstants.setForeground(aset, color);
         StyleConstants.setBackground(aset, bgColor != null ? bgColor : Color.BLACK);
         //StyleConstants.setBold(aset, bold);
         try {
-            doc.insertString(doc.getLength(), text, aset);
+            int l =doc.getLength();
+            if (l < 0) l = 0;
+            doc.insertString(l, text, aset);
         } catch (BadLocationException ex) {
             Logger.getLogger(SwingLogText.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -63,7 +71,9 @@ public class SwingText extends JTextPane {
         MutableAttributeSet aset = getInputAttributes();
         StyleConstants.setBackground(aset, color);
         try {
-            doc.insertString(doc.getLength(), s, aset);
+            int l =doc.getLength();
+            if (l < 0) l = 0;
+            doc.insertString(l, s, aset);
         } catch (BadLocationException ex) {
         }
     }
