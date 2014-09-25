@@ -191,7 +191,6 @@ public class ImplicationGraph extends SentenceItemGraph {
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
 
         try {
-            System.out.println(source + " =\\> " + target);        
             addEdge(source, target, impFinalSentence);
             concepts.put(impFinalSentence, c);
         }
