@@ -106,8 +106,8 @@ public final class SyllogisticRules {
         if ((content1 == null) || (content2 == null))
             return;
         
-        memory.doublePremiseTask(content1, truth1, budget1);
-        memory.doublePremiseTask(content2, truth2, budget2);
+        memory.doublePremiseTask(content1, truth1, budget1,false);
+        memory.doublePremiseTask(content2, truth2, budget2,false);
     }
 
     /**
@@ -164,12 +164,12 @@ public final class SyllogisticRules {
         }
                 
         memory.doublePremiseTask(
-                Statement.make(taskContent, term1, term2, order, memory), truth1, budget1);
+                Statement.make(taskContent, term1, term2, order, memory), truth1, budget1,false);
         memory.doublePremiseTask(
                 Statement.make(taskContent, term2, term1, reverseOrder(order), memory), 
-                    truth2, budget2);
+                    truth2, budget2,false);
         memory.doublePremiseTask(
-                Statement.makeSym(taskContent, term1, term2, order, memory), truth3, budget3);
+                Statement.makeSym(taskContent, term1, term2, order, memory), truth3, budget3,false);
         
     }
 
@@ -221,7 +221,7 @@ public final class SyllogisticRules {
         }
         
         memory.logic.ANALOGY.commit();
-        memory.doublePremiseTask( Statement.make(st, subj, pred, order, memory), truth, budget);
+        memory.doublePremiseTask( Statement.make(st, subj, pred, order, memory), truth, budget,false);
     }
 
     /**
@@ -258,7 +258,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, memory);
         }
         
-        memory.doublePremiseTask( Statement.make(st, term1, term2, order, memory), truth, budget );
+        memory.doublePremiseTask( Statement.make(st, term1, term2, order, memory), truth, budget,false );
     }
 
     /* --------------- rules used only in conditional inference --------------- */
@@ -352,7 +352,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, memory);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            memory.doublePremiseTask(content, truth, budget);
+            memory.doublePremiseTask(content, truth, budget,false);
         }
     }
 
@@ -498,7 +498,7 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, memory);
         }
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /**
@@ -599,7 +599,7 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, memory);
         }
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /**
@@ -672,7 +672,7 @@ public final class SyllogisticRules {
                 }
                 budget = BudgetFunctions.forward(truth, memory);
             }
-            memory.doublePremiseTask(content, truth, budget);
+            memory.doublePremiseTask(content, truth, budget,false);
         }
         
         if (term2 != null) {
@@ -696,7 +696,7 @@ public final class SyllogisticRules {
                 }
                 budget = BudgetFunctions.forward(truth, memory);
             }
-            memory.doublePremiseTask(content, truth, budget);
+            memory.doublePremiseTask(content, truth, budget,false);
         }
         
         return true;
@@ -732,6 +732,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, memory);
         }
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 }

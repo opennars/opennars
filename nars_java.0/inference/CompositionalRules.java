@@ -126,7 +126,7 @@ public final class CompositionalRules {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /**
@@ -220,7 +220,7 @@ public final class CompositionalRules {
         }
         if (truth != null) {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
-            memory.doublePremiseTask(content, truth, budget);
+            memory.doublePremiseTask(content, truth, budget,false);
         }
     }
 
@@ -264,7 +264,7 @@ public final class CompositionalRules {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /* --------------- rules used for variable introduction --------------- */
@@ -326,15 +326,15 @@ public final class CompositionalRules {
         Term content = Implication.make(state1, state2, memory);
         TruthValue truth = TruthFunctions.induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
         content = Implication.make(state2, state1, memory);
         truth = TruthFunctions.induction(truthB, truthT);
         budget = BudgetFunctions.compoundForward(truth, content, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
         content = Equivalence.make(state1, state2, memory);
         truth = TruthFunctions.comparison(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
         Variable varDep = new Variable("#varDep");
         if (index == 0) {
             state1 = Inheritance.make(varDep, taskContent.getPredicate(), memory);
@@ -484,7 +484,7 @@ public final class CompositionalRules {
             truth = TruthFunctions.induction(taskSentence.getTruth(), belief.getTruth());
         }
         budget = BudgetFunctions.forward(truth, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /**

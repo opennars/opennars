@@ -259,23 +259,23 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order), memory);
             Statement statement33 = Equivalence.make(t11, t22, order, memory);
             if(!tooMuchTemporalStatements(statement11)) {
-                memory.doublePremiseTask(statement11, truth1, budget1);
+                memory.doublePremiseTask(statement11, truth1, budget1,false);
             }
             if(!tooMuchTemporalStatements(statement22)) {
-                memory.doublePremiseTask(statement22, truth2, budget2);
+                memory.doublePremiseTask(statement22, truth2, budget2,false);
             }
             if(!tooMuchTemporalStatements(statement33)) {
-                memory.doublePremiseTask(statement33, truth3, budget3);
+                memory.doublePremiseTask(statement33, truth3, budget3,false);
             }
         }
         if(!tooMuchTemporalStatements(statement1)) {
-            memory.doublePremiseTask(statement1, truth1, budget1);
+            memory.doublePremiseTask(statement1, truth1, budget1,false);
         }
         if(!tooMuchTemporalStatements(statement2)) {
-            memory.doublePremiseTask(statement2, truth2, budget2);
+            memory.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
         }
         if(!tooMuchTemporalStatements(statement3)) {
-            memory.doublePremiseTask(statement3, truth3, budget3);
+            memory.doublePremiseTask(statement3, truth3, budget3,false);
         }
     }
     
@@ -286,7 +286,7 @@ public class TemporalRules {
                     s2.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
                 //if((s1.content instanceof Inheritance || s1.content instanceof Similarity) && s2.content instanceof Implication &&
                 //        s2.getTemporalOrder()==ORDER_FORWARD) {
-                    temporalInduction(s1,s2,mem);
+                   // temporalInduction(s1,s2,mem); not now
                 //}
             } //comment grey part out if only allowing restricted time inference
         }

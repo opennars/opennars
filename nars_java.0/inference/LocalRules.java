@@ -82,7 +82,7 @@ public class LocalRules {
         TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
         BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, memory);
         Term content = newBelief.getContent();
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /**
@@ -182,7 +182,7 @@ public class LocalRules {
         TruthValue value2 = judgment2.getTruth();
         TruthValue truth = TruthFunctions.intersection(value1, value2);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /**
@@ -199,7 +199,7 @@ public class LocalRules {
         Statement content = Statement.make(statement, sub, pre, memory);
         TruthValue truth = TruthFunctions.reduceConjunction(sym.getTruth(), asym.getTruth());
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /* -------------------- one-premise inference rules -------------------- */
