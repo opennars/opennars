@@ -689,9 +689,9 @@ public class GraphExecutive implements Observer {
         System.out.println("  no eligible roots: " + roots.size());
         
         return null;
-    }
+    } 
 
-    protected void plan(Concept c, Task task, Term target, double searchDistance, char punctuation) {
+   protected void plan(Concept c, Task task, Term target, double searchDistance, char punctuation) {
 
         if (!implication.containsVertex(target))
             return;
@@ -736,17 +736,25 @@ public class GraphExecutive implements Observer {
         //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
 
         //double planDistance = Math.min(plan.distance, searchDistance);
-        float confidence = plan.getMinConfidence();
-        //TruthValue val = new TruthValue(1.0f, confidence);
-        TruthValue truth=null; //use truth value according to NAL instead:
+        float confidence = 0; //(float)plan.activation; // * planDistance/searchDistance;
+        
+       // TruthValue truth=null; //use truth value according to NAL instead:
         for(Sentence s : path) {
-            if(truth==null) {
-                truth=s.truth; //truth of first element
+            if(confidence==0) {
+                confidence=s.truth.getConfidence(); //truth of first element
             }
             else {
-                truth=TruthFunctions.deduction(truth, truth);
+                if(s.truth.getConfidence()<confidence) {
+                    confidence=s.truth.getConfidence();
+                }
+                //truth=TruthFunctions.deduction(truth, truth);
             }
         }
+        
+        
+        
+        TruthValue truth = new TruthValue(1.0f, confidence);
+        
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
 
         Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD, memory);
