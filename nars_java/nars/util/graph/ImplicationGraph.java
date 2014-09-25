@@ -102,15 +102,16 @@ public class ImplicationGraph extends SentenceItemGraph {
             predicate = st.getPredicate();            
         }            
 
-        final Term precondition = predicate;
-        final Term postcondition = new PostCondition(precondition);
-        addVertex(precondition);
-        addVertex(postcondition);
+        final Term predicatePre = predicate;
+        final Term predicatePost = new PostCondition(predicatePre);
+        
+        addVertex(predicatePre);
+        addVertex(predicatePost);
 
         if (subject instanceof Conjunction) {
             Conjunction seq = (Conjunction)subject;
             if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
-                Term prev = precondition;
+                Term prev = predicatePre;
                 boolean addedNonInterval = false;
                 
                 
@@ -127,32 +128,35 @@ public class ImplicationGraph extends SentenceItemGraph {
                         }
                     }
                     if (GraphExecutive.validPlanComponent(a)) {
-                        /*if (!prev.equals(a))*/ {
-                            addVertex(prev);                        
-                            addVertex(a);
+                        /*if (!prev.equals(a))*/ 
+                        addVertex(a);
+                            
+                        if (prev!=null)  {
                             newImplicationEdge(prev, a, c, s);
-                            if (!(a instanceof Interval))
-                                addedNonInterval = true;
                         }
+                        
+                        if (!(a instanceof Interval))
+                            addedNonInterval = true;
+                        
                         prev = a;
                     }
                     else {
                         //separate the term into a disconnected pre and post condition
-                        Term pre = a;
-                        Term post = new PostCondition(a);
-                        addVertex(pre);
-                        addVertex(post);
+                        Term aPre = a;
+                        Term aPost = new PostCondition(a);
+                        addVertex(aPre);
+                        addVertex(aPost);
                         
                         addVertex(prev);
-                        newImplicationEdge(prev, pre, c, s); //leading edge from previous only         
+                        newImplicationEdge(prev, aPre, c, s); //leading edge from previous only         
                         if (!(a instanceof Interval))
                             addedNonInterval = true;                   
-                        prev = post;
+                        prev = aPost;
                     }
 
                 }
 
-                newImplicationEdge(prev, postcondition, c, s);
+                newImplicationEdge(prev, predicatePost, c, s);
                 return true;
             }
             else if (seq.operator() == Symbols.NativeOperator.PARALLEL) {
@@ -162,17 +166,18 @@ public class ImplicationGraph extends SentenceItemGraph {
         else {
             if (GraphExecutive.validPlanComponent(subject)) {
                 addVertex(subject);
-                newImplicationEdge(precondition, subject, c, s);
-                newImplicationEdge(subject, postcondition, c, s);                
+                //newImplicationEdge(predicatePre, subject, c, s);
+                //newImplicationEdge(subject, predicatePost, c, s);                
+                newImplicationEdge(subject, predicatePost, c, s);
             }
             else {
                 //separate into pre/post
-                PostCondition postSubject = new PostCondition(subject);
-                addVertex(precondition);
+                PostCondition subjectPost = new PostCondition(subject);
+                addVertex(predicatePre);
                 addVertex(subject);
-                addVertex(postSubject);
-                newImplicationEdge(precondition, subject, c, s);
-                newImplicationEdge(postSubject, postcondition, c, s);
+                addVertex(subjectPost);
+                newImplicationEdge(predicatePre, subject, c, s);
+                newImplicationEdge(subjectPost, predicatePost, c, s);
             }
         }
 
@@ -182,9 +187,11 @@ public class ImplicationGraph extends SentenceItemGraph {
     public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
         Implication impParent = (Implication)parent.content;
         Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
+        
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
 
         try {
+            System.out.println(source + " =\\> " + target);        
             addEdge(source, target, impFinalSentence);
             concepts.put(impFinalSentence, c);
         }
