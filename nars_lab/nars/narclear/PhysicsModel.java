@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import nars.narclear.jbox2d.ContactPoint;
-import nars.narclear.jbox2d.TestbedCamera;
+import nars.narclear.jbox2d.PhysicsCamera;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.jbox2d.TestbedState;
 import org.jbox2d.callbacks.ContactImpulse;
@@ -106,7 +106,7 @@ public abstract class PhysicsModel implements ContactListener {
   protected int m_textLine;
   private final LinkedList<String> textList = new LinkedList<String>();
 
-  private TestbedCamera camera;
+  private PhysicsCamera camera;
 
 
   private final Transform identity = new Transform();
@@ -141,7 +141,7 @@ public abstract class PhysicsModel implements ContactListener {
 //        particleGroupDestroyed(group);
 //      }
 //    };
-    camera = new TestbedCamera(getDefaultCameraPos(), getDefaultCameraScale(), ZOOM_SCALE_DIFF);
+    camera = new PhysicsCamera(getDefaultCameraPos(), getDefaultCameraScale(), ZOOM_SCALE_DIFF);
   }
   
   public void beginContact(Contact contact) {}
@@ -243,7 +243,7 @@ public abstract class PhysicsModel implements ContactListener {
     return pointCount;
   }
 
-  public TestbedCamera getCamera() {
+  public PhysicsCamera getCamera() {
     return camera;
   }
 

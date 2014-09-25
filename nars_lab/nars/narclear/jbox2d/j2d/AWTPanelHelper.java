@@ -11,7 +11,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.List;
 
 import org.jbox2d.common.Vec2;
-import nars.narclear.jbox2d.TestbedCamera.ZoomType;
+import nars.narclear.jbox2d.PhysicsCamera.ZoomType;
 import nars.narclear.jbox2d.PhysicsController;
 import nars.narclear.jbox2d.TestbedState;
 import nars.narclear.PhysicsModel;
