@@ -17,6 +17,7 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Term;
+import nars.language.Variables;
 
 
 
@@ -77,7 +78,12 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
     
     @Override
-    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
+    public boolean add(final Sentence s, final CompoundTerm ct, final Item c, boolean specialAdd) {
+        
+        if(!specialAdd) {
+            return false;
+        }
+        
         if (!(ct instanceof Implication)) {
             return false;
         }
@@ -100,7 +106,11 @@ public class ImplicationGraph extends SentenceItemGraph {
         else {
             subject = st.getSubject();
             predicate = st.getPredicate();            
-        }            
+        }  
+        
+        if(Variables.containVarIndep(s.content.toString())) {
+            return false;
+        }
 
         final Term predicatePre = predicate;
         final Term predicatePost = new PostCondition(predicatePre);

@@ -75,7 +75,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         else if (event == Events.ConceptBeliefAdd.class) {
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            add(s, c);
+            add(s, c,false);
         }
         else if (event == Events.ConceptBeliefRemove.class) {
             Concept c = (Concept)a[0];
@@ -110,7 +110,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
 
         for (final Concept c : memory.getConcepts()) {
             for (final Sentence s : c.beliefs) {                
-                add(s, c);
+                add(s, c,false);
             }
         }        
     }
@@ -138,7 +138,12 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         return true;
     }
     
-    public boolean add(final Sentence s, final Item c) {
+    public boolean add(final Sentence s, final Item c, boolean specialAdd) {
+        
+        //specialAdd is a debug variable, which makes it possible to select from where the system is allowed to build up the tree easily
+        if(!specialAdd)
+           return false;
+        
         /*if (containsEdge(s))
             return false;*/
         
@@ -155,7 +160,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
                 Statement st = (Statement)cs;
                 if (allow(st)) {
                                 
-                    if (add(s, st, c)) {
+                    if (add(s, st, c, specialAdd)) {
                         event.emit(GraphChange.class, st, null);
                         return true;
                     }
@@ -168,7 +173,12 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }    
     
     /** default behavior, may override in subclass */
-    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
+    public boolean add(final Sentence s, final CompoundTerm ct, final Item c, boolean specialAdd) {
+        
+        if(!specialAdd) {
+            return false;
+        }
+        
         if (ct instanceof Statement) {
             Statement st = (Statement)ct;
             Term subject = st.getSubject();

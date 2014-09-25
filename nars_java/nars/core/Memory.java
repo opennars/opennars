@@ -122,6 +122,13 @@ public class Memory implements Output, Serializable {
     
     private boolean enabled = true;
 
+    public void temporalRuleOutputToGraph(Sentence s, Task t) {
+        if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+            if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
+                executive.graph.implication.add(s, (CompoundTerm)s.content, t,true);
+            }
+        }
+    }
     
     public static interface TaskSource {
         public AbstractTask nextTask();
@@ -563,6 +570,8 @@ public class Memory implements Output, Serializable {
             output(IN.class, task);
 
             if (task.budget.aboveThreshold()) {
+                temporalRuleOutputToGraph(task.sentence,task);
+                
                 addNewTask(task, "Perceived");
             } else {
                 if (recorder.isActive()) {
@@ -650,7 +659,7 @@ public class Memory implements Output, Serializable {
      *
      * @param task the derived task
      */
-    public void derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
+    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
         
 
         if (task.budget.aboveThreshold()) {
@@ -661,7 +670,7 @@ public class Memory implements Output, Serializable {
                       //no confidence - we can delete the wrongs out that way.
                       if (recorder.isActive())
                           recorder.onTaskRemove(task, "Ignored (zero confidence)");
-                      return;
+                      return false;
                   }
             }
 
@@ -722,7 +731,7 @@ public class Memory implements Output, Serializable {
                         if (recorder.isActive()) {
                             recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
                         }
-                        return;
+                        return false;
                         }
                     }
                     i++;                    
@@ -737,7 +746,7 @@ public class Memory implements Output, Serializable {
                             if (recorder.isActive()) {                                
                                 recorder.onTaskRemove(task, "Overlapping Evidence on Revision: " + i + "," + j + " in " + stamp.toString());
                             }
-                            return;
+                            return false;
                         }
                     }
                 }
@@ -804,7 +813,7 @@ public class Memory implements Output, Serializable {
             if(task.sentence.content instanceof Operation) {
                 Operation op=(Operation) task.sentence.content;
                 if(op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
-                    return;
+                    return false;
                 }
             }
 
@@ -818,7 +827,7 @@ public class Memory implements Output, Serializable {
             if (recorder.isActive())
                 recorder.onTaskRemove(task, "Ignored (insufficient budget)");
         }
-            
+        return true;
     }
 
     /* --------------- new task building --------------- */
@@ -844,11 +853,14 @@ public class Memory implements Output, Serializable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
+    public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         if (newContent != null) {
             final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
             final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-            derivedTask(newTask, false, false, null, null);
+            boolean added=derivedTask(newTask, false, false, null, null);
+            if(added && temporalAdd) {
+                temporalRuleOutputToGraph(newSentence,newTask);
+            }
         }
     }
 
@@ -1042,7 +1054,7 @@ public class Memory implements Output, Serializable {
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory
         int counter = Math.min(maxTasks, newTasks.size());
-        
+        Task newEvent = null;
         while (counter-- > 0) {
             
             final Task task = newTasks.removeFirst();
@@ -1060,7 +1072,9 @@ public class Memory implements Output, Serializable {
                ) {
                 
                 // new addInput or existing concept
-                immediateProcess(task);                               
+                immediateProcess(task);    
+                if (executive.isActionable(task, newEvent))
+                    newEvent = task;
                 
             } else {
                 final Sentence s = task.sentence;
@@ -1083,6 +1097,10 @@ public class Memory implements Output, Serializable {
                 }
             }
         }
+        
+         boolean stmUpdated = executive.planShortTerm(newEvent,this);
+            if (stmUpdated)
+            logic.SHORT_TERM_MEMORY_UPDATE.commit();
                  
         return processed;
     }

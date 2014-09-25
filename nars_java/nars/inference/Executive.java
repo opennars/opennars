@@ -274,18 +274,18 @@ public class Executive {
 //        return graph.inputTask(concept, task);
 //    }
     
-    public boolean planShortTermOLD(final Task newEvent, Memory mem) {
+    public boolean planShortTerm(final Task newEvent, Memory mem) {
 
         if (newEvent == null)
             return false;
         
                 
-        //boolean actionable = isActionable(newEvent,mem);
-        boolean actionable = true;
-        /*
+        boolean actionable = isActionable(newEvent,mem);
+        //boolean actionable = true;
+        
         if (!actionable) {
             return false;
-        }*/
+        }
         
         
         
@@ -426,6 +426,21 @@ public class Executive {
         return false;
     }
     
+    //import from older revision where temporal induction was working fine:
+    public boolean isActionable(final Task newEvent, Memory mem) {
+        if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
+            return false;
+        }
+        Term newcontent=newEvent.sentence.content;
+        if(newcontent instanceof Operation) {
+            Term pred=((Operation)newcontent).getPredicate();
+            if(pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /*
     public boolean isActionable(final Task newEvent, Memory mem) {
         if(!((newEvent.isInput()))) {
             return false;
@@ -438,6 +453,6 @@ public class Executive {
             }
         }
         return true;
-    }
+    }*/
     
 }

@@ -60,8 +60,8 @@ public final class SyllogisticRules {
         Statement content = (Statement) sentence.getContent();
         Statement content1 = Statement.make(content, term1, term2, memory);
         Statement content2 = Statement.make(content, term2, term1, memory);
-        memory.doublePremiseTask(content1, truth1, budget1);
-        memory.doublePremiseTask(content2, truth2, budget2);
+        memory.doublePremiseTask(content1, truth1, budget1,false);
+        memory.doublePremiseTask(content2, truth2, budget2,false);
     }
 
     /**

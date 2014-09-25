@@ -232,7 +232,7 @@ public class LocalRules {
         TruthValue value2 = judgment2.truth;
         TruthValue truth = TruthFunctions.intersection(value1, value2);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /**
@@ -253,7 +253,7 @@ public class LocalRules {
         
         TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, memory);
-        memory.doublePremiseTask(content, truth, budget);
+        memory.doublePremiseTask(content, truth, budget,false);
     }
 
     /* -------------------- one-premise inference rules -------------------- */

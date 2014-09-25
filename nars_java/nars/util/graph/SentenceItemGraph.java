@@ -21,8 +21,13 @@ abstract public class SentenceItemGraph extends SentenceGraph {
 
     
     @Override
-    public boolean add(final Sentence s, final Item c) {
-        if (super.add(s, c)) {
+    public boolean add(final Sentence s, final Item c, boolean specialAdd) {
+        
+        if(!specialAdd) {
+            return false;
+        }
+        
+        if (super.add(s, c,specialAdd)) {
             concepts.put(s, c);
             //System.out.println(vertexSet().size() + ":" + edgeSet().size() + " add: " + s + " ");
             return true;
