@@ -9,11 +9,11 @@ import nars.core.NAR;
  */
 
 
-public class NARPhysics extends NARGame {
-    private final PhysicsModel model;
-    private final PhysicsRun phy;
+public class NARPhysics<P extends PhysicsModel> extends NARGame {
+    public final P model;
+    public final PhysicsRun phy;
 
-    public NARPhysics(NAR nar, PhysicsModel model) {
+    public NARPhysics(NAR nar, P model) {
         super(nar);
         this.model = model;
         this.phy = new PhysicsRun(model);
@@ -24,6 +24,9 @@ public class NARPhysics extends NARGame {
         phy.controller.setFrameRate((int)fps);        
         super.start(fps);        
     }
+    
+    public P getModel() { return model; }
+    
 
     @Override
     public void stop() {

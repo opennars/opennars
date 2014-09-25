@@ -9,7 +9,7 @@ import nars.gui.NARSwing;
  * Game event-loop interface for NARS sensory and motor interaction
  */
 abstract public class NARGame implements Observer {
-    private final NAR nar;
+    public final NAR nar;
 
     public NARGame(NAR nar) {        
         this.nar = nar;        

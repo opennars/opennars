@@ -30,7 +30,7 @@ import org.jbox2d.common.Vec2;
 
 import com.google.common.base.Preconditions;
 
-public class TestbedCamera {
+public class PhysicsCamera {
 
   public static enum ZoomType {
     ZOOM_IN, ZOOM_OUT
@@ -44,7 +44,7 @@ public class TestbedCamera {
   private final Mat22 upScale;
   private final Mat22 downScale;
 
-  public TestbedCamera(Vec2 initPosition, float initScale, float zoomScaleDiff) {
+  public PhysicsCamera(Vec2 initPosition, float initScale, float zoomScaleDiff) {
     Preconditions.checkArgument(zoomScaleDiff > 0, "Zoom scale %d must be > 0", zoomScaleDiff);
     this.transform = new OBBViewportTransform();
     transform.setCamera(initPosition.x, initPosition.y, initScale);
