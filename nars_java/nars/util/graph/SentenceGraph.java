@@ -114,6 +114,11 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             }
         }        
     }
+    
+    protected final void ensureTermConnected(final Term t) {
+        if (inDegreeOf(t)+outDegreeOf(t) == 0)  removeVertex(t);        
+    }
+    
         
     abstract public boolean allow(Sentence s);
     
@@ -130,8 +135,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         boolean r = removeEdge(s);
         
         
-        if (inDegreeOf(from)+outDegreeOf(from) == 0)  removeVertex(from);
-        if (inDegreeOf(to)+outDegreeOf(to) == 0)  removeVertex(to);                
+        ensureTermConnected(from);
+        ensureTermConnected(to);
 
         if (r)
             event.emit(GraphChange.class, null, s);

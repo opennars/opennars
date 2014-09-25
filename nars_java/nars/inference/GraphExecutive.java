@@ -42,10 +42,10 @@ public class GraphExecutive implements Observer {
 
     boolean planningEnabled = true;
     
-    int numTasks = 4;
+    int numTasks = 8;
             
-    float searchDepth = 128;
-    int particles = 512;
+    float searchDepth = 64;
+    int particles = 256;
     
     @Deprecated Executive exec;
     

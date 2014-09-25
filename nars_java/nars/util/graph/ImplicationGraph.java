@@ -1,8 +1,9 @@
 package nars.util.graph;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
@@ -23,6 +24,9 @@ import nars.language.Variables;
 
 public class ImplicationGraph extends SentenceItemGraph {
 
+    Map<Sentence, List<Sentence>> components = new HashMap();
+    
+
     float minConfidence = 0.1f;
     float minFreq = 0.6f;
     
@@ -30,7 +34,7 @@ public class ImplicationGraph extends SentenceItemGraph {
      *  any value between 0 and 1.0 is valid.  
      *  factor = dormantConceptInfluence + (1.0 - dormantConceptInfluence) * concept.priority
      */
-    float dormantConceptInfluence = 0.5f; 
+    float dormantConceptInfluence = 0.25f; 
 
     public ImplicationGraph(NAR nar) {
         this(nar.memory);
@@ -125,11 +129,11 @@ public class ImplicationGraph extends SentenceItemGraph {
                 boolean addedNonInterval = false;
                 
                 
-                List<Term>al = Arrays.asList(seq.term);
+                /*List<Term>al = Arrays.asList(seq.term);
                 if (reverse)
-                     Collections.reverse(al);
+                     Collections.reverse(al);*/
                 
-                for (Term a : al) {
+                for (Term a : seq.term) {
 
                     if (a instanceof Interval) {
                         if (addedNonInterval) {
@@ -193,22 +197,50 @@ public class ImplicationGraph extends SentenceItemGraph {
 
         return true;
     }
+    
+    protected void addComponents(final Sentence parentSentence, final Sentence edge) {
+        List<Sentence> componentList = components.get(parentSentence);
+        if (componentList == null) {
+            componentList = new ArrayList(1);
+            components.put(parentSentence, componentList);
+        }
+        componentList.add(edge);        
+    }
+    
+    protected boolean removeComponents(final Sentence parentSentence) {
+        List<Sentence> componentList = components.get(parentSentence);
+        if (componentList!=null) {
+            for (Sentence s : componentList) {
+                Term source = getEdgeSource(s);
+                Term target = getEdgeTarget(s);
+                removeEdge(s);
+                ensureTermConnected(source);
+                ensureTermConnected(target);
+            }
+            componentList.clear();
+            components.remove(parentSentence);        
+            return true;
+        }
+        return false;
+    }
+    
 
     public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
         Implication impParent = (Implication)parent.content;
         Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
         
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
-
-        try {
+        
+//        try {
             addEdge(source, target, impFinalSentence);
             concepts.put(impFinalSentence, c);
-        }
-        catch (IllegalArgumentException e) {
-            //throw new RuntimeException(this + " Unable to create edge: source=" + source + ", target=" + target);
-            return null;
-        }
-        
+//        }
+//        catch (IllegalArgumentException e) {
+//            //throw new RuntimeException(this + " Unable to create edge: source=" + source + ", target=" + target);
+//            return null;
+//        }
+  
+        addComponents(parent, impFinalSentence);
         return impFinalSentence;
     }
     
@@ -260,6 +292,14 @@ public class ImplicationGraph extends SentenceItemGraph {
         
         return 1.0 / (freq * conf * (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority));
     }
+
+    @Override
+    public boolean remove(final Sentence s) {
+        if (!removeComponents(s))
+            return false;
+        return super.remove(s);
+    }
+    
     
     
     
