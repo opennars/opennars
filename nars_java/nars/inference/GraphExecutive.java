@@ -45,7 +45,7 @@ public class GraphExecutive implements Observer {
     int numTasks = 8;
             
     float searchDepth = 64;
-    int particles = 256;
+    int particles = 128;
     
     @Deprecated Executive exec;
     
@@ -373,14 +373,13 @@ public class GraphExecutive implements Observer {
         double distance;
         
         public ParticlePath(final Term target, final List<Sentence> path, final double distance) {
-            this.target = target;
-            this.distance = Double.MAX_VALUE;
+            this.target = target;            
             addPath(path, distance);
         }
         
-        public void addPath(final List<Sentence> path, final double dist) {
-            if (dist < distance) {
-                this.path = path.toArray(new Sentence[path.size()]);
+        public void addPath(final List<Sentence> p, final double dist) {
+            if ((this.path == null) || (dist < distance)) {
+                this.path = p.toArray(new Sentence[p.size()]);
                 this.distance = dist;
             }
         }

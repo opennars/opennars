@@ -79,6 +79,20 @@ public class ImplicationGraph extends SentenceItemGraph {
         public PostCondition(final Term t) {
             super("~" + t.name(), t);
         }
+
+        
+        //fast override to avoid unnecessary calculations
+        @Override protected boolean setName(CharSequence name) {
+            this.name = name;
+            return true;
+        }
+
+        //fast override to avoid unnecessary calculations
+        @Override protected short calcComplexity() {
+            return term[0].getComplexity();
+        }
+        
+        
     }
     
     @Override
@@ -278,16 +292,16 @@ public class ImplicationGraph extends SentenceItemGraph {
         return x.toString();
     }
 
-    @Override
-    public double getEdgeWeight(Sentence e) {
+    /** weight = cost = distance */
+    @Override public double getEdgeWeight(Sentence e) {
         //transitions to PostCondition vertices are free or low-cost
         if (getEdgeTarget(e) instanceof PostCondition)
-            return 1.0;
+            return 0.1;
         
         float freq = e.truth.getFrequency();
         float conf = e.truth.getConfidence();        
         float conceptPriority = concepts.get(e).getPriority();
-        //weight = cost = distance
+        
         //return 1.0 / (freq * conf * conceptPriority);
         
         return 1.0 / (freq * conf * (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority));
