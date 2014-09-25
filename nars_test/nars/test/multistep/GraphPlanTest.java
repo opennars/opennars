@@ -13,12 +13,22 @@ import org.junit.Test;
 public class GraphPlanTest {
 
     static String input = "";
+    static final int test = 1;
     static {
-        input += "<(&/,<a --> b>,+1,(^pick,Y),+3,<c --> d>) =/> <goal --> reached>>.\n";
-        input += "<(&/,(^pick,X),+2) =/> <a --> b>>.\n";
-        input += "<(&/,(^pick,Z),+1) =/> <c --> d>>.\n";    
-        input += "<goal --> reached>!\n";
-    }
+        if (test == 1) {
+            input += "<(&/,<a --> b>,+1,(^pick,Y),+3,<c --> d>) =/> <goal --> reached>>.\n";
+            input += "<(&/,(^pick,X),+2) =/> <a --> b>>.\n";
+            input += "<(&/,(^pick,Z),+1) =/> <c --> d>>.\n";    
+            input += "<goal --> reached>!\n";
+        }
+        else {
+            input += "<C =/> <goal --> reached>>.\n";
+            input += "<B =/> C>.\n";
+            input += "<A =/> B>.\n";
+            input += "<(&/,(^pick,X),+1) =/> A>.\n";    
+            input += "<goal --> reached>!\n";
+        }
+    }    
     
     @Test
     public void testGraphPlan() throws IOException {
