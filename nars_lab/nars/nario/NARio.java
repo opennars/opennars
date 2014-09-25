@@ -70,7 +70,7 @@ public class NARio extends Run {
 
         NARio nario = new NARio(nar);
         new NARSwing(nar, false);
-        nar.start(30f,300);
+        nar.start(30f,30);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package nars.narclear;
 
-import java.util.Arrays;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
+import nars.io.TextInput;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.NullOperator;
@@ -21,6 +21,10 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     float shoulderRange = MathUtils.PI/2f;
     float elbowRange = MathUtils.PI/2f;
     float elbowAngle = 0, fingerAngle = 0;
+    
+    boolean autonomous = false;
+    private final ChangedTextInput upperArmSensor;
+    private final ChangedTextInput lowerArmSensor;
     
     public NARPhysicsDemo(final NAR n) {
         super(n, new RobotArm() {
@@ -43,33 +47,66 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         n.memory.addOperator(new NullOperator("^joint") {
             @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
 
-                System.out.println(Arrays.toString(args));
-                
-                float dA = 0.1f;
-                switch (args[0].toString()) {
-                    case "shoulder":
-                        if (args[1].toString().equals("left")) shoulderAngle-=dA;
-                        else if (args[1].toString().equals("right")) shoulderAngle+=dA;
-                        if (shoulderAngle < -shoulderRange) shoulderAngle = -shoulderRange;
-                        if (shoulderAngle > shoulderRange) shoulderAngle = shoulderRange;
-                        break;
-                    case "elbow":
-                        if (args[1].toString().equals("left")) elbowAngle-=dA;
-                        else if (args[1].toString().equals("right")) elbowAngle+=dA;
-                        if (elbowAngle < -elbowRange) elbowAngle = -elbowRange;
-                        if (elbowAngle > elbowRange) elbowAngle = elbowRange;
-                        break;                        
+                if ((autonomous) || (operation.getTask().isInput())) {
+                    
+
+                    String as = args[1].toString();
+
+                    float dA = 0.1f;
+
+                    switch (args[0].toString()) {
+                        case "shoulder":
+                            if (as.equals("left")) shoulderAngle-=dA;
+                            else if (as.equals("right")) shoulderAngle+=dA;
+                            else if (as.startsWith("a")) {
+                                int i = Integer.parseInt(as.substring(1));
+                                double radians = Math.toRadians(i);
+                                shoulderAngle = (float) radians;
+                            }
+                            if (shoulderAngle < -shoulderRange) shoulderAngle = -shoulderRange;
+                            if (shoulderAngle > shoulderRange) shoulderAngle = shoulderRange;
+                            break;
+                        case "elbow":
+                            if (args[1].toString().equals("left")) elbowAngle-=dA;
+                            else if (args[1].toString().equals("right")) elbowAngle+=dA;
+                            if (elbowAngle < -elbowRange) elbowAngle = -elbowRange;
+                            if (elbowAngle > elbowRange) elbowAngle = elbowRange;
+                            break;                        
+                    }
                 }
                 
                 return super.execute(operation, args, memory);
             }
         });
+        
+        upperArmSensor = new ChangedTextInput(nar);
+        lowerArmSensor = new ChangedTextInput(nar);
     }
 
-    public String angleState(String x, double v, int steps, double min, double max) {
-        double p = (v - min) / (max-min);
-        if (p < 0) p = 0;
-        if (p > 1.0) p = 1;
+    /** TextInput subclass that only inputs when the next input value changes from previous */
+    public static class ChangedTextInput extends TextInput {
+        private final NAR nar;
+        private String last = null;
+        
+        public ChangedTextInput(NAR n) {
+            this.nar = n;            
+        }
+        
+        public void set(String s) {
+            if ((last==null) || (!last.equals(s)))
+                nar.addInput(s);
+            last = s;
+        }
+        
+    }
+    
+    public String angleState(String x, double v, int steps) {
+        
+        v = MathUtils.reduceAngle((float)v);
+        v = ((int)(v * steps)) / steps;
+        
+        double p = v / MathUtils.TWOPI;
+        
         int s = (int) Math.round(p * steps);
         return ("<(*,angle_" + s + ") --> " + x + ">. :|:");
     }
@@ -77,6 +114,9 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     //boolean implication = false;
     
     int t = 0;
+    int cangle = -4;
+    int angleDiv = 20;
+    int trainingPeriod = 500;
     
     @Override
     public void cycle() {
@@ -90,24 +130,37 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
                 */
                 
         
-        if (Math.random() < 0.1f) {
-            nar.addInput("(^joint,shoulder,left)!");
+        int period = 10;
+        
+        if (t < trainingPeriod) {
+            
+            if (t % period == 0) {
+                cangle++;
+                if (cangle > 4) {
+                    cangle = -4;
+                }
+                nar.addInput("(^joint,shoulder,a" + (angleDiv*cangle) + ")!");
+            }
         }
-        if (Math.random() < 0.1f) {
-            nar.addInput("(^joint,shoulder,right)!");
+        else if (t == trainingPeriod) {
+            System.out.println(); System.out.println(); System.out.println(); System.out.println();
+            System.out.println("AUTONOMOUS");
+            System.out.println(); System.out.println(); System.out.println(); System.out.println();
+            autonomous = true;
         }
-        if (Math.random() < 0.1f) {
-            nar.addInput("(^joint,elbow,left)!");
-        }
-        if (Math.random() < 0.1f) {
-            nar.addInput("(^joint,elbow,right)!");
-        }
+        
+//        if (Math.random() < 0.1f) {
+//            nar.addInput("(^joint,elbow,left)!");
+//        }
+//        if (Math.random() < 0.1f) {
+//            nar.addInput("(^joint,elbow,right)!");
+//        }
         fingerAngle = (float)Math.sin(t)/2f+0.9f;
         
         
         
-        nar.addInput(angleState("lowerArm",arm.lowerArm.getAngle(),9,-MathUtils.PI,MathUtils.PI));
-        nar.addInput(angleState("upperArm",arm.upperArm.getAngle(),9,-MathUtils.PI,MathUtils.PI));
+        lowerArmSensor.set(angleState("lowerArm",arm.lowerArm.getAngle(),36));
+        upperArmSensor.set(angleState("upperArm",arm.upperArm.getAngle(),36));
 //        if (nar.getTime() % 20 == 0) {
 //            float s = (float)(Math.random() * 4f - 2f);
 //            float e = (float)(Math.random() * 4f - 2f);
@@ -120,11 +173,11 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
 
     public static void main(String[] args) {
         NAR n = new DefaultNARBuilder().build();
-        
+        n.param().duration.set(50);
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();
         
-        new NARPhysicsDemo(n).start(30, 10);
+        new NARPhysicsDemo(n).start(30, 50);
         
         
     }
