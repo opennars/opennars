@@ -55,6 +55,7 @@ import nars.gui.output.TermWindow;
 import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
+import nars.gui.output.graph.SentenceGraphPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -219,6 +220,16 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 }
             });
             m.add(mv);
+
+            
+            JMenuItem imv = new JMenuItem("+ Implication View");
+            imv.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new Window("Implications", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
+                }
+            });
+            m.add(imv);
             
             JMenuItem st = new JMenuItem("+ Sentence Table");
             st.addActionListener(new ActionListener() {

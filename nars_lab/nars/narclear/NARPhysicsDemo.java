@@ -6,6 +6,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
+import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
@@ -17,12 +18,27 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     private final RobotArm arm;
     
     float shoulderAngle = 0;
-    float shoulderRange = MathUtils.PI;
-    float elbowRange = MathUtils.PI;
+    float shoulderRange = MathUtils.PI/2f;
+    float elbowRange = MathUtils.PI/2f;
     float elbowAngle = 0, fingerAngle = 0;
     
-    public NARPhysicsDemo(NAR n) {
-        super(n, new RobotArm());
+    public NARPhysicsDemo(final NAR n) {
+        super(n, new RobotArm() {
+
+            @Override
+            public void sight(boolean[] hit) {
+                int totalHit = 0;
+                for (boolean x : hit)
+                    if (x) totalHit++;
+                
+                if (totalHit > 0) {
+                    float th = totalHit / ((float)hit.length);
+                    n.addInput("sight. :|: %1.00;" + Texts.n2(th) + "%");
+                }
+
+            }
+        });
+        
         arm = getModel();
         n.memory.addOperator(new NullOperator("^joint") {
             @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
@@ -60,6 +76,8 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     
     //boolean implication = false;
     
+    int t = 0;
+    
     @Override
     public void cycle() {
         super.cycle();
@@ -78,15 +96,26 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         if (Math.random() < 0.1f) {
             nar.addInput("(^joint,shoulder,right)!");
         }
+        if (Math.random() < 0.1f) {
+            nar.addInput("(^joint,elbow,left)!");
+        }
+        if (Math.random() < 0.1f) {
+            nar.addInput("(^joint,elbow,right)!");
+        }
+        fingerAngle = (float)Math.sin(t)/2f+0.9f;
         
         
-        nar.addInput(angleState("shoulder",shoulderAngle,5,-shoulderRange,shoulderRange));
+        
+        nar.addInput(angleState("lowerArm",arm.lowerArm.getAngle(),9,-MathUtils.PI,MathUtils.PI));
+        nar.addInput(angleState("upperArm",arm.upperArm.getAngle(),9,-MathUtils.PI,MathUtils.PI));
 //        if (nar.getTime() % 20 == 0) {
 //            float s = (float)(Math.random() * 4f - 2f);
 //            float e = (float)(Math.random() * 4f - 2f);
 //            float f = (float)(Math.random() * 2f - 1f);
 //        }
         arm.set(shoulderAngle, elbowAngle, fingerAngle);
+        
+        t++;
     }
 
     public static void main(String[] args) {
@@ -95,7 +124,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();
         
-        new NARPhysicsDemo(n).start(15, 1500);
+        new NARPhysicsDemo(n).start(30, 10);
         
         
     }

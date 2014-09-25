@@ -2,14 +2,16 @@ package nars.narclear;
 
 import nars.narclear.jbox2d.PhysicsCamera;
 import nars.narclear.jbox2d.TestbedSettings;
+import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.joints.PrismaticJoint;
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
@@ -19,11 +21,13 @@ import org.jbox2d.dynamics.joints.RevoluteJointDef;
  */
 public class RobotArm extends PhysicsModel {
 
-    private RevoluteJoint shoulderJoint;
-    private PrismaticJoint m_joint2;
-    private RevoluteJoint fingerLeftJoint;
-    private RevoluteJoint fingerRightJoint;
-    private RevoluteJoint elbowJoint;
+    protected RevoluteJoint shoulderJoint;
+    //protected PrismaticJoint m_joint2;
+    protected RevoluteJoint fingerLeftJoint;
+    protected RevoluteJoint fingerRightJoint;
+    protected RevoluteJoint elbowJoint;
+    protected Body lowerArm;
+    protected Body upperArm;
 
     @Override
     public void initTest(boolean argDeserialized) {
@@ -53,11 +57,11 @@ public class RobotArm extends PhysicsModel {
                 BodyDef bd = new BodyDef();
                 bd.type = BodyType.DYNAMIC;
                 bd.position.set(0.0f, 5.0f);
-                Body body = getWorld().createBody(bd);
-                body.createFixture(shape, 2.0f);
+                upperArm = getWorld().createBody(bd);
+                upperArm.createFixture(shape, 2.0f);
 
                 RevoluteJointDef rjd = new RevoluteJointDef();
-                rjd.initialize(prevBody, body, new Vec2(0.0f, 2.0f));
+                rjd.initialize(prevBody, upperArm, new Vec2(0.0f, 2.0f));
                 rjd.motorSpeed = 0; //1.0f * MathUtils.PI;
                 rjd.maxMotorTorque = 10000.0f;
                 rjd.enableMotor = true;
@@ -66,10 +70,10 @@ public class RobotArm extends PhysicsModel {
                 rjd.enableLimit = true;
                 shoulderJoint = (RevoluteJoint) getWorld().createJoint(rjd);
 
-                prevBody = body;
+                prevBody = upperArm;
             }
 
-            Body lowerArm;
+            
             // Define lower arm.            
             {
                 PolygonShape shape = new PolygonShape();
@@ -88,8 +92,7 @@ public class RobotArm extends PhysicsModel {
                 rjd.upperAngle = MathUtils.PI / 2f * 1.5f;
                 rjd.enableLimit = true;
                 elbowJoint = (RevoluteJoint) getWorld().createJoint(rjd);
-
-                prevBody = lowerArm;
+                
             }
             
             //Finger Right
@@ -173,30 +176,70 @@ public class RobotArm extends PhysicsModel {
         }
     }
 
+    RayCastClosestCallback ccallback = new RayCastClosestCallback();
+    Vec2 pooledHead = new Vec2();
+    Vec2 point1 = new Vec2();
+    Vec2 point2 = new Vec2();
+    Vec2 d = new Vec2();
+    Color3f laserColor = new Color3f(0.85f, 0, 0);
+              
     @Override
     public void step(TestbedSettings settings) {
         super.step(settings);
 
-    //addTextLine("Keys: (f) toggle friction, (m) toggle motor");
-        //float torque = m_joint1.getMotorTorque(1);
-        //Formatter f = new Formatter();
-        //addTextLine(f.format("Friction: %b, Motor Force = %5.0f, ", m_joint2.isMotorEnabled(), torque).toString());
-        //f.close();
+    
+        int pixels = 5;
+        float angle = 0.6f;
+        
+        float focusAngle = -angle/2f;
+        float aStep = focusAngle/pixels;
+        float L = 11.0f;
+        float a = (float) (lowerArm.getAngle() + Math.PI/2f - focusAngle/2f);
+        boolean[] hit = new boolean[pixels];
+        
+        for (int i = 0; i < pixels; i++) {
+            point1 = lowerArm.getWorldPoint(new Vec2(0,2));
+            
+            d.set(L * MathUtils.cos(a), L * MathUtils.sin(a));
+            point2.set(point1);
+            point2.addLocal(d);
+            
+
+            ccallback.init();
+            getWorld().raycast(ccallback, point1, point2);
+
+            if (ccallback.m_hit) {
+              getDebugDraw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
+              getDebugDraw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
+              pooledHead.set(ccallback.m_normal);
+              pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
+              getDebugDraw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
+              hit[i]= true;
+            } else {
+              getDebugDraw().drawSegment(point1, point2, laserColor);
+            }
+            a+= aStep;
+        }
+        sight(hit);
+    }
+    
+    public void sight(boolean[] hit) {
+        
     }
 
     @Override
     public void keyPressed(char argKeyChar, int argKeyCode) {
 
-        switch (argKeyChar) {
-            case 'f':
-                m_joint2.enableMotor(!m_joint2.isMotorEnabled());
-                getModel().getKeys()['f'] = false;
-                break;
-            case 'm':
-                shoulderJoint.enableMotor(!shoulderJoint.isMotorEnabled());
-                getModel().getKeys()['m'] = false;
-                break;
-        }
+//        switch (argKeyChar) {
+//            case 'f':
+//                m_joint2.enableMotor(!m_joint2.isMotorEnabled());
+//                getModel().getKeys()['f'] = false;
+//                break;
+//            case 'm':
+//                shoulderJoint.enableMotor(!shoulderJoint.isMotorEnabled());
+//                getModel().getKeys()['m'] = false;
+//                break;
+//        }
     }
     
     public void set(float shoulderAngle, float elbowAngle, float fingerAngle) {
@@ -221,4 +264,35 @@ public class RobotArm extends PhysicsModel {
         new PhysicsRun(r).start(30);
         
     }
+
+    class RayCastClosestCallback implements RayCastCallback {
+
+      boolean m_hit;
+      Vec2 m_point;
+      Vec2 m_normal;
+
+      public void init() {
+        m_hit = false;
+      }
+
+      public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
+        Body body = fixture.getBody();
+        Object userData = body.getUserData();
+//        if (userData != null) {
+//          int index = (Integer) userData;
+//          if (index == 0) {
+//            // filter
+//            return -1f;
+//          }
+//        }
+
+        m_hit = true;
+        m_point = point;
+        m_normal = normal;
+        
+        return fraction;
+      }
+
+    };
+
 }
