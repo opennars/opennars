@@ -303,7 +303,7 @@ public class NAR implements Runnable, Output, TaskSource {
     
     /** Execute a fixed number of cycles. 
      * may execute more than requested cycles if cyclesPerFrame > 1 */
-    public void cycle(final int cycles) {
+    public void step(final int cycles) {
         if (thread!=null) {
             memory.stepLater(cycles);
             return;
@@ -333,7 +333,7 @@ public class NAR implements Runnable, Output, TaskSource {
         //clear existing input
         int cyclesCompleted = 0;
         do {
-            cycle(1);
+            step(1);
             cyclesCompleted++;
         }
         while (!inputChannels.isEmpty());
@@ -345,7 +345,7 @@ public class NAR implements Runnable, Output, TaskSource {
         
         //finish all remaining cycles
         while (memory.getCyclesQueued() > 0) {
-            cycle(1);
+            step(1);
         }
         running = false;
     }

@@ -13,7 +13,7 @@ import org.junit.Test;
 public class GraphPlanTest {
 
     static String input = "";
-    static final int test = 1;
+    static final int test = 2;
     static {
         if (test == 1) {
             input += "<(&/,<a --> b>,+1,(^pick,Y),+3,<c --> d>) =/> <goal --> reached>>.\n";
@@ -42,8 +42,10 @@ public class GraphPlanTest {
         new Window("Implications", new SentenceGraphPanel(n, n.memory.executive.graph.implication)).show(500,500);
         for (int i = 0; i < 25; i++) {
         
-            n.cycle(1);
+            n.step(1);
+            //System.out.println(n.memory.executive.graph.implication);
             System.in.read();
+            
         }
         
         

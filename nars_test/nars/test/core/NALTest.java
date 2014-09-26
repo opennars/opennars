@@ -228,7 +228,7 @@ public class NALTest  {
         
         
         n.addInput(new TextInput(example));
-        n.cycle(1);
+        n.step(1);
         
         boolean error = false;
         try {

@@ -42,19 +42,19 @@ public class InferenceTracerTest {
         
         n.addInput("<a --> b>.");
         
-        n.cycle(1);
+        n.step(1);
         
         n.addInput("<a <-> b>.");
         
-        n.cycle(1);
+        n.step(1);
         
         n.addInput("<b --> c>.");
         
-        n.cycle(1);
+        n.step(1);
         
         n.addInput("<(*,a,b) --> d>.");        
         
-        n.cycle(1);
+        n.step(1);
         
         //tracer.printTime(System.out);        
         //System.out.println(tracer.concept);

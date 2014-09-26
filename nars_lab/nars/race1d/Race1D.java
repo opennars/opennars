@@ -149,7 +149,7 @@ public class Race1D {
             }            
         };
         n.addOutput(o);
-        n.cycle(1);
+        n.step(1);
         
         
         for (int i = 0; i < length-1; i++) {
@@ -163,7 +163,7 @@ public class Race1D {
             nextOut.set(UNKNOWN);
             //wait for answer
             while ((time < deadline) && (nextOut.get() == UNKNOWN)) {
-                n.cycle(1);
+                n.step(1);
                 time++;
             }
             if (nextOut.get()!=UNKNOWN) {
@@ -207,7 +207,7 @@ public class Race1D {
 
         r.evaluate(n);
         
-        n.cycle(1);
+        n.step(1);
         n.finish(1);
         r.draw();
     }
