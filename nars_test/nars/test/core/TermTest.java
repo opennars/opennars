@@ -69,13 +69,17 @@ public class TermTest {
         
         
             
-        String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-        Term term1 = n.term(term1String);
+        //these 2 representations are equal, after natural ordering
+        String term1String =    "<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
+        Term term1 = n.term(term1String);        
+        String term1Alternate = "<#1 --> (&,(/,taller_than,{Tom},_),boy)>";
+        Term term1a = n.term(term1Alternate);
+        
 
         // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
         Term term2 = n.term("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
 
-        assertTrue(term1.toString().equals(term1String));
+        assertTrue(term1.toString().equals( term1a.toString() ));
         assertTrue(term1.getComplexity() > 1);
         assertTrue(term1.getComplexity() == term2.getComplexity());
 
