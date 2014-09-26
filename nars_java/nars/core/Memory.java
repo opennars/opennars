@@ -206,7 +206,7 @@ public class Memory implements Output, Serializable {
             case IMAGE_INT:
                 return ImageInt.make(a, this);
             case NEGATION:
-                return Negation.make(a, this);
+                return Negation.make(a);
             case DISJUNCTION:
                 return Disjunction.make(CompoundTerm.termList(a), this);
             case CONJUNCTION:
@@ -723,14 +723,17 @@ public class Memory implements Output, Serializable {
 
                 int i = 0;
                 for (Term chain1 : chain) {
-                    if (task.sentence.isJudgment() && task.getContent().equals(chain1)) {
+                    Term tc = task.getContent();
+                    if (task.sentence.isJudgment() && tc.equals(chain1)) {
+                        Term ptc = task.getParentTask().getContent();
                         if(task.getParentTask()==null || 
-                           (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
-                           !(task.getContent().equals(Negation.make(task.getParentTask().getContent(), this))))) {
-                        if (recorder.isActive()) {
-                            recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
-                        }
-                        return false;
+                           (!(ptc.equals(Negation.make(tc))) && !(tc.equals(Negation.make(ptc))))) {
+                            
+                            if (recorder.isActive()) {
+                                recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
+                            }
+                            
+                            return false;
                         }
                     }
                     i++;                    
@@ -743,7 +746,7 @@ public class Memory implements Output, Serializable {
                     for (int j = 0; j < stampLength; j++) {     
                         if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
                             if (recorder.isActive()) {                                
-                                recorder.onTaskRemove(task, "Overlapping Evidence on Revision: " + i + "," + j + " in " + stamp.toString());
+                                recorder.onTaskRemove(task, "Overlapping Revision Evidence (i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/);
                             }
                             return false;
                         }
@@ -764,17 +767,14 @@ public class Memory implements Output, Serializable {
                 
                 Term operation = Inheritance.make(argTerm, opTerm,this);
                 TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                Stamp stampi = (Stamp) task.sentence.stamp.clone();
+                Stamp stampi = task.sentence.stamp.clone();
                 stamp.setOccurrenceTime(this.getTime());
                 
                 Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
                 BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
                 Task newTask = new Task(j, budg,Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
-                if (getRecorder().isActive()) {
-                    getRecorder().append("Abbreviate", j.toString());
-                }
                 output(newTask);
-                addNewTask(newTask, "Derived (abbreviated)");
+                addNewTask(newTask, "Derived (Abbreviated)");
             }
 
             if(param.experimentalNarsPlus.get() && task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
@@ -795,16 +795,13 @@ public class Memory implements Output, Serializable {
                         Term new_predicate=new Term("CARDINALITY"); //TODO this can be a static final instance shared by all
                         Term new_term=Inheritance.make(new_subject, new_predicate, this);
 
-                        TruthValue truth = (TruthValue) task.sentence.truth.clone();
-                        Stamp stampi = (Stamp) task.sentence.stamp.clone();
+                        TruthValue truth = task.sentence.truth.clone();
+                        Stamp stampi = task.sentence.stamp.clone();
                         Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
-                        BudgetValue budg=(BudgetValue) task.budget.clone();
+                        BudgetValue budg = task.budget.clone();
                         Task newTask = new Task(j, budg,task);
-                        if (getRecorder().isActive()) {
-                            this.recorder.append("Cardinality", j.toString());
-                        }
                         output(newTask);
-                        addNewTask(newTask, "Derived (cardinality)");
+                        addNewTask(newTask, "Derived (Cardinality)");
                     }
                 }
             }
