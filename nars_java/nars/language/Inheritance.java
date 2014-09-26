@@ -20,10 +20,10 @@
  */
 package nars.language;
 
+import nars.core.Memory;
 import nars.io.Symbols.NativeOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  * A Statement about an Inheritance relation.
@@ -55,7 +55,7 @@ public class Inheritance extends Statement {
      * @return A new object, to be casted into a SetExt
      */
     @Override public Inheritance clone() {
-        return new Inheritance(name(), cloneTerms(), isConstant(), containVar(), complexity);
+        return new Inheritance(name(), cloneTerms(), isConstant(), containVar(), getComplexity());
     }
 
     /**
@@ -72,24 +72,16 @@ public class Inheritance extends Statement {
             return null;
         }
         
+        boolean subjectProduct = subject instanceof Product;
+        boolean predicateOperator = predicate instanceof Operator;
+        
         CharSequence name;
-        if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term);
-        } else {
-            name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
-        }
- 
-        Term t = memory.conceptTerm(name);
-        if (t != null) {
-            return (Inheritance) t;
-        }        
-        
-        Term[] arguments = termArray( subject, predicate );
-        
-        if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            //return new Operation(name, arguments);
+        if (subjectProduct && predicateOperator) {
+            //name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term);
             return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, true, memory);
         } else {
+            name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
+            Term[] arguments = termArray( subject, predicate );
             return new Inheritance(name, arguments);
         }
          

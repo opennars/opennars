@@ -202,45 +202,45 @@ public abstract class CompoundTerm extends Term {
 
 
         
-
-    /**
-     * Orders among terms: variable < atomic < compound
-     *
-     * @param that The Term to be compared with the current Term
-\     * @return The order of the two terms
-     */
-    @Override
-    public int compareTo(final AbstractTerm that) {
-        if (this == that) return 0;
-        
-        if (that instanceof CompoundTerm) {
-            final CompoundTerm t = (CompoundTerm) that;
-            if (size() == t.size()) {
-                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
-                if (opDiff != 0) {
-                    return opDiff;
-                }
-                
-                int tDiff = this.getTemporalOrder() - t.getTemporalOrder(); //should be faster faster than Enum.compareTo                
-                if (tDiff != 0) {
-                    return tDiff;
-                }
-
-                for (int i = 0; i < term.length; i++) {
-                    final int diff = term[i].compareTo(t.term[i]);
-                    if (diff != 0) {
-                        return diff;
-                    }
-                }
-
-                return 0;
-            } else {
-                return size() - t.size();
-            }
-        } else {
-            return 1;
-        }
-    }
+//
+//    /**
+//     * Orders among terms: variable < atomic < compound
+//     *
+//     * @param that The Term to be compared with the current Term
+//\     * @return The order of the two terms
+//     */
+//    @Override
+//    public int compareTo(final AbstractTerm that) {
+//        if (this == that) return 0;
+//        
+//        if (that instanceof CompoundTerm) {
+//            final CompoundTerm t = (CompoundTerm) that;
+//            if (size() == t.size()) {
+//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
+//                if (opDiff != 0) {
+//                    return opDiff;
+//                }
+//                
+//                int tDiff = this.getTemporalOrder() - t.getTemporalOrder(); //should be faster faster than Enum.compareTo                
+//                if (tDiff != 0) {
+//                    return tDiff;
+//                }
+//
+//                for (int i = 0; i < term.length; i++) {
+//                    final int diff = term[i].compareTo(t.term[i]);
+//                    if (diff != 0) {
+//                        return diff;
+//                    }
+//                }
+//
+//                return 0;
+//            } else {
+//                return size() - t.size();
+//            }
+//        } else {
+//            return 1;
+//        }
+//    }
 
     @Override
     public int containedTemporalRelations() {

@@ -302,5 +302,26 @@ public class Texts {
 
     final static Format oneDecimal = new DecimalFormat("0.0");    
     public static final String n1(final float x) { return oneDecimal.format(x);     }
-    
+
+    public static int compareTo(final CharSequence s, final CharSequence t) {
+        int i = 0;
+
+        final int sl = s.length();
+        final int tl = t.length();
+        
+        while (i < sl && i < tl) {
+            char a = s.charAt(i);
+            char b = t.charAt(i);
+
+            int diff = a - b;
+
+            if (diff != 0)
+              return diff;
+
+            i++;
+        }
+
+        return sl - tl;
+      }
+
 }

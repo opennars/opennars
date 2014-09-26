@@ -160,20 +160,10 @@ public class Term implements AbstractTerm {
      */
     @Override
     public int compareTo(final AbstractTerm that) {
-        /*//This removes this class's dependency on CompoundTerm
-        if (that.getClass() == getClass())
-            return name.compareTo(that.name());
-        return that.getClass().getSimpleName().compareTo(getClass().getSimpleName());*/
-        
         //previously: Orders among terms: variable < atomic < compound
-        if (that instanceof CompoundTerm) {
+        if ((that instanceof Variable) && (getClass()!=Variable.class))
             return -1;
-        } else if (that instanceof Variable) {
-            return 1;
-        } else {
-            //force comparable, since all CharSequence we use provide it.
-            return ((Comparable)name).compareTo(that.name());            
-        }
+        return Texts.compareTo(name(), that.name());
     }
 
     /**
