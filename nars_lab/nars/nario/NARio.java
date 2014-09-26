@@ -26,6 +26,7 @@ import nars.nario.sprites.Sprite;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
 
+
 /**
  *
  * @author me
@@ -66,11 +67,11 @@ public class NARio extends Run {
         nar.param().duration.set(20);
         nar.param().noiseLevel.set(10);
         nar.param().shortTermMemorySize.set(1);
-        nar.param().decisionThreshold.set(0.3);
+        nar.param().decisionThreshold.set(0.1);
 
         NARio nario = new NARio(nar);
         new NARSwing(nar, false);
-        nar.start(30f,60);
+        nar.start(30f,50);
     }
 
     @Override

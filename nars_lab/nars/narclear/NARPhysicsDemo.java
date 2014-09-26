@@ -116,7 +116,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     int t = 0;
     int cangle = -4;
     int angleDiv = 20;
-    int trainingPeriod = 500;
+    int trainingPeriod = 50;
     
     @Override
     public void cycle() {
@@ -174,12 +174,12 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
 
     public static void main(String[] args) {
         NAR n = new DefaultNARBuilder().build();
-        n.param().duration.set(50);
+        n.param().duration.set(5);
         n.param().decisionThreshold.set(0);
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();
         
-        new NARPhysicsDemo(n).start(30, 50);
+        new NARPhysicsDemo(n).start(5, 50);
         
         
     }

@@ -55,8 +55,9 @@ public class SentenceGraphPanel extends NPanel implements Observer {
             public float edgeWeight(final Sentence edge) {
                 //edge.truth.getFrequency() * edge.truth.getConfidence() *14f;
                 float w = (float)graph.getEdgeWeight(edge);
-                if (w!=0)
-                    return 1.0f / (w) * 14f;
+                if (w!=0) {                    
+                    return 1.0f / (w) * 14f;                    
+                }
                 else
                     return 1;
             }
