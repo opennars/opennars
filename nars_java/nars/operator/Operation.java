@@ -81,14 +81,11 @@ public class Operation extends Inheritance {
      * @return A compound generated or null
      */
     public static Operation make(final Operator oper, final Term[] arg, boolean addSelf, final Memory memory) {        
+
+        if (oper == null)
+            return null;
         
         addSelf = false; //FALSE untli understand when SELF should apply
-        
-        
-        
-        if (oper == null) {
-            return null;
-        }
         
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
@@ -103,17 +100,10 @@ public class Operation extends Inheritance {
         else {
             productArg = arg;
         }   
-        
-        CharSequence name = makeName(oper.name(), productArg);
-        Term t = memory.conceptTerm(name);
-        if (t != null) {
-            return (Operation) t;
-        }
-                
-        return new Operation(name, 
+                        
+        return new Operation(makeName(oper.name(), productArg), 
                 termArray(Product.make(productArg, memory), oper)
-        );
-        
+        );        
     }
 
     public Operator getOperator() {

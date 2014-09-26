@@ -68,7 +68,7 @@ public abstract class Statement extends CompoundTerm {
      * @param pred The second component
      * @param statement A sample statement providing the class type
      */
-    public static Statement make(Statement statement, Term subj, Term pred, final Memory memory) {
+    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {        
         if (statement instanceof Inheritance) {
             return Inheritance.make(subj, pred, memory);
         }
@@ -315,6 +315,5 @@ public abstract class Statement extends CompoundTerm {
     }
 
     @Override public abstract Statement clone();
-
-    
+   
 }

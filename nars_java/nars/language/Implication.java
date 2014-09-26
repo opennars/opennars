@@ -63,7 +63,7 @@ public class Implication extends Statement {
      */
     @Override
     public Implication clone() {
-        return new Implication(name(), cloneTerms(), isConstant(), containVar(), complexity, temporalOrder);
+        return new Implication(name(), cloneTerms(), isConstant(), containVar(), getComplexity(), getTemporalOrder());
     }
 
     /**
