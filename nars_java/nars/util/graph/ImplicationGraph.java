@@ -229,6 +229,8 @@ public class ImplicationGraph extends SentenceItemGraph {
         List<Sentence> componentList = components.get(parentSentence);
         if (componentList!=null) {
             for (Sentence s : componentList) {
+                if (!containsEdge(s))
+                    continue;
                 Term source = getEdgeSource(s);
                 Term target = getEdgeTarget(s);
                 removeEdge(s);
@@ -280,7 +282,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             return true;
         }
         else {
-            System.err.println(this + " disallow " + st);
+            //System.err.println("ImplicationGraph disallow " + st);
         }
         return false;
     }
@@ -306,7 +308,7 @@ public class ImplicationGraph extends SentenceItemGraph {
         conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
         
         if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0 * conceptPriority;
+            return 1.0 / conceptPriority;
         }
         
         float freq = e.truth.getFrequency();

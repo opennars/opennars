@@ -15,7 +15,6 @@ import nars.core.Events.ConceptGoalAdd;
 import nars.core.Events.ConceptGoalRemove;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
-import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -44,16 +43,16 @@ public class GraphExecutive implements Observer {
     boolean planningEnabled = true;
     
     /** number of tasks that are active in the sorted priority buffer for execution */
-    int numActiveTasks = 16;
+    int numActiveTasks = 32;
 
     /** max number of tasks that a plan can generate. chooses the N most confident */
-    int maxPlannedTasks = 4;
+    int maxPlannedTasks = 8;
     
-    float searchDepth = 96;
-    int particles = 64;
+    float searchDepth = 64;
+    int particles = 32;
     
     /** controls the relative weigting of edges and vertices for particle traversals */
-    double conceptCostFactor = 0.5;
+    double conceptCostFactor = 0.3;
     double edgeCostFactor = 1.0 - conceptCostFactor;
     
     @Deprecated Executive exec;
@@ -316,7 +315,7 @@ public class GraphExecutive implements Observer {
         
         Operator oper = op.getOperator();
         
-        //System.out.println("ex2: " + op + " from " + task.toString());
+        System.out.println("ex2: " + op + " from " + task.toString());
         
         op.setTask(task);
                         
@@ -325,15 +324,13 @@ public class GraphExecutive implements Observer {
     
     
     protected void cycle() {
-        /*if (tasks.size() > 0)
-            System.out.println("Tasks (pre): " + tasks);*/
         
         updateTasks();
 
         if (tasks.size() == 0)
             return;
         
-        if (NAR.DEBUG) {
+        /*if (NAR.DEBUG)*/ {
             if (tasks.get(0).delayUntil==-1) {
                 if (tasks.size() > 1)  {
                     System.out.println("Tasks @ " + memory.getTime());
