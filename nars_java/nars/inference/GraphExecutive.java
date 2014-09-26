@@ -53,8 +53,8 @@ public class GraphExecutive implements Observer {
     int particles = 64;
     
     /** controls the relative weigting of edges and vertices for particle traversals */
-    double conceptWeightFactor = 0.5;
-    double edgeWeightFactor = 1.0 - conceptWeightFactor;
+    double conceptCostFactor = 0.5;
+    double edgeCostFactor = 1.0 - conceptCostFactor;
     
     @Deprecated Executive exec;
     
@@ -111,7 +111,7 @@ public class GraphExecutive implements Observer {
 
         /*if (!(!revised || (t.sentence.content instanceof Operation || (t.sentence.content instanceof Conjunction && t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))))
             return false;*/
-        if (!revised)
+        if (revised)
             return false;
         
         if (concept != null) {
@@ -600,20 +600,19 @@ public class GraphExecutive implements Observer {
 
                     currentPath.add(nextEdge);
 
-                    current = forward ? graph.getEdgeTarget(nextEdge) : graph.getEdgeSource(nextEdge);
-                    Concept nextConcept = memory.concept(current);
+                    current = forward ? graph.getEdgeTarget(nextEdge) : graph.getEdgeSource(nextEdge)
+                            ;
+                    double nextConceptPriority = getEffectivePriority(memory, current);
                     
                     /** weight = distance = cost, for an edge */
-                    double nextEdgeWeight = graph.getEdgeWeight(nextEdge);
+                    double nextEdgeCost = graph.getEdgeWeight(nextEdge);
                     
-                    /** cost = (1.0 - priority) of a concept, if it exists.  if it doesn't then cost is 1.0 */
-                    double nextConceptWeight = 
-                            nextConcept != null ? 
-                                (1.0 - nextConcept.getPriority()) :
-                                1.0;
+                    /** cost = (1.0 - priority) of a concept, if it exists.  
+                     * if it doesn't then cost is 1.0 */
+                    double nextConceptCost = (1.0 - nextConceptPriority);
 
-                    energy -= (edgeWeightFactor * nextEdgeWeight + 
-                            conceptWeightFactor * nextConceptWeight);
+                    energy -= (edgeCostFactor * nextEdgeCost + 
+                            conceptCostFactor * nextConceptCost);
 
                     
 //                    if ((current == null)  /*|| (!graph.containsVertex(current)*/) {                  
@@ -689,7 +688,34 @@ public class GraphExecutive implements Observer {
         //public void reset()
         
     }
-    
+
+    public static double getActualPriority(final Memory memory, final Term t) {
+        double p;
+        Concept nextConcept = memory.concept(t);
+        if (nextConcept!=null)
+            p = nextConcept.getPriority();
+        else
+            p = 0.0f;        
+        return p;
+    }
+
+    public static double getEffectivePriority(final Memory memory, final Term current) {
+        double nextConceptPriority;
+        if (current instanceof Interval) {
+            //default priority for intervals
+            nextConceptPriority = 1.0f;
+        }
+        else if (current instanceof PostCondition) {
+            //get the priority for the postcondition's actual concept
+            nextConceptPriority = getActualPriority(memory, ((PostCondition)current).term[0]);
+        }
+        else {
+            nextConceptPriority = getActualPriority(memory, current);
+        }
+        return nextConceptPriority;
+    }
+
+        
     public static class ParticlePlan implements Comparable<ParticlePlan> {
         public final Sentence[] path;
         public final List<Term> sequence;

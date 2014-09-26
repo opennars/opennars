@@ -208,9 +208,9 @@ public class TestQController {
                 
             }
             
-            n.cycle(1);            
-            m.cycle(1);
-            r.cycle(1);
+            n.step(1);            
+            m.step(1);
+            r.step(1);
             
             avgCycleToForget += ((double)n.param().conceptCyclesToForget.get()) / displayCycles;
             mm += qm.reward();

@@ -20,6 +20,6 @@ public class NARPrologSwing extends NARSwing {
         
         new NARPrologSwing(pn);
         pn.addInput("'Prolog enabled");
-        pn.cycle(1);
+        pn.step(1);
     }
 }

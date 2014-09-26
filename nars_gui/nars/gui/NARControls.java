@@ -447,7 +447,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 updateGUI();
             } else if (obj == walkButton) {
                 nar.stop();
-                nar.cycle(1);
+                nar.step(1);
                 updateGUI();
             }
         } else if (obj instanceof JMenuItem) {

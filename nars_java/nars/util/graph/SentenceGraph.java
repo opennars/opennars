@@ -75,7 +75,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         else if (event == Events.ConceptBeliefAdd.class) {
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            add(s, c,false);
+            add(s, c, true);
         }
         else if (event == Events.ConceptBeliefRemove.class) {
             Concept c = (Concept)a[0];
@@ -85,12 +85,12 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         else if (event == Events.ConceptGoalAdd.class) {
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            //add(s, c);
+            add(s, c, true);
         }
         else if (event == Events.ConceptGoalRemove.class) {
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            //remove(s);
+            remove(s);
         }
         else if (event == Events.CycleEnd.class) {
             if (needInitialConcepts)

@@ -153,16 +153,16 @@ public class TermTest {
        assertTrue(a == a1);
        
        n.addInput(statement1);       
-       n.cycle(4);
+       n.step(4);
               
        n.addInput(" <a  --> b>.  ");
-       n.cycle(1);
+       n.step(1);
        n.addInput(" <a--> b>.  ");
-       n.cycle(1);
+       n.step(1);
        
        String statement2 = "<a --> c>.";
        n.addInput(statement2);
-       n.cycle(1);
+       n.step(1);
        
        Term a2 = n.term("a");
        assertTrue(a2!=null);
@@ -179,7 +179,7 @@ public class TermTest {
         
         NAR n = new DefaultNARBuilder().build();
         n.addInput("<a --> \"b c\">.");
-        n.cycle(1);
+        n.step(1);
         
         assertTrue(n.memory.concept(Texts.escape("\"b c\"").toString())!=null);
 
