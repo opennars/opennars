@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Random;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
-import nars.core.Events.WorkCycleEnd;
-import nars.core.Events.WorkCycleStart;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
@@ -45,6 +43,7 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
+import nars.inference.GraphExecutive;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
@@ -950,8 +949,6 @@ public class Memory implements Output, Serializable {
         resource.CYCLE_CPU_TIME.start();
         resource.CYCLE_RAM_USED.start();
 
-        event.emit(Events.CycleStart.class);
-
         if (enabled) {
 
             int inputCycles = param.cycleInputTasks.get();
@@ -992,7 +989,6 @@ public class Memory implements Output, Serializable {
 
         }
 
-        event.emit(Events.CycleEnd.class);
         
         resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
@@ -1011,7 +1007,7 @@ public class Memory implements Output, Serializable {
      */
     public void cycleWork() {
         
-        event.emit(WorkCycleStart.class);
+        event.emit(Events.CycleStart.class);
         
         boolean recorderActive = recorder.isActive();
         if (recorderActive)
@@ -1031,7 +1027,7 @@ public class Memory implements Output, Serializable {
         
         clock++;
                 
-        event.emit(WorkCycleEnd.class);      
+        event.emit(Events.CycleEnd.class);      
         
     }
 
@@ -1066,9 +1062,9 @@ public class Memory implements Output, Serializable {
                   concept(task.getContent())!=null || 
                   (   task.sentence!=null && 
                       task.getContent()!=null && 
-                      task.getContent() instanceof Operation && 
+                      GraphExecutive.isExecutableTerm(task.getContent()) &&                      
                       task.sentence.isGoal() && 
-                      concept(task.getContent()) != null)
+                      conceptualize(task.getContent()) != null)
                ) {
                 
                 // new addInput or existing concept

@@ -98,6 +98,9 @@ public class Task extends AbstractTask {
     public Task clone() {
         return new Task(sentence, budget, parentTask, parentBelief, bestSolution);
     }
+    public Task clone(final Sentence replacedSentence) {
+        return new Task(replacedSentence, budget, parentTask, parentBelief, bestSolution);
+    }
     
     @Override public CharSequence getKey() {
         return key;

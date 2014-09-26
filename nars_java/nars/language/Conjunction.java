@@ -72,7 +72,11 @@ public class Conjunction extends CompoundTerm {
     public Conjunction clone() {
         return new Conjunction(name(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
-
+    
+    public Conjunction cloneReplacingTerms(final Term[] replacementTerms) {
+        return new Conjunction(makeCompoundName(operator(), replacementTerms), replacementTerms, isConstant(), complexity, temporalOrder);
+    }
+    
     /**
      * Get the operator of the term.
      *
