@@ -49,7 +49,7 @@ public class SentenceGraphPanel extends NPanel implements Observer {
                 float freq = edge.truth.getFrequency();
                 float conf = edge.truth.getConfidence();
                 //return PGraphPanel.getColor(edge.getClass().getSimpleName(), alpha);
-                return Color.HSBtoRGB(0.2f + freq*0.5f, 0.8f, 0.3f + conf * 0.7f);
+                return Color.HSBtoRGB(0.2f + freq*0.5f, 0.8f, 0.5f + conf * 0.5f);
             }
 
             @Override
@@ -66,7 +66,7 @@ public class SentenceGraphPanel extends NPanel implements Observer {
             @Override
             public int vertexColor(final Term vertex) {
                 float cp = (float)GraphExecutive.getEffectivePriority(nar.memory, vertex);
-                float alpha = 0.25f + 0.75f * cp;
+                float alpha = 0.5f + 0.5f * cp;
                 return PGraphPanel.getColor(vertex.getClass().getSimpleName(), alpha);
                 //return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();        
             }
