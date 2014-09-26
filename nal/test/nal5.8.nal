@@ -9,4 +9,4 @@
 19
 
 'I guess robin is a type of bird if and only if robin can fly. 
-''outputMustContain('<<robin --> bird> <=> <robin --> [flying]>>. %0.70;0.45%')
+''outputMustContain('<<robin --> [flying]> <=> <robin --> bird>>. %0.70;0.45%')

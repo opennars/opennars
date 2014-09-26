@@ -9,6 +9,6 @@
 7
 
 'there is a lock with the property that when opened by something, this something is a key (induction)
-''outputMustContain('<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>. %1.00;0.45%')
+''outputMustContain('<(&&,<#1 --> (/,open,$2,_)>,<#1 --> lock>) ==> <$2 --> key>>. %1.00;0.45%')
 
 

@@ -9,5 +9,5 @@
 19
 
 'Robin is a type of animal if and only if robin can fly. 
-''outputMustContain('<<robin --> animal> <=> <robin --> [flying]>>. %0.90;0.81%')
+''outputMustContain('<<robin --> [flying]> <=> <robin --> animal>>. %0.90;0.81%')
 
