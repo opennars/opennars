@@ -33,7 +33,7 @@ import nars.entity.Task;
 public class InferenceLogger implements nars.inference.InferenceRecorder {
 
     public static interface LogOutput {
-        public void logAppend(String s);
+        public void traceAppend(String channel, String msg);
     }
     
     private final List<LogOutput> outputs = new CopyOnWriteArrayList<LogOutput>();
@@ -44,6 +44,9 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
     public InferenceLogger(PrintStream p) {
         addOutput(p);
     }
+    public InferenceLogger(LogOutput l) {
+        addOutput(l);        
+    }
     
     public void addOutput(LogOutput l) {
         outputs.add(l);
@@ -53,8 +56,8 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
         //TODO removeOutput(p)
         
         addOutput(new LogOutput() {
-            @Override public void logAppend(String s) {
-                p.println("    " + s);
+            @Override public void traceAppend(String channel, String s) {
+                p.println(channel + ": " + s);
             }
         });        
     }
@@ -68,19 +71,18 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
         return !outputs.isEmpty();
     }
 
-
-    @Override
-    public void append(String s) {
-        for (LogOutput o : outputs)
-            o.logAppend(s);
+    @Override public void append(final String channel, final String s) {
+        for (final LogOutput o : outputs)
+            o.traceAppend(channel, s);
     }
+
 
 
     
 
     @Override
     public void onCycleStart(long clock) {
-        append("@ " + clock);
+        append("@", String.valueOf(clock));
     }
 
     @Override
@@ -90,17 +92,17 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
 
     @Override
     public void onTaskAdd(Task task, String reason) {
-        append("Task Added (" + reason + "): " + task);
+        append("Task Add", reason + ": " + task);
     }
 
     @Override
-    public void onTaskRemove(Task task, String reason) {
-        append("Task Removed (" + reason + "): " + task);
+    public void onTaskRemove(Task task, String reason) {        
+        append("Task Remove", reason + ": " + task);
     }
     
     @Override
     public void onConceptNew(Concept concept) {
-        append("Concept Created: " + concept);
+        append("Concept Add", concept.toString());
     }    
     
     

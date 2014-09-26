@@ -145,8 +145,8 @@ public class InferenceTracer implements InferenceRecorder {
     }
 
     @Override
-    public void append(String s) {
-        addEvent(new Comment(t, s.trim()));
+    public void append(String channel, String s) {
+        addEvent(new Comment(t, channel + ": " + s.trim()));
     }
 
     @Override

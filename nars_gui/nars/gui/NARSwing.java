@@ -33,8 +33,8 @@ import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
+import nars.io.Log4JOutput;
 import nars.io.TextInput;
-import nars.io.TextOutput;
 
 /**
  * The main Swing GUI class of the open-nars project.  
@@ -84,7 +84,9 @@ public class NARSwing  {
             outputWindow.setVisible(true);
         }
         else {
-            new TextOutput(nar, System.out);
+            //new TextOutput(nar, System.out);
+            new Log4JOutput(nar, true);
+            
         }
         
         

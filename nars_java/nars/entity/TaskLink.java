@@ -128,4 +128,8 @@ public class TaskLink extends TermLink {
     public String toString() {
         return super.toString() + " " + getTargetTask().sentence.stamp;
     }
+    
+    public String toStringBrief() {
+        return super.toString();
+    }
 }
