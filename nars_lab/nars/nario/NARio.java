@@ -47,6 +47,10 @@ public class NARio extends Run {
     private static final int levelSeed = 0;
     private static final int levelType = LevelGenerator.TYPE_OVERGROUND;
 
+    static float impulsivity = 0.1f; //lower=more impulsive
+    
+    boolean autonomous = false;
+    
     private int[] prevKeyWeight = new int[6];
     private int[] keyWeight = new int[6];
     int[] keys = new int[]{Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
@@ -64,14 +68,14 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(5);
+        nar.param().duration.set(8);
         nar.param().noiseLevel.set(10);
         nar.param().shortTermMemorySize.set(1);
-        nar.param().decisionThreshold.set(0.3);
+        nar.param().decisionThreshold.set(impulsivity);
 
         NARio nario = new NARio(nar);
         new NARSwing(nar, false);
-        nar.start(30f,4);
+        nar.start(30f,50);
     }
 
     @Override
@@ -79,11 +83,13 @@ public class NARio extends Run {
         super.keyReleased(e);
         if (e.getKeyChar() == '[') {
             System.out.println("Autonomy Disabled; Learning");
+            autonomous = false;
             nar.param().decisionThreshold.set(1.0);
         }
         if (e.getKeyChar() == ']') {
             System.out.println("Autonomy Enabled");
-            nar.param().decisionThreshold.set(0.3);
+            autonomous = true;
+            nar.param().decisionThreshold.set(impulsivity);
         }
         if (e.getKeyChar() == 'i') {
             //new Window("Implications", new JGraphXGraphPanel(nar.memory.executive.graph.implication)).show(500,500);            
@@ -104,6 +110,42 @@ public class NARio extends Run {
 
             }
 
+        });
+        nar.memory.addOperator(new NullOperator("^moveLeft") {
+            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                /*if (autonomous)*/ {
+                    mario.keys[Mario.KEY_LEFT] = true;
+                    mario.keys[Mario.KEY_RIGHT] = false;
+                }
+                return super.execute(operation, args, memory);
+            }           
+        });
+        nar.memory.addOperator(new NullOperator("^moveRight") {
+            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                /*if (autonomous)*/ {
+                    mario.keys[Mario.KEY_LEFT] = false;
+                    mario.keys[Mario.KEY_RIGHT] = true;
+                }
+                return super.execute(operation, args, memory);
+            }           
+        });
+        nar.memory.addOperator(new NullOperator("^moveStop") {
+            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                /*if (autonomous)*/ {
+                    mario.keys[Mario.KEY_LEFT] = false;
+                    mario.keys[Mario.KEY_RIGHT] = false;
+                    mario.keys[Mario.KEY_JUMP] = false;
+                }
+                return super.execute(operation, args, memory);
+            }           
+        });
+        nar.memory.addOperator(new NullOperator("^moveJump") {
+            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                /*if (autonomous)*/ {
+                    mario.keys[Mario.KEY_JUMP] = !mario.keys[Mario.KEY_JUMP];                    
+                }
+                return super.execute(operation, args, memory);
+            }           
         });
 
         nar.memory.event.on(Events.FrameEnd.class, new Observer() {
@@ -146,7 +188,7 @@ public class NARio extends Run {
                         float dx = ((x - lastX) / 16.0f);
                         float dy = ((y - lastY) / 16.0f);
 
-                        float minMove = 0.5f; //in blocks
+                        float minMove = 0.25f; //in blocks
 
                         //if no movement, decrease priority of sense
                         if ((dx < minMove) && (dy < minMove)) {
@@ -180,6 +222,9 @@ public class NARio extends Run {
                             nar.addInput(/*"$" + movementPriority + "$"*/
                                     "<(*," + idx + "," + idy + /*"," + idist +*/ ") --> moved>. :|:");
 //                            }
+                        }
+                        else if (cyclesWithoutMove == 1) {
+                            nar.addInput("(^moveStop,x). :|:");
                         }
 
                     }
@@ -344,7 +389,8 @@ public class NARio extends Run {
                                         delta = -1;
                                     }
 
-                                    keyWeight[k] += delta;
+                                    //keyWeight[k] += delta;
+                                    
 
                                 }
 
@@ -382,23 +428,39 @@ public class NARio extends Run {
 
                     keyTime[k] = nextKeyTime;
                 }
-                for (int k : keys) {
-                    String ko = "keyboard" + k;
-                    if (keyWeight[k] > 0) {                                                
-                        if (prevKeyWeight[k] <= 0)
-                            nar.addInput("(^" + ko + ",on)!");
-                        mario.keys[k] = true;                        
-                        
-                    }
-                    else {
-                        if (prevKeyWeight[k] > 0)
-                            nar.addInput("(^" + ko + ",off)!");
-                        mario.keys[k] = false;
-                    }
-                }
+//                for (int k : keys) {
+//                    String ko = "keyboard" + k;
+//                    if (keyWeight[k] > 0) {                                                
+//                        if (prevKeyWeight[k] <= 0)
+//                            nar.addInput("(^" + ko + ",on)!");
+//                        mario.keys[k] = true;                        
+//                        
+//                    }
+//                    else {
+//                        if (prevKeyWeight[k] > 0)
+//                            nar.addInput("(^" + ko + ",off)!");
+//                        mario.keys[k] = false;
+//                    }
+//                }
                 System.arraycopy(keyWeight, 0, prevKeyWeight, 0, keyWeight.length);
                 Arrays.fill(keyWeight, 0);
+
+                /*if (!autonomous)*/ {
+                    if (mario.keys[Mario.KEY_LEFT]) {
+                        nar.addInput("(^moveLeft,x)!");
+                    }
+                    if (mario.keys[Mario.KEY_RIGHT]) {
+                        nar.addInput("(^moveRight,x)!");
+                    }
+                    if (mario.keys[Mario.KEY_JUMP]) {
+                        nar.addInput("(^moveJump,x)!");
+                    }
+                }
+                
+
             }
+            
+        
 
         });
 
