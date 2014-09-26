@@ -44,10 +44,10 @@ public class GraphExecutive implements Observer {
     boolean planningEnabled = true;
     
     /** number of tasks that are active in the sorted priority buffer for execution */
-    int numActiveTasks = 8;
+    int numActiveTasks = 16;
 
     /** max number of tasks that a plan can generate. chooses the N most confident */
-    int maxPlannedTasks = 2;
+    int maxPlannedTasks = 4;
     
     float searchDepth = 96;
     int particles = 64;
