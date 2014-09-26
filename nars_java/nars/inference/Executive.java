@@ -169,8 +169,8 @@ public class Executive {
             return;
         }
         
-        /*if(next.isEmpty())
-            execute((Operation)content, concept, task, false);*/
+        /*if(next.isEmpty())*/
+        execute((Operation)content, concept, task, false);
     }
     
       /** Add plausibility estimation */

@@ -38,11 +38,17 @@ import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
+import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
+import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Term;
+import nars.operator.Operation;
 import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
 import nars.storage.NullBagObserver;
@@ -286,11 +292,11 @@ public class Concept extends Item {
                 
                 addToTable(task, goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class, revised);
                 
-//                if (noRevision || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
-//                    //hm or conjunction in time and temporal order forward
-//                    
-//                    memory.executive.decisionMaking(task, this);
-//               }
+                if (!revised || (task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))) {
+                    //hm or conjunction in time and temporal order forward
+                    
+                    memory.executive.decisionMaking(task, this);
+               }
                 
             }
         }
