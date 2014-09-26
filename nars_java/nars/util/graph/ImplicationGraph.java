@@ -159,7 +159,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                             a = new UniqueInterval(st, (Interval)a, prev);
                         }
                     }
-                    if (GraphExecutive.validPlanComponent(a)) {
+                    if (GraphExecutive.isPlanTerm(a)) {
                         /*if (!prev.equals(a))*/ 
                         addVertex(a);
                             
@@ -196,7 +196,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             }
         }
         else {
-            if (GraphExecutive.validPlanComponent(subject)) {
+            if (GraphExecutive.isPlanTerm(subject)) {
                 addVertex(subject);
                 //newImplicationEdge(predicatePre, subject, c, s);
                 //newImplicationEdge(subject, predicatePost, c, s);                

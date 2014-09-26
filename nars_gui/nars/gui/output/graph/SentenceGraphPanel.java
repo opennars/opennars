@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.gui.NPanel;
 import nars.language.Term;
@@ -64,7 +65,9 @@ public class SentenceGraphPanel extends NPanel implements Observer {
 
             @Override
             public int vertexColor(final Term vertex) {
-                return PGraphPanel.getColor(vertex.getClass());
+                Concept c = nar.memory.concept(vertex);                
+                float alpha = (c!=null) ? (0.25f + 0.75f * c.getPriority()) : 0.25f;
+                return PGraphPanel.getColor(vertex.getClass().getSimpleName(), alpha);
                 //return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();        
             }
         };
