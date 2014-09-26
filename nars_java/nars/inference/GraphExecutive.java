@@ -15,6 +15,7 @@ import nars.core.Events.ConceptGoalAdd;
 import nars.core.Events.ConceptGoalRemove;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -42,10 +43,14 @@ public class GraphExecutive implements Observer {
 
     boolean planningEnabled = true;
     
-    int numTasks = 8;
-            
-    float searchDepth = 64;
-    int particles = 128;
+    /** number of tasks that are active in the sorted priority buffer for execution */
+    int numActiveTasks = 4;
+
+    /** max number of tasks that a plan can generate. chooses the N most confident */
+    int maxPlannedTasks = 7;
+    
+    float searchDepth = 96;
+    int particles = 64;
     
     @Deprecated Executive exec;
     
@@ -73,7 +78,7 @@ public class GraphExecutive implements Observer {
                 }
 
             }
-        }, numTasks) {
+        }, numActiveTasks) {
 
             @Override protected void reject(final TaskConcept t) {
                 removeTask(t.t);
@@ -124,7 +129,7 @@ public class GraphExecutive implements Observer {
                     System.out.println("Goal: " + t + " plannable=" + plannable + ", implgraph=" 
                             + implication.vertexSet().size() + "|" + implication.edgeSet().size());
                     if (plannable) {                    
-                        plan(concept, t, t.getContent(), searchDepth, '.');
+                        plan(concept, t, t.getContent(), searchDepth, '.', maxPlannedTasks);
                         return true;
                     }
                 }
@@ -172,7 +177,7 @@ public class GraphExecutive implements Observer {
 
         @Override
         public String toString() {
-            return "!" + Texts.n2(getMotivation()) + "! " + t.toString();
+            return "!" + Texts.n2(getMotivation()) + "." + sequence + "! " + t.toString();
         }
 
 
@@ -242,13 +247,11 @@ public class GraphExecutive implements Observer {
         
         Operator oper = op.getOperator();
         
-        System.out.println("ex2: " + op + " from " + task.toString());
+        //System.out.println("ex2: " + op + " from " + task.toString());
         
         op.setTask(task);
                         
         oper.call(op, memory);
-        
-        
     }
     
     
@@ -261,14 +264,16 @@ public class GraphExecutive implements Observer {
         if (tasks.size() == 0)
             return;
         
-        if (tasks.get(0).delayUntil==-1) {
-            if (tasks.size() > 1)  {
-                System.out.println("Tasks @ " + memory.getTime());
-                for (TaskConcept tcc : tasks)
-                    System.out.println("  " + tcc.toString());
-            }
-            else {
-                System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
+        if (NAR.DEBUG) {
+            if (tasks.get(0).delayUntil==-1) {
+                if (tasks.size() > 1)  {
+                    System.out.println("Tasks @ " + memory.getTime());
+                    for (TaskConcept tcc : tasks)
+                        System.out.println("  " + tcc.toString());
+                }
+                else {
+                    System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
+                }
             }
         }
         
@@ -279,30 +284,35 @@ public class GraphExecutive implements Observer {
         if (term instanceof Operation) {            
             execute((Operation)term, top); //directly execute
             top.setPriority(0);
+            return;
         }
         else if (term instanceof Conjunction) {
             Conjunction c = (Conjunction)term;
             if (c.operator() == NativeOperator.SEQUENCE) {
                 executeConjunctionSequence(topConcept, c);
+                return;
             }
             
         }
         else if (term instanceof Implication) {
             Implication it = (Implication)term;
-            if (it.getSubject() instanceof Conjunction) {
-                Conjunction c = (Conjunction)it.getSubject();
-                if (c.operator() == NativeOperator.SEQUENCE) {
-                    executeConjunctionSequence(topConcept, c);
+            if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
+                if (it.getSubject() instanceof Conjunction) {
+                    Conjunction c = (Conjunction)it.getSubject();
+                    if (c.operator() == NativeOperator.SEQUENCE) {
+                        executeConjunctionSequence(topConcept, c);
+                        return;
+                    }
+                }
+                else if (it.getSubject() instanceof Operation) {
+                    execute((Operation)it.getSubject(), top); //directly execute
+                    top.setPriority(0);
                     return;
                 }
             }
-            else if (it.getSubject() instanceof Operation) {
-                execute((Operation)it.getSubject(), top); //directly execute
-                top.setPriority(0);
-                return;
-            }
             throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
         }
+        
         
 //        //Example prediction
 //        if (memory.getCurrentBelief()!=null) {
@@ -354,7 +364,7 @@ public class GraphExecutive implements Observer {
 
         if (s == c.term.length) {
             //end of task
-            System.out.println("  Completed " + task);
+            //System.out.println("  Completed " + task);
             task.t.setPriority(0);
             removeTask(task.t);
         }
@@ -401,6 +411,15 @@ public class GraphExecutive implements Observer {
         
         Map<Term, ParticlePath> termPaths = new HashMap();
         boolean avoidCycles = true;
+        private int edgeDecisionPass = 0;
+        private int edgeDecisionFailCyclical = 0;
+        private int edgeDecisionFailInvalidVertex = 0;
+        private int edgeDecisionFailInactiveEdge = 0;
+        private int pathFailEmpty = 0;
+        private int pathFailNoOperation = 0;
+        private int pathsValid = 0;
+        private int numIterations = 0;
+        private TreeSet paths;
 
         public ParticleActivation(ImplicationGraph graph) {
             this.graph = graph;            
@@ -418,6 +437,8 @@ public class GraphExecutive implements Observer {
             
             for (int i = 0; i < iterations; i++) {            
 
+                numIterations++;
+                
                 currentPath.clear();
 
                 double energy = distance;
@@ -434,30 +455,43 @@ public class GraphExecutive implements Observer {
                             graph.incomingEdgesOf(current);
                     
                     nextEdges.clear();
-
+                    double totalProb = 0;
                     //remove edges which loop to the target goal precondition OR postcondition
                     for (final Sentence s : graphEdges) {
                         Term etarget = forward ?
                                 graph.getEdgeTarget(s) :
                                 graph.getEdgeSource(s);
                         
-                        if ((avoidCycles) && (etarget.equals(source)))
+                        if ((avoidCycles) && (etarget.equals(source))) {
+                            edgeDecisionFailCyclical++;
                             continue;
+                        }
                            
                         if (!validVertex(etarget)) {
+                            edgeDecisionFailInvalidVertex++;
                             continue;
                         }
-                        
-                        if (!etarget.equals(source)) {
-                            nextEdges.add(s);
-                            if (etarget instanceof Operation) {
-                                operationTraversed = true;
-                            }
+                                                
+                        double ew = graph.getEdgeWeight(s);
+                        if (ew >= ImplicationGraph.DEACTIVATED_EDGE_WEIGHT) {
+                            edgeDecisionFailInactiveEdge++;
+                            continue;
                         }
+
+                        edgeDecisionPass++;
+                        nextEdges.add(s);
+
+                        totalProb += 1.0 / ew;
+
+                        if (etarget instanceof Operation) {
+                            operationTraversed = true;
+                        }
+                        
                     }
 
 
                     if (nextEdges.isEmpty()) {
+                        //particle went as far as it can
                         break;
                     }                
 
@@ -472,24 +506,21 @@ public class GraphExecutive implements Observer {
 
                         //TODO disallow edge that completes cycle back to target or traversed edge?
                         //  probably an option to allow cycles
-
-                        double totalProb = 0;
-                        for (int j = 0; j < numEdges; j++) {
-                            totalProb += 1.0 / graph.getEdgeWeight(nextEdges.get(j));
-                        }
                         
                         double r = Memory.randomNumber.nextDouble() * totalProb;
+
+                        choicesAvailable = true;
 
                         int j;
                         for (j = 0; j < numEdges; j++) {
                             nextEdge = nextEdges.get(j);
                             r -= 1.0 / graph.getEdgeWeight(nextEdge);
                             if (r <= 0) {
+                                //selected the next Edge
                                 break;
-                            }                            
+                            }
                         }
 
-                        choicesAvailable = true;
                     }
 
                     double weight = graph.getEdgeWeight(nextEdge);                
@@ -499,13 +530,19 @@ public class GraphExecutive implements Observer {
                     currentPath.add(nextEdge);
 
                     current = forward ? graph.getEdgeTarget(nextEdge) : graph.getEdgeSource(nextEdge);
-
-                    if ((current == null) || (!graph.containsVertex(current)))
-                        break;
+//                    if ((current == null)  /*|| (!graph.containsVertex(current)*/) {                  
+//                        break;
+//                    }
                 }
 
-                if ((currentPath.isEmpty()) || (!operationTraversed))
+                if (currentPath.isEmpty()) {
+                    pathFailEmpty++;
+                    continue;
+                }
+                if (!operationTraversed) {
+                    pathFailNoOperation++;
                     continue;                        
+                }
 
                 ParticlePath ppath = termPaths.get(current);
                 if (ppath == null) {                    
@@ -524,6 +561,8 @@ public class GraphExecutive implements Observer {
                     ppath.activation = 1;
                     break;
                 }
+                
+                pathsValid++;
 
             }
 
@@ -540,7 +579,22 @@ public class GraphExecutive implements Observer {
                     p.activation /= maxAct;            
 
 
-            return new TreeSet(paths);
+            this.paths = new TreeSet(paths);
+            return this.paths;
+        }
+        
+        public String getStatus() {
+                    
+            return "iterations=" + numIterations + 
+                    ", pathsFound=" + paths.size() +
+                    ", pathsValid=" + pathsValid +
+                    ", pathEmpty=" + pathFailEmpty +
+                    ", pathNoOperations=" + pathFailNoOperation +
+                    ", edgeDecisionPass=" + edgeDecisionPass +
+                    ", edgeDecisionFailInactiveEdge=" + edgeDecisionFailInactiveEdge +
+                    ", edgeDecisionFailInvalidVertex=" + edgeDecisionFailInvalidVertex +
+                    ", edgeDecisionFailCyclical=" + edgeDecisionFailCyclical;
+            
         }
         
         public boolean validVertex(final Term x) {
@@ -550,17 +604,25 @@ public class GraphExecutive implements Observer {
         
     }
     
-    public static class ParticlePlan {
-        Sentence[] path;
-        List<Term> sequence;
-        public double distance;
-        private final double activation;
+    public static class ParticlePlan implements Comparable<ParticlePlan> {
+        public final Sentence[] path;
+        public final List<Term> sequence;
+        public final double distance;
+        public final double activation;
+        public final TruthValue truth;
+        public final BudgetValue budget;
 
-        public ParticlePlan(Sentence[] path, List<Term> sequence, double activation, double distance) {
+        public ParticlePlan(Memory memory, Sentence[] path, List<Term> sequence, double activation, double distance) {
             this.path = path;
             this.sequence = sequence;
             this.activation = activation;
             this.distance = distance;
+            
+            final float confidence = getMinConfidence();                
+            truth = new TruthValue(1.0f, confidence);
+            budget = BudgetFunctions.forward(truth, memory);
+            budget.andPriority(confidence);
+            
         }        
 
         public float getMinConfidence() {
@@ -574,6 +636,18 @@ public class GraphExecutive implements Observer {
             }
             return min;
         }
+
+        @Override public final int compareTo(final ParticlePlan o) {
+            return Float.compare(o.truth.getConfidence(), truth.getConfidence());
+        }
+
+        @Override
+        public String toString() {
+            return sequence + "(" + truth.getConfidence() + ";" + activation + ";"+ distance + ")";
+        }
+        
+        
+        
     }
     
     protected void particlePredict(final Term source, final double distance, final int particles) {
@@ -584,7 +658,7 @@ public class GraphExecutive implements Observer {
         
     }
     
-    protected ParticlePlan particlePlan(final Term target, final double distance, final int particles) {
+    protected TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles) {
         PostCondition targetPost = new PostCondition(target);
         
         if (!implication.containsVertex(targetPost)) {
@@ -595,14 +669,15 @@ public class GraphExecutive implements Observer {
         ParticleActivation act = new ParticleActivation(implication) {
             @Override public boolean validVertex(final Term x) {
                 //additional restriction on path's vertices
-                return !target.equals(x);
+                return !targetPost.equals(x);
             }            
         };
+        
         SortedSet<ParticlePath> roots = act.activate(targetPost, false, particles, distance);
+        System.out.println("  plan: " + act.getStatus());
         
 
-        if (roots == null) {
-            System.out.println("  plan fail: no roots");
+        if (roots == null) {            
             return null;
         }
 //        System.out.println("Particle paths for " + target);
@@ -610,11 +685,13 @@ public class GraphExecutive implements Observer {
 //            System.out.println("  " + pp);
 //        }
         
+        TreeSet<ParticlePlan> plans = new TreeSet();
         for (final ParticlePath pp : roots) {
 
             Sentence[] path = pp.path;
             
-            if (path.length == 0) continue;
+            if (path.length == 0)
+                throw new RuntimeException("ParticlePath empty: " + pp);
             
             int operations = 0;
             
@@ -638,6 +715,9 @@ public class GraphExecutive implements Observer {
                     if (!isInterval) {
                         nonIntervalAdded = true;
                         if (accumulatedDelay > 0) {
+                            //TODO calculate a more fine-grained sequence of itnervals
+                            //rather than just rounding to the nearest.
+                            //ex: +2,+1 may be more accurate than a +3
                             seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
                             accumulatedDelay = 0;
                         }
@@ -657,7 +737,7 @@ public class GraphExecutive implements Observer {
                         int temporal = (s.content).getTemporalOrder();
                                                 
                         //only accumulate delay if the temporal rule involves time difference
-                        if ((temporal == TemporalRules.ORDER_FORWARD) || (temporal == TemporalRules.ORDER_BACKWARD)) {
+                        if (temporal == TemporalRules.ORDER_FORWARD) {
                             
                             accumulatedDelay++;
                         }
@@ -680,32 +760,23 @@ public class GraphExecutive implements Observer {
             if (seq.isEmpty())
                 continue;
 
-            System.out.println("  cause: " + Arrays.toString(path));
-
-            return new ParticlePlan(path, seq, pp.activation, pp.distance);
+            //System.out.println("  cause: " + Arrays.toString(path));
+            ParticlePlan rp = new ParticlePlan(memory, path, seq, pp.activation, pp.distance);
+            plans.add(rp);
+            System.out.println("  plan " + plans.size() + ": " + rp + " ");
         }
         
-        System.out.println("  no eligible roots: " + roots.size());
-        
-        return null;
+        return plans;
     } 
-
-   protected void plan(Concept c, Task task, Term target, double searchDistance, char punctuation) {
-
-        if (!implication.containsVertex(target))
-            return;
-
-        ParticlePlan plan = particlePlan(target, searchDistance, particles);
-        if (plan == null) {
-            System.out.println("  plan failure, vert degree=" + implication.inDegreeOf(target) + "|" + implication.outDegreeOf(target));
-            return;
-        }
+    
+    protected void planTask(ParticlePlan plan, Task task, Term target, char punctuation) {        
+        
+        TruthValue truth = plan.truth;
+        BudgetValue budget = plan.budget;
+        
         Sentence[] path = plan.path;
         List<Term> seq = plan.sequence;
-        if (seq.isEmpty()) {
-            System.out.println("  plan failure: sequence empty");
-            return;
-        }
+ 
         
         Sentence currentEdge = path[path.length-1];
 
@@ -722,37 +793,15 @@ public class GraphExecutive implements Observer {
         //memory.setCurrentTask(task);
         
         //remove final element from path if it's equal to target
-        if (seq.get(seq.size()-1).equals(target)) {
+        /*if (seq.get(seq.size()-1).equals(target)) {
             seq.remove(seq.size()-1);
-        }
+        }*/
 
         Term subj = seq.size() > 1 ?
             Conjunction.make(seq.toArray(new Term[seq.size()]), TemporalRules.ORDER_FORWARD, memory)
                 :
             seq.get(0);
         
-        
-        //System.out.println(" -> Graph PATH: " + subj + " =\\> " + target);
-
-        //double planDistance = Math.min(plan.distance, searchDistance);
-        float confidence = 0; //(float)plan.activation; // * planDistance/searchDistance;
-        
-       // TruthValue truth=null; //use truth value according to NAL instead:
-        for(Sentence s : path) {
-            if(confidence==0) {
-                confidence=s.truth.getConfidence(); //truth of first element
-            }
-            else {
-                if(s.truth.getConfidence()<confidence) {
-                    confidence=s.truth.getConfidence();
-                }
-                //truth=TruthFunctions.deduction(truth, truth);
-            }
-        }
-        
-        
-        
-        TruthValue truth = new TruthValue(1.0f, confidence);
         
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
 
@@ -762,19 +811,29 @@ public class GraphExecutive implements Observer {
             throw new RuntimeException("Invalid implication: " + subj + " =\\> " + target);
         }
         
-        BudgetValue bud = BudgetFunctions.forward(truth, memory);
-        bud.andPriority(confidence);
         
-        Task newTask = new Task(new Sentence(imp, punctuation, truth, stamp), bud, task);
+        Task newTask = new Task(new Sentence(imp, punctuation, truth, stamp), budget, task);
         
-        System.out.println("  -> Plan: " + newTask);
-
-        //memory.doublePremiseTask(imp, val, bud);
-        //memory.inputTask(t);
-        
-        //exec.decisionMaking2(t);
+        System.out.println("  PlanTask: " + newTask);
         
         memory.derivedTask(newTask, false, true, null, null);
+        
+    }
+
+   protected void plan(Concept c, Task task, Term target, double searchDistance, char punctuation, int maxTasks) {
+
+        if (!implication.containsVertex(target))
+            return;
+
+        TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
+        int n = 0;
+        System.out.println(" sorted plans: " + plans);
+        for (ParticlePlan p : plans) {
+            planTask(p, task, target, punctuation);
+            if (n++ == maxTasks)
+                break;
+        }
+       
     }
     
     protected void plan(Task task, Task __not_used_newEvent) {

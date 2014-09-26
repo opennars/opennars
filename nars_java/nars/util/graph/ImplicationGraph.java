@@ -27,14 +27,18 @@ public class ImplicationGraph extends SentenceItemGraph {
     Map<Sentence, List<Sentence>> components = new HashMap();
     
 
+    public static final double DEACTIVATED_EDGE_WEIGHT = 10000f;
+    
+    /** threshold for an edge to be active; 0 will include all edges to some degree */
+    double minEdgeStrength = 0.1;
+    
     float minConfidence = 0.1f;
-    float minFreq = 0.6f;
+    float minFreq = 0.1f;
     
     /** how much a completely dormant concept's priority will contribute to the weight calculation.
      *  any value between 0 and 1.0 is valid.  
-     *  factor = dormantConceptInfluence + (1.0 - dormantConceptInfluence) * concept.priority
-     */
-    float dormantConceptInfluence = 0.25f; 
+     *  factor = dormantConceptInfluence + (1.0 - dormantConceptInfluence) * concept.priority  */
+    float dormantConceptInfluence = 0.1f; 
 
     public ImplicationGraph(NAR nar) {
         this(nar.memory);
@@ -275,6 +279,9 @@ public class ImplicationGraph extends SentenceItemGraph {
         if ((o == Symbols.NativeOperator.IMPLICATION_WHEN) || (o == Symbols.NativeOperator.IMPLICATION_BEFORE) || (o == Symbols.NativeOperator.IMPLICATION_AFTER)) {
             return true;
         }
+        else {
+            System.err.println(this + " disallow " + st);
+        }
         return false;
     }
 
@@ -295,16 +302,21 @@ public class ImplicationGraph extends SentenceItemGraph {
     /** weight = cost = distance */
     @Override public double getEdgeWeight(Sentence e) {
         //transitions to PostCondition vertices are free or low-cost
-        if (getEdgeTarget(e) instanceof PostCondition)
-            return 0.1;
+        double conceptPriority = concepts.get(e).getPriority();
+        conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
+        
+        if (getEdgeTarget(e) instanceof PostCondition) {
+            return 1.0 * conceptPriority;
+        }
         
         float freq = e.truth.getFrequency();
         float conf = e.truth.getConfidence();        
-        float conceptPriority = concepts.get(e).getPriority();
         
-        //return 1.0 / (freq * conf * conceptPriority);
-        
-        return 1.0 / (freq * conf * (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority));
+        double strength = (freq * conf * conceptPriority);
+        if (strength > minEdgeStrength)
+            return 1.0 / strength;
+        else
+            return DEACTIVATED_EDGE_WEIGHT;
     }
 
     @Override
