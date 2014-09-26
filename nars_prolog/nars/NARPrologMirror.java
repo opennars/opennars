@@ -203,7 +203,7 @@ public class NARPrologMirror implements Output {
             else if (arity == 1) {
                 switch (predicate) {
                     case "negation":
-                        return Negation.make(nterm(s.getArg(0)), mem);
+                        return Negation.make(nterm(s.getArg(0)));
                 }
             }
             else if (arity == 2) {                

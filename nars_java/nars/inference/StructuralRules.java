@@ -655,8 +655,8 @@ public final class StructuralRules {
         Term pred = statement.getPredicate();
         
         Term content = Statement.make(statement, 
-                Negation.make(pred, memory), 
-                Negation.make(subj, memory), 
+                Negation.make(pred), 
+                Negation.make(subj), 
                 TemporalRules.reverseOrder(statement.getTemporalOrder()), 
                 memory);                
         

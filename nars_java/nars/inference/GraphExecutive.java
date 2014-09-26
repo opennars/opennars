@@ -15,6 +15,7 @@ import nars.core.Events.ConceptGoalAdd;
 import nars.core.Events.ConceptGoalRemove;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -43,13 +44,13 @@ public class GraphExecutive implements Observer {
     boolean planningEnabled = true;
     
     /** number of tasks that are active in the sorted priority buffer for execution */
-    int numActiveTasks = 32;
+    int numActiveTasks = 16;
 
     /** max number of tasks that a plan can generate. chooses the N most confident */
-    int maxPlannedTasks = 8;
+    int maxPlannedTasks = 4;
     
     float searchDepth = 64;
-    int particles = 32;
+    int particles = 64;
     
     /** controls the relative weigting of edges and vertices for particle traversals */
     double conceptCostFactor = 0.3;
@@ -116,12 +117,17 @@ public class GraphExecutive implements Observer {
         if (concept != null) {
             if (concept.getDesire()!=null)
                 if (concept.getDesire().getExpectation() < memory.param.decisionThreshold.get()) {
+                    if (memory.getRecorder().isActive())
+                        memory.getRecorder().append("Goal Ignore (insufficient desire)", t.toString());
                     return false;
                 }
-        }
-            
+        }            
 
         if (!tasks.contains(t)) {
+            if (memory.getRecorder().isActive())
+               memory.getRecorder().append("Goal Add", t.toString());
+            
+            
             //incoming task
             Term c = t.getContent();
             if ((c instanceof Operation) || isSequenceConjunction(c))  {
@@ -131,8 +137,6 @@ public class GraphExecutive implements Observer {
             else {
                 if (planningEnabled) {
                     boolean plannable = isPlannable(t.getContent());
-                    System.out.println("Goal: " + t + " plannable=" + plannable + ", implgraph=" 
-                            + implication.vertexSet().size() + "|" + implication.edgeSet().size());
                     if (plannable) {                    
                         plan(concept, t, t.getContent(), searchDepth, '!', maxPlannedTasks);
                         return true;
@@ -141,7 +145,7 @@ public class GraphExecutive implements Observer {
             }
         }
         else {
-            System.err.println("Duplicate task: " + t);
+            //System.err.println("Duplicate task: " + t);
         }
         return false;
         
@@ -288,6 +292,9 @@ public class GraphExecutive implements Observer {
                         
         } else if (event == ConceptGoalRemove.class) {
             Task t = (Task) a[2];
+            if (memory.getRecorder().isActive())
+               memory.getRecorder().append("Goal Remove", t.toString());
+            
             //removeTask(t);
             //System.out.println("Goal rem: " + a[0] + " " + a[1] + " " + t.budget);
         } else if (event == CycleEnd.class) {
@@ -315,8 +322,6 @@ public class GraphExecutive implements Observer {
         
         Operator oper = op.getOperator();
         
-        System.out.println("ex2: " + op + " from " + task.toString());
-        
         op.setTask(task);
                         
         oper.call(op, memory);
@@ -330,7 +335,7 @@ public class GraphExecutive implements Observer {
         if (tasks.size() == 0)
             return;
         
-        /*if (NAR.DEBUG)*/ {
+        if (NAR.DEBUG) {
             if (tasks.get(0).delayUntil==-1) {
                 if (tasks.size() > 1)  {
                     System.out.println("Tasks @ " + memory.getTime());
@@ -779,7 +784,7 @@ public class GraphExecutive implements Observer {
         PostCondition targetPost = new PostCondition(target);
         
         if (!implication.containsVertex(targetPost)) {
-            System.out.println("  plan for " + target + ": missing postCondition vertex");
+            //System.out.println("  plan for " + target + ": missing postCondition vertex");
             return null;
         }
         
@@ -791,7 +796,7 @@ public class GraphExecutive implements Observer {
         };
         
         SortedSet<ParticlePath> roots = act.activate(targetPost, false, particles, distance);
-        System.out.println("  plan: " + act.getStatus());
+        //System.out.println("  plan: " + act.getStatus());
         
 
         if (roots == null) {            
@@ -930,8 +935,9 @@ public class GraphExecutive implements Observer {
         
         Task newTask = new Task(new Sentence(imp, punctuation, truth, stamp), budget, task);
         
-        System.out.println("  PlanTask: " + newTask);
-        
+        if (memory.getRecorder().isActive())
+               memory.getRecorder().append("Plan Add", newTask.toString());
+
         memory.derivedTask(newTask, false, true, null, null);
         
     }
@@ -951,41 +957,41 @@ public class GraphExecutive implements Observer {
        
     }
     
-    protected void plan(Task task, Task __not_used_newEvent) {
-
-        Term t = task.getContent();
-        if (t == null) return;
-        
-        if ((t instanceof Implication) && (t.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
-            
-            System.out.println("plan: task=" + task + " newEvent=" + __not_used_newEvent);
-
-            Implication i = (Implication) t;
-            Term target;
-            
-            //implication.add(task.sentence);
-
-            if (i.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                target = i.getPredicate();
-            } else {
-                //TODO reverse it
-                target = i.getSubject();
-            }
-
-            if (target != null) {
-                System.err.println("plan: " + target);
-                System.exit(1);
-                ///plan(task, target, ...);
-            }
-        }
-
-//        System.out.println("Goals");        
-//        for (Task t : tasks) {
-//            System.out.println(t + " " + t.getParentBelief());
-//            //System.out.println(getImplicationPath(t.getParentBelief()));
+//    protected void plan(Task task, Task __not_used_newEvent) {
+//
+//        Term t = task.getContent();
+//        if (t == null) return;
+//        
+//        if ((t instanceof Implication) && (t.getTemporalOrder()!=TemporalRules.ORDER_NONE)) {
+//            
+//            //System.out.println("plan: task=" + task + " newEvent=" + __not_used_newEvent);
+//
+//            Implication i = (Implication) t;
+//            Term target;
+//            
+//            //implication.add(task.sentence);
+//
+//            if (i.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+//                target = i.getPredicate();
+//            } else {
+//                //TODO reverse it
+//                target = i.getSubject();
+//            }
+//
+//            if (target != null) {
+//                System.err.println("plan: " + target);
+//                System.exit(1);
+//                ///plan(task, target, ...);
+//            }
 //        }
-//        System.out.println();        
-    }
+//
+////        System.out.println("Goals");        
+////        for (Task t : tasks) {
+////            System.out.println(t + " " + t.getParentBelief());
+////            //System.out.println(getImplicationPath(t.getParentBelief()));
+////        }
+////        System.out.println();        
+//    }
 
 //    public String getImplicationPath(Sentence s) {
 //        Term t = s.content;
@@ -1003,60 +1009,60 @@ public class GraphExecutive implements Observer {
 //        
 //    }
 //    
+
+    /** TODO */
     public void reset() {
     }
 
-    public void manageExecution() {
-    }
 
-    public boolean isActionable(final Task newEvent, Memory mem) {
-        /*if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
-         return false;
-         }*/
-
-        Term newcontent = newEvent.sentence.content;
-        if (newcontent instanceof Operation) {
-            Term pred = ((Operation) newcontent).getPredicate();
-            if (pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
-                return false;
-            }
-        }
-
-        plan(newEvent, (Task)null);
-
-        return true;
-    }
-
-    public boolean isActionable(final Task task, final Task newEvent) {
-
-        plan(task, newEvent);
-        return true;
-
-        /*
-         if (task.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL) {
-         return false;
-         }
-        
-         if (!task.sentence.isJudgment()) {
-         return false;
-         }
-         */
-//        if ((newEvent == null)
-//                || (rankBelief(newEvent.sentence) < rankBelief(task.sentence))) {
-//            
-//            return true;
-//            
-//            /*return 
-//                ((shortTermMemory.isEmpty()                     
-//                    ||                    
-//                !equalSubTermsInRespectToImageAndProduct(
-//                            shortTermMemory.getLast().getContent(),
-//                            task.getContent()))
-//            );
-//                    */
-//        }        
-        //return false;        
-    }
+//    public boolean isActionable(final Task newEvent, Memory mem) {
+//        /*if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
+//         return false;
+//         }*/
+//
+//        Term newcontent = newEvent.sentence.content;
+//        if (newcontent instanceof Operation) {
+//            Term pred = ((Operation) newcontent).getPredicate();
+//            if (pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
+//                return false;
+//            }
+//        }
+//
+//        plan(newEvent, (Task)null);
+//
+//        return true;
+//    }
+//
+//    public boolean isActionable(final Task task, final Task newEvent) {
+//
+//        plan(task, newEvent);
+//        return true;
+//
+//        /*
+//         if (task.sentence.stamp.getOccurrenceTime() == Stamp.ETERNAL) {
+//         return false;
+//         }
+//        
+//         if (!task.sentence.isJudgment()) {
+//         return false;
+//         }
+//         */
+////        if ((newEvent == null)
+////                || (rankBelief(newEvent.sentence) < rankBelief(task.sentence))) {
+////            
+////            return true;
+////            
+////            /*return 
+////                ((shortTermMemory.isEmpty()                     
+////                    ||                    
+////                !equalSubTermsInRespectToImageAndProduct(
+////                            shortTermMemory.getLast().getContent(),
+////                            task.getContent()))
+////            );
+////                    */
+////        }        
+//        //return false;        
+//    }
 
 //    /** doesnt work yet and may not be necessary */
 //
