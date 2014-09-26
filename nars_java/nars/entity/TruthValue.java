@@ -203,7 +203,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
      */
-    public StringBuilder appendString(final StringBuilder sb, boolean external) {
+    public StringBuilder appendString(final StringBuilder sb, final boolean external) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {

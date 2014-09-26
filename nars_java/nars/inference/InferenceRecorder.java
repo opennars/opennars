@@ -13,7 +13,11 @@ public interface InferenceRecorder {
      *
      * @param s The line to be displayed
      */
-    public void append(String s);
+    public void append(String channel, String s);
+    
+    default public void append(String s) {
+        append("Inference", s);
+    }
 
     /** when a concept is instantiated */
     public void onConceptNew(Concept concept);

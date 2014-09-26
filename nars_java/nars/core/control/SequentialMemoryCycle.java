@@ -52,7 +52,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         if (currentConcept != null) {            
             
             if (m.getRecorder().isActive()) {
-                m.getRecorder().append("Concept Selected: " + currentConcept.term);
+                m.getRecorder().append("Concept Select", currentConcept.term.toString());
             }
                         
             currentConcept.fire();

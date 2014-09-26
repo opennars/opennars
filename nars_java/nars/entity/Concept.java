@@ -581,7 +581,7 @@ public class Concept extends Item {
 
         for (Sentence belief : beliefs) {
             if (memory.getRecorder().isActive()) {
-                memory.getRecorder().append(" * Selected Belief: " + belief);
+                memory.getRecorder().append("Belief Select", belief.toString());
             }
 
             memory.setTheNewStamp(make(taskStamp, belief.stamp, currentTime));
@@ -629,8 +629,8 @@ public class Concept extends Item {
         
         memory.setCurrentTaskLink(currentTaskLink);
         memory.setCurrentBeliefLink(null);
-        if (memory.getRecorder().isActive()) {
-            memory.getRecorder().append(" * Selected TaskLink: " + currentTaskLink);
+        if (memory.getRecorder().isActive()) {            
+            memory.getRecorder().append("TaskLink Select", currentTaskLink.toStringBrief());            
         }
         final Task task = currentTaskLink.getTargetTask();
         memory.setCurrentTask(task);  // one of the two places where this variable is set
@@ -644,8 +644,8 @@ public class Concept extends Item {
             while (termLinkCount > 0) {
                 final TermLink termLink = selectTermLink(currentTaskLink, memory.getTime());
                 if (termLink != null) {
-                    if (memory.getRecorder().isActive()) {
-                        memory.getRecorder().append(" * Selected TermLink: " + termLink);
+                    if (memory.getRecorder().isActive()) {                        
+                        memory.getRecorder().append("TermLink Select", termLink.toString());
                     }
                     memory.setCurrentBeliefLink(termLink);
                     

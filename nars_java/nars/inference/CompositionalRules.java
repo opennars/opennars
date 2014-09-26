@@ -968,7 +968,7 @@ public final class CompositionalRules {
             }
 
             if (memory.getRecorder().isActive()) {
-                memory.getRecorder().append(" * Selected Concept (For Second Layer Unification): " + second.term);
+                memory.getRecorder().append("Concept Select (Unification 2nd Layer)", second.term.toString());
             }            
 
 

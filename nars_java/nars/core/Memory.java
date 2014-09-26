@@ -505,7 +505,7 @@ public class Memory implements Output, Serializable {
                 logic.CONCEPT_NEW.commit(term.getComplexity());
                         
                 if (recorder.isActive()) {
-                    recorder.onConceptNew(concept);
+                    recorder.onConceptNew(newConcept);
                 }
                 return newConcept;
             }
@@ -771,7 +771,7 @@ public class Memory implements Output, Serializable {
                 BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
                 Task newTask = new Task(j, budg,Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
                 if (getRecorder().isActive()) {
-                    getRecorder().append("Named: " + j.toString());
+                    getRecorder().append("Abbreviate", j.toString());
                 }
                 output(newTask);
                 addNewTask(newTask, "Derived (abbreviated)");
@@ -801,7 +801,7 @@ public class Memory implements Output, Serializable {
                         BudgetValue budg=(BudgetValue) task.budget.clone();
                         Task newTask = new Task(j, budg,task);
                         if (getRecorder().isActive()) {
-                            this.recorder.append("Counted: " + j.toString());
+                            this.recorder.append("Cardinality", j.toString());
                         }
                         output(newTask);
                         addNewTask(newTask, "Derived (cardinality)");
@@ -1128,7 +1128,7 @@ public class Memory implements Output, Serializable {
         setCurrentTask(task); // one of the two places where this variable is set
         
         if (recorder.isActive()) {
-            recorder.append("Task Immediately Processed: " + task);
+            recorder.append("Task Immediate Process", task.toString());
         }
         
         setCurrentTerm(task.getContent());
@@ -1340,7 +1340,7 @@ public class Memory implements Output, Serializable {
         
         @Override public boolean isActive() { return false;  }
 
-        @Override public void append(String s) {        }
+        @Override public void append(String channel, String s) {        }
 
         @Override public void onCycleStart(long clock) {        }
         @Override public void onCycleEnd(long clock) {        }                
@@ -1416,7 +1416,7 @@ public class Memory implements Output, Serializable {
                 task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
         Task newTask = new Task(j, (BudgetValue) newbudget,Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
         if (getRecorder().isActive()) {
-            recorder.append("Remembered: " + j.toString());
+            recorder.append("Action Remembered", j.toString());
         }
         newTasks.add(newTask);
     }
