@@ -23,7 +23,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 public class SentenceGraphPanel extends NPanel implements Observer {
     
     private final SentenceGraph sentence;
-    private ProcessingGraphPanel pgraph;
+    private ProcessingGraphPanel2 pgraph;
     int minFrameTime = 1500; //ms
     long lastFrame = 0;
     private final NAR nar;
@@ -39,7 +39,7 @@ public class SentenceGraphPanel extends NPanel implements Observer {
         this.sentenceCopy = (DirectedMultigraph) sentence.clone();
 
         
-        pgraph = new ProcessingGraphPanel<Term,Sentence>() {
+        pgraph = new ProcessingGraphPanel2<Term,Sentence>() {
             @Override public DirectedMultigraph<Term,Sentence> getGraph() {
                 return sentenceCopy;
             }            

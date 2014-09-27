@@ -27,7 +27,7 @@ import static processing.core.PConstants.UP;
  */
 
 
-abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PApplet {
+abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
 
     int mouseScroll = 0;
 
@@ -66,16 +66,16 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
     boolean autofetch = true;
     private int MAX_UNSELECTED_LABEL_LENGTH = 32;
     boolean updateNext;
-    float nodeSize = 10;
+    float nodeSize = 7;
 
     float lineAlpha = 0.75f;
     float lineWidth = 3.8f;
 
-    Map<Object, VertexDisplay> vertices = new HashMap();
-    Set<Object> deadVertices = new HashSet();
-    Map<Class, Integer> edgeColors = new HashMap(16);
+    Map<V, VertexDisplay> vertices = new HashMap();
+    Set<V> deadVertices = new HashSet();
+    Map<Object, Integer> edgeColors = new HashMap(16);
 
-    private G currentGraph;
+    private DirectedMultigraph<V,E> currentGraph;
     boolean showSyntax;
 
     //bounds of last positioned vertices
@@ -87,7 +87,7 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
         init();
     }
 
-    class VertexDisplay {
+    public class VertexDisplay {
 
         float x, y, tx, ty;
         int color;
@@ -213,6 +213,21 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
             }
         }
 
+        public void setPosition(final float x, final float y) {
+            this.tx = x; this.ty = y;
+        }
+
+        public void movePosition(final float dx, final float dy) {
+            this.tx += dx; this.ty += dy;
+        }
+
+        public float getX() { return tx; }
+        public float getY() { return ty; }
+
+        public float getRadius() {
+            return radius*nodeSize;
+        }
+
     }
 
     @Override
@@ -221,7 +236,9 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
         drawn = false;
     }
 
-    public VertexDisplay updateVertex(Object o) {
+    public VertexDisplay updateVertex(final V o) {
+        deadVertices.remove(o);
+        
         VertexDisplay v = vertices.get(o);
         if (v != null) {
             v.update(o);
@@ -229,12 +246,14 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
         }
         v = new VertexDisplay(o);
 
+        
+        
         vertices.put(o, v);
 
         return v;
     }
 
-    public int getEdgeColor(Object e) {
+    public int getEdgeColor(E e) {
         Integer i = edgeColors.get(e.getClass());
         if (i == null) {
             i = PGraphPanel.getColor(e.getClass().getSimpleName());
@@ -274,7 +293,7 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
         hsim.mousePressed();
     }
 
-    abstract protected G getGraph();
+    abstract protected DirectedMultigraph<V,E> getGraph();
     abstract protected boolean hasUpdate();
     
     /**
@@ -297,14 +316,19 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
                 }
 
 
-                for (final Object v : deadVertices)
+                for (final V v : deadVertices)
                     vertices.remove(v);
             }
 
+            updateVertices();
             drawn = false;
         }
     }
 
+    /** called after the graph has updated the current set of vertices; override to layout */
+    protected void updateVertices() {
+        
+    }
     
     @Override
     public void draw() {
@@ -363,7 +387,7 @@ abstract class ProcessingGraphCanvas<G extends DirectedMultigraph> extends PAppl
 
             int numEdges = currentGraph.edgeSet().size();
             if (numEdges < maxEdges) {
-                for (final Object edge : currentGraph.edgeSet()) {
+                for (final E edge : currentGraph.edgeSet()) {
 
                     final VertexDisplay elem1 = vertices.get(currentGraph.getEdgeSource(edge));
                     final VertexDisplay elem2 = vertices.get(currentGraph.getEdgeTarget(edge));

@@ -17,7 +17,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NARSwing;
 import nars.gui.Window;
-import nars.gui.output.graph.ProcessingGraphPanel;
+import nars.gui.output.graph.ProcessingGraphPanel2;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.util.NARGraph;
@@ -93,7 +93,7 @@ public class SentenceTablePanel extends TablePanel {
     }
 
     public void newSelectedGraphPanel() {
-        ProcessingGraphPanel pgp = new ProcessingGraphPanel(getSelectedRows(1)) {
+        ProcessingGraphPanel2 pgp = new ProcessingGraphPanel2(getSelectedRows(1)) {
 
             @Override
             public DirectedMultigraph getGraph() {
