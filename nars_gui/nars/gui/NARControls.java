@@ -48,16 +48,18 @@ import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.LogPanel;
-import nars.gui.output.graph.MemoryView;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
 import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
+import nars.gui.output.graph.AnimatedProcessingGraphCanvas;
+import nars.gui.output.graph.MemoryView;
 import nars.gui.output.graph.SentenceGraphPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.util.graph.InheritanceGraph;
 
 
 public class NARControls extends JPanel implements ActionListener, Observer {
@@ -212,24 +214,34 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             m.add(ml);
 
             
-            JMenuItem mv = new JMenuItem("+ Memory View");
+            JMenuItem mv = new JMenuItem("+ Concept Graph");
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Memory View", new MemoryView(nar)).show(500, 500);
+                    new Window("Concept Graph", new MemoryView(nar)).show(500, 500);
                 }
             });
             m.add(mv);
 
             
-            JMenuItem imv = new JMenuItem("+ Implication View");
+            JMenuItem imv = new JMenuItem("+ Implication Graph");
             imv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Implications", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
+                    new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
                 }
             });
             m.add(imv);
+
+            JMenuItem sg = new JMenuItem("+ Inheritance Graph");
+            sg.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new Window("Inheritance Graph", new AnimatedProcessingGraphCanvas(new InheritanceGraph(nar))).show(500, 500);
+                }
+            });
+            m.add(sg);
+            
             
             JMenuItem st = new JMenuItem("+ Sentence Table");
             st.addActionListener(new ActionListener() {

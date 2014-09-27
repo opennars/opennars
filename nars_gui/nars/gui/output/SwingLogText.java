@@ -1,10 +1,18 @@
 package nars.gui.output;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -16,7 +24,9 @@ import nars.io.Output.OUT;
 public class SwingLogText extends SwingText implements Output {
     private final NAR nar;
     public boolean showStamp = false;
-    final List<LogLine> pendingDisplay = new ArrayList();
+    final Deque<LogLine> pendingDisplay = new ConcurrentLinkedDeque<>();
+    private JScrollPane scroller;
+
 
     
     public static class LogLine {
@@ -36,17 +46,80 @@ public class SwingLogText extends SwingText implements Output {
         super();
         
         this.nar = n;
+        
     }
 
+//    @Override
+//    public void paint(Graphics g) {
+//        super.paint(g); //To change body of generated methods, choose Tools | Templates.
+//        if (isVisible()) {
+//
+////            try {
+////
+////                TextUI mapper = getUI();
+////
+////                
+////                Rectangle r = mapper.modelToView(this, getCaretPosition());
+////                System.out.println("caret: " + r);
+////
+////            } catch (Exception e) {
+////
+////                System.err.println("Problem painting cursor");
+////
+////            }
+//
+//            //scrollUpdate();
+//        }
+//
+//    }
+    
+    void setScroller(JScrollPane scroller) {
+        this.scroller = scroller;
+        scroller.getViewport().addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    
+                    //scrollUpdate();
+
+                }
+            });
+    }
+
+    protected void scrollUpdate() {
+        int docLen = doc.getLength();
+        if (docLen > 0) {
+            //JViewport viewport = (JViewport) e.getSource();
+            Rectangle viewRect = scroller.getViewport().getViewRect();
+
+            Point p = viewRect.getLocation();
+            int startIndex = viewToModel(p);
+
+            p.x += viewRect.width;
+            p.y += viewRect.height;
+            int endIndex = viewToModel(p);
+
+            for (int offset = endIndex; offset < startIndex;) {
+                try {
+                    //System.out.println(" " + offset);
+                    
+                    onLineVisible(offset);
+                    
+                    offset = Utilities.getRowStart(SwingLogText.this, offset) - 1;
+                    
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(SwingLogText.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            //System.out.println("< -- (" + endIndex + ", " + startIndex);
+        }        
+    }
+    
+    protected void onLineVisible(int offset) { }
     
     @Override
-    public void output(final Class c, final Object o) {
-        final LogLine ll = new LogLine(c, o);
+    public void output(final Class c, final Object o) {        
+        pendingDisplay.addLast(new LogLine(c, o));
                 
-        synchronized (pendingDisplay) {            
-            pendingDisplay.add(ll);
-        }
-        
         if (pendingDisplay.size() >= 1) {
             SwingUtilities.invokeLater(update);
         }        
@@ -54,30 +127,25 @@ public class SwingLogText extends SwingText implements Output {
     
     public final Runnable update = new Runnable() {
         
-        List<LogLine> toDisplay = new ArrayList();
+        
         
         @Override public void run() {
-            limitBuffer();
             
-            synchronized (pendingDisplay) {
-                toDisplay.addAll(pendingDisplay);
-                pendingDisplay.clear();
+            while (pendingDisplay.size() > 0) {
+                LogLine l = pendingDisplay.removeLast();
+                print(l.c, l.o);                
             }
-            int displayCount = toDisplay.size();
-            for (int i = 0; i < displayCount; i++) {
-                LogLine l = toDisplay.get(i);
-                print(l.c, l.o);
-            }
-            toDisplay.clear();
+
+            limitBuffer();
             
         }
     };
     
     
-    protected void print(final Class c, final Object o)  {        
-        //Color defaultColor = Color.WHITE;
+    protected synchronized int print(Class c, Object o)  {        
 
         float priority = 1f;
+        
         if (c!=OUT.class) {
             //pad the channel name to max 6 characters, right aligned
             
@@ -98,11 +166,11 @@ public class SwingLogText extends SwingText implements Output {
         else {
             if (o instanceof Task) {
                 Task t = (Task)o;
-                priority = t.budget.getPriority();
-                printColorBlock(LogPanel.getPriorityColor(priority), "  ");
-                
                 Sentence s = t.sentence;
                 if (s!=null) {
+                    priority = t.budget.getPriority();
+                    printColorBlock(LogPanel.getPriorityColor(priority), "  ");
+                
                     TruthValue tv = s.truth;
                     if (tv!=null) {                    
                         printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
@@ -122,6 +190,7 @@ public class SwingLogText extends SwingText implements Output {
         Color textColor = new Color(tc, tc, tc);
         print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n');
 
+        return doc.getLength();
         
     }
     

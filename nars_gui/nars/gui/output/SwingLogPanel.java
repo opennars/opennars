@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -15,6 +16,7 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import nars.gui.NARControls;
 import nars.gui.NARSwing;
+import nars.gui.output.SwingLogText.LogLine;
 import nars.io.TextOutput;
 
 public class SwingLogPanel extends LogPanel {
@@ -22,11 +24,20 @@ public class SwingLogPanel extends LogPanel {
     public final SwingLogText ioText;
 
     static int defaultFontSize = 19;
+    public HashMap<Integer, LogLine> lines = new HashMap();
             
     public SwingLogPanel(NARControls narControls) {
         super(narControls);
 
-        ioText = new SwingLogText(narControls.nar);
+        ioText = new SwingLogText(narControls.nar) {
+
+            @Override
+            protected void onLineVisible(final int offset) {                
+                System.out.println(offset + " " + lines.get(offset));
+            }
+            
+            
+        };
         
         
 
@@ -34,6 +45,7 @@ public class SwingLogPanel extends LogPanel {
         JPanel ioTextWrap = new JPanel(new BorderLayout());
         ioTextWrap.add(ioText);
         JScrollPane ioTextScroll = new JScrollPane(ioTextWrap);
+        ioText.setScroller(ioTextScroll);
         add(ioTextScroll, BorderLayout.CENTER);
 	
                     
@@ -48,12 +60,19 @@ public class SwingLogPanel extends LogPanel {
     public void setShowStamp(boolean showStamp) {
         ioText.showStamp = showStamp;
     }
+
+    @Override
+    public void output(Class c, Object o) {
+        super.output(c, o);
+        print(c, o);
+    }
+    
     
     
 
     @Override
-    void print(final Class c, final Object o) {
-        ioText.print(c, o);//, showStamp, nar);
+    void print(Class c, Object o) {
+        int p = ioText.print(c, o);//, showStamp, nar);
 
         String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
@@ -63,6 +82,7 @@ public class SwingLogPanel extends LogPanel {
         ioText.scrollBottom.run();
     }
 
+    
     
     public void setFontSize(float v) {
         ioText.setFontSize(v);
