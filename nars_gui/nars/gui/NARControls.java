@@ -48,7 +48,7 @@ import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.LogPanel;
-import nars.gui.output.MemoryView;
+import nars.gui.output.MemoryView2;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
@@ -216,7 +216,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new MemoryView(nar);
+                    new Window("Memory View", new MemoryView2(nar)).show(500, 500);
                 }
             });
             m.add(mv);

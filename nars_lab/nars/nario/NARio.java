@@ -7,10 +7,9 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.inference.GraphExecutive;
 import nars.io.Output;
 import nars.language.Term;
 import nars.nario.level.Level;
@@ -110,7 +109,7 @@ public class NARio extends Run {
             
         });
                 
-        nar.memory.event.on(Events.CycleEnd.class, new Observer() {
+        nar.memory.event.on(Events.FrameEnd.class, new Observer() {
             private int[] keyTime = new int[256];
 
             @Override
@@ -320,8 +319,10 @@ public class NARio extends Run {
     }
 
     public static void main(String[] arg) {
-        NAR nar = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
-        //NAR nar = new DefaultNARBuilder().build();
+        //NAR nar = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
+        //NAR nar = new DiscretinuousBagNARBuilder(true).setConceptBagSize(2048).build();
+        
+        NAR nar = new DefaultNARBuilder().setConceptBagSize(2048).build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
          nar.param().conceptCyclesToForget.set(7);
@@ -332,7 +333,7 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(50);
+        nar.param().duration.set(5);
         nar.param().noiseLevel.set(0);
         nar.param().shortTermMemorySize.set(35);
 
@@ -340,7 +341,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(100);
+        nar.start(100,2);
     }
 
 }
