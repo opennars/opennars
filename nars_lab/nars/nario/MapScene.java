@@ -510,12 +510,6 @@ public class MapScene extends Scene
         tick++;
         int x = xMario / 16;
         int y = yMario / 16;
-        
-        if (y < 0) {
-            marioComponent.lose();
-            return;
-        }
-        
         if ((x > 0) && (y > 0)) {
             if (level[x][y] == TILE_ROAD)
             {
@@ -578,11 +572,6 @@ public class MapScene extends Scene
             }
             canEnterLevel = !keys[Mario.KEY_JUMP];
 
-            //left + right cancel each other
-            if (keys[Mario.KEY_LEFT] && keys[Mario.KEY_RIGHT]) {
-                keys[Mario.KEY_LEFT] = keys[Mario.KEY_RIGHT] = false;
-            }
-                
             if (keys[Mario.KEY_LEFT])
             {
                 keys[Mario.KEY_LEFT] = false;
@@ -606,7 +595,7 @@ public class MapScene extends Scene
         }
     }
 
-    public void tryWalking(final int xd, final int yd)
+    public void tryWalking(int xd, int yd)
     {
         int x = xMario / 16;
         int y = yMario / 16;

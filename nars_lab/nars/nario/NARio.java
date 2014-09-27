@@ -1,19 +1,16 @@
 package nars.nario;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.ContinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.gui.Window;
-import nars.gui.output.graph.SentenceGraphPanel;
+import nars.inference.GraphExecutive;
 import nars.io.Output;
 import nars.language.Term;
 import nars.nario.level.Level;
@@ -25,7 +22,7 @@ import nars.nario.sprites.Sparkle;
 import nars.nario.sprites.Sprite;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
-
+import nars.util.graph.ImplicationGraph;
 
 /**
  *
@@ -37,147 +34,100 @@ public class NARio extends Run {
     private LevelScene level;
     private float lastX = -1;
     private float lastY = -1;
+    int cycle = 0;
     int gotCoin = 0;
-    private Mario mario;
-    int cyclesPerMario = 1;
-    final boolean random = false;
-    int healthStatusCycle = 1600;
-    int inputRefresh = 1500;
-    final float gameTimePerMemoryCycle = 0.03f;
-    private static final int levelSeed = 0;
-    private static final int levelType = LevelGenerator.TYPE_OVERGROUND;
-
-    static float impulsivity = 0.1f; //lower=more impulsive
-    
-    boolean autonomous = false;
-    
-    private int[] prevKeyWeight = new int[6];
-    private int[] keyWeight = new int[6];
-    int[] keys = new int[]{Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
-
-    public static void main(String[] arg) {
-        NAR nar = new DiscretinuousBagNARBuilder(true).setConceptBagSize(1024).build();
-        //NAR nar = new DefaultNARBuilder().build();
-        /*nar.param().termLinkRecordLength.set(4);
-         nar.param().beliefCyclesToForget.set(30);
-         nar.param().conceptCyclesToForget.set(7);
-         nar.param().taskCyclesToForget.set(22);
-         nar.param().termLinkMaxReasoned.set(6);
-        
-         nar.param().cycleInputTasks.set(1);
-         nar.param().cycleMemory.set(1);*/
-
-        //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(5);
-        nar.param().noiseLevel.set(10);
-        nar.param().shortTermMemorySize.set(1);
-        nar.param().decisionThreshold.set(impulsivity);
-
-        NARio nario = new NARio(nar);
-        new NARSwing(nar, false);
-        nar.start(30f,100);
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        super.keyReleased(e);
-        if (e.getKeyChar() == '[') {
-            System.out.println("Autonomy Disabled; Learning");
-            autonomous = false;
-            nar.param().decisionThreshold.set(1.0);
-        }
-        if (e.getKeyChar() == ']') {
-            System.out.println("Autonomy Enabled");
-            autonomous = true;
-            nar.param().decisionThreshold.set(impulsivity);
-        }
-        if (e.getKeyChar() == 'i') {
-            //new Window("Implications", new JGraphXGraphPanel(nar.memory.executive.graph.implication)).show(500,500);            
-            new Window("Implications", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
-        }
-    }
+    private Mario mario;    
+    int cyclesPerMario = 4;
+    private ImplicationGraph implications;
 
     public NARio(NAR n) {
         super();
         this.nar = n;
+        //start();
+        run();
+    }
 
+    String[] sight = new String[9];
+
+    protected void axioms() {
+                        int flushed = nar.flushInput(Output.NullOutput);
+                        //System.out.println("Inports: " + nar.getInPorts().size()); 
+                        //System.out.println("Flushed: " + flushed);
+
+                        //NAR.DEBUG = true;
+                        
+                        
+                    //nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
+                        nar.addInput("<?y --> space>? :/:");
+                        nar.addInput("<{(*,0,0),(*,0,1),(*,1,0),(*,-1,0),(*,0,-1)} <-> direction>.");
+                        nar.addInput("<(*,0,0) <-> center>.");
+                        nar.addInput("<(*,-1,0) <-> left>.");
+                        nar.addInput("<(*,1,0) <-> right>.");
+                        nar.addInput("<(*,0,1) <-> up>.");
+                        nar.addInput("<(*,0,-1) <-> down>.");
+                        //nar.addInput("<solid <-> empty>. %0.00;0.99%");
+                        //nar.addInput("<up <-> down>. %0.00;0.99%");
+                        //nar.addInput("<left <-> right>. %0.00;0.99%");
+        
+    }
+    
+    @Override
+    public void ready() {
+        //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
+
+        scene = level = new LevelScene(graphicsConfiguration, this, 0, 1, LevelGenerator.TYPE_OVERGROUND) {
+            @Override
+            protected Mario newMario(LevelScene level) {
+                return new Mario(level) {
+                    @Override
+                    public void getCoin() {
+                        super.getCoin();
+                        gotCoin++;
+                    }
+                };
+            }
+        };
+        level.setSound(sound);
+        level.init();
+
+        mario = level.mario;
+        mario.setInvincible(true);
+                   
+        axioms();
+  
+        
+        
+        
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 //new Window("Implications", new SentenceGraphPanel(nar, new ImplicationGraph(nar))).show(500,500);
                 //new Window("Inheritance", new SentenceGraphPanel(nar, new InheritanceGraph(nar))).show(500,500);
-
+                
             }
-
+            
         });
-        nar.memory.addOperator(new NullOperator("^moveLeft") {
-            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-                /*if (autonomous)*/ {
-                    mario.keys[Mario.KEY_LEFT] = true;
-                    mario.keys[Mario.KEY_RIGHT] = false;
-                }
-                return super.execute(operation, args, memory);
-            }           
-        });
-        nar.memory.addOperator(new NullOperator("^moveRight") {
-            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-                /*if (autonomous)*/ {
-                    mario.keys[Mario.KEY_LEFT] = false;
-                    mario.keys[Mario.KEY_RIGHT] = true;
-                }
-                return super.execute(operation, args, memory);
-            }           
-        });
-        nar.memory.addOperator(new NullOperator("^moveStop") {
-            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-                /*if (autonomous)*/ {
-                    mario.keys[Mario.KEY_LEFT] = false;
-                    mario.keys[Mario.KEY_RIGHT] = false;
-                    mario.keys[Mario.KEY_JUMP] = false;
-                }
-                return super.execute(operation, args, memory);
-            }           
-        });
-        nar.memory.addOperator(new NullOperator("^moveJump") {
-            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-                /*if (autonomous)*/ {
-                    mario.keys[Mario.KEY_JUMP] = !mario.keys[Mario.KEY_JUMP];                    
-                }
-                return super.execute(operation, args, memory);
-            }           
-        });
-
-        nar.memory.event.on(Events.FrameEnd.class, new Observer() {
+                
+        nar.memory.event.on(Events.CycleEnd.class, new Observer() {
             private int[] keyTime = new int[256];
-            private int cyclesWithoutXMove;
-            private int cyclesWithoutMove;
 
             @Override
-            public void event(Class event, Object[] arguments) {
+            public void event(Class event, Object... arguments) {
 
-                if (scene != null) {
-                    try {
-
-                        cycle(gameTimePerMemoryCycle);
-                    } catch (NullPointerException n) {
-                        //HACK sick of debugging mario brothers
-                        return;
-                    }
+                /*if (cycle % cyclesPerMario == 0)*/ {
+                    cycle(0.05);
                 }
+
                 {
-
-                    if (level == null) {
-                        return;
-                    }
-                    if (level.mario == null) {
-                        return;
-                    }
-
+                    
 //                if (cycle % 100 == 1) {
 //                    System.out.println("Inports: " + nar.getInPorts().size());
 //                }
-                    //float sightPriority = 0.75f;
+ 
+
+                //float sightPriority = 0.75f;
                     //float movementPriority = 0.60f;
                     float x = level.mario.x;
                     float y = level.mario.y;
@@ -185,74 +135,25 @@ public class NARio extends Run {
                     boolean movement = false;
 
                     if (lastX != -1) {
-                        float dx = ((x - lastX) / 16.0f);
-                        float dy = ((y - lastY) / 16.0f);
-
-                        float minMove = 0.25f; //in blocks
+                        int dx = Math.round((x - lastX) / 16);
+                        int dy = Math.round((y - lastY) / 16);
 
                         //if no movement, decrease priority of sense
-                        if ((dx < minMove) && (dy < minMove)) {
-                            //sightPriority/=2.0f;
+                        if ((dx == 0) && (dy == 0)) {
+                        //sightPriority/=2.0f;
                             //movementPriority/=2.0f;
-                            cyclesWithoutMove++;
                         } else {
                             movement = true;
-                            cyclesWithoutMove = 0;
                         }
 
-                        if (dx == 0) {
-                            cyclesWithoutXMove++;
-                        } else {
-                            cyclesWithoutXMove = 0;
-                        }
-
-                        int idx = (int) Math.round(dx);
-                        int idy = (int) Math.round(dy);
-                        int idist = (int) Math.round(Math.sqrt(dx * dx + dy * dy));
                         if (movement) {
-//                            if ((idx==0) && (idy==0)) {
-//                                //create a fractional movement for <1 nudges
-//                                idx = (int)Math.ceil(dx);
-//                                idy = (int)Math.ceil(dy);
-//                                int conf = (int)(100.0 * 0.9 * Math.sqrt( dx*dx + dy*dy ));
-//                                if (conf > 99) conf = 99;
-//                                nar.addInput("<(*," + idx + "," + idy + ") --> moved>. :|: %1.00;0." + conf + "%");
-//                            }
-//                            else {                                
-                            nar.addInput(/*"$" + movementPriority + "$"*/
-                                    "<(*," + idx + "," + idy + /*"," + idist +*/ ") --> moved>. :|:");
-//                            }
-                        }
-                        else if (cyclesWithoutMove == 1) {
-                            nar.addInput("(^moveStop,x). :|:");
+                            nar.addInput(/*"$" + movementPriority + "$"*/"<(*," + dx + "," + dy + ") --> moved>. :\\:");
                         }
 
                     }
-
-                    boolean statusUpdate = nar.getTime() % healthStatusCycle == 0;
-                    //health status report
-                    if (statusUpdate) {
-                        float dead = 0.0f;
-                        //consider self dead when no movement
-                        if (cyclesWithoutMove > 0) {
-                            dead += 0.5;
-                        }
-                        //consider self dead when no X movement
-                        if (cyclesWithoutXMove > 8) {
-                            dead += 0.25;
-                        }
-
-                        if (dead == 0) {
-                            //nar.addInput("<nario --> alive>. :|: %1.00;0.50%");
-                        } else {
-                            nar.addInput("<nario --> alive>. :|: %0.00;" + dead + "%");
-                            nar.addInput("<nario --> alive>!");
-                        }
-                    }
-
 
                     /*if (movement)*/ {
-                        //predict next type of block at next current position
+                    //predict next type of block at next current position
 
                         int k = -1; //cycle through a different seeing each cycle
 
@@ -285,12 +186,9 @@ public class NARio extends Run {
                                 } else {
                                     continue; //ignore diagonal for now
                                 }
-                                /*String s = "<" + (blocked ? "solid" : "empty") + " --> " + 
-                                 direction + ">. :|:";*/
-                                String s = "<" + direction + " --> "
-                                        + (blocked ? "solid" : "empty") + ">. :|:";
+                                String s = "<" + (blocked ? "solid" : "empty") + " --> " + direction +">. :|:";
 
-                                if (((sight[k] != null) && (sight[k].equals(s))) && (!statusUpdate)) {
+                                if ((sight[k] != null) && (sight[k].equals(s))) {
                                     continue;
                                 }
 
@@ -303,9 +201,71 @@ public class NARio extends Run {
                     }
 
                     if (gotCoin > 0) {
-                        nar.addInput("<(*,0,0) --> gotCoin>. :|:");
-                        nar.addInput("<nario --> alive>. :|:");
+                        nar.addInput("<gotCoin --> (*,0,0)>. :|:");
                     }
+
+                        
+                    int[] keys = new int[] { Mario.KEY_LEFT,Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED };
+                    for (final int k : keys) {
+                        String ko = "keyboard" + k;
+                        if (nar.memory.getOperator(ko) == null) {
+                            nar.memory.addOperator(new NullOperator("^" + "keyboard" + k) {
+
+                                @Override
+                                protected List<Task> execute(Operation operation, Term[] args, Memory memory) {                                  
+                                    
+                                    String state = args[0].toString();
+                                    
+                                    Task task = operation.getTask();
+                                    if ((task.getParentTask()!=null) && (task.getParentBelief()!=null)) {
+                                        Task parent = task.getParentTask();
+                                        Task root = task.getRootTask();
+                                        
+                                        System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief() + ", parent=" + parent);
+                                        
+                                        if (parent!=root) {
+                                            System.out.println(", root=" + root);
+                                        }
+                                        else {
+                                            System.out.println();
+                                        }
+                                        
+                                        mario.keys[k] = state.equals("on");
+                                    }
+
+                                    return super.execute(operation, args, memory);
+                                }
+
+                            });
+                        }
+
+                        int currentKeyTime, nextKeyTime;
+                        currentKeyTime = nextKeyTime = keyTime[k];
+                        boolean wasPressed = currentKeyTime > 0;
+                        boolean pressed;
+
+                        if (!mario.keys[k]) {
+                            nextKeyTime = 0;
+                            pressed = false;
+                        }
+                        else {
+                            nextKeyTime++;
+                            pressed = true;
+                        }
+
+                        if (pressed!=wasPressed) {
+                            /*String budget = (nextKeyTime > 0) ? 
+                                    "$" + (1.0 / (1.0 + nextKeyTime)) + "$" :
+                                    "";*/
+                            String state = nextKeyTime > 0 ? "on" : "off";
+                            //String budget = "$0.8;0.1$";
+                            String budget = "";
+                            nar.addInput(budget + "(^" + ko + "," + state + ")!");
+                        }
+
+                        keyTime[k] = nextKeyTime;
+                    }
+                    
 
                     ArrayList<Sprite> sprites = new ArrayList(level.sprites);
                     for (Sprite s : sprites) {
@@ -317,13 +277,12 @@ public class NARio extends Run {
                             //priority/=2f;
                         }
 
-                        double senseRadius = 4;
+                        double senseRadius = 6;
                         double dist = Math.sqrt((x - s.x) * (x - s.x) + (y - s.y) * (y - s.y)) / 16.0;
-                        int idist = (int) Math.round(dist);
                         if (dist <= senseRadius) {
-                            double sightPriority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
+                            double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
 
-                            //sparkles are common and not important
+                        //sparkles are common and not important
                             String type = s.getClass().getSimpleName();
                             if (s instanceof Enemy) {
                                 type = s.toString();
@@ -332,234 +291,56 @@ public class NARio extends Run {
                             int dx = Math.round((x - s.x) / 16);
                             int dy = Math.round((y - s.y) / 16);
 
-                            //prevent repeat inputs
-                            if ((s.ix == Integer.MAX_VALUE) || ((s.ix != dx) || (s.iy != dy))) {
-                                s.ix = dx;
-                                s.iy = dy;
-                                nar.addInput("$" + sightPriority + "$"
-                                        + " <(*," + dx + "," + dy + /*"," + idist +*/ ") --> " + type + ">. :|:");
-                            }
+                            nar.addInput(/*"$" + sightPriority + "$" +*/
+                                    " <" + type  + " --> (*," + dx + "," + dy + ")>. :|:");
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
-                        } else {
-                            s.ix = s.iy = Integer.MAX_VALUE;
                         }
 
                     }
 
                     //keyTime = mario.keys.clone();
+
                     lastX = x;
                     lastY = y;
                     gotCoin = 0;
                 }
-
-                //System.out.println(Arrays.toString(keyWeight));
-                for (final int k : keys) {
-
-                    boolean humanPressed = mario.keys[k];
-                    String ko = "keyboard" + k;
-
-                    if (nar.memory.getOperator(ko) == null) {
-                        nar.memory.addOperator(new NullOperator("^" + "keyboard" + k) {
-
-                            @Override
-                            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-
-                                String state = args[0].toString();
-
-                                Task task = operation.getTask();
-                                if (!task.isInput()) {
-                                    //Task parent = task.getParentTask();
-                                    //Task root = task.getRootTask();
-
-                                    //System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief().toString(nar, true) + ", parent=" + parent);
-
-                                    /*
-                                     if (parent != root) {
-                                     System.out.println(", root=" + root);
-                                     } else {
-                                     System.out.println();
-                                     }
-                                     */
-                                    int delta = 0;
-                                    if (state.equals("on")) {
-                                        delta = 1;
-                                    }
-                                    else if (state.equals("off")) {
-                                        delta = -1;
-                                    }
-
-                                    //keyWeight[k] += delta;
-                                    
-
-                                }
-
-                                return super.execute(operation, args, memory);
-                            }
-
-                        });
-                    }
-
-                    int currentKeyTime, nextKeyTime;
-                    currentKeyTime = nextKeyTime = keyTime[k];
-                    boolean wasPressed = currentKeyTime > 0;
-
-                    if (!humanPressed) {
-                        nextKeyTime = 0;
-                    } else {
-                        nextKeyTime++;
-                    }
-
-                    if (humanPressed != wasPressed) {
-                        /*String budget = (nextKeyTime > 0) ? 
-                         "$" + (1.0 / (1.0 + nextKeyTime)) + "$" :
-                         "";*/
-                        //String state = nextKeyTime > 0 ? "on" : "off";
-                        //String budget = "$0.8;0.1$";
-                        //String budget = "";
-                        //nar.addInput(budget + "(^" + ko + "," + state + ")!");
-
-                    }
-                    if (humanPressed) {
-                        keyWeight[k]++;
-                    } else {
-                        //keyWeight[k]--;
-                    }
-
-                    keyTime[k] = nextKeyTime;
-                }
-//                for (int k : keys) {
-//                    String ko = "keyboard" + k;
-//                    if (keyWeight[k] > 0) {                                                
-//                        if (prevKeyWeight[k] <= 0)
-//                            nar.addInput("(^" + ko + ",on)!");
-//                        mario.keys[k] = true;                        
-//                        
-//                    }
-//                    else {
-//                        if (prevKeyWeight[k] > 0)
-//                            nar.addInput("(^" + ko + ",off)!");
-//                        mario.keys[k] = false;
-//                    }
-//                }
-                System.arraycopy(keyWeight, 0, prevKeyWeight, 0, keyWeight.length);
-                Arrays.fill(keyWeight, 0);
-
-                /*if (!autonomous)*/ {
-                    if (mario.keys[Mario.KEY_LEFT]) {
-                        nar.addInput("(^moveLeft,x)!");
-                    }
-                    if (mario.keys[Mario.KEY_RIGHT]) {
-                        nar.addInput("(^moveRight,x)!");
-                    }
-                    if (mario.keys[Mario.KEY_JUMP]) {
-                        nar.addInput("(^moveJump,x)!");
-                    }
-                }
                 
-
+                cycle++;
             }
             
-        
 
         });
 
-        //start();
-        run();
-    }
-
-    String[] sight = new String[9];
-
-    protected void axioms() {
-        int flushed = nar.flushInput(Output.NullOutput);
-                        //System.out.println("Inports: " + nar.getInPorts().size()); 
-        //System.out.println("Flushed: " + flushed);
-
-        //NAR.DEBUG = true;
-        //nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
-        nar.addInput("$0.99;0.99$ <nario --> alive>!");
-        nar.addInput("$0.99;0.99$ (--,<nario --> dead>)!");
-        nar.addInput("<alive <-> dead>. %0.00;0.99%");
-        nar.addInput("<off <-> on>. %0.00;0.99%");
-        nar.addInput("<?y --> space>? :/:");
-        //nar.addInput("<{(*,0,0),(*,0,1),(*,1,0),(*,-1,0),(*,0,-1)} <-> direction>.");
-        nar.addInput("<(*,0,0) <-> center>. %1.00;0.99%");
-        nar.addInput("<(*,-1,0) <-> left>. %1.00;0.99%");
-        nar.addInput("<(*,1,0) <-> right>. %1.00;0.99%");
-        nar.addInput("<(*,0,1) <-> up>. %1.00;0.99%");
-        nar.addInput("<(*,0,-1) <-> down>. %1.00;0.99%");
-        //nar.addInput("<solid <-> empty>. %0.00;0.99%");
-        //nar.addInput("<up <-> down>. %0.00;0.99%");
-        //nar.addInput("<left <-> right>. %0.00;0.99%");
-
-    }
-
-    @Override
-    public void ready() {
-        //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
-
-        //reset keys
-        if (mario != null) {
-            if (mario.keys != null) {
-                Arrays.fill(mario.keys, false);
-            }
-        }
-
-        axioms();
-
-        scene = level = new LevelScene(graphicsConfiguration, this, levelSeed, 1, levelType) {
-            @Override
-            protected Mario newMario(LevelScene level) {
-                return new Mario(level) {
-                    @Override
-                    public void getCoin() {
-                        super.getCoin();
-                        gotCoin++;
-                    }
-                };
-            }
-        };
-        level.setSound(sound);
-        level.init();
-
-        mario = level.mario;
-
-        //mario.setInvincible(true);
-    }
-
-    @Override
-    public void levelWon() {
-        nar.addInput("<nario --> win>. :|:");
-        scene = null;
-        ready();
-    }
-
-    @Override
-    public void lose() {
-        //not sure if this will ever be called
-        ready();
-    }
-
-    @Override
-    public void levelFailed() {
-        nar.addInput("<nario --> dead>. :|:");
-
-        scene = null;
-        ready();
-        /*
-         scene = mapScene;
-         mapScene.startMusic();
-         Mario.lives--;
-         if (Mario.lives == 0)
-         {
-         lose();
-         }
-         */
     }
 
     @Override
     protected void update() {
 
+    }
+
+    public static void main(String[] arg) {
+        NAR nar = new ContinuousBagNARBuilder(true).setConceptBagSize(2048).build();
+        //NAR nar = new DefaultNARBuilder().build();
+        /*nar.param().termLinkRecordLength.set(4);
+         nar.param().beliefCyclesToForget.set(30);
+         nar.param().conceptCyclesToForget.set(7);
+         nar.param().taskCyclesToForget.set(22);
+         nar.param().termLinkMaxReasoned.set(6);
+        
+         nar.param().cycleInputTasks.set(1);
+         nar.param().cycleMemory.set(1);*/
+
+        //new TextOutput(nar, System.out).setShowInput(true);
+        nar.param().duration.set(50);
+        nar.param().noiseLevel.set(0);
+        nar.param().shortTermMemorySize.set(35);
+
+
+        NARio nario = new NARio(nar);
+
+        new NARSwing(nar);
+        nar.start(100);
     }
 
 }
