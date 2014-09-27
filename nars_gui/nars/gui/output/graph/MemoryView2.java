@@ -1,14 +1,22 @@
-package nars.gui.output;
+package nars.gui.output.graph;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +25,7 @@ import java.util.Set;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
@@ -24,26 +33,22 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.gui.NARSwing;
+import nars.gui.NCanvas;
 import nars.gui.NSlider;
-import nars.gui.Window;
 import nars.gui.output.graph.PGraphPanel;
 import nars.language.Term;
 import nars.util.NARGraph;
 import nars.util.sort.IndexedTreeSet;
-import processing.core.PApplet;
 
 
-class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0 --> deleted>>)!
-{
+class GraphCanvasSwing extends NCanvas {
 
-///////////////HAMLIB
-//processingjs compatibility layer
+    NAR nar;
+
     int mouseScroll = 0;
 
-    ProcessingJs processingjs = new ProcessingJs();
-//Hnav 2D navigation system   
-    Hnav hnav = new Hnav();
-//Object
+    
     float selection_distance = 10;
     public float maxNodeSize = 40f;
     float FrameRate = 30f;
@@ -55,16 +60,10 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     private boolean compressLevels = true;
     boolean drawn = false;
     
-    Hsim hsim = new Hsim();
-
-    Hamlib hamlib = new Hamlib();
-
-
     public Button getBack;
     public Button conceptsView;
     public Button memoryView;
     public Button fetchMemory;
-    NAR nar;
     
     int maxNodesWithLabels = 300;
     int maxNodes = 1000;
@@ -98,16 +97,77 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     Set<Object> deadVertices = new HashSet();
     Map<Class,Integer> edgeColors = new HashMap(16);
     
+    Graphics2D g;
+    
     NARGraph graph;
     boolean showSyntax;
 
     //bounds of last positioned vertices
     float minX=0, minY=0, maxX=0, maxY=0;
     float motionBlur = 0.0f;
+    float scale = 1.0f;
+    int xOffset = 0, yOffset = 0;
+    Font f = NARSwing.monofont.deriveFont(16f);
 
+    public GraphCanvasSwing() {
+        addMouseWheelListener(new MouseWheelListener() {
+
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                double r = e.getPreciseWheelRotation();
+                
+                if (r < 0) {
+                    scale *= 0.9f;
+                }
+                else if (r > 0) {
+                    scale *= 1.1f;
+                }
+                
+                redraw();
+            }
+        });
+        final MouseAdapter c;
+        addMouseMotionListener(c = new MouseAdapter() {
+            private Point startLocation;
+            private int startXOffset, startYOffset;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                startLocation = e.getPoint();
+                startXOffset = xOffset;
+                startYOffset = yOffset;
+            }
+            
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (startLocation==null) {
+                    startLocation = e.getPoint();
+                    return;
+                }
+                Point currentLocation = e.getPoint();
+                
+                int deltaX  = currentLocation.x - startLocation.x;
+                int deltaY  = currentLocation.y - startLocation.y;
+                xOffset = startXOffset + deltaX;
+                yOffset = startYOffset + deltaY;
+                
+                redraw();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                startLocation = null;
+            }
+            
+        });
+        addMouseListener(c);
+        
+    }
+
+    
     public class VertexDisplay {
         float x, y, tx, ty;
-        int color;
+        Color color;
         float radius;
         float alpha;
         String label;
@@ -186,15 +246,17 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             }*/
                         
             float r = (radius+boost*boostScale) * nodeSize / 2f;
-            
-            fill(color, alpha*255/2);
-           
-            ellipse(x, y, r, r);
+            if (r > 0) {
+                g.setPaint(color);
+                g.fillOval((int)(x-(r/2)), (int)(y-(r/2)), (int)r, (int)r);
 
-            if (text && (label!=null)) {
-                fill(255,255,255,alpha*255*0.75f);
-                textSize(r/2);
-                text(label, x, y);            
+                if (text && (label!=null)) {
+
+                    g.setPaint(Color.WHITE);
+                    g.setFont(f);
+                    //textSize(r/2);
+                    g.drawString(label, x, y);
+                }
             }
             
             /*if (stroke > 0) {                
@@ -225,10 +287,10 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                  if (tr!=null) {
                      confidence = tr.getConfidence();
                      double hue = 0.25 + (0.25 * (kb.truth.getFrequency()-0.5));
-                     color = Color.getHSBColor((float)hue, 0.9f, 0.9f).getRGB();
+                     color = Color.getHSBColor((float)hue, 0.9f, 0.9f);
                  }
                  else {
-                     color = Color.GRAY.getRGB();
+                     color = Color.GRAY;
                  }
                 alpha = confidence*0.75f+0.25f;
                 
@@ -239,7 +301,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 Task ta = (Task)o;
                 radius = 2.0f + ta.getPriority()*2.0f;
                 alpha = ta.getDurability();
-                color = PGraphPanel.getColor(o.getClass());
+                color = NARSwing.getColor(o.getClass().toString(), 0.8f, 0.8f);
              }            
              else if (o instanceof Concept) {
                 Concept co = (Concept)o;
@@ -247,25 +309,19 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 
                 radius = (float)(2 + 6 * co.budget.summary() * nodeSize);
                 alpha = PGraphPanel.vertexAlpha(o);                             
-                color = PGraphPanel.getColor(t.getClass());
+                color = NARSwing.getColor(t.getClass().toString(), 0.8f, 0.8f);
                 stroke = 5;
              }
              else if (o instanceof Term) {
                 Term t = (Term)o;                
                 radius = (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
                 alpha = PGraphPanel.vertexAlpha(o);                             
-                color = PGraphPanel.getColor(o.getClass());
+                color = NARSwing.getColor(o.getClass().toString(), 0.8f, 0.8f);
              }
         }
 
     }
 
-    @Override
-    protected void resizeRenderer(int newWidth, int newHeight) {
-        super.resizeRenderer(newWidth, newHeight); //To change body of generated methods, choose Tools | Templates.
-        drawn = false;
-    }
-    
     
     public VertexDisplay updateVertex(Object o) {
         VertexDisplay v = vertices.get(o);
@@ -277,8 +333,6 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         
         vertices.put(o, v);
         
- 
-        
         return v;
     }
     
@@ -289,35 +343,6 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             edgeColors.put(e.getClass(), i);
         }
         return i;
-    }
-    
-    public void mouseScrolled() {
-        hamlib.mouseScrolled();
-    }
-
-    @Override
-    public void keyPressed() {
-        hamlib.keyPressed();
-    }
-
-    @Override
-    public void mouseMoved() {
-        hamlib.mouseMoved();
-    }
-
-    @Override
-    public void mouseReleased() {
-        hamlib.mouseReleased();
-    }
-
-    @Override
-    public void mouseDragged() {
-        hamlib.mouseDragged();
-    }
-
-    @Override
-    public void mousePressed() {
-        hamlib.mousePressed();
     }
 
     /** should be called from NAR update thread, not swing thread  */
@@ -477,59 +502,61 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             
             drawn = false;
         }
+        
+        redraw();
     }
     
-    @Override
-    public void draw() {
+    Runnable redrawSwing = new Runnable() {
+
+        @Override
+        public void run() {
+            showBuffer(g);            
+        }
         
-                
+    };
+    
+    protected void redraw() {
+        g = getBufferGraphics();
+        draw();
+        SwingUtilities.invokeLater(redrawSwing);
+    }
+
+    
+    public void draw() {                
         
-        if (drawn)
-            return;
+        if (graph== null) return;
+
+        //if (drawn)
+        //    return;
         
         drawn = true; //allow the vertices to invalidate again in drawit() callee
 
+        AffineTransform tRoot = new AffineTransform();
+        g.setTransform(tRoot);
+        g.setColor(backgroundClearColor);
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        AffineTransform tx = new AffineTransform();
+        tx.translate(xOffset, yOffset);
+        tx.scale(scale, scale);
+        g.setTransform(tx);
         
-        if (motionBlur > 0) {
-            fill(0,0,0,255f*(1.0f - motionBlur));
-            rect(0,0,getWidth(),getHeight());
-        }
-        else {        
-            background(0,0,0, 0.001f);
-        }
         
-        //pushMatrix();
-        hnav.Transform();
-        drawGraph();
-        //popMatrix();        
+//        if (motionBlur > 0) {
+//            g.clearRect(0, 0, getWidth(), getHeight());            
+//            //g.fillRect(0,0,0,255f*(1.0f - motionBlur));            
+//        }
+//        else {        
+//            g.clearRect(0, 0, getWidth(), getHeight());
+//        }
         
-    }
 
-
-
-    @Override
-    public void setup() {  
-        frameRate(FrameRate);
-        
-        /*
-        size(500,500,"P3D");
-        if (isGL()) {
-            System.out.println("Processing.org enabled OpenGL");
-        }
-        */
-        
-    }
-
-
-    public void drawGraph() {
-                        
-        if (graph== null) return;
-
+    
         
         synchronized (vertices) {
             //for speed:
-            strokeCap(SQUARE);
-            strokeJoin(PROJECT);
+            //strokeCap(SQUARE);
+            //strokeJoin(PROJECT);
 
             int numEdges = graph.edgeSet().size();
             if (numEdges < maxEdges) {
@@ -539,9 +566,16 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                     final VertexDisplay elem2 = vertices.get(graph.getEdgeTarget(edge));                
                     if ((elem1 == null) || (elem2 == null))
                         continue;
+                    
+                    
 
-                    stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f*lineAlpha );
-                    strokeWeight( (elem1.radius + elem2.radius)/2.0f / lineWidth );
+                    BasicStroke lineStroke = new BasicStroke(5f * (elem1.radius + elem2.radius)/2.0f / lineWidth );
+                    
+                    g.setStroke(lineStroke);       
+                    g.setPaint(Color.GRAY);
+                            
+                    //stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha)/2f * 255f*lineAlpha );
+                    //strokeWeight( (elem1.radius + elem2.radius)/2.0f / lineWidth );
 
                     float x1 = elem1.x;
                     float y1 = elem1.y;
@@ -549,9 +583,9 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                     float y2 = elem2.y;
                     
                     if (numEdges < maxEdgesWithArrows)
-                        drawArrow(x1, y1, x2, y2);     
+                        drawArrow(x1, y1, x2, y2);
                     else
-                        drawLine(x1, y1, x2, y2);
+                        drawArrow(x1, y1, x2, y2);
 
                     //float cx = (x1 + x2) / 2.0f;
                     //float cy = (y1 + y2) / 2.0f;
@@ -559,7 +593,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                 }
             }
 
-            noStroke();
+            //g.setStroke(null);
+            
 
             int numNodes = vertices.size();
             boolean text = numNodes < maxNodesWithLabels;
@@ -568,256 +603,38 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                     d.draw(text);
 
         }   
+        
     }
 
-    
-    void drawArrowAngle(final float cx, final float cy, final float len, final float angle){
-      pushMatrix();
-      translate(cx, cy);
-      rotate(radians(angle));
-      line(0,0,len, 0);
-      line(len, 0, len - 8*2, -8);
-      line(len, 0, len - 8*2, 8);
-      popMatrix();
-    }
-
+//    
+//    void drawArrowAngle(final float cx, final float cy, final float len, final float angle){
+//      pushMatrix();
+//      translate(cx, cy);
+//      rotate(radians(angle));
+//      line(0,0,len, 0);
+//      line(len, 0, len - 8*2, -8);
+//      line(len, 0, len - 8*2, 8);
+//      popMatrix();
+//    }
+//
     void drawArrow(final float x1, final float y1, final float x2, final float y2) {
         float cx = (x1+x2)/2f;
         float cy = (y1+y2)/2f;
         float len = (float)Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
         float a = (float)(Math.atan2(y2-y1,x2-x1)*180.0/Math.PI);
-        
-        drawArrowAngle(x1, y1, len, a);
+
+        g.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
+        //drawArrowAngle(x1, y1, len, a);
     }    
-    void drawLine(final float x1, final float y1, final float x2, final float y2) {
-        line(x1,y1,x2,y2);
-    }
+//    void drawLine(final float x1, final float y1, final float x2, final float y2) {
+//        line(x1,y1,x2,y2);
+//    }
     
     void setUpdateNext() {
         updateNext = true;
         drawn = false;        
     }
 
-    class ProcessingJs {
-
-        ProcessingJs() {
-            addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-                @Override
-                public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                    mouseScroll = -evt.getWheelRotation();
-                    mouseScrolled();
-                }
-            }
-            );
-        }
-    }
-
-    class Hnav {
-
-        private float savepx = 0;
-        private float savepy = 0;
-        private int selID = 0;
-        private float zoom = 1.0f;
-        private float difx = 0;
-        private float dify = 0;
-        private int lastscr = 0;
-        private boolean EnableZooming = true;
-        private float scrollcamspeed = 1.1f;
-
-        float MouseToWorldCoordX(int x) {
-            return 1 / zoom * (x - difx - width / 2);
-        }
-
-        float MouseToWorldCoordY(int y) {
-            return 1 / zoom * (y - dify - height / 2);
-        }
-        private boolean md = false;
-
-        void mousePressed() {
-            md = true;
-            if (mouseButton == RIGHT) {
-                savepx = mouseX;
-                savepy = mouseY;
-            }
-            drawn = false;
-        }
-
-        void mouseReleased() {
-            md = false;
-        }
-
-        void mouseDragged() {
-            if (mouseButton == RIGHT) {
-                difx += (mouseX - savepx);
-                dify += (mouseY - savepy);
-                savepx = mouseX;
-                savepy = mouseY;
-            }
-            drawn = false;
-        }
-        private float camspeed = 20.0f;
-        private float scrollcammult = 0.92f;
-        boolean keyToo = true;
-
-        void keyPressed() {
-            if ((keyToo && key == 'w') || keyCode == UP) {
-                dify += (camspeed);
-            }
-            if ((keyToo && key == 's') || keyCode == DOWN) {
-                dify += (-camspeed);
-            }
-            if ((keyToo && key == 'a') || keyCode == LEFT) {
-                difx += (camspeed);
-            }
-            if ((keyToo && key == 'd') || keyCode == RIGHT) {
-                difx += (-camspeed);
-            }
-            if (!EnableZooming) {
-                return;
-            }
-            if (key == '-' || key == '#') {
-                float zoomBefore = zoom;
-                zoom *= scrollcammult;
-                difx = (difx) * (zoom / zoomBefore);
-                dify = (dify) * (zoom / zoomBefore);
-            }
-            if (key == '+') {
-                float zoomBefore = zoom;
-                zoom /= scrollcammult;
-                difx = (difx) * (zoom / zoomBefore);
-                dify = (dify) * (zoom / zoomBefore);
-            }
-            drawn = false;
-        }
-
-        void Init() {
-            difx = -width / 2;
-            dify = -height / 2;
-        }
-
-        void mouseScrolled() {
-            if (!EnableZooming) {
-                return;
-            }
-            float zoomBefore = zoom;
-            if (mouseScroll > 0) {
-                zoom *= scrollcamspeed;
-            } else {
-                zoom /= scrollcamspeed;
-            }
-            difx = (difx) * (zoom / zoomBefore);
-            dify = (dify) * (zoom / zoomBefore);
-            drawn = false;
-        }
-
-        void Transform() {
-            translate(difx + 0.5f * width, dify + 0.5f * height);
-            scale(zoom, zoom);
-        }
-    }
-
-    
-////Object management - dragging etc.
-
-    class Hsim {
-
-        ArrayList obj = new ArrayList();
-
-        void Init() {
-            smooth();
-        }
-
-        void mousePressed() {
-            if (mouseButton == LEFT) {
-                checkSelect();
-            }
-        }
-        boolean dragged = false;
-
-        void mouseDragged() {
-            if (mouseButton == LEFT) {
-                dragged = true;
-                dragElems();
-            }
-        }
-
-        void mouseReleased() {
-            dragged = false;
-            //selected = null;
-        }
-
-        void dragElems() {
-            /*
-            if (dragged && selected != null) {
-                selected.x = hnav.MouseToWorldCoordX(mouseX);
-                selected.y = hnav.MouseToWorldCoordY(mouseY);
-                hsim_ElemDragged(selected);
-            }
-                    */
-        }
-        
-
-        void checkSelect() {
-            /*
-            double selection_distanceSq = selection_distance*selection_distance;
-            if (selected == null) {
-                for (int i = 0; i < obj.size(); i++) {
-                    Vertex oi = (Vertex) obj.get(i);
-                    float dx = oi.x - hnav.MouseToWorldCoordX(mouseX);
-                    float dy = oi.y - hnav.MouseToWorldCoordY(mouseY);
-                    float distanceSq = (dx * dx + dy * dy);
-                    if (distanceSq < (selection_distanceSq)) {
-                        selected = oi;
-                        hsim_ElemClicked(oi);
-                        return;
-                    }
-                }
-            }
-                    */
-        }
-    }
-
-//Hamlib handlers
-    class Hamlib {
-
-        void Init() {
-            noStroke();
-            hnav.Init();
-            hsim.Init();
-        }
-
-        void mousePressed() {
-            hnav.mousePressed();
-            hsim.mousePressed();
-        }
-
-        void mouseDragged() {
-            hnav.mouseDragged();
-            hsim.mouseDragged();
-        }
-
-        void mouseReleased() {
-            hnav.mouseReleased();
-            hsim.mouseReleased();
-        }
-
-        public void mouseMoved() {
-        }
-
-        void keyPressed() {
-            hnav.keyPressed();
-        }
-
-        void mouseScrolled() {
-            hnav.mouseScrolled();
-        }
-
-        void Camera() {
-
-        }
-
-
-    }
 
     public class Edge {
 
@@ -836,23 +653,22 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
     }
 }
 
-public class MemoryView extends Window {
+public class MemoryView2 extends JPanel {
 
-    mvo_applet app = null;
+    GraphCanvasSwing app = null;
 
-    public MemoryView(NAR n) {
-        super("Memory View");
+    public MemoryView2(NAR n) {
+        super(new BorderLayout());
 
 
-        app = new mvo_applet();
-        app.init();
+        app = new GraphCanvasSwing();        
         app.nar = n;
         
         this.setSize(1000, 860);//initial size of the window
         this.setVisible(true);
 
-        Container content = getContentPane();
-        content.setLayout(new BorderLayout());
+        Container content = this;
+        
 
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
@@ -944,8 +760,9 @@ public class MemoryView extends Window {
         n.memory.event.on(FrameEnd.class, new Observer() {
             @Override
             public void event(Class event, Object... arguments) {
-                if (app!=null)
-                    app.updateGraph();
+                if (app!=null) {
+                    app.updateGraph();                    
+                }
                 else
                     n.memory.event.off(FrameEnd.class, this);
             }  
@@ -953,14 +770,14 @@ public class MemoryView extends Window {
     
     }
 
-    @Override
-    protected void close() {
-        app.stop();
-        app.destroy();
-        getContentPane().removeAll();
-        app = null;
-    }
-
+//    @Override
+//    protected void close() {
+//        app.stop();
+//        app.destroy();
+//        getContentPane().removeAll();
+//        app = null;
+//    }
+//
     
     
     
