@@ -55,7 +55,8 @@ import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
 import nars.gui.output.graph.AnimatedProcessingGraphCanvas;
-import nars.gui.output.graph.MemoryView;
+import nars.gui.output.graph.ConceptGraphCanvas;
+import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -218,7 +219,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Concept Graph", new MemoryView(nar)).show(500, 500);
+                    new Window("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas(nar))).show(500, 500);
                 }
             });
             m.add(mv);
@@ -237,10 +238,12 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             sg.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Inheritance Graph", new AnimatedProcessingGraphCanvas(new InheritanceGraph(nar))).show(500, 500);
+                    new Window("Inheritance Graph", 
+                            new ProcessingGraphPanel(nar, new AnimatedProcessingGraphCanvas(new InheritanceGraph(nar)))).show(500, 500);
                 }
             });
             m.add(sg);
+            sg.doClick();; //TEMPORARY
             
             
             JMenuItem st = new JMenuItem("+ Sentence Table");

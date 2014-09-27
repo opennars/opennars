@@ -19,7 +19,7 @@ import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.NSlider;
-import nars.gui.output.graph.ProcessingGraphPanel;
+import nars.gui.output.graph.ProcessingGraphPanel2;
 import nars.io.Output;
 import nars.util.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -61,7 +61,7 @@ public class MultiModePanel extends JPanel implements Output {
     }
 
     
-    public class GraphView extends ProcessingGraphPanel implements MultiViewMode, Runnable {
+    public class GraphView extends ProcessingGraphPanel2 implements MultiViewMode, Runnable {
 
         @Override
         public DirectedMultigraph getGraph() {
