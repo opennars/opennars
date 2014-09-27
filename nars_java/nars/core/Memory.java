@@ -43,7 +43,6 @@ import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
-import nars.inference.GraphExecutive;
 import nars.inference.InferenceRecorder;
 import nars.inference.TemporalRules;
 import nars.io.Output;
@@ -1013,6 +1012,8 @@ public class Memory implements Output, Serializable {
         //--------m-a-i-n-----l-o-o-p--------
             
         conceptProcessor.cycle(this);
+        
+        executive.cycle();
             
         //--------m-a-i-n-----l-o-o-p--------
 
@@ -1059,7 +1060,7 @@ public class Memory implements Output, Serializable {
                   concept(task.getContent())!=null || 
                   (   task.sentence!=null && 
                       task.getContent()!=null && 
-                      GraphExecutive.isExecutableTerm(task.getContent()) &&                      
+                      Executive.isExecutableTerm(task.getContent()) &&
                       task.sentence.isGoal() && 
                       conceptualize(task.getContent()) != null)
                ) {

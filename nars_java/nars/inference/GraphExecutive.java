@@ -3,101 +3,48 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import nars.core.EventEmitter.Observer;
-import nars.core.Events.ConceptGoalAdd;
-import nars.core.Events.ConceptGoalRemove;
-import nars.core.Events.CycleEnd;
 import nars.core.Memory;
-import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.Symbols.NativeOperator;
-import nars.io.Texts;
-import nars.io.buffer.PriorityBuffer;
+import static nars.inference.Executive.isPlanTerm;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
-import nars.operator.Operator;
 import nars.util.graph.ImplicationGraph;
 import nars.util.graph.ImplicationGraph.PostCondition;
 
-public class GraphExecutive implements Observer {
+public class GraphExecutive {
 
     private final Memory memory;
     public final ImplicationGraph implication;
     
-    PriorityBuffer<TaskExecution> tasks;
-
-    boolean planningEnabled = true;
-    
-    /** number of tasks that are active in the sorted priority buffer for execution */
-    int numActiveTasks = 16;
-
-    /** max number of tasks that a plan can generate. chooses the N most confident */
-    int maxPlannedTasks = 4;
-    
-    float searchDepth = 64;
-    int particles = 64;
     
     /** controls the relative weigting of edges and vertices for particle traversals */
     double conceptCostFactor = 0.3;
     double edgeCostFactor = 1.0 - conceptCostFactor;
     
-    @Deprecated Executive exec;
     
     public GraphExecutive(Memory memory, Executive exec) {
         super();
-        this.exec=exec;
+
         this.memory = memory;
-        tasks = new PriorityBuffer<TaskExecution>(new Comparator<TaskExecution>() {
-            @Override
-            public final int compare(final TaskExecution a, final TaskExecution b) {
-                float bp = b.getMotivation();
-                float ap = a.getMotivation();
-                if (bp != ap) {
-                    return Float.compare(bp, ap);
-                } else {
-                    float ad = a.getPriority();
-                    float bd = b.getPriority();
-                    if (ad!=bd)
-                        return Float.compare(bd, ad);
-                    else {
-                        float add = a.getDurability();
-                        float bdd = b.getDurability();
-                        return Float.compare(bdd, add);                        
-                    }
-                }
-
-            }
-        }, numActiveTasks) {
-
-            @Override protected void reject(final TaskExecution t) {
-                removeTask(t.t);
-            }
-            
-        };
-
-        implication = new ImplicationGraph(memory);
-        memory.event.on(CycleEnd.class, this);
-        memory.event.on(ConceptGoalAdd.class, this);
-        memory.event.on(ConceptGoalRemove.class, this);
+        this.implication = new ImplicationGraph(memory);
     }
 
     /** whether the Term is currently a valid goal for the implication graph to plan for */
-    private boolean isPlannable(final Term goal) {
+    public boolean isPlannable(final Term goal) {
         PostCondition goalPostCondition = new PostCondition(goal);
         
         /** must be in the graph and have at least one incoming edge */
@@ -107,350 +54,6 @@ public class GraphExecutive implements Observer {
         return false;
     }
 
-    public boolean decisionMaking(final Task t, final Concept concept, final boolean revised) {
-
-        /*if (!(!revised || (t.sentence.content instanceof Operation || (t.sentence.content instanceof Conjunction && t.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD))))
-            return false;*/
-        if (revised)
-            return false;
-        
-        if (concept != null) {
-            if (concept.getDesire()!=null)
-                if (concept.getDesire().getExpectation() < memory.param.decisionThreshold.get()) {
-                    if (memory.getRecorder().isActive())
-                        memory.getRecorder().append("Goal Ignore (insufficient desire)", t.toString());
-                    return false;
-                }
-        }            
-
-        if (!tasks.contains(t)) {
-            if (memory.getRecorder().isActive())
-               memory.getRecorder().append("Goal Add", t.toString());
-            
-            
-            //incoming task
-            Term c = t.getContent();
-            if ((c instanceof Operation) || isSequenceConjunction(c))  {
-                addTask(concept, t);
-                //return true;
-            }
-            else {
-                if (planningEnabled) {
-                    boolean plannable = isPlannable(t.getContent());
-                    if (plannable) {                    
-                        plan(concept, t, t.getContent(), searchDepth, '!', maxPlannedTasks);
-                        return true;
-                    }
-                }
-            }
-        }
-        else {
-            //System.err.println("Duplicate task: " + t);
-        }
-        return false;
-        
-        
-    }
-
-    public class TaskExecution {
-        /** may be null for input tasks */
-        public final Concept c;
-        
-        public final Task t;
-        public int sequence;
-        public long delayUntil = -1;
-        private float motivationFactor = 1;
-        
-        public TaskExecution(final Concept concept, Task t) {
-            this.c = concept;
-            
-            
-            //Check if task is 
-            Term term = t.getContent();
-            if (term instanceof Implication) {
-                Implication it = (Implication)term;
-                if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
-                    if (it.getSubject() instanceof Conjunction) {
-                        t = inlineConjunction(t, (Conjunction)it.getSubject());
-                    }
-                }
-            }
-            else if (term instanceof Conjunction) {
-                t = inlineConjunction(t, (Conjunction)term);
-            }
-            
-            this.t = t;
-
-        }
-
-        protected Task inlineConjunction(Task t, final Conjunction c) {
-            List<Term> inlined = new ArrayList();
-            boolean wasInlined = false;
-            if (c.operator() == NativeOperator.SEQUENCE) {
-                for (Term e : c.term) {
-                    if (!isPlanTerm(e)) {
-                        if (isPlannable(e)) {
-                            
-                            TreeSet<ParticlePlan> plans = particlePlan(e, searchDepth, particles);
-                            if (plans.size() > 0) {
-                                //use the first
-                                ParticlePlan pp = plans.first();
-                                inlined.addAll(pp.sequence);
-                                //System.err.println("Inline " + e + " in " + t.getContent() + " = " + pp.sequence);  
-                                wasInlined = true;
-                            }
-                            else {
-                                //System.err.println("Inline: no planavailable");
-                                //no plan available, this wont be able to execute
-                                setMotivationFactor(0);
-                            }
-                        }
-                        else {
-                            //this won't be able to execute here
-                            setMotivationFactor(0);
-                        }
-                    }
-                    else {
-                        //executable term, add
-                        inlined.add(e);
-                    }
-                }                            
-            }            
-            
-            if (wasInlined) {
-                Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
-                t = t.clone(t.sentence.clone(nc) );
-                //System.err.println("  replaced task: " + t);
-            }
-            return t;
-        }
-        
-        @Override public boolean equals(final Object obj) {
-            if (obj instanceof TaskExecution) {
-                return ((TaskExecution)obj).t.equals(t);
-            }
-            return false;
-        }
-        
-        public final float getDesire() { 
-            if (c == null) return 1.0f;
-            return c.getDesire().getExpectation();         
-        }
-        public final float getPriority() { return t.getPriority();         }
-        public final float getDurability() { return t.getDurability(); }
-        public final float getMotivation() { return getDesire() * getPriority() * motivationFactor;         }
-        public final void setMotivationFactor(final float f) { this.motivationFactor = f;  }
-
-        @Override public int hashCode() {            return t.hashCode();         }
-
-        @Override
-        public String toString() {
-            return "!" + Texts.n2(getMotivation()) + "." + sequence + "! " + t.toString();
-        }
-
-
-        
-
-        
-    }
-
-    
-    
-    protected void addTask(final Concept c, final Task t) {
-        if (tasks.add(new TaskExecution(c, t))) {
-            //added successfully
-        }
-    }
-    protected void removeTask(final Task t) {
-        //since TaskContent will equal according to its task, it will match 't' even though it's not a TaskContent
-        tasks.remove(t);
-    }
-    
-    protected void updateTasks() {
-        List<TaskExecution> t = new ArrayList(tasks);
-        tasks.clear();
-        for (TaskExecution x : t) {
-            if ((x.getDesire() > 0) && (x.getPriority() > 0)) {
-                tasks.add(x);
-                if ((x.delayUntil!=-1) && (x.delayUntil <= memory.getTime())) {
-                    //restore motivation so task can resume processing
-                    x.motivationFactor = 1.0f;
-                }
-            }
-        }
-    }
-
-    @Override
-    public void event(final Class event, final Object[] a) {
-
-        if (event == ConceptGoalAdd.class) {
-            Concept concept = (Concept)a[0];
-            Task task = (Task) a[2];            
-            boolean revised = (Boolean)(((Object[])a[3])[0]);
-            
-            decisionMaking(task, concept, revised);
-                        
-        } else if (event == ConceptGoalRemove.class) {
-            Task t = (Task) a[2];
-            if (memory.getRecorder().isActive())
-               memory.getRecorder().append("Goal Remove", t.toString());
-            
-            //removeTask(t);
-            //System.out.println("Goal rem: " + a[0] + " " + a[1] + " " + t.budget);
-        } else if (event == CycleEnd.class) {
-//            if (tasks.size() > 0) {
-//                plan();
-//            }
-
-            //System.err.println("CYCLE" + memory.getTime() +  " " + tasks.size());
-            cycle();
-            
-        }
-    }
-
-    public static boolean isSequenceConjunction(final Term c) {
-        if (c instanceof Conjunction) {
-            Conjunction cc = ((Conjunction)c);
-            if ( cc.operator() == NativeOperator.SEQUENCE  ) {
-                return (cc.getTemporalOrder()==TemporalRules.ORDER_FORWARD) || (cc.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT);
-            }
-        }
-        return false;
-    }
-    
-    protected void execute(final Operation op, final Task task) {
-        
-        Operator oper = op.getOperator();
-        
-        op.setTask(task);
-                        
-        oper.call(op, memory);
-    }
-    
-    
-    protected void cycle() {
-        
-        updateTasks();
-
-        if (tasks.size() == 0)
-            return;
-        
-        if (NAR.DEBUG) {
-            if (tasks.get(0).delayUntil==-1) {
-                if (tasks.size() > 1)  {
-                    System.out.println("Tasks @ " + memory.getTime());
-                    for (TaskExecution tcc : tasks)
-                        System.out.println("  " + tcc.toString());
-                }
-                else {
-                    System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
-                }
-            }
-        }
-        
-        
-        TaskExecution topConcept = tasks.getFirst();
-        Task top = topConcept.t;
-        Term term = top.getContent();
-        if (term instanceof Operation) {            
-            execute((Operation)term, top); //directly execute
-            top.setPriority(0);
-            return;
-        }
-        else if (term instanceof Conjunction) {
-            Conjunction c = (Conjunction)term;
-            if (c.operator() == NativeOperator.SEQUENCE) {
-                executeConjunctionSequence(topConcept, c);
-                return;
-            }
-            
-        }
-        else if (term instanceof Implication) {
-            Implication it = (Implication)term;
-            if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
-                if (it.getSubject() instanceof Conjunction) {
-                    Conjunction c = (Conjunction)it.getSubject();
-                    if (c.operator() == NativeOperator.SEQUENCE) {
-                        executeConjunctionSequence(topConcept, c);
-                        return;
-                    }
-                }
-                else if (it.getSubject() instanceof Operation) {
-                    execute((Operation)it.getSubject(), top); //directly execute
-                    top.setPriority(0);
-                    return;
-                }
-            }
-            throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
-        }
-        else {
-            throw new RuntimeException("Unknown Task type: "+ top);
-        }
-        
-        
-//        //Example prediction
-//        if (memory.getCurrentBelief()!=null) {
-//            Term currentTerm = memory.getCurrentBelief().content;
-//            if (implication.containsVertex(currentTerm)) {
-//                particlePredict(currentTerm, 12, particles);
-//            }                
-//        }
-    }
-    
-    public static boolean isExecutableTerm(final Term t) {
-        return isPlanTerm(t) || isSequenceConjunction(t);
-    }
-    
-    public static boolean isPlanTerm(final Term t) {
-        return ((t instanceof Interval) || (t instanceof Operation));
-    }
-
-    private void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
-        int s = task.sequence;
-        Term currentTerm = c.term[s];
-        if (currentTerm instanceof Operation) {
-            execute((Operation)currentTerm, task.t);
-            s++;
-        }
-        else if (currentTerm instanceof Interval) {
-            Interval ui = (Interval)currentTerm;
-
-            if (task.delayUntil == -1) {
-                task.delayUntil = memory.getTime() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
-                //decrease priority in proportion to magnitude                
-                task.setMotivationFactor(1f/(ui.magnitude+1f)); 
-                
-                //TODO raise priority when the delay is finished so that it can trigger below
-            }
-            else {
-                if (task.delayUntil <= memory.getTime()) {
-                    //delay finished, continue execution with normal motivation
-                    task.setMotivationFactor(1.0f);
-                    task.delayUntil = -1;
-                    s++;
-                }
-                else {
-                    //..
-                }
-            }
-        }        
-        else {            
-            System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);
-            task.t.setPriority(0);
-        }
-
-        if (s == c.term.length) {
-            //end of task
-            //System.out.println("  Completed " + task);
-            task.t.setPriority(0);
-            removeTask(task.t);
-        }
-        else {            
-            task.sequence = s;//update new value for next cycle
-        }
-    }
-    
-    
     
     public static class ParticlePath implements Comparable<ParticlePath> {
         final public Term target;
@@ -780,7 +383,7 @@ public class GraphExecutive implements Observer {
         
     }
     
-    protected TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles) {
+    public TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles) {
         PostCondition targetPost = new PostCondition(target);
         
         if (!implication.containsVertex(targetPost)) {
@@ -942,7 +545,7 @@ public class GraphExecutive implements Observer {
         
     }
 
-   protected void plan(Concept c, Task task, Term target, double searchDistance, char punctuation, int maxTasks) {
+   protected void plan(Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
 
         if (!implication.containsVertex(target))
             return;

@@ -1,20 +1,25 @@
 package nars.inference;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
+import java.util.List;
+import java.util.TreeSet;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.rankBelief;
-import nars.language.CompoundTerm;
+import nars.io.Symbols;
+import nars.io.Texts;
+import nars.io.buffer.PriorityBuffer;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
-import nars.language.Interval.AtomicDuration;
-import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
@@ -36,6 +41,18 @@ public class Executive {
     /** memory for faster execution of &/ statements (experiment) */
     public final Deque<TaskConceptContent> next = new ArrayDeque<>();
 
+    PriorityBuffer<TaskExecution> tasks;
+
+    boolean planningEnabled = true;
+    
+    /** number of tasks that are active in the sorted priority buffer for execution */
+    int numActiveTasks = 16;
+
+    /** max number of tasks that a plan can generate. chooses the N most confident */
+    int maxPlannedTasks = 4;
+    
+    float searchDepth = 64;
+    int particles = 64;
     
     
     public static class TaskConceptContent {
@@ -65,7 +82,165 @@ public class Executive {
     public Executive(Memory mem) {
         this.memory = mem;        
         this.graph = new GraphExecutive(mem,this);
+
+        this.tasks = new PriorityBuffer<TaskExecution>(new Comparator<TaskExecution>() {
+            @Override
+            public final int compare(final TaskExecution a, final TaskExecution b) {
+                float bp = b.getMotivation();
+                float ap = a.getMotivation();
+                if (bp != ap) {
+                    return Float.compare(bp, ap);
+                } else {
+                    float ad = a.getPriority();
+                    float bd = b.getPriority();
+                    if (ad!=bd)
+                        return Float.compare(bd, ad);
+                    else {
+                        float add = a.getDurability();
+                        float bdd = b.getDurability();
+                        return Float.compare(bdd, add);                        
+                    }
+                }
+
+            }
+        }, numActiveTasks) {
+
+            @Override protected void reject(final TaskExecution t) {
+                removeTask(t.t);
+            }
+            
+        };
+        
     }
+    
+    public class TaskExecution {
+        /** may be null for input tasks */
+        public final Concept c;
+        
+        public final Task t;
+        public int sequence;
+        public long delayUntil = -1;
+        private float motivationFactor = 1;
+        
+        public TaskExecution(final Concept concept, Task t) {
+            this.c = concept;
+            
+            
+            //Check if task is 
+            Term term = t.getContent();
+            if (term instanceof Implication) {
+                Implication it = (Implication)term;
+                if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
+                    if (it.getSubject() instanceof Conjunction) {
+                        t = inlineConjunction(t, (Conjunction)it.getSubject());
+                    }
+                }
+            }
+            else if (term instanceof Conjunction) {
+                t = inlineConjunction(t, (Conjunction)term);
+            }
+            
+            this.t = t;
+
+        }
+
+        protected Task inlineConjunction(Task t, final Conjunction c) {
+            List<Term> inlined = new ArrayList();
+            boolean wasInlined = false;
+            if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
+                for (Term e : c.term) {
+                    if (!isPlanTerm(e)) {
+                        if (graph.isPlannable(e)) {
+                            
+                            TreeSet<GraphExecutive.ParticlePlan> plans = graph.particlePlan(e, searchDepth, particles);
+                            if (plans.size() > 0) {
+                                //use the first
+                                GraphExecutive.ParticlePlan pp = plans.first();
+                                inlined.addAll(pp.sequence);
+                                //System.err.println("Inline " + e + " in " + t.getContent() + " = " + pp.sequence);  
+                                wasInlined = true;
+                            }
+                            else {
+                                //System.err.println("Inline: no planavailable");
+                                //no plan available, this wont be able to execute
+                                setMotivationFactor(0);
+                            }
+                        }
+                        else {
+                            //this won't be able to execute here
+                            setMotivationFactor(0);
+                        }
+                    }
+                    else {
+                        //executable term, add
+                        inlined.add(e);
+                    }
+                }                            
+            }            
+            
+            if (wasInlined) {
+                Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
+                t = t.clone(t.sentence.clone(nc) );
+                //System.err.println("  replaced task: " + t);
+            }
+            return t;
+        }
+        
+        @Override public boolean equals(final Object obj) {
+            if (obj instanceof TaskExecution) {
+                return ((TaskExecution)obj).t.equals(t);
+            }
+            return false;
+        }
+        
+        public final float getDesire() { 
+            if (c == null) return 1.0f;
+            return c.getDesire().getExpectation();         
+        }
+        public final float getPriority() { return t.getPriority();         }
+        public final float getDurability() { return t.getDurability(); }
+        public final float getMotivation() { return getDesire() * getPriority() * motivationFactor;         }
+        public final void setMotivationFactor(final float f) { this.motivationFactor = f;  }
+
+        @Override public int hashCode() {            return t.hashCode();         }
+
+        @Override
+        public String toString() {
+            return "!" + Texts.n2(getMotivation()) + "." + sequence + "! " + t.toString();
+        }
+
+
+        
+
+        
+    }
+
+    
+    
+    protected void addTask(final Concept c, final Task t) {
+        if (tasks.add(new TaskExecution(c, t))) {
+            //added successfully
+        }
+    }
+    protected void removeTask(final Task t) {
+        //since TaskContent will equal according to its task, it will match 't' even though it's not a TaskContent
+        tasks.remove(t);
+    }
+    
+    protected void updateTasks() {
+        List<TaskExecution> t = new ArrayList(tasks);
+        tasks.clear();
+        for (TaskExecution x : t) {
+            if ((x.getDesire() > 0) && (x.getPriority() > 0)) {
+                tasks.add(x);
+                if ((x.delayUntil!=-1) && (x.delayUntil <= memory.getTime())) {
+                    //restore motivation so task can resume processing
+                    x.motivationFactor = 1.0f;
+                }
+            }
+        }
+    }
+    
 
     public void reset() {
         next.clear();
@@ -97,12 +272,8 @@ public class Executive {
 //        execute((Operation)n.content, n.concept, n.task, true);
 //    }    
 
-    protected void execute(final Operation op, final Concept concept, final Task task, final boolean masterplan) {
+    protected void execute(final Operation op, final Task task) {
         
-        if ((!masterplan) && (!next.isEmpty())) {
-            return; //already executing sth
-        }
-                
         Operator oper = op.getOperator();
         
         System.out.println("exe: " + task.getExplanation().trim());
@@ -114,14 +285,11 @@ public class Executive {
         task.setPriority(0);
         
     }
-    
+        
     /** Add plausibility estimation */
-    public void decisionMaking(final Task task, final Concept concept) {
-        
-        //System.out.println("decision making: " + task + " c=" + concept);
-                
-        Term content = concept.term;
-        
+    public void decisionMaking(final Task t, final Concept concept) {
+                        
+        Term content = concept.term;        
         
         TruthValue desireValue = concept.getDesire();
         
@@ -129,100 +297,219 @@ public class Executive {
             return;
         }
         
+        if (content instanceof Operation) {
+            //immediately execute
+            execute((Operation)content, t);
+            return;
+        }
+        else if (isSequenceConjunction(content)) {
+            if (!tasks.contains(t)) {
+                if (memory.getRecorder().isActive())
+                   memory.getRecorder().append("Goal Scheduled", t.toString());
+                addTask(concept, t);
+            }
+        }
+        else {
+            if (planningEnabled) {
+                boolean plannable = graph.isPlannable(t.getContent());
+                if (plannable) {                    
+                    if (memory.getRecorder().isActive())
+                       memory.getRecorder().append("Goal Planned", t.toString());
+                    
+                    graph.plan(concept, t, t.getContent(), 
+                            particles, searchDepth, '.', maxPlannedTasks);
+                }                
+            }
+        }              
+    }
+    
+    public void cycle() {
         
-        //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
-       /* if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
+        updateTasks();
+
+        if (tasks.size() == 0)
+            return;
+        
+        if (NAR.DEBUG) {
+            if (tasks.get(0).delayUntil==-1) {
+                if (tasks.size() > 1)  {
+                    System.out.println("Tasks @ " + memory.getTime());
+                    for (TaskExecution tcc : tasks)
+                        System.out.println("  " + tcc.toString());
+                }
+                else {
+                    System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
+                }
+            }
+        }
+        
+        
+        TaskExecution topConcept = tasks.getFirst();
+        Task top = topConcept.t;
+        Term term = top.getContent();
+        if (term instanceof Operation) {            
+            execute((Operation)term, top); //directly execute
+            top.setPriority(0);
+            return;
+        }
+        else if (term instanceof Conjunction) {
+            Conjunction c = (Conjunction)term;
+            if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
+                executeConjunctionSequence(topConcept, c);
+                return;
+            }
             
-            //1. get first operator and execute it
-            CompoundTerm cont = (CompoundTerm) content;
-            
-            for (final Term t : cont.term) {
-                if(!(t instanceof Operation) && !(t instanceof Interval)) {
+        }
+        else if (term instanceof Implication) {
+            Implication it = (Implication)term;
+            if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
+                if (it.getSubject() instanceof Conjunction) {
+                    Conjunction c = (Conjunction)it.getSubject();
+                    if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
+                        executeConjunctionSequence(topConcept, c);
+                        return;
+                    }
+                }
+                else if (it.getSubject() instanceof Operation) {
+                    execute((Operation)it.getSubject(), top); //directly execute
+                    top.setPriority(0);
                     return;
                 }
             }
-            
-            final AtomicDuration duration = memory.param.duration;
-            
-            for (final Term t : cont.term) {
-                
-                if(t instanceof Interval) {
-                    Interval intv=(Interval) t;
-                    
-                    long wait_steps = intv.getTime(duration);
-                           
-                    for(long i=0;i<wait_steps; i++) {
-                        next.addLast(TaskConceptContent.NULL);
-                    }
-                }
-                else if(t instanceof Operation) {
-                    next.addLast(new TaskConceptContent(task, concept, t));
-                }
-            }
-            //END FASTER EXECUTION OF ACTION SEQUENCE
-            
-            return;           
-        }*/
-        //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
-        if (!(content instanceof Operation)) {
-            //throw new RuntimeException("decisionMaking: Term content is not Operation: " + content);          
-            return;
+            throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
+        }
+        else {
+            throw new RuntimeException("Unknown Task type: "+ top);
         }
         
-        /*if(next.isEmpty())*/
-        execute((Operation)content, concept, task, false);
+        
+//        //Example prediction
+//        if (memory.getCurrentBelief()!=null) {
+//            Term currentTerm = memory.getCurrentBelief().content;
+//            if (implication.containsVertex(currentTerm)) {
+//                particlePredict(currentTerm, 12, particles);
+//            }                
+//        }
+    }
+
+   
+    public static boolean isPlanTerm(final Term t) {
+        return ((t instanceof Interval) || (t instanceof Operation));
     }
     
-      /** Add plausibility estimation */
-    public void decisionMaking2(final Task task) {
-        
-        //System.out.println("decision making: " + task + " c=" + concept);
-                
-        Term content = ((Statement)task.sentence.content).getSubject();
-        
-    
-        
-        
-        //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
-        if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
-            
-            //1. get first operator and execute it
-            CompoundTerm cont = (CompoundTerm) content;
-            
-            for (final Term t : cont.term) {
-                if(!(t instanceof Operation) && !(t instanceof Interval)) {
-                    return;
-                }
-            }
-            
-            final AtomicDuration duration = memory.param.duration;
-            
-            for (final Term t : cont.term) {
-                
-                if(t instanceof Interval) {
-                    Interval intv=(Interval) t;
-                    
-                    long wait_steps = intv.getTime(duration);
-                           
-                    for(long i=0;i<wait_steps; i++) {
-                        next.addLast(TaskConceptContent.NULL);
-                    }
-                }
-                else if(t instanceof Operation) {
-                    next.addLast(new TaskConceptContent(task, null, t));
-                }
-            }
-            return;           
-        }
-        //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
-        if (!(content instanceof Operation)) {
-            //throw new RuntimeException("decisionMaking: Term content is not Operation: " + content);          
-            return;
-        }
-        
-        if(next.isEmpty())
-            execute((Operation)content, null, task, false);
+    public static boolean isExecutableTerm(final Term t) {
+        return (t instanceof Operation) || isSequenceConjunction(t);
+ //task.sentence.content instanceof Operation || (task.sentence.content instanceof Conjunction && task.sentence.content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)))
     }
+    
+    public static boolean isSequenceConjunction(final Term c) {
+        if (c instanceof Conjunction) {
+            Conjunction cc = ((Conjunction)c);
+            if ( cc.operator() == Symbols.NativeOperator.SEQUENCE  ) {
+                return (cc.getTemporalOrder()==TemporalRules.ORDER_FORWARD) || (cc.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT);
+            }
+        }
+        return false;
+    }
+    
+
+    
+    private void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
+        int s = task.sequence;
+        Term currentTerm = c.term[s];
+        if (currentTerm instanceof Operation) {
+            execute((Operation)currentTerm, task.t);
+            s++;
+        }
+        else if (currentTerm instanceof Interval) {
+            Interval ui = (Interval)currentTerm;
+
+            if (task.delayUntil == -1) {
+                task.delayUntil = memory.getTime() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
+                //decrease priority in proportion to magnitude                
+                task.setMotivationFactor(1f/(ui.magnitude+1f)); 
+                
+                //TODO raise priority when the delay is finished so that it can trigger below
+            }
+            else {
+                if (task.delayUntil <= memory.getTime()) {
+                    //delay finished, continue execution with normal motivation
+                    task.setMotivationFactor(1.0f);
+                    task.delayUntil = -1;
+                    s++;
+                }
+                else {
+                    //..
+                }
+            }
+        }        
+        else {            
+            System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);
+            task.t.setPriority(0);
+        }
+
+        if (s == c.term.length) {
+            //end of task
+            //System.out.println("  Completed " + task);
+            task.t.setPriority(0);
+            removeTask(task.t);
+        }
+        else {            
+            task.sequence = s;//update new value for next cycle
+        }
+    }
+ 
+//    
+//      /** Add plausibility estimation */
+//    public void decisionMaking2(final Task task) {
+//        
+//        //System.out.println("decision making: " + task + " c=" + concept);
+//                
+//        Term content = ((Statement)task.sentence.content).getSubject();
+//        
+//    
+//        
+//        
+//        //FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
+//        if ((content instanceof Conjunction) && (content.getTemporalOrder()==TemporalRules.ORDER_FORWARD)) {
+//            
+//            //1. get first operator and execute it
+//            CompoundTerm cont = (CompoundTerm) content;
+//            
+//            for (final Term t : cont.term) {
+//                if(!(t instanceof Operation) && !(t instanceof Interval)) {
+//                    return;
+//                }
+//            }
+//            
+//            final AtomicDuration duration = memory.param.duration;
+//            
+//            for (final Term t : cont.term) {
+//                
+//                if(t instanceof Interval) {
+//                    Interval intv=(Interval) t;
+//                    
+//                    long wait_steps = intv.getTime(duration);
+//                           
+//                    for(long i=0;i<wait_steps; i++) {
+//                        next.addLast(TaskConceptContent.NULL);
+//                    }
+//                }
+//                else if(t instanceof Operation) {
+//                    next.addLast(new TaskConceptContent(task, null, t));
+//                }
+//            }
+//            return;           
+//        }
+//        //END FAST EXECUTION OF OPERATOR SEQUENCE LIKE STM PROVIDES
+//        if (!(content instanceof Operation)) {
+//            //throw new RuntimeException("decisionMaking: Term content is not Operation: " + content);          
+//            return;
+//        }
+//        
+//        if(next.isEmpty())
+//            execute((Operation)content, null, task, false);
+//    }
     
     
     @Deprecated public boolean isActionable(final Task task, final Task newEvent) {

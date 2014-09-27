@@ -8,7 +8,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
-import nars.inference.GraphExecutive;
+import nars.inference.Executive;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -159,7 +159,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                             a = new UniqueInterval(st, (Interval)a, prev);
                         }
                     }
-                    if (GraphExecutive.isPlanTerm(a)) {
+                    if (Executive.isPlanTerm(a)) {
                         /*if (!prev.equals(a))*/ 
                         addVertex(a);
                             
@@ -196,7 +196,7 @@ public class ImplicationGraph extends SentenceItemGraph {
             }
         }
         else {
-            if (GraphExecutive.isPlanTerm(subject)) {
+            if (Executive.isPlanTerm(subject)) {
                 addVertex(subject);
                 //newImplicationEdge(predicatePre, subject, c, s);
                 //newImplicationEdge(subject, predicatePost, c, s);                
