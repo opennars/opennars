@@ -1,7 +1,6 @@
 package nars.gui.output.graph;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -28,14 +27,15 @@ import nars.gui.NSlider;
 import nars.language.Term;
 import nars.util.NARGraph;
 import nars.util.sort.IndexedTreeSet;
+import org.jgrapht.graph.DirectedMultigraph;
 import processing.core.PApplet;
 
-abstract class GraphCanvasProcessing extends PApplet {
+abstract class GraphCanvasProcessing<G extends DirectedMultigraph> extends PApplet {
 
     int mouseScroll = 0;
 
-    ProcessingJs processingjs = new ProcessingJs();
     Hnav hnav = new Hnav();
+    Hsim hsim = new Hsim();
 
     float selection_distance = 10;
     public float maxNodeSize = 40f;
@@ -47,13 +47,6 @@ abstract class GraphCanvasProcessing extends PApplet {
 
     boolean compressLevels = true;
     boolean drawn = false;
-
-    Hsim hsim = new Hsim();
-
-    public Button getBack;
-    public Button conceptsView;
-    public Button memoryView;
-    public Button fetchMemory;
 
     int maxNodesWithLabels = 300;
     int maxNodes = 1000;
@@ -85,7 +78,7 @@ abstract class GraphCanvasProcessing extends PApplet {
     Set<Object> deadVertices = new HashSet();
     Map<Class, Integer> edgeColors = new HashMap(16);
 
-    NARGraph graph;
+    G graph;
     boolean showSyntax;
 
     //bounds of last positioned vertices
@@ -97,8 +90,7 @@ abstract class GraphCanvasProcessing extends PApplet {
         init();
     }
 
-    
-    public class VertexDisplay {
+    class VertexDisplay {
 
         float x, y, tx, ty;
         int color;
@@ -131,28 +123,6 @@ abstract class GraphCanvasProcessing extends PApplet {
             }
 
             update(o);
-
-        }
-
-        public void position(float level, float index, float priority) {
-            float LEVELRAD = maxNodeSize * 2.5f;
-
-            if (mode == 2) {
-                tx = ((float) Math.sin(index / 10d) * LEVELRAD) * 5 * ((10 + index) / 20);
-                //ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
-                ty = (1.0f - priority) * LEVELRAD * 150;
-            } else if (mode == 1) {
-
-                //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
-                double radius = (1.0 - priority) * LEVELRAD + 8;
-                float angle = index; //TEMPORARY
-                tx = (float) (Math.cos(angle / 3.0) * radius) * LEVELRAD;
-                ty = (float) (Math.sin(angle / 3.0) * radius) * LEVELRAD;
-            } else if (mode == 0) {
-                //gridsort
-                tx = index * LEVELRAD;
-                ty = (1.0f - priority) * LEVELRAD * 100;
-            }
 
         }
 
@@ -250,7 +220,7 @@ abstract class GraphCanvasProcessing extends PApplet {
 
     @Override
     protected void resizeRenderer(int newWidth, int newHeight) {
-        super.resizeRenderer(newWidth, newHeight); //To change body of generated methods, choose Tools | Templates.
+        super.resizeRenderer(newWidth, newHeight);
         drawn = false;
     }
 
@@ -270,7 +240,7 @@ abstract class GraphCanvasProcessing extends PApplet {
     public int getEdgeColor(Object e) {
         Integer i = edgeColors.get(e.getClass());
         if (i == null) {
-            i = PGraphPanel.getColor(e.getClass());
+            i = PGraphPanel.getColor(e.getClass().getSimpleName());
             edgeColors.put(e.getClass(), i);
         }
         return i;
@@ -307,8 +277,38 @@ abstract class GraphCanvasProcessing extends PApplet {
         hsim.mousePressed();
     }
 
-    abstract protected void updateGraph();
+    abstract protected G getGraph();
+    abstract protected boolean hasUpdate();
+    
+    /**
+     * called from NAR update thread, not swing thread
+     */
+    public void updateGraph() {
 
+        if (hasUpdate() || (updateNext)) {
+
+            updateNext = false;
+
+            synchronized (vertices) {
+                deadVertices.clear();
+                deadVertices.addAll(vertices.keySet());
+
+                try {
+                    graph = getGraph();
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+
+
+                for (final Object v : deadVertices)
+                    vertices.remove(v);
+            }
+
+            drawn = false;
+        }
+    }
+
+    
     @Override
     public void draw() {
 
@@ -334,6 +334,14 @@ abstract class GraphCanvasProcessing extends PApplet {
 
     @Override
     public void setup() {
+        addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                mouseScroll = -evt.getWheelRotation();
+                mouseScrolled();
+            }
+        });
+
         frameRate(FrameRate);
 
         if (isGL()) {
@@ -425,20 +433,6 @@ abstract class GraphCanvasProcessing extends PApplet {
     void setUpdateNext() {
         updateNext = true;
         drawn = false;
-    }
-
-    class ProcessingJs {
-
-        ProcessingJs() {
-            addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-                @Override
-                public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                    mouseScroll = -evt.getWheelRotation();
-                    mouseScrolled();
-                }
-            }
-            );
-        }
     }
 
     class Hnav {
@@ -545,7 +539,7 @@ abstract class GraphCanvasProcessing extends PApplet {
         }
     }
 
-////Object management - dragging etc.
+    ////Object management - dragging etc.
     class Hsim {
 
         ArrayList obj = new ArrayList();
@@ -603,7 +597,7 @@ abstract class GraphCanvasProcessing extends PApplet {
         }
     }
 
-    public class Edge {
+    static class Edge {
 
         public final int from;
         public final int to;
@@ -633,176 +627,189 @@ public class MemoryView extends NPanel implements Observer {
     }
 
     protected void init() {
-        app = new GraphCanvasProcessing() {
-            
-            /** called from NAR update thread, not swing thread*/
-            @Override public void updateGraph() {
+        app = new GraphCanvasProcessing<NARGraph>() {
+
+            public void position(GraphCanvasProcessing.VertexDisplay v, float level, float index, float priority) {
+                float LEVELRAD = maxNodeSize * 2.5f;
+
+                if (mode == 2) {
+                    v.tx = ((float) Math.sin(index / 10d) * LEVELRAD) * 5 * ((10 + index) / 20);
+                    //ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
+                    v.ty = (1.0f - priority) * LEVELRAD * 150;
+                } else if (mode == 1) {
+
+                    //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
+                    double radius = (1.0 - priority) * LEVELRAD + 8;
+                    float angle = index; //TEMPORARY
+                    v.tx = (float) (Math.cos(angle / 3.0) * radius) * LEVELRAD;
+                    v.ty = (float) (Math.sin(angle / 3.0) * radius) * LEVELRAD;
+                } else if (mode == 0) {
+                    //gridsort
+                    v.tx = index * LEVELRAD;
+                    v.ty = (1.0f - priority) * LEVELRAD * 100;
+                }
+
+            }
+
+            final IndexedTreeSet<Concept> sortedConcepts = new IndexedTreeSet(new Comparator<Concept>() {
+                @Override
+                public int compare(Concept o1, Concept o2) {
+                    return o1.getKey().toString().compareTo(o2.getKey().toString());
+                }
+            });
+
+            @Override
+            protected boolean hasUpdate() {
+                if (nar.getTime() != lasttime) {
+                    lasttime = nar.getTime();   
+                    return true;
+                }
+                return false;
+            }
+
+            //TODO genrealize to DirectedMultigraph
+            public NARGraph getGraph() {                
+                
                 final Sentence currentBelief = nar.memory.getCurrentBelief();
                 final Concept currentConcept = nar.memory.getCurrentConcept();
                 final Task currentTask = nar.memory.getCurrentTask();
-                final IndexedTreeSet<Concept> concepts = new IndexedTreeSet(new Comparator<Concept>() {
-                    @Override
-                    public int compare(Concept o1, Concept o2) {
-                        return o1.getKey().toString().compareTo(o2.getKey().toString());
-                    }
-                });
-
-                if ((nar.getTime() != lasttime) || (updateNext)) {
-                    updateNext = false;
-                    lasttime = nar.getTime();
-
-                    synchronized (vertices) {
-                        deadVertices.clear();
-
-                        if (mode == 0) {
-                            //index concepts
-                            concepts.addAll(nar.memory.getConcepts());
-                        }
-                        deadVertices.addAll(vertices.keySet());
-
-                        try {
-                            graph = new NARGraph();
-                            graph.add(nar, new NARGraph.ExcludeBelowPriority(minPriority),
-                                    new NARGraph.DefaultGraphizer(showBeliefs, true, showBeliefs, true, false) {
-
-                                        float level;
-                                        float index = 0;
-                                        int levelContents = 0;
-                                        private float priority;
-                                        Term lastTerm = null;
-                                        GraphCanvasProcessing.VertexDisplay lastTermVertex = null;
-
-                                        public void preLevel(NARGraph g, int l) {
-                                            if (!compressLevels) {
-                                                level = l;
-                                            }
-
-                                            levelContents = 0;
-
-                                            if (mode == 1) {
-                                                index = 0;
-                                            }
-                                        }
-
-                                        public void postLevel(NARGraph g, int l) {
-                                            if (compressLevels) {
-                                                if (levelContents > 0) {
-                                                    level--;
-                                                }
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onConcept(NARGraph g, Concept c) {
-                                            super.onConcept(g, c);
-
-                                            priority = c.getPriority();
-                                            level = (float) (priority * 100.0);
-
-                                            if (mode == 0) {
-                                                index = concepts.entryIndex(c);
-                                            } else {
-                                                if ((lastTerm != null) && (c.term.equals(lastTerm))) {
-                                        //terms equal to concept, ordinarily displayed as subsequent nodes
-                                                    //should just appear at the same position as the concept
-                                                    //lastTermVertex.visible = false;
-                                                    lastTermVertex.position(level, index, priority);
-                                                    lastTermVertex.visible = false;
-                                                } else {
-                                                    index++;
-                                                }
-                                            }
-
-                                            GraphCanvasProcessing.VertexDisplay d = updateVertex(c);
-                                            d.position(level, index, priority);
-                                            deadVertices.remove(c);
-
-                                            if (currentConcept != null) {
-                                                if (c.equals(currentConcept)) {
-                                                    d.boost = 1.0f;
-                                                    
-                                                }
-                                            }
-
-                                            levelContents++;
-
-                                            lastTerm = null;
-                                            lastTermVertex = null;
-                                        }
-
-                                        @Override
-                                        public void onTerm(Term t) {
-
-                                            index++;
-
-                                            GraphCanvasProcessing.VertexDisplay d = updateVertex(t);
-                                            d.position(level, index, priority);
-                                            deadVertices.remove(d);
-
-                                            lastTerm = t;
-                                            lastTermVertex = d;
-
-                                            levelContents++;
-
-                                        }
-
-                                        @Override
-                                        public void onBelief(Sentence kb) {
-                                            index += 0.25f;
-
-                                            GraphCanvasProcessing.VertexDisplay d = updateVertex(kb);
-                                            d.position(level, index, priority);
-                                            deadVertices.remove(kb);
-
-                                            if (currentBelief != null) {
-                                                if (kb.equals(currentBelief)) {
-                                                    d.boost = 1.0f;
-                                                }
-                                            }
-
-                                            levelContents++;
-
-                                            lastTerm = null;
-                                            lastTermVertex = null;
-
-                                        }
-
-                                        @Override
-                                        public void onQuestion(Task t) {
-                                            index += 0.25f;
-
-                                            GraphCanvasProcessing.VertexDisplay d = updateVertex(t);
-                                            d.position(level, index, priority);
-                                            deadVertices.remove(t);
-
-                                            if (currentTask != null) {
-                                                if (t.equals(currentTask)) {
-                                                    d.boost = 1.0f;
-                                                }
-                                            }
-
-                                            levelContents++;
-
-                                            lastTerm = null;
-                                            lastTermVertex = null;
-                                        }
-
-                                    });
-                        } catch (Exception e) {
-                            System.err.println(e);
-                        }
-
-                        for (Object v : deadVertices) {
-                            vertices.remove(v);
-                        }
-                    }
-
-                    drawn = false;
+                
+                if (mode == 0) {
+                    sortedConcepts.clear();
+                    sortedConcepts.addAll(nar.memory.getConcepts());
                 }
+                
+                return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority),
+                        new NARGraph.DefaultGraphizer(showBeliefs, true, showBeliefs, true, false) {
+
+                            float level;
+                            float index = 0;
+                            int levelContents = 0;
+                            private float priority;
+                            Term lastTerm = null;
+                            GraphCanvasProcessing.VertexDisplay lastTermVertex = null;
+
+                            public void preLevel(NARGraph g, int l) {
+                                if (!compressLevels) {
+                                    level = l;
+                                }
+
+                                levelContents = 0;
+
+                                if (mode == 1) {
+                                    index = 0;
+                                }
+                            }
+
+                            public void postLevel(NARGraph g, int l) {
+                                if (compressLevels) {
+                                    if (levelContents > 0) {
+                                        level--;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onConcept(NARGraph g, Concept c) {
+                                super.onConcept(g, c);
+
+                                priority = c.getPriority();
+                                level = (float) (priority * 100.0);
+
+                                if (mode == 0) {
+                                    index = sortedConcepts.entryIndex(c);
+                                } else {
+                                    if ((lastTerm != null) && (c.term.equals(lastTerm))) {
+                                                    //terms equal to concept, ordinarily displayed as subsequent nodes
+                                        //should just appear at the same position as the concept
+                                        //lastTermVertex.visible = false;
+                                        position(lastTermVertex, level, index, priority);
+                                        lastTermVertex.visible = false;
+                                    } else {
+                                        index++;
+                                    }
+                                }
+
+                                GraphCanvasProcessing.VertexDisplay d = updateVertex(c);
+                                position(d, level, index, priority);
+                                deadVertices.remove(c);
+
+                                if (currentConcept != null) {
+                                    if (c.equals(currentConcept)) {
+                                        d.boost = 1.0f;
+
+                                    }
+                                }
+
+                                levelContents++;
+
+                                lastTerm = null;
+                                lastTermVertex = null;
+                            }
+
+                            @Override
+                            public void onTerm(Term t) {
+
+                                index++;
+
+                                GraphCanvasProcessing.VertexDisplay d = updateVertex(t);
+                                position(d, level, index, priority);
+                                deadVertices.remove(d);
+
+                                lastTerm = t;
+                                lastTermVertex = d;
+
+                                levelContents++;
+
+                            }
+
+                            @Override
+                            public void onBelief(Sentence kb) {
+                                index += 0.25f;
+
+                                GraphCanvasProcessing.VertexDisplay d = updateVertex(kb);
+                                position(d, level, index, priority);
+                                deadVertices.remove(kb);
+
+                                if (currentBelief != null) {
+                                    if (kb.equals(currentBelief)) {
+                                        d.boost = 1.0f;
+                                    }
+                                }
+
+                                levelContents++;
+
+                                lastTerm = null;
+                                lastTermVertex = null;
+
+                            }
+
+                            @Override
+                            public void onQuestion(Task t) {
+                                index += 0.25f;
+
+                                GraphCanvasProcessing.VertexDisplay d = updateVertex(t);
+                                position(d, level, index, priority);
+                                deadVertices.remove(t);
+
+                                if (currentTask != null) {
+                                    if (t.equals(currentTask)) {
+                                        d.boost = 1.0f;
+                                    }
+                                }
+
+                                levelContents++;
+
+                                lastTerm = null;
+                                lastTermVertex = null;
+                            }
+
+                        });
+
             }
 
+
         };
-        
 
         this.setSize(1000, 860);//initial size of the window
         this.setVisible(true);

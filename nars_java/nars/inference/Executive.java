@@ -332,6 +332,7 @@ public class Executive {
             return;
         
         if (NAR.DEBUG) {
+            //TODO make a print function
             if (tasks.get(0).delayUntil==-1) {
                 if (tasks.size() > 1)  {
                     System.out.println("Tasks @ " + memory.getTime());
