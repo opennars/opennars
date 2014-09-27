@@ -54,6 +54,10 @@ public class NARSwing  {
             + "      NARS website:  http://sites.google.com/site/narswang/";
 
 
+    
+    static {
+        System.setProperty("sun.java2d.opengl","True");        
+    }
 
 
     public final NAR nar;
