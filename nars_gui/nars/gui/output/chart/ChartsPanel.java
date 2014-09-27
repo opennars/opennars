@@ -1,12 +1,8 @@
 package nars.gui.output.chart;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
@@ -16,15 +12,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.SwingUtilities;
 import nars.gui.NARSwing;
+import nars.gui.NCanvas;
 import nars.util.meter.data.DataSet;
 
-public class ChartsPanel extends Canvas {
+public class ChartsPanel extends NCanvas {
 
     
     //float motionBlur = 0.9f;
@@ -41,10 +37,7 @@ public class ChartsPanel extends Canvas {
     float yScale = 1.0f;
     private int yOffset = 0;
     private Polygon p;
-    private RenderingHints renderHints;
-    BufferedImage image = null;
-    Color backgroundClearColor = new Color(0,0,0,0.1f);
-    
+
     /**
      *
      * @param title
@@ -129,10 +122,7 @@ public class ChartsPanel extends Canvas {
         });
     }
 
-    @Override
-    public void paint(Graphics g) {
-        
-    }
+    
     
     
     
@@ -149,40 +139,12 @@ public class ChartsPanel extends Canvas {
     }
     
     
-    private boolean updateDoubleBuffer()     {
-        int w = getWidth();
-        int h = getHeight();
-        if ((w == 0) || (h == 0))
-            return false;
-        
-            
-            /*
-             * if image is already compatible and optimized for current system 
-             * settings, simply return it
-             */
-            if ((image!=null) && /*(image.getColorModel().equals(gfx_config.getColorModel())) &&*/ (image.getWidth()==w) && (image.getHeight()==h)) {
-                    //use existing image
-            }
-            else {
-                // obtain the current system graphical settings
-                GraphicsConfiguration gfx_config = GraphicsEnvironment.
-                        getLocalGraphicsEnvironment().getDefaultScreenDevice().
-                        getDefaultConfiguration();
-                image = gfx_config.createCompatibleImage(w, h);
-            }
-            
-            return true;
-    }
-
     
     public void update(final boolean addNextPoint) {
 	
         //TODO allow buffering input data points while not visible
-        
-        if (!updateDoubleBuffer()) 
-            return;
-        
-	Graphics2D g = (Graphics2D)image.getGraphics();
+        Graphics2D g = getBufferGraphics();
+        if (g == null) return;
         
         if (renderHints == null) {
             renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -303,18 +265,7 @@ public class ChartsPanel extends Canvas {
              
         }
 
-        Graphics localGraphics = getGraphics();
-        localGraphics.drawImage(image, 0, 0, null);
-        
-        g.dispose();
-        localGraphics.dispose();
-
- 
-        //Tell the System to do the Drawing now, otherwise it can take a few extra ms until 
-        //Drawing is done which looks very jerky
-        //Toolkit.getDefaultToolkit().sync();	
-        
-        //repaint();
+        showBuffer(g);
     }
 
     /*

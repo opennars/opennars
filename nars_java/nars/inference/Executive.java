@@ -46,7 +46,7 @@ public class Executive {
     boolean planningEnabled = true;
     
     /** number of tasks that are active in the sorted priority buffer for execution */
-    int numActiveTasks = 16;
+    int numActiveTasks = 8;
 
     /** max number of tasks that a plan can generate. chooses the N most confident */
     int maxPlannedTasks = 4;
