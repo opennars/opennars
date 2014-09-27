@@ -114,7 +114,7 @@ public class LevelScene extends Scene implements SpriteContext
         }
         mario = newMario(this);
         sprites.add(mario);
-        startTime = 0;
+        startTime = 1;
         
         timeLeft = 200*15;
 
@@ -152,9 +152,6 @@ public class LevelScene extends Scene implements SpriteContext
             startTime++;
         }
 
-        if (mario == null) {
-            return;
-        }
         float targetXCam = mario.x - 160;
 
         xCam = targetXCam;
@@ -378,7 +375,7 @@ public class LevelScene extends Scene implements SpriteContext
         {
             float t = startTime + alpha - 2;
             t = t * t * 0.6f;
-            renderBlackout(g, 160, 120, (int) (t*4));
+            renderBlackout(g, 160, 120, (int) (t));
         }
 //        mario.x>level.xExit*16
         if (mario.winTime > 0)
@@ -401,7 +398,7 @@ public class LevelScene extends Scene implements SpriteContext
             float t = mario.deathTime + alpha;
             t = t * t * 0.4f;
 
-            if (t > 0)
+            if (t > 1800)
             {
                 renderer.levelFailed();
                 //              replayer = new Replayer(recorder.getBytes());
