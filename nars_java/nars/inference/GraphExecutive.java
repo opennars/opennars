@@ -27,7 +27,7 @@ import nars.util.graph.ImplicationGraph.PostCondition;
 
 public class GraphExecutive {
 
-    private final Memory memory;
+    public final Memory memory;
     public final ImplicationGraph implication;
     
     

@@ -425,8 +425,7 @@ public class FastOrganicLayout<V, E> {
             reduceTemperature();
         }
 
-        Double minx = null;
-        Double miny = null;
+        double minx = 0, miny = 0, maxx = 0, maxy = 0;
 
         for (int i = 0; i < vertexArray.size(); i++) {
             V vertex = vertexArray.get(i);                
@@ -436,29 +435,29 @@ public class FastOrganicLayout<V, E> {
                 //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;
                 //cellLocation[i][1] -= 1/2.0; //geo.getHeight() / 2.0;
 
-                double x = /*graph.snap*/(cellLocation[i][0]);
-                double y = /*graph.snap*/(cellLocation[i][1]);                    
+                float r = vd.getRadius();
+                double x = /*graph.snap*/(cellLocation[i][0] - r/2f);
+                double y = /*graph.snap*/(cellLocation[i][1] - r/2f);                    
                 vd.setPosition((float)x, (float)y);
 
-                if (minx == null) {
-                    minx = new Double(x);
+                if (i == 0) {
+                    minx = maxx = x;
+                    miny = maxy = y;
                 } else {
-                    minx = new Double(Math.min(minx.doubleValue(), x));
+                    if (x < minx) minx = x;
+                    if (y < miny) miny = y;
+                    if (x > maxx) maxx = x;
+                    if (y > maxy) maxy = y;                    
                 }
 
-                if (miny == null) {
-                    miny = new Double(y);
-                } else {
-                    miny = new Double(Math.min(miny.doubleValue(), y));
-                }
             }
         }
 
                     // Modifies the cloned geometries in-place. Not needed
         // to clone the geometries again as we're in the same
         // undoable change.
-        double dx = (minx != null) ? -minx.doubleValue() - 1 : 0;
-        double dy = (miny != null) ? -miny.doubleValue() - 1 : 0;
+        double dx = -(maxx+minx)/2f;
+        double dy = -(maxy+miny)/2f;
 
         if (initialBounds != null) {
             dx += initialBounds.getX();

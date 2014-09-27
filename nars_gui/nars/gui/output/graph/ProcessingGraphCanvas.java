@@ -86,6 +86,15 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         super();
         init();
     }
+    
+    public float getNodeSize(final V v) {
+        //TODO normalize so it = 1
+        return 10f;
+    }
+
+    public float getEdgeThickness(E edge, VertexDisplay source, VertexDisplay target) {
+        return (source.radius + target.radius) / 2.0f / lineWidth;
+    }
 
     public class VertexDisplay {
 
@@ -94,12 +103,12 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         float radius;
         float alpha;
         String label;
-        final Object object;
+        final V object;
         float boost;
         float stroke;
         boolean visible;
 
-        public VertexDisplay(Object o) {
+        public VertexDisplay(V o) {
             this.object = o;
 
             x = y = 0;
@@ -174,7 +183,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
             boost *= boostMomentum;
         }
 
-        private void update(Object o) {
+        private void update(V o) {
             visible = true;
 
             if (o instanceof Sentence) {
@@ -191,26 +200,27 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                 alpha = confidence * 0.75f + 0.25f;
 
                 Term t = ((Sentence) o).content;
-                radius = (float) (Math.log(1 + 2 + confidence) * nodeSize);
+                //radius = (float) (Math.log(1 + 2 + confidence) * nodeSize);
             } else if (o instanceof Task) {
                 Task ta = (Task) o;
-                radius = 2.0f + ta.getPriority() * 2.0f;
+                //radius = 2.0f + ta.getPriority() * 2.0f;
                 alpha = ta.getDurability();
                 color = PGraphPanel.getColor(o.getClass());
             } else if (o instanceof Concept) {
                 Concept co = (Concept) o;
                 Term t = co.term;
 
-                radius = (float) (2 + 6 * co.budget.summary() * nodeSize);
+                //radius = (float) (2 + 6 * co.budget.summary() * nodeSize);
                 alpha = PGraphPanel.vertexAlpha(o);
                 color = PGraphPanel.getColor(t.getClass());
                 stroke = 5;
             } else if (o instanceof Term) {
                 Term t = (Term) o;
-                radius = (float) (Math.log(1 + 2 + t.getComplexity()) * nodeSize);
+                //radius = (float) (Math.log(1 + 2 + t.getComplexity()) * nodeSize);
                 alpha = PGraphPanel.vertexAlpha(o);
                 color = PGraphPanel.getColor(o.getClass());
             }
+            radius = getNodeSize(o);
         }
 
         public void setPosition(final float x, final float y) {
@@ -396,7 +406,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                     }
 
                     stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha) / 2f * 255f * lineAlpha);
-                    strokeWeight((elem1.radius + elem2.radius) / 2.0f / lineWidth);
+                    strokeWeight(getEdgeThickness(edge, elem1, elem2));
 
                     float x1 = elem1.x;
                     float y1 = elem1.y;
@@ -428,13 +438,13 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         }
     }
 
-    void drawArrowAngle(final float cx, final float cy, final float len, final float angle) {
+    void drawArrowAngle(final float cx, final float cy, final float len, final float angle, float arrowHeadRadius) {
         pushMatrix();
         translate(cx, cy);
         rotate(radians(angle));
         line(0, 0, len, 0);
-        line(len, 0, len - 8 * 2, -8);
-        line(len, 0, len - 8 * 2, 8);
+        line(len, 0, len - arrowHeadRadius * 2, -arrowHeadRadius);
+        line(len, 0, len - arrowHeadRadius * 2, arrowHeadRadius);
         popMatrix();
     }
 
@@ -444,7 +454,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         float len = (float) Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
         float a = (float) (Math.atan2(y2 - y1, x2 - x1) * 180.0 / Math.PI);
 
-        drawArrowAngle(x1, y1, len, a);
+        drawArrowAngle(x1, y1, len, a, nodeSize);
     }
 
     void drawLine(final float x1, final float y1, final float x2, final float y2) {

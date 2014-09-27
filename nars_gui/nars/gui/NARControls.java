@@ -56,8 +56,8 @@ import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
 import nars.gui.output.graph.AnimatedProcessingGraphCanvas;
 import nars.gui.output.graph.ConceptGraphCanvas;
+import nars.gui.output.graph.ImplicationGraphCanvas;
 import nars.gui.output.graph.ProcessingGraphPanel;
-import nars.gui.output.graph.SentenceGraphPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.util.graph.InheritanceGraph;
@@ -229,21 +229,28 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             imv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
+                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
+                    new Window("Implication Graph", 
+                            new ProcessingGraphPanel(nar, 
+                                    new ImplicationGraphCanvas(
+                                            nar.memory.executive.graph))).show(500, 500);
                 }
             });
             m.add(imv);
+            imv.doClick();; //TEMPORARY
 
             JMenuItem sg = new JMenuItem("+ Inheritance Graph");
             sg.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new Window("Inheritance Graph", 
-                            new ProcessingGraphPanel(nar, new AnimatedProcessingGraphCanvas(new InheritanceGraph(nar)))).show(500, 500);
+                            new ProcessingGraphPanel(nar, 
+                                    new AnimatedProcessingGraphCanvas(
+                                            new InheritanceGraph(nar)))).show(500, 500);
                 }
             });
             m.add(sg);
-            sg.doClick();; //TEMPORARY
+            
             
             
             JMenuItem st = new JMenuItem("+ Sentence Table");
