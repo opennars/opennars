@@ -27,7 +27,7 @@ public class InheritanceGraph extends SentenceGraph {
     @Override
     public boolean allow(final CompoundTerm st) {
         Symbols.NativeOperator o = st.operator();
-        if (o == Symbols.NativeOperator.INHERITANCE) {
+        if ((o == Symbols.NativeOperator.INHERITANCE) || (o == Symbols.NativeOperator.SIMILARITY)) {
             return true;
         }
         return false;

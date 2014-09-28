@@ -10,7 +10,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 
 public class AnimatedProcessingGraphCanvas<V,E> extends ProcessingGraphCanvas<V,E> {
-    private final DirectedMultigraph<V, E> graph;
+    final DirectedMultigraph<V, E> graph;
     //private final FastOrganicLayout layout;
     private final FastOrganicLayout layout;
 

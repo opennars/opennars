@@ -36,7 +36,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         this.memory = memory;
         
         reset();
-
+        
         start();
         
     }
@@ -44,7 +44,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     public void start() {
         if (started) return;        
         started = true;
-        memory.event.on(Events.CycleEnd.class, this);
+        memory.event.on(Events.FrameEnd.class, this);
         memory.event.on(Events.ConceptRemove.class, this);
         memory.event.on(Events.ConceptBeliefAdd.class, this);
         memory.event.on(Events.ConceptBeliefRemove.class, this);        
@@ -55,7 +55,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     public void stop() {
         if (!started) return;
         started = false;
-        memory.event.off(Events.CycleEnd.class, this);        
+        memory.event.off(Events.FrameEnd.class, this);        
         memory.event.off(Events.ConceptRemove.class, this);
         memory.event.off(Events.ConceptBeliefAdd.class, this);
         memory.event.off(Events.ConceptBeliefRemove.class, this);        
@@ -92,7 +92,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
             Sentence s = (Sentence)a[1];
             remove(s);
         }
-        else if (event == Events.CycleEnd.class) {
+        else if (event == Events.FrameEnd.class) {
             if (needInitialConcepts)
                 getInitialConcepts();
         }

@@ -1,6 +1,5 @@
 package nars.gui.output.graph;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +47,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     int maxNodesWithLabels = 300;
     int maxNodes = 1000;
     int maxEdgesWithArrows = 500;
-    int maxEdges = 1500;
+    int maxEdges = 2500;
 
     float minPriority = 0;
 
@@ -90,6 +89,9 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     public float getNodeSize(final V v) {
         //TODO normalize so it = 1
         return 10f;
+    }
+    public int getNodeColor(V o) {
+        return PGraphPanel.getColor(o.getClass());
     }
 
     public float getEdgeThickness(E edge, VertexDisplay source, VertexDisplay target) {
@@ -190,13 +192,6 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                 Sentence kb = (Sentence) o;
                 TruthValue tr = kb.truth;
                 float confidence = 0.5f;
-                if (tr != null) {
-                    confidence = tr.getConfidence();
-                    double hue = 0.25 + (0.25 * (kb.truth.getFrequency() - 0.5));
-                    color = Color.getHSBColor((float) hue, 0.9f, 0.9f).getRGB();
-                } else {
-                    color = Color.GRAY.getRGB();
-                }
                 alpha = confidence * 0.75f + 0.25f;
 
                 Term t = ((Sentence) o).content;
@@ -204,23 +199,21 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
             } else if (o instanceof Task) {
                 Task ta = (Task) o;
                 //radius = 2.0f + ta.getPriority() * 2.0f;
-                alpha = ta.getDurability();
-                color = PGraphPanel.getColor(o.getClass());
+                alpha = ta.getDurability();                
             } else if (o instanceof Concept) {
                 Concept co = (Concept) o;
                 Term t = co.term;
 
                 //radius = (float) (2 + 6 * co.budget.summary() * nodeSize);
-                alpha = PGraphPanel.vertexAlpha(o);
-                color = PGraphPanel.getColor(t.getClass());
+                alpha = PGraphPanel.vertexAlpha(o);                
                 stroke = 5;
             } else if (o instanceof Term) {
                 Term t = (Term) o;
                 //radius = (float) (Math.log(1 + 2 + t.getComplexity()) * nodeSize);
-                alpha = PGraphPanel.vertexAlpha(o);
-                color = PGraphPanel.getColor(o.getClass());
+                alpha = PGraphPanel.vertexAlpha(o);                
             }
             radius = getNodeSize(o);
+            color = getNodeColor(o);
         }
 
         public void setPosition(final float x, final float y) {

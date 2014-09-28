@@ -303,8 +303,13 @@ public class ImplicationGraph extends SentenceItemGraph {
 
     /** weight = cost = distance */
     @Override public double getEdgeWeight(Sentence e) {
+        if (!containsEdge(e))
+            return 0;
+        
         //transitions to PostCondition vertices are free or low-cost
-        double conceptPriority = concepts.get(e).getPriority();
+        
+        Item cc = concepts.get(e);
+        double conceptPriority = (cc!=null) ? concepts.get(e).getPriority() : 0;
         conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
         
         if (getEdgeTarget(e) instanceof PostCondition) {

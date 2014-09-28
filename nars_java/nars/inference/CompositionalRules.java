@@ -106,7 +106,7 @@ public final class CompositionalRules {
             if (term2ContainVar)
                 return;
         
-        for (final Concept concept : memory.getConcepts()) {
+        for (final Concept concept : memory.conceptProcessor) {
 
             final List<Task> questions = concept.questions;
             

@@ -10,7 +10,7 @@ import nars.language.Term;
  *  activating them during a memory cycle.  In essence it forms the very core of the memory,
  *  responsible for efficiently storing all NAR Concept's and which of those will activate
  *  at the beginning of each cycle.*/
-public interface ConceptProcessor {
+public interface ConceptProcessor extends Iterable<Concept> {
 
     /** An iteration of the main loop, called during each memory cycle. */
     public void cycle(Memory m);
@@ -33,8 +33,10 @@ public interface ConceptProcessor {
     /** Activates a concept, adjusting its budget.  
      *  May be invoked by the concept processor or at certain points in the reasoning process.
      */
-    public void conceptActivate(Concept c, BudgetValue b);
+    public void activate(Concept c, BudgetValue b);
 
+    public void forget(Concept c);
+    
     /**
      * Provides a "next" concept for sampling during inference. 
      */

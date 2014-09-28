@@ -35,6 +35,10 @@ public class GraphExecutive {
     double conceptCostFactor = 0.3;
     double edgeCostFactor = 1.0 - conceptCostFactor;
     
+    //for observation purposes, TODO enable/disable the maintenance of this
+    public final Map<Term,Double> accumulatedTerm = new HashMap();
+    public final Map<Sentence,Double> accumulatedSentence = new HashMap();
+    
     
     public GraphExecutive(Memory memory, Executive exec) {
         super();
@@ -43,6 +47,39 @@ public class GraphExecutive {
         this.implication = new ImplicationGraph(memory);
     }
 
+    
+    protected void accumulate(final Term t) {
+        accumulatedTerm.put(t, accumulatedTerm.getOrDefault(t, new Double(0)) + 1);
+    }
+    protected void accumulate(final Sentence s) {
+        accumulatedSentence.put(s, accumulatedTerm.getOrDefault(s, new Double(0)) + 1);
+    }
+    protected void accumulate(final Term t, final List<Sentence> path) {
+        accumulate(t);
+        for (Sentence s : path)
+            accumulate(s);
+    }
+    /** returns maximum value */
+    public double fadeAccumulatedTerms(final double rate) {
+        double max = 0;
+        for (final Map.Entry<Term, Double> e : accumulatedTerm.entrySet()) {
+            double vv = e.getValue();
+            if (vv > max) max = vv;
+            e.setValue( vv * rate );
+        }
+        return max;
+    }
+    /** returns maximum value */
+    public double fadeAccumulatedSentences(double rate) {
+        double max = 0;
+        for (final Map.Entry<Sentence, Double> e : accumulatedSentence.entrySet()) {
+            double vv = e.getValue();
+            if (vv > max) max = vv;
+            e.setValue( vv * rate );
+        }
+        return max;
+    }
+    
     /** whether the Term is currently a valid goal for the implication graph to plan for */
     public boolean isPlannable(final Term goal) {
         PostCondition goalPostCondition = new PostCondition(goal);
@@ -55,11 +92,11 @@ public class GraphExecutive {
     }
 
     
-    public static class ParticlePath implements Comparable<ParticlePath> {
+    public class ParticlePath implements Comparable<ParticlePath> {
         final public Term target;
         
         double activation = 0;
-        Sentence[] path;
+        Sentence[] shortestPath;
         double distance;
         
         public ParticlePath(final Term target, final List<Sentence> path, final double distance) {
@@ -68,10 +105,11 @@ public class GraphExecutive {
         }
         
         public void addPath(final List<Sentence> p, final double dist) {
-            if ((this.path == null) || (dist < distance)) {
-                this.path = p.toArray(new Sentence[p.size()]);
+            if ((this.shortestPath == null) || (dist < distance)) {
+                this.shortestPath = p.toArray(new Sentence[p.size()]);
                 this.distance = dist;
             }
+            accumulate(target, p);
         }
 
         @Override
@@ -81,7 +119,7 @@ public class GraphExecutive {
 
         @Override
         public String toString() {
-            return activation + "|" /*+ target */ + " <- " + Arrays.toString(path);
+            return activation + "|" /*+ target */ + " <- " + Arrays.toString(shortestPath);
         }
         
     }
@@ -413,7 +451,7 @@ public class GraphExecutive {
         TreeSet<ParticlePlan> plans = new TreeSet();
         for (final ParticlePath pp : roots) {
 
-            Sentence[] path = pp.path;
+            Sentence[] path = pp.shortestPath;
             
             if (path.length == 0)
                 throw new RuntimeException("ParticlePath empty: " + pp);
