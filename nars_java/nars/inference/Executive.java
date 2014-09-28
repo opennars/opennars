@@ -735,13 +735,13 @@ public class Executive {
         if(!((newEvent.isInput()) || (newEvent.getCause()!=null))) {
             return false;
         }
-        Term newcontent=newEvent.sentence.content;
+        /*Term newcontent=newEvent.sentence.content;
         if(newcontent instanceof Operation) {
             Term pred=((Operation)newcontent).getPredicate();
             if(pred.equals(mem.getOperator("^want")) || pred.equals(mem.getOperator("^believe"))) {
                 return false;
             }
-        }
+        }*/
         return true;
     }
     /*
