@@ -142,7 +142,7 @@ public class Memory implements Output, Serializable {
         randomNumber.setSeed(randomSeed);    
     }
     
-    private final ConceptProcessor conceptProcessor;
+    public final ConceptProcessor conceptProcessor;
     
     public final EventEmitter event = Events.newEventEmitter();
     
@@ -533,7 +533,7 @@ public class Memory implements Output, Serializable {
      * @param b the new BudgetValue
      */
     public void conceptActivate(final Concept c, final BudgetValue b) {
-        conceptProcessor.conceptActivate(c, b);
+        conceptProcessor.activate(c, b);
     }
 
     /* ---------- new task entries ---------- */
@@ -1213,7 +1213,9 @@ public class Memory implements Output, Serializable {
 
 
 
-    /** returns a collection of all concepts */
+    /** returns a collection of all concepts in the conceptProcessor; 
+     *  not guaranteed to return in order.  for descending priority iteration, use
+        conceptProcessor's Iterable<Concept> .iterator() */
     public Collection<? extends Concept> getConcepts() {
         return conceptProcessor.getConcepts();
     }

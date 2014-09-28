@@ -1,6 +1,7 @@
 package nars.core.control;
 
 import java.util.Collection;
+import java.util.Iterator;
 import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
@@ -43,6 +44,9 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         }
 
     }
+
+    
+    
     
     /**
      * Select and fire the next concept.
@@ -87,14 +91,28 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     
 
     @Override
-    public void conceptActivate(Concept c, BudgetValue b) {
+    public void activate(Concept c, BudgetValue b) {
         concepts.pickOut(c.getKey());
         BudgetFunctions.activate(c, b);
         concepts.putBack(c);
+    }
+    
+    @Override
+    public void forget(Concept c) {
+        concepts.pickOut(c.getKey());
+        concepts.forget(c);
+        concepts.putBack(c);    
     }
 
     @Override
     public Concept sampleNextConcept() {
         return concepts.processNext(false);
     }
+
+    @Override
+    public Iterator<Concept> iterator() {
+        return concepts.iterator();
+    }
+    
+    
 }

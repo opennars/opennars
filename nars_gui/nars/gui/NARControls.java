@@ -54,10 +54,10 @@ import nars.gui.output.TermWindow;
 import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
-import nars.gui.output.graph.AnimatedProcessingGraphCanvas;
 import nars.gui.output.graph.ConceptGraphCanvas;
 import nars.gui.output.graph.ImplicationGraphCanvas;
 import nars.gui.output.graph.ProcessingGraphPanel;
+import nars.gui.output.graph.SentenceGraphCanvas;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.util.graph.InheritanceGraph;
@@ -237,7 +237,6 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 }
             });
             m.add(imv);
-            imv.doClick();; //TEMPORARY
 
             JMenuItem sg = new JMenuItem("+ Inheritance Graph");
             sg.addActionListener(new ActionListener() {
@@ -245,7 +244,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 public void actionPerformed(ActionEvent e) {
                     new Window("Inheritance Graph", 
                             new ProcessingGraphPanel(nar, 
-                                    new AnimatedProcessingGraphCanvas(
+                                    new SentenceGraphCanvas(
                                             new InheritanceGraph(nar)))).show(500, 500);
                 }
             });

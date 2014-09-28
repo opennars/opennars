@@ -150,7 +150,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
 //    }
     
     /** called when an item is inserted or re-inserted */
-    protected void forget(final E x) {
+    public void forget(final E x) {
         int r = forgetRate();
         if (r > 0) {
             BudgetFunctions.forget(x.budget, r, RELATIVE_THRESHOLD);
@@ -201,6 +201,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     abstract public float getAveragePriority();
         
     /** iterates all items in descending priority */
+    @Override
     public abstract Iterator<E> iterator();
 
     /**

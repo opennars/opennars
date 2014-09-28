@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -74,6 +75,11 @@ public class RealTimeFloodCycle implements ConceptProcessor {
 
     final int latencyThreshold = 8;
     private Memory memory;
+
+    @Override
+    public Iterator<Concept> iterator() {
+        return concepts.values().iterator();
+    }
     
     /** Concept for use with Real-time Memory Models */
     public static class RTConcept extends Concept {
@@ -118,7 +124,7 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         
     }
     
-    Map<CharSequence, RTConcept> concepts = new HashMap();
+    Map<CharSequence,Concept> concepts = new HashMap();
     List<RTConcept> conceptList = new ArrayList();
     int nextSample = 0;
 
@@ -194,7 +200,7 @@ public class RealTimeFloodCycle implements ConceptProcessor {
     }
 
     @Override
-    public void conceptActivate(Concept c, BudgetValue b) {
+    public void activate(Concept c, BudgetValue b) {
         BudgetFunctions.activate(c, b);
     }
 
@@ -211,7 +217,8 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         return x;
     }
     
-    protected void forget(Concept x) {
+    @Override
+    public void forget(Concept x) {
         BudgetFunctions.forget(x.budget, memory.param.conceptCyclesToForget.get(), Parameters.BAG_THRESHOLD);        
     }
 

@@ -46,12 +46,12 @@ public class Executive {
     boolean planningEnabled = true;
     
     /** number of tasks that are active in the sorted priority buffer for execution */
-    int numActiveTasks = 8;
+    int numActiveTasks = 4;
 
     /** max number of tasks that a plan can generate. chooses the N most confident */
-    int maxPlannedTasks = 4;
+    int maxPlannedTasks = 2;
     
-    float searchDepth = 64;
+    float searchDepth = 256;
     int particles = 64;
     
     
@@ -276,16 +276,29 @@ public class Executive {
         
         Operator oper = op.getOperator();
         
-        if (NAR.DEBUG) 
+        if (NAR.DEBUG)
             System.out.println("exe: " + task.getExplanation().trim());
         
         op.setTask(task);
                         
-        oper.call(op, memory);
-        
-        task.setPriority(0);
+        oper.call(op, memory);        
         
     }
+    
+    protected void forget(final Task t) {
+        t.setPriority(0);
+
+        Concept c = memory.concept(t.getContent());
+        if (c!=null) {
+            memory.conceptProcessor.forget(c);
+            System.err.println("forgetting: " + t);
+        }
+        else {
+            System.err.println("task has no corresponding concept: " + t);
+        }
+        
+    }
+            
         
     /** Add plausibility estimation */
     public void decisionMaking(final Task t, final Concept concept) {
@@ -297,6 +310,8 @@ public class Executive {
         if (desireValue.getExpectation() < memory.param.decisionThreshold.get()) {
             return;
         }
+        
+        //forget(t);
         
         if (content instanceof Operation) {
             //immediately execute

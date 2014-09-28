@@ -7,7 +7,6 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -22,7 +21,6 @@ import nars.nario.sprites.Sparkle;
 import nars.nario.sprites.Sprite;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
-import nars.util.graph.ImplicationGraph;
 
 /**
  *
@@ -38,13 +36,37 @@ public class NARio extends Run {
     int gotCoin = 0;
     private Mario mario;    
     int cyclesPerMario = 4;
-    private ImplicationGraph implications;
+    int initCycles = 1000;
 
     public NARio(NAR n) {
         super();
         this.nar = n;
         //start();
         run();
+    }
+
+    public static void main(String[] arg) {
+        NAR nar = new DefaultNARBuilder().setConceptBagSize(2048).build();
+        //NAR nar = new ContinuousBagNARBuilder().build();
+        /*nar.param().termLinkRecordLength.set(4);
+         nar.param().beliefCyclesToForget.set(30);
+         nar.param().conceptCyclesToForget.set(7);
+         nar.param().taskCyclesToForget.set(22);
+         nar.param().termLinkMaxReasoned.set(6);
+        
+         nar.param().cycleInputTasks.set(1);
+         nar.param().cycleMemory.set(1);*/
+
+        //new TextOutput(nar, System.out).setShowInput(true);
+        nar.param().duration.set(10);
+        nar.param().noiseLevel.set(0);
+        nar.param().shortTermMemorySize.set(35);
+
+
+        NARio nario = new NARio(nar);
+
+        new NARSwing(nar);
+        nar.start(100,100);
     }
 
     String[] sight = new String[9];
@@ -59,12 +81,22 @@ public class NARio extends Run {
                         
                     //nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
                         nar.addInput("<?y --> space>? :/:");
-                        nar.addInput("<{(*,0,0),(*,0,1),(*,1,0),(*,-1,0),(*,0,-1)} <-> direction>.");
-                        nar.addInput("<(*,0,0) <-> center>.");
-                        nar.addInput("<(*,-1,0) <-> left>.");
-                        nar.addInput("<(*,1,0) <-> right>.");
-                        nar.addInput("<(*,0,1) <-> up>.");
-                        nar.addInput("<(*,0,-1) <-> down>.");
+                        nar.addInput("<{(*,0,0),(*,0,1),(*,1,0),(*,-1,0),(*,0,-1)} <-> direction>. %1.00;0.99%");
+                        
+                        nar.addInput("{solid,empty,gotCoin} <-> spatial>.  %1.00;0.99%");
+                        nar.addInput("<solid <-> empty>.  %0.00;0.99%");
+                        nar.addInput("<(*,0,0) <-> center>.  %1.00;0.99%");
+                        nar.addInput("<(*,-1,0) <-> left>.  %1.00;0.99%");
+                        nar.addInput("<(*,-2,0) <-> left>.  %1.00;0.50%");
+                        nar.addInput("<(*,1,0) <-> right>.  %1.00;0.99%");
+                        nar.addInput("<(*,0,1) <-> up>.  %1.00;0.99%");
+                        nar.addInput("<(*,0,2) <-> up>.  %1.00;0.50%");
+                        nar.addInput("<(*,0,2) <-> right>.  %1.00;0.50%");
+                        nar.addInput("<(*,0,-1) <-> down>.  %1.00;0.99%");
+                        nar.addInput("<(*,0,-2) <-> down>.  %1.00;0.50%");
+                        nar.addInput("<{on,off} <-> activation>. %1.00;0.99%");
+                        nar.addInput("<{-5,-4,-3,-2,-1,0,1,2,3,4,5} <-> integers>. %1.00;0.99%");
+                        nar.addInput("<{0,(*,0,0)} <-> zeroish>.  %1.00;0.99%");                        
                         //nar.addInput("<solid <-> empty>. %0.00;0.99%");
                         //nar.addInput("<up <-> down>. %0.00;0.99%");
                         //nar.addInput("<left <-> right>. %0.00;0.99%");
@@ -95,7 +127,7 @@ public class NARio extends Run {
                    
         axioms();
   
-        
+        nar.finish(initCycles);
         
         
         
@@ -116,6 +148,19 @@ public class NARio extends Run {
             @Override
             public void event(Class event, Object... arguments) {
 
+                {
+        //                int ji = 10;
+        //                System.out.print("CONCEPTS: ");
+        //                for (Concept cc : nar.memory.conceptProcessor) {
+        //                    System.out.print(cc.getPriority() + "=" + cc.toString() + " ");
+        //                    ji--;
+        //                    if (ji == 0)
+        //                        break;
+        //                }
+        //                System.out.println();
+                }
+                
+                    
                 /*if (cycle % cyclesPerMario == 0)*/ {
                     cycle(0.05);
                 }
@@ -201,7 +246,7 @@ public class NARio extends Run {
                     }
 
                     if (gotCoin > 0) {
-                        nar.addInput("<gotCoin --> (*,0,0)>. :|:");
+                        nar.addInput("<(*,0,0) --> gotCoin>. :|:");
                     }
 
                         
@@ -277,7 +322,7 @@ public class NARio extends Run {
                             //priority/=2f;
                         }
 
-                        double senseRadius = 6;
+                        double senseRadius = 4;
                         double dist = Math.sqrt((x - s.x) * (x - s.x) + (y - s.y) * (y - s.y)) / 16.0;
                         if (dist <= senseRadius) {
                             double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
@@ -292,7 +337,7 @@ public class NARio extends Run {
                             int dy = Math.round((y - s.y) / 16);
 
                             nar.addInput(/*"$" + sightPriority + "$" +*/
-                                    " <" + type  + " --> (*," + dx + "," + dy + ")>. :|:");
+                                    " <(*," + dx + "," + dy + ") --> " + type + ">. :|:");
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
                         }
@@ -317,30 +362,6 @@ public class NARio extends Run {
     @Override
     protected void update() {
 
-    }
-
-    public static void main(String[] arg) {
-        NAR nar = new DefaultNARBuilder().setConceptBagSize(2048).build();
-        //NAR nar = new DefaultNARBuilder().build();
-        /*nar.param().termLinkRecordLength.set(4);
-         nar.param().beliefCyclesToForget.set(30);
-         nar.param().conceptCyclesToForget.set(7);
-         nar.param().taskCyclesToForget.set(22);
-         nar.param().termLinkMaxReasoned.set(6);
-        
-         nar.param().cycleInputTasks.set(1);
-         nar.param().cycleMemory.set(1);*/
-
-        //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(3);
-        nar.param().noiseLevel.set(0);
-        nar.param().shortTermMemorySize.set(35);
-
-
-        NARio nario = new NARio(nar);
-
-        new NARSwing(nar);
-        nar.start(100,2);
     }
 
 }
