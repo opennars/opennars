@@ -115,11 +115,10 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         }
 
         @Override
-        public void directProcess(Task task) {
+        public boolean directProcess(Task task) {
             pendingTasks.add(task);
+            return true; //may be incorrect to return true automatically, because this assumes the task will be processed
         }
-        
-        
         
         
     }

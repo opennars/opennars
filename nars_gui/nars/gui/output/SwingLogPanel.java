@@ -60,14 +60,6 @@ public class SwingLogPanel extends LogPanel {
     public void setShowStamp(boolean showStamp) {
         ioText.showStamp = showStamp;
     }
-
-    @Override
-    public void output(Class c, Object o) {
-        super.output(c, o);
-        print(c, o);
-    }
-    
-    
     
 
     @Override

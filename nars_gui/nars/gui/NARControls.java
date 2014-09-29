@@ -479,16 +479,16 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     Parameters.INTERNAL_EXPERIENCE_FULL=true;
                     //Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
                     break;
-                case "Enable NARS+ Ideas":
-                    narsPlusItem.setEnabled(false);
-                    nar.memory.param.experimentalNarsPlus.set(true);
-                    //Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
-                    break;
-                case "Enable Internal Experience (NAL9)":
-                    internalExperienceItem.setEnabled(false);
-                    nar.memory.param.internalExperience.set(true);
-                    //Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
-                    break;
+                    
+//                case "Enable NARS+ Ideas":
+//                    narsPlusItem.setEnabled(false);
+//                    nar.memory.param.experimentalNarsPlus.set(true);
+//                    break;
+//                case "Enable Internal Experience (NAL9)":
+//                    internalExperienceItem.setEnabled(false);
+//                    nar.memory.param.internalExperience.set(true);
+//                    break;
+                    
                 case "Load Experience":
                     openLoadFile();
                     break;
