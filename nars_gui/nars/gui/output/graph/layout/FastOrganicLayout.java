@@ -416,20 +416,23 @@ public class FastOrganicLayout<V, E> {
         }
 
         // Main iteration loop
-        for (iteration = 0; iteration < maxIterations; iteration++) {
-            if (!allowedToRun) {
-                return;
+        try {
+            for (iteration = 0; iteration < maxIterations; iteration++) {
+                if (!allowedToRun) {
+                    return;
+                }
+
+                // Calculate repulsive forces on all vertices
+                calcRepulsion();
+
+                // Calculate attractive forces through edges
+                calcAttraction();
+
+                calcPositions();
+                reduceTemperature();
             }
-
-            // Calculate repulsive forces on all vertices
-            calcRepulsion();
-
-            // Calculate attractive forces through edges
-            calcAttraction();
-
-            calcPositions();
-            reduceTemperature();
         }
+        catch (Exception e) { }
 
         double minx = 0, miny = 0, maxx = 0, maxy = 0;
 
@@ -519,10 +522,13 @@ public class FastOrganicLayout<V, E> {
         // force of the edge connecting them
         for (int i = 0; i < vertexArray.size(); i++) {
             if (neighbors[i]==null) continue;
+            if (cellLocation[i] == null) continue;
             for (int k = 0; k < neighbors[i].length; k++) {
                 // Get the index of the othe cell in the vertex array
                 int j = neighbors[i][k];
 
+                if (cellLocation[j] == null) continue;
+                
                 // Do not proceed self-loops
                 if (i != j) {
                     double xDelta = cellLocation[i][0] - cellLocation[j][0];

@@ -138,8 +138,11 @@ public class SwingLogText extends SwingText implements Output {
             }
                         
             limitBuffer();                        
-            
-            scrollRectToVisible(bottom);
+
+            try {
+                scrollRectToVisible(bottom);
+            }
+            catch (Exception e) { } 
                     
             //repaint();
             validate();
