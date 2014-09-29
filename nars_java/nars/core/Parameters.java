@@ -36,7 +36,7 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static boolean INTERNAL_EXPERIENCE_FULL=false;
+    @Deprecated public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;

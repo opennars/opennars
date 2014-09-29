@@ -155,8 +155,9 @@ public class Concept extends Item {
      * called in Memory.immediateProcess only
      *
      * @param task The task to be processed
+     * @return whether it was processed
      */
-    public void directProcess(final Task task) {
+    public boolean directProcess(final Task task) {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
@@ -173,7 +174,7 @@ public class Concept extends Item {
                 processQuestion(task);
                 break;
             default:
-                return;
+                return false;
         }
 
         if (task.aboveThreshold()) {    // still need to be processed
@@ -184,10 +185,7 @@ public class Concept extends Item {
         if (entityObserver.isActive()) {
             entityObserver.refresh(displayContent());
         }
-        
-        if (memory.param.internalExperience.get()) {
-            memory.rememberAction(task);
-        }
+        return true;
     }
 
     /**

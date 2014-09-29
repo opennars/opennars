@@ -252,17 +252,14 @@ public class Memory implements Output, Serializable {
      */
     private InferenceRecorder recorder;
     
- 
-    
-
     /* ---------- Short-term workspace for a single cycle ---	------- */
+    
     /**
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
     public final ArrayDeque<Task> newTasks;
     
-
     public Term currentTerm;
 
     public Concept currentConcept;
@@ -1081,8 +1078,14 @@ public class Memory implements Output, Serializable {
         currentConcept = conceptualize(getCurrentTerm());
         
         if (getCurrentConcept() != null) {
+            
             conceptActivate(getCurrentConcept(), task.budget);
-            getCurrentConcept().directProcess(task);
+            
+            boolean processed = getCurrentConcept().directProcess(task);
+            
+            if (processed)
+                event.emit(Events.ConceptDirectProcessedTask.class, task);            
+            
         }
         
     }
@@ -1346,33 +1349,6 @@ public class Memory implements Output, Serializable {
         return conceptProcessor.sampleNextConcept();
     }
     
-    /**
-     * To rememberAction an internal action as an operation
-     * <p>
-     * called from Concept
-     * @param task The task processed
-     */
-    public void rememberAction(final Task task) {
-        Term content = task.getContent();
-        if (content instanceof Operation) {
-            return;     // to prevent infinite recursions
-        }
-        Sentence sentence = task.sentence;
-        TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Stamp stamp = (Stamp) task.sentence.stamp.clone();
-        stamp.setOccurrenceTime(getTime());
-        
-        Sentence j = new Sentence(sentence.toTerm(this), Symbols.JUDGMENT_MARK, truth, stamp);
-        BudgetValue newbudget=new BudgetValue(
-                task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
-        Task newTask = new Task(j, (BudgetValue) newbudget,Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
-        if (getRecorder().isActive()) {
-            recorder.append("Action Remembered", j.toString());
-        }
-        newTasks.add(newTask);
-    }
 
 //    /**
 //     * Updates the LogicState measurements and returns the data     
