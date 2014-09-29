@@ -562,7 +562,7 @@ public class FastOrganicLayout<V, E> {
                     return;
                 }
 
-                if (j != i) {
+                if ((j != i) && (cellLocation[i]!=null) && (cellLocation[j]!=null)) {
                     double xDelta = cellLocation[i][0] - cellLocation[j][0];
                     double yDelta = cellLocation[i][1] - cellLocation[j][1];
 

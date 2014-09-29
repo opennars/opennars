@@ -1,14 +1,36 @@
 package nars.gui.output;
 
 import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NAR.PluginState;
+import nars.core.Plugin;
+import nars.gui.NARSwing;
 import nars.gui.NPanel;
+import nars.util.PackageUtility;
 
 /**
  * Manages the activated set of plugins in a NAR, and a menu for adding additional ones
@@ -25,23 +47,104 @@ public class PluginPanel extends NPanel {
         
         
         menu = new JMenuBar();
+        initMenu();
         
-        plugins = new JPanel();
-        plugins.setLayout(new BoxLayout(plugins, BoxLayout.PAGE_AXIS));
+        plugins = new JPanel(new GridBagLayout());
         
         add(menu, BorderLayout.NORTH);
-        add(plugins, BorderLayout.CENTER);
+        add(new JScrollPane(plugins), BorderLayout.CENTER);
         
         update();
         
     }
+    
+    protected void initMenu() {
+        TreeMap<String, JMenu> menus = new TreeMap();
+        try {
+            TreeSet<Class> plugins = new TreeSet<Class>(new Comparator<Class>() {
+                @Override public int compare(Class o1, Class o2) {
+                    return o1.getSimpleName().compareTo(o2.getSimpleName());
+                }                
+            });
+            plugins.addAll(PackageUtility.getClasses("nars.plugin", false));
+            for (Class c : plugins) {
+                if (!Plugin.class.isAssignableFrom(c))
+                    continue;
+                
+                String[] p = c.getPackage().getName().split("\\.");
+                String category = p[2];
+                JMenu j = menus.get(category);
+                if (j == null) {
+                    j = new JMenu(category);
+                    menus.put(category, j);
+                }
+                JMenuItem x = newAddPluginItem(c);
+                j.add(x);
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PluginPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (JMenu j : menus.values()) {
+            menu.add(j);
+        }
+        
+    }
 
+    
+    public static class PluginPane extends JPanel {
+        private final PluginState plugin;
+
+        public PluginPane(PluginState p) {
+            super(new BorderLayout());
+            
+            this.plugin = p;
+            JLabel j = new JLabel(p.plugin.name().toString());
+            j.setFont(NARSwing.monofont);
+            add(j, BorderLayout.CENTER);
+            
+            JPanel buttons = new JPanel(new FlowLayout());
+            add(buttons, BorderLayout.EAST);
+            
+            JCheckBox e = new JCheckBox();
+            e.setSelected(p.isEnabled());
+            buttons.add(e);
+            
+            JButton removeButton = new JButton("X");
+            buttons.add(removeButton);
+            
+            e.setEnabled(false); //TEMPORARY
+        }
+    
+        
+    }
+    
     protected void update() {
         plugins.removeAll();
         
-        for (PluginState p : nar.getPlugins()) {
-            
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        
+        gc.gridx = 0;
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;
+        gc.gridy = 0;
+        
+        List<PluginState> ppp = nar.getPlugins();
+        if (!ppp.isEmpty()) {
+            for (PluginState p : ppp) {
+                PluginPane pp = new PluginPane(p);
+                pp.setBorder(new BevelBorder(BevelBorder.RAISED));            
+                plugins.add(pp, gc);
+                gc.gridy++;
+            }
         }
+        else {
+            plugins.add(new JLabel("No plugins active."), gc);
+        }
+    
+        
+        plugins.doLayout();
+        plugins.validate();
     }
     
 
@@ -53,6 +156,31 @@ public class PluginPanel extends NPanel {
                     update();
             }            
         }, b, Events.PluginsChange.class);
+    }
+
+    private JMenuItem newAddPluginItem(Class c) {
+        String name = c.getSimpleName();
+        JMenuItem j = new JMenuItem(name);
+        j.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                addPlugin(c);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        update();
+                    }                    
+                });
+            }            
+        });
+        return j;
+    }
+    
+    protected void addPlugin(Class c) {
+        try {
+            Plugin p = (Plugin)c.newInstance();
+            nar.addPlugin(p);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.toString());
+        }
     }
     
     

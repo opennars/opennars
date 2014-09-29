@@ -75,7 +75,7 @@ public class NAR implements Runnable, Output, TaskSource {
 
     public class PluginState {
         final public Plugin plugin;
-        boolean enabled;
+        boolean enabled = false;
 
         public PluginState(Plugin plugin) {
             this(plugin,true);
@@ -87,7 +87,15 @@ public class NAR implements Runnable, Output, TaskSource {
         }
 
         public void setEnabled(boolean enabled) {
+            if (this.enabled == enabled) return;
+            
             plugin.setEnabled(NAR.this, enabled);
+            this.enabled = enabled;
+            event().emit(Events.PluginsChange.class, null, null);
+        }
+
+        public boolean isEnabled() {
+            return enabled;
         }
     }
     

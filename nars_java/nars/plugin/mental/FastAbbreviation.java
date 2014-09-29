@@ -21,8 +21,8 @@ public class FastAbbreviation implements Plugin {
 
 
     
-    public AtomicInteger abbreviationComplexityMin = new AtomicInteger();
-    public AtomicDouble abbreviationQualityMin = new AtomicDouble();
+    public AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
+    public AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
@@ -37,10 +37,11 @@ public class FastAbbreviation implements Plugin {
     public boolean setEnabled(final NAR n, final boolean enabled) {
         final Memory memory = n.memory;
         
-        final Operator abbreviate = memory.getOperator("^abbreviate");
-        if (abbreviate == null) {
-            memory.addOperator(new Abbreviate());
+        Operator _abbreviate = memory.getOperator("^abbreviate");
+        if (_abbreviate == null) {
+            _abbreviate = memory.addOperator(new Abbreviate());
         }
+        final Operator abbreviate = _abbreviate;
         
         memory.event.set(new Observer() {            
             
