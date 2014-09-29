@@ -18,7 +18,7 @@ public class IntervalTest {
     public void testInterval() {
         AtomicDuration dur5 = new AtomicDuration(5);
         
-        assertTrue(dur5.getLog() == Math.log(5));
+        assertTrue(dur5.getSubDurationLog() == Math.log(5));
         assertTrue(dur5.get() == 5);
         
         Interval i1 = Interval.intervalTime(1, dur5);
