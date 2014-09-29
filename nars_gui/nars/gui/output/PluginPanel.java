@@ -40,6 +40,7 @@ public class PluginPanel extends NPanel {
     private final NAR nar;
     private final JPanel plugins;
     private final JMenuBar menu;
+    private final JPanel pluginsWrap;
 
     public PluginPanel(NAR nar) {
         super(new BorderLayout());
@@ -50,15 +51,19 @@ public class PluginPanel extends NPanel {
         initMenu();
         
         plugins = new JPanel(new GridBagLayout());
+        pluginsWrap = new JPanel(new BorderLayout());
+        pluginsWrap.add(plugins, BorderLayout.NORTH);
         
         add(menu, BorderLayout.NORTH);
-        add(new JScrollPane(plugins), BorderLayout.CENTER);
+        add(new JScrollPane(pluginsWrap), BorderLayout.CENTER);
         
         update();
         
     }
     
     protected void initMenu() {
+        menu.add(new JLabel(" + "));
+        
         TreeMap<String, JMenu> menus = new TreeMap();
         try {
             TreeSet<Class> plugins = new TreeSet<Class>(new Comparator<Class>() {
@@ -84,6 +89,7 @@ public class PluginPanel extends NPanel {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(PluginPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         for (JMenu j : menus.values()) {
             menu.add(j);
         }
@@ -91,14 +97,14 @@ public class PluginPanel extends NPanel {
     }
 
     
-    public static class PluginPane extends JPanel {
+    public class PluginPane extends JPanel {
         private final PluginState plugin;
 
         public PluginPane(PluginState p) {
             super(new BorderLayout());
             
             this.plugin = p;
-            JLabel j = new JLabel(p.plugin.name().toString());
+            final JLabel j = new JLabel(p.plugin.name().toString());
             j.setFont(NARSwing.monofont);
             add(j, BorderLayout.CENTER);
             
@@ -107,14 +113,31 @@ public class PluginPanel extends NPanel {
             
             JCheckBox e = new JCheckBox();
             e.setSelected(p.isEnabled());
+            e.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent ae) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override public void run() {
+                            boolean s = e.isSelected();
+                            p.setEnabled(s);
+                        }                        
+                    });
+                }
+            });
             buttons.add(e);
             
             JButton removeButton = new JButton("X");
-            buttons.add(removeButton);
+            removeButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent ae) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override public void run() {
+                            removePlugin(plugin);
+                        }                        
+                    });
+                }
+            });
             
-            e.setEnabled(false); //TEMPORARY
-        }
-    
+            buttons.add(removeButton);            
+        }    
         
     }
     
@@ -139,12 +162,12 @@ public class PluginPanel extends NPanel {
             }
         }
         else {
-            plugins.add(new JLabel("No plugins active."), gc);
+            plugins.add(new JLabel("(empty)"), gc);
         }
     
         
-        plugins.doLayout();
-        plugins.validate();
+        pluginsWrap.doLayout();
+        pluginsWrap.validate();
     }
     
 
@@ -181,6 +204,9 @@ public class PluginPanel extends NPanel {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.toString());
         }
+    }
+    protected void removePlugin(PluginState ps) {
+        nar.removePlugin(ps);
     }
     
     

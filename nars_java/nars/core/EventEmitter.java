@@ -97,9 +97,8 @@ public class EventEmitter {
         
         if ((observers == null) || (observers.isEmpty())) return;
 
-        int n = observers.size();        
-        for (int i = 0; i < n; i++) {
-            final Observer m = observers.get(i);
+        int n = observers.size();
+        for (Observer m : observers) {
             m.event(eventClass, params);
         }
     }

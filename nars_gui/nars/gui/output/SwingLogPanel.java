@@ -33,9 +33,8 @@ public class SwingLogPanel extends LogPanel {
 
             @Override
             protected void onLineVisible(final int offset) {                
-                System.out.println(offset + " " + lines.get(offset));
+                //System.out.println(offset + " " + lines.get(offset));
             }
-            
             
         };
         
@@ -64,18 +63,19 @@ public class SwingLogPanel extends LogPanel {
 
     @Override
     void print(Class c, Object o) {
-        int p = ioText.print(c, o);//, showStamp, nar);
+        ioText.output(c, o);//, showStamp, nar);
 
         String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
             logFile.println(s);
         }
         
-        ioText.scrollBottom.run();
+        
     }
 
     
     
+    @Override
     public void setFontSize(float v) {
         ioText.setFontSize(v);
     }

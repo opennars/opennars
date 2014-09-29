@@ -11,5 +11,6 @@ public interface Plugin {
     default public CharSequence name() {
         return this.getClass().getSimpleName();
     }
+    
 
 }
