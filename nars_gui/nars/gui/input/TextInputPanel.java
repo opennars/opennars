@@ -430,7 +430,6 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
         /**
          * List with buttons (instant invoke) and checkboxes with 'All' at the top when two or more are selected
-         * 
          */
         //private final JPanel list;
 
@@ -441,7 +440,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             //add(new JScrollPane(list), BorderLayout.CENTER);
             comments = new SwingText();
             comments.setEditable(false);
-            setConsoleStyle(comments, true);
+            setConsoleStyle(comments, true, 12);
             
             /*JPanel pj = new JPanel(new BorderLayout());
             pj.add(j, BorderLayout.CENTER);*/
@@ -603,7 +602,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                 }
             }
         });
-        setConsoleStyle(inputText, true, 24);
+        setConsoleStyle(inputText, true, 20);
 
         mainSplit.add(new JScrollPane(inputText), 0);
 

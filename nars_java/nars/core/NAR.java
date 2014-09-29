@@ -5,6 +5,7 @@ import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +73,25 @@ public class NAR implements Runnable, Output, TaskSource {
     //protected final List<InPort> oldInputChannels;
     protected final List<Output> oldOutputChannels;
 
-    protected final List<Plugin> plugins = new CopyOnWriteArrayList<>();
+    public class PluginState {
+        final public Plugin plugin;
+        boolean enabled;
+
+        public PluginState(Plugin plugin) {
+            this(plugin,true);
+        }
+        
+        public PluginState(Plugin plugin, boolean enabled) {
+            this.plugin = plugin;
+            setEnabled(enabled);
+        }
+
+        public void setEnabled(boolean enabled) {
+            plugin.setEnabled(NAR.this, enabled);
+        }
+    }
+    
+    protected final List<PluginState> plugins = new CopyOnWriteArrayList<>();
     
     /**
      * Flag for running continuously
@@ -253,23 +272,27 @@ public class NAR implements Runnable, Output, TaskSource {
     }
 
     public void addPlugin(Plugin p) {
-        if (plugins.add(p)) {
-            if (p instanceof Operator) {
-                memory.addOperator((Operator)p);
-            }
-            p.setEnabled(this, true);
-            event().emit(Events.PluginsChange.class, p, null);
+        if (p instanceof Operator) {
+            memory.addOperator((Operator)p);
         }
+        PluginState ps = new PluginState(p);
+        plugins.add(ps);
+        event().emit(Events.PluginsChange.class, p, null);
     }
     
-    public void removePlugin(Plugin p) {
-        if (plugins.remove(p)) {
+    public void removePlugin(PluginState ps) {
+        if (plugins.remove(ps)) {
+            Plugin p = ps.plugin;
             if (p instanceof Operator) {
                 memory.removeOperator((Operator)p);
             }
-            p.setEnabled(this, false);            
+            ps.setEnabled(false);
             event().emit(Events.PluginsChange.class, null, p);
         }
+    }
+    
+    public List<PluginState> getPlugins() {
+        return Collections.unmodifiableList(plugins);
     }
     
     /** Removes an output channel */

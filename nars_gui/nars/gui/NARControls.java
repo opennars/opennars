@@ -238,7 +238,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             });
             m.add(imv);
 
-            JMenuItem sg = new JMenuItem("+ Inheritance Graph");
+            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
             sg.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
