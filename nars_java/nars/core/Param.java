@@ -1,7 +1,6 @@
 package nars.core;
 
 import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.language.Interval.AtomicDuration;
 import nars.util.meter.util.AtomicDouble;
@@ -52,11 +51,11 @@ public class Param implements Serializable {
     public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
             
     
-    //let NARS use NARS+ ideas (counting etc.)
-    public final AtomicBoolean experimentalNarsPlus = new AtomicBoolean();
-
-    //let NARS use NAL9 operators to perceive its own mental actions
-    public final AtomicBoolean internalExperience = new AtomicBoolean();
+//    //let NARS use NARS+ ideas (counting etc.)
+//    public final AtomicBoolean experimentalNarsPlus = new AtomicBoolean();
+//
+//    //let NARS use NAL9 operators to perceive its own mental actions
+//    public final AtomicBoolean internalExperience = new AtomicBoolean();
     
     //these two are AND-coupled:
     //when a concept is important and exceeds a syntactic complexity, let NARS name it: 

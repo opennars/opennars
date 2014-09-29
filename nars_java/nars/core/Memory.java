@@ -753,36 +753,6 @@ public class Memory implements Output, Serializable {
             
             event.emit(Events.TaskDerived.class, task, revised, single, occurence, occurence2);
 
-
-            if(param.experimentalNarsPlus.get() && task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
-                //lets say we have <{...} --> M>.
-                if(task.sentence.content instanceof Inheritance) {
-                    Inheritance inh=(Inheritance) task.sentence.content;
-                    if(inh.getSubject() instanceof SetExt) {
-                        SetExt set_term=(SetExt) inh.getSubject();
-                        Integer cardinality=set_term.size();   //this gets the cardinality of M
-                        //now create term <(*,M,cardinality) --> CARDINALITY>.
-
-                        Term[] product_args = new Term[] { 
-                            inh.getPredicate(),
-                            new Term(cardinality.toString()) 
-                        };
-
-                        Term new_subject=Product.make(product_args, this);
-                        Term new_predicate=new Term("CARDINALITY"); //TODO this can be a static final instance shared by all
-                        Term new_term=Inheritance.make(new_subject, new_predicate, this);
-
-                        TruthValue truth = task.sentence.truth.clone();
-                        Stamp stampi = task.sentence.stamp.clone();
-                        Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
-                        BudgetValue budg = task.budget.clone();
-                        Task newTask = new Task(j, budg,task);
-                        output(newTask);
-                        addNewTask(newTask, "Derived (Cardinality)");
-                    }
-                }
-            }
-
             if(task.sentence.content instanceof Operation) {
                 Operation op=(Operation) task.sentence.content;
                 if(op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {

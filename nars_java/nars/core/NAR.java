@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
@@ -74,7 +72,7 @@ public class NAR implements Runnable, Output, TaskSource {
     //protected final List<InPort> oldInputChannels;
     protected final List<Output> oldOutputChannels;
 
-    protected final Map<CharSequence, Plugin> plugins = new ConcurrentHashMap<>();
+    protected final List<Plugin> plugins = new CopyOnWriteArrayList<>();
     
     /**
      * Flag for running continuously
@@ -255,20 +253,22 @@ public class NAR implements Runnable, Output, TaskSource {
     }
 
     public void addPlugin(Plugin p) {
-        if (p instanceof Operator) {
-            memory.addOperator((Operator)p);
+        if (plugins.add(p)) {
+            if (p instanceof Operator) {
+                memory.addOperator((Operator)p);
+            }
+            p.setEnabled(this, true);
+            event().emit(Events.PluginsChange.class, p, null);
         }
-        plugins.put(p.name(), p);
-        p.setEnabled(this, true);
     }
     
     public void removePlugin(Plugin p) {
-        if (p instanceof Operator) {
-            memory.removeOperator((Operator)p);
-        }
-        if (plugins.containsKey(p.name())) {
-            p.setEnabled(this, false);
-            plugins.remove(p.name());
+        if (plugins.remove(p)) {
+            if (p instanceof Operator) {
+                memory.removeOperator((Operator)p);
+            }
+            p.setEnabled(this, false);            
+            event().emit(Events.PluginsChange.class, null, p);
         }
     }
     
@@ -309,6 +309,8 @@ public class NAR implements Runnable, Output, TaskSource {
         this.inputting = inputEnabled;
     }
 
+    
+    public EventEmitter event() { return memory.event; }
     
     
     /**
