@@ -21,7 +21,9 @@ public class Events {
                 ConceptGoalAdd.class,
                 ConceptGoalRemove.class,
                 ConceptQuestionAdd.class,
-                ConceptQuestionRemove.class
+                ConceptQuestionRemove.class,
+                TaskDerived.class,
+                PluginsChange.class                
         );
     }
 
@@ -63,4 +65,8 @@ public class Events {
     public static class ConceptQuestionRemove { }
 
     public static class TaskDerived {    }
+
+    public static class PluginsChange {    }
+
+    public static class UnExecutedGoal {    }
 }

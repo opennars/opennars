@@ -80,11 +80,6 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         p.termLinkMaxMatched.set(10);
         p.termLinkRecordLength.set(10);
         
-        //NAL9 experimental
-        p.experimentalNarsPlus.set(false);
-        p.internalExperience.set(false);
-        p.abbreviationMinComplexity.set(20);
-        p.abbreviationMinQuality.set(0.95f);
         
         
         
