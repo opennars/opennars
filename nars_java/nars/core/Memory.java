@@ -102,7 +102,7 @@ import nars.storage.BagObserver;
 
 
 /**
- * Memory consists  the run-time state of a NAR, including:
+ * Memory consists of the run-time state of a NAR, including:
  *   * term and concept memory
  *   * clock
  *   * reasoner state
@@ -344,6 +344,9 @@ public class Memory implements Output, Serializable {
                     double p = c.getPriority();
                     totalQuestions += c.questions.size();        
                     totalBeliefs += c.beliefs.size();        
+                    //TODO totalGoals...
+                    //TODO totalQuests...
+                    
                     prioritySum += p;
                     prioritySumSq += p*p;
                     
@@ -430,10 +433,6 @@ public class Memory implements Output, Serializable {
         return clock;
     }
 
-     /* ---------- operator processing ---------- */
-     public boolean isOperatorRegistered(String op) {
-         return operators.containsKey(op);
-     }
  
     /**
      * Actually means that there are no new Tasks
@@ -540,7 +539,7 @@ public class Memory implements Output, Serializable {
     /**
      * add new task that waits to be processed in the next cycleMemory
      */
-    protected void addNewTask(final Task t, final String reason) {
+    public void addNewTask(final Task t, final String reason) {
         logic.TASK_ADD_NEW.commit(t.getPriority());
                 
         newTasks.add(t);
@@ -720,8 +719,8 @@ public class Memory implements Output, Serializable {
             //its a inference rule, so we have to do the derivation chain check to hamper cycles
             if (!revised) { 
 
-                int i = 0;
-                for (Term chain1 : chain) {
+                for (int i = 0; i < chain.size(); i++) {
+                    Term chain1 = chain.get(i);
                     Term tc = task.getContent();
                     if (task.sentence.isJudgment() && tc.equals(chain1)) {
                         Term ptc = task.getParentTask().getContent();
@@ -735,7 +734,6 @@ public class Memory implements Output, Serializable {
                             return false;
                         }
                     }
-                    i++;                    
                 }
             } else { //its revision, of course its cyclic, apply evidental base policy
                 final int stampLength = stamp.baseLength;
@@ -752,29 +750,9 @@ public class Memory implements Output, Serializable {
                     }
                 }
             }
+            
+            event.emit(Events.TaskDerived.class, task, revised, single, occurence, occurence2);
 
-            //is it complex and also important? then give it a name:
-            if (!(task.sentence.content instanceof Operation) && 
-                 (param.internalExperience.get()) && 
-                 (task.sentence.content.getComplexity() > param.abbreviationMinComplexity.get()) &&
-                 (task.budget.getQuality() > param.abbreviationMinQuality.get())) {
-
-                Term opTerm = this.getOperator("^abbreviate");
-                Term[] arg = new Term[1];
-                arg[0]=task.sentence.content;
-                Term argTerm = Product.make(arg,this);
-                
-                Term operation = Inheritance.make(argTerm, opTerm,this);
-                TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                Stamp stampi = task.sentence.stamp.clone();
-                stamp.setOccurrenceTime(this.getTime());
-                
-                Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
-                BudgetValue budg=new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, 1);
-                Task newTask = new Task(j, budg,Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
-                output(newTask);
-                addNewTask(newTask, "Derived (Abbreviated)");
-            }
 
             if(param.experimentalNarsPlus.get() && task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
                 //lets say we have <{...} --> M>.
@@ -1140,12 +1118,17 @@ public class Memory implements Output, Serializable {
     }
 
     
-     public Operator getOperator(String op) {
+     public Operator getOperator(final String op) {
         return operators.get(op);
      }
      
-     public void addOperator(Operator op) {
+     public Operator addOperator(final Operator op) {
          operators.put(op.name(), op);
+         return op;
+     }
+     
+     public Operator removeOperator(final Operator op) {
+         return operators.remove(op.name());
      }
      
  

@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
  */
 public class EventEmitter {
+
     
     /** Observes events emitted by EventEmitter */
     public interface Observer<C> {
@@ -73,7 +74,17 @@ public class EventEmitter {
             throw new RuntimeException("Observer " + o + " was not registered for events");
         }
     }
- 
+
+    /** for enabling many events at the same time */
+    public void set(final Observer o, final boolean enable, final Class... events) {
+        for (final Class c : events) {
+            if (enable)
+                on(c, o);
+            else
+                off(c, o);
+        }
+    }
+    
 
     public void emit(final Class eventClass, final Object... params) {
         List<Observer> observers = events.get(eventClass);

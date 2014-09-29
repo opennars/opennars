@@ -1,7 +1,6 @@
 package nars.operator;
 
 import nars.operator.math.Add;
-import nars.operator.mental.Abbreviate;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Consider;
 import nars.operator.mental.Doubt;
@@ -41,7 +40,7 @@ public class DefaultOperators {
             new Remind(),   // create/activate a concept
             new Consider(),  // find the most active concept            
             new Name(),         // turn a compount term into an atomic term
-            new Abbreviate(),
+            //new Abbreviate(),
             new Register(),
             
             // truth-value operations

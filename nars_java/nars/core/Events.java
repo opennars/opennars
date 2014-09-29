@@ -61,4 +61,6 @@ public class Events {
     public static class ConceptGoalRemove { }
     public static class ConceptQuestionAdd { }
     public static class ConceptQuestionRemove { }
+
+    public static class TaskDerived {    }
 }
