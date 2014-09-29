@@ -24,6 +24,8 @@ package nars.operator;
 import java.util.Arrays;
 import java.util.List;
 import nars.core.Memory;
+import nars.core.NAR;
+import nars.core.Plugin;
 import nars.entity.Task;
 import nars.io.Output.EXE;
 import nars.language.Product;
@@ -36,7 +38,7 @@ import nars.language.Term;
  * <p>
  * This is the only file to modify when registering a new operator into NARS.
  */
-public abstract class Operator extends Term {
+public abstract class Operator extends Term implements Plugin {
         
     protected Operator() {   super();    }
     
@@ -45,6 +47,11 @@ public abstract class Operator extends Term {
         if (!name.startsWith("^"))
             throw new RuntimeException("Operator name needs ^ prefix");
     }
+
+    @Override
+    public boolean setEnabled(NAR n, boolean enabled) {
+        return true;
+    }        
     
     /**
      * Required method for every operator, specifying the corresponding

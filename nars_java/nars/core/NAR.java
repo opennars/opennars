@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
@@ -24,6 +26,7 @@ import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
+import nars.operator.Operator;
 import nars.operator.io.Echo;
 
 
@@ -71,6 +74,7 @@ public class NAR implements Runnable, Output, TaskSource {
     //protected final List<InPort> oldInputChannels;
     protected final List<Output> oldOutputChannels;
 
+    protected final Map<CharSequence, Plugin> plugins = new ConcurrentHashMap<>();
     
     /**
      * Flag for running continuously
@@ -250,6 +254,24 @@ public class NAR implements Runnable, Output, TaskSource {
         return channel;
     }
 
+    public void addPlugin(Plugin p) {
+        if (p instanceof Operator) {
+            memory.addOperator((Operator)p);
+        }
+        plugins.put(p.name(), p);
+        p.setEnabled(this, true);
+    }
+    
+    public void removePlugin(Plugin p) {
+        if (p instanceof Operator) {
+            memory.removeOperator((Operator)p);
+        }
+        if (plugins.containsKey(p.name())) {
+            p.setEnabled(this, false);
+            plugins.remove(p.name());
+        }
+    }
+    
     /** Removes an output channel */
     public Output removeOutput(final Output channel) {
         oldOutputChannels.remove(channel);

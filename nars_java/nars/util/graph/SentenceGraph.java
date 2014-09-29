@@ -41,26 +41,27 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         
     }
     
+    private void setEvents(boolean n) {
+        memory.event.set(this, n, 
+                Events.FrameEnd.class, 
+                Events.ConceptRemove.class, 
+                Events.ConceptBeliefAdd.class, 
+                Events.ConceptBeliefRemove.class, 
+                Events.ConceptGoalAdd.class, 
+                Events.ConceptGoalRemove.class, 
+                Events.ResetEnd.class);
+    }
+    
     public void start() {
         if (started) return;        
         started = true;
-        memory.event.on(Events.FrameEnd.class, this);
-        memory.event.on(Events.ConceptRemove.class, this);
-        memory.event.on(Events.ConceptBeliefAdd.class, this);
-        memory.event.on(Events.ConceptBeliefRemove.class, this);        
-        memory.event.on(Events.ConceptGoalAdd.class, this);
-        memory.event.on(Events.ConceptGoalRemove.class, this);        
+        setEvents(true);        
     }
     
     public void stop() {
         if (!started) return;
         started = false;
-        memory.event.off(Events.FrameEnd.class, this);        
-        memory.event.off(Events.ConceptRemove.class, this);
-        memory.event.off(Events.ConceptBeliefAdd.class, this);
-        memory.event.off(Events.ConceptBeliefRemove.class, this);        
-        memory.event.off(Events.ConceptGoalAdd.class, this);
-        memory.event.off(Events.ConceptGoalRemove.class, this);        
+        setEvents(false);
     }
 
     @Override
@@ -95,6 +96,9 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         else if (event == Events.FrameEnd.class) {
             if (needInitialConcepts)
                 getInitialConcepts();
+        }
+        else if (event == Events.ResetEnd.class) {
+            reset();
         }
     }    
     
