@@ -496,16 +496,16 @@ public class GraphExecutive {
                     }                    
                 }
                 else {
-                    if (nonIntervalAdded) { ////ignore prefix intervals                        
+                    //accumulate delay if the temporal rule involves time difference??
+                    /*
+                    if (nonIntervalAdded) { 
+                        ////ignore prefix intervals                        
                         int temporal = (s.content).getTemporalOrder();
-                                                
-                        //only accumulate delay if the temporal rule involves time difference
-                        if (temporal == TemporalRules.ORDER_FORWARD) {
-                            
+                        if (temporal == TemporalRules.ORDER_FORWARD) {                            
                             accumulatedDelay++;
-                        }
-                        
+                        }                        
                     }
+                    */
                 }
                 
                 if (subj instanceof Operation)

@@ -151,9 +151,9 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     
     /** called when an item is inserted or re-inserted */
     public void forget(final E x) {
-        int r = forgetRate();
-        if (r > 0) {
-            BudgetFunctions.forget(x.budget, r, RELATIVE_THRESHOLD);
+        int forgetRate = forgetRate();
+        if (forgetRate > 0) {
+            BudgetFunctions.forget(x.budget, forgetRate, RELATIVE_THRESHOLD);
         }
     }
 

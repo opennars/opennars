@@ -31,7 +31,15 @@ import nars.io.Symbols;
 public class Interval extends Term {
     
     public static class AtomicDuration extends AtomicInteger {
-                
+        
+        /** this represents the amount of time in proportion to a duration in which
+         *  Interval resolution calculates.  originally, NARS had a hardcoded duration of 5
+         *  and an equivalent Interval scaling factor of ~1/2 (since ln(E) ~= 1/2 * 5).
+         *  Since duration is now adjustable, this factor approximates the same result
+         *  with regard to a "normalized" interval scale determined by duration.
+         */
+        final double subDurationResolution = 0.5;
+        
         double log; //caches the value here
         int lastValue = -1;
 
@@ -43,11 +51,11 @@ public class Interval extends Term {
         }
         
         
-        public double getLog() {
+        public double getSubDurationLog() {
             int val = get();
             if (lastValue != val) {
                 lastValue = val;
-                this.log = Math.log(val);
+                this.log = Math.log( val / subDurationResolution );
             }
             return log;
         }
@@ -105,13 +113,13 @@ public class Interval extends Term {
 //    }
 
     public static int timeToMagnitude(final long timeDiff, final AtomicDuration duration) {
-        return (int) Math.round(Math.log(timeDiff) / duration.getLog());
+        return (int) Math.round(Math.log(timeDiff) / duration.getSubDurationLog());
     }
     
     public static double magnitudeToTime(final double magnitude, final AtomicDuration duration) {
         if (magnitude <= 0)
             return 1;
-        return Math.exp(magnitude * duration.getLog());
+        return Math.exp(magnitude * duration.getSubDurationLog());
     }
     public static long magnitudeToTime(final int magnitude, final AtomicDuration duration) {
         return (long)Math.round(magnitudeToTime((double)magnitude, duration));

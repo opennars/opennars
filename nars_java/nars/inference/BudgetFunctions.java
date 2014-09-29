@@ -168,8 +168,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     /* ---------------- Bag functions, on all Items ------------------- */
     /**
-     * Decrease Priority after an item is used, called in Bag
-     * <p>
+     * Decrease Priority after an item is used, called in Bag.
      * After a constant time, p should become d*p. Since in this period, the
      * item is accessed c*p times, each time p-q should multiple d^(1/(c*p)).
      * The intuitive meaning of the parameter "forgetRate" is: after this number
