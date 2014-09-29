@@ -115,8 +115,8 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     
     int t = 0;
     int cangle = -4;
-    int angleDiv = 20;
-    int trainingPeriod = 50;
+    int angleDiv = 5;
+    int trainingPeriod = 1550;
     
     @Override
     public void cycle() {
