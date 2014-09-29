@@ -88,10 +88,11 @@ public class Abbreviation implements Plugin {
     public boolean setEnabled(final NAR n, final boolean enabled) {
         final Memory memory = n.memory;
         
-        final Operator opTerm = memory.getOperator("^abbreviate");
-        if (opTerm == null) {
-            memory.addOperator(new Abbreviate());
+        Operator _abbreviate = memory.getOperator("^abbreviate");
+        if (_abbreviate == null) {
+            _abbreviate = memory.addOperator(new Abbreviate());
         }
+        final Operator abbreviate = _abbreviate;
         
         memory.event.set(new Observer() {            
             
@@ -107,7 +108,7 @@ public class Abbreviation implements Plugin {
                 if (canAbbreviate(task)) {
 
                     Operation operation = Operation.make(
-                            opTerm, termArray( task.sentence.content ), false, memory);
+                            abbreviate, termArray( task.sentence.content ), false, memory);
 
                     
                     TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);

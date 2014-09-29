@@ -62,7 +62,12 @@ public class EventEmitter {
                 
     }
  
-    public void off(final Class<?> event, final Observer o) {
+    /**
+     * @param event
+     * @param o
+     * @return  whether it was removed
+     */
+    public boolean off(final Class<?> event, final Observer o) {
         if (null == event || null == o)
             throw new RuntimeException("Invalid parameter");
  
@@ -70,9 +75,10 @@ public class EventEmitter {
             throw new RuntimeException("Unknown event: " + event);
         
         boolean removed = events.get(event).remove(o);
-        if (!removed) {
+        /*if (!removed) {
             throw new RuntimeException("Observer " + o + " was not registered for events");
-        }
+        }*/
+        return removed;
     }
 
     /** for enabling many events at the same time */

@@ -137,7 +137,8 @@ public class SwingLogText extends SwingText implements Output {
             }
 
             limitBuffer();
-            
+            //repaint();
+            validate();
         }
     };
     
