@@ -119,7 +119,7 @@ public class FastOrganicLayout<V, E> {
     /**
      * Local copy of cell neighbours.
      */
-    protected int[][] neighbours;
+    protected int[][] neighbors;
 
     /**
      * Boolean flag that specifies if the layout is allowed to run. If this is
@@ -299,7 +299,7 @@ public class FastOrganicLayout<V, E> {
         dispY = new double[n];
         cellLocation = new double[n][];
         isMoveable = new boolean[n];
-        neighbours = new int[n][];
+        neighbors = new int[n][];
         radius = new double[n];
         radiusSquared = new double[n];
 
@@ -366,6 +366,12 @@ public class FastOrganicLayout<V, E> {
             V v = vertexArray.get(i);
             //ProcessingGraphCanvas.VertexDisplay vd = displayed.get(v);
 
+            
+            //TODO why does a vertex disappear from the graph... make this unnecessary
+            if (!graph.containsVertex(v))
+                continue;
+            
+            
             Set<E> edges = graph.edgesOf(v);
             List<V> cells = new ArrayList(edges.size());
             for (E e : edges) {
@@ -383,7 +389,7 @@ public class FastOrganicLayout<V, E> {
                 else if (target!=v)  cells.add(target);
             }
 
-            neighbours[i] = new int[cells.size()];
+            neighbors[i] = new int[cells.size()];
 
             for (int j = 0; j < cells.size(); j++) {
                 Integer index = indices.get(cells.get(j));
@@ -391,13 +397,13 @@ public class FastOrganicLayout<V, E> {
                                     // Check the connected cell in part of the vertex list to be
                 // acted on by this layout
                 if (index != null) {
-                    neighbours[i][j] = index.intValue();
+                    neighbors[i][j] = index.intValue();
                 } // Else if index of the other cell doesn't correspond to
                 // any cell listed to be acted upon in this layout. Set
                 // the index to the value of this vertex (a dummy self-loop)
                 // so the attraction force of the edge is not calculated
                 else {
-                    neighbours[i][j] = i;
+                    neighbors[i][j] = i;
                 }
             }
         }
@@ -512,9 +518,10 @@ public class FastOrganicLayout<V, E> {
 		// Check the neighbours of each vertex and calculate the attractive
         // force of the edge connecting them
         for (int i = 0; i < vertexArray.size(); i++) {
-            for (int k = 0; k < neighbours[i].length; k++) {
+            if (neighbors[i]==null) continue;
+            for (int k = 0; k < neighbors[i].length; k++) {
                 // Get the index of the othe cell in the vertex array
-                int j = neighbours[i][k];
+                int j = neighbors[i][k];
 
                 // Do not proceed self-loops
                 if (i != j) {

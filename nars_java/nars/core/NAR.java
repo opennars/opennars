@@ -92,6 +92,7 @@ public class NAR implements Runnable, Output, TaskSource {
             plugin.setEnabled(NAR.this, enabled);
             this.enabled = enabled;
             event().emit(Events.PluginsChange.class, null, null);
+            output(Plugin.class, plugin.name() + " " + (enabled ? "on" : "off"));
         }
 
         public boolean isEnabled() {
@@ -106,25 +107,11 @@ public class NAR implements Runnable, Output, TaskSource {
      */
     private boolean running = false;
     
-    
-    
-    /**
-     * determines the end of {@link NARSBatch} program (set but not accessed in
-     * this class)
-     */
-    private boolean finishedInputs;
 
     
     /**arbitrary data associated with this particular NAR instance can be stored here */
     public final HashMap data = new HashMap();
-    
-
-    /**
-     *  Parameters which can be changed at runtime
-    */
-    //public final Param param;
-    
-    
+        
 
     public final Perception perception;
     

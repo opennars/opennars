@@ -82,7 +82,7 @@ public class NARSwing  {
         mainWindow.setVisible(true);
         
         //TEMPORARY
-        new Window("Plugins", new PluginPanel(nar)).show(500, 800);
+        new Window("Plugins", new PluginPanel(nar)).show(300, 400);
         
         
         if (logPanel) {
