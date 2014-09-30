@@ -32,7 +32,6 @@ import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
-import nars.gui.output.PluginPanel;
 import nars.gui.output.SwingLogPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -82,7 +81,7 @@ public class NARSwing  {
         mainWindow.setVisible(true);
         
         //TEMPORARY
-        new Window("Plugins", new PluginPanel(nar)).show(300, 400);
+        //new Window("Plugins", new PluginPanel(nar)).show(300, 400);
         
         
         if (logPanel) {

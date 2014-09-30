@@ -55,7 +55,7 @@ public class Interval extends Term {
             int val = get();
             if (lastValue != val) {
                 lastValue = val;
-                this.log = Math.log( val / subDurationResolution );
+                this.log = Math.log( val * subDurationResolution );
             }
             return log;
         }

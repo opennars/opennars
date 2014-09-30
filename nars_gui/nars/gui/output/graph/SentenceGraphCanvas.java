@@ -24,13 +24,7 @@ public class SentenceGraphCanvas extends AnimatedProcessingGraphCanvas<Term,Sent
         this.sgraph = g;
     }
 
-    @Override
-    public void updateGraph() {
-        super.updateGraph(); 
-        
-        
-    }
-    
+
     @Override
     public int getEdgeColor(final Sentence edge) {
         float freq = edge.truth.getFrequency();

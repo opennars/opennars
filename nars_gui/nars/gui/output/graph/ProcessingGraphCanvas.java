@@ -34,12 +34,11 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     Hsim hsim = new Hsim();
 
     float selection_distance = 10;
-    public float maxNodeSize = 40f;
-    float FrameRate = 30f;
-    float boostMomentum = 0.98f;
-    float boostScale = 6.0f;
+    public float maxNodeSize = 100f;
+    float FrameRate = 25f;
+    static final float boostMomentum = 0.98f;
 
-    float vertexTargetThreshold = 4;
+    static final float vertexTargetThreshold = 4;
 
     boolean compressLevels = true;
     boolean drawn = false;
@@ -47,7 +46,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     int maxNodesWithLabels = 300;
     int maxNodes = 1000;
     int maxEdgesWithArrows = 500;
-    int maxEdges = 2500;
+    int maxEdges = 3500;
 
     float minPriority = 0;
 
@@ -63,9 +62,11 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     long lasttime = -1;
 
     boolean autofetch = true;
-    private int MAX_UNSELECTED_LABEL_LENGTH = 32;
+    static final int MAX_UNSELECTED_LABEL_LENGTH = 32;
     boolean updateNext;
+
     float nodeSize = 7;
+    static final float boostScale = 6.0f;
 
     float lineAlpha = 0.75f;
     float lineWidth = 3.8f;
@@ -74,7 +75,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     Set<V> deadVertices = new HashSet();
     Map<Object, Integer> edgeColors = new HashMap(16);
 
-    private DirectedMultigraph<V,E> currentGraph;
+    DirectedMultigraph<V,E> currentGraph;
     boolean showSyntax;
 
     //bounds of last positioned vertices
@@ -98,7 +99,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         return (source.radius + target.radius) / 2.0f / lineWidth;
     }
 
-    public class VertexDisplay {
+    public static class VertexDisplay<V> {
 
         float x, y, tx, ty;
         int color;
@@ -117,7 +118,6 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
             tx = x;
             ty = y;
             stroke = 0;
-            radius = nodeSize;
             visible = true;
 
             if (o instanceof Concept) {
@@ -130,7 +130,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                 label = label.substring(0, MAX_UNSELECTED_LABEL_LENGTH - 3) + "..";
             }
 
-            update(o);
+            update(o, 1, 1);
 
         }
 
@@ -144,48 +144,52 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
             return object.equals(obj);
         }
 
-        public void draw(boolean text) {
-            update();
+        public boolean draw(PApplet p, boolean text, float nodeSize, float nodeSpeed) {
+            boolean needsUpdate = update(nodeSpeed);
 
             if (!visible) {
-                return;
+                return needsUpdate;
             }
 
             /*if (stroke > 0) {
              stroke(Color.WHITE.getRGB());
              strokeWeight(stroke);
              }*/
-            float r = (radius + boost * boostScale) * nodeSize / 2f;
+            float r = ((radius*nodeSize) + boost * boostScale) / 2f;
+            if (r == 0)
+                return false;
 
-            fill(color, alpha * 255 / 2);
+            p.fill(color, alpha * 255 / 2);
 
-            ellipse(x, y, r, r);
+            p.ellipse(x, y, r, r);
 
             if (text && (label != null)) {
-                fill(255, 255, 255, alpha * 255 * 0.75f);
-                textSize(r / 2);
-                text(label, x, y);
+                p.fill(255, 255, 255, alpha * 255 * 0.75f);
+                p.textSize(r / 2);
+                p.text(label, x, y);
             }
 
             /*if (stroke > 0) {                
              //reset stroke
              noStroke();
              }*/
+            return needsUpdate;
         }
 
-        protected void update() {
+        protected boolean update(final float nodeSpeed) {
             x = (x * (1.0f - nodeSpeed) + tx * (nodeSpeed));
             y = (y * (1.0f - nodeSpeed) + ty * (nodeSpeed));
 
             if ((Math.abs(tx - x) + Math.abs(ty - y)) > vertexTargetThreshold) {
                 //keep animating if any vertex hasnt reached its target
-                drawn = false;
+                return false;
             }
 
             boost *= boostMomentum;
+            return true;
         }
 
-        private void update(V o) {
+        private void update(V o, float radius, int color) {
             visible = true;
 
             if (o instanceof Sentence) {
@@ -212,8 +216,8 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                 //radius = (float) (Math.log(1 + 2 + t.getComplexity()) * nodeSize);
                 alpha = PGraphPanel.vertexAlpha(o);                
             }
-            radius = getNodeSize(o);
-            color = getNodeColor(o);
+            this.radius = radius;
+            this.color = color;
         }
 
         public void setPosition(final float x, final float y) {
@@ -228,7 +232,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         public float getY() { return ty; }
 
         public float getRadius() {
-            return radius*nodeSize;
+            return radius;
         }
 
     }
@@ -243,8 +247,9 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         deadVertices.remove(o);
         
         VertexDisplay v = vertices.get(o);
+        boolean changed = false;
         if (v != null) {
-            v.update(o);
+            v.update(o, getNodeSize(o), getNodeColor(o));
             return v;
         }
         v = new VertexDisplay(o);
@@ -318,6 +323,9 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                     System.err.println(e);
                 }
 
+                for (V v : currentGraph.vertexSet()) {
+                   ProcessingGraphCanvas.VertexDisplay d = updateVertex(v);            
+                }
 
                 for (final V v : deadVertices)
                     vertices.remove(v);
@@ -339,8 +347,6 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         if (drawn) {
             return;
         }
-
-        drawn = true; //allow the vertices to invalidate again in drawit() callee
 
         if (motionBlur > 0) {
             fill(0, 0, 0, 255f * (1.0f - motionBlur));
@@ -377,8 +383,8 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
          */
     }
 
-    public void drawGraph() {
-
+    public void drawGraph() {        
+        
         if (currentGraph == null) {
             return;
         }
@@ -422,11 +428,13 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
 
             int numNodes = vertices.size();
             boolean text = numNodes < maxNodesWithLabels;
+            boolean changed = false;
             if (numNodes < maxNodes) {
                 for (final VertexDisplay d : vertices.values()) {
-                    d.draw(text);
+                    changed |= d.draw(this, text, nodeSize, nodeSpeed);
                 }
             }
+            //drawn = !changed;
 
         }
     }

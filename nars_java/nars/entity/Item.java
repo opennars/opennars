@@ -123,6 +123,22 @@ public abstract class Item implements Comparable {
         budget.decDurability(v);
     }
 
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) return true;
+        if (obj instanceof Item) {
+            return ((Item)obj).getKey().equals(getKey());
+        }
+        return false;
+    }
+    
+
+    
     /**
      * Get quality value
      * @return The quality value
