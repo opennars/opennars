@@ -55,6 +55,7 @@ import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
 import nars.gui.output.graph.ConceptGraphCanvas;
+import nars.gui.output.graph.ConceptGraphCanvas2;
 import nars.gui.output.graph.ImplicationGraphCanvas;
 import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphCanvas;
@@ -223,6 +224,15 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 }
             });
             m.add(mv);
+
+            JMenuItem mv2 = new JMenuItem("+ Concept Graph 2");
+            mv2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new Window("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
+                }
+            });
+            m.add(mv2);
 
             
             JMenuItem imv = new JMenuItem("+ Implication Graph");

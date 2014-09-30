@@ -130,15 +130,14 @@ public class FastOrganicLayout<V, E> {
     /**
      * Maps from vertices to indices.
      */
-    protected Map<V, Integer> indices = new HashMap<V, Integer>();
-    private final DirectedMultigraph<V, E> graph;
+    protected Map<V, Integer> indices;
+    
+    
 
     /**
      * Constructs a new fast organic layout for the specified graph.
      */
-    public FastOrganicLayout(DirectedMultigraph<V, E> graph) {
-        this.graph = graph;
-        
+    public FastOrganicLayout() {
 
     }
 
@@ -285,10 +284,20 @@ public class FastOrganicLayout<V, E> {
     /* (non-Javadoc)
      * @see com.mxgraph.layout.mxIGraphLayout#execute(java.lang.Object)
      */
-    public void execute(Map<V, ProcessingGraphCanvas.VertexDisplay> displayed) {
+    public synchronized void execute(DirectedMultigraph<V, E> graph, Map<V, ProcessingGraphCanvas.VertexDisplay> displayed) {
 
+        if (indices == null)
+            indices = new HashMap<V, Integer>();
+        else
+            indices.clear();
+        
         // Finds the relevant vertices for the layout
-        vertexArray = new ArrayList<>( graph.vertexSet() );
+        if (vertexArray == null)
+            vertexArray = new ArrayList();
+        else
+            vertexArray.clear();
+        
+        vertexArray.addAll( graph.vertexSet() );
 
         mxRectangle initialBounds = null; //new mxRectangle(-100, -50, 100, 50);
                 //? graph.getBoundsForCells(vertexArray, false, false, true) : null;
@@ -321,6 +330,10 @@ public class FastOrganicLayout<V, E> {
         for (int i = 0; i < n; i++) {
             V vertex = vertexArray.get(i);
             VertexDisplay vd = displayed.get(vertex);
+            if (vd == null) {
+                vd = new VertexDisplay(vertex);
+                displayed.put(vertex, vd);
+            }
             
             cellLocation[i] = new double[2];
 
