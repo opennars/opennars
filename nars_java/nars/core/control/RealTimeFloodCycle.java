@@ -193,7 +193,7 @@ public class RealTimeFloodCycle implements ConceptProcessor {
                 new ContinuousBag<TermLink>(20, m.param.taskCycleForgetDurations,true),
                 m);        
         
-        concepts.put(concept.getKey(), concept);       
+        concepts.put(concept.name(), concept);       
         conceptList.add(concept);
         return concept;
     }

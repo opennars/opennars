@@ -14,7 +14,7 @@ public class SetVolume extends AbstractTask {
     }
 
     @Override
-    public CharSequence getKey() {
+    public CharSequence name() {
         return "SetVolume(" + volume + ')';
     }
     

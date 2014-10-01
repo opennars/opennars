@@ -12,7 +12,7 @@ public class Reset extends AbstractTask {
     }
 
     @Override
-    public CharSequence getKey() {
+    public CharSequence name() {
         return "Reset";
     }
     

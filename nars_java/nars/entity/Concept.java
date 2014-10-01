@@ -140,7 +140,7 @@ public class Concept extends Item {
 
     }
 
-    @Override public CharSequence getKey() {
+    @Override public CharSequence name() {
         return key;
     }
     
@@ -733,7 +733,7 @@ public class Concept extends Item {
                 return null;
             }
             if (taskLink.novel(termLink, time)) {
-                termLinks.removeKey(termLink.getKey());
+                termLinks.removeKey(termLink.name());
                 return termLink;
             }
             termLinks.putBack(termLink, false);

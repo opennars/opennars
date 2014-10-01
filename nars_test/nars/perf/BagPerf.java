@@ -108,7 +108,7 @@ public class BagPerf {
 
         
         @Override
-        public CharSequence getKey() {
+        public CharSequence name() {
             return key;
         }
         

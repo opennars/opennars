@@ -148,29 +148,44 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
 //            bagObserver.stop();
 //        }
 //    }
-    
+
     /** called when an item is inserted or re-inserted */
     public void forget(final E x) {
         float forgetCycles = forgetCycles();
-        if (forgetCycles > 0) {
-            
-            
-            //increase the forgetting time (lower rate) by the empty space of the bag to keep the 
-            //actual forgetting rate constant over time, regardless of bag size vs. capacity.
-            final float size = size();
-            
-            float emptyBagFactor = size > 0 ? 
-                    ( 1 + (getCapacity() - size)/size ) 
-                    : 1;
-            
-            //System.out.println(size + "|" + getCapacity() + ": " + forgetRate + " " + emptyBagFactor);
-            
-            forgetCycles *= emptyBagFactor;
-            
-            
+        if (forgetCycles > 0) {            
             BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD);
         }
     }
+    
+//    /** called when an item is inserted or re-inserted */
+//    protected void forgetExperimental(final E x) {
+//        float forgetCycles = forgetCycles();
+//        if (forgetCycles > 0) {
+//            
+//            
+//            //increase the forgetting time (lower rate) by the empty space of the bag to keep the 
+//            //actual forgetting rate constant over time, regardless of bag size vs. capacity.
+//            final float size = size();
+//            float initialPriority = x.budget.getPriority();
+//
+//            
+//            
+//            BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD);
+//
+//            
+//            
+////            //use LERP to give the priority a momentum to simulate slower forgetting.
+////            //the rate is proportional to the empty bag space divided by the priority
+////            //this is because higher priority concepts will be activated more frequently
+////            //their forgetting should be more frequent
+////            float emptyBagFactor = (1f + size) / (1f + getCapacity()) - initialPriority;
+////            if (emptyBagFactor > 0)
+////                x.budget.lerpPriority(initialPriority, emptyBagFactor);
+////            
+////            if (x instanceof Concept)
+////                System.out.println(x.toString() + " " + size + "|" + getCapacity() + ": " + forgetCycles + " * " + initialPriority + " -> " +  x.budget.getPriority() + " " + emptyBagFactor);
+//        }
+//    }
 
     /**
      * Put an item back into the itemTable

@@ -1,12 +1,11 @@
 package nars.narclear;
 
+import nars.io.ChangedTextInput;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
-import nars.io.TextInput;
-import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
@@ -21,6 +20,16 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     float shoulderRange = MathUtils.PI/2f;
     float elbowRange = MathUtils.PI/2f;
     float elbowAngle = 0, fingerAngle = 0;
+    
+    int t = 0;
+    int cangle = 0;
+    int angleResolution = 16;
+    int angleDiv = 40;
+    int trainingPeriod = 100;
+    int actionTestPeriod = 10;
+    int numAngles = 4;
+
+    float decisionThreshold = 0.3f;
     
     boolean autonomous = false;
     private final ChangedTextInput upperArmSensor;
@@ -37,7 +46,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
                 
                 if (totalHit > 0) {
                     float th = totalHit / ((float)hit.length);
-                    n.addInput("sight. :|: %1.00;" + Texts.n2(th) + "%");
+                    //n.addInput("sight. :|: %1.00;" + Texts.n2(th) + "%");
                 }
 
             }
@@ -56,15 +65,17 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
 
                     switch (args[0].toString()) {
                         case "shoulder":
-                            if (as.equals("left")) shoulderAngle-=dA;
-                            else if (as.equals("right")) shoulderAngle+=dA;
+                            float a = shoulderAngle;
+                            
+                            if (as.equals("left")) a-=dA;
+                            else if (as.equals("right")) a+=dA;
                             else if (as.startsWith("a")) {
                                 int i = Integer.parseInt(as.substring(1));
                                 double radians = Math.toRadians(i);
-                                shoulderAngle = (float) radians;
+                                a = (float) radians;
                             }
-                            if (shoulderAngle < -shoulderRange) shoulderAngle = -shoulderRange;
-                            if (shoulderAngle > shoulderRange) shoulderAngle = shoulderRange;
+                            forceMoveShoulder(false, a);
+                            
                             break;
                         case "elbow":
                             if (args[1].toString().equals("left")) elbowAngle-=dA;
@@ -83,21 +94,15 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         lowerArmSensor = new ChangedTextInput(nar);
     }
 
-    /** TextInput subclass that only inputs when the next input value changes from previous */
-    public static class ChangedTextInput extends TextInput {
-        private final NAR nar;
-        private String last = null;
+
+    public void forceMoveShoulder(boolean addInput, float angle) {
+        int a = (int)angle;
+        if (addInput)
+            nar.addInput("(^joint,shoulder,a" + a + ")!");
         
-        public ChangedTextInput(NAR n) {
-            this.nar = n;            
-        }
-        
-        public void set(String s) {
-            if ((last==null) || (!last.equals(s)))
-                nar.addInput(s);
-            last = s;
-        }
-        
+        shoulderAngle = angle;
+        if (shoulderAngle < -shoulderRange) shoulderAngle = -shoulderRange;
+        if (shoulderAngle > shoulderRange) shoulderAngle = shoulderRange;        
     }
     
     public String angleState(String x, double v, int steps) {
@@ -113,10 +118,6 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     
     //boolean implication = false;
     
-    int t = 0;
-    int cangle = -4;
-    int angleDiv = 5;
-    int trainingPeriod = 1550;
     
     @Override
     public void cycle() {
@@ -130,24 +131,24 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
                 */
                 
         
-        int period = 10;
+        
         
         if (t < trainingPeriod) {
-            
-            if (t % period == 0) {
+            nar.param().decisionThreshold.set(0.75);
+            if (t % actionTestPeriod == 0) {
                 cangle++;
-                if (cangle > 4) {
-                    cangle = -4;
+                if (cangle > numAngles) {
+                    cangle = -numAngles;
                 }
-                nar.addInput("(^joint,shoulder,a" + (angleDiv*cangle) + ")!");
+                forceMoveShoulder(true, (angleDiv*cangle));
             }
         }
         else if (t == trainingPeriod) {
+            nar.param().decisionThreshold.set(decisionThreshold);
             System.out.println(); System.out.println(); System.out.println(); System.out.println();
             System.out.println("AUTONOMOUS");
             System.out.println(); System.out.println(); System.out.println(); System.out.println();
             autonomous = true;
-            nar.param().decisionThreshold.set(0.3);
         }
         
 //        if (Math.random() < 0.1f) {
@@ -160,8 +161,8 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         
         
         
-        lowerArmSensor.set(angleState("lowerArm",arm.lowerArm.getAngle(),36));
-        upperArmSensor.set(angleState("upperArm",arm.upperArm.getAngle(),36));
+        lowerArmSensor.set(angleState("lowerArm",arm.lowerArm.getAngle(),angleResolution));
+        upperArmSensor.set(angleState("upperArm",arm.upperArm.getAngle(),angleResolution));
 //        if (nar.getTime() % 20 == 0) {
 //            float s = (float)(Math.random() * 4f - 2f);
 //            float e = (float)(Math.random() * 4f - 2f);
@@ -174,8 +175,9 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
 
     public static void main(String[] args) {
         NAR n = new DefaultNARBuilder().build();
-        n.param().duration.set(5);
+        n.param().duration.set(20);
         n.param().decisionThreshold.set(0);
+        n.param().noiseLevel.set(5);
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();
         

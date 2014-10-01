@@ -139,7 +139,7 @@ public class TermLink extends Item {
         
         TermLink that = (TermLink)obj;
         
-        if (getKey() instanceof Rope) {
+        if (name() instanceof Rope) {
             //some quick comparisons to fail fast, because rope equals() may be slow
             if (that.type != type)
                 return false;
@@ -150,16 +150,16 @@ public class TermLink extends Item {
                 return false;
         }
                     
-        return getKey().equals(that.getKey());
+        return name().equals(that.name());
     }
 
     @Override
     public int hashCode() {
-        return getKey().hashCode();
+        return name().hashCode();
     }
 
     @Override
-    public CharSequence getKey() {
+    public CharSequence name() {
         if (key == null)
             setKey();
         return key;
