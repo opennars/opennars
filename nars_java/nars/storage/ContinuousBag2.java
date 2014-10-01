@@ -203,7 +203,7 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
     public boolean putIn(final E newItem, boolean nameTableInsert) {
         //TODO this is identical with Bag, should merge?
         if (nameTableInsert) {
-            final CharSequence newKey = newItem.getKey();                        
+            final CharSequence newKey = newItem.name();                        
             final E oldItem = nameTable.put(newKey, newItem);
             if (oldItem != null) {                  // merge duplications
                 outOfBase(oldItem);
@@ -213,7 +213,7 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
         
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
-            final CharSequence overflowKey = overflowItem.getKey();
+            final CharSequence overflowKey = overflowItem.name();
             nameTable.remove(overflowKey);
             return (overflowItem != newItem);
         } else {
@@ -326,7 +326,7 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
         boolean removed = items.remove(e);
         
         if (removeFromNameTable)
-            nameTable.remove(e.getKey());
+            nameTable.remove(e.name());
         
         addToMass(-(e.budget.getPriority()));
         

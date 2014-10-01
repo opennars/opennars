@@ -102,7 +102,7 @@ public class Task extends AbstractTask {
         return new Task(replacedSentence, budget, parentTask, parentBelief, bestSolution);
     }
     
-    @Override public CharSequence getKey() {
+    @Override public CharSequence name() {
         return key;
     }
 

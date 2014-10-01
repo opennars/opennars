@@ -18,7 +18,7 @@ public class Echo extends AbstractTask {
 
     
     @Override
-    public CharSequence getKey() {
+    public CharSequence name() {
         return channel.getSimpleName() + ": " + signal.toString();
     }
     

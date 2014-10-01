@@ -55,7 +55,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
     final IndexedTreeSet<Concept> sortedConcepts = new IndexedTreeSet(new Comparator<Concept>() {
         @Override
         public int compare(Concept o1, Concept o2) {
-            return o1.getKey().toString().compareTo(o2.getKey().toString());
+            return o1.name().toString().compareTo(o2.name().toString());
         }
     });
 
