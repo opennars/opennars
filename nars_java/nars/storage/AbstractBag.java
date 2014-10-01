@@ -3,7 +3,7 @@ package nars.storage;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.inference.BudgetFunctions;
@@ -16,7 +16,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      */
     private final float RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
     
-    protected AtomicInteger forgettingRate; //may be final
+    protected AtomicDurations forgettingRate; //may be final
     
     //protected BagObserver<E> bagObserver = null;
     
@@ -106,9 +106,9 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      *
      * @return The number of times for a decay factor to be fully applied, or -1 if forgetting is disabled in this bag
      */
-    protected int forgetRate() {
+    protected float forgetRate() {
         if (forgettingRate != null) {
-            return forgettingRate.get();
+            return forgettingRate.getCycles();
         }
         return -1;
     }
@@ -151,7 +151,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     
     /** called when an item is inserted or re-inserted */
     public void forget(final E x) {
-        int forgetRate = forgetRate();
+        float forgetRate = forgetRate();
         if (forgetRate > 0) {
             BudgetFunctions.forget(x.budget, forgetRate, RELATIVE_THRESHOLD);
         }

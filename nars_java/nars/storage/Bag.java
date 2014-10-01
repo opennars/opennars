@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.entity.Item;
 
@@ -95,7 +95,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         this(levels, capacity, null);
     }
     
-    public Bag(int levels, int capacity, AtomicInteger forgettingRate) {        
+    public Bag(int levels, int capacity, AtomicDurations forgettingRate) {        
         this.levels = levels;
         this.forgettingRate = forgettingRate;
         

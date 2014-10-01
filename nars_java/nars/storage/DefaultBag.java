@@ -17,7 +17,7 @@
 
 package nars.storage;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.Param.AtomicDurations;
 import nars.entity.Item;
 
 /**
@@ -25,8 +25,8 @@ import nars.entity.Item;
  */
 public class DefaultBag<E extends Item> extends Bag<E> {
 
-    public DefaultBag(int levels, int capacity, int forgetRate) {
-        super(levels, capacity, new AtomicInteger(forgetRate));        
+    public DefaultBag(int levels, int capacity, AtomicDurations forgetRate) {
+        super(levels, capacity, forgetRate);        
     }
     
     

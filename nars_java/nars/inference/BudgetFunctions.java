@@ -180,12 +180,12 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param relativeThreshold The relative threshold of the bag
      */
     public static void forget(final BudgetValue budget, final float forgetRate, final float relativeThreshold) {
-        double quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
-        final double p = budget.getPriority() - quality;                     // priority above quality
+        float quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
+        final float p = budget.getPriority() - quality;                     // priority above quality
         if (p > 0) {
             quality += p * pow(budget.getDurability(), 1.0 / (forgetRate * p));
         }    // priority Durability
-        budget.setPriority((float) quality);
+        budget.setPriority(quality);
     }
 
     /**

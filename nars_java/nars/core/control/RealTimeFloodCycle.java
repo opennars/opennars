@@ -189,8 +189,8 @@ public class RealTimeFloodCycle implements ConceptProcessor {
         //TODO check for capacity, return null if full
         
         RTConcept concept = new RTConcept(t, 
-                new ContinuousBag<TaskLink>(20, m.param.taskCyclesToForget,true),
-                new ContinuousBag<TermLink>(20, m.param.taskCyclesToForget,true),
+                new ContinuousBag<TaskLink>(20, m.param.taskCycleForgetDurations,true),
+                new ContinuousBag<TermLink>(20, m.param.taskCycleForgetDurations,true),
                 m);        
         
         concepts.put(concept.getKey(), concept);       
@@ -218,7 +218,7 @@ public class RealTimeFloodCycle implements ConceptProcessor {
     
     @Override
     public void forget(Concept x) {
-        BudgetFunctions.forget(x.budget, memory.param.conceptCyclesToForget.get(), Parameters.BAG_THRESHOLD);        
+        BudgetFunctions.forget(x.budget, memory.param.conceptForgetDurations.getCycles(), Parameters.BAG_THRESHOLD);        
     }
 
 }
