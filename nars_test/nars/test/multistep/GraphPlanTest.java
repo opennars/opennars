@@ -19,7 +19,7 @@ public class GraphPlanTest {
         input += "<(&/,(^pick,Z),+1) =/> <c --> d>>.\n";    
         input += "<goal --> reached>!\n";
         testGraphPlan(input, 
-                "<(&/,(^pick,X),+2,(^pick,Y),+3,(^pick,Z),+1) =/> <goal --> reached>>. %1.00;0.90%"    
+                "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z),+1) =/> <goal --> reached>>. %1.00;0.90%"    
         );
     }
     @Test public void testGraphPlan2() throws Exception {
@@ -29,7 +29,7 @@ public class GraphPlanTest {
         input += "<A =/> B>.\n";
         input += "<(&/,(^pick,X),+1) =/> A>.\n";    
         input += "<goal --> reached>!\n";
-        testGraphPlan(input, "<(&/,(^pick,X),+2) =/> <goal --> reached>>. %1.00;0.90%");
+        testGraphPlan(input, "<(&/,(^pick,X),+1) =/> <goal --> reached>>. %1.00;0.81%");
     }
     
     public void testGraphPlan(String input, String expected) throws IOException {
@@ -41,6 +41,7 @@ public class GraphPlanTest {
 
             @Override
             public void output(Class channel, Object o) {
+                //System.out.println(o);
                 if (o.toString().contains(expected))
                     success.set(true);
             }

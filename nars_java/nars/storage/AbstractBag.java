@@ -106,7 +106,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      *
      * @return The number of times for a decay factor to be fully applied, or -1 if forgetting is disabled in this bag
      */
-    protected float forgetRate() {
+    protected float forgetCycles() {
         //if (forgettingRate != null) {
             return forgettingRate.getCycles();            
         //}
@@ -151,11 +151,11 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     
     /** called when an item is inserted or re-inserted */
     public void forget(final E x) {
-        float forgetRate = forgetRate();
-        if (forgetRate > 0) {
+        float forgetCycles = forgetCycles();
+        if (forgetCycles > 0) {
             
             
-            //divide the forgetting rate by the empty space of the bag to keep the 
+            //increase the forgetting time (lower rate) by the empty space of the bag to keep the 
             //actual forgetting rate constant over time, regardless of bag size vs. capacity.
             final float size = size();
             
@@ -165,10 +165,10 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
             
             //System.out.println(size + "|" + getCapacity() + ": " + forgetRate + " " + emptyBagFactor);
             
-            forgetRate /= emptyBagFactor;
+            forgetCycles *= emptyBagFactor;
             
             
-            BudgetFunctions.forget(x.budget, forgetRate, RELATIVE_THRESHOLD);
+            BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD);
         }
     }
 
