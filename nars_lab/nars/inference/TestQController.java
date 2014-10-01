@@ -56,7 +56,7 @@ public class TestQController {
             
             Param p = nar.param();
             
-            add(new NControlSensor(p.conceptCyclesToForget, 3));
+            add(new NControlSensor(p.conceptForgetDurations, 3));
             //add(new NControlSensor(p.beliefCyclesToForget, 2));
             //add(new NControlSensor(p.taskCyclesToForget, 2));
             //add(new NControlSensor(p.termLinkMaxMatched, 2));
@@ -101,13 +101,13 @@ public class TestQController {
             
             switch (action) {
                 case 0: 
-                    p.conceptCyclesToForget.set(5);
+                    p.conceptForgetDurations.set(5);
                     break;
                 case 1: 
-                    p.conceptCyclesToForget.set(10);
+                    p.conceptForgetDurations.set(10);
                     break;
                 case 2:
-                    p.conceptCyclesToForget.set(15);
+                    p.conceptForgetDurations.set(15);
                     break;
             }
             
@@ -212,7 +212,7 @@ public class TestQController {
             m.step(1);
             r.step(1);
             
-            avgCycleToForget += ((double)n.param().conceptCyclesToForget.get()) / displayCycles;
+            avgCycleToForget += ((double)n.param().conceptForgetDurations.get()) / displayCycles;
             mm += qm.reward();
             nn += qn.reward();
             rr += qr.reward();

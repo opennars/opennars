@@ -63,15 +63,16 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
         p.decisionThreshold.set(0.30);
         
-        p.conceptCyclesToForget.set(10);             
-        p.taskCyclesToForget.set(20);
-        p.beliefCyclesToForget.set(50);
-        p.newTaskCyclesToForget.set(10);
+        p.duration.set(5);
+        p.conceptForgetDurations.set(2.0);
+        p.taskCycleForgetDurations.set(4.0);
+        p.beliefForgetDurations.set(10.0);
+        p.newTaskForgetDurations.set(2.0);
                 
         p.conceptBeliefsMax.set(7);
         p.conceptQuestionsMax.set(5);
         
-        p.duration.set(5);
+        
         p.shortTermMemorySize.set(15);
         
         p.contrapositionPriority.set(30);
@@ -99,20 +100,20 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Memory m) {        
-        AbstractBag<TaskLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskCyclesToForget);
-        AbstractBag<TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefCyclesToForget);
+        AbstractBag<TaskLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskCycleForgetDurations);
+        AbstractBag<TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgetDurations);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }
 
     
     protected AbstractBag<Concept> newConceptBag(Param p) {
-        return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptCyclesToForget);
+        return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgetDurations);
     }
 
     @Override
     public AbstractBag<Task> newNovelTaskBag(Param p) {
-        return new Bag<>(getConceptBagLevels(), getTaskBufferSize(), p.newTaskCyclesToForget);
+        return new Bag<>(getConceptBagLevels(), getTaskBufferSize(), p.newTaskForgetDurations);
     }
  
     

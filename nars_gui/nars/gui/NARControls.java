@@ -731,9 +731,9 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
         c.ipady = 4;
 
-        p.add(newIntSlider(memory.param.taskCyclesToForget, "Task Forgetting Rate", 1, 99), c);
-        p.add(newIntSlider(memory.param.beliefCyclesToForget, "Belief Forgetting Rate", 1, 99), c);
-        p.add(newIntSlider(memory.param.conceptCyclesToForget, "Concept Forgetting Rate", 1, 99), c);
+        p.add(new NSlider(memory.param.taskCycleForgetDurations, "Task Forgetting Rate", 1, 99), c);
+        p.add(new NSlider(memory.param.beliefForgetDurations, "Belief Forgetting Rate", 1, 99), c);
+        p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Forgetting Rate", 1, 99), c);
 
         //JPanel chartPanel = new JPanel(new GridLayout(0,1));
         {

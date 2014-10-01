@@ -28,12 +28,12 @@ public class RealTimeNARBuilder extends DefaultNARBuilder {
 
     @Override
     public AbstractBag<Task> newNovelTaskBag(Param p) {
-        return new ContinuousBag<>(getTaskBufferSize(), p.newTaskCyclesToForget, randomRemoval);
+        return new ContinuousBag<>(getTaskBufferSize(), p.newTaskForgetDurations, randomRemoval);
     }
 
     @Override
     public AbstractBag<Concept> newConceptBag(Param p) {
-        return new ContinuousBag<>(getConceptBagSize(), p.conceptCyclesToForget, randomRemoval);
+        return new ContinuousBag<>(getConceptBagSize(), p.conceptForgetDurations, randomRemoval);
     }
     
     @Override

@@ -23,9 +23,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.text.NumberFormat;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JLabel;
 import javax.swing.plaf.basic.BasicBorders;
+import nars.util.meter.util.AtomicDouble;
 
 
 
@@ -34,7 +34,7 @@ import javax.swing.plaf.basic.BasicBorders;
  * @author me
  */
 public class NSlider extends JLabel implements MouseListener, MouseMotionListener {
-    final AtomicReference<Float> value;
+    final AtomicDouble value;
     private float min;
     private float max;
     private Color barColor = null;
@@ -47,10 +47,15 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     }
     
     public NSlider(float initialValue, float min, float max) {
-        this(new AtomicReference<Float>(initialValue), min, max);
+        this(new AtomicDouble(initialValue), min, max);
+    }
+
+    public NSlider(AtomicDouble value, String prefix, float min, float max) {
+        this(value, min, max);
+        this.prefix = prefix;        
     }
     
-    public NSlider(AtomicReference<Float> value, float min, float max) {
+    public NSlider(AtomicDouble value, float min, float max) {
         super();
         
         nf.setMaximumFractionDigits(3);
@@ -67,7 +72,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         
     }
 
-    public float value() { return value.get().floatValue(); }
+    public float value() { return value.floatValue(); }
         
     @Override
     public void paint(Graphics g) {
@@ -75,7 +80,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         int h = getHeight();
         g.clearRect(0, 0, w, h);
 
-        float p = (value.get().floatValue() - min) / (max-min);
+        float p = (value.floatValue() - min) / (max-min);
         if (barColor == null) {
             //Green->Yellow->Red
             //g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.9f));
@@ -103,7 +108,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     @Override
     public String getText() {
         if (value!=null)
-            return prefix + nf.format(value.get().floatValue());
+            return prefix + nf.format(value.floatValue());
         return "";
     }
     
@@ -122,7 +127,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     
     
     public void setValue(float v) {
-        if (v != value.get().floatValue()) {
+        if (v != value.floatValue()) {
             value.set( v );     
             onChange(v);
         }

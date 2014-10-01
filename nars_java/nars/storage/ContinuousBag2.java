@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Memory;
+import nars.core.Param.AtomicDurations;
 import nars.entity.Item;
 import nars.util.sort.IndexedTreeSet;
 
@@ -103,11 +103,11 @@ public class ContinuousBag2<E extends Item> extends AbstractBag<E> implements Co
     
     
     
-    public ContinuousBag2(int capacity, int forgetRate, BagCurve curve, boolean randomRemoval) {
-        this(capacity, new AtomicInteger(forgetRate), curve, randomRemoval);
-    }
+//    public ContinuousBag2(int capacity, int forgetRate, BagCurve curve, boolean randomRemoval) {
+//        this(capacity, new AtomicInteger(forgetRate), curve, randomRemoval);
+//    }
     
-    public ContinuousBag2(int capacity, AtomicInteger forgetRate, BagCurve curve, boolean randomRemoval) {
+    public ContinuousBag2(int capacity, AtomicDurations forgetRate, BagCurve curve, boolean randomRemoval) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
