@@ -58,7 +58,8 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(20);
+        nar.param().duration.set(30);
+        nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
         nar.param().shortTermMemorySize.set(35);
 
@@ -66,7 +67,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 100);
+        nar.start(50, 20);
     }
 
     String[] sight = new String[9];

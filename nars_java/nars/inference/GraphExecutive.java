@@ -32,7 +32,7 @@ public class GraphExecutive {
     
     
     /** controls the relative weigting of edges and vertices for particle traversals */
-    double conceptCostFactor = 0.3;
+    double conceptCostFactor = 0.5;
     double edgeCostFactor = 1.0 - conceptCostFactor;
     
     //for observation purposes, TODO enable/disable the maintenance of this
