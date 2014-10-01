@@ -264,6 +264,26 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     
     @Override
     public E takeOut(final boolean removeFromNameTable) {
+        return takeOutFairly(removeFromNameTable);            
+    }
+    
+    public E takeOutFairly(final boolean removeFromNameTable) {
+        if (size() == 0) return null; // empty bag                
+                
+        nextNonEmptyLevel();
+        
+        final E selected = takeOutFirst(currentLevel); // take out the first item in the level
+        currentCounter--;
+        
+        if (removeFromNameTable) {
+            nameTable.remove(selected.getKey());
+            //refresh();
+        }
+        
+        return selected;        
+    }
+    
+    public E takeOutWithActiveLevelBias(final boolean removeFromNameTable) {
         if (size() == 0) return null; // empty bag                
                 
         if (levelEmpty(currentLevel) || (currentCounter == 0)) { // done with the current level
@@ -343,7 +363,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         return oldItem;		// TODO return null is a bad smell
     }
 
-    protected void ensureLevelExists(int level) {
+    protected final void ensureLevelExists(final int level) {
         if (itemTable[level]==null)
             itemTable[level] = newLevel();
     }
