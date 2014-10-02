@@ -12,12 +12,13 @@ import nars.io.Texts;
 
 public class PlanDecisionTest {
  
-    public void decisionTest() {
+    public PlanDecisionTest() {
+        decision(0.1, 0.9);
+        decision(0.1, 0.1);
+
         decision(0.9, 0.9);
         decision(0.5, 0.5);
         decision(0.9, 0.1);
-        decision(0.1, 0.9);
-        decision(0.1, 0.1);
         
         decision(0.54, 0.55);
        
@@ -37,8 +38,10 @@ public class PlanDecisionTest {
             i += "<c" + n + " --> decision>. :|: %1.00;" + Texts.n2((float)c) + "%\n";
         }
 
-        i += "goal!\n";
+        i += "goal!";
 
+        System.out.println(i);
+        
         System.out.println(Arrays.toString(confidences));
         
         NAR n = new DefaultNARBuilder().build();
@@ -68,5 +71,9 @@ public class PlanDecisionTest {
         
         System.out.println();
         
+    }
+    
+    public static void main(String[] arg) {
+        new PlanDecisionTest();
     }
 }
