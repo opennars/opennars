@@ -58,8 +58,8 @@ public class NARio extends Run {
          nar.param().cycleMemory.set(1);*/
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(10);
-        nar.param().decisionThreshold.set(0.1);
+        nar.param().duration.set(8);
+        nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
         nar.param().shortTermMemorySize.set(35);
 
@@ -67,7 +67,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 30);
+        nar.start(50, 8);
     }
 
     String[] sight = new String[9];
@@ -230,9 +230,10 @@ public class NARio extends Run {
                                 } else if ((i == 1) && (j == 0)) {
                                     direction = "right";
                                 } else {
-                                    continue; //ignore diagonal for now
+                                    direction = "(*," + i + "," + j + ")";
+                                    //continue; //ignore diagonal for now
                                 }
-                                String s = "<" + (blocked ? "solid" : "empty") + " --> " + direction +">. :|:";
+                                String s = "<" + direction + " --> " + (blocked ? "solid" : "empty")  +">. :|:";
 
                                 if ((sight[k] != null) && (sight[k].equals(s))) {
                                     continue;
