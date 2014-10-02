@@ -435,6 +435,10 @@ public class Stamp implements Cloneable {
     public long getOccurrenceTime() {
         return occurrenceTime;
     }
+    
+    public void setEternal() {
+        occurrenceTime=ETERNAL;
+    }
 
     
     public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
