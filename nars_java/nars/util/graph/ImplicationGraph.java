@@ -248,6 +248,7 @@ public class ImplicationGraph extends SentenceItemGraph {
     public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
         Implication impParent = (Implication)parent.content;
         Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
+        //System.out.println("new impl edge: " + impFinal + " " + parent.truth + " , parent=" + parent);
         
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
         
@@ -301,10 +302,10 @@ public class ImplicationGraph extends SentenceItemGraph {
         return x.toString();
     }
 
-    /** weight = cost = distance */
+    /** weight = cost = distance. returns (low cost) 0..1.0 (high cost) */
     @Override public double getEdgeWeight(Sentence e) {
         if (!containsEdge(e))
-            return 0;
+            return DEACTIVATED_EDGE_WEIGHT;
         
         //transitions to PostCondition vertices are free or low-cost
         
@@ -313,15 +314,12 @@ public class ImplicationGraph extends SentenceItemGraph {
         conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
         
         if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0 / conceptPriority;
+            return 1.0 - (e.truth.getExpectation() * conceptPriority);
         }
-        
-        float freq = e.truth.getFrequency();
-        float conf = e.truth.getConfidence();        
-        
-        double strength = (freq * conf * conceptPriority);
+             
+        double strength = (e.truth.getExpectation() * conceptPriority);
         if (strength > minEdgeStrength)
-            return 1.0 / strength;
+            return 1.0 - strength;
         else
             return DEACTIVATED_EDGE_WEIGHT;
     }
