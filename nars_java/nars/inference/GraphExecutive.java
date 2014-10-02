@@ -596,7 +596,7 @@ public class GraphExecutive {
         return plans;
     } 
     
-    protected void planTask(ParticlePlan plan, Task task, Term target, char punctuation) {        
+    protected void planTask(ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {        
         
         TruthValue truth = plan.truth;
         BudgetValue budget = plan.budget;
@@ -644,7 +644,8 @@ public class GraphExecutive {
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
 
-        memory.derivedTask(newTask, false, true, null, null);
+        //memory.derivedTask(newTask, false, true, null, null);
+        memory.executive.addTask(c, newTask);
         
         //System.out.println("  PLAN: " + newTask);
         
@@ -658,7 +659,7 @@ public class GraphExecutive {
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
         int n = 0;
         for (ParticlePlan p : plans) {
-            planTask(p, task, target, punctuation);
+            planTask(p, c, task, target, punctuation);
             if (n++ == maxTasks)
                 break;
         }

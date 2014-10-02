@@ -217,7 +217,7 @@ public class Executive {
 
     
     
-    protected void addTask(final Concept c, final Task t) {
+    public void addTask(final Concept c, final Task t) {
         if (tasks.add(new TaskExecution(c, t))) {
             //added successfully
         }
