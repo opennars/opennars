@@ -316,18 +316,18 @@ public class ImplicationGraph extends SentenceItemGraph {
         
         Item cc = concepts.get(e);
         double conceptPriority = (cc!=null) ? concepts.get(e).getPriority() : 0;
-        conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
+        //conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
         
         if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0 - (e.truth.getExpectation() * conceptPriority);
+            return 1.0 / (e.truth.getExpectation());// * conceptPriority);
         }
         
              
-        double strength = (e.truth.getExpectation() * conceptPriority);
-        if (strength > minEdgeStrength)
-            return 1.0 - strength;
-        else
-            return DEACTIVATED_EDGE_WEIGHT;
+        double strength = (e.truth.getExpectation());// * conceptPriority);
+        //if (strength > minEdgeStrength)
+            return 1.0 / strength;
+        //else
+        //    return DEACTIVATED_EDGE_WEIGHT;
     }
 
     @Override
