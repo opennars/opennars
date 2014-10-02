@@ -167,7 +167,8 @@ public class NAR implements Runnable, Output, TaskSource {
      the creationTime will be set to the current memory cycle time, but may be processed
      by memory later according to the length of the input queue. */
     public TextInput addInput(final String text) {
-        return addInput(text, getTime());
+        
+        return addInput(text, text.contains("\n") ? -1 : getTime());
     }
     
     /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
@@ -218,8 +219,9 @@ public class NAR implements Runnable, Output, TaskSource {
                             if (at instanceof Task) {
                                 Task t = (Task)at;
                                 if (t.sentence!=null)
-                                    if (t.sentence.stamp!=null)
+                                    if (t.sentence.stamp!=null) {
                                         t.sentence.stamp.setCreationTime(creationTime, duration);
+                                    }
                             }
                             return true;
                         }                        
@@ -236,6 +238,7 @@ public class NAR implements Runnable, Output, TaskSource {
         public void setCreationTimeOverride(final long creationTime) {
             this.creationTime = creationTime;
         }
+
     }
     
     /** Adds an input channel.  Will remain added until it closes or it is explicitly removed. */
