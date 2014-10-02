@@ -38,6 +38,13 @@ public class Parameters {
     
     @Deprecated public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
+    //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
+    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;
+    
+    //how much more priority should =/> =|> gain?
+    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.5f;
+    
+    
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
     //internal experience has less priority?

@@ -151,6 +151,16 @@ public class Sentence implements Cloneable {
     public Sentence clone() {
         return clone(content);
     }
+    
+    
+    public Sentence clone(boolean makeEternal) {
+        Sentence clon = clone(content);
+        if(clon.stamp.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
+            //change occurence time of clone
+            clon.stamp.setEternal();
+        }
+        return clon;
+    }
 
     /** Clone with a different Term */    
     public final Sentence clone(final Term t) {
