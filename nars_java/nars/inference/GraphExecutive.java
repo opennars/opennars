@@ -17,6 +17,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.Executive.isPlanTerm;
+import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
@@ -119,11 +120,12 @@ public class GraphExecutive {
 
         @Override
         public String toString() {
-            return score() + "[" + activation + "|" + distance + "] "/*+ target */ + " <- " + Arrays.toString(shortestPath);
+            return "[" + Texts.n4((float)score()) + "|" + Texts.n4((float)distance) + "] "/*+ target */ + " <- " + Arrays.toString(shortestPath);
         }
 
+        /** can be used to favor the total activation, or short distnce, or combinations of other factors  */
         private double score() {
-            return 1.0 / distance;
+            return activation;
         }
         
     }
@@ -155,7 +157,7 @@ public class GraphExecutive {
 
             List<Sentence> currentPath = new ArrayList();
 
-            List<Sentence> nextEdges = new ArrayList();
+            Map<Sentence, Double> nextEdgeCost = new HashMap();
             
             for (int i = 0; i < iterations; i++) {            
 
@@ -177,12 +179,9 @@ public class GraphExecutive {
                             graph.outgoingEdgesOf(current) : 
                             graph.incomingEdgesOf(current);
                     
-                    nextEdges.clear();
+                    nextEdgeCost.clear();
                     
-                    //TODO re-use or combine with nextEdges
-                    Map<Sentence, Double> nextEdgeCost = new HashMap();
                     
-                    double totalProb = 0;
                     //remove edges which loop to the target goal precondition OR postcondition
                     for (final Sentence s : graphEdges) {
                         Term etarget = forward ?
@@ -208,9 +207,7 @@ public class GraphExecutive {
                         }*/
 
                         edgeDecisionPass++;
-                        nextEdges.add(s);
 
-                        totalProb += 1.0 / ew;
 
                         if (etarget instanceof Operation) {
                             operationTraversed = true;
@@ -218,44 +215,19 @@ public class GraphExecutive {
                         
                     }
                     
-                    //System.out.println(totalProb + ": " + nextEdgeCost);
 
-
-                    if (nextEdges.isEmpty()) {
+                    if (nextEdgeCost.isEmpty()) {
                         //particle went as far as it can
                         break;
                     }                
 
                     Sentence nextEdge = null;
-                    if (nextEdges.size() == 1) {
-                        nextEdge = nextEdges.get(0);
+                    if (nextEdgeCost.size() == 1) {
+                        nextEdge = nextEdgeCost.keySet().iterator().next();
                     }
                     else {
-                        int numEdges = nextEdges.size();
-                        
-                        //choose edge; prob = 1/weight
-
-                        //TODO disallow edge that completes cycle back to target or traversed edge?
-                        //  probably an option to allow cycles
-                        
-                        double r = Memory.randomNumber.nextDouble() * totalProb;
-
                         choicesAvailable = true;
-
-                        
-                        int j;
-                        for (j = 0; j < numEdges; j++) {
-                            nextEdge = nextEdges.get(j);
-                            
-                            double edgeProb = 1.0 / nextEdgeCost.get(nextEdge);
-                            r -= edgeProb;
-                            
-                            if (r <= 0) {
-                                //selected the next Edge
-                                break;
-                            }
-                        }
-
+                        nextEdge = chooseEdge(nextEdgeCost);
                     }
 
                     currentPath.add(nextEdge);
@@ -318,6 +290,39 @@ public class GraphExecutive {
 
             this.paths = new TreeSet(paths);
             return this.paths;
+        }
+
+        /** choose a sentence according to a random probability 
+         * where lower cost = higher probability.  prob = 1.0 / ( 1 +  cost )*/
+        public Sentence chooseEdge(Map<Sentence,Double> cost) {
+            Sentence nextEdge = null;
+
+            double totalProb = 0;
+            for (Double c : cost.values()) {
+                if (c > 0)
+                    totalProb += 1.0 / (1 + c);
+            }
+
+            //TODO disallow edge that completes cycle back to target or traversed edge?
+            //  probably an option to allow cycles
+
+            double r = Memory.randomNumber.nextDouble() * totalProb;
+
+
+            int j;
+            for (Sentence e : cost.keySet()) {
+                nextEdge = e;
+
+                double edgeProb = 1.0 / (1 + cost.get(nextEdge));
+                r -= edgeProb;
+
+                if (r <= 0) {
+                    //selected the next Edge
+                    break;
+                }
+            }
+            return nextEdge;
+            
         }
         
         public String getStatus() {
@@ -490,7 +495,8 @@ public class GraphExecutive {
         };
         
         SortedSet<ParticlePath> roots = act.activate(targetPost, false, particles, distance);
-        //System.out.println("  plan: " + act.getStatus());
+        //System.out.println("  PATH: " + roots);
+        //System.out.println("      : " + act.getStatus());
         
 
         if (roots == null) {            
@@ -640,7 +646,7 @@ public class GraphExecutive {
 
         memory.derivedTask(newTask, false, true, null, null);
         
-        //System.out.println(newTask);
+        //System.out.println("  PLAN: " + newTask);
         
     }
 
