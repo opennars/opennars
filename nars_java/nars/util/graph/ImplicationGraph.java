@@ -8,6 +8,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.inference.Executive;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
@@ -102,9 +103,13 @@ public class ImplicationGraph extends SentenceItemGraph {
     @Override
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c, boolean specialAdd) {
         
-        if(!specialAdd) {
-            return false;
+        if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) { //add is confusing as hell, so just add it at all of the add functions...
+            return false; //still easier than searching where add is used and why it needs  4 classes hmmm
         }
+        
+       // if(specialAdd) {
+        //    return false;
+        //}
         
         if (!(ct instanceof Implication)) {
             return false;
