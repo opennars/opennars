@@ -434,6 +434,8 @@ public class Executive {
         int s = task.sequence;
         Term currentTerm = c.term[s];
         if (currentTerm instanceof Operation) {
+            Concept conc=memory.concept(currentTerm);
+            conc.setPriority(0);
             execute((Operation)currentTerm, task.t);
             s++;
         }
