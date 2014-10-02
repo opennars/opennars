@@ -32,7 +32,7 @@ public class GraphExecutive {
     
     
     /** controls the relative weigting of edges and vertices for particle traversals */
-    double conceptCostFactor = 0.5;
+    double conceptCostFactor = 0.8;
     double edgeCostFactor = 1.0 - conceptCostFactor;
     
     //for observation purposes, TODO enable/disable the maintenance of this
@@ -95,7 +95,7 @@ public class GraphExecutive {
     public class ParticlePath implements Comparable<ParticlePath> {
         final public Term target;
         
-        double activation = 0;
+        private double activation = 0;
         Sentence[] shortestPath;
         double distance;
         
@@ -119,7 +119,11 @@ public class GraphExecutive {
 
         @Override
         public String toString() {
-            return activation + "|" /*+ target */ + " <- " + Arrays.toString(shortestPath);
+            return score() + "[" + activation + "|" + distance + "] "/*+ target */ + " <- " + Arrays.toString(shortestPath);
+        }
+
+        private double score() {
+            return 1.0 / distance;
         }
         
     }
@@ -166,6 +170,7 @@ public class GraphExecutive {
                 boolean choicesAvailable = false;
                 boolean operationTraversed = false;
 
+                
                 while (energy > 0) {
 
                     Set<Sentence> graphEdges = forward ? 
@@ -173,6 +178,10 @@ public class GraphExecutive {
                             graph.incomingEdgesOf(current);
                     
                     nextEdges.clear();
+                    
+                    //TODO re-use or combine with nextEdges
+                    Map<Sentence, Double> nextEdgeCost = new HashMap();
+                    
                     double totalProb = 0;
                     //remove edges which loop to the target goal precondition OR postcondition
                     for (final Sentence s : graphEdges) {
@@ -190,11 +199,13 @@ public class GraphExecutive {
                             continue;
                         }
                                                 
-                        double ew = graph.getEdgeWeight(s);
-                        if (ew >= ImplicationGraph.DEACTIVATED_EDGE_WEIGHT) {
+                        //double ew = graph.getEdgeWeight(s);
+                        double ew = getTraversalCost(s, etarget);
+                        nextEdgeCost.put(s, ew);
+                        /*if (ew >= ImplicationGraph.DEACTIVATED_EDGE_WEIGHT) {
                             edgeDecisionFailInactiveEdge++;
                             continue;
-                        }
+                        }*/
 
                         edgeDecisionPass++;
                         nextEdges.add(s);
@@ -206,6 +217,8 @@ public class GraphExecutive {
                         }
                         
                     }
+                    
+                    //System.out.println(totalProb + ": " + nextEdgeCost);
 
 
                     if (nextEdges.isEmpty()) {
@@ -229,10 +242,14 @@ public class GraphExecutive {
 
                         choicesAvailable = true;
 
+                        
                         int j;
                         for (j = 0; j < numEdges; j++) {
                             nextEdge = nextEdges.get(j);
-                            r -= 1.0 / graph.getEdgeWeight(nextEdge);
+                            
+                            double edgeProb = 1.0 / nextEdgeCost.get(nextEdge);
+                            r -= edgeProb;
+                            
                             if (r <= 0) {
                                 //selected the next Edge
                                 break;
@@ -243,20 +260,12 @@ public class GraphExecutive {
 
                     currentPath.add(nextEdge);
 
-                    current = forward ? graph.getEdgeTarget(nextEdge) : graph.getEdgeSource(nextEdge)
-                            ;
-                    double nextConceptPriority = getEffectivePriority(memory, current);
-                    
-                    /** weight = distance = cost, for an edge */
-                    double nextEdgeCost = graph.getEdgeWeight(nextEdge);
-                    
-                    /** cost = (1.0 - priority) of a concept, if it exists.  
-                     * if it doesn't then cost is 1.0 */
-                    double nextConceptCost = (1.0 - nextConceptPriority);
+                    energy -= nextEdgeCost.get(nextEdge); //TODO used cache value calculated in last iteration of above 'j' for loop
 
-                    energy -= (edgeCostFactor * nextEdgeCost + 
-                            conceptCostFactor * nextConceptCost);
-
+                    current = forward ? graph.getEdgeTarget(nextEdge) : graph.getEdgeSource(nextEdge);
+                    
+                    
+                    //System.out.println(i + ": " + nextEdge + " : " + current + " " + nextEdgeCost.get(nextEdge));
                     
 //                    if ((current == null)  /*|| (!graph.containsVertex(current)*/) {                  
 //                        break;
@@ -294,17 +303,17 @@ public class GraphExecutive {
 
             }
 
-            Collection<ParticlePath> paths = termPaths.values();
-                 
+            Collection<ParticlePath> paths = termPaths.values();                 
+            //System.out.println(paths);
             
             //normalize activations to maxValue=1.0
             double maxAct = 0;
             for (final ParticlePath p : paths)
-                if (p.activation > maxAct)
-                    maxAct = p.activation;
-            if (maxAct > 0)
-                for (final ParticlePath p : paths)
-                    p.activation /= maxAct;            
+                if (p.score() > maxAct)
+                    maxAct = p.score();
+//            if (maxAct > 0)
+//                for (final ParticlePath p : paths)
+//                    p.score() /= maxAct;            
 
 
             this.paths = new TreeSet(paths);
@@ -332,32 +341,68 @@ public class GraphExecutive {
         
     }
 
+    /** total cost of a traversal, which includes the edge cost and the target vertex cost */
+    public double getTraversalCost(final Sentence s, final Term target) {
+        
+        double conceptPriority = getEffectivePriority(memory, target);
+        double conceptCost = (1.0 - conceptPriority);
+        
+        /** weight = distance = cost, for an edge */
+        double sentenceCost = implication.getEdgeWeight(s);
+
+        
+
+        return (edgeCostFactor * sentenceCost + conceptCostFactor * conceptCost);
+        
+    }
+
     public static double getActualPriority(final Memory memory, final Term t) {
         double p;
-        Concept nextConcept = memory.concept(t);
-        if (nextConcept!=null)
-            p = nextConcept.getPriority();
-        else
-            p = 0.0f;        
-        return p;
+        Concept c = memory.concept(t);
+        if ((c!=null) && (!c.beliefs.isEmpty())) {
+            Sentence bestBelief = c.beliefs.get(0);
+            if (bestBelief!=null)
+                return c.getPriority() * bestBelief.truth.getExpectation();            
+        }
+        //System.out.println("No Concept priority available for " + t);
+        return 0.5;
+    }
+    
+    public static float getActualConfidence(final Memory memory, final Term t) {
+        double p;
+        Concept c = memory.concept(t);
+        if ((c!=null) && (!c.beliefs.isEmpty())) {
+            Sentence bestBelief = c.beliefs.get(0);
+            if (bestBelief!=null)
+                return bestBelief.truth.getConfidence();   
+        }
+        return 1;
     }
 
     public static double getEffectivePriority(final Memory memory, final Term current) {
-        double nextConceptPriority;
-        if (current instanceof Interval) {
-            //default priority for intervals
-            nextConceptPriority = 1.0f;
-        }
-        else if (current instanceof PostCondition) {
-            //get the priority for the postcondition's actual concept
-            nextConceptPriority = getActualPriority(memory, ((PostCondition)current).term[0]);
-        }
-        else {
-            nextConceptPriority = getActualPriority(memory, current);
-        }
-        return nextConceptPriority;
+        double p;
+        
+        //default priority for intervals
+        if (current instanceof Interval)            
+            p = 1.0f; 
+        
+        //get the priority for the postcondition's actual concept
+        else if (current instanceof PostCondition)            
+            p = getActualPriority(memory, ((PostCondition)current).term[0]);
+        
+        else 
+            p = getActualPriority(memory, current);
+        
+        return p;
     }
 
+   public static float getEffectiveConfidence(final Memory memory, final Term current) {        
+        //get the priority for the postcondition's actual concept
+        if (current instanceof PostCondition)
+            return getActualConfidence(memory, ((PostCondition)current).term[0]);
+        else
+            return getActualConfidence(memory, current);      
+    }    
         
     public static class ParticlePlan implements Comparable<ParticlePlan> {
         public final Sentence[] path;
@@ -366,12 +411,14 @@ public class GraphExecutive {
         public final double activation;
         public final TruthValue truth;
         public final BudgetValue budget;
+        private final float minConf;
 
-        public ParticlePlan(Memory memory, Sentence[] path, List<Term> sequence, double activation, double distance) {
+        public ParticlePlan(Memory memory, Sentence[] path, List<Term> sequence, double activation, double distance, float minConf) {
             this.path = path;
             this.sequence = sequence;
             this.activation = activation;
             this.distance = distance;
+            this.minConf = minConf;
             
             final float confidence = getMinConfidence();                
             truth = new TruthValue(1.0f, confidence);
@@ -381,15 +428,16 @@ public class GraphExecutive {
         }        
 
         public float getMinConfidence() {
-            if (path.length == 0) return 0;
-            
-            float min = Float.MAX_VALUE;
-            for (final Sentence s : path) {
-                float c = s.truth.getConfidence();
-                if (c < min)
-                    min = c;
-            }
-            return min;
+            return minConf;
+//            if (path.length == 0) return 0;
+//            
+//            float min = Float.MAX_VALUE;
+//            for (final Sentence s : path) {
+//                float c = s.truth.getConfidence();
+//                if (c < min)
+//                    min = c;
+//            }
+//            return min;
         }
 
         public double score() {
@@ -464,6 +512,8 @@ public class GraphExecutive {
             Implication imp;
             boolean nonIntervalAdded = false;
             long accumulatedDelay = 0;
+            float minConf = 1.0f;
+            
             for (int i = path.length-1; i >=0; i--) {
                 Sentence s = path[i];
                 Term t = s.content;
@@ -496,6 +546,10 @@ public class GraphExecutive {
                     }                    
                 }
                 else {
+                    float c = getEffectiveConfidence(memory, subj);                    
+                    if (c < minConf)
+                        minConf = c;
+                    
                     //accumulate delay if the temporal rule involves time difference??
                     /*
                     if (nonIntervalAdded) { 
@@ -524,7 +578,7 @@ public class GraphExecutive {
                 continue;
 
             //System.out.println("  cause: " + Arrays.toString(path));
-            ParticlePlan rp = new ParticlePlan(memory, path, seq, pp.activation, pp.distance);
+            ParticlePlan rp = new ParticlePlan(memory, path, seq, pp.activation, pp.distance, minConf);
             plans.add(rp);
         }
         
@@ -580,6 +634,8 @@ public class GraphExecutive {
                memory.getRecorder().append("Plan Add", newTask.toString());
 
         memory.derivedTask(newTask, false, true, null, null);
+        
+        //System.out.println(newTask);
         
     }
 
