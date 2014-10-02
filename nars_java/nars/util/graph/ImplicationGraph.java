@@ -316,6 +316,7 @@ public class ImplicationGraph extends SentenceItemGraph {
         if (getEdgeTarget(e) instanceof PostCondition) {
             return 1.0 - (e.truth.getExpectation() * conceptPriority);
         }
+        
              
         double strength = (e.truth.getExpectation() * conceptPriority);
         if (strength > minEdgeStrength)

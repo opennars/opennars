@@ -314,8 +314,7 @@ public class Executive {
         //forget(t);
         
         if (content instanceof Operation) {
-            //immediately execute
-            execute((Operation)content, t);
+            addTask(concept, t);
             return;
         }
         else if (isSequenceConjunction(content)) {
