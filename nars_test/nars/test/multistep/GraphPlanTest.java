@@ -37,6 +37,8 @@ public class GraphPlanTest {
                 
         AtomicBoolean success = new AtomicBoolean(false);
         
+        System.out.println(input);
+        
         n.addOutput(new Output() {
 
             @Override

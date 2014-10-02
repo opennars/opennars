@@ -20,6 +20,7 @@ import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Term;
 import nars.language.Variables;
+import nars.operator.Operation;
 
 
 
@@ -46,6 +47,38 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
     public ImplicationGraph(Memory memory) {
         super(memory);
+    }
+    
+    /** creates a clone, optionally with or without preconditions */
+    public ImplicationGraph(ImplicationGraph g, boolean includePrecondition) {
+        super(null);
+        if (includePrecondition) {
+            throw new RuntimeException("Use .clone()");
+        }
+        else {
+            for (Term s : g.vertexSet()) {
+                if ((s instanceof Interval) || (s instanceof Operation) || (s instanceof PostCondition))
+                    super.addVertex(s);                    
+            }
+            for (Sentence s : g.edgeSet()) {
+                Term src = g.getEdgeSource(s);
+                Term tgt = g.getEdgeTarget(s);
+                
+                boolean containsSrc = containsVertex(src);
+                boolean containsTgt = containsVertex(tgt);
+                
+                //if both are precondition nodes, skip the edge
+                if (!containsSrc && !containsTgt)
+                    continue;
+                
+                
+                if (!containsSrc) super.addVertex(src);
+                if (!containsTgt) super.addVertex(tgt);
+                    
+                super.addEdge(src, tgt, s);
+            }
+        }
+        //System.out.println(g.vertexSet().size() + ":" + vertexSet().size() + "," + g.edgeSet().size() + ":" + edgeSet().size());
     }
     
     public static class UniqueInterval extends Interval {
