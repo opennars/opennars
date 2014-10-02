@@ -419,11 +419,16 @@ public class GraphExecutive {
             this.activation = activation;
             this.distance = distance;
             this.minConf = minConf;
+
+            for (final Sentence s : path) {
+                float c = s.truth.getConfidence();
+                if (c < minConf)
+                    minConf = c;
+            }
             
-            final float confidence = getMinConfidence();                
-            truth = new TruthValue(1.0f, confidence);
+            truth = new TruthValue(1.0f, minConf);
             budget = BudgetFunctions.forward(truth, memory);
-            budget.andPriority(confidence);
+            budget.andPriority(minConf);
             
         }        
 
@@ -578,7 +583,7 @@ public class GraphExecutive {
                 continue;
 
             //System.out.println("  cause: " + Arrays.toString(path));
-            ParticlePlan rp = new ParticlePlan(memory, path, seq, pp.activation, pp.distance, minConf);
+            ParticlePlan rp = new ParticlePlan(memory, path, seq, pp.score(), pp.distance, minConf);
             plans.add(rp);
         }
         

@@ -1,5 +1,6 @@
 package nars.util.graph;
 
+import java.util.ArrayList;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
@@ -103,8 +104,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }    
     
     public void reset() {
-        this.removeAllEdges(edgeSet());
-        this.removeAllVertices(vertexSet());
+        this.removeAllEdges( new ArrayList(edgeSet()) );
+        this.removeAllVertices( new ArrayList(vertexSet()) );
         
         needInitialConcepts = true;
     }
