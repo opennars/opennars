@@ -6,6 +6,8 @@ import nars.entity.Sentence;
 import nars.inference.GraphExecutive;
 import nars.language.Interval;
 import nars.language.Term;
+import nars.util.graph.ImplicationGraph;
+import org.jgrapht.graph.DirectedMultigraph;
 
 
 
@@ -20,6 +22,14 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
         
     }
 
+    @Override
+    protected DirectedMultigraph<Term,Sentence> getGraph() {
+        if (graph!=null)
+            return new ImplicationGraph(graphExec.implication, false);
+        
+        //otherwise, should override in subclasses
+        return null;
+    }    
     @Override
     public void updateGraph() {
         maxSentenceActivation = graphExec.fadeAccumulatedSentences(0.95);

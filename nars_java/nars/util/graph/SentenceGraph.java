@@ -44,14 +44,16 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }
     
     private void setEvents(boolean n) {
-        memory.event.set(this, n, 
-                Events.FrameEnd.class, 
-                Events.ConceptRemove.class, 
-                Events.ConceptBeliefAdd.class, 
-                Events.ConceptBeliefRemove.class, 
-                Events.ConceptGoalAdd.class, 
-                Events.ConceptGoalRemove.class, 
-                Events.ResetEnd.class);
+        if (memory!=null) {
+            memory.event.set(this, n, 
+                    Events.FrameEnd.class, 
+                    Events.ConceptRemove.class, 
+                    Events.ConceptBeliefAdd.class, 
+                    Events.ConceptBeliefRemove.class, 
+                    Events.ConceptGoalAdd.class, 
+                    Events.ConceptGoalRemove.class, 
+                    Events.ResetEnd.class);
+        }
     }
     
     public void start() {

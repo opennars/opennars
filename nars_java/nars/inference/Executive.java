@@ -276,8 +276,8 @@ public class Executive {
         
         Operator oper = op.getOperator();
         
-        if (NAR.DEBUG)
-            System.out.println("exe: " + task.getExplanation().trim());
+        //if (NAR.DEBUG)
+            //System.out.println("exe: " + task.getExplanation().trim());
         
         op.setTask(task);
                         
