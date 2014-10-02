@@ -122,7 +122,7 @@ public class Memory implements Output, Serializable {
 
     public void temporalRuleOutputToGraph(Sentence s, Task t) {
         if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-            if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
+            if(s.stamp.getOccurrenceTime()==Stamp.ETERNAL) { //should be eternal to be able to plan with it, shouldnt it?
                 executive.graph.implication.add(s, (CompoundTerm)s.content, t,true);
             }
         }
