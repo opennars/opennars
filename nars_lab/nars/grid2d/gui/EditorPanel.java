@@ -453,7 +453,7 @@ public class EditorPanel extends JPanel {
             }
         });
 
-        EditorMode wu=new EditorMode("Be curious") {
+        EditorMode wu=new EditorMode("stay active") {
 
             @Override
             public void run() {
