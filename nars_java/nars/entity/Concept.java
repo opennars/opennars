@@ -48,7 +48,6 @@ import nars.storage.AbstractBag;
 import nars.storage.BagObserver;
 import nars.storage.NullBagObserver;
 
-
 public class Concept extends Item {
 
     /**
@@ -86,8 +85,8 @@ public class Concept extends Item {
     public final ArrayList<Task> quests;
 
     /**
-     * Judgments directly made about the term
-     * Use ArrayList because of access and insertion in the middle
+     * Judgments directly made about the term Use ArrayList because of access
+     * and insertion in the middle
      */
     public final ArrayList<Sentence> beliefs;
 
@@ -104,8 +103,10 @@ public class Concept extends Item {
      * The display window
      */
 
-    @Deprecated private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
-    @Deprecated private EntityObserver entityObserver = defaultNullEntityObserver;
+    @Deprecated
+    private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
+    @Deprecated
+    private EntityObserver entityObserver = defaultNullEntityObserver;
     public final CharSequence key;
 
 
@@ -125,26 +126,23 @@ public class Concept extends Item {
         this.questions = new ArrayList();
         this.beliefs = new ArrayList();
         this.quests = new ArrayList<>();
-        this.desires = new ArrayList<>();       
+        this.desires = new ArrayList<>();
 
         this.taskLinks = taskLinks;
         this.termLinks = termLinks;
 
-
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
-        }
-        else {
+        } else {
             this.termLinkTemplates = null;
         }
 
     }
 
-    @Override public CharSequence name() {
+    @Override
+    public CharSequence name() {
         return key;
     }
-    
-    
 
     /* ---------- direct processing of tasks ---------- */
     /**
@@ -181,7 +179,7 @@ public class Concept extends Item {
             memory.logic.LINK_TO_TASK.commit();
             linkToTask(task);
         }
-                
+
         if (entityObserver.isActive()) {
             entityObserver.refresh(displayContent());
         }
@@ -195,14 +193,14 @@ public class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processJudgment(final Task task) {        
+    protected void processJudgment(final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
             if (newStamp.equals(oldStamp)) {
-                if (task!=null && task.getParentTask()!=null && task.getParentTask().sentence.isJudgment()) {
+                if (task != null && task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
                 return;
@@ -223,8 +221,8 @@ public class Concept extends Item {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 trySolution(judg, ques, memory);
             }
-            
-            addToTable(task, judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);            
+
+            addToTable(task, judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
         }
     }
 
@@ -232,15 +230,15 @@ public class Concept extends Item {
         int preSize = table.size();
 
         Sentence removed = addToTable(newSentence, table, max);
-        
-        if (removed!=null)
+
+        if (removed != null) {
             memory.event.emit(eventRemove, this, removed, task, extraEventArguments);
-        if ((preSize!=table.size()) || (removed!=null))
-            memory.event.emit(eventAdd, this, newSentence, task, extraEventArguments);        
+        }
+        if ((preSize != table.size()) || (removed != null)) {
+            memory.event.emit(eventAdd, this, newSentence, task, extraEventArguments);
+        }
     }
-    
-    
-    
+
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
@@ -253,15 +251,15 @@ public class Concept extends Item {
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean revised = false;
-        
+
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
-            
+
             if (newStamp.equals(oldStamp)) {
                 return;
             }
-            
+
             if (revisible(goal, oldGoal)) {
                 memory.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
                 if (memory.getTheNewStamp() != null) {
@@ -270,26 +268,28 @@ public class Concept extends Item {
                 }
             }
         }
-        
-        if (task.aboveThreshold()) {
-            
-            final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
-            
-            if (belief!=null)
-                trySolution(belief, task, memory);
 
-            
+        if (task.aboveThreshold()) {
+
+            final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+
+            if (belief != null) {
+                trySolution(belief, task, memory);
+            }
+
             // still worth pursuing?
-            if (task.aboveThreshold()) {    
-                                
+            if (task.aboveThreshold()) {
+
                 addToTable(task, goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class, revised);
-                
-                if (!revised || Executive.isExecutableTerm(task.sentence.content)) {
+
+                if (!Executive.isExecutableTerm(task.sentence.content)) {
+                    memory.executive.decisionPlanning(task, this);
+                } else {
                     //hm or conjunction in time and temporal order forward                    
                     memory.executive.decisionMaking(task, this);
-               }
-                
+                }
             }
+
         }
     }
 
@@ -302,7 +302,7 @@ public class Concept extends Item {
     protected void processQuestion(final Task task) {
 
         Sentence ques = task.sentence;
-        
+
         boolean newQuestion = true;
         for (final Task t : questions) {
             final Sentence q = t.sentence;
@@ -314,20 +314,19 @@ public class Concept extends Item {
         }
 
         if (newQuestion) {
-            if (questions.size()+1 > memory.param.conceptQuestionsMax.get()) {
+            if (questions.size() + 1 > memory.param.conceptQuestionsMax.get()) {
                 Task removed = questions.remove(0);    // FIFO
                 memory.event.emit(ConceptQuestionRemove.class, this, removed);
             }
 
-            questions.add(task);            
+            questions.add(task);
             memory.event.emit(ConceptQuestionAdd.class, this, task);
         }
 
+        final Sentence newAnswer = (ques.isQuestion())
+                ? selectCandidate(ques, beliefs)
+                : selectCandidate(ques, desires);
 
-        final Sentence newAnswer = (ques.isQuestion()) ? 
-                                       selectCandidate(ques, beliefs) :
-                                       selectCandidate(ques, desires);
-        
         if (newAnswer != null) {
             trySolution(newAnswer, task, memory);
         }
@@ -344,39 +343,37 @@ public class Concept extends Item {
      */
     protected void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
-        
-        insertTaskLink(new TaskLink(task, null, taskBudget, 
+
+        insertTaskLink(new TaskLink(task, null, taskBudget,
                 memory.param.termLinkRecordLength.get()));  // link type: SELF
-        
+
         if (term instanceof CompoundTerm) {
             if (!termLinkTemplates.isEmpty()) {
                 final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
                 if (subBudget.aboveThreshold()) {
-                    
+
                     for (int t = 0; t < termLinkTemplates.size(); t++) {
                         TermLink termLink = termLinkTemplates.get(t);
-                        
+
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                         Term componentTerm = termLink.target;
-                        
+
                         Concept componentConcept = memory.conceptualize(componentTerm);
-                        
+
                         if (componentConcept != null) {
-                            
+
                             componentConcept.insertTaskLink(
-                                new TaskLink(task, termLink, subBudget, 
-                                        memory.param.termLinkRecordLength.get()));
+                                    new TaskLink(task, termLink, subBudget,
+                                            memory.param.termLinkRecordLength.get()));
                         }
 //                        }
                     }
-                    
+
                     buildTermLinks(taskBudget);  // recursively insert TermLink
                 }
             }
         }
     }
-    
-    
 
     /**
      * Add a new belief (or goal) into the table Sort the beliefs/desires by
@@ -396,7 +393,7 @@ public class Concept extends Item {
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
                     return null;
-                }                                
+                }
                 table.add(i, newSentence);
                 break;
             }
@@ -407,8 +404,8 @@ public class Concept extends Item {
                 Sentence removed = table.remove(table.size() - 1);
                 return removed;
             }
-        } else if (i == table.size()) {            
-            table.add(newSentence);            
+        } else if (i == table.size()) {
+            table.add(newSentence);
         }
         return null;
     }
@@ -420,10 +417,10 @@ public class Concept extends Item {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-     private Sentence selectCandidate(final Sentence query, final List<Sentence> list) {
+    private Sentence selectCandidate(final Sentence query, final List<Sentence> list) {
  //        if (list == null) {
- //            return null;
- //        }
+        //            return null;
+        //        }
         float currentBest = 0;
         float beliefQuality;
         Sentence candidate = null;
@@ -467,13 +464,13 @@ public class Concept extends Item {
                         Term t = template.target;
                         final Concept concept = memory.conceptualize(t);
                         if (concept != null) {
-                            
+
                             // this termLink to that
                             TermLink termLink1 = insertTermLink(new TermLink(t, template, subBudget));
-                            
+
                             // that termLink to this
                             TermLink termLink2 = concept.insertTermLink(new TermLink(term, template, subBudget));
-                            
+
                             if (t instanceof CompoundTerm) {
                                 concept.buildTermLinks(subBudget);
                             }
@@ -546,10 +543,10 @@ public class Concept extends Item {
         float termComplexityFactor = 1.0f / term.getComplexity();
         float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
-            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size() );
+            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
         }
         return result;
-        
+
     }
 
     /**
@@ -594,40 +591,40 @@ public class Concept extends Item {
         return null;
     }
 
-    
-    
-    /** Get the current overall desire value. 
-     *  TODO to be refined */
+    /**
+     * Get the current overall desire value. TODO to be refined
+     */
     public TruthValue getDesire() {
         if (desires.isEmpty()) {
             return null;
         }
         TruthValue topValue = desires.get(0).truth;
         return topValue;
-    }    
-    
+    }
+
     /* ---------- main loop ---------- */
     /**
      * An atomic step in a concept
      */
     public void fire() {
         memory.setCurrentTerm(term);
-        
+
         final TaskLink currentTaskLink = taskLinks.takeOut();
-        if (currentTaskLink == null)
+        if (currentTaskLink == null) {
             return;
-        
+        }
+
         fire(currentTaskLink);
         taskLinks.putBack(currentTaskLink);
     }
-    
+
     protected void fire(TaskLink currentTaskLink) {
         memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
-        
+
         memory.setCurrentTaskLink(currentTaskLink);
         memory.setCurrentBeliefLink(null);
-        if (memory.getRecorder().isActive()) {            
-            memory.getRecorder().append("TaskLink Select", currentTaskLink.toStringBrief());            
+        if (memory.getRecorder().isActive()) {
+            memory.getRecorder().append("TaskLink Select", currentTaskLink.toStringBrief());
         }
         final Task task = currentTaskLink.getTargetTask();
         memory.setCurrentTask(task);  // one of the two places where this variable is set
@@ -641,20 +638,20 @@ public class Concept extends Item {
             while (termLinkCount > 0) {
                 final TermLink termLink = selectTermLink(currentTaskLink, memory.getTime());
                 if (termLink != null) {
-                    if (memory.getRecorder().isActive()) {                        
+                    if (memory.getRecorder().isActive()) {
                         memory.getRecorder().append("TermLink Select", termLink.toString());
                     }
                     memory.setCurrentBeliefLink(termLink);
-                    
-                    reason(currentTaskLink, termLink, memory);                    
-                    
+
+                    reason(currentTaskLink, termLink, memory);
+
                     termLinks.putBack(termLink);
                     termLinkCount--;
                 } else {
                     termLinkCount = 0;
                 }
             }
-        }        
+        }
 
     }
 
@@ -672,7 +669,8 @@ public class Concept extends Item {
      * @param showLinks Whether to display the task links
      */
     @SuppressWarnings("unchecked")
-    @Deprecated public void startPlay(EntityObserver entityObserver, boolean showLinks) {
+    @Deprecated
+    public void startPlay(EntityObserver entityObserver, boolean showLinks) {
         this.entityObserver = entityObserver;
         entityObserver.startPlay(this, showLinks);
         entityObserver.post(displayContent());
@@ -720,12 +718,13 @@ public class Concept extends Item {
 
     /**
      * Replace default to prevent repeated inference, by checking TaskLink
+     *
      * @param taskLink The selected TaskLink
      * @param time The current time
      * @return The selected TermLink
-     */    
-    protected TermLink selectTermLink(final TaskLink taskLink, final long time) {        
-        
+     */
+    protected TermLink selectTermLink(final TaskLink taskLink, final long time) {
+
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; i < toMatch; i++) {
             final TermLink termLink = termLinks.takeOut(false);
@@ -738,9 +737,9 @@ public class Concept extends Item {
             }
             termLinks.putBack(termLink, false);
         }
-        return null;        
-    }
+        return null;
 
+    }
 
     static final class NullEntityObserver implements EntityObserver {
 
@@ -779,7 +778,6 @@ public class Concept extends Item {
         return questions;
     }
 
-    
     public void discountConfidence(final boolean onBeliefs) {
         if (onBeliefs) {
             for (final Sentence s : beliefs) {
@@ -788,7 +786,7 @@ public class Concept extends Item {
         } else {
             for (final Sentence s : desires) {
                 s.discountConfidence();
-            }            
+            }
         }
-    }    
+    }
 }

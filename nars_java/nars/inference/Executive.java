@@ -15,7 +15,6 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.entity.TruthValue;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
@@ -248,12 +247,16 @@ public class Executive {
                 System.err.println("ignored late task: " + t + " for parent " + t.parentTask);
                 return false;
             }
+            
         }
+            
         
         if (tasks.add(new TaskExecution(c, t))) {
             //added successfully
+            if (memory.getRecorder().isActive())
+               memory.getRecorder().append("Task Scheduled", t.toString());
             System.out.println("  TASK add: "+ t);
-            System.out.println(t.getExplanation());
+            System.out.print(t.getExplanation());
             return true;
         }
         
@@ -342,42 +345,44 @@ public class Executive {
 //    }
             
         
+    public void decisionPlanning(final Task t, final Concept concept) {
+        
+        if (planningEnabled) {
+            
+            if (!isUrgent(concept)) return;
+        
+            boolean plannable = graph.isPlannable(t.getContent());
+            if (plannable) {                    
+                if (memory.getRecorder().isActive())
+                   memory.getRecorder().append("Goal Planned", t.toString());
+
+                graph.plan(concept, t, t.getContent(), 
+                        particles, searchDepth, '!', maxPlannedTasks);
+            }                
+        }
+        
+    }
+    
+    
     /** Entry point for all potentially executable tasks */
     public void decisionMaking(final Task t, final Concept concept) {
                         
-        Term content = concept.term;        
+        if (!isUrgent(concept)) return;
         
-        TruthValue desireValue = concept.getDesire();
-        
-        if (desireValue.getExpectation() < memory.param.decisionThreshold.get()) {
-            return;
-        }
-        
+        Term content = concept.term;
+            
         //forget(t);
         
         if (content instanceof Operation) {
             addTask(concept, t);
-            return;
         }
         else if (isSequenceConjunction(content)) {
-            if (!tasks.contains(t)) {
-                if (memory.getRecorder().isActive())
-                   memory.getRecorder().append("Goal Scheduled", t.toString());
-                addTask(concept, t);
-            }
+            addTask(concept, t);
         }
-        else {
-            if (planningEnabled) {
-                boolean plannable = graph.isPlannable(t.getContent());
-                if (plannable) {                    
-                    if (memory.getRecorder().isActive())
-                       memory.getRecorder().append("Goal Planned", t.toString());
-                    
-                    graph.plan(concept, t, t.getContent(), 
-                            particles, searchDepth, '!', maxPlannedTasks);
-                }                
-            }
-        }              
+    }
+    
+    public boolean isUrgent(Concept c) {               
+        return (c.getDesire().getExpectation() >= memory.param.decisionThreshold.get());        
     }
     
     public void cycle() {
