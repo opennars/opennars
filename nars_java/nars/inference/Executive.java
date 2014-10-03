@@ -68,13 +68,11 @@ public class Executive {
             public final int compare(final TaskExecution a, final TaskExecution b) {
                 float ap = a.getDesire();
                 float bp = b.getDesire();
-                System.out.println("? DESIRE: " + a + "=" + ap + ", " + b + "=" + bp );
                 if (bp != ap) {
                     return Float.compare(ap, bp);
                 } else {
                     float ad = a.getPriority();
                     float bd = b.getPriority();
-                    System.out.println("? PRIORITY: " + a + "=" + ad + ", " + b + "=" + bd );
                     if (ad!=bd)
                         return Float.compare(ad, bd);
                     else {
@@ -237,14 +235,14 @@ public class Executive {
 
             //if the new task for the existin goal has a lower priority, ignore it
             if (existingExecutable.getDesire() > t.getDesire().getExpectation()) {
-                System.err.println("ignored lower priority task: " + t + " for parent " + t.parentTask);
+                //System.out.println("ignored lower priority task: " + t + " for parent " + t.parentTask);
                 return false;
             }
 
             //do not allow interrupting a lower priority, but already executing task
             //TODO allow interruption if priority difference is above some threshold                
             if (existingExecutable.sequence > 0) {
-                System.err.println("ignored late task: " + t + " for parent " + t.parentTask);
+                //System.out.println("ignored late task: " + t + " for parent " + t.parentTask);
                 return false;
             }
             
@@ -254,9 +252,7 @@ public class Executive {
         if (tasks.add(new TaskExecution(c, t))) {
             //added successfully
             if (memory.getRecorder().isActive())
-               memory.getRecorder().append("Task Scheduled", t.toString());
-            System.out.println("  TASK add: "+ t);
-            System.out.print(t.getExplanation());
+               memory.getRecorder().append("Executive", "Task Add: " + t.toString());
             return true;
         }
         
@@ -266,7 +262,8 @@ public class Executive {
     protected void removeTask(final TaskExecution t) {
         if (tasksToRemove.add(t)) {
             //t.t.setPriority(0); //dint set priority of entire statement to 0
-            System.out.println("  TASK remove: "+ t);
+            if (memory.getRecorder().isActive())
+               memory.getRecorder().append("Executive", "Task Remove: " + t.toString());
         }
     }
     

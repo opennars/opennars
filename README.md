@@ -1,17 +1,14 @@
- * OpenNARS Home-Page: http://code.google.com/p/open-nars/
- * User Manual (HTML): http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
- * Discussion Group: https://groups.google.com/forum/?fromgroups#!forum/open-nars
+![OpenNARS Logo](https://raw.githubusercontent.com/opennars/opennars/graphplan1/doc/opennars_logo.png)
 
-**Open-NARS** is the open-source version of [NARS](https://sites.google.com/site/narswang/home), a general-purpose AI system, designed in the framework of a reasoning system.
+**Open-NARS** is the open-source version of [NARS](https://sites.google.com/site/narswang/home), a general-purpose AI system, designed in the framework of a reasoning system.  This project is an evolution of the [v1.5 system](http://code.google.com/p/open-nars/).  The [mailing list](https://groups.google.com/forum/?fromgroups#!forum/open-nars) discusses both its theory and implementation.
 
-NARS works by processing tasks imposed by its environment (human users or other computer systems). Tasks can arrive at any time, and there is no restriction on their contents, as far as they can be expressed in Narsese, the I/O language of NARS.
+Non-Axiomatic Reasoning System ([NARS](https://sites.google.com/site/narswang/home)) processes tasks imposed by its environment, which may include human users or other computer systems. Tasks can arrive at any time, and there is no restriction on their contents as far as they can be expressed in __Narsese__, the I/O language of NARS.
 
-There are several types of tasks:
+There are several types of __tasks__:
 
  * **Judgment** - To process it means to accept it as the system's belief, as well as to derive new beliefs and to revise old beliefs accordingly.
  * **Question** -  To process it means to find the best answer to it according to current beliefs.
  * **Goal** - To process it means to carry out some system operations to realize it.
-    * _Goal is not implemented in the current version, 1.5.5, though it was tested before in 1.3.3 and 1.4.0._
 
 As a reasoning system, the [architecture of NARS](http://www.cis.temple.edu/~pwang/Implementation/NARS/architecture.pdf) consists of a **memory**, an **inference engine**, and a **control mechanism**.
 
@@ -40,38 +37,32 @@ Beginners can start at the following online materials:
  * The memory and control: [Computation and Intelligence in Problem Solving](http://sites.google.com/site/narswang/publications/wang.computation.pdf)
 
 
-  
+
 Contents
 --------
  * **nars_java** - main logic engine
  * **nars_gui** - java.swing GUI
  * **nars_scala** - embryo of NARS in Scala (not currently active, just to see how NARS could look in Scala)
  * **nars_web** - web server
+ * **nars_lab** - experiments & demos
  * **nars_test** - unit tests
  * **nal** - examples
 
 In nars_java/ and nars_gui/ are the NARS core and the Swing GUI in Java. This is derived from the code of Pei Wang in nars_java.0/ directory.
 
-
-Requirements
-------------
- * Java 7+
- * ant
+For an overview of reasoning features, see working examples explained in SingleStepTestingCases and MultiStepExamples.
 
 
-Build
------
-To compile, test, and create a complete OpenNARS.jar: build.sh
+Run Requirements
+----------------
+ * Java 7+ (OpenJDK 8 recommended)
 
+Development Requirements
+------------------------
+ * ant or IDE
+   * To build a complete OpenNARS.jar: build.sh
+   * To run unit tests: ant test
 
-Test
-----
-ant test
-
-To test the current implementation:
- * The demonstration programs under Downloads.
- * The working examples explained in SingleStepTestingCases and MultiStepExamples.
- 
 
 History
 -------
@@ -79,6 +70,7 @@ Under the nars_java.0/ directory is the code Pei Wang originally moved into the 
 
 Later Joe Geldart started the nars_java.geldart/ version of NARS, which contains many good ideas (many of which are accepted into 1.5), but it isn't fully consistent with Pei's plan, especially about the new layers (7,8,9), so Pei didn't continue on that code base.
 
+Jean-Marc Vanel continued work on this roadmap, mainly in GUI and software engineering tasks contributing a non-regression test suite and separating NARS into Core and GUI modules.
 
 
 Source Code status
@@ -86,8 +78,3 @@ Source Code status
 See also http://code.google.com/p/open-nars/wiki/ProjectStatus
 
 Current version has been fully tested for single capability at a time; there may still be bugs when combining capabilities.
-
-Jean-Marc Vanel is working on this roadmap, mainly in GUI and software engineering tasks :
-- reestablish a non-regression test suite
-- make an independant syntax verifyer based on a grammar parser : it will give the column & line of error (there is a Scala combinator grammar)
-- separate NARS in 2 modules with a Maven build : nars_gui and nars_java

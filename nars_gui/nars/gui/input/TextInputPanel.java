@@ -50,6 +50,7 @@ import nars.entity.AbstractTask;
 import nars.gui.FileTreeModel;
 import nars.gui.NARSwing;
 import nars.gui.NPanel;
+import nars.gui.NWindow;
 import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
@@ -164,6 +165,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                             }
                         }
                     });
+                    new NWindow("Experience Library", new JScrollPane(fileTree)).show(400, 200);
                 }
 
                 return "";
