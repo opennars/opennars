@@ -61,6 +61,16 @@ public class NARSwing  {
         UIManager.put("TextEdit.border", new EmptyBorder(1,1,1,1));
         UIManager.put("TextArea.border", new EmptyBorder(1,1,1,1));
         UIManager.put("TextField.border", new EmptyBorder(1,1,1,1));
+        
+        UIManager.put("Label.foreground", Color.WHITE);
+        
+        UIManager.put("TextPane.background", Color.BLACK);
+        UIManager.put("TextPane.foreground", Color.WHITE);
+        UIManager.put("TextEdit.background", Color.BLACK);
+        UIManager.put("TextEdit.foreground", Color.WHITE);
+        UIManager.put("TextArea.background", Color.BLACK);
+        UIManager.put("TextArea.foreground", Color.WHITE);
+        
         UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
         UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
         UIManager.put("Panel.border", new EmptyBorder(1,1,1,1));
@@ -95,7 +105,7 @@ public class NARSwing  {
         controls = new NARControls(nar);        
         mainWindow = new NWindow(NAR.VERSION, controls);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainWindow.setBounds(10, 10, 270, 600);
+        mainWindow.setBounds(10, 10, 270, 650);
         mainWindow.setVisible(true);
         
         
@@ -104,7 +114,11 @@ public class NARSwing  {
         
         
         if (logPanel) {
-            new NWindow("I/O", new ConsolePanel(controls)).show(600, 800);
+            NWindow nw = new NWindow("I/O", new ConsolePanel(controls));
+            nw.setBounds(mainWindow.getX() + mainWindow.getWidth(), mainWindow.getY(), 800, 650);
+            nw.setVisible(true);
+            
+            
 
         }
         else {

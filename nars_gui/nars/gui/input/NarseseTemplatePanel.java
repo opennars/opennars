@@ -22,12 +22,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import nars.gui.NWindow;
 
 /**
- */**
  *
  * @author me
  */
-
-
 public class NarseseTemplatePanel {
 
     
@@ -60,11 +57,8 @@ public class NarseseTemplatePanel {
     
     public static class NarseseTemplate {
         
-        
-        
         public final Map<String,Concept> concepts = new HashMap();
         public final Map<String,List<TemplateElement>> forms = new HashMap();
-        
 
         public NarseseTemplate(String narsese, String english) {
             forms.put("narsese", parse(narsese));

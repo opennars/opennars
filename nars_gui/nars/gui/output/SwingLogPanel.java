@@ -50,7 +50,7 @@ public class SwingLogPanel extends LogPanel {
                     
         addPopupMenu();
 
-        setConsoleStyle(ioText, true);
+        setConsoleFont(ioText);
 
         setBackground(Color.BLACK);
     }
@@ -85,12 +85,12 @@ public class SwingLogPanel extends LogPanel {
         ioText.setText("");
     }
 
-    public static void setConsoleStyle(JTextComponent c, boolean invert) {
-        setConsoleStyle(c, invert, defaultFontSize);
+    public static void setConsoleFont(JTextComponent c) {
+        setConsoleFont(c, defaultFontSize);
     }
 
-    public static void setConsoleStyle(JTextComponent c, boolean invert, int fontSize) {
-        if (invert) {
+    public static void setConsoleFont(JTextComponent c, int fontSize) {
+        /*if (invert) {
             c.setForeground(Color.WHITE);
             c.setCaretColor(Color.WHITE);
             c.setBackground(Color.BLACK);
@@ -98,8 +98,7 @@ public class SwingLogPanel extends LogPanel {
             c.setForeground(Color.BLACK);
             c.setCaretColor(Color.BLACK);
             c.setBackground(Color.WHITE);
-
-        }
+        }*/
         c.setBorder(new EmptyBorder(0, 0, 0, 0));
         //c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
         c.setFont(NARSwing.monofont.deriveFont(1f*fontSize));

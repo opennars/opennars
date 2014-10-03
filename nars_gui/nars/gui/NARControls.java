@@ -46,7 +46,8 @@ import nars.core.NAR;
 import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
-import nars.gui.output.LogPanel;
+import nars.gui.output.MultiOutputPanel;
+import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
 import nars.gui.output.TermWindow;
@@ -187,15 +188,19 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             JMenuItem ml = new JMenuItem("+ Log");
             ml.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    LogPanel p = new SwingLogPanel(NARControls.this);
-                    NWindow w = new NWindow("Log", p);
-                    w.setSize(500, 300);
-                    w.setVisible(true);      
+                public void actionPerformed(ActionEvent e) {                    
+                    new NWindow("Log", new SwingLogPanel(NARControls.this)).show(500, 300);
                 }
             });
             m.add(ml);
 
+            JMenuItem al = new JMenuItem("+ Activity");
+            al.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new NWindow("Activity", new MultiOutputPanel(NARControls.this)).show(500, 300);                }
+            });
+            m.add(al);
             
             JMenuItem mv = new JMenuItem("+ Concept Graph");
             mv.addActionListener(new ActionListener() {
@@ -659,6 +664,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     private final char FA_PlayCharacter = '\uf04b';
     private final char FA_StopCharacter = '\uf04c';
     private final char FA_FocusCharacter = '\uf11e';
+    private final char FA_ControlCharacter = '\uf085';
 
     private JComponent newParameterPanel() {
         JPanel p = new JPanel();
@@ -690,6 +696,17 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         });
         pc.add(focusButton);
         
+        
+        JButton pluginsButton = new FAButton(FA_ControlCharacter);
+        pluginsButton.setToolTipText("Plugins");
+        pluginsButton.addActionListener(new ActionListener() {
+
+            @Override public void actionPerformed(ActionEvent e) {
+                new NWindow("Plugins", new PluginPanel(nar)).show(350, 600);
+            }
+
+        });
+        pc.add(pluginsButton);
         
         p.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
