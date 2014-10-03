@@ -265,7 +265,7 @@ public class Executive {
     
     protected void removeTask(final TaskExecution t) {
         if (tasksToRemove.add(t)) {
-            t.t.setPriority(0);
+            //t.t.setPriority(0); //dint set priority of entire statement to 0
             System.out.println("  TASK remove: "+ t);
         }
     }
