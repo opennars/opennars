@@ -19,9 +19,10 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import nars.gui.Window;
+import nars.gui.NWindow;
 
 /**
+ */**
  *
  * @author me
  */
@@ -255,7 +256,7 @@ public class NarseseTemplatePanel {
             new NarseseTemplate("<~#a --> ~#b>. %0.00;0.50%",  "~#a is possibly not a ~#b."),            
         }));
         
-        Window w = new Window("NarseseTemplatePanel test", NarseseTemplatePanel.newPanel(templates) );
+        NWindow w = new NWindow("NarseseTemplatePanel test", NarseseTemplatePanel.newPanel(templates) );
         w.setSize(400, 200);
         w.setVisible(true);
     }

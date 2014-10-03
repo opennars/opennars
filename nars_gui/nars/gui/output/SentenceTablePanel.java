@@ -16,7 +16,7 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NARSwing;
-import nars.gui.Window;
+import nars.gui.NWindow;
 import nars.gui.output.graph.ProcessingGraphPanel2;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -172,7 +172,7 @@ public class SentenceTablePanel extends TablePanel {
             }
 
         };
-        Window w = new Window("", pgp);
+        NWindow w = new NWindow("", pgp);
         w.setSize(400, 400);
         w.setVisible(true);
     }

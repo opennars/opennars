@@ -3,7 +3,7 @@ package nars.gui.output.face;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import nars.gui.NPanel;
-import nars.gui.Window;
+import nars.gui.NWindow;
 
 
 
@@ -133,7 +133,7 @@ public class HumanoidFacePanel extends NPanel {
     
     public static void main(String[] arg) {
         HumanoidFacePanel f = new HumanoidFacePanel();
-        Window w = new Window("Face", f);
+        NWindow w = new NWindow("Face", f);
         w.setSize(250,400);
         w.setVisible(true);
     }

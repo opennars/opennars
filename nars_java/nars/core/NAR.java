@@ -41,6 +41,18 @@ import nars.operator.io.Echo;
  */
 public class NAR implements Runnable, Output, TaskSource {
 
+    /**
+     * The information about the version and date of the project.
+     */
+    public static final String VERSION = "Open-NARS v1.6.2";
+    
+    /**
+     * The project web sites.
+     */
+    public static final String WEBSITE =
+              " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
+            + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
+              "    Github website:  http://github.com/opennars/ \n";    
     
     private Thread thread = null;
     long minCyclePeriodMS;

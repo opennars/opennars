@@ -1,7 +1,7 @@
 package nars.gui.input.image;
 
 import java.util.Stack;
-import nars.gui.Window;
+import nars.gui.NWindow;
 import nars.gui.output.PPanel;
 import static processing.core.PApplet.append;
 import static processing.core.PApplet.dist;
@@ -19,7 +19,7 @@ public class SketchPanel extends PPanel {
     
     public static void main(String[] arg) {
         
-        Window w = new Window("Sketch", new SketchPanel().newPanel());
+        NWindow w = new NWindow("Sketch", new SketchPanel().newPanel());
         w.setSize(500,500);
         w.setVisible(true);
     }

@@ -38,6 +38,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     private float min;
     private float max;
     private Color barColor = null;
+    private Color backgroundColor = Color.BLACK;
     private boolean dragging;
     NumberFormat nf = NumberFormat.getInstance();
     private String prefix = "";
@@ -58,17 +59,18 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     public NSlider(AtomicDouble value, float min, float max) {
         super();
         
+        
         nf.setMaximumFractionDigits(3);
         
         this.value = value;        
         this.min = min;
         this.max = max;
-        setBorder(BasicBorders.getButtonBorder());
+        setBorder(BasicBorders.getInternalFrameBorder());
         
         addMouseListener(this);
         addMouseMotionListener(this);
         
-        setFont(NARSwing.monofont.deriveFont(12f));
+        setFont(NARSwing.monofont.deriveFont(14f));
         
     }
 
@@ -78,13 +80,15 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     public void paint(Graphics g) {
         int w = getWidth();
         int h = getHeight();
-        g.clearRect(0, 0, w, h);
+        g.setPaintMode();
+        g.setColor(backgroundColor);
+        g.fillRect(0, 0, w, h);
 
         float p = (value.floatValue() - min) / (max-min);
         if (barColor == null) {
             //Green->Yellow->Red
             //g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.9f));
-             g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.1f, 0.8f + 0.15f * (1f - (float)p)));
+             g.setColor(Color.getHSBColor( (1f - (float)p) / 3.0f , 0.2f, 0.8f + 0.15f));
             
         }
         else {
@@ -94,6 +98,8 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         int wp = (int)(((float)w) * p );
         g.setColor(barColor);
         g.fillRect(0, 0, wp, h);
+        
+        g.setXORMode(Color.WHITE);        
         super.paint(g);
     }
     

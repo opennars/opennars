@@ -37,7 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import nars.core.Parameters;
 import nars.entity.Item;
-import nars.gui.Window;
+import nars.gui.NWindow;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.storage.BagObserver;
@@ -45,7 +45,7 @@ import nars.storage.BagObserver;
 /**
  * JWindow display the priority distribution of items within a given bag
  */
-@Deprecated public class BagWindow<E extends Item> extends Window implements ActionListener, AdjustmentListener,
+@Deprecated public class BagWindow<E extends Item> extends NWindow implements ActionListener, AdjustmentListener,
         BagObserver<E> {
 
     /**
@@ -172,9 +172,9 @@ import nars.storage.BagObserver;
         valueLabel = new JLabel("00", JLabel.RIGHT);
         valueBar = new JScrollBar(Scrollbar.HORIZONTAL, showLevel, 0, 1, bag.levels);
         valueBar.addAdjustmentListener(this);
-        stopButton = new JButton(Window.OFF_LABEL);
+        stopButton = new JButton(NWindow.OFF_LABEL);
         stopButton.addActionListener(this);
-        playButton = new JButton(Window.ON_LABEL);
+        playButton = new JButton(NWindow.ON_LABEL);
         playButton.addActionListener(this);
         closeButton = new JButton("Close");
         closeButton.addActionListener(this);

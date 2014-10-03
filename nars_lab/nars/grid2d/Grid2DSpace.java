@@ -20,7 +20,7 @@ import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
 import nars.grid2d.particle.ParticleSystem;
-import nars.gui.Window;
+import nars.gui.NWindow;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
@@ -83,9 +83,9 @@ public class Grid2DSpace extends PApplet {
         g.init(this);
     }
     
-    public Window newWindow(int width, int height, final boolean exitOnClose) {
+    public NWindow newWindow(int width, int height, final boolean exitOnClose) {
         
-        Window j = new Window("") {
+        NWindow j = new NWindow("") {
             
             @Override
             protected void close() {
@@ -113,7 +113,7 @@ public class Grid2DSpace extends PApplet {
          */
         
         EditorPanel editor = new EditorPanel(this);
-        Window editorWindow = new Window("Edit", editor);
+        NWindow editorWindow = new NWindow("Edit", editor);
         editorWindow.setSize(200, 400);
         editorWindow.setVisible(true);
         
