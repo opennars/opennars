@@ -409,7 +409,9 @@ public class GraphExecutive {
             return getActualConfidence(memory, current);      
     }    
         
-    public static class ParticlePlan implements Comparable<ParticlePlan> {
+    
+    public class ParticlePlan implements Comparable<ParticlePlan> {
+
         public final Sentence[] path;
         public final List<Term> sequence;
         public final double distance;
@@ -418,45 +420,53 @@ public class GraphExecutive {
         public final BudgetValue budget;
         private final float minConf;
 
+        //            if (path.length == 0) return 0;
+        //
+        //            float min = Float.MAX_VALUE;
+        //            for (final Sentence s : path) {
+        //                float c = s.truth.getConfidence();
+        //                if (c < min)
+        //                    min = c;
+        //            }
+        //            return min;
         public ParticlePlan(Memory memory, Sentence[] path, List<Term> sequence, double activation, double distance, float minConf) {
             this.path = path;
             this.sequence = sequence;
             this.activation = activation;
             this.distance = distance;
             this.minConf = minConf;
-
             for (final Sentence s : path) {
                 float c = s.truth.getConfidence();
-                if (c < minConf)
+                if (c < minConf) {
                     minConf = c;
+                }
             }
-            
             truth = new TruthValue(1.0f, minConf);
             budget = BudgetFunctions.forward(truth, memory);
             budget.andPriority(minConf);
-            
-        }        
+        }
 
         public float getMinConfidence() {
             return minConf;
-//            if (path.length == 0) return 0;
-//            
-//            float min = Float.MAX_VALUE;
-//            for (final Sentence s : path) {
-//                float c = s.truth.getConfidence();
-//                if (c < min)
-//                    min = c;
-//            }
-//            return min;
+            //            if (path.length == 0) return 0;
+            //
+            //            float min = Float.MAX_VALUE;
+            //            for (final Sentence s : path) {
+            //                float c = s.truth.getConfidence();
+            //                if (c < min)
+            //                    min = c;
+            //            }
+            //            return min;
         }
 
         public double score() {
             return truth.getConfidence() * activation;
         }
-        
-        @Override public final int compareTo(final ParticlePlan o) {
+
+        @Override
+        public final int compareTo(final ParticlePlan o) {
             int i = Double.compare(o.score(), score());
-            if ((i == 0) && (o!=this)) {
+            if ((i == 0) && (o != this)) {
                 return -1;
             }
             return i;
@@ -464,13 +474,11 @@ public class GraphExecutive {
 
         @Override
         public String toString() {
-            return sequence + "(" + score() + ";"+ distance + ")";
+            return sequence + "(" + score() + ";" + distance + ")";
         }
-        
-        
-        
     }
-    
+
+
     protected void particlePredict(final Term source, final double distance, final int particles) {
         ParticleActivation act = new ParticleActivation(implication);
         SortedSet<ParticlePath> paths = act.activate(source, true, particles, distance);
@@ -644,8 +652,8 @@ public class GraphExecutive {
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
 
-        //memory.derivedTask(newTask, false, true, null, null);
-        memory.executive.addTask(c, newTask);
+        memory.derivedTask(newTask, false, true, null, null);
+        //memory.executive.addTask(c, newTask);
         
         //System.out.println("  PLAN: " + newTask);
         
