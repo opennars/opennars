@@ -24,7 +24,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.text.NumberFormat;
 import javax.swing.JLabel;
-import javax.swing.plaf.basic.BasicBorders;
+import javax.swing.border.LineBorder;
 import nars.util.meter.util.AtomicDouble;
 
 
@@ -65,7 +65,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         this.value = value;        
         this.min = min;
         this.max = max;
-        setBorder(BasicBorders.getInternalFrameBorder());
+        setBorder(new LineBorder(Color.WHITE));
         
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -99,7 +99,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         g.setColor(barColor);
         g.fillRect(0, 0, wp, h);
         
-        g.setXORMode(Color.WHITE);        
+        g.setXORMode(Color.BLACK);        
         super.paint(g);
     }
     

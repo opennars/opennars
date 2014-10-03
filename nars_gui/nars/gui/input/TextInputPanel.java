@@ -50,7 +50,7 @@ import nars.entity.AbstractTask;
 import nars.gui.FileTreeModel;
 import nars.gui.NARSwing;
 import nars.gui.NPanel;
-import static nars.gui.output.SwingLogPanel.setConsoleStyle;
+import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
@@ -440,7 +440,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             //add(new JScrollPane(list), BorderLayout.CENTER);
             comments = new SwingText();
             comments.setEditable(false);
-            setConsoleStyle(comments, true, 12);
+            setConsoleFont(comments, 12);
             
             /*JPanel pj = new JPanel(new BorderLayout());
             pj.add(j, BorderLayout.CENTER);*/
@@ -602,7 +602,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                 }
             }
         });
-        setConsoleStyle(inputText, true, 20);
+        setConsoleFont(inputText, 20);
 
         mainSplit.add(new JScrollPane(inputText), 0);
 

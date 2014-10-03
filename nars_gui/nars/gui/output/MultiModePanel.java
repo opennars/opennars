@@ -52,7 +52,7 @@ public class MultiModePanel extends JPanel implements Output {
         public LogView() {
             super(nar);
             
-            SwingLogPanel.setConsoleStyle(this, true);
+            SwingLogPanel.setConsoleFont(this);
             
         }
 
@@ -230,7 +230,7 @@ public class MultiModePanel extends JPanel implements Output {
     }
         
     public JButton newStatusButton() {
-        JButton statusButton = new JButton(getLabel()) {
+        JButton statusButton = new JButton(" " + getLabel()) {
 
         Color bgColor = Color.WHITE;
         private Color fgColor = Color.WHITE;

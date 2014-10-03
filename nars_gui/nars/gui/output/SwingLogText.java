@@ -115,17 +115,18 @@ public class SwingLogText extends SwingText implements Output {
     protected void onLineVisible(int offset) { }
     
     @Override
-    public void output(final Class c, final Object o) {        
+    public void output(final Class c, final Object o) {                
         pendingDisplay.addLast(new LogLine(c, o));
                 
-        if (pendingDisplay.size() >= 1) {
+        if (pendingDisplay.size() == 1) {
+            //only invoke update after the first has been added
             SwingUtilities.invokeLater(update);
         }
     }
     
     public final Runnable update = new Runnable() {
         
-        final Rectangle bottom = new Rectangle(0,Integer.MAX_VALUE-1,1,1);        
+        //final Rectangle bottom = new Rectangle(0,Integer.MAX_VALUE-1,1,1);        
         
         @Override public void run() {
             
@@ -137,10 +138,10 @@ public class SwingLogText extends SwingText implements Output {
                         
             limitBuffer();                        
 
-            try {
-                scrollRectToVisible(bottom);
+            /*try {
+                //scrollRectToVisible(bottom);
             }
-            catch (Exception e) { } 
+            catch (Exception e) { } */
         }
     };
     

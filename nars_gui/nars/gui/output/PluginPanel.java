@@ -105,7 +105,7 @@ public class PluginPanel extends NPanel {
             
             this.plugin = p;
             final JLabel j = new JLabel(p.plugin.name().toString());
-            j.setFont(NARSwing.monofont);
+            j.setFont(NARSwing.monofont);            
             add(j, BorderLayout.CENTER);
             
             JPanel buttons = new JPanel(new FlowLayout());
