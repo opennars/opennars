@@ -23,6 +23,7 @@ import nars.grid2d.Cell.Material;
 import nars.grid2d.Grid2DSpace;
 import nars.grid2d.GridAgent;
 import nars.grid2d.GridObject;
+import nars.grid2d.Hauto;
 import nars.grid2d.LocalGridObject;
 import nars.grid2d.TestChamber;
 import nars.grid2d.object.Key;
@@ -71,6 +72,23 @@ public class EditorPanel extends JPanel {
 
         DefaultMutableTreeNode resourceMenu = new DefaultMutableTreeNode("Need of Resources");
         root.add(resourceMenu);
+        
+        DefaultMutableTreeNode mindSettings = new DefaultMutableTreeNode("Mind Settings");
+        root.add(mindSettings);
+        
+        mindSettings.add(new EditorMode("Allow subconscious knowledge") {
+            @Override
+            public void run() {
+                Hauto.allow_subsymbolic_knowledge=true;
+            }
+        });
+        
+        mindSettings.add(new EditorMode("Don't, use forcing actions without prioritizing") {
+            @Override
+            public void run() {
+                Hauto.allow_subsymbolic_knowledge=false;
+            }
+        });
         
         
         DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
@@ -175,6 +193,18 @@ public class EditorPanel extends JPanel {
                                     s.cells.readCells[i][j].name=c[11];
                                     s.cells.writeCells[i][j].name=c[11];
                                     
+                                    try {
+                                        if(!c[11].equals("")) {
+                                            String value=c[11].replaceAll("[A-Za-z]","");
+                                            int res=Integer.parseInt(value);
+                                            if(res>Hauto.entityID) {
+                                                Hauto.entityID=res+1;
+                                            }
+                                        }
+                                    }
+                                    catch(Exception ex){}
+                                    
+                                    
                                     s.cells.readCells[i][j].value=Float.valueOf(c[12]);
                                     s.cells.writeCells[i][j].value=Float.valueOf(c[12]);
                                     
@@ -189,6 +219,18 @@ public class EditorPanel extends JPanel {
                                         continue;
                                     }
                                     String name=val[1];
+                                    
+                                    try {
+                                        if(!name.equals("")) {
+                                            String value=name.replaceAll("[A-Za-z]","");
+                                            int res=Integer.parseInt(value);
+                                            if(res>Hauto.entityID) {
+                                                Hauto.entityID=res+1;
+                                            }
+                                        }
+                                    }
+                                    catch(Exception ex){}
+                                    
                                     float cx=Float.valueOf(val[2]);
                                     float cy=Float.valueOf(val[3]); 
                                     int x=Integer.valueOf(val[5]); 
