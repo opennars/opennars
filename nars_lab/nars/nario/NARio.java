@@ -35,8 +35,8 @@ public class NARio extends Run {
     int cycle = 0;
     int gotCoin = 0;
     private Mario mario;    
-    int cyclesPerMario = 4;
-    int initCycles = 1000;
+   // int cyclesPerMario = 20;
+    int initCycles = 4;
 
     public NARio(NAR n) {
         super();
@@ -56,9 +56,11 @@ public class NARio extends Run {
         
          nar.param().cycleInputTasks.set(1);
          nar.param().cycleMemory.set(1);*/
+        
+        nar.param().conceptForgetDurations.set(99.0f);
 
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(8);
+        nar.param().duration.set(500);
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
         nar.param().shortTermMemorySize.set(35);
@@ -67,7 +69,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 8);
+        nar.start(50, 500);
     }
 
     String[] sight = new String[9];
@@ -162,12 +164,11 @@ public class NARio extends Run {
                 }
                 
                     
-                /*if (cycle % cyclesPerMario == 0)*/ {
+               /* if (cycle % cyclesPerMario == 0)*/ {
                     cycle(0.05);
                 }
 
                 {
-                    
 //                if (cycle % 100 == 1) {
 //                    System.out.println("Inports: " + nar.getInPorts().size());
 //                }
