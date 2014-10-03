@@ -265,7 +265,7 @@ public class RobotArm extends PhysicsModel {
         
     }
 
-    class RayCastClosestCallback implements RayCastCallback {
+    public static class RayCastClosestCallback implements RayCastCallback {
 
       boolean m_hit;
       Vec2 m_point;

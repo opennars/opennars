@@ -40,7 +40,8 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame {
 
     @Override
     public void cycle() {
-        phy.cycle();
+        if (phy!=null)
+            phy.cycle();
     }
     
 }
