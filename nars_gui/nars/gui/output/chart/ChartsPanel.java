@@ -2,6 +2,7 @@ package nars.gui.output.chart;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -32,7 +33,7 @@ public class ChartsPanel extends NCanvas {
     final Map<String, TimeSeriesChart> charts = new TreeMap();
     
     public static final Font monofontLarge = NARSwing.monofont.deriveFont(Font.PLAIN, 18f);
-    public static final Font monofontSmall = NARSwing.monofont.deriveFont(Font.PLAIN, 14f);
+    public static final Font monofontSmall = NARSwing.monofont.deriveFont(Font.PLAIN, 13f);
     
     float yScale = 1.0f;
     private int yOffset = 0;
@@ -69,7 +70,7 @@ public class ChartsPanel extends NCanvas {
                     yScale *= 1.1f;
                 }
                 
-                update(false);
+                repaint();
             }
         });
         final MouseAdapter c;
@@ -93,7 +94,7 @@ public class ChartsPanel extends NCanvas {
                 Point currentLocation = e.getPoint();
                 int deltaY  = currentLocation.y - startLocation.y;
                 yOffset = startYOffset + deltaY;
-                update(false);
+                repaint();
             }
 
             @Override
@@ -108,25 +109,23 @@ public class ChartsPanel extends NCanvas {
 
             @Override
             public void run() {
-                update(false);
+                repaint();
+                
                 addComponentListener(new ComponentAdapter() {
-
-                    @Override
-                    public void componentResized(ComponentEvent e) {
-                        update(false);
+                    @Override public void componentResized(ComponentEvent e) {
+                        repaint();
                     }
-
                 });
             }
             
         });
     }
 
-    
-    
-    
-    
-
+    @Override
+    public void paint(Graphics g) {
+        update(false);
+        super.paint(g);
+    }
     
     protected TimeSeriesChart addChart(final String f) {
         //int chartType = TimeSeriesChart.AREA;
@@ -252,7 +251,12 @@ public class ChartsPanel extends NCanvas {
             
             g.setPaint(Color.WHITE);
             
-            g.setFont(monofontLarge);
+            if (h < 14) {
+                g.setFont(monofontSmall);                
+            }
+            else {
+                g.setFont(monofontLarge);
+            }
             g.drawString(f, 5, y+16);
             if (h > 25) {
                 g.setFont(monofontSmall);

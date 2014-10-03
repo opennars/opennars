@@ -43,7 +43,6 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
@@ -124,9 +123,6 @@ public class NARControls extends JPanel implements ActionListener, Observer {
      * @param nar
      * @param title
      */
-    private final JMenuItem internalExperienceItem;
-    private final JMenuItem narsPlusItem;
-    private final JMenuItem fullInternalExp;
     private ChartsPanel chart;
     private final MultiSense senses;
     public NARControls(final NAR nar) {
@@ -151,32 +147,15 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         addJMenuItem(m, "Reset");
         m.addSeparator();
         addJMenuItem(m, "Load Experience");
-        addJMenuItem(m, "Save Experience");
-        m.addSeparator();
+        addJMenuItem(m, "Save Experience");        
         
-        internalExperienceItem = addJMenuItem(m, "Enable Internal Experience (NAL9)");
+        /*internalExperienceItem = addJMenuItem(m, "Enable Internal Experience (NAL9)");
         fullInternalExp = addJMenuItem(m, "Enable Full Internal Experience");
-        narsPlusItem = addJMenuItem(m, "Enable NARS+ Ideas");
+        narsPlusItem = addJMenuItem(m, "Enable NARS+ Ideas");*/
+        
         m.addActionListener(this);
         menuBar.add(m);
 
-        /*m = new JMenu("Input");
-        {
-            JMenuItem mv = new JMenuItem("+ Text Input");
-            mv.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    InputPanel inputPanel = new InputPanel(nar);
-                    Window inputWindow = new Window("Text Input", inputPanel);                    
-                    inputWindow.setSize(800, 200);
-                    inputWindow.setVisible(true);        
-                }
-            });
-            m.add(mv);
-            
-        }
-        menuBar.add(m);*/
-        
         m = new JMenu("Windows");
         {
             
@@ -202,6 +181,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 }                
             });
             m.add(cct4);
+            
+            m.addSeparator();
             
             JMenuItem ml = new JMenuItem("+ Log");
             ml.addActionListener(new ActionListener() {
@@ -484,11 +465,11 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
             switch (label) {
-                case "Enable Full Internal Experience":
-                    fullInternalExp.setEnabled(false);
-                    Parameters.INTERNAL_EXPERIENCE_FULL=true;
+                //case "Enable Full Internal Experience":
+                    //fullInternalExp.setEnabled(false);
+                    //Parameters.INTERNAL_EXPERIENCE_FULL=true;
                     //Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
-                    break;
+                  //  break;
                     
 //                case "Enable NARS+ Ideas":
 //                    narsPlusItem.setEnabled(false);
@@ -517,8 +498,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     break;
                 case "Reset":
                     /// TODO mixture of modifier and reporting
-                    narsPlusItem.setEnabled(true);
-                    internalExperienceItem.setEnabled(true);
+                    //narsPlusItem.setEnabled(true);
+                    //internalExperienceItem.setEnabled(true);
                     nar.reset();
                     break;
                 case "Related Information":
@@ -731,9 +712,9 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
         c.ipady = 4;
 
-        p.add(new NSlider(memory.param.taskCycleForgetDurations, "Task Forgetting Rate", 1, 99), c);
-        p.add(new NSlider(memory.param.beliefForgetDurations, "Belief Forgetting Rate", 1, 99), c);
-        p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Forgetting Rate", 1, 99), c);
+        p.add(new NSlider(memory.param.taskCycleForgetDurations, "Task Forgetting Rate", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.beliefForgetDurations, "Belief Forgetting Rate", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Forgetting Rate", 0.5f, 20), c);
 
         //JPanel chartPanel = new JPanel(new GridLayout(0,1));
         {

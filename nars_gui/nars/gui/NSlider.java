@@ -70,7 +70,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         addMouseListener(this);
         addMouseMotionListener(this);
         
-        setFont(NARSwing.monofont.deriveFont(14f));
+        setFont(NARSwing.monofont.deriveFont(13f));
         
     }
 
@@ -114,7 +114,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     @Override
     public String getText() {
         if (value!=null)
-            return prefix + nf.format(value.floatValue());
+            return prefix + " " + nf.format(value.floatValue());
         return "";
     }
     
