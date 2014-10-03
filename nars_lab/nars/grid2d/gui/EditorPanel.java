@@ -83,7 +83,7 @@ public class EditorPanel extends JPanel {
             }
         });
         
-        mindSettings.add(new EditorMode("Don't, use forcing actions without prioritizing") {
+        mindSettings.add(new EditorMode("Don't use forcing actions with prioritizing") {
             @Override
             public void run() {
                 Hauto.allow_subsymbolic_knowledge=false;
