@@ -29,7 +29,7 @@ import javax.swing.JFrame;
 /**
  * Specify shared properties of NARS windows
  */
-public class Window extends JFrame {
+public class NWindow extends JFrame {
     //http://paletton.com/#uid=70u0u0kllllaFw0g0qFqFg0w0aF
     
     /**
@@ -70,7 +70,7 @@ public class Window extends JFrame {
     /**
      * Default constructor
      */
-    public Window() {
+    public NWindow() {
         this(" ");
     }
 
@@ -79,7 +79,7 @@ public class Window extends JFrame {
      *
      * @param title The title displayed by the window
      */
-    public Window(String title) {
+    public NWindow(String title) {
         super(title);
         //setFont(NarsFont);
         
@@ -91,7 +91,7 @@ public class Window extends JFrame {
         });
     }
     
-    public Window(String title, Component component) {
+    public NWindow(String title, Component component) {
         this(title);
         getContentPane().add(component);
     }

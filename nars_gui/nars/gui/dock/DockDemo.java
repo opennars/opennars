@@ -2,7 +2,7 @@ package nars.gui.dock;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import nars.gui.Window;
+import nars.gui.NWindow;
 
 /**
  *
@@ -29,7 +29,7 @@ public class DockDemo extends DockingRegionRoot {
     
     
     public static void main(String[] args)     {
-        Window w = new Window("Dock Test", new DockDemo());
+        NWindow w = new NWindow("Dock Test", new DockDemo());
         
         w.setSize(640, 480);
         w.setVisible(true);

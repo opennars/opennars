@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import nars.gui.Window;
+import nars.gui.NWindow;
 
 /**
  * "Sokoban 1.0, Written by Yossie Silverman."
@@ -545,7 +545,7 @@ public class Sokoban extends Applet {
 	}
         
         public static void main(String[] args) throws Exception {
-            Window w = new Window("Sokoban", new Sokoban());
+            NWindow w = new NWindow("Sokoban", new Sokoban());
             w.setSize(500,500);
             w.setVisible(true);
         }

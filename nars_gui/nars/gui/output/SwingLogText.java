@@ -9,8 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import nars.core.NAR;
@@ -75,14 +73,14 @@ public class SwingLogText extends SwingText implements Output {
     
     void setScroller(JScrollPane scroller) {
         this.scroller = scroller;
-        scroller.getViewport().addChangeListener(new ChangeListener() {
+        /*scroller.getViewport().addChangeListener(new ChangeListener() {
                 @Override
                 public void stateChanged(ChangeEvent e) {
                     
                     //scrollUpdate();
 
                 }
-            });
+            });*/
     }
 
     protected void scrollUpdate() {
@@ -143,9 +141,6 @@ public class SwingLogText extends SwingText implements Output {
                 scrollRectToVisible(bottom);
             }
             catch (Exception e) { } 
-                    
-            //repaint();
-            validate();
         }
     };
     

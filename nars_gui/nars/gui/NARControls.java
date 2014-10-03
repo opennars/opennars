@@ -185,7 +185,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     TextInputPanel inputPanel = new TextInputPanel(nar);
-                    Window inputWindow = new Window("Input", inputPanel);                    
+                    NWindow inputWindow = new NWindow("Input", inputPanel);                    
                     inputWindow.setSize(800, 200);
                     inputWindow.setVisible(true);        
                 }
@@ -196,7 +196,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             cct4.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Window w = new Window("Sketch", new SketchPointCloudPanel(nar));
+                    NWindow w = new NWindow("Sketch", new SketchPointCloudPanel(nar));
                     w.setSize(500,500);
                     w.setVisible(true);
                 }                
@@ -208,7 +208,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     LogPanel p = new SwingLogPanel(NARControls.this);
-                    Window w = new Window("Log", p);
+                    NWindow w = new NWindow("Log", p);
                     w.setSize(500, 300);
                     w.setVisible(true);      
                 }
@@ -220,7 +220,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas(nar))).show(500, 500);
+                    new NWindow("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas(nar))).show(500, 500);
                 }
             });
             m.add(mv);
@@ -229,7 +229,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             mv2.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
+                    new NWindow("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
                 }
             });
             m.add(mv2);
@@ -240,7 +240,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
-                    new Window("Implication Graph", 
+                    new NWindow("Implication Graph", 
                             new ProcessingGraphPanel(nar, 
                                     new ImplicationGraphCanvas(
                                             nar.memory.executive.graph))).show(500, 500);
@@ -252,7 +252,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             sg.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Window("Inheritance Graph", 
+                    new NWindow("Inheritance Graph", 
                             new ProcessingGraphPanel(nar, 
                                     new SentenceGraphCanvas(
                                             new InheritanceGraph(nar)))).show(500, 500);
@@ -267,7 +267,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     SentenceTablePanel p = new SentenceTablePanel(nar);
-                    Window w = new Window("Sentence Table", p);
+                    NWindow w = new NWindow("Sentence Table", p);
                     w.setSize(500, 300);
                     w.setVisible(true);                    
                 }
@@ -279,7 +279,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     BubbleChart bc = new BubbleChart(nar);
-                    Window wbc = new Window("Freq vs. Conf", bc);
+                    NWindow wbc = new NWindow("Freq vs. Conf", bc);
                     wbc.setSize(250,250);
                     wbc.setVisible(true);
                 }
@@ -291,7 +291,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     NARFacePanel f = new NARFacePanel(nar);
-                    Window w = new Window("Face", f);
+                    NWindow w = new NWindow("Face", f);
                     w.setSize(250,400);
                     w.setVisible(true);
                 }
@@ -523,11 +523,11 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     break;
                 case "Related Information":
 //                MessageDialog web =
-                    new MessageDialog(NARSwing.WEBSITE); 
+                    new MessageDialog(NAR.WEBSITE); 
                     break;
                 case "About NARS":
 //                MessageDialog info =
-                    new MessageDialog(NARSwing.INFO+"\n\n"+NARSwing.WEBSITE);
+                    new MessageDialog(NAR.VERSION+"\n\n"+NAR.WEBSITE);
                     break;
             }
         }

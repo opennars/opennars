@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import nars.entity.Concept;
 import nars.entity.EntityObserver;
-import nars.gui.Window;
+import nars.gui.NWindow;
 import nars.storage.BagObserver;
 //import java.beans.PropertyChangeEvent;
 //import java.beans.PropertyChangeListener;
@@ -39,7 +39,7 @@ import nars.storage.BagObserver;
  * JWindow displaying the content of a Concept, such as beliefs, goals, and
  * questions
  */
-public class ConceptWindow extends Window implements ActionListener, EntityObserver {
+public class ConceptWindow extends NWindow implements ActionListener, EntityObserver {
 
     /**
      * Control buttons

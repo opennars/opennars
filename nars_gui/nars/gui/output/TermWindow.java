@@ -31,13 +31,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import nars.entity.Concept;
 import nars.entity.EntityObserver;
-import nars.gui.Window;
+import nars.gui.NWindow;
 import nars.core.Memory;
 
 /**
  * JWindow accept a Term, then display the content of the corresponding Concept
  */
-public class TermWindow extends Window implements ActionListener {
+public class TermWindow extends NWindow implements ActionListener {
 
     /**
      * Display label

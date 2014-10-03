@@ -35,7 +35,7 @@ import javax.swing.JScrollBar;
 /**
  * JWindow displaying a system parameter that can be adjusted in run time
  */
-public class ParameterWindow extends Window implements ActionListener, AdjustmentListener, WindowFocusListener {
+public class ParameterWindow extends NWindow implements ActionListener, AdjustmentListener, WindowFocusListener {
 
     /** Display label */
     private final JLabel valueLabel;

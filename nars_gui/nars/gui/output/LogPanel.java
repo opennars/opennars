@@ -25,6 +25,7 @@ import nars.gui.InferenceLogger;
 import nars.gui.InferenceLogger.LogOutput;
 import nars.gui.NARControls;
 import nars.gui.NPanel;
+import nars.gui.NSlider;
 import nars.gui.WrapLayout;
 import nars.io.Output;
 import nars.io.TextOutput;
@@ -43,6 +44,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
     protected boolean showStamp = false;
     protected boolean showQuestions = true;
     protected boolean showStatements = true;
+    protected boolean showExecutions = true;
 
     /**
      * the log file
@@ -101,7 +103,8 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
         menuTop.add(Box.createHorizontalStrut(4));
 
-        final JToggleButton showStatementsBox = new JToggleButton("Statements");
+        final JToggleButton showStatementsBox = new JToggleButton(".");
+        showStatementsBox.setToolTipText("Show Statements");
         showStatementsBox.setSelected(showStatements);
         showStatementsBox.addActionListener(new ActionListener() {
             @Override
@@ -111,7 +114,8 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         });
         menuTop.add(showStatementsBox);
 
-        final JToggleButton showQuestionsBox = new JToggleButton("Questions");
+        final JToggleButton showQuestionsBox = new JToggleButton("?");
+        showQuestionsBox.setToolTipText("Show Questions");
         showQuestionsBox.setSelected(showQuestions);
         showQuestionsBox.addActionListener(new ActionListener() {
             @Override
@@ -121,6 +125,17 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         });
         menuTop.add(showQuestionsBox);
 
+        final JToggleButton showExecutionsBox = new JToggleButton("!");
+        showExecutionsBox.setToolTipText("Show Executions");
+        showExecutionsBox.setSelected(showExecutions);
+        showExecutionsBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showExecutions = showExecutionsBox.isSelected();
+            }
+        });
+        menuTop.add(showExecutionsBox);
+        
         final JToggleButton showErrorBox = new JToggleButton("Errors");
         showErrorBox.setSelected(showErrors);
         showErrorBox.addActionListener(new ActionListener() {
@@ -131,7 +146,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         });
         menuTop.add(showErrorBox);
 
-        final JToggleButton showStampBox = new JToggleButton("Stamps");
+        final JToggleButton showStampBox = new JToggleButton("Stamp");
         showStampBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -153,16 +168,18 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
         menuTop.add(Box.createHorizontalStrut(4));
 
-        /*
+        
         final NSlider fontSlider = new NSlider(12f, 6f, 40f) {
+
             @Override
-            public void onChange(double v) {
+            public void onChange(float v) {
                 setFontSize(v);
             }
+            
         };
         fontSlider.setPrefix("Font size: ");
         menuTop.add(fontSlider);
-                */
+
 
         //add(menuBottom, BorderLayout.SOUTH);
         add(menuTop, BorderLayout.NORTH);
@@ -195,9 +212,13 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
     @Override
     public void output(final Class c, Object o) {
 
-        if ((!showErrors) && (c == ERR.class)) {
+        if ((c == ERR.class) && (!showErrors)) {
             return;
         }
+        if ((c == EXE.class) && !showExecutions) {
+            return;
+        }
+        
         if (o instanceof Sentence) {
             Sentence s = (Sentence) o;
 
@@ -207,6 +228,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
             if (s.isJudgment() && !showStatements) {
                 return;
             }
+            
         }
 
         print(c, o);

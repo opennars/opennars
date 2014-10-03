@@ -28,11 +28,10 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
-import nars.gui.input.TextInputPanel;
-import nars.gui.output.LogPanel;
-import nars.gui.output.SwingLogPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -42,27 +41,47 @@ import nars.io.TextOutput;
  */
 public class NARSwing  {
 
-    /**
-     * The information about the version and date of the project.
-     */
-    public static final String INFO = "Open-NARS v1.6.1";
-    /**
-     * The project web sites.
-     */
-    public static final String WEBSITE =
-            " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
-            + "      NARS website:  http://sites.google.com/site/narswang/";
+
 
 
     
+    /*static {
+        System.setProperty("sun.java2d.opengl","True");        
+    }*/
+
     static {
-     //   System.setProperty("sun.java2d.opengl","True");        
+        //http://alvinalexander.com/java/java-swing-uimanager-defaults
+        UIManager.put("Button.foreground", Color.WHITE);
+        UIManager.put("Button.background", Color.DARK_GRAY);
+        UIManager.put("Panel.background", Color.BLACK);
+        UIManager.put("Button.border", new EmptyBorder(4,8,4,8));
+        UIManager.put("ToggleButton.border", new EmptyBorder(4,8,4,8));
+        UIManager.put("ScrollPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("SplitPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextEdit.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextArea.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextField.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("Panel.border", new EmptyBorder(1,1,1,1));
+        UIManager.put("Button.select", Color.GREEN);
+        UIManager.put("Button.highlight", Color.YELLOW);
+        UIManager.put("ToggleButton.foreground", Color.WHITE);
+        UIManager.put("ToggleButton.background", Color.DARK_GRAY);
+        UIManager.put("ToggleButton.select", Color.GRAY);
+        //UIManager.put("ToggleButton.border", Color.BLUE);
+        //UIManager.put("ToggleButton.light", Color.DARK_GRAY);
+        UIManager.put("Button.select", Color.ORANGE);
+        UIManager.put("Button.opaque", false);
+        UIManager.put("Panel.opaque", false);
+        UIManager.put("ScrollBar.opaque", false);
+        UIManager.put("ScrollBar.background", Color.BLACK);
+        UIManager.put("ScrollBar.border", new EmptyBorder(1,1,1,1));
     }
 
-
     public final NAR nar;
-    private final Window mainWindow;
-    private final NARControls narControls;
+    private final NWindow mainWindow;
+    private final NARControls controls;
 
     public NARSwing(NAR nar) {
         this(nar, true);
@@ -73,22 +92,20 @@ public class NARSwing  {
         
         this.nar = nar;                
         
-        narControls = new NARControls(nar);        
-        mainWindow = new Window(INFO, narControls);
+        controls = new NARControls(nar);        
+        mainWindow = new NWindow(NAR.VERSION, controls);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setBounds(10, 10, 270, 600);
         mainWindow.setVisible(true);
-        mainWindow.setVisible(true);
+        
         
         //TEMPORARY
         //new Window("Plugins", new PluginPanel(nar)).show(300, 400);
         
         
         if (logPanel) {
-            LogPanel outputLog = new SwingLogPanel(narControls); //new HTMLLogPanel(narControls);
-            Window outputWindow = new Window("Log", outputLog);        
-            outputWindow.setLocation(narControls.getLocation().x + narControls.getWidth(), narControls.getLocation().y);        outputWindow.setSize(800, 400);
-            outputWindow.setVisible(true);
+            new NWindow("I/O", new ConsolePanel(controls)).show(600, 800);
+
         }
         else {
             new TextOutput(nar, System.out);
@@ -101,12 +118,7 @@ public class NARSwing  {
 //        outputWindow.setVisible(true);
         
         
-        TextInputPanel inputPanel = new TextInputPanel(nar);
-        Window inputWindow = new Window("Input", inputPanel);
-        inputWindow.setLocation(narControls.getLocation().x + narControls.getWidth(), narControls.getLocation().y);
-        inputWindow.setSize(800, 200);
-        inputWindow.setVisible(true);
-        
+
                 
         
     }
