@@ -375,5 +375,8 @@ public class TestChamber {
         Say waaaa = new Say(this, "^say");
         nar.memory.addOperator(waaaa);
         space.add(a);
+
     }
+
+
 }

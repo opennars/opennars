@@ -651,8 +651,6 @@ public class GraphExecutive {
         
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
-
-        System.out.println("  PLAN: " + newTask);
         
         if (punctuation == '.')        
             memory.derivedTask(newTask, false, true, null, null);        

@@ -22,6 +22,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import nars.gui.NWindow;
 
 /**
+<<<<<<< HEAD
+=======
+/**
+>>>>>>> origin/graphplan1
  *
  * @author me
  */

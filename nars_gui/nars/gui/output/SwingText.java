@@ -18,7 +18,7 @@ public class SwingText extends JTextPane {
     /**
      * # of messages to buffer in log
      */
-    int maxLineWidth = 120;
+    int maxLineWidth = 200;
     protected final float baseFontScale = 1.0f;
     protected final DefaultStyledDocument doc;
     protected final Style mainStyle;

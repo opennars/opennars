@@ -260,7 +260,7 @@ public class ChartsPanel extends NCanvas {
             g.drawString(f, 5, y+16);
             if (h > 25) {
                 g.setFont(monofontSmall);
-                g.drawString("  current=" + firstValue + ", min=" + min + ", max=" + max, 5, y+16+18);
+                g.drawString("  current=" + firstValue + ", min=" + min + ", max=" + max, 5, y+16+12);
             }
             
             y += h;

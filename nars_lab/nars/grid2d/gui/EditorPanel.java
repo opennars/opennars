@@ -5,10 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,6 +33,8 @@ import processing.core.PVector;
  * @author me
  */
 public class EditorPanel extends JPanel {
+    
+    final String levelPath = "./nars_lab/nars/grid2d/level";
 
     abstract public static class EditorMode extends DefaultMutableTreeNode {
 
@@ -95,8 +94,8 @@ public class EditorPanel extends JPanel {
         root.add(load);
         DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
         root.add(save);
-        
-        File f = new File("."); // current directory
+
+        File f = new File(levelPath); // current directory
 
         File[] files = f.listFiles();
         for (File file : files) {
@@ -277,6 +276,7 @@ public class EditorPanel extends JPanel {
             public void run() {
                 //todo save to new file with file name dummy_i
                 String filename= JOptionPane.showInputDialog("What is the name of the level?: ")+".lvl";
+                filename = levelPath + filename;
                 StringBuilder wr=new StringBuilder();
                 for(int i=0;i<s.cells.h;i++) { //its not python, we have to export it to file ourselves:
                     for(int j=0;j<s.cells.w;j++) {

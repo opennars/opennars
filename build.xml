@@ -119,6 +119,9 @@
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip" level="9">
             <zipgroupfileset dir="dist" includes="opennars.jar"/>
             <zipgroupfileset dir="dist/lib" includes="java_websocket.jar"/>
+            <zipgroupfileset dir="dist/lib" includes="javolution-core-java-6.1.0-20140103.154957-9.jar"/>
+            <zipgroupfileset dir="dist/lib" includes="jgrapht-core-0.9.1-SNAPSHOT.jar"/>
+            <zipgroupfileset dir="dist/lib" includes="guava-18.0.jar"/>            
             
 
             <manifest>
