@@ -2,9 +2,12 @@ package nars.inference;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -43,12 +46,12 @@ public class Executive {
     //public final Deque<TaskConceptContent> next = new ArrayDeque<>();
 
     PriorityBuffer<TaskExecution> tasks;
-    private List<TaskExecution> tasksToRemove = new ArrayList();
+    private Set<TaskExecution> tasksToRemove = new HashSet();
     
     boolean planningEnabled = true;
     
     /** number of tasks that are active in the sorted priority buffer for execution */
-    int numActiveTasks = 8;
+    int numActiveTasks = 1;
 
     /** max number of tasks that a plan can generate. chooses the N most confident */
     int maxPlannedTasks = 2;
@@ -64,19 +67,21 @@ public class Executive {
         this.tasks = new PriorityBuffer<TaskExecution>(new Comparator<TaskExecution>() {
             @Override
             public final int compare(final TaskExecution a, final TaskExecution b) {
-                float bp = b.getDesire();
                 float ap = a.getDesire();
+                float bp = b.getDesire();
+                System.out.println("? DESIRE: " + a + "=" + ap + ", " + b + "=" + bp );
                 if (bp != ap) {
-                    return Float.compare(bp, ap);
+                    return Float.compare(ap, bp);
                 } else {
                     float ad = a.getPriority();
                     float bd = b.getPriority();
+                    System.out.println("? PRIORITY: " + a + "=" + ad + ", " + b + "=" + bd );
                     if (ad!=bd)
-                        return Float.compare(bd, ad);
+                        return Float.compare(ad, bd);
                     else {
                         float add = a.getDurability();
                         float bdd = b.getDurability();
-                        return Float.compare(bdd, add);                        
+                        return Float.compare(add, bdd);                        
                     }
                 }
 
@@ -96,7 +101,6 @@ public class Executive {
         public final Concept c;
         
         public final Task t;
-        public final Term goal;
         public int sequence;
         public long delayUntil = -1;
         private float motivationFactor = 1;
@@ -121,15 +125,13 @@ public class Executive {
             
             this.t = t;
 
-            this.goal = t.getGoal();
-            if (goal == null)
-                throw new RuntimeException("Executed task without Goal term");
         }
 
         protected Task inlineConjunction(Task t, final Conjunction c) {
             List<Term> inlined = new ArrayList();
             boolean wasInlined = false;
             if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
+                Term prev = null;
                 for (Term e : c.term) {
                     if (!isPlanTerm(e)) {
                         if (graph.isPlannable(e)) {
@@ -138,7 +140,28 @@ public class Executive {
                             if (plans.size() > 0) {
                                 //use the first
                                 ParticlePlan pp = plans.first();
-                                inlined.addAll(pp.sequence);
+                                
+                                //if terms precede this one, remove a common prefix
+                                //scan from the end of the sequence backward until a term matches the previous, and splice it there
+                                //TODO more rigorous prefix compraison. compare sublist prefix
+                                List<Term> seq = pp.sequence;
+                                
+                                if (prev!=null) {
+                                    int previousTermIndex = pp.sequence.lastIndexOf(prev);
+                                    
+                                    if (previousTermIndex!=-1) {
+                                        if (previousTermIndex == seq.size()-1)
+                                            seq = Collections.EMPTY_LIST;
+                                        else {                                            
+                                            seq = seq.subList(previousTermIndex+1, seq.size());
+                                        }
+                                    }
+                                }
+                                
+                                //System.out.println("inline: " + pp.sequence + " -> " + seq);
+                                
+                                
+                                inlined.addAll(seq);
                                 //System.err.println("Inline " + e + " in " + t.getContent() + " = " + pp.sequence);  
                                 wasInlined = true;
                             }
@@ -157,6 +180,7 @@ public class Executive {
                         //executable term, add
                         inlined.add(e);
                     }
+                    prev = e;
                 }                            
             }            
             
@@ -196,35 +220,33 @@ public class Executive {
         
     }
 
-    protected TaskExecution getExecution(final Term goal) {
+    protected TaskExecution getExecution(final Task parent) {        
         for (final TaskExecution t : tasks) {
-            if (t.goal.equals(goal))
-                return t;            
+            if (t.t.parentTask!=null)
+                if (t.t.parentTask.equals(parent))
+                    return t;            
         }
         return null;
     }
     
     
-    public boolean addTask(final Concept c, final Task t) {
-        Term goal = t.getGoal();
-        if (goal!=null) {
-            TaskExecution existingExecutable = getExecution(goal);        
-            if (existingExecutable!=null) {
-                
-                //TODO compare motivation (desire * priority) instead?
-                
-                //if the new task for the existin goal has a lower priority, ignore it
-                if (existingExecutable.getDesire() > t.getDesire().getExpectation()) {
-                    System.err.println("ignored lower priority task: " + t + " for goal " + goal);
-                    return false;
-                }
-                
-                //do not allow interrupting a lower priority, but already executing task
-                //TODO allow interruption if priority difference is above some threshold                
-                if (existingExecutable.sequence > 0) {
-                    System.err.println("ignored late task: " + t + " for goal " + goal);
-                    return false;
-                }
+    public boolean addTask(final Concept c, final Task t) {        
+        TaskExecution existingExecutable = getExecution(t.parentTask);
+        if (existingExecutable!=null) {
+
+            //TODO compare motivation (desire * priority) instead?
+
+            //if the new task for the existin goal has a lower priority, ignore it
+            if (existingExecutable.getDesire() > t.getDesire().getExpectation()) {
+                System.err.println("ignored lower priority task: " + t + " for parent " + t.parentTask);
+                return false;
+            }
+
+            //do not allow interrupting a lower priority, but already executing task
+            //TODO allow interruption if priority difference is above some threshold                
+            if (existingExecutable.sequence > 0) {
+                System.err.println("ignored late task: " + t + " for parent " + t.parentTask);
+                return false;
             }
         }
         
@@ -239,9 +261,10 @@ public class Executive {
     }
     
     protected void removeTask(final TaskExecution t) {
-        System.out.println("  TASK remove: "+ t);
-        t.t.setPriority(0);
-        tasksToRemove.add(t);
+        if (tasksToRemove.add(t)) {
+            t.t.setPriority(0);
+            System.out.println("  TASK remove: "+ t);
+        }
     }
     
     protected void updateTasks() {
@@ -351,7 +374,7 @@ public class Executive {
                        memory.getRecorder().append("Goal Planned", t.toString());
                     
                     graph.plan(concept, t, t.getContent(), 
-                            particles, searchDepth, '.', maxPlannedTasks);
+                            particles, searchDepth, '!', maxPlannedTasks);
                 }                
             }
         }              

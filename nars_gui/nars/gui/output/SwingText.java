@@ -51,7 +51,7 @@ public class SwingText extends JTextPane {
 
     public void print(final Color color, final Color bgColor, String text) {
         if (text.length() > maxLineWidth) {
-            text = text.substring(0,maxLineWidth);
+            text = text.substring(0,maxLineWidth) + "\n";
         }
 
         MutableAttributeSet aset = getInputAttributes();

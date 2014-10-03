@@ -652,10 +652,12 @@ public class GraphExecutive {
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
 
-        memory.derivedTask(newTask, false, true, null, null);
-        //memory.executive.addTask(c, newTask);
+        System.out.println("  PLAN: " + newTask);
         
-        //System.out.println("  PLAN: " + newTask);
+        if (punctuation == '.')        
+            memory.derivedTask(newTask, false, true, null, null);        
+        else if (punctuation == '!')
+            memory.executive.addTask(c, newTask);
         
     }
 

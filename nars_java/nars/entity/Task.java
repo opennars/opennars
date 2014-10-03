@@ -21,9 +21,6 @@
 package nars.entity;
 
 import com.google.common.base.Strings;
-import nars.inference.Executive;
-import nars.inference.TemporalRules;
-import nars.language.Implication;
 import nars.language.Term;
 import nars.operator.Operation;
 
@@ -280,26 +277,26 @@ public class Task extends AbstractTask {
 
     public TruthValue getDesire() { return sentence.truth; }
     
-    /** returns the goal term for this task, which may be either the predicate of a forward implication,
-     * an operation.  if neither, returns null      */
-    public Term getGoal() {
-        Term t = getContent();
-        if (t instanceof Implication) {
-            Implication i = (Implication)t;
-            if (i.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
-                return i.getPredicate();
-            else if (i.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
-                throw new RuntimeException("Term getGoal reversed");
-            }
-        }
-        else if (t instanceof Operation)
-            return t;
-        else if (Executive.isSequenceConjunction(t))
-            return t;
-        
-        return null;
-    }
-
+//    /** returns the goal term for this task, which may be either the predicate of a forward implication,
+//     * an operation.  if neither, returns null      */
+//    public Term getGoalTerm() {
+//        Term t = getContent();
+//        if (t instanceof Implication) {
+//            Implication i = (Implication)t;
+//            if (i.getTemporalOrder() == TemporalRules.ORDER_FORWARD)
+//                return i.getPredicate();
+//            else if (i.getTemporalOrder() == TemporalRules.ORDER_BACKWARD) {
+//                throw new RuntimeException("Term getGoal reversed");
+//            }
+//        }
+//        else if (t instanceof Operation)
+//            return t;
+//        else if (Executive.isSequenceConjunction(t))
+//            return t;
+//        
+//        return null;
+//    }
+//
 
     
 }
