@@ -19,6 +19,7 @@ import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.gui.AwesomeToggleButton;
 import nars.gui.FAButton;
 import nars.gui.InferenceLogger;
@@ -126,7 +127,7 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         menuTop.add(showQuestionsBox);
 
         final JToggleButton showExecutionsBox = new JToggleButton("!");
-        showExecutionsBox.setToolTipText("Show Executions");
+        showExecutionsBox.setToolTipText("Show Goals & Executions");
         showExecutionsBox.setSelected(showExecutions);
         showExecutionsBox.addActionListener(new ActionListener() {
             @Override
@@ -219,14 +220,19 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
             return;
         }
         
-        if (o instanceof Sentence) {
-            Sentence s = (Sentence) o;
-
-            if (s.isQuestion() && !showQuestions) {
-                return;
-            }
-            if (s.isJudgment() && !showStatements) {
-                return;
+        if (o instanceof Task) {
+            
+            Sentence s = ((Task) o).sentence;
+            if (s!=null) {
+                if (s.isQuestion() && !showQuestions) {
+                    return;
+                }
+                if (s.isJudgment() && !showStatements) {
+                    return;
+                }
+                if (s.isGoal()&& !showExecutions) {
+                    return;
+                }
             }
             
         }
