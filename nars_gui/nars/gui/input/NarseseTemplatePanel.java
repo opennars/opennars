@@ -22,7 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import nars.gui.NWindow;
 
 /**
- */**
+/**
  *
  * @author me
  */
