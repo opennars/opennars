@@ -144,7 +144,8 @@ public class Hauto {
     }
     
     String doorname="";
-    Integer entityID=0;
+    public static Integer entityID=0;
+    public static boolean allow_subsymbolic_knowledge=true;
     public void clicked(int x,int y, Grid2DSpace space)
     {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
@@ -163,17 +164,29 @@ public class Hauto {
         
         if(!"".equals(oper)) {
             if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
-                nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //we will force the action
+                if(allow_subsymbolic_knowledge) {
+                    nar.addInput("(^" + oper + ","+readCells[x][y].name+")! :|:"); //we will force the action
+                }
+                else {
+                    nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:");
+                    TestChamber.operateObj(readCells[x][y].name, oper);
+                }
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
                 //--nar.step(1);
-                TestChamber.operateObj(readCells[x][y].name, oper);
+                //.operateObj(readCells[x][y].name, oper);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
-                nar.addInput("(^" + oper + ","+s+"). :|:"); 
+                if(allow_subsymbolic_knowledge) {
+                    nar.addInput("(^" + oper + ","+s+")! :|:"); 
+                }
+                else {
+                    nar.addInput("(^" + oper + ","+s+"). :|:"); 
+                    TestChamber.operateObj(s, oper);
+                }
                 //nar.addInput("(^" + oper + ","+s+"). :|:");
                 //--nar.step(1);
-                TestChamber.operateObj(s, oper);
+               // TestChamber.operateObj(s, oper);
             }
             return;
         }
