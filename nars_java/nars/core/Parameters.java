@@ -36,7 +36,9 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    @Deprecated public static boolean INTERNAL_EXPERIENCE_FULL=false;
+    public static boolean TEMPORAL_PARTICLE_PLANNER=true;
+    
+    public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
     public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;

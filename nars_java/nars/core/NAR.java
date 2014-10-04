@@ -27,6 +27,7 @@ import nars.io.narsese.Narsese;
 import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
+import nars.plugin.mental.TemporalParticlePlanner;
 
 
 /**
@@ -154,7 +155,13 @@ public class NAR implements Runnable, Output, TaskSource {
         oldOutputChannels = new CopyOnWriteArrayList();
     
         this.perception.start(this);
-
+        
+        //the only plugin which is dependent on a parameter
+        //because it enriches NAL8 performance a lot:
+        if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
+            TemporalParticlePlanner planner=new TemporalParticlePlanner();
+            addPlugin(planner);
+        }
     }
 
     /**

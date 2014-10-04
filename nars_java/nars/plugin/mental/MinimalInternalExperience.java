@@ -23,48 +23,53 @@ import nars.operator.Operation;
  */
 public class MinimalInternalExperience implements Plugin {
 
+    public Observer obs;
+    
     @Override public boolean setEnabled(NAR n, boolean enabled) {
         Parameters.INTERNAL_EXPERIENCE_FULL=false;
         Memory memory = n.memory;
-        memory.event.set(new Observer() {
+        
+        if(obs==null) {
+            obs=new Observer() {
+                @Override public void event(Class event, Object[] a) {
 
-            @Override public void event(Class event, Object[] a) {
-                
-                if (event!=Events.ConceptDirectProcessedTask.class)
-                    return;
-                
-                Task task = (Task)a[0];                
+                    if (event!=Events.ConceptDirectProcessedTask.class)
+                        return;
 
-                Term content = task.getContent();
-                
-                // to prevent infinite recursions
-                if (content instanceof Operation)
-                    return;
-                                
-                Sentence sentence = task.sentence;
-                TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                
-                Stamp stamp = task.sentence.stamp.clone();
-                stamp.setOccurrenceTime(memory.getTime());
+                    Task task = (Task)a[0];                
 
-                Sentence j = new Sentence(sentence.toTerm(memory), Symbols.JUDGMENT_MARK, truth, stamp);
-                BudgetValue newbudget=new BudgetValue(
-                        task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                        task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                        task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
-                
-                Task newTask = new Task(j, (BudgetValue) newbudget, 
-                        Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
-                
-                if (memory.getRecorder().isActive()) {
-                    memory.getRecorder().append("Action Remembered", j.toString());
+                    Term content = task.getContent();
+
+                    // to prevent infinite recursions
+                    if (content instanceof Operation)
+                        return;
+
+                    Sentence sentence = task.sentence;
+                    TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+
+                    Stamp stamp = task.sentence.stamp.clone();
+                    stamp.setOccurrenceTime(memory.getTime());
+
+                    Sentence j = new Sentence(sentence.toTerm(memory), Symbols.JUDGMENT_MARK, truth, stamp);
+                    BudgetValue newbudget=new BudgetValue(
+                            task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                            task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
+                            task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
+
+                    Task newTask = new Task(j, (BudgetValue) newbudget, 
+                            Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
+
+                    if (memory.getRecorder().isActive()) {
+                        memory.getRecorder().append("Action Remembered", j.toString());
+                    }
+
+                    memory.addNewTask(newTask, "Remembered Action");
+
                 }
-                
-                memory.addNewTask(newTask, "Remembered Action");
-                
-            }
-            
-        }, enabled, Events.ConceptDirectProcessedTask.class);
+            };
+        }
+        
+        memory.event.set(obs, enabled, Events.ConceptDirectProcessedTask.class);
         return true;
     }
     

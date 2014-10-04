@@ -21,57 +21,62 @@ import nars.language.Term;
  */
 public class Counting implements Plugin {
 
+    public Observer obs;
     @Override public boolean setEnabled(NAR n, boolean enabled) {
         Memory memory = n.memory;
-        memory.event.set(new Observer() {
+        
+        if(obs==null) {
+            obs=new Observer() {
 
-            @Override
-            public void event(Class event, Object[] a) {
-                
-                if (event!=Events.TaskDerived.class)
-                    return;
-                
-                Task task = (Task)a[0];
-                
-                if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
-                    //lets say we have <{...} --> M>.
-                    if(task.sentence.content instanceof Inheritance) {
-                        
-                        Inheritance inh=(Inheritance) task.sentence.content;
-                        
-                        if(inh.getSubject() instanceof SetExt) {
-                            
-                            SetExt set_term=(SetExt) inh.getSubject();
-                            
-                            //this gets the cardinality of M
-                            int cardinality=set_term.size();   
-                            
-                            //now create term <(*,M,cardinality) --> CARDINALITY>.
-                            Term[] product_args = new Term[] { 
-                                inh.getPredicate(),
-                                new Term(String.valueOf(cardinality)) 
-                            };
-                            
-                            //TODO CARDINATLITY can be a static final instance shared by all
-                            Term new_term=Inheritance.make(
-                                Product.make(product_args, memory), /* --> */ new Term("CARDINALITY"), 
-                                memory);
+                @Override
+                public void event(Class event, Object[] a) {
 
-                            TruthValue truth = task.sentence.truth.clone();
-                            Stamp stampi = task.sentence.stamp.clone();
-                            Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
-                            BudgetValue budg = task.budget.clone();
-                            Task newTask = new Task(j, budg,task);
-                            
-                            memory.output(newTask);
-                            
-                            memory.addNewTask(newTask, "Derived (Cardinality)");
+                    if (event!=Events.TaskDerived.class)
+                        return;
+
+                    Task task = (Task)a[0];
+
+                    if(task.sentence.punctuation==Symbols.JUDGMENT_MARK) { 
+                        //lets say we have <{...} --> M>.
+                        if(task.sentence.content instanceof Inheritance) {
+
+                            Inheritance inh=(Inheritance) task.sentence.content;
+
+                            if(inh.getSubject() instanceof SetExt) {
+
+                                SetExt set_term=(SetExt) inh.getSubject();
+
+                                //this gets the cardinality of M
+                                int cardinality=set_term.size();   
+
+                                //now create term <(*,M,cardinality) --> CARDINALITY>.
+                                Term[] product_args = new Term[] { 
+                                    inh.getPredicate(),
+                                    new Term(String.valueOf(cardinality)) 
+                                };
+
+                                //TODO CARDINATLITY can be a static final instance shared by all
+                                Term new_term=Inheritance.make(
+                                    Product.make(product_args, memory), /* --> */ new Term("CARDINALITY"), 
+                                    memory);
+
+                                TruthValue truth = task.sentence.truth.clone();
+                                Stamp stampi = task.sentence.stamp.clone();
+                                Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
+                                BudgetValue budg = task.budget.clone();
+                                Task newTask = new Task(j, budg,task);
+
+                                memory.output(newTask);
+
+                                memory.addNewTask(newTask, "Derived (Cardinality)");
+                            }
                         }
                     }
                 }
-            }
-            
-        }, enabled, Events.TaskDerived.class);
+            };
+        }
+        
+        memory.event.set(obs, enabled, Events.TaskDerived.class);
         return true;
     }
     
