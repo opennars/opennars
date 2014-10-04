@@ -248,7 +248,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
             @Override
             public String getLabel() {
-                return "Narsese Input";
+                return "Input";
             }
 
             @Override

@@ -21,9 +21,10 @@ import nars.operator.Operation;
  * called from Concept
  * @param task The task processed
  */
-public class InternalExperience implements Plugin {
+public class MinimalInternalExperience implements Plugin {
 
     @Override public boolean setEnabled(NAR n, boolean enabled) {
+        Parameters.INTERNAL_EXPERIENCE_FULL=false;
         Memory memory = n.memory;
         memory.event.set(new Observer() {
 

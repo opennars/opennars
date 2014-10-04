@@ -7,7 +7,6 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events.TaskDerived;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Param;
 import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;
@@ -25,16 +24,11 @@ import nars.operator.Operator;
 import nars.util.meter.util.AtomicDouble;
 
 /**
- * Abbreviation plugin.  When first enabled, creates the ^abbreviation operator
+ * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
+ * Experimental alternative to Abbreviation plugin.
  */
 public class Abbreviation implements Plugin {
 
-    public AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
-    public AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
-    //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
-    //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
-
-    
     /**
     * Operator that give a CompoundTerm an atomic name
     */
@@ -75,8 +69,12 @@ public class Abbreviation implements Plugin {
         }
 
     }
-
     
+    public AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
+    public AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
+    
+    //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
+    //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
     
     public boolean canAbbreviate(Task task) {
         return !(task.sentence.content instanceof Operation) && 
@@ -100,34 +98,16 @@ public class Abbreviation implements Plugin {
                 if (event != TaskDerived.class)
                     return;                    
 
-                Param p = memory.param;
-
                 Task task = (Task)a[0];
 
                 //is it complex and also important? then give it a name:
                 if (canAbbreviate(task)) {
 
                     Operation operation = Operation.make(
-                            abbreviate, termArray( task.sentence.content ), false, memory);
+                            abbreviate, termArray( task.sentence.content ), 
+                            false, memory);
 
-                    
-                    TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-
-                    Stamp stampi = task.sentence.stamp.clone();
-                    stampi.setOccurrenceTime(n.getTime());
-
-                    Sentence j = new Sentence(operation,Symbols.GOAL_MARK, truth, stampi);
-
-                    BudgetValue budg=new BudgetValue(
-                            Parameters.DEFAULT_GOAL_PRIORITY /* * ((float)priorityFactor.get())*/, 
-                            Parameters.DEFAULT_GOAL_DURABILITY, 
-                            1);
-
-                    Task newTask = new Task(j, budg, Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
-                    
-                    memory.output(newTask);
-                    
-                    memory.addNewTask(newTask, "Derived (Abbreviated)");
+                    abbreviate.call(operation, memory);
                 }
                                 
             }
