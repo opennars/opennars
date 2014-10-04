@@ -72,6 +72,7 @@ public class Abbreviation implements Plugin {
     
     public AtomicInteger abbreviationComplexityMin = new AtomicInteger(20);
     public AtomicDouble abbreviationQualityMin = new AtomicDouble(0.95f);
+    public Observer obs;
     
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
@@ -92,27 +93,29 @@ public class Abbreviation implements Plugin {
         }
         final Operator abbreviate = _abbreviate;
         
-        memory.event.set(new Observer() {            
-            
-            @Override public void event(Class event, Object[] a) {
-                if (event != TaskDerived.class)
-                    return;                    
+        if(obs==null) {
+            obs=new Observer() {            
+                @Override public void event(Class event, Object[] a) {
+                    if (event != TaskDerived.class)
+                        return;                    
 
-                Task task = (Task)a[0];
+                    Task task = (Task)a[0];
 
-                //is it complex and also important? then give it a name:
-                if (canAbbreviate(task)) {
+                    //is it complex and also important? then give it a name:
+                    if (canAbbreviate(task)) {
 
-                    Operation operation = Operation.make(
-                            abbreviate, termArray( task.sentence.content ), 
-                            false, memory);
+                        Operation operation = Operation.make(
+                                abbreviate, termArray( task.sentence.content ), 
+                                false, memory);
 
-                    abbreviate.call(operation, memory);
+                        abbreviate.call(operation, memory);
+                    }
+
                 }
-                                
-            }
-
-        }, enabled, TaskDerived.class);
+            };
+        }
+        
+        memory.event.set(obs, enabled, TaskDerived.class);
         
         return true;
     }
