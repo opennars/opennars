@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -46,8 +47,6 @@ public class Executive {
 
     PriorityBuffer<TaskExecution> tasks;
     private Set<TaskExecution> tasksToRemove = new HashSet();
-    
-    boolean planningEnabled = true;
     
     /** number of tasks that are active in the sorted priority buffer for execution */
     int numActiveTasks = 1;
@@ -344,7 +343,7 @@ public class Executive {
         
     public void decisionPlanning(final Task t, final Concept concept) {
         
-        if (planningEnabled) {
+        if (Parameters.TEMPORAL_PARTICLE_PLANNER) {
             
             if (!isUrgent(concept)) return;
         
