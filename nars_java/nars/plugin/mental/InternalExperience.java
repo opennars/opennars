@@ -21,7 +21,7 @@ import nars.operator.Operation;
  * called from Concept
  * @param task The task processed
  */
-public class RememberActions implements Plugin {
+public class InternalExperience implements Plugin {
 
     @Override public boolean setEnabled(NAR n, boolean enabled) {
         Memory memory = n.memory;
