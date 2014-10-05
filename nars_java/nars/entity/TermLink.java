@@ -24,7 +24,6 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Term;
-import nars.util.rope.Rope;
 
 /**
  * A link between a compound term and a component term
@@ -130,33 +129,22 @@ public class TermLink extends Item {
         //setKey();
     }
 
-   @Override
-    public boolean equals(final Object obj) {
-        if (obj == this) return true;
-        
-        if (!(obj.getClass() == getClass()))
-            return false;
-        
-        TermLink that = (TermLink)obj;
-        
-        if (name() instanceof Rope) {
-            //some quick comparisons to fail fast, because rope equals() may be slow
-            if (that.type != type)
-                return false;
-
-            final int indexLen = index!=null ? index.length : -1;
-            final int thatIndexLen = that.index!=null ? that.index.length : -1;
-            if (indexLen != thatIndexLen)
-                return false;
-        }
-                    
-        return name().equals(that.name());
-    }
-
-    @Override
-    public int hashCode() {
-        return name().hashCode();
-    }
+//   @Override
+//    public boolean equals(final Object obj) {
+//        if (obj == this) return true;
+//        
+//        if (!(obj.getClass() == getClass()))
+//            return false;
+//        
+//        TermLink that = (TermLink)obj;
+//                            
+//        return name().equals(that.name());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return name().hashCode();
+//    }
 
     @Override
     public CharSequence name() {
