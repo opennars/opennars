@@ -1,9 +1,8 @@
 package nars.test.util;
 
-import nars.util.rope.impl.PrePostCharRope;
 import static java.lang.String.valueOf;
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.TruthValue;
@@ -18,15 +17,29 @@ import nars.language.Statement;
 import nars.language.Term;
 import nars.util.rope.Rope;
 import nars.util.rope.impl.FastConcatenationRope;
+import nars.util.rope.impl.PrePostCharRope;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 
 public class TextsTest {
  
 
+    @Test
+    public void testN2() {
+        
+        assertEquals("1.00", Texts.n2(1.00f).toString());
+        assertEquals("0.50", Texts.n2(0.5f).toString());
+        assertEquals("0.09", Texts.n2(0.09f).toString());
+        assertEquals("0.10", Texts.n2(0.1f).toString());
+        assertEquals("0.01", Texts.n2(0.009f).toString());
+        assertEquals("0.00", Texts.n2(0.001f).toString());
+        assertEquals("0.01", Texts.n2(0.01f).toString());
+        assertEquals("0.00", Texts.n2(0f).toString());
+        
+        
+    }
 
     
     public static CharSequence toString(Term term) {
