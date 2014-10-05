@@ -53,7 +53,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
     Image offScreen;
     Color[] lineColors = new Color[30];
     Color defaultColor = Color.WHITE;
-
+    Color backColor=new Color(50,50,50);
+    
     public SketchPointCloudPanel(NAR nar) {
         super(new BorderLayout());
         this.nar=nar;
@@ -71,10 +72,14 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         Panel tempContainer = new Panel();
         tempContainer.setLayout(new BorderLayout());
         tempContainer.add(caption, BorderLayout.CENTER);
-        caption.setBackground(Color.BLACK);
         clearCanvas.setLabel("Clear");
         clearCanvas.addActionListener(this);
         tempContainer.add(addInput,BorderLayout.LINE_START);
+        caption.setBackground(backColor);
+        tempContainer.setBackground(backColor);
+        clearCanvas.setBackground(backColor);
+        tempContainer.setForeground(Color.WHITE);
+        clearCanvas.setForeground(Color.WHITE);
         
         addInput.addActionListener(this);
         
@@ -98,12 +103,19 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         veryTempContainer = new Panel();
         veryTempContainer.setLayout(new FlowLayout());
         veryTempContainer.add(new Label("Add as example of type:"));
+        veryTempContainer.setForeground(Color.WHITE);
+        veryTempContainer.setBackground(backColor);
         userDefinedName.setColumns(10);
         userDefinedName.setText(DEFAULT_USER_DEFINED_STRING);
         veryTempContainer.add(userDefinedName);
+        userDefinedName.setBackground(Color.BLACK);
+        userDefinedName.setForeground(Color.WHITE);
         addUserDefined.setLabel("Add");
         addUserDefined.setEnabled(false);
         addUserDefined.addActionListener(this);
+        addUserDefined.setForeground(Color.WHITE);
+        addUserDefined.setBackground(backColor);
+
         veryTempContainer.add(addUserDefined);
         tempContainer.add(veryTempContainer);
 
@@ -111,6 +123,8 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         veryTempContainer.setLayout(new FlowLayout());
         veryTempContainer.add(new Label("Delete all types:"));
         veryTempContainer.add(new Label("                    "));
+        veryTempContainer.setBackground(backColor);
+        veryTempContainer.setForeground(Color.WHITE);
         deleteUserDefined.setLabel("Delete");
         deleteUserDefined.addActionListener(this);
         veryTempContainer.add(deleteUserDefined);
@@ -165,6 +179,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         }
 
         if (e.getSource() == addUserDefined) {
+            drawing="";
             String name = userDefinedName.getText();
             if (name.equals(DEFAULT_USER_DEFINED_STRING)) {
                 caption.setText("You must enter a name for the gesture");
