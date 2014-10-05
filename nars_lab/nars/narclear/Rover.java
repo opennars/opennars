@@ -307,6 +307,8 @@ public class Rover extends PhysicsModel {
             bd.position.set(x, y);
             Body body = p.getWorld().createBody(bd);
             body.createFixture(shape, mass);
+            body.setAngularDamping(10);
+            body.setLinearDamping(15);
 
         }
     }
@@ -319,6 +321,8 @@ public class Rover extends PhysicsModel {
         RoverWorld world = new RoverWorld(this, 48, 48);
 
         rover = new RoverModel(this);
+        rover.torso.setAngularDamping(20);
+        rover.torso.setLinearDamping(10);
 
         new NWindow("Rover Control", new RoverPanel(rover)).show(300, 200);
 
@@ -333,20 +337,20 @@ public class Rover extends PhysicsModel {
                 Term t1 = args[0];
                 float priority = operation.getTask().budget.getPriority();
                 
-                float rotationSpeed = 16f;
+                float rotationSpeed = 20f;
                 float linearSpeed = 100f;
                 
                 if (args.length > 1) {
                     Term t2 = args[1];
                     switch (t1.name().toString() + "," + t2.name().toString()) {
-                        case "turn,left":  rover.rotate(rotationSpeed * priority);  break;
-                        case "turn,right": rover.rotate(-rotationSpeed * priority);  break;                        
+                        case "turn,left":  rover.rotate(rotationSpeed);  break;
+                        case "turn,right": rover.rotate(-rotationSpeed);  break;                        
                     }
                 }
                 else {
                     switch (t1.name().toString()) {
-                        case "forward":  rover.thrust(0, linearSpeed*priority); break;
-                        case "backward": rover.thrust(0, -linearSpeed*priority); break;
+                        case "forward":  rover.thrust(0, linearSpeed); break;
+                        case "backward": rover.thrust(0, -linearSpeed); break;
                         case "stop": rover.stop(); break;
                     }
                 }
@@ -362,7 +366,7 @@ public class Rover extends PhysicsModel {
         //nar.addInput("<0.0 <-> -0.0>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1} --> zeroishNumber>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
-        nar.addInput("<0 <=> 0.0>. %1.00;0.90%");
+        nar.addInput("<0 <-> 0.0>. %1.00;0.90%");
         nar.addInput("<0.0 <-> 0.1>. %1.00;0.75%");
         nar.addInput("<0.1 <-> 0.2>. %1.00;0.75%");
         nar.addInput("<0.2 <-> 0.3>. %1.00;0.75%");
@@ -386,7 +390,8 @@ public class Rover extends PhysicsModel {
 
         };
         nar.param().duration.set(50);
-        nar.start(50,25);
+        nar.start(50,500);
+        nar.param().noiseLevel.set(0);
 
     }
 
