@@ -87,7 +87,7 @@ public class SwingText extends JTextPane {
         int overLength = doc.getLength() - LogPanel.maxIOTextSize;
         if (overLength > 0) {
             try {
-                doc.remove(0, overLength);
+                doc.remove(0, overLength + LogPanel.clearMargin);
             } catch (BadLocationException ex) {
             }
         }
