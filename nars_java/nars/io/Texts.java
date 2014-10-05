@@ -282,7 +282,7 @@ public class Texts {
         for (int i = 0; i < l; i++)            
             if (n.charAt(i) == c)
                 return true;        
-        return false;        
+        return false;
     }    
 
     /**
@@ -298,8 +298,42 @@ public class Texts {
     public static final String n4(final float x) { return fourDecimal.format(x);     }
 
     final static Format twoDecimal = new DecimalFormat("0.00");    
-    public static final String n2(final float x) { return twoDecimal.format(x);     }
+    public static final String n2Slow(final float x) { return twoDecimal.format(x);     }
 
+    public static long thousandths(final float d) {
+        return (long) ((d * 1000f + 0.5f));
+    }
+    public static long hundredths(final float d) {
+        return (long) ((d * 100f + 0.5f));
+    }
+     
+    public static final CharSequence n2(final float x) {         
+        if ((x < 0) || (x > 1.0f))
+            throw new RuntimeException("Invalid value for Texts.n2");
+        
+        int hundredths = (int)hundredths(x);
+        switch (hundredths) {
+            //some common values
+            case 100: return "1.00";
+            case 99: return "0.99";
+            case 90: return "0.90";
+            case 0: return "0.00";
+        }
+                    
+        StringBuilder sb = new StringBuilder(4);
+        if (hundredths > 9) {
+            sb.append("0.");
+            int tens = hundredths/10;
+            sb.append((char)('0' + tens));
+            sb.append((char)('0' + hundredths%10));
+        }
+        else {
+            sb.append("0.0");
+            sb.append((char)('0' + hundredths));
+        }            
+        return sb;        
+    }
+    
     final static Format oneDecimal = new DecimalFormat("0.0");    
     public static final String n1(final float x) { return oneDecimal.format(x);     }
 

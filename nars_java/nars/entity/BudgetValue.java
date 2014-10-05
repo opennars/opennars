@@ -235,9 +235,9 @@ public class BudgetValue implements Cloneable {
     public String toStringExternal() {
         //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
 
-        final String priorityString = Texts.n2(priority);
-        final String durabilityString = Texts.n2(durability);
-        final String qualityString = Texts.n2(quality);
+        final CharSequence priorityString = Texts.n2(priority);
+        final CharSequence durabilityString = Texts.n2(durability);
+        final CharSequence qualityString = Texts.n2(quality);
         return new StringBuilder(1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1)
             .append(MARK)
             .append(priorityString).append(SEPARATOR)
