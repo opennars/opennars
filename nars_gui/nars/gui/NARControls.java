@@ -110,7 +110,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     private float lastSpeed = 0f;
     private final float defaultSpeed = 0.5f;
 
-    private final int GUIUpdatePeriodMS = 50;
+    private final int GUIUpdatePeriodMS = 75;
     private NSlider volumeSlider;
 
     private boolean allowFullSpeed = true;
@@ -409,23 +409,25 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     long lastUpdateTime = -1;
     
     /** in memory cycles */
-    long lastUpdateCycle = -1;
+    
+    
+    long lastChartUpdateTime = 0;
+    long minChartUpdateTime = 100; //ms
     
     AtomicBoolean updateScheduled = new AtomicBoolean(false);
     
     protected void updateGUI() {
         
+        long now = System.currentTimeMillis();
+        
         speedSlider.repaint();
 
-        long nowTime = nar.getTime();
-
-        if (lastUpdateCycle != nowTime) {       
-            chart.update(true);
-            
-            lastUpdateCycle = nowTime;
-            updateScheduled.set(false);
+        if (now - lastChartUpdateTime > minChartUpdateTime) {
+            chart.redraw();
+            lastChartUpdateTime = now;
         }
 
+        updateScheduled.set(false);
 
     }
     
@@ -437,14 +439,20 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             long now = System.currentTimeMillis();
             long deltaTime = now - lastUpdateTime;
             
-            if ((deltaTime >= GUIUpdatePeriodMS) || (!updateScheduled.get())) {
+            if ((deltaTime >= GUIUpdatePeriodMS) /*|| (!updateScheduled.get())*/) {
                 
-                lastUpdateTime = System.currentTimeMillis();
-                
+                updateScheduled.set(true);
+
                 senses.update(memory);
                 
+                chart.updateData();
+                                
+                speedSlider.repaint();
+                
                 SwingUtilities.invokeLater(updateGUIRunnable);
-                updateScheduled.set(true);
+
+                lastUpdateTime = now;
+                
             }
         }
     }
@@ -543,7 +551,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             }
 
             @Override
-            public void onChange(float v) {
+            public void onChange(float v) {                
                 setSpeed(v);
             }
 
@@ -609,6 +617,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             }
 
         }
+        if (currentSpeed == nextSpeed) return;
         lastSpeed = currentSpeed;
         speedSlider.repaint();
         stopButton.setText(String.valueOf(FA_PlayCharacter));

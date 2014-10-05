@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import javax.swing.SwingUtilities;
 import nars.gui.NARSwing;
 import nars.gui.NCanvas;
+import nars.io.Texts;
 import nars.util.meter.data.DataSet;
 
 public class ChartsPanel extends NCanvas {
@@ -123,7 +124,7 @@ public class ChartsPanel extends NCanvas {
 
     @Override
     public void paint(Graphics g) {
-        update(false);
+        redraw();
         super.paint(g);
     }
     
@@ -138,8 +139,28 @@ public class ChartsPanel extends NCanvas {
     }
     
     
+    public void updateData() {
+        for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
+            String f = e.getKey();            
+            TimeSeriesChart ch = e.getValue();
+            Object value = data.get(f);
+
+            if (value instanceof Double) {                    
+                ch.push(((Number) value).floatValue());
+            }
+            else if (value instanceof Float) {
+                ch.push(((Number) value).floatValue());
+            }
+            else if (value instanceof Integer) {
+                ch.push(((Number) value).floatValue());
+            }
+            else if (value instanceof Long) {
+                ch.push(((Number) value).floatValue());
+            }            
+        }
+    }
     
-    public void update(final boolean addNextPoint) {
+    public void redraw() {
 	
         //TODO allow buffering input data points while not visible
         Graphics2D g = getBufferGraphics();
@@ -198,22 +219,6 @@ public class ChartsPanel extends NCanvas {
                 ch = addChart(f);            
             }
             
-            if (addNextPoint) {
-                Object value = data.get(f);
-
-                if (value instanceof Double) {                    
-                    ch.push(((Number) value).floatValue());
-                }
-                else if (value instanceof Float) {
-                    ch.push(((Number) value).floatValue());
-                }
-                else if (value instanceof Integer) {
-                    ch.push(((Number) value).floatValue());
-                }
-                else if (value instanceof Long) {
-                    ch.push(((Number) value).floatValue());
-                }
-            }            
         
             g.setPaint(ch.getColor());            
             
@@ -260,7 +265,10 @@ public class ChartsPanel extends NCanvas {
             g.drawString(f, 5, y+16);
             if (h > 25) {
                 g.setFont(monofontSmall);
-                g.drawString("  current=" + firstValue + ", min=" + min + ", max=" + max, 5, y+16+12);
+                g.drawString("  current=" + 
+                        Texts.n4((float)firstValue) + ", min=" + 
+                        Texts.n4(min) + ", max=" + 
+                        Texts.n4(max), 5, y+16+12);
             }
             
             y += h;
