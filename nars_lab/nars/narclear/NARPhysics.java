@@ -1,17 +1,20 @@
 package nars.narclear;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.NARGame;
 import nars.core.NAR;
 
-/**
- *
- * @author me
- */
 
 
-public class NARPhysics<P extends PhysicsModel> extends NARGame {
+public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runnable {
     public final P model;
     public final PhysicsRun phy;
+    ExecutorService physExe = Executors.newFixedThreadPool(1);
+    private Future<?> phyCycle;
 
     public NARPhysics(NAR nar, P model) {
         super(nar);
@@ -40,8 +43,24 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame {
 
     @Override
     public void cycle() {
-        if (phy!=null)
-            phy.cycle();
+        if (phy!=null) {
+            
+            //wait for prevoius cycle to finish if it hasnt
+            if (phyCycle!=null) {
+                try {
+                    phyCycle.get();
+                } catch (Exception ex) {
+                    Logger.getLogger(NARPhysics.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+            phyCycle = physExe.submit(this);            
+        }
+    }
+
+    @Override
+    public void run() {
+        phy.cycle();        
     }
     
 }
