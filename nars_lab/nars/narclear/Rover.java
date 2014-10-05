@@ -6,12 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NWindow;
 import nars.io.ChangedTextInput;
@@ -44,27 +45,24 @@ public class Rover extends PhysicsModel {
         this.nar = nar;
     }
 
-    
     public class RoverModel {
 
         private final Body torso;
 
-        RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
         Vec2 pooledHead = new Vec2();
         Vec2 point1 = new Vec2();
         Vec2 point2 = new Vec2();
         Vec2 d = new Vec2();
-        Color3f laserColor = new Color3f(0.55f, 0, 0.45f);
-        
+        Color3f laserColor = new Color3f(0.5f, 0.5f, 0.5f);
+        List<VisionRay> vision = new ArrayList();
+
         //public class ChangedNumericInput //discretizer
-        
         ChangedTextInput feltAngularVelocity = new ChangedTextInput(nar);
         ChangedTextInput feltOrientation = new ChangedTextInput(nar);
-        ChangedTextInput feltSpeed  = new ChangedTextInput(nar);
-        ChangedTextInput sight = new ChangedTextInput(nar);
+        ChangedTextInput feltSpeed = new ChangedTextInput(nar);
         
+
         //public class DistanceInput extends ChangedTextInput
-                
         public RoverModel(PhysicsModel p) {
             float mass = 2.25f;
             PolygonShape shape = new PolygonShape();
@@ -106,7 +104,7 @@ public class Rover extends PhysicsModel {
                 //rjd.maxMotorTorque = 10000.0f;
                 rjd.enableMotor = true;
                 float min = -MathUtils.PI / 1f * 0.1f;
-                float max = MathUtils.PI / 1f * 0.4f;
+                float max = MathUtils.PI / 1f * 0.2f;
                 rjd.lowerAngle = min;
                 rjd.upperAngle = max;
                 rjd.enableLimit = true;
@@ -129,63 +127,106 @@ public class Rover extends PhysicsModel {
                 elbowJoint = (RevoluteJoint) getWorld().createJoint(rjd2);
 
             }
+            
+            
+            
+            int pixels = 5;
+            float aStep = 0.9f / pixels;
+            float L = 11.0f;
+            Vec2 frontRetina = new Vec2(0, 0.5f);
+            for (int i = -pixels/2; i <= pixels/2; i++) {
+                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i, L));
+            }
+            
+            Vec2 backRetina = new Vec2(0, -0.5f);
+            vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f));
+            
+            
+            int n = 0;
+            float LS = 0.4f;
+            float LT = 1.95f;
+            for (float sonarAngle = 0f; sonarAngle < MathUtils.TWOPI; sonarAngle+=0.6f) {
+                float ca = (float)Math.cos(sonarAngle) * LT;
+                float sa = (float)Math.sin(sonarAngle) * LT;
+                vision.add(new VisionRay("radar" + n, torso, 
+                        new Vec2(ca, sa), sonarAngle + MathUtils.PI/16, LS, 2));
+                n++;
+            }
 
         }
 
-        public void step() {
-            int pixels = 5;
-            float angle = 0.9f;
+        public class VisionRay {
+            final Vec2 point; //where the retina receives vision at
+            final float angle;
+            private final float distance;
+            final ChangedTextInput sight = new ChangedTextInput(nar);
+            final String id;
+            RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
+            private final Body body;
+            private final int distanceSteps;
 
-            float focusAngle = -angle / 2f;
-            float aStep = focusAngle / pixels;
-            float L = 11.0f;
-            float a = (float) (torso.getAngle() + Math.PI / 2f - focusAngle / 2f);
-            boolean[] hit = new boolean[pixels];
+            public VisionRay(String id, Body body, Vec2 point, float angle, float length) {
+                this(id, body, point, angle, length, 10);
+            }
+            
+            public VisionRay(String id, Body body, Vec2 point, float angle, float length, int steps) {
+                this.id = id;
+                this.body = body;
+                this.point = point;
+                this.angle = angle;
+                this.distance = length;
+                this.distanceSteps = steps;
+            }
+            
+            
+            public void step() {
+                point1 = body.getWorldPoint(point);
 
-            for (int i = 0; i < pixels; i++) {
-                point1 = torso.getWorldPoint(new Vec2(0, 0.5f));
-
-                d.set(L * MathUtils.cos(a), L * MathUtils.sin(a));
+                d.set(distance * MathUtils.cos(angle+body.getAngle()), distance * MathUtils.sin(angle+body.getAngle()));
                 point2.set(point1);
                 point2.addLocal(d);
 
                 ccallback.init();
                 getWorld().raycast(ccallback, point1, point2);
 
+                Body hit = null;
+                float d = Float.POSITIVE_INFINITY;
                 if (ccallback.m_hit) {
+                    d = ccallback.m_point.sub(point).length()/distance;
+                    
                     getDebugDraw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
                     getDebugDraw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
                     pooledHead.set(ccallback.m_normal);
                     pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
                     getDebugDraw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
-                    hit[i] = true;
+                    hit = ccallback.body;
                 } else {
                     getDebugDraw().drawSegment(point1, point2, laserColor);
                 }
-                a += aStep;
+                
+                if (hit!=null) {                                        
+                    String dist = "unknown";
+                    if (distanceSteps == 10) {
+                        dist = Texts.n1(d);
+                    }
+                    else if (distanceSteps == 2) {
+                        dist = "hit";
+                    }
+                    sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
+                }
+                else {
+                    sight.set("<(*," + id + ",empty) --> see>. :|:");
+                }
             }
-            
-            see(hit);
-            feelMotion();
-            
         }
 
-        protected void see(boolean[] hit) {
-                int totalHit = 0;
-                for (boolean x : hit)
-                    if (x) totalHit++;
-                
-                
-                float th = totalHit / ((float)hit.length);
-                
-                //method 1:
-                String sp = Texts.n1(th/3f);
-                sight.set("<" + sp + " --> sight>. :|:");
-                
-                
-                //method 2:
-                //sight.set("sight. :|: %" + Texts.n2(th) + ";0.90%");
+        public void step() {
+            for (VisionRay v : vision)
+                v.step();
+            
+            feelMotion();
         }
+
 
         public void thrust(float angle, float force) {
             angle += torso.getAngle() + Math.PI / 2; //compensate for initial orientation
@@ -196,43 +237,49 @@ public class Rover extends PhysicsModel {
         public void rotate(float torque) {
             torso.applyTorque(torque);
         }
-        
+
         protected void feelMotion() {
             //radians per frame to a discretized value
             float xa = torso.getAngularVelocity();
             float angleScale = 1.50f;
-            float a = (float)(Math.log(Math.abs(xa*angleScale)+1f));
+            float a = (float) (Math.log(Math.abs(xa * angleScale) + 1f));
             float maxAngleVelocityFelt = 0.8f;
-            if (a > maxAngleVelocityFelt) a = maxAngleVelocityFelt;
-            
-            
+            if (a > maxAngleVelocityFelt) {
+                a = maxAngleVelocityFelt;
+            }
+
             if (a < 0.1) {
                 feltAngularVelocity.set("<0 --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
-            }
-            else {
+            } else {
                 String direction;
                 String da = Texts.n1(a);// + ",radPerFrame";
-                if (xa < 0) direction = "left";
-                else /*if (xa > 0)*/ direction = "right";            
+                if (xa < 0) {
+                    direction = "left";
+                } else /*if (xa > 0)*/ {
+                    direction = "right";
+                }
                 feltAngularVelocity.set("<(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
                 //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
-            
-            
+
             float h = torso.getAngle() % (MathUtils.TWOPI);
-            if (h < 0) h+=MathUtils.TWOPI;
-            h = h/MathUtils.TWOPI;
+            if (h < 0) {
+                h += MathUtils.TWOPI;
+            }
+            h = h / MathUtils.TWOPI;
             String dh = Texts.n1(h);// + ",rad";
             feltOrientation.set("<" + dh + " --> feltOrientation>. :|:");
-            
+
             float speed = Math.abs(torso.getLinearVelocity().length());
-            if (speed > 0.9f) speed = 0.9f;
+            if (speed > 0.9f) {
+                speed = 0.9f;
+            }
             String sp = Texts.n1(speed);
             feltSpeed.set("<" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }
-        
+
         public void stop() {
             torso.setAngularVelocity(0);
             torso.setLinearVelocity(new Vec2());
@@ -251,6 +298,7 @@ public class Rover extends PhysicsModel {
     public class RoverPanel extends JPanel {
 
         public class InputButton extends JButton implements ActionListener, KeyListener {
+
             private final String command;
 
             public InputButton(String label, String command) {
@@ -259,42 +307,45 @@ public class Rover extends PhysicsModel {
                 this.addKeyListener(this);
                 this.command = command;
             }
-            
-            @Override public void actionPerformed(ActionEvent e) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 nar.addInput(command);
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-               if(e.getKeyCode()==KeyEvent.VK_UP) {
-                   nar.addInput("(^motor,forward)!");
-               }
-               if(e.getKeyCode()==KeyEvent.VK_DOWN) {
-                   nar.addInput("(^motor,backward)!");
-               }
-               if(e.getKeyCode()==KeyEvent.VK_LEFT) {
-                   nar.addInput("(^motor,turn,left)!");
-               }
-               if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
-                   nar.addInput("(^motor,turn,right)!");
-               }
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    nar.addInput("(^motor,forward)!");
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    nar.addInput("(^motor,backward)!");
+                }
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    nar.addInput("(^motor,turn,left)!");
+                }
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    nar.addInput("(^motor,turn,right)!");
+                }
             }
+
             @Override
             public void keyReleased(KeyEvent e) {
-               
+
             }
+
             @Override
             public void keyTyped(KeyEvent e) {
-               
+
             }
         }
-        
+
         public RoverPanel(RoverModel rover) {
             super(new BorderLayout());
 
             {
-                JPanel motorPanel = new JPanel(new GridLayout(0,2));
-                
+                JPanel motorPanel = new JPanel(new GridLayout(0, 2));
+
                 motorPanel.add(new InputButton("Stop", "(^motor,stop)!"));
                 motorPanel.add(new InputButton("Forward", "(^motor,forward)!"));
                 motorPanel.add(new InputButton("TurnLeft", "(^motor,turn,left)!"));
@@ -354,37 +405,48 @@ public class Rover extends PhysicsModel {
 
         addAxioms();
         addOperators();
-        
+
     }
-    
+
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
-            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            @Override
+            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
                 Term t1 = args[0];
                 float priority = operation.getTask().budget.getPriority();
-                
+
                 float rotationSpeed = 20f;
                 float linearSpeed = 200f;
-                
+
                 if (args.length > 1) {
                     Term t2 = args[1];
                     switch (t1.name().toString() + "," + t2.name().toString()) {
-                        case "turn,left":  rover.rotate(rotationSpeed);  break;
-                        case "turn,right": rover.rotate(-rotationSpeed);  break;                        
+                        case "turn,left":
+                            rover.rotate(rotationSpeed);
+                            break;
+                        case "turn,right":
+                            rover.rotate(-rotationSpeed);
+                            break;
                     }
-                }
-                else {
+                } else {
                     switch (t1.name().toString()) {
-                        case "forward":  rover.thrust(0, linearSpeed); break;
-                        case "backward": rover.thrust(0, -linearSpeed); break;
-                        case "stop": rover.stop(); break;
+                        case "forward":
+                            rover.thrust(0, linearSpeed);
+                            break;
+                        case "backward":
+                            rover.thrust(0, -linearSpeed);
+                            break;
+                        case "stop":
+                            rover.stop();
+                            break;
                     }
                 }
                 return null;
-            }            
+            }
         });
-        
+
     }
+
     protected void addAxioms() {
         //nar.addInput("<{positiveNumber,negativeNumber} --> number>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
@@ -402,7 +464,7 @@ public class Rover extends PhysicsModel {
         nar.addInput("<0.6 <-> 0.7>. %1.00;0.75%");
         nar.addInput("<0.7 <-> 0.8>. %1.00;0.75%");
         nar.addInput("<0.8 <-> 0.9>. %1.00;0.75%");
-        
+
     }
 
     @Override
@@ -411,12 +473,13 @@ public class Rover extends PhysicsModel {
     }
 
     public static void main(String[] args) {
-        NAR nar = new DefaultNARBuilder().build();
+        //NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(4096).build();
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
         nar.param().duration.set(50);
-        nar.start(50,500);
+        nar.start(50, 500);
         nar.param().noiseLevel.set(0);
 
     }
