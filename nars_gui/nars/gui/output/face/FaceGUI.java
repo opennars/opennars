@@ -288,7 +288,7 @@ public class FaceGUI extends BaseClass {
     public int addFaces(int i, double d, double d1, double d2, String s) {
         int index = typeVector.size();
         typeVector.addElement(new Integer(i));
-        colorVector.addElement(new Color((float) d, (float) d1, (float) d2));
+        colorVector.addElement(new Color((float) d1, (float) d1, (float) d1));
         shapesVector.addElement(shapeVector = new Vector());
         if (s != null) {
             for (StringTokenizer stringtokenizer = new StringTokenizer(s); stringtokenizer.hasMoreTokens();) {
@@ -409,7 +409,7 @@ public class FaceGUI extends BaseClass {
         try {
             boolean flag = firstTime;
             float f1 = 0.9019608F;
-            super.bgcolor = isVectors ? Color.white : new Color(f1, f1, f1);
+            super.bgcolor = new Color(50,50,50); //isVectors ? Color.white : new Color(f1, f1, f1);
             if (firstTime) {
                 firstTime = false;
                 nVertices = vertexVector.size() / 3;
