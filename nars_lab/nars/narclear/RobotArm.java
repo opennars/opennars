@@ -270,6 +270,7 @@ public class RobotArm extends PhysicsModel {
       boolean m_hit;
       Vec2 m_point;
       Vec2 m_normal;
+      Body body;
 
       public void init() {
         m_hit = false;
@@ -277,7 +278,9 @@ public class RobotArm extends PhysicsModel {
 
       public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
         Body body = fixture.getBody();
-        Object userData = body.getUserData();
+        //Object userData = body.getUserData();
+        this.body = body;
+        
 //        if (userData != null) {
 //          int index = (Integer) userData;
 //          if (index == 0) {
