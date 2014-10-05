@@ -24,7 +24,7 @@ public class NCanvas extends Canvas {
     public void paint(Graphics g) {
     }
 
-    protected Graphics2D getBufferGraphics() {
+    protected final Graphics2D getBufferGraphics() {
         if (!updateDoubleBuffer()) 
             return null;
         
@@ -32,7 +32,7 @@ public class NCanvas extends Canvas {
     }
     
     
-    protected void showBuffer(Graphics2D g) {
+    protected final void showBuffer(final Graphics2D g) {
         Graphics localGraphics = getGraphics();
         localGraphics.drawImage(image, 0, 0, null);
         
@@ -41,7 +41,7 @@ public class NCanvas extends Canvas {
     }
     
     
-    protected boolean updateDoubleBuffer() {
+    protected final boolean updateDoubleBuffer() {
         int w = getWidth();
         int h = getHeight();
         if ((w == 0) || (h == 0)) {

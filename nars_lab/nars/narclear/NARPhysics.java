@@ -45,7 +45,7 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
     public void cycle() {
         if (phy!=null) {
             
-            //wait for prevoius cycle to finish if it hasnt
+            //wait for previous cycle to finish if it hasnt
             if (phyCycle!=null) {
                 try {
                     phyCycle.get();

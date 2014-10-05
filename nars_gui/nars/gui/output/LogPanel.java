@@ -40,7 +40,10 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
 
     protected final NAR nar;
-    public static final int maxIOTextSize = (int) 1E5;
+    
+    public static final int maxIOTextSize = (int) 3E5;
+    public static final int clearMargin = (int) 3E4;
+    
     protected boolean showErrors = true;
     protected boolean showStamp = false;
     protected boolean showQuestions = true;
