@@ -57,11 +57,13 @@ public class NARio extends Run {
          nar.param().cycleInputTasks.set(1);
          nar.param().cycleMemory.set(1);*/
         
-        nar.param().conceptForgetDurations.set(99.0f);
+       // nar.param().conceptForgetDurations.set(99.0f);
 
+       // nar.param().beliefForgetDurations.set(99.0f);
+        
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(500);
-        nar.param().decisionThreshold.set(0.3);
+        nar.param().duration.set(2500);
+        nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
         nar.param().shortTermMemorySize.set(35);
 
