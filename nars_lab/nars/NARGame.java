@@ -14,7 +14,7 @@ abstract public class NARGame implements Observer {
     public NARGame(NAR nar) {        
         this.nar = nar;        
         nar.memory.event.on(Events.FrameEnd.class, this);
-        new NARSwing(nar,false);
+        new NARSwing(nar);
     }
     
     abstract public void init();
