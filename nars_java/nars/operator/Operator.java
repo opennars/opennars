@@ -26,6 +26,7 @@ import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Plugin;
+import nars.entity.BudgetValue;
 import nars.entity.Task;
 import nars.io.Output.EXE;
 import nars.language.Product;
@@ -135,8 +136,10 @@ public abstract class Operator extends Term implements Plugin {
         if (feedback instanceof Exception)
             feedback = feedback.getClass().getSimpleName() + ": " + ((RuntimeException)feedback).getMessage();
         
+        BudgetValue b = operation.getTask().budget;
+        
         memory.output(EXE.class, 
-                operation.getTask().budget.toStringExternal() + " " + 
+                ((b != null) ? (b.toStringExternal() + " ") : "") + 
                         operator + "(" + Arrays.toString(args) + ")=" + feedback);
     }
 
