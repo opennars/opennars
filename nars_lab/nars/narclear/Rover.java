@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -248,12 +250,13 @@ public class Rover extends PhysicsModel {
 
     public class RoverPanel extends JPanel {
 
-        public class InputButton extends JButton implements ActionListener {
+        public class InputButton extends JButton implements ActionListener, KeyListener {
             private final String command;
 
             public InputButton(String label, String command) {
                 super(label);
                 addActionListener(this);
+                this.addKeyListener(this);
                 this.command = command;
             }
             
@@ -261,6 +264,29 @@ public class Rover extends PhysicsModel {
                 nar.addInput(command);
             }
 
+            @Override
+            public void keyPressed(KeyEvent e) {
+               if(e.getKeyCode()==KeyEvent.VK_UP) {
+                   nar.addInput("(^motor,forward)!");
+               }
+               if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+                   nar.addInput("(^motor,backward)!");
+               }
+               if(e.getKeyCode()==KeyEvent.VK_LEFT) {
+                   nar.addInput("(^motor,turn,left)!");
+               }
+               if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+                   nar.addInput("(^motor,turn,right)!");
+               }
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+               
+            }
+            @Override
+            public void keyTyped(KeyEvent e) {
+               
+            }
         }
         
         public RoverPanel(RoverModel rover) {
@@ -338,7 +364,7 @@ public class Rover extends PhysicsModel {
                 float priority = operation.getTask().budget.getPriority();
                 
                 float rotationSpeed = 20f;
-                float linearSpeed = 100f;
+                float linearSpeed = 200f;
                 
                 if (args.length > 1) {
                     Term t2 = args[1];
