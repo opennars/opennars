@@ -140,7 +140,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             @Override public String run() {
                 
                 TreeModel model = new FileTreeModel(new File("./nal"));
-                if (fileTree==null) {
+                /*if (fileTree==null)*/ {
                     fileTree = new JTree(model);
                     fileTree.addMouseListener(new MouseAdapter() {
                         @Override
