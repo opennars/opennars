@@ -3,7 +3,7 @@ package nars.core.build;
 import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.core.Param;
-import nars.core.control.SequentialMemoryCycle;
+import nars.core.control.BalancedSequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.entity.Task;
@@ -43,7 +43,8 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
 
     @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
-        return new SequentialMemoryCycle(newConceptBag(p), c);
+        //return new SequentialMemoryCycle(newConceptBag(p), c);
+        return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
     }
     
     @Override

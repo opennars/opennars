@@ -142,6 +142,7 @@ public class Rover extends PhysicsModel {
             vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f));
             
             
+            /*
             int n = 0;
             float LS = 0.4f;
             float LT = 1.95f;
@@ -152,6 +153,7 @@ public class Rover extends PhysicsModel {
                         new Vec2(ca, sa), sonarAngle + MathUtils.PI/16, LS, 2));
                 n++;
             }
+            */
 
         }
 
@@ -474,11 +476,15 @@ public class Rover extends PhysicsModel {
 
     public static void main(String[] args) {
         //NAR nar = new DefaultNARBuilder().build();
-        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(4096).build();
+        NAR nar = new DiscretinuousBagNARBuilder().
+                setConceptBagLevels(400).
+                setConceptBagSize(4096).
+                build();
+        
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
-        nar.param().duration.set(50);
+        nar.param().duration.set(500);
         nar.start(50, 500);
         nar.param().noiseLevel.set(0);
 
