@@ -135,8 +135,9 @@ public abstract class Operator extends Term implements Plugin {
         if (feedback instanceof Exception)
             feedback = feedback.getClass().getSimpleName() + ": " + ((RuntimeException)feedback).getMessage();
         
-        //System.out.println("EXECUTE: " + operator + "(" + buffer.toString() + ")");
-        memory.output(EXE.class, operator + "(" + Arrays.toString(args) + ")=" + feedback);
+        memory.output(EXE.class, 
+                operation.getTask().budget.toStringExternal() + " " + 
+                        operator + "(" + Arrays.toString(args) + ")=" + feedback);
     }
 
     public final boolean call(final Operation op, final Memory memory) {

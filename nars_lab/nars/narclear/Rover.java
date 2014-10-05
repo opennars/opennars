@@ -173,12 +173,16 @@ public class Rover extends PhysicsModel {
                 for (boolean x : hit)
                     if (x) totalHit++;
                 
-                //if (totalHit > 0) {
+                
                 float th = totalHit / ((float)hit.length);
+                
+                //method 1:
                 String sp = Texts.n1(th/3f);
                 sight.set("<" + sp + " --> sight>. :|:");
-                //}
                 
+                
+                //method 2:
+                //sight.set("sight. :|: %" + Texts.n2(th) + ";0.90%");
         }
 
         public void thrust(float angle, float force) {
@@ -193,15 +197,25 @@ public class Rover extends PhysicsModel {
         
         protected void feelMotion() {
             //radians per frame to a discretized value
-            float a = torso.getAngularVelocity();
-            float angleScale = 0.05f;
-            a = (float)(Math.signum(a) * Math.log(Math.abs(a*angleScale)+1f));
-            float maxAngleVelocityFelt = 0.4f;
+            float xa = torso.getAngularVelocity();
+            float angleScale = 1.50f;
+            float a = (float)(Math.log(Math.abs(xa*angleScale)+1f));
+            float maxAngleVelocityFelt = 0.8f;
             if (a > maxAngleVelocityFelt) a = maxAngleVelocityFelt;
-            if (a < -maxAngleVelocityFelt) a = -maxAngleVelocityFelt;
-            String da = Texts.n1(a);// + ",radPerFrame";
             
-            feltAngularVelocity.set("<" + da + " --> feltAngularMotion>. :|:");
+            
+            if (a < 0.1) {
+                feltAngularVelocity.set("<0 --> feltAngularMotion>. :|: %1.00;0.90%");
+                //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
+            }
+            else {
+                String direction;
+                String da = Texts.n1(a);// + ",radPerFrame";
+                if (xa < 0) direction = "left";
+                else /*if (xa > 0)*/ direction = "right";            
+                feltAngularVelocity.set("<(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+                //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
+            }
             
             
             float h = torso.getAngle() % (MathUtils.TWOPI);
@@ -214,6 +228,7 @@ public class Rover extends PhysicsModel {
             if (speed > 0.9f) speed = 0.9f;
             String sp = Texts.n1(speed);
             feltSpeed.set("<" + sp + " --> feltSpeed>. :|:");
+            //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }
         
         public void stop() {
@@ -316,19 +331,22 @@ public class Rover extends PhysicsModel {
         nar.addPlugin(new NullOperator("^motor") {
             @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
                 Term t1 = args[0];
+                float priority = operation.getTask().budget.getPriority();
                 
+                float rotationSpeed = 16f;
+                float linearSpeed = 100f;
                 
                 if (args.length > 1) {
                     Term t2 = args[1];
                     switch (t1.name().toString() + "," + t2.name().toString()) {
-                        case "turn,left":  rover.rotate(4.0f);  break;
-                        case "turn,right": rover.rotate(-4.0f);  break;                        
+                        case "turn,left":  rover.rotate(rotationSpeed * priority);  break;
+                        case "turn,right": rover.rotate(-rotationSpeed * priority);  break;                        
                     }
                 }
                 else {
                     switch (t1.name().toString()) {
-                        case "forward":  rover.thrust(0, 50.0f); break;
-                        case "backward": rover.thrust(0, -50.0f); break;
+                        case "forward":  rover.thrust(0, linearSpeed*priority); break;
+                        case "backward": rover.thrust(0, -linearSpeed*priority); break;
                         case "stop": rover.stop(); break;
                     }
                 }
@@ -338,11 +356,23 @@ public class Rover extends PhysicsModel {
         
     }
     protected void addAxioms() {
-        nar.addInput("<{positiveNumber,negativeNumber} --> number>. %1.00;0.99%");
-        nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
-        nar.addInput("<{-0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9} --> negativeNumber>. %1.00;0.99%");
-        nar.addInput("<{0.0,0.1,-0.0,-0.1} --> zeroishNumber>. %1.00;0.99%");
-        nar.addInput("<0.0 <-> -0.0>. %1.00;0.99%");
+        //nar.addInput("<{positiveNumber,negativeNumber} --> number>. %1.00;0.99%");
+        //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
+        //nar.addInput("<{-0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9} --> negativeNumber>. %1.00;0.99%");
+        //nar.addInput("<0.0 <-> -0.0>. %1.00;0.99%");
+        //nar.addInput("<{0.0,0.1} --> zeroishNumber>. %1.00;0.99%");
+        //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
+        nar.addInput("<0 <=> 0.0>. %1.00;0.90%");
+        nar.addInput("<0.0 <-> 0.1>. %1.00;0.75%");
+        nar.addInput("<0.1 <-> 0.2>. %1.00;0.75%");
+        nar.addInput("<0.2 <-> 0.3>. %1.00;0.75%");
+        nar.addInput("<0.3 <-> 0.4>. %1.00;0.75%");
+        nar.addInput("<0.4 <-> 0.5>. %1.00;0.75%");
+        nar.addInput("<0.5 <-> 0.6>. %1.00;0.75%");
+        nar.addInput("<0.6 <-> 0.7>. %1.00;0.75%");
+        nar.addInput("<0.7 <-> 0.8>. %1.00;0.75%");
+        nar.addInput("<0.8 <-> 0.9>. %1.00;0.75%");
+        
     }
 
     @Override
@@ -355,8 +385,8 @@ public class Rover extends PhysicsModel {
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
-        nar.param().duration.set(10);
-        nar.start(50, 10);
+        nar.param().duration.set(50);
+        nar.start(50,25);
 
     }
 
