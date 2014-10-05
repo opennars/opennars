@@ -1,5 +1,7 @@
 package nars.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import nars.gui.input.TextInputPanel;
@@ -24,10 +26,17 @@ public class ConsolePanel extends JSplitPane {
 
             @Override
             public void run() {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ConsolePanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 setDividerLocation(0.75);
             }
             
         });
+        
+        setDividerLocation(0.75);
         
     }
     
