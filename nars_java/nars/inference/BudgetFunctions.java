@@ -75,16 +75,16 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion of revision
      * @return The budget for the new task
      */
-    static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final Memory memory) {
+    static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final NAL nal) {
         final float difT = truth.getExpDifAbs(tTruth);
-        final Task task = memory.getCurrentTask();
+        final Task task = nal.getCurrentTask();
         task.decPriority(1 - difT);
         task.decDurability(1 - difT);
         if (feedbackToLinks) {
-            TaskLink tLink = memory.getCurrentTaskLink();
+            TaskLink tLink = nal.getCurrentTaskLink();
             tLink.decPriority(1 - difT);
             tLink.decDurability(1 - difT);
-            TermLink bLink = memory.getCurrentBeliefLink();
+            TermLink bLink = nal.getCurrentBeliefLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1 - difB);
             bLink.decDurability(1 - difB);
@@ -208,30 +208,30 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion
      * @return The budget value of the conclusion
      */
-    public static BudgetValue forward(final TruthValue truth, final Memory memory) {
-        return budgetInference(truthToQuality(truth), 1, memory);
+    public static BudgetValue forward(final TruthValue truth, final NAL nal) {
+        return budgetInference(truthToQuality(truth), 1, nal);
     }
 
     /**
      * Backward inference result and adjustment, stronger case
      *
      * @param truth The truth value of the belief deriving the conclusion
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      * @return The budget value of the conclusion
      */
-    public static BudgetValue backward(final TruthValue truth, final Memory memory) {
-        return budgetInference(truthToQuality(truth), 1, memory);
+    public static BudgetValue backward(final TruthValue truth, final NAL nal) {
+        return budgetInference(truthToQuality(truth), 1, nal);
     }
 
     /**
      * Backward inference result and adjustment, weaker case
      *
      * @param truth The truth value of the belief deriving the conclusion
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      * @return The budget value of the conclusion
      */
-    public static BudgetValue backwardWeak(final TruthValue truth, final Memory memory) {
-        return budgetInference(w2c(1) * truthToQuality(truth), 1, memory);
+    public static BudgetValue backwardWeak(final TruthValue truth, final NAL nal) {
+        return budgetInference(w2c(1) * truthToQuality(truth), 1, nal);
     }
 
     /* ----- Task derivation in CompositionalRules and StructuralRules ----- */
@@ -240,12 +240,12 @@ public final class BudgetFunctions extends UtilityFunctions {
      *
      * @param truth The truth value of the conclusion
      * @param content The content of the conclusion
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static BudgetValue compoundForward(final TruthValue truth, final Term content, final Memory memory) {
+    public static BudgetValue compoundForward(final TruthValue truth, final Term content, final NAL nal) {
         final int complexity = (content == null) ? 1 : content.getComplexity();
-        return budgetInference(truthToQuality(truth), complexity, memory);
+        return budgetInference(truthToQuality(truth), complexity, nal);
     }
 
     /**
@@ -255,19 +255,19 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param memory Reference to the memory
      * @return The budget of the conclusion
      */
-    public static BudgetValue compoundBackward(final Term content, final Memory memory) {
-        return budgetInference(1, content.getComplexity(), memory);
+    public static BudgetValue compoundBackward(final Term content, final NAL nal) {
+        return budgetInference(1, content.getComplexity(), nal);
     }
 
     /**
      * Backward inference with CompoundTerm conclusion, weaker case
      *
      * @param content The content of the conclusion
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static BudgetValue compoundBackwardWeak(final Term content, final Memory memory) {
-        return budgetInference(w2c(1), content.getComplexity(), memory);
+    public static BudgetValue compoundBackwardWeak(final Term content, final NAL nal) {
+        return budgetInference(w2c(1), content.getComplexity(), nal);
     }
 
     /**
@@ -275,22 +275,22 @@ public final class BudgetFunctions extends UtilityFunctions {
      *
      * @param qual Quality of the inference
      * @param complexity Syntactic complexity of the conclusion
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    private static BudgetValue budgetInference(final float qual, final int complexity, final Memory memory) {
-        Item t = memory.getCurrentTaskLink();
+    private static BudgetValue budgetInference(final float qual, final int complexity, final NAL nal) {
+        Item t = nal.getCurrentTaskLink();
         if (t == null) {
-            t = memory.getCurrentTask();
+            t = nal.getCurrentTask();
         }
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
-        final TermLink bLink = memory.getCurrentBeliefLink();
+        final TermLink bLink = nal.getCurrentBeliefLink();
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());
-            final float targetActivation = memory.conceptActivation(bLink.target);
+            final float targetActivation = nal.mem().conceptActivation(bLink.target);
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
         }

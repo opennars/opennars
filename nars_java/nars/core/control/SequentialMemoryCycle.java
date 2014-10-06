@@ -8,6 +8,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
+import nars.inference.NAL;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 
@@ -24,19 +25,21 @@ public class SequentialMemoryCycle implements ConceptProcessor {
      */
     public final AbstractBag<Concept> concepts;
     private final ConceptBuilder conceptBuilder;
+    private final NAL nal;
 
     public SequentialMemoryCycle(AbstractBag<Concept> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.conceptBuilder = conceptBuilder;
+        this.nal = new NAL();
     }
     
     
     @Override
     public void cycle(Memory m) {
-        m.processNewTasks();
+        m.processNewTasks(nal);
         
         if (m.getNewTaskCount() == 0) {       // necessary?
-            m.processNovelTask();
+            m.processNovelTask(nal);
         }
 
         if (m.getNewTaskCount() == 0) {       // necessary?
@@ -59,7 +62,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
                 m.getRecorder().append("Concept Select", currentConcept.term.toString());
             }
                         
-            currentConcept.fire();
+            currentConcept.fire(nal);
         }
     }
 

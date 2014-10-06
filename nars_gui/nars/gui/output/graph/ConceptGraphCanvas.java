@@ -70,9 +70,9 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
 
     //TODO genrealize to DirectedMultigraph
     public NARGraph getGraph() {
-        final Sentence currentBelief = nar.memory.getCurrentBelief();
-        final Concept currentConcept = nar.memory.getCurrentConcept();
-        final Task currentTask = nar.memory.getCurrentTask();
+        //final Sentence currentBelief = nar.memory.getCurrentBelief();
+        //final Concept currentConcept = nar.memory.getCurrentConcept();
+        //final Task currentTask = nar.memory.getCurrentTask();
         if (mode == 0) {
             sortedConcepts.clear();
             sortedConcepts.addAll(nar.memory.getConcepts());
@@ -124,11 +124,11 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
                 ProcessingGraphCanvas.VertexDisplay d = updateVertex(c);
                 position(d, level, index, priority);
                 deadVertices.remove(c);
-                if (currentConcept != null) {
+                /*if (currentConcept != null) {
                     if (c.equals(currentConcept)) {
                         d.boost = 1.0f;
                     }
-                }
+                }*/
                 levelContents++;
                 lastTerm = null;
                 lastTermVertex = null;
@@ -151,11 +151,11 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
                 ProcessingGraphCanvas.VertexDisplay d = updateVertex(kb);
                 position(d, level, index, priority);
                 deadVertices.remove(kb);
-                if (currentBelief != null) {
+                /*if (currentBelief != null) {
                     if (kb.equals(currentBelief)) {
                         d.boost = 1.0f;
                     }
-                }
+                }*/
                 levelContents++;
                 lastTerm = null;
                 lastTermVertex = null;
@@ -167,11 +167,11 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
                 ProcessingGraphCanvas.VertexDisplay d = updateVertex(t);
                 position(d, level, index, priority);
                 deadVertices.remove(t);
-                if (currentTask != null) {
+                /*if (currentTask != null) {
                     if (t.equals(currentTask)) {
                         d.boost = 1.0f;
                     }
-                }
+                }*/
                 levelContents++;
                 lastTerm = null;
                 lastTermVertex = null;

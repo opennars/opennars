@@ -37,8 +37,7 @@ import nars.inference.Executive;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
-import static nars.inference.RuleTables.reason;
-import static nars.inference.RuleTables.transformTask;
+import nars.inference.NAL;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
@@ -155,21 +154,21 @@ public class Concept extends Item {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public boolean directProcess(final Task task) {
+    public boolean directProcess(final NAL nal, final Task task) {
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
                 memory.logic.JUDGMENT_PROCESS.commit();
-                processJudgment(task);
+                processJudgment(nal, task);
                 break;
             case Symbols.GOAL_MARK:
                 memory.logic.GOAL_PROCESS.commit();
-                processGoal(task);
+                processGoal(nal, task);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
                 memory.logic.QUESTION_PROCESS.commit();
-                processQuestion(task);
+                processQuestion(nal, task);
                 break;
             default:
                 return false;
@@ -193,33 +192,33 @@ public class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processJudgment(final Task task) {
+    protected void processJudgment(final NAL nal, final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
             if (newStamp.equals(oldStamp)) {
-                if (task != null && task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
+                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
                 return;
             } else if (revisible(judg, oldBelief)) {
-                memory.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
-                if (memory.getTheNewStamp() != null) {
+                nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
+                if (nal.getTheNewStamp() != null) {
                     Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
                     if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
-                        memory.singlePremiseTask(projectedBelief, task.budget);
+                        nal.singlePremiseTask(projectedBelief, task.budget);
                     }
-                    memory.setCurrentBelief(projectedBelief);
-                    revision(judg, projectedBelief, false, memory);
+                    nal.setCurrentBelief(projectedBelief);
+                    revision(judg, projectedBelief, false, nal);
                 }
             }
         }
         if (task.aboveThreshold()) {
             for (final Task ques : questions) {
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
-                trySolution(judg, ques, memory);
+                trySolution(judg, ques, nal);
             }
 
             addToTable(task, judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
@@ -247,7 +246,7 @@ public class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final Task task) {
+    protected boolean processGoal(final NAL nal, final Task task) {
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean revised = false;
@@ -261,9 +260,9 @@ public class Concept extends Item {
             }
 
             if (revisible(goal, oldGoal)) {
-                memory.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
-                if (memory.getTheNewStamp() != null) {
-                    revision(goal, oldGoal, false, memory);
+                nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
+                if (nal.getTheNewStamp() != null) {
+                    revision(goal, oldGoal, false, nal);
                     revised = true;
                 }
             }
@@ -274,7 +273,7 @@ public class Concept extends Item {
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
 
             if (belief != null) {
-                trySolution(belief, task, memory);
+                trySolution(belief, task, nal);
             }
 
             // still worth pursuing?
@@ -283,7 +282,7 @@ public class Concept extends Item {
                 addToTable(task, goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class, revised);
 
                 if (!Executive.isExecutableTerm(task.sentence.content)) {
-                    memory.executive.decisionPlanning(task, this);
+                    memory.executive.decisionPlanning(nal, task, this);
                 } else {
                     //hm or conjunction in time and temporal order forward                    
                     memory.executive.decisionMaking(task, this);
@@ -301,7 +300,7 @@ public class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processQuestion(final Task task) {
+    protected void processQuestion(final NAL nal, final Task task) {
 
         Sentence ques = task.sentence;
 
@@ -330,7 +329,7 @@ public class Concept extends Item {
                 : selectCandidate(ques, desires);
 
         if (newAnswer != null) {
-            trySolution(newAnswer, task, memory);
+            trySolution(newAnswer, task, nal);
         }
     }
 
@@ -571,22 +570,22 @@ public class Concept extends Item {
      * @param task The selected task
      * @return The selected isBelief
      */
-    public Sentence getBelief(final Task task) {
+    public Sentence getBelief(final NAL nal, final Task task) {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.getTime();
 
-        for (Sentence belief : beliefs) {
+        for (final Sentence belief : beliefs) {
             if (memory.getRecorder().isActive()) {
                 memory.getRecorder().append("Belief Select", belief.toString());
             }
 
-            memory.setTheNewStamp(make(taskStamp, belief.stamp, currentTime));
+            nal.setTheNewStamp(make(taskStamp, belief.stamp, currentTime));
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.getTime());
             if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
-                memory.singlePremiseTask(projectedBelief, task.budget);
+                nal.singlePremiseTask(projectedBelief, task.budget);
             }
             return projectedBelief;     // return the first satisfying belief
         }
@@ -608,54 +607,17 @@ public class Concept extends Item {
     /**
      * An atomic step in a concept
      */
-    public void fire() {
-        memory.setCurrentTerm(term);
-
+    public void fire(NAL nal) {
         final TaskLink currentTaskLink = taskLinks.takeOut();
         if (currentTaskLink == null) {
             return;
         }
+        
+        nal.fire(memory, this, currentTaskLink);
 
-        fire(currentTaskLink);
         taskLinks.putBack(currentTaskLink);
     }
 
-    protected void fire(TaskLink currentTaskLink) {
-        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
-
-        memory.setCurrentTaskLink(currentTaskLink);
-        memory.setCurrentBeliefLink(null);
-        if (memory.getRecorder().isActive()) {
-            memory.getRecorder().append("TaskLink Select", currentTaskLink.toStringBrief());
-        }
-        final Task task = currentTaskLink.getTargetTask();
-        memory.setCurrentTask(task);  // one of the two places where this variable is set
-//      memory.getRecorder().append(" * Selected Task: " + task + "\n");    // for debugging
-        if (currentTaskLink.type == TermLink.TRANSFORM) {
-            memory.setCurrentBelief(null);
-            transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
-        } else {
-            int termLinkCount = memory.param.termLinkMaxReasoned.get();
-//        while (memory.noResult() && (termLinkCount > 0)) {
-            while (termLinkCount > 0) {
-                final TermLink termLink = selectTermLink(currentTaskLink, memory.getTime());
-                if (termLink != null) {
-                    if (memory.getRecorder().isActive()) {
-                        memory.getRecorder().append("TermLink Select", termLink.toString());
-                    }
-                    memory.setCurrentBeliefLink(termLink);
-
-                    reason(currentTaskLink, termLink, memory);
-
-                    termLinks.putBack(termLink);
-                    termLinkCount--;
-                } else {
-                    termLinkCount = 0;
-                }
-            }
-        }
-
-    }
 
     /* ---------- display ---------- */
     /**
@@ -741,7 +703,7 @@ public class Concept extends Item {
      * @param time The current time
      * @return The selected TermLink
      */
-    protected TermLink selectTermLink(final TaskLink taskLink, final long time) {
+    public TermLink selectTermLink(final TaskLink taskLink, final long time) {
 
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; i < toMatch; i++) {
@@ -756,6 +718,10 @@ public class Concept extends Item {
         }
         return null;
 
+    }
+
+    public void returnTermLink(TermLink termLink) {
+        termLinks.putBack(termLink);
     }
 
     static final class NullEntityObserver implements EntityObserver {

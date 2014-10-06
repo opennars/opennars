@@ -725,10 +725,10 @@ public class RuleTables {
      * transformation
      *
      * @param tLink The task link
-     * @param memory Reference to the memory
+     * @param nal Reference to the memory
      */
-    public static void transformTask(TaskLink tLink, Memory memory) {
-        CompoundTerm content = (CompoundTerm) memory.getCurrentTask().getContent();
+    public static void transformTask(TaskLink tLink, NAL nal) {
+        CompoundTerm content = (CompoundTerm) nal.getCurrentTask().getContent();
         short[] indices = tLink.index;
         Term inh = null;
         if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
@@ -750,7 +750,7 @@ public class RuleTables {
             }
         }
         if (inh instanceof Inheritance) {
-            StructuralRules.transformProductImage((Inheritance) inh, content, indices, memory);
+            StructuralRules.transformProductImage((Inheritance) inh, content, indices, nal);
         }
     }
 }
