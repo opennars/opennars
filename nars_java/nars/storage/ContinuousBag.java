@@ -175,26 +175,38 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * @param newItem The new Item
      * @return Whether the new Item is added into the Bag
      */
-    @Override
-    public boolean putIn(final E newItem, boolean nameTableInsert) {
-        //TODO this is identical with Bag, should merge?
-        if (nameTableInsert) {
-            final CharSequence newKey = newItem.name();                        
-            final E oldItem = nameTable.put(newKey, newItem);
-            if (oldItem != null) {                  // merge duplications
-                outOfBase(oldItem);
-                newItem.merge(oldItem);
+    @Override public boolean putIn(final E newItem) {
+
+        final CharSequence newKey = newItem.name();        
+        final E existingItemWithSameKey = nameTable.remove(newKey);
+
+        if (existingItemWithSameKey != null) {
+            // merge duplications
+            outOfBase(existingItemWithSameKey);
+            newItem.merge(existingItemWithSameKey);
+        }
+
+        // put the (new or merged) item into itemTable        
+        final E overflowItem = intoBase(newItem);
+
+        if (overflowItem == newItem) {
+            //did not add
+            return false;
+        }
+        
+        nameTable.put(newKey, newItem);
+        
+        
+
+        if (overflowItem != null) {             
+            // remove overflow
+            final CharSequence overflowKey = overflowItem.name();
+            if (!overflowKey.equals(newKey)) {
+                nameTable.remove(overflowKey);
             }
         }
         
-        final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
-        if (overflowItem != null) {             // remove overflow
-            final CharSequence overflowKey = overflowItem.name();
-            nameTable.remove(overflowKey);
-            return (overflowItem != newItem);
-        } else {
-            return true;
-        }
+        return true;
     }
 
 
@@ -205,10 +217,10 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E takeOut(boolean removeFromNameTable) {
+    public E takeOut() {
         if (size()==0) return null; // empty bag                
         
-        final E selected = takeOutIndex( nextRemovalIndex(), removeFromNameTable );
+        final E selected = takeOutIndex( nextRemovalIndex() );
         
         return selected;
     }
@@ -291,7 +303,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         E oldItem = null;
         
         if (size() >= capacity) {      // the bag is full            
-            oldItem = takeOutIndex(0, true);
+            oldItem = takeOutIndex(0);
         }
         
         items.add(newItem);
@@ -309,14 +321,12 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
      * @param level The current level
      * @return The first Item
      */
-    private E takeOutIndex(final int index, final boolean removeFromNameTable) {
+    private E takeOutIndex(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
         final E selected = items.remove(index);        
-        addToMass(-(selected.budget.getPriority()));
-                
-        if (removeFromNameTable) {
-            nameTable.remove(selected.name());
-        }
+        addToMass(-(selected.budget.getPriority()));                
+        
+        nameTable.remove(selected.name());        
         
         return selected;
     }
@@ -384,11 +394,6 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         return items.descendingIterator();
     }
 
-    @Override public E removeKey(final CharSequence key) {
-        return nameTable.remove(key);
-    }
-
-    
     
     
 }

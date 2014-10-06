@@ -247,7 +247,7 @@ public class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processGoal(final Task task) {
+    protected boolean processGoal(final Task task) {
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean revised = false;
@@ -257,7 +257,7 @@ public class Concept extends Item {
             final Stamp oldStamp = oldGoal.stamp;
 
             if (newStamp.equals(oldStamp)) {
-                return;
+                return false;
             }
 
             if (revisible(goal, oldGoal)) {
@@ -288,9 +288,11 @@ public class Concept extends Item {
                     //hm or conjunction in time and temporal order forward                    
                     memory.executive.decisionMaking(task, this);
                 }
+                return true;
             }
 
         }
+        return false;
     }
 
     /**
@@ -687,10 +689,26 @@ public class Concept extends Item {
         entityObserver.post(displayContent());
     }
 
+    @Override
+    public void end() {
+        //empty bags and lists
+        for (Task t : questions) t.end();
+        questions.clear();
+        
+        for (Task t : quests) t.end();
+        quests.clear();                
+        
+        termLinks.clear();
+        taskLinks.clear();        
+        beliefs.clear();
+        
+    }
+    
+    
     /**
      * Stop display, called from ConceptWindow only
      */
-    public void stop() {
+    @Deprecated public void stop() {
         entityObserver.stop();
     }
 
@@ -727,15 +745,14 @@ public class Concept extends Item {
 
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; i < toMatch; i++) {
-            final TermLink termLink = termLinks.takeOut(false);
+            final TermLink termLink = termLinks.takeOut();
             if (termLink == null) {
                 return null;
             }
             if (taskLink.novel(termLink, time)) {
-                termLinks.removeKey(termLink.name());
                 return termLink;
             }
-            termLinks.putBack(termLink, false);
+            termLinks.putBack(termLink);
         }
         return null;
 

@@ -263,4 +263,10 @@ public class TermLink extends Item {
         this(target, type, (short)i0, (short)i1, (short)i2, (short)i3);
     }
 
+    @Override public void end() {
+        key = null;
+    }
+
+    
+    
 }

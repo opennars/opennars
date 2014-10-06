@@ -138,6 +138,10 @@ public abstract class Item implements Comparable {
     }
     
 
+    /** called when the item has been discarded */
+    public void end() {
+        
+    }
     
     /**
      * Get quality value
