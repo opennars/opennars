@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.inference.NAL;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -30,11 +29,9 @@ import nars.operator.Operator;
  * Operator that activates a concept
  */
 public class Consider extends Operator {
-    private final NAL nal;
 
-    public Consider(NAL nal) {
+    public Consider() {
         super("^consider");
-        this.nal = nal;
     }
 
     /**
@@ -48,7 +45,7 @@ public class Consider extends Operator {
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[0];
         Concept concept = memory.conceptualize(term);
-        concept.fire(nal);
+        concept.fire();
         return null;
     }
 

@@ -607,13 +607,13 @@ public class Concept extends Item {
     /**
      * An atomic step in a concept
      */
-    public void fire(NAL nal) {
+    public void fire() {
         final TaskLink currentTaskLink = taskLinks.takeOut();
         if (currentTaskLink == null) {
             return;
         }
         
-        nal.fire(memory, this, currentTaskLink);
+        new NAL.FireConcept(memory, this, currentTaskLink).call();
 
         taskLinks.putBack(currentTaskLink);
     }

@@ -1,6 +1,7 @@
 package nars.inference;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -21,11 +22,11 @@ import nars.language.Variable;
 import nars.operator.Operation;
 
 /**
- * NAL Reasoner Thread.  Includes all reasoning process state.
+ * NAL Reasoner Process.  Includes all reasoning process state.
  */
-public class NAL {
+abstract public class NAL implements Callable<NAL> {
     
-    protected Memory mem;
+    public final Memory mem;
     
     protected Term currentTerm;
 
@@ -40,53 +41,63 @@ public class NAL {
 
     protected Stamp newStamp;       
 
-    public NAL() {
-
+    public NAL(Memory mem) {
+        this.mem = mem;
     }
 
-    public void fire(final Memory memory, final Concept concept, final TaskLink currentTaskLink) {
-        reset(memory);
+    public static class FireConcept extends NAL  {
         
-        final Task task = currentTaskLink.getTargetTask();
-        
-        setCurrentTerm(concept.term);
-        setCurrentTaskLink(currentTaskLink);
-        setCurrentBeliefLink(null);
-        setCurrentTask(task);  // one of the two places where this variable is set
-        
-        memory.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());        
-        if (memory.getRecorder().isActive()) {
-            memory.getRecorder().append("TaskLink Select", currentTaskLink.toStringBrief());
+        public FireConcept(Memory mem, Concept concept, TaskLink currentTaskLink) {
+            super(mem);
+            this.currentConcept = concept;
+            this.currentTaskLink = currentTaskLink;
         }
         
+        @Override public NAL call() {
         
-        if (currentTaskLink.type == TermLink.TRANSFORM) {
-            setCurrentBelief(null);
-            transformTask(currentTaskLink, this);  // to turn this into structural inference as below?
-        } else {
-            int termLinkCount = memory.param.termLinkMaxReasoned.get();
-//        while (memory.noResult() && (termLinkCount > 0)) {
-            while (termLinkCount > 0) {
-                final TermLink termLink = concept.selectTermLink(currentTaskLink, memory.getTime());
-                if (termLink != null) {
-                    
-                    if (memory.getRecorder().isActive()) {
-                        memory.getRecorder().append("TermLink Select", termLink.toString());
-                    }
-                    
-                    setCurrentBeliefLink(termLink);
+            final Task task = currentTaskLink.getTargetTask();
 
-                    reason(currentTaskLink, termLink, this);
-                    
-                    concept.returnTermLink(termLink);
-                    
-                    termLinkCount--;
-                    
-                } else {
-                    termLinkCount = 0;
+            setCurrentTerm(currentConcept.term);
+            setCurrentTaskLink(currentTaskLink);
+            setCurrentBeliefLink(null);
+            setCurrentTask(task);  // one of the two places where this variable is set
+
+            mem.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());        
+            if (mem.getRecorder().isActive()) {
+                mem.getRecorder().append("TaskLink Select", currentTaskLink.toStringBrief());
+            }
+
+
+            if (currentTaskLink.type == TermLink.TRANSFORM) {
+                setCurrentBelief(null);
+                transformTask(currentTaskLink, this);  // to turn this into structural inference as below?
+            } else {
+                int termLinkCount = mem.param.termLinkMaxReasoned.get();
+    //        while (memory.noResult() && (termLinkCount > 0)) {
+                while (termLinkCount > 0) {
+                    final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, mem.getTime());
+                    if (termLink != null) {
+
+                        if (mem.getRecorder().isActive()) {
+                            mem.getRecorder().append("TermLink Select", termLink.toString());
+                        }
+
+                        setCurrentBeliefLink(termLink);
+
+                        reason(currentTaskLink, termLink, this);
+
+                        currentConcept.returnTermLink(termLink);
+
+                        termLinkCount--;
+
+                    } else {
+                        termLinkCount = 0;
+                    }
                 }
             }
-        }
+            return this;
+       }
+        
     }
     
     /**
@@ -330,61 +341,62 @@ public class NAL {
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
         derivedTask(newTask, false, true, null, null);
     }
-    
-//    public Future immediateProcess(Memory mem, Task t, ExecutorService exe) {
-//        return exe.submit(new Runnable() {
-//            @Override public void run() {
-//                immediateProcess(mem, t);
-//            }            
-//        });
-//    }
+
     
     /**
      * Immediate processing of a new task, in constant time Local processing, in
      * one concept only
-     *
-     * @param task the task to be accepted
      */
-    public void immediateProcess(Memory mem, Task task) {
-        reset(mem);
-        currentTask = task;
+    public static class ImmediateProcess extends NAL  {
         
-        mem.logic.TASK_IMMEDIATE_PROCESS.commit();
+        public ImmediateProcess(Memory mem, Task currentTask) {
+            super(mem);
+            setCurrentTask(currentTask);
+        }
 
-        setCurrentTask(task); // one of the two places where this variable is set
-        
-        if (mem.getRecorder().isActive()) {
-            mem.getRecorder().append("Task Immediate Process", task.toString());
+        @Override
+        public NAL call()  {
+            mem.logic.TASK_IMMEDIATE_PROCESS.commit();
+
+            setCurrentTask(currentTask); // one of the two places where this variable is set
+
+            if (mem.getRecorder().isActive()) {
+                mem.getRecorder().append("Task Immediate Process", currentTask.toString());
+            }
+
+            setCurrentTerm(currentTask.getContent());
+            currentConcept = mem.conceptualize(getCurrentTerm());
+
+            if (getCurrentConcept() != null) {
+
+                mem.conceptActivate(getCurrentConcept(), currentTask.budget);
+
+                boolean processed = getCurrentConcept().directProcess(this, currentTask);
+
+                if (processed)
+                    mem.event.emit(Events.ConceptDirectProcessedTask.class, currentTask);            
+
+            }
+            
+            return this;
         }
         
-        setCurrentTerm(task.getContent());
-        currentConcept = mem.conceptualize(getCurrentTerm());
-        
-        if (getCurrentConcept() != null) {
-            
-            mem.conceptActivate(getCurrentConcept(), task.budget);
-            
-            boolean processed = getCurrentConcept().directProcess(this, task);
-            
-            if (processed)
-                mem.event.emit(Events.ConceptDirectProcessedTask.class, task);            
-            
-        }
         
     }
+    
 
     
     
-    protected void reset(Memory currentMemory) {
-        mem = currentMemory;
-        setCurrentTerm(null);
-        setCurrentBelief(null);
-        setCurrentConcept(null);
-        setCurrentTask(null);
-        setCurrentBeliefLink(null);
-        setCurrentTaskLink(null);
-        setNewStamp(null);
-    }
+//    protected void reset(Memory currentMemory) {
+//        mem = currentMemory;
+//        setCurrentTerm(null);
+//        setCurrentBelief(null);
+//        setCurrentConcept(null);
+//        setCurrentTask(null);
+//        setCurrentBeliefLink(null);
+//        setCurrentTaskLink(null);
+//        setNewStamp(null);
+//    }
 
     public long getTime() { return mem.getTime(); }
     
@@ -496,4 +508,14 @@ public class NAL {
     public Memory mem() {
         return mem;
     }
+
+    
+//    public Future immediateProcess(Memory mem, Task t, ExecutorService exe) {
+//        return exe.submit(new Runnable() {
+//            @Override public void run() {
+//                immediateProcess(mem, t);
+//            }            
+//        });
+//    }
+
 }

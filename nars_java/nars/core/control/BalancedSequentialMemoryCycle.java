@@ -17,9 +17,9 @@ public class BalancedSequentialMemoryCycle extends SequentialMemoryCycle {
     @Override
     public void cycle(Memory m) {
         
-        m.processNewTasks(nal, 1);
+        m.processNewTasks(1);
 
-        m.processNovelTask(nal);
+        m.processNovelTask();
 
         processConcept(m);
 
