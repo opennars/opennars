@@ -73,8 +73,8 @@ public class Implication extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Implication make(final Term subject, final Term predicate, final Memory memory) {
-        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
+    public static Implication make(final Term subject, final Term predicate) {
+        return make(subject, predicate, TemporalRules.ORDER_NONE);
     }
 
     public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
@@ -95,7 +95,7 @@ public class Implication extends Statement {
         return makeStatementName(subject, copula, predicate);
     }
     
-    public static Implication make(final Term subject, final Term predicate, int temporalOrder, final Memory memory) {
+    public static Implication make(final Term subject, final Term predicate, int temporalOrder) {
         if ((subject == null) || (predicate == null)) {
             return null;
         }
@@ -105,21 +105,14 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        final CharSequence name = makeName(subject, temporalOrder, predicate);
-        final Term t = memory.conceptTerm(name);
-        if (t != null) {            
-            if (t.getClass()!=Implication.class) {                
-                throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() + " = " + t.toString() );
-            }
-            return (Implication) t;
-        }
+        final CharSequence name = makeName(subject, temporalOrder, predicate);         
         if (predicate instanceof Implication) {
             final Term oldCondition = ((Statement) predicate).getSubject();
             if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
                 return null;
             }
-            final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);
-            return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder, memory);
+            final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder);
+            return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
         } else {
             return new Implication(name, new Term[] { subject, predicate }, temporalOrder);
         }

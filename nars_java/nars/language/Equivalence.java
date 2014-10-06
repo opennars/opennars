@@ -74,11 +74,11 @@ public class Equivalence extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Equivalence make(Term subject, Term predicate, Memory memory) {  // to be extended to check if subject is Conjunction
-        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
+    public static Equivalence make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
+        return make(subject, predicate, TemporalRules.ORDER_NONE);
     }
 
-    public static Equivalence make(Term subject, Term predicate, int temporalOrder, Memory memory) {  // to be extended to check if subject is Conjunction
+    public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
         if (invalidStatement(subject, predicate)) {
             return null;
         }
@@ -106,12 +106,10 @@ public class Equivalence extends Statement {
             default:
                 copula = NativeOperator.EQUIVALENCE;
         }
-        CharSequence name = makeStatementName(subject, copula, predicate);
-        Term t = memory.conceptTerm(name);
-        if (t != null) {
-            return (Equivalence) t;
-        }
-        return new Equivalence(name, termArray(subject, predicate), temporalOrder);
+        
+        return new Equivalence(
+                makeStatementName(subject, copula, predicate),
+                termArray(subject, predicate), temporalOrder);
     }
 
     /**

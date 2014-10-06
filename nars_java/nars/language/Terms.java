@@ -57,7 +57,7 @@ public class Terms {
         }
     }
 
-    public static CompoundTerm ReduceTillLayer2(CompoundTerm itself, Term replacement, Memory memory) {
+    public static CompoundTerm reduceUntilLayer2(CompoundTerm itself, Term replacement, Memory memory) {
         if (!(itself != null))
             return null;
         

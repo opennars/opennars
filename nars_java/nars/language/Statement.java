@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import nars.core.Memory;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
@@ -60,7 +59,7 @@ public abstract class Statement extends CompoundTerm {
     protected Statement(final CharSequence n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
         super(n, cs, con, hasVar, i);
     }
-
+    
     /**
      * Make a Statement from given components, called by the rules
      * @return The Statement built
@@ -68,18 +67,18 @@ public abstract class Statement extends CompoundTerm {
      * @param pred The second component
      * @param statement A sample statement providing the class type
      */
-    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {        
+    public static Statement make(final Statement statement, final Term subj, final Term pred) {        
         if (statement instanceof Inheritance) {
-            return Inheritance.make(subj, pred, memory);
+            return Inheritance.make(subj, pred);
         }
         if (statement instanceof Similarity) {
-            return Similarity.make(subj, pred, memory);
+            return Similarity.make(subj, pred);
         }
         if (statement instanceof Implication) {
-            return Implication.make(subj, pred, statement.getTemporalOrder(), memory);
+            return Implication.make(subj, pred, statement.getTemporalOrder());
         }
         if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, statement.getTemporalOrder(), memory);
+            return Equivalence.make(subj, pred, statement.getTemporalOrder());
         }
         return null;
     }
@@ -93,36 +92,36 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, final Memory memory) {
+    final public static Statement make(final NativeOperator o, final Term subject, final Term predicate) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
         
         switch (o) {
             case INHERITANCE:
-                return Inheritance.make(subject, predicate, memory);
+                return Inheritance.make(subject, predicate);
             case SIMILARITY:
-                return Similarity.make(subject, predicate, memory);
+                return Similarity.make(subject, predicate);
             case INSTANCE:
-                return Instance.make(subject, predicate, memory);
+                return Instance.make(subject, predicate);
             case PROPERTY:
-                return Property.make(subject, predicate, memory);
+                return Property.make(subject, predicate);
             case INSTANCE_PROPERTY:
-                return InstanceProperty.make(subject, predicate, memory);
+                return InstanceProperty.make(subject, predicate);
             case IMPLICATION:
-                return Implication.make(subject, predicate, memory);
+                return Implication.make(subject, predicate);
             case IMPLICATION_AFTER:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_FORWARD, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_BACKWARD, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_BACKWARD);
             case IMPLICATION_WHEN:
-                return Implication.make(subject, predicate, TemporalRules.ORDER_CONCURRENT, memory);
+                return Implication.make(subject, predicate, TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE:
-                return Equivalence.make(subject, predicate, memory);
+                return Equivalence.make(subject, predicate);
             case EQUIVALENCE_AFTER:
-                return Equivalence.make(subject, predicate, TemporalRules.ORDER_FORWARD, memory);
+                return Equivalence.make(subject, predicate, TemporalRules.ORDER_FORWARD);
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(subject, predicate, TemporalRules.ORDER_CONCURRENT, memory);            
+                return Equivalence.make(subject, predicate, TemporalRules.ORDER_CONCURRENT);            
         }
         
         return null;
@@ -142,19 +141,19 @@ public abstract class Statement extends CompoundTerm {
 //        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
 //    }
     
-    final public static Statement make(final Statement statement, final Term subj, final Term pred, int order, final Memory memory) {
+    final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
         if (statement instanceof Inheritance) {
-            return Inheritance.make(subj, pred, memory);
+            return Inheritance.make(subj, pred);
         }
         if (statement instanceof Similarity) {
-            return Similarity.make(subj, pred, memory);
+            return Similarity.make(subj, pred);
         }
         if (statement instanceof Implication) {
-            return Implication.make(subj, pred, order, memory);
+            return Implication.make(subj, pred, order);
         }
         if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, order, memory);
+            return Equivalence.make(subj, pred, order);
         }
         
         throw new RuntimeException("Unrecognized type for Statement.make: " + statement.getClass().getSimpleName() + ", subj=" + subj + ", pred=" + pred + ", order=" + order);        
@@ -171,12 +170,12 @@ public abstract class Statement extends CompoundTerm {
      * @param memory Reference to the memory
      * @return The Statement built
      */
-    final public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order, final Memory memory) {
+    final public static Statement makeSym(final Statement statement, final Term subj, final Term pred, final int order) {
         if (statement instanceof Inheritance) {
-            return Similarity.make(subj, pred, memory);
+            return Similarity.make(subj, pred);
         }
         if (statement instanceof Implication) {
-            return Equivalence.make(subj, pred, order, memory);
+            return Equivalence.make(subj, pred, order);
         }
         return null;
     }

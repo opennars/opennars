@@ -383,13 +383,13 @@ public class Narsese {
                     }
                 case SET_EXT_OPENER:
                     if (last == SET_EXT_CLOSER.ch) {
-                        return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
+                        return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
                     } else {
                         throw new InvalidInputException("missing ExtensionSet closer");
                     }                    
                 case SET_INT_OPENER:
                     if (last == SET_INT_CLOSER.ch) {
-                        return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR), memory);
+                        return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
                     } else {
                         throw new InvalidInputException("missing IntensionSet closer");
                     }   
@@ -462,7 +462,7 @@ public class Narsese {
         String relation = s.substring(i, i + 3);
         Term subject = parseTerm(s.substring(0, i));
         Term predicate = parseTerm(s.substring(i + 3));
-        Statement t = make(getRelation(relation), subject, predicate, memory);
+        Statement t = make(getRelation(relation), subject, predicate);
         if (t == null) {
             throw new InvalidInputException("invalid statement: statement unable to create: " + getOperator(relation) + " " + subject + " " + predicate);
         }
@@ -506,7 +506,7 @@ public class Narsese {
             t = memory.term(oNative, argA);
         }
         else if (oRegistered!=null) {
-            t = make(oRegistered, argA, true, memory);
+            t = make(oRegistered, argA, true);
         }
         else {
             throw new InvalidInputException("Invalid compound term");

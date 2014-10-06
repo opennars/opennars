@@ -22,7 +22,6 @@ package nars.language;
 
 import java.util.Collection;
 import java.util.TreeSet;
-import nars.core.Memory;
 import nars.io.Symbols.NativeOperator;
 
 /**
@@ -66,17 +65,17 @@ public class IntersectionExt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term term1, Term term2, Memory memory) {
+    public static Term make(Term term1, Term term2) {
         TreeSet<Term> set;
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             set.addAll(((CompoundTerm) term2).getTermList());        // set union
-            return SetInt.make(set, memory);
+            return SetInt.make(set);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             set.retainAll(((CompoundTerm) term2).getTermList());     // set intersection
-            return SetExt.make(set, memory);
+            return SetExt.make(set);
         }
         if (term1 instanceof IntersectionExt) {
             set = new TreeSet<>(((CompoundTerm) term1).getTermList());
@@ -97,7 +96,7 @@ public class IntersectionExt extends CompoundTerm {
             set.add(term1);
             set.add(term2);
         }
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -106,9 +105,9 @@ public class IntersectionExt extends CompoundTerm {
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Collection<Term> argList, Memory memory) {
+    public static Term make(Collection<Term> argList) {
         TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -117,14 +116,15 @@ public class IntersectionExt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set, Memory memory) {
+    public static Term make(TreeSet<Term> set) {
         if (set.size() == 1) {
+            // special case: single component
             return set.first();
-        }                         // special case: single component
-        Term[] argument = set.toArray(new Term[set.size()]);
-        CharSequence name = makeCompoundName(NativeOperator.INTERSECTION_EXT, argument);
-        Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new IntersectionExt(name, argument);
+        }                         
+        
+        Term[] argument = set.toArray(new Term[set.size()]);        
+        return new IntersectionExt(
+                makeCompoundName(NativeOperator.INTERSECTION_EXT, argument), argument);
     }
 
     /**

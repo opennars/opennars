@@ -64,16 +64,16 @@ public abstract class SynchronousFunctionOperator extends Operator {
         }
         
         
-        Term parameterTerm = x.length == 1 ? x[0] : Product.make(x, m);
+        Term parameterTerm = x.length == 1 ? x[0] : Product.make(x);
         
         Inheritance operatorInheritance = 
                 Operation.make(
                     Product.make(new Term[] { 
                         parameterTerm, y
-                    },
-                m), this, m);
+                    }
+                ), this);
         
-        Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange(), m);
+        Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange());
         m.output(Task.class, resultInheritance);
         
         return Lists.newArrayList( 

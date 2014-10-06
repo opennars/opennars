@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import nars.core.Memory;
 import nars.io.Symbols.NativeOperator;
 
 /**
@@ -65,19 +64,17 @@ public class Similarity extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Similarity make(final Term subject, final Term predicate, final Memory memory) {
+    public static Similarity make(final Term subject, final Term predicate) {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
         if (subject.compareTo(predicate) > 0) {
-            return make(predicate, subject, memory);
-        }
-        CharSequence name = makeStatementName(subject, NativeOperator.SIMILARITY, predicate);
-        Term t = memory.conceptTerm(name);
-        if (t != null) {
-            return (Similarity) t;
-        }
-        return new Similarity(name, termArray(subject, predicate));
+            return make(predicate, subject);
+        }        
+        
+        return new Similarity(
+                makeStatementName(subject, NativeOperator.SIMILARITY, predicate), 
+                termArray(subject, predicate));
     }
 
     /**

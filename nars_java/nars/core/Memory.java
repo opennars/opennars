@@ -448,9 +448,9 @@ public class Memory implements Output, Serializable {
      */
     public Term term(final CompoundTerm compound, final Term[] components) {
         if (compound instanceof ImageExt) {
-            return ImageExt.make(components, ((Image) compound).relationIndex, this);
+            return ImageExt.make(components, ((Image) compound).relationIndex);
         } else if (compound instanceof ImageInt) {
-            return ImageInt.make(components, ((Image) compound).relationIndex, this);
+            return ImageInt.make(components, ((Image) compound).relationIndex);
         } else {
             return term(compound.operator(), components);
         }
@@ -474,49 +474,49 @@ public class Memory implements Output, Serializable {
     public Term term(final NativeOperator op, final Term[] a) {
         switch (op) {
             case SET_EXT_OPENER:
-                return SetExt.make(CompoundTerm.termList(a), this);
+                return SetExt.make(CompoundTerm.termList(a));
             case SET_INT_OPENER:
-                return SetInt.make(CompoundTerm.termList(a), this);
+                return SetInt.make(CompoundTerm.termList(a));
             case INTERSECTION_EXT:
-                return IntersectionExt.make(CompoundTerm.termList(a), this);
+                return IntersectionExt.make(CompoundTerm.termList(a));
             case INTERSECTION_INT:
-                return IntersectionInt.make(CompoundTerm.termList(a), this);
+                return IntersectionInt.make(CompoundTerm.termList(a));
             case DIFFERENCE_EXT:
-                return DifferenceExt.make(a, this);
+                return DifferenceExt.make(a);
             case DIFFERENCE_INT:
-                return DifferenceInt.make(a, this);
+                return DifferenceInt.make(a);
             case INHERITANCE:
-                return Inheritance.make(a[0], a[1], this);
+                return Inheritance.make(a[0], a[1]);
             case PRODUCT:
-                return Product.make(a, this);
+                return Product.make(a);
             case IMAGE_EXT:
-                return ImageExt.make(a, this);
+                return ImageExt.make(a);
             case IMAGE_INT:
-                return ImageInt.make(a, this);
+                return ImageInt.make(a);
             case NEGATION:
                 return Negation.make(a);
             case DISJUNCTION:
-                return Disjunction.make(CompoundTerm.termList(a), this);
+                return Disjunction.make(CompoundTerm.termList(a));
             case CONJUNCTION:
-                return Conjunction.make(a, this);
+                return Conjunction.make(a);
             case SEQUENCE:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, this);
+                return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
             case PARALLEL:
-                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, this);
+                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
             case IMPLICATION:
-                return Implication.make(a[0], a[1], this);
+                return Implication.make(a[0], a[1]);
             case IMPLICATION_AFTER:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD, this);
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD);
             case IMPLICATION_WHEN:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE:
-                return Equivalence.make(a[0], a[1], this);
+                return Equivalence.make(a[0], a[1]);
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE_AFTER:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD);
         }
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }

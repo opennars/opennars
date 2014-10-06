@@ -144,7 +144,7 @@ public class TemporalRules {
         
     static final Variable varInd0 = new Variable("$0");
     
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final Memory memory) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
         if ((s1.truth==null) || (s2.truth==null))
             return;
         
@@ -172,11 +172,11 @@ public class TemporalRules {
             Variable var2 = var1;
 
             if (ss1.getSubject().equals(ss2.getSubject())) {
-                t11 = Statement.make(ss1, var1, ss1.getPredicate(), memory);
-                t22 = Statement.make(ss2, var2, ss2.getPredicate(), memory);
+                t11 = Statement.make(ss1, var1, ss1.getPredicate());
+                t22 = Statement.make(ss2, var2, ss2.getPredicate());
             } else if (ss1.getPredicate().equals(ss2.getPredicate())) {
-                t11 = Statement.make(ss1, ss1.getSubject(), var1, memory);
-                t22 = Statement.make(ss2, ss2.getSubject(), var2, memory);
+                t11 = Statement.make(ss1, ss1.getSubject(), var1);
+                t22 = Statement.make(ss2, ss2.getSubject(), var2);
             }
             //allow also temporal induction on operator arguments:
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
@@ -200,9 +200,9 @@ public class TemporalRules {
                                 }
                             }
 
-                            t11 = Statement.make(ss1, var1, ss1.getPredicate(), memory);
-                            Product S=(Product) Product.make(ars, memory);
-                            Operation op=(Operation) Operation.make(S, ss2.getPredicate(), memory);
+                            t11 = Statement.make(ss1, var1, ss1.getPredicate());
+                            Product S=(Product) Product.make(ars);
+                            Operation op=(Operation) Operation.make(S, ss2.getPredicate());
                             t22 = op;
                         }
                     }
@@ -214,7 +214,7 @@ public class TemporalRules {
             return;
         }
         
-        final Interval.AtomicDuration duration = memory.param.duration;
+        final Interval.AtomicDuration duration = nal.mem().param.duration;
         int durationCycles = duration.get();
         
         long time1 = s1.getOccurenceTime();
@@ -224,14 +224,14 @@ public class TemporalRules {
         if (Math.abs(timeDiff) > durationCycles) {
             interval = Interval.intervalTime(Math.abs(timeDiff), duration);
             if (timeDiff > 0) {
-                t1 = Conjunction.make(t1, interval, ORDER_FORWARD, memory);
+                t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
                 if(t11!=null) {
-                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD, memory);
+                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD);
                 }
             } else {
-                t2 = Conjunction.make(t2, interval, ORDER_FORWARD, memory);
+                t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
                 if(t22!=null) {
-                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD, memory);
+                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD);
                 }
             }
         }
@@ -248,34 +248,34 @@ public class TemporalRules {
         TruthValue truth1 = TruthFunctions.abduction(givenTruth1, givenTruth2);
         TruthValue truth2 = TruthFunctions.abduction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
-        BudgetValue budget1 = BudgetFunctions.forward(truth1, memory);
-        BudgetValue budget2 = BudgetFunctions.forward(truth2, memory);
-        BudgetValue budget3 = BudgetFunctions.forward(truth3, memory);
-        Statement statement1 = Implication.make(t1, t2, order, memory);
-        Statement statement2 = Implication.make(t2, t1, reverseOrder(order), memory);
-        Statement statement3 = Equivalence.make(t1, t2, order, memory);
+        BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
+        BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
+        BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
+        Statement statement1 = Implication.make(t1, t2, order);
+        Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
+        Statement statement3 = Equivalence.make(t1, t2, order);
         if(t11!=null && t22!=null) {
-            Statement statement11 = Implication.make(t11, t22, order, memory);
-            Statement statement22 = Implication.make(t22, t11, reverseOrder(order), memory);
-            Statement statement33 = Equivalence.make(t11, t22, order, memory);
+            Statement statement11 = Implication.make(t11, t22, order);
+            Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
+            Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11)) {
-                memory.doublePremiseTask(statement11, truth1, budget1,false);
+                nal.doublePremiseTask(statement11, truth1, budget1,false);
             }
             if(!tooMuchTemporalStatements(statement22)) {
-                memory.doublePremiseTask(statement22, truth2, budget2,false);
+                nal.doublePremiseTask(statement22, truth2, budget2,false);
             }
             if(!tooMuchTemporalStatements(statement33)) {
-                memory.doublePremiseTask(statement33, truth3, budget3,false);
+                nal.doublePremiseTask(statement33, truth3, budget3,false);
             }
         }
         if(!tooMuchTemporalStatements(statement1)) {
-            memory.doublePremiseTask(statement1, truth1, budget1,false);
+            nal.doublePremiseTask(statement1, truth1, budget1,false);
         }
         if(!tooMuchTemporalStatements(statement2)) {
-            memory.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
+            nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
         }
         if(!tooMuchTemporalStatements(statement3)) {
-            memory.doublePremiseTask(statement3, truth3, budget3,false);
+            nal.doublePremiseTask(statement3, truth3, budget3,false);
         }
     }
     
@@ -330,15 +330,15 @@ public class TemporalRules {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
+    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final NAL nal) {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
         if (task == null) {
-            task = memory.getCurrentTask();
+            task = nal.getCurrentTask();
             feedbackToLinks = true;
         }
         boolean judgmentTask = task.sentence.isJudgment();
-        final float quality = TemporalRules.solutionQuality(problem, solution, memory);
+        final float quality = TemporalRules.solutionQuality(problem, solution, nal.mem());
         if (judgmentTask) {
             task.incPriority(quality);
         } else {
@@ -347,9 +347,9 @@ public class TemporalRules {
             task.setPriority(Math.min(1 - quality, taskPriority));
         }
         if (feedbackToLinks) {
-            TaskLink tLink = memory.getCurrentTaskLink();
+            TaskLink tLink = nal.getCurrentTaskLink();
             tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = memory.getCurrentBeliefLink();
+            TermLink bLink = nal.getCurrentBeliefLink();
             bLink.incPriority(quality);
         }
         return budget;

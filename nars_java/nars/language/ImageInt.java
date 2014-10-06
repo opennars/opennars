@@ -73,7 +73,7 @@ public class ImageInt extends Image {
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(final Term[] argList, final Memory memory) {
+    public static Term make(final Term[] argList) {
         if (argList.length < 2) {
             return null;
         }
@@ -89,7 +89,7 @@ public class ImageInt extends Image {
             }
             n++;
         }
-        return make(argument, (short) index, memory);
+        return make(argument, (short) index);
     }
 
     /**
@@ -100,7 +100,7 @@ public class ImageInt extends Image {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Product product, final Term relation, final short index, final Memory memory) {
+    public static Term make(final Product product, final Term relation, final short index) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {
@@ -112,9 +112,9 @@ public class ImageInt extends Image {
                 }
             }
         }
-        Term[] argument = product.cloneTerms();
+        Term[] argument = product.cloneTerms(); //TODO is this clone needed?
         argument[index] = relation;
-        return make(argument, index, memory);
+        return make(argument, index);
     }
 
     /**
@@ -125,13 +125,13 @@ public class ImageInt extends Image {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final ImageInt oldImage, final Term component, final short index, final Memory memory) {
+    public static Term make(final ImageInt oldImage, final Term component, final short index) {
         Term[] argList = oldImage.cloneTerms();
         int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
-        return make(argList, index, memory);
+        return make(argList, index);
     }
 
     /**
@@ -141,10 +141,9 @@ public class ImageInt extends Image {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static ImageInt make(final Term[] argument, final short index, final Memory memory) {
-        CharSequence name = makeImageName(NativeOperator.IMAGE_INT, argument, index);
-        Term t = memory.conceptTerm(name);
-        return (t != null) ? ((ImageInt)t) : new ImageInt(name, argument, index);
+    public static ImageInt make(final Term[] argument, final short index) {        
+        return new ImageInt(makeImageName(NativeOperator.IMAGE_INT, argument, index),
+                argument, index);
     }
     
 

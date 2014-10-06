@@ -164,7 +164,7 @@ public class LocalRules {
         if (task.isInput()) {    // moved from Sentence                
             memory.output(OUT.class, task);
         }
-        BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, memory);
+        BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, nal);
         if ((budget != null) && budget.aboveThreshold()) {
             //System.out.println("Solved: Solution activated");
             
@@ -226,9 +226,9 @@ public class LocalRules {
         Term t2 = s1.getPredicate();
         Term content;
         if (s1 instanceof Inheritance) {
-            content = Similarity.make(t1, t2, nal.mem());
+            content = Similarity.make(t1, t2);
         } else {
-            content = Equivalence.make(t1, t2, s1.getTemporalOrder(), nal.mem());
+            content = Equivalence.make(t1, t2, s1.getTemporalOrder());
         }
         TruthValue value1 = judgment1.truth;
         TruthValue value2 = judgment2.truth;
@@ -250,7 +250,7 @@ public class LocalRules {
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
         
-        Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder(), nal.mem());
+        Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return;
         
         TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
@@ -308,11 +308,11 @@ public class LocalRules {
         Term otherTerm;
         if (Variables.containVarQuery(subjT.name())) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
-            content = Statement.make(content, otherTerm, predT, order, nal.mem());
+            content = Statement.make(content, otherTerm, predT, order);
         }
         if (Variables.containVarQuery(predT.name())) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
-            content = Statement.make(content, subjT, otherTerm, order, nal.mem());
+            content = Statement.make(content, subjT, otherTerm, order);
         }
         
         if (content == null) return;

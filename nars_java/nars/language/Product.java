@@ -70,10 +70,8 @@ public class Product extends CompoundTerm {
      * @param argument The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argument, final Memory memory) {
-        final CharSequence name = makeCompoundName(NativeOperator.PRODUCT, argument);
-        final Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new Product(name, argument);
+    @Deprecated public static Term make(Term[] argument) {        
+        return new Product(makeCompoundName(NativeOperator.PRODUCT, argument), argument);
     }
         
     /**
@@ -84,10 +82,10 @@ public class Product extends CompoundTerm {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final CompoundTerm image, final Term component, final int index, final Memory memory) {
+    public static Term make(final CompoundTerm image, final Term component, final int index) {
         Term[] argument = image.cloneTerms();
         argument[index] = component;
-        return make(argument, memory);
+        return make(argument);
     }
     
     /**

@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
-import nars.core.Memory;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.
@@ -67,10 +66,10 @@ public class SetInt extends SetTensional {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term t, Memory memory) {
+    public static Term make(final Term t) {
         TreeSet<Term> set = new TreeSet<>();
         set.add(t);
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -79,9 +78,9 @@ public class SetInt extends SetTensional {
      * @param argList The list of term
      * @param memory Reference to the memeory
      */
-    public static Term make(Collection<Term> argList, Memory memory) {
+    public static Term make(final Collection<Term> argList) {
         TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -90,14 +89,12 @@ public class SetInt extends SetTensional {
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set, Memory memory) {
-        if (set.isEmpty()) {
+    public static Term make(TreeSet<Term> set) {
+        if (set.isEmpty())
             return null;
-        }
-        Term[] argument = set.toArray(new Term[set.size()]);
-        CharSequence name = makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch);
-        Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new SetInt(name, argument);
+        
+        Term[] argument = set.toArray(new Term[set.size()]);        
+        return new SetInt(makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch), argument);
     }
 
     /**

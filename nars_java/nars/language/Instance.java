@@ -20,7 +20,6 @@
  */
 
 package nars.language;
-import nars.core.Memory;
 
 /**
  * A Statement about an Instance relation, which is used only in Narsese for I/O, 
@@ -37,7 +36,7 @@ public abstract class Instance /*extends Statement*/ {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Statement make(final Term subject, final Term predicate, final Memory memory) {
-        return Inheritance.make(SetExt.make(subject, memory), predicate, memory);
+    public static Statement make(final Term subject, final Term predicate) {
+        return Inheritance.make(SetExt.make(subject), predicate);
     }
 }
