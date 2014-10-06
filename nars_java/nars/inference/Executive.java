@@ -228,39 +228,43 @@ public class Executive {
     
     public boolean addTask(final Concept c, final Task t) {        
         TaskExecution existingExecutable = getExecution(t.parentTask);
+        boolean valid = true;
         if (existingExecutable!=null) {
 
             //TODO compare motivation (desire * priority) instead?
 
             //if the new task for the existin goal has a lower priority, ignore it
             if (existingExecutable.getDesire() > t.getDesire().getExpectation()) {
-                //System.out.println("ignored lower priority task: " + t + " for parent " + t.parentTask);
-                return false;
+                //System.out.println("ignored lower priority task: " + t + " for parent " + t.parentTask);              
+                valid = false;
             }
 
             //do not allow interrupting a lower priority, but already executing task
             //TODO allow interruption if priority difference is above some threshold                
             if (existingExecutable.sequence > 0) {
                 //System.out.println("ignored late task: " + t + " for parent " + t.parentTask);
-                return false;
+                valid = false;
             }
             
         }
             
-        
-        if (tasks.add(new TaskExecution(c, t))) {
-            //added successfully
-            if (memory.getRecorder().isActive())
-               memory.getRecorder().append("Executive", "Task Add: " + t.toString());
-            return true;
+        if (valid) {
+            if (tasks.add(new TaskExecution(c, t))) {
+                //added successfully
+                if (memory.getRecorder().isActive())
+                   memory.getRecorder().append("Executive", "Task Add: " + t.toString());
+                return true;
+            }
         }
-        
+
+        //t.end();
         return false;
     }
     
     protected void removeTask(final TaskExecution t) {
         if (tasksToRemove.add(t)) {
             //t.t.setPriority(0); //dint set priority of entire statement to 0
+            //t.t.end();
             if (memory.getRecorder().isActive())
                memory.getRecorder().append("Executive", "Task Remove: " + t.toString());
         }
@@ -363,17 +367,21 @@ public class Executive {
     /** Entry point for all potentially executable tasks */
     public void decisionMaking(final Task t, final Concept concept) {
                         
-        if (!isUrgent(concept)) return;
-        
-        Term content = concept.term;
-            
-        //forget(t);
-        
-        if (content instanceof Operation) {
-            addTask(concept, t);
+        if (isUrgent(concept)) {
+
+            Term content = concept.term;
+
+         
+
+            if (content instanceof Operation) {
+                addTask(concept, t);
+            }
+            else if (isSequenceConjunction(content)) {
+                addTask(concept, t);
+            }
         }
-        else if (isSequenceConjunction(content)) {
-            addTask(concept, t);
+        else {
+            //t.end();
         }
     }
     
