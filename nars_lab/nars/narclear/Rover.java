@@ -488,7 +488,7 @@ public class Rover extends PhysicsModel {
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
-        nar.param().duration.set(100);
+        nar.param().duration.set(10);
         nar.start(50, 250);
         nar.param().noiseLevel.set(0);
 

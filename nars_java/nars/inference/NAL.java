@@ -1,8 +1,6 @@
 package nars.inference;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -40,9 +38,10 @@ public class NAL {
 
     protected Sentence currentBelief;    
 
-    protected Stamp newStamp;
+    protected Stamp newStamp;       
 
     public NAL() {
+
     }
 
     public void fire(final Memory memory, final Concept concept, final TaskLink currentTaskLink) {
@@ -332,13 +331,13 @@ public class NAL {
         derivedTask(newTask, false, true, null, null);
     }
     
-    public Future immediateProcess(Memory mem, Task t, ExecutorService exe) {
-        return exe.submit(new Runnable() {
-            @Override public void run() {
-                immediateProcess(mem, t);
-            }            
-        });
-    }
+//    public Future immediateProcess(Memory mem, Task t, ExecutorService exe) {
+//        return exe.submit(new Runnable() {
+//            @Override public void run() {
+//                immediateProcess(mem, t);
+//            }            
+//        });
+//    }
     
     /**
      * Immediate processing of a new task, in constant time Local processing, in
@@ -497,6 +496,4 @@ public class NAL {
     public Memory mem() {
         return mem;
     }
-
-    
 }
