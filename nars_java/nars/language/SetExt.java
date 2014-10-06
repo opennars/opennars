@@ -22,10 +22,10 @@ package nars.language;
 
 import java.util.Collection;
 import java.util.TreeSet;
+import nars.core.Memory;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
-import nars.core.Memory;
 
 /**
  * An extensionally defined set, which contains one or more instances.
@@ -68,10 +68,10 @@ public class SetExt extends SetTensional {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term t, final Memory memory) {
+    public static Term make(final Term t) {
         final TreeSet<Term> set = new TreeSet<>();
         set.add(t);
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -80,9 +80,9 @@ public class SetExt extends SetTensional {
      * @param argList The list of term
      * @param memory Reference to the memeory
      */
-    public static Term make(final Collection<Term> argList, final Memory memory) {
+    public static Term make(final Collection<Term> argList) {
         TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -91,18 +91,16 @@ public class SetExt extends SetTensional {
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(final TreeSet<Term> set, final Memory memory) {
+    public static Term make(final TreeSet<Term> set) {
         if (set.isEmpty()) {
             return null;
         }
         Term[] argument = set.toArray(new Term[set.size()]);
-        return make(argument, memory);
+        return make(argument);
     }
 
-    private static Term make(final Term[] termSet, final Memory memory) {
-        final CharSequence name = makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch);
-        final Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new SetExt(name, termSet);
+    private static Term make(final Term[] termSet) {        
+        return new SetExt(makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch), termSet);
     }
     
     /**

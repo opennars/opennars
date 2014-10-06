@@ -63,7 +63,7 @@ public class NAL {
         
         if (currentTaskLink.type == TermLink.TRANSFORM) {
             setCurrentBelief(null);
-            transformTask(currentTaskLink, memory);  // to turn this into structural inference as below?
+            transformTask(currentTaskLink, this);  // to turn this into structural inference as below?
         } else {
             int termLinkCount = memory.param.termLinkMaxReasoned.get();
 //        while (memory.noResult() && (termLinkCount > 0)) {
@@ -77,7 +77,7 @@ public class NAL {
                     
                     setCurrentBeliefLink(termLink);
 
-                    reason(currentTaskLink, termLink, memory);
+                    reason(currentTaskLink, termLink, this);
                     
                     concept.returnTermLink(termLink);
                     

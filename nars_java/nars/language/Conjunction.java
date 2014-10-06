@@ -111,8 +111,8 @@ public class Conjunction extends CompoundTerm {
      * @param argList the list of arguments
      * @param memory Reference to the memory
      */
-    final public static Term make(final Term[] argList, final Memory memory) {
-        return make(argList, TemporalRules.ORDER_NONE, memory);
+    final public static Term make(final Term[] argList) {
+        return make(argList, TemporalRules.ORDER_NONE);
     }
 
     /**
@@ -123,7 +123,7 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    final public static Term make(final Term[] argList, final int temporalOrder, final Memory memory) {
+    final public static Term make(final Term[] argList, final int temporalOrder) {
         if (argList.length == 0) {
             return null;
         }                         // special case: single component
@@ -131,13 +131,11 @@ public class Conjunction extends CompoundTerm {
             return argList[0];
         }                         // special case: single component
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            final CharSequence name = makeCompoundName(NativeOperator.SEQUENCE, argList);
-            final Term t = memory.conceptTerm(name);
-            return (t != null) ? t : new Conjunction(name, argList, temporalOrder);
+            return new Conjunction(makeCompoundName(NativeOperator.SEQUENCE, argList), argList, temporalOrder);
         } else {
             // sort/merge arguments
             final TreeSet<Term> set = new TreeSet<>(Arrays.asList(argList));             
-            return make(set, temporalOrder, memory);
+            return make(set, temporalOrder);
         }
     }
 
@@ -149,7 +147,7 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    final private static Term make(final TreeSet<Term> set, int temporalOrder, final Memory memory) {
+    final private static Term make(final TreeSet<Term> set, int temporalOrder) {
         Term[] argument = set.toArray(new Term[set.size()]);
         final CharSequence name;
         if (temporalOrder == TemporalRules.ORDER_NONE) {
@@ -157,8 +155,7 @@ public class Conjunction extends CompoundTerm {
         } else {
             name = makeCompoundName(NativeOperator.PARALLEL, argument);
         }
-        final Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new Conjunction(name, argument, temporalOrder);
+        return new Conjunction(name, argument, temporalOrder);
     }
 
     // overload this method by term type?
@@ -170,11 +167,11 @@ public class Conjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    final public static Term make(final Term term1, final Term term2, final Memory memory) {
-        return make(term1, term2, TemporalRules.ORDER_NONE, memory);
+    final public static Term make(final Term term1, final Term term2) {
+        return make(term1, term2, TemporalRules.ORDER_NONE);
     }
 
-    final public static Term make(final Term term1, final Term term2, int temporalOrder, final Memory memory) {
+    final public static Term make(final Term term1, final Term term2, int temporalOrder) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             
             final Term[] components;
@@ -205,7 +202,7 @@ public class Conjunction extends CompoundTerm {
             } else {
                 components = new Term[] { term1, term2 };
             }
-            return make(components, temporalOrder, memory);
+            return make(components, temporalOrder);
             
         } else {
             
@@ -229,7 +226,7 @@ public class Conjunction extends CompoundTerm {
                 set.add(term1);
                 set.add(term2);
             }
-            return make(set, temporalOrder, memory);
+            return make(set, temporalOrder);
         }
     }
 

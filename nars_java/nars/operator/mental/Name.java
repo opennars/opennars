@@ -52,7 +52,7 @@ public class Name extends Operator {
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term compound = args[0];
         Term atomic = args[1];
-        Similarity content = Similarity.make(compound, atomic, memory);
+        Similarity content = Similarity.make(compound, atomic);
         
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));

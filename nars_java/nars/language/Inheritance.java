@@ -65,7 +65,7 @@ public class Inheritance extends Statement {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Inheritance make(final Term subject, final Term predicate, final Memory memory) {
+    public static Inheritance make(final Term subject, final Term predicate) {
         
         if (invalidStatement(subject, predicate)) {
             //throw new RuntimeException("Inheritance.make: Invalid Inheritance statement: subj=" + subject + ", pred=" + predicate);
@@ -78,7 +78,7 @@ public class Inheritance extends Statement {
         CharSequence name;
         if (subjectProduct && predicateOperator) {
             //name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term);
-            return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, true, memory);
+            return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, true);
         } else {
             name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
             Term[] arguments = termArray( subject, predicate );

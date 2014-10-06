@@ -76,7 +76,7 @@ public class Disjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A Disjunction generated or a Term it reduced to
      */
-    public static Term make(Term term1, Term term2, Memory memory) {
+    public static Term make(Term term1, Term term2) {
         TreeSet<Term> set;
         if (term1 instanceof Disjunction) {
             set = new TreeSet<>(((CompoundTerm) term1).getTermList());
@@ -97,7 +97,7 @@ public class Disjunction extends CompoundTerm {
             set.add(term1);
             set.add(term2);
         }
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -106,9 +106,9 @@ public class Disjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(Collection<Term> argList, Memory memory) {
+    public static Term make(Collection<Term> argList) {
         TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set, memory);
+        return make(set);
     }
 
     /**
@@ -117,14 +117,14 @@ public class Disjunction extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set, Memory memory) {
+    public static Term make(TreeSet<Term> set) {
         if (set.size() == 1) {
+            // special case: single component
             return set.first();
-        }                         // special case: single component
-        Term[] argument = set.toArray(new Term[set.size()]);
-        CharSequence name = makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument);
-        Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new Disjunction(name, argument);
+        }                         
+        Term[] argument = set.toArray(new Term[set.size()]);        
+        return new Disjunction(
+                makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument), argument);
     }
 
     /**

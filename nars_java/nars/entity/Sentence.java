@@ -399,8 +399,8 @@ public class Sentence implements Cloneable {
             String word = truth.toWord();
             arg[1]=new Term(word);
         }
-        Term argTerm = Product.make(arg,mem);
-        Term operation = Inheritance.make(argTerm, opTerm, mem);
+        Term argTerm = Product.make(arg);
+        Term operation = Inheritance.make(argTerm, opTerm);
         return operation;
     }
 

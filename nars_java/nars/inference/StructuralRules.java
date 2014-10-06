@@ -101,9 +101,9 @@ public final class StructuralRules {
         Term content;
         int order = statement.getTemporalOrder();
         if (switchOrder(compound, index)) {
-            content = Statement.make(statement, pred, sub, TemporalRules.reverseOrder(order), mem);
+            content = Statement.make(statement, pred, sub, TemporalRules.reverseOrder(order));
         } else {
-            content = Statement.make(statement, sub, pred, order, mem);
+            content = Statement.make(statement, sub, pred, order);
         }
         
         if (content == null)
@@ -140,9 +140,9 @@ public final class StructuralRules {
         Term content;
         int order = statement.getTemporalOrder();
         if (switchOrder(sub, (short) index)) {
-            content = Statement.make(statement, t2, t1, TemporalRules.reverseOrder(order), nal.mem());
+            content = Statement.make(statement, t2, t1, TemporalRules.reverseOrder(order));
         } else {
-            content = Statement.make(statement, t1, t2, order, nal.mem());
+            content = Statement.make(statement, t1, t2, order);
         }
         if (content == null) {
             return;
@@ -254,7 +254,7 @@ public final class StructuralRules {
             if (compound instanceof IntersectionInt) {
                 structuralStatement(component, pred, order, truthDed, nal);
             } else if ((compound instanceof SetExt) && (compound.size() > 1)) {
-                structuralStatement(SetExt.make(component, nal.mem()), pred, order, truthDed, nal);
+                structuralStatement(SetExt.make(component), pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
                 if (index == 0) {
                     structuralStatement(component, pred, order, truthDed, nal);
@@ -266,7 +266,7 @@ public final class StructuralRules {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(subj, component, order, truthDed, nal);
             } else if ((compound instanceof SetInt) && (compound.size() > 1)) {
-                structuralStatement(subj, SetInt.make(component, nal.mem()), order, truthDed, nal);
+                structuralStatement(subj, SetInt.make(component), order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
                     structuralStatement(subj, component, order, truthDed, nal);
@@ -289,7 +289,7 @@ public final class StructuralRules {
         Task task = nal.getCurrentTask();
         Term oldContent = task.getContent();
         if (oldContent instanceof Statement) {
-            Term content = Statement.make((Statement) oldContent, subject, predicate, order, nal.mem());
+            Term content = Statement.make((Statement) oldContent, subject, predicate, order);
             if (content != null) {
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
                 nal.singlePremiseTask(content, truth, budget);
@@ -319,12 +319,12 @@ public final class StructuralRules {
         Term pre = statement.getPredicate();
         Term content;
         if (statement instanceof Inheritance) {
-            content = Similarity.make(sub, pre, nal.mem());
+            content = Similarity.make(sub, pre);
         } else {
             if (((compound instanceof SetExt) && (side == 0)) || ((compound instanceof SetInt) && (side == 1))) {
-                content = Inheritance.make(pre, sub, nal.mem());
+                content = Inheritance.make(pre, sub);
             } else {
-                content = Inheritance.make(sub, pre, nal.mem());
+                content = Inheritance.make(sub, pre);
             }
         }
         if (content == null) {
@@ -380,31 +380,31 @@ public final class StructuralRules {
         if (comp instanceof Product) {
             if (side == 0) {
                 subject = comp.term[index];
-                predicate = ImageExt.make((Product) comp, inh.getPredicate(), index, memory);
+                predicate = ImageExt.make((Product) comp, inh.getPredicate(), index);
             } else {
-                subject = ImageInt.make((Product) comp, inh.getSubject(), index, memory);
+                subject = ImageInt.make((Product) comp, inh.getSubject(), index);
                 predicate = comp.term[index];
             }
         } else if ((comp instanceof ImageExt) && (side == 1)) {
             if (index == ((ImageExt) comp).relationIndex) {
-                subject = Product.make(comp, inh.getSubject(), index, memory);
+                subject = Product.make(comp, inh.getSubject(), index);
                 predicate = comp.term[index];
             } else {
                 subject = comp.term[index];
-                predicate = ImageExt.make((ImageExt) comp, inh.getSubject(), index, memory);
+                predicate = ImageExt.make((ImageExt) comp, inh.getSubject(), index);
             }
         } else if ((comp instanceof ImageInt) && (side == 0)) {
             if (index == ((ImageInt) comp).relationIndex) {
                 subject = comp.term[index];
-                predicate = Product.make(comp, inh.getPredicate(), index, memory);
+                predicate = Product.make(comp, inh.getPredicate(), index);
             } else {
-                subject = ImageInt.make((ImageInt) comp, inh.getPredicate(), index, memory);
+                subject = ImageInt.make((ImageInt) comp, inh.getPredicate(), index);
                 predicate = comp.term[index];
             }
         } else {
             return;
         }
-        Inheritance newInh = Inheritance.make(subject, predicate, memory);
+        Inheritance newInh = Inheritance.make(subject, predicate);
         if (newInh == null)
             return;
         
@@ -412,7 +412,7 @@ public final class StructuralRules {
         if (indices.length == 2) {
             content = newInh;
         } else if ((oldContent instanceof Statement) && (indices[0] == 1)) {
-            content = Statement.make((Statement) oldContent, oldContent.term[0], newInh, oldContent.getTemporalOrder(), memory);
+            content = Statement.make((Statement) oldContent, oldContent.term[0], newInh, oldContent.getTemporalOrder());
         } else {
             Term[] componentList;
             Term condition = oldContent.term[0];
@@ -420,14 +420,14 @@ public final class StructuralRules {
                 componentList = ((CompoundTerm) condition).cloneTerms();
                 componentList[indices[1]] = newInh;
                 Term newCond = memory.term((CompoundTerm) condition, componentList);
-                content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder(), memory);
+                content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
             } else {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
                     content = memory.term(oldContent, componentList);
                 } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
-                    content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder(), memory);
+                    content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
             }
         }
@@ -465,8 +465,8 @@ public final class StructuralRules {
             Product product = (Product) subject;
             for (short i = 0; i < product.size(); i++) {
                 newSubj = product.term[i];
-                newPred = ImageExt.make(product, predicate, i, nal.mem());
-                inheritance = Inheritance.make(newSubj, newPred, nal.mem());
+                newPred = ImageExt.make(product, predicate, i);
+                inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {
                     if (truth == null) {
                         budget = BudgetFunctions.compoundBackward(inheritance, nal);
@@ -482,12 +482,12 @@ public final class StructuralRules {
             for (short i = 0; i < image.size(); i++) {
                 if (i == relationIndex) {
                     newSubj = image.term[relationIndex];
-                    newPred = Product.make(image, predicate, relationIndex, nal.mem());
+                    newPred = Product.make(image, predicate, relationIndex);
                 } else {
-                    newSubj = ImageInt.make(image, predicate, i, nal.mem());
+                    newSubj = ImageInt.make(image, predicate, i);
                     newPred = image.term[i];
                 }
-                inheritance = Inheritance.make(newSubj, newPred, nal.mem());
+                inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {
                     if (truth == null) {
                         budget = BudgetFunctions.compoundBackward(inheritance, nal);
@@ -518,9 +518,9 @@ public final class StructuralRules {
         if (predicate instanceof Product) {
             Product product = (Product) predicate;
             for (short i = 0; i < product.size(); i++) {
-                newSubj = ImageInt.make(product, subject, i, nal.mem());
+                newSubj = ImageInt.make(product, subject, i);
                 newPred = product.term[i];
-                inheritance = Inheritance.make(newSubj, newPred, nal.mem());
+                inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {
                     if (truth == null) {
                         budget = BudgetFunctions.compoundBackward(inheritance, nal);
@@ -535,13 +535,13 @@ public final class StructuralRules {
             int relationIndex = image.relationIndex;
             for (short i = 0; i < image.size(); i++) {
                 if (i == relationIndex) {
-                    newSubj = Product.make(image, subject, relationIndex, nal.mem());
+                    newSubj = Product.make(image, subject, relationIndex);
                     newPred = image.term[relationIndex];
                 } else {
                     newSubj = image.term[i];
-                    newPred = ImageExt.make(image, subject, i, nal.mem());
+                    newPred = ImageExt.make(image, subject, i);
                 }
-                inheritance = Inheritance.make(newSubj, newPred, nal.mem());
+                inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) { // jmv <<<<<
                     if (truth == null) {
                         budget = BudgetFunctions.compoundBackward(inheritance, nal);
@@ -661,8 +661,7 @@ public final class StructuralRules {
         Term content = Statement.make(statement, 
                 Negation.make(pred), 
                 Negation.make(subj), 
-                TemporalRules.reverseOrder(statement.getTemporalOrder()), 
-                memory);                
+                TemporalRules.reverseOrder(statement.getTemporalOrder()));                
         
         TruthValue truth = sentence.truth;
         BudgetValue budget;

@@ -73,7 +73,7 @@ public class ImageExt extends Image {
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argList, Memory memory) {
+    public static Term make(Term[] argList) {
         if (argList.length < 2) {
             return null;
         }
@@ -89,7 +89,7 @@ public class ImageExt extends Image {
             }
             n++;
         }
-        return make(argument, (short) index, memory);
+        return make(argument, (short) index);
     }
 
     /**
@@ -99,7 +99,7 @@ public class ImageExt extends Image {
      * @param index The index of the place-holder
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Product product, Term relation, short index, Memory memory) {
+    public static Term make(Product product, Term relation, short index) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
             if ((product.size() == 2) && (p2.size() == 2)) {
@@ -111,9 +111,9 @@ public class ImageExt extends Image {
                 }
             }
         }
-        Term[] argument = product.cloneTerms();
+        Term[] argument = product.cloneTerms(); //TODO is this clone needed?
         argument[index] = relation;
-        return make(argument, index, memory);
+        return make(argument, index);
     }
 
     /**
@@ -123,13 +123,13 @@ public class ImageExt extends Image {
      * @param index The index of the place-holder in the new Image
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(ImageExt oldImage, Term component, short index, Memory memory) {
+    public static Term make(ImageExt oldImage, Term component, short index) {
         Term[] argList = oldImage.cloneTerms();
         int oldIndex = oldImage.relationIndex;
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
-        return make(argList, index, memory);
+        return make(argList, index);
     }
 
     /**
@@ -138,10 +138,9 @@ public class ImageExt extends Image {
      * @param index The index of the place-holder in the new Image
      * @return the Term generated from the arguments
      */
-    public static ImageExt make(final Term[] argument, final short index, final Memory memory) {
-        CharSequence name = makeImageName(NativeOperator.IMAGE_EXT, argument, index);
-        Term t = memory.conceptTerm(name);
-        return (t != null) ? ((ImageExt)t) : new ImageExt(name, argument, index);
+    public static ImageExt make(final Term[] argument, final short index) {
+        return new ImageExt(makeImageName(NativeOperator.IMAGE_EXT, argument, index), 
+                argument, index);
     }
 
 

@@ -429,7 +429,7 @@ public class GraphExecutive {
         //                    min = c;
         //            }
         //            return min;
-        public ParticlePlan(NAL nal, Sentence[] path, List<Term> sequence, double activation, double distance, float minConf) {
+        public ParticlePlan(Sentence[] path, List<Term> sequence, double activation, double distance, float minConf) {
             this.path = path;
             this.sequence = sequence;
             this.activation = activation;
@@ -442,7 +442,7 @@ public class GraphExecutive {
                 }
             }
             truth = new TruthValue(1.0f, minConf);
-            budget = BudgetFunctions.forward(truth, nal);
+            budget = new BudgetValue(); //BudgetFunctions.forward(truth, nal);
             budget.andPriority(minConf);
         }
 
@@ -487,8 +487,7 @@ public class GraphExecutive {
         
     }
     
-    public TreeSet<ParticlePlan> particlePlan(final NAL nal, final Term target, final double distance, final int particles) {
-        final Memory memory = nal.mem();
+    public TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles) {        
                 
         PostCondition targetPost = new PostCondition(target);
         
@@ -599,15 +598,14 @@ public class GraphExecutive {
                 continue;
 
             //System.out.println("  cause: " + Arrays.toString(path));
-            ParticlePlan rp = new ParticlePlan(nal, path, seq, pp.score(), pp.distance, minConf);
+            ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance, minConf);
             plans.add(rp);
         }
         
         return plans;
     } 
     
-    protected void planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {        
-        
+    protected Task planTask(ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         TruthValue truth = plan.truth;
         BudgetValue budget = plan.budget;
         
@@ -635,21 +633,26 @@ public class GraphExecutive {
         }*/
 
         Term subj = seq.size() > 1 ?
-            Conjunction.make(seq.toArray(new Term[seq.size()]), TemporalRules.ORDER_FORWARD, memory)
+            Conjunction.make(seq.toArray(new Term[seq.size()]), TemporalRules.ORDER_FORWARD)
                 :
             seq.get(0);
         
         
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
 
-        Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD, memory);
+        Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD);
 
         if (imp == null) {
             throw new RuntimeException("Invalid implication: " + subj + " =\\> " + target);
         }
         
         
-        Task newTask = new Task(new Sentence(imp, punctuation, truth, stamp), budget, task);
+        return new Task(new Sentence(imp, punctuation, truth, stamp), budget, task);        
+    }
+            
+    protected void planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
+        
+        Task newTask = planTask(plan, c, task, target, punctuation);
         
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
@@ -666,7 +669,7 @@ public class GraphExecutive {
         if (!implication.containsVertex(target))
             return;
 
-        TreeSet<ParticlePlan> plans = particlePlan(nal, target, searchDistance, particles);
+        TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
         int n = 0;
         for (ParticlePlan p : plans) {
             planTask(nal, p, c, task, target, punctuation);

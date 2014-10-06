@@ -54,13 +54,13 @@ public abstract class Feel extends Operator {
         Stamp stamp = new Stamp(memory, Tense.Present);
         TruthValue truth = new TruthValue(value, 0.999f);
         Term self = new Term(Symbols.SELF);
-        Term subject = SetExt.make(self, memory);
+        Term subject = SetExt.make(self);
                 
         Term predicate = SetInt.make(
                 // remove the "^feel" prefix from name
-                new Term( ((String)name()).substring(5) ), memory); 
+                new Term( ((String)name()).substring(5) )); 
         
-        Term content = Inheritance.make(subject, predicate, memory);
+        Term content = Inheritance.make(subject, predicate);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
         float quality = BudgetFunctions.truthToQuality(truth);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);

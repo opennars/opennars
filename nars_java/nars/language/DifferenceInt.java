@@ -21,8 +21,8 @@
 package nars.language;
 
 import java.util.TreeSet;
-import nars.io.Symbols.NativeOperator;
 import nars.core.Memory;
+import nars.io.Symbols.NativeOperator;
 
 /**
  * A compound term whose extension is the difference of the intensions of its term
@@ -64,7 +64,7 @@ public class DifferenceInt extends CompoundTerm {
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Term[] argList, Memory memory) {
+    public static Term make(Term[] argList) {
         if (argList.length == 1) { // special case from CompoundTerm.reduceComponent
             return argList[0];
         }
@@ -75,12 +75,11 @@ public class DifferenceInt extends CompoundTerm {
         if ((argList[0] instanceof SetInt) && (argList[1] instanceof SetInt)) {
             TreeSet<Term> set = new TreeSet<>(((CompoundTerm) argList[0]).getTermList());
             set.removeAll(((CompoundTerm) argList[1]).getTermList());           // set difference
-            return SetInt.make(set, memory);
+            return SetInt.make(set);
         }
-        
-        CharSequence name = makeCompoundName(NativeOperator.DIFFERENCE_INT, argList);
-        Term t = memory.conceptTerm(name);
-        return (t != null) ? t : new DifferenceInt(name, argList);
+                
+        return new DifferenceInt(makeCompoundName(NativeOperator.DIFFERENCE_INT, argList),
+                argList);
     }
 
     /**
@@ -90,12 +89,12 @@ public class DifferenceInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term t1, Term t2, Memory memory) {
+    public static Term make(Term t1, Term t2) {
         if (t1.equals(t2)) {
             return null;
         }
 
-        return make(new Term[] { t1, t2 }, memory);
+        return make(new Term[] { t1, t2 });
     }
 
     /**

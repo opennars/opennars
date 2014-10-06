@@ -25,7 +25,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
      */
     public final AbstractBag<Concept> concepts;
     private final ConceptBuilder conceptBuilder;
-    private final NAL nal;
+    public final NAL nal;
 
     public SequentialMemoryCycle(AbstractBag<Concept> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;

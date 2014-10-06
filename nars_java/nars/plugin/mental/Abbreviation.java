@@ -52,7 +52,7 @@ public class Abbreviation implements Plugin {
             Term atomic = memory.newSerialTerm(Symbols.TERM_PREFIX);
                         
             Sentence sentence = new Sentence(
-                    Similarity.make(compound, atomic, memory), 
+                    Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT_MARK, 
                     new TruthValue(1, 0.9999f),  // a naming convension
                     new Stamp(memory));
@@ -106,7 +106,7 @@ public class Abbreviation implements Plugin {
 
                         Operation operation = Operation.make(
                                 abbreviate, termArray( task.sentence.content ), 
-                                false, memory);
+                                false);
 
                         abbreviate.call(operation, memory);
                     }
