@@ -209,9 +209,9 @@ public class NARPrologMirror implements Output {
             else if (arity == 2) {                
                 switch (predicate) {
                     case "inheritance":
-                        return Inheritance.make(nterm(s.getArg(0)), nterm(s.getArg(1)), mem);
+                        return Inheritance.make(nterm(s.getArg(0)), nterm(s.getArg(1)));
                     case "similarity":
-                        return Similarity.make(nterm(s.getArg(0)), nterm(s.getArg(1)), mem);
+                        return Similarity.make(nterm(s.getArg(0)), nterm(s.getArg(1)));
                     //TODO more types
                     default:
                         System.err.println("nterm() does not yet support: " + predicate);

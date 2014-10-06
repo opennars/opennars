@@ -2,8 +2,6 @@ package nars;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
@@ -17,11 +15,9 @@ import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.prolog.Int;
 import nars.prolog.NoSolutionException;
-import nars.prolog.Parser;
 import nars.prolog.Prolog;
 import nars.prolog.SolveInfo;
 import nars.prolog.Struct;
-import nars.prolog.Theory;
 import nars.prolog.Var;
 
 /**
@@ -122,16 +118,14 @@ public class PrologQueryOperator extends Operator {
         }
         
         Inheritance operatorInheritance = Operation.make(
-            Product.make(resultInnerProductTerms, memory),
-            this,
-            memory
+            Product.make(resultInnerProductTerms),
+            this
         );
         
         //  create the nars result and return it
         Inheritance resultInheritance = Inheritance.make(
             operatorInheritance,
-            new Term("prolog_evaluation"),
-            memory
+            new Term("prolog_evaluation")            
         );
         
         
@@ -394,9 +388,8 @@ public class PrologQueryOperator extends Operator {
                 // is wraped up in a inheritance because there can also exist operators
                 // and it is better understandable by nars or other operators
                 return Inheritance.make(
-                    Product.make(innerProductTerms, memory),
-                    new Term("prolog_list"),
-                    memory
+                    Product.make(innerProductTerms),
+                    new Term("prolog_list")
                 );
             }
             else {
@@ -422,9 +415,9 @@ public class PrologQueryOperator extends Operator {
                 // is wraped up in a inheritance because there can also exist operators
                 // and it is better understandable by nars or other operators
                 return Inheritance.make(
-                    Product.make(innerProductTerms, memory),
-                    new Term("prolog_operation"),
-                    memory
+                    Product.make(innerProductTerms),
+                    new Term("prolog_operation")
+                    
                 );
             }
 
