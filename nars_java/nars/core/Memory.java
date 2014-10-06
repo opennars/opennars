@@ -575,6 +575,7 @@ public class Memory implements Output, Serializable {
                 if (recorder.isActive()) {
                     recorder.onTaskRemove(task, "Neglected");
                 }
+                task.end();
             }
         }
         else if (t instanceof PauseInput) {            
@@ -668,6 +669,7 @@ public class Memory implements Output, Serializable {
                       //no confidence - we can delete the wrongs out that way.
                       if (recorder.isActive())
                           recorder.onTaskRemove(task, "Ignored (zero confidence)");
+                      task.end();
                       return false;
                   }
             }
@@ -731,7 +733,7 @@ public class Memory implements Output, Serializable {
                             if (recorder.isActive()) {
                                 recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
                             }
-                            
+                            task.end();
                             return false;
                         }
                     }
@@ -746,6 +748,7 @@ public class Memory implements Output, Serializable {
                             if (recorder.isActive()) {                                
                                 recorder.onTaskRemove(task, "Overlapping Revision Evidence (i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/);
                             }
+                            task.end();
                             return false;
                         }
                     }
@@ -770,6 +773,8 @@ public class Memory implements Output, Serializable {
         else {            
             if (recorder.isActive())
                 recorder.onTaskRemove(task, "Ignored (insufficient budget)");
+            task.end();
+            return false;
         }
         return true;
     }
@@ -1047,7 +1052,7 @@ public class Memory implements Output, Serializable {
                         if (recorder.isActive()) {
                             recorder.onTaskRemove(task, "Neglected");
                         }
-                        
+                        task.end();
                     }
                 }
             }

@@ -298,5 +298,11 @@ public class Task extends AbstractTask {
 //    }
 //
 
+    /** sets priority to zero */
+    @Override
+    public void end() {
+        setPriority(0);
+    }
+
     
 }

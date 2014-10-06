@@ -32,8 +32,7 @@ import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.entity.Item;
 
-
-public class Bag<E extends Item> extends AbstractBag<E>  {
+public class Bag<E extends Item> extends AbstractBag<E> {
 
     /**
      * priority levels
@@ -43,15 +42,12 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      * firing threshold
      */
     public final int THRESHOLD;
-    
 
-    
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
     private final short[] DISTRIBUTOR;
-    
-    
+
     /**
      * mapping from key to item
      */
@@ -62,7 +58,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      * array of lists of items, for items on different level
      */
     public final Deque<E>[] itemTable;
-    
+
     /**
      * defined in different bags
      */
@@ -84,42 +80,39 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      */
     private int currentCounter;
 
-    
-    
     /**
      * The display level; initialized at lowest
      */
     //private int showLevel;
-    
     protected Bag(int levels, int capacity) {
         this(levels, capacity, null);
     }
-    
-    public Bag(int levels, int capacity, AtomicDurations forgettingRate) {        
+
+    public Bag(int levels, int capacity, AtomicDurations forgettingRate) {
         this.levels = levels;
         this.forgettingRate = forgettingRate;
-        
-        THRESHOLD = (int)(Parameters.BAG_THRESHOLD * levels);
+
+        THRESHOLD = (int) (Parameters.BAG_THRESHOLD * levels);
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
-        
+
         this.capacity = capacity;
-        
+
         nameTable = new HashMap<>(capacity);
-        
+
         itemTable = new Deque[this.levels];
-        
+
         DISTRIBUTOR = Distributor.get(this.levels).order;
-        
+
         clear();
         //showing = false;        
     }
-    
 
     @Override
     public final void clear() {
-        for (int i = 0; i < levels; i++) {            
-            if (itemTable[i]!=null)
+        for (int i = 0; i < levels; i++) {
+            if (itemTable[i] != null) {
                 itemTable[i].clear();
+            }
         }
         nameTable.clear();
         currentLevel = levels - 1;
@@ -127,9 +120,6 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         mass = 0;
         currentCounter = 0;
     }
-
-
-
 
     /**
      * The number of items in the bag
@@ -145,8 +135,6 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     public Set<CharSequence> keySet() {
         return nameTable.keySet();
     }
-    
-    
 
     /**
      * Get the average priority of Items
@@ -188,30 +176,39 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     }
 
 
-    @Override 
-    public boolean putIn(final E newItem, final boolean nameTableInsert) {
-                        
-        if (nameTableInsert) {
-            final CharSequence newKey = newItem.name();
-            final E oldItem = nameTable.put(newKey, newItem);            
-            if (oldItem != null) {                  // merge duplications
-                outOfBase(oldItem);
-                newItem.merge(oldItem);
-            }
-        }        
-        
-        final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
-        if (overflowItem != null) {             // remove overflow
-            final CharSequence overflowKey = overflowItem.name();
-            nameTable.remove(overflowKey);
-            return (overflowItem != newItem);
-        } else {
-            return true;
+    @Override public boolean putIn(final E newItem) {
+
+        final CharSequence newKey = newItem.name();        
+        final E existingItemWithSameKey = nameTable.remove(newKey);
+
+        if (existingItemWithSameKey != null) {
+            // merge duplications
+            outOfBase(existingItemWithSameKey);
+            newItem.merge(existingItemWithSameKey);
+        }
+
+        // put the (new or merged) item into itemTable        
+        final E overflowItem = intoBase(newItem);
+
+        if (overflowItem == newItem) {
+            //did not add
+            return false;
         }
         
-    }
-    
+        nameTable.put(newKey, newItem);
+        
+        
 
+        if (overflowItem != null) {             
+            // remove overflow
+            final CharSequence overflowKey = overflowItem.name();
+            if (!overflowKey.equals(newKey)) {
+                nameTable.remove(overflowKey);
+            }
+        }
+        
+        return true;
+    }
 
     /**
      * Check whether a level is empty
@@ -224,35 +221,33 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         return (level == null) || (level.isEmpty());
     }
 
-    
     final public int nextNonEmptyLevel(int levelIndex) {
         //group this code into one function so it hopefully gets inlined */
         final int distributorLength = DISTRIBUTOR.length;
         Deque<E> currentTable;
         int cl = currentLevel;
-        
+
         do {
-            cl = DISTRIBUTOR[((levelIndex++)%distributorLength)];
+            cl = DISTRIBUTOR[((levelIndex++) % distributorLength)];
             currentTable = itemTable[cl];
-        } while ((currentTable==null) || (currentTable.isEmpty())); //levelEmpty(currentLevel));
-        
+        } while ((currentTable == null) || (currentTable.isEmpty())); //levelEmpty(currentLevel));
+
         currentLevel = cl; //write to object outside of the loop
-        
+
         return levelIndex;
     }
-    
+
     protected void nextNonEmptyLevel() {
         // look for a non-empty level
         if (size() == 1) {
             //optimized case: only one item - just find the next non-empty level
             int levelsTraversed = 0;
             do {
-                currentLevel = (currentLevel + 1) % levels;    
+                currentLevel = (currentLevel + 1) % levels;
                 levelsTraversed++;
             } while (levelEmpty(currentLevel));
             levelIndex = (levelIndex + levelsTraversed) % DISTRIBUTOR.length;
-        }   
-        else {
+        } else {
             levelIndex = nextNonEmptyLevel(levelIndex);
         }
 
@@ -262,33 +257,30 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
             currentCounter = getLevelSize(currentLevel);
         }
     }
-    
 
     @Override
-    public E takeOut(final boolean removeFromNameTable) {
-        if (size() == 0) return null; // empty bag                
-                
+    public E takeOut() {
+        if (size() == 0) {
+            return null; // empty bag                
+        }
         if (levelEmpty(currentLevel) || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
-        
+
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
-               
+
         currentCounter--;
-        
-        if (removeFromNameTable) {
-            nameTable.remove(selected.name());
-            //refresh();
-        }
-        
+
+        nameTable.remove(selected.name());
+        //refresh();
+
         return selected;
     }
-    
 
-    public int getLevelSize(final int level) {        
+    public int getLevelSize(final int level) {
         return (levelEmpty(level)) ? 0 : itemTable[level].size();
     }
-    
+
     /**
      * Pick an item by key, then remove it from the bag
      *
@@ -297,14 +289,12 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      */
     @Override
     public E pickOut(final CharSequence key) {
-        final E picked = nameTable.get(key);
-        if (picked != null) {
+        final E picked = nameTable.remove(key);
+        //if (picked != null) {
             outOfBase(picked);
-            nameTable.remove(key);
-        }
+        //}
         return picked;
     }
-
 
     /**
      * Decide the put-in level according to priority
@@ -322,12 +312,13 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      * Insert an item into the itemTable, and return the overflow
      *
      * @param newItem The Item to put in
-     * @return The overflow Item
+     * @return null if nothing overflowed, non-null if an overflow Item, which
+     * may be the attempted input item (in which case it was not inserted)
      */
     private E intoBase(final E newItem) {
         E oldItem = null;
         int inLevel = getLevel(newItem);
-        if (size() > capacity) {      // the bag is full
+        if (size() > capacity) {      // the bag will be full after the next 
             int outLevel = 0;
             //while (itemTable[outLevel].isEmpty()) {
             while (levelEmpty(outLevel)) {
@@ -337,7 +328,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
                 oldItem = takeOutFirst(outLevel);
-            }        
+            }
         }
         ensureLevelExists(inLevel);
         itemTable[inLevel].add(newItem);        // FIFO
@@ -347,16 +338,17 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     }
 
     protected final void ensureLevelExists(final int level) {
-        if (itemTable[level]==null)
+        if (itemTable[level] == null) {
             itemTable[level] = newLevel();
+        }
     }
-    
+
     protected Deque<E> newLevel() {
-        return new ArrayDeque<>(1+capacity/levels);
+        return new ArrayDeque<>(1 + capacity / levels);
         //return new LinkedList<E>();  //not good
         //return new FastTable<E>(); //slower than arraydeque under current loads    
     }
-    
+
     /**
      * Take out the first or last E in a level from the itemTable
      *
@@ -364,7 +356,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      * @return The first Item
      */
     private E takeOutFirst(final int level) {
-        final E selected = itemTable[level].removeFirst();        
+        final E selected = itemTable[level].removeFirst();
         mass -= (level + 1);
         //refresh();
         return selected;
@@ -377,15 +369,16 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      */
     protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
-        
-        //boolean found = false;
-        if (itemTable[level] != null)
+
+        boolean found = false;
+        if (itemTable[level] != null) {
             if (itemTable[level].remove(oldItem)) {
-                //found = true;
+                found = true;
                 mass -= (level + 1);
             }
+        }
+
         
-        /*
         //If it wasn't found, it probably was removed already.  So this check is probably not necessary
         
         if (!found) {
@@ -393,22 +386,25 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
             if (!outOfBaseComplete(oldItem)) {
                 throw new RuntimeException("Can not remove missing element " + oldItem + " from " + this.getClass().getSimpleName());
             }
-        }*/
-        
+        }
         //refresh();
     }
 
-    /** try to avoid calling this, it is expensive.  
-     * a bug in an outOfBase() caller might be causing the need for this. */
+    /**
+     * try to avoid calling this, it is expensive. a bug in an outOfBase()
+     * caller might be causing the need for this.
+     */
     protected boolean outOfBaseComplete(final E oldItem) {
-        for (int i = 0; i < levels; i++) {
-            if (itemTable[i]!=null)
-                if (itemTable[i].remove(oldItem))
+        for (int level = 0; level < levels; level++) {
+            if (itemTable[level] != null) {
+                if (itemTable[level].remove(oldItem)) {
+                    mass -= (level + 1);
                     return true;
-        }       
+                }
+            }
+        }
         return false;
     }
-    
 
 //    /**
 //     * Refresh display
@@ -419,16 +415,15 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
 //                bagObserver.refresh(toString());
 //            }
 //    }
-
     /**
      * Collect Bag content into a String for display
      */
     @Override
     public String toString() {
         final StringBuilder buf = new StringBuilder(" ");
-        for (int i = levels-1; i >= 0; i--) {
-            if (itemTable[i]!=null && !itemTable[i].isEmpty()) {
-                buf.append("\n --- Level ").append((i+1)).append(":\n");
+        for (int i = levels - 1; i >= 0; i--) {
+            if (itemTable[i] != null && !itemTable[i].isEmpty()) {
+                buf.append("\n --- Level ").append((i + 1)).append(":\n");
                 for (final E e : itemTable[i]) {
                     buf.append(e.toStringExternal()).append('\n');
                 }
@@ -442,16 +437,16 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
      */
     public String toStringLong(int minLevel) {
         StringBuilder buf = new StringBuilder(32)
-            .append(" BAG ").append(getClass().getSimpleName())
-            .append(" ").append(showSizes());
-        
+                .append(" BAG ").append(getClass().getSimpleName())
+                .append(" ").append(showSizes());
+
         for (int i = levels; i >= minLevel; i--) {
-            if (!levelEmpty(i-1)) {
+            if (!levelEmpty(i - 1)) {
                 buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");
-                for (final E e : itemTable[i-1]) {
+                for (final E e : itemTable[i - 1]) {
                     buf = buf.append(e.toStringLong()).append('\n');
                 }
-                
+
             }
         }
         buf.append(">>>> end of Bag").append(getClass().getSimpleName());
@@ -473,28 +468,33 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         return "Levels: " + Integer.toString(l) + ", sizes: " + buf;
     }
 
-
     @Override
     public float getMass() {
         return mass;
     }
-    
+
     public float getAverageItemsPerLevel() {
-        return capacity/levels;
+        return capacity / levels;
     }
+
     public float getMaxItemsPerLevel() {
         int max = getLevelSize(0);
         for (int i = 1; i < levels; i++) {
             int s = getLevelSize(i);
-            if (s > max) max = s;
+            if (s > max) {
+                max = s;
+            }
         }
         return max;
     }
+
     public float getMinItemsPerLevel() {
         int min = getLevelSize(0);
         for (int i = 1; i < levels; i++) {
             int s = getLevelSize(i);
-            if (s < min) min = s;
+            if (s < min) {
+                min = s;
+            }
         }
         return min;
     }
@@ -505,7 +505,9 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     }
 
     public Collection<E> getLevel(final int i) {
-        if (itemTable[i] == null) return Collections.EMPTY_LIST;
+        if (itemTable[i] == null) {
+            return Collections.EMPTY_LIST;
+        }
         return itemTable[i];
     }
 
@@ -518,40 +520,42 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     public Iterator<E> iterator() {
         return new Iterator<E>() {
 
-            int l = itemTable.length-1;            
+            int l = itemTable.length - 1;
             private Iterator<E> levelIterator;
             private E next;
             final int size = size();
             int count = 0;
-            
+
             @Override
             public boolean hasNext() {
-                if (next!=null)
+                if (next != null) {
                     return true;
-                
-                if (l >=0 && levelIterator == null) {
+                }
+
+                if (l >= 0 && levelIterator == null) {
                     while (levelEmpty(l)) {
                         l--;
-                        if (l == -1)
+                        if (l == -1) {
                             return false; //end of the levels
+                        }
                     }
                     levelIterator = itemTable[l].descendingIterator();
                 }
-                
-                if (levelIterator == null)
+
+                if (levelIterator == null) {
                     return false;
-                
+                }
+
                 next = levelIterator.next();
-                count++;                                
-                
+                count++;
+
                 if (levelIterator.hasNext()) {
                     return true;
-                }
-                else {
+                } else {
                     levelIterator = null;
                     l--;
                     return count <= size;
-                }                
+                }
             }
 
             @Override
@@ -560,24 +564,44 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
                 next = null;
                 return e;
             }
-            
+
         };
     }
 
     public int numEmptyLevels() {
         int empty = 0;
         for (int i = 0; i < itemTable.length; i++) {
-            if (levelEmpty(i))
+            if (levelEmpty(i)) {
                 empty++;
+            }
         }
         return empty;
     }
 
-    @Override public E removeKey(final CharSequence key) {
-        return nameTable.remove(key);
-    }
-        
-    
-    
-    
+
+//    private void stat() {
+//        int itsize = 0;
+//        Set<CharSequence> items = new HashSet();
+//        for (Deque<E> x : itemTable) {
+//            if (x != null) {
+//                itsize += x.size();
+//                for (E e : x)
+//                    if (e!=null) items.add(e.name());
+//            }
+//        }
+//        int nsize = nameTable.size();
+//        if (nsize != itsize) {
+//            System.err.println("nameTable=" + nameTable.size() + " , itemTable=" + itsize);
+////            Set<CharSequence> named = new HashSet(nameTable.keySet());
+////            if (itsize > nsize) {
+////                System.err.println("  itemTable extras: " + items.removeAll(named));
+////            }
+////            else {
+////                System.err.println("  nameTable extras: " + named.removeAll(items));
+////            }
+//                        
+//        }
+//        
+//    }
+
 }

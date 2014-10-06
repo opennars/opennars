@@ -48,24 +48,13 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * Add a new Item into the Bag
      *
      * @param newItem The new Item
-     * @param insertIntoNameTable  whether to insert the item into the nametable; allows avoiding this if it was never removed
      * @return Whether the new Item is added into the Bag
      */
-    abstract public boolean putIn(final E newItem, boolean insertIntoNameTable);
+    abstract public boolean putIn(final E newItem);
     
     
 
-    /**
-     * Add a new Item into the Bag
-     *
-     * @param newItem The new Item
-     * @return Whether the new Item is added into the Bag
-     */
-    public boolean putIn(final E newItem) {
-        return putIn(newItem, true);
-    }
     
-
 
     /**
      * The number of items in the bag
@@ -80,7 +69,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      *
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public E takeOut(boolean removeFromNameTable);
+    abstract public E takeOut();
     abstract public E pickOut(final CharSequence key);    
 
     public void printAll() {
@@ -89,16 +78,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
             System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
         }
     }
-    
-    /**
-     * Choose an Item according to priority distribution and take it out of the
-     * Bag
-     *
-     * @return The selected Item, or null if this bag is empty
-     */    
-    public E takeOut() {
-        return takeOut(true);
-    }
+
         
     /**
      * Get the item decay rate, which differs in difference subclass, and can be
@@ -195,27 +175,24 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */
-    public final boolean putBack(final E oldItem, final boolean insertIntoNameTable) {        
-        forget(oldItem);
-        return putIn(oldItem, insertIntoNameTable);
-    }
-    
     public final boolean putBack(final E oldItem) {
-        return putBack(oldItem, true);
+        forget(oldItem);
+        return putIn(oldItem);
     }
+
     
     /** x = takeOut(), then putBack(x) - without removing 'x' from nameTable 
      *  @return the variable that was updated, or null if none was taken out
      */
     public E processNext(boolean forget) {
-        final E x = takeOut(false);
+        final E x = takeOut();
         if (x!=null) {
             //putBack():
             if (forget) {
                 forget(x);
             }
             
-            boolean r = putIn(x, false);
+            boolean r = putIn(x);
             if (!r) {
                 throw new RuntimeException("Bag.processNext");
             }
@@ -234,14 +211,6 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     @Override
     public abstract Iterator<E> iterator();
 
-    /**
-    *  Removes a key from the nameTable, but not from the bag itself.
-    *  Use only after having tentatively removed an item with takeOut(false) to complete
-    *  the removal operation.
-    * 
-    *  @return the previous value associated with <tt>key</tt>, or 
-    *  <tt>null</tt> if there was no mapping for <tt>key</tt>.
-    */
-    abstract public E removeKey(CharSequence key);
+
     
 }

@@ -15,6 +15,7 @@ import nars.core.NAR;
 import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NWindow;
+import nars.gui.output.TaskTree;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
 import nars.language.Term;
@@ -135,11 +136,11 @@ public class Rover extends PhysicsModel {
             float L = 11.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i, L));
+                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i, L, 3));
             }
             
             Vec2 backRetina = new Vec2(0, -0.5f);
-            vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f));
+            vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f, 3));
             
             
             /*
@@ -207,12 +208,12 @@ public class Rover extends PhysicsModel {
                 }
                 
                 if (hit!=null) {                                        
-                    String dist = "unknown";
-                    if (distanceSteps == 10) {
-                        dist = Texts.n1(d);
-                    }
-                    else if (distanceSteps == 2) {
+                    String dist = "unknown";                    
+                    if (distanceSteps == 2) {
                         dist = "hit";
+                    }
+                    else if (distanceSteps < 10) {
+                        dist = Texts.n1(d * (distanceSteps/10.0f));
                     }
                     sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
                 }
@@ -270,7 +271,7 @@ public class Rover extends PhysicsModel {
                 h += MathUtils.TWOPI;
             }
             h = h / MathUtils.TWOPI;
-            String dh = Texts.n1(h);// + ",rad";
+            String dh = "a" + (int)(h*18);   // + ",rad";
             feltOrientation.set("<" + dh + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length());
@@ -457,15 +458,18 @@ public class Rover extends PhysicsModel {
         //nar.addInput("<{0.0,0.1} --> zeroishNumber>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
         nar.addInput("<0 <-> 0.0>. %1.00;0.90%");
-        nar.addInput("<0.0 <-> 0.1>. %1.00;0.75%");
-        nar.addInput("<0.1 <-> 0.2>. %1.00;0.75%");
-        nar.addInput("<0.2 <-> 0.3>. %1.00;0.75%");
-        nar.addInput("<0.3 <-> 0.4>. %1.00;0.75%");
-        nar.addInput("<0.4 <-> 0.5>. %1.00;0.75%");
-        nar.addInput("<0.5 <-> 0.6>. %1.00;0.75%");
-        nar.addInput("<0.6 <-> 0.7>. %1.00;0.75%");
-        nar.addInput("<0.7 <-> 0.8>. %1.00;0.75%");
-        nar.addInput("<0.8 <-> 0.9>. %1.00;0.75%");
+        nar.addInput("<0.0 <-> 0.1>. %1.00;0.50%");
+        nar.addInput("<0.1 <-> 0.2>. %1.00;0.50%");
+        nar.addInput("<0.2 <-> 0.3>. %1.00;0.50%");
+        nar.addInput("<0.3 <-> 0.4>. %1.00;0.50%");
+        nar.addInput("<0.4 <-> 0.5>. %1.00;0.50%");
+        nar.addInput("<0.5 <-> 0.6>. %1.00;0.50%");
+        nar.addInput("<0.6 <-> 0.7>. %1.00;0.50%");
+        nar.addInput("<0.7 <-> 0.8>. %1.00;0.50%");
+        nar.addInput("<0.8 <-> 0.9>. %1.00;0.50%");
+        nar.addInput("<feltOrientation <-> feltAngularMotion>?");
+        nar.addInput("<feltSpeed <-> feltAngularMotion>?");
+        nar.addInput("<{left,right,forward,backward} --> direction>.");
 
     }
 
@@ -477,17 +481,18 @@ public class Rover extends PhysicsModel {
     public static void main(String[] args) {
         //NAR nar = new DefaultNARBuilder().build();
         NAR nar = new DiscretinuousBagNARBuilder().
-                setConceptBagLevels(400).
-                setConceptBagSize(4096).
+                //setConceptBagLevels(400).
+                //setConceptBagSize(4096).
                 build();
         
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
-        nar.param().duration.set(500);
-        nar.start(50, 500);
+        nar.param().duration.set(10);
+        nar.start(50, 50);
         nar.param().noiseLevel.set(0);
 
+        new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
 
 }
