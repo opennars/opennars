@@ -22,7 +22,6 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
@@ -38,12 +37,11 @@ import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.entity.TaskLink;
-import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
 import nars.inference.InferenceRecorder;
+import nars.inference.NAL;
 import nars.inference.TemporalRules;
 import nars.io.Output;
 import nars.io.Output.OUT;
@@ -90,7 +88,6 @@ import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
-import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
@@ -120,13 +117,7 @@ public class Memory implements Output, Serializable {
     
     private boolean enabled = true;
 
-    public void temporalRuleOutputToGraph(Sentence s, Task t) {
-        if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-            if(s.stamp.getOccurrenceTime()==Stamp.ETERNAL) { //should be eternal to be able to plan with it, shouldnt it?
-                executive.graph.implication.add(s, (CompoundTerm)s.content, t,false);
-            }
-        }
-    }
+    
     
     public static interface TaskSource {
         public AbstractTask nextTask();
@@ -147,92 +138,6 @@ public class Memory implements Output, Serializable {
     public final EventEmitter event = Events.newEventEmitter();
     
     
-
-    /* static methods making new compounds, which may return null */
-    /**
-     * Try to make a compound term from a template and a list of term
-     *
-     * @param compound The template
-     * @param components The term
-     * @param memory Reference to the memory
-     * @return A compound term or null
-     */
-    public Term term(final CompoundTerm compound, final Term[] components) {
-        if (compound instanceof ImageExt) {
-            return ImageExt.make(components, ((Image) compound).relationIndex, this);
-        } else if (compound instanceof ImageInt) {
-            return ImageInt.make(components, ((Image) compound).relationIndex, this);
-        } else {
-            return term(compound.operator(), components);
-        }
-    }
-
-    public Term term(final CompoundTerm compound, Collection<Term> components) {
-        Term[] c = components.toArray(new Term[components.size()]);
-        return term(compound, c);
-    }
-    
-
-    /**
-     * Try to make a compound term from an operator and a list of term
-     * <p>
-     * Called from StringParser
-     *
-     * @param op Term operator
-     * @param arg Component list
-     * @return A term or null
-     */
-    public Term term(final NativeOperator op, final Term[] a) {
-        switch (op) {
-            case SET_EXT_OPENER:
-                return SetExt.make(CompoundTerm.termList(a), this);
-            case SET_INT_OPENER:
-                return SetInt.make(CompoundTerm.termList(a), this);
-            case INTERSECTION_EXT:
-                return IntersectionExt.make(CompoundTerm.termList(a), this);
-            case INTERSECTION_INT:
-                return IntersectionInt.make(CompoundTerm.termList(a), this);
-            case DIFFERENCE_EXT:
-                return DifferenceExt.make(a, this);
-            case DIFFERENCE_INT:
-                return DifferenceInt.make(a, this);
-            case INHERITANCE:
-                return Inheritance.make(a[0], a[1], this);
-            case PRODUCT:
-                return Product.make(a, this);
-            case IMAGE_EXT:
-                return ImageExt.make(a, this);
-            case IMAGE_INT:
-                return ImageInt.make(a, this);
-            case NEGATION:
-                return Negation.make(a);
-            case DISJUNCTION:
-                return Disjunction.make(CompoundTerm.termList(a), this);
-            case CONJUNCTION:
-                return Conjunction.make(a, this);
-            case SEQUENCE:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, this);
-            case PARALLEL:
-                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, this);
-            case IMPLICATION:
-                return Implication.make(a[0], a[1], this);
-            case IMPLICATION_AFTER:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
-            case IMPLICATION_BEFORE:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD, this);
-            case IMPLICATION_WHEN:
-                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
-            case EQUIVALENCE:
-                return Equivalence.make(a[0], a[1], this);
-            case EQUIVALENCE_WHEN:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
-            case EQUIVALENCE_AFTER:
-                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
-        }
-        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
-    }
-    
-
 
     
     
@@ -260,21 +165,25 @@ public class Memory implements Output, Serializable {
      */
     public final ArrayDeque<Task> newTasks;
     
-    public Term currentTerm;
-
-    public Concept currentConcept;
-
-    private Task currentTask;
-
-    private TermLink currentBeliefLink;
-    private TaskLink currentTaskLink;
-
-    private Sentence currentBelief;
-
     
-
-    private Stamp newStamp;
-
+    
+    
+    // ----------------------------------------
+//    public Term currentTerm;
+//
+//    public Concept currentConcept;
+//
+//    private Task currentTask;
+//
+//    private TermLink currentBeliefLink;
+//    private TaskLink currentTaskLink;
+//
+//    private Sentence currentBelief;    
+//
+//    private Stamp newStamp;
+    // ----------------------------------------
+    
+    
     public final Term self;
 
     
@@ -288,6 +197,7 @@ public class Memory implements Output, Serializable {
     
     
     private boolean working;    
+    
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
@@ -300,8 +210,6 @@ public class Memory implements Output, Serializable {
      */
     private long clock;
     
-
-
     
     public final Param param;
     
@@ -469,6 +377,15 @@ public class Memory implements Output, Serializable {
         return null;
     }
 
+    //TODO decide if this is necessary
+    public void temporalRuleOutputToGraph(Sentence s, Task t) {
+        if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+            if(s.stamp.getOccurrenceTime()==Stamp.ETERNAL) { //should be eternal to be able to plan with it, shouldnt it?
+                executive.graph.implication.add(s, (CompoundTerm)s.content, t,false);
+            }
+        }
+    }
+    
     /**
      * Get an existing Concept for a given Term.
      *
@@ -519,6 +436,94 @@ public class Memory implements Output, Serializable {
         return (c == null) ? 0f : c.getPriority();
     }
 
+
+    /* static methods making new compounds, which may return null */
+    /**
+     * Try to make a compound term from a template and a list of term
+     *
+     * @param compound The template
+     * @param components The term
+     * @param memory Reference to the memory
+     * @return A compound term or null
+     */
+    public Term term(final CompoundTerm compound, final Term[] components) {
+        if (compound instanceof ImageExt) {
+            return ImageExt.make(components, ((Image) compound).relationIndex, this);
+        } else if (compound instanceof ImageInt) {
+            return ImageInt.make(components, ((Image) compound).relationIndex, this);
+        } else {
+            return term(compound.operator(), components);
+        }
+    }
+
+    public Term term(final CompoundTerm compound, Collection<Term> components) {
+        Term[] c = components.toArray(new Term[components.size()]);
+        return term(compound, c);
+    }
+    
+
+    /**
+     * Try to make a compound term from an operator and a list of term
+     * <p>
+     * Called from StringParser
+     *
+     * @param op Term operator
+     * @param arg Component list
+     * @return A term or null
+     */
+    public Term term(final NativeOperator op, final Term[] a) {
+        switch (op) {
+            case SET_EXT_OPENER:
+                return SetExt.make(CompoundTerm.termList(a), this);
+            case SET_INT_OPENER:
+                return SetInt.make(CompoundTerm.termList(a), this);
+            case INTERSECTION_EXT:
+                return IntersectionExt.make(CompoundTerm.termList(a), this);
+            case INTERSECTION_INT:
+                return IntersectionInt.make(CompoundTerm.termList(a), this);
+            case DIFFERENCE_EXT:
+                return DifferenceExt.make(a, this);
+            case DIFFERENCE_INT:
+                return DifferenceInt.make(a, this);
+            case INHERITANCE:
+                return Inheritance.make(a[0], a[1], this);
+            case PRODUCT:
+                return Product.make(a, this);
+            case IMAGE_EXT:
+                return ImageExt.make(a, this);
+            case IMAGE_INT:
+                return ImageInt.make(a, this);
+            case NEGATION:
+                return Negation.make(a);
+            case DISJUNCTION:
+                return Disjunction.make(CompoundTerm.termList(a), this);
+            case CONJUNCTION:
+                return Conjunction.make(a, this);
+            case SEQUENCE:
+                return Conjunction.make(a, TemporalRules.ORDER_FORWARD, this);
+            case PARALLEL:
+                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT, this);
+            case IMPLICATION:
+                return Implication.make(a[0], a[1], this);
+            case IMPLICATION_AFTER:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
+            case IMPLICATION_BEFORE:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD, this);
+            case IMPLICATION_WHEN:
+                return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
+            case EQUIVALENCE:
+                return Equivalence.make(a[0], a[1], this);
+            case EQUIVALENCE_WHEN:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT, this);
+            case EQUIVALENCE_AFTER:
+                return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD, this);
+        }
+        throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
+    }
+    
+
+    
+    
     /* ---------- adjustment functions ---------- */
     /**
      * Adjust the activation level of a Concept
@@ -608,8 +613,8 @@ public class Memory implements Output, Serializable {
      * @param candidateBelief The belief to be used in future inference, for
      * forward/backward correspondence
      */
-    public void activatedTask(final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
-        final Task task = new Task(sentence, budget, getCurrentTask(), sentence, candidateBelief);
+    public void activatedTask(Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
+        final Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
 
         if (sentence.isQuestion()) {
             output(task);
@@ -624,13 +629,14 @@ public class Memory implements Output, Serializable {
      * @param operation The operation just executed
      */
     public void executedTask(final Operation operation) {
-        logic.TASK_EXECUTED.commit(currentTask.budget.getPriority());
+        Task opTask = operation.getTask();
+        logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
         
         TruthValue truth = new TruthValue(1f,0.9999f);
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
         
-        Task task = new Task(sentence, currentTask.budget, operation.getTask());
+        Task task = new Task(sentence, opTask.budget, operation.getTask());
         task.setCause(operation);
         
         addNewTask(task, "Executed");
@@ -653,245 +659,6 @@ public class Memory implements Output, Serializable {
             output.output(c, signal);
     }
 
-    /**
-     * Derived task comes from the inference rules.
-     *
-     * @param task the derived task
-     */
-    public boolean derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
-        
-
-        if (task.budget.aboveThreshold()) {
-        
-            if (task.sentence != null && task.sentence.truth != null) {
-                  float conf = task.sentence.truth.getConfidence();                
-                  if (conf == 0) { 
-                      //no confidence - we can delete the wrongs out that way.
-                      if (recorder.isActive())
-                          recorder.onTaskRemove(task, "Ignored (zero confidence)");
-                      task.end();
-                      return false;
-                  }
-            }
-
-            
-            final Stamp stamp = task.sentence.stamp;
-            if(occurence!=null && occurence.getOccurenceTime()!=Stamp.ETERNAL) {
-                stamp.setOccurrenceTime(occurence.getOccurenceTime());
-            }
-            if(occurence2!=null && occurence2.getOccurenceTime()!=Stamp.ETERNAL) {
-                stamp.setOccurrenceTime(occurence2.getOccurenceTime());
-            }
-            if (stamp.latency > 0) {
-                logic.DERIVATION_LATENCY.commit(stamp.latency);
-            }
-            
-            final ArrayList<Term> chain = stamp.getChain();
-
-            final Term currentTaskContent = getCurrentTask().getContent();
-
-            if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
-                final Term currentBeliefContent = getCurrentBelief().content;
-                if(chain.contains(currentBeliefContent)) {
-                //if(stamp.chainContainsInstance(currentBeliefContent)) {
-                    chain.remove(currentBeliefContent);
-                }
-                stamp.addToChain(currentBeliefContent);
-            }
-
-
-            //workaround for single premise task issue:
-            if(currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
-                if(chain.contains(currentTaskContent)) {
-                //if(stamp.chainContainsInstance(currentTaskContent)) {
-                    chain.remove(currentTaskContent);
-                }
-                stamp.addToChain(currentTaskContent);
-            }
-            //end workaround
-
-            if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
-                if(chain.contains(currentTaskContent)) {                
-                //if(stamp.chainContainsInstance(currentTaskContent)) {                    
-                    chain.remove(currentTaskContent);
-                }
-                stamp.addToChain(currentTaskContent);
-            }
-
-
-            //its a inference rule, so we have to do the derivation chain check to hamper cycles
-            if (!revised) { 
-
-                for (int i = 0; i < chain.size(); i++) {
-                    Term chain1 = chain.get(i);
-                    Term tc = task.getContent();
-                    if (task.sentence.isJudgment() && tc.equals(chain1)) {
-                        Term ptc = task.getParentTask().getContent();
-                        if(task.getParentTask()==null || 
-                           (!(ptc.equals(Negation.make(tc))) && !(tc.equals(Negation.make(ptc))))) {
-                            
-                            if (recorder.isActive()) {
-                                recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
-                            }
-                            task.end();
-                            return false;
-                        }
-                    }
-                }
-            } else { //its revision, of course its cyclic, apply evidental base policy
-                final int stampLength = stamp.baseLength;
-                for (int i = 0; i < stampLength; i++) {
-                    final long baseI = stamp.evidentialBase[i];
-
-                    for (int j = 0; j < stampLength; j++) {     
-                        if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
-                            if (recorder.isActive()) {                                
-                                recorder.onTaskRemove(task, "Overlapping Revision Evidence (i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/);
-                            }
-                            task.end();
-                            return false;
-                        }
-                    }
-                }
-            }
-            
-            event.emit(Events.TaskDerived.class, task, revised, single, occurence, occurence2);
-
-            if(task.sentence.content instanceof Operation) {
-                Operation op=(Operation) task.sentence.content;
-                if(op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
-                    return false;
-                }
-            }
-
-            logic.TASK_DERIVED.commit(task.budget.getPriority());
-
-            output(task);
-
-            addNewTask(task, "Derived");
-        }
-        else {            
-            if (recorder.isActive())
-                recorder.onTaskRemove(task, "Ignored (insufficient budget)");
-            task.end();
-            return false;
-        }
-        return true;
-    }
-
-    /* --------------- new task building --------------- */
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
-     */
-    public void doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
-        Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-        derivedTask(newTask, true, false, null, null);
-    }
-
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
-     */
-    public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
-        if (newContent != null) {
-            {
-                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-                final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                boolean added=derivedTask(newTask, false, false, null, null);
-                if(added && temporalAdd) {
-                    temporalRuleOutputToGraph(newSentence,newTask);
-                }
-            }
-            if(temporalAdd) {
-                TruthValue truthEt=newTruth.clone();
-                truthEt.setConfidence(newTruth.getConfidence()*Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
-                final Sentence newSentence = (new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, getTheNewStamp())).clone(true);
-                final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                boolean added=derivedTask(newTask, false, false, null, null);
-                if(added && temporalAdd) {
-                    temporalRuleOutputToGraph(newSentence,newTask);
-                }
-            }
-        }
-    }
-
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
-     * @param revisible Whether the sentence is revisible
-     */
-//    public void doublePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget, boolean revisible) {
-//        if (newContent != null) {
-//            Sentence taskSentence = currentTask.getSentence();
-//            Sentence newSentence = new Sentence(newContent, taskSentence.getPunctuation(), newTruth, newStamp, revisible);
-//            Task newTask = new Task(newSentence, newBudget, currentTask, currentBelief);
-//            derivedTask(newTask, false, false);
-//        }
-//    }
-
-    /**
-     * Shared final operations by all single-premise rules, called in
-     * StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
-     */
-    public void singlePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
-        singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
-    }
-
-    /**
-     * Shared final operations by all single-premise rules, called in
-     * StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param punctuation The punctuation of the sentence in task
-     * @param newTruth The truth value of the sentence in task
-     * @param newBudget The budget value in task
-     */
-    public void singlePremiseTask(final Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
-        Task parentTask = getCurrentTask().getParentTask();
-                
-        if (parentTask != null) {
-            if (parentTask.getContent() == null)
-                return;     
-            if(newContent==null) {
-                return;
-            }
-            if (newContent.equals(parentTask.getContent())) // circular structural inference
-                return;            
-        }
-        Sentence taskSentence = getCurrentTask().sentence;
-        if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            setTheNewStamp(new Stamp(taskSentence.stamp, getTime()));
-        } else {    // to answer a question with negation in NAL-5 --- move to activated task?
-            setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
-        }
-        
-        Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        derivedTask(newTask, false, true, null, null);
-    }
-
-    public void singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        derivedTask(newTask, false, true, null, null);
-    }
 
     /** enable/disable all I/O and memory processing.  CycleStart and CycleStop events will 
      continue to be generated, allowing the memory to be used as a clock tick while disabled. */
@@ -1004,12 +771,12 @@ public class Memory implements Output, Serializable {
  from the buffer. 
         @return number of tasks processed
      */
-    public int processNewTasks() {        
-        return processNewTasks(newTasks.size());
+    public int processNewTasks(NAL nal) {        
+        return processNewTasks(nal, newTasks.size());
     }
     
     /** Processes a specific number of new tasks */
-    public int processNewTasks(int maxTasks) {
+    public int processNewTasks(NAL nal, int maxTasks) {
         
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory
@@ -1032,7 +799,8 @@ public class Memory implements Output, Serializable {
                ) {
                 
                 // new addInput or existing concept
-                immediateProcess(task);    
+                nal.immediateProcess(this, task);    
+                
                 if (executive.isActionable(task, newEvent))
                     newEvent = task;
                 
@@ -1069,47 +837,15 @@ public class Memory implements Output, Serializable {
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public boolean processNovelTask() {
+    public boolean processNovelTask(NAL nal) {
         final Task task = novelTasks.takeOut();       // select a task from novelTasks
         if (task != null) {
-            immediateProcess(task);
+            nal.immediateProcess(this, task);
             return true;
         }
         return false;
     }
 
-
-    /* ---------- task processing ---------- */
-    /**
-     * Immediate processing of a new task, in constant time Local processing, in
-     * one concept only
-     *
-     * @param task the task to be accepted
-     */
-    private void immediateProcess(final Task task) {
-        logic.TASK_IMMEDIATE_PROCESS.commit();
-
-        setCurrentTask(task); // one of the two places where this variable is set
-        
-        if (recorder.isActive()) {
-            recorder.append("Task Immediate Process", task.toString());
-        }
-        
-        setCurrentTerm(task.getContent());
-        currentConcept = conceptualize(getCurrentTerm());
-        
-        if (getCurrentConcept() != null) {
-            
-            conceptActivate(getCurrentConcept(), task.budget);
-            
-            boolean processed = getCurrentConcept().directProcess(task);
-            
-            if (processed)
-                event.emit(Events.ConceptDirectProcessedTask.class, task);            
-            
-        }
-        
-    }
 
     
      public Operator getOperator(final String op) {
@@ -1166,10 +902,10 @@ public class Memory implements Output, Serializable {
         final StringBuilder sb = new StringBuilder(1024);
         sb.append(getConcepts().toString())
                 .append(toStringLongIfNotNull(novelTasks, "novelTasks"))
-                .append(toStringIfNotNull(newTasks, "newTasks"))
-                .append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
-                .append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
-                .append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
+                .append(toStringIfNotNull(newTasks, "newTasks"));
+                //.append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
+                //.append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
+                //.append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
         return sb.toString();
     }
 
@@ -1197,96 +933,6 @@ public class Memory implements Output, Serializable {
         return conceptProcessor.getConcepts();
     }
 
-    /**
-     * @return the currentTask
-     */
-    public Task getCurrentTask() {
-        return currentTask;
-    }
-
-    /**
-     * @param currentTask the currentTask to set
-     */
-    public void setCurrentTask(Task currentTask) {
-        this.currentTask = currentTask;
-    }
-
-    /**
-     * @return the newStamp
-     */
-    public Stamp getTheNewStamp() {
-        return newStamp;
-    }
-
-    /**
-     * @param newStamp the newStamp to set
-     */
-    public void setTheNewStamp(Stamp newStamp) {
-        this.newStamp = newStamp;
-    }
-
-    /**
-     * @return the currentBelief
-     */
-    public Sentence getCurrentBelief() {
-        return currentBelief;
-    }
-
-    /**
-     * @param currentBelief the currentBelief to set
-     */
-    public void setCurrentBelief(Sentence currentBelief) {
-        this.currentBelief = currentBelief;
-    }
-
-    /**
-     * @return the currentBeliefLink
-     */
-    public TermLink getCurrentBeliefLink() {
-        return currentBeliefLink;
-    }
-
-    /**
-     * @param currentBeliefLink the currentBeliefLink to set
-     */
-    public void setCurrentBeliefLink(TermLink currentBeliefLink) {
-        this.currentBeliefLink = currentBeliefLink;
-    }
-
-    /**
-     * @return the currentTaskLink
-     */
-    public TaskLink getCurrentTaskLink() {
-        return currentTaskLink;
-    }
-
-    /**
-     * @param currentTaskLink the currentTaskLink to set
-     */
-    public void setCurrentTaskLink(TaskLink currentTaskLink) {
-        this.currentTaskLink = currentTaskLink;
-    }
-
-    /**
-     * @return the currentTerm
-     */
-    public Term getCurrentTerm() {
-        return currentTerm;
-    }
-
-    /**
-     * @param currentTerm the currentTerm to set
-     */
-    public void setCurrentTerm(Term currentTerm) {
-        this.currentTerm = currentTerm;
-    }
-
-    /**
-     * @return the currentConcept
-     */
-    public Concept getCurrentConcept() {
-        return currentConcept;
-    }
 
     public long newStampSerial() {
         return currentStampSerial++;

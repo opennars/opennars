@@ -13,7 +13,6 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.Concept;
-import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import static nars.inference.BudgetFunctions.rankBelief;
@@ -345,7 +344,7 @@ public class Executive {
 //    }
             
         
-    public void decisionPlanning(final Task t, final Concept concept) {
+    public void decisionPlanning(final NAL nal, final Task t, final Concept concept) {
         
         if (Parameters.TEMPORAL_PARTICLE_PLANNER) {
             
@@ -356,7 +355,7 @@ public class Executive {
                 if (memory.getRecorder().isActive())
                    memory.getRecorder().append("Goal Planned", t.toString());
 
-                graph.plan(concept, t, t.getContent(), 
+                graph.plan(nal, concept, t, t.getContent(), 
                         particles, searchDepth, '!', maxPlannedTasks);
             }                
         }
@@ -630,154 +629,154 @@ public class Executive {
 //    }
     
     public boolean planShortTerm(final Task newEvent, Memory mem) {
-
-        if (newEvent == null)
-            return false;
-        
-                
-        boolean actionable = isActionable(newEvent,mem);
-        //boolean actionable = true;
-        
-        if (!actionable) {
-            return false;
-        }
-        
-        
-        
-
-        final int maxStmSize =  memory.param.shortTermMemorySize.get();
-        int stmSize = shortTermMemory.size();
-
-        if (stmSize!=0) { 
-            //also here like in rule tables: we dont want to derive useless statements
-                        
-            Task stmLast = shortTermMemory.getLast();
-
-            if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,stmLast.sentence.content)) {
-                return false;
-            }
-            
-            
-            memory.setTheNewStamp(Stamp.make(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.getTime()));
-            
-            memory.setCurrentTask(newEvent);
-                        
-            
-            Sentence currentBelief = stmLast.sentence;
-            
-            memory.setCurrentBelief(currentBelief);
-
-            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, memory);
-
-            //SHORT TERM MEMORY: REMEMBER OWN ACTION SEQUENCES
-            /*if(!(newEvent.sentence.content instanceof Operation)) {
-
-                final AtomicDuration duration = memory.param.duration;
-
-
-                ArrayList<Term> cur=new ArrayList<Term>();
-                
-                Iterator<Task> t = shortTermMemory.descendingIterator();
-                Task curT = t.next(), nextT = null;
-                int i = stmSize;
-                do {
-                    i--;
-                    
-                    if (t.hasNext())
-                        nextT = t.next();
-                    else
-                        nextT = null;
-                    
-                    cur.add(curT.getContent());
-                    
-                    if (nextT!=null) {
-                        long diff = curT.getCreationTime() - nextT.getCreationTime();
-                        
-                        if (diff >= duration.get()) {
-                            cur.add( Interval.intervalTime(diff, duration) );
-                        }
-                    }
-                    
-                    if (t.hasNext()) {
-                        curT = nextT;
-                        continue; //just use last one
-                    }
-                    else {
-                        //Finalize
-                        
-                        memory.setCurrentBelief(curT.sentence);
-
-                        TruthValue val = curT.sentence.truth;
-
-                        //for(int j=i+1;j+1<n;j++) { 
-                        //    val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
-                        // ///lets let it abduction instead
-
-                        long diff = newEvent.getCreationTime() - stmLast.getCreationTime();
-
-                        if (diff >= duration.get()) {
-                            cur.add(0, Interval.intervalTime(diff, duration) );
-                        }
-
-                        //while (cur.size() < maxStmSize) {
-                        //    cur.add( Interval.intervalMagnitude(i) );
-                        //    //cur.add( Interval.intervalTime(i) );
-                        //
-
-                        //if (cur.size() > 1) {
-                        //term = reverse of cur
-                        Term[] terms=new Term[cur.size()];
-                        for(int j=0;j<cur.size();j++) {
-                            terms[cur.size()-j-1]=cur.get(j);
-                        }
-                        int u=0, o=0;
-                        for(int j=0;j<terms.length;j++) {
-                            if(terms[j] instanceof Operation  || terms[j] instanceof Interval) {
-                                u++;
-                            }
-                        }
-                        
-                        if(u!=0) {
-                            Term[] terms_temp=new Term[u];
-                            for(int j=0;j<terms.length;j++) { //only for operator/wait chains
-                                if(terms[j] instanceof Operation || terms[j] instanceof Interval) {
-                                    terms_temp[o]=terms[j];
-                                    o++;
-                                }
-                            }
-                            terms=terms_temp;
-
-                            if (terms.length > 1) {
-
-                                Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
-                                val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-
-                                Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
-
-                                BudgetValue bud=BudgetFunctions.forward(val, memory);
-
-                                memory.doublePremiseTask(imp,val,bud);
-                            }
-                        }
-                    }
-                    
-                    curT = nextT;
-                                        
-                } while (curT!=null);
-            }*/
-            //END SHORT TERM MEMORY
-        }
-
-        //for this heuristic, only use input events & task effects of operations
-        if (actionable) { 
-            shortTermMemory.add(newEvent);
-            
-            if(shortTermMemory.size()>maxStmSize) {
-                shortTermMemory.removeFirst();
-            }
-        
-            return true;
-        }
+//
+//        if (newEvent == null)
+//            return false;
+//        
+//                
+//        boolean actionable = isActionable(newEvent,mem);
+//        //boolean actionable = true;
+//        
+//        if (!actionable) {
+//            return false;
+//        }
+//        
+//        
+//        
+//
+//        final int maxStmSize =  memory.param.shortTermMemorySize.get();
+//        int stmSize = shortTermMemory.size();
+//
+//        if (stmSize!=0) { 
+//            //also here like in rule tables: we dont want to derive useless statements
+//                        
+//            Task stmLast = shortTermMemory.getLast();
+//
+//            if(equalSubTermsInRespectToImageAndProduct(newEvent.sentence.content,stmLast.sentence.content)) {
+//                return false;
+//            }
+//            
+//            
+//            memory.setTheNewStamp(Stamp.make(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.getTime()));
+//            
+//            memory.setCurrentTask(newEvent);
+//                        
+//            
+//            Sentence currentBelief = stmLast.sentence;
+//            
+//            memory.setCurrentBelief(currentBelief);
+//
+//            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, memory);
+//
+//            //SHORT TERM MEMORY: REMEMBER OWN ACTION SEQUENCES
+//            /*if(!(newEvent.sentence.content instanceof Operation)) {
+//
+//                final AtomicDuration duration = memory.param.duration;
+//
+//
+//                ArrayList<Term> cur=new ArrayList<Term>();
+//                
+//                Iterator<Task> t = shortTermMemory.descendingIterator();
+//                Task curT = t.next(), nextT = null;
+//                int i = stmSize;
+//                do {
+//                    i--;
+//                    
+//                    if (t.hasNext())
+//                        nextT = t.next();
+//                    else
+//                        nextT = null;
+//                    
+//                    cur.add(curT.getContent());
+//                    
+//                    if (nextT!=null) {
+//                        long diff = curT.getCreationTime() - nextT.getCreationTime();
+//                        
+//                        if (diff >= duration.get()) {
+//                            cur.add( Interval.intervalTime(diff, duration) );
+//                        }
+//                    }
+//                    
+//                    if (t.hasNext()) {
+//                        curT = nextT;
+//                        continue; //just use last one
+//                    }
+//                    else {
+//                        //Finalize
+//                        
+//                        memory.setCurrentBelief(curT.sentence);
+//
+//                        TruthValue val = curT.sentence.truth;
+//
+//                        //for(int j=i+1;j+1<n;j++) { 
+//                        //    val=TruthFunctions.abduction(val,shortTermMemory.get(j+1).sentence.truth);
+//                        // ///lets let it abduction instead
+//
+//                        long diff = newEvent.getCreationTime() - stmLast.getCreationTime();
+//
+//                        if (diff >= duration.get()) {
+//                            cur.add(0, Interval.intervalTime(diff, duration) );
+//                        }
+//
+//                        //while (cur.size() < maxStmSize) {
+//                        //    cur.add( Interval.intervalMagnitude(i) );
+//                        //    //cur.add( Interval.intervalTime(i) );
+//                        //
+//
+//                        //if (cur.size() > 1) {
+//                        //term = reverse of cur
+//                        Term[] terms=new Term[cur.size()];
+//                        for(int j=0;j<cur.size();j++) {
+//                            terms[cur.size()-j-1]=cur.get(j);
+//                        }
+//                        int u=0, o=0;
+//                        for(int j=0;j<terms.length;j++) {
+//                            if(terms[j] instanceof Operation  || terms[j] instanceof Interval) {
+//                                u++;
+//                            }
+//                        }
+//                        
+//                        if(u!=0) {
+//                            Term[] terms_temp=new Term[u];
+//                            for(int j=0;j<terms.length;j++) { //only for operator/wait chains
+//                                if(terms[j] instanceof Operation || terms[j] instanceof Interval) {
+//                                    terms_temp[o]=terms[j];
+//                                    o++;
+//                                }
+//                            }
+//                            terms=terms_temp;
+//
+//                            if (terms.length > 1) {
+//
+//                                Conjunction subj=(Conjunction) Conjunction.make(terms, TemporalRules.ORDER_FORWARD, memory);
+//                                val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+//
+//                                Term imp=Implication.make(subj, newEvent.sentence.content, TemporalRules.ORDER_FORWARD, memory);
+//
+//                                BudgetValue bud=BudgetFunctions.forward(val, memory);
+//
+//                                memory.doublePremiseTask(imp,val,bud);
+//                            }
+//                        }
+//                    }
+//                    
+//                    curT = nextT;
+//                                        
+//                } while (curT!=null);
+//            }*/
+//            //END SHORT TERM MEMORY
+//        }
+//
+//        //for this heuristic, only use input events & task effects of operations
+//        if (actionable) { 
+//            shortTermMemory.add(newEvent);
+//            
+//            if(shortTermMemory.size()>maxStmSize) {
+//                shortTermMemory.removeFirst();
+//            }
+//        
+//            return true;
+//        }
         return false;
     }
     

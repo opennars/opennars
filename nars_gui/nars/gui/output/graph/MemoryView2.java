@@ -36,7 +36,6 @@ import nars.entity.TruthValue;
 import nars.gui.NARSwing;
 import nars.gui.NCanvas;
 import nars.gui.NSlider;
-import nars.gui.output.graph.PGraphPanel;
 import nars.language.Term;
 import nars.util.NARGraph;
 import nars.util.sort.IndexedTreeSet;
@@ -347,9 +346,9 @@ class GraphCanvasSwing extends NCanvas {
 
     /** should be called from NAR update thread, not swing thread  */
     public void updateGraph() {
-        final Sentence currentBelief = nar.memory.getCurrentBelief();
+        /*final Sentence currentBelief = nar.memory.getCurrentBelief();
         final Concept currentConcept = nar.memory.getCurrentConcept();
-        final Task currentTask = nar.memory.getCurrentTask();
+        final Task currentTask = nar.memory.getCurrentTask();*/
         final IndexedTreeSet<Concept> concepts = new IndexedTreeSet(new Comparator<Concept>() {
             @Override public int compare(Concept o1, Concept o2) {
                 return o1.name().toString().compareTo(o2.name().toString());
@@ -427,9 +426,9 @@ class GraphCanvasSwing extends NCanvas {
                                 d.position(level, index, priority);
                                 deadVertices.remove(c);
 
-                                if (currentConcept!=null)
+                                /*if (currentConcept!=null)
                                     if (c.equals(currentConcept))
-                                        d.boost = 1.0f;                        
+                                        d.boost = 1.0f;                        */
 
 
                                 levelContents++;
@@ -462,9 +461,9 @@ class GraphCanvasSwing extends NCanvas {
                                 d.position(level, index, priority);                    
                                 deadVertices.remove(kb);
 
-                                if (currentBelief!=null)
+                                /*if (currentBelief!=null)
                                     if (kb.equals(currentBelief))
-                                        d.boost = 1.0f;                        
+                                        d.boost = 1.0f;                        */
 
                                 levelContents++;
 
@@ -481,9 +480,9 @@ class GraphCanvasSwing extends NCanvas {
                                 d.position(level, index, priority);                    
                                 deadVertices.remove(t);
 
-                                if (currentTask!=null)
+                                /*if (currentTask!=null)
                                     if (t.equals(currentTask))
-                                        d.boost = 1.0f;                        
+                                        d.boost = 1.0f;                        */
 
                                 levelContents++;
 

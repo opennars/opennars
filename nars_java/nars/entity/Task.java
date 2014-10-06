@@ -298,7 +298,7 @@ public class Task extends AbstractTask {
 //    }
 //
 
-    /** sets priority to zero */
+    /** sets priority to zero, signaling that the Task has ended or discarded */
     @Override
     public void end() {
         setPriority(0);
