@@ -48,6 +48,7 @@ import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
 import nars.inference.InferenceRecorder;
 import nars.inference.NAL;
+import nars.inference.NAL.ImmediateProcess;
 import nars.inference.TemporalRules;
 import nars.io.Output;
 import nars.io.Output.OUT;
@@ -783,14 +784,14 @@ public class Memory implements Output, Serializable {
  from the buffer. 
         @return number of tasks processed
      */
-    public int processNewTasks(NAL nal) {        
-        return processNewTasks(nal, newTasks.size());
+    public int processNewTasks() {        
+        return processNewTasks(newTasks.size());
     }
     
     /** Processes a specific number of new tasks */
-    public int processNewTasks(NAL nal, int maxTasks) {
+    public int processNewTasks(int maxTasks) {
         
-        Collection<Callable<NAL>> cc = new ArrayList(maxTasks);
+        Collection<Callable<NAL>> pending = new ArrayList(maxTasks);
         
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory
@@ -813,7 +814,7 @@ public class Memory implements Output, Serializable {
                ) {
                 
                 // new addInput or existing concept
-                cc.add(new ImmediateProcess(task));                
+                pending.add(new ImmediateProcess(this, task));                
                 
                 /*if (executive.isActionable(task, newEvent))
                     newEvent = task;*/
@@ -840,7 +841,7 @@ public class Memory implements Output, Serializable {
             }
         }        
         
-        synch(cc);
+        execute(pending);
         
         /*boolean stmUpdated = executive.planShortTerm(newEvent,this);
         if (stmUpdated)
@@ -848,25 +849,9 @@ public class Memory implements Output, Serializable {
                  
         return processed;
     }
+ 
     
-    public class ImmediateProcess implements Callable<NAL> {
-        private final Task task;
-        private final NAL nal = new NAL();
-
-        public ImmediateProcess(Task t) {
-            this.task = t;
-            //System.out.println("Start" + task);
-        }
-       
-        @Override public NAL call() throws Exception {
-            nal.immediateProcess(Memory.this, task);
-            //System.out.println("End " + task);
-            return nal;
-        }
-        
-    }
-    
-    public <T> void synch(final Collection<Callable<T>> tasks) {
+    public <T> void execute(final Collection<Callable<T>> tasks) {
         try {
             //System.out.println("Executing: " + tasks);
             exe.invokeAll(tasks);
@@ -881,10 +866,10 @@ public class Memory implements Output, Serializable {
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public boolean processNovelTask(NAL nal) {
+    public boolean processNovelTask() {
         final Task task = novelTasks.takeOut();       // select a task from novelTasks
         if (task != null) {
-            nal.immediateProcess(this, task);
+            new ImmediateProcess(this, task).call();
             return true;
         }
         return false;

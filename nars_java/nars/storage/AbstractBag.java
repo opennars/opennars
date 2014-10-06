@@ -184,7 +184,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     /** x = takeOut(), then putBack(x) - without removing 'x' from nameTable 
      *  @return the variable that was updated, or null if none was taken out
      */
-    public E processNext(boolean forget) {
+    synchronized public E processNext(boolean forget) {
         final E x = takeOut();
         if (x!=null) {
             //putBack():
