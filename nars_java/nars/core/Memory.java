@@ -22,9 +22,15 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.sense.EmotionSense;
@@ -116,6 +122,7 @@ public class Memory implements Output, Serializable {
     public final Executive executive;
     
     private boolean enabled = true;
+    private ExecutorService exe;
 
     
     
@@ -222,6 +229,11 @@ public class Memory implements Output, Serializable {
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
     public Memory(Param param, ConceptProcessor cycleControl, AbstractBag<Task> novelTasks, Operator[] initialOperators) {                
+
+        int threads = 4;
+        if (threads > 0) {
+            exe = Executors.newFixedThreadPool(threads);
+        }
         
         this.param = param;
         this.conceptProcessor = cycleControl;
@@ -778,6 +790,8 @@ public class Memory implements Output, Serializable {
     /** Processes a specific number of new tasks */
     public int processNewTasks(NAL nal, int maxTasks) {
         
+        Collection<Callable<NAL>> cc = new ArrayList(maxTasks);
+        
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory
         int counter = Math.min(maxTasks, newTasks.size());
@@ -799,10 +813,10 @@ public class Memory implements Output, Serializable {
                ) {
                 
                 // new addInput or existing concept
-                nal.immediateProcess(this, task);    
+                cc.add(new ImmediateProcess(task));                
                 
-                if (executive.isActionable(task, newEvent))
-                    newEvent = task;
+                /*if (executive.isActionable(task, newEvent))
+                    newEvent = task;*/
                 
             } else {
                 final Sentence s = task.sentence;
@@ -824,14 +838,44 @@ public class Memory implements Output, Serializable {
                     }
                 }
             }
-        }
+        }        
         
-        boolean stmUpdated = executive.planShortTerm(newEvent,this);
+        synch(cc);
+        
+        /*boolean stmUpdated = executive.planShortTerm(newEvent,this);
         if (stmUpdated)
-            logic.SHORT_TERM_MEMORY_UPDATE.commit();
+            logic.SHORT_TERM_MEMORY_UPDATE.commit();*/
                  
         return processed;
     }
+    
+    public class ImmediateProcess implements Callable<NAL> {
+        private final Task task;
+        private final NAL nal = new NAL();
+
+        public ImmediateProcess(Task t) {
+            this.task = t;
+            //System.out.println("Start" + task);
+        }
+       
+        @Override public NAL call() throws Exception {
+            nal.immediateProcess(Memory.this, task);
+            //System.out.println("End " + task);
+            return nal;
+        }
+        
+    }
+    
+    public <T> void synch(final Collection<Callable<T>> tasks) {
+        try {
+            //System.out.println("Executing: " + tasks);
+            exe.invokeAll(tasks);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Memory.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+    }
+
+
     
     /**
      * Select a novel task to process.

@@ -176,7 +176,7 @@ public class Bag<E extends Item> extends AbstractBag<E> {
     }
 
 
-    @Override public boolean putIn(final E newItem) {
+    @Override synchronized public boolean putIn(final E newItem) {
 
         final CharSequence newKey = newItem.name();        
         final E existingItemWithSameKey = nameTable.remove(newKey);
@@ -259,7 +259,7 @@ public class Bag<E extends Item> extends AbstractBag<E> {
     }
 
     @Override
-    public E takeOut() {
+    public synchronized E takeOut() {
         if (size() == 0) {
             return null; // empty bag                
         }
