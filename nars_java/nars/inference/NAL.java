@@ -139,11 +139,9 @@ abstract public class NAL implements Callable<NAL> {
 
             if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
                 final Term currentBeliefContent = getCurrentBelief().content;
-                if(chain.contains(currentBeliefContent)) {
-                //if(stamp.chainContainsInstance(currentBeliefContent)) {
-                    chain.remove(currentBeliefContent);
-                }
-                stamp.addToChain(currentBeliefContent);
+                
+                stamp.chainRemove(currentBeliefContent);
+                stamp.chainAdd(currentBeliefContent);
             }
 
 
@@ -153,7 +151,7 @@ abstract public class NAL implements Callable<NAL> {
                 //if(stamp.chainContainsInstance(currentTaskContent)) {
                     chain.remove(currentTaskContent);
                 }
-                stamp.addToChain(currentTaskContent);
+                stamp.chainAdd(currentTaskContent);
             }
             //end workaround
 
@@ -162,7 +160,7 @@ abstract public class NAL implements Callable<NAL> {
                 //if(stamp.chainContainsInstance(currentTaskContent)) {                    
                     chain.remove(currentTaskContent);
                 }
-                stamp.addToChain(currentTaskContent);
+                stamp.chainAdd(currentTaskContent);
             }
 
 

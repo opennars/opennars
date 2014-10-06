@@ -151,7 +151,7 @@ public class LocalRules {
             content = u[0];                
             belief = belief.clone(content);
             Stamp st = new Stamp(belief.stamp, memory.getTime());
-            st.addToChain(belief.content);
+            st.chainAdd(belief.content);
         }
 
         task.setBestSolution(belief);

@@ -20,11 +20,10 @@
  */
 package nars.entity;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -200,9 +199,9 @@ public class Stamp implements Cloneable {
         i2 = chain2.size() - 1;
 
         //set here is for fast contains() checking
-        Set<Term> added = new HashSet<>(baseLength * 2); 
+        LinkedHashSet<Term> added = new LinkedHashSet<>(baseLength * 2); 
         
-        derivationChain = new ArrayList(baseLength);
+        
         
         //take as long till the chain is full or all elements were taken out of chain1 and chain2:
         j = 0;
@@ -210,32 +209,28 @@ public class Stamp implements Cloneable {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
                     final Term c1i1 = chain1.get(i1);
-                    if (!added.contains(c1i1)) {
-                        derivationChain.add(c1i1);
-                        added.add(c1i1);
-                    } else {
+                    boolean b = added.add(c1i1);
+                    if (!b)
                         j--; //was double, so we can add one more now
-                    }
                     i1--;
                 }
             } else {
                 if (i2 >= 0) {
                     final Term c2i2 = chain2.get(i2);
-                    if (!added.contains(c2i2)) {
-                        derivationChain.add(c2i2);
-                        added.add(c2i2);
-                    } else {
-                       j--; //was double, so we can add one more now
-                    }
+                    boolean b = added.add(c2i2);
+                    if (!b)
+                       j--; //was double, so we can add one more now                    
                     i2--;
                 }
             }
             j++;
         } 
+        
+        //create derivationChain as reverse of 'added'
+        //the most important elements are at the beginning so let's change that:       
+        derivationChain = new ArrayList(added);
+        Lists.reverse(derivationChain);
 
-        //ok but now the most important elements are at the beginning so let's change that:       
-        //reverse the linkedhashset
-        Collections.reverse(this.derivationChain);
 
         creationTime = time;
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
@@ -329,7 +324,7 @@ public class Stamp implements Cloneable {
      *
      * @return The evidentialBase of numbers
      */
-    public void addToChain(final Term T) {
+    public void chainAdd(final Term T) {
         if (derivationChain.size()+1 > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
             derivationChain.remove(0);
         }
@@ -337,6 +332,11 @@ public class Stamp implements Cloneable {
         derivationChain.add(T);
         name = null;
     }
+    public void chainRemove(final Term t) {
+        derivationChain.remove(t);
+        name = null;
+    }
+    
     
     public static long[] toSetArray(final long[] x) {
         long[] set = x.clone();
@@ -538,6 +538,7 @@ public class Stamp implements Cloneable {
     public long getCreationTime() {
         return creationTime;
     }
+
 
 
 
