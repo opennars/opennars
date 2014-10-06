@@ -231,10 +231,13 @@ public class Memory implements Output, Serializable {
      */
     public Memory(Param param, ConceptProcessor cycleControl, AbstractBag<Task> novelTasks, Operator[] initialOperators) {                
 
-        int threads = 4;
-        if (threads > 0) {
-            exe = Executors.newFixedThreadPool(threads);
+        int threads = 1;
+        if (threads == 1) {
+            exe = Executors.newSingleThreadExecutor();
         }
+        else {
+            exe = Executors.newFixedThreadPool(threads);
+        }               
         
         this.param = param;
         this.conceptProcessor = cycleControl;
