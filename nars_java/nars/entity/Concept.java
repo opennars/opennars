@@ -225,7 +225,7 @@ public class Concept extends Item {
         }
     }
 
-    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    protected synchronized void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         int preSize = table.size();
 
         Sentence removed = addToTable(newSentence, table, max);
@@ -385,7 +385,7 @@ public class Concept extends Item {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    private static Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    private static synchronized Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
         final float rank1 = rankBelief(newSentence);    // for the new isBelief
         float rank2;
         int i = 0;

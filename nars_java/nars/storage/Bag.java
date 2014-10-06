@@ -318,7 +318,7 @@ public class Bag<E extends Item> extends AbstractBag<E> {
     private E intoBase(final E newItem) {
         E oldItem = null;
         int inLevel = getLevel(newItem);
-        if (size() > capacity) {      // the bag will be full after the next 
+        if (size() >= capacity) {      // the bag will be full after the next 
             int outLevel = 0;
             //while (itemTable[outLevel].isEmpty()) {
             while (levelEmpty(outLevel)) {
