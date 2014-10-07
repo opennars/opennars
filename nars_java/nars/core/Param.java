@@ -2,6 +2,7 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.Memory.TimeMode;
 import nars.language.Interval.AtomicDuration;
 import nars.util.meter.util.AtomicDouble;
 
@@ -20,6 +21,8 @@ public class Param implements Serializable {
        (Cycles per duration)
        The range of "now" is [-DURATION, DURATION];      */
     public final AtomicDuration duration = new AtomicDuration();
+
+    protected TimeMode time = TimeMode.Iterative;
 
     
     /** can return result multiplied by duration */
@@ -89,5 +92,16 @@ public class Param implements Serializable {
     
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
+
+    
+    public void setTime(TimeMode time) {
+        this.time = time;
+    }
+
+    public TimeMode getTime() {
+        return time;
+    }
+    
+    
     
 }
