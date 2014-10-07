@@ -164,7 +164,7 @@ public class ImplicationGraph extends SentenceItemGraph {
         if(Variables.containVarIndep(s.content.toString())) {
             return false;
         }
-
+        
         final Term predicatePre = predicate;
         final Term predicatePost = new PostCondition(predicatePre);
         
@@ -185,7 +185,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                 for (Term a : seq.term) {
 
                     if (a instanceof Interval) {
-                        if (addedNonInterval) {
+                        /*if (addedNonInterval) */{
                             //eliminate prefix intervals
                             a = new UniqueInterval(st, (Interval)a, prev);
                         }
@@ -341,22 +341,20 @@ public class ImplicationGraph extends SentenceItemGraph {
         if (!containsEdge(e))
             return DEACTIVATED_EDGE_WEIGHT;
         
-        //transitions to PostCondition vertices are free or low-cost
         
         Item cc = concepts.get(e);
         double conceptPriority = (cc!=null) ? concepts.get(e).getPriority() : 0;
         //conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
+        double strength = (e.truth.getExpectation() * conceptPriority);// * conceptPriority);
+        if (strength == 0)
+            return DEACTIVATED_EDGE_WEIGHT;
         
+        //transitions to PostCondition vertices are free or low-cost        
         if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0 / (e.truth.getExpectation() * conceptPriority);// * conceptPriority);
+            return 1.0 / (1.0 + strength) / 2.0;
         }
         
-             
-        double strength = (e.truth.getExpectation() * conceptPriority);// * conceptPriority);
-        //if (strength > minEdgeStrength)
-            return 1.0 / strength;
-        //else
-        //    return DEACTIVATED_EDGE_WEIGHT;
+        return 1.0 / (1.0 + strength);
     }
 
     @Override

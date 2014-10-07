@@ -1,22 +1,18 @@
 package nars.inference;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import nars.core.Memory;
-import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
 import nars.io.Texts;
@@ -49,11 +45,13 @@ public class Executive {
     int numActiveTasks = 1;
 
     /** max number of tasks that a plan can generate. chooses the N most confident */
-    int maxPlannedTasks = 2;
+    int maxPlannedTasks = 4;
     
     float searchDepth = 32;
-    int particles = 32;
+    int particles = 64;
     
+    /** allows another task to run while another is in delay; may cause priority conflict */
+    boolean decreaseMotivationWhileDelaying = false;
     
     public Executive(Memory mem) {
         this.memory = mem;        
@@ -371,7 +369,7 @@ public class Executive {
         if (tasks.size() == 0)
             return;
         
-        if (NAR.DEBUG) {
+        /*if (NAR.DEBUG)*/ {
             //TODO make a print function
             if (tasks.get(0).delayUntil==-1) {
                 if (tasks.size() > 1)  {
@@ -470,8 +468,9 @@ public class Executive {
 
             if (task.delayUntil == -1) {
                 task.delayUntil = memory.getTime() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
-                //decrease priority in proportion to magnitude                
-                task.setMotivationFactor(1f/(ui.magnitude+1f)); 
+                //decrease priority in proportion to magnitude            
+                if (decreaseMotivationWhileDelaying)
+                    task.setMotivationFactor(1f/(ui.magnitude+1f)); 
                 
                 //TODO raise priority when the delay is finished so that it can trigger below
             }

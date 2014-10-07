@@ -350,7 +350,7 @@ public class GraphExecutive {
     public double getTraversalCost(final Sentence s, final Term target) {
         
         double conceptPriority = getEffectivePriority(memory, target);
-        double conceptCost = (1.0 - conceptPriority);
+        double conceptCost = (1.0 / conceptPriority);
         
         /** weight = distance = cost, for an edge */
         double sentenceCost = implication.getEdgeWeight(s);
@@ -530,23 +530,35 @@ public class GraphExecutive {
                         
             //Calculate path back to target
             Implication imp;
-            boolean nonIntervalAdded = false;
             long accumulatedDelay = 0;
             float minConf = 1.0f;
             
-            for (int i = path.length-1; i >=0; i--) {
+            
+            
+            //iterate backwards, from pred -> subj -> pred -> subj
+            boolean onSubject = false;
+            Term prevTerm = null;
+            for (int i = path.length-1; i >=0; ) {
                 Sentence s = path[i];
                 Term t = s.content;
                 
                 if (!(t instanceof Implication))
                     throw new RuntimeException("Unknown type: " + t + " in sequence generation of " + this);
-                imp = (Implication)t;
-                Term subj = imp.getSubject();
                 
-                if (isPlanTerm(subj)) {                    
-                    boolean isInterval = subj instanceof Interval;
+                imp = (Implication)t;
+                Term term = onSubject ? imp.getSubject() : imp.getPredicate();
+                
+                if (onSubject) i--; //next impl
+                
+                onSubject = !onSubject;
+                
+                if (term==prevTerm)
+                    continue;
+                
+                if (isPlanTerm(term)) {                    
+                    boolean isInterval = term instanceof Interval;
                     if (!isInterval) {
-                        nonIntervalAdded = true;
+                        
                         if (accumulatedDelay > 0) {
                             //TODO calculate a more fine-grained sequence of itnervals
                             //rather than just rounding to the nearest.
@@ -554,19 +566,18 @@ public class GraphExecutive {
                             seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
                             accumulatedDelay = 0;
                         }
-                        seq.add(subj);
+                        seq.add(term);
+                        prevTerm = term;
+                        
                     }
                     else {
-                        //prevent prefix intervals
-                        if (nonIntervalAdded) {
-                            Interval in = (Interval)subj;
-                            long time = in.getTime(memory);
-                            accumulatedDelay += time;
-                        }
+                        Interval in = (Interval)term;
+                        long time = in.getTime(memory);
+                        accumulatedDelay += time;
                     }                    
                 }
                 else {
-                    float c = getEffectiveConfidence(memory, subj);                    
+                    float c = getEffectiveConfidence(memory, term);                    
                     if (c < minConf)
                         minConf = c;
                     
@@ -582,21 +593,21 @@ public class GraphExecutive {
                     */
                 }
                 
-                if (subj instanceof Operation)
+                if (term instanceof Operation)
                     operations++;
             }            
                     
             if (operations == 0)
                 continue;
-            
-            if (accumulatedDelay > 0) {
-                //add suffix delay
-                seq.add( Interval.intervalTime(accumulatedDelay, memory)  );                
-            }
-            
+                        
             if (seq.isEmpty())
                 continue;
+            
+            int lastTerm = seq.size()-1;
+            if (seq.get(lastTerm) instanceof Interval)
+                seq.remove(lastTerm);
 
+            
             //System.out.println("  cause: " + Arrays.toString(path));
             ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance, minConf);
             plans.add(rp);
