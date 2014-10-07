@@ -7,7 +7,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.Output;
@@ -46,7 +46,10 @@ public class NARio extends Run {
     }
 
     public static void main(String[] arg) {
-        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).build();
+        NAR nar = new DefaultNARBuilder().build();
+        
+        //NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).build();
+        
         //NAR nar = new ContinuousBagNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
@@ -62,7 +65,7 @@ public class NARio extends Run {
        // nar.param().beliefForgetDurations.set(99.0f);
         
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(2500);
+        nar.param().duration.set(100);
         nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
         nar.param().shortTermMemorySize.set(35);
@@ -71,7 +74,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 500);
+        nar.start(50, 50);
     }
 
     String[] sight = new String[9];

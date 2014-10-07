@@ -5,7 +5,6 @@ import java.util.Map;
 import nars.core.Memory;
 import nars.entity.Item;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
 
 /**
  * SentenceGraph subclass that stores a Map<Sentence,Concept> of where the sentence
@@ -24,9 +23,6 @@ abstract public class SentenceItemGraph extends SentenceGraph {
     @Override
     public boolean add(final Sentence s, final Item c, boolean specialAdd) {
         
-        if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
-            return false;
-        }
         
        // if(specialAdd) {
        //     return false;

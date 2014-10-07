@@ -135,14 +135,7 @@ public class ImplicationGraph extends SentenceItemGraph {
     
     @Override
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c, boolean specialAdd) {
-        
-        if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) { //add is confusing as hell, so just add it at all of the add functions...
-            return false; //still easier than searching where add is used and why it needs  4 classes hmmm
-        }
-        
-       // if(specialAdd) {
-        //    return false;
-        //}
+
         
         if (!(ct instanceof Implication)) {
             return false;
@@ -306,6 +299,9 @@ public class ImplicationGraph extends SentenceItemGraph {
     
     @Override
     public boolean allow(final Sentence s) {        
+        if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
+            return false;
+        }
         float conf = s.truth.getConfidence();
         float freq = s.truth.getFrequency();
         if ((conf > minConfidence) && (freq > minFreq))

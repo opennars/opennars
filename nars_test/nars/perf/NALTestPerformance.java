@@ -108,7 +108,7 @@ public class NALTestPerformance {
                 m.update(nar.memory);
                 logicState.add(m.toArray(
                         exampleNum,
-                        nar.getTime(),
+                        nar.memory.getCycleTime(),
                         absTime++,
                         successRate, 
                         error ? 1 : 0
