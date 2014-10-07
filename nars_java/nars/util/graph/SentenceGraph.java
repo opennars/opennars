@@ -8,7 +8,6 @@ import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
 import nars.language.CompoundTerm;
 import nars.language.Statement;
 import nars.language.Term;
@@ -152,16 +151,11 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }
     
     public boolean add(final Sentence s, final Item c, boolean specialAdd) { 
-        if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
-            return false;
-        }
+
         //specialAdd is a debug variable, which makes it possible to select from where the system is allowed to build up the tree easily
        // if(specialAdd)
        //    return false;
-        
-        /*if (containsEdge(s))
-            return false;*/
-        
+
         if (!allow(s))
             return false;
             
@@ -190,9 +184,6 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     /** default behavior, may override in subclass */
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c, boolean specialAdd) {
         
-        if(s.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
-            return false;
-        }
        // if(specialAdd) {
        //     return false;
        // }

@@ -147,19 +147,13 @@ abstract public class NAL implements Callable<NAL> {
 
             //workaround for single premise task issue:
             if(currentBelief == null && single && currentTask != null && currentTask.sentence.isJudgment()) {
-                if(chain.contains(currentTaskContent)) {
-                //if(stamp.chainContainsInstance(currentTaskContent)) {
-                    chain.remove(currentTaskContent);
-                }
+                stamp.chainRemove(currentTaskContent);
                 stamp.chainAdd(currentTaskContent);
             }
             //end workaround
 
             if (currentTask != null && !single && currentTask.sentence.isJudgment()) {
-                if(chain.contains(currentTaskContent)) {                
-                //if(stamp.chainContainsInstance(currentTaskContent)) {                    
-                    chain.remove(currentTaskContent);
-                }
+                stamp.chainRemove(currentTaskContent);
                 stamp.chainAdd(currentTaskContent);
             }
 
@@ -346,14 +340,17 @@ abstract public class NAL implements Callable<NAL> {
      * one concept only
      */
     public static class ImmediateProcess extends NAL  {
+        private final Task task;
         
         public ImmediateProcess(Memory mem, Task currentTask) {
             super(mem);
-            setCurrentTask(currentTask);
+            this.task = currentTask;
         }
 
         @Override
         public NAL call()  {
+            setCurrentTask(task);
+            
             mem.logic.TASK_IMMEDIATE_PROCESS.commit();
 
             setCurrentTask(currentTask); // one of the two places where this variable is set
@@ -376,6 +373,15 @@ abstract public class NAL implements Callable<NAL> {
 
             }
             
+            if (mem.executive.isActionable(currentTask)) {
+
+                boolean stmUpdated = mem.executive.inductionOnSucceedingEvents(currentTask, this);
+                if (stmUpdated) {
+                    mem.logic.SHORT_TERM_MEMORY_UPDATE.commit();
+                }
+            }
+
+
             return this;
         }
         

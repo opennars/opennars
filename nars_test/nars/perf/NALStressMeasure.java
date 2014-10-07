@@ -42,7 +42,7 @@ public class NALStressMeasure  {
                     e.printStackTrace();
                 }
                 
-                totalCycles += n.getTime();
+                totalCycles += n.memory.getCycleTime();
             }
                         
 

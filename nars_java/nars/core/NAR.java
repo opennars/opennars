@@ -135,11 +135,9 @@ public class NAR implements Runnable, Output, TaskSource {
     private int inputSelected = 0; //counter for the current selected input channel
     private boolean ioChanged;
     
-    private long lastTime = -1; //last cycle's time, for detecting a reset
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
     
-
     public NAR(Memory m, Perception p) {
         this.memory = m;
         this.perception = p;
@@ -375,8 +373,8 @@ public class NAR implements Runnable, Output, TaskSource {
         
         final boolean wasRunning = running;
         running = true;
-        long startTime = getTime();
-        while (getTime() - startTime < cycles) {
+        long startCycle = memory.getCycleTime();
+        while (memory.getCycleTime() - startCycle < cycles) {
             frame();
         }
         running = wasRunning;
@@ -532,16 +530,7 @@ public class NAR implements Runnable, Output, TaskSource {
         
         if (DEBUG) {
             debugTime();            
-        }        
-
-        //Detect reset
-        long t = memory.getTime();
-        if (t <= lastTime) {
-            resetPorts();
-            lastTime = -1;
-        }
-        lastTime = t;
-        
+        }                
         
         memory.event.emit(FrameStart.class);
 
@@ -602,6 +591,7 @@ public class NAR implements Runnable, Output, TaskSource {
     public long getTime() {
         return memory.getTime();
     }
+    
 
     public boolean isRunning() {
         return running;

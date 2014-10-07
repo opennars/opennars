@@ -248,7 +248,7 @@ public class NALTest  {
         }
 
         if ((!success) || (success && showSuccess)) {
-            System.err.println('\n' + path + " @" + n.getTime());
+            System.err.println('\n' + path + " @" + n.memory.getCycleTime());
             for (Expect e: expects) {
                 System.err.println("  " + e);
             }

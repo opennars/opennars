@@ -25,6 +25,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -124,6 +125,7 @@ public class Memory implements Output, Serializable {
     
     private boolean enabled = true;
     private ExecutorService exe;
+    private long realClockStart;
 
     
     
@@ -330,6 +332,7 @@ public class Memory implements Output, Serializable {
         executive.reset();
         
         clock = 0;
+        realClockStart = System.currentTimeMillis();
         cyclesQueued = 0;
         working = true;
         
@@ -351,6 +354,12 @@ public class Memory implements Output, Serializable {
     }
 
     public long getTime() {
+        return System.currentTimeMillis() - realClockStart;
+        //return clock;
+    }
+    
+    /** internal, subjective time (inference steps) */
+    public long getCycleTime() {
         return clock;
     }
 
@@ -396,10 +405,10 @@ public class Memory implements Output, Serializable {
     //TODO decide if this is necessary
     public void temporalRuleOutputToGraph(Sentence s, Task t) {
         if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-            if(s.stamp.getOccurrenceTime()==Stamp.ETERNAL) { //should be eternal to be able to plan with it, shouldnt it?
-                executive.graph.implication.add(s, (CompoundTerm)s.content, t,false);
-            }
+            
+            executive.graph.implication.add(s, (CompoundTerm)s.content, t,false);            
         }
+
     }
     
     /**
@@ -794,12 +803,11 @@ public class Memory implements Output, Serializable {
     /** Processes a specific number of new tasks */
     public int processNewTasks(int maxTasks) {
         
-        Collection<Callable<NAL>> pending = new ArrayList(maxTasks);
+        List<Callable<NAL>> pending = new ArrayList(maxTasks);
         
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory
         int counter = Math.min(maxTasks, newTasks.size());
-        Task newEvent = null;
         while (counter-- > 0) {
             
             final Task task = newTasks.removeFirst();
@@ -818,9 +826,7 @@ public class Memory implements Output, Serializable {
                 
                 // new addInput or existing concept
                 pending.add(new ImmediateProcess(this, task));                
-                
-                /*if (executive.isActionable(task, newEvent))
-                    newEvent = task;*/
+                                
                 
             } else {
                 final Sentence s = task.sentence;
@@ -845,16 +851,22 @@ public class Memory implements Output, Serializable {
         }        
         
         execute(pending);
-        
-        /*boolean stmUpdated = executive.planShortTerm(newEvent,this);
-        if (stmUpdated)
-            logic.SHORT_TERM_MEMORY_UPDATE.commit();*/
-                 
+                         
         return processed;
     }
  
     
-    public <T> void execute(final Collection<Callable<T>> tasks) {
+    public <T> void execute(final List<Callable<T>> tasks) {
+        if (tasks.size() == 0) return;
+        if (tasks.size() == 1) {
+            try {
+                tasks.get(0).call();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex.toString());
+            }
+            return;
+        }
+        
         try {
             //System.out.println("Executing: " + tasks);
             exe.invokeAll(tasks);
