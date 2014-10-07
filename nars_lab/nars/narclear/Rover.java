@@ -12,7 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NWindow;
 import nars.gui.output.TaskTree;
@@ -479,17 +479,17 @@ public class Rover extends PhysicsModel {
     }
 
     public static void main(String[] args) {
-        NAR nar = new DefaultNARBuilder().build();
-        //NAR nar = new DiscretinuousBagNARBuilder().
-                //setConceptBagLevels(400).
-                //setConceptBagSize(4096).
-                //build();
+        //NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new DiscretinuousBagNARBuilder().
+                setConceptBagLevels(400).
+                setConceptBagSize(4096).
+                build();
         
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
-        nar.param().duration.set(50);
-        nar.start(50, 1);
+        nar.param().duration.set(200);
+        nar.start(50, 100);
         nar.param().noiseLevel.set(0);
 
         new NWindow("Tasks",new TaskTree(nar)).show(300,600);

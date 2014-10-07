@@ -538,7 +538,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     return "";
                 }
                 
-                String s = "@" + memory.getTime();
+                String s = "@" + memory.getTime() + "|" + memory.getCycleTime();
 
                 if (currentSpeed == 0) {
                     s += " - pause";

@@ -537,6 +537,8 @@ public class NAR implements Runnable, Output, TaskSource {
         updatePorts();
         
         try {
+            memory.executive.cycle();
+            
             for (int i = 0; i < cyclesPerFrame; i++)
                 memory.cycle(this);
         }
