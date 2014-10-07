@@ -329,8 +329,6 @@ public class Memory implements Output, Serializable {
         novelTasks.clear();
         newTasks.clear();     
         
-        executive.reset();
-        
         clock = 0;
         realClockStart = System.currentTimeMillis();
         cyclesQueued = 0;

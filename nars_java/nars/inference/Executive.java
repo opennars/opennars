@@ -38,9 +38,6 @@ public class Executive {
     public final GraphExecutive graph;
     
     public final Memory memory;
-    
-    /** previous events, for temporal induction */
-    public final Deque<Task> shortTermMemory = new ArrayDeque<>();
 
     ///** memory for faster execution of &/ statements (experiment) */
     //public final Deque<TaskConceptContent> next = new ArrayDeque<>();
@@ -285,13 +282,7 @@ public class Executive {
         }
         tasksToRemove.clear();
     }
-    
 
-    public void reset() {
-        //next.clear();
-        shortTermMemory.clear();        
-    }   
-    
 
 //    public void manageExecution()  {
 //        
@@ -533,7 +524,6 @@ public class Executive {
         }
 
         //for this heuristic, only use input events & task effects of operations
-        shortTermMemory.add(newEvent);
         stmLast=newEvent;
 
         return true;
