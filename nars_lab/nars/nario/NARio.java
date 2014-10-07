@@ -68,7 +68,6 @@ public class NARio extends Run {
         nar.param().duration.set(100);
         nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
-        nar.param().shortTermMemorySize.set(35);
 
 
         NARio nario = new NARio(nar);

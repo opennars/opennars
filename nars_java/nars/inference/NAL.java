@@ -373,14 +373,10 @@ abstract public class NAL implements Callable<NAL> {
 
             }
             
-            if (mem.executive.isActionable(currentTask)) {
-
-                boolean stmUpdated = mem.executive.inductionOnSucceedingEvents(currentTask, this);
-                if (stmUpdated) {
-                    mem.logic.SHORT_TERM_MEMORY_UPDATE.commit();
-                }
+            boolean stmUpdated = mem.executive.inductionOnSucceedingEvents(currentTask, this);
+            if (stmUpdated) {
+                mem.logic.SHORT_TERM_MEMORY_UPDATE.commit();
             }
-
 
             return this;
         }

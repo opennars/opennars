@@ -90,10 +90,4 @@ public class Param implements Serializable {
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
     
-        
-    
-    /** # of events, can be dynamically adjusted */
-    @Deprecated public final AtomicInteger shortTermMemorySize = new AtomicInteger();
-    
-    
 }
