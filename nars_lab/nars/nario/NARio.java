@@ -65,15 +65,15 @@ public class NARio extends Run {
        // nar.param().beliefForgetDurations.set(99.0f);
         
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(100);
-        nar.param().decisionThreshold.set(0.3);
+        nar.param().duration.set(50);
+        nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
 
 
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 500);
+        nar.start(50, 100);
     }
 
     String[] sight = new String[9];
@@ -273,7 +273,7 @@ public class NARio extends Run {
                                         Task parent = task.getParentTask();
                                         Task root = task.getRootTask();
                                         
-                                        System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief() + ", parent=" + parent);
+                                        //System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief() + ", parent=" + parent);
                                         
                                         if (parent!=root) {
                                             System.out.println(", root=" + root);

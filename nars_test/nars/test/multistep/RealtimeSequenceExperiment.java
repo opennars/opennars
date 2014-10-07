@@ -3,6 +3,9 @@ package nars.test.multistep;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.gui.NARSwing;
+import nars.gui.NWindow;
+import nars.gui.output.graph.ImplicationGraphCanvas;
+import nars.gui.output.graph.ProcessingGraphPanel;
 
 /**
  *
@@ -13,11 +16,11 @@ import nars.gui.NARSwing;
 public class RealtimeSequenceExperiment {
 
     public RealtimeSequenceExperiment() throws InterruptedException {
-        int seqLength = 12;
+        int seqLength = 8;
         int framePeriodMS = 100;
-        int seqPeriodMS = 400;
-        int durationMS = 100;
-        int cycPerFrame = 10;
+        int seqPeriodMS = 800;
+        int durationMS = 50;
+        int cycPerFrame = 5;
         
         NAR n = new DefaultNARBuilder().build();
         
@@ -27,6 +30,10 @@ public class RealtimeSequenceExperiment {
         n.param().decisionThreshold.set(0.9);
         
         new NARSwing(n);
+        new NWindow("Implication Graph", 
+                            new ProcessingGraphPanel(n, 
+                                    new ImplicationGraphCanvas(
+                                            n.memory.executive.graph))).show(500, 500);
         
         n.start(framePeriodMS, cycPerFrame);
     
@@ -47,7 +54,9 @@ public class RealtimeSequenceExperiment {
 //        }
         
         while (true) {
-            n.addInput("e" + last + ". :|:");
+            n.addInput("(^pick,x" + i + ")!");
+            //n.addInput("<(^pick,x" + i + ") =/> e" + i + ">. :|:");
+            //n.addInput("e" + last + ". :|:");
             Thread.sleep(seqPeriodMS);
             i++;
             last++;

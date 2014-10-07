@@ -164,12 +164,14 @@ public class ImplicationGraph extends SentenceItemGraph {
         if(Variables.containVarIndep(s.content.toString())) {
             return false;
         }
-        
+                
         final Term predicatePre = predicate;
         final Term predicatePost = new PostCondition(predicatePre);
         
         addVertex(predicatePre);
         addVertex(predicatePost);
+        
+        
 
         if (subject instanceof Conjunction) {
             Conjunction seq = (Conjunction)subject;
@@ -343,7 +345,7 @@ public class ImplicationGraph extends SentenceItemGraph {
         
         
         Item cc = concepts.get(e);
-        double conceptPriority = (cc!=null) ? concepts.get(e).getPriority() : 0;
+        double conceptPriority = (cc!=null) ? cc.getPriority() : 0.5;
         //conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
         double strength = (e.truth.getExpectation() * conceptPriority);// * conceptPriority);
         if (strength == 0)

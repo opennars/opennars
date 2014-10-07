@@ -47,11 +47,12 @@ public class Executive {
     /** max number of tasks that a plan can generate. chooses the N most confident */
     int maxPlannedTasks = 4;
     
-    float searchDepth = 32;
+    float searchDepth = 8;
     int particles = 64;
     
-    /** allows another task to run while another is in delay; may cause priority conflict */
-    boolean decreaseMotivationWhileDelaying = false;
+    long lastExecution = -1;
+    
+
     
     public Executive(Memory mem) {
         this.memory = mem;        
@@ -307,6 +308,7 @@ public class Executive {
 //    }    
 
     protected void execute(final Operation op, final Task task) {
+    
         
         Operator oper = op.getOperator();
         
@@ -363,6 +365,13 @@ public class Executive {
     }
     
     public void cycle() {
+        long now = memory.getTime();
+        
+        //only execute something no less than every duration time
+        if (now - lastExecution < memory.param.duration.get())
+            return;
+                        
+        lastExecution = now;
         
         updateTasks();
 
@@ -371,16 +380,16 @@ public class Executive {
         
         /*if (NAR.DEBUG)*/ {
             //TODO make a print function
-            if (tasks.get(0).delayUntil==-1) {
-                if (tasks.size() > 1)  {
-                    System.out.println("Tasks @ " + memory.getTime());
-                    for (TaskExecution tcc : tasks)
-                        System.out.println("  " + tcc.toString());
-                }
-                else {
-                    System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
-                }
+            
+            if (tasks.size() > 1)  {
+                System.out.println("Tasks @ " + memory.getTime());
+                for (TaskExecution tcc : tasks)
+                    System.out.println("  " + tcc.toString());
             }
+            else {
+                System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
+            }
+            
         }
         
         
@@ -458,33 +467,24 @@ public class Executive {
     private void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
         int s = task.sequence;
         Term currentTerm = c.term[s];
+        
+        long now = memory.getTime();
+        
+        if (task.delayUntil > now) {
+            //not ready to execute next term
+            return;
+        }
+        
         if (currentTerm instanceof Operation) {
             Concept conc=memory.concept(currentTerm);            
             execute((Operation)currentTerm, task.t);
+            task.delayUntil = now + memory.param.duration.get();
             s++;
         }
         else if (currentTerm instanceof Interval) {
             Interval ui = (Interval)currentTerm;
-
-            if (task.delayUntil == -1) {
-                task.delayUntil = memory.getTime() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
-                //decrease priority in proportion to magnitude            
-                if (decreaseMotivationWhileDelaying)
-                    task.setMotivationFactor(1f/(ui.magnitude+1f)); 
-                
-                //TODO raise priority when the delay is finished so that it can trigger below
-            }
-            else {
-                if (task.delayUntil <= memory.getTime()) {
-                    //delay finished, continue execution with normal motivation
-                    task.setMotivationFactor(1.0f);
-                    task.delayUntil = -1;
-                    s++;
-                }
-                else {
-                    //..
-                }
-            }
+            task.delayUntil = memory.getTime() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
+            s++;
         }        
         else {            
             System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);

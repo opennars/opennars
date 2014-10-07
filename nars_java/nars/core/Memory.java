@@ -738,6 +738,8 @@ public class Memory implements Output, Serializable {
                 }            
             }
             resource.MEMORY_CYCLE.stop();
+            
+            executive.cycle();
 
         }
 
