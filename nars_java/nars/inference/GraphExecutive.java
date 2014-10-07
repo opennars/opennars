@@ -33,7 +33,7 @@ public class GraphExecutive {
     
     
     /** controls the relative weigting of edges and vertices for particle traversals */
-    double conceptCostFactor = 0.8;
+    double conceptCostFactor = 0.5;
     double edgeCostFactor = 1.0 - conceptCostFactor;
     
     //for observation purposes, TODO enable/disable the maintenance of this
@@ -348,14 +348,17 @@ public class GraphExecutive {
 
     /** total cost of a traversal, which includes the edge cost and the target vertex cost */
     public double getTraversalCost(final Sentence s, final Term target) {
-        
-        double conceptPriority = getEffectivePriority(memory, target);
-        double conceptCost = (1.0 / conceptPriority);
+        double conceptCost;
+        if (target instanceof Interval)
+            return 0;
+            //conceptCost = 0;
+        else {
+            double conceptPriority = getEffectivePriority(memory, target);
+            conceptCost = (1.0 / conceptPriority);
+        }
         
         /** weight = distance = cost, for an edge */
-        double sentenceCost = implication.getEdgeWeight(s);
-
-        
+        double sentenceCost = implication.getEdgeWeight(s);        
 
         return (edgeCostFactor * sentenceCost + conceptCostFactor * conceptCost);
         
@@ -535,6 +538,7 @@ public class GraphExecutive {
             
             
             
+            
             //iterate backwards, from pred -> subj -> pred -> subj
             boolean onSubject = false;
             Term prevTerm = null;
@@ -552,20 +556,25 @@ public class GraphExecutive {
                 
                 onSubject = !onSubject;
                 
-                if (term==prevTerm)
-                    continue;
                 
-                if (isPlanTerm(term)) {                    
+                
+                if (isPlanTerm(term)) {                                        
                     boolean isInterval = term instanceof Interval;
                     if (!isInterval) {
+                                                
                         
                         if (accumulatedDelay > 0) {
                             //TODO calculate a more fine-grained sequence of itnervals
                             //rather than just rounding to the nearest.
                             //ex: +2,+1 may be more accurate than a +3
                             seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
-                            accumulatedDelay = 0;
+                            accumulatedDelay = 0;                            
                         }
+                        
+                        //avoid consecutive duplicates
+                        if (prevTerm!=null && term.equals(prevTerm))
+                            continue;
+                        
                         seq.add(term);
                         prevTerm = term;
                         
@@ -574,6 +583,7 @@ public class GraphExecutive {
                         Interval in = (Interval)term;
                         long time = in.getTime(memory);
                         accumulatedDelay += time;
+                        prevTerm = in;
                     }                    
                 }
                 else {
@@ -591,12 +601,14 @@ public class GraphExecutive {
                         }                        
                     }
                     */
+                    prevTerm = term;
                 }
                 
                 if (term instanceof Operation)
                     operations++;
             }            
-                    
+                
+            
             if (operations == 0)
                 continue;
                         
@@ -607,6 +619,7 @@ public class GraphExecutive {
             if (seq.get(lastTerm) instanceof Interval)
                 seq.remove(lastTerm);
 
+            
             
             //System.out.println("  cause: " + Arrays.toString(path));
             ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance, minConf);
