@@ -72,9 +72,6 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         p.conceptBeliefsMax.set(7);
         p.conceptQuestionsMax.set(5);
         
-        
-        p.shortTermMemorySize.set(15);
-        
         p.contrapositionPriority.set(30);
                 
         p.termLinkMaxReasoned.set(3);

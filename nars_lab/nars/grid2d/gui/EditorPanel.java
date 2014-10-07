@@ -501,19 +501,16 @@ public class EditorPanel extends JPanel {
             public void run() {
                 TestChamber.curiousity=true;
                 TestChamber.active=true;
-                String command="(&/";
                 int cnt=0;
                 for (GridObject g : s.objects) {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            command+=",(^go-to," + obi.doorname + "),"+"(^pick," + obi.doorname + ")";
                             s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=2;
                         }
                         if (obi instanceof Pizza) {
-                            command+=",(^go-to," + obi.doorname + ")";
                             s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
@@ -523,11 +520,9 @@ public class EditorPanel extends JPanel {
                     for (int j = 0; j < s.cells.h; j++) {
                         if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
                             s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
-                            command+=",(^go-to," + s.cells.readCells[i][j].name + ")";
                             cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            command+=",(^activate," + s.cells.readCells[i][j].name + ")";
                             s.nar.addInput("<(^activate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             s.nar.addInput("<(^deactivate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
@@ -535,17 +530,6 @@ public class EditorPanel extends JPanel {
                     }
                 }
                 
-                if(!command.equals("(&/")) {
-                    while(cnt< s.nar.param().shortTermMemorySize.get()) {
-                        command+=",+1";
-                        cnt++;
-                    }
-                    command+=")";
-                    
-                   // s.nar.addInput(command+"!");
-                    //s.nar.addInput("<"+command+" =/> <Self --> [exploring]>>.");
-                    //s.nar.addInput("<"+command+" =/> <Self --> [curious]>>.");
-                }
                 s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
                 s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
                 s.nar.addInput("<Self --> [curious]>!");
