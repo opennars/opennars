@@ -47,17 +47,12 @@ public class RealtimeSequenceExperiment {
 //        }
         
         while (true) {
-            n.addInput("<(&/,e" + last + ",(^pick,x" + last + ")) =/> e" + i + ">. :|:");
+            n.addInput("e" + last + ". :|:");
             Thread.sleep(seqPeriodMS);
             i++;
             last++;
             i%=seqLength;
             last%=seqLength;
-            if (last == 0)
-                n.addInput("e" + last + "!");
-            else {
-                //n.addInput("e" + last + ". :|:");
-            }
         }
 
     }
