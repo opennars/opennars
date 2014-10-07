@@ -481,15 +481,15 @@ public class Rover extends PhysicsModel {
     public static void main(String[] args) {
         //NAR nar = new DefaultNARBuilder().build();
         NAR nar = new DiscretinuousBagNARBuilder().
-                setConceptBagLevels(400).
-                setConceptBagSize(4096).
+                setConceptBagLevels(100).
+                setConceptBagSize(1024).
                 build();
         
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
-        nar.param().duration.set(200);
-        nar.start(50, 100);
+        nar.param().duration.set(25);
+        nar.start(25, 20);
         nar.param().noiseLevel.set(0);
 
         new NWindow("Tasks",new TaskTree(nar)).show(300,600);

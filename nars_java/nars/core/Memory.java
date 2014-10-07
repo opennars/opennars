@@ -126,7 +126,13 @@ public class Memory implements Output, Serializable {
     private boolean enabled = true;
     private ExecutorService exe;
     private long realClockStart;
+    private long realClockNow;
 
+    
+    public enum TimeMode {
+        Iterative, Real
+    }
+    TimeMode timeMode;
     
     
     public static interface TaskSource {
@@ -218,7 +224,7 @@ public class Memory implements Output, Serializable {
      * System clock, relatively defined to guarantee the repeatability of
      * behaviors
      */
-    private long clock;
+    private long cycle;
     
     
     public final Param param;
@@ -329,9 +335,12 @@ public class Memory implements Output, Serializable {
         novelTasks.clear();
         newTasks.clear();     
         
-        clock = 0;
-        realClockStart = System.currentTimeMillis();
+        timeMode = param.getTime();      
+        cycle = 0;
+        realClockStart = realClockNow = System.currentTimeMillis();
+        
         cyclesQueued = 0;
+        
         working = true;
         
         emotion.set(0.5f, 0.5f);
@@ -352,15 +361,21 @@ public class Memory implements Output, Serializable {
     }
 
     public long getTime() {
-        return System.currentTimeMillis() - realClockStart;
-        //return clock;
+        switch (timeMode) {
+            case Iterative: return getCycleTime();
+            case Real: return getRealTime();
+        }
+        return 0;
     }
     
     /** internal, subjective time (inference steps) */
     public long getCycleTime() {
-        return clock;
+        return cycle;
     }
 
+    public long getRealTime() {
+        return realClockNow - realClockStart;
+    }
  
     /**
      * Actually means that there are no new Tasks
@@ -765,7 +780,7 @@ public class Memory implements Output, Serializable {
         
         boolean recorderActive = recorder.isActive();
         if (recorderActive)
-            recorder.onCycleStart(clock);
+            recorder.onCycleStart(cycle);
 
         //--------m-a-i-n-----l-o-o-p--------
             
@@ -774,18 +789,22 @@ public class Memory implements Output, Serializable {
         //--------m-a-i-n-----l-o-o-p--------
 
         if (recorderActive)
-            recorder.onCycleEnd(clock);
+            recorder.onCycleEnd(cycle);
 
         if (cyclesQueued > 0)
             cyclesQueued--;         
         
-        clock++;
+        updateTime();        
                 
         event.emit(Events.CycleEnd.class);      
         
     }
 
     
+    protected void updateTime() {
+        cycle++;
+        realClockNow = System.currentTimeMillis();
+    }
     
     
     /**
