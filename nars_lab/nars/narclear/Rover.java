@@ -483,12 +483,13 @@ public class Rover extends PhysicsModel {
         NAR nar = new DiscretinuousBagNARBuilder().
                 setConceptBagLevels(100).
                 setConceptBagSize(1024).
+                realtime().
                 build();
         
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
-        nar.param().setTiming(Memory.Timing.Real);
+        
         nar.param().duration.set(25);
         nar.start(25, 20);
         nar.param().noiseLevel.set(0);
