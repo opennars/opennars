@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -384,8 +385,13 @@ public class ImplicationGraph extends SentenceItemGraph {
         if (getEdgeTarget(e) instanceof PostCondition) {
             return 1.0;
         }
- 
-        double strength = e.truth.getExpectation();
+        
+        Concept c=memory.concept(e.content);
+        double strength = 0;
+        if(c!=null) {
+            strength*=c.getPriority() * e.truth.getExpectation();
+        }
+        
         return strength;
     }
 
