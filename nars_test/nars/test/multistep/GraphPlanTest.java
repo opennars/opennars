@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.gui.NARSwing;
+import nars.gui.NWindow;
+import nars.gui.output.graph.ImplicationGraphCanvas;
+import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.io.Output;
 import org.junit.Test;
 
@@ -11,8 +15,20 @@ import org.junit.Test;
 
 public class GraphPlanTest {
 
+    @Test public void testGraphPlan1a() throws Exception {
+        String input = "";
+        input += "<(&/,(^pick,X),+2) =/> <a --> b>>.\n";
+        input += "<(&/,(^pick,Z),+1) =/> <c --> d>>.\n";    
+        input += "<(&/,<a --> b>,+1,(^pick,Y),+3,<c --> d>) =/> <goal --> reached>>.\n";
+        input += "<goal --> reached>!\n";
+        testGraphPlan(input, 
+                "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z),+1) =/> <goal --> reached>>! %1.00"
+        );
+    }
     @Test public void testGraphPlan1() throws Exception {
         String input = "";
+        
+        //same as above with inputs rearranged
         input += "<(&/,<a --> b>,+1,(^pick,Y),+3,<c --> d>) =/> <goal --> reached>>.\n";
         input += "<(&/,(^pick,X),+2) =/> <a --> b>>.\n";
         input += "<(&/,(^pick,Z),+1) =/> <c --> d>>.\n";    
@@ -20,7 +36,8 @@ public class GraphPlanTest {
         testGraphPlan(input, 
                 "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z),+1) =/> <goal --> reached>>! %1.00"
         );
-    }
+    }    
+    
     @Test public void testGraphPlan2() throws Exception {
         String input = "";
         input += "<C =/> <goal --> reached>>.\n";
@@ -43,7 +60,7 @@ public class GraphPlanTest {
 
             @Override
             public void output(Class channel, Object o) {
-                //System.out.println(o);
+                System.out.println(o);
                 if (o.toString().contains(expected))
                     success.set(true);
             }
@@ -52,11 +69,23 @@ public class GraphPlanTest {
         
         n.addInput(input);
 
-        n.finish(45);
+        //n.finish(45);
         
         //assertTrue(success.get());
+        
+        new NARSwing(n);
+                new NWindow("Implication Graph", 
+                            new ProcessingGraphPanel(n, 
+                                    new ImplicationGraphCanvas(
+                                            n.memory.executive.graph))).show(500, 500);
+        //n.start(100, 1);
+        
+        
     }
     
 
+    public static void main(String[] args) throws Exception {
+        new GraphPlanTest().testGraphPlan1();
+    }
     
 }

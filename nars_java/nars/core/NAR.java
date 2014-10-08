@@ -14,6 +14,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
 import nars.core.Memory.TaskSource;
+import nars.core.Memory.Timing;
 import nars.entity.AbstractTask;
 import nars.entity.Task;
 import nars.gui.NARControls;
@@ -27,7 +28,6 @@ import nars.io.narsese.Narsese;
 import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
-import nars.plugin.mental.TemporalParticlePlanner;
 
 
 /**
@@ -79,7 +79,7 @@ public class NAR implements Runnable, Output, TaskSource {
     protected List<Output> outputChannels;
     
     /** pending input and output channels to add on the next cycle. */
-    private final List<InPort> newInputChannels;
+    private final List<InPort<Object,AbstractTask>> newInputChannels;
     private final List<Output> newOutputChannels;
     
     /** pending niput and output channels to remove on the next cycle */
@@ -153,13 +153,7 @@ public class NAR implements Runnable, Output, TaskSource {
         oldOutputChannels = new CopyOnWriteArrayList();
     
         this.perception.start(this);
-        
-        //the only plugin which is dependent on a parameter
-        //because it enriches NAL8 performance a lot:
-        if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
-            TemporalParticlePlanner planner=new TemporalParticlePlanner();
-            addPlugin(planner);
-        }
+
     }
 
     /**
@@ -456,18 +450,15 @@ public class NAR implements Runnable, Output, TaskSource {
         ioChanged = false;        
         
         if (!newInputChannels.isEmpty()) {
-            for (final InPort n : newInputChannels)
-                inputChannels.add(n);
+            inputChannels.addAll(newInputChannels);
             newInputChannels.clear();
         }
         if (!oldOutputChannels.isEmpty()) {
-            for (final Output n : oldOutputChannels)
-                outputChannels.remove(n);
+            outputChannels.removeAll(oldOutputChannels);
             oldOutputChannels.clear();
         }
         if (!newOutputChannels.isEmpty()) {
-            for (final Output n : newOutputChannels)
-                outputChannels.add(n);
+            outputChannels.addAll(newOutputChannels);
             newOutputChannels.clear();
         }
         
@@ -532,6 +523,8 @@ public class NAR implements Runnable, Output, TaskSource {
             debugTime();            
         }                
         
+        long timeStart = System.currentTimeMillis();
+        
         memory.event.emit(FrameStart.class);
 
         updatePorts();
@@ -549,6 +542,19 @@ public class NAR implements Runnable, Output, TaskSource {
         
         memory.event.emit(FrameEnd.class);
         
+        long timeEnd = System.currentTimeMillis();
+        
+        if (memory.getTiming() == Timing.Real) {
+            long frameTime = timeEnd - timeStart;
+            final int d = param().duration.get();
+            
+            //warn if frame consumed more time than reasoner duration
+            if (frameTime > d) {
+                output(ERR.class, 
+                        "@" + timeEnd + ": Real-time consumed by frame (" + 
+                                frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
+            }
+        }
     }
     
     

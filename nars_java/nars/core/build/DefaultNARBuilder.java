@@ -3,8 +3,10 @@ package nars.core.build;
 import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.core.Memory.Timing;
+import nars.core.NAR;
 import nars.core.NARBuilder;
 import nars.core.Param;
+import nars.core.Parameters;
 import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -12,6 +14,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
+import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
 
@@ -81,12 +84,24 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         p.termLinkMaxMatched.set(10);
         p.termLinkRecordLength.set(10);
         
-        
-        
-        
-        
         return p;
     }
+
+    @Override
+    public NAR build() {
+        NAR n = super.build();
+        
+        //the only plugin which is dependent on a parameter
+        //because it enriches NAL8 performance a lot:
+        if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
+            TemporalParticlePlanner planner=new TemporalParticlePlanner();
+            n.addPlugin(planner);
+        }
+        
+        return n;
+    }
+    
+    
     
     @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
