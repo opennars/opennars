@@ -68,7 +68,7 @@ public class NARio extends Run {
         nar.param().duration.set(50);
         nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
-
+        nar.param().setTiming(Memory.Timing.Real);
 
         NARio nario = new NARio(nar);
 

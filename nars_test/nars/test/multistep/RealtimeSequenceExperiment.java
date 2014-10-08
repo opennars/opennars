@@ -1,5 +1,6 @@
 package nars.test.multistep;
 
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.gui.NARSwing;
@@ -24,7 +25,7 @@ public class RealtimeSequenceExperiment {
         
         NAR n = new DefaultNARBuilder().build();
         
-        //n.param().setRealtime(true);
+        n.param().setTiming(Memory.Timing.Real);
         n.param().duration.set(durationMS);
         n.param().noiseLevel.set(0);
         n.param().decisionThreshold.set(0.9);

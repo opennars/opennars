@@ -129,10 +129,10 @@ public class Memory implements Output, Serializable {
     private long realClockNow;
 
     
-    public enum TimeMode {
+    public enum Timing {
         Iterative, Real
     }
-    TimeMode timeMode;
+    Timing timing;
     
     
     public static interface TaskSource {
@@ -335,7 +335,7 @@ public class Memory implements Output, Serializable {
         novelTasks.clear();
         newTasks.clear();     
         
-        timeMode = param.getTime();      
+        timing = param.getTiming();      
         cycle = 0;
         realClockStart = realClockNow = System.currentTimeMillis();
         
@@ -361,7 +361,7 @@ public class Memory implements Output, Serializable {
     }
 
     public long getTime() {
-        switch (timeMode) {
+        switch (timing) {
             case Iterative: return getCycleTime();
             case Real: return getRealTime();
         }
