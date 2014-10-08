@@ -205,11 +205,18 @@ public class ImplicationGraph extends SentenceItemGraph {
                 if (reverse)
                      Collections.reverse(al);*/
                 
-                for (Term a : seq.term) {
+                
+                for (int i = 0; i < seq.term.length; i++) {
+                    
+                    Term a = seq.term[i];
                     
                     if (Executive.isPlanTerm(a)) {
-                        /*if (!prev.equals(a))*/ 
-                        a = newExecutableVertex(st, a, prev);
+                        //make a unique Term if an Interval or if an Operation in the middle of a sequence
+                        if (((i > 0) && (i < seq.term.length-1)) || (a instanceof Interval))
+                            a = newExecutableVertex(st, a, prev);
+                        else {
+                            addVertex(a);
+                        }
                             
                         if (prev!=null)  {
                             newImplicationEdge(prev, a, c, s);
@@ -247,7 +254,8 @@ public class ImplicationGraph extends SentenceItemGraph {
             if (Executive.isPlanTerm(subject)) {                
                 //newImplicationEdge(predicatePre, subject, c, s);
                 //newImplicationEdge(subject, predicatePost, c, s);                
-                newImplicationEdge(newExecutableVertex(st, subject, null), predicatePost, c, s);
+                addVertex(subject);
+                newImplicationEdge(subject, predicatePost, c, s);
             }
             else {
                 //separate into pre/post
@@ -367,25 +375,18 @@ public class ImplicationGraph extends SentenceItemGraph {
         return x.toString();
     }
 
-    /** weight = cost = distance. returns (low cost) 0..1.0 (high cost) */
-    @Override public double getEdgeWeight(Sentence e) {
+    /** returns (no relevancy) 0..1.0 (high relevancy) */
+    public double getSentenceRelevancy(final Sentence e) {
         if (!containsEdge(e))
-            return DEACTIVATED_EDGE_WEIGHT;
-        
-        
-        Item cc = concepts.get(e);
-        double conceptPriority = (cc!=null) ? cc.getPriority() : 0.5;
-        //conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
-        double strength = (e.truth.getExpectation() * conceptPriority);// * conceptPriority);
-        if (strength == 0)
-            return DEACTIVATED_EDGE_WEIGHT;
+            return 0;
         
         //transitions to PostCondition vertices are free or low-cost        
         if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0 / (1.0 + strength) / 2.0;
+            return 1.0;
         }
-        
-        return 1.0 / (1.0 + strength);
+ 
+        double strength = e.truth.getExpectation();
+        return strength;
     }
 
     @Override

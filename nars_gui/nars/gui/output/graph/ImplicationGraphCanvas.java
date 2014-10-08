@@ -72,17 +72,7 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
     
     @Override
     public float getNodeSize(final Term v) {        
-        float b = 10f * (0.2f + (float) GraphExecutive.getEffectivePriority(graphExec.memory, v));
-        
-        if (maxTermActivation > 0) {
-            Double A = graphExec.accumulatedTerm.get(v);
-            if (A!=null) {
-                double a = graphExec.accumulatedTerm.get(v) / maxTermActivation;
-                b += (float)a;
-            }
-        }
-        
-        return b;
+        return (0.5f + (float)GraphExecutive.getEffectivePriority(graphExec.memory, v)) * 10f;
     }
     
     @Override
@@ -93,6 +83,7 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
         return PGraphPanel.getColor(o.getClass());
     }
             
+    
     
     
 
