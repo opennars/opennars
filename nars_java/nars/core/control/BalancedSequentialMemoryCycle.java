@@ -16,12 +16,13 @@ public class BalancedSequentialMemoryCycle extends SequentialMemoryCycle {
 
     @Override
     public void cycle(Memory m) {
+        this.memory = m;
         
         m.processNewTasks(1);
 
         m.processNovelTask();
 
-        processConcept(m);
+        processConcept();
 
     }
     
