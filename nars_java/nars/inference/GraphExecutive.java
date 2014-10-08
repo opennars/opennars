@@ -300,7 +300,7 @@ public class GraphExecutive {
             double totalProb = 0;
             for (Double c : cost.values()) {
                 if (c > 0)
-                    totalProb += 1.0 / (1 + c);
+                    totalProb += 1.0 / c;
             }
 
             //TODO disallow edge that completes cycle back to target or traversed edge?
@@ -313,7 +313,7 @@ public class GraphExecutive {
             for (Sentence e : cost.keySet()) {
                 nextEdge = e;
 
-                double edgeProb = 1.0 / (1 + cost.get(nextEdge));
+                double edgeProb = 1.0 / cost.get(nextEdge);
                 r -= edgeProb;
 
                 if (r <= 0) {
@@ -346,21 +346,17 @@ public class GraphExecutive {
         
     }
 
-    /** total cost of a traversal, which includes the edge cost and the target vertex cost */
+    /** total cost of a traversal, which includes the edge cost and the target vertex cost. any value > 1 */
     public double getTraversalCost(final Sentence s, final Term target) {
-        double conceptCost;
-        if (target instanceof Interval)
-            return 0;
-            //conceptCost = 0;
-        else {
-            double conceptPriority = getEffectivePriority(memory, target);
-            conceptCost = (1.0 / conceptPriority);
-        }
+        double m = 0.1;
         
-        /** weight = distance = cost, for an edge */
-        double sentenceCost = implication.getEdgeWeight(s);        
+        if ((target instanceof Interval) || (target instanceof Operation))
+            return 1;
+        
+        double conceptRelevancy = getEffectivePriority(memory, target);
+        double sentenceRelevancy = implication.getSentenceRelevancy(s);
 
-        return (edgeCostFactor * sentenceCost + conceptCostFactor * conceptCost);
+        return 1 + 1d / (m + edgeCostFactor * sentenceRelevancy + conceptCostFactor * conceptRelevancy);
         
     }
 
@@ -372,8 +368,11 @@ public class GraphExecutive {
             if (bestBelief!=null)
                 return c.getPriority() * bestBelief.truth.getExpectation();            
         }
-        //System.out.println("No Concept priority available for " + t);
-        return 0.5;
+
+        //System.err.println("No Concept priority available for " + t);
+        
+        //Probably an input term, so make it high priority
+        return 1;
     }
     
     public static float getActualConfidence(final Memory memory, final Term t) {
@@ -384,20 +383,21 @@ public class GraphExecutive {
             if (bestBelief!=null)
                 return bestBelief.truth.getConfidence();   
         }
-        return 1;
+        System.err.println("No Concept confidence available for " + t);
+        return 0;
     }
 
+    /** returns 0..1.0, 1.0 being highest priority, 0 = no priority */
     public static double getEffectivePriority(final Memory memory, final Term current) {
         double p;
         
         //default priority for intervals
-        if (current instanceof Interval)            
-            p = 1.0f; 
+        if ((current instanceof Interval) || (current instanceof Operation))  
+            p = 1.0f;
         
         //get the priority for the postcondition's actual concept
         else if (current instanceof PostCondition)            
-            p = getActualPriority(memory, ((PostCondition)current).term[0]);
-        
+            p = getActualPriority(memory, ((PostCondition)current).term[0]);        
         else 
             p = getActualPriority(memory, current);
         
@@ -537,7 +537,7 @@ public class GraphExecutive {
             float minConf = 1.0f;
             
             
-            System.out.println("path=" + Arrays.toString(path));
+            //System.out.println("path=" + Arrays.toString(path));
             
             
             //iterate backwards, from pred -> subj -> pred -> subj
@@ -564,9 +564,7 @@ public class GraphExecutive {
                 }
 
                 prevTerm = term;
-                
-                System.out.println("  " + term);
-                
+                                
                 if (isPlanTerm(term)) {                                        
                     boolean isInterval = term instanceof Interval;
                     if (!isInterval) {

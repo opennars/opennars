@@ -279,7 +279,7 @@ abstract public class PGraphPanel<V,E> extends PPanel implements ActionListener 
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
             if (s.truth!=null)
-                return (float)((0.25 + 0.75 * s.truth.getConfidence()));            
+                return (float)((0.5 + 0.5 * s.truth.getConfidence()));            
         }
         return 1.0f;
     }    
