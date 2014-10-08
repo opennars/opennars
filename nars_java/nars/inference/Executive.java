@@ -47,7 +47,7 @@ public class Executive {
     /** max number of tasks that a plan can generate. chooses the N most confident */
     int maxPlannedTasks = 4;
     
-    float searchDepth = 16;
+    float searchDepth = 3;
     int particles = 64;
     
     long lastExecution = -1;

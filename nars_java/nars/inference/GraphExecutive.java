@@ -537,10 +537,12 @@ public class GraphExecutive {
             float minConf = 1.0f;
             
             
+            System.out.println("path=" + Arrays.toString(path));
             
             
             //iterate backwards, from pred -> subj -> pred -> subj
             boolean onSubject = false;
+            Term prevTerm = null;
             for (int i = path.length-1; i >=0; ) {
                 Sentence s = path[i];
                 Term t = s.content;
@@ -555,7 +557,15 @@ public class GraphExecutive {
                 
                 onSubject = !onSubject;
                 
+                //avoid consecutive duplicates
+                if (prevTerm!=null && term == prevTerm) {
+                    prevTerm = term;
+                    continue;
+                }
+
+                prevTerm = term;
                 
+                System.out.println("  " + term);
                 
                 if (isPlanTerm(term)) {                                        
                     boolean isInterval = term instanceof Interval;
@@ -568,9 +578,12 @@ public class GraphExecutive {
                             //ex: +2,+1 may be more accurate than a +3
                             seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
                             accumulatedDelay = 0;                            
-                        }                        
+                        }
                         
-                        seq.add(term);                        
+                        
+                        
+                        seq.add(term);
+                        
                     }
                     else {
                         Interval in = (Interval)term;
@@ -599,7 +612,7 @@ public class GraphExecutive {
                     operations++;
             }            
                 
-            
+            //TODO check this prior to above loop, to avoid wasting that effort
             if (operations == 0)
                 continue;
                         
