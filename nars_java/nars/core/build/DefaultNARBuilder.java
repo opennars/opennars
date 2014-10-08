@@ -2,6 +2,7 @@ package nars.core.build;
 
 import nars.core.ConceptProcessor;
 import nars.core.Memory;
+import nars.core.Memory.Timing;
 import nars.core.NARBuilder;
 import nars.core.Param;
 import nars.core.control.SequentialMemoryCycle;
@@ -35,6 +36,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     /** Size of TaskBuffer */
     private int taskBufferSize = 10;
+    private Memory.Timing timing = Timing.Iterative;
     
     
     public DefaultNARBuilder() {
@@ -55,6 +57,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     @Override
     public Param newParam() {
         Param p = new Param();
+        p.setTiming(timing);
         p.noiseLevel.set(100);
         
         //Cycle control
@@ -171,7 +174,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         this.termLinkBagSize = termLinkBagSize;
         return this;
     }
-    
+
     
     public static class CommandLineNARBuilder extends DefaultNARBuilder {
         private final Param param;
@@ -213,6 +216,10 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         }
     }
     
+    public DefaultNARBuilder realtime() {
+        timing = Timing.Real;
+        return this;
+    }
 
     /* ---------- initial values of run-time adjustable parameters ---------- */
 //    /** Concept decay rate in ConceptBag, in [1, 99]. */

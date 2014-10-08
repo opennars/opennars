@@ -42,6 +42,7 @@ import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
+import static nars.core.Memory.Timing.Real;
 import nars.core.NAR;
 import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
@@ -538,7 +539,11 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     return "";
                 }
                 
-                String s = "@" + memory.getTime() + "|" + memory.getCycleTime();
+                String s = "@" +
+                        (memory.param.getTiming() == Real ?
+                            + memory.getTime() + "|" + memory.getCycleTime() : memory.getTime());
+                        
+                
 
                 if (currentSpeed == 0) {
                     s += " - pause";
