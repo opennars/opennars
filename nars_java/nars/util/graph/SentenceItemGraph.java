@@ -1,7 +1,7 @@
 package nars.util.graph;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import nars.core.Memory;
 import nars.entity.Item;
 import nars.entity.Sentence;
@@ -16,21 +16,20 @@ abstract public class SentenceItemGraph extends SentenceGraph {
 
     public SentenceItemGraph(Memory memory) {
         super(memory);
-        concepts = new HashMap();
+        concepts = new WeakHashMap();
     }
 
     
     @Override
-    public boolean add(final Sentence s, final Item c, boolean specialAdd) {
+    public boolean add(final Sentence s, final Item c) {
         
         
        // if(specialAdd) {
        //     return false;
        // }
         
-        if (super.add(s, c,specialAdd)) {
+        if (super.add(s, c)) {
             concepts.put(s, c);
-            //System.out.println(vertexSet().size() + ":" + edgeSet().size() + " add: " + s + " ");
             return true;
         }
         return false;

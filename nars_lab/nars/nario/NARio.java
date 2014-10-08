@@ -10,7 +10,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
@@ -51,9 +51,9 @@ public class NARio extends Run {
     }
 
     public static void main(String[] arg) {
-        NAR nar = new DefaultNARBuilder().realtime().build();
+        //NAR nar = new DefaultNARBuilder().realtime().build();
         
-        //NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).realtime().build();
+        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).realtime().build();
         
         //NAR nar = new ContinuousBagNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
@@ -79,7 +79,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 30);
+        nar.start(50, 100);
     }
 
     String[] sight = new String[9];
@@ -245,8 +245,8 @@ public class NARio extends Run {
                         int dx = Math.round((x - lastX) / 1);
                         int dy = Math.round((y - lastY) / 1);
                         
-                        int mx = (int)((x-lastMX)/16);
-                        int my = (int)((y-lastMY)/16);
+                        int mx = (int)Math.round((x-lastMX)/16);
+                        int my = (int)Math.round((y-lastMY)/16);
 
                         //if no movement, decrease priority of sense
                         if ((dx == 0) && (dy == 0)) {

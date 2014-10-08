@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import nars.core.Memory;
-import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -45,11 +44,16 @@ public class Executive {
     /** number of tasks that are active in the sorted priority buffer for execution */
     int numActiveTasks = 1;
 
-    /** max number of tasks that a plan can generate. chooses the N most confident */
-    int maxPlannedTasks = 4;
+    /** max number of tasks that a plan can generate. chooses the N best */
+    int maxPlannedTasks = 6;
     
+    /** global plan search parameters */
     float searchDepth = 16;
     int particles = 64;
+    
+    /** inline search parameters */
+    float inlineSearchDepth = 8;
+    int inlineParticles = 8;
     
     float maxExecutionsPerDuration = 1f;
     
@@ -139,7 +143,7 @@ public class Executive {
                     if (!isPlanTerm(e)) {
                         if (graph.isPlannable(e)) {
                             
-                            TreeSet<ParticlePlan> plans = graph.particlePlan(e, searchDepth, particles);
+                            TreeSet<ParticlePlan> plans = graph.particlePlan(e, inlineSearchDepth, inlineParticles);
                             if (plans.size() > 0) {
                                 //use the first
                                 ParticlePlan pp = plans.first();
@@ -223,7 +227,7 @@ public class Executive {
 
         @Override
         public String toString() {
-            return "!" + Texts.n2(getDesire()) + "." + sequence + "! " + t.toString();
+            return "!" + Texts.n2Slow(getDesire()) + "." + sequence + "! " + t.toString();
         }
 
         
@@ -291,10 +295,12 @@ public class Executive {
         for (TaskExecution x : t) {
             if (x.getDesire() > 0) { // && (x.getPriority() > 0)) {
                 tasks.add(x);
-                if ((x.delayUntil!=-1) && (x.delayUntil <= memory.getTime())) {
-                    //restore motivation so task can resume processing
-                    x.motivationFactor = 1.0f;
-                }
+                
+                //this is incompatible with the other usages of motivationFactor, so do not use this:
+//                if ((x.delayUntil!=-1) && (x.delayUntil <= memory.getTime())) {
+//                    //restore motivation so task can resume processing                    
+//                    x.motivationFactor = 1.0f;
+//                }
             }            
         }
         tasksToRemove.clear();
@@ -398,7 +404,7 @@ public class Executive {
         if (tasks.isEmpty())
             return;
         
-        if (NAR.DEBUG) {
+        /*if (NAR.DEBUG)*/ {
             //TODO make a print function
             
             if (tasks.size() > 1)  {

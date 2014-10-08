@@ -30,8 +30,6 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.sense.EmotionSense;
@@ -244,7 +242,7 @@ public class Memory implements Output, Serializable {
 
         int threads = 1;
         if (threads == 1) {
-            exe = Executors.newSingleThreadExecutor();
+            exe = null;
         }
         else {
             exe = Executors.newFixedThreadPool(threads);
@@ -429,7 +427,7 @@ public class Memory implements Output, Serializable {
     public void temporalRuleOutputToGraph(Sentence s, Task t) {
         if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             
-            executive.graph.implication.add(s, (CompoundTerm)s.content, t,false);            
+            executive.graph.implication.add(s, (CompoundTerm)s.content, t);            
         }
 
     }
@@ -886,21 +884,31 @@ public class Memory implements Output, Serializable {
     
     public <T> void execute(final List<Callable<T>> tasks) {
         if (tasks.size() == 0) return;
-        if (tasks.size() == 1) {
+        else if (tasks.size() == 1) {
             try {
                 tasks.get(0).call();
-            } catch (Exception ex) {
+            } catch (Exception ex) { 
+                ex.printStackTrace();
                 throw new RuntimeException(ex.toString());
             }
-            return;
         }
-        
-        try {
-            //System.out.println("Executing: " + tasks);
-            exe.invokeAll(tasks);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Memory.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        else if (exe == null) {
+            //single threaded
+            for (final Callable<T> t : tasks) {
+                try {
+                    t.call();
+                } catch (Exception ex) { 
+                    ex.printStackTrace();
+                    throw new RuntimeException(ex.toString());
+                }
+            }
+        }
+        else {   
+            //execute in parallel, multithreaded            
+            try {            
+                exe.invokeAll(tasks);
+            } catch (Exception ex) { throw new RuntimeException(ex.toString());}
+        }
     }
 
 

@@ -566,7 +566,7 @@ public class NAR implements Runnable, Output, TaskSource {
      * @param o 
      */
     @Override
-    public void output(final Class channel, final Object o) {
+    public synchronized void output(final Class channel, final Object o) {
         
         updatePorts();
         

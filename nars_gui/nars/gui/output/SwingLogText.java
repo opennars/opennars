@@ -16,7 +16,6 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.io.Output;
-import nars.io.Output.OUT;
 
 
 public class SwingLogText extends SwingText implements Output {
@@ -145,10 +144,28 @@ public class SwingLogText extends SwingText implements Output {
         }
     };
     
+//    public class TaskIcon extends NCanvas {
+//
+//        public TaskIcon() {
+//            super();
+//            setMaximumSize(new Dimension(50,10));
+//            setPreferredSize(new Dimension(50,10));
+//            setSize(50,10);
+//            
+//            Graphics2D g = getBufferGraphics();
+//            
+//            showBuffer(g);
+//        }
+//        
+//        
+//        
+//    }
     
     protected synchronized int print(Class c, Object o)  {        
 
         float priority = 1f;
+
+        
         
         if (c!=OUT.class) {
             //pad the channel name to max 6 characters, right aligned
@@ -157,11 +174,11 @@ public class SwingLogText extends SwingText implements Output {
             n = n.substring(0,Math.min(6, n.length()));
             switch (n.length()) {
                 case 0: break;
-                case 1: n = "     " + n; break;
-                case 2: n = "    " + n; break;
-                case 3: n = "   " + n; break;
-                case 4: n = "  " + n; break;
-                case 5: n = " " + n; break;                    
+                case 1: n = "_____" + n; break;
+                case 2: n = "____" + n; break;
+                case 3: n = "___" + n; break;
+                case 4: n = "__" + n; break;
+                case 5: n = "_" + n; break;                    
             }
             
             print(LogPanel.getChannelColor(c), n);
@@ -173,22 +190,22 @@ public class SwingLogText extends SwingText implements Output {
                 Sentence s = t.sentence;
                 if (s!=null) {
                     priority = t.budget.getPriority();
-                    printColorBlock(LogPanel.getPriorityColor(priority), "  ");
+                    printColorBlock(LogPanel.getPriorityColor(priority), "__");
                 
                     TruthValue tv = s.truth;
                     if (tv!=null) {                    
-                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
-                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");                        
+                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "__");
+                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "__");                        
                     }
                     else if ( t.getBestSolution()!=null) {
-                        printColorBlock(LogPanel.getStatementColor('=', priority), "    ");
+                        printColorBlock(LogPanel.getStatementColor('=', priority), "____");
                     }
                     else {                        
-                        printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");                   
+                        printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "____");                   
                     }
                 }
             }
-        }
+        }        
         
         float tc = 0.75f + 0.25f * priority;
         Color textColor = new Color(tc, tc, tc);
