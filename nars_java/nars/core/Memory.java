@@ -127,6 +127,9 @@ public class Memory implements Output, Serializable {
     private ExecutorService exe;
     private long realClockStart;
     private long realClockNow;
+    private long lastTime;
+
+
 
     
     public enum Timing {
@@ -338,6 +341,7 @@ public class Memory implements Output, Serializable {
         timing = param.getTiming();      
         cycle = 0;
         realClockStart = realClockNow = System.currentTimeMillis();
+        lastTime = getTime();
         
         cyclesQueued = 0;
         
@@ -376,7 +380,13 @@ public class Memory implements Output, Serializable {
     public long getRealTime() {
         return realClockNow - realClockStart;
     }
- 
+
+    /** difference in time since last cycle */
+    public long getTimeDelta() {
+        return getTime() - lastTime;
+    }
+
+    
     /**
      * Actually means that there are no new Tasks
      *
@@ -802,6 +812,7 @@ public class Memory implements Output, Serializable {
 
     
     protected void updateTime() {
+        lastTime = getTime();
         cycle++;
         realClockNow = System.currentTimeMillis();
     }
@@ -1077,7 +1088,11 @@ public class Memory implements Output, Serializable {
         return conceptProcessor.sampleNextConcept();
     }
     
+    public Timing getTiming() {
+        return timing;
+    }
 
+    
 //    /**
 //     * Updates the LogicState measurements and returns the data     
 //     */
