@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -397,7 +398,7 @@ public class Executive {
         if (tasks.isEmpty())
             return;
         
-        /*if (NAR.DEBUG)*/ {
+        if (NAR.DEBUG) {
             //TODO make a print function
             
             if (tasks.size() > 1)  {
