@@ -1,7 +1,7 @@
 package nars.inference;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -96,6 +96,7 @@ public class Executive {
         public int sequence;
         public long delayUntil = -1;
         private float motivationFactor = 1;
+        private boolean empty = false;
         
         public TaskExecution(final Concept concept, Task t) {
             this.c = concept;
@@ -120,8 +121,8 @@ public class Executive {
         }
 
         protected Task inlineConjunction(Task t, final Conjunction c) {
-            List<Term> inlined = new ArrayList();
-            boolean wasInlined = false;
+            ArrayDeque<Term> inlined = new ArrayDeque();
+            boolean modified = false;
             if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
                 Term prev = null;
                 for (Term e : c.term) {
@@ -138,24 +139,24 @@ public class Executive {
                                 //TODO more rigorous prefix compraison. compare sublist prefix
                                 List<Term> seq = pp.sequence;
                                 
-                                if (prev!=null) {
-                                    int previousTermIndex = pp.sequence.lastIndexOf(prev);
-                                    
-                                    if (previousTermIndex!=-1) {
-                                        if (previousTermIndex == seq.size()-1)
-                                            seq = Collections.EMPTY_LIST;
-                                        else {                                            
-                                            seq = seq.subList(previousTermIndex+1, seq.size());
-                                        }
-                                    }
-                                }
+//                                if (prev!=null) {
+//                                    int previousTermIndex = pp.sequence.lastIndexOf(prev);
+//                                    
+//                                    if (previousTermIndex!=-1) {
+//                                        if (previousTermIndex == seq.size()-1)
+//                                            seq = Collections.EMPTY_LIST;
+//                                        else {                                            
+//                                            seq = seq.subList(previousTermIndex+1, seq.size());
+//                                        }
+//                                    }
+//                                }
                                 
                                 //System.out.println("inline: " + pp.sequence + " -> " + seq);
                                 
                                 
                                 inlined.addAll(seq);
                                 //System.err.println("Inline " + e + " in " + t.getContent() + " = " + pp.sequence);  
-                                wasInlined = true;
+                                modified = true;
                             }
                             else {
                                 //System.err.println("Inline: no planavailable");
@@ -170,16 +171,30 @@ public class Executive {
                     }
                     else {
                         //executable term, add
+                        //System.out.println("inline: " + inlined + " <- " + e);
                         inlined.add(e);
                     }
                     prev = e;
                 }                            
             }            
             
-            if (wasInlined) {
-                Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
-                t = t.clone(t.sentence.clone(nc) );
-                //System.err.println("  replaced task: " + t);
+            //remove suffix intervals
+            if (inlined.size() > 0) {
+                while (inlined.peekLast() instanceof Interval) {
+                    inlined.removeLast();
+                    modified = true;
+                }
+            }
+            
+            if (modified) {
+                empty = inlined.isEmpty();
+                if (!empty) {
+                    Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
+                    t = t.clone(t.sentence.clone(nc) );
+                }
+                else {
+                    t = null;
+                }
             }
             return t;
         }
@@ -204,6 +219,11 @@ public class Executive {
         @Override
         public String toString() {
             return "!" + Texts.n2(getDesire()) + "." + sequence + "! " + t.toString();
+        }
+
+        /** whether this task will have no effect; used to prevent adding to task queue in that case */
+        private boolean isEmpty() {
+            return empty;
         }
 
 
@@ -245,11 +265,14 @@ public class Executive {
         }
             
         if (valid) {
-            if (tasks.add(new TaskExecution(c, t))) {
-                //added successfully
-                if (memory.getRecorder().isActive())
-                   memory.getRecorder().append("Executive", "Task Add: " + t.toString());
-                return true;
+            final TaskExecution te = new TaskExecution(c, t);
+            if (!te.isEmpty()) {
+                if (tasks.add(te)) {
+                    //added successfully
+                    if (memory.getRecorder().isActive())
+                       memory.getRecorder().append("Executive", "Task Add: " + t.toString());
+                    return true;
+                }
             }
         }
 

@@ -80,7 +80,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 100);
+        nar.start(50, 30);
     }
 
     String[] sight = new String[9];
@@ -165,7 +165,8 @@ public class NARio extends Run {
     protected int slog(int x) {
         if (x == 0) return 0;
         int sign = (int)signum(x);        
-        return sign * (int)Math.ceil(2*log((1+x)));
+        x = Math.abs(x);
+        return sign * (int)Math.ceil(log((1+x)));
     }
     
     @Override

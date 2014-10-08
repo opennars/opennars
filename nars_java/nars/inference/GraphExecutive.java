@@ -375,6 +375,7 @@ public class GraphExecutive {
         return 1;
     }
     
+    /** between 0...1 */
     public static float getActualConfidence(final Memory memory, final Term t) {
         double p;
         Concept c = memory.concept(t);
@@ -383,8 +384,11 @@ public class GraphExecutive {
             if (bestBelief!=null)
                 return bestBelief.truth.getConfidence();   
         }
-        System.err.println("No Concept confidence available for " + t);
-        return 0;
+        
+        //System.err.println("No Concept confidence available for " + t);
+        
+        //if no concept confidence is available, assume 0.5
+        return 0.5f;
     }
 
     /** returns 0..1.0, 1.0 being highest priority, 0 = no priority */
@@ -535,14 +539,7 @@ public class GraphExecutive {
             Implication imp;
             long accumulatedDelay = 0;
             float minConf = 1.0f;
-            
-            
-            //System.out.println("path=" + Arrays.toString(path));
-            
-            
-            //iterate backwards, from pred -> subj -> pred -> subj
-            boolean onSubject = false;
-            Term prevTerm = null;
+                                                                       
             for (int i = path.length-1; i >=0; ) {
                 Sentence s = path[i];
                 Term t = s.content;
@@ -551,19 +548,11 @@ public class GraphExecutive {
                     throw new RuntimeException("Unknown type: " + t + " in sequence generation of " + this);
                 
                 imp = (Implication)t;
-                Term term = onSubject ? imp.getSubject() : imp.getPredicate();
+                Term term = imp.getSubject();
                 
-                if (onSubject) i--; //next impl
+                i--; //next impl                                
                 
-                onSubject = !onSubject;
                 
-                //avoid consecutive duplicates
-                if (prevTerm!=null && term == prevTerm) {
-                    prevTerm = term;
-                    continue;
-                }
-
-                prevTerm = term;
                                 
                 if (isPlanTerm(term)) {                                        
                     boolean isInterval = term instanceof Interval;
@@ -577,9 +566,7 @@ public class GraphExecutive {
                             seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
                             accumulatedDelay = 0;                            
                         }
-                        
-                        
-                        
+                                                
                         seq.add(term);
                         
                     }
@@ -624,7 +611,7 @@ public class GraphExecutive {
             
             
             //System.out.println("  cause: " + Arrays.toString(path));
-            ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance, minConf);
+            ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance, minConf);            
             plans.add(rp);
         }
         
