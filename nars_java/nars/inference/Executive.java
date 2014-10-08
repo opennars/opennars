@@ -50,7 +50,16 @@ public class Executive {
     float searchDepth = 16;
     int particles = 64;
     
+    float maxExecutionsPerDuration = 1f;
+    
+    /** time of last execution */
     long lastExecution = -1;
+    
+    /** motivation set on an executing task to prevent other tasks from interrupting it, unless they are relatively urgent.
+     * a larger value means it is more difficult for a new task to interrupt one which has
+     * already begun executing.
+     */
+    float motivationToFinishCurrentExecution = 1.5f;
     
 
     
@@ -159,7 +168,6 @@ public class Executive {
                                 modified = true;
                             }
                             else {
-                                //System.err.println("Inline: no planavailable");
                                 //no plan available, this wont be able to execute
                                 setMotivationFactor(0);
                             }
@@ -171,7 +179,6 @@ public class Executive {
                     }
                     else {
                         //executable term, add
-                        //System.out.println("inline: " + inlined + " <- " + e);
                         inlined.add(e);
                     }
                     prev = e;
@@ -186,15 +193,12 @@ public class Executive {
                 }
             }
             
+            if (inlined.isEmpty())
+                setMotivationFactor(0);
+            
             if (modified) {
-                empty = inlined.isEmpty();
-                if (!empty) {
-                    Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
-                    t = t.clone(t.sentence.clone(nc) );
-                }
-                else {
-                    t = null;
-                }
+                Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
+                t = t.clone(t.sentence.clone(nc) );
             }
             return t;
         }
@@ -220,14 +224,6 @@ public class Executive {
         public String toString() {
             return "!" + Texts.n2(getDesire()) + "." + sequence + "! " + t.toString();
         }
-
-        /** whether this task will have no effect; used to prevent adding to task queue in that case */
-        private boolean isEmpty() {
-            return empty;
-        }
-
-
-        
 
         
     }
@@ -266,13 +262,11 @@ public class Executive {
             
         if (valid) {
             final TaskExecution te = new TaskExecution(c, t);
-            if (!te.isEmpty()) {
-                if (tasks.add(te)) {
-                    //added successfully
-                    if (memory.getRecorder().isActive())
-                       memory.getRecorder().append("Executive", "Task Add: " + t.toString());
-                    return true;
-                }
+            if (tasks.add(te)) {
+                //added successfully
+                if (memory.getRecorder().isActive())
+                   memory.getRecorder().append("Executive", "Task Add: " + t.toString());
+                return true;
             }
         }
 
@@ -348,7 +342,7 @@ public class Executive {
         
         if (Parameters.TEMPORAL_PARTICLE_PLANNER) {
             
-            if (!isUrgent(concept)) return;
+            if (!isDesired(concept)) return;
         
             boolean plannable = graph.isPlannable(t.getContent());
             if (plannable) {                    
@@ -365,7 +359,7 @@ public class Executive {
     /** Entry point for all potentially executable tasks */
     public void decisionMaking(final Task t, final Concept concept) {
                         
-        if (isUrgent(concept)) {
+        if (isDesired(concept)) {
 
             Term content = concept.term;
 
@@ -383,22 +377,24 @@ public class Executive {
         }
     }
     
-    public boolean isUrgent(Concept c) {               
+    /** whether a concept's desire exceeds decision threshold */
+    public boolean isDesired(final Concept c) {               
         return (c.getDesire().getExpectation() >= memory.param.decisionThreshold.get());        
     }
     
+    /** called during each memory cycle */
     public void cycle() {
         long now = memory.getTime();
         
         //only execute something no less than every duration time
-        if (now - lastExecution < memory.param.duration.get())
+        if (now - lastExecution < (memory.param.duration.get()/maxExecutionsPerDuration) )
             return;
                         
         lastExecution = now;
         
         updateTasks();
 
-        if (tasks.size() == 0)
+        if (tasks.isEmpty())
             return;
         
         /*if (NAR.DEBUG)*/ {
@@ -416,7 +412,7 @@ public class Executive {
         }
         
         
-        TaskExecution topExecution = tasks.getFirst();
+        TaskExecution topExecution = tasks.getFirst();        
         Task top = topExecution.t;
         Term term = top.getContent();
         if (term instanceof Operation) {            
@@ -521,6 +517,7 @@ public class Executive {
         }
         else {            
             task.sequence = s;//update new value for next cycle
+            task.setMotivationFactor(motivationToFinishCurrentExecution);
         }
     }
     
