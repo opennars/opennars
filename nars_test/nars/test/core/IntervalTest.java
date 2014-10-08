@@ -90,9 +90,8 @@ public class IntervalTest {
             int numTerms = 6;
             for (int t = 1; t < duration * duration * duration; t++) {
                 List<Interval> ad1 = Interval.intervalTimeSequence(t, numTerms, m);
-                Interval approx = Interval.intervalTime(t, m);
-                
-                /*System.out.println(t + " = " + ad1 + "; ~= " + 
+                /*Interval approx = Interval.intervalTime(t, m);                
+                System.out.println(t + " = " + ad1 + "; ~= " + 
                         approx + " (error=" + (approx.getTime(m) - t) + ")");*/
                 
                 assertEquals(t, Interval.intervalSequenceTime(ad1, m));

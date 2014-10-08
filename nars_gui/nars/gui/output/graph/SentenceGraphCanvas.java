@@ -48,7 +48,7 @@ public class SentenceGraphCanvas extends AnimatedProcessingGraphCanvas<Term,Sent
 
     @Override
     public float getNodeSize(final Term v) {        
-        float b = 10f * (0.2f + 2 * (float) GraphExecutive.getActualPriority(sgraph.memory, v));
+        float b = 10f * (0.2f + 2 * (float) GraphExecutive.getEffectivePriority(sgraph.memory, v));
         return b;
     }
     

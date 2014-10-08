@@ -25,7 +25,7 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
     @Override
     protected DirectedMultigraph<Term,Sentence> getGraph() {
         if (graph!=null)
-            return new ImplicationGraph(graphExec.implication, false);
+            return new ImplicationGraph(graphExec.implication, false, minPriority);
         
         //otherwise, should override in subclasses
         return null;

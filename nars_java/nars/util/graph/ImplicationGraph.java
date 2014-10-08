@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -51,7 +50,7 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
     
     /** creates a clone, optionally with or without preconditions */
-    public ImplicationGraph(ImplicationGraph g, boolean includePrecondition) {
+    public ImplicationGraph(ImplicationGraph g, boolean includePrecondition, double minPriority) {
         super(null);
         if (includePrecondition) {
             throw new RuntimeException("Use .clone()");
@@ -72,6 +71,9 @@ public class ImplicationGraph extends SentenceItemGraph {
                 if (!containsSrc && !containsTgt)
                     continue;
                 
+                if (s.truth!=null)
+                    if (s.truth.getExpectation() < minPriority)
+                        continue;
                 
                 if (!containsSrc) super.addVertex(src);
                 if (!containsTgt) super.addVertex(tgt);
@@ -376,24 +378,6 @@ public class ImplicationGraph extends SentenceItemGraph {
         return x.toString();
     }
 
-    /** returns (no relevancy) 0..1.0 (high relevancy) */
-    public double getSentenceRelevancy(final Sentence e) {
-        if (!containsEdge(e))
-            return 0;
-        
-        //transitions to PostCondition vertices are free or low-cost        
-        if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0;
-        }
-        
-        Concept c=memory.concept(e.content);
-        double strength = 0;
-        if(c!=null) {
-            strength*=c.getPriority() * e.truth.getExpectation();
-        }
-        
-        return strength;
-    }
 
     @Override
     public boolean remove(final Sentence s) {

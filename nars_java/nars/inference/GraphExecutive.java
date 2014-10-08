@@ -298,7 +298,7 @@ public class GraphExecutive {
          * where lower cost = higher probability.  prob = 1.0 / ( 1 +  cost )*/
         public Sentence chooseEdge(Map<Sentence,Double> cost) {
             Sentence nextEdge = null;
-
+                        
             double totalProb = 0;
             for (Double c : cost.values()) {
                 if (c > 0)
@@ -312,10 +312,11 @@ public class GraphExecutive {
 
 
             int j;
-            for (Sentence e : cost.keySet()) {
-                nextEdge = e;
+            for (Map.Entry<Sentence, Double> es : cost.entrySet()) {
+                
+                nextEdge = es.getKey();
 
-                double edgeProb = 1.0 / cost.get(nextEdge);
+                double edgeProb = 1.0 / es.getValue();
                 r -= edgeProb;
 
                 if (r <= 0) {
@@ -350,15 +351,26 @@ public class GraphExecutive {
 
     /** total cost of a traversal, which includes the edge cost and the target vertex cost. any value > 1 */
     public double getTraversalCost(final Sentence s, final Term target) {
+        //sharpness parameter, affects how much cost is incurred for a low priority
         double m = 0.1;
         
-        if ((target instanceof Interval) || (target instanceof Operation))
-            return 1;
+        //if ((target instanceof Interval) || (target instanceof Operation))
+            //return 1;
+          
+        double conceptRelevancy;
+        if ((target instanceof Interval) || (target instanceof Operation))            
+            conceptRelevancy = 1.0;
+        else        
+            conceptRelevancy = getEffectivePriority(memory, target);
         
-        double conceptRelevancy = getEffectivePriority(memory, target);
-        double sentenceRelevancy = implication.getSentenceRelevancy(s);
-
-        return 1 + 1d / (m + edgeCostFactor * sentenceRelevancy + conceptCostFactor * conceptRelevancy);
+        double sentenceRelevancy = getSentenceRelevancy(s);
+        
+        double c = edgeCostFactor / (m + sentenceRelevancy) + 
+                    conceptCostFactor / (m + conceptRelevancy);
+        
+        //System.out.println("s " + sentenceRelevancy + ", " + conceptRelevancy + " = " + c);
+        
+        return c;
         
     }
 
@@ -418,6 +430,21 @@ public class GraphExecutive {
             return getActualConfidence(memory, current);      
     }    
         
+
+    /** returns (no relevancy) 0..1.0 (high relevancy) */
+    public double getSentenceRelevancy(final Sentence e) {
+        if (!implication.containsEdge(e)) 
+            return 0;
+        
+        //transitions to PostCondition vertices are free or low-cost        
+        /*
+        if (getEdgeTarget(e) instanceof PostCondition) {
+            return 1.0;
+        }
+        */
+        
+        return getEffectivePriority(memory, e.content) * e.truth.getExpectation();
+    }    
     
     public class ParticlePlan implements Comparable<ParticlePlan> {
 
@@ -553,19 +580,15 @@ public class GraphExecutive {
                 Term term = imp.getSubject();
                 
                 i--; //next impl                                
-                
-                
-                                
+                                                
                 if (isPlanTerm(term)) {                                        
                     boolean isInterval = term instanceof Interval;
                     if (!isInterval) {
                                                 
                         
                         if (accumulatedDelay > 0) {
-                            //TODO calculate a more fine-grained sequence of itnervals
-                            //rather than just rounding to the nearest.
-                            //ex: +2,+1 may be more accurate than a +3
-                            seq.addAll(Interval.intervalTimeSequence(accumulatedDelay, maxConsecutiveIntervalTerms, memory)  );
+                            seq.addAll(Interval.intervalTimeSequence(
+                                    accumulatedDelay, maxConsecutiveIntervalTerms, memory)  );
                             accumulatedDelay = 0;                            
                         }
                                                 

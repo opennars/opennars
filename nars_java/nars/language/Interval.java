@@ -182,6 +182,11 @@ public class Interval extends Term {
         long remaining = t - a;
         c.addAll( intervalTimeSequence(remaining, maxTerms-1, memory));
         
+        
+        Interval approx = Interval.intervalTime(t, memory);                
+        System.out.println(t + " = " + c + "; ~= " + 
+                        approx + " (t=" + t + ", seq=" + intervalSequenceTime(c, memory) + ", one=" + approx.getTime(memory) + ")");
+                
         return c;
     }
 
