@@ -39,8 +39,7 @@ public class NARio extends Run {
     int cycle = 0;
     int gotCoin = 0;
     private Mario mario;    
-   // int cyclesPerMario = 20;
-    int initCycles = 4;
+
     private ChangedTextInput moveInput;
     private ChangedTextInput velInput;
 
@@ -173,7 +172,7 @@ public class NARio extends Run {
     public void ready() {
         //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
 
-        scene = level = new LevelScene(graphicsConfiguration, this, 0, 1, LevelGenerator.TYPE_CASTLE) {
+        scene = level = new LevelScene(graphicsConfiguration, this, 1,2, LevelGenerator.TYPE_CASTLE) {
             @Override
             protected Mario newMario(LevelScene level) {
                 return new Mario(level) {
@@ -191,11 +190,7 @@ public class NARio extends Run {
         mario = level.mario;
         mario.setInvincible(true);
                    
-        axioms();
-  
-        nar.finish(initCycles);
-        
-        
+        axioms();        
         
         SwingUtilities.invokeLater(new Runnable() {
 
