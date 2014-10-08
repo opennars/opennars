@@ -39,6 +39,7 @@ public class NARio extends Run {
     int cycle = 0;
     int gotCoin = 0;
     private Mario mario;    
+    static double gameRate;
 
     private ChangedTextInput moveInput;
     private ChangedTextInput velInput;
@@ -73,13 +74,13 @@ public class NARio extends Run {
         nar.param().duration.set(50);
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
-        nar.param().conceptForgetDurations.set(50);
-        
+        nar.param().conceptForgetDurations.set(10);
+        gameRate = 0.05;
 
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 100);
+        nar.start(50, 30);
     }
 
     String[] sight = new String[9];
@@ -124,7 +125,13 @@ public class NARio extends Run {
     protected void setKey(int k, boolean pressed) {
         if (keyInput[k] == null)
             keyInput[k] = new ChangedTextInput(nar);
-        keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")!");
+        
+        if (keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")!")) {            
+            //input the opposite keypress as a back-dated input from between last frame and this
+//            long dd = nar.param().duration.get();
+//            long lastFrame = nar.getTime() - dd + dd/2;
+//            nar.addInput("(^keyboard" + k + "," + (!pressed ? "on" : "off") + "). :|:", lastFrame);
+        }
     }
     
     @Override protected void toggleKey(int keyCode, boolean isPressed)
@@ -172,7 +179,7 @@ public class NARio extends Run {
     public void ready() {
         //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
 
-        scene = level = new LevelScene(graphicsConfiguration, this, 1,2, LevelGenerator.TYPE_CASTLE) {
+        scene = level = new LevelScene(graphicsConfiguration, this, 4,1, LevelGenerator.TYPE_OVERGROUND) {
             @Override
             protected Mario newMario(LevelScene level) {
                 return new Mario(level) {
@@ -225,7 +232,7 @@ public class NARio extends Run {
                 
                     
                /* if (cycle % cyclesPerMario == 0)*/ {
-                    cycle(0.05);
+                    cycle(gameRate);
                 }
 
                 {
@@ -287,9 +294,9 @@ public class NARio extends Run {
                             for (int j = -1; j <= 1; j++) {
 
                                 k++;
-
-                                int block = level.level.getBlock(x+i*16, y+j*16);
-                                int data = level.level.getData(x+i*16, y+j*16);
+                                
+                                int block = level.level.getBlock(x + i*16f-8, y + j*16f-8);
+                                int data = level.level.getData(x + i*16-8, y + j*16-8);
 
                                 boolean blocked
                                         = ((block & Level.BIT_BLOCK_ALL) > 0)

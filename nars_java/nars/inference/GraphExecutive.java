@@ -141,10 +141,13 @@ public class GraphExecutive {
     public class ParticleActivation {
         private final ImplicationGraph graph;
         
+        /** caches sentence costs while traversing */
+        transient public final Map<Sentence, Double> sentenceCosts = new HashMap();
+        
         public final Map<Term, ParticlePath> termPaths = new HashMap();
         TreeSet<ParticlePath> paths;
         
-        boolean avoidCycles = true;
+        final boolean avoidCycles = true;
         private int edgeDecisionPass = 0;
         private int edgeDecisionFailCyclical = 0;
         private int edgeDecisionFailInvalidVertex = 0;
@@ -166,6 +169,8 @@ public class GraphExecutive {
             List<Sentence> currentPath = new ArrayList();
 
             Map<Sentence, Double> nextEdgeCost = new HashMap();
+            
+            sentenceCosts.clear();
             
             for (int i = 0; i < iterations; i++) {            
 
@@ -190,13 +195,17 @@ public class GraphExecutive {
                     nextEdgeCost.clear();
                     
                     
+                    Sentence currentSentence = null;
+                    
+                    double totalProb = 0;
+                    
                     //remove edges which loop to the target goal precondition OR postcondition
                     for (final Sentence s : graphEdges) {
                         Term etarget = forward ?
                                 getEdgeTarget(s):
                                 getEdgeSource(s);
                         
-                        if ((avoidCycles) && (etarget.equals(source))) {
+                        if ((avoidCycles) && (etarget == source)) {
                             edgeDecisionFailCyclical++;
                             continue;
                         }
@@ -206,14 +215,15 @@ public class GraphExecutive {
                             continue;
                         }
                                                 
-                        //double ew = graph.getEdgeWeight(s);
                         double ew = getTraversalCost(s, etarget);
                         
                         //ignore if this edge will cost more energy than allowed
                         if (ew > energy)
                             continue;
                         
-                        nextEdgeCost.put(s, ew);
+                        currentSentence = s;
+                        totalProb += 1.0 / ew;
+                        nextEdgeCost.put(currentSentence, ew);
                         /*if (ew >= ImplicationGraph.DEACTIVATED_EDGE_WEIGHT) {
                             edgeDecisionFailInactiveEdge++;
                             continue;
@@ -236,25 +246,19 @@ public class GraphExecutive {
 
                     Sentence nextEdge;
                     if (nextEdgeCost.size() == 1) {
-                        nextEdge = nextEdgeCost.keySet().iterator().next();
+                        nextEdge = currentSentence;
                     }
                     else {
                         choicesAvailable = true;
-                        nextEdge = chooseEdge(nextEdgeCost);
+                        nextEdge = chooseEdge(nextEdgeCost, totalProb);
                     }
 
                     currentPath.add(nextEdge);
 
-                    energy -= nextEdgeCost.get(nextEdge); //TODO used cache value calculated in last iteration of above 'j' for loop
+                    energy -= nextEdgeCost.get(nextEdge);
 
                     currentVertex = forward ? getEdgeTarget(nextEdge) : getEdgeSource(nextEdge);
-                    
-                    
-                    //System.out.println(i + ": " + nextEdge + " : " + current + " " + nextEdgeCost.get(nextEdge));
-                    
-//                    if ((current == null)  /*|| (!graph.containsVertex(current)*/) {                  
-//                        break;
-//                    }
+
                 }
 
                 if (currentPath.isEmpty()) {
@@ -293,18 +297,39 @@ public class GraphExecutive {
             }
             return this.paths;
         }
+        
+        /** total cost of a traversal, which includes the edge cost and the target vertex cost. any value > 1 */
+        public double getTraversalCost(final Sentence s, final Term target) {
+            Double d = sentenceCosts.get(s);
+            if (d!=null)
+                return d;
+            
+            //sharpness parameter, affects how much cost is incurred for a low priority
+            double m = 0.1;
+            
+            double conceptRelevancy;
+            if ((target instanceof Interval) || (target instanceof Operation))            
+                conceptRelevancy = 1.0;
+            else        
+                conceptRelevancy = getEffectivePriority(memory, target);
 
+            double sentenceRelevancy = getSentenceRelevancy(s);
+
+            double c = edgeCostFactor / (m + sentenceRelevancy) + 
+                        conceptCostFactor / (m + conceptRelevancy);
+
+            //System.out.println("s " + sentenceRelevancy + ", " + conceptRelevancy + " = " + c);
+
+            sentenceCosts.put(s, c);
+            return c;
+        }
+
+        
         /** choose a sentence according to a random probability 
          * where lower cost = higher probability.  prob = 1.0 / ( 1 +  cost )*/
-        public Sentence chooseEdge(Map<Sentence,Double> cost) {
+        public Sentence chooseEdge(Map<Sentence,Double> cost, double totalProb) {
             Sentence nextEdge = null;
-                        
-            double totalProb = 0;
-            for (Double c : cost.values()) {
-                if (c > 0)
-                    totalProb += 1.0 / c;
-            }
-
+ 
             //TODO disallow edge that completes cycle back to target or traversed edge?
             //  probably an option to allow cycles
 
@@ -312,7 +337,7 @@ public class GraphExecutive {
 
 
             int j;
-            for (Map.Entry<Sentence, Double> es : cost.entrySet()) {
+            for (final Map.Entry<Sentence, Double> es : cost.entrySet()) {
                 
                 nextEdge = es.getKey();
 
@@ -324,8 +349,8 @@ public class GraphExecutive {
                     break;
                 }
             }
-            return nextEdge;
             
+            return nextEdge;            
         }
         
         public String getStatus() {
@@ -357,30 +382,6 @@ public class GraphExecutive {
         return ((Implication)s.content).getPredicate();
     }
 
-    /** total cost of a traversal, which includes the edge cost and the target vertex cost. any value > 1 */
-    public double getTraversalCost(final Sentence s, final Term target) {
-        //sharpness parameter, affects how much cost is incurred for a low priority
-        double m = 0.1;
-        
-        //if ((target instanceof Interval) || (target instanceof Operation))
-            //return 1;
-          
-        double conceptRelevancy;
-        if ((target instanceof Interval) || (target instanceof Operation))            
-            conceptRelevancy = 1.0;
-        else        
-            conceptRelevancy = getEffectivePriority(memory, target);
-        
-        double sentenceRelevancy = getSentenceRelevancy(s);
-        
-        double c = edgeCostFactor / (m + sentenceRelevancy) + 
-                    conceptCostFactor / (m + conceptRelevancy);
-        
-        //System.out.println("s " + sentenceRelevancy + ", " + conceptRelevancy + " = " + c);
-        
-        return c;
-        
-    }
 
     public static double getActualPriority(final Memory memory, final Term t) {
         double p;
