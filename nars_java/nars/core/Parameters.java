@@ -41,10 +41,10 @@ public class Parameters {
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.1f;
+    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.2f;
     
     //how much more priority should =/> =|> gain?
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f;
+    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.2f;
     
     
     //internal experience has less durability?

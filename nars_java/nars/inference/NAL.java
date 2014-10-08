@@ -253,7 +253,7 @@ abstract public class NAL implements Callable<NAL> {
                 }
             }
             
-            if(temporalAdd) {
+            if(temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL!=0.0) {
                 TruthValue truthEt=newTruth.clone();
                 truthEt.setConfidence(newTruth.getConfidence()*Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
                 final Sentence newSentence = (new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, getTheNewStamp())).clone(true);
