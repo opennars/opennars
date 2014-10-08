@@ -27,7 +27,7 @@ public class SwingText extends JTextPane {
     public SwingText() {
         super(new DefaultStyledDocument(new StyleContext()));
 
-        doc = (DefaultStyledDocument) getDocument();
+        doc = (DefaultStyledDocument) getDocument();        
         setEditable(false);
 
         // Create and add the main document style
@@ -37,7 +37,7 @@ public class SwingText extends JTextPane {
         //StyleConstants.setLeftIndent(mainStyle, 16);
         //StyleConstants.setRightIndent(mainStyle, 16);
         //StyleConstants.setFirstLineIndent(mainStyle, 16);
-        StyleConstants.setFontFamily(mainStyle, NARSwing.monofont.getFamily());
+        //StyleConstants.setFontFamily(mainStyle, NARSwing.monofont.getFamily());
         //StyleConstants.setFontSize(mainStyle, 16);
 
         doc.setLogicalStyle(0, mainStyle);

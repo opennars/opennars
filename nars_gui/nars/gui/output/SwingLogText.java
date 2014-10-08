@@ -1,16 +1,10 @@
 package nars.gui.output;
 
 import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Utilities;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -82,34 +76,34 @@ public class SwingLogText extends SwingText implements Output {
             });*/
     }
 
-    protected void scrollUpdate() {
-        int docLen = doc.getLength();
-        if (docLen > 0) {
-            //JViewport viewport = (JViewport) e.getSource();
-            Rectangle viewRect = scroller.getViewport().getViewRect();
-
-            Point p = viewRect.getLocation();
-            int startIndex = viewToModel(p);
-
-            p.x += viewRect.width;
-            p.y += viewRect.height;
-            int endIndex = viewToModel(p);
-
-            for (int offset = endIndex; offset < startIndex;) {
-                try {
-                    //System.out.println(" " + offset);
-                    
-                    onLineVisible(offset);
-                    
-                    offset = Utilities.getRowStart(SwingLogText.this, offset) - 1;
-                    
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(SwingLogText.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            //System.out.println("< -- (" + endIndex + ", " + startIndex);
-        }        
-    }
+//    protected void scrollUpdate() {
+//        int docLen = doc.getLength();
+//        if (docLen > 0) {
+//            //JViewport viewport = (JViewport) e.getSource();
+//            Rectangle viewRect = scroller.getViewport().getViewRect();
+//
+//            Point p = viewRect.getLocation();
+//            int startIndex = viewToModel(p);
+//
+//            p.x += viewRect.width;
+//            p.y += viewRect.height;
+//            int endIndex = viewToModel(p);
+//
+//            for (int offset = endIndex; offset < startIndex;) {
+//                try {
+//                    //System.out.println(" " + offset);
+//                    
+//                    onLineVisible(offset);
+//                    
+//                    offset = Utilities.getRowStart(SwingLogText.this, offset) - 1;
+//                    
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(SwingLogText.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//            //System.out.println("< -- (" + endIndex + ", " + startIndex);
+//        }        
+//    }
     
     protected void onLineVisible(int offset) { }
     
@@ -174,11 +168,11 @@ public class SwingLogText extends SwingText implements Output {
             n = n.substring(0,Math.min(6, n.length()));
             switch (n.length()) {
                 case 0: break;
-                case 1: n = "_____" + n; break;
-                case 2: n = "____" + n; break;
-                case 3: n = "___" + n; break;
-                case 4: n = "__" + n; break;
-                case 5: n = "_" + n; break;                    
+                case 1: n = "     " + n; break;
+                case 2: n = "    " + n; break;
+                case 3: n = "   " + n; break;
+                case 4: n = "  " + n; break;
+                case 5: n = " " + n; break;                    
             }
             
             print(LogPanel.getChannelColor(c), n);
@@ -190,18 +184,18 @@ public class SwingLogText extends SwingText implements Output {
                 Sentence s = t.sentence;
                 if (s!=null) {
                     priority = t.budget.getPriority();
-                    printColorBlock(LogPanel.getPriorityColor(priority), "__");
+                    printColorBlock(LogPanel.getPriorityColor(priority), "  ");
                 
                     TruthValue tv = s.truth;
                     if (tv!=null) {                    
-                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "__");
-                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "__");                        
+                        printColorBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
+                        printColorBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");                        
                     }
                     else if ( t.getBestSolution()!=null) {
-                        printColorBlock(LogPanel.getStatementColor('=', priority), "____");
+                        printColorBlock(LogPanel.getStatementColor('=', priority), "    ");
                     }
                     else {                        
-                        printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "____");                   
+                        printColorBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");                   
                     }
                 }
             }

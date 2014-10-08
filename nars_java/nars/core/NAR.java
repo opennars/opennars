@@ -306,7 +306,7 @@ public class NAR implements Runnable, Output, TaskSource {
     
     /** Removes an output channel */
     public Output removeOutput(final Output channel) {
-        oldOutputChannels.remove(channel);
+        oldOutputChannels.add(channel);
         ioChanged = true;
         return channel;
     }
