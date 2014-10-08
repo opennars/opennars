@@ -31,7 +31,9 @@ public class GraphExecutive {
     public final Memory memory;
     public final ImplicationGraph implication;
     
-    
+
+    final int maxConsecutiveIntervalTerms = 3;
+        
     /** controls the relative weigting of edges and vertices for particle traversals */
     double conceptCostFactor = 0.5;
     double edgeCostFactor = 1.0 - conceptCostFactor;
@@ -563,7 +565,7 @@ public class GraphExecutive {
                             //TODO calculate a more fine-grained sequence of itnervals
                             //rather than just rounding to the nearest.
                             //ex: +2,+1 may be more accurate than a +3
-                            seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
+                            seq.addAll(Interval.intervalTimeSequence(accumulatedDelay, maxConsecutiveIntervalTerms, memory)  );
                             accumulatedDelay = 0;                            
                         }
                                                 

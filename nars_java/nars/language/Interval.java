@@ -17,6 +17,9 @@
 
 package nars.language;
 
+import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Memory;
 import nars.io.Symbols;
@@ -29,7 +32,7 @@ import nars.io.Symbols;
  * @author peiwang / SeH
  */
 public class Interval extends Term {
-    
+
     public static class AtomicDuration extends AtomicInteger {
         
         /** this represents the amount of time in proportion to a duration in which
@@ -65,7 +68,7 @@ public class Interval extends Term {
     static final int INTERVAL_POOL_SIZE = 16;
     static Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
     
-    public static Interval interval(String i) {
+    public static Interval interval(final String i) {
         return intervalMagnitude( Integer.parseInt(i.substring(1)) - 1);
     }
     
@@ -77,7 +80,7 @@ public class Interval extends Term {
         return intervalMagnitude( timeToMagnitude( time, duration ) );
     }
     
-    protected static Interval intervalMagnitude(final int magnitude) {
+    public static Interval intervalMagnitude(final int magnitude) {
         if (magnitude >= INTERVAL_POOL_SIZE)
             return new Interval(magnitude, true);
         
@@ -121,9 +124,11 @@ public class Interval extends Term {
             return 1;
         return Math.exp(magnitude * duration.getSubDurationLog());
     }
+    
     public static long magnitudeToTime(final int magnitude, final AtomicDuration duration) {
         return (long)Math.round(magnitudeToTime((double)magnitude, duration));
     }
+    
     /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude */
     public static long magnitudeToTimeHalfRadius(final int magnitude, final AtomicDuration duration) {
         //TODO cache this result because it will be equal for all similar integer magnitudes
@@ -151,4 +156,47 @@ public class Interval extends Term {
         //originally: return new Interval(magnitude, true);        
         return this;
     }
+
+    /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
+    public static List<Interval> intervalTimeSequence(final long t, final int maxTerms, final Memory memory) {
+        if (maxTerms == 1)
+            return Lists.newArrayList(intervalTime(t, memory));
+        
+        long a; //current approximation value
+        Interval first;
+        first = intervalTime(t, memory);
+        a = first.getTime(memory);
+        if (a == t) return Lists.newArrayList(first);
+        else if (a < t) {
+            //ok we will add to it. nothing to do here
+        }
+        else if ((a > t) && (first.magnitude > 0)) {
+            //use next lower magnitude
+            first = intervalMagnitude(first.magnitude - 1);
+            a = first.getTime(memory);
+        }
+                
+        List c = new ArrayList(maxTerms);
+        c.add(first);
+        
+        long remaining = t - a;
+        c.addAll( intervalTimeSequence(remaining, maxTerms-1, memory));
+        
+        return c;
+    }
+
+    /** sum the time period contained in the Intervals (if any) in a sequence of objects (usually list of Terms) */
+    public static long intervalSequenceTime(final Iterable s, final Memory memory) {
+        long time = 0;
+        for (final Object t : s) {
+            if (t instanceof Interval) {
+                Interval i = (Interval)t;
+                time += i.getTime(memory);
+            }
+        }
+        return time;
+    }
+
+    
+
 }
