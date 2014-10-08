@@ -81,35 +81,56 @@ public class ImplicationGraph extends SentenceItemGraph {
         //System.out.println(g.vertexSet().size() + ":" + vertexSet().size() + "," + g.edgeSet().size() + ":" + edgeSet().size());
     }
     
+    public static class UniqueOperation extends Operation {
+        
+        public final Implication parent;        
+        private final String id;
+        
+        public UniqueOperation(Implication parent, Operation o, Term previous) {
+            super(o.name(), o.term);
+            if (previous != null)
+                this.id = parent.name() +"/"+ previous.name() + "/" + o.name();
+            else
+                this.id = parent.name() +"/"+ o.name();
+            this.parent = parent;
+        }
+
+ 
+        
+        @Override public int hashCode() {  return id.hashCode();        }
+
+        @Override public boolean equals(Object that) {
+            if (that == this) return true;
+            
+            if (that instanceof UniqueOperation)
+                return (((UniqueOperation)that).id.equals(id));
+            
+            return false;
+        }
+        
+    }
+    
     public static class UniqueInterval extends Interval {
         
         public final Implication parent;        
-        private final Term prev;
         private final String id;
     
         public UniqueInterval(Implication parent, Interval i, Term previous) {
             super(i.magnitude, true);    
             this.id = parent.name() + "/" + previous.name() + "/" + i.name();
             this.parent = parent;
-            this.prev = previous;
         }
 
-        @Override
-        public int hashCode() {
-            return id.hashCode();
-        }
+        @Override public int hashCode() {  return id.hashCode();        }
 
-        @Override
-        public boolean equals(Object that) {
+        @Override public boolean equals(Object that) {
             if (that == this) return true;
             
-            if (that instanceof UniqueInterval) {
-                UniqueInterval ui = (UniqueInterval)that;
-                return (ui.id.equals(id));
-            }
+            if (that instanceof UniqueInterval)
+                return (((UniqueInterval)that).id.equals(id));
+            
             return false;
-        }
-        
+        }        
         
     }
     
@@ -185,16 +206,10 @@ public class ImplicationGraph extends SentenceItemGraph {
                      Collections.reverse(al);*/
                 
                 for (Term a : seq.term) {
-
-                    if (a instanceof Interval) {
-                        /*if (addedNonInterval) */{
-                            //eliminate prefix intervals
-                            a = new UniqueInterval(st, (Interval)a, prev);
-                        }
-                    }
+                    
                     if (Executive.isPlanTerm(a)) {
                         /*if (!prev.equals(a))*/ 
-                        addVertex(a);
+                        a = newExecutableVertex(st, a, prev);
                             
                         if (prev!=null)  {
                             newImplicationEdge(prev, a, c, s);
@@ -229,11 +244,10 @@ public class ImplicationGraph extends SentenceItemGraph {
             }
         }
         else {
-            if (Executive.isPlanTerm(subject)) {
-                addVertex(subject);
+            if (Executive.isPlanTerm(subject)) {                
                 //newImplicationEdge(predicatePre, subject, c, s);
                 //newImplicationEdge(subject, predicatePost, c, s);                
-                newImplicationEdge(subject, predicatePost, c, s);
+                newImplicationEdge(newExecutableVertex(st, subject, null), predicatePost, c, s);
             }
             else {
                 //separate into pre/post
@@ -278,6 +292,21 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
     
 
+    public Term newExecutableVertex(Implication st, Term t, Term prev) {
+        Term r;
+        if (t instanceof Operation) {
+            r = new UniqueOperation(st, (Operation)t, prev);
+        }
+        else if (t instanceof Interval) {
+            r = new UniqueInterval(st, (Interval)t, prev);
+        }
+        else
+            throw new RuntimeException("Not executable vertex: " + t);
+        
+        addVertex(r);
+        return r;
+    }
+    
     public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
         Implication impParent = (Implication)parent.content;
         Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
