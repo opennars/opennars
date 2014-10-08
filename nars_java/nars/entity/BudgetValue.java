@@ -53,6 +53,9 @@ public class BudgetValue implements Cloneable {
     /** The overall (context-independent) evaluation */
     private float quality;
 
+    /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
+    long lastForgetTime = -1;
+    
     /** 
      * Default constructor
      */
@@ -253,6 +256,18 @@ public class BudgetValue implements Cloneable {
      */
     public void lerpPriority(final float targetValue, final float momentum) {
         setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
+    }
+
+    public long getForgetPeriod(long currentTime) {
+        long period;
+        if (this.lastForgetTime == -1)            
+            period = 0;
+        else
+            period = currentTime - lastForgetTime;
+        
+        lastForgetTime = currentTime;
+        
+        return period;
     }
 
 }

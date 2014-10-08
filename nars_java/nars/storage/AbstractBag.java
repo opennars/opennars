@@ -130,10 +130,10 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
 //    }
 
     /** called when an item is inserted or re-inserted */
-    public void forget(final E x) {
+    public void forget(final E x, long currentTime) {
         float forgetCycles = forgetCycles();
         if (forgetCycles > 0) {            
-            BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD);
+            BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD, currentTime);
         }
     }
     
@@ -175,8 +175,8 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */
-    public final boolean putBack(final E oldItem) {
-        forget(oldItem);
+    public final boolean putBack(final E oldItem, long currentTime) {
+        forget(oldItem, currentTime);
         return putIn(oldItem);
     }
 
@@ -184,12 +184,12 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     /** x = takeOut(), then putBack(x) - without removing 'x' from nameTable 
      *  @return the variable that was updated, or null if none was taken out
      */
-    synchronized public E processNext(boolean forget) {
+    synchronized public E processNext(boolean forget, long currentTime) {
         final E x = takeOut();
         if (x!=null) {
             //putBack():
             if (forget) {
-                forget(x);
+                forget(x, currentTime);
             }
             
             boolean r = putIn(x);

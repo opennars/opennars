@@ -7,7 +7,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.Output;
@@ -46,9 +46,9 @@ public class NARio extends Run {
     }
 
     public static void main(String[] arg) {
-        //NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new DefaultNARBuilder().realtime().build();
         
-        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).realtime().build();
+        //NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).realtime().build();
         
         //NAR nar = new ContinuousBagNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
@@ -68,6 +68,7 @@ public class NARio extends Run {
         nar.param().duration.set(50);
         nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
+        nar.param().conceptForgetDurations.set(20);
         
 
         NARio nario = new NARio(nar);

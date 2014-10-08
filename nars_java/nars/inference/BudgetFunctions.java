@@ -179,7 +179,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param forgetCycles The budget for the new item
      * @param relativeThreshold The relative threshold of the bag
      */
-    public static void forget(final BudgetValue budget, final float forgetCycles, final float relativeThreshold) {
+    public static void forgetOLD(final BudgetValue budget, final float forgetCycles, final float relativeThreshold) {
         float quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
         final float p = budget.getPriority() - quality;                     // priority above quality
         if (p > 0) {
@@ -188,6 +188,24 @@ public final class BudgetFunctions extends UtilityFunctions {
         budget.setPriority(quality);
     }
 
+    /** forgetting calculation for real-time timing */
+    public static void forget(final BudgetValue budget, final float forgetTime, float minPriority, final long currentTime) {
+        long forgetDelta = budget.getForgetPeriod(currentTime);
+        
+        float forgetProportion = forgetDelta / forgetTime;
+        if (forgetProportion > 1.0f) forgetProportion = 1.0f;
+        if (forgetProportion < 0) forgetProportion = 0;
+        
+        //System.out.println("forget Delta=" + forgetDelta + " " + forgetTime + " " + forgetProportion);
+        minPriority *= budget.getQuality();
+        
+        float currentPriority = budget.getPriority();
+        budget.setPriority( currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion) );
+        //System.out.println("  " + currentPriority + " -> " + budget.getPriority());
+        
+    }
+
+    
     /**
      * Merge an item into another one in a bag, when the two are identical
      * except in budget values
@@ -300,4 +318,5 @@ public final class BudgetFunctions extends UtilityFunctions {
     @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
         throw new RuntimeException("Moved to TemporalRules.java");
     }    
+
 }

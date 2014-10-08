@@ -24,6 +24,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
      */
     public final AbstractBag<Concept> concepts;
     private final ConceptBuilder conceptBuilder;
+    Memory memory;
     
 
     public SequentialMemoryCycle(AbstractBag<Concept> concepts, ConceptBuilder conceptBuilder) {
@@ -33,7 +34,9 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     
     
     @Override
-    public void cycle(Memory m) {
+    public void cycle(final Memory m) {
+        this.memory = m;
+        
         m.processNewTasks();
         
         if (m.getNewTaskCount() == 0) {       // necessary?
@@ -41,7 +44,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         }
 
         if (m.getNewTaskCount() == 0) {       // necessary?
-            processConcept(m);
+            processConcept();
         }
 
     }
@@ -52,12 +55,12 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     /**
      * Select and fire the next concept.
      */
-    public void processConcept(Memory m) {
-        Concept currentConcept = concepts.processNext(false);
+    public void processConcept() {
+        Concept currentConcept = concepts.processNext(false, memory.getTime());
         if (currentConcept != null) {            
             
-            if (m.getRecorder().isActive()) {
-                m.getRecorder().append("Concept Select", currentConcept.term.toString());
+            if (memory.getRecorder().isActive()) {
+                memory.getRecorder().append("Concept Select", currentConcept.term.toString());
             }
                         
             currentConcept.fire();
@@ -95,19 +98,19 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     public void activate(Concept c, BudgetValue b) {
         concepts.pickOut(c.name());
         BudgetFunctions.activate(c, b);
-        concepts.putBack(c);
+        concepts.putBack(c, memory.getTime());
     }
     
     @Override
     public void forget(Concept c) {
         concepts.pickOut(c.name());
-        concepts.forget(c);
-        concepts.putBack(c);    
+        concepts.forget(c, memory.getTime());
+        concepts.putBack(c, memory.getTime());    
     }
 
     @Override
     public Concept sampleNextConcept() {
-        return concepts.processNext(false);
+        return concepts.processNext(false, memory.getTime());
     }
 
     @Override
