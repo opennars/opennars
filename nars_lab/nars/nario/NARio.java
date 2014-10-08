@@ -1,5 +1,6 @@
 package nars.nario;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -10,6 +11,7 @@ import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
+import nars.io.ChangedTextInput;
 import nars.io.Output;
 import nars.language.Term;
 import nars.nario.level.Level;
@@ -68,7 +70,7 @@ public class NARio extends Run {
         nar.param().duration.set(50);
         nar.param().decisionThreshold.set(0.1);
         nar.param().noiseLevel.set(0);
-        nar.param().conceptForgetDurations.set(20);
+        nar.param().conceptForgetDurations.set(50);
         
 
         NARio nario = new NARio(nar);
@@ -111,6 +113,48 @@ public class NARio extends Run {
         
     }
     
+    ChangedTextInput[] keyInput = new ChangedTextInput[6];
+    
+    protected void setKey(int k, boolean pressed) {
+        if (keyInput[k] == null)
+            keyInput[k] = new ChangedTextInput(nar);
+        keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")!");
+    }
+    
+    @Override protected void toggleKey(int keyCode, boolean isPressed)
+    {
+        if (keyCode == KeyEvent.VK_LEFT)
+        {
+            setKey(0, isPressed);
+            scene.toggleKey(Mario.KEY_LEFT, isPressed);
+        }
+        if (keyCode == KeyEvent.VK_RIGHT)
+        {
+            setKey(1, isPressed);
+            scene.toggleKey(Mario.KEY_RIGHT, isPressed);
+        }
+        if (keyCode == KeyEvent.VK_DOWN)
+        {
+            setKey(2, isPressed);
+            scene.toggleKey(Mario.KEY_DOWN, isPressed);
+        }
+        if (keyCode == KeyEvent.VK_UP)
+        {
+            setKey(3, isPressed);
+            scene.toggleKey(Mario.KEY_UP, isPressed);
+        }
+        if (keyCode == KeyEvent.VK_S)
+        {
+            setKey(4, isPressed);
+            scene.toggleKey(Mario.KEY_JUMP, isPressed);
+        }
+        if (keyCode == KeyEvent.VK_A)
+        {
+            setKey(5, isPressed);
+            scene.toggleKey(Mario.KEY_SPEED, isPressed);
+        }
+    }
+
     @Override
     public void ready() {
         //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
@@ -214,8 +258,8 @@ public class NARio extends Run {
 
                                 k++;
 
-                                int block = level.level.getBlock(x, y);
-                                int data = level.level.getData(x, y);
+                                int block = level.level.getBlock(x+i*16, y+j*16);
+                                int data = level.level.getData(x+i*16, y+j*16);
 
                                 boolean blocked
                                         = ((block & Level.BIT_BLOCK_ALL) > 0)
@@ -228,9 +272,9 @@ public class NARio extends Run {
 //                                            ")) --> space>. :|:";
                                 String direction = "(*," + i + "," + j + ")";
                                 if ((i == 0) && (j == -1)) {
-                                    direction = "down";
-                                } else if ((i == 0) && (j == 1)) {
                                     direction = "up";
+                                } else if ((i == 0) && (j == 1)) {
+                                    direction = "down";
                                 } else if ((i == -1) && (j == 0)) {
                                     direction = "left";
                                 } else if ((i == 1) && (j == 0)) {
@@ -239,7 +283,9 @@ public class NARio extends Run {
                                     direction = "(*," + i + "," + j + ")";
                                     //continue; //ignore diagonal for now
                                 }
-                                String s = "<" + direction + " --> " + (blocked ? "solid" : "empty")  +">. :|:";
+                                
+                                char datachar = (char)('r' + data);
+                                String s = "<" + direction + " --> (*," + (blocked ? "solid" : "empty")  +",d" + datachar +")>. :|:";
 
                                 if ((sight[k] != null) && (sight[k].equals(s))) {
                                     continue;
@@ -270,21 +316,21 @@ public class NARio extends Run {
                                     String state = args[0].toString();
                                     
                                     Task task = operation.getTask();
-                                    if ((task.getParentTask()!=null) && (task.getParentBelief()!=null)) {
+                                    //if ((task.getParentTask()!=null) && (task.getParentBelief()!=null)) {
                                         Task parent = task.getParentTask();
                                         Task root = task.getRootTask();
                                         
                                         //System.out.print(nar.getTime() + ": " + operation.getTask() + " caused by " + task.getParentBelief() + ", parent=" + parent);
                                         
-                                        if (parent!=root) {
+                                        /*if (parent!=root) {
                                             System.out.println(", root=" + root);
                                         }
                                         else {
                                             System.out.println();
-                                        }
+                                        }*/
                                         
                                         mario.keys[k] = state.equals("on");
-                                    }
+                                    //}
 
                                     return super.execute(operation, args, memory);
                                 }
@@ -313,7 +359,7 @@ public class NARio extends Run {
                             String state = nextKeyTime > 0 ? "on" : "off";
                             //String budget = "$0.8;0.1$";
                             String budget = "";
-                            nar.addInput(budget + "(^" + ko + "," + state + ")!");
+                            //nar.addInput(budget + "(^" + ko + "," + state + ")!");
                         }
 
                         keyTime[k] = nextKeyTime;

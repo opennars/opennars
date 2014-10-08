@@ -67,7 +67,8 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         setFocusable(true);
     }
 
-    private void toggleKey(int keyCode, boolean isPressed)
+    
+    protected void toggleKey(int keyCode, boolean isPressed)
     {
         if (keyCode == KeyEvent.VK_LEFT)
         {
