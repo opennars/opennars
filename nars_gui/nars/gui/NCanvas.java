@@ -41,7 +41,7 @@ public class NCanvas extends Canvas {
     }
     
     
-    protected final boolean updateDoubleBuffer() {
+    private final boolean updateDoubleBuffer() {
         int w = getWidth();
         int h = getHeight();
         if ((w == 0) || (h == 0)) {

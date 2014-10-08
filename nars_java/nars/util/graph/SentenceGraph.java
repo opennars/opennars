@@ -79,7 +79,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         else if (event == Events.ConceptBeliefAdd.class) {
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            add(s, c, true);
+            add(s, c);
         }
         else if (event == Events.ConceptBeliefRemove.class) {
             Concept c = (Concept)a[0];
@@ -89,7 +89,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         else if (event == Events.ConceptGoalAdd.class) {
             Concept c = (Concept)a[0];
             Sentence s = (Sentence)a[1];
-            add(s, c, true);
+            add(s, c);
         }
         else if (event == Events.ConceptGoalRemove.class) {
             Concept c = (Concept)a[0];
@@ -117,7 +117,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
 
         for (final Concept c : memory.getConcepts()) {
             for (final Sentence s : c.beliefs) {                
-                add(s, c,false);
+                add(s, c);
             }
         }        
     }
@@ -150,11 +150,8 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         return true;
     }
     
-    public boolean add(final Sentence s, final Item c, boolean specialAdd) { 
+    public boolean add(final Sentence s, final Item c) { 
 
-        //specialAdd is a debug variable, which makes it possible to select from where the system is allowed to build up the tree easily
-       // if(specialAdd)
-       //    return false;
 
         if (!allow(s))
             return false;
@@ -169,7 +166,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
                 Statement st = (Statement)cs;
                 if (allow(st)) {
                                 
-                    if (add(s, st, c, specialAdd)) {
+                    if (add(s, st, c)) {
                         event.emit(GraphChange.class, st, null);
                         return true;
                     }
@@ -182,11 +179,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }    
     
     /** default behavior, may override in subclass */
-    public boolean add(final Sentence s, final CompoundTerm ct, final Item c, boolean specialAdd) {
-        
-       // if(specialAdd) {
-       //     return false;
-       // }
+    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
         
         if (ct instanceof Statement) {
             Statement st = (Statement)ct;

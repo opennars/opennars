@@ -2,7 +2,6 @@ package nars.inference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class GraphExecutive {
     protected void accumulate(final Sentence s) {
         accumulatedSentence.put(s, accumulatedTerm.getOrDefault(s, new Double(0)) + 1);
     }
-    protected void accumulate(final Term t, final List<Sentence> path) {
+    protected void accumulate(final Term t, final Sentence[] path) {
         accumulate(t);
         for (Sentence s : path)
             accumulate(s);
@@ -98,9 +97,9 @@ public class GraphExecutive {
     public class ParticlePath implements Comparable<ParticlePath> {
         final public Term target;
         
-        private double activation = 0;
-        Sentence[] shortestPath;
+        Sentence[] bestPath;
         double distance;
+        double score;
         
         public ParticlePath(final Term target, final List<Sentence> path, final double distance) {
             this.target = target;            
@@ -108,26 +107,33 @@ public class GraphExecutive {
         }
         
         public void addPath(final List<Sentence> p, final double dist) {
-            if ((this.shortestPath == null) || (dist < distance)) {
-                this.shortestPath = p.toArray(new Sentence[p.size()]);
+            
+            double newScore = 0;
+            for (Sentence s : p)
+                newScore += getSentenceRelevancy(s);
+            newScore /= ((double)p.size());
+                
+            if ((this.bestPath == null) || (score < newScore)) {
+                this.bestPath = p.toArray(new Sentence[p.size()]);
                 this.distance = dist;
+                this.score = newScore;                
             }
-            accumulate(target, p);
+            
         }
 
         @Override
         public final int compareTo(final ParticlePath o) {
-            return Double.compare(o.activation, activation);
+            return Double.compare(o.score(), score());
         }
 
         @Override
         public String toString() {
-            return "[" + Texts.n4((float)score()) + "|" + Texts.n4((float)distance) + "] "/*+ target */ + " <- " + Arrays.toString(shortestPath);
+            return "[" + Texts.n4((float)score()) + "|" + Texts.n4((float)distance) + "] "/*+ target */ + " <- " + Arrays.toString(bestPath);
         }
 
         /** can be used to favor the total activation, or short distnce, or combinations of other factors  */
         private double score() {
-            return activation;
+            return score;
         }
         
     }
@@ -135,7 +141,9 @@ public class GraphExecutive {
     public class ParticleActivation {
         private final ImplicationGraph graph;
         
-        Map<Term, ParticlePath> termPaths = new HashMap();
+        public final Map<Term, ParticlePath> termPaths = new HashMap();
+        TreeSet<ParticlePath> paths;
+        
         boolean avoidCycles = true;
         private int edgeDecisionPass = 0;
         private int edgeDecisionFailCyclical = 0;
@@ -145,7 +153,7 @@ public class GraphExecutive {
         private int pathFailNoOperation = 0;
         private int pathsValid = 0;
         private int numIterations = 0;
-        private TreeSet paths;
+        
 
         public ParticleActivation(ImplicationGraph graph) {
             this.graph = graph;            
@@ -155,8 +163,6 @@ public class GraphExecutive {
 
             //TODO cache pathways in the graph for faster traversal. must store source leading edge, destination(s) and their distances
             
-            double particleActivation = 1.0 / iterations;
-
             List<Sentence> currentPath = new ArrayList();
 
             Map<Sentence, Double> nextEdgeCost = new HashMap();
@@ -169,7 +175,7 @@ public class GraphExecutive {
 
                 double energy = distance;
 
-                Term current = source;
+                Term currentVertex = source;
 
                 boolean choicesAvailable = false;
                 boolean operationTraversed = false;
@@ -178,8 +184,8 @@ public class GraphExecutive {
                 while (energy > 0) {
 
                     Set<Sentence> graphEdges = forward ? 
-                            graph.outgoingEdgesOf(current) : 
-                            graph.incomingEdgesOf(current);
+                            graph.outgoingEdgesOf(currentVertex) : 
+                            graph.incomingEdgesOf(currentVertex);
                     
                     nextEdgeCost.clear();
                     
@@ -187,8 +193,8 @@ public class GraphExecutive {
                     //remove edges which loop to the target goal precondition OR postcondition
                     for (final Sentence s : graphEdges) {
                         Term etarget = forward ?
-                                graph.getEdgeTarget(s) :
-                                graph.getEdgeSource(s);
+                                getEdgeTarget(s):
+                                getEdgeSource(s);
                         
                         if ((avoidCycles) && (etarget.equals(source))) {
                             edgeDecisionFailCyclical++;
@@ -202,6 +208,11 @@ public class GraphExecutive {
                                                 
                         //double ew = graph.getEdgeWeight(s);
                         double ew = getTraversalCost(s, etarget);
+                        
+                        //ignore if this edge will cost more energy than allowed
+                        if (ew > energy)
+                            continue;
+                        
                         nextEdgeCost.put(s, ew);
                         /*if (ew >= ImplicationGraph.DEACTIVATED_EDGE_WEIGHT) {
                             edgeDecisionFailInactiveEdge++;
@@ -223,7 +234,7 @@ public class GraphExecutive {
                         break;
                     }                
 
-                    Sentence nextEdge = null;
+                    Sentence nextEdge;
                     if (nextEdgeCost.size() == 1) {
                         nextEdge = nextEdgeCost.keySet().iterator().next();
                     }
@@ -236,7 +247,7 @@ public class GraphExecutive {
 
                     energy -= nextEdgeCost.get(nextEdge); //TODO used cache value calculated in last iteration of above 'j' for loop
 
-                    current = forward ? graph.getEdgeTarget(nextEdge) : graph.getEdgeSource(nextEdge);
+                    currentVertex = forward ? getEdgeTarget(nextEdge) : getEdgeSource(nextEdge);
                     
                     
                     //System.out.println(i + ": " + nextEdge + " : " + current + " " + nextEdgeCost.get(nextEdge));
@@ -255,42 +266,31 @@ public class GraphExecutive {
                     continue;                        
                 }
 
-                ParticlePath ppath = termPaths.get(current);
+                ParticlePath ppath = termPaths.get(currentVertex);
                 if (ppath == null) {                    
-                    termPaths.put(current, 
+                    termPaths.put(currentVertex, 
                             ppath = new ParticlePath(source, currentPath, distance - energy));
                 }
                 else {
                     ppath.addPath(currentPath, distance - energy);
                 }
 
-                if (choicesAvailable) {                
-                    ppath.activation += particleActivation;
-                }
-                else {
-                    //we've found the only path, so it gets all activation and we dont need to iterate any further
-                    ppath.activation = 1;
+                pathsValid++;
+
+                if (!choicesAvailable) {                
+                    //we've found the only path, so and we dont need to iterate any further
                     break;
                 }
                 
-                pathsValid++;
 
             }
 
-            Collection<ParticlePath> paths = termPaths.values();                 
-            //System.out.println(paths);
+            this.paths = new TreeSet(termPaths.values());
             
-            //normalize activations to maxValue=1.0
-            double maxAct = 0;
-            for (final ParticlePath p : paths)
-                if (p.score() > maxAct)
-                    maxAct = p.score();
-//            if (maxAct > 0)
-//                for (final ParticlePath p : paths)
-//                    p.score() /= maxAct;            
-
-
-            this.paths = new TreeSet(paths);
+            for (ParticlePath p : this.paths) {
+                accumulate(p.target, p.bestPath);
+                //System.out.println("  " + p);
+            }
             return this.paths;
         }
 
@@ -348,6 +348,14 @@ public class GraphExecutive {
         //public void reset()
         
     }
+    
+    
+    public Term getEdgeSource(final Sentence s) {
+        return ((Implication)s.content).getSubject();
+    }
+    public Term getEdgeTarget(final Sentence s) {
+        return ((Implication)s.content).getPredicate();
+    }
 
     /** total cost of a traversal, which includes the edge cost and the target vertex cost. any value > 1 */
     public double getTraversalCost(final Sentence s, final Term target) {
@@ -392,6 +400,7 @@ public class GraphExecutive {
     /** between 0...1 */
     public static float getActualConfidence(final Memory memory, final Term t) {
         double p;
+        
         Concept c = memory.concept(t);
         if ((c!=null) && (!c.beliefs.isEmpty())) {
             Sentence bestBelief = c.beliefs.get(0);
@@ -433,8 +442,8 @@ public class GraphExecutive {
 
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getSentenceRelevancy(final Sentence e) {
-        if (!implication.containsEdge(e)) 
-            return 0;
+        /*if (!implication.containsEdge(e)) 
+            return 0;*/
         
         //transitions to PostCondition vertices are free or low-cost        
         /*
@@ -555,7 +564,7 @@ public class GraphExecutive {
         TreeSet<ParticlePlan> plans = new TreeSet();
         for (final ParticlePath pp : roots) {
 
-            Sentence[] path = pp.shortestPath;
+            Sentence[] path = pp.bestPath;
             
             if (path.length == 0)
                 throw new RuntimeException("ParticlePath empty: " + pp);

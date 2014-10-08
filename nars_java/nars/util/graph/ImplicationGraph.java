@@ -158,7 +158,7 @@ public class ImplicationGraph extends SentenceItemGraph {
     }
     
     @Override
-    public boolean add(final Sentence s, final CompoundTerm ct, final Item c, boolean specialAdd) {
+    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
 
         
         if (!(ct instanceof Implication)) {
@@ -318,9 +318,22 @@ public class ImplicationGraph extends SentenceItemGraph {
         return r;
     }
     
+    /** less costly subclass of Implication */
+    public static class LightweightImplication extends Implication {
+
+        public LightweightImplication(Term subject, Term predicate, int order) {
+            super(subject, predicate, order);
+        }
+    
+        @Override
+        protected boolean calcContainedVariables() { return false; }            
+        @Override
+        protected short calcComplexity() { return -1; }
+    }
+    
     public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
         Implication impParent = (Implication)parent.content;
-        Implication impFinal = new Implication(source, target, impParent.getTemporalOrder());                    
+        Implication impFinal = new LightweightImplication(source, target, impParent.getTemporalOrder());                    
         //System.out.println("new impl edge: " + impFinal + " " + parent.truth + " , parent=" + parent);
         
         Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
