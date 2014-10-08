@@ -541,7 +541,6 @@ public class GraphExecutive {
             
             //iterate backwards, from pred -> subj -> pred -> subj
             boolean onSubject = false;
-            Term prevTerm = null;
             for (int i = path.length-1; i >=0; ) {
                 Sentence s = path[i];
                 Term t = s.content;
@@ -569,21 +568,14 @@ public class GraphExecutive {
                             //ex: +2,+1 may be more accurate than a +3
                             seq.add( Interval.intervalTime(accumulatedDelay, memory)  );
                             accumulatedDelay = 0;                            
-                        }
+                        }                        
                         
-                        //avoid consecutive duplicates
-                        if (prevTerm!=null && term.equals(prevTerm))
-                            continue;
-                        
-                        seq.add(term);
-                        prevTerm = term;
-                        
+                        seq.add(term);                        
                     }
                     else {
                         Interval in = (Interval)term;
                         long time = in.getTime(memory);
                         accumulatedDelay += time;
-                        prevTerm = in;
                     }                    
                 }
                 else {
@@ -601,7 +593,6 @@ public class GraphExecutive {
                         }                        
                     }
                     */
-                    prevTerm = term;
                 }
                 
                 if (term instanceof Operation)
