@@ -42,7 +42,7 @@ public class SwingLogPanel extends LogPanel {
 
         //http://stackoverflow.com/questions/4702891/toggling-text-wrap-in-a-jtextpane        
         JPanel ioTextWrap = new JPanel(new BorderLayout());
-        ioTextWrap.add(ioText);
+        ioTextWrap.add(ioText, BorderLayout.CENTER);
         JScrollPane ioTextScroll = new JScrollPane(ioTextWrap);
         ioText.setScroller(ioTextScroll);
         add(ioTextScroll, BorderLayout.CENTER);

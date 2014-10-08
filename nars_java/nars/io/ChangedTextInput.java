@@ -1,7 +1,6 @@
 package nars.io;
 
 import nars.core.NAR;
-import nars.io.TextInput;
 
 
 /** TextInput subclass that only inputs when the next input value changes from previous */
@@ -14,12 +13,14 @@ public class ChangedTextInput extends TextInput {
         this.nar = n;
     }
 
-    public void set(String s) {
+    public boolean set(String s) {
         if ((last == null) || (!last.equals(s))) {
             nar.addInput(s);
+            last = s;
+            return true;
         }
-        //TODO else add with lower budget
-        last = s;
+        //TODO option to, when else, add with lower budget ?
+        return false;
     }
 }
 
