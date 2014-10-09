@@ -21,8 +21,8 @@
 package nars.inference;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -72,7 +72,7 @@ import nars.language.Variables;
  * decompositional rules are also used in backward inference
  */
 public final class CompositionalRules {
-        
+
     /* --------------- questions which contain answers which are of no value for NARS but need to be answered --------------- */
     /**
      * {(&&,A,B,...)?, A,B} |- {(&&,A,B)} {(&&,A,_components_1_)?,
@@ -86,99 +86,97 @@ public final class CompositionalRules {
      * @param nal Reference to the memory
      */
     static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
-        if(sentence==null || belief==null || !sentence.isJudgment() || !belief.isJudgment()) {
+        if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
+
+        Memory m = nal.mem();
+        Collection<Task> qq = m.conceptQuestions(Conjunction.class);
+        if (qq.isEmpty())
+            return;
         
+
         final Term term1 = sentence.content;
         final boolean term1ContainVar = term1.containVar();
         final boolean term1Conjunction = term1 instanceof Conjunction;
 
-        if (term1Conjunction)
-            if (term1ContainVar)
-                return;
-                    
+        if ((term1Conjunction) && (term1ContainVar))
+            return;                    
+
         final Term term2 = belief.content;
         final boolean term2ContainVar = term2.containVar();
         final boolean term2Conjunction = term2 instanceof Conjunction;
 
-        if (term2Conjunction)
-            if (term2ContainVar)
-                return;
-        
-        //TODO use Question index
-        for (final Concept concept : nal.mem().conceptProcessor) {
+        if ((term2Conjunction) && (term2ContainVar))
+            return;
 
-            final List<Task> questions = concept.questions;
-            
-            for (int i = 0; i < questions.size(); i++) {
-                final Task question = questions.get(i);                                    
+
+        for (final Task question : qq) {
 
                 //if(question==null) { assert(false); continue; }
-
-                Sentence qu=question.sentence;
+            Sentence qu = question.sentence;
 
                 //if(qu==null) { assert(false); continue; }
+            final Term pcontent = qu.content;
+            if (!(pcontent instanceof Conjunction)) {
+                continue;
+            }
 
-                final Term pcontent = qu.content;
-                if (!(pcontent instanceof Conjunction))
-                    continue;
-                
-                final Conjunction ctpcontent = (Conjunction)pcontent;
-                if (ctpcontent.containVar())
-                    continue;
-                
+            final Conjunction ctpcontent = (Conjunction) pcontent;
+            if (ctpcontent.containVar()) {
+                continue;
+            }
 
-                if (!term1Conjunction && !term2Conjunction) {
-                    if(!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
+            if (!term1Conjunction && !term2Conjunction) {
+                if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
+                    continue;
+                }
+            } else {
+                if (term1Conjunction) {
+                    if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
+                        continue;
+                    }
+                    if (!ctpcontent.containsAllTermsOf(term1)) {
                         continue;
                     }
                 }
-                else {
-                    if (term1Conjunction) {
-                        if(!term2Conjunction && !ctpcontent.containsTerm(term2))
-                            continue;                    
-                        if (!ctpcontent.containsAllTermsOf(term1))
-                            continue;                        
-                    }
 
-                    if (term2Conjunction) {
-                        if (!term1Conjunction && !ctpcontent.containsTerm(term1))
-                            continue;                    
-                        if (!ctpcontent.containsAllTermsOf(term2))
-                            continue;
+                if (term2Conjunction) {
+                    if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
+                        continue;
+                    }
+                    if (!ctpcontent.containsAllTermsOf(term2)) {
+                        continue;
                     }
                 }
+            }
 
-                
-                Term conj = Conjunction.make(term1, term2);
+            Term conj = Conjunction.make(term1, term2);
 
-                /*
+            /*
                 since we already checked for term1 and term2 having a variable, the result
                 will not have a variable
                 
                 if (Variables.containVarDepOrIndep(conj.name()))
                     continue;
-                */
-
-                TruthValue truthT = nal.getCurrentTask().sentence.truth;
-                TruthValue truthB = nal.getCurrentBelief().truth;
-                /*if(truthT==null || truthB==null) {
+             */
+            TruthValue truthT = nal.getCurrentTask().sentence.truth;
+            TruthValue truthB = nal.getCurrentBelief().truth;
+            /*if(truthT==null || truthB==null) {
                     //continue; //<- should this be return and not continue?
                     return;
                 }*/
-                
-                nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.commit();                
 
-                TruthValue truthAnd = intersection(truthT, truthB);
-                BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
-                nal.doublePremiseTask(conj, truthAnd, budget,false);
-                break;
-            }
+            nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.commit();
+
+            TruthValue truthAnd = intersection(truthT, truthB);
+            BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
+            nal.doublePremiseTask(conj, truthAnd, budget, false);
+            break;
         }
 
     }
-    
+
     /* -------------------- intersections and differences -------------------- */
     /**
      * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==> M>,
@@ -274,11 +272,11 @@ public final class CompositionalRules {
             return;
         }
         Term content = Statement.make(statement, subject, predicate, order);
-        if ((content == null) || statement==null || content.equals(statement) || content.equals(nal.getCurrentBelief().content)) {
+        if ((content == null) || statement == null || content.equals(statement) || content.equals(nal.getCurrentBelief().content)) {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, false);
     }
 
     /**
@@ -293,7 +291,7 @@ public final class CompositionalRules {
      * @param nal Reference to the memory
      */
     private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
-        
+
         if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
             return;
         }
@@ -375,7 +373,7 @@ public final class CompositionalRules {
         }
         if (truth != null) {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-            nal.doublePremiseTask(content, truth, budget,false);
+            nal.doublePremiseTask(content, truth, budget, false);
         }
     }
 
@@ -391,7 +389,7 @@ public final class CompositionalRules {
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return;
         }
-        
+
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         Sentence belief = nal.getCurrentBelief();
@@ -403,7 +401,7 @@ public final class CompositionalRules {
         BudgetValue budget;
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
-            nal.doublePremiseTask(content, truth, budget,false);
+            nal.doublePremiseTask(content, truth, budget, false);
             // special inference to answer conjunctive questions with query variables
             if (Variables.containVarQuery(taskSentence.content.name())) {
                 Concept contentConcept = nal.mem().concept(content);
@@ -419,8 +417,8 @@ public final class CompositionalRules {
                 Term conj = Conjunction.make(component, content);
                 truth = intersection(contentBelief.truth, belief.truth);
                 budget = BudgetFunctions.compoundForward(truth, conj, nal);
-                nal.doublePremiseTask(conj, truth, budget,false);
-            }        
+                nal.doublePremiseTask(conj, truth, budget, false);
+            }
         } else {
             TruthValue v1, v2;
             if (compoundTask) {
@@ -440,7 +438,7 @@ public final class CompositionalRules {
                 } else { // isJudgment
                     truth = reduceConjunction(v1, v2);
                 }
-                } else if (compound instanceof Disjunction) {
+            } else if (compound instanceof Disjunction) {
                 if (taskSentence.isGoal()) {
                     if (compoundTask) {
                         truth = reduceConjunction(v2, v1);
@@ -448,23 +446,22 @@ public final class CompositionalRules {
                         return;
                     }
                 } else {  // isJudgment
-                        truth = reduceDisjunction(v1, v2);
-                    }
-                } else {
+                    truth = reduceDisjunction(v1, v2);
+                }
+            } else {
                 return;
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, false);
     }
-    
-    
+
     static final Variable varInd1 = new Variable("$varInd1");
     static final Variable varInd2 = new Variable("$varInd2");
     static final Variable varDep = new Variable("#varDep");
     static final Variable varDep2 = new Variable("#varDep2");
     static final Variable depIndVar1 = new Variable("#depIndVar1");
-    static final Variable depIndVar2 = new Variable("#depIndVar2");    
+    static final Variable depIndVar2 = new Variable("#depIndVar2");
 
     /* --------------- rules used for variable introduction --------------- */
     // forward inference only?
@@ -479,13 +476,11 @@ public final class CompositionalRules {
      * @param nal Reference to the memory
      */
     public static void introVarOuter(final Statement taskContent, final Statement beliefContent, final int index, final NAL nal) {
-        
+
         if (!(taskContent instanceof Inheritance)) {
             return;
         }
-        
-        
-        
+
         Term term11, term12, term21, term22, commonTerm;
         HashMap<Term, Term> subs = new HashMap<>();
         if (index == 0) {
@@ -533,7 +528,7 @@ public final class CompositionalRules {
         if (content == null) {
             return;
         }
-        
+
         TruthValue truthT = nal.getCurrentTask().sentence.truth;
         TruthValue truthB = nal.getCurrentBelief().truth;
         /*
@@ -542,21 +537,22 @@ public final class CompositionalRules {
         
         if (truthB == null)
             throw new RuntimeException("CompositionalRules.introVarOuter: current belief has null truth: " + memory.getCurrentBelief());
-        */
-        if ((truthT==null) || (truthB == null))
+         */
+        if ((truthT == null) || (truthB == null)) {
             return;
-        
+        }
+
         TruthValue truth = induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, false);
         content = Implication.make(state2, state1);
         truth = induction(truthB, truthT);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, false);
         content = Equivalence.make(state1, state2);
         truth = comparison(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, false);
 
         if (index == 0) {
             state1 = Inheritance.make(varDep, term12);
@@ -568,7 +564,7 @@ public final class CompositionalRules {
         content = Conjunction.make(state1, state2);
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, false);
     }
 
     /**
@@ -604,24 +600,25 @@ public final class CompositionalRules {
             return;
         }
         Sentence belief = nal.getCurrentBelief();
-        
+
         HashMap<Term, Term> substitute = new HashMap<>();
         substitute.put(commonTerm1, varDep2);
         CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound);
         content = content.applySubstitute(substitute);
         TruthValue truth = intersection(taskSentence.truth, belief.truth);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
-        
-        substitute.clear();        
-        
+        nal.doublePremiseTask(content, truth, budget, false);
+
+        substitute.clear();
+
         substitute.put(commonTerm1, varInd1);
         if (commonTerm2 != null) {
             substitute.put(commonTerm2, varInd2);
         }
         content = Implication.make(premise1, oldCompound);
-        if (content == null)
+        if (content == null) {
             return;
+        }
         content = content.applySubstitute(substitute);
         if (premise1.equals(taskSentence.content)) {
             truth = induction(belief.truth, taskSentence.truth);
@@ -629,7 +626,7 @@ public final class CompositionalRules {
             truth = induction(taskSentence.truth, belief.truth);
         }
         budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget,false);
+        nal.doublePremiseTask(content, truth, budget, false);
     }
 
     /**
@@ -652,52 +649,55 @@ public final class CompositionalRules {
                     }
                 }
             }
-        } else {
-            if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
-                commonTerm = ((ImageInt) term1).getTheOtherComponent();
-                if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
-                    commonTerm = ((ImageInt) term2).getTheOtherComponent();
-                    if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
-                        commonTerm = null;
-                    }
+        } else if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
+            commonTerm = ((ImageInt) term1).getTheOtherComponent();
+            if ((commonTerm == null) || !term2.containsTermRecursively(commonTerm)) {
+                commonTerm = ((ImageInt) term2).getTheOtherComponent();
+                if ((commonTerm == null) || !term1.containsTermRecursively(commonTerm)) {
+                    commonTerm = null;
                 }
             }
         }
         return commonTerm;
     }
-    
+
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final NAL nal) {
-        Statement T1 = (Statement)sentence.content;
-        Statement T2 = (Statement)belief.content;
+        Statement T1 = (Statement) sentence.content;
+        Statement T2 = (Statement) belief.content;
 
         Term S1 = T2.getSubject();
         Term S2 = T1.getSubject();
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
-        
-        HashMap<Term,Term> res1=new HashMap<>();
-        HashMap<Term,Term> res2=new HashMap<>();
-        HashMap<Term,Term> res3=new HashMap<>();
-        HashMap<Term,Term> res4=new HashMap<>();
-        
-        if(figure==21) {
+
+        HashMap<Term, Term> res1 = new HashMap<>();
+        HashMap<Term, Term> res2 = new HashMap<>();
+        HashMap<Term, Term> res3 = new HashMap<>();
+        HashMap<Term, Term> res4 = new HashMap<>();
+
+        if (figure == 21) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is 
-            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = (Statement)T2.applySubstitute(res1);            
-            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
-            
-            if(S1 instanceof Conjunction) {
+            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement) T2.applySubstitute(res1);
+            S1 = T2.getSubject();
+            S2 = T1.getSubject();
+            P1 = T2.getPredicate();
+            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+
+            if (S1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(final Term s1 : ((CompoundTerm)S1).term) {
+                for (final Term s1 : ((CompoundTerm) S1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) S1).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(!s2.equals(s1)) {
+                            if (!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.doublePremiseTask(s2, truth, budget, false);
@@ -706,160 +706,183 @@ public final class CompositionalRules {
                     }
                 }
             }
-            if(P2 instanceof Conjunction) {
+            if (P2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(final Term s1 : ((CompoundTerm)P2).term) {
+                for (final Term s1 : ((CompoundTerm) P2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) P2).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(!s2.equals(s1)) {
+                            if (!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget,false);
+                                nal.doublePremiseTask(s2, truth, budget, false);
                             }
                         }
                     }
                 }
             }
         }
-        
-        if(figure==12) {
+
+        if (figure == 12) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is 
-            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = (Statement)T2.applySubstitute(res1);            
-            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
-            
-            if(S2 instanceof Conjunction) {
+            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement) T2.applySubstitute(res1);
+            S1 = T2.getSubject();
+            S2 = T1.getSubject();
+            P1 = T2.getPredicate();
+            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+
+            if (S2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(final Term s1 : ((CompoundTerm)S2).term) {
+                for (final Term s1 : ((CompoundTerm) S2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) S2).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(!s2.equals(s1)) {
+                            if (!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget,false);
+                                nal.doublePremiseTask(s2, truth, budget, false);
                             }
                         }
                     }
                 }
             }
-            if(P1 instanceof Conjunction) {
+            if (P1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(final Term s1 : ((CompoundTerm)P1).term) {
+                for (final Term s1 : ((CompoundTerm) P1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) P1).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(!s2.equals(s1)) {
+                            if (!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget,false);
+                                nal.doublePremiseTask(s2, truth, budget, false);
                             }
                         }
                     }
                 }
             }
         }
-        
-        if(figure==11) {
+
+        if (figure == 11) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is 
-            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = (Statement)T2.applySubstitute(res1);            
-            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
-            
-            if(P1 instanceof Conjunction) {
+            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement) T2.applySubstitute(res1);
+            S1 = T2.getSubject();
+            S2 = T1.getSubject();
+            P1 = T2.getPredicate();
+            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+
+            if (P1 instanceof Conjunction) {
                 //try to unify P2 with a component
-                for(final Term s1 : ((CompoundTerm)P1).term) {
+                for (final Term s1 : ((CompoundTerm) P1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P1).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;                            
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) P1).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if ((!s2.equals(s1)) && (sentence.truth!=null) && (belief.truth!=null)) {
+                            if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget,false);
+                                nal.doublePremiseTask(s2, truth, budget, false);
                             }
                         }
                     }
                 }
             }
-            if(P2 instanceof Conjunction) {
+            if (P2 instanceof Conjunction) {
                 //try to unify P1 with a component
-                for(final Term s1 : ((CompoundTerm)P2).term) {
+                for (final Term s1 : ((CompoundTerm) P2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)P2).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;
-                            
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) P2).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
+
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(!s2.equals(s1)) {
+                            if (!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget,false);
+                                nal.doublePremiseTask(s2, truth, budget, false);
                             }
                         }
                     }
                 }
             }
         }
-        
-        if(figure==22) {
+
+        if (figure == 22) {
             res1.clear();
             res2.clear();
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is 
-            T1 = (Statement)T1.applySubstitute(res2); //independent, the rule works if it unifies
-            T2 = (Statement)T2.applySubstitute(res1);            
-            S1 = T2.getSubject(); S2 = T1.getSubject(); P1 = T2.getPredicate(); P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
-            
-            if(S1 instanceof Conjunction) {
+            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+            T2 = (Statement) T2.applySubstitute(res1);
+            S1 = T2.getSubject();
+            S2 = T1.getSubject();
+            P1 = T2.getPredicate();
+            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+
+            if (S1 instanceof Conjunction) {
                 //try to unify S2 with a component
-                for(final Term s1 : ((CompoundTerm)S1).term) {
+                for (final Term s1 : ((CompoundTerm) S1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S1).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;
-                            
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) S1).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
+
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(!s2.equals(s1)) {
+                            if (!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget,false);
+                                nal.doublePremiseTask(s2, truth, budget, false);
                             }
                         }
                     }
                 }
             }
-            if(S2 instanceof Conjunction) {
+            if (S2 instanceof Conjunction) {
                 //try to unify S1 with a component
-                for(final Term s1 : ((CompoundTerm)S2).term) {
+                for (final Term s1 : ((CompoundTerm) S2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) { 
-                        for(Term s2 : ((CompoundTerm)S2).term) {
-                            if (!(s2 instanceof CompoundTerm)) continue;
-                            
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
+                        for (Term s2 : ((CompoundTerm) S2).term) {
+                            if (!(s2 instanceof CompoundTerm)) {
+                                continue;
+                            }
+
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if(!s2.equals(s1)) {
+                            if (!s2.equals(s1)) {
                                 TruthValue truth = abduction(sentence.truth, belief.truth);
                                 BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget,false);
+                                nal.doublePremiseTask(s2, truth, budget, false);
                             }
                         }
                     }
@@ -867,7 +890,7 @@ public final class CompositionalRules {
             }
         }
     }
-    
+
     static void IntroVarSameSubjectOrPredicate(final Sentence originalMainSentence, final Sentence subSentence, final Term component, final Term content, final int index, final NAL nal) {
         Term T1 = originalMainSentence.content;
         if (!(T1 instanceof CompoundTerm) || !(content instanceof CompoundTerm)) {
@@ -882,14 +905,14 @@ public final class CompositionalRules {
                 return; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
-                
+
                 CompoundTerm zw = (CompoundTerm) T.term[index];
                 zw = (CompoundTerm) zw.setComponent(1, depIndVar1, nal.mem());
                 T2 = (CompoundTerm) T2.setComponent(1, depIndVar1, nal.mem());
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
                 T = (CompoundTerm) T.setComponent(index, res, nal.mem());
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
-                
+
                 CompoundTerm zw = (CompoundTerm) T.term[index];
                 zw = (CompoundTerm) zw.setComponent(0, depIndVar2, nal.mem());
                 T2 = (CompoundTerm) T2.setComponent(0, depIndVar2, nal.mem());
@@ -898,45 +921,43 @@ public final class CompositionalRules {
             }
             TruthValue truth = induction(originalMainSentence.truth, subSentence.truth);
             BudgetValue budget = BudgetFunctions.compoundForward(truth, T, nal);
-            nal.doublePremiseTask(T, truth, budget,false);
+            nal.doublePremiseTask(T, truth, budget, false);
         }
     }
 
     public static final boolean sEqualsP(final Term T) {
-        if(T instanceof Statement) {
-            Statement st=(Statement) T;
-            if(st.getSubject().equals(st.getPredicate())) {
+        if (T instanceof Statement) {
+            Statement st = (Statement) T;
+            if (st.getSubject().equals(st.getPredicate())) {
                 return true;
             }
         }
         return false;
     }
-    
+
     static boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
-        
-        
-        Sentence taskSentence=task.sentence;
-        
-        if(taskSentence==null || taskSentence.isQuestion()) {
+
+        Sentence taskSentence = task.sentence;
+
+        if (taskSentence == null || taskSentence.isQuestion()) {
             return false;
         }
-        
-        Term taskterm=taskSentence.content;
-        
+
+        Term taskterm = taskSentence.content;
+
         if (!(taskterm instanceof CompoundTerm)) {
             return false;
         }
-        
+
         //lets just allow conjunctions, implication and equivalence for now
-        if (!((taskterm instanceof Disjunction || taskterm instanceof Conjunction || taskterm instanceof Equivalence || taskterm instanceof Implication)))
+        if (!((taskterm instanceof Disjunction || taskterm instanceof Conjunction || taskterm instanceof Equivalence || taskterm instanceof Implication))) {
             return false;
-        
+        }
+
         if (!taskterm.containVar()) {
             return false;
-        }           
+        }
 
-
-        
         boolean unifiedAnything = false;
         int remainingUnifications = 1; //memory.param.variableUnificationLayer2_MaxUnificationsPerCycle.get();
 
@@ -945,33 +966,33 @@ public final class CompositionalRules {
         //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
         ArrayList<CompoundTerm> terms_dependent = null;
         ArrayList<CompoundTerm> terms_independent = null;
-        HashMap<Term, Term> Values = null; 
-        HashMap<Term, Term> Values2 = null; 
+        HashMap<Term, Term> Values = null;
+        HashMap<Term, Term> Values2 = null;
         HashMap<Term, Term> Values3 = null;
         HashMap<Term, Term> Values4 = null;
         HashMap<Term, Term> smap = null;
 
-        for (int k = 0; k < maxUnificationAttempts; k++ ) {               
+        for (int k = 0; k < maxUnificationAttempts; k++) {
             Concept second = nal.mem().sampleNextConcept();
 
-            if(second==null) {
+            if (second == null) {
                 //no more concepts, stop
                 break;
             }
 
             //prevent unification with itself
-            if (second.term.equals(taskterm))
+            if (second.term.equals(taskterm)) {
                 continue;
+            }
 
-            Term secterm=second.term;
-            if(second.beliefs.isEmpty()) {
+            Term secterm = second.term;
+            if (second.beliefs.isEmpty()) {
                 continue;
             }
 
             if (nal.mem().getRecorder().isActive()) {
                 nal.mem().getRecorder().append("Concept Select (Unification 2nd Layer)", second.term.toString());
-            }            
-
+            }
 
             Sentence second_belief = second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
 
@@ -981,15 +1002,14 @@ public final class CompositionalRules {
             //{
             //    TemporalRules.temporalInduction(taskSentence, second_belief, memory);
             //}
-
-            TruthValue truthSecond=second_belief.truth;
+            TruthValue truthSecond = second_belief.truth;
 
             if (terms_dependent == null) {
-                final int initialTermListSize = 8;                    
-                terms_dependent=new ArrayList<>(initialTermListSize);
-                terms_independent=new ArrayList<>(initialTermListSize);
-                Values = newVariableSubstitutionMap(); 
-                Values2 = newVariableSubstitutionMap(); 
+                final int initialTermListSize = 8;
+                terms_dependent = new ArrayList<>(initialTermListSize);
+                terms_independent = new ArrayList<>(initialTermListSize);
+                Values = newVariableSubstitutionMap();
+                Values2 = newVariableSubstitutionMap();
                 Values3 = newVariableSubstitutionMap();
                 Values4 = newVariableSubstitutionMap();
                 smap = newVariableSubstitutionMap();
@@ -1001,59 +1021,56 @@ public final class CompositionalRules {
 
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
-            Term[] components_level1 = ((CompoundTerm)taskterm).term;            
-            Term secterm_unwrap=unwrapNegation(secterm);
+            Term[] components_level1 = ((CompoundTerm) taskterm).term;
+            Term secterm_unwrap = unwrapNegation(secterm);
 
-
-
-            for(final Term T1 : components_level1) {
-                Term T1_unwrap=unwrapNegation(T1);
+            for (final Term T1 : components_level1) {
+                Term T1_unwrap = unwrapNegation(T1);
                 Values.clear(); //we are only interested in first variables
 
                 smap.clear();
 
-                if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap,Values,smap)) {
-                    CompoundTerm taskterm_subs=((CompoundTerm)taskterm);
+                if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
+                    CompoundTerm taskterm_subs = ((CompoundTerm) taskterm);
                     taskterm_subs = taskterm_subs.applySubstitute(Values);
-                    taskterm_subs=reduceUntilLayer2(taskterm_subs,secterm,nal.mem());
-                    if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
+                    taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                    if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                         terms_dependent.add(taskterm_subs);
                     }
                 }
 
-
                 Values2.clear(); //we are only interested in first variables
                 smap.clear();
 
-                if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap,Values2, smap)) {
-                    CompoundTerm taskterm_subs= (CompoundTerm)taskterm;
+                if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values2, smap)) {
+                    CompoundTerm taskterm_subs = (CompoundTerm) taskterm;
                     taskterm_subs = taskterm_subs.applySubstitute(Values2);
-                    taskterm_subs=reduceUntilLayer2(taskterm_subs,secterm,nal.mem());
-                    if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
+                    taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                    if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
 
                         terms_independent.add(taskterm_subs);
                     }
                 }
 
-                if(!((T1_unwrap instanceof Implication) || (T1_unwrap instanceof Equivalence) || (T1_unwrap instanceof Conjunction) || (T1_unwrap instanceof Disjunction))) {
+                if (!((T1_unwrap instanceof Implication) || (T1_unwrap instanceof Equivalence) || (T1_unwrap instanceof Conjunction) || (T1_unwrap instanceof Disjunction))) {
                     continue;
                 }
 
-                if(T1_unwrap instanceof CompoundTerm) {
-                    Term[] components_level2 = ((CompoundTerm)T1_unwrap).term;
+                if (T1_unwrap instanceof CompoundTerm) {
+                    Term[] components_level2 = ((CompoundTerm) T1_unwrap).term;
 
-                    for(final Term T2 : components_level2) {
-                        Term T2_unwrap=unwrapNegation(T2);
+                    for (final Term T2 : components_level2) {
+                        Term T2_unwrap = unwrapNegation(T2);
 
                         Values3.clear(); //we are only interested in first variables
                         smap.clear();
 
-                        if(Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap,Values3, smap)) {
+                        if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values3, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs=(CompoundTerm)taskterm;
+                            CompoundTerm taskterm_subs = (CompoundTerm) taskterm;
                             taskterm_subs = taskterm_subs.applySubstitute(Values3);
-                            taskterm_subs=reduceUntilLayer2(taskterm_subs,secterm,nal.mem());
-                            if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
+                            taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                            if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_dependent.add(taskterm_subs);
                             }
                         }
@@ -1061,12 +1078,12 @@ public final class CompositionalRules {
                         Values4.clear(); //we are only interested in first variables
                         smap.clear();
 
-                        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap,Values4, smap)) {
+                        if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values4, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs=(CompoundTerm)taskterm;
+                            CompoundTerm taskterm_subs = (CompoundTerm) taskterm;
                             taskterm_subs = taskterm_subs.applySubstitute(Values4);
-                            taskterm_subs = reduceUntilLayer2(taskterm_subs,secterm,nal.mem());
-                            if(taskterm_subs!=null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
+                            taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
+                            if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_independent.add(taskterm_subs);
                             }
                         }
@@ -1074,43 +1091,41 @@ public final class CompositionalRules {
                 }
             }
 
-            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp,nal.getTime());
+            Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
 
-            dedSecondLayerVariableUnificationTerms(nal, taskSentence, task, 
-                    second_belief, ss, terms_dependent, 
-                    anonymousAnalogy(taskSentence.truth, truthSecond), 
+            dedSecondLayerVariableUnificationTerms(nal, taskSentence, task,
+                    second_belief, ss, terms_dependent,
+                    anonymousAnalogy(taskSentence.truth, truthSecond),
                     taskSentence.truth, truthSecond, false);
 
-            dedSecondLayerVariableUnificationTerms(nal, taskSentence, task, 
-                    second_belief, ss, terms_independent, 
-                    deduction(taskSentence.truth, truthSecond), 
+            dedSecondLayerVariableUnificationTerms(nal, taskSentence, task,
+                    second_belief, ss, terms_independent,
+                    deduction(taskSentence.truth, truthSecond),
                     taskSentence.truth, truthSecond, true);
 
             final int termsIndependent = terms_independent.size();
-            for(int i=0;i<termsIndependent;i++) {
+            for (int i = 0; i < termsIndependent; i++) {
                 Term result = terms_independent.get(i);
                 TruthValue truth = deduction(taskSentence.truth, truthSecond);
 
-                char mark=Symbols.JUDGMENT_MARK;
-                if(taskSentence.isGoal() || second_belief.isGoal()) {
+                char mark = Symbols.JUDGMENT_MARK;
+                if (taskSentence.isGoal() || second_belief.isGoal()) {
                     truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
-                    mark=Symbols.GOAL_MARK;
+                    mark = Symbols.GOAL_MARK;
                 }
 
-                Stamp useEvidentalBase=new Stamp(taskSentence.stamp, second_belief.stamp,nal.getTime());
-                Sentence newSentence = new Sentence(result, mark, truth, 
-                        new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase) );                
+                Stamp useEvidentalBase = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
+                Sentence newSentence = new Sentence(result, mark, truth,
+                        new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
-                if(sEqualsP(newSentence.content)) {
+                if (sEqualsP(newSentence.content)) {
                     //changed from return to continue to allow furhter processing
                     continue;
                 }
 
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
-
-
 
                 nal.setCurrentBelief(taskSentence);
                 nal.setCurrentTask(dummy);
@@ -1123,52 +1138,51 @@ public final class CompositionalRules {
 
             remainingUnifications--;
 
-            if (remainingUnifications == 0)
+            if (remainingUnifications == 0) {
                 break;
+            }
 
         }
 
         return unifiedAnything;
     }
-    
 
     private static void dedSecondLayerVariableUnificationTerms(NAL nal, Sentence taskSentence, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
-        
-            Stamp sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
-                        
-            for(int i=0;i<terms_dependent.size();i++) {
-                final CompoundTerm result = terms_dependent.get(i);
-               
-                char mark=Symbols.JUDGMENT_MARK;
-                if(task.sentence.isGoal() || second_belief.isGoal()) {
-                    if(strong) {
-                        truth=abduction(t1,t2);
-                    }
-                    else {
-                        truth=intersection(t1,t2);
-                    }
-                    mark=Symbols.GOAL_MARK;
-                }
 
-                Sentence newSentence=new Sentence(result, mark, truth, sx);                     
-                BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
-                
-                //check this after compoundForward, seems the earliest it can exit loop
-                if(sEqualsP(newSentence.content)) {
+        Stamp sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
+
+        for (int i = 0; i < terms_dependent.size(); i++) {
+            final CompoundTerm result = terms_dependent.get(i);
+
+            char mark = Symbols.JUDGMENT_MARK;
+            if (task.sentence.isGoal() || second_belief.isGoal()) {
+                if (strong) {
+                    truth = abduction(t1, t2);
+                } else {
+                    truth = intersection(t1, t2);
+                }
+                mark = Symbols.GOAL_MARK;
+            }
+
+            Sentence newSentence = new Sentence(result, mark, truth, sx);
+            BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
+
+            //check this after compoundForward, seems the earliest it can exit loop
+            if (sEqualsP(newSentence.content)) {
                     //changed this from return to continue, 
-                    //to allow processing terms_dependent when it has > 1 items
-                    continue;
-                }
-                
-                Task newTask = new Task(newSentence, budget, task, null);
-                Task dummy = new Task(second_belief, budget, task, null);
+                //to allow processing terms_dependent when it has > 1 items
+                continue;
+            }
 
-                nal.setCurrentBelief(taskSentence);
-                nal.setCurrentTask(dummy);
-                
-                nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
-                nal.derivedTask(newTask, false, false, taskSentence, second_belief);
-            }    
+            Task newTask = new Task(newSentence, budget, task, null);
+            Task dummy = new Task(second_belief, budget, task, null);
+
+            nal.setCurrentBelief(taskSentence);
+            nal.setCurrentTask(dummy);
+
+            nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
+            nal.derivedTask(newTask, false, false, taskSentence, second_belief);
+        }
     }
 
     private static HashMap<Term, Term> newVariableSubstitutionMap() {
