@@ -172,6 +172,9 @@ public class TemporalRules {
             args.add(A);
             args.add(B1);
         }
+        if(args==null) {
+            return;
+        }
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term=args.toArray(new Term[0]);
         Term realB2=args.get(1);
