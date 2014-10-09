@@ -5,5 +5,5 @@
 11
   IN: <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :|: 
 20
-''outputMustContain('<(&/,<(*,Self,key001) --> reachable>,+3,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%') 
-
+''outputMustContain('<(&/,<(*,Self,key001) --> reachable>,+4,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%') 
+'adjusted +3 to +4

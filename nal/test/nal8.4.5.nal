@@ -3,4 +3,5 @@
   IN: (^pick,key001). :\:  
   IN: <(*,Self,key001) --> hold>. :|: 
 5
-''outputMustContain('<(&/,(^pick,key001),+2) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%') 
+''outputMustContain('<(&/,(^pick,key001),+3) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%') 
+'adjusted +2 to +3
