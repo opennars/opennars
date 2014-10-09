@@ -23,6 +23,7 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -90,96 +91,106 @@ public final class CompositionalRules {
             return;
         }
 
+        //TODO make complete use of this index instead of iterating below, once the index is sorted in a similiar way
         Memory m = nal.mem();
         Collection<Task> qq = m.conceptQuestions(Conjunction.class);
-        if (qq.isEmpty())
+        if (qq.isEmpty()) {
             return;
-        
+        }
 
         final Term term1 = sentence.content;
         final boolean term1ContainVar = term1.containVar();
         final boolean term1Conjunction = term1 instanceof Conjunction;
 
-        if ((term1Conjunction) && (term1ContainVar))
-            return;                    
+        if ((term1Conjunction) && (term1ContainVar)) {
+            return;
+        }
 
         final Term term2 = belief.content;
         final boolean term2ContainVar = term2.containVar();
         final boolean term2Conjunction = term2 instanceof Conjunction;
 
-        if ((term2Conjunction) && (term2ContainVar))
+        if ((term2Conjunction) && (term2ContainVar)) {
             return;
+        }
 
+        //TODO use Question index
+        for (final Concept concept : nal.mem().conceptProcessor) {
 
-        for (final Task question : qq) {
+            final List<Task> questions = concept.questions;
+
+            for (int i = 0; i < questions.size(); i++) {
+                final Task question = questions.get(i);
 
                 //if(question==null) { assert(false); continue; }
-            Sentence qu = question.sentence;
+                Sentence qu = question.sentence;
 
                 //if(qu==null) { assert(false); continue; }
-            final Term pcontent = qu.content;
-            if (!(pcontent instanceof Conjunction)) {
-                continue;
-            }
-
-            final Conjunction ctpcontent = (Conjunction) pcontent;
-            if (ctpcontent.containVar()) {
-                continue;
-            }
-
-            if (!term1Conjunction && !term2Conjunction) {
-                if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
+                final Term pcontent = qu.content;
+                if (!(pcontent instanceof Conjunction)) {
                     continue;
                 }
-            } else {
-                if (term1Conjunction) {
-                    if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
+
+                final Conjunction ctpcontent = (Conjunction) pcontent;
+                if (ctpcontent.containVar()) {
+                    continue;
+                }
+
+                if (!term1Conjunction && !term2Conjunction) {
+                    if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
                         continue;
                     }
-                    if (!ctpcontent.containsAllTermsOf(term1)) {
-                        continue;
+                } else {
+                    if (term1Conjunction) {
+                        if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
+                            continue;
+                        }
+                        if (!ctpcontent.containsAllTermsOf(term1)) {
+                            continue;
+                        }
+                    }
+
+                    if (term2Conjunction) {
+                        if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
+                            continue;
+                        }
+                        if (!ctpcontent.containsAllTermsOf(term2)) {
+                            continue;
+                        }
                     }
                 }
 
-                if (term2Conjunction) {
-                    if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
-                        continue;
-                    }
-                    if (!ctpcontent.containsAllTermsOf(term2)) {
-                        continue;
-                    }
-                }
-            }
+                Term conj = Conjunction.make(term1, term2);
 
-            Term conj = Conjunction.make(term1, term2);
-
-            /*
+                /*
                 since we already checked for term1 and term2 having a variable, the result
                 will not have a variable
                 
                 if (Variables.containVarDepOrIndep(conj.name()))
                     continue;
-             */
-            TruthValue truthT = nal.getCurrentTask().sentence.truth;
-            TruthValue truthB = nal.getCurrentBelief().truth;
-            /*if(truthT==null || truthB==null) {
+                 */
+                TruthValue truthT = nal.getCurrentTask().sentence.truth;
+                TruthValue truthB = nal.getCurrentBelief().truth;
+                /*if(truthT==null || truthB==null) {
                     //continue; //<- should this be return and not continue?
                     return;
                 }*/
 
-            nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.commit();
+                nal.mem().logic.DED_CONJUNCTION_BY_QUESTION.commit();
 
-            TruthValue truthAnd = intersection(truthT, truthB);
-            BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
-            nal.doublePremiseTask(conj, truthAnd, budget, false);
-            break;
+                TruthValue truthAnd = intersection(truthT, truthB);
+                BudgetValue budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
+                nal.doublePremiseTask(conj, truthAnd, budget, false);
+                break;
+            }
+
         }
-
     }
 
     /* -------------------- intersections and differences -------------------- */
     /**
-     * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==> M>,
+     * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==>
+     * M>,
      * <(P-S) ==> M>}
      *
      * @param taskSentence The first premise
@@ -1169,7 +1180,7 @@ public final class CompositionalRules {
 
             //check this after compoundForward, seems the earliest it can exit loop
             if (sEqualsP(newSentence.content)) {
-                    //changed this from return to continue, 
+                //changed this from return to continue, 
                 //to allow processing terms_dependent when it has > 1 items
                 continue;
             }
