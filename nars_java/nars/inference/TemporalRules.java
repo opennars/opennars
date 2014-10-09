@@ -17,6 +17,9 @@
 package nars.inference;
 
 
+import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -35,6 +38,7 @@ import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
+import nars.language.Variables;
 import nars.operator.Operation;
 
 /**
@@ -141,7 +145,49 @@ public class TemporalRules {
         }
         return t.containedTemporalRelations() > 1;
     }
+      
+    //A =/> B1
+    //B2 =/> C
+    // |-  &/ A B =/> C
+    //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
+    public static void temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
         
+        //try if B1 unifies with B2, if yes, create new judgement
+        Statement S1=(Implication) s1.content;
+        Statement S2=(Implication) s2.content;
+        Term A=S1.getSubject();
+        Term B1=S1.getPredicate();
+        Term B2=S2.getSubject();
+        Term C=S2.getPredicate();
+        ArrayList<Term> args=null;
+        if(B2 instanceof Conjunction) {
+            Conjunction CB2=((Conjunction)B2);
+            if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                args=Lists.newArrayList(CB2.term);
+                args.add(0, A);
+            }
+        }
+        else {
+            args=new ArrayList(); 
+            args.add(A);
+            args.add(B1);
+        }
+        //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
+        Term[] term=args.toArray(new Term[0]);
+        Term realB2=args.get(1);
+        if(Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2)) {
+            //ok it unifies, so lets create a &/ term
+            int order1=s1.getTemporalOrder();
+            int order2=s2.getTemporalOrder();
+            Conjunction S=(Conjunction) Conjunction.make(term,order1);
+            Implication whole=Implication.make(S, C,order2);
+            TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
+            BudgetValue budget = BudgetFunctions.forward(truth, nal);
+            nal.doublePremiseTask(whole, truth, budget, true);
+        }
+    }
+    
+    
     static final Variable varInd0 = new Variable("$0");
     
     public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
