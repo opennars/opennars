@@ -611,6 +611,19 @@ public class EditorPanel extends JPanel {
             }
         });
 
+        
+        knowMenu.add(new EditorMode("common sense") {
+            @Override
+            public void run() {
+                s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
+                s.nar.addInput("<(^go-to,$1) =/> <$1 --> at>>.");
+                s.nar.addInput("<(&/,<$1 --> at>,(^activate,$1)) =/> <$1 --> on>>.");
+                s.nar.addInput("<(&/,<$1 --> at>,(^deactivate,$1)) =/> <$1 --> off>>.");
+                //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
+                //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
+            }
+        });
+        
         knowMenu.add(new EditorMode("if you go to somewhere you will be there") {
             @Override
             public void run() {
