@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
-import nars.gui.NARSwing;
-import nars.gui.NWindow;
-import nars.gui.output.graph.ImplicationGraphCanvas;
-import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.io.Output;
 import org.junit.Test;
 
@@ -60,7 +56,7 @@ public class GraphPlanTest {
 
             @Override
             public void output(Class channel, Object o) {
-                System.out.println(o);
+                //System.out.println(o);
                 if (o.toString().contains(expected))
                     success.set(true);
             }
@@ -73,11 +69,11 @@ public class GraphPlanTest {
         
         //assertTrue(success.get());
         
-        new NARSwing(n);
-                new NWindow("Implication Graph", 
-                            new ProcessingGraphPanel(n, 
-                                    new ImplicationGraphCanvas(
-                                            n.memory.executive.graph))).show(500, 500);
+//        new NARSwing(n);
+//                new NWindow("Implication Graph", 
+//                            new ProcessingGraphPanel(n, 
+//                                    new ImplicationGraphCanvas(
+//                                            n.memory.executive.graph))).show(500, 500);
         //n.start(100, 1);
         
         

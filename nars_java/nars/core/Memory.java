@@ -25,8 +25,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -129,6 +131,7 @@ public class Memory implements Output, Serializable {
 
 
 
+
     
     public enum Timing {
         Iterative, Real
@@ -152,7 +155,7 @@ public class Memory implements Output, Serializable {
     
     public final ConceptProcessor conceptProcessor;
     
-    public final EventEmitter event = Events.newEventEmitter();
+    public final EventEmitter event;
     
     
 
@@ -232,6 +235,11 @@ public class Memory implements Output, Serializable {
     
     transient private Output output;
 
+    
+    //index of Conjunction questions
+    transient private Set<Task> questionsConjunction = new HashSet();
+    
+    
     /* ---------- Constructor ---------- */
     /**
      * Create a new memory
@@ -255,7 +263,6 @@ public class Memory implements Output, Serializable {
         this.newTasks = new ArrayDeque<>();
         this.operators = new HashMap<>();
         
-        this.executive = new Executive(this);
 
         this.resource = new ResourceSense();
         this.logic = new LogicSense() {
@@ -313,14 +320,20 @@ public class Memory implements Output, Serializable {
 
         };
         
-        recorder = NullInferenceRecorder.global;
+        this.event = newEventEmitter();
+        
+        this.executive = new Executive(this);
+        
+        this.recorder = NullInferenceRecorder.global;
         
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
                 
+
+        
         
         // create self
-        self = conceptualize(new Term(Symbols.SELF)).term;
+        this.self = conceptualize(new Term(Symbols.SELF)).term;
 
         for (Operator o : initialOperators)
             addOperator(o);
@@ -329,6 +342,59 @@ public class Memory implements Output, Serializable {
 
     }
 
+    protected EventEmitter newEventEmitter() {
+        //TODO use reflection to get all subclasses
+        return new EventEmitter(
+                Events.FrameStart.class,
+                Events.FrameEnd.class,
+                Events.CycleStart.class,
+                Events.CycleEnd.class,
+                Events.WorkCycleStart.class,
+                Events.WorkCycleEnd.class,
+                ResetStart.class,
+                ResetEnd.class,
+                Events.ConceptAdd.class,
+                Events.ConceptRemove.class,
+                Events.ConceptBeliefAdd.class,
+                Events.ConceptBeliefRemove.class,
+                Events.ConceptGoalAdd.class,
+                Events.ConceptGoalRemove.class,
+                Events.ConceptQuestionAdd.class,
+                Events.ConceptQuestionRemove.class,
+                Events.ConceptDirectProcessedTask.class,
+                Events.TaskDerived.class,
+                Events.PluginsChange.class                
+        ) {
+
+            @Override
+            public void emit(Class eventClass, Object... params) {
+                super.emit(eventClass, params); 
+                
+                //directly access events here, 
+                //for slightly more efficient than attaching a handler for Memory's use
+                    
+                if (eventClass == Events.ConceptQuestionAdd.class) {                    
+                    //Concept c = params[0];
+                    Task t = (Task)params[1];
+                    Term term = t.getContent();
+                    if (term instanceof Conjunction) {
+                        questionsConjunction.add(t);
+                    }
+                }
+                else if (eventClass == Events.ConceptQuestionAdd.class) {
+                    //Concept c = params[0];
+                    Task t = (Task)params[1];
+                    Term term = t.getContent();
+                    if (term instanceof Conjunction) {
+                        questionsConjunction.remove(t);
+                    }
+                    //System.out.println("Q-" + Arrays.toString(params));
+                }
+            }
+          
+        };
+    }
+    
     public void reset() {
         event.emit(ResetStart.class);
         
@@ -1098,6 +1164,13 @@ public class Memory implements Output, Serializable {
     
     public Timing getTiming() {
         return timing;
+    }
+
+    public Collection<Task> conceptQuestions(Class c) {
+        if (c == Conjunction.class) {
+            return questionsConjunction;
+        }
+        throw new RuntimeException("Questions index for " + c + " does not exist");
     }
 
     
