@@ -45,10 +45,10 @@ public class Executive {
     int numActiveTasks = 1;
 
     /** max number of tasks that a plan can generate. chooses the N best */
-    int maxPlannedTasks = 6;
+    int maxPlannedTasks = 1;
     
     /** global plan search parameters */
-    float searchDepth = 32;
+    float searchDepth = 64;
     int particles = 64;
     
     /** inline search parameters */
