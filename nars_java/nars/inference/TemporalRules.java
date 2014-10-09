@@ -146,9 +146,8 @@ public class TemporalRules {
         return t.containedTemporalRelations() > 1;
     }
       
-    //A =/> B1
-    //B2 =/> C
-    // |-  &/ A B =/> C
+    // { A =/> B, B =/> C } |- (&/,A,B) =/> C
+    // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
     public static void temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
         
