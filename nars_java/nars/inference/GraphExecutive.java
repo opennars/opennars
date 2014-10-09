@@ -705,9 +705,9 @@ public class GraphExecutive {
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
         
-        if (punctuation == '.')        
-            nal.derivedTask(newTask, false, true, null, null);        
-        else if (punctuation == '!')
+        //if (punctuation == '.')        
+        //    nal.derivedTask(newTask, false, true, null, null);        
+        if (punctuation == '!')
             memory.executive.addTask(c, newTask);
         
     }
