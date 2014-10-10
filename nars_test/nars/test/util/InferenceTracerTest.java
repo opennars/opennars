@@ -2,7 +2,7 @@ package nars.test.util;
 
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
-import nars.util.InferenceTracer;
+import nars.util.InferenceTrace;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -16,8 +16,7 @@ public class InferenceTracerTest {
     public void testConceptAndTask() {
         NAR n = new DefaultNARBuilder().build();
         
-        InferenceTracer tracer = new InferenceTracer();
-        n.memory.setRecorder(tracer);
+        InferenceTrace tracer = new InferenceTrace(n);        
         
         n.addInput("<a --> b>.");
         
@@ -37,8 +36,7 @@ public class InferenceTracerTest {
     public void test2() {
         NAR n = new DefaultNARBuilder().build();
         
-        InferenceTracer tracer = new InferenceTracer();
-        n.memory.setRecorder(tracer);
+        InferenceTrace tracer = new InferenceTrace(n);
         
         n.addInput("<a --> b>.");
         

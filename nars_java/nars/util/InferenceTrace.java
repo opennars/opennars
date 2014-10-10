@@ -1,21 +1,23 @@
 package nars.util;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.inference.InferenceRecorder;
+import nars.io.Output;
 
 /**
- *
- * @author me
+ * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
  */
-public class InferenceTracer implements InferenceRecorder {
+public class InferenceTrace implements InferenceRecorder, Output, Serializable {
 
     /**
      * utility method for diagnosing stack overflow errors caused by unbounded
@@ -36,10 +38,11 @@ public class InferenceTracer implements InferenceRecorder {
     }
 
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
-    public final Map<Long, List<InferenceEvent>> time = new TreeMap();
+    public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
 
     private long t;
-    private boolean active = true;
+    transient private boolean active = true;
+
 
     abstract public static class InferenceEvent {
 
@@ -50,17 +53,30 @@ public class InferenceTracer implements InferenceRecorder {
         int STACK_PREFIX = 4;
 
         protected InferenceEvent(long when) {
+            this(when, 0);
+        }
+        
+        protected InferenceEvent(long when, int stackFrames) {
             this.when = when;
-            List<StackTraceElement> sl = Arrays.asList(Thread.currentThread().getStackTrace());
+            
+            if (stackFrames > 0) {
+                List<StackTraceElement> sl = Arrays.asList(Thread.currentThread().getStackTrace());
 
-            int tickIndex = 0;
-            for (StackTraceElement e : sl) {
-                if (e.getClassName().equals("nars.core.NAR") && e.getMethodName().equals("tick")) {
-                    break;
+                int frame = 0;
+                
+                for (StackTraceElement e : sl) {
+                    frame++;
+                    if (e.getClassName().equals("nars.core.NAR")) {
+                        break;
+                    }                    
                 }
-                tickIndex++;
+                if (frame - STACK_PREFIX > stackFrames)
+                    frame = STACK_PREFIX + stackFrames;
+                this.stack = sl.subList(STACK_PREFIX, frame);
             }
-            this.stack = sl.subList(STACK_PREFIX, tickIndex);
+            else {
+                this.stack = null;
+            }
         }
 
     }
@@ -105,14 +121,16 @@ public class InferenceTracer implements InferenceRecorder {
     public static class TaskEvent extends InferenceEvent {
 
         public final Task task;
-        private final TaskEventType type;
-        private final String reason;
+        public final TaskEventType type;
+        public final String reason;
+        public float priority;
 
         public TaskEvent(Task t, long when, TaskEventType type, String reason) {
             super(when);
             this.task = t;
             this.type = type;
             this.reason = reason;
+            this.priority = t.getPriority();
         }
 
         @Override
@@ -120,6 +138,14 @@ public class InferenceTracer implements InferenceRecorder {
             return "Task " + type + " (" + reason + "): " + task.toStringExternal() + " " + stack;
         }
     }
+
+    public InferenceTrace(NAR n) {
+        super();
+        n.addOutput(this);
+        n.memory.setRecorder(this);
+    }
+    
+    
 
     public void addEvent(InferenceEvent e) {
         List<InferenceEvent> timeslot = time.get(t);
@@ -181,6 +207,12 @@ public class InferenceTracer implements InferenceRecorder {
         addEvent(tr);
     }
 
+    @Override
+    public void output(Class channel, Object signal) {
+        //TODO use a new InferenceEvent subclass for outputs
+        addEvent(new Comment(t, channel + ": " + signal));
+    }
+    
     public void printTime() {
         printTime(System.out);
     }
