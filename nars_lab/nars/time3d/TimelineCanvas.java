@@ -1,6 +1,7 @@
 package nars.time3d;
 
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +19,6 @@ import nars.util.InferenceTrace.InferenceEvent;
 import nars.util.InferenceTrace.OutputEvent;
 import nars.util.InferenceTrace.TaskEvent;
 import org.jbox2d.common.MathUtils;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.graph.SimpleGraph;
 import processing.core.PApplet;
 
 /** Timeline view of an inference trace.  Focuses on a specific window and certain features which
@@ -45,7 +44,9 @@ public class TimelineCanvas extends PApplet {
     private float lastMousePressX = Float.NaN;
 
     private final InferenceTrace trace;
-    private UndirectedGraph<EventPoint,Integer> influence = null;
+
+    //private UndirectedGraph<EventPoint,Integer> influence = null;
+    //private int nextEdgeID;
     
     //stores the previous "representative event" for an object as the visualization is updated each time step
     public Map<Object,EventPoint> lastSubjectEvent = new HashMap();
@@ -53,8 +54,28 @@ public class TimelineCanvas extends PApplet {
     //all events mapped to their visualized feature
     public Map<Object,EventPoint> events = new HashMap();
     
-    private int nextEdgeID;
     private boolean updated = false;
+
+    public static class EventPoint<X> {
+        public float x, y, z;
+        public X value;
+        public List<EventPoint<X>> incoming = new ArrayList<>();
+
+        public EventPoint(X value, float x, float y, float z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.value = value;
+        }
+
+        private void set(float x, float y, float z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+        
+    }
+    
     
     public static void main(String[] args) {
         NAR nar = new DefaultNARBuilder().build();
@@ -63,7 +84,7 @@ public class TimelineCanvas extends PApplet {
         nar.addInput("<b --> c>.");
         nar.addInput("<(^pick,x) =\\> a>.");
         nar.addInput("<(*, b, c) <-> x>.");
-        nar.finish(200);
+        nar.finish(250);
         
         
         
@@ -159,8 +180,6 @@ public class TimelineCanvas extends PApplet {
 
 
         if (!updated) {
-            nextEdgeID = 0;
-            influence = new SimpleGraph(Integer.class);
             lastSubjectEvent.clear();
             events.clear();            
         }
@@ -176,11 +195,11 @@ public class TimelineCanvas extends PApplet {
         }
 
         stroke(190f, 120f);
-        strokeWeight(0.2f);
-        for (Integer edge : influence.edgeSet()) {
-            EventPoint source = influence.getEdgeSource(edge);
-            EventPoint target = influence.getEdgeTarget(edge);
-            line(source.x, source.y, source.z, target.x, target.y, target.z);
+        strokeWeight(0.4f);
+        for (EventPoint<Object> to : events.values()) {
+            for (EventPoint<Object> from : to.incoming) {
+                line(from.x, from.y, from.z, to.x, to.y, to.z);    
+            }                
         }
         
         if (!updated) {
@@ -200,24 +219,6 @@ public class TimelineCanvas extends PApplet {
         
     }
 
-    public static class EventPoint<X> {
-        public float x, y, z;
-        public X value;
-
-        public EventPoint(X value, float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.value = value;
-        }
-
-        private void set(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-        
-    }
     
     private void plot(long t, List<InferenceEvent> v) {
         
@@ -330,12 +331,11 @@ public class TimelineCanvas extends PApplet {
     protected void setEventPoint(Object event, Object subject, float x, float y, float z) {
         EventPoint f = new EventPoint(event, x, y, z);        
         events.put(event, f);
-        influence.addVertex(f);
         
         if (subject!=null) {
             EventPoint e = lastSubjectEvent.put(subject, f);
             if (e != null) {
-                influence.addEdge(e, f, nextEdgeID++);
+                f.incoming.add(e);
             }
         }
     }

@@ -19,13 +19,12 @@ import static processing.core.PConstants.PROJECT;
 import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.SQUARE;
 import static processing.core.PConstants.UP;
+import processing.event.MouseEvent;
 
 /**
  *
  * @author me
  */
-
-
 abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
 
     int mouseScroll = 0;
@@ -43,10 +42,10 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     boolean compressLevels = true;
     boolean drawn = false;
 
-    int maxNodesWithLabels = 300;
-    int maxNodes = 1000;
-    int maxEdgesWithArrows = 500;
-    int maxEdges = 3500;
+    int maxNodesWithLabels = 5000;
+    int maxNodes = 5000;
+    int maxEdgesWithArrows = 10000;
+    int maxEdges = 10000;
 
     float minPriority = 0;
 
@@ -358,30 +357,46 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
 
         //pushMatrix();
         hnav.Transform();
-        drawGraph();
+        
+        
+        //long start = System.nanoTime();
+        {
+            drawGraph();
+        }
+        /*long end = System.nanoTime();
+        float time = end - start;
+        if (currentGraph!=null)
+            System.out.println(time + "ns for " + currentGraph.vertexSet().size() + "|" + currentGraph.edgeSet().size());
+        */
+        
+        
         //popMatrix();        
 
     }
 
     @Override
+    public void mouseWheel(MouseEvent event) {
+        super.mouseWheel(event);
+        mouseScroll = -event.getCount();
+        mouseScrolled();
+    }
+
+    
+    @Override
     public void setup() {
-        addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                mouseScroll = -evt.getWheelRotation();
-                mouseScrolled();
-            }
-        });
+        
+        //size(500,500,P3D);
 
         frameRate(FrameRate);
 
         if (isGL()) {
+            textFont(createDefaultFont(16));
+            smooth();
             System.out.println("Processing.org enabled OpenGL");
         }
 
-        /*
-         size(500,500,"P3D");
-         */
+        
+         
     }
 
     public void drawGraph() {        
