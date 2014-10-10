@@ -1,17 +1,25 @@
 package nars.time3d;
 
 import java.awt.event.MouseWheelEvent;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.JFrame;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.entity.Item;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
 import nars.util.InferenceTrace;
 import nars.util.InferenceTrace.InferenceEvent;
+import nars.util.InferenceTrace.OutputEvent;
 import nars.util.InferenceTrace.TaskEvent;
+import org.jbox2d.common.MathUtils;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.SimpleGraph;
 import processing.core.PApplet;
 
 /** Timeline view of an inference trace.  Focuses on a specific window and certain features which
@@ -23,22 +31,39 @@ public class TimelineCanvas extends PApplet {
     private final int initialHeight;
 
     long cycleStart = 0;
-    long cycleEnd = 100;
+    long cycleEnd = 250;
     
     float camX = 0f;
     float camY = 0f;
     float camZ = -100f;
     float camScale = 8f;
+    float rotX = 0;
+    float rotY = 0;
+    float rotZ = 0;
+    float rotSpeed = 0.1f/frameRate;
     private float lastMousePressY = Float.NaN;
     private float lastMousePressX = Float.NaN;
+
+    private final InferenceTrace trace;
+    private UndirectedGraph<EventPoint,Integer> influence = null;
+    
+    //stores the previous "representative event" for an object as the visualization is updated each time step
+    public Map<Object,EventPoint> lastSubjectEvent = new HashMap();
+    
+    //all events mapped to their visualized feature
+    public Map<Object,EventPoint> events = new HashMap();
+    
+    private int nextEdgeID;
+    private boolean updated = false;
     
     public static void main(String[] args) {
         NAR nar = new DefaultNARBuilder().build();
         InferenceTrace it = new InferenceTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
-        nar.addInput("<c --> a>.");
-        nar.finish(64);
+        nar.addInput("<(^pick,x) =\\> a>.");
+        nar.addInput("<(*, b, c) <-> x>.");
+        nar.finish(200);
         
         
         
@@ -47,7 +72,6 @@ public class TimelineCanvas extends PApplet {
         n.setVisible(true);        
         n.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    private final InferenceTrace trace;
     
     public TimelineCanvas(InferenceTrace trace, int w, int h) {
         super();
@@ -60,7 +84,7 @@ public class TimelineCanvas extends PApplet {
 
     public void setup() {
         size(initialWidth, initialHeight, P3D);
-        noStroke();
+        
         frameRate(frameRate);
         colorMode(HSB);
     }
@@ -82,8 +106,23 @@ public class TimelineCanvas extends PApplet {
         
         if (mouseButton > 0) {
             if (Float.isFinite(lastMousePressX)) {
-                camX -= (mouseX - lastMousePressX);
-                camY -= (mouseY - lastMousePressY);
+                float dx = (mouseX - lastMousePressX);
+                float dy = (mouseY - lastMousePressY);
+                
+                if (mouseButton == 37) {
+                    //left mouse button
+                    camX -= dx;
+                    camY -= dy;
+                }
+                else if (mouseButton == 39) {
+                    //right mouse button
+                    rotY -= dx * rotSpeed;
+                    rotX -= dy * rotSpeed;
+                }
+                else if (mouseButton == 3) {
+                    //middle mouse button (wheel)
+                    rotZ -= dx * rotSpeed;
+                }
             }
             
             lastMousePressX = mouseX;
@@ -105,16 +144,28 @@ public class TimelineCanvas extends PApplet {
         translate(width/2, height/2, camZ);
         scale(camScale);
         
-        rotateX(PI);
+        rotateX(PI+rotX);
+        rotateY(PI+rotY);
+        rotateZ(-PI+rotZ);
     }
     
-    public void draw() {
+    
+    public void draw() {            
+        
         lights();
         background(0);
         
         updateCamera();
 
 
+        if (!updated) {
+            nextEdgeID = 0;
+            influence = new SimpleGraph(Integer.class);
+            lastSubjectEvent.clear();
+            events.clear();            
+        }
+        
+        noStroke();
         
         TreeMap<Long, List<InferenceEvent>> time = trace.time;
         for (Map.Entry<Long, List<InferenceEvent>> e : time.subMap(cycleStart, cycleEnd).entrySet()) {
@@ -123,59 +174,170 @@ public class TimelineCanvas extends PApplet {
             
             plot(t, v);
         }
+
+        stroke(190f, 120f);
+        strokeWeight(0.2f);
+        for (Integer edge : influence.edgeSet()) {
+            EventPoint source = influence.getEdgeSource(edge);
+            EventPoint target = influence.getEdgeTarget(edge);
+            line(source.x, source.y, source.z, target.x, target.y, target.z);
+        }
         
+        if (!updated) {
+            
+            /*
+            for (Map.Entry<Object, EventPoint> e : lastSubjectEvent.entrySet()) {
+                System.out.println(e);
+            }
+            System.out.println("Edges: "+ influence.edgeSet().size() + ", Vertices: " + influence.vertexSet().size());
+            */
+            
+            
+            
+            updated = true;
+        }
         
         
     }
 
+    public static class EventPoint<X> {
+        public float x, y, z;
+        public X value;
+
+        public EventPoint(X value, float x, float y, float z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.value = value;
+        }
+
+        private void set(float x, float y, float z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+        
+    }
+    
     private void plot(long t, List<InferenceEvent> v) {
         
         float timeScale = 4f;
-        float yScale = 4f;
-
-        pushMatrix();
-        translate(t * timeScale, 0);
         
-        for (InferenceEvent i : v) {
-            translate(0, yScale);
+        float itemScale = timeScale*0.95f;
+        
+        float yScale = itemScale;
+        
+        float x = t * timeScale, y = 0;
+        
+        for (InferenceEvent i : v) {            
+            
             
             
             //box(2);
             //quad(-0.5f, -0.5f, 0, 0.5f, -0.5f, 0, 0.5f, 0.5f, 0, -0.5f, 0.5f, 0);
             
-            if (i instanceof InferenceTrace.TaskEvent) {
+            if (i instanceof TaskEvent) {
                 TaskEvent te = (TaskEvent)i;
-                float p = te.priority;
-                float r = 4f + p;
+                float p = te.priority;                
                 
-                pushMatrix();
                 {
                     fill(256f * NARSwing.hashFloat(i.getClass().hashCode()), 200f, 200f);
-                    translate(0,0,p);
+                    float z = p*10f;
                     
                     switch (te.type) {
                         case Added:
                             //forward
-                            triangle(-r/2, -r/2, r/2, 0, -r/2, r/2);
+                            triangleHorizontal(i, te.task, p*itemScale, x, y, z, 1.0f);
                             break;
                         case Removed:
                             //backwards
-                            triangle(r/2, -r/2, -r/2, 0, r/2, r/2);
+                            triangleHorizontal(i, te.task, p*itemScale, x, y, z, -1.0f);
                             break;
                                 
                     }
                     
                 }                
-                popMatrix();
+            }
+            else if (i instanceof OutputEvent) {
+                OutputEvent te = (OutputEvent)i;
+                
+                float p = 0.5f;
+                if (te.signal instanceof Item) {
+                    p = ((Item)te.signal).getPriority();
+                }
+                float ph = 0.5f + 0.5f * p; //so that priority 0 will still be visible
+
+                fill(256f * NARSwing.hashFloat(te.channel.hashCode()), 100f + 100f * ph, 255f * ph);
+
+                
+                if (te.channel.equals(IN.class)) {
+                    pushMatrix();
+                    translate(x, y, 0);
+                    rotateZ(0.65f); //angled diagonally down and to the right                    
+                    triangleHorizontal(i, te.signal, ph*itemScale, 0, 0, 0, 1.0f);                    
+                    popMatrix();
+                }
+                else if (te.channel.equals(OUT.class)) {
+                    //TODO use faster triangleVertical function instead of push and rotate
+                    pushMatrix();
+                    translate(x, y, 0);
+                    rotateZ(MathUtils.HALF_PI); //angled diagonally down and to the right                   
+                    triangleHorizontal(i, te.signal, ph*itemScale, 0, 0, 0, 1.0f);                    
+                    popMatrix();
+                }
+                /*else if exe... {
+                    
+                }*/
+                else {                    
+                    rect(i, te.signal, ph*itemScale, x, y);
+                }
             }
             else {
-                float r = 4f;
                 fill(256f * NARSwing.hashFloat(i.getClass().hashCode()), 200f, 200f);
-                rect(-r/2f, -r/2f, r/2f, r/2f);
+                rect(i, null, 0.75f * itemScale, x, y);
+            }
+            
+            y += yScale;
+        }
+        
+            
+    }
+
+    protected void rect(Object event, Object subject, float r, float x, float y/*, float z*/) {
+        rect(
+                x + -r/2f,  y + -r/2f, 
+                r/2f,   r/2f
+        );
+        if (!updated) {
+            setEventPoint(event, subject, x, y, 0);
+        }
+    }
+    
+    protected void triangleHorizontal(Object event, Object subject, float r, float x, float y, float z, float direction) {
+        translate(0,0,z);
+        triangle(
+                x + direction * -r/2,   y + direction * -r/2, 
+                x + direction * r/2,    y + 0, 
+                x + direction * -r/2,   y + direction * r/2
+        );
+        translate(0,0,-z); //should be cheaper than a push/pop
+        
+        if (!updated) {
+            setEventPoint(event, subject, x, y, z);
+        }
+    }
+    
+    protected void setEventPoint(Object event, Object subject, float x, float y, float z) {
+        EventPoint f = new EventPoint(event, x, y, z);        
+        events.put(event, f);
+        influence.addVertex(f);
+        
+        if (subject!=null) {
+            EventPoint e = lastSubjectEvent.put(subject, f);
+            if (e != null) {
+                influence.addEdge(e, f, nextEdgeID++);
             }
         }
-        popMatrix();
-            
     }
     
     

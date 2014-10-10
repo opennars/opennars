@@ -81,18 +81,20 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
 
     }
 
-    public static class Comment extends InferenceEvent {
+    public static class OutputEvent extends InferenceEvent {
 
-        public final String message;
+        public final Object channel;
+        public final Object signal;
 
-        public Comment(long when, String message) {
+        public OutputEvent(long when, Object channel, Object signal) {
             super(when);
-            this.message = message;
+            this.channel = channel;
+            this.signal = signal;
         }
 
         @Override
         public String toString() {
-            return "\"" + message + "\"";
+            return channel + ": " + signal;
         }
 
     }
@@ -172,7 +174,7 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
 
     @Override
     public void append(String channel, String s) {
-        addEvent(new Comment(t, channel + ": " + s.trim()));
+        addEvent(new OutputEvent(t, channel, s));
     }
 
     @Override
@@ -208,9 +210,8 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
     }
 
     @Override
-    public void output(Class channel, Object signal) {
-        //TODO use a new InferenceEvent subclass for outputs
-        addEvent(new Comment(t, channel + ": " + signal));
+    public void output(Class channel, Object signal) {                
+        addEvent(new OutputEvent(t, channel, signal));
     }
     
     public void printTime() {
