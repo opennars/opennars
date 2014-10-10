@@ -637,7 +637,7 @@ public final class StructuralRules {
             StructuralRules.contraposition(taskTerm, taskSentence, nal); 
         } 
 
-        double n2=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
+       // double n2=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
         double w2=1.0/((n*(n-1))/2.0); //let's assume hierachical tuple (triangle numbers) amount for this
         if(Memory.randomNumber.nextDouble()<w2) { //so that NARS memory will not be spammed with contrapositions
             StructuralRules.contraposition(taskTerm, taskSentence, nal); //before it was the linkage which did that

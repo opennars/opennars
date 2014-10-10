@@ -23,6 +23,7 @@ package nars.inference;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -85,7 +86,13 @@ public class RuleTables {
         
         nal.setCurrentBelief( belief );  // may be null
         
-        if (belief != null) {            
+        if (belief != null) {    
+            if(beliefTerm instanceof Implication && 
+                (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&
+                taskTerm instanceof Implication && 
+                (taskTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || taskTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
+                TemporalRules.temporalInductionChain(taskSentence, belief, nal);
+            }
             LocalRules.match(task, belief, nal);
             if (memory.getNewTaskCount() > 0) {
                 //new tasks resulted from the match, so return
