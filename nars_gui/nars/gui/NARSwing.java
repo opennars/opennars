@@ -228,16 +228,19 @@ public class NARSwing  {
 //            // If Nimbus is not available, you can set the GUI to another look and feel.
 //        }
 //    }
-    
 
-    public static Color getColor(final String s, float saturation, float brightness) {            
-        float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
+    public final static float hashFloat(final int h) {
+        return ((float)h) / Integer.MAX_VALUE;
+    }
+
+    public final static Color getColor(final String s, float saturation, float brightness) {            
+        float hue = hashFloat(s.hashCode());
         return Color.getHSBColor(hue, saturation, brightness);
     }
-    public static Color getColor(final Color c, float alpha) {
+    public final static Color getColor(final Color c, float alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(255.0 * alpha));
     }
-    public static Color getColor(final String s, float sat, float bright, float alpha) {
+    public final static Color getColor(final String s, float sat, float bright, float alpha) {
         return getColor(getColor(s, sat, bright), alpha);
     }
     
