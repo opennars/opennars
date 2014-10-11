@@ -22,7 +22,6 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
-import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -40,10 +39,14 @@ public class play extends javax.swing.JFrame {
     public static NAR nar;
     public play() {
         nar = new DefaultNARBuilder().build();
-        new NARSwing(nar);
+        //new NARSwing(nar);
         nar.memory.addOperator(new AddO("^addO"));
+        nar.param().noiseLevel.set(0);
+        nar.param().decisionThreshold.set(0.3);
         narstart();
         initComponents();
+        addStartKnowledge();
+        nar.addInput("<game --> reset>. :|:");
     }
     
     int[] field=new int[]{ 0,0,0,
@@ -60,6 +63,7 @@ public class play extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton11 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -72,6 +76,9 @@ public class play extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jButton12 = new javax.swing.JButton();
+
+        jButton11.setText("jButton11");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("NARTacToe");
@@ -171,7 +178,17 @@ public class play extends javax.swing.JFrame {
         });
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("game in progress");
+        jLabel1.setText("playing...");
+        jLabel1.setToolTipText("");
+
+        jButton12.setBackground(new java.awt.Color(0, 0, 0));
+        jButton12.setForeground(new java.awt.Color(255, 255, 255));
+        jButton12.setText("remind game");
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -180,6 +197,12 @@ public class play extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton12))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -197,12 +220,7 @@ public class play extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,7 +243,8 @@ public class play extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(jButton12))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -255,46 +274,65 @@ public class play extends javax.swing.JFrame {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          
-        TestChamber.executed=true;
+        boolean success=true;
         System.out.println("Executed: " + this);
-        if(args[0].toString().equals("1")) {
+        if(args[0].toString().equals("1") && field[0]==0) {
             jButton2.setText("O");
             field[0]=2;
         }
-        if(args[0].toString().equals("2")) {
+        else
+        if(args[0].toString().equals("2") && field[1]==0) {
             jButton5.setText("O");
             field[1]=2;
         }
-        if(args[0].toString().equals("3")) {
+        else
+        if(args[0].toString().equals("3") && field[2]==0) {
             jButton8.setText("O");
             field[2]=2;
         }
-        if(args[0].toString().equals("4")) {
+        else
+        if(args[0].toString().equals("4") && field[3]==0) {
             jButton3.setText("O");
             field[3]=2;
         }
-        if(args[0].toString().equals("5")) {
+        else
+        if(args[0].toString().equals("5") && field[4]==0) {
             jButton6.setText("O");
             field[4]=2;
         }
-        if(args[0].toString().equals("6")) {
+        else
+        if(args[0].toString().equals("6") && field[5]==0) {
             jButton9.setText("O");
             field[5]=2;
         }
-        if(args[0].toString().equals("7")) {
+        else
+        if(args[0].toString().equals("7") && field[6]==0) {
              jButton4.setText("O");
             field[6]=2;
         }
-        if(args[0].toString().equals("8")) {
+        else
+        if(args[0].toString().equals("8") && field[7]==0) {
             jButton7.setText("O");
             field[7]=2;
         }
-        if(args[0].toString().equals("9")) {
+        else
+        if(args[0].toString().equals("9") && field[8]==0) {
+            nar.addInput("<input --> succeeded>. %1.00;0.99% :|:");
             jButton10.setText("O");
             field[8]=2;
         }
+        else {
+            nar.addInput("<input --> succeeded>. %0.00;0.99% :|:");
+            success=false;
+        }
         
-        check_field();
+        if(success) {
+            enableall(true);
+            check_field();
+            nar.step(100); //give time to see win condition
+            nar.stop();
+        }
+            
         //for (Term t : args) {
         //    System.out.println(" --- " + t);
        // }
@@ -342,85 +380,136 @@ public class play extends javax.swing.JFrame {
     public void narstart() { 
         nar.start(50, 300);
     }
+    
+    boolean en=false;
+    public void enableall(boolean state) {
+       /* jButton2.setEnabled(state);
+        jButton3.setEnabled(state);
+        jButton4.setEnabled(state);
+        jButton5.setEnabled(state);
+        jButton6.setEnabled(state);
+        jButton7.setEnabled(state);
+        jButton8.setEnabled(state);
+        jButton9.setEnabled(state);
+        jButton10.setEnabled(state);*/
+        en=state;
+    }
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<1 --> set>. :|:");
         jButton2.setText("X");
         field[0]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<4 --> set>. :|:");
         jButton3.setText("X");
         field[3]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<7 --> set>. :|:");
         jButton4.setText("X");
         field[6]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<2 --> set>. :|:");
         jButton5.setText("X");
         field[1]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<5 --> set>. :|:");
         jButton6.setText("X");
         field[4]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<8 --> set>. :|:");
         jButton7.setText("X");
         field[7]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<3 --> set>. :|:");
         jButton8.setText("X");
         field[2]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<6 --> set>. :|:");
         jButton9.setText("X");
         field[5]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
+        if(!en) {
+            return;
+        }
         nar.addInput("<9 --> set>. :|:");
         jButton10.setText("X");
         field[8]=1;
         check_field();
         narstart(); //nars turn
+        enableall(false);
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -434,13 +523,59 @@ public class play extends javax.swing.JFrame {
         jButton8.setText("_");
         jButton9.setText("_");
         jButton10.setText("_");
-        this.jLabel1.setText("game in progress");
+        this.jLabel1.setText("...");
         field=new int[]{ 0,0,0,
                          0,0,0,
                          0,0,0
         };
+        nar.addInput("<game --> reset>. :|:");
+        addStartKnowledge();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        // TODO add your handling code here:
+        addStartKnowledge();
+    }//GEN-LAST:event_jButton12ActionPerformed
+
+    public void addStartKnowledge() {
+        nar.addInput("<goal --> reached>! %1.0;0.99%");
+        
+        nar.addInput("<(^addO,$1) =/> <input --> succeeded>>"); //usually input succeeds
+        nar.addInput("<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>"); //usually input succeeds but not when it was set by player cause overwrite is not valid
+        nar.addInput("<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>"); //also overwriting on own is not valid
+        nar.addInput("<(&/,(^addO,1),<input --> succeeded>,(^addO,2),<input --> succeeded>,(^addO,3),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&/,(^addO,4),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,6),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&/,(^addO,7),<input --> succeeded>,(^addO,8),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        //also with 3 in a column:
+        nar.addInput("<(&/,(^addO,1),<input --> succeeded>,(^addO,4),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&/,(^addO,2),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,8),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&/,(^addO,3),<input --> succeeded>,(^addO,6),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        //and with the 2 diagonals:
+        nar.addInput("<(&/,(^addO,1),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&/,(^addO,3),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
+        //
+        nar.addInput("<goal --> reached>! %1.0;0.99%");
+        
+        /*nar.addInput("(&/,<#1 --> field>,(^addO,#1))!"); //doing something is also a goal :D
+        nar.addInput("(^addO,1)! %1.0;0.7%");
+        nar.addInput("(^addO,2)! %1.0;0.7%");
+        nar.addInput("(^addO,3)! %1.0;0.7%");
+        nar.addInput("(^addO,4)! %1.0;0.7%");
+        nar.addInput("(^addO,5)! %1.0;0.7%");
+        nar.addInput("(^addO,6)! %1.0;0.7%");
+        nar.addInput("<1 --> field>.");
+        nar.addInput("<2 --> field>.");
+        nar.addInput("<3 --> field>.");
+        nar.addInput("<4 --> field>.");
+        nar.addInput("<5 --> field>.");
+        nar.addInput("<6 --> field>.");
+        nar.addInput("<7 --> field>.");
+        nar.addInput("<8 --> field>.");
+        nar.addInput("<9 --> field>.");*/
+        nar.addInput("(--,<input --> failed>)!");
+        
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -479,6 +614,8 @@ public class play extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
