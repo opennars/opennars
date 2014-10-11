@@ -261,7 +261,7 @@ public class RobotArm extends PhysicsModel {
 
     public static void main(String[] args) {
         RobotArm r = new RobotArm();
-        new PhysicsRun(r).start(30);
+        new PhysicsRun(null,null,r).start(30);
         
     }
 

@@ -39,7 +39,7 @@ import org.jbox2d.dynamics.joints.RevoluteJointDef;
  */
 public class Rover extends PhysicsModel {
 
-    private RoverModel rover;
+    public static RoverModel rover;
     private final NAR nar;
 
     public Rover(NAR nar) {
@@ -181,8 +181,9 @@ public class Rover extends PhysicsModel {
                 this.distanceSteps = steps;
             }
             
-            
+            int n=0;
             public void step() {
+                n++;
                 point1 = body.getWorldPoint(point);
 
                 d.set(distance * MathUtils.cos(angle+body.getAngle()), distance * MathUtils.sin(angle+body.getAngle()));
@@ -207,14 +208,24 @@ public class Rover extends PhysicsModel {
                     getDebugDraw().drawSegment(point1, point2, laserColor);
                 }
                 
+                float di=d * (distanceSteps/10.0f);
                 if (hit!=null) {                                        
                     String dist = "unknown";                    
                     if (distanceSteps == 2) {
                         dist = "hit";
                     }
                     else if (distanceSteps < 10) {
-                        dist = Texts.n1(d * (distanceSteps/10.0f));
+                        dist = Texts.n1(di);
                     }
+                    
+                    if(n%500==0) {
+                        nar.addInput("<goal --> reached>!"); //also remember on goal
+                    }
+                    if(di <= 0.02f) {
+                        nar.addInput("<goal --> reached>. :|:");
+                        
+                    }
+                    
                     sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
                 }
                 else {
@@ -300,14 +311,14 @@ public class Rover extends PhysicsModel {
 
     public class RoverPanel extends JPanel {
 
-        public class InputButton extends JButton implements ActionListener, KeyListener {
+        public class InputButton extends JButton implements ActionListener {
 
             private final String command;
 
             public InputButton(String label, String command) {
                 super(label);
                 addActionListener(this);
-                this.addKeyListener(this);
+                //this.addKeyListener(this);
                 this.command = command;
             }
 
@@ -316,31 +327,7 @@ public class Rover extends PhysicsModel {
                 nar.addInput(command);
             }
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    nar.addInput("(^motor,forward)!");
-                }
-                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    nar.addInput("(^motor,backward)!");
-                }
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    nar.addInput("(^motor,turn,left)!");
-                }
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    nar.addInput("(^motor,turn,right)!");
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
+            
         }
 
         public RoverPanel(RoverModel rover) {
@@ -349,11 +336,11 @@ public class Rover extends PhysicsModel {
             {
                 JPanel motorPanel = new JPanel(new GridLayout(0, 2));
 
-                motorPanel.add(new InputButton("Stop", "(^motor,stop)!"));
-                motorPanel.add(new InputButton("Forward", "(^motor,forward)!"));
-                motorPanel.add(new InputButton("TurnLeft", "(^motor,turn,left)!"));
-                motorPanel.add(new InputButton("TurnRight", "(^motor,turn,right)!"));
-                motorPanel.add(new InputButton("Backward", "(^motor,backward)!"));
+                motorPanel.add(new InputButton("Stop", "(^motor,stop). :|:"));
+                motorPanel.add(new InputButton("Forward", "(^motor,forward). :|:"));
+                motorPanel.add(new InputButton("TurnLeft", "(^motor,turn,left). :|:"));
+                motorPanel.add(new InputButton("TurnRight", "(^motor,turn,right). :|:"));
+                motorPanel.add(new InputButton("Backward", "(^motor,backward). :|:"));
 
                 add(motorPanel, BorderLayout.SOUTH);
             }
@@ -393,24 +380,29 @@ public class Rover extends PhysicsModel {
         }
     }
 
+    //public static RoverWorld world;
+    
     @Override
     public void initTest(boolean deserialized) {
         getWorld().setGravity(new Vec2());
         getWorld().setAllowSleep(false);
 
         RoverWorld world = new RoverWorld(this, 48, 48);
-
+        
         rover = new RoverModel(this);
         rover.torso.setAngularDamping(20);
         rover.torso.setLinearDamping(10);
 
-        new NWindow("Rover Control", new RoverPanel(rover)).show(300, 200);
+        //new NWindow("Rover Control", new RoverPanel(rover)).show(300, 200);
 
         addAxioms();
         addOperators();
 
     }
 
+    public static float rotationSpeed = 20f;
+    public static float linearSpeed = 200f;
+                
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
             @Override
@@ -418,8 +410,7 @@ public class Rover extends PhysicsModel {
                 Term t1 = args[0];
                 float priority = operation.getTask().budget.getPriority();
 
-                float rotationSpeed = 20f;
-                float linearSpeed = 200f;
+                
 
                 if (args.length > 1) {
                     Term t2 = args[1];
@@ -457,7 +448,7 @@ public class Rover extends PhysicsModel {
         //nar.addInput("<0.0 <-> -0.0>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1} --> zeroishNumber>. %1.00;0.99%");
         //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
-        nar.addInput("<0 <-> 0.0>. %1.00;0.90%");
+        nar.addInput("<0 <-> 0.0>. %1.00;0.99%");
         nar.addInput("<0.0 <-> 0.1>. %1.00;0.50%");
         nar.addInput("<0.1 <-> 0.2>. %1.00;0.50%");
         nar.addInput("<0.2 <-> 0.3>. %1.00;0.50%");
@@ -467,8 +458,8 @@ public class Rover extends PhysicsModel {
         nar.addInput("<0.6 <-> 0.7>. %1.00;0.50%");
         nar.addInput("<0.7 <-> 0.8>. %1.00;0.50%");
         nar.addInput("<0.8 <-> 0.9>. %1.00;0.50%");
-        nar.addInput("<feltOrientation <-> feltAngularMotion>?");
-        nar.addInput("<feltSpeed <-> feltAngularMotion>?");
+        //nar.addInput("<feltOrientation <-> feltAngularMotion>?");
+        //nar.addInput("<feltSpeed <-> feltAngularMotion>?");
         nar.addInput("<{left,right,forward,backward} --> direction>.");
 
     }
@@ -478,6 +469,7 @@ public class Rover extends PhysicsModel {
         return "NARS Rover";
     }
 
+
     public static void main(String[] args) {
         //NAR nar = new DefaultNARBuilder().build();
         NAR nar = new DiscretinuousBagNARBuilder().
@@ -485,16 +477,17 @@ public class Rover extends PhysicsModel {
                 setConceptBagSize(1024).
                 realtime().
                 build();
-        
+
+       // RoverWorld.world= new RoverWorld(rv, 48, 48);
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
         };
         
-        nar.param().duration.set(25);
-        nar.start(25, 20);
+        //nar.param().duration.set(25);
+        nar.start(25, 50);
         nar.param().noiseLevel.set(0);
 
-        new NWindow("Tasks",new TaskTree(nar)).show(300,600);
+       // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
 
 }
