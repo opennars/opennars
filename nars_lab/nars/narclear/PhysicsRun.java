@@ -112,15 +112,15 @@ public class PhysicsRun {
                     rover.thrust(0, linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    nar.addInput("(^motor,backward) :|:");
+                    nar.addInput("(^motor,backward). :|:");
                     rover.thrust(0, -linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    nar.addInput("(^motor,turn,left) :|:");
+                    nar.addInput("(^motor,turn,left). :|:");
                     rover.rotate(rotationSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    nar.addInput("(^motor,turn,right) :|:");
+                    nar.addInput("(^motor,turn,right). :|:");
                     rover.rotate(-rotationSpeed);
                 }
             }
