@@ -5,7 +5,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -14,8 +13,6 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
-import nars.gui.NWindow;
-import nars.gui.output.TaskTree;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
 import nars.language.Term;
@@ -29,8 +26,6 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.joints.RevoluteJoint;
-import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 /**
  * NARS Rover
@@ -130,19 +125,24 @@ public class Rover extends PhysicsModel {
             }*/
             
             
-            
-            int pixels = 5;
+             
+            int pixels = 5; //should be odd # to balance
             float aStep = 0.9f / pixels;
+            float retinaArc = aStep;
+            int retinaResolution = 5; //should be odd # to balance
             float L = 15.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f, L, 3));
+                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f, 
+                        retinaArc, retinaResolution, L, 3));
             }
             
             pixels=3;
             Vec2 backRetina = new Vec2(0, -0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4), 5.5f, 3));
+                vision.add(new VisionRay("back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4), 
+                        retinaArc, retinaResolution, 
+                        5.5f, 3));
             }
             
             //Vec2 backRetina = new Vec2(0, -0.5f);
@@ -173,16 +173,17 @@ public class Rover extends PhysicsModel {
             RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
             private final Body body;
             private final int distanceSteps;
+            private final int resolution;
+            private final float arc;
 
-            public VisionRay(String id, Body body, Vec2 point, float angle, float length) {
-                this(id, body, point, angle, length, 10);
-            }
             
-            public VisionRay(String id, Body body, Vec2 point, float angle, float length, int steps) {
+            public VisionRay(String id, Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
                 this.id = id;
                 this.body = body;
                 this.point = point;
                 this.angle = angle;
+                this.arc = arc;
+                this.resolution = resolution;
                 this.distance = length;
                 this.distanceSteps = steps;
             }
@@ -192,42 +193,54 @@ public class Rover extends PhysicsModel {
                 n++;
                 point1 = body.getWorldPoint(point);
 
-                d.set(distance * MathUtils.cos(angle+body.getAngle()), distance * MathUtils.sin(angle+body.getAngle()));
-                point2.set(point1);
-                point2.addLocal(d);
-
-                ccallback.init();
-                getWorld().raycast(ccallback, point1, point2);
-
                 Body hit = null;
-                float d = Float.POSITIVE_INFINITY;
-                if (ccallback.m_hit) {
-                    d = ccallback.m_point.sub(point).length()/distance;
+                float sumDist = 0;
+                int numDist = 0;
+                
+                float dArc = arc / resolution;
+                for (int r = 0; r < resolution; r++) {
+                    float da = (-arc/2f) + dArc * r;
+                    d.set(distance * MathUtils.cos(da+angle+body.getAngle()), distance * MathUtils.sin(da+angle+body.getAngle()));
+                    point2.set(point1);
+                    point2.addLocal(d);
+
+                    ccallback.init();
+                    getWorld().raycast(ccallback, point1, point2);
                     
-                    getDebugDraw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
-                    getDebugDraw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
-                    pooledHead.set(ccallback.m_normal);
-                    pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
-                    getDebugDraw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
-                    hit = ccallback.body;
-                } else {
-                    getDebugDraw().drawSegment(point1, point2, laserColor);
+                    
+                    if (ccallback.m_hit) {
+                        float d = ccallback.m_point.sub(point1).length()/distance;
+                        /*Vec2 v1=point1;
+                        Vec2 v2=hit.getTransform().p;
+                        double dx=v1.x-v2.x;
+                        double dy=v1.y-v2.y;
+                        float d = (float) Math.sqrt(dx*dx+dy*dy)/distance;*/
+
+                        
+                        getDebugDraw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
+                        getDebugDraw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
+                        pooledHead.set(ccallback.m_normal);
+                        pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
+                        getDebugDraw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
+                        hit = ccallback.body;
+                        
+                        sumDist+=d;
+                        numDist++;
+                    } else {
+                        getDebugDraw().drawSegment(point1, point2, laserColor);
+                    }
+                
                 }
-                
-                
 
                 if (hit!=null) {  
+                    
+                    float di = sumDist / numDist;                    
                     
                     if(id.startsWith("back")) {
                         sight.set("<goal --> reached>. :|: %0.0;0.90%");
                         return;
                     }
                     
-                    Vec2 v1=point1;
-                    Vec2 v2=hit.getTransform().p;
-                    double dx=v1.x-v2.x;
-                    double dy=v1.y-v2.y;
-                    float di=(float) Math.sqrt(dx*dx+dy*dy)/distance;
                     String dist = "unknown";                    
                     if (distanceSteps == 2) {
                         dist = "hit";
