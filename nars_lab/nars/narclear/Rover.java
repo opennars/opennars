@@ -258,7 +258,7 @@ public class Rover extends PhysicsModel {
             }
         }
 
-        boolean feel_motion=false; //todo, idea
+        boolean feel_motion=true; //todo, idea
         public void step() {
             for (VisionRay v : vision)
                 v.step();
@@ -290,7 +290,7 @@ public class Rover extends PhysicsModel {
             }
 
             if (a < 0.1) {
-                feltAngularVelocity.set("<0 --> feltAngularMotion>. :|: %1.00;0.90%");
+                feltAngularVelocity.set("$0.4;0.5$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
@@ -300,7 +300,7 @@ public class Rover extends PhysicsModel {
                 } else /*if (xa > 0)*/ {
                     direction = "right";
                 }
-                feltAngularVelocity.set("<(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+                feltAngularVelocity.set("$0.4;0.5$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
                // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
@@ -310,14 +310,14 @@ public class Rover extends PhysicsModel {
             }
             h = h / MathUtils.TWOPI;
             String dh = "a" + (int)(h*18);   // + ",rad";
-            feltOrientation.set("<" + dh + " --> feltOrientation>. :|:");
+            feltOrientation.set("$0.4;0.5$ <" + dh + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length());
             if (speed > 0.9f) {
                 speed = 0.9f;
             }
             String sp = Texts.n1(speed);
-            feltSpeed.set("<" + sp + " --> feltSpeed>. :|:");
+            feltSpeed.set("$0.4;0.5$ <" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }
 
