@@ -546,11 +546,15 @@ public class Executive {
             Sentence currentBelief = stmLast.sentence;
             nal.setCurrentBelief(currentBelief);
 
-            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
+            if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+                TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
+            }
         }
 
         //for this heuristic, only use input events & task effects of operations
-        stmLast=newEvent;
+        if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+            stmLast=newEvent;
+        }
 
         return true;
     }
