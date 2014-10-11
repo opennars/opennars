@@ -400,8 +400,8 @@ public class Rover extends PhysicsModel {
 
     }
 
-    public static float rotationSpeed = 20f;
-    public static float linearSpeed = 200f;
+    public static float rotationSpeed = 100f;
+    public static float linearSpeed = 5000f;
                 
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
