@@ -131,7 +131,7 @@ public class Rover extends PhysicsModel {
             
             
             
-            int pixels = 5;
+            int pixels = 3;
             float aStep = 0.9f / pixels;
             float L = 11.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
@@ -139,8 +139,8 @@ public class Rover extends PhysicsModel {
                 vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i, L, 3));
             }
             
-            Vec2 backRetina = new Vec2(0, -0.5f);
-            vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f, 3));
+            //Vec2 backRetina = new Vec2(0, -0.5f);
+            //vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f, 3));
             
             
             /*
@@ -225,8 +225,8 @@ public class Rover extends PhysicsModel {
                         nar.addInput("<goal --> reached>. :|:");
                         
                     }
-                    
-                    sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
+                    sight.set("<(*," + id + ",sth) --> see>. :|:");
+                    //sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
                 }
                 else {
                     sight.set("<(*," + id + ",empty) --> see>. :|:");
@@ -263,7 +263,7 @@ public class Rover extends PhysicsModel {
             }
 
             if (a < 0.1) {
-                feltAngularVelocity.set("<0 --> feltAngularMotion>. :|: %1.00;0.90%");
+               // feltAngularVelocity.set("<0 --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
@@ -273,8 +273,8 @@ public class Rover extends PhysicsModel {
                 } else /*if (xa > 0)*/ {
                     direction = "right";
                 }
-                feltAngularVelocity.set("<(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
-                //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
+                //feltAngularVelocity.set("<(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+               // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
             float h = torso.getAngle() % (MathUtils.TWOPI);
