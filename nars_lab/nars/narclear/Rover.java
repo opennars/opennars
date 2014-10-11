@@ -219,9 +219,15 @@ public class Rover extends PhysicsModel {
                     }
                     
                     if(n%500==0) {
+                       
                         nar.addInput("<goal --> reached>!"); //also remember on goal
                     }
                     if(di <= 0.02f) {
+                        float x = (float) Math.random() * sz - sz / 2f;
+                        float y = (float) Math.random() * sz - sz / 2f;
+                        //world.AddABlock(Phys, sz, sz);
+                        hit.setTransform(new Vec2(x,y), hit.getAngle());
+                        //Phys.getWorld().destroyBody(hit);
                         sight.set("<goal --> reached>. :|:");
                         
                     }
@@ -306,7 +312,18 @@ public class Rover extends PhysicsModel {
         super.step(settings);
 
         rover.step();
-
+        if(rover.torso.getTransform().p.x>sz) {
+            rover.torso.setTransform(new Vec2(-sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
+        }
+        if(rover.torso.getTransform().p.y>sz) {
+            rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,-sz),rover.torso.getAngle());
+        }
+        if(rover.torso.getTransform().p.x<-sz) {
+            rover.torso.setTransform(new Vec2(sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
+        }
+        if(rover.torso.getTransform().p.y<-sz) {
+            rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,sz),rover.torso.getAngle());
+        }
     }
 
     public class RoverPanel extends JPanel {
@@ -348,19 +365,25 @@ public class Rover extends PhysicsModel {
 
     }
 
+    public static PhysicsModel Phys;
     public class RoverWorld {
 
         public RoverWorld(PhysicsModel p, float w, float h) {
+            Phys=p;
             for (int i = 0; i < 10; i++) {
-                float x = (float) Math.random() * w - w / 2f;
-                float y = (float) Math.random() * h - h / 2f;
-                float bw = 1.0f;
-                float bh = 1.6f;
-                float a = 0;
-                addBlock(p, x, y, bw, bh, a);
+                AddABlock(p, w, h);
             }
         }
 
+        public void AddABlock(PhysicsModel p, float w, float h) {
+            float x = (float) Math.random() * w - w / 2f;
+            float y = (float) Math.random() * h - h / 2f;
+            float bw = 1.0f;
+            float bh = 1.6f;
+            float a = 0;
+            addBlock(p, x, y, bw, bh, a);
+        }
+        
         public void addBlock(PhysicsModel p, float x, float y, float w, float h, float a) {
             float mass = 0.25f;
             PolygonShape shape = new PolygonShape();
@@ -376,18 +399,18 @@ public class Rover extends PhysicsModel {
             body.createFixture(shape, mass);
             body.setAngularDamping(10);
             body.setLinearDamping(15);
-
         }
     }
 
+    public static RoverWorld world;
     //public static RoverWorld world;
-    
+    public static int sz=48;
     @Override
     public void initTest(boolean deserialized) {
         getWorld().setGravity(new Vec2());
         getWorld().setAllowSleep(false);
 
-        RoverWorld world = new RoverWorld(this, 48, 48);
+        world = new RoverWorld(this, sz, sz);
         
         rover = new RoverModel(this);
         rover.torso.setAngularDamping(20);
