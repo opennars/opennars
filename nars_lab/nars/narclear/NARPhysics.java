@@ -1,7 +1,6 @@
 package nars.narclear;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -9,7 +8,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nars.NARGame;
 import nars.core.NAR;
-import nars.narclear.Rover.RoverModel;
 
 
 
@@ -22,9 +20,18 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
     public NARPhysics(NAR nar, P model) {
         super(nar);
         this.model = model;
-        this.phy = new PhysicsRun(nar,model);
+        this.phy = new PhysicsRun(nar,model) {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                NARPhysics.this.keyPressed(e);
+            }
+          
+            
+        };
         
     }
+    public void keyPressed(KeyEvent e) { }
 
     @Override
     public void start(float fps, int cyclesPerFrame) {

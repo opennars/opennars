@@ -226,7 +226,7 @@ public class Rover extends PhysicsModel {
                     Vec2 v1=point1;
                     Vec2 v2=hit.getTransform().p;
                     double dx=v1.x-v2.x;
-                    double dy=v2.y-v2.y;
+                    double dy=v1.y-v2.y;
                     float di=(float) Math.sqrt(dx*dx+dy*dy)/distance;
                     String dist = "unknown";                    
                     if (distanceSteps == 2) {
@@ -287,7 +287,7 @@ public class Rover extends PhysicsModel {
             }
 
             if (a < 0.1) {
-               // feltAngularVelocity.set("<0 --> feltAngularMotion>. :|: %1.00;0.90%");
+                feltAngularVelocity.set("<0 --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
@@ -297,7 +297,7 @@ public class Rover extends PhysicsModel {
                 } else /*if (xa > 0)*/ {
                     direction = "right";
                 }
-                //feltAngularVelocity.set("<(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+                feltAngularVelocity.set("<(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
                // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
@@ -307,14 +307,14 @@ public class Rover extends PhysicsModel {
             }
             h = h / MathUtils.TWOPI;
             String dh = "a" + (int)(h*18);   // + ",rad";
-           // feltOrientation.set("<" + dh + " --> feltOrientation>. :|:");
+            feltOrientation.set("<" + dh + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length());
             if (speed > 0.9f) {
                 speed = 0.9f;
             }
             String sp = Texts.n1(speed);
-          //  feltSpeed.set("<" + sp + " --> feltSpeed>. :|:");
+            feltSpeed.set("<" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }
 
@@ -522,10 +522,39 @@ public class Rover extends PhysicsModel {
        // RoverWorld.world= new RoverWorld(rv, 48, 48);
         new NARPhysics<Rover>(nar, new Rover(nar)) {
 
+            @Override
+            public void keyPressed(KeyEvent e) {
+                 
+                Rover.RoverModel rover=Rover.rover;
+                float rotationSpeed = Rover.rotationSpeed;
+                float linearSpeed = Rover.linearSpeed;
+
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    nar.addInput("(^motor,forward). :|:");
+                    rover.thrust(0, linearSpeed);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    nar.addInput("(^motor,backward). :|:");
+                    rover.thrust(0, -linearSpeed);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    nar.addInput("(^motor,turn,left). :|:");
+                    rover.rotate(rotationSpeed);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    nar.addInput("(^motor,turn,right). :|:");
+                    rover.rotate(-rotationSpeed);
+                }
+
+            }
+
+            
         };
         
-        //nar.param().duration.set(25);
-        nar.start(25, 200);
+        int frameTimeMS = 100; //was 25
+        int cyclesPerFrame = 500; //was 200
+        nar.param().duration.set(frameTimeMS);
+        nar.start(frameTimeMS, cyclesPerFrame);
         nar.param().noiseLevel.set(0);
 
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);

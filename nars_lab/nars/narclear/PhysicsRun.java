@@ -93,6 +93,10 @@ public class PhysicsRun {
         controller.ready();
     }
     
+    public void keyPressed(KeyEvent e) {
+        
+    }
+    
     class PhysPanel extends TestPanelJ2D implements KeyListener {
 
         public PhysPanel(final TestbedState model, final PhysicsController controller) {
@@ -102,27 +106,7 @@ public class PhysicsRun {
         
         @Override
             public void keyPressed(KeyEvent e) {
-                
-                Rover.RoverModel rover=Rover.rover;
-                float rotationSpeed = Rover.rotationSpeed;
-                float linearSpeed = Rover.linearSpeed;
-
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    nar.addInput("(^motor,forward). :|:");
-                    rover.thrust(0, linearSpeed);
-                }
-                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    nar.addInput("(^motor,backward). :|:");
-                    rover.thrust(0, -linearSpeed);
-                }
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    nar.addInput("(^motor,turn,left). :|:");
-                    rover.rotate(rotationSpeed);
-                }
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    nar.addInput("(^motor,turn,right). :|:");
-                    rover.rotate(-rotationSpeed);
-                }
+                PhysicsRun.this.keyPressed(e);
             }
 
             @Override

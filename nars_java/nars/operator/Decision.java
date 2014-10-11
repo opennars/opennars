@@ -8,7 +8,7 @@ import nars.entity.Task;
 import nars.language.Term;
 
 /**
- * A is a set of mutually exclusive actions (each represented as a Term parameter to an Operator).
+ * A decision is a set of mutually exclusive actions (each represented as a Term parameter to an Operator).
  * Each invocation of the operator effectively casts a vote towards one of the results.
  * After some time, the decision can be decided and the state reset.
  * Different policies determine which decision is selected.
