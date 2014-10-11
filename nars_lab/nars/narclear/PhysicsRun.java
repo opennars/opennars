@@ -27,10 +27,14 @@ package nars.narclear;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import nars.core.NAR;
+import nars.narclear.Rover.RoverModel;
 import nars.narclear.jbox2d.PhysicsController;
 import nars.narclear.jbox2d.PhysicsController.MouseBehavior;
 import nars.narclear.jbox2d.PhysicsController.UpdateBehavior;
@@ -49,7 +53,9 @@ public class PhysicsRun {
     public final PhysicsController controller;
     // private static final Logger log = LoggerFactory.getLogger(TestbedMain.class);
 
-    public PhysicsRun(PhysicsModel... tests) {
+    NAR nar;
+    public PhysicsRun(NAR nar,PhysicsModel... tests) {
+        this.nar=nar;
     // try {
         // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         // } catch (Exception e) {
@@ -65,7 +71,8 @@ public class PhysicsRun {
                             JOptionPane.ERROR_MESSAGE);
                 }
             });
-        TestPanelJ2D panel = new TestPanelJ2D(model, controller);
+        PhysPanel panel = new PhysPanel(model, controller);
+
         model.setPanel(panel);
         model.setDebugDraw(new DebugDrawJ2D(panel, true));
 
@@ -84,6 +91,50 @@ public class PhysicsRun {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         controller.ready();
+    }
+    
+    class PhysPanel extends TestPanelJ2D implements KeyListener {
+
+        public PhysPanel(final TestbedState model, final PhysicsController controller) {
+            super(model,controller);
+            this.addKeyListener(this);
+        }
+        
+        @Override
+            public void keyPressed(KeyEvent e) {
+                
+                Rover.RoverModel rover=Rover.rover;
+                float rotationSpeed = Rover.rotationSpeed;
+                float linearSpeed = Rover.linearSpeed;
+
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    nar.addInput("(^motor,forward)!");
+                    rover.thrust(0, linearSpeed);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    nar.addInput("(^motor,backward)!");
+                    rover.thrust(0, -linearSpeed);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    nar.addInput("(^motor,turn,left)!");
+                    rover.rotate(rotationSpeed);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    nar.addInput("(^motor,turn,right)!");
+                    rover.rotate(-rotationSpeed);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+        
     }
 
     public void start(final int fps) {
