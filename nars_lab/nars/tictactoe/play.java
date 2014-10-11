@@ -17,8 +17,16 @@
 
 package nars.tictactoe;
 
+import java.util.List;
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.entity.Task;
+import nars.grid2d.TestChamber;
+import nars.gui.NARSwing;
+import nars.language.Term;
+import nars.operator.Operation;
+import nars.operator.Operator;
 
 /**
  *
@@ -29,17 +37,19 @@ public class play extends javax.swing.JFrame {
     /**
      * Creates new form play
      */
-    NAR nar;
+    public static NAR nar;
     public play() {
-        initComponents();
         nar = new DefaultNARBuilder().build();
-        
+        new NARSwing(nar);
+        nar.memory.addOperator(new AddO("^addO"));
+        narstart();
+        initComponents();
     }
     
     int[] field=new int[]{ 0,0,0,
                            0,0,0,
                            0,0,0
-            };
+    };
                             
     /**
      * This method is called from within the constructor to initialize the form.
@@ -233,49 +243,184 @@ public class play extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    public class AddO extends Operator {
+
+    public AddO(String name) {
+        super(name);
+    }
+
+    @Override
+    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        //Operation content = (Operation) task.getContent();
+        //Operator op = content.getOperator();
+         
+        TestChamber.executed=true;
+        System.out.println("Executed: " + this);
+        if(args[0].toString().equals("1")) {
+            jButton2.setText("O");
+            field[0]=2;
+        }
+        if(args[0].toString().equals("2")) {
+            jButton5.setText("O");
+            field[1]=2;
+        }
+        if(args[0].toString().equals("3")) {
+            jButton8.setText("O");
+            field[2]=2;
+        }
+        if(args[0].toString().equals("4")) {
+            jButton3.setText("O");
+            field[3]=2;
+        }
+        if(args[0].toString().equals("5")) {
+            jButton6.setText("O");
+            field[4]=2;
+        }
+        if(args[0].toString().equals("6")) {
+            jButton9.setText("O");
+            field[5]=2;
+        }
+        if(args[0].toString().equals("7")) {
+             jButton4.setText("O");
+            field[6]=2;
+        }
+        if(args[0].toString().equals("8")) {
+            jButton7.setText("O");
+            field[7]=2;
+        }
+        if(args[0].toString().equals("9")) {
+            jButton10.setText("O");
+            field[8]=2;
+        }
+        
+        check_field();
+        //for (Term t : args) {
+        //    System.out.println(" --- " + t);
+       // }
+        
+        return null;
+    }
+
+}
+    
+    public void check_field()
+    {
+        int won=0; //player 1 won: won=1, nars won: won=2
+        
+        for(int player=1;player<=2;player++) { //up down
+            for(int i=0;i<3;i++) {
+                if(field[i]==player && field[i+3]==player && field[i+3+3]==player) {
+                    won=player;
+                }
+            }
+            
+            for(int i=0;i<=6;i+=3) { //left right
+                if(field[i]==player && field[i+1]==player && field[i+1+1]==player) {
+                    won=player;
+                }
+            }
+            
+            if(field[0]==player && field[0+4]==player && field[0+4+4]==player) { //left diagonale
+                won=player;
+            }
+            if(field[2]==player && field[0+2]==player && field[0+2+2]==player) { //right diagonale
+                won=player;
+            }
+        }
+        
+        
+        if(won==1) {
+            this.jLabel1.setText("Player won");
+            nar.addInput("<goal --> reached>. %0.0;0.99%");
+        }
+        if(won==2) {
+            this.jLabel1.setText("NARS won");
+            nar.addInput("<goal --> reached>. %1.0;0.99%");
+        }
+    }
+    public void narstart() { 
+        nar.start(50, 300);
+    }
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<1 --> set>. :|:");
         jButton2.setText("X");
+        field[0]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<4 --> set>. :|:");
         jButton3.setText("X");
+        field[3]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<7 --> set>. :|:");
         jButton4.setText("X");
+        field[6]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<2 --> set>. :|:");
         jButton5.setText("X");
+        field[1]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<5 --> set>. :|:");
         jButton6.setText("X");
+        field[4]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<8 --> set>. :|:");
         jButton7.setText("X");
+        field[7]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<3 --> set>. :|:");
         jButton8.setText("X");
+        field[2]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<6 --> set>. :|:");
         jButton9.setText("X");
+        field[5]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
+        nar.addInput("<9 --> set>. :|:");
         jButton10.setText("X");
+        field[8]=1;
+        check_field();
+        narstart(); //nars turn
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -290,6 +435,10 @@ public class play extends javax.swing.JFrame {
         jButton9.setText("_");
         jButton10.setText("_");
         this.jLabel1.setText("game in progress");
+        field=new int[]{ 0,0,0,
+                         0,0,0,
+                         0,0,0
+        };
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
