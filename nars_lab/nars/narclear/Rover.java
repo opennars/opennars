@@ -82,7 +82,7 @@ public class Rover extends PhysicsModel {
 //                Body prevBody = ground;
 //
             // Define upper arm.
-            for (float axis = -1f; axis <= 1f; axis += 2f) {
+            /*for (float axis = -1f; axis <= 1f; axis += 2f) {
                 Body upperArm;
                 RevoluteJoint leftShoulderJoint;
                 Body lowerArm;
@@ -127,16 +127,22 @@ public class Rover extends PhysicsModel {
                 rjd.collideConnected = false;
                 elbowJoint = (RevoluteJoint) getWorld().createJoint(rjd2);
 
-            }
+            }*/
             
             
             
-            int pixels = 3;
+            int pixels = 5;
             float aStep = 0.9f / pixels;
-            float L = 11.0f;
+            float L = 15.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i, L, 3));
+                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f, L, 3));
+            }
+            
+            pixels=3;
+            Vec2 backRetina = new Vec2(0, -0.5f);
+            for (int i = -pixels/2; i <= pixels/2; i++) {
+                vision.add(new VisionRay("back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4), 5.5f, 3));
             }
             
             //Vec2 backRetina = new Vec2(0, -0.5f);
@@ -208,13 +214,20 @@ public class Rover extends PhysicsModel {
                     getDebugDraw().drawSegment(point1, point2, laserColor);
                 }
                 
-                Vec2 v1=point1;
-                Vec2 v2=point2;
-                double dx=v1.x-v2.x;
-                double dy=v2.y-v2.y;
-                float di=(float) Math.sqrt(dx*dx+dy*dy)/distance;
+                
 
-                if (hit!=null) {                                        
+                if (hit!=null) {  
+                    
+                    if(id.startsWith("back")) {
+                        sight.set("<goal --> reached>. :|: %0.0;0.90%");
+                        return;
+                    }
+                    
+                    Vec2 v1=point1;
+                    Vec2 v2=hit.getTransform().p;
+                    double dx=v1.x-v2.x;
+                    double dy=v2.y-v2.y;
+                    float di=(float) Math.sqrt(dx*dx+dy*dy)/distance;
                     String dist = "unknown";                    
                     if (distanceSteps == 2) {
                         dist = "hit";
@@ -227,7 +240,7 @@ public class Rover extends PhysicsModel {
                        
                         nar.addInput("<goal --> reached>!"); //also remember on goal
                     }
-                    if(di <= 0.02f) {
+                    if(di <= 0.1f) {
                         float x = (float) Math.random() * sz - sz / 2f;
                         float y = (float) Math.random() * sz - sz / 2f;
                         //world.AddABlock(Phys, sz, sz);
@@ -512,7 +525,7 @@ public class Rover extends PhysicsModel {
         };
         
         //nar.param().duration.set(25);
-        nar.start(25, 50);
+        nar.start(25, 200);
         nar.param().noiseLevel.set(0);
 
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
