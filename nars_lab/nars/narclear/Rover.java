@@ -283,14 +283,14 @@ public class Rover extends PhysicsModel {
             }
             h = h / MathUtils.TWOPI;
             String dh = "a" + (int)(h*18);   // + ",rad";
-            feltOrientation.set("<" + dh + " --> feltOrientation>. :|:");
+           // feltOrientation.set("<" + dh + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length());
             if (speed > 0.9f) {
                 speed = 0.9f;
             }
             String sp = Texts.n1(speed);
-            feltSpeed.set("<" + sp + " --> feltSpeed>. :|:");
+          //  feltSpeed.set("<" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }
 
