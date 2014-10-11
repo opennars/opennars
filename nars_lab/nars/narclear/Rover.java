@@ -196,7 +196,12 @@ public class Rover extends PhysicsModel {
                 Body hit = null;
                 float d = Float.POSITIVE_INFINITY;
                 if (ccallback.m_hit) {
-                    d = ccallback.m_point.sub(point).length()/distance;
+                    //d = ccallback.m_point.sub(point).length()/distance;
+                    Vec2 v1=ccallback.m_point;
+                    Vec2 v2=point;
+                    double dx=v1.x-v2.x;
+                    double dy=v2.y-v2.y;
+                    d=(float) Math.sqrt(dx*dx+dy*dy);
                     
                     getDebugDraw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
                     getDebugDraw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
@@ -208,7 +213,7 @@ public class Rover extends PhysicsModel {
                     getDebugDraw().drawSegment(point1, point2, laserColor);
                 }
                 
-                float di=d * (distanceSteps/10.0f);
+                float di=d; // * (distanceSteps/10.0f);
                 if (hit!=null) {                                        
                     String dist = "unknown";                    
                     if (distanceSteps == 2) {
