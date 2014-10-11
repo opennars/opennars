@@ -33,7 +33,9 @@ import org.jbox2d.dynamics.BodyType;
  * @author me
  */
 public class Rover extends PhysicsModel {
-
+    public static int decrease_of_importance_step=30;
+    public static int cnt=0;
+    public static int do_sth_importance=0;
     public static RoverModel rover;
     private final NAR nar;
 
@@ -125,24 +127,24 @@ public class Rover extends PhysicsModel {
             }*/
             
             
-             
-            int pixels = 5; //should be odd # to balance
+            
+            int pixels = 5;
             float aStep = 0.9f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 5; //should be odd # to balance
             float L = 15.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f, 
-                        retinaArc, retinaResolution, L, 3));
+                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
+                            retinaArc, retinaResolution, L, 3));
             }
             
             pixels=3;
             Vec2 backRetina = new Vec2(0, -0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4), 
-                        retinaArc, retinaResolution, 
-                        5.5f, 3));
+                vision.add(new VisionRay("back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4),
+                           retinaArc, retinaResolution,
+                           5.5f, 3));
             }
             
             //Vec2 backRetina = new Vec2(0, -0.5f);
@@ -176,7 +178,6 @@ public class Rover extends PhysicsModel {
             private final int resolution;
             private final float arc;
 
-            
             public VisionRay(String id, Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
                 this.id = id;
                 this.body = body;
@@ -194,48 +195,44 @@ public class Rover extends PhysicsModel {
                 point1 = body.getWorldPoint(point);
 
                 Body hit = null;
+                
                 float sumDist = 0;
                 int numDist = 0;
-                
                 float dArc = arc / resolution;
                 for (int r = 0; r < resolution; r++) {
-                    float da = (-arc/2f) + dArc * r;
-                    d.set(distance * MathUtils.cos(da+angle+body.getAngle()), distance * MathUtils.sin(da+angle+body.getAngle()));
+                    float da = (-arc / 2f) + dArc * r;
+                    d.set(distance * MathUtils.cos(da + angle + body.getAngle()), distance * MathUtils.sin(da + angle + body.getAngle()));
                     point2.set(point1);
                     point2.addLocal(d);
 
                     ccallback.init();
                     getWorld().raycast(ccallback, point1, point2);
-                    
-                    
-                    if (ccallback.m_hit) {
-                        float d = ccallback.m_point.sub(point1).length()/distance;
-                        /*Vec2 v1=point1;
-                        Vec2 v2=hit.getTransform().p;
-                        double dx=v1.x-v2.x;
-                        double dy=v1.y-v2.y;
-                        float d = (float) Math.sqrt(dx*dx+dy*dy)/distance;*/
 
-                        
+                    if (ccallback.m_hit) {
+                        float d = ccallback.m_point.sub(point1).length() / distance;
+                        /*Vec2 v1=point1;
+                         Vec2 v2=hit.getTransform().p;
+                         double dx=v1.x-v2.x;
+                         double dy=v1.y-v2.y;
+                         float d = (float) Math.sqrt(dx*dx+dy*dy)/distance;*/
+
                         getDebugDraw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
                         getDebugDraw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
                         pooledHead.set(ccallback.m_normal);
                         pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
                         getDebugDraw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
                         hit = ccallback.body;
-                        
-                        sumDist+=d;
+
+                        sumDist += d;
                         numDist++;
                     } else {
                         getDebugDraw().drawSegment(point1, point2, laserColor);
                     }
-                
                 }
 
                 if (hit!=null) {  
                     
-                    float di = sumDist / numDist;                    
-                    
+                    float di = sumDist / numDist; 
                     if(id.startsWith("back")) {
                         sight.set("<goal --> reached>. :|: %0.0;0.90%");
                         return;
@@ -250,14 +247,13 @@ public class Rover extends PhysicsModel {
                     }
                     
                     if(n%500==0) {
-                       
                         nar.addInput("<goal --> reached>!"); //also remember on goal
                     }
                     if(di <= 0.2f) {
                         float x = (float) Math.random() * sz - sz / 2f;
                         float y = (float) Math.random() * sz - sz / 2f;
                         //world.AddABlock(Phys, sz, sz);
-                        hit.setTransform(new Vec2(x,y), hit.getAngle());
+                        hit.setTransform(new Vec2(x*2.0f,y*2.0f), hit.getAngle());
                         //Phys.getWorld().destroyBody(hit);
                         sight.set("<goal --> reached>. :|:");
                         
@@ -271,14 +267,22 @@ public class Rover extends PhysicsModel {
             }
         }
 
-        boolean feel_motion=true; //todo, idea
+        boolean feel_motion=true; //todo add option in gui
+
         public void step() {
             for (VisionRay v : vision)
                 v.step();
             
+            if(Rover.cnt>=do_sth_importance) {
+                Rover.cnt=0;
+                Rover.do_sth_importance+=decrease_of_importance_step; //increase
+                nar.addInput("(^motor,random)!");
+            }
+            
             if(feel_motion) {
                 feelMotion();
             }
+            Rover.cnt++;
         }
 
 
@@ -303,7 +307,7 @@ public class Rover extends PhysicsModel {
             }
 
             if (a < 0.1) {
-                feltAngularVelocity.set("$0.4;0.5$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
+                feltAngularVelocity.set("$0.1;0.1$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
@@ -313,7 +317,7 @@ public class Rover extends PhysicsModel {
                 } else /*if (xa > 0)*/ {
                     direction = "right";
                 }
-                feltAngularVelocity.set("$0.4;0.5$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+                feltAngularVelocity.set("$0.1;0.1$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
                // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
@@ -323,14 +327,14 @@ public class Rover extends PhysicsModel {
             }
             h = h / MathUtils.TWOPI;
             String dh = "a" + (int)(h*18);   // + ",rad";
-            feltOrientation.set("$0.4;0.5$ <" + dh + " --> feltOrientation>. :|:");
+            feltOrientation.set("$0.1;0.1$ <" + dh + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length());
             if (speed > 0.9f) {
                 speed = 0.9f;
             }
             String sp = Texts.n1(speed);
-            feltSpeed.set("$0.4;0.5$ <" + sp + " --> feltSpeed>. :|:");
+            feltSpeed.set("$0.1;0.1$ <" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }
 
@@ -404,7 +408,7 @@ public class Rover extends PhysicsModel {
 
         public RoverWorld(PhysicsModel p, float w, float h) {
             Phys=p;
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 30; i++) {
                 AddABlock(p, w, h);
             }
         }
@@ -415,7 +419,7 @@ public class Rover extends PhysicsModel {
             float bw = 1.0f;
             float bh = 1.6f;
             float a = 0;
-            addBlock(p, x, y, bw, bh, a);
+            addBlock(p, x*2.0f, y*2.0f, bw, bh, a);
         }
         
         public void addBlock(PhysicsModel p, float x, float y, float w, float h, float a) {
@@ -490,8 +494,32 @@ public class Rover extends PhysicsModel {
                         case "stop":
                             rover.stop();
                             break;
+                        case "random": //tend forward
+                            nar.addInput("(^motor,forward). :|:");
+                            rover.thrust(0, linearSpeed);
+                            nar.step(100);
+                            
+                            ArrayList<String> candids=new ArrayList<String>();
+                            candids.add("(^motor,turn,left). :|:");
+                            candids.add("(^motor,turn,right). :|:");
+                            candids.add("(^motor,backward). :|:");
+                            candids.add("(^motor,forward). :|:");
+                            int candid=(int)(Math.random()*candids.size()-0.001);
+                            if(candid>=3)
+                                rover.thrust(0, linearSpeed);
+                            if(candid==2)
+                                rover.thrust(0, -linearSpeed);
+                            if(candid==1)
+                                rover.rotate(-rotationSpeed);
+                            if(candid==0)
+                                rover.rotate(rotationSpeed);
+                            
+                            //{"(^motor,turn,left)! :|:", "(^motor,turn,right)! :|:", "(^motor,forward)! :|:", "(^motor,backward)! :|:"};
+                            nar.addInput(candids.get(candid));
+                            break;
                     }
                 }
+                Rover.cnt=0;
                 return null;
             }
         });
@@ -570,6 +598,7 @@ public class Rover extends PhysicsModel {
         int frameTimeMS = 100; //was 25
         int cyclesPerFrame = 500; //was 200
         nar.param().duration.set(frameTimeMS);
+        nar.param().decisionThreshold.set(0.1);
         nar.start(frameTimeMS, cyclesPerFrame);
         nar.param().noiseLevel.set(0);
 
