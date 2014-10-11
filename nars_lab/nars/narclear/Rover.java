@@ -258,11 +258,14 @@ public class Rover extends PhysicsModel {
             }
         }
 
+        boolean feel_motion=false; //todo, idea
         public void step() {
             for (VisionRay v : vision)
                 v.step();
             
-            feelMotion();
+            if(feel_motion) {
+                feelMotion();
+            }
         }
 
 
