@@ -240,7 +240,7 @@ public class Rover extends PhysicsModel {
                        
                         nar.addInput("<goal --> reached>!"); //also remember on goal
                     }
-                    if(di <= 0.1f) {
+                    if(di <= 0.2f) {
                         float x = (float) Math.random() * sz - sz / 2f;
                         float y = (float) Math.random() * sz - sz / 2f;
                         //world.AddABlock(Phys, sz, sz);
