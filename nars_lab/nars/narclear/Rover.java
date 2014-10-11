@@ -222,7 +222,7 @@ public class Rover extends PhysicsModel {
                         nar.addInput("<goal --> reached>!"); //also remember on goal
                     }
                     if(di <= 0.02f) {
-                        nar.addInput("<goal --> reached>. :|:");
+                        sight.set("<goal --> reached>. :|:");
                         
                     }
                     sight.set("<(*," + id + ",sth) --> see>. :|:");
