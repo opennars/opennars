@@ -41,6 +41,8 @@ import nars.io.TextOutput;
  */
 public class NARSwing  {
 
+    
+
 
 
 
@@ -49,7 +51,7 @@ public class NARSwing  {
         System.setProperty("sun.java2d.opengl","True");        
     }*/
 
-    static {
+    public static void themeInvert() {
         //http://alvinalexander.com/java/java-swing-uimanager-defaults
         UIManager.put("Button.foreground", Color.WHITE);
         UIManager.put("Button.background", Color.DARK_GRAY);
@@ -61,16 +63,16 @@ public class NARSwing  {
         UIManager.put("TextEdit.border", new EmptyBorder(1,1,1,1));
         UIManager.put("TextArea.border", new EmptyBorder(1,1,1,1));
         UIManager.put("TextField.border", new EmptyBorder(1,1,1,1));
-        
+
         UIManager.put("Label.foreground", Color.WHITE);
-        
+
         UIManager.put("TextPane.background", Color.BLACK);
         UIManager.put("TextPane.foreground", Color.WHITE);
         UIManager.put("TextEdit.background", Color.BLACK);
         UIManager.put("TextEdit.foreground", Color.WHITE);
         UIManager.put("TextArea.background", Color.BLACK);
         UIManager.put("TextArea.foreground", Color.WHITE);
-        
+
         UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
         UIManager.put("TextPane.border", new EmptyBorder(1,1,1,1));
         UIManager.put("Panel.border", new EmptyBorder(1,1,1,1));
@@ -99,7 +101,7 @@ public class NARSwing  {
 
     public NARSwing(NAR nar, boolean logPanel) {
         super();
-        
+                
         this.nar = nar;                
         
         controls = new NARControls(nar);        
@@ -176,6 +178,8 @@ public class NARSwing  {
  --silence <integer>
      */
     public static void main(String args[]) {
+        themeInvert();
+                
         NAR nar = new CommandLineNARBuilder(args).build();
         
         //temporary:
