@@ -367,7 +367,7 @@ public class play extends javax.swing.JFrame {
 
 }
     
-    public void check_field()
+    public boolean check_field()
     {
         int won=0; //player 1 won: won=1, nars won: won=2
         
@@ -401,6 +401,8 @@ public class play extends javax.swing.JFrame {
             this.jLabel1.setText("NARS won");
             nar.addInput("<goal --> reached>. %1.0;0.99%");
         }
+        
+        return won!=0;
     }
     public void narstart() { 
         nar.start(50, 500);
@@ -422,121 +424,139 @@ public class play extends javax.swing.JFrame {
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[0]!=0) {
             return;
         }
         nar.addInput("<1 --> set>. :|:");
         jButton2.setText("X");
         field[0]=1;
-        check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[3]!=0) {
             return;
         }
         nar.addInput("<4 --> set>. :|:");
         jButton3.setText("X");
         field[3]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[6]!=0) {
             return;
         }
         nar.addInput("<7 --> set>. :|:");
         jButton4.setText("X");
         field[6]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[1]!=0) {
             return;
         }
         nar.addInput("<2 --> set>. :|:");
         jButton5.setText("X");
         field[1]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[4]!=0) {
             return;
         }
         nar.addInput("<5 --> set>. :|:");
         jButton6.setText("X");
         field[4]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[7]!=0) {
             return;
         }
         nar.addInput("<8 --> set>. :|:");
         jButton7.setText("X");
         field[7]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[2]!=0) {
             return;
         }
         nar.addInput("<3 --> set>. :|:");
         jButton8.setText("X");
         field[2]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[5]!=0) {
             return;
         }
         nar.addInput("<6 --> set>. :|:");
         jButton9.setText("X");
         field[5]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
-        if(!en) {
+        if(!en || field[8]!=0) {
             return;
         }
         nar.addInput("<9 --> set>. :|:");
         jButton10.setText("X");
         field[8]=1;
         check_field();
-        narstart(); //nars turn
-        enableall(false);
+        if(!check_field()) {
+            narstart(); //nars turn
+            enableall(false);
+        }
     }//GEN-LAST:event_jButton10ActionPerformed
 
+    boolean beginner=false;
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         jButton2.setText("_");
@@ -555,6 +575,17 @@ public class play extends javax.swing.JFrame {
         };
         nar.addInput("<game --> reset>. :|:");
         addStartKnowledge();
+        
+        if(!beginner) {
+            narstart(); //nars turn
+            enableall(false);
+        }
+        else {
+            nar.stop();
+            enableall(true);
+        }
+        
+        beginner=!beginner;
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
