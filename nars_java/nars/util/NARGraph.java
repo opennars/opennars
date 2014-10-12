@@ -15,6 +15,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.CompoundTerm;
 import nars.language.Term;
@@ -142,23 +143,23 @@ public class NARGraph extends DirectedMultigraph {
         }
     }
 
-    public static class TLink extends NAREdge {
+    public static class TermLinkEdge extends NAREdge {
         public final TermLink termLink;
 
-        public TLink(TermLink t) {
-            this.termLink = t;
-        }
-
+        public TermLinkEdge(TermLink t) {  this.termLink = t;         }
         
-        @Override
-        public String toString() {
-            return "termlink";
-        }
+        @Override public String toString() { return "termlink";         }
 
-        @Override
-        public Object clone() {
-            return super.clone();
-        }
+        @Override public Object clone() {  return super.clone();        }
+    }
+    public static class TaskLinkEdge extends NAREdge {
+        public final TaskLink taskLink;
+
+        public TaskLinkEdge(TaskLink t) {  this.taskLink = t;         }
+        
+        @Override public String toString() { return "tasklink";         }
+
+        @Override public Object clone() {  return super.clone();        }
     }
     
     public static class TermQuestion extends NAREdge {
@@ -286,9 +287,11 @@ public class NARGraph extends DirectedMultigraph {
         private final boolean includeBeliefs;
         private final boolean includeQuestions;
         private final boolean includeTermLinks;
+        private final boolean includeTaskLinks;
         
 
         public final Map<TermLink, Concept> termLinks = new HashMap();
+        public final Map<TaskLink, Concept> taskLinks = new HashMap();
         public final Map<Term, Concept> terms = new HashMap();
         public final Map<Sentence, Concept> sentenceTerms = new HashMap();
 
@@ -296,17 +299,18 @@ public class NARGraph extends DirectedMultigraph {
         private final boolean includeDerivations;
         @Deprecated protected int includeSyntax; //how many recursive levels to decompose per Term
 
-        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax, boolean includeTermLinks) {
-            this(includeBeliefs, includeDerivations, includeQuestions, includeTermContent, includeSyntax ? 2 : 0, includeTermLinks);
+        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax, boolean includeTermLinks, boolean includeTaskLinks) {
+            this(includeBeliefs, includeDerivations, includeQuestions, includeTermContent, includeSyntax ? 2 : 0, includeTermLinks, includeTaskLinks);
         }
 
-        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax, boolean includeTermLinks) {
+        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax, boolean includeTermLinks, boolean includeTaskLinks) {
             this.includeBeliefs = includeBeliefs;
             this.includeQuestions = includeQuestions;
             this.includeTermContent = includeTermContent;
             this.includeDerivations = includeDerivations;
             this.includeSyntax = includeSyntax;
             this.includeTermLinks = includeTermLinks;
+            this.includeTaskLinks = includeTaskLinks;
         }
 
         @Override
@@ -343,10 +347,14 @@ public class NARGraph extends DirectedMultigraph {
             if (includeTermLinks) {
                 for (TermLink x : c.termLinks) {
                     termLinks.put(x, c);
-                }
-                
+                }                
             }
 
+            if (includeTaskLinks) {
+                for (TaskLink x : c.taskLinks) {                    
+                    taskLinks.put(x, c);
+                }                
+            }
 
             if (includeTermContent) {
                 g.addVertex(c.term);
@@ -497,9 +505,20 @@ public class NARGraph extends DirectedMultigraph {
                     TermLink t = et.getKey();                    
                     Concept from = et.getValue();
                     Concept to = terms.get(t.target);                    
-                    if (to!=null)
-                        g.addEdge(from, to, new TLink(t));
+                    if (to!=null) {                        
+                        g.addEdge(from, to, new TermLinkEdge(t));
+                    }
                 }
+            }
+            if (includeTaskLinks) {
+                for (Entry<TaskLink, Concept> et : taskLinks.entrySet()) {
+                    TaskLink t = et.getKey();                    
+                    Concept from = et.getValue();
+                    if (t.targetTask!=null) {
+                        g.addVertex(t.targetTask);
+                        g.addEdge(from, t.targetTask, new TaskLinkEdge(t));
+                    }
+                }                
             }
         }
 

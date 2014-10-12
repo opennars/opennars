@@ -9,6 +9,7 @@ import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.language.Term;
@@ -108,8 +109,13 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
 
 
     public static float edgeThickness(Object edge, VertexDisplay source, VertexDisplay target) {
-        if (edge instanceof NARGraph.TLink) {
-            TermLink t = ((NARGraph.TLink)edge).termLink;
+        if (edge instanceof NARGraph.TermLinkEdge) {
+            TermLink t = ((NARGraph.TermLinkEdge)edge).termLink;
+            float p = t.getPriority();            
+            return (1 + p);
+        }
+        if (edge instanceof NARGraph.TaskLinkEdge) {
+            TaskLink t = ((NARGraph.TaskLinkEdge)edge).taskLink;
             float p = t.getPriority();            
             return (1 + p);
         }
@@ -122,10 +128,15 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     }
 
     public int getEdgeColor(E e) {
-        if (e instanceof NARGraph.TLink) {
-            TermLink t = ((NARGraph.TLink)e).termLink;
+        if (e instanceof NARGraph.TermLinkEdge) {
+            TermLink t = ((NARGraph.TermLinkEdge)e).termLink;
             float p = t.getPriority();
             return color(255f * (0.5f + p*0.5f), 125f, 125f, 255f * (0.5f + p*0.5f) );
+        }
+        if (e instanceof NARGraph.TaskLinkEdge) {
+            TaskLink t = ((NARGraph.TaskLinkEdge)e).taskLink;
+            float p = t.getPriority();
+            return color(125f, 255f * (0.5f + p*0.5f), 125f, 255f * (0.5f + p*0.5f) );
         }
         Integer i = edgeColors.get(e.getClass());
         if (i == null) {

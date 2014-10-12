@@ -17,7 +17,7 @@ public class ConceptGraphCanvas2 extends AnimatedProcessingGraphCanvas<Object,Ob
 
     @Override
     protected DirectedMultigraph<Object, Object> getGraph() {
-        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new NARGraph.DefaultGraphizer(false, true, false, false, false, true));
+        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new NARGraph.DefaultGraphizer(false, true, false, false, false, true, true));
     }
 
     

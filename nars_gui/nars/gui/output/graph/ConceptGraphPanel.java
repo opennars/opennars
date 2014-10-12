@@ -51,6 +51,17 @@ public class ConceptGraphPanel extends ProcessingGraphPanel {
         });
         menu.add(termlinkEnable);        
         
+        final JCheckBox taskLinkEnable = new JCheckBox("TaskLinks");
+        taskLinkEnable.setSelected(cg.showTasklinks);
+        taskLinkEnable.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                cg.showTasklinks = (taskLinkEnable.isSelected());
+                cg.setUpdateNext();
+            }
+        });
+        menu.add(taskLinkEnable);
+
+        
         final JCheckBox beliefsEnable = new JCheckBox("Beliefs");
         beliefsEnable.setSelected(cg.showBeliefs);
         beliefsEnable.addActionListener(new ActionListener() {
