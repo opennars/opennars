@@ -196,12 +196,24 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (forgetProportion > 1.0f) forgetProportion = 1.0f;
         if (forgetProportion < 0) forgetProportion = 0;
         
-        //System.out.println("forget Delta=" + forgetDelta + " " + forgetTime + " " + forgetProportion);
+        
+        /*if (forgetDelta > 0)
+            System.out.println("forget Delta=" + forgetDelta + " " + forgetTime + " " + forgetProportion);*/
+        
         minPriority *= budget.getQuality();
         
         float currentPriority = budget.getPriority();
-        budget.setPriority( currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion) );
-        //System.out.println("  " + currentPriority + " -> " + budget.getPriority());
+        if (currentPriority < minPriority) {
+            //priority already below threshold, don't decrease any further
+            return;
+        }
+        
+        //more durability = slower forgetting
+        forgetProportion *= (1.0 - budget.getDurability());        
+        
+        budget.setPriority( 0.5f *  currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion) );
+        /*if (forgetDelta > 0)
+            System.out.println("  " + currentPriority + " -> " + budget.getPriority());*/
         
     }
 

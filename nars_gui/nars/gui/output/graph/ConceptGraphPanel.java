@@ -30,7 +30,8 @@ public class ConceptGraphPanel extends ProcessingGraphPanel {
                 
         final JComboBox modeSelect = new JComboBox();
         modeSelect.addItem("GridSort");
-        modeSelect.addItem("Circle");
+        modeSelect.addItem("Circle Anim");
+        modeSelect.addItem("Circle Fixed");       
         modeSelect.addItem("Grid");
         modeSelect.setSelectedIndex(cg.mode);
         modeSelect.addActionListener(new ActionListener() {

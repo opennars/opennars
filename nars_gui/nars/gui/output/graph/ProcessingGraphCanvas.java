@@ -65,11 +65,11 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     boolean updateNext;
 
     public float maxNodeSize = 1000f;
-    float nodeSize = 150f;
+    float nodeSize = 200f;
     static final float boostScale = 6.0f;
 
     float lineAlpha = 0.75f;
-    float lineWidth = 2f;
+    float lineWidth = 4f;
 
     Map<V, VertexDisplay> vertices = new HashMap();
     Set<V> deadVertices = new HashSet();
@@ -116,7 +116,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         }
         if (edge instanceof NARGraph.TaskLinkEdge) {
             TaskLink t = ((NARGraph.TaskLinkEdge)edge).taskLink;
-            float p = t.getPriority();            
+            float p = t.targetTask.getPriority();            
             return (1 + p);
         }
         return 1f;        
@@ -135,7 +135,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         }
         if (e instanceof NARGraph.TaskLinkEdge) {
             TaskLink t = ((NARGraph.TaskLinkEdge)e).taskLink;
-            float p = t.getPriority();
+            float p = t.targetTask.getPriority();
             return color(125f, 255f * (0.5f + p*0.5f), 125f, 255f * (0.5f + p*0.5f) );
         }
         Integer i = edgeColors.get(e.getClass());
