@@ -47,7 +47,7 @@ public class play extends javax.swing.JFrame {
         nar.memory.addOperator(new AddO("^addO"));
         nar.param().noiseLevel.set(0);
         nar.param().decisionThreshold.set(0.3);
-        narstart();
+        
         initComponents();
         addStartKnowledge();
         nar.addInput("<game --> reset>. :|:");
@@ -70,6 +70,7 @@ public class play extends javax.swing.JFrame {
             Logger.getLogger(play.class.getName()).log(Level.SEVERE, null, ex);
         }
         new NARSwing(nar);
+        narstart();
     }
     
     int[] field=new int[]{ 0,0,0,
@@ -219,7 +220,7 @@ public class play extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(1, 1, 1)
@@ -243,7 +244,8 @@ public class play extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,11 +277,11 @@ public class play extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, Short.MAX_VALUE)
         );
 
         pack();
@@ -401,7 +403,7 @@ public class play extends javax.swing.JFrame {
         }
     }
     public void narstart() { 
-        nar.start(50, 300);
+        nar.start(50, 500);
     }
     
     boolean en=false;
@@ -595,7 +597,7 @@ public class play extends javax.swing.JFrame {
         nar.addInput("<7 --> field>.");
         nar.addInput("<8 --> field>.");
         nar.addInput("<9 --> field>.");*/
-        nar.addInput("(--,<input --> failed>)!");
+        nar.addInput("<input --> succeeded>!");
         
     }
     
