@@ -210,7 +210,6 @@ public final class BudgetFunctions extends UtilityFunctions {
         
         //more durability = slower forgetting
         forgetProportion *= (1.0 - budget.getDurability());        
-        System.out.println(budget.getDurability() + " " + forgetProportion);
         
         budget.setPriority( currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion) );
         /*if (forgetDelta > 0)
