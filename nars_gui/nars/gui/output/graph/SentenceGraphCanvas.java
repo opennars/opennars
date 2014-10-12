@@ -43,13 +43,12 @@ public class SentenceGraphCanvas extends AnimatedProcessingGraphCanvas<Term,Sent
     @Override
     public float getEdgeThickness(final Sentence edge, final VertexDisplay source, final VertexDisplay target) {
         float c = edge.truth.getConfidence();
-        return (0.1f + c) * 14f;
+        return c * super.getEdgeThickness(edge, source, target);
     }
 
     @Override
     public float getNodeSize(final Term v) {        
-        float b = 10f * (0.2f + 2 * (float) GraphExecutive.getEffectivePriority(sgraph.memory, v));
-        return b;
+        return (float) GraphExecutive.getEffectivePriority(sgraph.memory, v) * super.getNodeSize(v);
     }
     
     

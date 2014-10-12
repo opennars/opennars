@@ -25,7 +25,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 public class SentenceTablePanel extends TablePanel {
 
-    private final JButton graphButton;
+    private final JButton syntaxGraphButton;
 
     public SentenceTablePanel(NAR nar) {
         super(nar);
@@ -40,7 +40,7 @@ public class SentenceTablePanel extends TablePanel {
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                graphButton.setEnabled(table.getSelectedRowCount() > 0);
+                syntaxGraphButton.setEnabled(table.getSelectedRowCount() > 0);
             }
         });
         table.getColumn("Type").setMaxWidth(48);
@@ -54,15 +54,15 @@ public class SentenceTablePanel extends TablePanel {
 
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         {
-            graphButton = new JButton("Graph");
-            graphButton.setEnabled(false);
-            graphButton.addActionListener(new ActionListener() {
+            syntaxGraphButton = new JButton("Graph");
+            syntaxGraphButton.setEnabled(false);
+            syntaxGraphButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     newSelectedGraphPanel();
                 }
             });
-            menu.add(graphButton);
+            menu.add(syntaxGraphButton);
 
             JButton clearButton = new JButton("Clear");
             clearButton.addActionListener(new ActionListener() {
@@ -98,7 +98,7 @@ public class SentenceTablePanel extends TablePanel {
             @Override
             public DirectedMultigraph getGraph() {
 
-                NARGraph.DefaultGraphizer graphizer = new NARGraph.DefaultGraphizer(true, true, true, true, false) {
+                NARGraph.DefaultGraphizer graphizer = new NARGraph.DefaultGraphizer(true, true, true, true, false, false) {
 
                     protected void addSentence(NARGraph g, Sentence s) {
                         Term t = s.content;

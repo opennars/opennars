@@ -156,18 +156,18 @@ abstract public class PGraphPanel<V,E> extends PPanel implements ActionListener 
 
     public static int getColor(final String s, final float alpha) {
         double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return NARSwing.getColor(Color.getHSBColor((float)hue,0.7f,0.8f), alpha).getRGB();        
+        return NARSwing.getColor(Color.getHSBColor((float)hue,0.8f,0.9f), alpha).getRGB();        
     }
     
 
     public static int getColor(final Class c) {            
         double hue = (((double)c.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();                
+        return Color.getHSBColor((float)hue,0.8f,0.9f).getRGB();                
     }
     
     public static int getColor(final String s) {            
         double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
-        return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();        
+        return Color.getHSBColor((float)hue,0.8f,0.9f).getRGB();        
     }
     
     public void drawit() {
@@ -188,7 +188,7 @@ abstract public class PGraphPanel<V,E> extends PPanel implements ActionListener 
 
                     int rgb = edgeColor(edge);
                     float linkWeight = edgeWeight(edge);
-                    stroke(rgb, 230f);            
+                    stroke(rgb,0.9f);//, 230f);            
                     strokeWeight(linkWeight);                
 
                     V sourceVertex = graph.getEdgeSource(edge);
@@ -279,7 +279,7 @@ abstract public class PGraphPanel<V,E> extends PPanel implements ActionListener 
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
             if (s.truth!=null)
-                return (float)((0.5 + 0.5 * s.truth.getConfidence()));            
+                return (float)((0.75 + 0.25 * s.truth.getConfidence()));            
         }
         return 1.0f;
     }    

@@ -20,6 +20,7 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
     
     ProcessingGraphCanvas app = null;
     private final NAR nar;
+    JPanel menu;
 
     public ProcessingGraphPanel(NAR n, ProcessingGraphCanvas graphCanvas) {
         super(new BorderLayout());
@@ -33,30 +34,8 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
         this.setSize(1000, 860);//initial size of the window
         this.setVisible(true);
 
-        JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        final JComboBox modeSelect = new JComboBox();
-        modeSelect.addItem("GridSort");
-        modeSelect.addItem("Circle");
-        modeSelect.addItem("Grid");
-        modeSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                app.mode = modeSelect.getSelectedIndex();
-                app.setUpdateNext();
-            }
-        });
-        menu.add(modeSelect);
-
-        final JCheckBox beliefsEnable = new JCheckBox("Beliefs");
-        beliefsEnable.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                app.showBeliefs = (beliefsEnable.isSelected());
-                app.setUpdateNext();
-            }
-        });
-        menu.add(beliefsEnable);
 
         /*
          final JCheckBox syntaxEnable = new JCheckBox("Syntax");
@@ -71,14 +50,25 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
         NSlider nodeSize = new NSlider(app.nodeSize, 1, app.maxNodeSize) {
             @Override
             public void onChange(float v) {
-                app.nodeSize = (float) v;
+                app.nodeSize = v;
                 app.drawn = false;
             }
         };
         nodeSize.setPrefix("Node Size: ");
-        nodeSize.setPreferredSize(new Dimension(125, 25));
+        nodeSize.setPreferredSize(new Dimension(80, 25));
         menu.add(nodeSize);
+        
+        NSlider edgeWidth = new NSlider(app.lineWidth, 0.1f, app.maxNodeSize/2f) {
+            @Override public void onChange(float v) {
+                app.lineWidth = v;
+                app.drawn = false;
+            }
+        };
+        edgeWidth.setPrefix("Line Thick: ");
+        edgeWidth.setPreferredSize(new Dimension(80, 25));
+        menu.add(edgeWidth);
 
+        
         //final int numLevels = ((Bag<Concept>)n.memory.concepts).levels;
         NSlider maxLevels = new NSlider(1, 0, 1) {
             @Override
@@ -88,7 +78,7 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
             }
         };
         maxLevels.setPrefix("Min Level: ");
-        maxLevels.setPreferredSize(new Dimension(125, 25));
+        maxLevels.setPreferredSize(new Dimension(80, 25));
         menu.add(maxLevels);
 
         NSlider nodeSpeed = new NSlider(app.nodeSpeed, 0.001f, 0.99f) {
@@ -98,8 +88,8 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
                 app.drawn = false;
             }
         };
-        nodeSpeed.setPrefix("Node Speed: ");
-        nodeSpeed.setPreferredSize(new Dimension(125, 25));
+        nodeSpeed.setPrefix("Speed: ");
+        nodeSpeed.setPreferredSize(new Dimension(70, 25));
         menu.add(nodeSpeed);
 
         NSlider blur = new NSlider(0, 0, 1.0f) {
@@ -110,7 +100,7 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
             }
         };
         blur.setPrefix("Blur: ");
-        blur.setPreferredSize(new Dimension(85, 25));
+        blur.setPreferredSize(new Dimension(60, 25));
         menu.add(blur);
 
         add(menu, BorderLayout.NORTH);
