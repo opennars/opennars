@@ -42,7 +42,7 @@ public class AnimatedProcessingGraphCanvas<V,E> extends ProcessingGraphCanvas<V,
         
         scale = 10f;
         layout.setInitialTemp(10f);
-        layout.setMinDistanceLimit(50f);
+        layout.setMinDistanceLimit(75f);
         layout.setMaxDistanceLimit(200f);
         
         layout.setMaxIterations(5);
