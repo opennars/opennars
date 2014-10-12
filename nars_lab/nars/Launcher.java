@@ -31,6 +31,7 @@ import nars.core.build.DefaultNARBuilder;
 import nars.gui.NARSwing;
 import nars.nario.NARio;
 import nars.nario.Run;
+import static nars.tictactoe.play.nar;
 
 /**
  *
@@ -282,6 +283,7 @@ public class Launcher extends javax.swing.JFrame {
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
         nars.tictactoe.play.main(new String[]{});
+        this.dispose();
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
