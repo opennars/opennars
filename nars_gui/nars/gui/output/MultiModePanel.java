@@ -21,6 +21,7 @@ import nars.gui.NARSwing;
 import nars.gui.NSlider;
 import nars.gui.output.graph.ProcessingGraphPanel2;
 import nars.io.Output;
+import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 
@@ -67,7 +68,7 @@ public class MultiModePanel extends JPanel implements Output {
         public DirectedMultigraph getGraph() {
             //TODO udpate this
             return new NARGraph().add(nar, NARGraph.IncludeEverything,
-                    new NARGraph.DefaultGraphizer(true,true,true,true,false,false, false) 
+                    new DefaultGraphizer(true,true,true,true,0,false, false) 
             );
         }
 

@@ -1,6 +1,7 @@
 package nars.gui.output.graph;
 
 import nars.core.NAR;
+import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 
@@ -17,7 +18,7 @@ public class ConceptGraphCanvas2 extends AnimatedProcessingGraphCanvas<Object,Ob
 
     @Override
     protected DirectedMultigraph<Object, Object> getGraph() {
-        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new NARGraph.DefaultGraphizer(false, true, false, false, false, true, true));
+        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(false, true, false, false, 0, true, true));
     }
 
     

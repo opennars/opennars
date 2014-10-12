@@ -1,11 +1,14 @@
 package nars.gui.output.graph;
 
+
+
 import java.util.Comparator;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.language.Term;
+import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import nars.util.sort.IndexedTreeSet;
 
@@ -42,7 +45,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
     
     //TODO genrealize to DirectedMultigraph
 
-    public void position(ProcessingGraphCanvas.VertexDisplay v, float level, float index, float priority) {
+    public void position(VertexDisplay v, float level, float index, float priority) {
         
         if (mode == 2) {
             v.tx = ((float) Math.sin(index / 10d) * spacing) * 5 * ((10 + index) / 20);
@@ -85,13 +88,14 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
             sortedConcepts.clear();
             sortedConcepts.addAll(nar.memory.getConcepts());
         }
-        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new NARGraph.DefaultGraphizer(showBeliefs, showBeliefs, false, false, false, showTermlinks, showTasklinks) {
+        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), 
+                new DefaultGraphizer(showBeliefs, showBeliefs, false, false, 0, showTermlinks, showTasklinks) { 
             float level;
             float index = 0;
             int levelContents = 0;
             private float priority;
             Term lastTerm = null;
-            ProcessingGraphCanvas.VertexDisplay lastTermVertex = null;
+            VertexDisplay lastTermVertex = null;
 
             public void preLevel(NARGraph g, int l) {
                 if (!compressLevels) {
@@ -129,7 +133,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
                         index++;
                     }
                 }
-                ProcessingGraphCanvas.VertexDisplay d = updateVertex(c);
+                VertexDisplay d = updateVertex(c);
                 position(d, level, index, priority);
                 deadVertices.remove(c);
                 /*if (currentConcept != null) {
@@ -145,7 +149,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
             @Override
             public void onTerm(Term t) {
                 index++;
-                //ProcessingGraphCanvas.VertexDisplay d = updateVertex(t);
+                //VertexDisplay d = updateVertex(t);
                 //position(d, level, index, priority);
                 //deadVertices.remove(d);
                 //lastTerm = t;
@@ -153,10 +157,24 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
                 levelContents++;
             }
 
+//            @Override
+//            public void onTask(Task t) {
+//                VertexDisplay d = updateVertex(t);
+//                position(t, t.getPriority(), index++, t.getPriority());
+//            }
+//
+
+            @Override
+            public void onTask(Task t) {
+                VertexDisplay d = updateVertex(t);
+                position(d, t.getPriority(), index++, t.getPriority());
+            }
+            
+            
             @Override
             public void onBelief(Sentence kb) {
                 index += 0.25f;
-                //ProcessingGraphCanvas.VertexDisplay d = updateVertex(kb);
+                //VertexDisplay d = updateVertex(kb);
                 //position(d, level, index, priority);
                 //deadVertices.remove(kb);
                 /*if (currentBelief != null) {
@@ -172,7 +190,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
             @Override
             public void onQuestion(Task t) {
                 index += 0.25f;
-                //ProcessingGraphCanvas.VertexDisplay d = updateVertex(t);
+                //VertexDisplay d = updateVertex(t);
                 //position(d, level, index, priority);
                 //deadVertices.remove(t);
                 /*if (currentTask != null) {

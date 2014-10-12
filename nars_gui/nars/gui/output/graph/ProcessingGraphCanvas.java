@@ -202,13 +202,18 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
              stroke(Color.WHITE.getRGB());
              strokeWeight(stroke);
              }*/
-            float r = ((radius*nodeSize) + boost * boostScale) / 2f;
+            float r = ((radius*nodeSize) + boost * boostScale) / 2f * scale;
             if (r == 0)
                 return false;
 
             p.fill(color, alpha * 255 / 2);
 
-            p.ellipse(x*scale, y*scale, r, r);
+            if (object instanceof Task) {
+                p.rect(x*scale-r/2f, y*scale-r/2f, r, r);
+            }
+            else {
+                p.ellipse(x*scale, y*scale, r, r);
+            }
 
             if (text && (label != null)) {
                 p.fill(255, 255, 255, alpha * 255 * 0.75f);
