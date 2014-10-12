@@ -407,13 +407,14 @@ public final class SyllogisticRules {
             
                 CompoundTerm compoundCommonComponent = ((CompoundTerm) commonComponent);
                 
-                if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index))
+                if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index)) { // assumption: { was missing
                     u = new Term[] { premise1, premise2 };
                     match = Variables.unify(Symbols.VAR_INDEPENDENT, 
                             oldCondition.term[index], 
                             compoundCommonComponent.term[index], 
                             u);
                     premise1 = (Implication) u[0]; premise2 = u[1];
+                }
                 
             }
             if (!match) {
