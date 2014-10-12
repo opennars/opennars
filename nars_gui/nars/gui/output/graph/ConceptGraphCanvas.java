@@ -5,10 +5,8 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.entity.TermLink;
 import nars.language.Term;
 import nars.util.NARGraph;
-import nars.util.NARGraph.TLink;
 import nars.util.sort.IndexedTreeSet;
 
 
@@ -19,6 +17,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
 
     boolean showBeliefs = true;
     boolean showTermlinks = true;
+    boolean showTasklinks = true;
     float spacing = 100f;
 
     
@@ -86,7 +85,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
             sortedConcepts.clear();
             sortedConcepts.addAll(nar.memory.getConcepts());
         }
-        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new NARGraph.DefaultGraphizer(showBeliefs, showBeliefs, false, false, false, showTermlinks) {
+        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new NARGraph.DefaultGraphizer(showBeliefs, showBeliefs, false, false, false, showTermlinks, showTasklinks) {
             float level;
             float index = 0;
             int levelContents = 0;

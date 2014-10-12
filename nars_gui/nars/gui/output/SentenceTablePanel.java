@@ -98,7 +98,7 @@ public class SentenceTablePanel extends TablePanel {
             @Override
             public DirectedMultigraph getGraph() {
 
-                NARGraph.DefaultGraphizer graphizer = new NARGraph.DefaultGraphizer(true, true, true, true, false, false) {
+                NARGraph.DefaultGraphizer graphizer = new NARGraph.DefaultGraphizer(true, true, true, true, false, false, false) {
 
                     protected void addSentence(NARGraph g, Sentence s) {
                         Term t = s.content;

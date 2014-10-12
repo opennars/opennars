@@ -67,7 +67,7 @@ public class MultiModePanel extends JPanel implements Output {
         public DirectedMultigraph getGraph() {
             //TODO udpate this
             return new NARGraph().add(nar, NARGraph.IncludeEverything,
-                    new NARGraph.DefaultGraphizer(true,true,true,true,false,false) 
+                    new NARGraph.DefaultGraphizer(true,true,true,true,false,false, false) 
             );
         }
 
