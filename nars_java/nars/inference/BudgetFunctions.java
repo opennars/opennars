@@ -195,7 +195,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float forgetProportion = forgetDelta / forgetTime;
         if (forgetProportion > 1.0f) forgetProportion = 1.0f;
         if (forgetProportion < 0) forgetProportion = 0;
-        
+        if (forgetProportion == 0) return;
         
         /*if (forgetDelta > 0)
             System.out.println("forget Delta=" + forgetDelta + " " + forgetTime + " " + forgetProportion);*/
@@ -210,8 +210,9 @@ public final class BudgetFunctions extends UtilityFunctions {
         
         //more durability = slower forgetting
         forgetProportion *= (1.0 - budget.getDurability());        
+        System.out.println(budget.getDurability() + " " + forgetProportion);
         
-        budget.setPriority( 0.5f *  currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion) );
+        budget.setPriority( currentPriority * (1.0f - forgetProportion) + minPriority * (forgetProportion) );
         /*if (forgetDelta > 0)
             System.out.println("  " + currentPriority + " -> " + budget.getPriority());*/
         

@@ -3,6 +3,7 @@ package nars.storage;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import nars.core.Memory;
 import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.entity.Item;
@@ -130,10 +131,18 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
 //    }
 
     /** called when an item is inserted or re-inserted */
-    public void forget(final E x, long currentTime) {
+    public void forget(final E x, Memory m) {
+        
+        
         float forgetCycles = forgetCycles();
         if (forgetCycles > 0) {            
-            BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD, currentTime);
+            if (m.getTiming() == Memory.Timing.Iterative) {
+                BudgetFunctions.forgetIterative(x.budget, forgetCycles, RELATIVE_THRESHOLD);
+            }
+            else {
+                long currentTime = m.getTime();
+                BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD, currentTime);
+            }            
         }
     }
     
@@ -175,8 +184,8 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */
-    public final boolean putBack(final E oldItem, long currentTime) {
-        forget(oldItem, currentTime);
+    public final boolean putBack(final E oldItem, Memory m) {
+        forget(oldItem, m);
         return putIn(oldItem);
     }
 
@@ -184,12 +193,12 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
     /** x = takeOut(), then putBack(x) - without removing 'x' from nameTable 
      *  @return the variable that was updated, or null if none was taken out
      */
-    synchronized public E processNext(boolean forget, long currentTime) {
+    synchronized public E processNext(boolean forget, Memory m) {
         final E x = takeOut();
         if (x!=null) {
             //putBack():
             if (forget) {
-                forget(x, currentTime);
+                forget(x, m);
             }
             
             boolean r = putIn(x);

@@ -615,7 +615,7 @@ public class Concept extends Item {
         
         new NAL.FireConcept(memory, this, currentTaskLink).call();
 
-        taskLinks.putBack(currentTaskLink, memory.getTime());
+        taskLinks.putBack(currentTaskLink, memory);
     }
 
 
@@ -714,14 +714,14 @@ public class Concept extends Item {
             if (taskLink.novel(termLink, time)) {
                 return termLink;
             }
-            termLinks.putBack(termLink, memory.getTime());
+            termLinks.putBack(termLink, memory);
         }
         return null;
 
     }
 
     public void returnTermLink(TermLink termLink) {
-        termLinks.putBack(termLink, memory.getTime());
+        termLinks.putBack(termLink, memory);
     }
 
     static final class NullEntityObserver implements EntityObserver {
