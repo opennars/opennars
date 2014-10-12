@@ -384,10 +384,10 @@ public class play extends javax.swing.JFrame {
                 }
             }
             
-            if(field[0]==player && field[0+4]==player && field[0+4+4]==player) { //left diagonale
+            if(field[0]==player && field[4]==player && field[8]==player) { //left diagonale
                 won=player;
             }
-            if(field[0]==player && field[0+2]==player && field[0+2+2]==player) { //right diagonale
+            if(field[2]==player && field[4]==player && field[6]==player) { //right diagonale
                 won=player;
             }
         }
