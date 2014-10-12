@@ -568,16 +568,16 @@ public class play extends javax.swing.JFrame {
         //nar.addInput("<(^addO,$1) =/> <input --> succeeded>>."); //usually input succeeds
         //nar.addInput("<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>."); //usually input succeeds but not when it was set by player cause overwrite is not valid
         //nar.addInput("<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>."); //also overwriting on own is not valid
-        nar.addInput("<(&/,(^addO,1),<input --> succeeded>,(^addO,2),<input --> succeeded>,(^addO,3),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&/,(^addO,4),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,6),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&/,(^addO,7),<input --> succeeded>,(^addO,8),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,1),<input --> succeeded>,(^addO,2),<input --> succeeded>,(^addO,3),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,4),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,6),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,7),<input --> succeeded>,(^addO,8),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
         //also with 3 in a column:
-        nar.addInput("<(&/,(^addO,1),<input --> succeeded>,(^addO,4),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&/,(^addO,2),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,8),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&/,(^addO,3),<input --> succeeded>,(^addO,6),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,1),<input --> succeeded>,(^addO,4),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,2),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,8),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,3),<input --> succeeded>,(^addO,6),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
         //and with the 2 diagonals:
-        nar.addInput("<(&/,(^addO,1),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
-        nar.addInput("<(&/,(^addO,3),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,1),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
+        nar.addInput("<(&|,(^addO,3),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,7),<input --> succeeded>) =/> <goal --> reached>>.");
         //
         nar.addInput("<goal --> reached>! %1.0;0.99%");
         
