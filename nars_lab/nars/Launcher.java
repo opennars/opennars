@@ -39,7 +39,7 @@ public class Launcher extends javax.swing.JFrame {
     public Launcher() {
         initComponents();
         try {
-            BufferedImage myPicture = ImageIO.read(new File("/home/tc/OpenNARS.png"));
+            BufferedImage myPicture = ImageIO.read(new File("OpenNARS.png"));
             jLabel1.setIcon(new ImageIcon(myPicture));
             
         } catch (IOException ex) {
