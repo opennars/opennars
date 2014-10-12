@@ -56,7 +56,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
      * Select and fire the next concept.
      */
     public void processConcept() {
-        Concept currentConcept = concepts.processNext(false, memory.getTime());
+        Concept currentConcept = concepts.processNext(false, memory);
         if (currentConcept != null) {            
             
             if (memory.getRecorder().isActive()) {
@@ -98,19 +98,18 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     public void activate(Concept c, BudgetValue b) {
         concepts.pickOut(c.name());
         BudgetFunctions.activate(c, b);
-        concepts.putBack(c, memory.getTime());
+        concepts.putBack(c, memory);
     }
     
     @Override
     public void forget(Concept c) {
-        concepts.pickOut(c.name());
-        concepts.forget(c, memory.getTime());
-        concepts.putBack(c, memory.getTime());    
+        concepts.pickOut(c.name());        
+        concepts.putBack(c, memory);    
     }
 
     @Override
     public Concept sampleNextConcept() {
-        return concepts.processNext(false, memory.getTime());
+        return concepts.processNext(false, memory);
     }
 
     @Override

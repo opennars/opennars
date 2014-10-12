@@ -28,7 +28,7 @@ public class TestNARGraph {
 
         
         NARGraph g = new NARGraph();
-        g.add(n, IncludeEverything, new DefaultGraphizer(true,true,true,true,true));
+        g.add(n, IncludeEverything, new DefaultGraphizer(true,true,true,true,0,true,true));
         
         //System.out.println(g);
         
