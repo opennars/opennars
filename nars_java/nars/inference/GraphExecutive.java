@@ -387,9 +387,10 @@ public class GraphExecutive {
         double p;
         Concept c = memory.concept(t);
         if ((c!=null) && (!c.beliefs.isEmpty())) {
-            Sentence bestBelief = c.beliefs.get(0);
-            if (bestBelief!=null)
-                return c.getPriority() * bestBelief.truth.getExpectation();            
+            //Sentence bestBelief = c.beliefs.get(0);
+            //if (bestBelief!=null)
+            //    return c.getPriority() * bestBelief.truth.getExpectation();            
+            return c.getPriority(); //it is not expectation cause the goal could be to make a judgement true but also false
         }
 
         //System.err.println("No Concept priority available for " + t);
