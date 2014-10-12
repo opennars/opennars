@@ -7,6 +7,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.gui.NARSwing;
 import nars.language.Term;
 import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
@@ -16,7 +17,7 @@ import nars.util.sort.IndexedTreeSet;
 
 public class ConceptGraphCanvas extends ProcessingGraphCanvas {
 
-    public int mode = 1;
+    public int mode = 2;
 
     boolean showBeliefs = true;
     boolean showTermlinks = true;
@@ -47,16 +48,22 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
 
     public void position(VertexDisplay v, float level, float index, float priority) {
         
-        if (mode == 2) {
+        if (mode == 3) {
             v.tx = ((float) Math.sin(index / 10d) * spacing) * 5 * ((10 + index) / 20);
             //ty = -((((Bag<Concept>)nar.memory.concepts).levels - level) * maxNodeSize * 3.5f);
-            v.ty = (1.0f - priority) * spacing * 150;
+            v.ty = (1.0f - priority) * spacing * 150;            
         } else if (mode == 1) {
             //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
             double radius = (1.0 - priority) * spacing + 8;
             float angle = index; //TEMPORARY
             v.tx = (float) (Math.cos(angle / 3.0) * radius) * spacing;
             v.ty = (float) (Math.sin(angle / 3.0) * radius) * spacing;
+        } else if (mode == 2) {
+            //double radius = ((((Bag<Concept>)nar.memory.concepts).levels - level)+8);
+            double radius = (1.0 - priority) * spacing + 8;
+            float angle = NARSwing.hashFloat(v.object.hashCode()) * ((float)Math.PI*2f);
+            v.tx = (float) (Math.cos(angle) * radius) * spacing;
+            v.ty = (float) (Math.sin(angle) * radius) * spacing;
         } else if (mode == 0) {
             //gridsort
             v.tx = index * spacing;

@@ -58,7 +58,7 @@ public class ProcessingGraphPanel extends NPanel implements Observer {
         nodeSize.setPreferredSize(new Dimension(80, 25));
         menu.add(nodeSize);
         
-        NSlider edgeWidth = new NSlider(app.lineWidth, 0.1f, app.maxNodeSize/2f) {
+        NSlider edgeWidth = new NSlider(app.lineWidth, 0.95f, app.maxNodeSize/4f) {
             @Override public void onChange(float v) {
                 app.lineWidth = v;
                 app.drawn = false;
