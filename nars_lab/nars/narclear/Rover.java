@@ -495,9 +495,9 @@ public class Rover extends PhysicsModel {
                             rover.stop();
                             break;
                         case "random": //tend forward
-                            nar.addInput("(^motor,forward). :|:");
+                            nar.addInput("(^motor,forward). :|:\n100\n");
                             rover.thrust(0, linearSpeed);
-                            nar.step(100);
+                            //nar.step(100);
                             
                             ArrayList<String> candids=new ArrayList<String>();
                             candids.add("(^motor,turn,left). :|:");
