@@ -20,6 +20,7 @@ import nars.gui.NWindow;
 import nars.gui.output.graph.ProcessingGraphPanel2;
 import nars.language.CompoundTerm;
 import nars.language.Term;
+import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 
@@ -98,7 +99,7 @@ public class SentenceTablePanel extends TablePanel {
             @Override
             public DirectedMultigraph getGraph() {
 
-                NARGraph.DefaultGraphizer graphizer = new NARGraph.DefaultGraphizer(true, true, true, true, false, false, false) {
+                DefaultGraphizer graphizer = new DefaultGraphizer(true, true, true, true, 0, false, false) {
 
                     protected void addSentence(NARGraph g, Sentence s) {
                         Term t = s.content;

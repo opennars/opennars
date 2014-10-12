@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nars.core.NAR;
+import nars.util.DefaultGraphizer;
 import nars.util.NARGraph;
 import static nars.util.NARGraph.IncludeEverything;
 import org.jgrapht.Graph;
@@ -98,7 +99,7 @@ public class JGraphXGraphPanel extends JPanel {
     }
     
     public JGraphXGraphPanel(NAR n) {
-        this(new NARGraph().add(n, IncludeEverything, new NARGraph.DefaultGraphizer(true,true,true,true,true,false, false)));
+        this(new NARGraph().add(n, IncludeEverything, new DefaultGraphizer(true,true,true,true,3,false, false)));
     }
     
 //    public static void main(String[] args) {

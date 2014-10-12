@@ -3,7 +3,7 @@ package nars.test.util;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
 import nars.util.NARGraph;
-import nars.util.NARGraph.DefaultGraphizer;
+import nars.util.DefaultGraphizer;
 import static nars.util.NARGraph.IncludeEverything;
 import org.junit.Test;
 
