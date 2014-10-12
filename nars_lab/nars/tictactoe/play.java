@@ -18,6 +18,10 @@
 package nars.tictactoe;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
@@ -38,8 +42,8 @@ public class play extends javax.swing.JFrame {
      */
     public static NAR nar;
     public play() {
-        nar = new DefaultNARBuilder().build();
-        //new NARSwing(nar);
+        
+        
         nar.memory.addOperator(new AddO("^addO"));
         nar.param().noiseLevel.set(0);
         nar.param().decisionThreshold.set(0.3);
@@ -47,6 +51,25 @@ public class play extends javax.swing.JFrame {
         initComponents();
         addStartKnowledge();
         nar.addInput("<game --> reset>. :|:");
+        
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(play.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        NARSwing.themeInvert();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(play.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(play.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(play.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(play.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        new NARSwing(nar);
     }
     
     int[] field=new int[]{ 0,0,0,
@@ -580,7 +603,11 @@ public class play extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
         /* Set the Nimbus look and feel */
+        NARSwing.themeInvert();
+        nar = new DefaultNARBuilder().build();
+        
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -600,15 +627,17 @@ public class play extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(play.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(play.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+        } 
         //</editor-fold>
-
+       
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new play().setVisible(true);
             }
         });
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
