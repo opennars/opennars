@@ -340,12 +340,12 @@ public class play extends javax.swing.JFrame {
         }
         else
         if(args[0].toString().equals("9") && field[8]==0) {
-            nar.addInput("<input --> succeeded>. %1.00;0.99% :|:");
+            nar.addInput("<input --> succeeded>. :|: %1.00;0.99%");
             jButton10.setText("O");
             field[8]=2;
         }
         else {
-            nar.addInput("<input --> succeeded>. %0.00;0.99% :|:");
+            nar.addInput("<input --> succeeded>. :|: %0.00;0.99%");
             success=false;
         }
         
@@ -385,7 +385,7 @@ public class play extends javax.swing.JFrame {
             if(field[0]==player && field[0+4]==player && field[0+4+4]==player) { //left diagonale
                 won=player;
             }
-            if(field[2]==player && field[0+2]==player && field[0+2+2]==player) { //right diagonale
+            if(field[0]==player && field[0+2]==player && field[0+2+2]==player) { //right diagonale
                 won=player;
             }
         }
@@ -546,7 +546,7 @@ public class play extends javax.swing.JFrame {
         jButton8.setText("_");
         jButton9.setText("_");
         jButton10.setText("_");
-        this.jLabel1.setText("...");
+        this.jLabel1.setText("playing...");
         field=new int[]{ 0,0,0,
                          0,0,0,
                          0,0,0
@@ -563,9 +563,9 @@ public class play extends javax.swing.JFrame {
     public void addStartKnowledge() {
         nar.addInput("<goal --> reached>! %1.0;0.99%");
         
-        nar.addInput("<(^addO,$1) =/> <input --> succeeded>>"); //usually input succeeds
-        nar.addInput("<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>"); //usually input succeeds but not when it was set by player cause overwrite is not valid
-        nar.addInput("<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>"); //also overwriting on own is not valid
+        //nar.addInput("<(^addO,$1) =/> <input --> succeeded>>."); //usually input succeeds
+        //nar.addInput("<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>."); //usually input succeeds but not when it was set by player cause overwrite is not valid
+        //nar.addInput("<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>."); //also overwriting on own is not valid
         nar.addInput("<(&/,(^addO,1),<input --> succeeded>,(^addO,2),<input --> succeeded>,(^addO,3),<input --> succeeded>) =/> <goal --> reached>>.");
         nar.addInput("<(&/,(^addO,4),<input --> succeeded>,(^addO,5),<input --> succeeded>,(^addO,6),<input --> succeeded>) =/> <goal --> reached>>.");
         nar.addInput("<(&/,(^addO,7),<input --> succeeded>,(^addO,8),<input --> succeeded>,(^addO,9),<input --> succeeded>) =/> <goal --> reached>>.");
