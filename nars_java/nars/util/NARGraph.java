@@ -6,7 +6,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,6 +15,7 @@ import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.entity.TermLink;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import org.jgrapht.ext.GmlExporter;
@@ -37,7 +37,7 @@ public class NARGraph extends DirectedMultigraph {
 
     @Override
     public Object clone() {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        return super.clone();
     }
 
     /**
@@ -124,7 +124,7 @@ public class NARGraph extends DirectedMultigraph {
 
         @Override
         public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+            return super.clone();
         }
 
     }
@@ -138,10 +138,29 @@ public class NARGraph extends DirectedMultigraph {
 
         @Override
         public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+            return super.clone();
         }
     }
 
+    public static class TLink extends NAREdge {
+        public final TermLink termLink;
+
+        public TLink(TermLink t) {
+            this.termLink = t;
+        }
+
+        
+        @Override
+        public String toString() {
+            return "termlink";
+        }
+
+        @Override
+        public Object clone() {
+            return super.clone();
+        }
+    }
+    
     public static class TermQuestion extends NAREdge {
 
         @Override
@@ -151,7 +170,7 @@ public class NARGraph extends DirectedMultigraph {
 
         @Override
         public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+            return super.clone();
         }
     }
 
@@ -164,7 +183,7 @@ public class NARGraph extends DirectedMultigraph {
 
         @Override
         public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+            return super.clone();
         }
     }
 
@@ -177,7 +196,7 @@ public class NARGraph extends DirectedMultigraph {
 
         @Override
         public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+            return super.clone();
         }
     }
 
@@ -190,7 +209,7 @@ public class NARGraph extends DirectedMultigraph {
 
         @Override
         public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+            return super.clone();
         }
     }
 
@@ -203,7 +222,7 @@ public class NARGraph extends DirectedMultigraph {
 
         @Override
         public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+            return super.clone();
         }
     }
 
@@ -266,37 +285,40 @@ public class NARGraph extends DirectedMultigraph {
 
         private final boolean includeBeliefs;
         private final boolean includeQuestions;
+        private final boolean includeTermLinks;
+        
 
-        public final Set<Term> terms = new HashSet();
-        public final Map<Sentence, Term> sentenceTerms = new HashMap();
+        public final Map<TermLink, Concept> termLinks = new HashMap();
+        public final Map<Term, Concept> terms = new HashMap();
+        public final Map<Sentence, Concept> sentenceTerms = new HashMap();
 
         private final boolean includeTermContent;
         private final boolean includeDerivations;
         @Deprecated protected int includeSyntax; //how many recursive levels to decompose per Term
 
-        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax) {
-            this(includeBeliefs, includeDerivations, includeQuestions, includeTermContent, includeSyntax ? 2 : 0);
+        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, boolean includeSyntax, boolean includeTermLinks) {
+            this(includeBeliefs, includeDerivations, includeQuestions, includeTermContent, includeSyntax ? 2 : 0, includeTermLinks);
         }
 
-        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax) {
+        public DefaultGraphizer(boolean includeBeliefs, boolean includeDerivations, boolean includeQuestions, boolean includeTermContent, int includeSyntax, boolean includeTermLinks) {
             this.includeBeliefs = includeBeliefs;
             this.includeQuestions = includeQuestions;
             this.includeTermContent = includeTermContent;
             this.includeDerivations = includeDerivations;
             this.includeSyntax = includeSyntax;
+            this.includeTermLinks = includeTermLinks;
         }
 
         @Override
         public void onTime(NARGraph g, long time) {
             terms.clear();
             sentenceTerms.clear();
+            termLinks.clear();
         }
 
         protected void addTerm(NARGraph g, Term t) {
-            if (terms.add(t)) {
-                g.addVertex(t);
-                onTerm(t);
-            }
+            //if (terms.put(t)) {
+            //}
         }
 
         public void onTerm(Term t) {
@@ -314,40 +336,59 @@ public class NARGraph extends DirectedMultigraph {
         @Override
         public void onConcept(NARGraph g, Concept c) {
 
-            final Term term = c.term;
-            addTerm(g, term);
+            g.addVertex(c);
+            
+            terms.put(c.term, c);
+            
+            if (includeTermLinks) {
+                for (TermLink x : c.termLinks) {
+                    termLinks.put(x, c);
+                }
+                
+            }
 
+
+            if (includeTermContent) {
+                g.addVertex(c.term);
+                terms.put(c.term, c);
+                g.addEdge(c, c.term, new TermContent());
+                onTerm(c.term);
+            }
+            
             if (includeBeliefs) {
+                
+                
                 for (final Sentence belief : c.beliefs) {
                     onBelief(belief);
 
-                    sentenceTerms.put(belief, term);
-                    g.addVertex(belief);
-                    g.addEdge(belief, term, new SentenceContent());
+                    sentenceTerms.put(belief, c);
+                    //g.addVertex(c);
+                    //g.addVertex(belief);
+                    //g.addEdge(belief, c, new SentenceContent());
 
                     //TODO extract to onBelief                    
                     //TODO check if kb.getContent() is never distinct from c.getTerm()
-                    if (term.equals(belief.content)) {
+                    /*if (c.term.equals(belief.content)) {
                         continue;
                     }
 
                     addTerm(g, belief.content);
-                    g.addEdge(term, belief.content, new TermBelief());
+                    g.addEdge(term, belief.content, new TermBelief());*/
                 }
             }
 
             if (includeQuestions) {
                 for (final Task q : c.getQuestions()) {
-                    if (term.equals(q.getContent())) {
+                    if (c.term.equals(q.getContent())) {
                         continue;
                     }
 
                     //TODO extract to onQuestion
-                    addTerm(g, q.getContent());
+                    g.addVertex(q);
 
                     //TODO q.getParentBelief()
                     //TODO q.getParentTask()                    
-                    g.addEdge(term, q.getContent(), new TermQuestion());
+                    g.addEdge(c, q, new TermQuestion());
 
                     onQuestion(q);
                 }
@@ -375,7 +416,7 @@ public class NARGraph extends DirectedMultigraph {
         @Override
         public void onFinish(NARGraph g) {
             if (includeSyntax > 0) {
-                for (final Term a : terms) {
+                for (final Term a : terms.keySet()) {
                     if (a instanceof CompoundTerm) {
                         CompoundTerm c = (CompoundTerm) a;
                         g.addVertex(c.operator());
@@ -390,51 +431,74 @@ public class NARGraph extends DirectedMultigraph {
             }
 
             if (includeTermContent) {
-                for (final Term a : terms) {
+                for (final Term a : terms.keySet()) {
 
-                    for (final Term b : terms) {
+                    for (final Term b : terms.keySet()) {
                         if (a == b) {
                             continue;
                         }
 
                         if (a.containsTerm(b)) {
+                            g.addVertex(a);
+                            g.addVertex(b);
                             g.addEdge(a, b, new TermContent());
                         }
                         if (b.containsTerm(a)) {
+                            g.addVertex(a);
+                            g.addVertex(b);
                             g.addEdge(b, a, new TermContent());
                         }
                     }
                 }
 
             }
-
+            
             if (includeDerivations && includeBeliefs) {
-                for (final Entry<Sentence, Term> s : sentenceTerms.entrySet()) {
+                for (final Entry<Sentence, Concept> s : sentenceTerms.entrySet()) {
 
-                    final Collection<Term> schain = s.getKey().stamp.getChain();
-                    final Term derived = s.getValue();
+                    final Sentence derivedSentence = s.getKey();
+                    final Collection<Term> schain = derivedSentence.stamp.getChain();
+                    final Concept derived = s.getValue();
 
-                    for (final Entry<Sentence, Term> t : sentenceTerms.entrySet()) {
+                    
+                    for (final Entry<Sentence, Concept> t : sentenceTerms.entrySet()) {
                         if (s == t) {
                             continue;
                         }
 
-                        final Term deriver = t.getValue();
+                        
+                        final Sentence deriverSentence = t.getKey();
+                        final Concept deriver = t.getValue();
                         if (derived == deriver) //avoid loops
                         {
                             continue;
                         }
 
-                        final Collection<Term> tchain = s.getKey().stamp.getChain();
-                        final Sentence deriverSentence = t.getKey();
+                        final Collection<Term> tchain = deriverSentence.stamp.getChain();
+                        
 
+                        
                         if (schain.contains(deriverSentence.content)) {
+                            g.addVertex(derived);
+                            g.addVertex(deriver);
                             g.addEdge(deriver, derived, new TermDerivation());
                         }
-                        if (tchain.contains(derived)) {
+                        if (tchain.contains(derivedSentence.content)) {
+                            g.addVertex(derived);
+                            g.addVertex(deriver);
                             g.addEdge(derived, deriver, new TermDerivation());
                         }
                     }
+                }
+            }
+            
+            if (includeTermLinks) {
+                for (Entry<TermLink, Concept> et : termLinks.entrySet()) {
+                    TermLink t = et.getKey();                    
+                    Concept from = et.getValue();
+                    Concept to = terms.get(t.target);                    
+                    if (to!=null)
+                        g.addEdge(from, to, new TLink(t));
                 }
             }
         }

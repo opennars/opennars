@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import nars.entity.Concept;
+import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.language.Term;
+import nars.util.NARGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 import processing.core.PApplet;
 import static processing.core.PApplet.radians;
@@ -32,8 +35,8 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     Hnav hnav = new Hnav();
     Hsim hsim = new Hsim();
 
+    float scale = 1f;
     float selection_distance = 10;
-    public float maxNodeSize = 100f;
     float FrameRate = 25f;
     static final float boostMomentum = 0.98f;
 
@@ -49,10 +52,6 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
 
     float minPriority = 0;
 
-    public int mode = 0;
-
-    boolean showBeliefs = false;
-
     float nodeSpeed = 0.1f;
 
     float sx = 800;
@@ -64,11 +63,12 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     static final int MAX_UNSELECTED_LABEL_LENGTH = 32;
     boolean updateNext;
 
-    float nodeSize = 7;
+    public float maxNodeSize = 1000f;
+    float nodeSize = 150f;
     static final float boostScale = 6.0f;
 
     float lineAlpha = 0.75f;
-    float lineWidth = 3.8f;
+    float lineWidth = 2f;
 
     Map<V, VertexDisplay> vertices = new HashMap();
     Set<V> deadVertices = new HashSet();
@@ -88,14 +88,51 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     
     public float getNodeSize(final V v) {
         //TODO normalize so it = 1
-        return 10f;
+        float size = 1;
+        
+        
+        if (v instanceof Item) {
+            size *= ((Item)v).getPriority() * 0.5f + 0.5f;
+        }
+        else if (v instanceof Sentence) {
+            //size *= ((Sentence)v).getPriority();
+        }
+        return size;
     }
+    
     public int getNodeColor(V o) {
-        return PGraphPanel.getColor(o.getClass());
+        Object x = o;
+        if (x instanceof Concept) x = ((Concept)o).term;
+        return PGraphPanel.getColor(x.getClass());
     }
 
-    public float getEdgeThickness(E edge, VertexDisplay source, VertexDisplay target) {
-        return (source.radius + target.radius) / 2.0f / lineWidth;
+
+    public static float edgeThickness(Object edge, VertexDisplay source, VertexDisplay target) {
+        if (edge instanceof NARGraph.TLink) {
+            TermLink t = ((NARGraph.TLink)edge).termLink;
+            float p = t.getPriority();            
+            return (1 + p);
+        }
+        return 1f;        
+    }
+    
+    
+    public float getEdgeThickness(E edge, VertexDisplay source, VertexDisplay target) {        
+        return edgeThickness(edge, source, target)*lineWidth;
+    }
+
+    public int getEdgeColor(E e) {
+        if (e instanceof NARGraph.TLink) {
+            TermLink t = ((NARGraph.TLink)e).termLink;
+            float p = t.getPriority();
+            return color(255f * (0.5f + p*0.5f), 125f, 125f, 255f * (0.5f + p*0.5f) );
+        }
+        Integer i = edgeColors.get(e.getClass());
+        if (i == null) {
+            i = PGraphPanel.getColor(e.getClass());
+            edgeColors.put(e.getClass(), i);
+        }
+        return i;
     }
 
     public static class VertexDisplay<V> {
@@ -143,7 +180,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
             return object.equals(obj);
         }
 
-        public boolean draw(PApplet p, boolean text, float nodeSize, float nodeSpeed) {
+        public boolean draw(PApplet p, boolean text, float nodeSize, float nodeSpeed, float scale) {
             boolean needsUpdate = update(nodeSpeed);
 
             if (!visible) {
@@ -160,12 +197,12 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
 
             p.fill(color, alpha * 255 / 2);
 
-            p.ellipse(x, y, r, r);
+            p.ellipse(x*scale, y*scale, r, r);
 
             if (text && (label != null)) {
                 p.fill(255, 255, 255, alpha * 255 * 0.75f);
                 p.textSize(r / 2);
-                p.text(label, x, y);
+                p.text(label, x*scale, y*scale);
             }
 
             /*if (stroke > 0) {                
@@ -230,9 +267,8 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         public float getX() { return tx; }
         public float getY() { return ty; }
 
-        public float getRadius() {
-            final float radScale = 4.0f;
-            return radius * radScale;
+        public float getRadius() {            
+            return radius;
         }
 
     }
@@ -261,14 +297,6 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         return v;
     }
 
-    public int getEdgeColor(E e) {
-        Integer i = edgeColors.get(e.getClass());
-        if (i == null) {
-            i = PGraphPanel.getColor(e.getClass().getSimpleName());
-            edgeColors.put(e.getClass(), i);
-        }
-        return i;
-    }
 
     public void mouseScrolled() {
         hnav.mouseScrolled();
@@ -321,6 +349,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                     currentGraph = getGraph();
                 } catch (Exception e) {
                     System.err.println(e);
+                    e.printStackTrace();;
                 }
 
                 for (V v : currentGraph.vertexSet()) {
@@ -423,10 +452,10 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                     stroke(getEdgeColor(edge), (elem1.alpha + elem2.alpha) / 2f * 255f * lineAlpha);
                     strokeWeight(getEdgeThickness(edge, elem1, elem2));
 
-                    float x1 = elem1.x;
-                    float y1 = elem1.y;
-                    float x2 = elem2.x;
-                    float y2 = elem2.y;
+                    float x1 = elem1.x*scale;
+                    float y1 = elem1.y*scale;
+                    float x2 = elem2.x*scale;
+                    float y2 = elem2.y*scale;
 
                     if (numEdges < maxEdgesWithArrows) {
                         drawArrow(x1, y1, x2, y2);
@@ -447,7 +476,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
             boolean changed = false;
             if (numNodes < maxNodes) {
                 for (final VertexDisplay d : vertices.values()) {
-                    changed |= d.draw(this, text, nodeSize, nodeSpeed);
+                    changed |= d.draw(this, text, nodeSize, nodeSpeed, scale);
                 }
             }
             //drawn = !changed;
@@ -460,8 +489,8 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         translate(cx, cy);
         rotate(radians(angle));
         line(0, 0, len, 0);
-        line(len, 0, len - arrowHeadRadius * 2, -arrowHeadRadius);
-        line(len, 0, len - arrowHeadRadius * 2, arrowHeadRadius);
+        line(len, 0, len - arrowHeadRadius, -arrowHeadRadius/2f);
+        line(len, 0, len - arrowHeadRadius, arrowHeadRadius/2f);
         popMatrix();
     }
 
@@ -471,7 +500,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         float len = (float) Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
         float a = (float) (Math.atan2(y2 - y1, x2 - x1) * 180.0 / Math.PI);
 
-        drawArrowAngle(x1, y1, len, a, nodeSize);
+        drawArrowAngle(x1, y1, len, a, nodeSize/16f);
     }
 
     void drawLine(final float x1, final float y1, final float x2, final float y2) {

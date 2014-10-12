@@ -98,7 +98,7 @@ public class JGraphXGraphPanel extends JPanel {
     }
     
     public JGraphXGraphPanel(NAR n) {
-        this(new NARGraph().add(n, IncludeEverything, new NARGraph.DefaultGraphizer(true,true,true,true,true)));
+        this(new NARGraph().add(n, IncludeEverything, new NARGraph.DefaultGraphizer(true,true,true,true,true,false)));
     }
     
 //    public static void main(String[] args) {

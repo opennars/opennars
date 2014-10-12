@@ -32,6 +32,8 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
+import nars.gui.output.graph.ConceptGraphCanvas;
+import nars.gui.output.graph.ConceptGraphPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -127,6 +129,9 @@ public class NARSwing  {
             new TextOutput(nar, System.out);
             //new Log4JOutput(nar, false);            
         }
+        
+        //TEMPORARY
+        new NWindow("Concept Graph", new ConceptGraphPanel(nar, new ConceptGraphCanvas(nar))).show(800, 500);
         
         
 //        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));

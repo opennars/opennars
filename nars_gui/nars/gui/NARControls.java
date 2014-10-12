@@ -57,6 +57,7 @@ import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
 import nars.gui.output.graph.ConceptGraphCanvas;
 import nars.gui.output.graph.ConceptGraphCanvas2;
+import nars.gui.output.graph.ConceptGraphPanel;
 import nars.gui.output.graph.ImplicationGraphCanvas;
 import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphCanvas;
@@ -207,7 +208,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new NWindow("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas(nar))).show(500, 500);
+                    new NWindow("Concept Graph", new ConceptGraphPanel(nar, new ConceptGraphCanvas(nar))).show(800, 500);
                 }
             });
             m.add(mv);
@@ -216,7 +217,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             mv2.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new NWindow("Concept Graph", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
+                    new NWindow("Concept Graph 2", new ProcessingGraphPanel(nar, new ConceptGraphCanvas2(nar))).show(500, 500);
                 }
             });
             m.add(mv2);
