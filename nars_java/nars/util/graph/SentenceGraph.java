@@ -1,6 +1,9 @@
 package nars.util.graph;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
@@ -16,13 +19,16 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 
 
-abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> implements Observer {
+abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> implements Observer {
     public final Memory memory;
 
     public static class GraphChange { }
     
     private boolean needInitialConcepts;
     private boolean started;
+    
+    public final Map<Sentence, List<E>> components = new WeakHashMap();
+    
     public final EventEmitter event = new EventEmitter( GraphChange.class );
     
     public SentenceGraph(Memory memory) {
@@ -105,6 +111,28 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         }
     }    
     
+
+    
+        
+    protected boolean remove(Sentence s) {
+        List<E> componentList = components.get(s);
+        if (componentList!=null) {
+            for (E e : componentList) {
+                if (!containsEdge(e))
+                    continue;
+                Term source = getEdgeSource(e);
+                Term target = getEdgeTarget(e);
+                removeEdge(e);
+                ensureTermConnected(source);
+                ensureTermConnected(target);
+            }
+            componentList.clear();
+            components.remove(s);        
+            return true;
+        }
+        return false;
+    }
+    
     public void reset() {
         this.removeAllEdges( new ArrayList(edgeSet()) );
         this.removeAllVertices( new ArrayList(vertexSet()) );
@@ -131,7 +159,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     
     abstract public boolean allow(CompoundTerm st);    
     
-    public boolean remove(final Sentence s) {
+    public boolean remove(final E s) {
         if (!containsEdge(s))
             return false;
         
@@ -148,6 +176,16 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
         if (r)
             event.emit(GraphChange.class, null, s);
         return true;
+    }
+    
+   
+    protected void addComponents(final Sentence parentSentence, final E edge) {
+        List<E> componentList = components.get(parentSentence);
+        if (componentList == null) {
+            componentList = new ArrayList(1);
+            components.put(parentSentence, componentList);
+        }
+        componentList.add(edge);        
     }
     
     public boolean add(final Sentence s, final Item c) { 
@@ -179,19 +217,7 @@ abstract public class SentenceGraph extends DirectedMultigraph<Term, Sentence> i
     }    
     
     /** default behavior, may override in subclass */
-    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
-        
-        if (ct instanceof Statement) {
-            Statement st = (Statement)ct;
-            Term subject = st.getSubject();
-            Term predicate = st.getPredicate();
-            addVertex(subject);
-            addVertex(predicate);
-            addEdge(subject, predicate, s);        
-            return true;
-        }
-        return false;
-        
-    }
+    abstract public boolean add(final Sentence s, final CompoundTerm ct, final Item c);
+
     
 }

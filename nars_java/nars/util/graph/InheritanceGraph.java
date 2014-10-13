@@ -1,9 +1,12 @@
 package nars.util.graph;
 
 import nars.core.NAR;
+import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Statement;
+import nars.language.Term;
 
 /** Maintains a directed grpah of Inheritance and Similiarty statements */
 public class InheritanceGraph extends SentenceGraph {
@@ -41,6 +44,21 @@ public class InheritanceGraph extends SentenceGraph {
 
         return false;
     }
+
+    @Override
+    public boolean add(Sentence s, CompoundTerm ct, Item c) {
+        if (ct instanceof Statement) {
+            Statement st = (Statement)ct;
+            Term subject = st.getSubject();
+            Term predicate = st.getPredicate();
+            addVertex(subject);
+            addVertex(predicate);
+            addEdge(subject, predicate, s);        
+            return true;
+        }
+        return false;
+        
+    }    
     
     
 }

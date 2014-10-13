@@ -7,11 +7,12 @@ import nars.inference.GraphExecutive;
 import nars.language.Interval;
 import nars.language.Term;
 import nars.util.graph.ImplicationGraph;
+import nars.util.graph.ImplicationGraph.Cause;
 import org.jgrapht.graph.DirectedMultigraph;
 
 
 
-public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,Sentence> {
+public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,Cause> {
     private final GraphExecutive graphExec;
     private double maxTermActivation = 0;
     private double maxSentenceActivation = 0;
@@ -23,7 +24,7 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
     }
 
     @Override
-    protected DirectedMultigraph<Term,Sentence> getGraph() {
+    protected DirectedMultigraph<Term,Cause> getGraph() {
         if (graph!=null)
             return new ImplicationGraph(graphExec.implication, false, minPriority);
         
@@ -40,13 +41,13 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
     
 
     @Override
-    public int getEdgeColor(Sentence e) {
-        float a = (float)graphExec.getSentenceRelevancy(e);
+    public int getEdgeColor(Cause c) {
+        float a = (float)graphExec.getSentenceRelevancy(c);
         if (a > 1.0f) a = 1.0f;
         if (a < 0f) a = 0f;
 
         float activation = 0;
-        Double A = graphExec.accumulatedSentence.get(e);
+        Double A = graphExec.accumulatedSentence.get(c);
         if (A!=null)
             activation = A.floatValue();
         
@@ -54,20 +55,20 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
     }
     
     @Override
-    public float getEdgeThickness(Sentence edge, VertexDisplay source, VertexDisplay target) {
+    public float getEdgeThickness(Cause c, VertexDisplay source, VertexDisplay target) {
         
-        float ww = (float)graphExec.getSentenceRelevancy(edge);
+        float ww = (float)graphExec.getSentenceRelevancy(c);
         if (ww < 1.0f) ww = 1.0f;
         
         
         if (maxSentenceActivation > 0) {
-            Double A = graphExec.accumulatedSentence.get(edge);
+            Double A = graphExec.accumulatedSentence.get(c);
             if (A!=null) {
                 double a = A / maxSentenceActivation;
                 ww += (float)a;
             }
         }
-        return super.getEdgeThickness(edge, source, target) * ww;
+        return super.getEdgeThickness(c, source, target) * ww;
     }
     
     @Override

@@ -23,6 +23,7 @@ import nars.language.Interval;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.util.graph.ImplicationGraph;
+import nars.util.graph.ImplicationGraph.Cause;
 import nars.util.graph.ImplicationGraph.PostCondition;
 
 public class GraphExecutive {
@@ -39,7 +40,7 @@ public class GraphExecutive {
     
     //for observation purposes, TODO enable/disable the maintenance of this
     public final Map<Term,Double> accumulatedTerm = new HashMap();
-    public final Map<Sentence,Double> accumulatedSentence = new HashMap();
+    public final Map<Cause,Double> accumulatedSentence = new HashMap();
     
     
     public GraphExecutive(Memory memory, Executive exec) {
@@ -53,12 +54,12 @@ public class GraphExecutive {
     protected void accumulate(final Term t) {
         accumulatedTerm.put(t, accumulatedTerm.getOrDefault(t, new Double(0)) + 1);
     }
-    protected void accumulate(final Sentence s) {
+    protected void accumulate(final Cause s) {
         accumulatedSentence.put(s, accumulatedTerm.getOrDefault(s, new Double(0)) + 1);
     }
-    protected void accumulate(final Term t, final Sentence[] path) {
+    protected void accumulate(final Term t, final Cause[] path) {
         accumulate(t);
-        for (Sentence s : path)
+        for (Cause s : path)
             accumulate(s);
     }
     /** returns maximum value */
@@ -74,7 +75,7 @@ public class GraphExecutive {
     /** returns maximum value */
     public double fadeAccumulatedSentences(double rate) {
         double max = 0;
-        for (final Map.Entry<Sentence, Double> e : accumulatedSentence.entrySet()) {
+        for (final Map.Entry<Cause, Double> e : accumulatedSentence.entrySet()) {
             double vv = e.getValue();
             if (vv > max) max = vv;
             e.setValue( vv * rate );
@@ -97,24 +98,24 @@ public class GraphExecutive {
     public class ParticlePath implements Comparable<ParticlePath> {
         final public Term target;
         
-        Sentence[] bestPath;
+        Cause[] bestPath;
         double distance;
         double score;
         
-        public ParticlePath(final Term target, final List<Sentence> path, final double distance) {
+        public ParticlePath(final Term target, final List<Cause> path, final double distance) {
             this.target = target;            
             addPath(path, distance);
         }
         
-        public void addPath(final List<Sentence> p, final double dist) {
+        public void addPath(final List<Cause> p, final double dist) {
             
             double newScore = 0;
-            for (Sentence s : p)
+            for (Cause s : p)
                 newScore += getSentenceRelevancy(s);
             newScore /= ((double)p.size());
                 
             if ((this.bestPath == null) || (score < newScore)) {
-                this.bestPath = p.toArray(new Sentence[p.size()]);
+                this.bestPath = p.toArray(new Cause[p.size()]);
                 this.distance = dist;
                 this.score = newScore;                
             }
@@ -142,7 +143,7 @@ public class GraphExecutive {
         private final ImplicationGraph graph;
         
         /** caches sentence costs while traversing */
-        transient public final Map<Sentence, Double> sentenceCosts = new HashMap();
+        transient public final Map<Cause, Double> sentenceCosts = new HashMap();
         
         public final Map<Term, ParticlePath> termPaths = new HashMap();
         TreeSet<ParticlePath> paths;
@@ -166,9 +167,9 @@ public class GraphExecutive {
 
             //TODO cache pathways in the graph for faster traversal. must store source leading edge, destination(s) and their distances
             
-            List<Sentence> currentPath = new ArrayList();
+            List<Cause> currentPath = new ArrayList();
 
-            Map<Sentence, Double> nextEdgeCost = new HashMap();
+            Map<Cause, Double> nextEdgeCost = new HashMap();
             
             sentenceCosts.clear();
             
@@ -188,22 +189,20 @@ public class GraphExecutive {
                 
                 while (energy > 0) {
 
-                    Set<Sentence> graphEdges = forward ? 
+                    Set<Cause> graphEdges = forward ? 
                             graph.outgoingEdgesOf(currentVertex) : 
                             graph.incomingEdgesOf(currentVertex);
                     
                     nextEdgeCost.clear();
                     
                     
-                    Sentence currentSentence = null;
+                    Cause currentSentence = null;
                     
                     double totalProb = 0;
                     
                     //remove edges which loop to the target goal precondition OR postcondition
-                    for (final Sentence s : graphEdges) {
-                        Term etarget = forward ?
-                                getEdgeTarget(s):
-                                getEdgeSource(s);
+                    for (final Cause s : graphEdges) {
+                        Term etarget = forward ? s.effect : s.cause;
                         
                         if ((avoidCycles) && (etarget == source)) {
                             edgeDecisionFailCyclical++;
@@ -244,7 +243,7 @@ public class GraphExecutive {
                         break;
                     }                
 
-                    Sentence nextEdge;
+                    Cause nextEdge;
                     if (nextEdgeCost.size() == 1) {
                         nextEdge = currentSentence;
                     }
@@ -257,7 +256,7 @@ public class GraphExecutive {
 
                     energy -= nextEdgeCost.get(nextEdge);
 
-                    currentVertex = forward ? getEdgeTarget(nextEdge) : getEdgeSource(nextEdge);
+                    currentVertex = forward ? nextEdge.effect : nextEdge.cause;
 
                 }
 
@@ -299,7 +298,7 @@ public class GraphExecutive {
         }
         
         /** total cost of a traversal, which includes the edge cost and the target vertex cost. any value > 1 */
-        public double getTraversalCost(final Sentence s, final Term target) {
+        public double getTraversalCost(final Cause s, final Term target) {
             Double d = sentenceCosts.get(s);
             if (d!=null)
                 return d;
@@ -327,8 +326,8 @@ public class GraphExecutive {
         
         /** choose a sentence according to a random probability 
          * where lower cost = higher probability.  prob = 1.0 / ( 1 +  cost )*/
-        public Sentence chooseEdge(Map<Sentence,Double> cost, double totalProb) {
-            Sentence nextEdge = null;
+        public Cause chooseEdge(Map<Cause,Double> cost, double totalProb) {
+            Cause nextEdge = null;
  
             //TODO disallow edge that completes cycle back to target or traversed edge?
             //  probably an option to allow cycles
@@ -337,7 +336,7 @@ public class GraphExecutive {
 
 
             int j;
-            for (final Map.Entry<Sentence, Double> es : cost.entrySet()) {
+            for (final Map.Entry<Cause, Double> es : cost.entrySet()) {
                 
                 nextEdge = es.getKey();
 
@@ -374,13 +373,6 @@ public class GraphExecutive {
         
     }
     
-    
-    public Term getEdgeSource(final Sentence s) {
-        return ((Implication)s.content).getSubject();
-    }
-    public Term getEdgeTarget(final Sentence s) {
-        return ((Implication)s.content).getPredicate();
-    }
 
 
     public static double getActualPriority(final Memory memory, final Term t) {
@@ -443,7 +435,7 @@ public class GraphExecutive {
         
 
     /** returns (no relevancy) 0..1.0 (high relevancy) */
-    public double getSentenceRelevancy(final Sentence e) {
+    public double getSentenceRelevancy(final Cause c) {
         /*if (!implication.containsEdge(e)) 
             return 0;*/
         
@@ -454,12 +446,12 @@ public class GraphExecutive {
         }
         */
         
-        return getEffectivePriority(memory, e.content) * e.truth.getExpectation();
+        return getEffectivePriority(memory, c.getImplication()) * c.getTruth().getExpectation();
     }    
     
     public class ParticlePlan implements Comparable<ParticlePlan> {
 
-        public final Sentence[] path;
+        public final Cause[] path;
         public final List<Term> sequence;
         public final double distance;
         public final double activation;
@@ -476,14 +468,14 @@ public class GraphExecutive {
         //                    min = c;
         //            }
         //            return min;
-        public ParticlePlan(Sentence[] path, List<Term> sequence, double activation, double distance, float minConf) {
+        public ParticlePlan(Cause[] path, List<Term> sequence, double activation, double distance, float minConf) {
             this.path = path;
             this.sequence = sequence;
             this.activation = activation;
             this.distance = distance;
             this.minConf = minConf;
-            for (final Sentence s : path) {
-                float c = s.truth.getConfidence();
+            for (final Cause s : path) {
+                float c = s.getTruth().getConfidence();
                 if (c < minConf) {
                     minConf = c;
                 }
@@ -566,7 +558,7 @@ public class GraphExecutive {
         TreeSet<ParticlePlan> plans = new TreeSet();
         for (final ParticlePath pp : roots) {
 
-            Sentence[] path = pp.bestPath;
+            Cause[] path = pp.bestPath;
             
             if (path.length == 0)
                 throw new RuntimeException("ParticlePath empty: " + pp);
@@ -576,18 +568,13 @@ public class GraphExecutive {
             List<Term> seq = new ArrayList(path.length);
                         
             //Calculate path back to target
-            Implication imp;
             long accumulatedDelay = 0;
             float minConf = 1.0f;
                                                                        
             for (int i = path.length-1; i >=0; ) {
-                Sentence s = path[i];
-                Term t = s.content;
-                
-                if (!(t instanceof Implication))
-                    throw new RuntimeException("Unknown type: " + t + " in sequence generation of " + this);
-                
-                imp = (Implication)t;
+                Cause s = path[i];
+                Implication imp = s.getImplication();
+                                
                 Term term = imp.getSubject();
                 
                 i--; //next impl                                
@@ -658,13 +645,13 @@ public class GraphExecutive {
         TruthValue truth = plan.truth;
         BudgetValue budget = plan.budget;
         
-        Sentence[] path = plan.path;
+        Cause[] path = plan.path;
         List<Term> seq = plan.sequence;
  
         
-        Sentence currentEdge = path[path.length-1];
+        Cause currentEdge = path[path.length-1];
 
-        Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.stamp, memory.getTime());
+        Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.getStamp(), memory.getTime());
         
         //add all terms to derivation chain
         for(Term T : seq) {
