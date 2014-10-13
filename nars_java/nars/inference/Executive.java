@@ -56,6 +56,13 @@ public class Executive {
     int inlineParticles = 8;
     
     float maxExecutionsPerDuration = 1f;
+
+    /** how much to multiply all cause relevancies per cycle */
+    double causeRelevancyFactor = 0.99;
+    
+    /** how much to add value to each cause involved in a successful plan */ 
+    //TODO move this to a parameter class visible to both Executive and GraphExecutive
+    public static double relevancyOfSuccessfulPlan = 0.50;
     
     /** time of last execution */
     long lastExecution = -1;
@@ -398,6 +405,8 @@ public class Executive {
             return;
                         
         lastExecution = now;
+        
+        graph.implication.multiplyRelevancy(causeRelevancyFactor);
         
         updateTasks();
 

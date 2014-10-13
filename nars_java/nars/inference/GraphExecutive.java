@@ -146,6 +146,7 @@ public class GraphExecutive {
         transient public final Map<Cause, Double> sentenceCosts = new HashMap();
         
         public final Map<Term, ParticlePath> termPaths = new HashMap();
+        
         TreeSet<ParticlePath> paths;
         
         final boolean avoidCycles = true;
@@ -157,13 +158,15 @@ public class GraphExecutive {
         private int pathFailNoOperation = 0;
         private int pathsValid = 0;
         private int numIterations = 0;
+        private final Term goal;
         
 
-        public ParticleActivation(ImplicationGraph graph) {
+        public ParticleActivation(ImplicationGraph graph, final Term goal) {
             this.graph = graph;            
+            this.goal = goal;
         }
         
-        public SortedSet<ParticlePath> activate(final Term source, final boolean forward, int iterations, double distance) {
+        public SortedSet<ParticlePath> activate(final boolean forward, int iterations, double distance) {
 
             //TODO cache pathways in the graph for faster traversal. must store source leading edge, destination(s) and their distances
             
@@ -181,7 +184,7 @@ public class GraphExecutive {
 
                 double energy = distance;
 
-                Term currentVertex = source;
+                Term currentVertex = goal;
 
                 boolean choicesAvailable = false;
                 boolean operationTraversed = false;
@@ -204,7 +207,7 @@ public class GraphExecutive {
                     for (final Cause s : graphEdges) {
                         Term etarget = forward ? s.effect : s.cause;
                         
-                        if ((avoidCycles) && (etarget == source)) {
+                        if ((avoidCycles) && (etarget == goal)) {
                             edgeDecisionFailCyclical++;
                             continue;
                         }
@@ -272,7 +275,7 @@ public class GraphExecutive {
                 ParticlePath ppath = termPaths.get(currentVertex);
                 if (ppath == null) {                    
                     termPaths.put(currentVertex, 
-                            ppath = new ParticlePath(source, currentPath, distance - energy));
+                            ppath = new ParticlePath(goal, currentPath, distance - energy));
                 }
                 else {
                     ppath.addPath(currentPath, distance - energy);
@@ -298,7 +301,7 @@ public class GraphExecutive {
         }
         
         /** total cost of a traversal, which includes the edge cost and the target vertex cost. any value > 1 */
-        public double getTraversalCost(final Cause s, final Term target) {
+        public double getTraversalCost(final Cause s, final Term nextTerm) {
             Double d = sentenceCosts.get(s);
             if (d!=null)
                 return d;
@@ -307,12 +310,12 @@ public class GraphExecutive {
             double m = 0.1;
             
             double conceptRelevancy;
-            if ((target instanceof Interval) || (target instanceof Operation))            
+            if ((nextTerm instanceof Interval) || (nextTerm instanceof Operation))            
                 conceptRelevancy = 1.0;
             else        
-                conceptRelevancy = getEffectivePriority(memory, target);
+                conceptRelevancy = getEffectivePriority(memory, nextTerm);
 
-            double sentenceRelevancy = getSentenceRelevancy(s);
+            double sentenceRelevancy = getSentenceRelevancy(s) + s.getRelevancy(goal);
 
             double c = edgeCostFactor / (m + sentenceRelevancy) + 
                         conceptCostFactor / (m + conceptRelevancy);
@@ -447,6 +450,7 @@ public class GraphExecutive {
         */
         
         return getEffectivePriority(memory, c.getImplication()) * c.getTruth().getExpectation();
+                
     }    
     
     public class ParticlePlan implements Comparable<ParticlePlan> {
@@ -519,8 +523,8 @@ public class GraphExecutive {
 
 
     protected void particlePredict(final Term source, final double distance, final int particles) {
-        ParticleActivation act = new ParticleActivation(implication);
-        SortedSet<ParticlePath> paths = act.activate(source, true, particles, distance);
+        ParticleActivation act = new ParticleActivation(implication, source);
+        SortedSet<ParticlePath> paths = act.activate(true, particles, distance);
         if (!paths.isEmpty())
             System.out.println(source + " predicts: " + paths);
         
@@ -535,14 +539,14 @@ public class GraphExecutive {
             return null;
         }
         
-        ParticleActivation act = new ParticleActivation(implication) {
+        ParticleActivation act = new ParticleActivation(implication, targetPost) {
             @Override public boolean validVertex(final Term x) {
                 //additional restriction on path's vertices
                 return !targetPost.equals(x);
             }            
         };
         
-        SortedSet<ParticlePath> roots = act.activate(targetPost, false, particles, distance);
+        SortedSet<ParticlePath> roots = act.activate(false, particles, distance);
         //System.out.println("  PATH: " + roots);
         //System.out.println("      : " + act.getStatus());
         
@@ -641,7 +645,7 @@ public class GraphExecutive {
         return plans;
     } 
     
-    protected Task planTask(ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
+    protected Task planTask(ParticlePlan plan, Concept c, Task task, Term goal, char punctuation) {
         TruthValue truth = plan.truth;
         BudgetValue budget = plan.budget;
         
@@ -676,16 +680,33 @@ public class GraphExecutive {
         
         //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
 
-        Term imp = Implication.make(subj, target, TemporalRules.ORDER_FORWARD);
+        Term imp = Implication.make(subj, goal, TemporalRules.ORDER_FORWARD);
 
         if (imp == null) {
-            throw new RuntimeException("Invalid implication: " + subj + " =\\> " + target);
+            throw new RuntimeException("Invalid implication: " + subj + " =\\> " + goal);
         }
         
         
-        return new Task(new Sentence(imp, punctuation, truth, stamp), budget, task);        
+        return new Task(new Sentence(imp, punctuation, truth, stamp), budget, task) {
+
+            @Override public void end(boolean success) {
+                if (success) {
+                    rememberPlanSuccess(plan, goal, this);
+                }
+                super.end(success);
+            }
+          
+            
+        };
     }
             
+    
+    protected void rememberPlanSuccess(ParticlePlan plan, Term goal, Task t) {
+        for (Cause c : plan.path) {
+            c.rememberRelevant(goal, Executive.relevancyOfSuccessfulPlan);
+        }
+    }
+    
     protected void planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
         Task newTask = planTask(plan, c, task, target, punctuation);

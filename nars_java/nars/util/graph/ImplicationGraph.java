@@ -1,6 +1,9 @@
 package nars.util.graph;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
@@ -29,7 +32,12 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         public final Term cause;
         public final Term effect;
         public final Sentence parent;
-        private Map<Term,Double> relevancy = null;// = new WeakHashMap();
+        
+        /** strength below which an item will be removed */
+        public final double minStrength = 0.01;
+        
+        //TODO use a primitive collection
+        private Map<Term,Double> relevancy = null;
         
 
         public Cause(Term cause, Term effect, Sentence parent) {
@@ -50,12 +58,32 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return (Implication)parent.content;
         }
         
-        public void setRelevant(Term t, double strength) {
-            
+        /**
+         * 
+         * @param t = term
+         * @param strength  = reward (if positive), punishment (if negative)
+         */
+        public void rememberRelevant(Term t, double strength) {
+            if (relevancy == null) relevancy = new WeakHashMap();            
+            relevancy.put( t, relevancy.getOrDefault(t, new Double(0)) + strength);
         }
         
-        public void forget(double rate) {
+        /** "forgets" when scale < 1.0 */
+        public void multiply(final double x) {
+            if (x == 1.0) return;
+            if (relevancy == null) return;
             
+            List<Term> toRemove = null;
+            for (Map.Entry<Term, Double> e : relevancy.entrySet()) {
+                double newValue = e.getValue() * x;
+                if (newValue < minStrength)  {
+                    if (toRemove == null) toRemove = new ArrayList();
+                    toRemove.add(e.getKey());
+                }
+                else
+                    e.setValue(newValue);                
+            }
+            for (Term t : toRemove) relevancy.remove(t);            
         }
         
         public double getRelevancy(Term t) {
@@ -393,6 +421,11 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     }
 
 
+    public void multiplyRelevancy(double x) {
+        if (x == 1.0) return;
+        for (Cause c : edgeSet())
+            c.multiply(x);        
+    }
     
     
     
