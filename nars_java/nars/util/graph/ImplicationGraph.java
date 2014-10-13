@@ -1,5 +1,6 @@
 package nars.util.graph;
 
+import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +40,33 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         //TODO use a primitive collection
         private Map<Term,Double> relevancy = null;
         
+        private final int hash;
+        
 
         public Cause(Term cause, Term effect, Sentence parent) {
             this.cause = cause;
             this.effect = effect;
             this.parent = parent;
+            this.hash = Objects.hashCode(cause, effect, parent);
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Cause) {
+                Cause c = (Cause)obj;
+                //use fast == for comparison since the terms are within the same graph
+                return (c.cause == cause) && (c.effect == effect) && (c.parent == parent);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+        
+        
+        
         
         public TruthValue getTruth() { return parent.truth; }
         
@@ -433,7 +455,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         if (x == 1.0) return;
         for (Cause c : edgeSet()) {
             if (c.relevancy!=null)
-                System.out.println(c);
+                System.out.println(c.parent.content + " :: " + c.relevancy);
             c.multiply(x);        
         }
     }
