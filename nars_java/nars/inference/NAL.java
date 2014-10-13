@@ -40,10 +40,14 @@ abstract public class NAL implements Callable<NAL> {
     protected Sentence currentBelief;    
 
     protected Stamp newStamp;       
+    protected StampBuilder newStampBuilder;
 
     public NAL(Memory mem) {
         this.mem = mem;
     }
+
+    
+
 
     public static class FireConcept extends NAL  {
         
@@ -311,9 +315,8 @@ abstract public class NAL implements Callable<NAL> {
         if (parentTask != null) {
             if (parentTask.getContent() == null)
                 return;     
-            if(newContent==null) {
-                return;
-            }
+            if(newContent==null)
+                return;            
             if (newContent.equals(parentTask.getContent())) // circular structural inference
                 return;            
         }
@@ -432,16 +435,34 @@ abstract public class NAL implements Callable<NAL> {
      * @return the newStamp
      */
     public Stamp getTheNewStamp() {
+        if (newStamp==null) {
+            //if newStamp==null then newStampBuilder must be available. cache it's return value as newStamp
+            newStamp = newStampBuilder.build();
+            newStampBuilder = null;
+        }
         return newStamp;
     }
 
     /**
      * @param newStamp the newStamp to set
      */
-    public void setTheNewStamp(Stamp newStamp) {
+    public Stamp setTheNewStamp(Stamp newStamp) {        
         this.newStamp = newStamp;
+        this.newStampBuilder = null;
+        return newStamp;
     }
-
+    
+    interface StampBuilder {  Stamp build();    }
+    
+    /** creates a lazy/deferred StampBuilder which only constructs the stamp if getTheNewStamp() is actually invoked */
+    public void setTheNewStamp(final Stamp first, final Stamp second, final long time) {        
+        newStamp = null;
+        newStampBuilder = new StampBuilder() {
+            @Override public Stamp build() {
+                return new Stamp(first, second, time);
+            }
+        };
+    }
     /**
      * @return the currentBelief
      */

@@ -58,7 +58,7 @@ public class Executive {
     float maxExecutionsPerDuration = 1f;
 
     /** how much to multiply all cause relevancies per cycle */
-    double causeRelevancyFactor = 0.99;
+    double causeRelevancyFactor = 0.999;
     
     /** how much to add value to each cause involved in a successful plan */ 
     //TODO move this to a parameter class visible to both Executive and GraphExecutive
@@ -553,7 +553,7 @@ public class Executive {
                 return false;
             }
             
-            nal.setTheNewStamp(Stamp.make(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.getTime()));
+            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.getTime());
             nal.setCurrentTask(newEvent);
                         
             Sentence currentBelief = stmLast.sentence;
