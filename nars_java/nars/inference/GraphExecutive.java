@@ -97,14 +97,14 @@ public class GraphExecutive {
 
     
     public class ParticlePath implements Comparable<ParticlePath> {
-        final public Term target;
+        final public Term goal;
         
         Cause[] bestPath;
         double distance;
         double score;
         
-        public ParticlePath(final Term target, final List<Cause> path, final double distance) {
-            this.target = target;            
+        public ParticlePath(final Term goal, final List<Cause> path, final double distance) {
+            this.goal = goal;            
             addPath(path, distance);
         }
         
@@ -112,7 +112,7 @@ public class GraphExecutive {
             
             double newScore = 0;
             for (Cause s : p)
-                newScore += getSentenceRelevancy(s);
+                newScore += getCauseRelevancy(s, goal);
             newScore /= ((double)p.size());
                 
             if ((this.bestPath == null) || (score < newScore)) {
@@ -277,7 +277,7 @@ public class GraphExecutive {
                 ParticlePath ppath = termPaths.get(currentVertex);
                 if (ppath == null) {                    
                     termPaths.put(currentVertex, 
-                            ppath = new ParticlePath(goalPost, currentPath, distance - energy));
+                            ppath = new ParticlePath(goal, currentPath, distance - energy));
                 }
                 else {
                     ppath.addPath(currentPath, distance - energy);
@@ -296,7 +296,7 @@ public class GraphExecutive {
             this.paths = new TreeSet(termPaths.values());
             
             for (ParticlePath p : this.paths) {
-                accumulate(p.target, p.bestPath);
+                accumulate(p.goal, p.bestPath);
                 //System.out.println("  " + p);
             }
             return this.paths;
@@ -317,9 +317,9 @@ public class GraphExecutive {
             else        
                 conceptRelevancy = getEffectivePriority(memory, nextTerm);
 
-            double sentenceRelevancy = getSentenceRelevancy(s) + s.getRelevancy(goalPost);
+            double causeRelevancy = getCauseRelevancy(s, goal);
 
-            double c = edgeCostFactor / (m + sentenceRelevancy) + 
+            double c = edgeCostFactor / (m + causeRelevancy) + 
                         conceptCostFactor / (m + conceptRelevancy);
 
             //System.out.println("s " + sentenceRelevancy + ", " + conceptRelevancy + " = " + c);
@@ -327,7 +327,7 @@ public class GraphExecutive {
             sentenceCosts.put(s, c);
             return c;
         }
-
+        
         
         /** choose a sentence according to a random probability 
          * where lower cost = higher probability.  prob = 1.0 / ( 1 +  cost )*/
@@ -378,7 +378,16 @@ public class GraphExecutive {
         
     }
     
-
+    
+    /** returns (no relevancy) 0..1.0 (high relevancy) */
+    public double getCauseRelevancy(Cause c, Term goal) {
+        return (getCauseRelevancy(c) + c.getRelevancy(goal)) * 0.5;
+    }
+    
+    /** returns (no relevancy) 0..1.0 (high relevancy) */
+    public double getCauseRelevancy(final Cause c) {
+        return getEffectivePriority(memory, c.getImplication()) * c.getTruth().getExpectation();          
+    }    
 
     public static double getActualPriority(final Memory memory, final Term t) {
         double p;
@@ -439,31 +448,17 @@ public class GraphExecutive {
     }    
         
 
-    /** returns (no relevancy) 0..1.0 (high relevancy) */
-    public double getSentenceRelevancy(final Cause c) {
-        /*if (!implication.containsEdge(e)) 
-            return 0;*/
-        
-        //transitions to PostCondition vertices are free or low-cost        
-        /*
-        if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0;
-        }
-        */
-        
-        return getEffectivePriority(memory, c.getImplication()) * c.getTruth().getExpectation();
-                
-    }    
+    
     
     public class ParticlePlan implements Comparable<ParticlePlan> {
 
         public final Cause[] path;
         public final List<Term> sequence;
         public final double distance;
-        public final double activation;
+        public final double pathScore;
         public final TruthValue truth;
         public final BudgetValue budget;
-        private final float minConf;
+        private float minConf;
 
         //            if (path.length == 0) return 0;
         //
@@ -474,39 +469,31 @@ public class GraphExecutive {
         //                    min = c;
         //            }
         //            return min;
-        public ParticlePlan(Cause[] path, List<Term> sequence, double activation, double distance, float minConf) {
+        public ParticlePlan(Cause[] path, List<Term> sequence, double pathScore, double distance) {
             this.path = path;
             this.sequence = sequence;
-            this.activation = activation;
+            this.pathScore = pathScore;
             this.distance = distance;
-            this.minConf = minConf;
+            this.minConf = 1.0f;
             for (final Cause s : path) {
                 float c = s.getTruth().getConfidence();
                 if (c < minConf) {
                     minConf = c;
                 }
             }
-            truth = new TruthValue(1.0f, minConf);
+            
+            truth = new TruthValue(1.0f, score());
             budget = new BudgetValue(1.0f, Parameters.DEFAULT_GOAL_DURABILITY, 
                     BudgetFunctions.truthToQuality(truth));
-            budget.andPriority(minConf);
+            budget.andPriority(score());
         }
 
         public float getMinConfidence() {
             return minConf;
-            //            if (path.length == 0) return 0;
-            //
-            //            float min = Float.MAX_VALUE;
-            //            for (final Sentence s : path) {
-            //                float c = s.truth.getConfidence();
-            //                if (c < min)
-            //                    min = c;
-            //            }
-            //            return min;
         }
 
-        public double score() {
-            return truth.getConfidence() * activation;
+        public float score() {
+            return (float)(/*minConf * */pathScore);
         }
 
         @Override
@@ -576,7 +563,6 @@ public class GraphExecutive {
                         
             //Calculate path back to target
             long accumulatedDelay = 0;
-            float minConf = 1.0f;
                                                                        
             for (int i = path.length-1; i >=0; ) {
                 Cause s = path[i];
@@ -607,10 +593,6 @@ public class GraphExecutive {
                     }                    
                 }
                 else {
-                    float c = getEffectiveConfidence(memory, term);                    
-                    if (c < minConf)
-                        minConf = c;
-                    
                     //accumulate delay if the temporal rule involves time difference??
                     /*
                     if (nonIntervalAdded) { 
@@ -641,7 +623,8 @@ public class GraphExecutive {
             
             
             //System.out.println("  cause: " + Arrays.toString(path));
-            ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance, minConf);            
+            ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance);            
+            //System.out.println(" +path: " + pp);
             plans.add(rp);
         }
         
@@ -720,7 +703,7 @@ public class GraphExecutive {
         if (punctuation == '.')        
             nal.derivedTask(newTask, false, true, null, null);        
         if (punctuation == '!') {
-            System.out.println("  exe plan: " + newTask);
+            //System.out.println("  exe plan: " + newTask);
             memory.executive.addTask(c, newTask);
         }
         

@@ -89,7 +89,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
          */
         public void rememberRelevant(Term t, double strength) {
             if (relevancy == null) relevancy = new WeakHashMap();            
-            relevancy.put( t, relevancy.getOrDefault(t, new Double(0)) + strength);
+            relevancy.put( t, Math.min(1.0, relevancy.getOrDefault(t, new Double(0)) + strength) );
         }
         
         /** "forgets" when scale < 1.0 */
@@ -100,6 +100,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             List<Term> toRemove = null;
             for (Map.Entry<Term, Double> e : relevancy.entrySet()) {
                 double newValue = e.getValue() * x;
+                if (newValue > 1.0) newValue = 1.0;
                 if (newValue < minStrength)  {
                     if (toRemove == null) toRemove = new ArrayList();
                     toRemove.add(e.getKey());
@@ -121,7 +122,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
         @Override
         public String toString() {
-            return cause + " =/> " + effect + " [" + relevancy + "] in " + parent;
+            return cause + " =/> " + effect /* +  " [" + relevancy + "] in " + parent*/;
         }
 
         
