@@ -130,9 +130,6 @@ public class NARSwing  {
             //new Log4JOutput(nar, false);            
         }
         
-        //TEMPORARY
-        new NWindow("Concept Graph", new ConceptGraphPanel(nar, new ConceptGraphCanvas(nar))).show(800, 500);
-        
         
 //        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
 //        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);

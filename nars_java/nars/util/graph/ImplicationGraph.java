@@ -83,7 +83,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 else
                     e.setValue(newValue);                
             }
-            for (Term t : toRemove) relevancy.remove(t);            
+            if (toRemove!=null)
+                for (Term t : toRemove)
+                    relevancy.remove(t);            
         }
         
         public double getRelevancy(Term t) {
@@ -93,6 +95,12 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return r;            
         }
 
+        @Override
+        public String toString() {
+            return cause + " =/> " + effect + " [" + relevancy + "] in " + parent;
+        }
+
+        
     }
     
     
@@ -423,8 +431,11 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
     public void multiplyRelevancy(double x) {
         if (x == 1.0) return;
-        for (Cause c : edgeSet())
+        for (Cause c : edgeSet()) {
+            if (c.relevancy!=null)
+                System.out.println(c);
             c.multiply(x);        
+        }
     }
     
     
