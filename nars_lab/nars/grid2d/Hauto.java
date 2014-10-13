@@ -145,7 +145,7 @@ public class Hauto {
     
     String doorname="";
     public static Integer entityID=0;
-    public static boolean allow_subsymbolic_knowledge=false;
+    public static boolean allow_imitating=false;
     public void clicked(int x,int y, Grid2DSpace space)
     {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
@@ -164,7 +164,7 @@ public class Hauto {
         
         if(!"".equals(oper)) {
             if(!"".equals(readCells[x][y].name) && !"pick".equals(oper)) {
-                if(allow_subsymbolic_knowledge) {
+                if(allow_imitating) {
                     nar.addInput("(^" + oper + ","+readCells[x][y].name+")! :|:"); //we will force the action
                 }
                 else {
@@ -177,7 +177,7 @@ public class Hauto {
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
-                if(allow_subsymbolic_knowledge) {
+                if(allow_imitating) {
                     nar.addInput("(^" + oper + ","+s+")! :|:"); 
                 }
                 else {

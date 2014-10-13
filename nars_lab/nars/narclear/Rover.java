@@ -464,6 +464,8 @@ public class Rover extends PhysicsModel {
     public static float rotationSpeed = 100f;
     public static float linearSpeed = 5000f;
                 
+    public static boolean allow_imitate=true;
+    
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
             @Override
@@ -499,23 +501,35 @@ public class Rover extends PhysicsModel {
                             rover.thrust(0, linearSpeed);
                             //nar.step(100);
                             
-                            ArrayList<String> candids=new ArrayList<String>();
-                            candids.add("(^motor,turn,left). :|:");
-                            candids.add("(^motor,turn,right). :|:");
-                            candids.add("(^motor,backward). :|:");
-                            candids.add("(^motor,forward). :|:");
-                            int candid=(int)(Math.random()*candids.size()-0.001);
-                            if(candid>=3)
-                                rover.thrust(0, linearSpeed);
-                            if(candid==2)
-                                rover.thrust(0, -linearSpeed);
-                            if(candid==1)
-                                rover.rotate(-rotationSpeed);
-                            if(candid==0)
-                                rover.rotate(rotationSpeed);
+ 
+                            if(true) { //allow_subcons
+                                ArrayList<String> candids=new ArrayList<String>();
+                                candids.add("(^motor,turn,left). :|:");
+                                candids.add("(^motor,turn,right). :|:");
+                                candids.add("(^motor,backward). :|:");
+                                candids.add("(^motor,forward). :|:");
+                                int candid=(int)(Math.random()*candids.size()-0.001);
+                                nar.addInput(candids.get(candid));
+                                if(candid>=3)
+                                    rover.thrust(0, linearSpeed);
+                                if(candid==2)
+                                    rover.thrust(0, -linearSpeed);
+                                if(candid==1)
+                                    rover.rotate(-rotationSpeed);
+                                if(candid==0)
+                                    rover.rotate(rotationSpeed);
+                            } else {
+                                ArrayList<String> candids=new ArrayList<String>();
+                                candids.add("(^motor,turn,left)! :|:");
+                                candids.add("(^motor,turn,right)! :|:");
+                                candids.add("(^motor,backward)! :|:");
+                                candids.add("(^motor,forward)! :|:");
+                                int candid=(int)(Math.random()*candids.size()-0.001);
+                                nar.addInput(candids.get(candid));
+                            }
                             
                             //{"(^motor,turn,left)! :|:", "(^motor,turn,right)! :|:", "(^motor,forward)! :|:", "(^motor,backward)! :|:"};
-                            nar.addInput(candids.get(candid));
+                            
                             break;
                     }
                 }
@@ -574,19 +588,35 @@ public class Rover extends PhysicsModel {
                 float linearSpeed = Rover.linearSpeed;
 
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    nar.addInput("(^motor,forward). :|:");
+                    if(!Rover.allow_imitate) {
+                        nar.addInput("(^motor,forward). :|:");
+                    } else {
+                        nar.addInput("(^motor,forward)! :|:");
+                    }
                     rover.thrust(0, linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    nar.addInput("(^motor,backward). :|:");
+                    if(!Rover.allow_imitate) {
+                        nar.addInput("(^motor,backward). :|:");
+                    } else {
+                        nar.addInput("(^motor,backward)! :|:");
+                    }
                     rover.thrust(0, -linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    nar.addInput("(^motor,turn,left). :|:");
+                    if(!Rover.allow_imitate) {
+                        nar.addInput("(^motor,turn,left). :|:");
+                    } else {
+                        nar.addInput("(^motor,turn,left)! :|:");
+                    }
                     rover.rotate(rotationSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    nar.addInput("(^motor,turn,right). :|:");
+                    if(!Rover.allow_imitate) {
+                        nar.addInput("(^motor,turn,right). :|:");
+                    } else {
+                        nar.addInput("(^motor,turn,right)! :|:");
+                    }
                     rover.rotate(-rotationSpeed);
                 }
 
