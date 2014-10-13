@@ -54,8 +54,10 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         public boolean equals(Object obj) {
             if (obj instanceof Cause) {
                 Cause c = (Cause)obj;
-                //use fast == for comparison since the terms are within the same graph
-                return (c.cause == cause) && (c.effect == effect) && (c.parent == parent);
+                if (c.hash!=hash)
+                    return false;
+                
+                return (c.cause.equals(cause)) && (c.effect.equals(effect)) && (c.parent.equals(parent));
             }
             return false;
         }
@@ -454,8 +456,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     public void multiplyRelevancy(double x) {
         if (x == 1.0) return;
         for (Cause c : edgeSet()) {
-            if (c.relevancy!=null)
-                System.out.println(c.parent.content + " :: " + c.relevancy);
+            /*if (c.relevancy!=null)
+                System.out.println(c.relevancy.size() + " [" + c.parent.content + "]" + c.parent.content );*/
             c.multiply(x);        
         }
     }
