@@ -1,14 +1,12 @@
 package nars.util.graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
+import nars.entity.TruthValue;
 import nars.inference.Executive;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
@@ -21,26 +19,59 @@ import nars.language.Negation;
 import nars.language.Term;
 import nars.language.Variables;
 import nars.operator.Operation;
+import nars.util.graph.ImplicationGraph.Cause;
 
 
 
-public class ImplicationGraph extends SentenceItemGraph {
+public class ImplicationGraph extends SentenceGraph<Cause> {
 
-    Map<Sentence, List<Sentence>> components = new HashMap();
+    public static class Cause {
+        public final Term cause;
+        public final Term effect;
+        public final Sentence parent;
+        private Map<Term,Double> relevancy = null;// = new WeakHashMap();
+        
+
+        public Cause(Term cause, Term effect, Sentence parent) {
+            this.cause = cause;
+            this.effect = effect;
+            this.parent = parent;
+        }
+        
+        public TruthValue getTruth() { return parent.truth; }
+        
+        public Stamp getStamp() { return parent.stamp; }
+     
+        public int getTemporalOrder() {
+            return getImplication().getTemporalOrder();
+        }
+        
+        public Implication getImplication() {
+            return (Implication)parent.content;
+        }
+        
+        public void setRelevant(Term t, double strength) {
+            
+        }
+        
+        public void forget(double rate) {
+            
+        }
+        
+        public double getRelevancy(Term t) {
+            if (relevancy == null) return 0;
+            Double r = relevancy.get(t);
+            if (r == null) return 0;
+            return r;            
+        }
+
+    }
+    
     
 
-    public static final double DEACTIVATED_EDGE_WEIGHT = 10000f;
-    
-    /** threshold for an edge to be active; 0 will include all edges to some degree */
-    double minEdgeStrength = 0.1;
-    
     float minConfidence = 0.1f;
     float minFreq = 0.1f;
     
-    /** how much a completely dormant concept's priority will contribute to the weight calculation.
-     *  any value between 0 and 1.0 is valid.  
-     *  factor = dormantConceptInfluence + (1.0 - dormantConceptInfluence) * concept.priority  */
-    float dormantConceptInfluence = 0.1f; 
 
     public ImplicationGraph(NAR nar) {
         this(nar.memory);
@@ -60,7 +91,7 @@ public class ImplicationGraph extends SentenceItemGraph {
                 if ((s instanceof Interval) || (s instanceof Operation) || (s instanceof PostCondition))
                     super.addVertex(s);                    
             }
-            for (Sentence s : g.edgeSet()) {
+            for (Cause s : g.edgeSet()) {
                 Term src = g.getEdgeSource(s);
                 Term tgt = g.getEdgeTarget(s);
                 
@@ -71,8 +102,8 @@ public class ImplicationGraph extends SentenceItemGraph {
                 if (!containsSrc && !containsTgt)
                     continue;
                 
-                if (s.truth!=null)
-                    if (s.truth.getExpectation() < minPriority)
+                if (s.getTruth()!=null)
+                    if (s.getTruth().getExpectation() < minPriority)
                         continue;
                 
                 if (!containsSrc) super.addVertex(src);
@@ -273,35 +304,18 @@ public class ImplicationGraph extends SentenceItemGraph {
 
         return true;
     }
-    
-    protected void addComponents(final Sentence parentSentence, final Sentence edge) {
-        List<Sentence> componentList = components.get(parentSentence);
-        if (componentList == null) {
-            componentList = new ArrayList(1);
-            components.put(parentSentence, componentList);
-        }
-        componentList.add(edge);        
+ 
+
+    @Override
+    public Term getEdgeSource(final Cause e) {
+        return e.cause;
     }
-    
-    protected boolean removeComponents(final Sentence parentSentence) {
-        List<Sentence> componentList = components.get(parentSentence);
-        if (componentList!=null) {
-            for (Sentence s : componentList) {
-                if (!containsEdge(s))
-                    continue;
-                Term source = getEdgeSource(s);
-                Term target = getEdgeTarget(s);
-                removeEdge(s);
-                ensureTermConnected(source);
-                ensureTermConnected(target);
-            }
-            componentList.clear();
-            components.remove(parentSentence);        
-            return true;
-        }
-        return false;
+
+    @Override
+    public Term getEdgeTarget(final Cause e) {
+        return e.effect;
     }
-    
+
 
     public Term newExecutableVertex(Implication st, Term t, Term prev) {
         Term r;
@@ -331,24 +345,11 @@ public class ImplicationGraph extends SentenceItemGraph {
         protected short calcComplexity() { return -1; }
     }
     
-    public Sentence newImplicationEdge(final Term source, final Term target, final Item c, final Sentence parent) {
-        Implication impParent = (Implication)parent.content;
-        Implication impFinal = new LightweightImplication(source, target, impParent.getTemporalOrder());                    
-        //System.out.println("new impl edge: " + impFinal + " " + parent.truth + " , parent=" + parent);
-        
-        Sentence impFinalSentence = new Sentence(impFinal, '.', parent.truth, parent.stamp);
-        
-//        try {
-            addEdge(source, target, impFinalSentence);
-            concepts.put(impFinalSentence, c);
-//        }
-//        catch (IllegalArgumentException e) {
-//            //throw new RuntimeException(this + " Unable to create edge: source=" + source + ", target=" + target);
-//            return null;
-//        }
-  
-        addComponents(parent, impFinalSentence);
-        return impFinalSentence;
+    public Cause newImplicationEdge(final Term source, final Term target, Item i, final Sentence parent) {
+        Cause c = new Cause(source, target, parent);
+        addEdge(source, target, c);
+        addComponents(parent, c);
+        return c;
     }
     
     
@@ -385,20 +386,13 @@ public class ImplicationGraph extends SentenceItemGraph {
         for (Term v : vertexSet())
             x.append("  " + v.toString() + ",");
         x.append("\nImplications:\n");
-        for (Sentence v : edgeSet())
+        for (Cause v : edgeSet())
             x.append("  " + v.toString() + ",");
         x.append("\n\n");
         return x.toString();
     }
 
 
-    @Override
-    public boolean remove(final Sentence s) {
-        if (!removeComponents(s))
-            return false;
-        return super.remove(s);
-    }
-    
     
     
     
