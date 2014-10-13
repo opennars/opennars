@@ -566,9 +566,9 @@ public class GraphExecutive {
                                                                        
             for (int i = path.length-1; i >=0; ) {
                 Cause s = path[i];
-                Implication imp = s.getImplication();
+                
                                 
-                Term term = imp.getSubject();
+                Term term = s.cause;
                 
                 i--; //next impl                                
                                                 
