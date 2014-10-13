@@ -46,7 +46,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     boolean compressLevels = true;
     boolean drawn = false;
 
-    int maxNodesWithLabels = 5000;
+    int maxNodesWithLabels = 2000;
     int maxNodes = 5000;
     int maxEdgesWithArrows = 10000;
     int maxEdges = 10000;
@@ -65,7 +65,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     boolean updateNext;
 
     public float maxNodeSize = 1000f;
-    float nodeSize = 200f;
+    float nodeSize = 75f;
     static final float boostScale = 6.0f;
 
     float lineAlpha = 0.75f;
@@ -83,8 +83,24 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     float motionBlur = 0.0f;
 
     public ProcessingGraphCanvas() {
-        super();
+        super();       
+        
         init();
+        
+        try {
+            size(500,500,OPENGL);
+        }
+        catch (Exception e) {
+            //opengl not available
+            System.err.println(e.toString());         
+        }
+
+
+        if (isGL()) {
+            textFont(createDefaultFont(16));            
+            System.out.println("Processing.org enabled OpenGL");
+        }
+        
     }
     
     public float getNodeSize(final V v) {
@@ -429,19 +445,8 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     
     @Override
     public void setup() {
-        
-        //size(500,500,P3D);
-
         frameRate(FrameRate);
-
-        if (isGL()) {
-            textFont(createDefaultFont(16));
-            smooth();
-            System.out.println("Processing.org enabled OpenGL");
-        }
-
-        
-         
+        smooth();
     }
 
     public void drawGraph() {        
@@ -636,10 +641,6 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
     class Hsim {
 
         ArrayList obj = new ArrayList();
-
-        void Init() {
-            smooth();
-        }
 
         void mousePressed() {
             if (mouseButton == LEFT) {

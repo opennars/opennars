@@ -41,7 +41,7 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
 
     @Override
     public int getEdgeColor(Sentence e) {
-        float a = (float)(1.0f / graphExec.implication.getEdgeWeight(e));
+        float a = (float)graphExec.getSentenceRelevancy(e);
         if (a > 1.0f) a = 1.0f;
         if (a < 0f) a = 0f;
 
@@ -55,24 +55,24 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
     
     @Override
     public float getEdgeThickness(Sentence edge, VertexDisplay source, VertexDisplay target) {
-        float ar = (source.radius + target.radius)/2f;
-        float ww = (float)graphExec.implication.getEdgeWeight(edge);
+        
+        float ww = (float)graphExec.getSentenceRelevancy(edge);
         if (ww < 1.0f) ww = 1.0f;
-        ar = ar/ww;
+        
         
         if (maxSentenceActivation > 0) {
             Double A = graphExec.accumulatedSentence.get(edge);
             if (A!=null) {
                 double a = A / maxSentenceActivation;
-                ar += (float)a*ar;
+                ww += (float)a;
             }
         }
-        return ar;
+        return super.getEdgeThickness(edge, source, target) * ww;
     }
     
     @Override
     public float getNodeSize(final Term v) {        
-        return (0.5f + (float)GraphExecutive.getEffectivePriority(graphExec.memory, v)) * 10f;
+        return super.getNodeSize(v) * (float)GraphExecutive.getEffectivePriority(graphExec.memory, v);
     }
     
     @Override
@@ -80,7 +80,7 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,S
         if (o instanceof Interval) {
             return color(0.8f, 0.25f);
         }
-        return PGraphPanel.getColor(o.getClass());
+        return super.getNodeColor(o);
     }
             
     
