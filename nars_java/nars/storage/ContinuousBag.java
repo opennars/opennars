@@ -1,6 +1,7 @@
 package nars.storage;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -52,7 +53,15 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     public static class ContinuousBagSortedList<E extends Item> extends SortedItemList<E> {
             
         public ContinuousBagSortedList(int capacity) {
-            super(null,capacity);
+            super(new Comparator<E>() {
+
+                @Override public int compare(E o1, E o2) {
+                    //fast comparison because name table will already prevent duplicates?
+                    if (o1 == o2) return 0;
+                    return -1;
+                }
+                
+            },capacity);
         }
 
         @Override

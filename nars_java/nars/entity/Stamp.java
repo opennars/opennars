@@ -179,6 +179,9 @@ public class Stamp implements Cloneable {
         final long[] secondBase = second.evidentialBase;     
         int firstLength = firstBase.length;
         int secondLength = secondBase.length;
+
+        creationTime = time;
+        occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
         
         //calculate latency as the time difference between now and the last created of the 2 input stamps
         this.latency = time - Math.max(first.creationTime, second.creationTime);
@@ -199,7 +202,7 @@ public class Stamp implements Cloneable {
         i2 = chain2.size() - 1;
 
         //set here is for fast contains() checking
-        LinkedHashSet<Term> added = new LinkedHashSet<>(baseLength * 2); 
+        LinkedHashSet<Term> added = new LinkedHashSet<>(baseLength); 
         
         
         
@@ -232,8 +235,6 @@ public class Stamp implements Cloneable {
         Lists.reverse(derivationChain);
 
 
-        creationTime = time;
-        occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
     }
 
     /**

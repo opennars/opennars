@@ -1112,6 +1112,12 @@ public final class CompositionalRules {
             final int termsIndependent = terms_independent.size();
             for (int i = 0; i < termsIndependent; i++) {
                 Term result = terms_independent.get(i);
+
+                if (sEqualsP(result)) {
+                    //changed from return to continue to allow furhter processing
+                    continue;
+                }
+                
                 TruthValue truth = deduction(taskSentence.truth, truthSecond);
 
                 char mark = Symbols.JUDGMENT_MARK;
@@ -1125,10 +1131,6 @@ public final class CompositionalRules {
                         new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
-                if (sEqualsP(newSentence.content)) {
-                    //changed from return to continue to allow furhter processing
-                    continue;
-                }
 
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
@@ -1153,12 +1155,18 @@ public final class CompositionalRules {
         return unifiedAnything;
     }
 
-    private static void dedSecondLayerVariableUnificationTerms(NAL nal, Sentence taskSentence, Task task, Sentence second_belief, Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, final Sentence taskSentence, Task task, Sentence second_belief, final Stamp s, ArrayList<CompoundTerm> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
 
-        Stamp sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
+        Stamp sx = null;
 
         for (int i = 0; i < terms_dependent.size(); i++) {
             final CompoundTerm result = terms_dependent.get(i);
+
+            if (sEqualsP(result)) {
+                //changed this from return to continue, 
+                //to allow processing terms_dependent when it has > 1 items
+                continue;
+            }
 
             char mark = Symbols.JUDGMENT_MARK;
             if (task.sentence.isGoal() || second_belief.isGoal()) {
@@ -1170,15 +1178,12 @@ public final class CompositionalRules {
                 mark = Symbols.GOAL_MARK;
             }
 
+            if (sx == null)
+                sx = new Stamp(taskSentence.stamp, nal.getTime(), s);
+                        
             Sentence newSentence = new Sentence(result, mark, truth, sx);
             BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
 
-            //check this after compoundForward, seems the earliest it can exit loop
-            if (sEqualsP(newSentence.content)) {
-                //changed this from return to continue, 
-                //to allow processing terms_dependent when it has > 1 items
-                continue;
-            }
 
             Task newTask = new Task(newSentence, budget, task, null);
             Task dummy = new Task(second_belief, budget, task, null);

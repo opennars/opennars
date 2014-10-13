@@ -203,9 +203,8 @@ public class Concept extends Item {
                     task.budget.decPriority(0);    // duplicated task
                 }   // else: activated belief
                 return;
-            } else if (revisible(judg, oldBelief)) {
-                nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
-                if (nal.getTheNewStamp() != null) {
+            } else if (revisible(judg, oldBelief)) {               ;
+                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime())) != null) {
                     Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
                     if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
@@ -259,9 +258,8 @@ public class Concept extends Item {
                 return false;
             }
 
-            if (revisible(goal, oldGoal)) {
-                nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime()));
-                if (nal.getTheNewStamp() != null) {
+            if (revisible(goal, oldGoal)) {                
+                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime())) != null) {
                     revision(goal, oldGoal, false, nal);
                     revised = true;
                 }
@@ -579,7 +577,7 @@ public class Concept extends Item {
                 memory.getRecorder().append("Belief Select", belief.toString());
             }
 
-            nal.setTheNewStamp(make(taskStamp, belief.stamp, currentTime));
+            nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
