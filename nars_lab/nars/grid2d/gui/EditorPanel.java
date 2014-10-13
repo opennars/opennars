@@ -78,14 +78,14 @@ public class EditorPanel extends JPanel {
         mindSettings.add(new EditorMode("Allow imitation") {
             @Override
             public void run() {
-                Hauto.allow_subsymbolic_knowledge=true;
+                Hauto.allow_imitating=true;
             }
         });
         
         mindSettings.add(new EditorMode("Don't allow imitation") {
             @Override
             public void run() {
-                Hauto.allow_subsymbolic_knowledge=false;
+                Hauto.allow_imitating=false;
             }
         });
         
