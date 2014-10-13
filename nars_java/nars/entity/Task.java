@@ -300,7 +300,6 @@ public class Task extends AbstractTask {
 
     /** ends, indicating whether successful completion */
     public void end(boolean success) {
-        end();
         setPriority(0);
     }
     

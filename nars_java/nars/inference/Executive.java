@@ -251,6 +251,7 @@ public class Executive {
     
     
     public boolean addTask(final Concept c, final Task t) {        
+        
         TaskExecution existingExecutable = getExecution(t.parentTask);
         boolean valid = true;
         if (existingExecutable!=null) {
@@ -349,6 +350,8 @@ public class Executive {
         op.setTask(task);
                         
         oper.call(op, memory);        
+        
+        task.end(true);
         
     }   
         
@@ -527,12 +530,13 @@ public class Executive {
         }
 
         if (s == c.term.length) {
-            //end of task
-            //System.out.println("  Completed " + task);
+            //completed task
+            task.t.end(true);
             removeTask(task);
         }
         else {            
-            task.sequence = s;//update new value for next cycle
+            //still incomplete
+            task.sequence = s;
             task.setMotivationFactor(motivationToFinishCurrentExecution);
         }
     }

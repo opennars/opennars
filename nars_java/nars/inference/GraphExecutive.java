@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -158,12 +159,13 @@ public class GraphExecutive {
         private int pathFailNoOperation = 0;
         private int pathsValid = 0;
         private int numIterations = 0;
-        private final Term goal;
+        private final Term goal, goalPost;
         
 
-        public ParticleActivation(ImplicationGraph graph, final Term goal) {
-            this.graph = graph;            
+        public ParticleActivation(ImplicationGraph graph, final Term goal, final Term goalPost) {
+            this.graph = graph;
             this.goal = goal;
+            this.goalPost = goalPost;
         }
         
         public SortedSet<ParticlePath> activate(final boolean forward, int iterations, double distance) {
@@ -184,7 +186,7 @@ public class GraphExecutive {
 
                 double energy = distance;
 
-                Term currentVertex = goal;
+                Term currentVertex = goalPost;
 
                 boolean choicesAvailable = false;
                 boolean operationTraversed = false;
@@ -207,7 +209,7 @@ public class GraphExecutive {
                     for (final Cause s : graphEdges) {
                         Term etarget = forward ? s.effect : s.cause;
                         
-                        if ((avoidCycles) && (etarget == goal)) {
+                        if ((avoidCycles) && (etarget == goalPost)) {
                             edgeDecisionFailCyclical++;
                             continue;
                         }
@@ -275,7 +277,7 @@ public class GraphExecutive {
                 ParticlePath ppath = termPaths.get(currentVertex);
                 if (ppath == null) {                    
                     termPaths.put(currentVertex, 
-                            ppath = new ParticlePath(goal, currentPath, distance - energy));
+                            ppath = new ParticlePath(goalPost, currentPath, distance - energy));
                 }
                 else {
                     ppath.addPath(currentPath, distance - energy);
@@ -315,7 +317,7 @@ public class GraphExecutive {
             else        
                 conceptRelevancy = getEffectivePriority(memory, nextTerm);
 
-            double sentenceRelevancy = getSentenceRelevancy(s) + s.getRelevancy(goal);
+            double sentenceRelevancy = getSentenceRelevancy(s) + s.getRelevancy(goalPost);
 
             double c = edgeCostFactor / (m + sentenceRelevancy) + 
                         conceptCostFactor / (m + conceptRelevancy);
@@ -485,7 +487,8 @@ public class GraphExecutive {
                 }
             }
             truth = new TruthValue(1.0f, minConf);
-            budget = new BudgetValue(); //BudgetFunctions.forward(truth, nal);
+            budget = new BudgetValue(1.0f, Parameters.DEFAULT_GOAL_DURABILITY, 
+                    BudgetFunctions.truthToQuality(truth));
             budget.andPriority(minConf);
         }
 
@@ -523,7 +526,7 @@ public class GraphExecutive {
 
 
     protected void particlePredict(final Term source, final double distance, final int particles) {
-        ParticleActivation act = new ParticleActivation(implication, source);
+        ParticleActivation act = new ParticleActivation(implication, source, source);
         SortedSet<ParticlePath> paths = act.activate(true, particles, distance);
         if (!paths.isEmpty())
             System.out.println(source + " predicts: " + paths);
@@ -539,7 +542,7 @@ public class GraphExecutive {
             return null;
         }
         
-        ParticleActivation act = new ParticleActivation(implication, targetPost) {
+        ParticleActivation act = new ParticleActivation(implication, target, targetPost) {
             @Override public boolean validVertex(final Term x) {
                 //additional restriction on path's vertices
                 return !targetPost.equals(x);
@@ -716,15 +719,14 @@ public class GraphExecutive {
         
         if (punctuation == '.')        
             nal.derivedTask(newTask, false, true, null, null);        
-        if (punctuation == '!')
+        if (punctuation == '!') {
+            System.out.println("  exe plan: " + newTask);
             memory.executive.addTask(c, newTask);
+        }
         
     }
 
    protected void plan(final NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
-
-        if (!implication.containsVertex(target))
-            return;
 
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
         int n = 0;
