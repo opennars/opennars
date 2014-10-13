@@ -19,9 +19,9 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
 
     public int mode = 2;
 
-    boolean showBeliefs = true;
-    boolean showTermlinks = true;
-    boolean showTasklinks = true;
+    boolean showBeliefs = false;
+    boolean showTermlinks = false;
+    boolean showTasklinks = false;
     float spacing = 100f;
 
     

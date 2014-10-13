@@ -74,7 +74,7 @@ public class NARio extends Run {
         nar.param().duration.set(50);
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
-        nar.param().conceptForgetDurations.set(10);
+        nar.param().conceptForgetDurations.set(20);
         gameRate = 0.05;
 
         NARio nario = new NARio(nar);
