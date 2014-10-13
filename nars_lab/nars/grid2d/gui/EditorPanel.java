@@ -75,14 +75,14 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode mindSettings = new DefaultMutableTreeNode("Mind Settings");
         root.add(mindSettings);
         
-        mindSettings.add(new EditorMode("Allow subconscious knowledge") {
+        mindSettings.add(new EditorMode("Allow imitation") {
             @Override
             public void run() {
                 Hauto.allow_subsymbolic_knowledge=true;
             }
         });
         
-        mindSettings.add(new EditorMode("Don't use forcing actions with prioritizing") {
+        mindSettings.add(new EditorMode("Don't allow imitation") {
             @Override
             public void run() {
                 Hauto.allow_subsymbolic_knowledge=false;

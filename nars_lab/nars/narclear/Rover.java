@@ -464,7 +464,7 @@ public class Rover extends PhysicsModel {
     public static float rotationSpeed = 100f;
     public static float linearSpeed = 5000f;
                 
-    public static boolean allow_subcons=true;
+    public static boolean allow_imitate=true;
     
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
@@ -588,7 +588,7 @@ public class Rover extends PhysicsModel {
                 float linearSpeed = Rover.linearSpeed;
 
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if(!Rover.allow_subcons) {
+                    if(!Rover.allow_imitate) {
                         nar.addInput("(^motor,forward). :|:");
                     } else {
                         nar.addInput("(^motor,forward)! :|:");
@@ -596,7 +596,7 @@ public class Rover extends PhysicsModel {
                     rover.thrust(0, linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if(!Rover.allow_subcons) {
+                    if(!Rover.allow_imitate) {
                         nar.addInput("(^motor,backward). :|:");
                     } else {
                         nar.addInput("(^motor,backward)! :|:");
@@ -604,7 +604,7 @@ public class Rover extends PhysicsModel {
                     rover.thrust(0, -linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    if(!Rover.allow_subcons) {
+                    if(!Rover.allow_imitate) {
                         nar.addInput("(^motor,turn,left). :|:");
                     } else {
                         nar.addInput("(^motor,turn,left)! :|:");
@@ -612,7 +612,7 @@ public class Rover extends PhysicsModel {
                     rover.rotate(rotationSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    if(!Rover.allow_subcons) {
+                    if(!Rover.allow_imitate) {
                         nar.addInput("(^motor,turn,right). :|:");
                     } else {
                         nar.addInput("(^motor,turn,right)! :|:");
