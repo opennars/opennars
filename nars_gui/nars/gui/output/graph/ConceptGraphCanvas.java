@@ -35,6 +35,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
     //should just appear at the same position as the concept
     //lastTermVertex.visible = false;
     public ConceptGraphCanvas(NAR nar) {
+        super();
         this.nar = nar;        
     }
 
