@@ -100,9 +100,16 @@ public class NWindow extends JFrame {
         
     }
     
+    
     public void show(int w, int h) {
         setSize(w, h);
         setVisible(true);
+    }
+    
+    public void show(int w, int h, boolean exitOnClose) {
+        show(w, h);
+        if (exitOnClose)
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);                
     }
 
 }
