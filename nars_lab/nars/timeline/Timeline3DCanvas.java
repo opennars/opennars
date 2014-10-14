@@ -14,10 +14,10 @@ import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
-import nars.util.InferenceTrace;
-import nars.util.InferenceTrace.InferenceEvent;
-import nars.util.InferenceTrace.OutputEvent;
-import nars.util.InferenceTrace.TaskEvent;
+import nars.util.NARTrace;
+import nars.util.NARTrace.InferenceEvent;
+import nars.util.NARTrace.OutputEvent;
+import nars.util.NARTrace.TaskEvent;
 import org.jbox2d.common.MathUtils;
 import processing.core.PApplet;
 
@@ -43,7 +43,7 @@ public class Timeline3DCanvas extends PApplet {
     private float lastMousePressY = Float.NaN;
     private float lastMousePressX = Float.NaN;
 
-    private final InferenceTrace trace;
+    private final NARTrace trace;
 
     //private UndirectedGraph<EventPoint,Integer> influence = null;
     //private int nextEdgeID;
@@ -79,7 +79,7 @@ public class Timeline3DCanvas extends PApplet {
     
     public static void main(String[] args) {
         NAR nar = new DefaultNARBuilder().build();
-        InferenceTrace it = new InferenceTrace(nar);
+        NARTrace it = new NARTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
         nar.addInput("<(^pick,x) =\\> a>.");
@@ -94,7 +94,7 @@ public class Timeline3DCanvas extends PApplet {
         n.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    public Timeline3DCanvas(InferenceTrace trace, int w, int h) {
+    public Timeline3DCanvas(NARTrace trace, int w, int h) {
         super();
         this.trace = trace;
         this.initialWidth = w;

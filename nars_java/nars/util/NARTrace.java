@@ -21,7 +21,7 @@ import nars.io.Output;
 /**
  * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
  */
-public class InferenceTrace implements InferenceRecorder, Output, Serializable {
+public class NARTrace implements InferenceRecorder, Output, Serializable {
 
     /**
      * utility method for diagnosing stack overflow errors caused by unbounded
@@ -150,7 +150,7 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
         }
     }
 
-    public InferenceTrace(NAR n) {
+    public NARTrace(NAR n) {
         super();
         n.addOutput(this);
         n.memory.setRecorder(this);
