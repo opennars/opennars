@@ -632,7 +632,6 @@ public class Rover extends PhysicsModel {
         nar.param().decisionThreshold.set(0.1);
         nar.start(frameTimeMS, cyclesPerFrame);
         nar.param().noiseLevel.set(0);
-        Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY=0.0; //cause we have more input events here than usual
 
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
