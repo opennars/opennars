@@ -21,7 +21,7 @@ import nars.util.NARTrace.TaskEvent;
 import org.jbox2d.common.MathUtils;
 import processing.core.PApplet;
 
-/** Timeline view of an inference trace.  Focuses on a specific window and certain features which
+/** NOT READY YET Timeline view of an inference trace.  Focuses on a specific window and certain features which
  can be adjusted dynamically. Can either analyze a trace while a NAR runs, or after it finishes. */
 public class Timeline3DCanvas extends PApplet {
 
