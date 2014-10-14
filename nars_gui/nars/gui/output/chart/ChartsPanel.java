@@ -31,7 +31,7 @@ public class ChartsPanel extends NCanvas {
     //private final int chartType;
     private boolean autoRanging = true;
     private final DataSet data;
-    final Map<String, TimeSeriesChart> charts = new TreeMap();
+    final Map<String, TimeSeries> charts = new TreeMap();
     
     public static final Font monofontLarge = NARSwing.monofont.deriveFont(Font.PLAIN, 18f);
     public static final Font monofontSmall = NARSwing.monofont.deriveFont(Font.PLAIN, 13f);
@@ -128,10 +128,10 @@ public class ChartsPanel extends NCanvas {
         super.paint(g);
     }
     
-    protected TimeSeriesChart addChart(final String f) {
+    protected TimeSeries addChart(final String f) {
         //int chartType = TimeSeriesChart.AREA;
 
-        TimeSeriesChart ch = new TimeSeriesChart(f, NARSwing.getColor(f, 0.7f, 0.7f), historySize);
+        TimeSeries ch = new TimeSeries(f, NARSwing.getColor(f, 0.7f, 0.7f), historySize);
         charts.put(f, ch);
         
         
@@ -140,9 +140,9 @@ public class ChartsPanel extends NCanvas {
     
     
     public void updateData(long t) {
-        for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
+        for (Map.Entry<String, TimeSeries> e : charts.entrySet()) {
             String f = e.getKey();            
-            TimeSeriesChart ch = e.getValue();
+            TimeSeries ch = e.getValue();
             Object value = data.get(f);
 
             if (value instanceof Double) {                    
@@ -205,7 +205,7 @@ public class ChartsPanel extends NCanvas {
         xPoints[0] = xPoints[1];
         xPoints[xPoints.length-1] = xPoints[xPoints.length-2] = 0;
         
-        for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
+        for (Map.Entry<String, TimeSeries> e : charts.entrySet()) {
             
             if (y + h < 0) {
                 y+=h;
@@ -213,7 +213,7 @@ public class ChartsPanel extends NCanvas {
             }
 
             String f = e.getKey();            
-            TimeSeriesChart ch = e.getValue();
+            TimeSeries ch = e.getValue();
                         
             if (ch==null) {
                 ch = addChart(f);            

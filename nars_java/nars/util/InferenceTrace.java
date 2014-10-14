@@ -14,7 +14,7 @@ import nars.core.sense.MultiSense;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
-import nars.gui.output.chart.TimeSeriesChart;
+import nars.gui.output.chart.TimeSeries;
 import nars.inference.InferenceRecorder;
 import nars.io.Output;
 
@@ -45,7 +45,7 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
     
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
-    public final Map<String, TimeSeriesChart> charts = new TreeMap();
+    public final Map<String, TimeSeries> charts = new TreeMap();
 
     private long t;
     transient private boolean active = true;
@@ -163,7 +163,7 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
         senses.update(memory);        
         
         for (String x : senses.keySet()) {
-            TimeSeriesChart ch = new TimeSeriesChart(x, NARSwing.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
+            TimeSeries ch = new TimeSeries(x, NARSwing.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
             charts.put(x, ch);            
         }
         
@@ -219,9 +219,9 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
     public void onCycleEnd(long time) {
         senses.update(nar.memory);
         
-        for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
+        for (Map.Entry<String, TimeSeries> e : charts.entrySet()) {
             String f = e.getKey();            
-            TimeSeriesChart ch = e.getValue();
+            TimeSeries ch = e.getValue();
             Object value = senses.get(f);
             
             if (value instanceof Double) {                    

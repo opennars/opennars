@@ -1,11 +1,12 @@
 package nars.gui.output.chart;
 
 import java.awt.Color;
+import nars.gui.NARSwing;
 
 /**
  * Used by Chart, a chart data set is a container to store chart data.
  */
-public class TimeSeriesChart  {
+public class TimeSeries  {
 
         final float[] values;
 	protected Color colour;
@@ -13,12 +14,12 @@ public class TimeSeriesChart  {
 	//protected int[] colors = new int[0];
 
         boolean resetRangeEachCycle = true;
-	protected final String label;
+	public final String label;
         private final int historySize;
         float min, max;
         long lastT = -1;
 
-	public TimeSeriesChart(String theName, Color color, int historySize) {
+	public TimeSeries(String theName, Color color, int historySize) {
 		label = theName;
 		colour = color;
                 this.historySize = historySize;
@@ -85,7 +86,42 @@ public class TimeSeriesChart  {
         return values[(int)(lastT - t)];
     }
 
+    public void updateMinMax(long cycleStart, long cycleEnd) {
+    }
         
+    public static class FirstOrderDifferenceTimeSeries extends TimeSeries {
+        public final TimeSeries data;
+
+        public FirstOrderDifferenceTimeSeries(String name, TimeSeries s) {
+            super(name, NARSwing.getColor(name, 0.8f,0.8f), 1);
+            this.data = s;
+        }
+
+        @Override
+        public float getValue(final long t) {
+            float prev = data.getValue(t-1);
+            if (Float.isNaN(prev)) return 0;
+            
+            float cur = data.getValue(t);
+            if (Float.isNaN(cur)) return 0;
+            
+            return cur - prev;
+        }
+
+        
+        @Override
+        public void updateMinMax(long cycleStart, long cycleEnd) {
+            min = max = getValue(cycleStart);
+            for (long i = cycleStart + 1; i < cycleEnd; i++) {
+                float v = getValue(i);
+                if (v < min) min = v;
+                if (v > max) max = v;
+            }
+                
+        }
+        
+    }
+    
 }
 //
 ///**
