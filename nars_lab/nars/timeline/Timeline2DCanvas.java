@@ -6,17 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
-import javax.swing.JFrame;
-import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
 import nars.entity.Item;
 import nars.gui.NARSwing;
-import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
@@ -25,7 +20,6 @@ import nars.util.NARTrace;
 import nars.util.NARTrace.InferenceEvent;
 import nars.util.NARTrace.OutputEvent;
 import nars.util.NARTrace.TaskEvent;
-import org.ejml.interfaces.linsol.ReducedRowEchelonForm;
 import processing.core.PApplet;
 import static processing.core.PConstants.SQUARE;
 import processing.event.KeyEvent;
@@ -38,13 +32,13 @@ import processing.event.KeyEvent;
 public class Timeline2DCanvas extends PApplet {
 
     float camScale = 1f;
-    float scaleSpeed = 0.1f;
+    float scaleSpeed = 0.2f;
     private float lastMousePressY = Float.NaN;
     private float lastMousePressX = Float.NaN;
 
     boolean updating = true;
 
-    float minLabelScale = 5f;
+    float minLabelScale = 10f;
     float minYScale = 0.5f;
     float minTimeScale = 0.5f;
     float drawnTextScale = 0;
@@ -388,7 +382,7 @@ public class Timeline2DCanvas extends PApplet {
 
 
             l.noStroke();
-            l.textSize(l.drawnTextScale * 0.25f);
+            l.textSize(l.drawnTextScale);
 
             //something not quite right about this
             long maxItemsPerCycle = timepoints.values().stream().map(x -> x.stream().filter(e -> include(e)).count()).max(Long::compare).get();
@@ -608,8 +602,11 @@ public class Timeline2DCanvas extends PApplet {
                 } else if (mouseButton == 39) {
                     //right mouse button
                     float sx = dx * scaleSpeed;
-                    float sy = dy * scaleSpeed;
-                                        
+                    float sy = dy * scaleSpeed;         
+                    
+                    camX += sx * camX / timeScale;
+                    camY += sy * camY / yScale;
+                    
                     timeScale += sx;
                     yScale += sy;
 
@@ -627,30 +624,19 @@ public class Timeline2DCanvas extends PApplet {
         } else {
             lastMousePressX = Float.NaN;
         }
-
-        if (yScale < minYScale) {
-            yScale = minYScale;
-        }
-        if (timeScale < minTimeScale) {
-            timeScale = minTimeScale;
-        }
+        
+        
+        if (yScale < minYScale) yScale = minYScale;
+        if (timeScale < minTimeScale)  timeScale = minTimeScale;
 
         translate(-camX + width / 2, -camY + height / 2);
-
-        if (camScale != 1.0) {
-            if (camScale > 100f) {
-                camScale = 100f;
-            }
-            if (camScale < 0.1f) {
-                camScale = 0.1f;
-            }
-            scale(camScale);
-        }
 
         cycleStart = (int) (Math.floor((camX - width / 2) / timeScale) - 1);
         cycleStart = Math.max(0, cycleStart);
         cycleEnd = (int) (Math.ceil((camX + width / 2) / timeScale) + 1);
 
+        if (cycleEnd < cycleStart) cycleEnd = cycleStart;
+        
         drawnTextScale = Math.min(yScale, timeScale) * textScale;
 
     }
