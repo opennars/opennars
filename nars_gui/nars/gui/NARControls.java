@@ -447,7 +447,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
                 senses.update(memory);
                 
-                chart.updateData();
+                chart.updateData(memory.getTime());
                                 
                 speedSlider.repaint();
                 

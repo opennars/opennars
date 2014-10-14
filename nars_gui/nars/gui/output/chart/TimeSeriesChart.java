@@ -16,6 +16,7 @@ public class TimeSeriesChart  {
 	protected final String label;
         private final int historySize;
         float min, max;
+        long lastT = -1;
 
 	public TimeSeriesChart(String theName, Color color, int historySize) {
 		label = theName;
@@ -52,7 +53,7 @@ public class TimeSeriesChart  {
 
         }
         
-        public void push(final float f) {
+        public void push(final long t, final float f) {
             //System.arraycopy(values, 0, values, 1, historySize-1);
             if (resetRangeEachCycle)
                 min = max = f;
@@ -67,6 +68,7 @@ public class TimeSeriesChart  {
             }
             
             values[0] = f;
+            lastT = t;
         }
 
         public float getMin() {
@@ -76,6 +78,12 @@ public class TimeSeriesChart  {
         public float getMax() {
             return max;
         }
+
+    public float getValue(long t) {
+        if (t < lastT - historySize) return Float.NaN;
+        if (t > lastT) return Float.NaN;
+        return values[(int)(lastT - t)];
+    }
 
         
 }

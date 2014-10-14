@@ -23,30 +23,43 @@ import nars.util.InferenceTrace.OutputEvent;
 import nars.util.InferenceTrace.TaskEvent;
 import org.jbox2d.common.MathUtils;
 import processing.core.PApplet;
+import processing.event.KeyEvent;
 
 /** Timeline view of an inference trace.  Focuses on a specific window and certain features which
  can be adjusted dynamically. Can either analyze a trace while a NAR runs, or after it finishes. */
 public class Timeline2DCanvas extends PApplet {
 
-    float frameRate = 20f;
 
+    float camScale = 1f;
+    float scaleSpeed = 0.1f;
+    private float lastMousePressY = Float.NaN;
+    private float lastMousePressX = Float.NaN;
+
+    private final InferenceTrace trace;
+    //float dScale = 0.6f;
+
+    boolean updating = true;
+
+    float minLabelScale = 2f;
+    float minYScale = 0.5f;
+    float minTimeScale = 0.5f;
+    float drawnTextScale = 0;
+    
+    
+    //display options
+    boolean showEventLabels = true;
+    float textScale = 0.1f;
+    float timeScale = 32f;
+    float yScale = 32f;
+    final Map<String, TimeSeriesChart> charts = new TreeMap();
     long cycleStart = 0;
     long cycleEnd = 45;
     
     float camX = 0f;
     float camY = 0f;
-    float camScale = 8f;
-    private float lastMousePressY = Float.NaN;
-    private float lastMousePressX = Float.NaN;
-
-    private final InferenceTrace trace;
-    float dScale = 0.6f;
-
-    final Map<String, TimeSeriesChart> charts = new TreeMap();
-    float timeScale = 32f;
-    boolean updating = true;
     
 
+    
     /**
      * Modes:
      *      Line
@@ -90,8 +103,6 @@ public class Timeline2DCanvas extends PApplet {
     
     public List<Chart> chartsEnabled = new ArrayList();
     
-    private boolean updated = false;
-
     public static class EventPoint<X> {
         public float x, y, z;
         public final X value;
@@ -156,8 +167,6 @@ public class Timeline2DCanvas extends PApplet {
     
     @Override
     public void setup() {
-        
-        frameRate(frameRate);
         colorMode(HSB);
     }
 
@@ -167,31 +176,32 @@ public class Timeline2DCanvas extends PApplet {
         updateNext();
     }
 
- 
-    
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-        updateNext();
-    }
-
     
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
-        int wr = e.getWheelRotation();
-        camScale += wr * dScale;   
+        /*int wr = e.getWheelRotation();
+        camScale += wr * dScale;
         if (wr != 0)
-            updateNext();
+            updateNext();*/
     }
 
+    @Override
+    public void keyPressed(KeyEvent event) {
+        super.keyPressed(event);
+        if (event.getKey() == 'l') { 
+            showEventLabels = !showEventLabels;
+            updateNext();
+        }
+            
+    }
+
+
+    
     
     protected void updateCamera() {
         
         //scale limits
-        if (camScale > 100f) camScale = 100f;
-        if (camScale < 0.1f) camScale = 0.1f;
-
         
         if (mouseButton > 0) {
             if (Float.isFinite(lastMousePressX)) {
@@ -206,11 +216,12 @@ public class Timeline2DCanvas extends PApplet {
                         updateNext();
                     }
                 }
-//                else if (mouseButton == 39) {
-//                    //right mouse button
-//                    rotY -= dx * rotSpeed;
-//                    rotX -= dy * rotSpeed;
-//                }
+                else if (mouseButton == 39) {
+                    //right mouse button
+                    yScale += dy * scaleSpeed;
+                    timeScale += dx * scaleSpeed;
+                    updateNext();
+                }
 //                else if (mouseButton == 3) {
 //                    //middle mouse button (wheel)
 //                    rotZ -= dx * rotSpeed;
@@ -224,12 +235,28 @@ public class Timeline2DCanvas extends PApplet {
         else {
             lastMousePressX = Float.NaN;
         }
-        
+
+        if (yScale < minYScale) yScale = minYScale;
+        if (timeScale < minTimeScale) timeScale = minTimeScale;
+
 
         translate(-camX + width/2, -camY + height/2);
+        
 
-        scale(camScale);
+        if (camScale!=1.0) {
+            if (camScale > 100f) camScale = 100f;
+            if (camScale < 0.1f) camScale = 0.1f;
+            scale(camScale);
+        }
+        
 
+        cycleStart = (int)(Math.floor((camX - width/2)/timeScale)-1);
+        cycleStart = Math.max(0, cycleStart);
+        cycleEnd = (int)(Math.ceil((camX + width/2)/timeScale)+1);
+        
+
+        
+        drawnTextScale = Math.min(yScale,timeScale) * textScale;
 
     }
     
@@ -250,180 +277,157 @@ public class Timeline2DCanvas extends PApplet {
         
 
 
-        if (!updated) {
-            lastSubjectEvent.clear();
-            events.clear();            
-        }
+        lastSubjectEvent.clear();
+        events.clear();            
+
+        drawEvents();
         
+        
+        float y = -yScale;        
+        float yMargin = yScale*0.1f;
+        for (Chart c : chartsEnabled) {
+            float h = c.height * yScale;
+            drawChart(c, y, timeScale, yScale);
+            y -=(h+yMargin);
+        }
+  
+    }
+
+    protected void drawChart(Chart c, float y, float timeScale, float yScale) {
+                
+        yScale = yScale * c.height;
+        
+
+
+        double min = Double.NaN, max = 0;
+        for (String cc : c.sensors) {
+            TimeSeriesChart chart = trace.charts.get(cc);
+
+            if (Double.isNaN(min)) {
+                min = (chart.getMin());
+                max = (chart.getMax());
+            }
+            else {
+                min = Math.min(min, chart.getMin());
+                max = Math.max(max, chart.getMax());
+            }                                
+        }
+
+        stroke(127);
+        strokeWeight(0.5f);
+
+        //bottom line
+        line(cycleStart * timeScale, y, cycleEnd * timeScale, y);
+
+        //top line
+        line(cycleStart * timeScale, y-yScale, cycleEnd * timeScale, y-yScale);
+
+
+        float screenyHi = screenY(cycleStart*timeScale, y-yScale);
+        float screenyLo = screenY(cycleStart*timeScale, y);
+
+        int ccolor = 0;
+
+        for (String cc : c.sensors) {
+            TimeSeriesChart chart = trace.charts.get(cc);
+
+            ccolor = chart.getColor().getRGB();
+
+            float lx=0, ly=0;
+
+            strokeWeight(1f);            
+
+
+            fill(255f);
+           
+            for (long t = cycleStart; t < cycleEnd; t++) {
+                float x = t * timeScale;
+
+
+                float v = chart.getValue(t);
+                if (Float.isNaN(v)) continue;
+
+                float p = (max == min) ? 0 : (float)((v - min) / (max - min));
+
+
+                float px = x;
+                float h = p*yScale;
+                float py = y - h;
+
+                if (c.showVerticalLines) {
+                    stroke(ccolor, 127f);
+                    line(px, py, px, py+h);
+                }
+
+                stroke(ccolor);
+                if (t!=cycleStart) {
+                    line(lx, ly, px, py);
+                }
+
+                lx = px;
+                ly = py;
+
+            }
+        }                   
+
+        //draw overlay
+        pushMatrix();
+        resetMatrix();
+        textSize(15f);
+
+        int dsy = (int) Math.abs(screenyLo - screenyHi);
+
+        float dsyt = screenyHi + 0.15f * dsy;
+        float ytspace = dsy * 0.75f / c.sensors.size() / 2;
+        for (String cs : c.sensors) {
+            fill(trace.charts.get(cs).getColor().getRGB());
+            dsyt += ytspace;
+            text(cs, 0, dsyt);
+            dsyt += ytspace;
+        }
+
+        textSize(11f);
+        fill(200, 195f);
+        text(Texts.n4((float)min), 0, screenyLo-dsy/10f);
+        text(Texts.n4((float)max), 0, screenyHi+dsy/10f);
+
+        popMatrix();
+
+
+
+        
+    }
+
+    protected void drawEvents() {
         noStroke();
-        
         TreeMap<Long, List<InferenceEvent>> time = trace.time;
+        
         for (Map.Entry<Long, List<InferenceEvent>> e : time.subMap(cycleStart, cycleEnd).entrySet()) {
-            long t = e.getKey();
+            long t = e.getKey();                        
             List<InferenceEvent> v = e.getValue();            
-            plot(t, v, timeScale);
+            drawEvent(t, v, 0);
         }
         
         
-        
+        strokeCap(SQUARE);        
+        strokeWeight(0.75f);
         for (EventPoint<Object> to : events.values()) {
             for (EventPoint<Object> from : to.incoming) {                
                 stroke(256f * NARSwing.hashFloat(to.subject.hashCode()), 100f, 200f, 127);
-                line(from.x, from.y, to.x, to.y);
+                line(timeScale * from.x, yScale * from.y, timeScale * to.x, yScale * to.y);
             }                
         }
-
-        
-        strokeCap(SQUARE);        
-        stroke(190f, 120f);
-        strokeWeight(1f);
-        
-        drawCharts(timeScale);
-
-        
-        
-        if (!updated) {
-            
-            /*
-            for (Map.Entry<Object, EventPoint> e : lastSubjectEvent.entrySet()) {
-                System.out.println(e);
-            }
-            System.out.println("Edges: "+ influence.edgeSet().size() + ", Vertices: " + influence.vertexSet().size());
-            */
-            
-            
-            
-            updated = true;
-        }
-        
-        
-    }
-
-    protected void drawCharts(float timeScale) {
-        
-        
-        float y = -timeScale;
-        
-        
-        for (Chart c : chartsEnabled) {
-            float yScale = timeScale * c.height;
-            float yMargin = timeScale*0.1f;
-
-    
-            double min = Double.NaN, max = 0;
-            for (String cc : c.sensors) {
-                TimeSeriesChart chart = trace.charts.get(cc);
-
-                if (Double.isNaN(min)) {
-                    min = (chart.getMin());
-                    max = (chart.getMax());
-                }
-                else {
-                    min = Math.min(min, chart.getMin());
-                    max = Math.max(max, chart.getMax());
-                }                                
-            }
-
-            stroke(127);
-            strokeWeight(0.5f);
-            
-            //bottom line
-            line(cycleStart * timeScale, y, cycleEnd * timeScale, y);
-
-            //top line
-            line(cycleStart * timeScale, y-yScale, cycleEnd * timeScale, y-yScale);
-            
-            
-            float screenyHi = screenY(cycleStart*timeScale, y-yScale);
-            float screenyLo = screenY(cycleStart*timeScale, y);
-            
-            int ccolor = 0;
-            
-            for (String cc : c.sensors) {
-                TimeSeriesChart chart = trace.charts.get(cc);
-
-                ccolor = chart.getColor().getRGB();
-
-                float lx=0, ly=0;
-
-                strokeWeight(1f);            
-
-
-                fill(255f);
-
-
-                float[] cv = chart.getValues();
-                int tt = (int)Math.min((cycleEnd-cycleStart),cv.length)-1;
-                for (long t = cycleStart; t < cycleEnd; t++) {
-                    float x = t * timeScale;
-
-
-                    float v = cv[tt--];
-
-                    float p = (max == min) ? 0 : (float)((v - min) / (max - min));
-
-
-                    float px = x;
-                    float h = p*yScale;
-                    float py = y - h;
-
-                    if (c.showVerticalLines) {
-                        stroke(ccolor, 127f);
-                        line(px, py, px, py+h);
-                    }
-
-                    stroke(ccolor);
-                    if (t!=cycleStart) {
-                        line(lx, ly, px, py);
-                    }
-
-                    lx = px;
-                    ly = py;
-
-                }
-            }                   
-            
-            //draw overlay
-            pushMatrix();
-            resetMatrix();
-            textSize(15f);
-            
-            int dsy = (int) Math.abs(screenyLo - screenyHi);
-            
-            float dsyt = screenyHi + 0.15f * dsy;
-            float ytspace = dsy * 0.75f / c.sensors.size() / 2;
-            for (String cs : c.sensors) {
-                fill(trace.charts.get(cs).getColor().getRGB());
-                dsyt += ytspace;
-                text(cs, 0, dsyt);
-                dsyt += ytspace;
-            }
-            
-            textSize(11f);
-            fill(200, 195f);
-            text(Texts.n4((float)min), 0, screenyLo-dsy/10f);
-            text(Texts.n4((float)max), 0, screenyHi+dsy/10f);
-            
-            popMatrix();
-        
-            y -=(yScale+yMargin);
-
-        }
         
     }
     
-    
-    private void plot(long t, List<InferenceEvent> v, float timeScale) {
+    private void drawEvent(long t, List<InferenceEvent> v, float y) {
         
         
-        float itemScale = timeScale*0.5f;
-        
-        float yScale = itemScale;
+        float itemScale = Math.min(timeScale,yScale)*0.5f;
         
         
         
-        float y = 0;
-        float x = t * timeScale;
+        float x = t;
         for (InferenceEvent i : v) {            
             
             //box(2);
@@ -464,19 +468,19 @@ public class Timeline2DCanvas extends PApplet {
 
                 
                 if (te.channel.equals(IN.class)) {
-                    pushMatrix();
-                    translate(x, y);
-                    rotate(0.65f); //angled diagonally down and to the right                    
-                    triangleHorizontal(i, te.signal, ph*itemScale, 0, 0, 0, 1.0f);                    
-                    popMatrix();
+                    /*pushMatrix();
+                    translate(x*timeScale, y*yScale);
+                    rotate(0.65f); //angled diagonally down and to the right                    */
+                    triangleHorizontal(i, te.signal, ph*itemScale, x, y, 0, 1.0f);                    
+                    //popMatrix();
                 }
                 else if (te.channel.equals(OUT.class)) {
                     //TODO use faster triangleVertical function instead of push and rotate
-                    pushMatrix();
-                    translate(x, y);
-                    rotate(MathUtils.HALF_PI); //angled diagonally down and to the right                   
-                    triangleHorizontal(i, te.signal, ph*itemScale, 0, 0, 0, 1.0f);                    
-                    popMatrix();
+                    /*pushMatrix();
+                    translate(x*timeScale, y*yScale);
+                    rotate(MathUtils.HALF_PI); //angled diagonally down and to the right                   */
+                    triangleHorizontal(i, te.signal, ph*itemScale, x, y, 0, 1.0f);                    
+                    //popMatrix();
                 }
                 /*else if exe... {
                     
@@ -490,16 +494,18 @@ public class Timeline2DCanvas extends PApplet {
                 rect(i, null, 0.75f * itemScale, x, y);
             }
 
-            x += timeScale / v.size();
-            y += yScale;
+            x += 1.0 / v.size();
+            y += 1;
         }
         
             
     }
 
     protected void rect(Object event, Object subject, float r, float x, float y/*, float z*/) {
+        float px = x*timeScale;
+        float py = y*yScale;
         rect(
-                x + -r/2f,  y + -r/2f, 
+                px + -r/2f,  py + -r/2f, 
                 r,   r
         );
         
@@ -507,21 +513,24 @@ public class Timeline2DCanvas extends PApplet {
     }
     
     protected void label(Object event, Object subject, float r, float x, float y) {
-        fill(255f);
-        textSize(1f);
-        text(event.toString(), x-r/2, y);
-        if (!updated) {
-            setEventPoint(event, subject, x, y, 0);
+        if ((showEventLabels) && (yScale > minLabelScale) && (timeScale > minLabelScale)) {
+            fill(255f);            
+            textSize(drawnTextScale);
+            text(event.toString(), timeScale*x-r/2, yScale*y);
         }
+        
+        setEventPoint(event, subject, x, y, 0);
     }
     
     
-    protected void triangleHorizontal(Object event, Object subject, float r, float x, float y, float z, float direction) {
-        translate(0,0);
+    protected void triangleHorizontal(Object event, Object subject, float r, float x, float y, float z, float direction) {        
+        float px = x*timeScale;
+        float py = y*yScale;
+        
         triangle(
-                x + direction * -r/2,   y + direction * -r/2, 
-                x + direction * r/2,    y + 0, 
-                x + direction * -r/2,   y + direction * r/2
+                px + direction * -r/2,   py + direction * -r/2, 
+                px + direction * r/2,    py + 0, 
+                px + direction * -r/2,   py + direction * r/2
         );
         label(event, subject, r, x, y);
     }
