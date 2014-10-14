@@ -139,23 +139,23 @@ public class ChartsPanel extends NCanvas {
     }
     
     
-    public void updateData() {
+    public void updateData(long t) {
         for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
             String f = e.getKey();            
             TimeSeriesChart ch = e.getValue();
             Object value = data.get(f);
 
             if (value instanceof Double) {                    
-                ch.push(((Number) value).floatValue());
+                ch.push(t, ((Number) value).floatValue());
             }
             else if (value instanceof Float) {
-                ch.push(((Number) value).floatValue());
+                ch.push(t, ((Number) value).floatValue());
             }
             else if (value instanceof Integer) {
-                ch.push(((Number) value).floatValue());
+                ch.push(t, ((Number) value).floatValue());
             }
             else if (value instanceof Long) {
-                ch.push(((Number) value).floatValue());
+                ch.push(t, ((Number) value).floatValue());
             }            
         }
     }

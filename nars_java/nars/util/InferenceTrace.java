@@ -216,7 +216,7 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
     }
 
     @Override
-    public void onCycleEnd(long clock) {
+    public void onCycleEnd(long time) {
         senses.update(nar.memory);
         
         for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
@@ -225,16 +225,16 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
             Object value = senses.get(f);
             
             if (value instanceof Double) {                    
-                ch.push(((Number) value).floatValue());
+                ch.push(time, ((Number) value).floatValue());
             }
             else if (value instanceof Float) {
-                ch.push(((Number) value).floatValue());
+                ch.push(time, ((Number) value).floatValue());
             }
             else if (value instanceof Integer) {
-                ch.push(((Number) value).floatValue());
+                ch.push(time, ((Number) value).floatValue());
             }
             else if (value instanceof Long) {
-                ch.push(((Number) value).floatValue());
+                ch.push(time, ((Number) value).floatValue());
             }            
         }        
     }
