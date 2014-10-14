@@ -5,7 +5,7 @@ import java.awt.Color;
 /**
  * Used by Chart, a chart data set is a container to store chart data.
  */
-class TimeSeriesChart  {
+public class TimeSeriesChart  {
 
         final float[] values;
 	protected Color colour;
@@ -69,6 +69,15 @@ class TimeSeriesChart  {
             values[0] = f;
         }
 
+        public float getMin() {
+            return min;
+        }
+
+        public float getMax() {
+            return max;
+        }
+
+        
 }
 //
 ///**
