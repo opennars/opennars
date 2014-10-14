@@ -36,7 +36,7 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static double TEMPORAL_INDUCTION_MIN_PRIORITY=0.5;
+    public static double TEMPORAL_INDUCTION_MIN_PRIORITY=0.0;
     
     public static boolean TEMPORAL_PARTICLE_PLANNER=true;
     
