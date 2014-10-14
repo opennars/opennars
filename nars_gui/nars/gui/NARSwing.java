@@ -236,10 +236,11 @@ public class NARSwing  {
 //    }
 
     public final static float hashFloat(final int h) {
-        return ((float)h) / ((float)Integer.MAX_VALUE);
+        return ((float)h) / (((float)Integer.MAX_VALUE) - ((float)Integer.MIN_VALUE));
+        //return ((float)(h%256)) / (256.0f);
     }
 
-    public final static Color getColor(final String s, float saturation, float brightness) {            
+    public final static Color getColor(final String s, final float saturation, final float brightness) {            
         float hue = hashFloat(s.hashCode());
         return Color.getHSBColor(hue, saturation, brightness);
     }

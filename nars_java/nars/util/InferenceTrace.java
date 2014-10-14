@@ -163,7 +163,7 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
         senses.update(memory);        
         
         for (String x : senses.keySet()) {
-            TimeSeriesChart ch = new TimeSeriesChart(x, NARSwing.getColor(x, 0.8f, 0.8f), chartHistorySize);
+            TimeSeriesChart ch = new TimeSeriesChart(x, NARSwing.getColor(x+"_EsfDF_SDF_SD", 0.8f, 0.8f), chartHistorySize);
             charts.put(x, ch);            
         }
         
