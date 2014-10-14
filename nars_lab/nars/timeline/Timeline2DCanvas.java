@@ -1,12 +1,11 @@
 package nars.timeline;
 
+import com.google.common.collect.Lists;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import javax.swing.JFrame;
 import nars.core.NAR;
@@ -45,7 +44,43 @@ public class Timeline2DCanvas extends PApplet {
 
     final Map<String, TimeSeriesChart> charts = new TreeMap();
     float timeScale = 32f;
+    boolean updating = true;
     
+
+    /**
+     * Modes:
+     *      Line
+     *      Line with vertical pole to base
+     *      Stacked bar
+     *      Stacked bar normalized each step
+     *      Scatter
+     *      Spectral
+     *      Event Bubble
+     * 
+     */
+    public static class Chart {
+        private final List<String> sensors;
+        private float height = 1.0f;
+        boolean showVerticalLines = true;
+
+        public Chart(String... sensors) {
+            this(Lists.newArrayList(sensors), 1f);
+        }
+        
+        public Chart(List<String> sensors, float height) {
+            this.sensors = sensors;
+            this.height = height;
+            showVerticalLines = sensors.size() == 1;
+        }
+
+        private Chart height(float h) {
+            this.height = h;
+            return this;
+        }
+        
+        
+        
+    }
     
     //stores the previous "representative event" for an object as the visualization is updated each time step
     public Map<Object,EventPoint> lastSubjectEvent = new HashMap();
@@ -53,19 +88,21 @@ public class Timeline2DCanvas extends PApplet {
     //all events mapped to their visualized feature
     public Map<Object,EventPoint> events = new HashMap();
     
-    public Set<String> chartsEnabled = new HashSet();
+    public List<Chart> chartsEnabled = new ArrayList();
     
     private boolean updated = false;
 
     public static class EventPoint<X> {
         public float x, y, z;
-        public X value;
-        public List<EventPoint<X>> incoming = new ArrayList<>();
+        public final X value;
+        public final List<EventPoint<X>> incoming = new ArrayList<>();
+        public final Object subject;
 
-        public EventPoint(X value, float x, float y, float z) {
+        public EventPoint(X value, Object subject, float x, float y, float z) {
             this.x = x;
             this.y = y;
             this.z = z;
+            this.subject = subject;
             this.value = value;
         }
 
@@ -79,38 +116,44 @@ public class Timeline2DCanvas extends PApplet {
     
     
     public static void main(String[] args) {
+        int cycles = 200;
         NAR nar = new DefaultNARBuilder().build();
         InferenceTrace it = new InferenceTrace(nar);
         nar.addInput("<a --> b>.");
         nar.addInput("<b --> c>.");
         nar.addInput("<(^pick,x) =\\> a>.");
         nar.addInput("<(*, b, c) <-> x>.");
-        nar.finish(45);
+        nar.finish(cycles);
         
         
         
-        NWindow n = new NWindow("Timeline Test", new Timeline2DCanvas(it));
+        NWindow n = new NWindow("Timeline Test", new Timeline2DCanvas(it, 0, cycles));
         n.show(800,800);
         n.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    public Timeline2DCanvas(InferenceTrace trace) {
+    public Timeline2DCanvas(InferenceTrace trace, int cycleStart, int cycleEnd) {
         super();
         this.trace = trace;
+        this.cycleStart = cycleStart;
+        this.cycleEnd = cycleEnd;
 
     
-        chartsEnabled.add("concept.count");
-        chartsEnabled.add("concept.priority.hist.0");
-        chartsEnabled.add("concept.priority.hist.1");
-        chartsEnabled.add("concept.priority.hist.2");
-        chartsEnabled.add("concept.priority.hist.3");
         
-        chartsEnabled.add("task.derived");
+        addChart("concept.count");
+        addChart("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2);
+        addChart("task.derived", "task.immediate_processed").height(2);
                     
         init();
   
     }
 
+    public Chart addChart(String... sensors) {
+        Chart c = new Chart(sensors);
+        chartsEnabled.add(c);
+        return c;
+    }
+    
     @Override
     public void setup() {
         
@@ -119,10 +162,27 @@ public class Timeline2DCanvas extends PApplet {
     }
 
     @Override
+    protected void resizeRenderer(int newWidth, int newHeight) {
+        super.resizeRenderer(newWidth, newHeight);
+        updateNext();
+    }
+
+ 
+    
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        updateNext();
+    }
+
+    
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
         int wr = e.getWheelRotation();
         camScale += wr * dScale;   
+        if (wr != 0)
+            updateNext();
     }
 
     
@@ -140,8 +200,11 @@ public class Timeline2DCanvas extends PApplet {
                 
                 if (mouseButton == 37) {
                     //left mouse button
-                    camX -= dx;
-                    camY -= dy;
+                    if ((dx!=0) || (dy!=0)) {
+                        camX -= dx;
+                        camY -= dy;
+                        updateNext();
+                    }
                 }
 //                else if (mouseButton == 39) {
 //                    //right mouse button
@@ -156,6 +219,7 @@ public class Timeline2DCanvas extends PApplet {
             
             lastMousePressX = mouseX;
             lastMousePressY = mouseY;
+            
         }
         else {
             lastMousePressX = Float.NaN;
@@ -169,12 +233,21 @@ public class Timeline2DCanvas extends PApplet {
 
     }
     
+
+    public void updateNext() { updating = true; }
     
     public void draw() {            
         
+        updateCamera();
+        
+        if (!updating) {
+            return;
+        }
+        
+        updating = false;
+        
         background(0);
         
-        updateCamera();
 
 
         if (!updated) {
@@ -191,20 +264,22 @@ public class Timeline2DCanvas extends PApplet {
             plot(t, v, timeScale);
         }
         
+        
+        
+        for (EventPoint<Object> to : events.values()) {
+            for (EventPoint<Object> from : to.incoming) {                
+                stroke(256f * NARSwing.hashFloat(to.subject.hashCode()), 100f, 200f, 127);
+                line(from.x, from.y, to.x, to.y);
+            }                
+        }
 
+        
         strokeCap(SQUARE);        
         stroke(190f, 120f);
         strokeWeight(1f);
         
         drawCharts(timeScale);
 
-        stroke(200f);
-        
-        for (EventPoint<Object> to : events.values()) {
-            for (EventPoint<Object> from : to.incoming) {
-                line(from.x, from.y, to.x, to.y);    
-            }                
-        }
         
         
         if (!updated) {
@@ -226,22 +301,28 @@ public class Timeline2DCanvas extends PApplet {
 
     protected void drawCharts(float timeScale) {
         
-        float yScale = timeScale;
-        float yMargin = yScale*0.1f;
         
-        float y = -(yScale+yMargin);
+        float y = -timeScale;
         
-        for (String c : trace.charts.keySet()) {
-            if (!chartsEnabled.contains(c)) {
-                continue;
+        
+        for (Chart c : chartsEnabled) {
+            float yScale = timeScale * c.height;
+            float yMargin = timeScale*0.1f;
+
+    
+            double min = Double.NaN, max = 0;
+            for (String cc : c.sensors) {
+                TimeSeriesChart chart = trace.charts.get(cc);
+
+                if (Double.isNaN(min)) {
+                    min = (chart.getMin());
+                    max = (chart.getMax());
+                }
+                else {
+                    min = Math.min(min, chart.getMin());
+                    max = Math.max(max, chart.getMax());
+                }                                
             }
-
-            TimeSeriesChart chart = trace.charts.get(c);
-            double min = chart.getMin();
-            double max = chart.getMax();
-
-            
-            float lx=0, ly=0;
 
             stroke(127);
             strokeWeight(0.5f);
@@ -256,49 +337,77 @@ public class Timeline2DCanvas extends PApplet {
             float screenyHi = screenY(cycleStart*timeScale, y-yScale);
             float screenyLo = screenY(cycleStart*timeScale, y);
             
+            int ccolor = 0;
             
-            strokeWeight(1f);            
-            stroke(chart.getColor().getRGB());
-            fill(255f);
-                        
-            for (long t = cycleStart; t <= cycleEnd; t++) {
-                float x = t * timeScale;
+            for (String cc : c.sensors) {
+                TimeSeriesChart chart = trace.charts.get(cc);
 
-                
-                double v = chart.getValues()[(int)t];
+                ccolor = chart.getColor().getRGB();
 
-                float p = (max == min) ? 0 : (float)((v - min) / (max - min));
-                
-                float w = timeScale/16f;
-                float px = x + yScale/2 -w/2f;
-                float py = y - p*yScale - w/2f;
-                rect(px, py, w, w);
-                if (t!=cycleStart) {
-                    line(lx, ly, px, py);
+                float lx=0, ly=0;
+
+                strokeWeight(1f);            
+
+
+                fill(255f);
+
+
+                float[] cv = chart.getValues();
+                int tt = (int)Math.min((cycleEnd-cycleStart),cv.length)-1;
+                for (long t = cycleStart; t < cycleEnd; t++) {
+                    float x = t * timeScale;
+
+
+                    float v = cv[tt--];
+
+                    float p = (max == min) ? 0 : (float)((v - min) / (max - min));
+
+
+                    float px = x;
+                    float h = p*yScale;
+                    float py = y - h;
+
+                    if (c.showVerticalLines) {
+                        stroke(ccolor, 127f);
+                        line(px, py, px, py+h);
+                    }
+
+                    stroke(ccolor);
+                    if (t!=cycleStart) {
+                        line(lx, ly, px, py);
+                    }
+
+                    lx = px;
+                    ly = py;
+
                 }
-                
-                lx = px;
-                ly = py;
-
-            }
-            y -= yScale + yMargin;
-            
-            
+            }                   
             
             //draw overlay
             pushMatrix();
             resetMatrix();
             textSize(15f);
-            fill(chart.getColor().getRGB());
+            
             int dsy = (int) Math.abs(screenyLo - screenyHi);
-            text(c, 0, (screenyLo + screenyHi) / 2);
+            
+            float dsyt = screenyHi + 0.15f * dsy;
+            float ytspace = dsy * 0.75f / c.sensors.size() / 2;
+            for (String cs : c.sensors) {
+                fill(trace.charts.get(cs).getColor().getRGB());
+                dsyt += ytspace;
+                text(cs, 0, dsyt);
+                dsyt += ytspace;
+            }
             
             textSize(11f);
-            fill(chart.getColor().getRGB(), 195f);
-            text(Texts.n4((float)min), 0, screenyLo-dsy/8f);
-            text(Texts.n4((float)max), 0, screenyHi+dsy/8);
+            fill(200, 195f);
+            text(Texts.n4((float)min), 0, screenyLo-dsy/10f);
+            text(Texts.n4((float)max), 0, screenyHi+dsy/10f);
             
             popMatrix();
+        
+            y -=(yScale+yMargin);
+
         }
         
     }
@@ -307,17 +416,15 @@ public class Timeline2DCanvas extends PApplet {
     private void plot(long t, List<InferenceEvent> v, float timeScale) {
         
         
-        float itemScale = timeScale*0.95f;
+        float itemScale = timeScale*0.5f;
         
         float yScale = itemScale;
         
-        float x = t * timeScale, 
-                y = 0;
         
         
+        float y = 0;
+        float x = t * timeScale;
         for (InferenceEvent i : v) {            
-            
-            
             
             //box(2);
             //quad(-0.5f, -0.5f, 0, 0.5f, -0.5f, 0, 0.5f, 0.5f, 0, -0.5f, 0.5f, 0);
@@ -382,7 +489,8 @@ public class Timeline2DCanvas extends PApplet {
                 fill(256f * NARSwing.hashFloat(i.toString().hashCode()), 200f, 200f);
                 rect(i, null, 0.75f * itemScale, x, y);
             }
-            
+
+            x += timeScale / v.size();
             y += yScale;
         }
         
@@ -419,7 +527,7 @@ public class Timeline2DCanvas extends PApplet {
     }
     
     protected void setEventPoint(Object event, Object subject, float x, float y, float z) {
-        EventPoint f = new EventPoint(event, x, y, z);        
+        EventPoint f = new EventPoint(event, subject, x, y, z);        
         events.put(event, f);
         
         if (subject!=null) {
