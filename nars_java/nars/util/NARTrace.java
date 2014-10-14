@@ -121,7 +121,7 @@ public class NARTrace implements InferenceRecorder, Output, Serializable {
 
         @Override
         public String toString() {
-            return "Concept Created: " + concept + " " + stack;
+            return "Concept Created: " + concept;
         }
 
     }

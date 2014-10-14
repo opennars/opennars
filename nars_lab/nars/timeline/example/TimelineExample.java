@@ -16,10 +16,6 @@
  */
 package nars.timeline.example;
 
-/**
- *
- * @author sue
- */
 abstract public class TimelineExample {
  
     
