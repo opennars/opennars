@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
@@ -258,8 +259,8 @@ public class Rover extends PhysicsModel {
                         sight.set("<goal --> reached>. :|:");
                         
                     }
-                    sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    //sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
+                    //sight.set("<(*," + id + ",sth) --> see>. :|:");
+                    sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
                 }
                 else {
                     sight.set("<(*," + id + ",empty) --> see>. :|:");
