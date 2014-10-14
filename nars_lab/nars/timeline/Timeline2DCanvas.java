@@ -60,7 +60,7 @@ public class Timeline2DCanvas extends PApplet {
     float camX = 0f;
     float camY = 0f;
 
-    public final List<Chart> charts = new ArrayList();
+    public final List<Chart> charts;
     //display options ----------------------------------------
 
     /**
@@ -403,7 +403,7 @@ public class Timeline2DCanvas extends PApplet {
             l.strokeWeight(2f);
             for (EventPoint<Object> to : events.values()) {
                 for (EventPoint<Object> from : to.incoming) {
-                    l.stroke(256f * NARSwing.hashFloat(to.subject.hashCode()), 100f, 200f, 127);
+                    l.stroke(256f * NARSwing.hashFloat(to.subject.hashCode()), 100f, 200f, 68f);
                     l.line(timeScale * from.x, from.y, timeScale * to.x, to.y);
                 }
             }
@@ -496,6 +496,9 @@ public class Timeline2DCanvas extends PApplet {
         protected void rect(Object event, Object subject, float r, float x, float y/*, float z*/) {
             float px = x * timeScale;
             float py = y;
+            
+            if (r < 2) r = 2;
+            
             l.rect(
                     px + -r / 2f, py + -r / 2f,
                     r, r
@@ -518,6 +521,8 @@ public class Timeline2DCanvas extends PApplet {
             float px = x * timeScale;
             float py = y;
 
+            if (r < 2) r = 2;
+            
             l.triangle(
                     px + direction * -r / 2, py + direction * -r / 2,
                     px + direction * r / 2, py + 0,
@@ -540,40 +545,20 @@ public class Timeline2DCanvas extends PApplet {
 
     }
 
-    public static void main(String[] args) {
-        int cycles = 200;
-        NAR nar = new DefaultNARBuilder().build();
-        NARTrace it = new NARTrace(nar);
-        nar.addInput("<a --> b>.");
-        nar.addInput("<b --> c>.");
-        nar.addInput("<(^pick,x) =\\> a>.");
-        nar.addInput("<(*, b, c) <-> x>.");
-        nar.finish(cycles);
 
-        Timeline2DCanvas tc = new Timeline2DCanvas(0, cycles);
-        tc.charts.add(new BarChart(new TimeSeries.FirstOrderDifferenceTimeSeries("d(concepts)", it.charts.get("concept.count"))));
-        tc.charts.add(new EventChart(it, true, false, false).height(3));
-        tc.charts.add(new BarChart(new TimeSeries.FirstOrderDifferenceTimeSeries("d(concepts)", it.charts.get("concept.count"))));
-        tc.charts.add(new BarChart(new TimeSeries.FirstOrderDifferenceTimeSeries("d(concepts)", it.charts.get("concept.count"))).height(2));
-        tc.charts.add(new StackedPercentageChart(it, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2));
-        tc.charts.add(new EventChart(it, false, true, false).height(3));
-        tc.charts.add(new LineChart(it, "task.derived", "task.immediate_processed").height(2));
-        tc.charts.add(new LineChart(it, "concept.priority.mean").height(1));
-        tc.charts.add(new LineChart(it, "emotion.busy").height(1));
-        tc.charts.add(new EventChart(it, false, false, true).height(3));
-
-        NWindow n = new NWindow("Timeline Test", tc);
-        n.show(800, 800);
-        n.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-
-    public Timeline2DCanvas(int cycleStart, int cycleEnd) {
+    public Timeline2DCanvas(Chart... charts) {
         super();
-        this.cycleStart = cycleStart;
-        this.cycleEnd = cycleEnd;
+        this.charts = Lists.newArrayList(charts);
 
         init();
     }
+    
+    public void view(long start, long end) {
+
+        //TODO calculate timeScale and camX to view the cycle range
+        
+    }
+    
 
     @Override
     public void setup() {
@@ -622,8 +607,12 @@ public class Timeline2DCanvas extends PApplet {
                     }
                 } else if (mouseButton == 39) {
                     //right mouse button
-                    yScale += dy * scaleSpeed;
-                    timeScale += dx * scaleSpeed;
+                    float sx = dx * scaleSpeed;
+                    float sy = dy * scaleSpeed;
+                                        
+                    timeScale += sx;
+                    yScale += sy;
+
                     updateNext();
                 }
 //                else if (mouseButton == 3) {
