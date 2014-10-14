@@ -87,6 +87,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         
         init();
         
+        /*
         try {
             size(500,500,OPENGL);
         }
@@ -94,6 +95,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
             //opengl not available
             System.err.println(e.toString());         
         }
+        */
 
 
         if (isGL()) {

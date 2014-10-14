@@ -1,10 +1,12 @@
-package nars.time3d;
+package nars.timeline;
 
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import javax.swing.JFrame;
 import nars.core.NAR;
@@ -12,8 +14,10 @@ import nars.core.build.DefaultNARBuilder;
 import nars.entity.Item;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
+import nars.gui.output.chart.TimeSeriesChart;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
+import nars.io.Texts;
 import nars.util.InferenceTrace;
 import nars.util.InferenceTrace.InferenceEvent;
 import nars.util.InferenceTrace.OutputEvent;
@@ -23,36 +27,33 @@ import processing.core.PApplet;
 
 /** Timeline view of an inference trace.  Focuses on a specific window and certain features which
  can be adjusted dynamically. Can either analyze a trace while a NAR runs, or after it finishes. */
-public class TimelineCanvas extends PApplet {
+public class Timeline2DCanvas extends PApplet {
 
     float frameRate = 20f;
-    private final int initialWidth;
-    private final int initialHeight;
 
     long cycleStart = 0;
-    long cycleEnd = 250;
+    long cycleEnd = 45;
     
     float camX = 0f;
     float camY = 0f;
-    float camZ = -100f;
     float camScale = 8f;
-    float rotX = 0;
-    float rotY = 0;
-    float rotZ = 0;
-    float rotSpeed = 0.1f/frameRate;
     private float lastMousePressY = Float.NaN;
     private float lastMousePressX = Float.NaN;
 
     private final InferenceTrace trace;
+    float dScale = 0.6f;
 
-    //private UndirectedGraph<EventPoint,Integer> influence = null;
-    //private int nextEdgeID;
+    final Map<String, TimeSeriesChart> charts = new TreeMap();
+    float timeScale = 32f;
+    
     
     //stores the previous "representative event" for an object as the visualization is updated each time step
     public Map<Object,EventPoint> lastSubjectEvent = new HashMap();
     
     //all events mapped to their visualized feature
     public Map<Object,EventPoint> events = new HashMap();
+    
+    public Set<String> chartsEnabled = new HashSet();
     
     private boolean updated = false;
 
@@ -84,27 +85,34 @@ public class TimelineCanvas extends PApplet {
         nar.addInput("<b --> c>.");
         nar.addInput("<(^pick,x) =\\> a>.");
         nar.addInput("<(*, b, c) <-> x>.");
-        nar.finish(250);
+        nar.finish(45);
         
         
         
-        NWindow n = new NWindow("Timeline Test", new TimelineCanvas(it, 1000, 800));
-        n.pack();
-        n.setVisible(true);        
+        NWindow n = new NWindow("Timeline Test", new Timeline2DCanvas(it));
+        n.show(800,800);
         n.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    public TimelineCanvas(InferenceTrace trace, int w, int h) {
+    public Timeline2DCanvas(InferenceTrace trace) {
         super();
         this.trace = trace;
-        this.initialWidth = w;
-        this.initialHeight = h;
+
+    
+        chartsEnabled.add("concept.count");
+        chartsEnabled.add("concept.priority.hist.0");
+        chartsEnabled.add("concept.priority.hist.1");
+        chartsEnabled.add("concept.priority.hist.2");
+        chartsEnabled.add("concept.priority.hist.3");
+        
+        chartsEnabled.add("task.derived");
+                    
         init();
   
     }
 
+    @Override
     public void setup() {
-        size(initialWidth, initialHeight, P3D);
         
         frameRate(frameRate);
         colorMode(HSB);
@@ -114,15 +122,15 @@ public class TimelineCanvas extends PApplet {
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
         int wr = e.getWheelRotation();
-        camZ += wr * 20f;   
+        camScale += wr * dScale;   
     }
 
     
     protected void updateCamera() {
         
         //scale limits
-        if (camScale > 10f) camScale = 10f;
-        if (camScale < 0.5f) camScale = 0.5f;
+        if (camScale > 100f) camScale = 100f;
+        if (camScale < 0.1f) camScale = 0.1f;
 
         
         if (mouseButton > 0) {
@@ -135,15 +143,15 @@ public class TimelineCanvas extends PApplet {
                     camX -= dx;
                     camY -= dy;
                 }
-                else if (mouseButton == 39) {
-                    //right mouse button
-                    rotY -= dx * rotSpeed;
-                    rotX -= dy * rotSpeed;
-                }
-                else if (mouseButton == 3) {
-                    //middle mouse button (wheel)
-                    rotZ -= dx * rotSpeed;
-                }
+//                else if (mouseButton == 39) {
+//                    //right mouse button
+//                    rotY -= dx * rotSpeed;
+//                    rotX -= dy * rotSpeed;
+//                }
+//                else if (mouseButton == 3) {
+//                    //middle mouse button (wheel)
+//                    rotZ -= dx * rotSpeed;
+//                }
             }
             
             lastMousePressX = mouseX;
@@ -153,27 +161,17 @@ public class TimelineCanvas extends PApplet {
             lastMousePressX = Float.NaN;
         }
         
-        float cameraY = height / 2.0f;
-        float fov = /*mouseX / (float)(width) **/ PI / 2;
-        float cameraZ = cameraY / tan(fov / 2.0f);
-        float aspect = (float)(width)/height;
 
-        perspective(fov, aspect, cameraZ / 10.0f, cameraZ * 10.0f);
-        
-        camera(camX, camY, (height/2) / tan(PI/6), camX, camY, 0, 0, 1, 0);
+        translate(-camX + width/2, -camY + height/2);
 
-        translate(width/2, height/2, camZ);
         scale(camScale);
-        
-        rotateX(PI+rotX);
-        rotateY(PI+rotY);
-        rotateZ(-PI+rotZ);
+
+
     }
     
     
     public void draw() {            
         
-        lights();
         background(0);
         
         updateCamera();
@@ -189,18 +187,25 @@ public class TimelineCanvas extends PApplet {
         TreeMap<Long, List<InferenceEvent>> time = trace.time;
         for (Map.Entry<Long, List<InferenceEvent>> e : time.subMap(cycleStart, cycleEnd).entrySet()) {
             long t = e.getKey();
-            List<InferenceEvent> v = e.getValue();
-            
-            plot(t, v);
+            List<InferenceEvent> v = e.getValue();            
+            plot(t, v, timeScale);
         }
+        
 
+        strokeCap(SQUARE);        
         stroke(190f, 120f);
-        strokeWeight(0.4f);
+        strokeWeight(1f);
+        
+        drawCharts(timeScale);
+
+        stroke(200f);
+        
         for (EventPoint<Object> to : events.values()) {
             for (EventPoint<Object> from : to.incoming) {
-                line(from.x, from.y, from.z, to.x, to.y, to.z);    
+                line(from.x, from.y, to.x, to.y);    
             }                
         }
+        
         
         if (!updated) {
             
@@ -219,16 +224,96 @@ public class TimelineCanvas extends PApplet {
         
     }
 
-    
-    private void plot(long t, List<InferenceEvent> v) {
+    protected void drawCharts(float timeScale) {
         
-        float timeScale = 4f;
+        float yScale = timeScale;
+        float yMargin = yScale*0.1f;
+        
+        float y = -(yScale+yMargin);
+        
+        for (String c : trace.charts.keySet()) {
+            if (!chartsEnabled.contains(c)) {
+                continue;
+            }
+
+            TimeSeriesChart chart = trace.charts.get(c);
+            double min = chart.getMin();
+            double max = chart.getMax();
+
+            
+            float lx=0, ly=0;
+
+            stroke(127);
+            strokeWeight(0.5f);
+            
+            //bottom line
+            line(cycleStart * timeScale, y, cycleEnd * timeScale, y);
+
+            //top line
+            line(cycleStart * timeScale, y-yScale, cycleEnd * timeScale, y-yScale);
+            
+            
+            float screenyHi = screenY(cycleStart*timeScale, y-yScale);
+            float screenyLo = screenY(cycleStart*timeScale, y);
+            
+            
+            strokeWeight(1f);            
+            stroke(chart.getColor().getRGB());
+            fill(255f);
+                        
+            for (long t = cycleStart; t <= cycleEnd; t++) {
+                float x = t * timeScale;
+
+                
+                double v = chart.getValues()[(int)t];
+
+                float p = (max == min) ? 0 : (float)((v - min) / (max - min));
+                
+                float w = timeScale/16f;
+                float px = x + yScale/2 -w/2f;
+                float py = y - p*yScale - w/2f;
+                rect(px, py, w, w);
+                if (t!=cycleStart) {
+                    line(lx, ly, px, py);
+                }
+                
+                lx = px;
+                ly = py;
+
+            }
+            y -= yScale + yMargin;
+            
+            
+            
+            //draw overlay
+            pushMatrix();
+            resetMatrix();
+            textSize(15f);
+            fill(chart.getColor().getRGB());
+            int dsy = (int) Math.abs(screenyLo - screenyHi);
+            text(c, 0, (screenyLo + screenyHi) / 2);
+            
+            textSize(11f);
+            fill(chart.getColor().getRGB(), 195f);
+            text(Texts.n4((float)min), 0, screenyLo-dsy/8f);
+            text(Texts.n4((float)max), 0, screenyHi+dsy/8);
+            
+            popMatrix();
+        }
+        
+    }
+    
+    
+    private void plot(long t, List<InferenceEvent> v, float timeScale) {
+        
         
         float itemScale = timeScale*0.95f;
         
         float yScale = itemScale;
         
-        float x = t * timeScale, y = 0;
+        float x = t * timeScale, 
+                y = 0;
+        
         
         for (InferenceEvent i : v) {            
             
@@ -273,16 +358,16 @@ public class TimelineCanvas extends PApplet {
                 
                 if (te.channel.equals(IN.class)) {
                     pushMatrix();
-                    translate(x, y, 0);
-                    rotateZ(0.65f); //angled diagonally down and to the right                    
+                    translate(x, y);
+                    rotate(0.65f); //angled diagonally down and to the right                    
                     triangleHorizontal(i, te.signal, ph*itemScale, 0, 0, 0, 1.0f);                    
                     popMatrix();
                 }
                 else if (te.channel.equals(OUT.class)) {
                     //TODO use faster triangleVertical function instead of push and rotate
                     pushMatrix();
-                    translate(x, y, 0);
-                    rotateZ(MathUtils.HALF_PI); //angled diagonally down and to the right                   
+                    translate(x, y);
+                    rotate(MathUtils.HALF_PI); //angled diagonally down and to the right                   
                     triangleHorizontal(i, te.signal, ph*itemScale, 0, 0, 0, 1.0f);                    
                     popMatrix();
                 }
@@ -294,7 +379,7 @@ public class TimelineCanvas extends PApplet {
                 }
             }
             else {
-                fill(256f * NARSwing.hashFloat(i.getClass().hashCode()), 200f, 200f);
+                fill(256f * NARSwing.hashFloat(i.toString().hashCode()), 200f, 200f);
                 rect(i, null, 0.75f * itemScale, x, y);
             }
             
@@ -307,25 +392,30 @@ public class TimelineCanvas extends PApplet {
     protected void rect(Object event, Object subject, float r, float x, float y/*, float z*/) {
         rect(
                 x + -r/2f,  y + -r/2f, 
-                r/2f,   r/2f
+                r,   r
         );
+        
+        label(event, subject, r, x, y);
+    }
+    
+    protected void label(Object event, Object subject, float r, float x, float y) {
+        fill(255f);
+        textSize(1f);
+        text(event.toString(), x-r/2, y);
         if (!updated) {
             setEventPoint(event, subject, x, y, 0);
         }
     }
     
+    
     protected void triangleHorizontal(Object event, Object subject, float r, float x, float y, float z, float direction) {
-        translate(0,0,z);
+        translate(0,0);
         triangle(
                 x + direction * -r/2,   y + direction * -r/2, 
                 x + direction * r/2,    y + 0, 
                 x + direction * -r/2,   y + direction * r/2
         );
-        translate(0,0,-z); //should be cheaper than a push/pop
-        
-        if (!updated) {
-            setEventPoint(event, subject, x, y, z);
-        }
+        label(event, subject, r, x, y);
     }
     
     protected void setEventPoint(Object event, Object subject, float x, float y, float z) {

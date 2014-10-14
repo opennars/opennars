@@ -8,9 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.sense.MultiSense;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.gui.NARSwing;
+import nars.gui.output.chart.TimeSeriesChart;
 import nars.inference.InferenceRecorder;
 import nars.io.Output;
 
@@ -37,11 +41,16 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
         return true;
     }
 
+    final int chartHistorySize = 5000;
+    
     public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
+    public final Map<String, TimeSeriesChart> charts = new TreeMap();
 
     private long t;
     transient private boolean active = true;
+    public final NAR nar;
+    public final MultiSense senses;
 
 
     abstract public static class InferenceEvent {
@@ -145,6 +154,19 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
         super();
         n.addOutput(this);
         n.memory.setRecorder(this);
+        this.nar = n;
+        
+        Memory memory = nar.memory;
+        
+        senses = new MultiSense(memory.logic, memory.resource);
+        senses.setActive(true);
+        senses.update(memory);        
+        
+        for (String x : senses.keySet()) {
+            TimeSeriesChart ch = new TimeSeriesChart(x, NARSwing.getColor(x, 0.8f, 0.8f), chartHistorySize);
+            charts.put(x, ch);            
+        }
+        
     }
     
     
@@ -195,6 +217,26 @@ public class InferenceTrace implements InferenceRecorder, Output, Serializable {
 
     @Override
     public void onCycleEnd(long clock) {
+        senses.update(nar.memory);
+        
+        for (Map.Entry<String, TimeSeriesChart> e : charts.entrySet()) {
+            String f = e.getKey();            
+            TimeSeriesChart ch = e.getValue();
+            Object value = senses.get(f);
+            
+            if (value instanceof Double) {                    
+                ch.push(((Number) value).floatValue());
+            }
+            else if (value instanceof Float) {
+                ch.push(((Number) value).floatValue());
+            }
+            else if (value instanceof Integer) {
+                ch.push(((Number) value).floatValue());
+            }
+            else if (value instanceof Long) {
+                ch.push(((Number) value).floatValue());
+            }            
+        }        
     }
 
     @Override

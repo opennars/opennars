@@ -1,4 +1,4 @@
-package nars.time3d;
+package nars.timeline;
 
 import javax.swing.JFrame;
 import nars.gui.NWindow;
