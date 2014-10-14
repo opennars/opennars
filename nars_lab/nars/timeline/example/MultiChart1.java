@@ -30,7 +30,7 @@ import nars.util.NARTrace;
 public class MultiChart1 extends TimelineExample {
     
     public static void main(String[] args) {
-        int cycles = 200;
+        int cycles = 500;
         
         NAR nar = new DefaultNARBuilder().build();
         NARTrace t = new NARTrace(nar);

@@ -103,6 +103,8 @@ public class NARTrace implements InferenceRecorder, Output, Serializable {
 
         @Override
         public String toString() {
+            if (channel instanceof Class)
+                return ((Class)channel).getSimpleName() + ": " + signal;
             return channel + ": " + signal;
         }
 
@@ -146,7 +148,7 @@ public class NARTrace implements InferenceRecorder, Output, Serializable {
 
         @Override
         public String toString() {
-            return "Task " + type + " (" + reason + "): " + task.toStringExternal() + " " + stack;
+            return "Task " + type + " (" + reason + "): " + task.toStringExternal();
         }
     }
 
