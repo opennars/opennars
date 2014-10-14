@@ -71,7 +71,7 @@ public class Timeline2DCanvas extends PApplet {
      *      Event Bubble
      * 
      */
-    public static class Chart {
+    abstract public static class Chart {
         private final List<String> sensors;
         private float height = 1.0f;
         boolean showVerticalLines = true;
@@ -86,15 +86,30 @@ public class Timeline2DCanvas extends PApplet {
             showVerticalLines = sensors.size() == 1;
         }
 
-        private Chart height(float h) {
+        public Chart height(float h) {
             this.height = h;
             return this;
         }
         
+        abstract public void draw(Timeline2DCanvas l, float y, float timeScale, float yScale);
+        
+    }
+    
+    public static class LineChart extends Chart {
+
+        public LineChart(String... sensors) {
+            super(sensors);
+        }
+
+        @Override
+        public void draw(Timeline2DCanvas l, float y, float timeScale, float yScale) {
+            
+        }
         
         
     }
     
+        
     //stores the previous "representative event" for an object as the visualization is updated each time step
     public Map<Object,EventPoint> lastSubjectEvent = new HashMap();
     
@@ -151,18 +166,12 @@ public class Timeline2DCanvas extends PApplet {
 
     
         
-        addChart("concept.count");
-        addChart("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2);
-        addChart("task.derived", "task.immediate_processed").height(2);
+        chartsEnabled.add(new LineChart("concept.count"));
+        chartsEnabled.add(new LineChart("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2));
+        chartsEnabled.add(new LineChart("task.derived", "task.immediate_processed").height(2));
                     
         init();
   
-    }
-
-    public Chart addChart(String... sensors) {
-        Chart c = new Chart(sensors);
-        chartsEnabled.add(c);
-        return c;
     }
     
     @Override
