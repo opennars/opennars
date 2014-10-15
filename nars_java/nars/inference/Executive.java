@@ -48,8 +48,8 @@ public class Executive {
     int maxPlannedTasks = 1;
     
     /** global plan search parameters */
-    float searchDepth = 128;
-    int particles = 64;
+    float searchDepth = 32;
+    int particles = 16;
     
     /** inline search parameters */
     float inlineSearchDepth = 8;
@@ -62,7 +62,7 @@ public class Executive {
     
     /** how much to add value to each cause involved in a successful plan */ 
     //TODO move this to a parameter class visible to both Executive and GraphExecutive
-    public static double relevancyOfSuccessfulPlan = 0.50;
+    public static double relevancyOfSuccessfulPlan = 0.10;
     
     /** time of last execution */
     long lastExecution = -1;
@@ -276,9 +276,9 @@ public class Executive {
         if (valid) {
             if(!occured && this.expected_task!=null && ended) {
                 expected_task.expect(false); //ok this one didnt get his expectation
-                occured=false; //only bad to not happened not interrupted ones
-                ended=false;
             }
+            occured=false; //only bad to not happened not interrupted ones
+            ended=false;
             
             final TaskExecution te = new TaskExecution(c, t);
             if (tasks.add(te)) {

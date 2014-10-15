@@ -89,7 +89,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
          */
         public void rememberRelevant(Term t, double strength) {
             if (relevancy == null) relevancy = new WeakHashMap();            
-            relevancy.put( t, Math.min(1.0, relevancy.getOrDefault(t, new Double(0)) + strength) );
+            relevancy.put( t, Math.min(0.99, relevancy.getOrDefault(t, new Double(0)) + strength) );
         }
         
         public void forgetRelevant(Term t, double strength) {
@@ -122,6 +122,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             if (relevancy == null) return 0;
             Double r = relevancy.get(t);
             if (r == null) return 0;
+            if(this.parent!=null) {
+                
+            }
             return r;            
         }
 
@@ -136,7 +139,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
 
     float minConfidence = 0.1f;
-    float minFreq = 0.1f;
     
 
     public ImplicationGraph(NAR nar) {
@@ -291,8 +293,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         addVertex(predicatePre);
         addVertex(predicatePost);
-        
-        
 
         if (subject instanceof Conjunction) {
             Conjunction seq = (Conjunction)subject;
@@ -425,8 +425,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return false;
         }
         float conf = s.truth.getConfidence();
-        float freq = s.truth.getFrequency();
-        if ((conf > minConfidence) && (freq > minFreq))
+        if (conf > minConfidence)
             return true;
         return false;
     }
