@@ -381,7 +381,7 @@ public class GraphExecutive {
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getCauseRelevancy(Cause c, Term goal) {
-        return (getCauseRelevancy(c) + c.getRelevancy(goal)) * 0.5;
+        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
     }
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
@@ -712,8 +712,8 @@ public class GraphExecutive {
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
         
-        //if (punctuation == '.')        
-         //   nal.derivedTask(newTask, false, true, null, null);        
+        if (punctuation == '.')        
+            nal.derivedTask(newTask, false, true, null, null);        
         if (punctuation == '!') {
             //System.out.println("  exe plan: " + newTask);
             memory.executive.addTask(c, newTask);
