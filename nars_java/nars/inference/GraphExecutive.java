@@ -676,10 +676,16 @@ public class GraphExecutive {
         return new Task(new Sentence(imp, punctuation, truth, stamp), budget, task) {
 
             @Override public void end(boolean success) {
-                if (success) {
+                super.end(success);
+            }
+            
+            @Override public void expect(boolean eventHappened) {
+                if (eventHappened) {
                     rememberPlanSuccess(plan, goal, this);
                 }
-                super.end(success);
+                if (!eventHappened) {
+                    forgetPlanSuccess(plan, goal, this);
+                }
             }
           
             
@@ -693,6 +699,12 @@ public class GraphExecutive {
         }
     }
     
+    protected void forgetPlanSuccess(ParticlePlan plan, Term goal, Task t) {
+        for (Cause c : plan.path) {
+            c.forgetRelevant(goal, Executive.relevancyOfSuccessfulPlan);
+        }
+    }
+    
     protected void planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
         Task newTask = planTask(plan, c, task, target, punctuation);
@@ -700,8 +712,8 @@ public class GraphExecutive {
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
         
-        if (punctuation == '.')        
-            nal.derivedTask(newTask, false, true, null, null);        
+        //if (punctuation == '.')        
+         //   nal.derivedTask(newTask, false, true, null, null);        
         if (punctuation == '!') {
             //System.out.println("  exe plan: " + newTask);
             memory.executive.addTask(c, newTask);

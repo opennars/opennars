@@ -92,6 +92,11 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             relevancy.put( t, Math.min(1.0, relevancy.getOrDefault(t, new Double(0)) + strength) );
         }
         
+        public void forgetRelevant(Term t, double strength) {
+            if (relevancy == null) relevancy = new WeakHashMap();            
+            relevancy.put( t, Math.max(0.0, relevancy.getOrDefault(t, new Double(0)) - strength) );
+        }
+        
         /** "forgets" when scale < 1.0 */
         public void multiply(final double x) {
             if (x == 1.0) return;

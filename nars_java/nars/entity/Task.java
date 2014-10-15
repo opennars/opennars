@@ -303,6 +303,10 @@ public class Task extends AbstractTask {
         setPriority(0);
     }
     
+    public void expect(boolean eventHappened) {
+        int a=3;
+    }
+    
     /** sets priority to zero, signaling that the Task has ended or discarded */
     @Override public void end() {
         end(false);
