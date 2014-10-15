@@ -712,8 +712,8 @@ public class GraphExecutive {
         if (memory.getRecorder().isActive())
                memory.getRecorder().append("Plan Add", newTask.toString());
         
-        if (punctuation == '.')        
-            nal.derivedTask(newTask, false, true, null, null);        
+        //if (punctuation == '.')   //feedback is due to temporal induction currently.     
+        //    nal.derivedTask(newTask, false, true, null, null);  //and if this is a implication then wrong
         if (punctuation == '!') {
             //System.out.println("  exe plan: " + newTask);
             memory.executive.addTask(c, newTask);
