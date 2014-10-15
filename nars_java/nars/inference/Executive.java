@@ -48,7 +48,7 @@ public class Executive {
     int maxPlannedTasks = 1;
     
     /** global plan search parameters */
-    float searchDepth = 64;
+    float searchDepth = 128;
     int particles = 64;
     
     /** inline search parameters */
@@ -274,6 +274,12 @@ public class Executive {
         }
             
         if (valid) {
+            if(!occured && this.expected_task!=null && ended) {
+                expected_task.expect(false); //ok this one didnt get his expectation
+                occured=false; //only bad to not happened not interrupted ones
+                ended=false;
+            }
+            
             final TaskExecution te = new TaskExecution(c, t);
             if (tasks.add(te)) {
                 //added successfully
@@ -289,7 +295,7 @@ public class Executive {
     
     protected void removeTask(final TaskExecution t) {
         if (tasksToRemove.add(t)) {
-            //t.t.setPriority(0); //dint set priority of entire statement to 0
+            t.t.setPriority(0); //dint set priority of entire statement to 0
             //t.t.end();
             if (memory.getRecorder().isActive())
                memory.getRecorder().append("Executive", "Task Remove: " + t.toString());
@@ -351,7 +357,7 @@ public class Executive {
                         
         oper.call(op, memory);        
         
-        task.end(true);
+        //task.end(true);
         
     }   
         
@@ -501,7 +507,9 @@ public class Executive {
     }
     
 
-    
+    public Task expected_task=null;
+    public Term expected_event=null;
+    boolean ended=false;
     private void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
         int s = task.sequence;
         Term currentTerm = c.term[s];
@@ -530,18 +538,27 @@ public class Executive {
         }
 
         if (s == c.term.length) {
+            ended=true;
             //completed task
             task.t.end(true);
+            if(task.t.sentence.content instanceof Implication) {
+                expected_task=task.t;
+                expected_event=((Implication)task.t.sentence.content).getPredicate();
+            }
+            
             removeTask(task);
+            task.sequence=0;
         }
         else {            
+            ended=false;
             //still incomplete
             task.sequence = s;
-            task.setMotivationFactor(motivationToFinishCurrentExecution);
+          //  task.setMotivationFactor(motivationToFinishCurrentExecution);
         }
     }
     
     public Task stmLast=null;
+    boolean occured=false;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime()==Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent,nal.mem))
@@ -558,7 +575,7 @@ public class Executive {
                         
             Sentence currentBelief = stmLast.sentence;
             nal.setCurrentBelief(currentBelief);
-
+            
             if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
                 TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
             }
@@ -566,6 +583,17 @@ public class Executive {
 
         //for this heuristic, only use input events & task effects of operations
         if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+            if(Parameters.TEMPORAL_PARTICLE_PLANNER && this.expected_event!=null && this.expected_task!=null) {
+                if(newEvent.sentence.content.equals(this.expected_event)) {
+                    this.expected_task.expect(true);
+                    occured=true;
+                } //else {
+                  //  this.expected_task.expect(false);
+               // }
+                    
+               // this.expected_event=null;
+               // this.expected_task=null; //done i think//todo, refine, it could come in a specific time, also +4 on end of a (&/ plan has to be used
+            }
             stmLast=newEvent;
         }
 
