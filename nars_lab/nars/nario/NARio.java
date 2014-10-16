@@ -54,7 +54,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new DefaultNARBuilder().realtime().build();
         
-        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).realTime().build();
+        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).simulationTime().build();
         
         //NAR nar = new ContinuousBagNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);
@@ -71,16 +71,17 @@ public class NARio extends Run {
        // nar.param().beliefForgetDurations.set(99.0f);
         
         //new TextOutput(nar, System.out).setShowInput(true);
-        nar.param().duration.set(50);
+        
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
         nar.param().conceptForgetDurations.set(20);
-        gameRate = 0.05;
+        float fps = 20f;
+        gameRate = 1.0f / fps;
 
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.start(50, 300);
+        nar.startFPS(fps, 300, 1f);
     }
 
     String[] sight = new String[9];

@@ -133,9 +133,7 @@ public class PhysicsRun {
         });        
     }*/
     
-    public void cycle() {  
-        float dt = simulationRate;
-        System.out.println(dt);
-        controller.cycle(dt);
+    public void cycle() {          
+        controller.cycle(simulationRate);
     }
 }
