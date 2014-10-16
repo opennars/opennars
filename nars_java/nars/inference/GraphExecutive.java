@@ -39,6 +39,9 @@ public class GraphExecutive {
     double conceptExpectationFactor = 1.0;
     double causeRelevanceFactor = 1.0;
     double conceptPriorityFactor = 0.5;
+
+    double minEdgeCost = 1.0;
+    
     
     //for observation purposes, TODO enable/disable the maintenance of this
     public final Map<Term,Double> accumulatedTerm = new HashMap();
@@ -112,7 +115,7 @@ public class GraphExecutive {
         public void addPath(final List<Cause> p, final double cost) {
                 
             //1 / avg Cause cost
-            double newScore = 1.0 - (cost / p.size());
+            double newScore = (p.size() / cost);
             
             if ((this.bestPath == null) || (score < newScore)) {
                 this.bestPath = p.toArray(new Cause[p.size()]);
@@ -329,6 +332,8 @@ public class GraphExecutive {
             
             c/= (causeRelevanceFactor + conceptExpectationFactor + conceptPriorityFactor);
             
+            c+= minEdgeCost;
+            
             //System.out.println("  s " + s + " >> " + nextTerm + " : " + " = " + c);
 
             sentenceCosts.put(s, c);
@@ -337,7 +342,7 @@ public class GraphExecutive {
         
         
         /** choose a sentence according to a random probability 
-         * where lower cost = higher probability.  prob = 1.0 / ( 1 +  cost )*/
+         * where lower cost = higher probability.  */
         public Cause chooseEdge(final Map<Cause,Double> cost, double totalProb) {
             Cause nextEdge = null;
  
