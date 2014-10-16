@@ -36,8 +36,9 @@ public class GraphExecutive {
     final int maxConsecutiveIntervalTerms = 3;
         
     /** controls the relative weigting of edges and vertices for particle traversals */
-    double conceptCostFactor = 0.5;
-    double edgeCostFactor = 1.0 - conceptCostFactor;
+    double conceptExpectationFactor = 1.0;
+    double causeRelevanceFactor = 1.0;
+    double conceptPriorityFactor = 0.5;
     
     //for observation purposes, TODO enable/disable the maintenance of this
     public final Map<Term,Double> accumulatedTerm = new HashMap();
@@ -103,21 +104,19 @@ public class GraphExecutive {
         double distance;
         double score;
         
-        public ParticlePath(final Term goal, final List<Cause> path, final double distance) {
+        public ParticlePath(final Term goal, final List<Cause> path, final double cost) {
             this.goal = goal;            
-            addPath(path, distance);
+            addPath(path, cost);
         }
         
-        public void addPath(final List<Cause> p, final double dist) {
-            
-            double newScore = 0;
-            for (Cause s : p)
-                newScore += getCauseRelevancy(s, goal);
-            newScore /= ((double)p.size());
+        public void addPath(final List<Cause> p, final double cost) {
                 
+            //1 / avg Cause cost
+            double newScore = 1.0 - (cost / p.size());
+            
             if ((this.bestPath == null) || (score < newScore)) {
                 this.bestPath = p.toArray(new Cause[p.size()]);
-                this.distance = dist;
+                this.distance = cost;
                 this.score = newScore;                
             }
             
@@ -228,10 +227,6 @@ public class GraphExecutive {
                         currentSentence = s;
                         totalProb += 1.0 / ew;
                         nextEdgeCost.put(currentSentence, ew);
-                        /*if (ew >= ImplicationGraph.DEACTIVATED_EDGE_WEIGHT) {
-                            edgeDecisionFailInactiveEdge++;
-                            continue;
-                        }*/
 
                         edgeDecisionPass++;
 
@@ -308,21 +303,33 @@ public class GraphExecutive {
             if (d!=null)
                 return d;
             
-            //sharpness parameter, affects how much cost is incurred for a low priority
-            double m = 0.1;
             
-            double conceptRelevancy;
-            if ((nextTerm instanceof Interval) || (nextTerm instanceof Operation))            
-                conceptRelevancy = 1.0;
-            else        
-                conceptRelevancy = getEffectivePriority(memory, nextTerm);
+            double conceptExpectation, conceptPriority;
+            if ((nextTerm instanceof Interval) || (nextTerm instanceof Operation)) {
+                conceptExpectation = 1.0;
+                conceptPriority = 1.0;
+            }
+            else {
+                if (conceptExpectationFactor > 0)
+                    conceptExpectation = getEffectiveExpectation(memory, nextTerm);
+                else
+                    conceptExpectation = 0;
+                
+                if (conceptPriorityFactor > 0)
+                    conceptPriority = getEffectivePriority(memory, nextTerm);
+                else
+                    conceptPriority = 0;
+            }
 
-            double causeRelevancy = getCauseRelevancy(s, goal);
+            double causeRelevancy = causeRelevanceFactor > 0 ? getCauseRelevancy(s, goal) : 0.0;
 
-            double c = edgeCostFactor / (m + causeRelevancy) + 
-                        conceptCostFactor / (m + conceptRelevancy);
-
-            //System.out.println("s " + sentenceRelevancy + ", " + conceptRelevancy + " = " + c);
+            double c = causeRelevanceFactor * (1.0 - causeRelevancy) + 
+                       conceptExpectationFactor * (1.0 - conceptExpectation) +
+                       conceptPriorityFactor * (1.0 - conceptPriority);
+            
+            c/= (causeRelevanceFactor + conceptExpectationFactor + conceptPriorityFactor);
+            
+            //System.out.println("  s " + s + " >> " + nextTerm + " : " + " = " + c);
 
             sentenceCosts.put(s, c);
             return c;
@@ -331,7 +338,7 @@ public class GraphExecutive {
         
         /** choose a sentence according to a random probability 
          * where lower cost = higher probability.  prob = 1.0 / ( 1 +  cost )*/
-        public Cause chooseEdge(Map<Cause,Double> cost, double totalProb) {
+        public Cause chooseEdge(final Map<Cause,Double> cost, double totalProb) {
             Cause nextEdge = null;
  
             //TODO disallow edge that completes cycle back to target or traversed edge?
@@ -380,8 +387,9 @@ public class GraphExecutive {
     
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
-    public double getCauseRelevancy(Cause c, Term goal) {
-        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
+    public double getCauseRelevancy(final Cause c, final Term goal) {
+        //return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
+        return c.getTruth().getExpectation();
     }
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
@@ -406,20 +414,20 @@ public class GraphExecutive {
     }
     
     /** between 0...1 */
-    public static float getActualConfidence(final Memory memory, final Term t) {
+    public static float getActualExpectation(final Memory memory, final Term t) {
         double p;
         
         Concept c = memory.concept(t);
         if ((c!=null) && (!c.beliefs.isEmpty())) {
             Sentence bestBelief = c.beliefs.get(0);
             if (bestBelief!=null)
-                return bestBelief.truth.getConfidence();   
+                return bestBelief.truth.getExpectation();   
         }
         
         //System.err.println("No Concept confidence available for " + t);
         
-        //if no concept confidence is available, assume 0.5
-        return 0.5f;
+        //if no concept confidence is available, assume 0.5?
+        return 0f;
     }
 
     /** returns 0..1.0, 1.0 being highest priority, 0 = no priority */
@@ -439,12 +447,12 @@ public class GraphExecutive {
         return p;
     }
 
-   public static float getEffectiveConfidence(final Memory memory, final Term current) {        
+   public static float getEffectiveExpectation(final Memory memory, final Term current) {        
         //get the priority for the postcondition's actual concept
         if (current instanceof PostCondition)
-            return getActualConfidence(memory, ((PostCondition)current).term[0]);
+            return getActualExpectation(memory, ((PostCondition)current).term[0]);
         else
-            return getActualConfidence(memory, current);      
+            return getActualExpectation(memory, current);      
     }    
         
 
