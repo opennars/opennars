@@ -36,7 +36,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     private final ChangedTextInput lowerArmSensor;
     
     public NARPhysicsDemo(final NAR n) {
-        super(n, new RobotArm() {
+        super(n, 1.0f/30.0f,new RobotArm() {
 
             @Override
             public void sight(boolean[] hit) {
