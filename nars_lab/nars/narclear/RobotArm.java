@@ -184,8 +184,8 @@ public class RobotArm extends PhysicsModel {
     Color3f laserColor = new Color3f(0.85f, 0, 0);
               
     @Override
-    public void step(TestbedSettings settings) {
-        super.step(settings);
+    public void step(float timeStep, TestbedSettings settings) {
+        super.step(timeStep, settings);
 
     
         int pixels = 5;
@@ -261,7 +261,7 @@ public class RobotArm extends PhysicsModel {
 
     public static void main(String[] args) {
         RobotArm r = new RobotArm();
-        new PhysicsRun(null,null,r).start(30);
+        //new PhysicsRun(null,null,r).start(30);
         
     }
 

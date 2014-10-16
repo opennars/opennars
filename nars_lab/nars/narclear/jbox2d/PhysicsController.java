@@ -37,7 +37,7 @@ import org.jbox2d.common.Vec2;
  * 
  * @author Daniel Murphy
  */
-public class PhysicsController implements Runnable {
+public class PhysicsController  {
   private static final Logger log = Logger.getLogger(PhysicsController.class.toString());
 
 
@@ -79,7 +79,7 @@ public class PhysicsController implements Runnable {
     model = argModel;
     inputQueue = Lists.newLinkedList();
     setFrameRate(DEFAULT_FPS);
-    animator = new Thread(this, "Testbed");
+    //animator = new Thread(this, "Testbed");
     updateBehavior = behavior;
     this.errorHandler = errorHandler;
     this.mouseBehavior = mouseBehavior;
@@ -185,7 +185,7 @@ public class PhysicsController implements Runnable {
    * {@link UpdateBehavior#UPDATE_IGNORED}, then this needs to be called manually to update the input
    * and test.
    */
-  public void updateTest() {
+  public void updateTest(float timeStep) {
     if (resetPending) {
       if (currTest != null) {
         currTest.init(model);
@@ -257,7 +257,7 @@ public class PhysicsController implements Runnable {
     }
 
     if (currTest != null) {
-      currTest.step(model.getSettings());
+      currTest.step(timeStep, model.getSettings());
     }
   }
 
@@ -351,7 +351,7 @@ public class PhysicsController implements Runnable {
   float timeInSecs;
   long beforeTime, afterTime, updateTime, timeDiff, sleepTime, timeSpent;
        
-  public void cycle() {
+  public void cycle(float timeStep) {
       if (nextTest != null) {
         initTest(nextTest);
         model.setRunningTest(nextTest);
@@ -374,8 +374,8 @@ public class PhysicsController implements Runnable {
       TestbedPanel panel = model.getPanel();
 
       if (panel.render()) {
-        if (currTest != null && updateBehavior == UpdateBehavior.UPDATE_CALLED) {
-          updateTest();
+        if (currTest != null && updateBehavior == UpdateBehavior.UPDATE_CALLED) {            
+          updateTest(timeStep);
         }
         panel.paintScreen();
       }
@@ -383,31 +383,31 @@ public class PhysicsController implements Runnable {
       
   }
   
-  public void run() {
-   
-    beforeTime = startTime = updateTime = System.nanoTime();
-    sleepTime = 0;
-
-    animating = true;
-    loopInit();
-    while (animating) {
-
-
-        cycle();
-        
-      afterTime = System.nanoTime();
-
-      timeDiff = afterTime - beforeTime;
-      sleepTime = (long) ((1000000000f / targetFrameRate - timeDiff) / 1000000f);
-      if (sleepTime > 0) {
-        try {
-          Thread.sleep(sleepTime);
-        } catch (InterruptedException ex) {}
-      }
-
-      beforeTime = System.nanoTime();
-    } // end of run loop
-  }
+//  public void run() {
+//   
+//    beforeTime = startTime = updateTime = System.nanoTime();
+//    sleepTime = 0;
+//
+//    animating = true;
+//    loopInit();
+//    while (animating) {
+//
+//
+//        cycle();
+//        
+//      afterTime = System.nanoTime();
+//
+//      timeDiff = afterTime - beforeTime;
+//      sleepTime = (long) ((1000000000f / targetFrameRate - timeDiff) / 1000000f);
+//      if (sleepTime > 0) {
+//        try {
+//          Thread.sleep(sleepTime);
+//        } catch (InterruptedException ex) {}
+//      }
+//
+//      beforeTime = System.nanoTime();
+//    } // end of run loop
+//  }
 
 
 }

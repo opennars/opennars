@@ -22,7 +22,7 @@ abstract public class NARGame implements Observer {
     
     
     public void start(float fps, int cyclesPerFrame) {
-        nar.start(fps, cyclesPerFrame);
+        nar.startFPS(fps, cyclesPerFrame, 1f);
     }
     
     public void stop() {

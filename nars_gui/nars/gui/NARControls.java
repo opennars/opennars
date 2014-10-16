@@ -638,7 +638,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
         float logScale = 50f;
         if (nextSpeed > 0) {
-            int ms = (int) ((1.0 - Math.log(1+nextSpeed*logScale)/Math.log(1+logScale)) * maxPeriodMS);
+            long ms = (long) ((1.0 - Math.log(1+nextSpeed*logScale)/Math.log(1+logScale)) * maxPeriodMS);
             if (ms < 1) {
                 if (allowFullSpeed)
                     ms = 0;

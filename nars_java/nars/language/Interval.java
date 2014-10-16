@@ -49,10 +49,11 @@ public class Interval extends Term {
         public AtomicDuration() {
             super();
         }
+        
+        
         public AtomicDuration(int v) {
             super(v);            
-        }
-        
+        }        
         
         public double getSubDurationLog() {
             int val = get();
