@@ -79,7 +79,7 @@ abstract public class NAL implements Callable<NAL> {
                 int termLinkCount = mem.param.termLinkMaxReasoned.get();
     //        while (memory.noResult() && (termLinkCount > 0)) {
                 while (termLinkCount > 0) {
-                    final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, mem.getTime());
+                    final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, mem.time());
                     if (termLink != null) {
 
                         if (mem.getRecorder().isActive()) {
@@ -401,7 +401,7 @@ abstract public class NAL implements Callable<NAL> {
 //        setNewStamp(null);
 //    }
 
-    public long getTime() { return mem.getTime(); }
+    public long getTime() { return mem.time(); }
     
     public Stamp getNewStamp() {
         return newStamp;

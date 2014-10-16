@@ -574,8 +574,7 @@ public class Rover extends PhysicsModel {
         //NAR nar = new DefaultNARBuilder().build();
         NAR nar = new DiscretinuousBagNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(1024).
-                realtime().
+                setConceptBagSize(1024).simulationTime().
                 build();
 
        // RoverWorld.world= new RoverWorld(rv, 48, 48);

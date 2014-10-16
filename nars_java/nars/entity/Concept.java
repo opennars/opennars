@@ -204,8 +204,8 @@ public class Concept extends Item {
                 }   // else: activated belief
                 return;
             } else if (revisible(judg, oldBelief)) {               ;
-                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime())) != null) {
-                    Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.getTime());
+                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.time())) != null) {
+                    Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
                     if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
                     }
@@ -259,7 +259,7 @@ public class Concept extends Item {
             }
 
             if (revisible(goal, oldGoal)) {                
-                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.getTime())) != null) {
+                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.time())) != null) {
                     revision(goal, oldGoal, false, nal);
                     revised = true;
                 }
@@ -570,7 +570,7 @@ public class Concept extends Item {
      */
     public Sentence getBelief(final NAL nal, final Task task) {
         final Stamp taskStamp = task.sentence.stamp;
-        final long currentTime = memory.getTime();
+        final long currentTime = memory.time();
 
         for (final Sentence belief : beliefs) {
             if (memory.getRecorder().isActive()) {
@@ -581,7 +581,7 @@ public class Concept extends Item {
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
-            Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.getTime());
+            Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
             if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }

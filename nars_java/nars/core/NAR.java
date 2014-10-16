@@ -85,6 +85,9 @@ public class NAR implements Runnable, Output, TaskSource {
     /** pending niput and output channels to remove on the next cycle */
     //protected final List<InPort> oldInputChannels;
     protected final List<Output> oldOutputChannels;
+    
+    /** frames per second: target FPS, or simulation rate. not used when in Iterative timing */
+    private float targetFPS = 0;
 
     public class PluginState {
         final public Plugin plugin;
@@ -312,11 +315,12 @@ public class NAR implements Runnable, Output, TaskSource {
     }
 
     public void start(final float targetFPS, int memoryCyclesPerCycle) {
+        this.targetFPS = targetFPS;
         long cycleTime = (long)(1000f / targetFPS);
-        start(cycleTime, memoryCyclesPerCycle);
+        start(cycleTime, memoryCyclesPerCycle);        
     }
     
-    public void start(final long minCyclePeriodMS, int memoryCyclesPerCycle) {
+    protected void start(final long minCyclePeriodMS, int memoryCyclesPerCycle) {
         this.minCyclePeriodMS = minCyclePeriodMS;
         this.cyclesPerFrame = memoryCyclesPerCycle;
         if (thread == null) {
@@ -327,11 +331,13 @@ public class NAR implements Runnable, Output, TaskSource {
     }
     
     /**
-     * Repeatedly execute NARS working cycle in a new thread.
+     * Repeatedly execute NARS working cycle in a new thread with Iterative timing.
      * 
      * @param minCyclePeriodMS minimum cycle period (milliseconds).
      */    
     public void start(final long minCyclePeriodMS) {
+        if (memory.getTiming()!=Timing.Iterative) 
+            throw new RuntimeException("Invalid timing mode for start(minCyclePeriodMS)");
         start(minCyclePeriodMS, 1);
     }
 
@@ -555,6 +561,9 @@ public class NAR implements Runnable, Output, TaskSource {
                                 frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
             }
         }
+        else if (memory.getTiming() == Timing.Simulation) {
+            memory.addSimulationTime((long)(1000f / targetFPS));
+        }
     }
     
     
@@ -595,7 +604,7 @@ public class NAR implements Runnable, Output, TaskSource {
      * @return The current time
      */
     public long getTime() {
-        return memory.getTime();
+        return memory.time();
     }
     
 

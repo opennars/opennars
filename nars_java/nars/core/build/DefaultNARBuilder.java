@@ -231,8 +231,12 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         }
     }
     
-    public DefaultNARBuilder realtime() {
+    public DefaultNARBuilder realTime() {
         timing = Timing.Real;
+        return this;
+    }
+    public DefaultNARBuilder simulationTime() {
+        timing = Timing.Simulation;
         return this;
     }
 

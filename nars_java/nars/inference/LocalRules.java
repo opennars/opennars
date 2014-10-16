@@ -150,7 +150,7 @@ public class LocalRules {
             Variables.unify(Symbols.VAR_INDEPENDENT, u);
             content = u[0];                
             belief = belief.clone(content);
-            Stamp st = new Stamp(belief.stamp, memory.getTime());
+            Stamp st = new Stamp(belief.stamp, memory.time());
             st.chainAdd(belief.content);
         }
 

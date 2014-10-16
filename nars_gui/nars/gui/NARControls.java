@@ -42,7 +42,9 @@ import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
+import nars.core.Memory.Timing;
 import static nars.core.Memory.Timing.Real;
+import static nars.core.Memory.Timing.Simulation;
 import nars.core.NAR;
 import nars.core.sense.MultiSense;
 import nars.gui.input.TextInputPanel;
@@ -447,7 +449,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
 
                 senses.update(memory);
                 
-                chart.updateData(memory.getTime());
+                chart.updateData(memory.time());
                                 
                 speedSlider.repaint();
                 
@@ -540,9 +542,10 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     return "";
                 }
                 
+                Timing tt = memory.param.getTiming();
                 String s = "@" +
-                        (memory.param.getTiming() == Real ?
-                            + memory.getTime() + "|" + memory.getCycleTime() : memory.getTime());
+                        ((tt == Real || tt == Simulation) ?
+                            + memory.time() + "|" + memory.getCycleTime() : memory.time());
                         
                 
 

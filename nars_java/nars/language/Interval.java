@@ -116,7 +116,9 @@ public class Interval extends Term {
 //    }
 
     public static int timeToMagnitude(final long timeDiff, final AtomicDuration duration) {
-        return (int) Math.round(Math.log(timeDiff) / duration.getSubDurationLog());
+        int m = (int) Math.round(Math.log(timeDiff) / duration.getSubDurationLog());
+        if (m < 0) return 0;
+        return m;
     }
     
     public static double magnitudeToTime(final double magnitude, final AtomicDuration duration) {

@@ -407,7 +407,7 @@ public class Executive {
     
     /** called during each memory cycle */
     public void cycle() {
-        long now = memory.getTime();
+        long now = memory.time();
         
         //only execute something no less than every duration time
         if (now - lastExecution < (memory.param.duration.get()/maxExecutionsPerDuration) )
@@ -426,12 +426,12 @@ public class Executive {
             //TODO make a print function
             
             if (tasks.size() > 1)  {
-                System.out.println("Tasks @ " + memory.getTime());
+                System.out.println("Tasks @ " + memory.time());
                 for (TaskExecution tcc : tasks)
                     System.out.println("  " + tcc.toString());
             }
             else {
-                System.out.println("Task @ " + memory.getTime() + ": " + tasks.get(0));
+                System.out.println("Task @ " + memory.time() + ": " + tasks.get(0));
             }
             
         }
@@ -514,7 +514,7 @@ public class Executive {
         int s = task.sequence;
         Term currentTerm = c.term[s];
         
-        long now = memory.getTime();
+        long now = memory.time();
         
         if (task.delayUntil > now) {
             //not ready to execute next term
@@ -529,7 +529,7 @@ public class Executive {
         }
         else if (currentTerm instanceof Interval) {
             Interval ui = (Interval)currentTerm;
-            task.delayUntil = memory.getTime() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
+            task.delayUntil = memory.time() + Interval.magnitudeToTime(ui.magnitude, memory.param.duration);
             s++;
         }        
         else {            
@@ -570,7 +570,7 @@ public class Executive {
                 return false;
             }
             
-            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.getTime());
+            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, memory.time());
             nal.setCurrentTask(newEvent);
                         
             Sentence currentBelief = stmLast.sentence;

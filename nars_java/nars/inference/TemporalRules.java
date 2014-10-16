@@ -355,7 +355,7 @@ public class TemporalRules {
         if (problem.getOccurenceTime() != solution.getOccurenceTime()) {
             //TODO avoid creating entire Sentence; 
             //only calculate TruthValue which is all that is useful here
-            Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.getTime());
+            Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.time());
             truth = cloned.truth;
         }
         if (problem.containQueryVar()) {
