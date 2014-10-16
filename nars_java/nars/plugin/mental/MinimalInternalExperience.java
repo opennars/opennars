@@ -48,7 +48,7 @@ public class MinimalInternalExperience implements Plugin {
                     TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
 
                     Stamp stamp = task.sentence.stamp.clone();
-                    stamp.setOccurrenceTime(memory.getTime());
+                    stamp.setOccurrenceTime(memory.time());
 
                     Sentence j = new Sentence(sentence.toTerm(memory), Symbols.JUDGMENT_MARK, truth, stamp);
                     BudgetValue newbudget=new BudgetValue(

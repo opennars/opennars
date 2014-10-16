@@ -54,7 +54,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new DefaultNARBuilder().realtime().build();
         
-        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).realtime().build();
+        NAR nar = new DiscretinuousBagNARBuilder().setConceptBagSize(1024).realTime().build();
         
         //NAR nar = new ContinuousBagNARBuilder().build();
         /*nar.param().termLinkRecordLength.set(4);

@@ -125,17 +125,26 @@ public class Memory implements Output, Serializable {
     
     private boolean enabled = true;
     private ExecutorService exe;
-    private long realClockStart;
-    private long realClockNow;
-    private long lastTime;
-
+    
+    private long timeRealStart;
+    private long timeRealNow;
+    private long timePreviousCycle;
+    private long timeSimulation;
 
 
 
     
     public enum Timing {
-        Iterative, Real
+        /** internal, subjective time (inference steps) */
+        Iterative, 
+        
+        /** hard real-time, uses system clock */
+        Real, 
+        
+        /** soft real-time, uses controlled simulation time */
+        Simulation
     }
+    
     Timing timing;
     
     
@@ -404,8 +413,8 @@ public class Memory implements Output, Serializable {
         
         timing = param.getTiming();      
         cycle = 0;
-        realClockStart = realClockNow = System.currentTimeMillis();
-        lastTime = getTime();
+        timeRealStart = timeRealNow = System.currentTimeMillis();
+        timePreviousCycle = time();
         
         cyclesQueued = 0;
         
@@ -428,10 +437,11 @@ public class Memory implements Output, Serializable {
         this.recorder = recorder;
     }
 
-    public long getTime() {
+    public long time() {
         switch (timing) {
             case Iterative: return getCycleTime();
             case Real: return getRealTime();
+            case Simulation: return getSimulationTime();
         }
         return 0;
     }
@@ -441,13 +451,23 @@ public class Memory implements Output, Serializable {
         return cycle;
     }
 
+    /** hard real-time, uses system clock */
     public long getRealTime() {
-        return realClockNow - realClockStart;
+        return timeRealNow - timeRealStart;
     }
-
+    
+    /** soft real-time, uses controlled simulation time */
+    public long getSimulationTime() {
+        return timeSimulation;
+    }
+    
+    public void addSimulationTime(long dt) {
+        timeSimulation += dt;
+    }
+    
     /** difference in time since last cycle */
     public long getTimeDelta() {
-        return getTime() - lastTime;
+        return time() - timePreviousCycle;
     }
 
     
@@ -809,7 +829,7 @@ public class Memory implements Output, Serializable {
                     if (t instanceof Task) {
                         Stamp s = ((Task)t).sentence.stamp;                        
                         if (s.getCreationTime()==-1)
-                            s.setCreationTime(getTime(), duration);
+                            s.setCreationTime(time(), duration);
                     }
                     if (t!=null)
                         inputTask(t);
@@ -876,9 +896,9 @@ public class Memory implements Output, Serializable {
 
     
     protected void updateTime() {
-        lastTime = getTime();
+        timePreviousCycle = time();
         cycle++;
-        realClockNow = System.currentTimeMillis();
+        timeRealNow = System.currentTimeMillis();
     }
     
     

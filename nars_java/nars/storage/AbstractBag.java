@@ -140,7 +140,7 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, RELATIVE_THRESHOLD);
             }
             else {
-                long currentTime = m.getTime();
+                long currentTime = m.time();
                 BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD, currentTime);
             }            
         }

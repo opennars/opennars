@@ -263,7 +263,7 @@ public class Stamp implements Cloneable {
     }
 
     public Stamp(final Memory memory, final Tense tense) {
-        this(memory.getTime(), tense, memory.newStampSerial(), memory.param.duration.get());
+        this(memory.time(), tense, memory.newStampSerial(), memory.param.duration.get());
     }
 
     public Stamp(final Memory memory) {

@@ -641,7 +641,7 @@ public class GraphExecutive {
         
         Cause currentEdge = path[path.length-1];
 
-        Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.getStamp(), memory.getTime());
+        Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.getStamp(), memory.time());
         
         //add all terms to derivation chain
         for(Term T : seq) {

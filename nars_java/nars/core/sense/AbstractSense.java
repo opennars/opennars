@@ -88,7 +88,7 @@ abstract public class AbstractSense extends DefaultDataSet {
         if (!active)
             return;
         
-        long time = memory.getTime();
+        long time = memory.time();
         if (time == lastUpdate) {
             //already updated
             return;

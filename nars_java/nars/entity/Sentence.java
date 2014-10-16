@@ -331,7 +331,7 @@ public class Sentence implements Cloneable {
     
         CharSequence contentName = content.name();
         
-        final long t = nar.memory.getTime();
+        final long t = nar.memory.time();
 
         final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.param.duration.get()) : "";
         final String truthString = (truth != null) ? truth.toStringExternal() : null;

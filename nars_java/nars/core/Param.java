@@ -22,7 +22,7 @@ public class Param implements Serializable {
        The range of "now" is [-DURATION, DURATION];      */
     public final AtomicDuration duration = new AtomicDuration();
 
-    protected Timing timing = Timing.Iterative;
+    protected Timing timing;
 
     
     /** can return result multiplied by duration */
