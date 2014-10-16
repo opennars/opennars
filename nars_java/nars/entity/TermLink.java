@@ -91,12 +91,8 @@ public class TermLink extends Item {
             /* for (int i = 0; i < indices.length; i++)
                 index[i + 1] = (short) indices[i]; */
         } else {
-            index = indices;
-            /* index = new short[indices.length];
-            for (int i = 0; i < index.length; i++)
-                index[i] = (short) indices[i]; */
+            index = indices;            
         }
-        //setKey();        
     }
 
     /** called from TaskLink
@@ -108,7 +104,6 @@ public class TermLink extends Item {
         this.type = type;
         this.index = indices;
         this.target = null;
-        //setKey();
     }
 
     /**
@@ -126,25 +121,7 @@ public class TermLink extends Item {
                 ? (short)(template.type - 1) //// point to component
                 : template.type;
         index = template.index;
-        //setKey();
     }
-
-//   @Override
-//    public boolean equals(final Object obj) {
-//        if (obj == this) return true;
-//        
-//        if (!(obj.getClass() == getClass()))
-//            return false;
-//        
-//        TermLink that = (TermLink)obj;
-//                            
-//        return name().equals(that.name());
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return name().hashCode();
-//    }
 
     @Override
     public CharSequence name() {
@@ -169,41 +146,6 @@ public class TermLink extends Item {
                         target!=null ? target.name() : null, 
                         suffix);        
     }
-    
-//    protected final Rope newKeyRope(String suffix) {
-//        Rope r = Rope.catFast();
-//        
-//        //Rope.visualize(r, System.err);
-//        
-//        return r;
-//    }
-//    
-//    protected final StringBuilder newKeyStringBuilder(String suffix) {
-//        int estimatedLength = 0;
-//        
-//        CharSequence prefix = newKeyPrefix();
-//        estimatedLength += prefix.length();
-//        
-//        String targetString = null;
-//        if (target!=null) {
-//            targetString = target.toString();
-//            estimatedLength += targetString.length();
-//        }
-//        
-//        if (suffix!=null)
-//            estimatedLength += suffix.length();
-//        
-//        
-//        StringBuilder sb = new StringBuilder(estimatedLength).append(prefix);
-//        
-//        if (target != null)
-//            sb.append(targetString);        
-//        
-//        if (suffix!=null)
-//            sb.append(suffix);        
-//        
-//        return sb;
-//    }
        
     public CharSequence newKeyPrefix() {
         final String at1, at2;
