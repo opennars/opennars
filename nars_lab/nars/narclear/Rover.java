@@ -347,8 +347,8 @@ public class Rover extends PhysicsModel {
     }
 
     @Override
-    public void step(TestbedSettings settings) {
-        super.step(settings);
+    public void step(float timeStep, TestbedSettings settings) {
+        super.step(timeStep, settings);
 
         rover.step();
         if(rover.torso.getTransform().p.x>sz) {
@@ -576,9 +576,16 @@ public class Rover extends PhysicsModel {
                 setConceptBagLevels(100).
                 setConceptBagSize(1024).simulationTime().
                 build();
+        
+        float framesPerSecond = 20f;
+        int cyclesPerFrame = 500; //was 200        
+        nar.param().decisionThreshold.set(0.1);
+        nar.param().noiseLevel.set(0);
+        
+        
 
        // RoverWorld.world= new RoverWorld(rv, 48, 48);
-        new NARPhysics<Rover>(nar, new Rover(nar)) {
+        new NARPhysics<Rover>(nar, 1.0f / framesPerSecond, new Rover(nar)) {
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -625,12 +632,7 @@ public class Rover extends PhysicsModel {
             
         };
         
-        int frameTimeMS = 100; //was 25
-        int cyclesPerFrame = 500; //was 200
-        nar.param().duration.set(frameTimeMS);
-        nar.param().decisionThreshold.set(0.1);
-        nar.start(frameTimeMS, cyclesPerFrame);
-        nar.param().noiseLevel.set(0);
+        nar.startFPS(framesPerSecond, cyclesPerFrame, 1.0f);
 
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }

@@ -339,9 +339,9 @@ public abstract class PhysicsModel implements ContactListener {
   private final ParticleVelocityQueryCallback pcallback = new ParticleVelocityQueryCallback();
   private final AABB paabb = new AABB();
 
-  public void step(TestbedSettings settings) {
+  public void step(float timeStep, TestbedSettings settings) {
     float hz = settings.getSetting(TestbedSettings.Hz).value;
-    float timeStep = hz > 0f ? 1f / hz : 0;
+    
     if (settings.singleStep && !settings.pause) {
       settings.pause = true;
     }

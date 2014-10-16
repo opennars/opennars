@@ -17,10 +17,10 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
     ExecutorService physExe = Executors.newFixedThreadPool(1);
     private Future<?> phyCycle;
 
-    public NARPhysics(NAR nar, P model) {
+    public NARPhysics(NAR nar, float simulationRate, P model) {
         super(nar);
         this.model = model;
-        this.phy = new PhysicsRun(nar,model) {
+        this.phy = new PhysicsRun(nar,simulationRate, model) {
 
             @Override
             public void keyPressed(KeyEvent e) {

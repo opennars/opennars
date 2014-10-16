@@ -54,8 +54,10 @@ public class PhysicsRun {
     // private static final Logger log = LoggerFactory.getLogger(TestbedMain.class);
 
     NAR nar;
-    public PhysicsRun(NAR nar,PhysicsModel... tests) {
+    private final float simulationRate;
+    public PhysicsRun(NAR nar, float simulationRate, PhysicsModel... tests) {
         this.nar=nar;
+        this.simulationRate = simulationRate;
     // try {
         // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         // } catch (Exception e) {
@@ -121,7 +123,7 @@ public class PhysicsRun {
         
     }
 
-    public void start(final int fps) {
+    /*public void start(final int fps) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -129,9 +131,11 @@ public class PhysicsRun {
                 controller.start();
             }
         });        
-    }
+    }*/
     
-    public void cycle() {        
-        controller.cycle();
+    public void cycle() {  
+        float dt = simulationRate;
+        System.out.println(dt);
+        controller.cycle(dt);
     }
 }

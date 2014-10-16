@@ -86,8 +86,6 @@ public class NAR implements Runnable, Output, TaskSource {
     //protected final List<InPort> oldInputChannels;
     protected final List<Output> oldOutputChannels;
     
-    /** frames per second: target FPS, or simulation rate. not used when in Iterative timing */
-    private float targetFPS = 0;
 
     public class PluginState {
         final public Plugin plugin;
@@ -314,13 +312,13 @@ public class NAR implements Runnable, Output, TaskSource {
         return channel;
     }
 
-    public void start(final float targetFPS, int memoryCyclesPerCycle) {
-        this.targetFPS = targetFPS;
+    public void startFPS(final float targetFPS, int memoryCyclesPerCycle, float durationsPerFrame) {        
         long cycleTime = (long)(1000f / targetFPS);
+        param().duration.set((int)Math.round(cycleTime / durationsPerFrame));
         start(cycleTime, memoryCyclesPerCycle);        
     }
     
-    protected void start(final long minCyclePeriodMS, int memoryCyclesPerCycle) {
+    public void start(final long minCyclePeriodMS, int memoryCyclesPerCycle) {
         this.minCyclePeriodMS = minCyclePeriodMS;
         this.cyclesPerFrame = memoryCyclesPerCycle;
         if (thread == null) {
@@ -363,18 +361,17 @@ public class NAR implements Runnable, Output, TaskSource {
         running = false;
     }    
     
-    /** Execute a fixed number of cycles. 
+    /** Execute a fixed number of frames. 
      * may execute more than requested cycles if cyclesPerFrame > 1 */
-    public void step(final int cycles) {
-        if (thread!=null) {
+    public void step(final int frames) {
+        /*if (thread!=null) {
             memory.stepLater(cycles);
             return;
-        }
+        }*/
         
         final boolean wasRunning = running;
         running = true;
-        long startCycle = memory.getCycleTime();
-        while (memory.getCycleTime() - startCycle < cycles) {
+        for (int f = 0;  f < frames; f++) {
             frame();
         }
         running = wasRunning;
@@ -562,7 +559,7 @@ public class NAR implements Runnable, Output, TaskSource {
             }
         }
         else if (memory.getTiming() == Timing.Simulation) {
-            memory.addSimulationTime((long)(1000f / targetFPS));
+            memory.addSimulationTime(minCyclePeriodMS);
         }
     }
     
