@@ -577,9 +577,9 @@ public class Rover extends PhysicsModel {
                 setConceptBagSize(1024).simulationTime().
                 build();
         
-        float framesPerSecond = 20f;
-        int cyclesPerFrame = 500; //was 200        
-        nar.param().decisionThreshold.set(0.1);
+        float framesPerSecond = 50f;
+        int cyclesPerFrame = 200; //was 200        
+        nar.param().decisionThreshold.set(0.2);
         nar.param().noiseLevel.set(0);
         
         
