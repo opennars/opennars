@@ -41,7 +41,7 @@ public class EventEmitter {
         return new CopyOnWriteArrayList<Observer>();
     }
     
-    public boolean hasAnyOn(final Class event) {
+    public boolean isActive(final Class event) {
         if (events.get(event)!=null)
             if (events.get(event).size() > 0)
                 return true;
@@ -49,9 +49,6 @@ public class EventEmitter {
     }
     
     public <C> void on(final Class<? extends C> event, final Observer<? extends C> o) {
-        if (null == event || null == o)
-            return;
-         
         if (events.containsKey(event))
             events.get(event).add(o);
         else {

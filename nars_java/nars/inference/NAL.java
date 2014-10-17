@@ -3,6 +3,9 @@ package nars.inference;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import nars.core.Events;
+import nars.core.Events.ConceptFire;
+import nars.core.Events.TaskImmediateProcess;
+import nars.core.Events.TermLinkSelect;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -66,10 +69,8 @@ abstract public class NAL implements Callable<NAL> {
             setCurrentBeliefLink(null);
             setCurrentTask(task);  // one of the two places where this variable is set
 
-            mem.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());        
-            if (mem.getRecorder().isActive()) {
-                mem.getRecorder().append("TaskLink Select", currentTaskLink.toStringBrief());
-            }
+            mem.logic.TASKLINK_FIRE.commit(currentTaskLink.budget.getPriority());
+            emit(ConceptFire.class, currentConcept, currentTaskLink);
 
 
             if (currentTaskLink.type == TermLink.TRANSFORM) {
@@ -77,14 +78,12 @@ abstract public class NAL implements Callable<NAL> {
                 transformTask(currentTaskLink, this);  // to turn this into structural inference as below?
             } else {
                 int termLinkCount = mem.param.termLinkMaxReasoned.get();
-    //        while (memory.noResult() && (termLinkCount > 0)) {
+    
                 while (termLinkCount > 0) {
                     final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, mem.time());
                     if (termLink != null) {
 
-                        if (mem.getRecorder().isActive()) {
-                            mem.getRecorder().append("TermLink Select", termLink.toString());
-                        }
+                        emit(TermLinkSelect.class, termLink, currentConcept);
 
                         setCurrentBeliefLink(termLink);
 
@@ -104,6 +103,11 @@ abstract public class NAL implements Callable<NAL> {
         
     }
     
+    public void emit(final Class c, final Object... o) {
+        mem.emit(c, o);
+    }
+    
+    
     /**
      * Derived task comes from the inference rules.
      *
@@ -118,9 +122,7 @@ abstract public class NAL implements Callable<NAL> {
                   float conf = task.sentence.truth.getConfidence();                
                   if (conf == 0) { 
                       //no confidence - we can delete the wrongs out that way.
-                      if (mem.getRecorder().isActive())
-                          mem.getRecorder().onTaskRemove(task, "Ignored (zero confidence)");
-                      task.end();
+                      mem.removeTask(task, "Ignored (zero confidence)");
                       return false;
                   }
             }
@@ -170,13 +172,8 @@ abstract public class NAL implements Callable<NAL> {
                     Term tc = task.getContent();
                     if (task.sentence.isJudgment() && tc.equals(chain1)) {
                         Term ptc = task.getParentTask().getContent();
-                        if(task.getParentTask()==null || 
-                           (!(ptc.equals(Negation.make(tc))) && !(tc.equals(Negation.make(ptc))))) {
-                            
-                            if (mem.getRecorder().isActive()) {
-                                mem.getRecorder().onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
-                            }
-                            task.end();
+                        if(task.getParentTask()==null || (!(ptc.equals(Negation.make(tc))) && !(tc.equals(Negation.make(ptc))))) {                            
+                            mem.removeTask(task, "Cyclic Reasoning");
                             return false;
                         }
                     }
@@ -188,17 +185,15 @@ abstract public class NAL implements Callable<NAL> {
 
                     for (int j = 0; j < stampLength; j++) {     
                         if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
-                            if (mem.getRecorder().isActive()) {                                
-                                mem.getRecorder().onTaskRemove(task, "Overlapping Revision Evidence (i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/);
-                            }
-                            task.end();
+                            mem.removeTask(task,  "Overlapping Revision Evidence");
+                            //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                             return false;
                         }
                     }
                 }
             }
             
-            mem.event.emit(Events.TaskDerived.class, task, revised, single, occurence, occurence2);
+            mem.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
 
             if(task.sentence.content instanceof Operation) {
                 Operation op=(Operation) task.sentence.content;
@@ -207,16 +202,11 @@ abstract public class NAL implements Callable<NAL> {
                 }
             }
 
-            mem.logic.TASK_DERIVED.commit(task.budget.getPriority());
-
-            mem.output(task);
-
+            mem.logic.TASK_DERIVED.commit(task.budget.getPriority());            
             mem.addNewTask(task, "Derived");
         }
         else {            
-            if (mem.getRecorder().isActive())
-                mem.getRecorder().onTaskRemove(task, "Ignored (insufficient budget)");
-            task.end();
+            mem.removeTask(task, "Insufficient Budget"); 
             return false;
         }
         return true;
@@ -355,12 +345,7 @@ abstract public class NAL implements Callable<NAL> {
             setCurrentTask(task);
             
             mem.logic.TASK_IMMEDIATE_PROCESS.commit();
-
-            setCurrentTask(currentTask); // one of the two places where this variable is set
-
-            if (mem.getRecorder().isActive()) {
-                mem.getRecorder().append("Task Immediate Process", currentTask.toString());
-            }
+            emit(TaskImmediateProcess.class, task);
 
             setCurrentTerm(currentTask.getContent());
             currentConcept = mem.conceptualize(getCurrentTerm());

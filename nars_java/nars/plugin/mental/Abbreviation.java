@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.EventEmitter.Observer;
-import nars.core.Events.TaskDerived;
+import nars.core.Events.TaskDerive;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -29,6 +29,7 @@ import nars.util.meter.util.AtomicDouble;
  */
 public class Abbreviation implements Plugin {
 
+    
     /**
     * Operator that give a CompoundTerm an atomic name
     */
@@ -37,6 +38,13 @@ public class Abbreviation implements Plugin {
         public Abbreviate() {
             super("^abbreviate");
         }
+
+        private static AtomicInteger currentTermSerial = new AtomicInteger(1);
+
+        public Term newSerialTerm(char prefix) {
+            return new Term(prefix + String.valueOf(currentTermSerial.incrementAndGet()));
+        }
+
 
         /**
          * To create a judgment with a given statement
@@ -49,7 +57,7 @@ public class Abbreviation implements Plugin {
             
             Term compound = args[0];
             
-            Term atomic = memory.newSerialTerm(Symbols.TERM_PREFIX);
+            Term atomic = newSerialTerm(Symbols.TERM_PREFIX);
                         
             Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
@@ -96,7 +104,7 @@ public class Abbreviation implements Plugin {
         if(obs==null) {
             obs=new Observer() {            
                 @Override public void event(Class event, Object[] a) {
-                    if (event != TaskDerived.class)
+                    if (event != TaskDerive.class)
                         return;                    
 
                     Task task = (Task)a[0];
@@ -115,7 +123,7 @@ public class Abbreviation implements Plugin {
             };
         }
         
-        memory.event.set(obs, enabled, TaskDerived.class);
+        memory.event.set(obs, enabled, TaskDerive.class);
         
         return true;
     }

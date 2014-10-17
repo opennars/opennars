@@ -21,30 +21,42 @@
 package nars.gui;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import nars.core.Events.ConceptAdd;
+import nars.core.Events.TaskAdd;
+import nars.core.Events.TaskRemove;
+import nars.core.Memory.Timing;
+import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.inference.MemoryObserver;
 
 /**
  * Inference log, which record input/output of each inference step interface
  * with 1 implementation: GUI ( batch not implemented )
  */
-public class InferenceLogger implements nars.inference.InferenceRecorder {
+public class InferenceLogger extends MemoryObserver {
+
 
     public static interface LogOutput {
-        public void traceAppend(String channel, String msg);
+        public void traceAppend(Class channel, String msg);
     }
     
     private final List<LogOutput> outputs = new CopyOnWriteArrayList<LogOutput>();
 
-    public InferenceLogger() {
+    public InferenceLogger(NAR n) {
+        super(n, true);
     }
     
-    public InferenceLogger(PrintStream p) {
+    public InferenceLogger(NAR n, PrintStream p) {
+        super(n, true);
         addOutput(p);
     }
-    public InferenceLogger(LogOutput l) {
+    
+    public InferenceLogger(NAR n, LogOutput l) {
+        super(n, true);
         addOutput(l);        
     }
     
@@ -56,7 +68,7 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
         //TODO removeOutput(p)
         
         addOutput(new LogOutput() {
-            @Override public void traceAppend(String channel, String s) {
+            @Override public void traceAppend(Class channel, String s) {
                 p.println(channel + ": " + s);
             }
         });        
@@ -71,18 +83,22 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
         return !outputs.isEmpty();
     }
 
-    @Override public void append(final String channel, final String s) {
-        for (final LogOutput o : outputs)
-            o.traceAppend(channel, s);
+    @Override
+    public void output(Class channel, Object... args) {
+        for (final LogOutput o : outputs) {
+            if (args.length == 1)
+                o.traceAppend(channel, args[0].toString());
+            else
+                o.traceAppend(channel, Arrays.toString(args));
+        }
     }
-
 
 
     
 
     @Override
     public void onCycleStart(long clock) {
-        append("@", String.valueOf(clock));
+        output(Timing.class, String.valueOf(clock));
     }
 
     @Override
@@ -92,17 +108,17 @@ public class InferenceLogger implements nars.inference.InferenceRecorder {
 
     @Override
     public void onTaskAdd(Task task, String reason) {
-        append("Task Add", reason + ": " + task);
+        output(TaskAdd.class, reason + ": " + task);
     }
 
     @Override
     public void onTaskRemove(Task task, String reason) {        
-        append("Task Remove", reason + ": " + task);
+        output(TaskRemove.class, reason + ": " + task);
     }
     
     @Override
     public void onConceptNew(Concept concept) {
-        append("Concept Add", concept.toString());
+        output(ConceptAdd.class, concept.toString());
     }    
     
     

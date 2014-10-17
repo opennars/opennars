@@ -15,13 +15,13 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.output.chart.TimeSeries;
-import nars.inference.InferenceRecorder;
+import nars.inference.MemoryObserver;
 import nars.io.Output;
 
 /**
  * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
  */
-public class NARTrace implements InferenceRecorder, Output, Serializable {
+public class NARTrace implements MemoryObserver, Output, Serializable {
 
     /**
      * utility method for diagnosing stack overflow errors caused by unbounded

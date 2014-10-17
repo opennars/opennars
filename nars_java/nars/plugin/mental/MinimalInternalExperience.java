@@ -60,7 +60,7 @@ public class MinimalInternalExperience implements Plugin {
                             Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
 
                     if (memory.getRecorder().isActive()) {
-                        memory.getRecorder().append("Action Remembered", j.toString());
+                        memory.getRecorder().output("Action Remembered", j.toString());
                     }
 
                     memory.addNewTask(newTask, "Remembered Action");

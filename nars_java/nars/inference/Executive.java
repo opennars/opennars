@@ -85,7 +85,7 @@ public class Executive {
     
     public Executive(Memory mem) {
         this.memory = mem;    
-        this.memory.event.on(Events.TaskDerived.class,new thelambda() {
+        this.memory.event.on(Events.TaskDerive.class,new thelambda() {
             @Override
             public void event(Class event, Object[] arguments) {
                 Task derivedTask=(Task) arguments[0];
@@ -317,7 +317,7 @@ public class Executive {
             if (tasks.add(te)) {
                 //added successfully
                 if (memory.getRecorder().isActive())
-                   memory.getRecorder().append("Executive", "Task Add: " + t.toString());
+                   memory.getRecorder().output("Executive", "Task Add: " + t.toString());
                 return true;
             }
         }
@@ -331,7 +331,7 @@ public class Executive {
             t.t.setPriority(0); //dint set priority of entire statement to 0
             //t.t.end();
             if (memory.getRecorder().isActive())
-               memory.getRecorder().append("Executive", "Task Remove: " + t.toString());
+               memory.getRecorder().output("Executive", "Task Remove: " + t.toString());
         }
     }
     
@@ -403,7 +403,7 @@ public class Executive {
             boolean plannable = graph.isPlannable(t.getContent());
             if (plannable) {                    
                 if (memory.getRecorder().isActive())
-                   memory.getRecorder().append("Goal Planned", t.toString());
+                   memory.getRecorder().output("Goal Planned", t.toString());
 
                 int planned = graph.plan(nal, concept, t, t.getContent(), 
                         particles, searchDepth, '!', maxPlannedTasks);
