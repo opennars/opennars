@@ -921,7 +921,9 @@ public class Memory implements Output, Serializable {
         // don't include new tasks produced in the current cycleMemory
         int counter = Math.min(maxTasks, newTasks.size());
         while (counter-- > 0) {
-            
+            if(newTasks.size()==0) { //TODO it can already be 0 inbetween, multithreading?
+                break;
+            }
             final Task task = newTasks.removeFirst();
             processed++;
             
