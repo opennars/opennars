@@ -2077,5 +2077,5 @@ OUT: +6. %1.00;0.16%
 OUT: (&/,(^deactivate,switch0),+6). %1.00;0.18%
 OUT: <(&/,<place4 --> (/,^go-to,_)>,+6) =/> <place4 --> at>>. :\: %1.00;0.45%
 OUT: (&/,(^go-to,place4),+6). :\: %1.00;0.34%
-IN: <door5 --> opened>. :|:
+IN: <door5 --> opened>! :|:
 LOG: Stream saved: lvl1.nal
