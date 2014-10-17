@@ -124,19 +124,20 @@ public class Executive {
             
             
             //Check if task is 
-            Term term = t.getContent();
-            if (term instanceof Implication) {
-                Implication it = (Implication)term;
-                if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
-                    if (it.getSubject() instanceof Conjunction) {
-                        t = inlineConjunction(t, (Conjunction)it.getSubject());
+            if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
+                Term term = t.getContent();
+                if (term instanceof Implication) {
+                    Implication it = (Implication)term;
+                    if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
+                        if (it.getSubject() instanceof Conjunction) {
+                            t = inlineConjunction(t, (Conjunction)it.getSubject());
+                        }
                     }
                 }
+                else if (term instanceof Conjunction) {
+                    t = inlineConjunction(t, (Conjunction)term);
+                }
             }
-            else if (term instanceof Conjunction) {
-                t = inlineConjunction(t, (Conjunction)term);
-            }
-            
             this.t = t;
 
         }
