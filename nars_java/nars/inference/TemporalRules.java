@@ -329,19 +329,6 @@ public class TemporalRules {
         }
     }
     
-    public static void ApplyTemporalInductionOnStandardInference(Sentence s1, Sentence s2, Memory mem) {
-        //allow chaining of &/ plans by chaining together a =/> term and a similarity/inheritance term 
-        if(s1!=null && s2!=null /*&& (s1.content instanceof Inheritance || s1.content instanceof Inheritance) */) {
-            if(/*s2.getOccurenceTime()>s1.getOccurenceTime() && */ s1.stamp.getOccurrenceTime()!=Stamp.ETERNAL &&
-                    s2.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
-                //if((s1.content instanceof Inheritance || s1.content instanceof Similarity) && s2.content instanceof Implication &&
-                //        s2.getTemporalOrder()==ORDER_FORWARD) {
-                   // temporalInduction(s1,s2,mem); not now
-                //}
-            } //comment grey part out if only allowing restricted time inference
-        }
-    }
-    
     /**
      * Evaluate the quality of the judgment as a solution to a problem
      *
