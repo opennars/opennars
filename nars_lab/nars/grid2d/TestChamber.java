@@ -111,6 +111,10 @@ public class TestChamber {
     }
     
     public TestChamber(NAR nar) {
+        this(nar, true);
+    }
+    
+    public TestChamber(NAR nar, boolean showWindow) {
         super();
 
         int w = 50;
@@ -142,7 +146,7 @@ public class TestChamber {
             private long lastDrawn = 0;
             
             @Override
-            public void event(Class event, Object... arguments) {                           
+            public void event(Class event, Object... arguments) {           
                 if (nar.getTime() % gridUpdatePeriod == 0) {
                     space.update(into);
                     
@@ -155,8 +159,8 @@ public class TestChamber {
             }
         });
 
-        
-        space.newWindow(1000, 800, true);
+        if (showWindow)
+            space.newWindow(1000, 800, true);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         GridAgent a = new GridAgent(17, 17, nar) {
 

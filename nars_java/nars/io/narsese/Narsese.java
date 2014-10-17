@@ -297,8 +297,11 @@ public class Narsese {
             if (i < 0) {        // default durability
                 priority = parseFloat(s);
             } else {
+                int i2 = s.indexOf(VALUE_SEPARATOR, i+1);
+                if (i2 == -1)
+                    i2 = s.length();
                 priority = parseFloat(s.substring(0, i));
-                durability = parseFloat(s.substring(i + 1));
+                durability = parseFloat(s.substring(i + 1, i2));
             }
         }
         float quality = (truth == null) ? 1 : truthToQuality(truth);

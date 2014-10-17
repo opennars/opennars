@@ -214,8 +214,14 @@ public class TextOutput implements Output {
         
     }
     
-    @Deprecated public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
-        return getOutputString(channel, signal, showChannel, showStamp, nar, new StringBuilder());
+    public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
+        String s = getOutputString(signal, showStamp, nar);
+        if (showChannel) {            
+            return channel.getSimpleName() + ": " + s;
+        }
+        else {
+            return s;
+        }
     }
 
     public static String getOutputString(Object signal, final boolean showStamp, final NAR nar) {
