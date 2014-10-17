@@ -399,7 +399,7 @@ public class GraphExecutive {
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getCauseRelevancy(final Cause c) {
-        return getEffectivePriority(memory, c.getImplication()) * c.getTruth().getExpectation();          
+        return c.getTruth().getExpectation();          
     }    
 
     public static double getActualPriority(final Memory memory, final Term t) {
