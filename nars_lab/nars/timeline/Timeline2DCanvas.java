@@ -32,7 +32,7 @@ import processing.event.KeyEvent;
 public class Timeline2DCanvas extends PApplet {
 
     float camScale = 1f;
-    float scaleSpeed = 0.2f;
+    float scaleSpeed = 1f;
     private float lastMousePressY = Float.NaN;
     private float lastMousePressX = Float.NaN;
 
@@ -41,6 +41,8 @@ public class Timeline2DCanvas extends PApplet {
     float minLabelScale = 10f;
     float minYScale = 0.5f;
     float minTimeScale = 0.5f;
+    float maxYScale = 100f;
+    float maxTimeScale = 100f;
     float drawnTextScale = 0;
 
     //display options to extract to a parameter class ----------------------------------------
@@ -53,6 +55,8 @@ public class Timeline2DCanvas extends PApplet {
 
     float camX = 0f;
     float camY = 0f;
+    
+    long lastUpdate = System.nanoTime();
 
     public final List<Chart> charts;
     //display options ----------------------------------------
@@ -287,6 +291,12 @@ public class Timeline2DCanvas extends PApplet {
             super(t);
         }
 
+        public BarChart(NARTrace t, String... sensors) {
+            super(t, sensors);
+        }
+
+        
+        
         @Override
         protected void drawData(Timeline2DCanvas l, float timeScale, float yScale1, float y) {
             int ccolor = 0;
@@ -452,7 +462,11 @@ public class Timeline2DCanvas extends PApplet {
 
                     float p = 0.5f;
                     if (te.signal instanceof Item) {
-                        p = ((Item) te.signal).getPriority();
+                        Item ii = (Item) te.signal;
+                        if (ii.budget!=null)
+                            p = ii.getPriority();
+                        else
+                            p= 0.5f;
                     }
                     float ph = 0.5f + 0.5f * p; //so that priority 0 will still be visible
 
@@ -586,9 +600,14 @@ public class Timeline2DCanvas extends PApplet {
 
     protected void updateCamera() {
 
+        
         //scale limits
         if (mouseButton > 0) {
+            long now = System.nanoTime();
+            
             if (Float.isFinite(lastMousePressX)) {
+                float dt = (now - lastUpdate)/1e9f;
+                
                 float dx = (mouseX - lastMousePressX);
                 float dy = (mouseY - lastMousePressY);
 
@@ -601,8 +620,8 @@ public class Timeline2DCanvas extends PApplet {
                     }
                 } else if (mouseButton == 39) {
                     //right mouse button
-                    float sx = dx * scaleSpeed;
-                    float sy = dy * scaleSpeed;         
+                    float sx = dx * scaleSpeed * dt;
+                    float sy = dy * scaleSpeed * dt;         
                     
                     camX += sx * camX / timeScale;
                     camY += sy * camY / yScale;
@@ -611,6 +630,7 @@ public class Timeline2DCanvas extends PApplet {
                     yScale += sy;
 
                     updateNext();
+                    //System.out.println(camX +  " " + camY + " " + sx + " "  + sy);
                 }
 //                else if (mouseButton == 3) {
 //                    //middle mouse button (wheel)
@@ -621,13 +641,19 @@ public class Timeline2DCanvas extends PApplet {
             lastMousePressX = mouseX;
             lastMousePressY = mouseY;
 
+            lastUpdate = now;
+            
         } else {
             lastMousePressX = Float.NaN;
         }
         
         
+        
+        
         if (yScale < minYScale) yScale = minYScale;
+        if (yScale > maxYScale) yScale = maxYScale;
         if (timeScale < minTimeScale)  timeScale = minTimeScale;
+        if (timeScale > maxTimeScale) timeScale = maxTimeScale;
 
         translate(-camX + width / 2, -camY + height / 2);
 
