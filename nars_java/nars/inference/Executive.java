@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import nars.core.EventEmitter.Observer;
+import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Concept;
@@ -40,6 +42,8 @@ public class Executive {
 
     PriorityBuffer<TaskExecution> tasks;
     private Set<TaskExecution> tasksToRemove = new HashSet();
+    public int shortTermMemorySize=0; //this value will adjust according to the longest (&/,a1...an) =/> .. statement
+    public ArrayList<Task> lastEvents=new ArrayList<Task>();
     
     /** number of tasks that are active in the sorted priority buffer for execution */
     int numActiveTasks = 1;
@@ -73,10 +77,38 @@ public class Executive {
      */
     float motivationToFinishCurrentExecution = 1.5f;
     
-
+    public class thelambda implements Observer{@Override
+        public void event(Class event, Object[] arguments) {}
+    }
+    
+    HashSet<Task> current_tasks=new HashSet<Task>();
     
     public Executive(Memory mem) {
-        this.memory = mem;        
+        this.memory = mem;    
+        this.memory.event.on(Events.TaskDerived.class,new thelambda() {
+            @Override
+            public void event(Class event, Object[] arguments) {
+                Task derivedTask=(Task) arguments[0];
+                if(derivedTask.sentence.content instanceof Implication &&
+                   ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                    
+                    if(!current_tasks.contains(derivedTask)) {
+                        current_tasks.add(derivedTask);
+                    }
+                }
+            }
+        });
+        
+        this.memory.event.on(Events.ConceptBeliefRemove.class,new thelambda() {
+            @Override
+            public void event(Class event, Object[] arguments) {
+                Task removedTask=(Task) arguments[0];
+                if(current_tasks.contains(removedTask)) {
+                    current_tasks.remove(removedTask);
+                }
+            }
+        });
+        
         this.graph = new GraphExecutive(mem,this);
 
         this.tasks = new PriorityBuffer<TaskExecution>(new Comparator<TaskExecution>() {
@@ -599,6 +631,11 @@ public class Executive {
                // this.expected_task=null; //done i think//todo, refine, it could come in a specific time, also +4 on end of a (&/ plan has to be used
             }
             stmLast=newEvent;
+            lastEvents.add(newEvent);
+            while(lastEvents.size()>shortTermMemorySize) {
+                lastEvents.remove(0);
+            }
+            
         }
 
         return true;
