@@ -373,8 +373,10 @@ public class Executive {
                 if (memory.getRecorder().isActive())
                    memory.getRecorder().append("Goal Planned", t.toString());
 
-                graph.plan(nal, concept, t, t.getContent(), 
+                int planned = graph.plan(nal, concept, t, t.getContent(), 
                         particles, searchDepth, '!', maxPlannedTasks);
+                
+                memory.logic.PLAN_TASK_PLANNED.commit(planned);
             }                
         }
         
@@ -419,6 +421,7 @@ public class Executive {
         graph.implication.multiplyRelevancy(causeRelevancyFactor);
         
         updateTasks();
+        updateSensors();
 
         if (tasks.isEmpty())
             return;
@@ -653,5 +656,11 @@ public class Executive {
 //        
 //    }
     
+    
+    protected void updateSensors() {
+        memory.logic.PLAN_GRAPH_EDGE.commit(graph.implication.edgeSet().size());
+        memory.logic.PLAN_GRAPH_VERTEX.commit(graph.implication.vertexSet().size());
+        memory.logic.PLAN_TASK_EXECUTABLE.commit(tasks.size());                
+    }
     
 }

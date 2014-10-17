@@ -61,7 +61,13 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final EventValueSensor SOLUTION_BEST;
     private double conceptVariance;
     private double[] conceptHistogram;
-    
+    public final EventValueSensor PLAN_GRAPH_IN_DELAY_MAGNITUDE;
+    public final EventValueSensor PLAN_GRAPH_IN_OPERATION;
+    public final EventValueSensor PLAN_GRAPH_IN_OTHER;
+    public final EventValueSensor PLAN_GRAPH_EDGE;
+    public final EventValueSensor PLAN_GRAPH_VERTEX;
+    public final EventValueSensor PLAN_TASK_PLANNED;
+    public final EventValueSensor PLAN_TASK_EXECUTABLE;
 
     public LogicSense() {
         super();
@@ -109,6 +115,16 @@ public class LogicSense extends AbstractSense implements Serializable {
         DERIVATION_LATENCY.setSampleWindow(64);
         
         add(SOLUTION_BEST = new EventValueSensor("task.solution.best"));
+        
+        add(PLAN_GRAPH_IN_DELAY_MAGNITUDE = new EventValueSensor("plan.graph.in.delay_magnitude"));
+        add(PLAN_GRAPH_IN_OPERATION = new EventValueSensor("plan.graph.in.operation"));
+        add(PLAN_GRAPH_IN_OTHER = new EventValueSensor("plan.graph.in.other"));
+        
+        add(PLAN_GRAPH_EDGE = new EventValueSensor("plan.graph.edge"));
+        add(PLAN_GRAPH_VERTEX = new EventValueSensor("plan.graph.vertex"));
+        
+        add(PLAN_TASK_PLANNED = new EventValueSensor("plan.task.planned"));
+        add(PLAN_TASK_EXECUTABLE = new EventValueSensor("plan.task.executable"));
     }
     
     @Override
@@ -194,8 +210,26 @@ public class LogicSense extends AbstractSense implements Serializable {
         
         putHits(SHORT_TERM_MEMORY_UPDATE);
         
-        putHits(SOLUTION_BEST);
-        put("task.solution.best.priority.mean", SOLUTION_BEST.get().mean());
+        {
+            putHits(SOLUTION_BEST);
+            put("task.solution.best.priority.mean", SOLUTION_BEST.get().mean());
+        }
+        
+        
+        {
+            
+            put("plan.graph.edge.count", PLAN_GRAPH_EDGE.getValue());
+            put("plan.graph.vertex.count", PLAN_GRAPH_VERTEX.getValue());
+            
+            put("plan.graph.in.other.count", PLAN_GRAPH_IN_OTHER.getHits());
+            put("plan.graph.in.operation.count", PLAN_GRAPH_IN_OPERATION.getHits());
+            put("plan.graph.in.interval.count", PLAN_GRAPH_IN_DELAY_MAGNITUDE.getHits());
+            put("plan.graph.in.delay_magnitude.mean", PLAN_GRAPH_IN_DELAY_MAGNITUDE.getReset().mean());
+
+            put("plan.task.executable", PLAN_TASK_EXECUTABLE.getReset().sum());
+            put("plan.task.planned", PLAN_TASK_PLANNED.getReset().sum());
+
+        }
     }
     
     public void putValue(final EventValueSensor s) {
