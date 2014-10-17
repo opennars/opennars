@@ -511,7 +511,7 @@ public class Memory implements Output, Serializable {
 
     //TODO decide if this is necessary
     public void temporalRuleOutputToGraph(Sentence s, Task t) {
-        if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+        if(t.sentence.content instanceof Implication && ((Implication)t.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
             
             executive.graph.implication.add(s, (CompoundTerm)s.content, t);            
         }
