@@ -723,7 +723,7 @@ public class GraphExecutive {
         Task newTask = planTask(plan, c, task, target, punctuation);
         
         if (memory.getRecorder().isActive())
-               memory.getRecorder().append("Plan Add", newTask.toString());
+               memory.getRecorder().output("Plan Add", newTask.toString());
         
         //if (punctuation == '.')   //feedback is due to temporal induction currently.     
         //    nal.derivedTask(newTask, false, true, null, null);  //and if this is a implication then wrong

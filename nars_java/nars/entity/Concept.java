@@ -22,6 +22,7 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import nars.core.Events.BeliefSelect;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Events.ConceptGoalAdd;
@@ -572,19 +573,20 @@ public class Concept extends Item {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.time();
 
-        for (final Sentence belief : beliefs) {
-            if (memory.getRecorder().isActive()) {
-                memory.getRecorder().append("Belief Select", belief.toString());
-            }
+        for (final Sentence belief : beliefs) {            
+            nal.emit(BeliefSelect.class, belief);
 
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
+            
 ////            if (memory.newStamp != null) {
             //               return belief.projection(taskStamp.getOccurrenceTime(), currentTime);
 ////            }
+            
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
             if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }
+            
             return projectedBelief;     // return the first satisfying belief
         }
         return null;
@@ -606,13 +608,13 @@ public class Concept extends Item {
      * An atomic step in a concept
      */
     public void fire() {
-        final TaskLink currentTaskLink = taskLinks.takeOut();
-        if (currentTaskLink == null) {
+        if (taskLinks.size() == 0)
             return;
-        }
+        
+        final TaskLink currentTaskLink = taskLinks.takeOut();
         
         new NAL.FireConcept(memory, this, currentTaskLink).call();
-
+        
         taskLinks.putBack(currentTaskLink, memory);
     }
 

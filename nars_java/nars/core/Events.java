@@ -41,7 +41,15 @@ public class Events {
     public static class ConceptQuestionAdd { }
     public static class ConceptQuestionRemove { }
 
-    public static class TaskDerived {    }
+    public static class ConceptFire { }
+    public static class TaskImmediateProcess { }
+    public static class TermLinkSelect { }
+    public static class BeliefSelect { }
+    public static class ConceptUnification { } //2nd level unification in CompositionalRules
+
+    public static class TaskAdd { }
+    public static class TaskRemove { }
+    public static class TaskDerive {    }
 
     public static class PluginsChange {    }
 

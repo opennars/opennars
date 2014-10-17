@@ -31,7 +31,7 @@ public class Counting implements Plugin {
                 @Override
                 public void event(Class event, Object[] a) {
 
-                    if (event!=Events.TaskDerived.class)
+                    if (event!=Events.TaskDerive.class)
                         return;
 
                     Task task = (Task)a[0];
@@ -63,9 +63,7 @@ public class Counting implements Plugin {
                                 Stamp stampi = task.sentence.stamp.clone();
                                 Sentence j = new Sentence(new_term, Symbols.JUDGMENT_MARK, truth, stampi);
                                 BudgetValue budg = task.budget.clone();
-                                Task newTask = new Task(j, budg,task);
-
-                                memory.output(newTask);
+                                Task newTask = new Task(j, budg,task);                               
 
                                 memory.addNewTask(newTask, "Derived (Cardinality)");
                             }
@@ -75,7 +73,7 @@ public class Counting implements Plugin {
             };
         }
         
-        memory.event.set(obs, enabled, Events.TaskDerived.class);
+        memory.event.set(obs, enabled, Events.TaskDerive.class);
         return true;
     }
     

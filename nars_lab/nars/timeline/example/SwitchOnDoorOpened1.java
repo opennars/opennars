@@ -40,8 +40,8 @@ import nars.util.NARTrace;
 public class SwitchOnDoorOpened1 extends TimelineExample {
     
     public static void main(String[] args) throws Exception {
-        int cycles = 3000;
-        int inputDelay = 8;
+        int cycles = 1000;
+        int inputDelay = 20;
         
         NAR nar = new DefaultNARBuilder().build();
         new TestChamber(nar, false);
@@ -69,7 +69,7 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         
         nar.addInput(i);
         
-        nar.finish(cycles);        
+        nar.finish(1);        
         System.out.println(nar.getTime());
 
         nar.finish(cycles);        

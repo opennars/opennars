@@ -32,8 +32,10 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import nars.core.Events.ConceptAdd;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
+import nars.core.Events.TaskRemove;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
@@ -47,11 +49,10 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
-import nars.inference.InferenceRecorder;
 import nars.inference.NAL;
 import nars.inference.NAL.ImmediateProcess;
 import nars.inference.TemporalRules;
-import nars.io.Output;
+import nars.io.Output.IN;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
@@ -119,12 +120,12 @@ import nars.storage.BagObserver;
  * 
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Output, Serializable {
+public class Memory implements Serializable {
     
     public final Executive executive;
     
     private boolean enabled = true;
-    private ExecutorService exe;
+    private final ExecutorService exe;
     
     private long timeRealStart;
     private long timeRealNow;
@@ -174,17 +175,14 @@ public class Memory implements Output, Serializable {
     public final HashMap<CharSequence, Operator> operators;
     
     private long currentStampSerial = 0;
-    private long currentTermSerial = 1;
+    
     
     
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
     public final AbstractBag<Task> novelTasks;
-    /**
-     * Inference record text to be written into a log file
-     */
-    private InferenceRecorder recorder;
+    
     
     /* ---------- Short-term workspace for a single cycle ---	------- */
     
@@ -242,8 +240,6 @@ public class Memory implements Output, Serializable {
     
     public final Param param;
     
-    transient private Output output;
-
     
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
@@ -332,9 +328,7 @@ public class Memory implements Output, Serializable {
         this.event = newEventEmitter();
         
         this.executive = new Executive(this);
-        
-        this.recorder = NullInferenceRecorder.global;
-        
+                
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
                 
@@ -371,7 +365,9 @@ public class Memory implements Output, Serializable {
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
                 Events.ConceptDirectProcessedTask.class,
-                Events.TaskDerived.class,
+                Events.TaskAdd.class,
+                Events.TaskRemove.class,
+                Events.TaskDerive.class,
                 Events.PluginsChange.class                
         ) {
 
@@ -424,17 +420,6 @@ public class Memory implements Output, Serializable {
         
         event.emit(ResetEnd.class);
        
-        if (getRecorder().isActive()) {
-            getRecorder().append("Reset");
-        }
-    }
-
-    public InferenceRecorder getRecorder() {
-        return recorder;
-    }
-
-    public void setRecorder(InferenceRecorder recorder) {
-        this.recorder = recorder;
     }
 
     public long time() {
@@ -548,9 +533,8 @@ public class Memory implements Output, Serializable {
             } else {
                 logic.CONCEPT_NEW.commit(term.getComplexity());
                         
-                if (recorder.isActive()) {
-                    recorder.onConceptNew(newConcept);
-                }
+                emit(ConceptAdd.class, newConcept);
+                
                 return newConcept;
             }
         }
@@ -677,14 +661,14 @@ public class Memory implements Output, Serializable {
         if(t.sentence.content instanceof Implication && t.sentence.content.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             t.setPriority(Math.min(0.99f, t.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
         }
+    
         
         logic.TASK_ADD_NEW.commit(t.getPriority());
                 
         newTasks.add(t);
-        
-        if (recorder.isActive()) {
-            recorder.onTaskAdd(t, reason);
-        }
+                
+        emit(Events.TaskAdd.class, t, reason);
+        output(t);
     }
     
     /* There are several types of new tasks, all added into the
@@ -696,43 +680,40 @@ public class Memory implements Output, Serializable {
  tasks with low priority are ignored, and the others are put into task
  buffer.
      *
-     * @param task The addInput task
+     * @param t The addInput task
      */
     public void inputTask(final AbstractTask t) {                                                 
         if (t instanceof Task) {                                       
             Task task = (Task)t;
 
-            output(IN.class, task);
+            emit(IN.class, task);
 
             if (task.budget.aboveThreshold()) {
                 temporalRuleOutputToGraph(task.sentence,task);
                 
                 addNewTask(task, "Perceived");
             } else {
-                if (recorder.isActive()) {
-                    recorder.onTaskRemove(task, "Neglected");
-                }
-                task.end();
+                removeTask(task, "Neglected");
             }
         }
         else if (t instanceof PauseInput) {            
             stepLater(((PauseInput)t).cycles);            
-            output(IN.class, t);
+            emit(IN.class, t);
         }
         else if (t instanceof Reset) {
             reset();
-            output(IN.class, t);
+            emit(IN.class, t);
         }
         else if (t instanceof Echo) {
             Echo e = (Echo)t;
-            output(e.channel, e.signal);
+            emit(e.channel, e.signal);
         }
         else if (t instanceof SetVolume) {            
             param.noiseLevel.set(((SetVolume)t).volume);
-            output(IN.class, t);
+            emit(IN.class, t);
         }            
         else {
-            output(IN.class, "Unrecognized Input Task: " + t);
+            emit(IN.class, "Unrecognized Input Task: " + t);
         }
     }
 
@@ -748,11 +729,12 @@ public class Memory implements Output, Serializable {
     public void activatedTask(Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
         final Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
 
-        if (sentence.isQuestion()) {
-            output(task);
-        }
-
         addNewTask(task, "Activated");
+    }
+
+    public void removeTask(Task task, String reason) {
+        emit(TaskRemove.class, task, reason);
+        task.end();
     }
     
     /**
@@ -774,21 +756,18 @@ public class Memory implements Output, Serializable {
         addNewTask(task, "Executed");
     }
 
-    public void output(final Task t) {
-        if (output == null) return;
+    protected void output(final Task t) {
         
         final float budget = t.budget.summary();
         final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);
         
         if (budget >= noiseLevel) {  // only report significant derived Tasks
-            output(OUT.class, t);
+            emit(OUT.class, t);
         }        
     }
     
-    @Override
-    public void output(final Class c, final Object signal) {
-        if (output!=null)
-            output.output(c, signal);
+    public void emit(final Class c, final Object... signal) {        
+        event.emit(c, signal);
     }
 
 
@@ -868,33 +847,25 @@ public class Memory implements Output, Serializable {
      *
      * @param clock The current time to be displayed
      */
-    public void cycleWork() {
-        
+    public void cycleWork() {        
         event.emit(Events.CycleStart.class);
         
-        boolean recorderActive = recorder.isActive();
-        if (recorderActive)
-            recorder.onCycleStart(cycle);
-
         //--------m-a-i-n-----l-o-o-p--------
             
         conceptProcessor.cycle(this);                
             
         //--------m-a-i-n-----l-o-o-p--------
 
-        if (recorderActive)
-            recorder.onCycleEnd(cycle);
-
         if (cyclesQueued > 0)
             cyclesQueued--;         
         
         updateTime();        
                 
-        event.emit(Events.CycleEnd.class);      
-        
+        event.emit(Events.CycleEnd.class);        
     }
 
-    
+    /**
+     * automatically called each cycle */    
     protected void updateTime() {
         timePreviousCycle = time();
         cycle++;
@@ -953,12 +924,8 @@ public class Memory implements Output, Serializable {
                         // new concept formation                        
                         novelTasks.putIn(task);
                         
-                    } else {
-                        
-                        if (recorder.isActive()) {
-                            recorder.onTaskRemove(task, "Neglected");
-                        }
-                        task.end();
+                    } else {                        
+                        removeTask(task, "Neglected");
                     }
                 }
             }
@@ -1029,27 +996,7 @@ public class Memory implements Output, Serializable {
          return operators.remove(op.name());
      }
      
- 
-//    /* ---------- display ---------- */
-//    /**
-//     * Start display active concepts on given bagObserver, called from
-//     * MainWindow.
-//     *
-//     * we don't want to expose fields concepts and novelTasks, AND we want to
-//     * separate GUI and inference, so this method takes as argument a
-//     * {@link BagObserver} and calls
-//     * {@link ConceptBag#addBagObserver(BagObserver, String)} ;
-//     *
-//     * see design for {@link Bag} and {@link nars.gui.BagWindow} in
-//     * {@link Bag#addBagObserver(BagObserver, String)}
-//     *
-//     * @param bagObserver bag Observer that will receive notifications
-//     * @param title the window title
-//     */
-//    public void conceptsStartPlay(final BagObserver<Concept> bagObserver, final String title) {
-//        bagObserver.setBag(concepts);
-//        concepts.addBagObserver(bagObserver, title);
-//    }
+
 
     /**
      * Display new tasks, called from MainWindow. see
@@ -1105,16 +1052,7 @@ public class Memory implements Output, Serializable {
     public long newStampSerial() {
         return currentStampSerial++;
     }
-    public Term newSerialTerm(char prefix) {
-        return new Term(prefix + String.valueOf(currentTermSerial++));
-    }
 
-    /**
-     * sets the current output destination for Memory's emitted signals     
-     */
-    public void setOutput(Output o) {
-        output = o;
-    }
 
     public int getCyclesQueued() {
         return cyclesQueued;
@@ -1122,25 +1060,6 @@ public class Memory implements Output, Serializable {
 
 
 
-    public static final class NullInferenceRecorder implements InferenceRecorder {
-
-        public static final NullInferenceRecorder global = new NullInferenceRecorder();
-
-        
-        private NullInferenceRecorder() {        }
-        
-        @Override public boolean isActive() { return false;  }
-
-        @Override public void append(String channel, String s) {        }
-
-        @Override public void onCycleStart(long clock) {        }
-        @Override public void onCycleEnd(long clock) {        }                
-        @Override public void onConceptNew(Concept concept) {        }
-        @Override public void onTaskAdd(Task task, String reason) {        }        
-        @Override public void onTaskRemove(Task task, String reason) {        }        
-               
-    }
-    
 
     public boolean isWorking() {
         return working;
@@ -1195,24 +1114,5 @@ public class Memory implements Output, Serializable {
         throw new RuntimeException("Questions index for " + c + " does not exist");
     }
 
-    
-//    /**
-//     * Updates the LogicState measurements and returns the data     
-//     */
-//    public LogicSense updateLogicSense() {
-//        logic.update(this);
-//        return logic;
-//    }
-//    
-//    public MultiSense updateSenses() {
-//        
-//        updateLogicSense();
-//        
-//        resource.update(this);
-//        
-//        return new MultiSense(logic, resource);
-//    }
-//
-        
     
 }

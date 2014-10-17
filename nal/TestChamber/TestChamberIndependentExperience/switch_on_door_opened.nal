@@ -29,6 +29,11 @@ IN: $0.8000;0.5000;0.9500$ (^go-to,place4). :|: %1.00;0.90%
 IN: $0.8000;0.5000;0.9500$ <place4 --> at>. :|: %1.00;0.90%
 IN: <door5 --> opened>! :|:
 
+500
+
+IN: <door5 --> opened>! :|:
+
+
 
 ' <patham9> at least after second trial it has to get it
 ' <patham9> no matter what parameter we will choose, if it cannot do this after two observations of the sequence something is not ideal :D

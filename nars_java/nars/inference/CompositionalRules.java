@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import nars.core.Events;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -954,18 +955,18 @@ public final class CompositionalRules {
             return false;
         }
 
-        Term taskterm = taskSentence.content;
+        Term first = taskSentence.content;
 
-        if (!(taskterm instanceof CompoundTerm)) {
+        if (!(first instanceof CompoundTerm)) {
             return false;
         }
 
         //lets just allow conjunctions, implication and equivalence for now
-        if (!((taskterm instanceof Disjunction || taskterm instanceof Conjunction || taskterm instanceof Equivalence || taskterm instanceof Implication))) {
+        if (!((first instanceof Disjunction || first instanceof Conjunction || first instanceof Equivalence || first instanceof Implication))) {
             return false;
         }
 
-        if (!taskterm.containVar()) {
+        if (!first.containVar()) {
             return false;
         }
 
@@ -984,28 +985,26 @@ public final class CompositionalRules {
         HashMap<Term, Term> smap = null;
 
         for (int k = 0; k < maxUnificationAttempts; k++) {
-            Concept second = nal.mem().sampleNextConcept();
+            Concept secondConcept = nal.mem().sampleNextConcept();
 
-            if (second == null) {
+            if (secondConcept == null) {
                 //no more concepts, stop
                 break;
             }
 
             //prevent unification with itself
-            if (second.term.equals(taskterm)) {
+            if (secondConcept.term.equals(first)) {
                 continue;
             }
 
-            Term secterm = second.term;
-            if (second.beliefs.isEmpty()) {
+            Term secterm = secondConcept.term;
+            if (secondConcept.beliefs.isEmpty()) {
                 continue;
             }
+            
+            nal.emit(Events.ConceptUnification.class, first, secondConcept);
 
-            if (nal.mem().getRecorder().isActive()) {
-                nal.mem().getRecorder().append("Concept Select (Unification 2nd Layer)", second.term.toString());
-            }
-
-            Sentence second_belief = second.beliefs.get(Memory.randomNumber.nextInt(second.beliefs.size()));
+            Sentence second_belief = secondConcept.beliefs.get(Memory.randomNumber.nextInt(secondConcept.beliefs.size()));
             
             
             TruthValue truthSecond = second_belief.truth;
@@ -1027,7 +1026,7 @@ public final class CompositionalRules {
 
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
-            Term[] components_level1 = ((CompoundTerm) taskterm).term;
+            Term[] components_level1 = ((CompoundTerm) first).term;
             Term secterm_unwrap = unwrapNegation(secterm);
 
             for (final Term T1 : components_level1) {
@@ -1037,7 +1036,7 @@ public final class CompositionalRules {
                 smap.clear();
 
                 if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
-                    CompoundTerm taskterm_subs = ((CompoundTerm) taskterm);
+                    CompoundTerm taskterm_subs = ((CompoundTerm) first);
                     taskterm_subs = taskterm_subs.applySubstitute(Values);
                     taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -1049,7 +1048,7 @@ public final class CompositionalRules {
                 smap.clear();
 
                 if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values2, smap)) {
-                    CompoundTerm taskterm_subs = (CompoundTerm) taskterm;
+                    CompoundTerm taskterm_subs = (CompoundTerm) first;
                     taskterm_subs = taskterm_subs.applySubstitute(Values2);
                     taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -1073,7 +1072,7 @@ public final class CompositionalRules {
 
                         if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values3, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs = (CompoundTerm) taskterm;
+                            CompoundTerm taskterm_subs = (CompoundTerm) first;
                             taskterm_subs = taskterm_subs.applySubstitute(Values3);
                             taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -1086,7 +1085,7 @@ public final class CompositionalRules {
 
                         if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values4, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                            CompoundTerm taskterm_subs = (CompoundTerm) taskterm;
+                            CompoundTerm taskterm_subs = (CompoundTerm) first;
                             taskterm_subs = taskterm_subs.applySubstitute(Values4);
                             taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -1190,9 +1189,13 @@ public final class CompositionalRules {
 
             nal.setCurrentBelief(taskSentence);
             nal.setCurrentTask(dummy);
-
-            nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
-            nal.derivedTask(newTask, false, false, taskSentence, second_belief);
+            
+            if (nal.derivedTask(newTask, false, false, taskSentence, second_belief)) {
+                
+                nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
+                
+            }
+            
         }
     }
 

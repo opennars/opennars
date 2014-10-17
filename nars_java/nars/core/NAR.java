@@ -21,6 +21,8 @@ import nars.gui.NARControls;
 import nars.io.InPort;
 import nars.io.Input;
 import nars.io.Output;
+import nars.io.Output.ERR;
+import nars.io.Output.IN;
 import nars.io.TextInput;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
@@ -40,7 +42,7 @@ import nars.operator.io.Echo;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Runnable, Output, TaskSource {
+public class NAR implements Runnable, TaskSource {
 
     /**
      * The information about the version and date of the project.
@@ -75,16 +77,8 @@ public class NAR implements Runnable, Output, TaskSource {
     /** The addInput channels of the reasoner     */
     protected final List<InPort<Object,AbstractTask>> inputChannels;
     
-    /** The output channels of the reasoner     */
-    protected List<Output> outputChannels;
-    
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
-    private final List<Output> newOutputChannels;
-    
-    /** pending niput and output channels to remove on the next cycle */
-    //protected final List<InPort> oldInputChannels;
-    protected final List<Output> oldOutputChannels;
     
 
     public class PluginState {
@@ -105,8 +99,7 @@ public class NAR implements Runnable, Output, TaskSource {
             
             plugin.setEnabled(NAR.this, enabled);
             this.enabled = enabled;
-            event().emit(Events.PluginsChange.class, null, null);
-            output(Plugin.class, plugin.name() + " " + (enabled ? "on" : "off"));
+            emit(Events.PluginsChange.class, plugin, enabled);
         }
 
         public boolean isEnabled() {
@@ -141,17 +134,11 @@ public class NAR implements Runnable, Output, TaskSource {
     
     public NAR(Memory m, Perception p) {
         this.memory = m;
-        this.perception = p;
-        
-        m.setOutput(this);                
+        this.perception = p;                
         
         //needs to be concurrent in case we change this while running
         inputChannels = new ArrayList();
         newInputChannels = new CopyOnWriteArrayList();
-        //oldInputChannels = new ArrayList();
-        outputChannels = new ArrayList();
-        newOutputChannels = new CopyOnWriteArrayList();
-        oldOutputChannels = new CopyOnWriteArrayList();
     
         this.perception.start(this);
 
@@ -261,7 +248,7 @@ public class NAR implements Runnable, Output, TaskSource {
             i.update();
             newInputChannels.add(i);
         } catch (IOException ex) {                    
-            output(ERR.class, ex);
+            emit(ERR.class, ex);
         }
         ioChanged = true;
         return i;
@@ -274,12 +261,6 @@ public class NAR implements Runnable, Output, TaskSource {
 //        return channel;
 //    }
 
-    /** Adds an output channel */
-    public Output addOutput(final Output channel) {
-        newOutputChannels.add(channel);
-        ioChanged = true;
-        return channel;
-    }
 
     public void addPlugin(Plugin p) {
         if (p instanceof Operator) {
@@ -287,7 +268,7 @@ public class NAR implements Runnable, Output, TaskSource {
         }
         PluginState ps = new PluginState(p);
         plugins.add(ps);
-        event().emit(Events.PluginsChange.class, p, null);
+        emit(Events.PluginsChange.class, p, null);
     }
     
     public void removePlugin(PluginState ps) {
@@ -297,7 +278,7 @@ public class NAR implements Runnable, Output, TaskSource {
                 memory.removeOperator((Operator)p);
             }
             ps.setEnabled(false);
-            event().emit(Events.PluginsChange.class, null, p);
+            emit(Events.PluginsChange.class, null, p);
         }
     }
     
@@ -305,12 +286,6 @@ public class NAR implements Runnable, Output, TaskSource {
         return Collections.unmodifiableList(plugins);
     }
     
-    /** Removes an output channel */
-    public Output removeOutput(final Output channel) {
-        oldOutputChannels.add(channel);
-        ioChanged = true;
-        return channel;
-    }
 
     public void startFPS(final float targetFPS, int memoryCyclesPerCycle, float durationsPerFrame) {        
         long cycleTime = (long)(1000f / targetFPS);
@@ -456,15 +431,7 @@ public class NAR implements Runnable, Output, TaskSource {
             inputChannels.addAll(newInputChannels);
             newInputChannels.clear();
         }
-        if (!oldOutputChannels.isEmpty()) {
-            outputChannels.removeAll(oldOutputChannels);
-            oldOutputChannels.clear();
-        }
-        if (!newOutputChannels.isEmpty()) {
-            outputChannels.addAll(newOutputChannels);
-            newOutputChannels.clear();
-        }
-        
+
     }
     
     /**     
@@ -492,7 +459,7 @@ public class NAR implements Runnable, Output, TaskSource {
             try {
                 i.update();
             } catch (IOException ex) {                    
-                output(ERR.class, ex);
+                emit(ERR.class, ex);
             }                
 
             if (i.hasNext()) {
@@ -517,6 +484,10 @@ public class NAR implements Runnable, Output, TaskSource {
     }
 
     
+    protected void emit(final Class c, final Object... o) {
+        memory.event.emit(c, o);
+    }
+    
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
@@ -528,7 +499,7 @@ public class NAR implements Runnable, Output, TaskSource {
         
         long timeStart = System.currentTimeMillis();
         
-        memory.event.emit(FrameStart.class);
+        emit(FrameStart.class);
 
         updatePorts();
         
@@ -537,13 +508,13 @@ public class NAR implements Runnable, Output, TaskSource {
                 memory.cycle(this);
         }
         catch (Throwable e) {
-            output(ERR.class, e);
+            emit(ERR.class, e);
 
             System.err.println(e);
             e.printStackTrace();
         }
         
-        memory.event.emit(FrameEnd.class);
+        emit(FrameEnd.class);
         
         long timeEnd = System.currentTimeMillis();
         
@@ -553,7 +524,7 @@ public class NAR implements Runnable, Output, TaskSource {
             
             //warn if frame consumed more time than reasoner duration
             if (frameTime > d) {
-                output(ERR.class, 
+                emit(ERR.class, 
                         "@" + timeEnd + ": Real-time consumed by frame (" + 
                                 frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
             }
@@ -563,29 +534,6 @@ public class NAR implements Runnable, Output, TaskSource {
         }
     }
     
-    
-    /**
-     * Outputs an object to the output channels, via a specific Channel that signifying 
-     * the mode of this output. (IN, OUT, ERR, etc..)
-     * 
-     * @param channel
-     * @param o 
-     */
-    @Override
-    public synchronized void output(final Class channel, final Object o) {
-        
-        updatePorts();
-        
-//        if (o instanceof Sentence) {
-//            System.err.println("output should receive Task, not a Sentence");
-//            new Exception().printStackTrace();;
-//        }        
-//        System.out.println(o.getClass().getSimpleName());
-        for (int i = 0; i < outputChannels.size(); i++)        
-            outputChannels.get(i).output(channel, o);
-    }
-
-  
 
     @Override
     public String toString() {
@@ -631,7 +579,7 @@ public class NAR implements Runnable, Output, TaskSource {
         try {
             return perception.getText().narsese.parseTerm(s);
         } catch (Narsese.InvalidInputException ex) {
-            output(ERR.class, ex);
+            emit(ERR.class, ex);
         }
         return null;
     }
@@ -650,12 +598,12 @@ public class NAR implements Runnable, Output, TaskSource {
     
     /** stops and empties an input channel into a receiver. 
      * this results in no pending input from this channel. */
-    public int flushInput(InPort i, Output receiver) {
+    public int flushInput(InPort i, Observer receiver) {
         int total = 0;
         i.finish();
         
         while (i.hasNext()) {
-            receiver.output(IN.class, i.next());
+            receiver.event(IN.class, new Object[] { i.next() });
             total++;
         }        
         
