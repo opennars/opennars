@@ -102,7 +102,7 @@ public class Executive {
         this.memory.event.on(Events.ConceptBeliefRemove.class,new thelambda() {
             @Override
             public void event(Class event, Object[] arguments) {
-                Task removedTask=(Task) arguments[0];
+                Task removedTask=(Task) arguments[2]; //task is 2nd
                 if(current_tasks.contains(removedTask)) {
                     current_tasks.remove(removedTask);
                 }
