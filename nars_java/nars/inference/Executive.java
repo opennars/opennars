@@ -48,8 +48,8 @@ public class Executive {
     int maxPlannedTasks = 1;
     
     /** global plan search parameters */
-    float searchDepth = 16;
-    int particles = 96;
+    float searchDepth = 64;
+    int particles = 32;
     
     /** inline search parameters */
     float inlineSearchDepth = 8;
