@@ -405,7 +405,8 @@ public class play extends javax.swing.JFrame {
         return won!=0;
     }
     public void narstart() { 
-        nar.start(50, 500);
+       // nar.start(50, 500);
+        nar.start(0);
     }
     
     boolean en=false;
