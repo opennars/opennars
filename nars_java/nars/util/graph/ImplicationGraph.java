@@ -256,6 +256,15 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
     }
     
+    protected void meter(Term a) {
+        if (a instanceof Interval)
+            memory.logic.PLAN_GRAPH_IN_DELAY_MAGNITUDE.commit(((Interval)a).magnitude);
+        else if (a instanceof Operation)
+            memory.logic.PLAN_GRAPH_IN_OPERATION.commit(1);
+        else
+            memory.logic.PLAN_GRAPH_IN_OTHER.commit(1);
+    }
+    
     @Override
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
 
@@ -308,7 +317,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 
                 for (int i = 0; i < seq.term.length; i++) {
                     
-                    Term a = seq.term[i];
+                    Term a = seq.term[i];                    
+                    meter(a);                       
                     
                     if (Executive.isPlanTerm(a)) {
                         //make a unique Term if an Interval or if an Operation in the middle of a sequence
@@ -353,7 +363,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         else {
             if (Executive.isPlanTerm(subject)) {                
                 //newImplicationEdge(predicatePre, subject, c, s);
-                //newImplicationEdge(subject, predicatePost, c, s);                
+                //newImplicationEdge(subject, predicatePost, c, s);                                
                 addVertex(subject);
                 newImplicationEdge(subject, predicatePost, c, s);
             }
@@ -366,6 +376,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 newImplicationEdge(predicatePre, subject, c, s);
                 newImplicationEdge(subjectPost, predicatePost, c, s);
             }
+            meter(subject);
         }
 
         return true;
