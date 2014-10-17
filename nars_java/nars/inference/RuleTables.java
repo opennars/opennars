@@ -115,8 +115,6 @@ public class RuleTables {
         
         CompositionalRules.dedConjunctionByQuestion(taskSentence, belief, nal);
         
-        TemporalRules.ApplyTemporalInductionOnStandardInference(taskSentence, belief, memory);
-        
         short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
         switch (tLink.type) {          // dispatch first by TaskLink type
