@@ -183,9 +183,11 @@ public class TemporalRules {
             int order2=s2.getTemporalOrder();
             Conjunction S=(Conjunction) Conjunction.make(term,order1);
             Implication whole=Implication.make(S, C,order2);
-            TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
-            BudgetValue budget = BudgetFunctions.forward(truth, nal);
-            nal.doublePremiseTask(whole, truth, budget, true);
+            if(whole!=null) {
+                TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
+                BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                nal.doublePremiseTask(whole, truth, budget, true);
+            }
         }
     }
     
