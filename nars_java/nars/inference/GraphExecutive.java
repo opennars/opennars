@@ -734,15 +734,16 @@ public class GraphExecutive {
         
     }
 
-   protected void plan(final NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
+   protected int plan(final NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
 
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
         int n = 0;
         for (ParticlePlan p : plans) {
-            planTask(nal, p, c, task, target, punctuation);
+            planTask(nal, p, c, task, target, punctuation);            
             if (n++ == maxTasks)
                 break;
         }
+        return n;
        
     }
     

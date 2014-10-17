@@ -41,8 +41,8 @@ public class Timeline2DCanvas extends PApplet {
     float minLabelScale = 10f;
     float minYScale = 0.5f;
     float minTimeScale = 0.5f;
-    float maxYScale = 100f;
-    float maxTimeScale = 100f;
+    float maxYScale = 1000f;
+    float maxTimeScale = 1000f;
     float drawnTextScale = 0;
 
     //display options to extract to a parameter class ----------------------------------------

@@ -41,7 +41,7 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
     
     public static void main(String[] args) throws Exception {
         int cycles = 3000;
-        int inputDelay = 50;
+        int inputDelay = 8;
         
         NAR nar = new DefaultNARBuilder().build();
         new TestChamber(nar, false);
@@ -68,25 +68,38 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         }; 
         
         nar.addInput(i);
-        nar.finish(cycles);
         
-        System.out.println(t.time.size());
+        nar.finish(cycles);        
+        System.out.println(nar.getTime());
 
+        nar.finish(cycles);        
+        System.out.println(nar.getTime());
+        
         new NWindow("_", new Timeline2DCanvas(
+                
+            new BarChart(t, "task.executed").height(2),
+            new StackedPercentageChart(t, "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count").height(3),
+            new LineChart(t, "plan.graph.in.delay_magnitude.mean").height(1),
+            new LineChart(t, "plan.graph.edge.count", "plan.graph.vertex.count").height(2),                
+            new StackedPercentageChart(t, "plan.task.executable", "plan.task.planned").height(2),
+            
+                
             new EventChart(t, true, false, false).height(3),
+            new EventChart(t, false, true, false).height(3),
+            new EventChart(t, false, false, true).height(3),
+
             new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
             
             new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
             new LineChart(t, "concept.priority.mean").height(1),
+                
 
-            //new EventChart(t, false, true, false).height(3),
-            
+                
             new LineChart(t, "task.novel.add", "task.immediate_processed").height(3),
             new LineChart(t, "task.goal.process", "task.question.process", "task.judgment.process").height(3),
-            new BarChart(t, "task.executed").height(3),
-            new LineChart(t, "task.new.add").height(3),
-            new LineChart(t, "emotion.busy").height(1)
-            //new EventChart(t, false, false, true).height(3)
+            new LineChart(t, "task.new.add").height(3)
+            //new LineChart(t, "emotion.busy").height(1)
+            
         )).show(800, 800, true);
     }
     
