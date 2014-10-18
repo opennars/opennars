@@ -26,8 +26,31 @@ package nars.entity;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item implements Comparable {
+public abstract class Item<K> implements Comparable {
 
+
+
+    abstract public static class StringKeyItem extends Item<CharSequence> {
+        
+        public StringKeyItem() {  super();        }
+        public StringKeyItem(final BudgetValue budget) { super(budget);         }
+
+                
+        @Override
+        public int hashCode() {
+            return name().hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj == this) return true;
+            if (obj instanceof Item) {
+                return ((Item)obj).name().equals(name());
+            }
+            return false;
+        }
+    
+    }
     
     /** The budget of the Item, consisting of 3 numbers */
     public final BudgetValue budget;
@@ -56,7 +79,7 @@ public abstract class Item implements Comparable {
      * Get the current key
      * @return Current key value
      */
-    abstract public CharSequence name();
+    abstract public K name();
 
 
     /**
@@ -122,20 +145,7 @@ public abstract class Item implements Comparable {
     public void decDurability(final float v) {
         budget.decDurability(v);
     }
-
-    @Override
-    public int hashCode() {
-        return name().hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == this) return true;
-        if (obj instanceof Item) {
-            return ((Item)obj).name().equals(name());
-        }
-        return false;
-    }
+    
     
 
     /** called when the item has been discarded */
@@ -176,7 +186,8 @@ public abstract class Item implements Comparable {
         //return budget + " " + key ;
         
         String budgetStr = budget!=null ? budget.toString() : "";
-        return new StringBuilder(budgetStr.length()+name().length()+1).append(budgetStr).append(' ').append(name()).toString();
+        String n = name().toString();
+        return new StringBuilder(budgetStr.length()+n.length()+1).append(budgetStr).append(' ').append(n).toString();
     }
 
     /**
@@ -186,7 +197,8 @@ public abstract class Item implements Comparable {
     public String toStringExternal() {        
         //return budget.toStringBrief() + " " + key ;
         final String briefBudget = budget.toStringExternal();
-        return new StringBuilder(briefBudget.length()+name().length()+1).append(briefBudget).append(' ').append(name()).toString();
+        String n = name().toString();
+        return new StringBuilder(briefBudget.length()+n.length()+1).append(briefBudget).append(' ').append(n).toString();
     }
     
     public String toStringLong() {
@@ -195,7 +207,7 @@ public abstract class Item implements Comparable {
 
     //default:
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(final Object o) {
         //return System.identityHashCode(this) - System.identityHashCode(o);
         return hashCode() - o.hashCode();
     }

@@ -32,7 +32,7 @@ import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.entity.Item;
 
-public class Bag<E extends Item> extends AbstractBag<E> {
+public class Bag<E extends Item<K>,K> extends AbstractBag<E,K> {
 
     /**
      * priority levels
@@ -52,7 +52,7 @@ public class Bag<E extends Item> extends AbstractBag<E> {
      * mapping from key to item
      */
     //public final Set<E> nameTable;
-    public final Map<CharSequence, E> nameTable;
+    public final Map<K, E> nameTable;
 
     /**
      * array of lists of items, for items on different level
@@ -132,7 +132,7 @@ public class Bag<E extends Item> extends AbstractBag<E> {
     }
 
     @Override
-    public Set<CharSequence> keySet() {
+    public Set<K> keySet() {
         return nameTable.keySet();
     }
 
@@ -171,14 +171,14 @@ public class Bag<E extends Item> extends AbstractBag<E> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final CharSequence key) {
+    public E get(final K key) {
         return nameTable.get(key);
     }
 
 
     @Override synchronized public boolean putIn(final E newItem) {
 
-        final CharSequence newKey = newItem.name();        
+        final K newKey = newItem.name();        
         final E existingItemWithSameKey = nameTable.remove(newKey);
 
         if (existingItemWithSameKey != null) {
@@ -201,7 +201,7 @@ public class Bag<E extends Item> extends AbstractBag<E> {
 
         if (overflowItem != null) {             
             // remove overflow
-            final CharSequence overflowKey = overflowItem.name();
+            final K overflowKey = overflowItem.name();
             if (!overflowKey.equals(newKey)) {
                 nameTable.remove(overflowKey);
             }
@@ -288,7 +288,7 @@ public class Bag<E extends Item> extends AbstractBag<E> {
      * @return The Item with the key
      */
     @Override
-    public E pickOut(final CharSequence key) {
+    public E pickOut(final K key) {
         final E picked = nameTable.remove(key);
         //if (picked != null) {
             outOfBase(picked);

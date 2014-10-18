@@ -20,7 +20,7 @@ public class BagIteratorTest {
     int L = 4;
 
 
-    public void testIterator(AbstractBag<NullItem> b) {
+    public void testIterator(AbstractBag<NullItem,CharSequence> b) {
         int count = 0;
         NullItem first = null, current = null;
         Iterator<NullItem> i = b.iterator();
@@ -41,7 +41,7 @@ public class BagIteratorTest {
         assertTrue(count==b.size());
     }
     
-    public void testBagIterator(AbstractBag<NullItem> b) {
+    public void testBagIterator(AbstractBag<NullItem,CharSequence> b) {
         
         b.putIn(new NullItem(0.1f));
         b.putIn(new NullItem(0.2f));
@@ -71,10 +71,10 @@ public class BagIteratorTest {
     public void testBags() {
         AtomicDurations forgetRate = new DefaultNARBuilder().build().param().conceptForgetDurations;
         
-        Bag<NullItem> b = new Bag(L, L*2, forgetRate);
+        Bag<NullItem,CharSequence> b = new Bag(L, L*2, forgetRate);
         testBagIterator(b);
         
-        ContinuousBag<NullItem> c = new ContinuousBag(L*2, forgetRate, false);
+        ContinuousBag<NullItem,CharSequence> c = new ContinuousBag(L*2, forgetRate, false);
         testBagIterator(c);
         
     }

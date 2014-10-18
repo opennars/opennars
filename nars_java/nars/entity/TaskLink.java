@@ -34,10 +34,12 @@ public class TaskLink extends TermLink {
      * The Task linked. The "target" field in TermLink is not used here.
      */
     public final Task targetTask;
+    
     /**
      * Remember the TermLinks that has been used recently with this TaskLink
      */
-    public final CharSequence recordedLinks[];
+    public final TermLink recordedLinks[];
+    
     /**
      * Remember the time when each TermLink is used with this TaskLink
      */
@@ -68,13 +70,31 @@ public class TaskLink extends TermLink {
         );
         
         targetTask = t;
-        recordedLinks = new CharSequence[recordLength];
+        recordedLinks = new TermLink[recordLength];
         recordingTime = new long[recordLength];
         counter = 0;
-        setKey(t.name());   // as defined in TermLink
+        //setKey(t.name());   // as defined in TermLink
         
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj instanceof TaskLink) {
+            TaskLink t = (TaskLink)obj;
+            return t.targetTask.equals(targetTask);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return targetTask.hashCode();                
+    }
+    
+
+    
+    
     /**
      * Get the target Task
      *
@@ -99,7 +119,7 @@ public class TaskLink extends TermLink {
         if (bTerm.equals(targetTask.sentence.content)) {            
             return false;
         }
-        CharSequence linkKey = termLink.name();
+        TermLink linkKey = termLink.name();
         int next, i;
         
         final int recordLength = recordedLinks.length; //Parameters.TERM_LINK_RECORD_LENGTH;

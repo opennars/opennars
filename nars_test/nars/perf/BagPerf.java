@@ -20,7 +20,6 @@ package nars.perf;
 import java.util.Iterator;
 import nars.core.Param.AtomicDurations;
 import nars.core.build.DefaultNARBuilder;
-import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.AbstractBag;
 import nars.storage.ContinuousBag;
@@ -55,7 +54,7 @@ public class BagPerf {
 
             @Override
             public void run(boolean warmup) {
-                DefaultBag<NullItem> b = new DefaultBag<NullItem>(levels, capacity, forgetRate) {
+                DefaultBag<NullItem,CharSequence> b = new DefaultBag(levels, capacity, forgetRate) {
 
 //                    @Override
 //                    protected ArrayDeque<NullItem> newLevel() {
@@ -92,7 +91,7 @@ public class BagPerf {
     public static int itemID = 0;
     
     /** Empty Item implementation useful for testing */
-    public static class NullItem extends Item {
+    public static class NullItem extends Item.StringKeyItem {
         private final String key;
     
         public NullItem() {
@@ -114,7 +113,7 @@ public class BagPerf {
         
     }
     
-    public static void randomBagIO(AbstractBag<NullItem> b, int accesses, double insertProportion) {
+    public static void randomBagIO(AbstractBag<NullItem,CharSequence> b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (Math.random() > insertProportion) {
                 //remove
@@ -126,7 +125,7 @@ public class BagPerf {
             }            
         }
     }
-    public static void iterate(AbstractBag<NullItem> b) {
+    public static void iterate(AbstractBag<NullItem,CharSequence> b) {
         Iterator<NullItem> i = b.iterator();
         int count = 0;
         while (i.hasNext()) {
@@ -138,8 +137,8 @@ public class BagPerf {
         }
     }
     
-    public interface BagBuilder<E extends Item> {
-        public AbstractBag<E> newBag();
+    public interface BagBuilder<E extends Item<K>,K> {
+        public AbstractBag<E,K> newBag();
     }
     
     //final boolean first, final int levels, final int levelCapacity, 
@@ -217,7 +216,7 @@ public class BagPerf {
                           }                        
                         };*/
                         
-                        return new ContinuousBag2<Item>(bagCapacity, forgetRate, new ContinuousBag2.DefaultBagCurve(), true);
+                        return new ContinuousBag2(bagCapacity, forgetRate, new ContinuousBag2.DefaultBagCurve(), true);
                     }                    
                 }, iterations, randomAccesses, insertRatio, repeats, warmups);
                 
@@ -237,7 +236,7 @@ public class BagPerf {
                         };
                         */     
                         
-                        return new ContinuousBag<Item>(bagCapacity, forgetRate, true);
+                        return new ContinuousBag(bagCapacity, forgetRate, true);
 
                     
                     }                    

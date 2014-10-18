@@ -16,7 +16,7 @@ abstract public class NARBuilder extends Parameters  {
      
     /** initial runtime parameters */
     abstract public Param newParam();
-    abstract public AbstractBag<Task> newNovelTaskBag(Param p);
+    abstract public AbstractBag<Task,CharSequence> newNovelTaskBag(Param p);
     abstract public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c);
     abstract public ConceptBuilder getConceptBuilder();
     

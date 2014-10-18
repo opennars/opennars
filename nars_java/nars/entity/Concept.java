@@ -31,6 +31,7 @@ import nars.core.Events.ConceptQuestionAdd;
 import nars.core.Events.ConceptQuestionRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
+import nars.entity.Item.StringKeyItem;
 import static nars.entity.Stamp.make;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
@@ -45,10 +46,8 @@ import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.storage.BagObserver;
-import nars.storage.NullBagObserver;
 
-public class Concept extends Item {
+public class Concept extends StringKeyItem {
 
     /**
      * The term is the unique ID of the concept
@@ -58,12 +57,12 @@ public class Concept extends Item {
     /**
      * Task links for indirect processing
      */
-    public final AbstractBag<TaskLink> taskLinks;
+    public final AbstractBag<TaskLink,TermLink> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
      */
-    public final AbstractBag<TermLink> termLinks;
+    public final AbstractBag<TermLink,TermLink> termLinks;
 
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
@@ -103,10 +102,6 @@ public class Concept extends Item {
      * The display window
      */
 
-    @Deprecated
-    private static final EntityObserver defaultNullEntityObserver = new NullEntityObserver();
-    @Deprecated
-    private EntityObserver entityObserver = defaultNullEntityObserver;
     public final CharSequence key;
 
 
@@ -117,8 +112,9 @@ public class Concept extends Item {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Term tm, AbstractBag<TaskLink> taskLinks, AbstractBag<TermLink> termLinks, final Memory memory) {
+    public Concept(final Term tm, AbstractBag<TaskLink,TermLink> taskLinks, AbstractBag<TermLink,TermLink> termLinks, final Memory memory) {
         super();
+        
         this.key = tm.name();
         this.term = tm;
         this.memory = memory;
@@ -180,9 +176,6 @@ public class Concept extends Item {
             linkToTask(task);
         }
 
-        if (entityObserver.isActive()) {
-            entityObserver.refresh(displayContent());
-        }
         return true;
     }
 
@@ -619,38 +612,6 @@ public class Concept extends Item {
     }
 
 
-    /* ---------- display ---------- */
-    /**
-     * Start displaying contents and links, called from ConceptWindow,
-     * TermWindow or Memory.processTask only
-     *
-     * same design as for {@link nars.storage.Bag} and
-     * {@link nars.gui.BagWindow}; see
-     * {@link nars.storage.Bag#addBagObserver(BagObserver, String)}
-     *
-     * @param entityObserver {@link EntityObserver} to set; TODO make it a real
-     * observer pattern (i.e. with a plurality of observers)
-     * @param showLinks Whether to display the task links
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public void startPlay(EntityObserver entityObserver, boolean showLinks) {
-        this.entityObserver = entityObserver;
-        entityObserver.startPlay(this, showLinks);
-        entityObserver.post(displayContent());
-//        if (showLinks) {
-//            taskLinks.addBagObserver(entityObserver.createBagObserver(), "Task Links in " + term);
-//            termLinks.addBagObserver(entityObserver.createBagObserver(), "Term Links in " + term);
-//        }
-    }
-
-    /**
-     * Resume display, called from ConceptWindow only
-     */
-    public void play() {
-        entityObserver.post(displayContent());
-    }
-
     @Override
     public void end() {
         //empty bags and lists
@@ -666,13 +627,6 @@ public class Concept extends Item {
         
     }
     
-    
-    /**
-     * Stop display, called from ConceptWindow only
-     */
-    @Deprecated public void stop() {
-        entityObserver.stop();
-    }
 
     /**
      * Collect direct isBelief, questions, and desires for display
@@ -722,35 +676,6 @@ public class Concept extends Item {
 
     public void returnTermLink(TermLink termLink) {
         termLinks.putBack(termLink, memory);
-    }
-
-    static final class NullEntityObserver implements EntityObserver {
-
-        @Override
-        public boolean isActive() {
-            return false;
-        }
-
-        @Override
-        public void post(String str) {
-        }
-
-        @Override
-        public BagObserver<TermLink> createBagObserver() {
-            return new NullBagObserver<>();
-        }
-
-        @Override
-        public void startPlay(Concept concept, boolean showLinks) {
-        }
-
-        @Override
-        public void stop() {
-        }
-
-        @Override
-        public void refresh(String message) {
-        }
     }
 
     /**

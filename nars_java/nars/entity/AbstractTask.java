@@ -1,9 +1,11 @@
 package nars.entity;
 
+import nars.entity.Item.StringKeyItem;
+
 /**
  * Base class for all perception commands and Task's
  */
-abstract public class AbstractTask extends Item {
+abstract public class AbstractTask extends StringKeyItem {
 
     public AbstractTask() {
         super(null);
