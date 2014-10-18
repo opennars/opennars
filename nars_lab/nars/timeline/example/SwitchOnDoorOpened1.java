@@ -57,15 +57,6 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
                     return inputDelay+ "\n";
             }
         };
-        TextOutput o = new TextOutput(nar, System.out) {
-
-            @Override
-            public synchronized void output(Class channel, Object o) {
-                if (channel == EXE.class)
-                    super.output(channel, o);
-            }
-            
-        }; 
         
         nar.addInput(i);
         

@@ -500,7 +500,7 @@ public class Executive {
             throw new RuntimeException("Unrecognized executable term: " + it.getSubject() + "[" + it.getSubject().getClass() + "] from " + top);
         }
         else {
-            throw new RuntimeException("Unknown Task type: "+ top);
+            //throw new RuntimeException("Unknown Task type: "+ top);
         }
         
         

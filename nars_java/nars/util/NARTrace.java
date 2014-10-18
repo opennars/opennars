@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import nars.core.Events.ConceptAdd;
+import nars.core.Events.InferenceEvent;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.sense.MultiSense;
@@ -16,7 +18,6 @@ import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.output.chart.TimeSeries;
 import nars.inference.MemoryObserver;
-import nars.io.Output;
 
 /**
  * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
@@ -48,47 +49,10 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public final Map<String, TimeSeries> charts = new TreeMap();
 
     private long t;
-    transient private boolean active = true;
     public final NAR nar;
     public final MultiSense senses;
 
 
-    abstract public static class InferenceEvent {
-
-        public final long when;
-        public final List<StackTraceElement> stack;
-
-        //how many stack frames down to record from; we don't need to include the current and the previous (InferenceEvent subclass's constructor
-        int STACK_PREFIX = 4;
-
-        protected InferenceEvent(long when) {
-            this(when, 0);
-        }
-        
-        protected InferenceEvent(long when, int stackFrames) {
-            this.when = when;
-            
-            if (stackFrames > 0) {
-                List<StackTraceElement> sl = Arrays.asList(Thread.currentThread().getStackTrace());
-
-                int frame = 0;
-                
-                for (StackTraceElement e : sl) {
-                    frame++;
-                    if (e.getClassName().equals("nars.core.NAR")) {
-                        break;
-                    }                    
-                }
-                if (frame - STACK_PREFIX > stackFrames)
-                    frame = STACK_PREFIX + stackFrames;
-                this.stack = sl.subList(STACK_PREFIX, frame);
-            }
-            else {
-                this.stack = null;
-            }
-        }
-
-    }
 
     public static class OutputEvent extends InferenceEvent {
 
@@ -103,26 +67,14 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
         @Override
         public String toString() {
-            if (channel instanceof Class)
-                return ((Class)channel).getSimpleName() + ": " + Arrays.toString(signal);
-            return channel + ": " + Arrays.toString(signal);
+            return ((Class)channel).getSimpleName() + ": " + 
+                    (signal.length > 1 ? Arrays.toString(signal) : signal[0]);
         }
-
-    }
-
-    public static class ConceptCreation extends InferenceEvent {
-
-        public final Concept concept;
-
-        public ConceptCreation(Concept concept, long when) {
-            super(when);
-            this.concept = concept;
+        
+        public Class getType() {
+            return channel;
         }
-
-        @Override
-        public String toString() {
-            return "Concept Created: " + concept;
-        }
+        
 
     }
 
@@ -185,10 +137,6 @@ public class NARTrace extends MemoryObserver implements Serializable {
         return active;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public void reset() {
         time.clear();
         concept.clear();
@@ -198,14 +146,17 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
 
     @Override
-    public void onConceptNew(Concept concept) {
-        ConceptCreation cc = new ConceptCreation(concept, t);
+    public void onConceptAdd(Concept concept) {
+        if (this.concept.containsKey(concept)) 
+            throw new RuntimeException(this + " adding duplicate concept: " + concept);
+
+        ConceptAdd cc = new ConceptAdd(concept, t);
+        addEvent(cc);
 
         List<InferenceEvent> lc = new ArrayList(1);
         lc.add(cc);
-
+                
         this.concept.put(concept, lc);
-        addEvent(cc);
     }
 
     @Override

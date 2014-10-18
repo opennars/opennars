@@ -1,5 +1,9 @@
 package nars.core;
 
+import java.util.Arrays;
+import java.util.List;
+import nars.entity.Concept;
+
 /** empty event classes for use with EventEmitter */
 public class Events {
 
@@ -32,7 +36,16 @@ public class Events {
     public static class ResetEnd {
     }
     
-    public static class ConceptAdd { }
+    public static class ConceptAdd extends ParametricInferenceEvent<Concept> {
+        public ConceptAdd(Concept c, long when) {
+            super(c, when);
+        }
+        
+        @Override public String toString() {
+            return "Concept Created: " + object;
+        }        
+    }
+    
     public static class ConceptRemove { }
     public static class ConceptBeliefAdd { }
     public static class ConceptBeliefRemove { }
@@ -53,7 +66,61 @@ public class Events {
 
     public static class PluginsChange {    }
 
-    public static class UnExecutedGoal {    }
+    //public static class UnExecutedGoal {    }
 
     public static class ConceptDirectProcessedTask {    }
+
+    abstract public static class InferenceEvent {
+
+        public final long when;
+        public final List<StackTraceElement> stack;
+
+        //how many stack frames down to record from; we don't need to include the current and the previous (InferenceEvent subclass's constructor
+        int STACK_PREFIX = 4;
+
+        protected InferenceEvent(long when) {
+            this(when, 0);
+        }
+        
+        protected InferenceEvent(long when, int stackFrames) {
+            this.when = when;
+            
+            if (stackFrames > 0) {
+                List<StackTraceElement> sl = Arrays.asList(Thread.currentThread().getStackTrace());
+
+                int frame = 0;
+                
+                for (StackTraceElement e : sl) {
+                    frame++;
+                    if (e.getClassName().equals("nars.core.NAR")) {
+                        break;
+                    }                    
+                }
+                if (frame - STACK_PREFIX > stackFrames)
+                    frame = STACK_PREFIX + stackFrames;
+                this.stack = sl.subList(STACK_PREFIX, frame);
+            }
+            else {
+                this.stack = null;
+            }
+        }
+
+        public Class getType() {
+            return getClass();
+        }
+
+    }
+
+    abstract public static class ParametricInferenceEvent<O> extends InferenceEvent {    
+        public final O object;
+
+        public ParametricInferenceEvent(O object, long when) {
+            super(when);
+            this.object = object;
+        }
+        
+        
+        
+    }
+    
 }

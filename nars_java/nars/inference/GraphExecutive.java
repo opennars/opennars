@@ -578,7 +578,7 @@ public class GraphExecutive {
                 }
 
             };
-            return goal;
+            return solution;
         }
         
         /** the task that caused the need for this plan */

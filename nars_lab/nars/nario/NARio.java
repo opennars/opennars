@@ -87,7 +87,7 @@ public class NARio extends Run {
     String[] sight = new String[9];
 
     protected void axioms() {
-                        int flushed = nar.flushInput(Output.NullOutput);
+                        
                         //System.out.println("Inports: " + nar.getInPorts().size()); 
                         //System.out.println("Flushed: " + flushed);
 
