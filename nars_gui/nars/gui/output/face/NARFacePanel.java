@@ -9,7 +9,7 @@ import nars.io.Output;
  */
 
 
-public class NARFacePanel extends HumanoidFacePanel implements Output {
+public class NARFacePanel extends HumanoidFacePanel  {
     private final NAR nar;
 
     public NARFacePanel(NAR n) {
@@ -21,12 +21,12 @@ public class NARFacePanel extends HumanoidFacePanel implements Output {
     protected void onShowing(boolean showing) {
         super.onShowing(showing);
         
-        if (showing) {
-            nar.addOutput(this);
-        }
-        else {
-            nar.removeOutput(this);
-        }
+//        if (showing) {
+//            nar.addOutput(this);
+//        }
+//        else {
+//            nar.removeOutput(this);
+//        }
     }
     
 
@@ -49,9 +49,9 @@ public class NARFacePanel extends HumanoidFacePanel implements Output {
         super.update(t);        
     }
 
-    @Override
-    public void output(Class channel, Object signal) {
-        talk=1;
-    }
+//    @Override
+//    public void output(Class channel, Object signal) {
+//        talk=1;
+//    }
     
 }

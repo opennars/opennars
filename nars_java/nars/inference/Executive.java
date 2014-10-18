@@ -316,8 +316,7 @@ public class Executive {
             final TaskExecution te = new TaskExecution(c, t);
             if (tasks.add(te)) {
                 //added successfully
-                if (memory.getRecorder().isActive())
-                   memory.getRecorder().output("Executive", "Task Add: " + t.toString());
+                memory.emit(TaskExecution.class, te);
                 return true;
             }
         }
@@ -327,11 +326,10 @@ public class Executive {
     }
     
     protected void removeTask(final TaskExecution t) {
-        if (tasksToRemove.add(t)) {
-            t.t.setPriority(0); //dint set priority of entire statement to 0
-            //t.t.end();
-            if (memory.getRecorder().isActive())
-               memory.getRecorder().output("Executive", "Task Remove: " + t.toString());
+        if (tasksToRemove.add(t)) {            
+//            if (memory.getRecorder().isActive())
+//               memory.getRecorder().output("Executive", "Task Remove: " + t.toString());
+            t.t.end();
         }
     }
     
@@ -401,14 +399,8 @@ public class Executive {
             if (!isDesired(concept)) return;
         
             boolean plannable = graph.isPlannable(t.getContent());
-            if (plannable) {                    
-                if (memory.getRecorder().isActive())
-                   memory.getRecorder().output("Goal Planned", t.toString());
-
-                int planned = graph.plan(nal, concept, t, t.getContent(), 
-                        particles, searchDepth, '!', maxPlannedTasks);
-                
-                memory.logic.PLAN_TASK_PLANNED.commit(planned);
+            if (plannable) {                                    
+                graph.plan(nal, concept, t, t.getContent(), particles, searchDepth, '!', maxPlannedTasks);
             }                
         }
         

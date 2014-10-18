@@ -1,6 +1,8 @@
 package nars.io;
 
 import nars.core.EventEmitter;
+import nars.core.Memory;
+import nars.core.NAR;
 import nars.inference.AbstractObserver;
 
 /**
@@ -26,6 +28,14 @@ public abstract class Output extends AbstractObserver {
 
     public Output(EventEmitter source, boolean active) {
         super(source, active, IN.class, EXE.class, OUT.class, ERR.class, ECHO.class);
+    }
+    
+    public Output(Memory m, boolean active) {
+        this(m.event, active);
+    }
+
+    public Output(NAR n, boolean active) {
+        this(n.memory.event, active);
     }
 
 }

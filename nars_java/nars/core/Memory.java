@@ -756,7 +756,7 @@ public class Memory implements Serializable {
         addNewTask(task, "Executed");
     }
 
-    protected void output(final Task t) {
+    public void output(final Task t) {
         
         final float budget = t.budget.summary();
         final float noiseLevel = 1.0f - (param.noiseLevel.get() / 100.0f);

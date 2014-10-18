@@ -19,7 +19,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import nars.core.EventEmitter.Observer;
-import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.NAR;
 import nars.entity.Concept;
@@ -27,13 +26,17 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.gui.NARSwing;
 import nars.gui.NPanel;
-import nars.io.Output;
+import nars.io.Output.ERR;
+import nars.io.Output.EXE;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
+import nars.operator.io.Echo;
 
 /**
  *
  * @author me
  */
-public class TaskTree extends NPanel implements Output, Observer, Runnable {
+public class TaskTree extends NPanel implements Observer, Runnable {
 
     long updatePeriodMS = 250;
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
@@ -57,8 +60,7 @@ public class TaskTree extends NPanel implements Output, Observer, Runnable {
         tree.setModel(model);
         tree.setCellRenderer(new CustomDefaultRenderer());
 
-        this.nar = nar;
-        nar.addOutput(this);
+        this.nar = nar;        
 
         add(new JScrollPane(tree), BorderLayout.CENTER);
 
@@ -66,7 +68,7 @@ public class TaskTree extends NPanel implements Output, Observer, Runnable {
 
     @Override
     public void onShowing(boolean b) {
-        nar.memory.event.set(this, b, Events.FrameEnd.class);
+        nar.memory.event.set(this, b, IN.class, OUT.class, ERR.class, Echo.class, EXE.class, FrameEnd.class);
     }
 
     public void add(Task t) {
@@ -227,17 +229,14 @@ public class TaskTree extends NPanel implements Output, Observer, Runnable {
     }
 
     @Override
-    public void output(Class channel, Object o) {
+    public void event(Class channel, Object[] arguments) {        
         if (channel == OUT.class) {
+            Object o = arguments[0];
             if (o instanceof Task) {
                 add((Task) o);
             }
         }
-    }
-
-    @Override
-    public void event(Class event, Object[] arguments) {
-        if (event == FrameEnd.class) {
+        else if (channel == FrameEnd.class) {
             update();
         }
     }

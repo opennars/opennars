@@ -484,7 +484,7 @@ public class NAR implements Runnable, TaskSource {
     }
 
     
-    protected void emit(final Class c, final Object... o) {
+    public void emit(final Class c, final Object... o) {
         memory.event.emit(c, o);
     }
     

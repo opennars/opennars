@@ -9,25 +9,32 @@ import nars.gui.NPanel;
 import nars.io.Output;
 
 
-public abstract class TablePanel extends NPanel implements Output {
+public abstract class TablePanel extends NPanel  {
 
     protected final NAR nar;
     protected DefaultTableModel data;
     protected final JTable table;
+    private final Output out;
 
     public TablePanel(NAR nar) {
         super();
         this.nar = nar;
-        table = new JTable();        
+        table = new JTable();   
+        out = new Output(nar, false) {
+
+            @Override
+            public void event(Class event, Object[] arguments) {
+                output(event, arguments.length > 1 ? arguments : arguments[0]);            
+            }
+            
+        };        
     }
 
+    abstract public void output(Class c, Object s);
+    
     @Override
     protected void onShowing(boolean showing) {
-        if (showing) {
-            nar.addOutput(this);
-        } else {
-            nar.removeOutput(this);
-        }
+        out.setActive(showing);
     }
 
     protected List<Object> getSelectedRows(int column) {

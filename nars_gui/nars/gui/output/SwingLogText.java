@@ -9,10 +9,10 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
-import nars.io.Output;
+import nars.io.Output.OUT;
 
 
-public class SwingLogText extends SwingText implements Output {
+public class SwingLogText extends SwingText  {
     private final NAR nar;
     public boolean showStamp = false;
     final Deque<LogLine> pendingDisplay = new ConcurrentLinkedDeque<>();
@@ -107,7 +107,7 @@ public class SwingLogText extends SwingText implements Output {
     
     protected void onLineVisible(int offset) { }
     
-    @Override
+    
     public void output(final Class c, final Object o) {                
         pendingDisplay.addLast(new LogLine(c, o));
                 

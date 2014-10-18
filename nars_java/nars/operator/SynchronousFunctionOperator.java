@@ -57,7 +57,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
             if (y == null) {
                 return null;
             }
-            m.output(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
+            m.emit(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
         }
         catch (Exception e) {
             throw e;
@@ -74,7 +74,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
                 ), this);
         
         Inheritance resultInheritance = Inheritance.make(operatorInheritance, getRange());
-        m.output(Task.class, resultInheritance);
+        m.emit(Task.class, resultInheritance);
         
         return Lists.newArrayList( 
                 m.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 

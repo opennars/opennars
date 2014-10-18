@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javax.swing.JLabel;
 import nars.gui.NARControls;
+import nars.io.Output.OUT;
 import nars.io.TextOutput;
 
 /**

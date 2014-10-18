@@ -143,8 +143,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         experienceWriter = new TextOutput(nar);
         conceptWin = new TermWindow(memory);
         
-        logger = new InferenceLogger();
-        nar.memory.setRecorder(logger);
+        logger = new InferenceLogger(nar);
         
         JMenuBar menuBar = new JMenuBar();
 
