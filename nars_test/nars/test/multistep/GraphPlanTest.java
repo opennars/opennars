@@ -52,16 +52,19 @@ public class GraphPlanTest {
         
         //System.out.println(input);
         
-        n.addOutput(new Output() {
+        new Output(n) {
 
             @Override
-            public void output(Class channel, Object o) {
+            public void event(Class channel, Object... args) {
                 //System.out.println(o);
-                if (o.toString().contains(expected))
-                    success.set(true);
+                if (args.length > 0) {
+                    Object o = args[1];
+                    if (o.toString().contains(expected))
+                        success.set(true);
+                }
             }
         
-        });
+        };
         
         n.addInput(input);
 

@@ -48,8 +48,9 @@ public class PlanDecisionExperiment {
         n.addInput(i);
         //new TextOutput(n, System.out);
         
-        n.addOutput(new Output() {            
-            @Override public void output(Class c, Object o) {
+        new Output(n) {            
+            @Override public void event(Class c, Object... args) {
+                Object o = args[0];
                 /*if (c == IN.class) {
                     System.out.println("IN: " + n.getTime() + ": " + o);
                 }*/
@@ -65,7 +66,7 @@ public class PlanDecisionExperiment {
                     System.out.println("EXE: " + n.getTime() + ": " + o);
                 }
             }
-        });
+        };
         
         n.finish(2000);
         
