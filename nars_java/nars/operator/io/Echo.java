@@ -6,7 +6,7 @@ import nars.entity.AbstractTask;
  * TODO wrap as operator
  * @author me
  */
-public class Echo extends AbstractTask {
+public class Echo extends AbstractTask<CharSequence> {
     public final Object signal;
     public final Class channel;
 

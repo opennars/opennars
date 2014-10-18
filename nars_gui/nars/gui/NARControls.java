@@ -53,7 +53,6 @@ import nars.gui.output.MultiOutputPanel;
 import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
-import nars.gui.output.TermWindow;
 import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
@@ -99,10 +98,6 @@ public class NARControls extends JPanel implements ActionListener, Observer {
     private boolean savingExp = false;
 
 
-    /**
-     * JWindow to accept a Term to be looked into
-     */
-    public TermWindow conceptWin;
 
     /**
      * To process the next chunk of output data
@@ -141,7 +136,6 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         senses.update(memory);
         
         experienceWriter = new TextOutput(nar);
-        conceptWin = new TermWindow(memory);
         
         logger = new InferenceLogger(nar);
         

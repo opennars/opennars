@@ -27,7 +27,7 @@ import nars.operator.Operation;
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue
  */
-public class Task extends AbstractTask {
+public class Task extends AbstractTask<Sentence> {
 
     /**
      * The sentence of the Task
@@ -45,8 +45,6 @@ public class Task extends AbstractTask {
      * For Question and Goal: best solution found so far
      */
     private Sentence bestSolution;
-    
-    private final CharSequence key;
     
     private Operation cause;
     
@@ -78,7 +76,6 @@ public class Task extends AbstractTask {
     public Task(final Sentence s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
         super(b);
         this.sentence = s;
-        this.key = sentence.getKey();        
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
     }
@@ -100,13 +97,31 @@ public class Task extends AbstractTask {
     public Task clone() {
         return new Task(sentence, budget, parentTask, parentBelief, bestSolution);
     }
+    
     public Task clone(final Sentence replacedSentence) {
         return new Task(replacedSentence, budget, parentTask, parentBelief, bestSolution);
     }
     
-    @Override public CharSequence name() {
-        return key;
+    @Override public Sentence name() {
+        return sentence;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Task) {
+            Task t = (Task)obj;            
+            return t.sentence.equals(sentence);
+        }
+        return false;        
+    }
+
+    @Override
+    public int hashCode() {
+        return sentence.hashCode();
+    }
+    
+    
+    
 
 
     /**
@@ -304,7 +319,7 @@ public class Task extends AbstractTask {
     }
     
     public void expect(boolean eventHappened) {
-        int a=3;
+        //int a=3;
     }
     
     /** sets priority to zero, signaling that the Task has ended or discarded */
