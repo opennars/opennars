@@ -191,7 +191,7 @@ public class TermLink extends Item<TermLink> {
     
     @Override
     public String toString() {
-        return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : null).toString();
+        return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
     }
 
     public CharSequence newKeyPrefix() {

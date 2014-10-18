@@ -108,11 +108,12 @@ public class LocalRules {
         TruthValue oldTruth = oldBelief.truth;
         TruthValue truth = TruthFunctions.revision(newTruth, oldTruth);
         BudgetValue budget = BudgetFunctions.revise(newTruth, oldTruth, truth, feedbackToLinks, nal);
-        Term content = newBelief.content;
         
-        nal.mem().logic.BELIEF_REVISION.commit();
-        
-        nal.doublePremiseTaskRevised(content, truth, budget);
+        if (budget.aboveThreshold()) {
+            if (nal.doublePremiseTaskRevised(newBelief.content, truth, budget)) {
+                nal.mem().logic.BELIEF_REVISION.commit();
+            }
+        }
     }
 
 

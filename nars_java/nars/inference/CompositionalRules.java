@@ -1131,16 +1131,20 @@ public final class CompositionalRules {
 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
 
-                Task newTask = new Task(newSentence, budget, task, null);
-                Task dummy = new Task(second_belief, budget, task, null);
+                if (budget.aboveThreshold()) {
+                    Task newTask = new Task(newSentence, budget, task, null);
+                    Task dummy = new Task(second_belief, budget, task, null);
 
-                nal.setCurrentBelief(taskSentence);
-                nal.setCurrentTask(dummy);
-
-                nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
-                nal.derivedTask(newTask, false, false, taskSentence, second_belief);
-
-                unifiedAnything = true;
+                    nal.setCurrentBelief(taskSentence);
+                    nal.setCurrentTask(dummy);
+                    
+                    if (nal.derivedTask(newTask, false, false, taskSentence, second_belief)) {
+                        
+                        nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
+                        unifiedAnything = true;
+                        
+                    }
+                }
             }
 
             remainingUnifications--;
@@ -1184,16 +1188,18 @@ public final class CompositionalRules {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.content, nal);
 
 
-            Task newTask = new Task(newSentence, budget, task, null);
-            Task dummy = new Task(second_belief, budget, task, null);
+            if (budget.aboveThreshold()) {
+                Task newTask = new Task(newSentence, budget, task, null);
+                Task dummy = new Task(second_belief, budget, task, null);
 
-            nal.setCurrentBelief(taskSentence);
-            nal.setCurrentTask(dummy);
-            
-            if (nal.derivedTask(newTask, false, false, taskSentence, second_belief)) {
-                
-                nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
-                
+                nal.setCurrentBelief(taskSentence);
+                nal.setCurrentTask(dummy);
+
+                if (nal.derivedTask(newTask, false, false, taskSentence, second_belief)) {
+
+                    nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
+
+                }
             }
             
         }

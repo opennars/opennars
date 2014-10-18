@@ -94,7 +94,7 @@ abstract public class NAL implements Callable<NAL> {
                         termLinkCount--;
 
                     } else {
-                        termLinkCount = 0;
+                        break;
                     }
                 }
             }
@@ -221,10 +221,10 @@ abstract public class NAL implements Callable<NAL> {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
+    public boolean doublePremiseTaskRevised(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget) {
         Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
         Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-        derivedTask(newTask, true, false, null, null);
+        return derivedTask(newTask, true, false, null, null);
     }
 
     /**
@@ -236,6 +236,10 @@ abstract public class NAL implements Callable<NAL> {
      * @param newBudget The budget value in task
      */
     public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+        
+        if (!newBudget.aboveThreshold())
+            return;
+        
         if (newContent != null) {
             
             {
@@ -300,6 +304,9 @@ abstract public class NAL implements Callable<NAL> {
      * @param newBudget The budget value in task
      */
     public void singlePremiseTask(final Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
+        if (!newBudget.aboveThreshold())
+            return;
+        
         Task parentTask = getCurrentTask().getParentTask();
                 
         if (parentTask != null) {
@@ -323,6 +330,9 @@ abstract public class NAL implements Callable<NAL> {
     }
 
     public void singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
+        if (!newBudget.aboveThreshold())
+            return;
+        
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
         derivedTask(newTask, false, true, null, null);
     }

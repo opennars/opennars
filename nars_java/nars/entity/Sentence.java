@@ -112,6 +112,7 @@ public class Sentence implements Cloneable {
      */
     @Override
     public boolean equals(final Object that) {
+        if (this == that) return true;
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
             //return getKey().equals(t.getKey());
