@@ -37,7 +37,7 @@ import nars.io.Output;
  * 
  * @author me
  */
-public class MultiOutputPanel extends JPanel implements Output, HierarchyListener {
+public class MultiOutputPanel extends JPanel implements HierarchyListener {
 
     DockingRegionRoot dock = new DockingRegionRoot();
     
@@ -86,16 +86,16 @@ public class MultiOutputPanel extends JPanel implements Output, HierarchyListene
     }
     
     protected void onShowing(boolean showing) {
-        if (showing) {
-            nar.addOutput(this);
-        }
-        else {
-            nar.removeOutput(this);
-        }
+//        if (showing) {
+//            nar.addOutput(this);
+//        }
+//        else {
+//            nar.removeOutput(this);
+//        }
     }
 
-    
-    @Override
+
+    //TODO use Output instance
     public void output(Class channel, Object o) {
         Object category;
         if (o instanceof Task) {

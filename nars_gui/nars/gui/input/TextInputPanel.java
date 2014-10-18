@@ -156,7 +156,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                                     if (!f.isDirectory()) {
                                         try {
                                             nar.addInput(new TextInput(f));
-                                            nar.output(OUT.class, "Loaded file: " + f.getAbsolutePath());
+                                            nar.emit(OUT.class, "Loaded file: " + f.getAbsolutePath());
                                         } catch (IOException ex) {
                                             System.err.println(ex);
                                         }

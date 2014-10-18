@@ -29,22 +29,24 @@ import org.jgrapht.graph.DirectedMultigraph;
  *
  * @author me
  */
-public class MultiModePanel extends JPanel implements Output {
+public class MultiModePanel extends JPanel  {
     final float activityIncrement = 0.5f; //per output
     final float activityMomentum = 0.95f;
 
     private final NAR nar;
     private final Object object;
+    private final Output out;
+    
     float activity = 0;
     //private final String label;
     private final String label;
     MultiViewMode currentMode = null;
 
 
-    public interface MultiViewMode extends Output {
+    public interface MultiViewMode  {
 
         public void setFontSize(float newSize);
-        
+        public void output(Class c, Object s);
     }
     
     /** extension of SwingLogText with functionality specific to MultiLogPanel */
@@ -135,6 +137,12 @@ public class MultiModePanel extends JPanel implements Output {
         this.object = object;
   
           
+        out = new Output(nar, false) {
+            @Override public void event(Class event, Object[] arguments) {
+                MultiModePanel.this.output(event, arguments.length > 1 ? arguments : arguments[0]);
+            }
+        };
+        
         if (object instanceof Task) {
             label = ((Task)object).sentence.toString();
         }
@@ -265,7 +273,7 @@ public class MultiModePanel extends JPanel implements Output {
         return statusButton;        
     }
 
-    @Override
+    
     public void output(final Class channel, final Object signal) {
         if (currentMode!=null)
             currentMode.output(channel, signal);

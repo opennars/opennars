@@ -21,7 +21,7 @@ import nars.io.Output;
 /**
  * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
  */
-public class NARTrace implements MemoryObserver, Output, Serializable {
+public class NARTrace extends MemoryObserver implements Serializable {
 
     /**
      * utility method for diagnosing stack overflow errors caused by unbounded
@@ -92,10 +92,10 @@ public class NARTrace implements MemoryObserver, Output, Serializable {
 
     public static class OutputEvent extends InferenceEvent {
 
-        public final Object channel;
-        public final Object signal;
+        public final Class channel;
+        public final Object[] signal;
 
-        public OutputEvent(long when, Object channel, Object signal) {
+        public OutputEvent(long when, Class channel, Object... signal) {
             super(when);
             this.channel = channel;
             this.signal = signal;
@@ -104,8 +104,8 @@ public class NARTrace implements MemoryObserver, Output, Serializable {
         @Override
         public String toString() {
             if (channel instanceof Class)
-                return ((Class)channel).getSimpleName() + ": " + signal;
-            return channel + ": " + signal;
+                return ((Class)channel).getSimpleName() + ": " + Arrays.toString(signal);
+            return channel + ": " + Arrays.toString(signal);
         }
 
     }
@@ -153,9 +153,7 @@ public class NARTrace implements MemoryObserver, Output, Serializable {
     }
 
     public NARTrace(NAR n) {
-        super();
-        n.addOutput(this);
-        n.memory.setRecorder(this);
+        super(n, true);
         this.nar = n;
         
         Memory memory = nar.memory;
@@ -195,11 +193,9 @@ public class NARTrace implements MemoryObserver, Output, Serializable {
         time.clear();
         concept.clear();
     }
+    
 
-    @Override
-    public void append(String channel, String s) {
-        addEvent(new OutputEvent(t, channel, s));
-    }
+
 
     @Override
     public void onConceptNew(Concept concept) {
@@ -254,7 +250,7 @@ public class NARTrace implements MemoryObserver, Output, Serializable {
     }
 
     @Override
-    public void output(Class channel, Object signal) {                
+    public void output(Class channel, Object... signal) {
         addEvent(new OutputEvent(t, channel, signal));
     }
     

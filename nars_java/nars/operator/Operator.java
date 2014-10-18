@@ -138,7 +138,7 @@ public abstract class Operator extends Term implements Plugin {
         
         BudgetValue b = operation.getTask().budget;
         
-        memory.output(EXE.class, 
+        memory.emit(EXE.class, 
                 ((b != null) ? (b.toStringExternal() + " ") : "") + 
                         operator + "(" + Arrays.toString(args) + ")=" + feedback);
     }

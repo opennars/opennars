@@ -31,13 +31,18 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.io.Output.ECHO;
+import nars.io.Output.ERR;
+import nars.io.Output.EXE;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
 import nars.language.Statement;
 import nars.operator.Operator;
 
 /**
  * To read and write experience as Task streams
  */
-public class TextOutput implements Output {
+public class TextOutput extends Output {
 
 
     private final NAR nar;
@@ -62,8 +67,8 @@ public class TextOutput implements Output {
      * @param n
      */
     public TextOutput(NAR n) {
+        super(n, true);
         this.nar = n;
-        n.addOutput(this);
     }
     public TextOutput(NAR n, LineOutput outExp2) {
         this(n);
@@ -96,7 +101,7 @@ public class TextOutput implements Output {
      */
     public void closeSaveFile() {
         outExp.close();
-        nar.removeOutput(this);
+        stop();
     }
 
     /**
@@ -105,7 +110,7 @@ public class TextOutput implements Output {
      * @param lines The text to be displayed
      */
     @Override
-    public synchronized void output(final Class channel, final Object o) {
+    public synchronized void event(final Class channel, final Object... oo) {
         if (!showErrors && (channel == ERR.class))
             return;
         
@@ -113,6 +118,7 @@ public class TextOutput implements Output {
             return;
         
         if ((outExp!=null) || (outExp2!=null)) {
+            Object o = oo[0];
             final String s = process(channel, o);
             if (outExp != null) {
                 outExp.println(prefix + s);
@@ -264,7 +270,7 @@ public class TextOutput implements Output {
     
     
     public void stop() {
-        nar.removeOutput(this);
+        setActive(false);
     }
     
     /** generates a human-readable string from an output channel and signal */

@@ -472,6 +472,8 @@ public class GraphExecutive {
         public final TruthValue truth;
         public final BudgetValue budget;
         private float minConf;
+        private Task solution;
+        private Task goal;
 
         //            if (path.length == 0) return 0;
         //
@@ -522,6 +524,69 @@ public class GraphExecutive {
         public String toString() {
             return sequence + "(" + score() + ";" + distance + ")";
         }
+        
+        public Task planTask(Concept c, Task goal, Term goalTerm, char punctuation) {
+            
+            Cause currentEdge = path[path.length-1];
+
+            Stamp stamp = Stamp.make(goal.sentence.stamp, currentEdge.getStamp(), memory.time());
+
+            //add all terms to derivation chain
+            for(Term T : sequence) {
+                stamp.derivationChain.add(T); //todo: if too long kick out the first n terms
+            }
+            //todo: evidental base hm
+
+            //memory.setTheNewStamp(stamp);
+
+            //memory.setCurrentTask(task);
+
+            //remove final element from path if it's equal to target
+            /*if (seq.get(seq.size()-1).equals(target)) {
+                seq.remove(seq.size()-1);
+            }*/
+
+            Term subj = sequence.size() > 1 ?
+                Conjunction.make(sequence.toArray(new Term[sequence.size()]), TemporalRules.ORDER_FORWARD)
+                    :
+                sequence.get(0);
+
+
+            //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
+
+            Term imp = Implication.make(subj, goalTerm, TemporalRules.ORDER_FORWARD);
+
+            if (imp == null) {
+                throw new RuntimeException("Invalid implication: " + subj + " =\\> " + goalTerm);
+            }
+
+
+            this.goal = goal;
+            this.solution = new Task(new Sentence(imp, punctuation, truth, stamp), budget, goal) {
+
+                @Override public void end(boolean success) {
+                    super.end(success);
+                }
+
+                @Override public void expect(boolean eventHappened) {
+                    if (eventHappened) {
+                        rememberPlanSuccess(ParticlePlan.this, goalTerm, this);
+                    }
+                    if (!eventHappened) {
+                        forgetPlanSuccess(ParticlePlan.this, goalTerm, this);
+                    }
+                }
+
+            };
+            return goal;
+        }
+        
+        /** the task that caused the need for this plan */
+        public Task getGoal() { return goal; }
+        
+        /** the plan's created task */
+        public Task getSolution() { return solution; }
+                   
     }
 
 
@@ -644,67 +709,7 @@ public class GraphExecutive {
         return plans;
     } 
     
-    protected Task planTask(ParticlePlan plan, Concept c, Task task, Term goal, char punctuation) {
-        TruthValue truth = plan.truth;
-        BudgetValue budget = plan.budget;
-        
-        Cause[] path = plan.path;
-        List<Term> seq = plan.sequence;
  
-        
-        Cause currentEdge = path[path.length-1];
-
-        Stamp stamp = Stamp.make(task.sentence.stamp, currentEdge.getStamp(), memory.time());
-        
-        //add all terms to derivation chain
-        for(Term T : seq) {
-            stamp.derivationChain.add(T); //todo: if too long kick out the first n terms
-        }
-        //todo: evidental base hm
-        
-        //memory.setTheNewStamp(stamp);
-
-        //memory.setCurrentTask(task);
-        
-        //remove final element from path if it's equal to target
-        /*if (seq.get(seq.size()-1).equals(target)) {
-            seq.remove(seq.size()-1);
-        }*/
-
-        Term subj = seq.size() > 1 ?
-            Conjunction.make(seq.toArray(new Term[seq.size()]), TemporalRules.ORDER_FORWARD)
-                :
-            seq.get(0);
-        
-        
-        //val=TruthFunctions.abduction(val, newEvent.sentence.truth);
-
-        Term imp = Implication.make(subj, goal, TemporalRules.ORDER_FORWARD);
-
-        if (imp == null) {
-            throw new RuntimeException("Invalid implication: " + subj + " =\\> " + goal);
-        }
-        
-        
-        return new Task(new Sentence(imp, punctuation, truth, stamp), budget, task) {
-
-            @Override public void end(boolean success) {
-                super.end(success);
-            }
-            
-            @Override public void expect(boolean eventHappened) {
-                if (eventHappened) {
-                    rememberPlanSuccess(plan, goal, this);
-                }
-                if (!eventHappened) {
-                    forgetPlanSuccess(plan, goal, this);
-                }
-            }
-          
-            
-        };
-    }
-            
     
     protected void rememberPlanSuccess(ParticlePlan plan, Term goal, Task t) {
         for (Cause c : plan.path) {
@@ -718,12 +723,9 @@ public class GraphExecutive {
         }
     }
     
-    protected void planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
+    protected Task planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
-        Task newTask = planTask(plan, c, task, target, punctuation);
-        
-        if (memory.getRecorder().isActive())
-               memory.getRecorder().output("Plan Add", newTask.toString());
+        Task newTask = plan.planTask(c, task, target, punctuation);
         
         //if (punctuation == '.')   //feedback is due to temporal induction currently.     
         //    nal.derivedTask(newTask, false, true, null, null);  //and if this is a implication then wrong
@@ -732,17 +734,27 @@ public class GraphExecutive {
             memory.executive.addTask(c, newTask);
         }
         
+        return newTask;
+        
     }
 
    protected int plan(final NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
 
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
+        
         int n = 0;
+        
         for (ParticlePlan p : plans) {
-            planTask(nal, p, c, task, target, punctuation);            
+            planTask(nal, p, c, task, target, punctuation); 
+            
+            memory.emit(ParticlePlan.class, p);                
+                
             if (n++ == maxTasks)
                 break;
         }
+        
+        memory.logic.PLAN_TASK_PLANNED.commit(n);
+        
         return n;
        
     }

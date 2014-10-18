@@ -29,17 +29,19 @@ import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.gui.WrapLayout;
 import nars.io.Output;
+import nars.io.Output.ERR;
+import nars.io.Output.EXE;
 import nars.io.TextOutput;
 
-abstract public class LogPanel extends NPanel implements Output, LogOutput {
+abstract public class LogPanel extends NPanel implements LogOutput {
 
     static String getText(Object o, boolean showStamp, NAR nar) {
         return TextOutput.getOutputString(o, showStamp, nar);
     }
 
-
-
     protected final NAR nar;
+
+    private Output out;
     
     public static final int maxIOTextSize = (int) 3E5;
     public static final int clearMargin = (int) 3E4;
@@ -65,6 +67,12 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
         this.nar = c.nar;
         this.logger = c.logger;
 
+        out = new Output(nar, false) {
+            @Override public void event(final Class event, final Object[] arguments) {
+                LogPanel.this.output(event, arguments.length > 1 ? arguments : arguments[0]);
+            }
+        };
+                
         //JPanel menuBottom = new JPanel(new WrapLayout(FlowLayout.RIGHT, 0, 0));
         JPanel menuTop = new JPanel(new WrapLayout(FlowLayout.LEFT, 0, 0));
 
@@ -206,14 +214,14 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
 
     @Override
     protected void onShowing(boolean showing) {
+
         if (showing) {
-            nar.addOutput(this);
+            out.setActive(true);
         } else {
-            nar.removeOutput(this);
+            out.setActive(false);
         }
     }
 
-    @Override
     public void output(final Class c, Object o) {
 
         if ((c == ERR.class) && (!showErrors)) {
@@ -293,8 +301,9 @@ abstract public class LogPanel extends NPanel implements Output, LogOutput {
     public static final class LOG {
     }
 
+    
     @Override
-    public void traceAppend(String channel, String s) {
+    public void traceAppend(Class channel, String s) {
         output(LOG.class, channel + ": "+ s);
     }
 

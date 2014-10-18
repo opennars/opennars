@@ -12,10 +12,13 @@ import org.apache.log4j.net.SocketAppender;
 /**
  * Appends to Log4J logging system, which can output to console, file, socket, etc..
  */
-public class Log4JOutput implements Output, LogOutput {
+public class Log4JOutput extends Output implements LogOutput {
     private boolean traceActive;
+    private InferenceLogger tracer;
 
     public Log4JOutput(NAR nar, boolean trace) {
+        super(nar, true);
+        
         SocketAppender sa = new SocketAppender("localhost", 4445);
         Logger.getRootLogger().addAppender(sa);
         
@@ -32,16 +35,14 @@ public class Log4JOutput implements Output, LogOutput {
   
         Logger.getRootLogger().addAppender(console);
         
-        nar.addOutput(this);
-        
         if (trace) {
             this.traceActive = true;
             
-            nar.memory.setRecorder(new InferenceLogger(this));
+            this.tracer = new InferenceLogger(nar, this);
         }
     }
     
-    @Override public final void output(final Class channel, final Object signal) {
+    @Override public final void event(final Class channel, final Object... signals) {
         Logger l;
         if (channel == IN.class)
             l = Logger.getLogger("nars.io.In");
@@ -56,10 +57,13 @@ public class Log4JOutput implements Output, LogOutput {
         else 
             l = Logger.getLogger(channel);
         
-        l.info(signal);
+        if (signals.length == 1)
+            l.info(signals[0]);
+        else
+            l.info(signals);
     }
     
-    @Override public void traceAppend(final String channel, final String s) {
+    @Override public void traceAppend(final Class channel, final String s) {
         Logger.getLogger("nars.inference." + channel).info(s);
         
     }

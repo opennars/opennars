@@ -71,7 +71,7 @@ public class DefaultTextPerception  {
             @Override public Object react(String input) {                
                 if (input.equals(Symbols.REBOOT_COMMAND)) {
                     //immediately reset the memory
-                    memory.output(IN.class, "reboot");
+                    memory.emit(IN.class, "reboot");
                     memory.reset();
                     return new Reboot();
                 }
@@ -232,7 +232,7 @@ public class DefaultTextPerception  {
             errorMessage += " : " + lastException.toString(); 
         }
         
-        memory.output(Output.ERR.class, errorMessage);
+        memory.emit(Output.ERR.class, errorMessage);
         return null;
     }
 

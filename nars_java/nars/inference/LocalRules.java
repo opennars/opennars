@@ -161,9 +161,10 @@ public class LocalRules {
             memory.emotion.adjustHappy(newQ, task.getPriority());
         }
 
-        if (task.isInput()) {    // moved from Sentence                
-            memory.output(OUT.class, task);
+        if (task.isInput()) {
+            memory.output(task);
         }
+        
         BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, nal);
         if ((budget != null) && budget.aboveThreshold()) {
             //System.out.println("Solved: Solution activated");
