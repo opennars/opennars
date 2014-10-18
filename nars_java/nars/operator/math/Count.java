@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.operators.math;
+package nars.operator.math;
 
 import nars.language.CompoundTerm;
 import nars.language.SetExt;

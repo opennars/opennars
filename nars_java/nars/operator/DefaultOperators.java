@@ -14,7 +14,7 @@ import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
-import nars.operators.math.Count;
+import nars.operator.math.Count;
 
 
 public class DefaultOperators {
