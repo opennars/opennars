@@ -10,7 +10,7 @@ import nars.storage.AbstractBag;
  */
 public class BalancedSequentialMemoryCycle extends SequentialMemoryCycle {
 
-    public BalancedSequentialMemoryCycle(AbstractBag<Concept> concepts, ConceptBuilder conceptBuilder) {
+    public BalancedSequentialMemoryCycle(AbstractBag<Concept,CharSequence> concepts, ConceptBuilder conceptBuilder) {
         super(concepts, conceptBuilder);
     }
 

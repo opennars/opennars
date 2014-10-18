@@ -10,7 +10,7 @@ import nars.entity.Item;
 import nars.inference.BudgetFunctions;
 
 
-public abstract class AbstractBag<E extends Item> implements Iterable<E> {
+public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
     
     /**
      * relative threshold, only calculate once
@@ -37,9 +37,9 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    abstract public E get(final CharSequence key);
+    abstract public E get(final K key);
     
-    abstract public Set<CharSequence> keySet();
+    abstract public Set<K> keySet();
 
     abstract public int getCapacity();
 
@@ -71,10 +71,10 @@ public abstract class AbstractBag<E extends Item> implements Iterable<E> {
      * @return The selected Item, or null if this bag is empty
      */
     abstract public E takeOut();
-    abstract public E pickOut(final CharSequence key);    
+    abstract public E pickOut(final K key);    
 
     public void printAll() {
-        for (CharSequence k : keySet()) {
+        for (K k : keySet()) {
             E v = get(k);
             System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
         }

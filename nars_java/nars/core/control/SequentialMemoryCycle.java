@@ -22,12 +22,12 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     /**
      * Concept bag. Containing all Concepts of the system
      */
-    public final AbstractBag<Concept> concepts;
+    public final AbstractBag<Concept,CharSequence> concepts;
     private final ConceptBuilder conceptBuilder;
     Memory memory;
     
 
-    public SequentialMemoryCycle(AbstractBag<Concept> concepts, ConceptBuilder conceptBuilder) {
+    public SequentialMemoryCycle(AbstractBag<Concept,CharSequence> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.conceptBuilder = conceptBuilder;        
     }

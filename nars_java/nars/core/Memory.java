@@ -104,7 +104,6 @@ import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
 import nars.storage.AbstractBag;
-import nars.storage.BagObserver;
 
 
 /**
@@ -181,7 +180,7 @@ public class Memory implements Serializable {
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    public final AbstractBag<Task> novelTasks;
+    public final AbstractBag<Task,CharSequence> novelTasks;
     
     
     /* ---------- Short-term workspace for a single cycle ---	------- */
@@ -251,7 +250,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, ConceptProcessor cycleControl, AbstractBag<Task> novelTasks, Operator[] initialOperators) {                
+    public Memory(Param param, ConceptProcessor cycleControl, AbstractBag<Task,CharSequence> novelTasks, Operator[] initialOperators) {                
 
         int threads = 1;
         if (threads == 1) {
@@ -998,19 +997,6 @@ public class Memory implements Serializable {
      
 
 
-    /**
-     * Display new tasks, called from MainWindow. see
-     * {@link #conceptsStartPlay(BagObserver, String)}
-     *
-     * @param bagObserver
-     * @param s the window title
-     */
-    public void taskBuffersStartPlay(final BagObserver<Task> bagObserver, final String s) {
-        bagObserver.setBag(novelTasks);
-        //novelTasks.addBagObserver(bagObserver, s);
-    }
-
-
 
     @Override
     public String toString() {
@@ -1024,7 +1010,7 @@ public class Memory implements Serializable {
         return sb.toString();
     }
 
-    private String toStringLongIfNotNull(AbstractBag<?> item, String title) {
+    private String toStringLongIfNotNull(AbstractBag<?,?> item, String title) {
         return item == null ? "" : "\n " + title + ":\n"
                 + item.toString();
     }

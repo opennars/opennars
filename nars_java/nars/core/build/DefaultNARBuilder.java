@@ -115,19 +115,19 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Memory m) {        
-        AbstractBag<TaskLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskCycleForgetDurations);
-        AbstractBag<TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgetDurations);
+        AbstractBag<TaskLink,TermLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize(), m.param.taskCycleForgetDurations);
+        AbstractBag<TermLink,TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize(), m.param.beliefForgetDurations);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }
 
     
-    protected AbstractBag<Concept> newConceptBag(Param p) {
+    protected AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
         return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgetDurations);
     }
 
     @Override
-    public AbstractBag<Task> newNovelTaskBag(Param p) {
+    public AbstractBag<Task,CharSequence> newNovelTaskBag(Param p) {
         return new Bag<>(getConceptBagLevels(), getTaskBufferSize(), p.newTaskForgetDurations);
     }
  
