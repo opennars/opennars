@@ -60,7 +60,7 @@ public class PrologTheoryStringOperator extends nars.operator.Operator {
             return null;
         }
         
-        memory.output(Prolog.class, prologInterpreterKey + "=" + theoryContent );
+        memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryContent );
 
         return null;
     }

@@ -99,7 +99,7 @@ public class PrologQueryOperator extends Operator {
         
         
         // TODO< convert the result from the prolog to strings >
-        memory.output(Prolog.class, query + " | TODO");
+        memory.emit(Prolog.class, query + " | TODO");
         //memory.output(Prolog.class, query + " | " + result);
        
         // set result values
@@ -129,7 +129,7 @@ public class PrologQueryOperator extends Operator {
         );
         
         
-        memory.output(Task.class, resultInheritance);
+        memory.emit(Task.class, resultInheritance);
         
         ArrayList<Task> results = new ArrayList<>(1);
         results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
