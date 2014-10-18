@@ -3,7 +3,7 @@ package nars;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nars.io.Output;
+import nars.core.NAR;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
 import nars.prolog.event.OutputEvent;
@@ -21,11 +21,11 @@ import nars.prolog.lib.BasicLibrary;
  */
 public class NARProlog extends Prolog implements OutputListener, WarningListener, TheoryListener, QueryListener {
     
-    public final Output output;
+    public final NAR nar;
     
-    public NARProlog(Output o) throws Exception {
+    public NARProlog(NAR n) throws Exception {
         super();
-        this.output = o;
+        this.nar = n;
                 
         loadLibrary(new BasicLibrary());
         addOutputListener(this);
@@ -36,17 +36,17 @@ public class NARProlog extends Prolog implements OutputListener, WarningListener
     }
     
     @Override public void onOutput(OutputEvent e) {        
-        output.output(Prolog.class, e.getMsg());
+        nar.emit(Prolog.class, e.getMsg());
     }
     
     @Override
     public void onWarning(WarningEvent e) {
-        output.output(Prolog.class, e.getMsg() + ", from " + e.getSource());
+        nar.emit(Prolog.class, e.getMsg() + ", from " + e.getSource());
     }
 
     @Override
     public void theoryChanged(TheoryEvent e) {
-        output.output(Prolog.class, e.toString());
+        nar.emit(Prolog.class, e.toString());
     }
     
     @Override

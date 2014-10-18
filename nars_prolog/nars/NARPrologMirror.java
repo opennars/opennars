@@ -30,7 +30,7 @@ import nars.prolog.Var;
 /**
  * Causes a NARProlog to mirror certain activity of a NAR
  */
-public class NARPrologMirror implements Output {
+public class NARPrologMirror extends Output {
     private final NAR nar;
     private final NARProlog prolog;
     
@@ -42,15 +42,16 @@ public class NARPrologMirror implements Output {
     
 
     public NARPrologMirror(NAR nar, NARProlog prolog) {
+        super(nar);
         this.nar = nar;
-        this.prolog = prolog;
-        
-        nar.addOutput(this);
+        this.prolog = prolog;    
     }
    
     @Override
-    public void output(final Class channel, final Object o) {        
+    public void event(final Class channel, final Object... arg) {        
+        
         if ((channel == IN.class) || (channel == OUT.class)) {
+            Object o = arg[0];
             if (o instanceof Task) {
                 Task task = (Task)o;
                 Sentence s = task.sentence;
@@ -77,7 +78,7 @@ public class NARPrologMirror implements Output {
                                     beliefs.put(th, s);
                                 }
                             } catch (Exception ex) {
-                                nar.output(ERR.class, ex.toString());
+                                nar.emit(ERR.class, ex.toString());
                             }
                         }
                         
@@ -118,11 +119,11 @@ public class NARPrologMirror implements Output {
                             while (prolog.hasOpenAlternatives());
                         }
                     } catch (InvalidTermException nse) {
-                        nar.output(NARPrologMirror.class, s + " : not supported yet");       
+                        nar.emit(NARPrologMirror.class, s + " : not supported yet");       
                     } catch (NoMoreSolutionException nse) {
                         //normal
                     } catch (Exception ex) {                        
-                        nar.output(ERR.class, ex.toString());
+                        nar.emit(ERR.class, ex.toString());
                     }
                 }
 

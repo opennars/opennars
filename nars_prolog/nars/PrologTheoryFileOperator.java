@@ -92,7 +92,7 @@ public class PrologTheoryFileOperator extends nars.operator.Operator {
         }
         
         
-        memory.output(Prolog.class, prologInterpreterKey + "=" + theoryPath );
+        memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryPath );
 
         return null;
     }
