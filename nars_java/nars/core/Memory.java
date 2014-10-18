@@ -52,6 +52,7 @@ import nars.inference.Executive;
 import nars.inference.NAL;
 import nars.inference.NAL.ImmediateProcess;
 import nars.inference.TemporalRules;
+import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
 import nars.io.Symbols;
@@ -731,9 +732,10 @@ public class Memory implements Serializable {
         addNewTask(task, "Activated");
     }
 
-    public void removeTask(Task task, String reason) {
+    public void removeTask(Task task, String reason) {        
         emit(TaskRemove.class, task, reason);
         task.end();
+        
     }
     
     /**
@@ -935,6 +937,10 @@ public class Memory implements Serializable {
         return processed;
     }
  
+    protected void error(Exception ex) {
+        emit(ERR.class, ex);
+        ex.printStackTrace();
+    }
     
     public <T> void execute(final List<Callable<T>> tasks) {
         if (tasks.size() == 0) return;
@@ -942,8 +948,7 @@ public class Memory implements Serializable {
             try {
                 tasks.get(0).call();
             } catch (Exception ex) { 
-                ex.printStackTrace();
-                throw new RuntimeException(ex.toString());
+                error(ex);
             }
         }
         else if (exe == null) {
@@ -952,8 +957,7 @@ public class Memory implements Serializable {
                 try {
                     t.call();
                 } catch (Exception ex) { 
-                    ex.printStackTrace();
-                    throw new RuntimeException(ex.toString());
+                    error(ex);
                 }
             }
         }
@@ -961,7 +965,9 @@ public class Memory implements Serializable {
             //execute in parallel, multithreaded            
             try {            
                 exe.invokeAll(tasks);
-            } catch (Exception ex) { throw new RuntimeException(ex.toString());}
+            } catch (Exception ex) { 
+                error(ex);
+            }
         }
     }
 

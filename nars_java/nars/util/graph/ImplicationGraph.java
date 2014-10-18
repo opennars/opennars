@@ -1,9 +1,9 @@
 package nars.util.graph;
 
-import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -47,7 +47,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             this.cause = cause;
             this.effect = effect;
             this.parent = parent;
-            this.hash = Objects.hashCode(cause, effect, parent);
+            this.hash = Objects.hash(cause, effect, parent);
         }
 
         @Override

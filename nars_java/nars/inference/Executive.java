@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
+import nars.core.Events.ConceptBeliefRemove;
+import nars.core.Events.TaskDerive;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Concept;
@@ -31,7 +33,7 @@ import nars.operator.Operator;
  * Operation execution and planning support.  
  * Strengthens and accelerates goal-reaching activity
  */
-public class Executive {
+public class Executive /*implements Observer*/ {
     
     public final GraphExecutive graph;
     
@@ -77,38 +79,14 @@ public class Executive {
      */
     float motivationToFinishCurrentExecution = 1.5f;
     
-    public class thelambda implements Observer{@Override
-        public void event(Class event, Object[] arguments) {}
-    }
+
     
-    HashSet<Task> current_tasks=new HashSet<Task>();
+
+
     
     public Executive(Memory mem) {
         this.memory = mem;    
-        this.memory.event.on(Events.TaskDerive.class,new thelambda() {
-            @Override
-            public void event(Class event, Object[] arguments) {
-                Task derivedTask=(Task) arguments[0];
-                if(derivedTask.sentence.content instanceof Implication &&
-                   ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                    
-                    if(!current_tasks.contains(derivedTask)) {
-                        current_tasks.add(derivedTask);
-                    }
-                }
-            }
-        });
-        
-        this.memory.event.on(Events.ConceptBeliefRemove.class,new thelambda() {
-            @Override
-            public void event(Class event, Object[] arguments) {
-                Task removedTask=(Task) arguments[2]; //task is 2nd
-                if(current_tasks.contains(removedTask)) {
-                    current_tasks.remove(removedTask);
-                }
-            }
-        });
-        
+                
         this.graph = new GraphExecutive(mem,this);
 
         this.tasks = new PriorityBuffer<TaskExecution>(new Comparator<TaskExecution>() {
@@ -139,7 +117,36 @@ public class Executive {
             
         };
         
+        //memory.event.set(this, true, TaskDerive.class, ConceptBeliefRemove.class);
+
     }
+    
+    /*
+    HashSet<Task> current_tasks=new HashSet<Task>();
+    
+    @Override
+    public void event(Class event, Object[] arguments) {
+        if (event == TaskDerive.class) {
+            Task derivedTask=(Task) arguments[0];
+            if(derivedTask.sentence.content instanceof Implication &&
+               ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+
+                if(!current_tasks.contains(derivedTask)) {
+                    current_tasks.add(derivedTask);
+                }
+            }
+            
+        }
+    
+        else if (event == ConceptBeliefRemove.class) {
+            Task removedTask=(Task) arguments[2]; //task is 2nd
+            if(current_tasks.contains(removedTask)) {
+                current_tasks.remove(removedTask);
+            }            
+        }
+    }
+    */
+        
     
     public class TaskExecution {
         /** may be null for input tasks */
@@ -149,7 +156,6 @@ public class Executive {
         public int sequence;
         public long delayUntil = -1;
         private float motivationFactor = 1;
-        private boolean empty = false;
         
         public TaskExecution(final Concept concept, Task t) {
             this.c = concept;

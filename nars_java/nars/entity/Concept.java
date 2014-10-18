@@ -210,7 +210,6 @@ public class Concept extends StringKeyItem {
         }
         if (task.aboveThreshold()) {
             for (final Task ques : questions) {
-//                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 trySolution(judg, ques, nal);
             }
 
@@ -239,7 +238,8 @@ public class Concept extends StringKeyItem {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final NAL nal, final Task task) {
+    protected boolean processGoal(final NAL nal, final Task task) {        
+        
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean revised = false;
@@ -599,16 +599,29 @@ public class Concept extends StringKeyItem {
     /* ---------- main loop ---------- */
     /**
      * An atomic step in a concept
+     * @return whether a TaskLink was fired or not
      */
-    public void fire() {
+    public boolean fire() {
+
         if (taskLinks.size() == 0)
-            return;
+            return false;
         
         final TaskLink currentTaskLink = taskLinks.takeOut();
+                        
         
-        new NAL.FireConcept(memory, this, currentTaskLink).call();
+        if (currentTaskLink.budget.aboveThreshold()) {
+            
+            new NAL.FireConcept(memory, this, currentTaskLink).call();        
+
+            taskLinks.putBack(currentTaskLink, memory);
+            
+            return true;           
+        }
+        else {
+            //System.out.println("Discard task: " + currentTaskLink.targetTask);
+        }
         
-        taskLinks.putBack(currentTaskLink, memory);
+        return false;
     }
 
 
@@ -659,15 +672,18 @@ public class Concept extends StringKeyItem {
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
 
+        if (termLinks.size() == 0)
+            return null;
+        
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; i < toMatch; i++) {
+            
             final TermLink termLink = termLinks.takeOut();
-            if (termLink == null) {
-                return null;
-            }
+            
             if (taskLink.novel(termLink, time)) {
                 return termLink;
             }
+            
             termLinks.putBack(termLink, memory);
         }
         return null;
@@ -697,4 +713,5 @@ public class Concept extends StringKeyItem {
             }
         }
     }
+    
 }
