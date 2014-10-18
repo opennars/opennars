@@ -66,11 +66,9 @@ public class NALTest  {
             if (s.indexOf(expectOutContains)==0) {
 
                 //without ') suffix:
-                String e = s.substring(expectOutContains.length(), s.length()-3);
-                
-                Expect ex = new ExpectContains(n, e, saveSimilar);
+                String e = s.substring(expectOutContains.length(), s.length()-3);                                
 
-                expects.add((Expect)n.addOutput(ex));
+                expects.add(new ExpectContains(n, e, saveSimilar));
             }
             
             
@@ -83,15 +81,12 @@ public class NALTest  {
                 String e = s.substring(expectOutContains2.length(), s.length()-3); 
                 e = e.replace("\\\\","\\");
                 
-                Expect ex = new ExpectContains(n, e, saveSimilar);
-
-                expects.add((Expect)n.addOutput(ex));
+                expects.add(new ExpectContains(n, e, saveSimilar));
             }                
             
             final String expectOutEmpty = "''expect.outEmpty";
-            if (s.indexOf(expectOutEmpty)==0) {                
-                Expect ex = new ExpectOutputEmpty(n);
-                expects.add((Expect)n.addOutput(ex));
+            if (s.indexOf(expectOutEmpty)==0) {                                
+                expects.add(new ExpectOutputEmpty(n));
             }                
             
 
@@ -217,13 +212,12 @@ public class NALTest  {
         String example = getExample(path);
         List<Expect> extractedExpects = getExpectations(n, example, saveSimilar);
         for (Expect e1 : extractedExpects)
-            expects.add((Expect)n.addOutput(e1));
+            expects.add(e1);
         
         if (showOutput)
             new TextOutput(n, System.out);
         if (showTrace) {
-            InferenceLogger logger = new InferenceLogger(System.out);
-            n.memory.setRecorder(logger);
+            new InferenceLogger(n, System.out);
         }
         
         
@@ -268,22 +262,22 @@ public class NALTest  {
         testNAL(scriptPath);
     }
 
-    public static abstract class Expect implements Output {
+    public static abstract class Expect extends Output {
 
         public boolean realized = false;
         public List<String> exact = new ArrayList();
-        protected final NAR nar;
+        public final NAR nar;
+        
 
         public Expect(NAR nar) {
-            super();
+            super(nar);
             this.nar = nar;
-            
-            nar.addOutput(this);
         }
         
         @Override
-        public void output(Class channel, Object signal) {
+        public void event(Class channel, Object... args) {
             if (channel == OUT.class) {
+                Object signal = args[0];
                 if (condition(channel, signal)) {
                     exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
                     realized = true;

@@ -83,7 +83,7 @@ public class NALTestPerformance {
 
             List<NALTest.Expect> extractedExpects = getExpectations(nar, input, false);
             for (NALTest.Expect e1 : extractedExpects) {
-                expects.add((NALTest.Expect) nar.addOutput(e1));
+                expects.add(e1);
             }
 
             nar.addInput(input);

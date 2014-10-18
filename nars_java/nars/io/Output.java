@@ -38,4 +38,8 @@ public abstract class Output extends AbstractObserver {
         this(n.memory.event, active);
     }
 
+    public Output(NAR n) {
+        this(n, true);
+    }
+
 }
