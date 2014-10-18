@@ -2,6 +2,7 @@
 package nars.core;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,12 +21,18 @@ public class EventEmitter {
 
     private final Map<Class<?>, List<Observer>> events;
             
+    public EventEmitter() {
+        this(false);
+    }
 
     /** EventEmitter that allows unknown events; must use concurrent collection
      *  for multithreading since new event classes may be added at any time.
      */
-    public EventEmitter() {
-        events = new ConcurrentHashMap<Class<?>, List<Observer>>();
+    public EventEmitter(boolean threadsafe) {
+        if (threadsafe)
+            events = new ConcurrentHashMap<Class<?>, List<Observer>>();
+        else
+            events = new IdentityHashMap<Class<?>, List<Observer>>();
     }
 
     /** EventEmitter with a fixed set of known events; the 'events' map
