@@ -20,6 +20,8 @@
  */
 package nars.entity;
 
+import java.util.Objects;
+import static java.util.Objects.hash;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -73,6 +75,8 @@ public class Sentence implements Cloneable {
     /** caches the 'getKey()' result */
     private CharSequence key;
 
+    private final int hash;
+    
     /**
      * Create a Sentence with the given fields
      *
@@ -88,8 +92,18 @@ public class Sentence implements Cloneable {
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = !((content instanceof Conjunction) && Variables.containVarDep(content.name()));
+        
+    
+        if (isUniqueByOcurrenceTime())
+            this.hash = Objects.hash( content, punctuation, truth, stamp.getOccurrenceTime());
+        else 
+            this.hash = Objects.hash( content, punctuation, truth );
     }
 
+    protected boolean isUniqueByOcurrenceTime() {
+        return ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK));
+    }
+    
     /**
      * To check whether two sentences are equal
      *
@@ -100,13 +114,26 @@ public class Sentence implements Cloneable {
     public boolean equals(final Object that) {
         if (that instanceof Sentence) {
             final Sentence t = (Sentence) that;
-            return getKey().equals(t.getKey());
-            /*
-            return content.equals(t.content) && 
-                    punctuation == t.punctuation &&
-                    truth.equals(t.truth) &&
-                    stamp.equals(t.stamp);
-            */
+            //return getKey().equals(t.getKey());
+            
+            if (hash!=t.hash) return false;
+            
+            if (punctuation!=t.punctuation) return false;
+            if (isUniqueByOcurrenceTime()) {
+                if (stamp.getOccurrenceTime()!=t.stamp.getOccurrenceTime()) return false;
+            }                
+            
+            if (truth==null) {
+                if (t.truth!=null) return false;
+            }
+            else if (t.truth==null) {
+                return false;
+            }
+            else if (!truth.equals(t.truth)) return false;            
+            
+            if (!content.equals(t.content)) return false;
+                    
+            return true;
         }
         return false;
     }
@@ -118,15 +145,7 @@ public class Sentence implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return getKey().hashCode();
-        /*
-        int hash = 5;
-        hash = 67 * hash + (this.content != null ? this.content.hashCode() : 0);
-        hash = 67 * hash + (this.punctuation);
-        hash = 67 * hash + (this.truth != null ? this.truth.hashCode() : 0);
-        hash = 67 * hash + (this.stamp != null ? this.stamp.hashCode() : 0);
         return hash;
-        */
     }
 
     /**
