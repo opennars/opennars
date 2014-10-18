@@ -6,6 +6,7 @@ import nars.core.Param;
 import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
+import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -30,7 +31,7 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     final static BagCurve curve = new ContinuousBag2.CubicBagCurve();
 
     @Override
-    public AbstractBag<Task,CharSequence> newNovelTaskBag(Param p) {
+    public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
         return new ContinuousBag2<>(getTaskBufferSize(), p.taskCycleForgetDurations, curve, randomRemoval);
     }
 

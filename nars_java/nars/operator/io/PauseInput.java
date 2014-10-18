@@ -6,7 +6,7 @@ import nars.entity.AbstractTask;
  * Input perception command to queue 'stepLater' cycles in Memory
  * TODO wrap as Operator
  */
-public class PauseInput extends AbstractTask {
+public class PauseInput extends AbstractTask<CharSequence> {
     public final int cycles;
 
     public PauseInput(int cycles) {        

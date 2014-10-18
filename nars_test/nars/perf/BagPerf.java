@@ -20,6 +20,7 @@ package nars.perf;
 import java.util.Iterator;
 import nars.core.Param.AtomicDurations;
 import nars.core.build.DefaultNARBuilder;
+import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.AbstractBag;
 import nars.storage.ContinuousBag;

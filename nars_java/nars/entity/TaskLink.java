@@ -27,6 +27,8 @@ import nars.language.Term;
  * <p>
  * The reason to separate a Task and a TaskLink is that the same Task can be
  * linked from multiple Concepts, with different BudgetValue.
+ * 
+ * TaskLinks are unique according to the Task they reference
  */
 public class TaskLink extends TermLink {
 

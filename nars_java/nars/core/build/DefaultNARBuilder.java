@@ -10,6 +10,7 @@ import nars.core.Parameters;
 import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
+import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -127,7 +128,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     }
 
     @Override
-    public AbstractBag<Task,CharSequence> newNovelTaskBag(Param p) {
+    public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
         return new Bag<>(getConceptBagLevels(), getTaskBufferSize(), p.newTaskForgetDurations);
     }
  
