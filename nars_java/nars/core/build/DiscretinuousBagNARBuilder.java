@@ -6,6 +6,7 @@ import nars.core.Param;
 import nars.core.control.BalancedSequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
+import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -31,13 +32,13 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     final static ContinuousBag2.BagCurve curve = new ContinuousBag2.CubicBagCurve();
     
     @Override
-    public AbstractBag<Task> newNovelTaskBag(Param p) {
+    public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
         //return new ContinuousBag2<>(getTaskBufferSize(), p.taskCyclesToForget, curve, randomRemoval);
         return new ContinuousBag<>(getTaskBufferSize(), p.taskCycleForgetDurations, randomRemoval);
     }
 
     @Override
-    public AbstractBag<Concept> newConceptBag(Param p) {
+    public AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
         return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgetDurations);
     }
 
@@ -53,8 +54,8 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
         /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
-        AbstractBag<TaskLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), m.param.taskCycleForgetDurations, randomRemoval);
-        AbstractBag<TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), m.param.beliefForgetDurations, randomRemoval);
+        AbstractBag<TaskLink,TermLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), m.param.taskCycleForgetDurations, randomRemoval);
+        AbstractBag<TermLink,TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), m.param.beliefForgetDurations, randomRemoval);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }
