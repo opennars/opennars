@@ -85,7 +85,7 @@ public class InferenceLogger extends MemoryObserver {
 
     @Override
     public void output(Class channel, Object... args) {
-        for (final LogOutput o : outputs) {
+        for (final LogOutput o : outputs) {            
             if (args.length == 1)
                 o.traceAppend(channel, args[0].toString());
             else
@@ -117,7 +117,7 @@ public class InferenceLogger extends MemoryObserver {
     }
     
     @Override
-    public void onConceptNew(Concept concept) {
+    public void onConceptAdd(Concept concept) {
         output(ConceptAdd.class, concept.toString());
     }    
     

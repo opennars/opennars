@@ -1,9 +1,6 @@
 package nars.inference;
 
 import nars.core.EventEmitter;
-import nars.core.Events;
-import nars.entity.Concept;
-import nars.io.Output;
 
 /**
  *

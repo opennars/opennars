@@ -10,6 +10,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
+import nars.core.Events.InferenceEvent;
 import nars.entity.Item;
 import nars.gui.NARSwing;
 import nars.gui.output.chart.TimeSeries;
@@ -17,7 +18,6 @@ import nars.io.Output.IN;
 import nars.io.Output.OUT;
 import nars.io.Texts;
 import nars.util.NARTrace;
-import nars.util.NARTrace.InferenceEvent;
 import nars.util.NARTrace.OutputEvent;
 import nars.util.NARTrace.TaskEvent;
 import processing.core.PApplet;
@@ -435,6 +435,8 @@ public class Timeline2DCanvas extends PApplet {
                 if (!include(i))
                     continue;
                 
+                Class c = i.getType();
+                
             //box(2);
                 //quad(-0.5f, -0.5f, 0, 0.5f, -0.5f, 0, 0.5f, 0.5f, 0, -0.5f, 0.5f, 0);
                 if (i instanceof TaskEvent) {
@@ -442,7 +444,7 @@ public class Timeline2DCanvas extends PApplet {
                     float p = te.priority;
 
                     {
-                        l.fill(256f * NARSwing.hashFloat(i.getClass().hashCode()), 200f, 200f);                        
+                        l.fill(256f * NARSwing.hashFloat(c.hashCode()), 200f, 200f);                        
 
                         switch (te.type) {
                             case Added:
@@ -461,13 +463,14 @@ public class Timeline2DCanvas extends PApplet {
                     OutputEvent te = (OutputEvent) i;
 
                     float p = 0.5f;
-                    if (te.signal instanceof Item) {
-                        Item ii = (Item) te.signal;
-                        if (ii.budget!=null)
-                            p = ii.getPriority();
-                        else
-                            p= 0.5f;
-                    }
+                    if (te.signal.length > 0)
+                        if (te.signal[0] instanceof Item) {
+                            Item ii = (Item) te.signal[0];
+                            if (ii.budget!=null)
+                                p = ii.getPriority();
+                            else
+                                p= 0.5f;
+                        }
                     float ph = 0.5f + 0.5f * p; //so that priority 0 will still be visible
 
                     l.fill(256f * NARSwing.hashFloat(te.channel.hashCode()), 100f + 100f * ph, 255f * ph);
@@ -491,7 +494,7 @@ public class Timeline2DCanvas extends PApplet {
                         rect(i, te.signal, ph * itemScale, x, y);
                     }
                 } else {
-                    l.fill(256f * NARSwing.hashFloat(i.toString().hashCode()), 200f, 200f);
+                    l.fill(256f * NARSwing.hashFloat(c.hashCode()), 200f, 200f);
                     rect(i, null, 0.75f * itemScale, x, y);
                 }
 
