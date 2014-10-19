@@ -3,6 +3,7 @@ package nars.timeline;
 import com.google.common.collect.Lists;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +100,11 @@ public class Timeline2DCanvas extends PApplet {
 
         }
 
+        public LineChart(TimeSeries... series) {
+            super();
+            this.sensors = Arrays.asList(series);            
+        }
+        
         public LineChart(NARTrace t, String... sensors) {
             super();
             this.sensors = Stream.of(sensors).map(x -> t.charts.get(x)).collect(toList());
@@ -222,6 +228,10 @@ public class Timeline2DCanvas extends PApplet {
 
         float barWidth = 0.9f;
 
+        public StackedPercentageChart(TimeSeries... series) {
+            super(series);
+        }
+        
         public StackedPercentageChart(NARTrace t, String... sensors) {
             super(t, sensors);
         }

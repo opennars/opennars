@@ -18,6 +18,9 @@ public class TimeSeries  {
         private final int historySize;
         float min, max;
         long lastT = -1;
+    private float specificMin;
+    private float specificMax;
+    private boolean specificRange;
 
 	public TimeSeries(String theName, Color color, int historySize) {
 		label = theName;
@@ -26,6 +29,13 @@ public class TimeSeries  {
                 values = new float[historySize];
 	}
 
+        public TimeSeries setRange(float min, float max) {
+            this.specificRange = true;
+            this.specificMin = min;
+            this.specificMax = max;
+            return this;
+        }
+        
 	public Color getColor() {
 		return colour;
 	}        
@@ -73,17 +83,21 @@ public class TimeSeries  {
         }
 
         public float getMin() {
+            if (specificRange) return specificMin;
             return min;
         }
 
         public float getMax() {
+            if (specificRange) return specificMax;
             return max;
         }
 
     public float getValue(long t) {
         if (t < lastT - historySize) return Float.NaN;
         if (t > lastT) return Float.NaN;
-        return values[(int)(lastT - t)];
+        int i = (int)(lastT - t);
+        if (i >= values.length) return 0;
+        return values[i];
     }
 
     public void updateMinMax(long cycleStart, long cycleEnd) {
