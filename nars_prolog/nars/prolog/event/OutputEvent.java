@@ -17,7 +17,7 @@
  */
 package nars.prolog.event;
 
-import java.util.*;
+import java.util.EventObject;
 
 /**
  *  This class defines an output event (after a write operation, for instance)

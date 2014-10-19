@@ -18,12 +18,12 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
+import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.core.Memory;
 
 /**
  * Operator that activates a concept

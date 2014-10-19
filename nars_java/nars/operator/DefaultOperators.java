@@ -1,6 +1,7 @@
 package nars.operator;
 
 import nars.operator.math.Add;
+import nars.operator.math.Count;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Doubt;
 import nars.operator.mental.Evaluate;
@@ -14,7 +15,6 @@ import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
 import nars.operator.software.Javascript;
 import nars.operator.software.NumericCertainty;
-import nars.operator.math.Count;
 
 
 public class DefaultOperators {

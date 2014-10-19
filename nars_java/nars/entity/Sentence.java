@@ -21,7 +21,6 @@
 package nars.entity;
 
 import java.util.Objects;
-import static java.util.Objects.hash;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;

@@ -1,6 +1,7 @@
 package nars.prolog.util;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class OneWayList<E> {
     

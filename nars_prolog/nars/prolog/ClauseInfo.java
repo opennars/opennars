@@ -16,7 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.prolog;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 
 /**
  * This class mantains information about a clause creation

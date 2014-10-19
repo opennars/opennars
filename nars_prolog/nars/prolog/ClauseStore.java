@@ -1,7 +1,9 @@
 package nars.prolog;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import nars.prolog.util.OneWayList;
 
 /**

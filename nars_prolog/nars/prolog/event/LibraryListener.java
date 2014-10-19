@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.prolog.event;
-import java.util.*;
+import java.util.EventListener;
 
 /**
  * Listener for library events

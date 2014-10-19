@@ -17,10 +17,10 @@
 
 package nars.test.util;
 
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
-import nars.io.TextOutput;
 import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
+import nars.io.TextOutput;
 import nars.util.Number1DInput;
 import org.junit.Assert;
 import org.junit.Test;

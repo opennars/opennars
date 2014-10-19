@@ -1,7 +1,8 @@
 package nars.prolog.gui.ide;
 
 import javax.swing.JTable;
-import javax.swing.table.*;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 
 @SuppressWarnings("serial")
 public class PrologTable

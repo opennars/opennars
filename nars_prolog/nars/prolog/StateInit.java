@@ -17,8 +17,6 @@
  */
 package nars.prolog;
 
-import nars.prolog.Struct;
-
 /**
  * @author Alex Benini
  *

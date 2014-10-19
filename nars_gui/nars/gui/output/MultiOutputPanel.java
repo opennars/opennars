@@ -2,8 +2,6 @@ package nars.gui.output;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -12,24 +10,17 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.entity.Task;
 import nars.gui.NARControls;
 import nars.gui.NARSwing;
 import nars.gui.dock.DockingContent;
 import nars.gui.dock.DockingRegionRoot;
-import nars.io.Output;
 
 /**
  * TODO queue outputs in non-displayed SwingLogPanel's into ArrayDeque without involving

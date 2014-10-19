@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.prolog.event;
-import java.util.*;
+import java.util.EventObject;
 
 /**
  *  This class defines an event defining a warning emitted by

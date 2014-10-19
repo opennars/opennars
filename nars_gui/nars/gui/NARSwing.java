@@ -32,8 +32,6 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
-import nars.gui.output.graph.ConceptGraphCanvas;
-import nars.gui.output.graph.ConceptGraphPanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

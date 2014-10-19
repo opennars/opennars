@@ -52,7 +52,6 @@ import nars.inference.Executive;
 import nars.inference.NAL;
 import nars.inference.NAL.ImmediateProcess;
 import nars.inference.TemporalRules;
-import nars.io.Output;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
@@ -655,6 +654,17 @@ public class Memory implements Serializable {
         conceptProcessor.activate(c, b);
     }
 
+    
+    public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
+        if (getTiming() == Memory.Timing.Iterative) {
+            BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+        }
+        else {                
+            BudgetFunctions.forget(x.budget, forgetCycles, relativeThreshold, time());
+        }            
+    }    
+
+    
     /* ---------- new task entries ---------- */
     /**
      * add new task that waits to be processed in the next cycleMemory

@@ -5,8 +5,8 @@
 
 package nars.prolog;
 
-import nars.prolog.util.OneWayList;
 import java.util.List;
+import nars.prolog.util.OneWayList;
 
 /**
  * ClausesFilter has the aim to reduce the number of clauses

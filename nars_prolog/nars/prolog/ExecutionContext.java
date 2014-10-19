@@ -17,9 +17,8 @@
  */
 package nars.prolog;
 
-import java.util.*;
-
-import nars.prolog.Struct;
+import java.util.ArrayList;
+import java.util.List;
 import nars.prolog.util.OneWayList;
 
 

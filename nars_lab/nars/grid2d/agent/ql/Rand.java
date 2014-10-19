@@ -1,6 +1,5 @@
 package nars.grid2d.agent.ql;
 import static java.lang.Math.abs;
-import static java.lang.Math.abs;
 import java.util.Random;
 /**
  * Useful class for obtaining various random numbers

@@ -14,7 +14,11 @@ package nars.util.sort;
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-import java.util.*;
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class provides a skeletal implementation of the <tt>Map</tt>

@@ -4,20 +4,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import nars.core.Memory;
-import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.entity.Item;
-import nars.inference.BudgetFunctions;
 
 
 public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
     
-    /**
-     * relative threshold, only calculate once
-     */
-    private final float RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
     
-    protected AtomicDurations forgettingRate; //may be final
     
     //protected BagObserver<E> bagObserver = null;
     
@@ -62,8 +55,9 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
      * @return The selected Item, or null if this bag is empty
      */
     abstract public E takeOut();    
-    
-    
+
+    /** gets the next value without removing changing it or removing it from any index */
+    abstract public E peekNext();
     
     abstract public E pickOut(final K key);    
 
@@ -83,21 +77,6 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
             System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
         }
     }
-
-        
-    /**
-     * Get the item decay rate, which differs in difference subclass, and can be
-     * changed in run time by the user, so not a constant.
-     *
-     * @return The number of times for a decay factor to be fully applied, or -1 if forgetting is disabled in this bag
-     */
-    protected float forgetCycles() {
-        //if (forgettingRate != null) {
-            return forgettingRate.getCycles();            
-        //}
-        //return -1;
-    }
-
     
 
 //    /**
@@ -134,21 +113,7 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
 //        }
 //    }
 
-    /** called when an item is inserted or re-inserted */
-    public void forget(final E x, Memory m) {
-        
-        
-        float forgetCycles = forgetCycles();
-        if (forgetCycles > 0) {            
-            if (m.getTiming() == Memory.Timing.Iterative) {
-                BudgetFunctions.forgetIterative(x.budget, forgetCycles, RELATIVE_THRESHOLD);
-            }
-            else {
-                long currentTime = m.time();
-                BudgetFunctions.forget(x.budget, forgetCycles, RELATIVE_THRESHOLD, currentTime);
-            }            
-        }
-    }
+
     
 //    /** called when an item is inserted or re-inserted */
 //    protected void forgetExperimental(final E x) {
@@ -180,6 +145,17 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
 //        }
 //    }
 
+
+    abstract public Collection<E> values();
+
+    abstract public float getAveragePriority();
+        
+    /** iterates all items in descending priority */
+    @Override
+    public abstract Iterator<E> iterator();
+
+
+    
     /**
      * Put an item back into the itemTable
      * <p>
@@ -188,23 +164,23 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */    
-    public final boolean putBack(final E oldItem, Memory m) {
-        forget(oldItem, m);
+    public final boolean putBack(final E oldItem, float forgetCycles, Memory m) {
+        float relativeThreshold = Parameters.BAG_THRESHOLD;
+        m.forget(oldItem, forgetCycles, relativeThreshold);
         return putIn(oldItem);
     }
 
     
-    /** x = takeOut(), then putBack(x) - without removing 'x' from nameTable 
+    /** x = takeOut(), then putBack(x)
+     *  @forgetCycles forgetting time in cycles
      *  @return the variable that was updated, or null if none was taken out
      */
-    synchronized public E processNext(boolean forget, Memory m) {
+    synchronized public E processNext(float forgetCycles, float relativeThreshold, Memory m) {
         final E x = takeOut();
         if (x!=null) {
-            //putBack():
-            if (forget) {
-                forget(x, m);
-            }
             
+            m.forget(x, forgetCycles, relativeThreshold);
+                        
             boolean r = putIn(x);
             if (!r) {
                 throw new RuntimeException("Bag.processNext");
@@ -215,14 +191,7 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
             return null;
         }
     }
-
-    abstract public Collection<E> values();
-
-    abstract public float getAveragePriority();
-        
-    /** iterates all items in descending priority */
-    @Override
-    public abstract Iterator<E> iterator();
+    
 
     
     public double[] getPriorityDistribution(int bins) {

@@ -17,11 +17,8 @@
  */
 package nars.prolog;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import nars.prolog.ClauseInfo;
-import nars.prolog.Struct;
+import java.util.List;
 import nars.prolog.util.OneWayList;
 
 /**

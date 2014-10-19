@@ -23,7 +23,6 @@ package nars.inference;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;

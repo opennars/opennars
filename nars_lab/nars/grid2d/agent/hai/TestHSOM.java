@@ -6,8 +6,6 @@
 
 package hai;
 
-import hai.Hsom;
-
 /**
  *
  * @author me

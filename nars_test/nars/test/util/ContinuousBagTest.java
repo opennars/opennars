@@ -48,7 +48,7 @@ public class ContinuousBagTest {
     }
     
     public void testFastBag(boolean random) {
-        ContinuousBag<NullItem,CharSequence> f = new ContinuousBag(4, p.conceptForgetDurations, random);
+        ContinuousBag<NullItem,CharSequence> f = new ContinuousBag(4, random);
         
         f.putIn(new NullItem(.25f));
         assert(f.size() == 1);
@@ -75,7 +75,7 @@ public class ContinuousBagTest {
     }
 
     public void testFastBag2(boolean random) {
-        ContinuousBag2<NullItem,CharSequence> f = new ContinuousBag2(4, p.conceptForgetDurations, new ContinuousBag2.DefaultBagCurve(), random);
+        ContinuousBag2<NullItem,CharSequence> f = new ContinuousBag2(4, new ContinuousBag2.DefaultBagCurve(), random);
         
         f.putIn(new NullItem(.25f));
         assert(f.size() == 1);
@@ -137,10 +137,10 @@ public class ContinuousBagTest {
     }
     
     public void testFastBagCapacityLimit() {
-        testFastBagCapacityLimit(new ContinuousBag(4, p.conceptForgetDurations, true));
-        testFastBagCapacityLimit(new ContinuousBag(4, p.conceptForgetDurations, false));
-        testFastBagCapacityLimit(new ContinuousBag2(4, p.conceptForgetDurations, new ContinuousBag2.DefaultBagCurve(), true));
-        testFastBagCapacityLimit(new ContinuousBag2(4, p.conceptForgetDurations, new ContinuousBag2.DefaultBagCurve(),false));
+        testFastBagCapacityLimit(new ContinuousBag(4, true));
+        testFastBagCapacityLimit(new ContinuousBag(4, false));
+        testFastBagCapacityLimit(new ContinuousBag2(4, new ContinuousBag2.DefaultBagCurve(), true));
+        testFastBagCapacityLimit(new ContinuousBag2(4, new ContinuousBag2.DefaultBagCurve(),false));
     }
     
     
@@ -150,7 +150,7 @@ public class ContinuousBagTest {
         
         int count[] = new int[N];
         
-        ContinuousBag<NullItem,CharSequence> f = new ContinuousBag(N, p.conceptForgetDurations, random);
+        ContinuousBag<NullItem,CharSequence> f = new ContinuousBag(N, random);
         
         //fill
         for (int i= 0; i < N; i++) {
@@ -185,7 +185,7 @@ public class ContinuousBagTest {
         
         final float priorityEpsilon = 0.1f;
         
-        ContinuousBag<NullItem,CharSequence> c = new ContinuousBag(capacity, p.conceptForgetDurations, false);
+        ContinuousBag<NullItem,CharSequence> c = new ContinuousBag(capacity, false);
         Bag<NullItem,CharSequence> d = new DefaultBag<NullItem,CharSequence>(capacity, 10, p.conceptForgetDurations);
         
         assertEquals(c.getMass(), d.getMass(), 0);

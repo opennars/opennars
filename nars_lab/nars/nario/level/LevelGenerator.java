@@ -1,7 +1,6 @@
 package nars.nario.level;
 
 import java.util.Random;
-
 import nars.nario.sprites.Enemy;
 
 

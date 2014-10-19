@@ -1,6 +1,5 @@
 package nars.prolog.gui.ide;
 
-import nars.prolog.util.Automaton;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,6 +21,7 @@ import nars.prolog.event.SpyListener;
 import nars.prolog.event.WarningEvent;
 import nars.prolog.event.WarningListener;
 import nars.prolog.lib.IOLibrary;
+import nars.prolog.util.Automaton;
 
 @SuppressWarnings("serial")
 public class CUIConsole extends Automaton implements Serializable, OutputListener, SpyListener, WarningListener/*Castagna 06/2011*/, ExceptionListener/**/{

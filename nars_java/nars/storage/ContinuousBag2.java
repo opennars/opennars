@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
-import nars.core.Param.AtomicDurations;
 import nars.entity.Item;
 import nars.util.sort.IndexedTreeSet;
 
@@ -107,7 +106,7 @@ public class ContinuousBag2<E extends Item<K>,K> extends AbstractBag<E,K> implem
 //        this(capacity, new AtomicInteger(forgetRate), curve, randomRemoval);
 //    }
     
-    public ContinuousBag2(int capacity, AtomicDurations forgetRate, BagCurve curve, boolean randomRemoval) {
+    public ContinuousBag2(int capacity, BagCurve curve, boolean randomRemoval) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
@@ -121,9 +120,7 @@ public class ContinuousBag2<E extends Item<K>,K> extends AbstractBag<E,K> implem
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
         items = new IndexedTreeSet<E>(this);
-            
-        
-        this.forgettingRate = forgetRate;
+                            
         this.mass = 0;
     }
 
@@ -246,6 +243,15 @@ public class ContinuousBag2<E extends Item<K>,K> extends AbstractBag<E,K> implem
         
         final E selected = takeOutIndex( nextRemovalIndex() );
         
+        return selected;
+    }
+    
+
+    @Override
+    public E peekNext() {
+        if (size()==0) return null; // empty bag                
+                
+        final E selected = items.exact( nextRemovalIndex() );
         return selected;
     }
     

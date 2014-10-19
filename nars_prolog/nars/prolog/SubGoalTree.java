@@ -1,5 +1,6 @@
 package nars.prolog;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class SubGoalTree extends AbstractSubGoalTree implements Iterable<AbstractSubGoalTree> {

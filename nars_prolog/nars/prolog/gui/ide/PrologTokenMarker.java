@@ -1,9 +1,9 @@
 package nars.prolog.gui.ide;
 
-import nars.prolog.gui.edit.Token;
-import nars.prolog.gui.edit.KeywordMap;
-import nars.prolog.gui.edit.TokenMarker;
 import javax.swing.text.Segment;
+import nars.prolog.gui.edit.KeywordMap;
+import nars.prolog.gui.edit.Token;
+import nars.prolog.gui.edit.TokenMarker;
 
 public class PrologTokenMarker extends TokenMarker
 {

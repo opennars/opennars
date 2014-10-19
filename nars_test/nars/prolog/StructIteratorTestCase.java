@@ -2,7 +2,6 @@ package nars.prolog;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import junit.framework.TestCase;
 
 /**

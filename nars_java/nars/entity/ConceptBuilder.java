@@ -1,12 +1,8 @@
 package nars.entity;
 
-import nars.language.Term;
 import nars.core.Memory;
+import nars.language.Term;
 
-/**
- *
- * @author me
- */
 
 
 public interface ConceptBuilder {

@@ -1,7 +1,7 @@
 package nars.timeline.pick;
 
 
-import processing.core.*;
+import processing.core.PImage;
 
 //https://raw.githubusercontent.com/nclavaud/picking/master/src/picking/Buffer.java
 public class Buffer extends processing.opengl.PGraphics3D {

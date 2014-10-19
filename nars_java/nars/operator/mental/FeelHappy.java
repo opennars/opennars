@@ -18,10 +18,10 @@
 package nars.operator.mental;
 
 import java.util.ArrayList;
-import nars.entity.*;
-import nars.language.*;
-import nars.operator.Operation;
 import nars.core.Memory;
+import nars.entity.Task;
+import nars.language.Term;
+import nars.operator.Operation;
 
 /**
  * Feeling happy value

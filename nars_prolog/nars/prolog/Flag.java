@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * This class represents a prolog Flag

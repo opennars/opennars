@@ -1,7 +1,5 @@
 package hai;
 
-import hai.Hsom;
-
 public class Hai {
 
     public static double random(double max) { return Math.random() * max;    }

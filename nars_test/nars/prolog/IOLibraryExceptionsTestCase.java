@@ -2,7 +2,6 @@ package nars.prolog;
 
 import java.io.File;
 import java.io.PrintWriter;
-
 import junit.framework.TestCase;
 
 /**

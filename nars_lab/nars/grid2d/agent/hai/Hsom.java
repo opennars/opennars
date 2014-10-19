@@ -1,8 +1,5 @@
 package hai;
 
-
-import hai.Hai;
-
 public class Hsom {
 
     private double[][][] links;

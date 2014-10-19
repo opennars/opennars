@@ -1,9 +1,10 @@
 package nars.prolog.gui.ide;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.JLabel;
 
 public class StatusBar extends JLabel implements PropertyChangeListener
 {

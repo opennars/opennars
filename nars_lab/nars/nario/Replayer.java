@@ -1,6 +1,8 @@
 package nars.nario;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 
 public class Replayer

@@ -1,16 +1,12 @@
 package nars.test.util;
 
-import nars.core.build.DefaultNARBuilder;
 import nars.core.NAR;
-import nars.util.NARGraph;
+import nars.core.build.DefaultNARBuilder;
 import nars.util.DefaultGraphizer;
+import nars.util.NARGraph;
 import static nars.util.NARGraph.IncludeEverything;
 import org.junit.Test;
 
-/**
- *
- * @author me
- */
 
 
 public class TestNARGraph {
