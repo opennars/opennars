@@ -905,6 +905,7 @@ public class Memory implements Serializable {
             processed++;
             
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
+
             
             if (  task.isInput()  || 
                   concept(task.getContent())!=null || 
@@ -984,7 +985,7 @@ public class Memory implements Serializable {
      */
     public boolean processNovelTask() {
         final Task task = novelTasks.takeOut();       // select a task from novelTasks
-        if (task != null) {
+        if (task != null) {            
             new ImmediateProcess(this, task).call();
             return true;
         }

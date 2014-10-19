@@ -32,7 +32,7 @@ import processing.event.KeyEvent;
 public class Timeline2DCanvas extends PApplet {
 
     float camScale = 1f;
-    float scaleSpeed = 1f;
+    float scaleSpeed = 4f;
     private float lastMousePressY = Float.NaN;
     private float lastMousePressX = Float.NaN;
 

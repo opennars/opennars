@@ -74,14 +74,14 @@ public class NARio extends Run {
         
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
-        nar.param().conceptForgetDurations.set(20);
+        nar.param().conceptForgetDurations.set(10);
         float fps = 20f;
         gameRate = 1.0f / fps;
 
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.startFPS(fps, 300, 1f);
+        nar.startFPS(fps, 500, 1f);
     }
 
     String[] sight = new String[9];
