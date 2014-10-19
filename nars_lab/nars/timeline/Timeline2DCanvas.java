@@ -227,6 +227,7 @@ public class Timeline2DCanvas extends PApplet {
     public static class StackedPercentageChart extends LineChart {
 
         float barWidth = 0.9f;
+        float barHeight = 0.95f;
 
         public StackedPercentageChart(TimeSeries... series) {
             super(series);
@@ -283,8 +284,9 @@ public class Timeline2DCanvas extends PApplet {
                     float px = x;
                     float h = p * yScale;
 
+                    float gap = (h*(1.0f - barHeight)/2f);
                     l.fill(ccolor, 255f * (0.5f + 0.5f * p));
-                    l.rect(px, sy, timeScale * barWidth, h);
+                    l.rect(px, sy+gap, timeScale * barWidth, h - gap);
 
                     sy += h;
                 }
@@ -566,12 +568,14 @@ public class Timeline2DCanvas extends PApplet {
 
     }
 
-
-    public Timeline2DCanvas(Chart... charts) {
+    public Timeline2DCanvas(List<Chart> charts) {
         super();
-        this.charts = Lists.newArrayList(charts);
-
+        this.charts = charts;
         init();
+    }
+    
+    public Timeline2DCanvas(Chart... charts) {        
+        this(Lists.newArrayList(charts));
     }
     
     public void view(long start, long end) {
