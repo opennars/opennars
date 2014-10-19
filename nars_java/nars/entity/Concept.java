@@ -194,7 +194,8 @@ public class Concept extends StringKeyItem {
             final Stamp oldStamp = oldBelief.stamp;
             if (newStamp.equals(oldStamp)) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
-                    task.budget.decPriority(0);    // duplicated task
+                    //task.budget.decPriority(0);    // duplicated task
+                    memory.removeTask(task, "Duplicated");
                 }   // else: activated belief
                 return;
             } else if (revisible(judg, oldBelief)) {               ;
