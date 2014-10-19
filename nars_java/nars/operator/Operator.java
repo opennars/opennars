@@ -107,12 +107,6 @@ public abstract class Operator extends Term implements Plugin {
     public Operator clone() {
         //do not clone operators, just use as-is since it's effectively immutable
         return this;
-        
-        /*
-        Operator o = new Operator();
-        o.name = name(); //apply name directly, no need to invoke setName()
-        return o;
-        */
     }
 
 //    /**
@@ -122,25 +116,24 @@ public abstract class Operator extends Term implements Plugin {
 //     * @param operation The content of the operation to be executed
 //     */
     public static void reportExecution(final Operation operation, final Term[] args, Object feedback, final Memory memory) {
+        
         final Term opT = operation.getPredicate();
         if(!(opT instanceof Operator)) {
             return;
         }
-        final Operator operator = (Operator) opT;
-        
-        StringBuilder buffer = new StringBuilder();
-        for (Object obj : args) {
-            buffer.append(obj).append(",");
-        }
-        
-        if (feedback instanceof Exception)
-            feedback = feedback.getClass().getSimpleName() + ": " + ((RuntimeException)feedback).getMessage();
-        
-        BudgetValue b = operation.getTask().budget;
-        
-        memory.emit(EXE.class, 
+
+        if (memory.emitting(EXE.class)) {
+            final Operator operator = (Operator) opT;
+            
+            BudgetValue b = operation.getTask().budget;
+            
+            if (feedback instanceof Exception)
+                feedback = feedback.getClass().getSimpleName() + ": " + ((RuntimeException)feedback).getMessage();
+            
+            memory.emit(EXE.class, 
                 ((b != null) ? (b.toStringExternal() + " ") : "") + 
                         operator + "(" + Arrays.toString(args) + ")=" + feedback);
+        }
     }
 
     public final boolean call(final Operation op, final Memory memory) {

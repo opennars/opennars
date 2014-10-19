@@ -48,9 +48,9 @@ public class EventEmitter {
         return new CopyOnWriteArrayList<Observer>();
     }
     
-    public boolean isActive(final Class event) {
+    public final boolean isActive(final Class event) {
         if (events.get(event)!=null)
-            if (events.get(event).size() > 0)
+            if (!events.get(event).isEmpty())
                 return true;
         return false;
     }

@@ -52,6 +52,7 @@ import nars.inference.Executive;
 import nars.inference.NAL;
 import nars.inference.NAL.ImmediateProcess;
 import nars.inference.TemporalRules;
+import nars.io.Output;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
@@ -131,6 +132,7 @@ public class Memory implements Serializable {
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
+
 
 
 
@@ -661,12 +663,10 @@ public class Memory implements Serializable {
         if(t.sentence.content instanceof Implication && t.sentence.content.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
             t.setPriority(Math.min(0.99f, t.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
         }
-    
-        
-        logic.TASK_ADD_NEW.commit(t.getPriority());
                 
         newTasks.add(t);
                 
+        logic.TASK_ADD_NEW.commit(t.getPriority());
         emit(Events.TaskAdd.class, t, reason);
         output(t);
     }
@@ -726,16 +726,17 @@ public class Memory implements Serializable {
      * @param candidateBelief The belief to be used in future inference, for
      * forward/backward correspondence
      */
-    public void activatedTask(Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
-        final Task task = new Task(sentence, budget, currentTask, sentence, candidateBelief);
-
-        addNewTask(task, "Activated");
+    public void activatedTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {
+        
+        addNewTask(
+                new Task(sentence, budget, currentTask, sentence, candidateBelief), 
+                "Activated");
+        
     }
 
     public void removeTask(Task task, String reason) {        
         emit(TaskRemove.class, task, reason);
-        task.end();
-        
+        task.end();        
     }
     
     /**
@@ -746,7 +747,7 @@ public class Memory implements Serializable {
     public void executedTask(final Operation operation) {
         Task opTask = operation.getTask();
         logic.TASK_EXECUTED.commit(opTask.budget.getPriority());
-        
+                
         TruthValue truth = new TruthValue(1f,0.9999f);
         Stamp stamp = new Stamp(this, Tense.Present); 
         Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
@@ -767,11 +768,15 @@ public class Memory implements Serializable {
         }        
     }
     
-    public void emit(final Class c, final Object... signal) {        
+    final public void emit(final Class c, final Object... signal) {        
         event.emit(c, signal);
     }
 
+    final public boolean emitting(final Class channel) {
+        return event.isActive(channel);
+    }
 
+    
     /** enable/disable all I/O and memory processing.  CycleStart and CycleStop events will 
      continue to be generated, allowing the memory to be used as a clock tick while disabled. */
     public void setEnabled(boolean e) {

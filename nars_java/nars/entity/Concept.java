@@ -598,27 +598,28 @@ public class Concept extends StringKeyItem {
 
     /* ---------- main loop ---------- */
     /**
-     * An atomic step in a concept
+     * Fire next tasklink
      * @return whether a TaskLink was fired or not
      */
     public boolean fire() {
 
-        if (taskLinks.size() == 0)
-            return false;
+        while (taskLinks.size() > 0) {
         
-        final TaskLink currentTaskLink = taskLinks.takeOut();
-                        
-        
-        if (currentTaskLink.budget.aboveThreshold()) {
-            
-            new NAL.FireConcept(memory, this, currentTaskLink).call();        
+            final TaskLink currentTaskLink = taskLinks.takeOut();
 
-            taskLinks.putBack(currentTaskLink, memory);
+            if (currentTaskLink.budget.aboveThreshold()) {
+
+                new NAL.FireConcept(memory, this, currentTaskLink).call();        
+
+                taskLinks.putBack(currentTaskLink, memory);
+
+                return true;           
+            }
             
-            return true;           
-        }
-        else {
-            //System.out.println("Discard task: " + currentTaskLink.targetTask);
+            //else {
+                //System.out.println("Discard task: " + currentTaskLink.targetTask);
+            //}
+            
         }
         
         return false;
