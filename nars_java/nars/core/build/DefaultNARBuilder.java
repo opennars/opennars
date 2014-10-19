@@ -41,21 +41,23 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     /** Size of TaskBuffer */
     private int taskBufferSize = 10;
     private Memory.Timing timing = Timing.Iterative;
+    private int taskBufferLevels;
     
     
     public DefaultNARBuilder() {
         super();
         
-        setConceptBagLevels(100);
         setConceptBagSize(1000);        
+        setConceptBagLevels(100);
         
-        setTaskLinkBagLevels(100);
         setTaskLinkBagSize(20);
+        setTaskLinkBagLevels(8); //was 100
 
-        setTermLinkBagLevels(100);
         setTermLinkBagSize(100);
+        setTermLinkBagLevels(10); //was 100
         
-        setTaskBufferSize(10);
+        setNovelTaskBagSize(10);
+        setNovelTaskBagLevels(4); //was 100
     }
 
     @Override
@@ -129,7 +131,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     @Override
     public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
-        return new Bag<>(getConceptBagLevels(), getTaskBufferSize(), p.newTaskForgetDurations);
+        return new Bag<>(getNovelTaskBagLevels(), getNovelTaskBagSize(), p.newTaskForgetDurations);
     }
  
     
@@ -154,14 +156,21 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         return this;
     }
 
-    public void setTaskBufferSize(int taskBufferSize) {
+    public void setNovelTaskBagSize(int taskBufferSize) {
         this.taskBufferSize = taskBufferSize;
     }
 
-    public int getTaskBufferSize() {
+    public int getNovelTaskBagSize() {
         return taskBufferSize;
     }
     
+    public void setNovelTaskBagLevels(int l) {
+        this.taskBufferLevels = l;
+    }
+
+    public int getNovelTaskBagLevels() {
+        return taskBufferLevels;
+    }
     
 
     public int getTaskLinkBagSize() {

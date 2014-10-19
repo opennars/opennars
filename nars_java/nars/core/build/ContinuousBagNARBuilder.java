@@ -32,7 +32,7 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
 
     @Override
     public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
-        return new ContinuousBag2<>(getTaskBufferSize(), p.taskCycleForgetDurations, curve, randomRemoval);
+        return new ContinuousBag2<>(getNovelTaskBagSize(), p.taskCycleForgetDurations, curve, randomRemoval);
     }
 
     @Override
