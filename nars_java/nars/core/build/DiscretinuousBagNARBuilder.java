@@ -34,7 +34,7 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
         //return new ContinuousBag2<>(getTaskBufferSize(), p.taskCyclesToForget, curve, randomRemoval);
-        return new ContinuousBag<>(getTaskBufferSize(), p.taskCycleForgetDurations, randomRemoval);
+        return new ContinuousBag<>(getNovelTaskBagSize(), p.taskCycleForgetDurations, randomRemoval);
     }
 
     @Override
