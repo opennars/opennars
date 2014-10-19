@@ -105,7 +105,7 @@ public class IntersectionInt extends CompoundTerm {
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Collection<Term> argList) {
+    public static Term make(final Collection<Term> argList) {
         TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
         return make(set);
     }
@@ -116,7 +116,7 @@ public class IntersectionInt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set) {
+    public static Term make(final TreeSet<Term> set) {
         if (set.size() == 1) {
             return set.first();
         }                         // special case: single component

@@ -40,6 +40,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         //TODO use a primitive collection
         private Map<Term,Double> relevancy = null;
         
+        private double activity = 0;
+        
         private final int hash;
         
 
@@ -67,6 +69,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return hash;
         }
         
+        public double getActivity() { return activity; }
+        public double addActivity(double a) { activity += a; return activity; }
+        public double multActivity(double m) { activity *= m; return activity; }
         
         
         

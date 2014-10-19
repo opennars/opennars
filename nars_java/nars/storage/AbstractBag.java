@@ -52,17 +52,8 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
      * @return Whether the new Item is added into the Bag
      */
     abstract public boolean putIn(final E newItem);
-    
-    
 
     
-
-    /**
-     * The number of items in the bag
-     *
-     * @return The number of items
-     */
-    abstract public int size();
 
     /**
      * Choose an Item according to priority distribution and take it out of the
@@ -70,9 +61,22 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
      *
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public E takeOut();
+    abstract public E takeOut();    
+    
+    
+    
     abstract public E pickOut(final K key);    
 
+    
+    /**
+     * The number of items in the bag
+     *
+     * @return The number of items
+     */
+    abstract public int size();
+
+    
+    
     public void printAll() {
         for (K k : keySet()) {
             E v = get(k);
@@ -183,7 +187,7 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
      *
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
-     */
+     */    
     public final boolean putBack(final E oldItem, Memory m) {
         forget(oldItem, m);
         return putIn(oldItem);

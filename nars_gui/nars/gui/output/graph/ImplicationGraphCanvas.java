@@ -33,8 +33,7 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,C
     }    
     @Override
     public void updateGraph() {
-        maxSentenceActivation = graphExec.fadeAccumulatedSentences(0.95);
-        maxTermActivation = graphExec.fadeAccumulatedTerms(0.95);
+        maxSentenceActivation = graphExec.fadeAccumulatedSentences(0.95);        
 
         super.updateGraph();        
     }
@@ -45,11 +44,8 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,C
         float a = (float)graphExec.getCauseRelevancy(c);
         if (a > 1.0f) a = 1.0f;
         if (a < 0f) a = 0f;
-
-        float activation = 0;
-        Double A = graphExec.accumulatedSentence.get(c);
-        if (A!=null)
-            activation = A.floatValue();
+        
+        float activation = (float)c.getActivity();
         
         return Color.HSBtoRGB(0.4f * activation*0.1f, activation, 0.5f+ 0.5f * a);
     }
@@ -61,12 +57,10 @@ public class ImplicationGraphCanvas extends AnimatedProcessingGraphCanvas<Term,C
         if (ww < 1.0f) ww = 1.0f;
         
         
-        if (maxSentenceActivation > 0) {
-            Double A = graphExec.accumulatedSentence.get(c);
-            if (A!=null) {
-                double a = A / maxSentenceActivation;
-                ww += (float)a;
-            }
+        if (maxSentenceActivation > 0) {            
+            double A = c.getActivity();
+            double a = A / maxSentenceActivation;
+            ww += (float)a;
         }
         return super.getEdgeThickness(c, source, target) * ww;
     }

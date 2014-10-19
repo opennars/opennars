@@ -43,9 +43,6 @@ public class GraphExecutive {
     double minEdgeCost = 1.0;
     
     
-    //for observation purposes, TODO enable/disable the maintenance of this
-    public final Map<Term,Double> accumulatedTerm = new HashMap();
-    public final Map<Cause,Double> accumulatedSentence = new HashMap();
     
     
     public GraphExecutive(Memory memory, Executive exec) {
@@ -56,34 +53,17 @@ public class GraphExecutive {
     }
 
     
-    protected void accumulate(final Term t) {
-        accumulatedTerm.put(t, accumulatedTerm.getOrDefault(t, new Double(0)) + 1);
+    protected void accumulate(final Term t, final Cause[] path) {        
+        for (final Cause s : path)
+            s.addActivity(1.0);
     }
-    protected void accumulate(final Cause s) {
-        accumulatedSentence.put(s, accumulatedTerm.getOrDefault(s, new Double(0)) + 1);
-    }
-    protected void accumulate(final Term t, final Cause[] path) {
-        accumulate(t);
-        for (Cause s : path)
-            accumulate(s);
-    }
-    /** returns maximum value */
-    public double fadeAccumulatedTerms(final double rate) {
-        double max = 0;
-        for (final Map.Entry<Term, Double> e : accumulatedTerm.entrySet()) {
-            double vv = e.getValue();
-            if (vv > max) max = vv;
-            e.setValue( vv * rate );
-        }
-        return max;
-    }
+    
     /** returns maximum value */
     public double fadeAccumulatedSentences(double rate) {
         double max = 0;
-        for (final Map.Entry<Cause, Double> e : accumulatedSentence.entrySet()) {
-            double vv = e.getValue();
+        for (final Cause c: implication.edgeSet()) {
+            double vv = c.multActivity(rate);
             if (vv > max) max = vv;
-            e.setValue( vv * rate );
         }
         return max;
     }
