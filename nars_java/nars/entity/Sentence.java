@@ -60,7 +60,7 @@ public class Sentence implements Cloneable {
     /**
      * The truth value of Judgment, or desire value of Goal     
      */
-    public final TruthValue truth;
+    public TruthValue truth;
     
     /**
      * Partial record of the derivation path
