@@ -51,13 +51,13 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         setConceptBagLevels(100);
         
         setTaskLinkBagSize(20);
-        setTaskLinkBagLevels(8); //was 100
+        setTaskLinkBagLevels(100);
 
         setTermLinkBagSize(100);
-        setTermLinkBagLevels(10); //was 100
+        setTermLinkBagLevels(100);
         
         setNovelTaskBagSize(10);
-        setNovelTaskBagLevels(4); //was 100
+        setNovelTaskBagLevels(100);
     }
 
     @Override
