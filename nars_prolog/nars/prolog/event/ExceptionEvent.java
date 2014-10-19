@@ -1,7 +1,7 @@
 /*Castagna 06/2011*/
 package nars.prolog.event;
 
-import java.util.*;
+import java.util.EventObject;
 
 @SuppressWarnings("serial")
 public class ExceptionEvent extends EventObject{

@@ -1,19 +1,8 @@
 package nars.plugin.mental;
 
-import nars.core.EventEmitter.Observer;
-import nars.core.Events;
-import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.core.Plugin;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
-import nars.entity.Task;
-import nars.entity.TruthValue;
-import nars.io.Symbols;
-import nars.language.Term;
-import nars.operator.Operation;
 
 /**
  * To rememberAction an internal action as an operation

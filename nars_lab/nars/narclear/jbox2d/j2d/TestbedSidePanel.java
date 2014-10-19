@@ -45,14 +45,14 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import nars.narclear.PhysicsModel;
 import nars.narclear.jbox2d.PhysicsController;
-import nars.narclear.jbox2d.TestbedState;
-import nars.narclear.jbox2d.TestbedState.ListItem;
 import nars.narclear.jbox2d.TestbedSetting;
 import static nars.narclear.jbox2d.TestbedSetting.ConstraintType.RANGE;
 import nars.narclear.jbox2d.TestbedSetting.SettingType;
 import nars.narclear.jbox2d.TestbedSettings;
-import nars.narclear.PhysicsModel;
+import nars.narclear.jbox2d.TestbedState;
+import nars.narclear.jbox2d.TestbedState.ListItem;
 
 
 /**

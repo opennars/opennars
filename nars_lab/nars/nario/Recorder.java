@@ -1,6 +1,8 @@
 package nars.nario;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 
 public class Recorder

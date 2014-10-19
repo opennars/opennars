@@ -2,9 +2,8 @@ package nars.prolog;
 
 import java.util.List;
 import java.util.Map;
-
-import nars.prolog.lib.IOLibrary;
 import junit.framework.TestCase;
+import nars.prolog.lib.IOLibrary;
 
 public class IOLibraryTestCase extends TestCase {
 	

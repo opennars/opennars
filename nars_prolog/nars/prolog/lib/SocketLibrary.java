@@ -14,17 +14,17 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 import java.util.regex.Pattern;
-import nars.prolog.net.AbstractSocket;
-import nars.prolog.net.Client_Socket;
-import nars.prolog.net.Datagram_Socket;
 import nars.prolog.Int;
 import nars.prolog.Library;
 import nars.prolog.Prolog;
 import nars.prolog.PrologError;
-import nars.prolog.net.Server_Socket;
 import nars.prolog.Struct;
 import nars.prolog.Term;
 import nars.prolog.interfaces.ISocketLib;
+import nars.prolog.net.AbstractSocket;
+import nars.prolog.net.Client_Socket;
+import nars.prolog.net.Datagram_Socket;
+import nars.prolog.net.Server_Socket;
 
 @SuppressWarnings("serial")
 /**

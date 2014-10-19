@@ -26,7 +26,7 @@ import nars.entity.Item;
 public class DefaultBag<E extends Item<K>,K> extends Bag<E,K> {
 
     public DefaultBag(int levels, int capacity, AtomicDurations forgetRate) {
-        super(levels, capacity, forgetRate);        
+        super(levels, capacity);        
     }
     
     

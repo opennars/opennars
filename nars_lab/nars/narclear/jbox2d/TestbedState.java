@@ -23,12 +23,10 @@
  ******************************************************************************/
 package nars.narclear.jbox2d;
 
-import nars.narclear.PhysicsModel;
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.DefaultComboBoxModel;
-
+import nars.narclear.PhysicsModel;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.IViewportTransform;
 

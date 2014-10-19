@@ -10,7 +10,6 @@ import static java.lang.Double.MAX_VALUE;
 import static java.lang.Double.MIN_VALUE;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import java.util.Arrays;
 import static java.util.Arrays.fill;
 
 /**

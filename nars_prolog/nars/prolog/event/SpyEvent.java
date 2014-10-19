@@ -17,8 +17,7 @@
  */
 package nars.prolog.event;
 
-import java.util.*;
-
+import java.util.EventObject;
 import nars.prolog.Engine;
 
 /**

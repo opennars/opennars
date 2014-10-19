@@ -2,7 +2,6 @@ package nars.gui.output.graph;
 
 
 import java.awt.Color;
-import nars.entity.Sentence;
 import nars.inference.GraphExecutive;
 import nars.language.Interval;
 import nars.language.Term;

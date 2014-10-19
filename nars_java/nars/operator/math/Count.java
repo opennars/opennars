@@ -17,12 +17,12 @@
 
 package nars.operator.math;
 
+import nars.core.Memory;
 import nars.language.CompoundTerm;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
-import nars.core.Memory;
 
 /**
  * Count the number of elements in a set

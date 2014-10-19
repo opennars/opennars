@@ -35,8 +35,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
 import nars.narclear.jbox2d.PhysicsController;
-import nars.narclear.jbox2d.TestbedState;
 import nars.narclear.jbox2d.TestbedPanel;
+import nars.narclear.jbox2d.TestbedState;
 
 
 /**

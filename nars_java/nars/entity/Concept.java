@@ -612,7 +612,7 @@ public class Concept extends StringKeyItem {
 
                 new NAL.FireConcept(memory, this, currentTaskLink).call();        
 
-                taskLinks.putBack(currentTaskLink, memory);
+                taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
 
                 return true;           
             }
@@ -686,14 +686,14 @@ public class Concept extends StringKeyItem {
                 return termLink;
             }
             
-            termLinks.putBack(termLink, memory);
+            returnTermLink(termLink);
         }
         return null;
 
     }
 
     public void returnTermLink(TermLink termLink) {
-        termLinks.putBack(termLink, memory);
+        termLinks.putBack(termLink, memory.param.beliefForgetDurations.getCycles(), memory);
     }
 
     /**

@@ -17,8 +17,7 @@
  */
 package nars.prolog;
 
-import java.util.*;
-
+import java.util.List;
 import nars.prolog.util.OneWayList;
 
 

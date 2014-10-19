@@ -28,7 +28,6 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
-import nars.io.Output.OUT;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;

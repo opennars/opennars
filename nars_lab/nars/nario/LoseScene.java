@@ -2,7 +2,6 @@ package nars.nario;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
 import nars.nario.sprites.Mario;
 
 public class LoseScene extends Scene

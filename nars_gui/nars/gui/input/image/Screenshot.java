@@ -1,6 +1,5 @@
 package nars.gui.input.image;
 
-import nars.gui.output.BitmapPanel;
 import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
@@ -10,6 +9,7 @@ import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import nars.gui.output.BitmapPanel;
 
 /**
  *

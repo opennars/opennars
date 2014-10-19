@@ -21,7 +21,6 @@
 
 package nars.language;
 
-import nars.core.Memory;
 import nars.io.Symbols.NativeOperator;
 
 /**

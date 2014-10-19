@@ -1,5 +1,5 @@
 package nars.prolog.gui.ide;
-import java.util.*;
+import java.util.EventListener;
 
 /**
  * Listener for information to display in the console events

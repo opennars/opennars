@@ -1,7 +1,6 @@
 package nars.nario;
 
 import java.awt.Graphics;
-
 import nars.nario.sonar.SonarSoundEngine;
 import nars.nario.sonar.SoundListener;
 

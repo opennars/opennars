@@ -1,12 +1,7 @@
 package nars.gui.output.face;
 
 import nars.core.NAR;
-import nars.io.Output;
 
-/**
- *
- * @author me
- */
 
 
 public class NARFacePanel extends HumanoidFacePanel  {

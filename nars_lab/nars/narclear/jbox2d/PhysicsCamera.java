@@ -23,12 +23,11 @@
  ******************************************************************************/
 package nars.narclear.jbox2d;
 
+import com.google.common.base.Preconditions;
 import org.jbox2d.common.IViewportTransform;
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Vec2;
-
-import com.google.common.base.Preconditions;
 
 public class PhysicsCamera {
 

@@ -26,12 +26,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import nars.core.build.DefaultNARBuilder;
 import nars.gui.NARSwing;
 import nars.nario.NARio;
-import nars.nario.Run;
-import static nars.tictactoe.play.nar;
 
 /**
  *

@@ -20,7 +20,6 @@
  */
 package nars.operator;
 
-import nars.core.Memory;
 import nars.entity.Task;
 import nars.io.Symbols;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;

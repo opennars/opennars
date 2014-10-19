@@ -18,7 +18,6 @@ import nars.entity.TruthValue;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.gui.output.graph.ProcessingGraphPanel2;
-import nars.io.Output;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.util.DefaultGraphizer;

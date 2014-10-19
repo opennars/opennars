@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
-import nars.core.Param.AtomicDurations;
 import nars.entity.Item;
 import nars.util.SortedItemList;
 
@@ -101,7 +100,7 @@ public class ContinuousBag<E extends Item<K>, K> extends AbstractBag<E,K> {
 //        this(capacity, new AtomicDurations(forgetRate), randomRemoval);
 //    }
     
-    public ContinuousBag(int capacity, AtomicDurations forgetRate, boolean randomRemoval) {
+    public ContinuousBag(int capacity, boolean randomRemoval) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
@@ -115,7 +114,6 @@ public class ContinuousBag<E extends Item<K>, K> extends AbstractBag<E,K> {
         
         items = new ContinuousBagSortedList<>(capacity);
         
-        this.forgettingRate = forgetRate;
         this.mass = 0;
     }
     
@@ -233,6 +231,15 @@ public class ContinuousBag<E extends Item<K>, K> extends AbstractBag<E,K> {
         
         return selected;
     }
+
+    @Override
+    public E peekNext() {
+        if (size()==0) return null; // empty bag                
+                
+        final E selected = items.get( nextRemovalIndex() );
+        return selected;
+    }
+    
     
     /** distributor function */
     public int nextRemovalIndex() {      

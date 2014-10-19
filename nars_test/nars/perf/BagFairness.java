@@ -2,6 +2,8 @@ package nars.perf;
 
 import java.awt.Color;
 import java.util.UUID;
+import nars.core.EventEmitter.Observer;
+import nars.core.Events;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.control.SequentialMemoryCycle;
@@ -36,6 +38,13 @@ public class BagFairness {
             bin[b] = new TimeSeries(percentStart + ".." + percentEnd, Color.getHSBColor(0.2f + 0.5f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
         }
         
+        n.event().on(Events.ConceptFire.class, new Observer() {
+
+            @Override
+            public void event(Class event, Object[] arguments) {
+            }
+            
+        });
         
         while (n.getTime() < iterations) {
             double p = Math.random();

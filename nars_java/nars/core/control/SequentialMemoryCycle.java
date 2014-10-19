@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import nars.core.ConceptProcessor;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -48,15 +49,15 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         }
 
     }
-
-    
     
     
     /**
      * Select and fire the next concept.
      */
     public void processConcept() {
-        Concept currentConcept = concepts.processNext(true, memory);
+        float forgetCycles = memory.param.conceptForgetDurations.getCycles();
+
+        Concept currentConcept = concepts.processNext(forgetCycles, Parameters.BAG_THRESHOLD, memory);
         if (currentConcept != null) {            
             currentConcept.fire();
         }
@@ -73,12 +74,12 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     }
 
     @Override
-    public Concept concept(CharSequence name) {
+    public Concept concept(final CharSequence name) {
         return concepts.get(name);
     }
 
     @Override
-    public Concept addConcept(Term term, Memory memory) {
+    public Concept addConcept(final Term term, final Memory memory) {
         Concept concept = conceptBuilder.newConcept(term, memory);
         
         boolean added = concepts.putIn(concept);
@@ -90,21 +91,21 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     
 
     @Override
-    public void activate(Concept c, BudgetValue b) {
+    public void activate(final Concept c, final BudgetValue b) {
         concepts.pickOut(c.name());
         BudgetFunctions.activate(c, b);
-        concepts.putBack(c, memory);
+        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
     }
     
     @Override
     public void forget(Concept c) {
         concepts.pickOut(c.name());        
-        concepts.putBack(c, memory);    
+        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);    
     }
 
     @Override
     public Concept sampleNextConcept() {
-        return concepts.processNext(false, memory);
+        return concepts.peekNext();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package nars.grid2d.agent.ql;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.abs;
 import nars.core.NAR;
 import nars.grid2d.Cell;
 import nars.grid2d.Effect;
@@ -11,10 +10,6 @@ import static nars.grid2d.Hauto.LEFT;
 import static nars.grid2d.Hauto.RIGHT;
 import static nars.grid2d.Hauto.UP;
 
-/**
- *
- * @author me
- */
 
 
 public class QAgent extends GridAgent {

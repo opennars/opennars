@@ -1,6 +1,6 @@
 package nars.nario.level;
 
-import java.util.*;
+import java.util.Random;
 
 public final class ImprovedNoise
 {

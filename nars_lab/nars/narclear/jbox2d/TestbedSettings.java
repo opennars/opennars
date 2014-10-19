@@ -26,14 +26,12 @@
  */
 package nars.narclear.jbox2d;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import nars.narclear.jbox2d.TestbedSetting.SettingType;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Stores all the testbed settings.  Automatically populates default settings.

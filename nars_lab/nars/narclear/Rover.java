@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;

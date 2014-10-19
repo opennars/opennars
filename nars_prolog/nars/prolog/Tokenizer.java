@@ -17,9 +17,13 @@
  */
 package nars.prolog;
 
-import java.io.*;
-import java.util.LinkedList;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 /**
  * BNF for tuProlog

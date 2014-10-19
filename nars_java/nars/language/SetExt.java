@@ -22,7 +22,6 @@ package nars.language;
 
 import java.util.Collection;
 import java.util.TreeSet;
-import nars.core.Memory;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;

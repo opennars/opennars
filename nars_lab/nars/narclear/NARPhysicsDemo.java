@@ -1,11 +1,11 @@
 package nars.narclear;
 
-import nars.io.ChangedTextInput;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
+import nars.io.ChangedTextInput;
 import nars.language.Term;
 import nars.operator.NullOperator;
 import nars.operator.Operation;

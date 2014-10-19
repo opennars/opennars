@@ -32,12 +32,12 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
 
     @Override
     public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
-        return new ContinuousBag2<>(getNovelTaskBagSize(), p.taskCycleForgetDurations, curve, randomRemoval);
+        return new ContinuousBag2<>(getNovelTaskBagSize(), curve, randomRemoval);
     }
 
     @Override
     public AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
-        return new ContinuousBag2<>(getConceptBagSize(), p.conceptForgetDurations, curve, randomRemoval);
+        return new ContinuousBag2<>(getConceptBagSize(), curve, randomRemoval);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public Concept newConcept(final Term t, final Memory m) {
         
-        AbstractBag<TaskLink,TermLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCycleForgetDurations, curve, randomRemoval);
-        AbstractBag<TermLink,TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefForgetDurations, curve, randomRemoval);
+        AbstractBag<TaskLink,TermLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), curve, randomRemoval);
+        AbstractBag<TermLink,TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), curve, randomRemoval);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }

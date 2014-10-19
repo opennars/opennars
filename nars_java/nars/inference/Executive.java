@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import nars.core.EventEmitter.Observer;
-import nars.core.Events;
 import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Events.TaskDerive;
 import nars.core.Memory;

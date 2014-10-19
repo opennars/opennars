@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import static java.lang.Math.abs;
-import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;

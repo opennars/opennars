@@ -34,12 +34,12 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
         //return new ContinuousBag2<>(getTaskBufferSize(), p.taskCyclesToForget, curve, randomRemoval);
-        return new ContinuousBag<>(getNovelTaskBagSize(), p.taskCycleForgetDurations, randomRemoval);
+        return new ContinuousBag<>(getNovelTaskBagSize(), randomRemoval);
     }
 
     @Override
     public AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
-        return new Bag(getConceptBagLevels(), getConceptBagSize(), p.conceptForgetDurations);
+        return new Bag(getConceptBagLevels(), getConceptBagSize());
     }
 
     @Override
@@ -54,8 +54,8 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
         /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
-        AbstractBag<TaskLink,TermLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), m.param.taskCycleForgetDurations, randomRemoval);
-        AbstractBag<TermLink,TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), m.param.beliefForgetDurations, randomRemoval);
+        AbstractBag<TaskLink,TermLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), randomRemoval);
+        AbstractBag<TermLink,TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), randomRemoval);
         
         return new Concept(t, taskLinks, termLinks, m);        
     }

@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.entity.Item;
 
@@ -80,17 +79,10 @@ public class Bag<E extends Item<K>,K> extends AbstractBag<E,K> {
      */
     private int currentCounter;
 
-    /**
-     * The display level; initialized at lowest
-     */
-    //private int showLevel;
-    protected Bag(int levels, int capacity) {
-        this(levels, capacity, null);
-    }
 
-    public Bag(int levels, int capacity, AtomicDurations forgettingRate) {
+
+    public Bag(int levels, int capacity) {
         this.levels = levels;
-        this.forgettingRate = forgettingRate;
 
         THRESHOLD = (int) (Parameters.BAG_THRESHOLD * levels);
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
@@ -258,6 +250,18 @@ public class Bag<E extends Item<K>,K> extends AbstractBag<E,K> {
         }
     }
 
+    @Override
+    public synchronized E peekNext() {
+        if (size() == 0) {
+            return null; // empty bag                
+        }
+        if (levelEmpty(currentLevel) || (currentCounter == 0)) { // done with the current level
+            nextNonEmptyLevel();
+        }
+       
+        return itemTable[currentLevel].peekFirst();
+    }
+    
     @Override
     public synchronized E takeOut() {
         if (size() == 0) {

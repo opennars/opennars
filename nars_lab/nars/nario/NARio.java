@@ -14,7 +14,6 @@ import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
-import nars.io.Output;
 import nars.language.Term;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;

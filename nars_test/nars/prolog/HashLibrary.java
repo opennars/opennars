@@ -20,7 +20,7 @@
  */
 package nars.prolog;
 
-import java.util.*;
+import java.util.HashMap;
 
 public class HashLibrary extends Library {
 	private static final long serialVersionUID = 1L;
