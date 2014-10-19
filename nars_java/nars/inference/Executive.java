@@ -17,6 +17,7 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TruthValue;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
 import nars.io.Texts;
@@ -33,7 +34,7 @@ import nars.operator.Operator;
  * Operation execution and planning support.  
  * Strengthens and accelerates goal-reaching activity
  */
-public class Executive /*implements Observer*/ {
+public class Executive implements Observer {
     
     public final GraphExecutive graph;
     
@@ -44,7 +45,9 @@ public class Executive /*implements Observer*/ {
 
     PriorityBuffer<TaskExecution> tasks;
     private Set<TaskExecution> tasksToRemove = new HashSet();
-    public int shortTermMemorySize=0; //this value will adjust according to the longest (&/,a1...an) =/> .. statement
+    public int shortTermMemorySize=10; //how many events its able to track for the temporal feedback system
+    //100 should be enough for all practical examples for now, we may make it adaptive later,
+    //which means adjusting according to the longest (&/,a1...an) =/> .. statement
     public ArrayList<Task> lastEvents=new ArrayList<Task>();
     
     /** number of tasks that are active in the sorted priority buffer for execution */
@@ -117,17 +120,17 @@ public class Executive /*implements Observer*/ {
             
         };
         
-        //memory.event.set(this, true, TaskDerive.class, ConceptBeliefRemove.class);
+        memory.event.set(this, true, TaskDerive.class, ConceptBeliefRemove.class);
 
     }
     
-    /*
+    
     HashSet<Task> current_tasks=new HashSet<Task>();
     
     @Override
-    public void event(Class event, Object[] arguments) {
+    public void event(Class event, Object[] args) {
         if (event == TaskDerive.class) {
-            Task derivedTask=(Task) arguments[0];
+            Task derivedTask=(Task) args[0];
             if(derivedTask.sentence.content instanceof Implication &&
                ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
 
@@ -139,13 +142,13 @@ public class Executive /*implements Observer*/ {
         }
     
         else if (event == ConceptBeliefRemove.class) {
-            Task removedTask=(Task) arguments[2]; //task is 2nd
+            Task removedTask=(Task) args[2]; //task is 3nd
             if(current_tasks.contains(removedTask)) {
                 current_tasks.remove(removedTask);
             }            
         }
     }
-    */
+    
         
     
     public class TaskExecution {
@@ -591,6 +594,44 @@ public class Executive /*implements Observer*/ {
         }
     }
     
+    //check all predictive statements, match them with last events
+    public void temporalPredictionsAdapt() {
+        for(Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
+            Term[] args=new Term[1];
+            Implication imp=(Implication) c.getContent();
+            args[0]=imp.getSubject();
+            if(imp.getSubject() instanceof Conjunction) {
+                Conjunction conj=(Conjunction) imp.getSubject();
+                if(conj.temporalOrder==TemporalRules.ORDER_FORWARD) {
+                    args=conj.term; //in case of &/ this are the terms
+                }
+            }
+            int i=0;
+            boolean matched=true;
+            int off=0;
+            for(i=0;i<args.length;i++) {
+                //just matching order for now, todo taking temporal time into account
+                //ok lets match the sequences:
+                if(args[i] instanceof Interval) {
+                    off++;
+                    continue;
+                }
+                if(!args[i].equals(lastEvents.get(i-off))) {
+                    matched=false;
+                    break;
+                }
+            }
+            //ok it matched, is the consequence also right?
+            if(matched) { 
+                if(imp.getPredicate().equals(lastEvents.get(args.length))) { //it matched and same consequence, so positive evidence
+                    c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                } else { //it matched and other consequence, so negative evidence
+                    c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                } //todo use derived task with revision instead
+            }
+        }
+    }
+    
     public Task stmLast=null;
     boolean occured=false;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
@@ -630,6 +671,7 @@ public class Executive /*implements Observer*/ {
             }
             stmLast=newEvent;
             lastEvents.add(newEvent);
+            temporalPredictionsAdapt();
             while(lastEvents.size()>shortTermMemorySize) {
                 lastEvents.remove(0);
             }
