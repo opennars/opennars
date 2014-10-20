@@ -328,7 +328,7 @@ public class Brain implements Serializable {
         for (int l = w.length - 1; l >= 0; l--) {
             for (int i = 0; i < w[l].length; i++) {
                 for (int j = 0; j < w[l][i].length; j++) {
-                    w[l][i][j] = w[l][i][j] + (alpha * change * e[l][i][j]);
+                    w[l][i][j] += (alpha * change * e[l][i][j]);
                 }
             }
         }

@@ -187,13 +187,13 @@ public final class ImprovMath
         } else   
         {   
             double d3 = 1.0D / Math.sqrt(d1);   
-            ad2[0] = ad2[0] * d3;   
-            ad2[1] = ad2[1] * d3;   
-            ad2[2] = ad2[2] * d3;   
+            ad2[0] *= d3;   
+            ad2[1] *= d3;   
+            ad2[2] *= d3;   
             double d = Math.sin(ad2[3] * 0.5D);   
-            ad2[0] = ad2[0] * d;   
-            ad2[1] = ad2[1] * d;   
-            ad2[2] = ad2[2] * d;   
+            ad2[0] *= d;   
+            ad2[1] *= d;   
+            ad2[2] *= d;   
             ad2[3] = Math.cos(ad2[3] * 0.5D);   
             double d2 = ad2[0] * ad2[0] + ad2[1] * ad2[1] + ad2[2] * ad2[2] + ad2[3] * ad2[3];   
             double d4 = 2D / d2;   
@@ -224,9 +224,9 @@ public final class ImprovMath
             ad1[byte0] = Math.atan2(d18 = ad3[byte1][byte2] * (double)(-j), d17 = ad3[byte2][byte2]);   
             ad1[byte1] = Math.atan2(ad3[byte0][byte2] * (double)j, Math.sqrt(d17 * d17 + d18 * d18));   
             ad1[byte2] = Math.atan2(ad3[byte0][byte1] * (double)(-j), ad3[byte0][byte0]);   
-            ad1[0] = ad1[0] / 0.017453292519943295D;   
-            ad1[1] = ad1[1] / 0.017453292519943295D;   
-            ad1[2] = ad1[2] / 0.017453292519943295D;   
+            ad1[0] /= 0.017453292519943295D;   
+            ad1[1] /= 0.017453292519943295D;   
+            ad1[2] /= 0.017453292519943295D;   
             return ad1;   
         }   
     }   
@@ -371,11 +371,8 @@ public final class ImprovMath
         {   
             p[256 + j] = p[j];   
             g1[256 + j] = g1[j];   
-            for(int j1 = 0; j1 < 2; j1++)   
-                g2[256 + j][j1] = g2[j][j1];   
-   
-            for(int k1 = 0; k1 < 3; k1++)   
-                g3[256 + j][k1] = g3[j][k1];   
+            System.arraycopy(g2[j], 0, g2[256 + j], 0, 2);
+            System.arraycopy(g3[j], 0, g3[256 + j], 0, 3);   
    
         }   
    
@@ -473,16 +470,16 @@ public final class ImprovMath
     private static void normalize2(double ad[])   
     {   
         double d = Math.sqrt(ad[0] * ad[0] + ad[1] * ad[1]);   
-        ad[0] = ad[0] / d;   
-        ad[1] = ad[1] / d;   
+        ad[0] /= d;   
+        ad[1] /= d;   
     }   
    
     private static void normalize3(double ad[])   
     {   
         double d = Math.sqrt(ad[0] * ad[0] + ad[1] * ad[1] + ad[2] * ad[2]);   
-        ad[0] = ad[0] / d;   
-        ad[1] = ad[1] / d;   
-        ad[2] = ad[2] / d;   
+        ad[0] /= d;   
+        ad[1] /= d;   
+        ad[2] /= d;   
     }   
    
     private static void prepAngles(double ad[])   

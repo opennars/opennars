@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serializable {
 
-    private final transient LinkedEntry<K, V> header = new LinkedEntry<K, V>(null, null, null, null);
+    private final transient LinkedEntry<K, V> header = new LinkedEntry<>(null, null, null, null);
 
     {
         header.next = header;
@@ -90,7 +90,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
     @Override
     public V put(final K key, final V value) {
         size = 0; // reset
-        LinkedEntry<K, V> newEntry = new LinkedEntry<K, V>(key, value, header, header.prev);
+        LinkedEntry<K, V> newEntry = new LinkedEntry<>(key, value, header, header.prev);
         newEntry.prev.next = newEntry;
         newEntry.next.prev = newEntry;
         return null;
@@ -147,7 +147,7 @@ public class FastPutsLinkedMap<K, V> extends AbstractMap<K, V> implements Serial
                 public Iterator<Map.Entry<K, V>> iterator() {
                     compact();
 
-                    final List<Map.Entry<K, V>> list = new ArrayList<Map.Entry<K, V>>(size());
+                    final List<Map.Entry<K, V>> list = new ArrayList<>(size());
                     for (LinkedEntry<K, V> entry = header.next; entry != null && entry != header; entry = entry.next) {
                         list.add(entry);
                     }

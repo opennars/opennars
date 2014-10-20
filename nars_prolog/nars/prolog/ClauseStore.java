@@ -82,7 +82,7 @@ public class ClauseStore {
      * @return unificazioni delle variabili
      */
     private List<Term> deunify(List<Var> varsToDeunify) {
-        List<Term> saveUnifications = new ArrayList<Term>();
+        List<Term> saveUnifications = new ArrayList<>();
         //List saveUnifications = new LinkedList();
         //deunifico le variabili termporaneamente
         Iterator<Var> it = varsToDeunify.iterator();
@@ -144,7 +144,7 @@ public class ClauseStore {
      */
     
     public List<ClauseInfo> getClauses() {
-        ArrayList<ClauseInfo> l = new ArrayList<ClauseInfo>();
+        ArrayList<ClauseInfo> l = new ArrayList<>();
         OneWayList<ClauseInfo> t = clauses;
         while (t != null) {
             l.add(t.getHead());

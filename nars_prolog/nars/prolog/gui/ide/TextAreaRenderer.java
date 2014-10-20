@@ -22,7 +22,7 @@ public class TextAreaRenderer
   /**
  * map from table to map of rows to map of column heights
  */
-  private final Map<JTable,Map<Integer,Map<Integer,Integer>>> cellSizes = new HashMap<JTable, Map<Integer,Map<Integer,Integer>>>();
+  private final Map<JTable,Map<Integer,Map<Integer,Integer>>> cellSizes = new HashMap<>();
   private boolean[] isExpandedCellArray;
   private boolean[] isBorderedCellArray;
 
@@ -76,11 +76,11 @@ public class TextAreaRenderer
                        int height) {
     Map<Integer,Map<Integer,Integer>> rows = cellSizes.get(table);
     if (rows == null) {
-      cellSizes.put(table, rows = new HashMap<Integer, Map<Integer,Integer>>());
+      cellSizes.put(table, rows = new HashMap<>());
     }
     Map<Integer,Integer> rowheights = rows.get(new Integer(row));
     if (rowheights == null) {
-      rows.put(new Integer(row), rowheights = new HashMap<Integer, Integer>());
+      rows.put(new Integer(row), rowheights = new HashMap<>());
     }
     rowheights.put(new Integer(column), new Integer(height));
   }

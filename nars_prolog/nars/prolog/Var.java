@@ -427,7 +427,6 @@ public class Var extends Term {
                     return true;
                 }
             } else if (t instanceof Struct) {
-                ;
                 // occur-check
                 if (occurCheck(vl2, (Struct) t)) {
                     return false;

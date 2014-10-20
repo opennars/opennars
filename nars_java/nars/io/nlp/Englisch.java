@@ -33,7 +33,7 @@ import nars.io.narsese.Narsese;
  */
 public class Englisch {
 
-    public final ArrayList<String> vocabulary = new ArrayList<String>();
+    public final ArrayList<String> vocabulary = new ArrayList<>();
     
     /** substitutions */
     public final Map<String,String> sub = new HashMap();
@@ -63,7 +63,7 @@ public class Englisch {
         s = s.replace("somewhere", "#1").replace("something", "#1");
 
         String[] words = s.split(" ");
-        ArrayList<String> realwords = new ArrayList<String>();
+        ArrayList<String> realwords = new ArrayList<>();
         for (int i = 0; i < words.length; i++) {
             if (!(words[i].equals("a") || words[i].equals("an") || words[i].equals("the"))) {
                 realwords.add(words[i]);

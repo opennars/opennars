@@ -136,10 +136,10 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<
         } else {
             x += scanningRate * 1.0f / (1 + s);
             if (x >= 1.0f) {
-                x = x - 1.0f;
+                x -= 1.0f;
             }
             if (x <= 0.0f) {
-                x = x + 1.0f;
+                x += 1.0f;
             }
         }
         return c(x);

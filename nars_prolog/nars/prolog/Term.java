@@ -132,7 +132,7 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
      * gets a copy of this term for the output
      */
     public Term copyResult(Collection<Var> goalVars, List<Var> resultVars) {
-        IdentityHashMap<Var,Var> originals = new IdentityHashMap<Var,Var>();
+        IdentityHashMap<Var,Var> originals = new IdentityHashMap<>();
         for (Var key: goalVars) {
             Var clone = new Var();
             if (!key.isAnonymous())
@@ -140,7 +140,7 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
             originals.put(key,clone);
             resultVars.add(clone);
         }
-        return copy(originals,new IdentityHashMap<Term,Var>());
+        return copy(originals,new IdentityHashMap<>());
     }
 
     @Override
@@ -190,15 +190,15 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
         EngineManager engine = mediator.getEngineManager();
         resolveTerm();
         t1.resolveTerm();
-        List<Var> v1 = new ArrayList<Var>();
-        List<Var> v2 = new ArrayList<Var>(); 
+        List<Var> v1 = new ArrayList<>();
+        List<Var> v2 = new ArrayList<>(); 
         boolean ok = unify(v1,v2,t1);
         if (ok) {
             ExecutionContext ec = engine.getCurrentContext();
             if (ec != null) {
                 int id = (engine.getEnv()==null)? Var.PROGRESSIVE : engine.getEnv().nDemoSteps;
                 // Update trailingVars
-                ec.trailingVars = new OneWayList<List<Var>>(v1,ec.trailingVars);
+                ec.trailingVars = new OneWayList<>(v1,ec.trailingVars);
                 // Renaming after unify because its utility regards not the engine but the user
                 int count = 0;
                 for(final Var v:v1){
@@ -238,8 +238,8 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
     public boolean match(Term t) {
         resolveTerm();
         t.resolveTerm();
-        List<Var> v1 = new ArrayList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
-        List<Var> v2 = new ArrayList<Var>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
+        List<Var> v1 = new ArrayList<>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
+        List<Var> v2 = new ArrayList<>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
         boolean ok = unify(v1,v2,t);
         Var.free(v1);
         Var.free(v2);

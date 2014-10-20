@@ -28,7 +28,7 @@ public class HashLibrary extends Library {
 	private HashMap<String, Term> dict;
 		
 	public boolean hashtable_0(){
-		dict = new HashMap<String, Term>();
+		dict = new HashMap<>();
 		return true;
 	} 
 	

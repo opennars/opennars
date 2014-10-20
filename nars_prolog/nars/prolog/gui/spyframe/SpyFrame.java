@@ -67,7 +67,7 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener{
         if(c instanceof Struct){
           Struct s=(Struct)c;
           String name=s.getName();
-          ArrayList<Term> sub=new ArrayList<Term>();
+          ArrayList<Term> sub=new ArrayList<>();
           for(AbstractSubGoalTree sgt: ec.getSubGoalStore().getSubGoals())
           {
         	  if (sgt.isRoot())
@@ -102,7 +102,7 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener{
     }
 
 	private void cerca(AbstractSubGoalTree sgt) {
-		elementi=new ArrayList<Term>();
+		elementi=new ArrayList<>();
 		int dim = ((SubGoalTree)sgt).size();
 		for (int i=0; i<dim; i++)
 		{
@@ -151,7 +151,7 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener{
     steps=1;
     c.add(topp, BorderLayout.NORTH);
     //JSplitPane at CENTER containing the tree and the results
-    tree=new Tree<List<ExecutionContext>>(contexts2tree);
+    tree=new Tree<>(contexts2tree);
     results=new JTextArea("", 4, 40);
     JSplitPane jsp=new JSplitPane(
         JSplitPane.VERTICAL_SPLIT,

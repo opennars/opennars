@@ -9,7 +9,7 @@ public class TermQueue {
 	private ArrayDeque<Term> queue;
 	
 	public TermQueue(){
-		queue=new ArrayDeque<Term>();
+		queue=new ArrayDeque<>();
 	}
 	
 	public synchronized boolean get(Term t, Prolog engine, EngineRunner er){

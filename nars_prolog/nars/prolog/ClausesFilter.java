@@ -102,7 +102,7 @@ class ClausesFilter {
 
             if((arg instanceof Var) ||
                     (arg instanceof Number && ((Number) arg).isEqual(t))){
-                OneWayList<ClauseInfo> l = new OneWayList<ClauseInfo>(clause, null);
+                OneWayList<ClauseInfo> l = new OneWayList<>(clause, null);
             
                 if(result == null){
                     result = p = l;
@@ -130,7 +130,7 @@ class ClausesFilter {
 
             if(arg instanceof Var ||
                     ((Struct) arg).getPredicateIndicator().equals(predIndicator)){
-                OneWayList<ClauseInfo> l = new OneWayList<ClauseInfo>(clause, null);
+                OneWayList<ClauseInfo> l = new OneWayList<>(clause, null);
 
                 if(result == null){
                     result = p = l;
@@ -172,7 +172,7 @@ class ClausesFilter {
             Term arg = clause.getHead().getArg(0).getTerm();
 
             if(arg instanceof Var || isAList(arg)){
-                OneWayList<ClauseInfo> l = new OneWayList<ClauseInfo>(clause, null);
+                OneWayList<ClauseInfo> l = new OneWayList<>(clause, null);
 
                 if(result == null){
                     result = p = l;
@@ -199,7 +199,7 @@ class ClausesFilter {
             Term arg = clause.getHead().getArg(0).getTerm();
 
             if(arg instanceof Var || arg.isAtomic()){
-                OneWayList<ClauseInfo> l = new OneWayList<ClauseInfo>(clause, null);
+                OneWayList<ClauseInfo> l = new OneWayList<>(clause, null);
 
                 if(result == null){
                     result = p = l;

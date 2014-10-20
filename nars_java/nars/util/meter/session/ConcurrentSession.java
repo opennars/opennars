@@ -65,7 +65,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     protected final AtomicLong commits = new AtomicLong(DataSet.Field.Default.COMMITS);
 
     // The proper default is taken care of in getFirst()
-    protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
+    protected final AtomicReference<Double> first = new AtomicReference<>(null);
 
     protected volatile double last = DataSet.Field.Default.LAST;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);

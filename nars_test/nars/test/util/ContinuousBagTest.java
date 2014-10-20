@@ -185,7 +185,7 @@ public class ContinuousBagTest {
         final float priorityEpsilon = 0.1f;
         
         ContinuousBag<NullItem,CharSequence> c = new ContinuousBag(capacity, false);
-        LevelBag<NullItem,CharSequence> d = new LevelBag<NullItem,CharSequence>(capacity, 10);
+        LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
         
         assertEquals(c.getMass(), d.getMass(), 0);
         assertEquals(c.getAveragePriority(), d.getAveragePriority(), 0);

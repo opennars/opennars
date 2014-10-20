@@ -184,10 +184,10 @@ public abstract class Library implements Serializable, IPrimitives {
     public Map<Integer,List<PrimitiveInfo>> getPrimitives() {
         try {
             java.lang.reflect.Method[] mlist = this.getClass().getMethods();
-            Map<Integer,List<PrimitiveInfo>> mapPrimitives = new HashMap<Integer, List<PrimitiveInfo>>();
-            mapPrimitives.put(PrimitiveInfo.DIRECTIVE,new ArrayList<PrimitiveInfo>());
-            mapPrimitives.put(PrimitiveInfo.FUNCTOR,new ArrayList<PrimitiveInfo>());
-            mapPrimitives.put(PrimitiveInfo.PREDICATE,new ArrayList<PrimitiveInfo>());
+            Map<Integer,List<PrimitiveInfo>> mapPrimitives = new HashMap<>();
+            mapPrimitives.put(PrimitiveInfo.DIRECTIVE,new ArrayList<>());
+            mapPrimitives.put(PrimitiveInfo.FUNCTOR,new ArrayList<>());
+            mapPrimitives.put(PrimitiveInfo.PREDICATE,new ArrayList<>());
             //{new ArrayList<PrimitiveInfo>(), new ArrayList<PrimitiveInfo>(), new ArrayList<PrimitiveInfo>()};
             
             for (int i = 0; i < mlist.length; i++) {

@@ -475,7 +475,7 @@ public class Struct extends Term {
         if (resolved) {
             return count;
         } else {
-            LinkedList<Var> vars = new LinkedList<Var>();
+            LinkedList<Var> vars = new LinkedList<>();
             return resolveTerm(vars,count);
         }
     }
@@ -623,7 +623,7 @@ public class Struct extends Term {
             return null;
         }
         Struct at = (Struct) arg[1].getTerm();
-        LinkedList<Term> al = new LinkedList<Term>();
+        LinkedList<Term> al = new LinkedList<>();
         while (!at.isEmptyList()) {
             if (!at.isList()) {
                 return null;
@@ -739,7 +739,7 @@ public class Struct extends Term {
         } else {
             String s = (Parser.isAtom(name) ? name : "'" + name + "'");
             if (arity > 0) {
-                s = s + "(";
+                s += "(";
                 for (int c = 1;c < arity;c++) {
                     if (!(arg[c - 1] instanceof Var)) {
                         s = s + arg[c - 1].toString() + ",";
@@ -799,10 +799,10 @@ public class Struct extends Term {
             StringBuffer buf = new StringBuffer(head.toString());
             while (tail instanceof Struct && ((Struct)tail).getName().equals(",")){
                 head = ((Struct)tail).getTerm(0);
-                buf.append(","+head.toString());
+                buf.append(",").append(head.toString());
                 tail = ((Struct)tail).getTerm(1);
             }
-            buf.append(","+tail.toString());
+            buf.append(",").append(tail.toString());
             return buf.toString();
             //    return arg[0]+","+((Struct)arg[1]).toString0_bracket();
         }
@@ -906,12 +906,12 @@ public class Struct extends Term {
         if (arity == 0) {
             return v;
         }
-        v = v + "(";
+        v += "(";
         for (p = 1;p < arity;p++) {
             v = v + arg[p - 1].toStringAsArgY(op,0) + ",";
         }
-        v = v + arg[arity - 1].toStringAsArgY(op,0);
-        v = v + ")";
+        v += arg[arity - 1].toStringAsArgY(op,0);
+        v += ")";
         return v;
     }
     

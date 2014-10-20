@@ -559,7 +559,7 @@ public class IndexedTreeMap<K, V>
             // throw NullPointerException
             //
             // compare(key, key); // type check
-            root = new Entry<K, V>(key, value, null);
+            root = new Entry<>(key, value, null);
             root.weight = 1;
             size = 1;
             modCount++;
@@ -595,7 +595,7 @@ public class IndexedTreeMap<K, V>
                     return t.setValue(value);
             } while (t != null);
         }
-        Entry<K, V> e = new Entry<K, V>(key, value, parent);
+        Entry<K, V> e = new Entry<>(key, value, parent);
         if (cmp < 0) {
             parent.left = e;
         } else {
@@ -1233,16 +1233,16 @@ public class IndexedTreeMap<K, V>
 
         public NavigableSet<E> subSet(E fromElement, boolean fromInclusive,
                                       E toElement, boolean toInclusive) {
-            return new IndexedTreeSet<E>(m.subMap(fromElement, fromInclusive,
+            return new IndexedTreeSet<>(m.subMap(fromElement, fromInclusive,
                     toElement, toInclusive));
         }
 
         public NavigableSet<E> headSet(E toElement, boolean inclusive) {
-            return new IndexedTreeSet<E>(m.headMap(toElement, inclusive));
+            return new IndexedTreeSet<>(m.headMap(toElement, inclusive));
         }
 
         public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
-            return new IndexedTreeSet<E>(m.tailMap(fromElement, inclusive));
+            return new IndexedTreeSet<>(m.tailMap(fromElement, inclusive));
         }
 
         public SortedSet<E> subSet(E fromElement, E toElement) {
@@ -1379,7 +1379,7 @@ public class IndexedTreeMap<K, V>
      */
     static <K, V> Map.Entry<K, V> exportEntry(IndexedTreeMap.Entry<K, V> e) {
         return e == null ? null :
-                new java.util.AbstractMap.SimpleImmutableEntry<K, V>(e);
+                new java.util.AbstractMap.SimpleImmutableEntry<>(e);
     }
 
     /**
@@ -2743,7 +2743,7 @@ public class IndexedTreeMap<K, V>
             value = (defaultVal != null ? defaultVal : (V) str.readObject());
         }
 
-        Entry<K, V> middle = new Entry<K, V>(key, value, null);
+        Entry<K, V> middle = new Entry<>(key, value, null);
 
         // color nodes in non-full bottommost level red
         if (level == redLevel)

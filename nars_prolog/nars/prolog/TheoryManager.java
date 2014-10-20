@@ -195,7 +195,7 @@ public class TheoryManager implements Serializable {
 			//            return l;
 			throw new RuntimeException();
 		}
-		return new LinkedList<ClauseInfo>();
+		return new LinkedList<>();
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class TheoryManager implements Serializable {
 	 * @param libName       if it not null, then the clauses are marked to belong to the specified library
 	 */
 	public synchronized void consult(PrologTermIterator theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-            startGoalStack = new Stack<Term>();
+            startGoalStack = new Stack<>();
             int clause = 1;
             /**/
             // iterate and assert all clauses in theory
@@ -223,7 +223,7 @@ public class TheoryManager implements Serializable {
 	}
         
 	public synchronized void consult(final Struct theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-            startGoalStack = new Stack<Term>();            
+            startGoalStack = new Stack<>();            
             try {                
                 if (!runDirective(theory))
                         assertZ(theory, dynamicTheory, libName, true);

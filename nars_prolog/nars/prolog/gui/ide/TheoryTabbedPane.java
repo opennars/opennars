@@ -37,7 +37,7 @@ public class TheoryTabbedPane
         super();
         setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         addMouseListener(this);
-        theoryFileNames = new ArrayList<FileIDE>();
+        theoryFileNames = new ArrayList<>();
     }
 
     public FileIDE getTheoryTitleNamesAt(int index)

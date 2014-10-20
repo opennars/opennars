@@ -44,7 +44,7 @@ public class TaskTree extends NPanel implements Observer, Runnable {
     Map<Task, DefaultMutableTreeNode> nodes = new HashMap();
     private final JTree tree;
     private final NAR nar;
-    final WeakHashMap<Task, Component> components = new WeakHashMap<Task, Component>();
+    final WeakHashMap<Task, Component> components = new WeakHashMap<>();
     float priorityThreshold = 0.05f;
     final Set<TreeNode> needRefresh = Collections.synchronizedSet(new HashSet());
     final ConcurrentLinkedDeque<Task> toAdd = new ConcurrentLinkedDeque<>();

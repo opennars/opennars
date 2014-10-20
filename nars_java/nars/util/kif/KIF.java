@@ -230,7 +230,7 @@ public class KIF {
                 if (st.ttype == StreamTokenizer.TT_EOL) {
                     if (isEOL) { // two line seperators in a row, shows a new KIF statement is to start.
                         // check if a new statement has already been generated, otherwise report error
-                        if (keySet.size() != 0 || expression.length() > 0) {
+                        if (!keySet.isEmpty() || expression.length() > 0) {
                             //System.out.print("INFO in KIF.parse(): Parsing Error:");
                             //System.out.println(new Integer(lineStart + totalLinesForComments).toString());
                             throw new ParseException("Parsing error in " + filename + ": possible missing close parenthesis.", f.startLine);
@@ -390,7 +390,7 @@ public class KIF {
                 // if (key != null)
                 //    display(st,inRule,inAntecedent,inConsequent,argumentNum,parenLevel,key);
             } while (st.ttype != StreamTokenizer.TT_EOF);
-            if (keySet.size() != 0 || expression.length() > 0) {
+            if (!keySet.isEmpty() || expression.length() > 0) {
                 //System.out.println("Error in KIF.parse(): Parsing error: ");
                 //System.out.println("Kif ends before parsing finishes.  Missing closing parenthesis.");
                 throw new ParseException("Parsing error in "

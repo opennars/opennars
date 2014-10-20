@@ -47,7 +47,7 @@ public class Executive implements Observer {
     public int shortTermMemorySize=10; //how many events its able to track for the temporal feedback system
     //100 should be enough for all practical examples for now, we may make it adaptive later,
     //which means adjusting according to the longest (&/,a1...an) =/> .. statement
-    public ArrayList<Task> lastEvents=new ArrayList<Task>();
+    public ArrayList<Task> lastEvents=new ArrayList<>();
     
     /** number of tasks that are active in the sorted priority buffer for execution */
     int numActiveTasks = 1;
@@ -124,7 +124,7 @@ public class Executive implements Observer {
     }
     
     
-    HashSet<Task> current_tasks=new HashSet<Task>();
+    HashSet<Task> current_tasks=new HashSet<>();
     
     @Override
     public void event(Class event, Object[] args) {

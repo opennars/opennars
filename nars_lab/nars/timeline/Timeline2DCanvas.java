@@ -112,7 +112,7 @@ public class Timeline2DCanvas extends PApplet {
 
         @Override
         public void draw(Timeline2DCanvas l, float y, float timeScale, float yScale) {
-            yScale = yScale * height;
+            yScale *= height;
 
             float screenyHi = l.screenY(l.cycleStart * timeScale, y);
             float screenyLo = l.screenY(l.cycleStart * timeScale, y + yScale);

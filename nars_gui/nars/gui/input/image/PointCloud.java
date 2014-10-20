@@ -84,7 +84,7 @@ public class PointCloud
 
   PointCloud(String name, double[] X, double[] Y, int[]ID)
   {
-    _points = new ArrayList<PointCloudPoint>();
+    _points = new ArrayList<>();
     for(int i = 0; i < X.length; i++)
     {
       _points.add(new PointCloudPoint(X[i], Y[i], ID[i]));

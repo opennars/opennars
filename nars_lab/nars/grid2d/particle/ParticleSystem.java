@@ -13,8 +13,8 @@ public class ParticleSystem  {
 
     Random r = new XORShiftRandom();
     float oldX, oldY;
-    public final List<Particle> p = new FastTable<Particle>();
-    List<Graviton> gravitonAL = new FastTable<Graviton>();
+    public final List<Particle> p = new FastTable<>();
+    List<Graviton> gravitonAL = new FastTable<>();
     private long lastTime;
     private boolean pause = false;
     private boolean emit = false;

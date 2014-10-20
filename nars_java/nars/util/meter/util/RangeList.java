@@ -212,7 +212,7 @@ public class RangeList implements Iterable<Range>, Serializable {
     /* NESTED CLASSES */
     public static class Builder {
 
-        private final List<Range> ranges = new ArrayList<Range>();
+        private final List<Range> ranges = new ArrayList<>();
         private boolean exclusiveRangeEnd = Range.DEFAULT_EXCLUSIVE_RANGE_END;
 
         private boolean beginningRangeAdded = false;

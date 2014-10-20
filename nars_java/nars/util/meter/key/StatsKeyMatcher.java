@@ -261,7 +261,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     public Collection<StatsKey> filterCopy(final Collection<StatsKey> keys) {
-        List<StatsKey> filteredList = new ArrayList<StatsKey>(keys.size());
+        List<StatsKey> filteredList = new ArrayList<>(keys.size());
         for (StatsKey key : keys) {
             if (matches(key)) {
                 filteredList.add(key);
@@ -271,7 +271,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     public Set<StatsKey> filterCopy(final Set<StatsKey> keys) {
-        Set<StatsKey> filteredSet = new HashSet<StatsKey>(keys.size());
+        Set<StatsKey> filteredSet = new HashSet<>(keys.size());
         for (StatsKey key : keys) {
             if (matches(key)) {
                 filteredSet.add(key);
@@ -291,7 +291,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     public <T> Map<StatsKey, T> filterCopy(final Map<StatsKey, T> map) {
-        Map<StatsKey, T> filteredMap = new HashMap<StatsKey, T>(map.size() / 2);
+        Map<StatsKey, T> filteredMap = new HashMap<>(map.size() / 2);
         for (Map.Entry<StatsKey, T> entry : map.entrySet()) {
             if (matches(entry.getKey())) {
                 filteredMap.put(entry.getKey(), entry.getValue());
@@ -301,7 +301,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     public <T> Collection<T> filterToCollection(final Map<StatsKey, T> map) {
-        List<T> filteredList = new ArrayList<T>(map.size() / 2);
+        List<T> filteredList = new ArrayList<>(map.size() / 2);
         for (Map.Entry<StatsKey, T> entry : map.entrySet()) {
             if (matches(entry.getKey())) {
                 filteredList.add(entry.getValue());
@@ -311,7 +311,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     public <T> Collection<T> filterToCollection(final Collection<? extends StatsKeyAssociation<T>> associations) {
-        List<T> filteredList = new ArrayList<T>(associations.size() / 2);
+        List<T> filteredList = new ArrayList<>(associations.size() / 2);
         StatsKey key;
         for (StatsKeyAssociation<T> ka : associations) {
             key = ka.getKey();
@@ -323,7 +323,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     public <T> Map<StatsKey, T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
-        Map<StatsKey, T> filteredMap = new HashMap<StatsKey, T>(associations.size() / 2);
+        Map<StatsKey, T> filteredMap = new HashMap<>(associations.size() / 2);
         StatsKey key;
         for (StatsKeyAssociation<T> ka : associations) {
             key = ka.getKey();
@@ -485,7 +485,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public <T> Collection<T> filterToCollection(Collection<? extends StatsKeyAssociation<T>> associations) {
-            List<T> filteredList = new ArrayList<T>(associations.size());
+            List<T> filteredList = new ArrayList<>(associations.size());
             for (StatsKeyAssociation<T> ka : associations) {
                 filteredList.add(ka.getValue());
             }
@@ -494,7 +494,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public <T> Map<StatsKey, T> filterToMap(Collection<? extends StatsKeyAssociation<T>> associations) {
-            Map<StatsKey, T> filteredMap = new HashMap<StatsKey, T>(associations.size());
+            Map<StatsKey, T> filteredMap = new HashMap<>(associations.size());
             for (StatsKeyAssociation<T> ka : associations) {
                 filteredMap.put(ka.getKey(), ka.getValue());
             }
@@ -788,17 +788,17 @@ public abstract class StatsKeyMatcher implements Serializable {
         public boolean matches(final StatsKey key) {
             switch (target) {
                 case KEY_NAME:
-                    return key.getName().indexOf(string) > -1;
+                    return key.getName().contains(string);
                 case ATTR_NAME:
                     for (String attrName : key.getAttributes().keySet()) {
-                        if (attrName.indexOf(string) > -1) {
+                        if (attrName.contains(string)) {
                             return true;
                         }
                     }
                     break;
                 case ATTR_VALUE:
                     for (Object attrValue : key.getAttributes().values()) {
-                        if (attrValue.toString().indexOf(string) > -1) {
+                        if (attrValue.toString().contains(string)) {
                             return true;
                         }
                     }

@@ -108,7 +108,7 @@ public class ConcatenationRopeReverseIteratorImpl implements Iterator<Character>
                 this.currentRopePos -= remainingAmt;
                 return;
             }
-            remainingAmt = remainingAmt - this.currentRopePos;
+            remainingAmt -= this.currentRopePos;
             if (remainingAmt > 0 && this.toTraverse.isEmpty()) {
                 throw new IllegalArgumentException("Unable to move forward " + amount + ". Reached end of rope.");
             }

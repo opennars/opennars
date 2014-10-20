@@ -35,7 +35,7 @@ class FlagManager {
     protected Prolog mediator;
 
     FlagManager() {
-        flags = new ArrayList<Flag>();
+        flags = new ArrayList<>();
     }
 
     /**

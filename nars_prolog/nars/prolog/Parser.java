@@ -578,7 +578,7 @@ public class Parser implements /*Castagna 06/2011*/IParser,/**/ Serializable
 		}
 		if (")".equals(t.seq)) {
 			tokenizer.unreadToken(t);
-			LinkedList<Term> l = new LinkedList<Term>();
+			LinkedList<Term> l = new LinkedList<>();
 			l.add(head);
 			return l;
 		}

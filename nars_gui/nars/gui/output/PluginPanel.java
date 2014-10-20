@@ -66,7 +66,7 @@ public class PluginPanel extends NPanel {
         
         TreeMap<String, JMenu> menus = new TreeMap();
         try {
-            TreeSet<Class> plugins = new TreeSet<Class>(new Comparator<Class>() {
+            TreeSet<Class> plugins = new TreeSet<>(new Comparator<Class>() {
                 @Override public int compare(Class o1, Class o2) {
                     return o1.getSimpleName().compareTo(o2.getSimpleName());
                 }                

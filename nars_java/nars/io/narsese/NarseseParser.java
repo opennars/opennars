@@ -168,7 +168,7 @@ public class NarseseParser extends BaseParser<Object> {
             String input = sc.nextLine();
             RecoveringParseRunner rpr = new RecoveringParseRunner(p.Input());
             ParsingResult r = rpr.run(input);
-            System.out.println("valid? " + (r.matched && (r.parseErrors.size() == 0)) );
+            System.out.println("valid? " + (r.matched && (r.parseErrors.isEmpty())) );
             for (Object e : r.parseErrors) {
                 if (e instanceof InvalidInputError) {
                     InvalidInputError iie = (InvalidInputError) e;

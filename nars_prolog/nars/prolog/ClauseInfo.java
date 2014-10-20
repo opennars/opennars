@@ -158,9 +158,9 @@ public class ClauseInfo {
      * Perform copy for assertion operation
      */
     void performCopy() {
-        AbstractMap<Var,Var> v = new LinkedHashMap<Var,Var>();
+        AbstractMap<Var,Var> v = new LinkedHashMap<>();
         clause = (Struct) clause.copy(v, Var.ORIGINAL);
-        v = new IdentityHashMap<Var,Var>();
+        v = new IdentityHashMap<>();
         head = (Struct)head.copy(v,Var.ORIGINAL);
         body = new SubGoalTree();
         bodyCopy(body,bodyCopy,v,Var.ORIGINAL);
@@ -171,7 +171,7 @@ public class ClauseInfo {
      * @param idExecCtx Current ExecutionContext id
      */
     void performCopy(int idExecCtx) {
-        IdentityHashMap<Var,Var> v = new IdentityHashMap<Var,Var>();
+        IdentityHashMap<Var,Var> v = new IdentityHashMap<>();
         headCopy = (Struct)head.copy(v,idExecCtx);
         bodyCopy = new SubGoalTree();
         bodyCopy(body,bodyCopy,v,idExecCtx);

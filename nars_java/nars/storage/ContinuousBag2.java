@@ -129,7 +129,7 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
-        items = new IndexedTreeSet<E>(this);
+        items = new IndexedTreeSet<>(this);
                             
         this.mass = 0;
     }
@@ -276,9 +276,9 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
         else {
             x += scanningRate * 1.0f / (1+s);
             if (x >= 1.0f)
-                x = x - 1.0f;
+                x -= 1.0f;
             if (x <= 0.0f)
-                x = x + 1.0f;
+                x += 1.0f;
         }
         
         double y = curve.y(x);

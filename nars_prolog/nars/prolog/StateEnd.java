@@ -57,7 +57,7 @@ public class StateEnd extends State {
     
     
     void doJob(Engine e) {
-        vars = new ArrayList<Var>();
+        vars = new ArrayList<>();
         goal = (Struct)e.startGoal.copyResult(e.goalVars,vars);
 //        System.out.println("STATE END: STAMPO LE VAR del GOAL****"+e.goalVars);
 //        System.out.println("STATE END: STATE END "+vars+ " GOAL "+goal);  
@@ -222,7 +222,7 @@ public class StateEnd extends State {
 		    	//riordino la struttura seguendo l'ordine di comparsa delle var nel goal
 		    	if(initGoalBag != null){
 			    	//System.out.println("Creo una lista a partire dalla struttura di initGoalBag ");
-			    	ArrayList<Term> initGoalBagList=new ArrayList<Term>();
+			    	ArrayList<Term> initGoalBagList=new ArrayList<>();
 			    	Struct initGoalBagTemp=(Struct)initGoalBag;
 			    	while(initGoalBagTemp.getArity()>0){
 			    		Term t1=initGoalBagTemp.getArg(0);
@@ -235,19 +235,19 @@ public class StateEnd extends State {
 			    	//System.out.println("Lista "+initGoalBagList);
 			    	
 			    	// QUI FA ORDINAMENTO 
-			    	ArrayList<Term> initGoalBagListOrdered=new ArrayList<Term>();
+			    	ArrayList<Term> initGoalBagListOrdered=new ArrayList<>();
 			    	if(((Struct)query).getName().equals("setof")){
-				    	ArrayList<String> initGoalBagListVar=new ArrayList<String>();
+				    	ArrayList<String> initGoalBagListVar=new ArrayList<>();
 				    	for(int m=0; m<initGoalBagList.size(); m++){
 				    		if(initGoalBagList.get(m) instanceof Var)
 				    			initGoalBagListVar.add(((Var)initGoalBagList.get(m)).getName());
 				    	}
 				    	//System.out.println("Lista VAR "+initGoalBagListVar);
-				    	ArrayList<Term> left=new ArrayList<Term>();
-				    	ArrayList<Term> left_temp=new ArrayList<Term>();
+				    	ArrayList<Term> left=new ArrayList<>();
+				    	ArrayList<Term> left_temp=new ArrayList<>();
 				    	left.add(initGoalBagList.get(0));
-				    	ArrayList<Term> right=new ArrayList<Term>();
-				    	ArrayList<Term> right_temp=new ArrayList<Term>();
+				    	ArrayList<Term> right=new ArrayList<>();
+				    	ArrayList<Term> right_temp=new ArrayList<>();
 				    	//right.add(initGoalBagList.get(1));
 				    	for(int m=1; m<initGoalBagList.size(); m++){
 			    		int k=0;
@@ -318,7 +318,7 @@ public class StateEnd extends State {
 			    	initGoalBag=s;
 			    	
 			    	//System.out.println("Creo una lista a partire dalla struttura di initBag ");//serve per unificare
-			    	ArrayList<Term> initBagList=new ArrayList<Term>();
+			    	ArrayList<Term> initBagList=new ArrayList<>();
 			    	Struct initBagTemp=(Struct)((Var)initBag).getLink();
 			    	while(initBagTemp.getArity()>0){
 			    		Term t0=initBagTemp.getArg(0);
@@ -375,7 +375,7 @@ public class StateEnd extends State {
 	    	 * lSolVar = [H_e2301, H_e2302, H_e2303, H_e2304, H_e2305, H_e2306, H_e2307, H_e2308]
 	    	 */
 	    	
-	    	ArrayList<String> lSolVar=new ArrayList<String>() ;
+	    	ArrayList<String> lSolVar=new ArrayList<>() ;
 	    	//System.out.println("Le var del risultato sono BAG "+bag); 
 	    	/*NB lSolVar ha lunghezza multipla di lGoal var, se ho pi� soluzioni si ripete 
 	    	 * servirebbe esempio con 2 bag */
@@ -389,7 +389,7 @@ public class StateEnd extends State {
 	    				Struct t1 = ((Struct)t);
 	    				//System.out.println("RESVAR BAG LINK � STRUCT "+t1);
 	    				//uso lista temporanea per aggiustare ordine, dalla struct con findvar escono al contrario
-	    				List<String> l_temp=new ArrayList<String>();
+	    				List<String> l_temp=new ArrayList<>();
 	    				l_temp= findVar(t1,l_temp);
 	    				for(int w=l_temp.size()-1; w>=0;w--){
 	    					lSolVar.add(l_temp.get(w));
@@ -418,11 +418,11 @@ public class StateEnd extends State {
 	    	//System.out.println("il goal interno bag of � "+(c.getEngineMan()).getBagOFgoal());
 	    	Var goalBO = (Var)(c.getEngineMan()).getBagOFgoal();
 	    	//System.out.println("il goal interno bag of � var con link "+goalBO.getLink());
-	    	ArrayList<String> lgoalBOVar=new ArrayList<String>() ; 
+	    	ArrayList<String> lgoalBOVar=new ArrayList<>() ; 
 	    	Term goalBOvalue = goalBO.getLink();
 	    	if(goalBOvalue instanceof Struct){
 	    		Struct t1 = ((Struct)goalBOvalue);
-	    		List<String> l_temp=new ArrayList<String>();
+	    		List<String> l_temp=new ArrayList<>();
 	    		l_temp= findVar(t1,l_temp);
 	    		for(int w=l_temp.size()-1; w>=0;w--){
 	    			lgoalBOVar.add(l_temp.get(w));
@@ -442,7 +442,7 @@ public class StateEnd extends State {
 	    	//System.out.println("Le var della bagof sono "+c.getEngineMan().getBagOFvarSet());
 	    	Var v=(Var)c.getEngineMan().getBagOFvarSet();
 	    	Struct varList=(Struct)v.getLink(); //lista delle variabili nel goal bagof con nomi interni alla bagof
-	    	ArrayList<String> lGoalVar=new ArrayList<String>() ; //lista delle variabili nel goal bagof con nomi goal
+	    	ArrayList<String> lGoalVar=new ArrayList<>() ; //lista delle variabili nel goal bagof con nomi goal
 	    	//ArrayList<String> lGoalVar_copy=new ArrayList<String>() ; //????????mi serve la copia per sostituire le var sia nel goal originale che nel risultato
 	    	//System.out.println("Lista variabili goal bagof nomi interni alla bagof varList "+varList);
 	    	//Object[] a=(e.goalVars).toArray();
@@ -682,7 +682,7 @@ public class StateEnd extends State {
     public List<String> findVar (Struct s, List<String> l){ 
     	
     	if(s.getArity()>0){
-            ArrayList<String> allVar=new ArrayList<String>(s.getArity());
+            ArrayList<String> allVar=new ArrayList<>(s.getArity());
             Term t = s.getArg(0);
             Term tt;
             if(s.getArity()>1) {

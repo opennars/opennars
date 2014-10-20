@@ -99,7 +99,7 @@ public class Hsom {
             for (i1 = 0; i1 < SomSize; i1++) {
                 for (i2 = 0; i2 < SomSize; i2++) {
                     for (j = 0; j < numInputs; j++) { //adaption
-                        links[i1][i2][j] = links[i1][i2][j] + eta * hsit(i1, i2) * (inputs[j] - links[i1][i2][j]);
+                        links[i1][i2][j] += eta * hsit(i1, i2) * (inputs[j] - links[i1][i2][j]);
                     }
                 }
             }

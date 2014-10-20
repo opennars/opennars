@@ -254,7 +254,7 @@ public class Hauto {
             if(selected.machine==Machine.Turret) 
                 name="firework";
             String Klass=name;
-            name=name+(entityID.toString());
+            name += (entityID.toString());
             if(selected.material==Material.Door) {
                 doorname=name;
             }

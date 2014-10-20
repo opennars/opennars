@@ -87,7 +87,7 @@ public abstract class InputHandler extends KeyAdapter
 
     static
     {
-        actions = new Hashtable<String, ActionListener>();
+        actions = new Hashtable<>();
         actions.put("backspace",BACKSPACE);
         actions.put("backspace-word",BACKSPACE_WORD);
         actions.put("delete",DELETE);

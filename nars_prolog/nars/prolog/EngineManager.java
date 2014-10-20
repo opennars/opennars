@@ -25,17 +25,17 @@ public class EngineManager implements java.io.Serializable {
 
 	public void initialize(Prolog vm) {
 		this.vm=vm;
-		runners=new Hashtable<Integer,EngineRunner>();
-		threads = new Hashtable<Integer,Integer>();
-		queues =new Hashtable<String, TermQueue>();
-		locks = new Hashtable<String, ReentrantLock>();
+		runners=new Hashtable<>();
+		threads = new Hashtable<>();
+		queues =new Hashtable<>();
+		locks = new Hashtable<>();
 		
 		er1 = new EngineRunner(rootID);
 		er1.initialize(vm);	
 	}
 	
 	public synchronized boolean threadCreate(Term threadID, Term goal) {
-		id = id+1;
+		id += 1;
 		
 		if (goal == null) return false;
 		if (goal instanceof Var) 
@@ -105,7 +105,7 @@ public class EngineManager implements java.io.Serializable {
 	public boolean sendMsg (int dest, Term msg){
 		EngineRunner er = findRunner(dest);
 		if (er==null) return false;
-		Term msgcopy = msg.copy(new LinkedHashMap<Var,Var>(), 0);
+		Term msgcopy = msg.copy(new LinkedHashMap<>(), 0);
 		er.sendMsg(msgcopy);
 		return true;
 	}
@@ -113,7 +113,7 @@ public class EngineManager implements java.io.Serializable {
 	public boolean sendMsg(String name, Term msg) {
 		TermQueue queue = queues.get(name);
 		if (queue==null) return false;
-		Term msgcopy = msg.copy(new LinkedHashMap<Var,Var>(), 0);
+		Term msgcopy = msg.copy(new LinkedHashMap<>(), 0);
 		queue.store(msgcopy);
 		return true;
 	}
@@ -232,23 +232,23 @@ public class EngineManager implements java.io.Serializable {
 	
 	public void solveEnd() {
 		er1.solveEnd();
-		if(runners.size()!=0){
+		if(!runners.isEmpty()){
 			java.util.Enumeration<EngineRunner> ers=runners.elements();
 			while (ers.hasMoreElements()) {
 				EngineRunner current=ers.nextElement();
 				current.solveEnd();		
 			}
-			runners=new Hashtable<Integer,EngineRunner>();
-			threads=new Hashtable<Integer,Integer>();
-			queues =new Hashtable<String, TermQueue>();
-			locks = new Hashtable<String, ReentrantLock>();
+			runners=new Hashtable<>();
+			threads=new Hashtable<>();
+			queues =new Hashtable<>();
+			locks = new Hashtable<>();
 			id = 0;
 		}
 	}
 	
 	public void solveHalt() {
 		er1.solveHalt();
-		if(runners.size()!=0){
+		if(!runners.isEmpty()){
 			java.util.Enumeration<EngineRunner> ers=runners.elements();
 			while (ers.hasMoreElements()) {
 				EngineRunner current=ers.nextElement();

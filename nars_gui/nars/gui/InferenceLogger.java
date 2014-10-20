@@ -44,7 +44,7 @@ public class InferenceLogger extends MemoryObserver {
         public void traceAppend(Class channel, String msg);
     }
     
-    private final List<LogOutput> outputs = new CopyOnWriteArrayList<LogOutput>();
+    private final List<LogOutput> outputs = new CopyOnWriteArrayList<>();
 
     public InferenceLogger(NAR n) {
         super(n, true);

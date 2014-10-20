@@ -51,8 +51,8 @@ public class StateRuleSelection extends State {
             /* from normal evaluation */
             fromBacktracking = false;
             //List varsList = new LinkedList();
-            List<Var> varsList = new ArrayList<Var>();
-            e.currentContext.trailingVars = new OneWayList<List<Var>>(varsList,e.currentContext.trailingVars);
+            List<Var> varsList = new ArrayList<>();
+            e.currentContext.trailingVars = new OneWayList<>(varsList,e.currentContext.trailingVars);
             clauseStore = ClauseStore.build(goal, varsList, c.find(goal));
             if (clauseStore == null){
                 e.nextState = c.BACKTRACK;

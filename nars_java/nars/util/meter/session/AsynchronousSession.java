@@ -81,7 +81,7 @@ public class AsynchronousSession extends AbstractStatsSession {
     public AsynchronousSession(final StatsKey key,
             final EventManager eventManager,
             final DataRecorder... dataRecorders) {
-        this(key, eventManager, new ConcurrentLinkedQueue<TrackerEntry>(), dataRecorders);
+        this(key, eventManager, new ConcurrentLinkedQueue<>(), dataRecorders);
     }
 
     public AsynchronousSession(final StatsKey key,

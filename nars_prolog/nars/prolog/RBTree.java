@@ -219,7 +219,7 @@ public class RBTree<K extends Comparable<? super K>,V>
     }
 
     public void insert(K key, V value) {
-        Node<K,V> insertedNode = new Node<K,V>(key, value, Color.RED, null, null);
+        Node<K,V> insertedNode = new Node<>(key, value, Color.RED, null, null);
         if (root == null) {
             root = insertedNode;
         } else {

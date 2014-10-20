@@ -149,21 +149,21 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @param warning warning activated
 	 */
 	private Prolog(boolean spy, boolean warning) {
-		outputListeners = new ArrayList<OutputListener>();
-		spyListeners = new ArrayList<SpyListener>();
-		warningListeners = new ArrayList<WarningListener>();
+		outputListeners = new ArrayList<>();
+		spyListeners = new ArrayList<>();
+		warningListeners = new ArrayList<>();
 		/*Castagna 06/2011*/		
-		exceptionListeners = new ArrayList<ExceptionListener>();
+		exceptionListeners = new ArrayList<>();
 		/**/
 		this.spy = spy;
 		this.warning = warning;
 		/*Castagna 06/2011*/
 		exception = true;
 		/**/
-		theoryListeners = new ArrayList<TheoryListener>();
-		queryListeners = new ArrayList<QueryListener>();
-		libraryListeners = new ArrayList<LibraryListener>();
-        absolutePathList = new ArrayList<String>();
+		theoryListeners = new ArrayList<>();
+		queryListeners = new ArrayList<>();
+		libraryListeners = new ArrayList<>();
+        absolutePathList = new ArrayList<>();
 		initializeManagers();
 	}
 
@@ -886,7 +886,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * Gets a copy of current listener list to output events
 	 */
 	public synchronized List<OutputListener> getOutputListenerList() {
-		return new ArrayList<OutputListener>(outputListeners);
+		return new ArrayList<>(outputListeners);
 	}
 
 	/**
@@ -894,7 +894,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 */
 	public synchronized List<WarningListener> getWarningListenerList() {
-		return new ArrayList<WarningListener>(warningListeners);
+		return new ArrayList<>(warningListeners);
 	}
 
 	/*Castagna 06/2011*/	
@@ -903,7 +903,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 */
 	public synchronized List<ExceptionListener> getExceptionListenerList() {
-		return new ArrayList<ExceptionListener>(exceptionListeners);
+		return new ArrayList<>(exceptionListeners);
 	}
 	/**/
 	
@@ -912,7 +912,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 */
 	public synchronized List<SpyListener> getSpyListenerList() {
-		return new ArrayList<SpyListener>(spyListeners);
+		return new ArrayList<>(spyListeners);
 	}
 
 	/**
@@ -920,7 +920,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * 
 	 */
 	public synchronized List<TheoryListener> getTheoryListenerList() {
-		return new ArrayList<TheoryListener>(theoryListeners);
+		return new ArrayList<>(theoryListeners);
 	}
 
 	/**
@@ -928,7 +928,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 */
 	public synchronized List<LibraryListener> getLibraryListenerList() {
-		return new ArrayList<LibraryListener>(libraryListeners);
+		return new ArrayList<>(libraryListeners);
 	}
 
 	/**
@@ -936,7 +936,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 */
 	public synchronized List<QueryListener> getQueryListenerList() {
-		return new ArrayList<QueryListener>(queryListeners);
+		return new ArrayList<>(queryListeners);
 	}
 
 	// notification
@@ -1057,7 +1057,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
        * Reset directory list
       */
     public void resetDirectoryList(String path) {
-        absolutePathList = new ArrayList<String>();
+        absolutePathList = new ArrayList<>();
         absolutePathList.add(path);
     }
     

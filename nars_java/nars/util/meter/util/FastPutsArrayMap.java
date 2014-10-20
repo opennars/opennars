@@ -29,7 +29,7 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
     }
 
     public FastPutsArrayMap(final int initialCapacity) {
-        entries = new ArrayList<Entry<K, V>>(initialCapacity);
+        entries = new ArrayList<>(initialCapacity);
     }
 
     public FastPutsArrayMap(final Map<K, V> map) {
@@ -131,7 +131,7 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
         if (key == null) {
             throw new NullPointerException("key");
         }
-        entries.add(new SimpleEntry<K, V>(key, value));
+        entries.add(new SimpleEntry<>(key, value));
         size = UNKNOWN_SIZE;
         return null;
     }

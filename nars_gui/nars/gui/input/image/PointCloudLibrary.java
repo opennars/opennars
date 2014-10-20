@@ -80,7 +80,7 @@ public class PointCloudLibrary
 {
   private static double CLOSE_ENOUGH = 0.3;
   private static PointCloudLibrary demoLibrary = null;
-  private ArrayList<PointCloud> _pointClouds =  new ArrayList<PointCloud>();
+  private ArrayList<PointCloud> _pointClouds =  new ArrayList<>();
 
   public PointCloudLibrary()
   {
@@ -114,7 +114,7 @@ public class PointCloudLibrary
 
   Set<PointCloud> getPointCloud(String name)
   {
-    HashSet<PointCloud> result = new HashSet<PointCloud>();
+    HashSet<PointCloud> result = new HashSet<>();
     
     for(int i = 0; i < _pointClouds.size(); i++)
     {
@@ -129,7 +129,7 @@ public class PointCloudLibrary
   
   public Set<String> getNames()
   {
-    HashSet<String> result = new HashSet<String>();
+    HashSet<String> result = new HashSet<>();
     for(int i = 0; i < _pointClouds.size(); i++)
     {
       result.add(_pointClouds.get(i).getName());
@@ -165,7 +165,7 @@ public class PointCloudLibrary
       
       if(result == null)
       {
-        result = new ArrayList<PointCloud>();
+        result = new ArrayList<>();
         result.add(p);
         _pointClouds.remove(i);
       }
@@ -178,12 +178,12 @@ public class PointCloudLibrary
   {
     if(this == demoLibrary)
     {
-      _pointClouds = new ArrayList<PointCloud>();
+      _pointClouds = new ArrayList<>();
       populateDemoLibrary(this);
     }
     else
     {
-      _pointClouds = new ArrayList<PointCloud>();
+      _pointClouds = new ArrayList<>();
     }
   }
   
@@ -349,7 +349,7 @@ public class PointCloudLibrary
   
   private static void populateDemoLibrary(PointCloudLibrary library)
   {
-    ArrayList<PointCloudPoint> p = new ArrayList<PointCloudPoint>();
+    ArrayList<PointCloudPoint> p = new ArrayList<>();
 
     p.add(pcp(30,7,1));
     p.add(pcp(103,7,1));
@@ -357,7 +357,7 @@ public class PointCloudLibrary
     p.add(pcp(66,87,2));
     library.addPointCloud(new PointCloud("T", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(177,92,1));
     p.add(pcp(177,2,1));
     p.add(pcp(182,1,2));
@@ -366,7 +366,7 @@ public class PointCloudLibrary
     p.add(pcp(247,1,3));
     library.addPointCloud(new PointCloud("N", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(345,9,1));
     p.add(pcp(345,87,1));
     p.add(pcp(351,8,2));
@@ -395,7 +395,7 @@ public class PointCloudLibrary
     p.add(pcp(349,87,2));
     library.addPointCloud(new PointCloud("D", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(507,8,1));
     p.add(pcp(507,87,1));
     p.add(pcp(513,7,2));
@@ -421,14 +421,14 @@ public class PointCloudLibrary
     p.add(pcp(510,55,2));
     library.addPointCloud(new PointCloud("P", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(30,146,1));
     p.add(pcp(106,222,1));
     p.add(pcp(30,225,2));
     p.add(pcp(106,146,2));
     library.addPointCloud(new PointCloud("X", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(188,137,1));
     p.add(pcp(188,225,1));
     p.add(pcp(188,180,2));
@@ -437,7 +437,7 @@ public class PointCloudLibrary
     p.add(pcp(241,225,3));
     library.addPointCloud(new PointCloud("H", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(371,149,1));
     p.add(pcp(371,221,1));
     p.add(pcp(341,149,2));
@@ -446,18 +446,18 @@ public class PointCloudLibrary
     p.add(pcp(401,221,3));
     library.addPointCloud(new PointCloud("I", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(526,142,1));
     p.add(pcp(526,204,1));
     p.add(pcp(526,221,2));
     library.addPointCloud(new PointCloud("exclamation", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(12,347,1));
     p.add(pcp(119,347,1));
     library.addPointCloud(new PointCloud("line", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(177,396,1));
     p.add(pcp(223,299,1));
     p.add(pcp(262,396,1));
@@ -466,7 +466,7 @@ public class PointCloudLibrary
     p.add(pcp(184,397,1));
     library.addPointCloud(new PointCloud("five-point star", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(382,310,1));
     p.add(pcp(377,308,1));
     p.add(pcp(373,307,1));
@@ -511,7 +511,7 @@ public class PointCloudLibrary
     p.add(pcp(337,390,2));
     library.addPointCloud(new PointCloud("null", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(506,349,1));
     p.add(pcp(574,349,1));
     p.add(pcp(525,306,2));
@@ -519,7 +519,7 @@ public class PointCloudLibrary
     p.add(pcp(525,388,2));
     library.addPointCloud(new PointCloud("arrowhead", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(38,470,1));
     p.add(pcp(36,476,1));
     p.add(pcp(36,482,1));
@@ -543,7 +543,7 @@ public class PointCloudLibrary
     p.add(pcp(62,571,2));
     library.addPointCloud(new PointCloud("pitchfork", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(177,554,1));
     p.add(pcp(223,476,1));
     p.add(pcp(268,554,1));
@@ -554,7 +554,7 @@ public class PointCloudLibrary
     p.add(pcp(183,490,2));
     library.addPointCloud(new PointCloud("six-point star", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(325,499,1));
     p.add(pcp(417,557,1));
     p.add(pcp(417,499,2));
@@ -563,7 +563,7 @@ public class PointCloudLibrary
     p.add(pcp(371,571,3));
     library.addPointCloud(new PointCloud("asterisk", p));
 
-    p = new ArrayList<PointCloudPoint>();
+    p = new ArrayList<>();
     p.add(pcp(546,465,1));
     p.add(pcp(546,531,1));
     p.add(pcp(540,530,2));

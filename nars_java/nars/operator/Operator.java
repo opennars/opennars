@@ -128,7 +128,7 @@ public abstract class Operator extends Term implements Plugin {
             BudgetValue b = operation.getTask().budget;
             
             if (feedback instanceof Exception)
-                feedback = feedback.getClass().getSimpleName() + ": " + ((RuntimeException)feedback).getMessage();
+                feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();
             
             memory.emit(EXE.class, 
                 ((b != null) ? (b.toStringExternal() + " ") : "") + 

@@ -22,8 +22,8 @@ public class RenderClass_v5 extends JComponent implements MouseListener, MouseMo
 
     Random r = new XORShiftRandom();
     float oldX, oldY;
-    List<Particle> particleAL = new FastTable<Particle>();
-    List<Graviton> gravitonAL = new FastTable<Graviton>();
+    List<Particle> particleAL = new FastTable<>();
+    List<Graviton> gravitonAL = new FastTable<>();
     private final int WIDTH, HEIGHT;
     private long lastTime;
     private boolean pause = false;

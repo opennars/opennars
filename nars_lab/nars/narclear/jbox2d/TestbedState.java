@@ -40,7 +40,7 @@ public class TestbedState {
   private final TestbedSettings settings = new TestbedSettings();
   private DebugDraw draw;
   private PhysicsModel test;
-  private final Vector<TestChangedListener> listeners = new Vector<TestChangedListener>();
+  private final Vector<TestChangedListener> listeners = new Vector<>();
   private final boolean[] keys = new boolean[512];
   private final boolean[] codedKeys = new boolean[512];
   private float calculatedFps;

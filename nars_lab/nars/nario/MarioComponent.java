@@ -163,7 +163,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
                         repaint();
                     }
                     catch (Exception e) {
-                        e.printStackTrace();;
+                        e.printStackTrace();
                     }
                 }
                 

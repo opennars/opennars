@@ -61,9 +61,9 @@ class Flag implements java.io.Serializable {
     public Object clone() {
         Flag f = new Flag();
         f.name=name;
-        f.valueList=(Struct)valueList.copy(new HashMap<Var,Var>(),Var.ORIGINAL);
-        f.value=value.copy(new HashMap<Var,Var>(),Var.ORIGINAL);
-        f.defaultValue=defaultValue.copy(new HashMap<Var,Var>(),Var.ORIGINAL);
+        f.valueList=(Struct)valueList.copy(new HashMap<>(),Var.ORIGINAL);
+        f.value=value.copy(new HashMap<>(),Var.ORIGINAL);
+        f.defaultValue=defaultValue.copy(new HashMap<>(),Var.ORIGINAL);
         f.modifiable=modifiable;
         f.libraryName=libraryName;
         return f;

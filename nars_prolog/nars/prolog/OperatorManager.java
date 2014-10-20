@@ -80,7 +80,7 @@ import nars.prolog.interfaces.IOperatorManager;
      *  @return the list of the operators
      */
     public synchronized List<Operator> getOperators() {
-        return new LinkedList<Operator>(operatorList);
+        return new LinkedList<>(operatorList);
     }
     
 /*Castagna 06/2011*/     
@@ -108,7 +108,7 @@ import nars.prolog.interfaces.IOperatorManager;
     {
         //map of operators by name and type
         //key is the nameType of an operator (for example ":-xfx") - value is an Operator
-        private HashMap<String,Operator> nameTypeToKey = new HashMap<String, Operator>();
+        private HashMap<String,Operator> nameTypeToKey = new HashMap<>();
         
         public boolean addOperator(Operator op) {
             final String nameTypeKey = op.name + op.type;
@@ -128,7 +128,7 @@ import nars.prolog.interfaces.IOperatorManager;
         public Object clone() {		 
         	OperatorRegister or = (OperatorRegister)super.clone();		 
         	Iterator<Operator> ior = (Iterator<Operator>)or.iterator();		 
-        	or.nameTypeToKey = new HashMap<String, Operator>();		 
+        	or.nameTypeToKey = new HashMap<>();		 
         	while(ior.hasNext()) {		 
         		Operator o = (Operator)ior.next();		 
         		or.nameTypeToKey.put(o.name + o.type, o);		 

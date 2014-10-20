@@ -21,7 +21,7 @@ public final class Misc {
     @SuppressWarnings("unchecked")
     public static <T> Set<T> getStaticFieldValues(final Class<?> target,
             final Class<T> fieldType) {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
 
         for (Field field : target.getDeclaredFields()) {
             if ((field.getModifiers() & Modifier.STATIC) != 0

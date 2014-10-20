@@ -444,7 +444,7 @@ public class BuiltIn extends Library {
 		 arg0 = arg0.getTerm();
 		 arg1 = arg1.getTerm();
 		 int id = engineManager.getEnv().nDemoSteps;
-		 return unify(arg1, arg0.copy(new IdentityHashMap<Var,Var>(), id));
+		 return unify(arg1, arg0.copy(new IdentityHashMap<>(), id));
 	 }
 
 	 // $append

@@ -180,8 +180,8 @@ public abstract class AbstractStatsKey implements StatsKey {
                 Map<String, Object> thisAttrs = this.getAttributes();
                 Map<String, Object> otherAttrs = other.getAttributes();
 
-                List<String> thisAttrKeys = new ArrayList<String>(thisAttrs.keySet());
-                List<String> otherAttrKeys = new ArrayList<String>(otherAttrs.keySet());
+                List<String> thisAttrKeys = new ArrayList<>(thisAttrs.keySet());
+                List<String> otherAttrKeys = new ArrayList<>(otherAttrs.keySet());
 
                 Collections.sort(thisAttrKeys);
                 Collections.sort(otherAttrKeys);

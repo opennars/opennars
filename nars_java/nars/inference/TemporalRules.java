@@ -159,22 +159,22 @@ public class TemporalRules {
         ArrayList<Term> args=null;
         if(B2 instanceof Conjunction) {
             Conjunction CB2=((Conjunction)B2);
-            if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                args=Lists.newArrayList(CB2.term);
-                args.add(0, A);
+            if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {                
+                args = new ArrayList(CB2.term.length + 1);
+                args.add(A);
+                for (final Term t : CB2.term) args.add(t);
             }
         }
         else {
-            args=new ArrayList(); 
-            args.add(A);
-            args.add(B1);
+            args=Lists.newArrayList(A, B1);
         }
-        if(args==null) {
+        
+        if(args==null)
             return;
-        }
+                
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
-        Term[] term=args.toArray(new Term[0]);
-        Term realB2=args.get(1);
+        Term[] term = args.toArray(new Term[args.size()]);
+        Term realB2 = term[1];
         if(Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2)) {
             //ok it unifies, so lets create a &/ term
             int order1=s1.getTemporalOrder();

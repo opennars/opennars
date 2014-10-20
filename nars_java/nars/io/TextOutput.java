@@ -241,7 +241,7 @@ public class TextOutput extends Output {
         if (signal instanceof Exception) {
             Exception e = (Exception)signal;
 
-            buffer.append(e.getClass().getSimpleName() + ": " + e.getMessage());
+            buffer.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
 
             /*if (showStackTrace)*/ 
             {
@@ -289,7 +289,7 @@ public class TextOutput extends Output {
                 if (s.truth!=null) {
                     buffer.append(getTruthHTML(s.truth));
                 }
-                buffer.append("<div style='float:left'><pre>" + escapeHTML(s.toString(nar, showStamp)) + "</pre></div>");
+                buffer.append("<div style='float:left'><pre>").append(escapeHTML(s.toString(nar, showStamp))).append("</pre></div>");
                 buffer.append("<br/>");
                 /*
                 Task root = t.getRootTask();
@@ -425,7 +425,7 @@ public class TextOutput extends Output {
                     } else {
                         // Not 7 Bit use the unicode system
                         sb.append("&#");
-                        sb.append(new Integer(ci).toString());
+                        sb.append(Integer.toString(ci));
                         sb.append(';');
                     }
                 }

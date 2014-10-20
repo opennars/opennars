@@ -31,7 +31,7 @@ public class DefaultInputHandler extends InputHandler
      */
     public DefaultInputHandler()
     {
-        bindings = currentBindings = new Hashtable<KeyStroke, Object>();
+        bindings = currentBindings = new Hashtable<>();
         //checks if the os is macosx
         String os = System.getProperty("os.name").toLowerCase();
         isMacOSX = "mac os x".equals(os);
@@ -125,7 +125,7 @@ public class DefaultInputHandler extends InputHandler
                     current = (Hashtable<KeyStroke, Object>)o;
                 else
                 {
-                    o = new Hashtable<KeyStroke, Object>();
+                    o = new Hashtable<>();
                     current.put(keyStroke,o);
                     current = (Hashtable<KeyStroke, Object>)o;
                 }

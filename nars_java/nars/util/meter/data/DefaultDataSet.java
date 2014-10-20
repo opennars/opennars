@@ -38,7 +38,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
 
     public DefaultDataSet(final long collectionTimeStamp,
             final boolean drainedSession) {
-        this(collectionTimeStamp, drainedSession, new ConcurrentHashMap<String, Object>());
+        this(collectionTimeStamp, drainedSession, new ConcurrentHashMap<>());
     }
 
     public DefaultDataSet(final long collectionTimeStamp,
@@ -65,7 +65,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
     }
 
     protected Map<String, Object> createMetaDataMap() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
     @Override

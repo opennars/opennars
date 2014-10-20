@@ -14,7 +14,7 @@ public class Game {
 	public final int HEIGHT;
 	public final int WIDTH;
 
-	private ArrayList<int[]> movementHistory = new ArrayList<int[]>();
+	private ArrayList<int[]> movementHistory = new ArrayList<>();
 	private Piece[][] pieces;
 	private char turn = TURN_DARK;	// dark is basically an alias for player 1
 	private int remainingJumpX = -1, remainingJumpY = -1;
@@ -106,7 +106,7 @@ public class Game {
 				// jump
 				jump(srcX, srcY, dstX, dstY);
 
-				if(pieceCouldJumpToFrom(dstX, dstY).size() == 0)
+				if(pieceCouldJumpToFrom(dstX, dstY).isEmpty())
 				{
 					advanceTurn();
 					if(hasRemainingJump())
@@ -147,7 +147,7 @@ public class Game {
 	 */
 	public ArrayList<int[]> pieceCouldJumpToFrom(int srcX, int srcY)
 	{
-		ArrayList<int[]> destinations = new ArrayList<int[]>();
+		ArrayList<int[]> destinations = new ArrayList<>();
 
 		if(pieces[srcX][srcY].isLight() || pieces[srcX][srcY] instanceof King)
 		{
@@ -216,7 +216,7 @@ public class Game {
 	 */
 	public ArrayList<int[]> pieceCouldMoveToFrom(int srcX, int srcY)
 	{
-		ArrayList<int[]> destinations = new ArrayList<int[]>();
+		ArrayList<int[]> destinations = new ArrayList<>();
 
 		if(pieces[srcX][srcY] != null)
 		{
@@ -268,7 +268,7 @@ public class Game {
 	 */
 	public ArrayList<Game> getPossibleFollowingContexts()
 	{
-		ArrayList<Game> contexts = new ArrayList<Game>();
+		ArrayList<Game> contexts = new ArrayList<>();
 
 		return contexts;
 	}
@@ -327,7 +327,7 @@ public class Game {
 		{
 			if((pieces[srcX][srcY].isLight() && isTurnLight()) || (pieces[srcX][srcY].isDark() && isTurnDark()))
 			{
-				ArrayList<int[]> dsts = new ArrayList<int[]>();
+				ArrayList<int[]> dsts = new ArrayList<>();
 
 				if(hasRemainingJump())
 				{
