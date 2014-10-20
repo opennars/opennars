@@ -74,6 +74,7 @@ public class NARio extends Run {
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
         nar.param().conceptForgetDurations.set(10);
+        nar.param().duration.set(500); //??
         float fps = 20f;
         gameRate = 1.0f / fps;
 
