@@ -10,6 +10,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -74,7 +75,7 @@ public class NARio extends Run {
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
         nar.param().conceptForgetDurations.set(10);
-        nar.param().duration.set(500); //??
+        Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.1; //value sequence more
         float fps = 20f;
         gameRate = 1.0f / fps;
 
