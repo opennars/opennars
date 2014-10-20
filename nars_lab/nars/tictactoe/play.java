@@ -47,6 +47,7 @@ public class play extends javax.swing.JFrame {
         nar.memory.addOperator(new AddO("^addO"));
         nar.param().noiseLevel.set(0);
         nar.param().decisionThreshold.set(0.3);
+        nar.param().duration.set(10000);
         
         initComponents();
         addStartKnowledge();
