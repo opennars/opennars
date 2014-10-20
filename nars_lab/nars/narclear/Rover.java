@@ -582,7 +582,6 @@ public class Rover extends PhysicsModel {
         nar.param().decisionThreshold.set(0.2);
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
-        Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.1; //value sequence more
         
         
 
