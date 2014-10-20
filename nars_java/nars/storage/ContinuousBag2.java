@@ -36,7 +36,7 @@ public class ContinuousBag2<E extends Item<K>,K> extends AbstractBag<E,K> implem
     private float mass;
     
     /** whether items are removed by random sampling, or a continuous scanning */
-    private final boolean randomRemoval;
+    final protected boolean randomRemoval;
     
     /** Rate of sampling index when in non-random "scanning" removal mode.  
      *  The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
@@ -44,10 +44,10 @@ public class ContinuousBag2<E extends Item<K>,K> extends AbstractBag<E,K> implem
      *  When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
      * 
      *  Valid values are: -1.0 <= x <= 1.0, x!=0      */
-    final float scanningRate = -1.0f;
+    final protected float scanningRate = -1.0f;
     
     /** current removal index x, between 0..1.0.  set automatically */
-    private double x;
+    protected double x;
     private final BagCurve curve;
     
 
