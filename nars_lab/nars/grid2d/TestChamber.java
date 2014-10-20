@@ -5,6 +5,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NARBuilder;
+import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
@@ -46,7 +47,7 @@ public class TestChamber {
         
         //set NAR runtime parmeters: 
         nar.param().noiseLevel.set(0);
-        
+        Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.01; //in testchamber so far only sequences play a role
         new NARSwing(nar);
 
         new TestChamber(nar);
