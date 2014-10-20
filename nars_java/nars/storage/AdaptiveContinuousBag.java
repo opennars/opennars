@@ -1,7 +1,8 @@
 package nars.storage;
 
+import java.util.Arrays;
 import nars.core.Memory;
-import nars.core.Param.AtomicDurations;
+import nars.core.Parameters;
 import nars.entity.Item;
 
 
@@ -20,15 +21,24 @@ then it removes the item at this index
  */
 public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<I, K> {
 
+    boolean stabilize = true;
+    float minForgetAdjustment = 0.5f;
+    float maxForgetAdjustment = 2.0f;
+    
     final int resolution = 10;
+    final int distributeCycles = 1; //every how many cycles to calculate distribution optimization
+    double[] distribution = new double[resolution];
+    long cycle = 0;
+    
     double[] index = new double[resolution];
     private double minPriority;
     private double maxPriority;
+    
 
     public AdaptiveContinuousBag(int capacity) {
         super(capacity, null, true);                
         
-        reset();
+        update();
     }
 
     public int posToIndex(final int res) {
@@ -44,22 +54,69 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<
         return x;
     }
 
-    public void reset() {
-        for (int i = 0; i < resolution; i++) {
-            setIndex(i, i * (((double) getCapacity()) / (resolution - 1)));
-        }
-    }
-
     protected void update() {
-        for (int i = 0; i < resolution; i++) {
-            setIndex(i, items.exact(posToIndex(i)).getPriority());
+        if (size() == 0) {
+            for (int i = 0; i < resolution; i++)
+                setIndex(i, i * (((double) getCapacity()) / (resolution - 1)));            
+            minPriority = maxPriority = 0;
         }
-        minPriority = index[0];
-        maxPriority = index[resolution - 1];
-        //System.out.println(Arrays.toString(index));
-        
+        else {
+            for (int i = 0; i < resolution; i++) {
+                setIndex(i, items.exact(posToIndex(i)).getPriority());
+            }
+            minPriority = index[0];
+            maxPriority = index[resolution - 1];
+            
+            if (stabilize) {
+                if (cycle % distributeCycles == 0) {
+                    getPriorityDistribution(distribution);                
+                }                
+            }
+
+        }
+        cycle++;
     }
 
+    public float getMeanDistributionDifference(final int a, final int b) {
+        if ((a == b) || ( b< a)) return 0;
+        float total = 0;
+        
+        for (int i = a; i < b; i++) {
+            float actualDistribution = (float)distribution[i]; 
+            float idealDistribution = 1.0f / distribution.length;  //TODO make this parametric
+            total += idealDistribution - actualDistribution;
+        }
+        total /= (b-a);
+        return total;
+    }
+
+    @Override
+    public float getForgetCycles(final float baseForgetCycles, final I item) {
+        if (!stabilize) {
+            return super.getForgetCycles(baseForgetCycles, item);
+        }
+        
+        float p = item.getPriority();
+        int pb = bin(p, resolution-1);
+        
+        //System.out.println("  remove: " + p + " " + pb);
+        //System.out.println("     dist=" + distribution[pb]);
+        
+        float dwAbove = getMeanDistributionDifference(pb, distribution.length);
+        float dwBelow = getMeanDistributionDifference(0, pb);        
+        
+        float factor = 0.2f;
+        float r = (factor + dwAbove) / (factor + dwBelow);
+        if (r < minForgetAdjustment) 
+            r = minForgetAdjustment;
+        if (r > maxForgetAdjustment) 
+            r = maxForgetAdjustment;
+        //System.out.println(pb + " r=" + r + " , above=" + dwAbove + " below=" + dwBelow);
+                
+        return baseForgetCycles * r;
+    }
+
+    
     
     protected void setIndex(final int i, final double v) {
         index[i] = v;

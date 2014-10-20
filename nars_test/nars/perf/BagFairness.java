@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
@@ -15,10 +14,11 @@ import nars.entity.Concept;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
 import nars.io.Input;
+import nars.io.TextOutput;
 import nars.io.Texts;
 import nars.language.Term;
+import nars.storage.AdaptiveContinuousBag;
 import nars.storage.Bag;
-import nars.test.util.AdaptiveContinuousBagTest.AdaptiveContinuousBag;
 import nars.timeline.Timeline2DCanvas;
 import nars.timeline.Timeline2DCanvas.Chart;
 
@@ -66,7 +66,7 @@ public class BagFairness {
 
             if (nextConcept!=null) {
                 float p = nextConcept.getPriority();
-                int b = (int)Math.round(p * bins);
+                int b = Bag.bin(p, bins-1);
                 
                 fireCount[b]++;
                 
@@ -75,7 +75,8 @@ public class BagFairness {
 
             
             int concepts = ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.size();
-            double[] d = ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.getPriorityDistribution(bins);           
+            double[] d = new double[bins];
+            ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.getPriorityDistribution(d);
             for (int b = 0; b < bins; b++) {
                 
                 bin[b].push(n.getTime(), (float)d[b] * concepts);
@@ -84,7 +85,7 @@ public class BagFairness {
             
             
             
-            //((SequentialMemoryCycle)n.memory.conceptProcessor).processConcept();
+            ///((SequentialMemoryCycle)n.memory.conceptProcessor).processConcept();
             n.step(1);
         }
         
@@ -127,15 +128,22 @@ public class BagFairness {
         private final double inputProb;
         private final double minPriority;
         private final double maxPriority;
+        private final int numTerms;
+        private final double inheritanceProb;
+        private final double similarityProb;
+        private final double productProb;
 
-        public RandomTermInput(double inputProb, double minPriority, double maxPriority) {
+        public RandomTermInput(int numTerms, double inputProb, double inheritanceProb, double similarityProb, double productProb, double minPriority, double maxPriority) {
+            this.numTerms = numTerms;
             this.inputProb = inputProb;
+            this.inheritanceProb = inheritanceProb;
+            this.similarityProb = similarityProb;
+            this.productProb = productProb;
             this.minPriority = minPriority;
             this.maxPriority = maxPriority;
             
         }
 
-        
         @Override public String next() throws IOException {
             double p = Math.random();
             if (p < inputProb) {
@@ -144,9 +152,26 @@ public class BagFairness {
                 double pr = Math.random() * (maxPriority-minPriority) + minPriority;
                 float priority = (float)pr;                               
                 
-                return ("$" + Texts.n2(priority) + "$ " + new Term(UUID.randomUUID().toString()) + ".");
+                double tp = inheritanceProb + similarityProb + productProb;                
+                double s = Math.random() * tp;
+                s -= inheritanceProb; if (s < 0) {
+                    return "$" + Texts.n2(priority) + "$ <" + randomTerm() + " --> " + randomTerm() + ">.";
+                }
+                s -= similarityProb; if (s < 0) {
+                    return "$" + Texts.n2(priority) + "$ <" + randomTerm() + " <-> " + randomTerm() + ">.";
+                }
+                s -= productProb; if (s < 0) {
+                    return "$" + Texts.n2(priority) + "$ <(*," + randomTerm() + "," + randomTerm() + ") --> " + randomTerm() + ">.";
+                }
+                
+                
             }
             return null;
+        }
+
+        private Term randomTerm() {
+            int t = (int)(Math.random() * numTerms);
+            return new Term("t" + t);
         }
 
         @Override public boolean finished(boolean stop) { return false; }
@@ -161,14 +186,16 @@ public class BagFairness {
             }
             
         }.build();
-        
-        n.param().conceptForgetDurations.set(1.0);
-        
         //NAR n = new ContinuousBagNARBuilder(new ContinuousBag2.CubicBagCurve(), true).build();
         
-        for (double rProb = 0.25; rProb <= 1.0; rProb += 10.10) {
+        //n.param().conceptForgetDurations.set(1.0);
+        
+
+        new TextOutput(n, System.out);
+        
+        for (double rProb = 0.05; rProb <= 1.0; rProb += 10.10) {
             new BagFairness(n,
-                    new RandomTermInput(rProb, 0.75, 1.0),
+                    new RandomTermInput(32, rProb, 0.75, 0.5, 0.5, 0, 1.0),
                     1500
             );
         }

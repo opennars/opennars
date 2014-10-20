@@ -98,7 +98,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return Whether the new Item is added into the Bag
      */    
-    public final boolean putBack(final E oldItem, final float forgetCycles, final Memory m) {
+    public boolean putBack(final E oldItem, final float forgetCycles, final Memory m) {
         float relativeThreshold = Parameters.BAG_THRESHOLD;
         m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
@@ -125,13 +125,17 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     }
     
 
+    public static final int bin(final float x, final int bins) {
+        int i = (int)Math.floor((x + 0.5f/bins) * bins);
+        return i;
+    }
     
-    public double[] getPriorityDistribution(int bins) {
-        double[] x = new double[bins];
+    public double[] getPriorityDistribution(double[] x) {
+        int bins = x.length;
         double total = 0;
         for (E e : values()) {
             float p = e.budget.getPriority();
-            int b = (int)Math.floor(p * (0.5 + bins));
+            int b = bin(p, bins-1);
             x[b]++;
             total++;
         }
