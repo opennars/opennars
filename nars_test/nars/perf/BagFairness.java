@@ -18,7 +18,7 @@ import nars.io.Input;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import nars.test.util.AdaptiveContinuousBagTest.AdaptiveContinuousBag;
+import nars.storage.AdaptiveContinuousBag;
 import nars.timeline.Timeline2DCanvas;
 import nars.timeline.Timeline2DCanvas.Chart;
 
@@ -42,8 +42,8 @@ public class BagFairness {
         final float maxConcepts = 1000;
         
         for (int b = 0; b < bins; b++) {
-            double percentStart = ((double)b)/bins;
-            double percentEnd = ((double)(b+1))/bins;            
+            double percentStart = ((double)b)/(bins);
+            double percentEnd = ((double)(b+1))/(bins);            
             if (percentEnd > 1.0) percentEnd = 1.0;
             
             bin[b] = new TimeSeries("Concept: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
@@ -66,8 +66,7 @@ public class BagFairness {
 
             if (nextConcept!=null) {
                 float p = nextConcept.getPriority();
-                int b = (int)Math.round(p * bins);
-                
+                int b = (int)Math.floor(p * (0.5 + bins));
                 fireCount[b]++;
                 
                 nextConcept = null;
@@ -166,9 +165,9 @@ public class BagFairness {
         
         //NAR n = new ContinuousBagNARBuilder(new ContinuousBag2.CubicBagCurve(), true).build();
         
-        for (double rProb = 0.25; rProb <= 1.0; rProb += 10.10) {
+        for (double rProb = 0.5; rProb <= 1.0; rProb += 10.10) {
             new BagFairness(n,
-                    new RandomTermInput(rProb, 0.75, 1.0),
+                    new RandomTermInput(rProb, 0.25, 1.0),
                     1500
             );
         }

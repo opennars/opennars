@@ -11,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.ContinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -571,7 +571,8 @@ public class Rover extends PhysicsModel {
 
     public static void main(String[] args) {
         //NAR nar = new DefaultNARBuilder().build();
-        NAR nar = new DiscretinuousBagNARBuilder().
+        //NAR nar = new DiscretinuousBagNARBuilder().
+        NAR nar = new ContinuousBagNARBuilder().
                 setConceptBagLevels(100).
                 setConceptBagSize(1024).simulationTime().
                 build();
