@@ -132,7 +132,7 @@ public class Rover extends PhysicsModel {
             float aStep = 0.9f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 5; //should be odd # to balance
-            float L = 15.0f;
+            float L = 25.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
@@ -408,7 +408,7 @@ public class Rover extends PhysicsModel {
 
         public RoverWorld(PhysicsModel p, float w, float h) {
             Phys=p;
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < 20; i++) {
                 AddABlock(p, w, h);
             }
         }
@@ -577,9 +577,10 @@ public class Rover extends PhysicsModel {
                 build();
         
         float framesPerSecond = 50f;
-        int cyclesPerFrame = 200; //was 200        
+        int cyclesPerFrame = 500; //was 200        
         nar.param().decisionThreshold.set(0.2);
         nar.param().noiseLevel.set(0);
+        nar.param().duration.set(cyclesPerFrame);
         
         
 
