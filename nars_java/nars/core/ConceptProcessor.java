@@ -21,8 +21,8 @@ public interface ConceptProcessor extends Iterable<Concept> {
     /** Invoked during a memory reset to empty all concepts */
     public void clear();
 
-    /** Maps a concept name (a subclass of CharSequence) to a Concept */
-    public Concept concept(CharSequence name);
+    /** Maps Term to associated Concept */
+    public Concept concept(Term term);
 
     /**
      * Creates and adds new concept to the memory

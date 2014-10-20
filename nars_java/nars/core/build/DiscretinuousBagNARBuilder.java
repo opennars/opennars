@@ -38,7 +38,7 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     }
 
     @Override
-    public AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
+    public AbstractBag<Concept,Term> newConceptBag(Param p) {
         return new Bag(getConceptBagLevels(), getConceptBagSize());
     }
 
