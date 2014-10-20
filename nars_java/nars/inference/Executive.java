@@ -608,23 +608,44 @@ public class Executive implements Observer {
             int i=0;
             boolean matched=true;
             int off=0;
-            int expected_time=0;
+            long expected_time=lastEvents.get(0).sentence.getOccurenceTime();
+            
             for(i=0;i<args.length;i++) {
-                //just matching order for now, todo taking temporal time into account
+
                 //ok lets match the sequences:
                 if(args[i] instanceof Interval) {
+                    expected_time+=((Interval)args[i]).getTime(memory);
                     off++;
                     continue;
                 }
-                if(!args[i].equals(lastEvents.get(i-off).sentence.content)) {
-                    matched=false;
-                    break;
+                if(!args[i].equals(lastEvents.get(i-off).sentence.content)) { //it didnt match, instead sth different unexpected happened
+                    matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
+                    break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
+                } else { //however I decided that sequence matters also for now, because then the more accurate hypothesis wins.
+                    
+                    if(lastEvents.get(i-off).sentence.truth.getExpectation()<=0.5) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
+                        //it didn't happen
+                        matched=false;
+                        break;
+                    }
+                    
+                    long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
+                    if(Math.abs(occurence-expected_time) > ((double)memory.param.duration.get())/2.0) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
+                        matched=false;
+                        break;
+                    }
                 }
+                //did it happen in the expected interval alos?
                 
+                //new temporal check: is it correct in timing?
+                expected_time+=memory.param.duration.get();
             }
             //ok it matched, is the consequence also right?
             if(matched) { 
-                if(imp.getPredicate().equals(lastEvents.get(args.length).sentence.content)) { //it matched and same consequence, so positive evidence
+                long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
+                boolean right_in_time=Math.abs(occurence-expected_time)<((double)memory.param.duration.get())/2.0;
+                
+                if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.content)) { //it matched and same consequence, so positive evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
                 } else { //it matched and other consequence, so negative evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
