@@ -181,12 +181,12 @@ public class TestChamber {
                         hungry--;
                         if(hungry<0) {
                             hungry=250;
-                            //nar.addInput("<#1 --> eat>!"); //also works but better:
-                            for (GridObject obj : space.objects) {
+                            nar.addInput("(&&,<#1 --> pizza>,<#1 --> eat>)!"); //also works but better:
+                            /*for (GridObject obj : space.objects) {
                                 if (obj instanceof Pizza) {
                                     nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
                                 }
-                            }
+                            }*/
                         }
                     }
                 }
