@@ -102,7 +102,7 @@ public class DenoisingAutoencoder {
     }
 
     // Encode
-    public void getEncoded(double[] x, double[] y, boolean sigmoid, boolean normalize) {
+    public void encode(double[] x, double[] y, boolean sigmoid, boolean normalize) {
         double max=0, min=0;
         for (int i = 0; i < n_hidden; i++) {
             y[i] = 0;
@@ -157,7 +157,7 @@ public class DenoisingAutoencoder {
         else {
             tilde_x = x;
         }
-        getEncoded(tilde_x, y, true, false);
+        encode(tilde_x, y, true, false);
         get_reconstructed_input(y, z);
 
         // vbias
@@ -187,7 +187,7 @@ public class DenoisingAutoencoder {
     public void reconstruct(double[] x, double[] z) {
         double[] y = new double[n_hidden];
 
-        getEncoded(x, y, true, false);
+        encode(x, y, true, false);
         get_reconstructed_input(y, z);
     }
 

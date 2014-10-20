@@ -4,7 +4,7 @@ import nars.core.NAR;
 
 
 /** TextInput subclass that only inputs when the next input value changes from previous */
-public class ChangedTextInput extends TextInput {
+public class ChangedTextInput  {
 
     private final NAR nar;
     private String last = null;
