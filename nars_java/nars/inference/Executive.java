@@ -633,7 +633,7 @@ public class Executive implements Observer {
                     }
                     
                     long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
-                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)memory.param.duration.get())/2.0;
+                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)memory.param.duration.get())/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                     if(right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
                         matched=false;
                         break;
@@ -657,7 +657,7 @@ public class Executive implements Observer {
             //ok it matched, is the consequence also right?
             if(matched) { 
                 long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
-                boolean right_in_time=Math.abs(occurence-expected_time)<((double)memory.param.duration.get())/2.0;
+                boolean right_in_time=Math.abs(occurence-expected_time)<((double)memory.param.duration.get())/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                 
                 if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.content)) { //it matched and same consequence, so positive evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
