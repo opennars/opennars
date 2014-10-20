@@ -131,24 +131,21 @@ public class Executive implements Observer {
         if (event == TaskDerive.class) {
             Task derivedTask=(Task) args[0];
             if(derivedTask.sentence.content instanceof Implication &&
-               ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+               (((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
+                    ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
                 if(!current_tasks.contains(derivedTask)) {
                     current_tasks.add(derivedTask);
                 }
             }
-            
         }
-    
         else if (event == ConceptBeliefRemove.class) {
             Task removedTask=(Task) args[2]; //task is 3nd
             if(current_tasks.contains(removedTask)) {
                 current_tasks.remove(removedTask);
             }            
         }
-    }
-    
-        
+    }   
     
     public class TaskExecution {
         /** may be null for input tasks */
@@ -596,33 +593,73 @@ public class Executive implements Observer {
     //check all predictive statements, match them with last events
     public void temporalPredictionsAdapt() {
         for(Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
+            boolean concurrent_conjunction=false;
             Term[] args=new Term[1];
             Implication imp=(Implication) c.getContent();
+            boolean concurrent_implication=imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT;
             args[0]=imp.getSubject();
             if(imp.getSubject() instanceof Conjunction) {
                 Conjunction conj=(Conjunction) imp.getSubject();
-                if(conj.temporalOrder==TemporalRules.ORDER_FORWARD) {
+                if(conj.temporalOrder==TemporalRules.ORDER_FORWARD || conj.temporalOrder==TemporalRules.ORDER_CONCURRENT) {
+                    concurrent_conjunction=conj.temporalOrder==TemporalRules.ORDER_CONCURRENT;
                     args=conj.term; //in case of &/ this are the terms
                 }
             }
             int i=0;
             boolean matched=true;
             int off=0;
+            long expected_time=lastEvents.get(0).sentence.getOccurenceTime();
+            
             for(i=0;i<args.length;i++) {
-                //just matching order for now, todo taking temporal time into account
-                //ok lets match the sequences:
+                //handling of intervals:
                 if(args[i] instanceof Interval) {
+                    if(!concurrent_conjunction) {
+                        expected_time+=((Interval)args[i]).getTime(memory);
+                    }
                     off++;
                     continue;
                 }
-                if(!args[i].equals(lastEvents.get(i-off))) {
-                    matched=false;
-                    break;
+                
+                //handling of other events, seeing if they match and are right in time
+                if(!args[i].equals(lastEvents.get(i-off).sentence.content)) { //it didnt match, instead sth different unexpected happened
+                    matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
+                    break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
+                } else { //however I decided that sequence matters also for now, because then the more accurate hypothesis wins.
+                    
+                    if(lastEvents.get(i-off).sentence.truth.getExpectation()<=0.5) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
+                        //it didn't happen
+                        matched=false;
+                        break;
+                    }
+                    
+                    long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
+                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)memory.param.duration.get())/2.0;
+                    if(right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
+                        matched=false;
+                        break;
+                    }
+                }
+
+                if(!concurrent_conjunction) {
+                    expected_time+=memory.param.duration.get();
                 }
             }
+            
+            if(concurrent_conjunction && !concurrent_implication) { //implication is not concurrent
+                expected_time+=memory.param.duration.get(); //so here we have to add duration
+            }
+            else
+            if(!concurrent_conjunction && concurrent_implication) {
+                expected_time-=memory.param.duration.get();
+            } //else if both are concurrent, time has never been added so correct
+              //else if both are not concurrent, time was always added so also correct
+            
             //ok it matched, is the consequence also right?
             if(matched) { 
-                if(imp.getPredicate().equals(lastEvents.get(args.length))) { //it matched and same consequence, so positive evidence
+                long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
+                boolean right_in_time=Math.abs(occurence-expected_time)<((double)memory.param.duration.get())/2.0;
+                
+                if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.content)) { //it matched and same consequence, so positive evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
                 } else { //it matched and other consequence, so negative evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
