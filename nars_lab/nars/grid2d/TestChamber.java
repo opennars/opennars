@@ -46,7 +46,7 @@ public class TestChamber {
         NAR nar = builder.build();
         
         //set NAR runtime parmeters: 
-        nar.param().noiseLevel.set(0);
+        nar.param().noiseLevel.set(0); 
         new NARSwing(nar);
 
         new TestChamber(nar);
