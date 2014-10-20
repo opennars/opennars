@@ -131,24 +131,21 @@ public class Executive implements Observer {
         if (event == TaskDerive.class) {
             Task derivedTask=(Task) args[0];
             if(derivedTask.sentence.content instanceof Implication &&
-               ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+               (((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
+                    ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
                 if(!current_tasks.contains(derivedTask)) {
                     current_tasks.add(derivedTask);
                 }
             }
-            
         }
-    
         else if (event == ConceptBeliefRemove.class) {
             Task removedTask=(Task) args[2]; //task is 3nd
             if(current_tasks.contains(removedTask)) {
                 current_tasks.remove(removedTask);
             }            
         }
-    }
-    
-        
+    }   
     
     public class TaskExecution {
         /** may be null for input tasks */
@@ -596,12 +593,15 @@ public class Executive implements Observer {
     //check all predictive statements, match them with last events
     public void temporalPredictionsAdapt() {
         for(Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
+            boolean concurrent_conjunction=false;
             Term[] args=new Term[1];
             Implication imp=(Implication) c.getContent();
+            boolean concurrent_implication=imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT;
             args[0]=imp.getSubject();
             if(imp.getSubject() instanceof Conjunction) {
                 Conjunction conj=(Conjunction) imp.getSubject();
-                if(conj.temporalOrder==TemporalRules.ORDER_FORWARD) {
+                if(conj.temporalOrder==TemporalRules.ORDER_FORWARD || conj.temporalOrder==TemporalRules.ORDER_CONCURRENT) {
+                    concurrent_conjunction=conj.temporalOrder==TemporalRules.ORDER_CONCURRENT;
                     args=conj.term; //in case of &/ this are the terms
                 }
             }
@@ -611,13 +611,16 @@ public class Executive implements Observer {
             long expected_time=lastEvents.get(0).sentence.getOccurenceTime();
             
             for(i=0;i<args.length;i++) {
-
-                //ok lets match the sequences:
+                //handling of intervals:
                 if(args[i] instanceof Interval) {
-                    expected_time+=((Interval)args[i]).getTime(memory);
+                    if(!concurrent_conjunction) {
+                        expected_time+=((Interval)args[i]).getTime(memory)+memory.param.duration.get();
+                    }
                     off++;
                     continue;
                 }
+                
+                //handling of other events, seeing if they match and are right in time
                 if(!args[i].equals(lastEvents.get(i-off).sentence.content)) { //it didnt match, instead sth different unexpected happened
                     matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
                     break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
@@ -635,11 +638,21 @@ public class Executive implements Observer {
                         break;
                     }
                 }
-                //did it happen in the expected interval alos?
-                
-                //new temporal check: is it correct in timing?
-                expected_time+=memory.param.duration.get();
+
+                if(!concurrent_conjunction) {
+                    expected_time+=memory.param.duration.get();
+                }
             }
+            
+            if(concurrent_conjunction && !concurrent_implication) { //implication is not concurrent
+                expected_time+=memory.param.duration.get(); //so here we have to add duration
+            }
+            else
+            if(!concurrent_conjunction && concurrent_implication) {
+                expected_time-=memory.param.duration.get();
+            } //else if both are concurrent, time has never been added so correct
+              //else if both are not concurrent, time was always added so also correct
+            
             //ok it matched, is the consequence also right?
             if(matched) { 
                 long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
