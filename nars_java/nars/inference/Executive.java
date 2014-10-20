@@ -614,7 +614,7 @@ public class Executive implements Observer {
                 //handling of intervals:
                 if(args[i] instanceof Interval) {
                     if(!concurrent_conjunction) {
-                        expected_time+=((Interval)args[i]).getTime(memory)+memory.param.duration.get();
+                        expected_time+=((Interval)args[i]).getTime(memory);
                     }
                     off++;
                     continue;
@@ -633,7 +633,8 @@ public class Executive implements Observer {
                     }
                     
                     long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
-                    if(Math.abs(occurence-expected_time) > ((double)memory.param.duration.get())/2.0) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
+                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)memory.param.duration.get())/2.0;
+                    if(right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
                         matched=false;
                         break;
                     }
