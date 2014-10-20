@@ -608,6 +608,7 @@ public class Executive implements Observer {
             int i=0;
             boolean matched=true;
             int off=0;
+            int expected_time=0;
             for(i=0;i<args.length;i++) {
                 //just matching order for now, todo taking temporal time into account
                 //ok lets match the sequences:
@@ -615,14 +616,15 @@ public class Executive implements Observer {
                     off++;
                     continue;
                 }
-                if(!args[i].equals(lastEvents.get(i-off))) {
+                if(!args[i].equals(lastEvents.get(i-off).sentence.content)) {
                     matched=false;
                     break;
                 }
+                
             }
             //ok it matched, is the consequence also right?
             if(matched) { 
-                if(imp.getPredicate().equals(lastEvents.get(args.length))) { //it matched and same consequence, so positive evidence
+                if(imp.getPredicate().equals(lastEvents.get(args.length).sentence.content)) { //it matched and same consequence, so positive evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
                 } else { //it matched and other consequence, so negative evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
