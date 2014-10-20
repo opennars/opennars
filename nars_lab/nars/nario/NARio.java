@@ -75,7 +75,6 @@ public class NARio extends Run {
         nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
         nar.param().conceptForgetDurations.set(10);
-        Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.1; //value sequence more
         float fps = 20f;
         gameRate = 1.0f / fps;
 

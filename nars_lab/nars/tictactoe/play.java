@@ -49,7 +49,6 @@ public class play extends javax.swing.JFrame {
         nar.param().noiseLevel.set(0);
         nar.param().decisionThreshold.set(0.3);
         nar.param().duration.set(1000);
-        Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.01; //only sequence matters
         
         initComponents();
         addStartKnowledge();
