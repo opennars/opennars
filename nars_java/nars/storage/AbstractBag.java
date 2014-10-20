@@ -195,7 +195,7 @@ public abstract class AbstractBag<E extends Item<K>,K> implements Iterable<E> {
 
     
     public double[] getPriorityDistribution(int bins) {
-        double[] x = new double[bins];
+        double[] x = new double[bins+1];
         double total = 0;
         for (E e : values()) {
             float p = e.budget.getPriority();

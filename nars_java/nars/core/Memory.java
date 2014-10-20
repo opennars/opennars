@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.core.Events.ConceptAdd;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
@@ -79,6 +81,8 @@ import static nars.io.Symbols.NativeOperator.PRODUCT;
 import static nars.io.Symbols.NativeOperator.SEQUENCE;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
+import nars.io.narsese.Narsese;
+import nars.io.narsese.NarseseParser;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
@@ -472,28 +476,15 @@ public class Memory implements Serializable {
      * <p>
      * called from Term and ConceptWindow.
      *
-     * @param name the name of a concept
+     * @param t the name of a concept
      * @return a Concept or null
      */
-    public Concept concept(final CharSequence name) {
-        return conceptProcessor.concept(name);
+    public Concept concept(final Term t) {
+        return conceptProcessor.concept(t);
     }
+  
 
-    /**
-     * Get a Term for a given name of a Concept or InnateOperator
-     * <p>
-     * called in StringParser and the make____() methods of compound terms.
-     *
-     * @param name the name of a concept or operator
-     * @return a Term or null (if no Concept/InnateOperator has this name)
-     */
-    public Term conceptTerm(final CharSequence name) {
-        final Concept concept = concept(name);
-        if (concept != null) {
-            return concept.term;
-        }
-        return null;
-    }
+
 
     //TODO decide if this is necessary
     public void temporalRuleOutputToGraph(Sentence s, Task t) {
@@ -503,16 +494,7 @@ public class Memory implements Serializable {
         }
 
     }
-    
-    /**
-     * Get an existing Concept for a given Term.
-     *
-     * @param term The Term naming a concept
-     * @return a Concept or null
-     */
-    public Concept concept(final Term term) {
-        return concept(term.name());
-    }
+
 
     /**
      * Get the Concept associated to a Term, or create it.
@@ -524,8 +506,8 @@ public class Memory implements Serializable {
         if (!term.isConstant()) {
             return null;
         }
-        final CharSequence n = term.name();
-        Concept concept = concept(n);
+        
+        Concept concept = concept(term);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
             Concept newConcept = conceptProcessor.addConcept(term, this);

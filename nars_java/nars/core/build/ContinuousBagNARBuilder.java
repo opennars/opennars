@@ -17,18 +17,21 @@ import nars.storage.ContinuousBag2.BagCurve;
 
 
 public class ContinuousBagNARBuilder extends DefaultNARBuilder {
-    private final boolean randomRemoval;
+    public final boolean randomRemoval;
+    public final BagCurve curve;
 
     public ContinuousBagNARBuilder() {
         this(true);
     }
     public ContinuousBagNARBuilder(boolean randomRemoval) {
+        this(new ContinuousBag2.QuadraticBagCurve(), randomRemoval);        
+    }
+    public ContinuousBagNARBuilder(BagCurve curve, boolean randomRemoval) {
         super();
         this.randomRemoval = randomRemoval;
+        this.curve = curve;
     }
     
-    //final static BagCurve curve = new ContinuousBag2.DefaultBagCurve();
-    final static BagCurve curve = new ContinuousBag2.CubicBagCurve();
 
     @Override
     public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
@@ -36,7 +39,7 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     }
 
     @Override
-    public AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
+    public AbstractBag<Concept,Term> newConceptBag(Param p) {
         return new ContinuousBag2<>(getConceptBagSize(), curve, randomRemoval);
     }
 

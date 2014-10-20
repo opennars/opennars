@@ -358,4 +358,8 @@ public class Texts {
         return sl - tl;
       }
 
+    public static CharSequence n2(final double p) {
+        return n2((float)p);
+    }
+
 }

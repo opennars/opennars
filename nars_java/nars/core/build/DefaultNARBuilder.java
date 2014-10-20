@@ -125,7 +125,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     }
 
     
-    protected AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
+    protected AbstractBag<Concept,Term> newConceptBag(Param p) {
         return new Bag(getConceptBagLevels(), getConceptBagSize());
     }
 

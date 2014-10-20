@@ -1,14 +1,19 @@
 package nars.perf;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.control.SequentialMemoryCycle;
+import nars.entity.Concept;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
+import nars.io.Input;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.timeline.Timeline2DCanvas;
@@ -23,62 +28,73 @@ import nars.timeline.Timeline2DCanvas.Chart;
 public class BagFairness {
 
     final int bins = 10;
+    TimeSeries fired[] = new TimeSeries[bins];
     TimeSeries bin[] = new TimeSeries[bins];
+    float fireCount[] = new float[bins];
     long total = 0;
+    Concept nextConcept = null;
             
-    public BagFairness(NAR n, int iterations, double insertProb, double removeProb) {
+    public BagFairness(NAR n, Input input, int iterations) {
 
         final float maxConcepts = 1000;
         
-        for (int b = bins-1; b >= 0; b--) {
+        for (int b = 0; b < bins; b++) {
             double percentStart = ((double)b)/bins;
             double percentEnd = ((double)(b+1))/bins;            
-            //System.out.println(  + ":\t\t" + amount);
+            if (percentEnd > 1.0) percentEnd = 1.0;
             
-            bin[b] = new TimeSeries(percentStart + ".." + percentEnd, Color.getHSBColor(0.2f + 0.5f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
+            bin[b] = new TimeSeries("Concept: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
+            fired[b] = new TimeSeries("Fired: " + Texts.n2(percentStart) + ".." + Texts.n2(percentEnd), Color.getHSBColor(0.2f + 0.7f * (float)percentStart, 0.8f, 0.8f), iterations-1).setRange(0, maxConcepts);
         }
+
         
         n.event().on(Events.ConceptFire.class, new Observer() {
 
             @Override
             public void event(Class event, Object[] arguments) {
+                nextConcept = (Concept)arguments[0];
             }
             
         });
         
+        n.addInput(input);
+        
         while (n.getTime() < iterations) {
-            double p = Math.random();
-            if (p < insertProb) {
-                float priority = (float)Math.random(); //uniform distribution                
-                n.addInput("$" + Texts.n2(priority) + "$ " + new Term(UUID.randomUUID().toString()) + ".");
-            }
-            p = Math.random();
-            if (p < removeProb) {
-                //NullItem removed = bag.takeOut();
-                //n.memory.
-                /*if (removed!=null) {
-                    removalPriority(removed.getPriority());
-                } */               
-            }
-            
-            double[] d = ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.getPriorityDistribution(bins);
 
+            if (nextConcept!=null) {
+                float p = nextConcept.getPriority();
+                int b = (int)Math.round(p * bins);
+                
+                fireCount[b]++;
+                
+                nextConcept = null;
+            }
+
+            
             int concepts = ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.size();
+            double[] d = ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.getPriorityDistribution(bins);           
             for (int b = 0; b < bins; b++) {
                 
                 bin[b].push(n.getTime(), (float)d[b] * concepts);
+                fired[b].push(n.getTime(), fireCount[b]);
             }
+            
+            
+            
             //((SequentialMemoryCycle)n.memory.conceptProcessor).processConcept();
             n.step(1);
         }
         
-        Chart[] charts = new Chart[bins+2];
-        int b;
-        for (b = 0; b < bins; b++) {
+        List<Chart>charts = new ArrayList();
+        
+        /*for (b = 0; b < bins; b++) {
             charts[b] = new Timeline2DCanvas.LineChart(bin[b]);                 
-        }        
-        charts[b++] = new Timeline2DCanvas.StackedPercentageChart(bin).height(8f);
-        charts[b++] = new Timeline2DCanvas.LineChart(bin).height(8f);
+        } 8*/       
+        charts.add(new Timeline2DCanvas.StackedPercentageChart(bin).height(8f));
+        charts.add(new Timeline2DCanvas.LineChart(bin).height(8f));
+        
+        charts.add(new Timeline2DCanvas.StackedPercentageChart(fired).height(8f));
+        
         new NWindow("_", new Timeline2DCanvas(charts)).show(800, 800, true);
 
         //printResults(insertProb, removeProb);
@@ -103,14 +119,44 @@ public class BagFairness {
 //        System.out.println();
 //    }
 //    
+    
+    public static class RandomTermInput implements Input<String> {
+        private final double inputProb;
+        private final double minPriority;
+        private final double maxPriority;
+
+        public RandomTermInput(double inputProb, double minPriority, double maxPriority) {
+            this.inputProb = inputProb;
+            this.minPriority = minPriority;
+            this.maxPriority = maxPriority;
+            
+        }
+
+        
+        @Override public String next() throws IOException {
+            double p = Math.random();
+            if (p < inputProb) {
+                
+                //uniform distribution
+                double pr = Math.random() * (maxPriority-minPriority) + minPriority;
+                float priority = (float)pr;                               
+                
+                return ("$" + Texts.n2(priority) + "$ " + new Term(UUID.randomUUID().toString()) + ".");
+            }
+            return null;
+        }
+
+        @Override public boolean finished(boolean stop) { return false; }
+    }
+    
     public static void main(String[] args) {
         NAR n = new DefaultNARBuilder().build();
+        //NAR n = new ContinuousBagNARBuilder(new ContinuousBag2.CubicBagCurve(), true).build();
         
-        //AbstractBag<NullItem, CharSequence> b = new DefaultBag<NullItem,CharSequence>(100,1000, n.param().conceptForgetDurations);
-        //AbstractBag<NullItem, CharSequence> b = new ContinuousBag<NullItem,CharSequence>(1000, n.param().conceptForgetDurations,true);
         for (double rProb = 0.5; rProb <= 1.0; rProb += 10.10) {
             new BagFairness(n,
-                    1500, 1.0, rProb
+                    new RandomTermInput(rProb, 0, 1.0),
+                    1500
             );
         }
     }
