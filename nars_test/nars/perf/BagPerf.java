@@ -22,10 +22,10 @@ import nars.core.Param.AtomicDurations;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
-import nars.storage.AbstractBag;
+import nars.storage.Bag;
+import nars.storage.LevelBag;
 import nars.storage.ContinuousBag;
 import nars.storage.ContinuousBag2;
-import nars.storage.DefaultBag;
 
 /**
  *
@@ -55,7 +55,7 @@ public class BagPerf {
 
             @Override
             public void run(boolean warmup) {
-                DefaultBag<NullItem,CharSequence> b = new DefaultBag(levels, capacity, forgetRate) {
+                LevelBag<NullItem,CharSequence> b = new LevelBag(levels, capacity) {
 
 //                    @Override
 //                    protected ArrayDeque<NullItem> newLevel() {
@@ -114,7 +114,7 @@ public class BagPerf {
         
     }
     
-    public static void randomBagIO(AbstractBag<NullItem,CharSequence> b, int accesses, double insertProportion) {
+    public static void randomBagIO(Bag<NullItem,CharSequence> b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (Math.random() > insertProportion) {
                 //remove
@@ -126,7 +126,7 @@ public class BagPerf {
             }            
         }
     }
-    public static void iterate(AbstractBag<NullItem,CharSequence> b) {
+    public static void iterate(Bag<NullItem,CharSequence> b) {
         Iterator<NullItem> i = b.iterator();
         int count = 0;
         while (i.hasNext()) {
@@ -139,7 +139,7 @@ public class BagPerf {
     }
     
     public interface BagBuilder<E extends Item<K>,K> {
-        public AbstractBag<E,K> newBag();
+        public Bag<E,K> newBag();
     }
     
     //final boolean first, final int levels, final int levelCapacity, 
@@ -151,7 +151,7 @@ public class BagPerf {
 
             @Override
             public void run(boolean warmup) {
-                AbstractBag bag = b.newBag();
+                Bag bag = b.newBag();
                 
                 randomBagIO(bag, randomAccesses, insertRatio);
                 
@@ -202,7 +202,7 @@ public class BagPerf {
                 double a = 0, b = 0;
                 
                 a = compare("A", new BagBuilder() {
-                    @Override public AbstractBag newBag() {
+                    @Override public Bag newBag() {
                         
                         /*return new DefaultBag<Item>(_levels, bagCapacity, forgetRate) {
                           @Override
@@ -222,7 +222,7 @@ public class BagPerf {
                 }, iterations, randomAccesses, insertRatio, repeats, warmups);
                 
                 b = compare("B", new BagBuilder() {
-                    @Override public AbstractBag newBag() {
+                    @Override public Bag newBag() {
                         
                         /*
                         return new DefaultBag<Item>(_levels, bagCapacity, forgetRate) {

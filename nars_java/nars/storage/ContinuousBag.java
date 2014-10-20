@@ -12,7 +12,7 @@ import nars.util.SortedItemList;
 
 
 
-public class ContinuousBag<E extends Item<K>, K> extends AbstractBag<E,K> {
+public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      
     final float MASS_EPSILON = 1e-5f;
     
