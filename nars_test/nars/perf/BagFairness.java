@@ -8,6 +8,7 @@ import java.util.UUID;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
+import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
 import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
@@ -16,6 +17,8 @@ import nars.gui.output.chart.TimeSeries;
 import nars.io.Input;
 import nars.io.Texts;
 import nars.language.Term;
+import nars.storage.AbstractBag;
+import nars.test.util.AdaptiveContinuousBagTest.AdaptiveContinuousBag;
 import nars.timeline.Timeline2DCanvas;
 import nars.timeline.Timeline2DCanvas.Chart;
 
@@ -150,12 +153,22 @@ public class BagFairness {
     }
     
     public static void main(String[] args) {
-        NAR n = new DefaultNARBuilder().build();
+        NAR n = new DefaultNARBuilder() {
+
+            @Override
+            protected AbstractBag<Concept, Term> newConceptBag(Param p) {
+                return new AdaptiveContinuousBag(getConceptBagSize());
+            }
+            
+        }.build();
+        
+        n.param().conceptForgetDurations.set(1.0);
+        
         //NAR n = new ContinuousBagNARBuilder(new ContinuousBag2.CubicBagCurve(), true).build();
         
-        for (double rProb = 0.5; rProb <= 1.0; rProb += 10.10) {
+        for (double rProb = 0.25; rProb <= 1.0; rProb += 10.10) {
             new BagFairness(n,
-                    new RandomTermInput(rProb, 0, 1.0),
+                    new RandomTermInput(rProb, 0.75, 1.0),
                     1500
             );
         }

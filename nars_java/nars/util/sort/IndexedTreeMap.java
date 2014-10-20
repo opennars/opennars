@@ -870,6 +870,7 @@ public class IndexedTreeMap<K, V>
     }
 
 
+    @Override
     public Entry<K, V> exactEntry(final int index) {
         return getExactEntry(root, index);
     }
