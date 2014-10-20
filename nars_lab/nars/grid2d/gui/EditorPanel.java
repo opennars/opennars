@@ -34,7 +34,7 @@ import processing.core.PVector;
  */
 public class EditorPanel extends JPanel {
     
-    final String levelPath = "./nars_lab/nars/grid2d/level";
+    final String levelPath = "./nars_lab/nars/grid2d/level/";
 
     abstract public static class EditorMode extends DefaultMutableTreeNode {
 

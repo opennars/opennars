@@ -5,6 +5,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
 import nars.core.NARBuilder;
+import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
@@ -45,8 +46,7 @@ public class TestChamber {
         NAR nar = builder.build();
         
         //set NAR runtime parmeters: 
-        nar.param().noiseLevel.set(0);
-        
+        nar.param().noiseLevel.set(0); 
         new NARSwing(nar);
 
         new TestChamber(nar);
@@ -181,12 +181,12 @@ public class TestChamber {
                         hungry--;
                         if(hungry<0) {
                             hungry=250;
-                            //nar.addInput("<#1 --> eat>!"); //also works but better:
-                            for (GridObject obj : space.objects) {
+                            nar.addInput("(&&,<#1 --> pizza>,<#1 --> eat>)!"); //also works but better:
+                            /*for (GridObject obj : space.objects) {
                                 if (obj instanceof Pizza) {
                                     nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
                                 }
-                            }
+                            }*/
                         }
                     }
                 }

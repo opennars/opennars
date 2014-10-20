@@ -24,6 +24,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -46,7 +47,6 @@ public class play extends javax.swing.JFrame {
         
         nar.memory.addOperator(new AddO("^addO"));
         nar.param().noiseLevel.set(0);
-        nar.param().decisionThreshold.set(0.3);
         
         initComponents();
         addStartKnowledge();
