@@ -36,6 +36,8 @@ public interface Input<X> {
      * it has been removed from NAR.
      * @return whether this input is finished
      */
-    public boolean finished(boolean stop);
-    
+    //public boolean finished(boolean stop);        
+    default public boolean finished(boolean stop) {
+        return false;
+    }
 }

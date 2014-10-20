@@ -50,7 +50,7 @@ abstract public class DAPerception extends Perception {
         if (output == null) return;
         
         da.train(sensor, learning_rate, corruption_level);
-        da.getEncoded(sensor, encoded, true, true);
+        da.encode(sensor, encoded, true, true);
         
         
         //printArray(output);
