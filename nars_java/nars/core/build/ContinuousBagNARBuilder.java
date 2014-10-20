@@ -24,7 +24,7 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
         this(true);
     }
     public ContinuousBagNARBuilder(boolean randomRemoval) {
-        this(new ContinuousBag2.CubicBagCurve(), randomRemoval);        
+        this(new ContinuousBag2.QuadraticBagCurve(), randomRemoval);        
     }
     public ContinuousBagNARBuilder(BagCurve curve, boolean randomRemoval) {
         super();
@@ -39,7 +39,7 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     }
 
     @Override
-    public AbstractBag<Concept,CharSequence> newConceptBag(Param p) {
+    public AbstractBag<Concept,Term> newConceptBag(Param p) {
         return new ContinuousBag2<>(getConceptBagSize(), curve, randomRemoval);
     }
 
