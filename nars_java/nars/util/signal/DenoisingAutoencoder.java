@@ -1,10 +1,11 @@
-package nars.grid2d.agent.dl;
+package nars.util.signal;
 
 
-import java.util.Arrays;
 import java.util.Random;
+import nars.util.XORShiftRandom;
 
-public class dA {
+/** Denoising Autoencoder (from DeepLearning.net) */
+public class DenoisingAutoencoder {
 
     public int n_visible;
     public int n_hidden;
@@ -12,12 +13,17 @@ public class dA {
     public double[] hbias;
     public double[] vbias;
     public Random rng;
+    private double[] tilde_x;
+    private double[] y;
+    private double[] z;
+    private double[] L_vbias;
+    private double[] L_hbias;
 
-    public double uniform(double min, double max) {
+    public double uniform(final double min, final double max) {
         return rng.nextDouble() * (max - min) + min;
     }
 
-    public double binomial(int n, double p) {
+    public double binomial(final int n, final double p) {
         if (p < 0 || p > 1) {
             return 0;
         }
@@ -35,21 +41,20 @@ public class dA {
         return c;
     }
 
-    public static double sigmoid(double x) {
+    final public static double sigmoid(final double x) {
         return 1.0 / (1.0 + Math.pow(Math.E, -x));
     }
     
-    public dA(int n_visible, int n_hidden) {
+    public DenoisingAutoencoder(int n_visible, int n_hidden) {
         this(n_visible, n_hidden, null, null, null, null);
     }
 
-    public dA(int n_visible, int n_hidden,
-            double[][] W, double[] hbias, double[] vbias, Random rng) {
+    public DenoisingAutoencoder(int n_visible, int n_hidden, double[][] W, double[] hbias, double[] vbias, Random rng) {
         this.n_visible = n_visible;
         this.n_hidden = n_hidden;
 
         if (rng == null) {
-            this.rng = new Random(1234);
+            this.rng = new XORShiftRandom();
         } else {
             this.rng = rng;
         }
@@ -137,12 +142,14 @@ public class dA {
     }
 
     public void train(double[] x, double lr, double corruption_level) {
-        double[] tilde_x = new double[n_visible];
-        double[] y = new double[n_hidden];
-        double[] z = new double[n_visible];
+        if ((tilde_x == null) || (tilde_x.length!=n_visible)) {
+            tilde_x = new double[n_visible];
+            y = new double[n_hidden];
+            z = new double[n_visible];
 
-        double[] L_vbias = new double[n_visible];
-        double[] L_hbias = new double[n_hidden];
+            L_vbias = new double[n_visible];
+            L_hbias = new double[n_hidden];            
+        }
 
         if (corruption_level > 0) {        
             get_corrupted_input(x, tilde_x, 1 - corruption_level);
@@ -184,68 +191,4 @@ public class dA {
         get_reconstructed_input(y, z);
     }
 
-    private static void test_dA() {
-        Random rng = new Random(123);
-
-        double corruption_level = 0.3;
-        int training_epochs = 100;
-
-        int train_N = 10;
-        int test_N = 2;
-        int n_visible = 20;
-        int n_hidden = 5;
-
-        double learning_rate = 0.1 / train_N;
-
-        double[][] train_X = {
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0}
-        };
-
-        dA da = new dA(n_visible, n_hidden, null, null, null, rng);
-
-        // train
-        for (int epoch = 0; epoch < training_epochs; epoch++) {
-            for (int i = 0; i < train_N; i++) {
-                da.train(train_X[i], learning_rate, corruption_level);
-            }
-        }
-
-        // test data
-        double[][] test_X = {
-            {1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0}
-        };
-
-        double[][] reconstructed_X = new double[test_N][n_visible];
-
-        // test
-        for (int i = 0; i < test_N; i++) {
-            double[] encoded_X = new double[n_hidden];
-            da.getEncoded(test_X[i], encoded_X, false, false);
-            
-            System.out.println(Arrays.toString(test_X[i]));
-            System.out.println(Arrays.toString(encoded_X));
-            da.reconstruct(test_X[i], reconstructed_X[i]);
-            for (int j = 0; j < n_visible; j++) {
-                System.out.printf("%.5f ", reconstructed_X[i][j]);
-            }
-            System.out.println();
-            
-            System.out.println();
-        }
-    }
-
-    public static void main(String[] args) {
-        test_dA();
-
-    }
 }

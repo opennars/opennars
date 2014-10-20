@@ -57,12 +57,7 @@ import nars.operator.Operator;
 public class Narsese {
     
     public final Memory memory;
-            
-        
-    //an index of known, but non-conceptualized Terms
-    final Map<CharSequence,Term> unconceptualized = new HashMap();
-        
-    
+                
     /**
      * All kinds of invalid addInput lines
      */
@@ -325,36 +320,6 @@ public class Narsese {
 
     
     
-    public Term parseTerm(final String s) throws InvalidInputException {
-        if (s.isEmpty())
-            throw new InvalidInputException("empty string");        
-        
-        Term parsed = _parseTerm(s.trim());
-        
-        Term conceptualized = memory.conceptTerm(parsed.name());    // existing constant or getOperator
-        if (conceptualized != null) {
-        	//already conceptualized
-        	
-        	//remove from unconceptualized if it happens to be there
-        	unconceptualized.remove(conceptualized.name());
-        	
-            return conceptualized;   
-        }
-        else {        	
-        	Term known = unconceptualized.get(parsed.name());
-        	if (known!=null) {
-            	//unconceptualized, but known
-        		return known;
-        	}
-        	else {
-            	//new Term
-        		unconceptualized.put(parsed.name(), parsed);
-        		return parsed;
-        	}
-        }
-        
-    }
-    
     /* ---------- react String into term ---------- */
     /**
      * Top-level method that react a Term in general, which may recursively call
@@ -369,7 +334,8 @@ public class Narsese {
      * @param memory Reference to the memory
      * @return the Term generated from the String
      */
-    public Term _parseTerm(final String s) throws InvalidInputException {
+    public Term parseTerm(String s) throws InvalidInputException {
+        s = s.trim();
         
         int index = s.length() - 1;
         char first = s.charAt(0);

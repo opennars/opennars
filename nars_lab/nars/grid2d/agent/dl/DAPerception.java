@@ -1,6 +1,7 @@
 
 package nars.grid2d.agent.dl;
 
+import nars.util.signal.DenoisingAutoencoder;
 import java.util.Random;
 import nars.grid2d.agent.ql.Perception;
 
@@ -10,7 +11,7 @@ import nars.grid2d.agent.ql.Perception;
  */
 abstract public class DAPerception extends Perception {
 
-    private final dA da;
+    private final DenoisingAutoencoder da;
 
     double pretrain_lr = 0.25;
     double corruption_level = 0;
@@ -33,7 +34,7 @@ abstract public class DAPerception extends Perception {
         encoded = new double[ reducedInputs];
                 
         
-        this.da = new dA(n_ins, reducedInputs);
+        this.da = new DenoisingAutoencoder(n_ins, reducedInputs);
     }
 
     @Override

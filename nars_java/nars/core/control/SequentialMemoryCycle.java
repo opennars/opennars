@@ -23,12 +23,12 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     /**
      * Concept bag. Containing all Concepts of the system
      */
-    public final AbstractBag<Concept,CharSequence> concepts;
+    public final AbstractBag<Concept,Term> concepts;
     private final ConceptBuilder conceptBuilder;
     Memory memory;
     
 
-    public SequentialMemoryCycle(AbstractBag<Concept,CharSequence> concepts, ConceptBuilder conceptBuilder) {
+    public SequentialMemoryCycle(AbstractBag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.conceptBuilder = conceptBuilder;        
     }
@@ -74,8 +74,8 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     }
 
     @Override
-    public Concept concept(final CharSequence name) {
-        return concepts.get(name);
+    public Concept concept(final Term term) {
+        return concepts.get(term);
     }
 
     @Override

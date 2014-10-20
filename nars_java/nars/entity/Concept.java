@@ -31,7 +31,6 @@ import nars.core.Events.ConceptQuestionAdd;
 import nars.core.Events.ConceptQuestionRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
-import nars.entity.Item.StringKeyItem;
 import static nars.entity.Stamp.make;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
@@ -47,7 +46,7 @@ import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.AbstractBag;
 
-public class Concept extends StringKeyItem {
+public class Concept extends Item<Term> {
 
     /**
      * The term is the unique ID of the concept
@@ -102,7 +101,6 @@ public class Concept extends StringKeyItem {
      * The display window
      */
 
-    public final CharSequence key;
 
 
     /* ---------- constructor and initialization ---------- */
@@ -115,7 +113,6 @@ public class Concept extends StringKeyItem {
     public Concept(final Term tm, AbstractBag<TaskLink,TermLink> taskLinks, AbstractBag<TermLink,TermLink> termLinks, final Memory memory) {
         super();
         
-        this.key = tm.name();
         this.term = tm;
         this.memory = memory;
 
@@ -135,9 +132,25 @@ public class Concept extends StringKeyItem {
 
     }
 
+//    @Override public int hashCode() {
+//        return term.hashCode();
+//    }
+//
+//    @Override public boolean equals(final Object obj) {
+//        if (this == obj) return true;
+//        if (obj instanceof Concept) {
+//            Concept t = (Concept)obj;
+//            return (t.term.equals(term));
+//        }
+//        return false;
+//    }
+//    
+
+    
+    
     @Override
-    public CharSequence name() {
-        return key;
+    public Term name() {
+        return term;
     }
 
     /* ---------- direct processing of tasks ---------- */
@@ -503,7 +516,7 @@ public class Concept extends StringKeyItem {
      */
     @Override
     public String toStringLong() {
-        String res = toStringExternal() + " " + key
+        String res = toStringExternal() + " " + term.name()
                 + toStringIfNotNull(termLinks, "termLinks")
                 + toStringIfNotNull(taskLinks, "taskLinks");
         res += toStringIfNotNull(null, "questions");

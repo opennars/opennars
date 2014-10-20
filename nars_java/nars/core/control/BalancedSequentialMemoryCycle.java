@@ -3,6 +3,7 @@ package nars.core.control;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
+import nars.language.Term;
 import nars.storage.AbstractBag;
 
 /**
@@ -10,7 +11,7 @@ import nars.storage.AbstractBag;
  */
 public class BalancedSequentialMemoryCycle extends SequentialMemoryCycle {
 
-    public BalancedSequentialMemoryCycle(AbstractBag<Concept,CharSequence> concepts, ConceptBuilder conceptBuilder) {
+    public BalancedSequentialMemoryCycle(AbstractBag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
         super(concepts, conceptBuilder);
     }
 
