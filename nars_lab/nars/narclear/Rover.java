@@ -580,7 +580,7 @@ public class Rover extends PhysicsModel {
         int cyclesPerFrame = 500; //was 200        
         nar.param().decisionThreshold.set(0.2);
         nar.param().noiseLevel.set(0);
-        nar.param().duration.set(cyclesPerFrame);
+        nar.param().duration.set(cyclesPerFrame*3);
         
         
 
