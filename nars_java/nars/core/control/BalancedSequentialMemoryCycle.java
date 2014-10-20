@@ -4,14 +4,14 @@ import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.language.Term;
-import nars.storage.AbstractBag;
+import nars.storage.Bag;
 
 /**
  * Implements a cycle with fair 1:1:1 policy for processing a) New tasks, b) Novel tasks, and c) Concepts
  */
 public class BalancedSequentialMemoryCycle extends SequentialMemoryCycle {
 
-    public BalancedSequentialMemoryCycle(AbstractBag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
+    public BalancedSequentialMemoryCycle(Bag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
         super(concepts, conceptBuilder);
     }
 

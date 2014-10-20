@@ -40,7 +40,7 @@ public class GraphExecutive {
     double causeRelevanceFactor = 1.0;
     double conceptPriorityFactor = 0.5;
 
-    double minEdgeCost = 2.0;
+    double minEdgeCost = 1.0;
     
     
     

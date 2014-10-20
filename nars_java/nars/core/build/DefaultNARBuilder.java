@@ -16,8 +16,8 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.plugin.mental.TemporalParticlePlanner;
-import nars.storage.AbstractBag;
 import nars.storage.Bag;
+import nars.storage.LevelBag;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -118,20 +118,20 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Memory m) {        
-        AbstractBag<TaskLink,TermLink> taskLinks = new Bag<>(getTaskLinkBagLevels(), getTaskLinkBagSize());
-        AbstractBag<TermLink,TermLink> termLinks = new Bag<>(getTermLinkBagLevels(), getTermLinkBagSize());
+        Bag<TaskLink,TermLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getTaskLinkBagSize());
+        Bag<TermLink,TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getTermLinkBagSize());
         
         return new Concept(t, taskLinks, termLinks, m);        
     }
 
     
-    protected AbstractBag<Concept,Term> newConceptBag(Param p) {
-        return new Bag(getConceptBagLevels(), getConceptBagSize());
+    protected Bag<Concept,Term> newConceptBag(Param p) {
+        return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
 
     @Override
-    public AbstractBag<Task,Sentence> newNovelTaskBag(Param p) {
-        return new Bag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
+    public Bag<Task,Sentence> newNovelTaskBag(Param p) {
+        return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
     }
  
     

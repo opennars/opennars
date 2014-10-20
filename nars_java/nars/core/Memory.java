@@ -108,7 +108,7 @@ import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
-import nars.storage.AbstractBag;
+import nars.storage.Bag;
 
 
 /**
@@ -186,7 +186,7 @@ public class Memory implements Serializable {
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    public final AbstractBag<Task,Sentence> novelTasks;
+    public final Bag<Task,Sentence> novelTasks;
     
     
     /* ---------- Short-term workspace for a single cycle ---	------- */
@@ -256,7 +256,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, ConceptProcessor cycleControl, AbstractBag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
+    public Memory(Param param, ConceptProcessor cycleControl, Bag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
 
         int threads = 1;
         if (threads == 1) {
@@ -1014,7 +1014,7 @@ public class Memory implements Serializable {
         return sb.toString();
     }
 
-    private String toStringLongIfNotNull(AbstractBag<?,?> item, String title) {
+    private String toStringLongIfNotNull(Bag<?,?> item, String title) {
         return item == null ? "" : "\n " + title + ":\n"
                 + item.toString();
     }

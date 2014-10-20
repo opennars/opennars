@@ -10,7 +10,7 @@ import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
-import nars.storage.AbstractBag;
+import nars.storage.Bag;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -23,12 +23,12 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     /**
      * Concept bag. Containing all Concepts of the system
      */
-    public final AbstractBag<Concept,Term> concepts;
+    public final Bag<Concept,Term> concepts;
     private final ConceptBuilder conceptBuilder;
     Memory memory;
     
 
-    public SequentialMemoryCycle(AbstractBag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
+    public SequentialMemoryCycle(Bag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.conceptBuilder = conceptBuilder;        
     }
@@ -57,7 +57,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     public void processConcept() {
         float forgetCycles = memory.param.conceptForgetDurations.getCycles();
 
-        Concept currentConcept = concepts.processNext(forgetCycles, Parameters.BAG_THRESHOLD, memory);
+        Concept currentConcept = concepts.processNext(forgetCycles, memory);
         if (currentConcept != null) {            
             currentConcept.fire();
         }

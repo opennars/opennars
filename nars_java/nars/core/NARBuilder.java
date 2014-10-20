@@ -6,7 +6,7 @@ import nars.entity.Task;
 import nars.operator.DefaultOperators;
 import nars.operator.ExampleOperators;
 import nars.operator.Operator;
-import nars.storage.AbstractBag;
+import nars.storage.Bag;
 
 /**
  * NAR design parameters which define a NAR at initialization.  These do not change at runtime.
@@ -17,7 +17,7 @@ abstract public class NARBuilder extends Parameters  {
      
     /** initial runtime parameters */
     abstract public Param newParam();
-    abstract public AbstractBag<Task,Sentence> newNovelTaskBag(Param p);
+    abstract public Bag<Task,Sentence> newNovelTaskBag(Param p);
     abstract public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c);
     abstract public ConceptBuilder getConceptBuilder();
     

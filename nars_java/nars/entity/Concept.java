@@ -44,7 +44,7 @@ import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Term;
-import nars.storage.AbstractBag;
+import nars.storage.Bag;
 
 public class Concept extends Item<Term> {
 
@@ -56,12 +56,12 @@ public class Concept extends Item<Term> {
     /**
      * Task links for indirect processing
      */
-    public final AbstractBag<TaskLink,TermLink> taskLinks;
+    public final Bag<TaskLink,TermLink> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
      */
-    public final AbstractBag<TermLink,TermLink> termLinks;
+    public final Bag<TermLink,TermLink> termLinks;
 
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
@@ -110,7 +110,7 @@ public class Concept extends Item<Term> {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Term tm, AbstractBag<TaskLink,TermLink> taskLinks, AbstractBag<TermLink,TermLink> termLinks, final Memory memory) {
+    public Concept(final Term tm, Bag<TaskLink,TermLink> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
         super();
         
         this.term = tm;

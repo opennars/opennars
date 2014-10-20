@@ -12,7 +12,7 @@ import nars.util.sort.IndexedTreeSet;
 
 
 
-public class ContinuousBag2<E extends Item<K>,K> extends AbstractBag<E,K> implements Comparator<E> {
+public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Comparator<E> {
      
     final float MASS_EPSILON = 1e-5f;
     

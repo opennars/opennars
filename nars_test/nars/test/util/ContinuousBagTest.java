@@ -3,11 +3,10 @@ package nars.test.util;
 import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
 import nars.perf.BagPerf.NullItem;
-import nars.storage.AbstractBag;
 import nars.storage.Bag;
+import nars.storage.LevelBag;
 import nars.storage.ContinuousBag;
 import nars.storage.ContinuousBag2;
-import nars.storage.DefaultBag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -111,7 +110,7 @@ public class ContinuousBagTest {
         
     }
     
-    public void testFastBagCapacityLimit(AbstractBag f) {
+    public void testFastBagCapacityLimit(Bag f) {
         
         NullItem four = new NullItem(.4f);
         NullItem five = new NullItem(.5f);
@@ -186,7 +185,7 @@ public class ContinuousBagTest {
         final float priorityEpsilon = 0.1f;
         
         ContinuousBag<NullItem,CharSequence> c = new ContinuousBag(capacity, false);
-        Bag<NullItem,CharSequence> d = new DefaultBag<NullItem,CharSequence>(capacity, 10, p.conceptForgetDurations);
+        LevelBag<NullItem,CharSequence> d = new LevelBag<NullItem,CharSequence>(capacity, 10);
         
         assertEquals(c.getMass(), d.getMass(), 0);
         assertEquals(c.getAveragePriority(), d.getAveragePriority(), 0);

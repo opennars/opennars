@@ -1,8 +1,8 @@
 package nars.storage;
 
 import nars.core.Memory;
+import nars.core.Param.AtomicDurations;
 import nars.entity.Item;
-import nars.storage.ContinuousBag2;
 
 
 /**
@@ -26,7 +26,8 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<
     private double maxPriority;
 
     public AdaptiveContinuousBag(int capacity) {
-        super(capacity, null, true);
+        super(capacity, null, true);                
+        
         reset();
     }
 
@@ -56,8 +57,10 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<
         minPriority = index[0];
         maxPriority = index[resolution - 1];
         //System.out.println(Arrays.toString(index));
+        
     }
 
+    
     protected void setIndex(final int i, final double v) {
         index[i] = v;
     }
@@ -141,4 +144,5 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<
         }
         return c(x);
     }
+
 }

@@ -17,7 +17,7 @@ import nars.gui.output.chart.TimeSeries;
 import nars.io.Input;
 import nars.io.Texts;
 import nars.language.Term;
-import nars.storage.AbstractBag;
+import nars.storage.Bag;
 import nars.test.util.AdaptiveContinuousBagTest.AdaptiveContinuousBag;
 import nars.timeline.Timeline2DCanvas;
 import nars.timeline.Timeline2DCanvas.Chart;
@@ -156,7 +156,7 @@ public class BagFairness {
         NAR n = new DefaultNARBuilder() {
 
             @Override
-            protected AbstractBag<Concept, Term> newConceptBag(Param p) {
+            protected Bag<Concept, Term> newConceptBag(Param p) {
                 return new AdaptiveContinuousBag(getConceptBagSize());
             }
             
