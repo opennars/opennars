@@ -30,9 +30,9 @@ public class EventEmitter {
      */
     public EventEmitter(boolean threadsafe) {
         if (threadsafe)
-            events = new ConcurrentHashMap<Class<?>, List<Observer>>();
+            events = new ConcurrentHashMap<>();
         else
-            events = new IdentityHashMap<Class<?>, List<Observer>>();
+            events = new IdentityHashMap<>();
     }
 
     /** EventEmitter with a fixed set of known events; the 'events' map
@@ -45,7 +45,7 @@ public class EventEmitter {
     }
 
     protected List<Observer> newObserverList() {
-        return new CopyOnWriteArrayList<Observer>();
+        return new CopyOnWriteArrayList<>();
     }
     
     public final boolean isActive(final Class event) {

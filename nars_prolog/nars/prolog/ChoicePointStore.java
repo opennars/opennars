@@ -84,7 +84,7 @@ public class ChoicePointStore {
      */
     
     public List<ChoicePointContext> getChoicePoints() {
-        ArrayList<ChoicePointContext> l = new ArrayList<ChoicePointContext>();
+        ArrayList<ChoicePointContext> l = new ArrayList<>();
         ChoicePointContext t = pointer;
         while (t != null) {
             l.add(t);

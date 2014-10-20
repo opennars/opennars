@@ -170,10 +170,10 @@ public abstract class AbstractStatsSession implements StatsSession {
     protected DataSet createDataSet(final boolean drainedSession) {
         DataSet dataSet = new DefaultDataSet(System.currentTimeMillis(),
                 drainedSession,
-                new FastPutsLinkedMap<String, Object>()) {
+                new FastPutsLinkedMap<>()) {
                     @Override
                     protected Map<String, Object> createMetaDataMap() {
-                        return new FastPutsLinkedMap<String, Object>();
+                        return new FastPutsLinkedMap<>();
                     }
                 };
 

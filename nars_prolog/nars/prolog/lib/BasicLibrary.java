@@ -841,10 +841,10 @@ public class BasicLibrary extends Library {
             nars.prolog.Number n0 = (nars.prolog.Number) arg0;
             String st = null;
             if (n0.isInteger()) {
-                st = new java.lang.Integer(n0.intValue()).toString();
+                st = Integer.toString(n0.intValue());
             } 
             else {
-                st = new java.lang.Double(n0.doubleValue()).toString();
+                st = Double.toString(n0.doubleValue());
             }
             return (unify(arg1, new Struct(st)));
         } else {
@@ -944,7 +944,6 @@ public class BasicLibrary extends Library {
             }
             if (st3!=null)
             	st2=st3;
-            ;
             Term term = null;
             try {
                 term = new nars.prolog.Int(java.lang.Integer.parseInt(st2));
@@ -1472,8 +1471,8 @@ public class BasicLibrary extends Library {
             	ArrayList<Term> l = (engine.getEngineManager()).getBagOFres();
             	ArrayList<String> lString = (engine.getEngineManager()).getBagOFresString();
             	if(l==null){
-            		l=new ArrayList<Term>();
-            		lString=new ArrayList<String>();
+            		l=new ArrayList<>();
+            		lString=new ArrayList<>();
             	}
             	l.add(t);
             	//if(t instanceof Var)

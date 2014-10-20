@@ -55,8 +55,8 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 
 	private final Random r = new XORShiftRandom();
 
-	List<Particle> particleAL = new FastTable<Particle>();
-        ArrayDeque<Node> heap = new ArrayDeque<Node>();
+	List<Particle> particleAL = new FastTable<>();
+        ArrayDeque<Node> heap = new ArrayDeque<>();
         
 	public RenderClass_v7(int width, int height) {
 		

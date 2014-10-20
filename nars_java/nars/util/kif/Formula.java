@@ -816,7 +816,7 @@ public class Formula implements Comparable {
                 }
             }
         }
-        return sList.size() == 0;
+        return sList.isEmpty();
     }
 
     /**
@@ -1180,7 +1180,7 @@ public class Formula implements Comparable {
                 Iterator it = relns.iterator();
                 while (it.hasNext()) {
                     r = (String) it.next();
-                    ans = (this.theFormula.indexOf(r) != -1);
+                    ans = (this.theFormula.contains(r));
                     if (ans) {
                         break;
                     }
@@ -1968,7 +1968,7 @@ public class Formula implements Comparable {
                             + ", classP == \""
                             + classP
                             + "\"");
-                    if (mgrErrStr.isEmpty() || (mgrErrStr.indexOf(errStr) == -1)) {
+                    if (mgrErrStr.isEmpty() || (!mgrErrStr.contains(errStr))) {
                         KBmanager.getMgr().setError(mgrErrStr
                                 + "\n<br/>"
                                 + errStr
@@ -1987,7 +1987,7 @@ public class Formula implements Comparable {
                             + result[argnum]);
                     mgrErrStr = KBmanager.getMgr().getError();
                     System.out.println("Error in Formula.addToTypeList(): " + errStr);
-                    if (mgrErrStr.isEmpty() || (mgrErrStr.indexOf(errStr) == -1)) {
+                    if (mgrErrStr.isEmpty() || (!mgrErrStr.contains(errStr))) {
                         KBmanager.getMgr().setError(KBmanager.getMgr().getError()
                                 + "\n<br/>"
                                 + errStr
@@ -2404,7 +2404,7 @@ public class Formula implements Comparable {
                     classIt = ios.iterator();
                     while (classIt.hasNext()) {
                         constraint = "(instance " + var + " " + classIt.next() + ")";
-                        if (this.theFormula.indexOf(constraint) == -1) {
+                        if (!this.theFormula.contains(constraint)) {
                             constraints.add(constraint);
                         }
                     }
@@ -2414,7 +2414,7 @@ public class Formula implements Comparable {
                     classIt = scs.iterator();
                     while (classIt.hasNext()) {
                         constraint = "(subclass " + var + " " + classIt.next() + ")";
-                        if (this.theFormula.indexOf(constraint) == -1) {
+                        if (!this.theFormula.contains(constraint)) {
                             constraints.add(constraint);
                         }
                     }
@@ -2493,7 +2493,7 @@ public class Formula implements Comparable {
                     classIt = ios.iterator();
                     while (classIt.hasNext()) {
                         constraint = "(instance " + var + " " + classIt.next() + ")";
-                        if (this.theFormula.indexOf(constraint) == -1) {
+                        if (!this.theFormula.contains(constraint)) {
                             constraints.add(constraint);
                         }
                     }
@@ -2503,7 +2503,7 @@ public class Formula implements Comparable {
                     classIt = scs.iterator();
                     while (classIt.hasNext()) {
                         constraint = "(subclass " + var + " " + classIt.next() + ")";
-                        if (this.theFormula.indexOf(constraint) == -1) {
+                        if (!this.theFormula.contains(constraint)) {
                             constraints.add(constraint);
                         }
                     }

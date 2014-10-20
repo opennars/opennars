@@ -62,7 +62,7 @@ public class TermPanel extends JPanel implements ActionListener{
    */
   public TermPanel(Term term){
     
-    ptt=new Tree<Term>(term2tree, term);
+    ptt=new Tree<>(term2tree, term);
     add(new JScrollPane(ptt));
     input=new JTextField();
     add(input, BorderLayout.SOUTH);

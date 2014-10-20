@@ -211,7 +211,7 @@ public class Concept extends Item<Term> {
                     memory.removeTask(task, "Duplicated");
                 }   // else: activated belief
                 return;
-            } else if (revisible(judg, oldBelief)) {               ;
+            } else if (revisible(judg, oldBelief)) {
                 if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.time())) != null) {
                     Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
                     if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {

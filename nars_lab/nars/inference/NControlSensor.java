@@ -26,7 +26,6 @@ public class NControlSensor extends ControlSensor {
     @Override
     public double get() {
         double aa = a.doubleValue();
-        ;
         range.set(aa);
         return aa;
     }

@@ -14,7 +14,7 @@ import nars.util.meter.sensor.SpanTracker;
 
 abstract public class AbstractSense extends DefaultDataSet {
 
-    final Map<String, Sensor> sensors = new HashMap<String, Sensor>();
+    final Map<String, Sensor> sensors = new HashMap<>();
     long lastUpdate = -1;
     int allSensorResetPeriodCycles = 2048; //how often to reset all sensors
     boolean active = false;

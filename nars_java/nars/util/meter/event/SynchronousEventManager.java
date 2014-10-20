@@ -45,7 +45,7 @@ public class SynchronousEventManager implements EventManager {
     private final Support lifeCycleSupport = new Support();
 
     protected List<EventHandler> createEventHandlerList() {
-        return new CopyOnWriteArrayList<EventHandler>();
+        return new CopyOnWriteArrayList<>();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class SynchronousEventManager implements EventManager {
         }
 
         Map<StatsKey, Collection<EventHandler>> matches
-                = new HashMap<StatsKey, Collection<EventHandler>>(sessionEventHandlers.size());
+                = new HashMap<>(sessionEventHandlers.size());
 
         for (Map.Entry<StatsKey, List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
             if (keyMatcher.matches(entry.getKey())) {
@@ -110,7 +110,7 @@ public class SynchronousEventManager implements EventManager {
         //assertNotNull(key, "key");
         //assertNotNull(eventHandler, "eventHandler");
         if (sessionEventHandlers == null) {
-            sessionEventHandlers = new ConcurrentHashMap<StatsKey, List<EventHandler>>();
+            sessionEventHandlers = new ConcurrentHashMap<>();
         }
 
         List<EventHandler> eventHandlers = getEventHandlers(key, true);

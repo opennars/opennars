@@ -327,7 +327,7 @@ public class Rover extends PhysicsModel {
             if (h < 0) {
                 h += MathUtils.TWOPI;
             }
-            h = h / MathUtils.TWOPI;
+            h /= MathUtils.TWOPI;
             String dh = "a" + (int)(h*18);   // + ",rad";
             feltOrientation.set("$0.1;0.1$ <" + dh + " --> feltOrientation>. :|:");
 
@@ -505,7 +505,7 @@ public class Rover extends PhysicsModel {
                             
  
                             if(true) { //allow_subcons
-                                ArrayList<String> candids=new ArrayList<String>();
+                                ArrayList<String> candids=new ArrayList<>();
                                 candids.add("(^motor,turn,left). :|:");
                                 candids.add("(^motor,turn,right). :|:");
                                 candids.add("(^motor,backward). :|:");
@@ -521,7 +521,7 @@ public class Rover extends PhysicsModel {
                                 if(candid==0)
                                     rover.rotate(rotationSpeed);
                             } else {
-                                ArrayList<String> candids=new ArrayList<String>();
+                                ArrayList<String> candids=new ArrayList<>();
                                 candids.add("(^motor,turn,left)! :|:");
                                 candids.add("(^motor,turn,right)! :|:");
                                 candids.add("(^motor,backward)! :|:");

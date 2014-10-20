@@ -110,7 +110,7 @@ public class TermTest {
         System.out.println("t2 compareTo t1 " + t2c1);
         */
 
-        TreeSet<Term> set = new TreeSet<Term>();
+        TreeSet<Term> set = new TreeSet<>();
         boolean added1 = set.add((Term) term1.clone());
         boolean added2 = set.add((Term) term2.clone());
         assertTrue("term 1 added to set", added1);

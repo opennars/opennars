@@ -32,11 +32,11 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	public FamilyClausesList(){
 		super();
 
-		numCompClausesIndex = new FamilyClausesIndex<Number>();
-		constantCompClausesIndex = new FamilyClausesIndex<String>();
-		structCompClausesIndex = new FamilyClausesIndex<String>();
+		numCompClausesIndex = new FamilyClausesIndex<>();
+		constantCompClausesIndex = new FamilyClausesIndex<>();
+		structCompClausesIndex = new FamilyClausesIndex<>();
 
-		listCompClausesList = new LinkedList<ClauseInfo>();
+		listCompClausesList = new LinkedList<>();
 	}
 
 	/**

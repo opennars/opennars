@@ -50,13 +50,12 @@ public class Hai {
         double DeltaQ = reward + Gamma * Q[StateX][StateY][Action] - 
                 Q[lastStateX][lastStateY][lastAction];
         
-        et[lastStateX][lastStateY][lastAction] = 
-                et[lastStateX][lastStateY][lastAction] + 1;
+        et[lastStateX][lastStateY][lastAction] += 1;
         
         for (int i = 0; i < nStates; i++) {
             for (int j = 0; j < nStates; j++) {
                 for (int k = 0; k < nActions; k++) {
-                    Q[i][j][k] = Q[i][j][k] + Alpha * DeltaQ * et[i][j][k];
+                    Q[i][j][k] += Alpha * DeltaQ * et[i][j][k];
                     et[i][j][k] = Gamma * Lambda * et[i][j][k];
                 }
             }

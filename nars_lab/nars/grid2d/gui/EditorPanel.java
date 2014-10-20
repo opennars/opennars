@@ -211,7 +211,7 @@ public class EditorPanel extends JPanel {
                                     s.cells.writeCells[i][j].value2=Float.valueOf(c[13]);
                                 }
                                 String[] objs=allText.split("OBJECTS")[1].split(";");
-                                ArrayList<GridObject> newobj=new ArrayList<GridObject>(); //new ArrayList we have to fill
+                                ArrayList<GridObject> newobj=new ArrayList<>(); //new ArrayList we have to fill
                                 for(String obj : objs) {
                                     String[] val=obj.split(",");
                                     if(val.length==0) {

@@ -23,7 +23,7 @@ public class SimpleGUI extends JFrame{
 	private JLabel particlesizeL, tileL;
 	
 	private final String[] selectionTitles = {"v5","v7"};
-	private final JComboBox<String> versionList = new JComboBox<String>(selectionTitles);
+	private final JComboBox<String> versionList = new JComboBox<>(selectionTitles);
 	
 	private final int WIDTH = 700;
 	private int HEIGHT = 300;

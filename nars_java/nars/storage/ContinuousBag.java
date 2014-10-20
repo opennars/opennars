@@ -250,9 +250,9 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
         else {
             x += scanningRate * 1.0f / (1+s);
             if (x >= 1.0f)
-                x = x - 1.0f;
+                x -= 1.0f;
             if (x <= 0.0f)
-                x = x + 1.0f;
+                x += 1.0f;
         }
         
         float y = getFocus(x);

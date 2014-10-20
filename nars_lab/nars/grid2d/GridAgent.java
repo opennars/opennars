@@ -31,7 +31,7 @@ abstract public class GridAgent extends LocalGridObject {
     public void perceive(Effect e) {         effects.add(e);     }
     
     public Effect perceiveNext() {
-        if (effects.size() == 0)
+        if (effects.isEmpty())
             return null;
         
         return effects.pop();

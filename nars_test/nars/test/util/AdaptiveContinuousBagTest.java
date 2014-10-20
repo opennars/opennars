@@ -101,10 +101,10 @@ then it removes the item at this index
             } else {
                 x += scanningRate * 1.0f / (1 + s);
                 if (x >= 1.0f) {
-                    x = x - 1.0f;
+                    x -= 1.0f;
                 }
                 if (x <= 0.0f) {
-                    x = x + 1.0f;
+                    x += 1.0f;
                 }
             }
 

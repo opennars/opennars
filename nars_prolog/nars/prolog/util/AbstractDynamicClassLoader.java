@@ -18,24 +18,24 @@ import java.util.Hashtable;
 public abstract class AbstractDynamicClassLoader extends ClassLoader
 {
 	protected ArrayList<URL> listURLs = null;
-	protected Hashtable<String, Class<?>> classCache = new Hashtable<String, Class<?>>();
+	protected Hashtable<String, Class<?>> classCache = new Hashtable<>();
 	
 	public AbstractDynamicClassLoader()
 	{
 		super(AbstractDynamicClassLoader.class.getClassLoader());
-		listURLs = new ArrayList<URL>();
+		listURLs = new ArrayList<>();
 	}
 	
 	public AbstractDynamicClassLoader(URL[] urls)
 	{
 		super(AbstractDynamicClassLoader.class.getClassLoader());
-		listURLs = new ArrayList<URL>(Arrays.asList(urls));
+		listURLs = new ArrayList<>(Arrays.asList(urls));
 	}
 	
 	public AbstractDynamicClassLoader(URL[] urls, ClassLoader parent)
 	{
 		super(parent);
-		listURLs = new ArrayList<URL>(Arrays.asList(urls));
+		listURLs = new ArrayList<>(Arrays.asList(urls));
 	}
 	
 	public Class<?> loadClass(String className) throws ClassNotFoundException {  

@@ -300,7 +300,7 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
      */
     private JComboBox<String> createComboBox(Object library)
     {
-        JComboBox<String> cb = new JComboBox<String>();
+        JComboBox<String> cb = new JComboBox<>();
         cb.setEditable(false);
         cb.addItem("Loaded");
         cb.addItem("Unloaded");
@@ -624,7 +624,7 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
 
     private Object[] getLibrariesFromFile(FileIDE file)
     {
-        ArrayList<String> resultList = new ArrayList<String>();
+        ArrayList<String> resultList = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(file.getContent(),"\n");
         while (st.hasMoreTokens())
         {

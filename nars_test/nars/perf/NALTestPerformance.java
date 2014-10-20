@@ -145,7 +145,7 @@ public class NALTestPerformance {
             if (successes == expects.size()) {
                 successAt = (int) nar.getTime();
             }
-            if (expects.size() != 0) {
+            if (!expects.isEmpty()) {
                 success = successes / expects.size();
             }
         }

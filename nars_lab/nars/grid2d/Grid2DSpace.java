@@ -596,7 +596,7 @@ public class Grid2DSpace extends PApplet {
     }
 
     static List<PVector> Reconstruct_Taken_Path(Map<PVector, PVector> parent, PVector start, PVector target) {
-        List<PVector> path = new ArrayList<PVector>();
+        List<PVector> path = new ArrayList<>();
         path.add( target );
         while (!path.get(path.size()-1).equals(start)) {
             //since bfs found a solution, start is included for sure and thus this loop terminates for sure
@@ -607,9 +607,9 @@ public class Grid2DSpace extends PApplet {
     }
 
     static List<PVector> Shortest_Path(Grid2DSpace s, GridAgent a, PVector start, PVector target) {
-        Set<PVector> avoid = new HashSet<PVector>();
-        Map<PVector, PVector> parent = new HashMap<PVector, PVector>();
-        ArrayDeque<PVector> queue = new ArrayDeque<PVector>();
+        Set<PVector> avoid = new HashSet<>();
+        Map<PVector, PVector> parent = new HashMap<>();
+        ArrayDeque<PVector> queue = new ArrayDeque<>();
         queue.add(start);
 
 

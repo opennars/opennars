@@ -365,7 +365,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
                     currentGraph = getGraph();
                 } catch (Exception e) {
                     System.err.println(e);
-                    e.printStackTrace();;
+                    e.printStackTrace();
                 }
 
                 for (V v : currentGraph.vertexSet()) {

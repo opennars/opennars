@@ -50,7 +50,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     /* Last environment used */
     private Engine last_env;
     /* Stack environments of nidicate solving */
-    private LinkedList<Engine> stackEnv = new LinkedList<Engine>();
+    private LinkedList<Engine> stackEnv = new LinkedList<>();
     private SolveInfo sinfo;
     private String sinfoSetOf;
     
@@ -105,7 +105,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
         solving = false;
         sinfo = null;
         msgs = new TermQueue();
-        next = new ArrayList<Boolean>();
+        next = new ArrayList<>();
         countNext = 0;
         lockVar = new ReentrantLock();  
         cond = lockVar.newCondition();

@@ -39,7 +39,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
 
     int _currentStrokeId = 0;
     PointCloudLibrary _library = PointCloudLibrary.getDemoLibrary();
-    ArrayList<PointCloudPoint> _currentGesture = new ArrayList<PointCloudPoint>();
+    ArrayList<PointCloudPoint> _currentGesture = new ArrayList<>();
     Label caption = new Label();
     Button clearCanvas = new Button();
     Button deleteUserDefined = new Button();
@@ -194,7 +194,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
     }
 
     private void clearCanvas() {
-        _currentGesture = new ArrayList<PointCloudPoint>();
+        _currentGesture = new ArrayList<>();
         _currentStrokeId = 0;
         caption.setText("");
         addUserDefined.setEnabled(false);

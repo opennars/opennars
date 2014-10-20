@@ -45,8 +45,8 @@ import nars.prolog.util.Tools;
 public class ISOIOLibrary extends Library{
     
     protected final int files = 1000; //numero casuale abbastanza alto per evitare eccezioni sulle dimensioni delle hashtable
-    protected Hashtable<InputStream, Hashtable<String, Term>> inputStreams = new Hashtable<InputStream,Hashtable<String,Term>>(files);
-    protected Hashtable<OutputStream, Hashtable<String, Term>> outputStreams = new Hashtable<OutputStream,Hashtable<String,Term>>(files);
+    protected Hashtable<InputStream, Hashtable<String, Term>> inputStreams = new Hashtable<>(files);
+    protected Hashtable<OutputStream, Hashtable<String, Term>> outputStreams = new Hashtable<>(files);
     
     protected InputStream inputStream = null;
     protected OutputStream outputStream = null;
@@ -86,7 +86,7 @@ public class ISOIOLibrary extends Library{
             throw PrologError.type_error(engine.getEngineManager(), 3, "variable", stream);
         }
         
-        Hashtable<String, Term> properties = new Hashtable<String, Term>(10);
+        Hashtable<String, Term> properties = new Hashtable<>(10);
         boolean result = inizialize_properties(properties);
         BufferedOutputStream output = null;
         BufferedInputStream input = null;        
@@ -267,7 +267,7 @@ public class ISOIOLibrary extends Library{
         
         //siccome ? una open con la lista delle opzioni vuota, inizializzo comunque le opzioni
         //e inoltre inserisco i valori che gi? conosco come file_name,mode,input,output e type.
-        Hashtable<String, Term> properties = new Hashtable<String, Term>(10);
+        Hashtable<String, Term> properties = new Hashtable<>(10);
         boolean result = inizialize_properties(properties);
         
         BufferedOutputStream output = null;
@@ -525,7 +525,7 @@ public class ISOIOLibrary extends Library{
         if(!propertyName.equals("input") && !propertyName.equals("output")){
             propertyValue = (Struct)prop.getArg(0);
         }
-        List<Struct> resultList = new ArrayList<Struct>(); //object generico perche' sono sia inputStream che outputStream
+        List<Struct> resultList = new ArrayList<>(); //object generico perche' sono sia inputStream che outputStream
             
         if(propertyName.equals("input")){
             for(Map.Entry<InputStream,Hashtable<String, Term>> stream:inputStreams.entrySet()){
@@ -1475,18 +1475,18 @@ public class ISOIOLibrary extends Library{
             unify(input_term,Term.createTerm(st));
                     
             //opzione variables + variables_name
-            List<Term> variables_list = new ArrayList<Term>();
+            List<Term> variables_list = new ArrayList<>();
             analize_term(variables_list,input_term);
             
-            Hashtable<Term,String> associations_table = new Hashtable<Term,String>(variables_list.size());
+            Hashtable<Term,String> associations_table = new Hashtable<>(variables_list.size());
 
             //la hashtable sottostante la costruisco per avere le associazioni 
             //con le variabili '_' Queste infatti non andrebbero inserite all'interno della
             //read_option variable_name, ma vanno sostituite comunque da variabili nel termine letto.
-            Hashtable<Term,String> association_for_replace = new Hashtable<Term,String>(variables_list.size());
+            Hashtable<Term,String> association_for_replace = new Hashtable<>(variables_list.size());
             
-            LinkedHashSet<Term> set = new LinkedHashSet<Term>(variables_list);
-            List<Var> vars = new ArrayList<Var>();
+            LinkedHashSet<Term> set = new LinkedHashSet<>(variables_list);
+            List<Var> vars = new ArrayList<>();
 
             if(variables_bool == true){
                 int num = 0;
@@ -1503,10 +1503,10 @@ public class ISOIOLibrary extends Library{
             }
                         
             //opzione singletons
-            List<Term> singl = new ArrayList<Term>();
+            List<Term> singl = new ArrayList<>();
             int flag = 0;
             if(singletons_bool == true){
-                List<Term> temporanyList = new ArrayList<Term>(variables_list);
+                List<Term> temporanyList = new ArrayList<>(variables_list);
                 for(Term t:variables_list){
                     temporanyList.remove(t);
                     flag = 0;
@@ -1686,7 +1686,7 @@ public class ISOIOLibrary extends Library{
             
             Struct term = (Struct)out_term;
             String result = "";
-            Hashtable<String,Boolean> options = new Hashtable<String,Boolean>(3);
+            Hashtable<String,Boolean> options = new Hashtable<>(3);
             options.put("numbervars", numbervars);
             options.put("ignore_ops", ignore_ops);
             options.put("quoted", quoted);
@@ -1977,7 +1977,7 @@ public class ISOIOLibrary extends Library{
         flag = 1;
         
         //inserisco anche stdin e stdout all'interno dell'hashtable con le sue propriet?
-        Hashtable<String, Term> propertyInput = new Hashtable<String, Term>(10);
+        Hashtable<String, Term> propertyInput = new Hashtable<>(10);
         inizialize_properties(propertyInput);
         propertyInput.put("input", new Struct("true"));
         propertyInput.put("mode", new Struct("read"));
@@ -1986,7 +1986,7 @@ public class ISOIOLibrary extends Library{
         propertyInput.put("file_name", new Struct("stdin"));
         propertyInput.put("eof_action", new Struct("reset"));
         propertyInput.put("type", new Struct("text"));
-        Hashtable<String, Term> propertyOutput = new Hashtable<String, Term>(10);
+        Hashtable<String, Term> propertyOutput = new Hashtable<>(10);
         inizialize_properties(propertyOutput);
         propertyOutput.put("output", new Struct("true"));
         propertyOutput.put("mode", new Struct("append"));

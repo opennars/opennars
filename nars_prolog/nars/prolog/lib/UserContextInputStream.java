@@ -24,7 +24,7 @@ public class UserContextInputStream extends InputStream {
         {
         		this.avalaible = false;
                 this.start = true;
-                this.readListeners = new ArrayList<ReadListener>();
+                this.readListeners = new ArrayList<>();
         }
 
         public synchronized InputStream getInput()

@@ -223,7 +223,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             ParsingResult r = rpr.run(input);
 
             String s = "";
-            boolean valid = (r.parseErrors.size() == 0);
+            boolean valid = (r.parseErrors.isEmpty());
             if (!valid) {
                 for (Object e : r.parseErrors) {
                     if (e instanceof InvalidInputError) {
@@ -342,7 +342,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                 }
 
                 this.nextTasks = englisch.parse(input, nar.perception.getText().narsese, false);
-                if (nextTasks.size() == 0)
+                if (nextTasks.isEmpty())
                     nextTasks = null;
             }
         }

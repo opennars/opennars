@@ -55,7 +55,7 @@ public final class StatsKeyUtil {
      * @return
      */
     public static List<String> keyNameHierarchy(final String keyName, boolean ascending) {
-        final List<String> result = new ArrayList<String>(8);
+        final List<String> result = new ArrayList<>(8);
 
         if (ascending) {
             int i = -1;

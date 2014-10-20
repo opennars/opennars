@@ -83,7 +83,7 @@ public class PointCloudUtils
   public static ArrayList<PointCloudPoint> translateTo(ArrayList<PointCloudPoint> points, PointCloudPoint pt) // translates points' centroid
   {
     PointCloudPoint c = centroid(points);
-    ArrayList<PointCloudPoint> newpoints = new ArrayList<PointCloudPoint>();
+    ArrayList<PointCloudPoint> newpoints = new ArrayList<>();
 
     for(int i = 0; i < points.size(); i++)
     {
@@ -134,7 +134,7 @@ public class PointCloudUtils
 
     double size = Math.max(maxX - minX, maxY - minY);
 
-    ArrayList<PointCloudPoint> newpoints = new ArrayList<PointCloudPoint>();
+    ArrayList<PointCloudPoint> newpoints = new ArrayList<>();
 
     for(int i = 0; i < points.size(); i++)
     {
@@ -167,7 +167,7 @@ public class PointCloudUtils
   {
     double I = pathLength(points) / (numPoints - 1); // interval length
     double D = 0.0;
-    ArrayList<PointCloudPoint> newpoints = new ArrayList<PointCloudPoint>();
+    ArrayList<PointCloudPoint> newpoints = new ArrayList<>();
     PointCloudPoint p = points.get(0);
     newpoints.add(new PointCloudPoint(p.getX(), p.getY(), p.getID()));
 

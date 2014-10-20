@@ -52,7 +52,7 @@ public abstract class AbstractSensor implements Sensor {
 
     public AbstractSensor(String id) {
         this(new ConcurrentSession(
-                new DefaultStatsKey("", id, new FastPutsArrayMap<String, Object>()),
+                new DefaultStatsKey("", id, new FastPutsArrayMap<>()),
                 null,
                 new DistributionDataRecorder()));
     }

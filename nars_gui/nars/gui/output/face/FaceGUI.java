@@ -324,9 +324,7 @@ public class FaceGUI extends BaseClass {
     public double[][] getTargets() {
         double ad[][] = new double[2][flexTarget[0].length];
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < flexTarget[0].length; j++) {
-                ad[i][j] = flexTarget[i][j];
-            }
+            System.arraycopy(flexTarget[i], 0, ad[i], 0, flexTarget[0].length);
 
         }
 
@@ -335,9 +333,7 @@ public class FaceGUI extends BaseClass {
 
     public void setTargets(double ad[][]) {
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < flexTarget[0].length; j++) {
-                flexTarget[i][j] = ad[i][j];
-            }
+            System.arraycopy(ad[i], 0, flexTarget[i], 0, flexTarget[0].length);
 
         }
     }

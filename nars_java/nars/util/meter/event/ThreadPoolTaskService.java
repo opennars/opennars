@@ -82,9 +82,9 @@ public class ThreadPoolTaskService implements TaskService {
 
         int queueSize = StatsProperties.getIntegerProperty(PROP_QUEUE_SIZE, DEFAULT_QUEUE_SIZE);
         if (queueSize < 1) {
-            queue = new LinkedBlockingQueue<Runnable>();
+            queue = new LinkedBlockingQueue<>();
         } else {
-            queue = new ArrayBlockingQueue<Runnable>(queueSize);
+            queue = new ArrayBlockingQueue<>(queueSize);
         }
 
         return queue;

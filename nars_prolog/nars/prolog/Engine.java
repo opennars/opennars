@@ -100,7 +100,7 @@ public class Engine /*Castagna 06/2011*/implements IEngine/**/{
 	}
 
 	public List<ExecutionContext> getExecutionStack() {
-		ArrayList<ExecutionContext> l = new ArrayList<ExecutionContext>();
+		ArrayList<ExecutionContext> l = new ArrayList<>();
 		ExecutionContext t = currentContext;
 		while (t != null) {
 			l.add(t);
@@ -114,7 +114,7 @@ public class Engine /*Castagna 06/2011*/implements IEngine/**/{
 	}
 
 	void prepareGoal() {
-		LinkedHashMap<Var,Var> goalVars = new LinkedHashMap<Var, Var>();
+		LinkedHashMap<Var,Var> goalVars = new LinkedHashMap<>();
 		startGoal = (Struct)(query).copyGoal(goalVars,0);
 		this.goalVars = goalVars.values();
 	}

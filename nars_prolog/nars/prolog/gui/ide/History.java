@@ -31,7 +31,7 @@ class History {
     private int index;
     
     public History() {
-        history = new ArrayList<String>(1);
+        history = new ArrayList<>(1);
         history.add("");
         index = 0;
     }
@@ -49,7 +49,7 @@ class History {
      * in history if its lower bound is crossed.
      */
     public String previous() {
-        if (history.size() == 0) return "";
+        if (history.isEmpty()) return "";
         index--;
         if (index < 0)
             index = 0;
@@ -64,7 +64,7 @@ class History {
      * if history's upper bound is crossed.
      */
     public String next() {
-        if (history.size() == 0) return "";
+        if (history.isEmpty()) return "";
         index++;
         if (index >= history.size())
             index = history.size() - 1;

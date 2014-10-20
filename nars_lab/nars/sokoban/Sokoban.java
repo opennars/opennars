@@ -515,7 +515,7 @@ public class Sokoban extends Applet {
 				for (int i = 0; i < level.length; i++) if (level[i] == dollar) b = false;
 				if (b) {
 					wow.play();
-					try { Thread.sleep(2000); } catch (InterruptedException e) {};
+					try { Thread.sleep(2000); } catch (InterruptedException e) {}
 					newLevel(currlevel + 1);
 					repaint();
 				}

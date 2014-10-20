@@ -30,9 +30,9 @@ import nars.nario.sprites.SpriteContext;
 
 public class LevelScene extends Scene implements SpriteContext
 {
-    public final List<Sprite> sprites = new CopyOnWriteArrayList<Sprite>();
-    private List<Sprite> spritesToAdd = new ArrayList<Sprite>();
-    private List<Sprite> spritesToRemove = new ArrayList<Sprite>();
+    public final List<Sprite> sprites = new CopyOnWriteArrayList<>();
+    private List<Sprite> spritesToAdd = new ArrayList<>();
+    private List<Sprite> spritesToRemove = new ArrayList<>();
 
     public Level level;
     public Mario mario;
@@ -124,14 +124,14 @@ public class LevelScene extends Scene implements SpriteContext
 
     public int fireballsOnScreen = 0;
 
-    List<Shell> shellsToCheck = new ArrayList<Shell>();
+    List<Shell> shellsToCheck = new ArrayList<>();
 
     public void checkShellCollide(Shell shell)
     {
         shellsToCheck.add(shell);
     }
 
-    List<Fireball> fireballsToCheck = new ArrayList<Fireball>();
+    List<Fireball> fireballsToCheck = new ArrayList<>();
 
     public void checkFireballCollide(Fireball fireball)
     {

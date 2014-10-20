@@ -60,7 +60,7 @@ public class RangeDataRecorder implements DataRecorder {
 
     @Override
     public Set<String> getSupportedFieldNames() {
-        Set<String> result = new HashSet<String>(rangeList.size());
+        Set<String> result = new HashSet<>(rangeList.size());
 
         for (Range range : rangeList) {
             result.add(range.getName());

@@ -90,7 +90,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
     /**/
     
     //used to enable pushback from the parser. Not in any way connected with pushBack2 and super.pushBack().
-    private LinkedList<Token> tokenList = new LinkedList<Token>();
+    private LinkedList<Token> tokenList = new LinkedList<>();
 
     //used in the double lookahead check that . following ints is a fraction marker or end marker (pushback() only works on one level)
     private PushBack pushBack2 = null;

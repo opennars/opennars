@@ -29,7 +29,7 @@ public class LibraryManager
 	private Prolog prolog;
 	private TheoryManager theoryManager;
 	private PrimitiveManager primitiveManager;
-	private Hashtable<String, URL> externalLibraries = new Hashtable<String, URL>();
+	private Hashtable<String, URL> externalLibraries = new Hashtable<>();
 
 	/**
 	 * @author Alessio Mercurio
@@ -41,7 +41,7 @@ public class LibraryManager
 
 	LibraryManager()
 	{
-		currentLibraries = new ArrayList<Library>();
+		currentLibraries = new ArrayList<>();
 	}
 
 	/**

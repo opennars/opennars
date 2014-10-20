@@ -121,7 +121,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      * {@code ClassCastException}.
      */
     public IndexedTreeSet() {
-        this(new IndexedTreeMap<E, Object>());
+        this(new IndexedTreeMap<>());
     }
 
     /**
@@ -138,7 +138,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      *                   ordering} of the elements will be used.
      */
     public IndexedTreeSet(Comparator<? super E> comparator) {
-        this(new IndexedTreeMap<E, Object>(comparator));
+        this(new IndexedTreeMap<>(comparator));
     }
 
     /**
@@ -324,7 +324,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      */
     public NavigableSet<E> subSet(E fromElement, boolean fromInclusive,
                                   E toElement, boolean toInclusive) {
-        return new IndexedTreeSet<E>(m.subMap(fromElement, fromInclusive,
+        return new IndexedTreeSet<>(m.subMap(fromElement, fromInclusive,
                 toElement, toInclusive));
     }
 
@@ -337,7 +337,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      * @since 1.6
      */
     public NavigableSet<E> headSet(E toElement, boolean inclusive) {
-        return new IndexedTreeSet<E>(m.headMap(toElement, inclusive));
+        return new IndexedTreeSet<>(m.headMap(toElement, inclusive));
     }
 
     /**
@@ -349,7 +349,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
      * @since 1.6
      */
     public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
-        return new IndexedTreeSet<E>(m.tailMap(fromElement, inclusive));
+        return new IndexedTreeSet<>(m.tailMap(fromElement, inclusive));
     }
 
     /**
@@ -479,7 +479,7 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
             throw new InternalError();
         }
 
-        clone.m = new IndexedTreeMap<E, Object>(m);
+        clone.m = new IndexedTreeMap<>(m);
         return clone;
     }
 
@@ -526,9 +526,9 @@ public class IndexedTreeSet<E> extends java.util.AbstractSet<E>
         // Create backing IndexedTreeMap
         IndexedTreeMap<E, Object> tm;
         if (c == null)
-            tm = new IndexedTreeMap<E, Object>();
+            tm = new IndexedTreeMap<>();
         else
-            tm = new IndexedTreeMap<E, Object>(c);
+            tm = new IndexedTreeMap<>(c);
         m = tm;
 
         // Read in size

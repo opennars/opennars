@@ -70,7 +70,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
             PrimitiveInfo p = it.next();
             functorHashMap.put(p.getKey(),p);
         }
-        List<PrimitiveInfo> primOfLib = new LinkedList<PrimitiveInfo>(prims.get(PrimitiveInfo.DIRECTIVE));
+        List<PrimitiveInfo> primOfLib = new LinkedList<>(prims.get(PrimitiveInfo.DIRECTIVE));
         primOfLib.addAll(prims.get(PrimitiveInfo.PREDICATE));
         primOfLib.addAll(prims.get(PrimitiveInfo.FUNCTOR));
         libHashMap.put(src,primOfLib);

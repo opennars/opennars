@@ -418,7 +418,7 @@ public class ConsoleDialog
         if (variables == null || variables.length<getVariablesName(info).length)
             variables = getVariablesName(info);
         if (bindings == null)
-            bindings = new ArrayList<Var>();
+            bindings = new ArrayList<>();
         try
         {
             if (info.isSuccess())
@@ -518,14 +518,14 @@ public class ConsoleDialog
         int columns = getVariablesNumber(querySolutions);
         int rows = getSolutionsNumber(querySolutions);
         if (columns > 0) {
-            ArrayList<String> tableModelList = new ArrayList<String>();
+            ArrayList<String> tableModelList = new ArrayList<>();
             for (int i = 0; i < getSolutionsNumber(querySolutions); i++) {
                 SolveInfo solution = ((QueryEvent) querySolutions[i]).getSolveInfo();
                 if (solution.isSuccess()) {
                     try {
                         for (Var v: solution.getBindingVars()) {
                             if (!v.isAnonymous()) {
-                                String value = v.getTerm().toString();;
+                                String value = v.getTerm().toString();
                                 if (v == v.getTerm())
                                     value = new Var().getName();
                                 tableModelList.add(value);
@@ -613,9 +613,9 @@ public class ConsoleDialog
         tableSolve = new PrologTable();
         if (bindings != null && variables.length > 0) {
             if (selectDisplayModality == 0) {
-                ArrayList<String> tableModelList = new ArrayList<String>();
+                ArrayList<String> tableModelList = new ArrayList<>();
                 for(Var v:bindings){
-                    String value = v.getTerm().toString();;
+                    String value = v.getTerm().toString();
                     if (v == v.getTerm())
                         value = new Var().getName();
                     tableModelList.add(value);
@@ -626,7 +626,7 @@ public class ConsoleDialog
                 tableSolve = newPrologTable(tableModel,variables);
             }
             if (selectDisplayModality == 1 || selectDisplayModality == 2) {
-                ArrayList<String> tableModelList = new ArrayList<String>();
+                ArrayList<String> tableModelList = new ArrayList<>();
                 for(Var v:bindings){
                     String value = v.getTerm().toString();
                     if (v == v.getTerm())
@@ -646,7 +646,7 @@ public class ConsoleDialog
                             tableModel[j / 2][j % 2] = (String) tableModelList.get(i);
                             j++;
                             tableModel[j / 2][j % 2] = (String) tableModelList.get(i+1);
-                            i = i + 2 * variables.length;
+                            i += 2 * variables.length;
                             j++;
                         }
                 }

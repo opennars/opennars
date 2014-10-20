@@ -43,9 +43,9 @@ public class SocketLibrary extends Library implements ISocketLib {
 
 	public SocketLibrary() {
 		addrRegex = "[\\. :]";	// Address:Port parsed using regex
-		readers = new LinkedList<ThreadReader>();
-		serverSockets=new LinkedList<ServerSocket>();
-		clientSockets=new LinkedList<Socket>();
+		readers = new LinkedList<>();
+		serverSockets=new LinkedList<>();
+		clientSockets=new LinkedList<>();
 	}
 
 	public String getTheory() {
@@ -523,7 +523,7 @@ public boolean aread_from_socket_2(Term Socket, Struct Options) throws PrologErr
  * Transform the Struct s in a LinkedList
  */
 private LinkedList<Term> StructToList(Struct s) {
-	LinkedList<Term> list = new LinkedList<Term>();
+	LinkedList<Term> list = new LinkedList<>();
 	Term temp;
 	temp = s;
 	while (true) {
@@ -562,7 +562,7 @@ public void onSolveEnd(){
 			e.printStackTrace();
 		}
 	}
-	serverSockets=new LinkedList<ServerSocket>();
+	serverSockets=new LinkedList<>();
 	for(Socket s:clientSockets){
 		try {
 			s.close();
@@ -570,7 +570,7 @@ public void onSolveEnd(){
 			e.printStackTrace();
 		}
 	}
-	clientSockets = new LinkedList<Socket>();
+	clientSockets = new LinkedList<>();
 	for(ThreadReader r:readers)r.stopRead();
 
 }

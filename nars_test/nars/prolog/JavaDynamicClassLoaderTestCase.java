@@ -52,7 +52,7 @@ public class JavaDynamicClassLoaderTestCase {
 		Method m1 = cl.getMethod("getValue", new Class[]{});
 		m1.setAccessible(true);
 		Object res_obj = m1.invoke(obj, new Object[]{});
-		int res = new Integer(res_obj.toString()).intValue();
+		int res = Integer.parseInt(res_obj.toString());
 		assertEquals(1, res);
 	}
 	

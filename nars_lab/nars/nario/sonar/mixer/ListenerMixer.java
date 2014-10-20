@@ -13,7 +13,7 @@ import nars.nario.sonar.StereoSoundProducer;
 
 public class ListenerMixer implements StereoSoundProducer
 {
-    private List<Sound> sounds = new ArrayList<Sound>();
+    private List<Sound> sounds = new ArrayList<>();
     private float[] buf = new float[0];
     private int maxChannels;
     private SoundListener soundListener;

@@ -16,11 +16,11 @@ class FamilyClausesIndex<K extends Comparable<? super K>>
 
     public FamilyClausesIndex(){
         super();
-        varsClauses = new LinkedList<ClauseInfo>();
+        varsClauses = new LinkedList<>();
     }
 
     private Node<K,LinkedList<ClauseInfo>> createNewNode(K key, ClauseInfo clause, boolean first){
-        LinkedList<ClauseInfo> list = new LinkedList<ClauseInfo>(varsClauses);
+        LinkedList<ClauseInfo> list = new LinkedList<>(varsClauses);
 
         if(first){
             list.addFirst(clause);
@@ -28,7 +28,7 @@ class FamilyClausesIndex<K extends Comparable<? super K>>
             list.addLast(clause);
         }
         
-        return new Node<K,LinkedList<ClauseInfo>>(key, list, Color.RED, null, null);
+        return new Node<>(key, list, Color.RED, null, null);
     }
 
     /**
@@ -55,7 +55,7 @@ class FamilyClausesIndex<K extends Comparable<? super K>>
 
         //Aggiorna tutti i nodi che ci sono
         if(root != null){
-            LinkedList<Node<K, LinkedList<ClauseInfo>>> buf = new LinkedList<Node<K, LinkedList<ClauseInfo>>>();
+            LinkedList<Node<K, LinkedList<ClauseInfo>>> buf = new LinkedList<>();
             buf.add(root);
 
             while(buf.size() > 0){
@@ -140,7 +140,7 @@ class FamilyClausesIndex<K extends Comparable<? super K>>
         if(varsClauses.remove(clause)){
             if(root != null){
                 if(root != null){
-            LinkedList<Node<K, LinkedList<ClauseInfo>>> buf = new LinkedList<Node<K, LinkedList<ClauseInfo>>>();
+            LinkedList<Node<K, LinkedList<ClauseInfo>>> buf = new LinkedList<>();
             buf.add(root);
 
             while(buf.size() > 0){

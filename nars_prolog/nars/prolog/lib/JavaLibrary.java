@@ -70,14 +70,14 @@ public class JavaLibrary extends Library {
     /**
          * java objects referenced by prolog terms (keys)
          */
-    private HashMap<String,Object> currentObjects = new HashMap<String, Object>();
+    private HashMap<String,Object> currentObjects = new HashMap<>();
     /**
          * inverse map useful for implementation issue
          */
-    private IdentityHashMap<Object,Struct> currentObjects_inverse = new IdentityHashMap<Object, Struct>();
+    private IdentityHashMap<Object,Struct> currentObjects_inverse = new IdentityHashMap<>();
 
-    private HashMap<String,Object> staticObjects = new HashMap<String, Object>();
-    private IdentityHashMap<Object,Struct> staticObjects_inverse = new IdentityHashMap<Object, Struct>();
+    private HashMap<String,Object> staticObjects = new HashMap<>();
+    private IdentityHashMap<Object,Struct> staticObjects_inverse = new IdentityHashMap<>();
 
     /**
          * progressive conter used to identify registered objects
@@ -668,7 +668,7 @@ public class JavaLibrary extends Library {
 				}
 	        	
 	        	stringURLs = stringURLs.substring(0, stringURLs.length() - 1);
-	        	stringURLs = stringURLs + "]";
+	        	stringURLs += "]";
         	}
         	else
         		stringURLs = "[]";
@@ -1828,8 +1828,8 @@ public class JavaLibrary extends Library {
     private void readObject(java.io.ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-        currentObjects = new HashMap<String, Object>();
-        currentObjects_inverse = new IdentityHashMap<Object, Struct>();
+        currentObjects = new HashMap<>();
+        currentObjects_inverse = new IdentityHashMap<>();
         preregisterObjects();
     }
 
@@ -1851,7 +1851,7 @@ public class JavaLibrary extends Library {
 
         // go the more complicated route
         Method[] methods = target.getMethods();
-        Vector<Method> goodMethods = new Vector<Method>();
+        Vector<Method> goodMethods = new Vector<>();
         for (int i = 0; i != methods.length; i++) {
             if (name.equals(methods[i].getName())
                     && matchClasses(methods[i].getParameterTypes(), argClasses))
@@ -1906,7 +1906,7 @@ public class JavaLibrary extends Library {
 
         // go the more complicated route
         Constructor<?>[] constructors = target.getConstructors();
-        Vector<Constructor<?>> goodConstructors = new Vector<Constructor<?>>();
+        Vector<Constructor<?>> goodConstructors = new Vector<>();
         for (int i = 0; i != constructors.length; i++) {
             if (matchClasses(constructors[i].getParameterTypes(), argClasses))
                 goodConstructors.addElement(constructors[i]);

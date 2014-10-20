@@ -12,7 +12,7 @@ public abstract class Player
 	private String name;
 	private Board board;
 	private boolean hasTurn = false;
-	private ArrayList<PlayerListener> listeners = new ArrayList<PlayerListener>();
+	private ArrayList<PlayerListener> listeners = new ArrayList<>();
 
 	/**
 	 * Creates a new Player object.

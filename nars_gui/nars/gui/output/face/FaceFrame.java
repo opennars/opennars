@@ -12,8 +12,7 @@ public class FaceFrame extends Object {
     public FaceFrame(double[][] t, Image snap, double w) {
 	targets = new double[2][t[0].length];
 	for(int s = 0; s < 2; s++)
-	    for(int v = 0; v < t[0].length; v++)
-		targets[s][v] = t[s][v];
+	    System.arraycopy(t[s], 0, targets[s], 0, t[0].length);
 	snapshot = snap;
 	when = w;
     }
@@ -27,7 +26,7 @@ public class FaceFrame extends Object {
     public FaceFrame(String s) {
 	StringTokenizer outside = new StringTokenizer(s, "|\n");
 	String w = outside.nextToken();
-	when = Double.valueOf(w).doubleValue();
+	when = Double.parseDouble(w);
 
 	String val = outside.nextToken();
 	StringTokenizer inside = new StringTokenizer(val, ",");
@@ -36,7 +35,7 @@ public class FaceFrame extends Object {
 	String v;
 	while(inside.hasMoreTokens()) {
 	    v = inside.nextToken();
-	    targets[0][i] = Double.valueOf(v).doubleValue();
+	    targets[0][i] = Double.parseDouble(v);
 	    i++;
 	}
 
@@ -45,7 +44,7 @@ public class FaceFrame extends Object {
 	i = 0;
 	while(inside.hasMoreTokens()) {
 	    v = inside.nextToken();
-	    targets[1][i] = Double.valueOf(v).doubleValue();
+	    targets[1][i] = Double.parseDouble(v);
 	    i++;
 	}
 	snapshot = null;

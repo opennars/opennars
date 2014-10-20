@@ -29,9 +29,9 @@ public class ConsoleManager
     public ConsoleManager(IDE ide)
     {
         this.ide = ide;
-        informationToDisplayListeners = new ArrayList<InformationToDisplayListener>();
-        queryEventList = new ArrayList<QueryEvent>();
-        queryEventListString = new ArrayList<String>();
+        informationToDisplayListeners = new ArrayList<>();
+        queryEventList = new ArrayList<>();
+        queryEventListString = new ArrayList<>();
     }
 
     public void setDialog(ConsoleDialog dialog){this.dialog = dialog;}

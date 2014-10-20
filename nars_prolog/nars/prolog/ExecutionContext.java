@@ -88,7 +88,7 @@ public class ExecutionContext {
     }
     
     public List<List<Var>> getTrailingVars() {
-        ArrayList<List<Var>> l = new ArrayList<List<Var>>();
+        ArrayList<List<Var>> l = new ArrayList<>();
         OneWayList<List<Var>> t = trailingVars;
         while (t != null) {
             l.add(t.getHead());

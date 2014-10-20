@@ -462,13 +462,13 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     @Override
     public String toString() {
         StringBuilder x = new StringBuilder();
-        x.append(getClass().toString() + "\n");
+        x.append(getClass().toString()).append("\n");
         x.append("Terms:\n");
         for (Term v : vertexSet())
-            x.append("  " + v.toString() + ",");
+            x.append("  ").append(v.toString()).append(",");
         x.append("\nImplications:\n");
         for (Cause v : edgeSet())
-            x.append("  " + v.toString() + ",");
+            x.append("  ").append(v.toString()).append(",");
         x.append("\n\n");
         return x.toString();
     }

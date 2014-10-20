@@ -9,7 +9,7 @@ public class SubGoalTree extends AbstractSubGoalTree implements Iterable<Abstrac
         //private LinkedList terms;
     
     public SubGoalTree() {
-        terms = new ArrayList<AbstractSubGoalTree>();
+        terms = new ArrayList<>();
                 //terms = new LinkedList();
     }
 

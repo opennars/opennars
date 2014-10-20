@@ -79,7 +79,6 @@ public class ISOLibrary extends Library {
                     
                 } catch (Exception ex) {
                 }
-                ;
                 st = st.concat(st1);
                 list = (Struct) list.getTerm(1);
             }
@@ -404,22 +403,22 @@ public class ISOLibrary extends Library {
                 //
                 ":- flag(bounded, [true,false], true, false).\n"
                 + ":- flag(max_integer, ["
-                + new Integer(Integer.MAX_VALUE).toString()
+                + Integer.toString(Integer.MAX_VALUE)
                 + "], "
-                + new Integer(Integer.MAX_VALUE).toString()
+                + Integer.toString(Integer.MAX_VALUE)
                 + ",false).\n"
                 + ":- flag(min_integer, ["
-                + new Integer(Integer.MIN_VALUE).toString()
+                + Integer.toString(Integer.MIN_VALUE)
                 + "], "
-                + new Integer(Integer.MIN_VALUE).toString()
+                + Integer.toString(Integer.MIN_VALUE)
                 + ",false).\n"
                 + ":- flag(integer_rounding_function, [up,down], down, false).\n"
                 + ":- flag(char_conversion,[on,off],off,false).\n"
                 + ":- flag(debug,[on,off],off,false).\n"
                 + ":- flag(max_arity, ["
-                + new Integer(Integer.MAX_VALUE).toString()
+                + Integer.toString(Integer.MAX_VALUE)
                 + "], "
-                + new Integer(Integer.MAX_VALUE).toString()
+                + Integer.toString(Integer.MAX_VALUE)
                 + ",false).\n"
                 + ":- flag(undefined_predicate, [error,fail,warning], fail, false).\n"
                 + ":- flag(double_quotes, [atom,chars,codes], atom, false).\n"

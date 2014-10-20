@@ -45,10 +45,10 @@ public final class LibraryManager
 	 * Stores classnames for managed libraries.
 	 */
     private ArrayList<String> libraries;
-    private Hashtable<String, URL> externalLibraries = new Hashtable<String, URL>();
+    private Hashtable<String, URL> externalLibraries = new Hashtable<>();
 
     public LibraryManager() {
-    	libraries = new ArrayList<String>();
+    	libraries = new ArrayList<>();
     }
 
     /**
@@ -206,7 +206,7 @@ public final class LibraryManager
 
     public void resetLibraries()
     {
-        this.libraries=new ArrayList<String>();
+        this.libraries=new ArrayList<>();
     }
 
     public String toString()

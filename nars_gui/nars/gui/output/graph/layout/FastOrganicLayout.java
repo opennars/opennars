@@ -287,7 +287,7 @@ public class FastOrganicLayout<V, E> {
     public synchronized void execute(DirectedMultigraph<V, E> graph, Map<V, ProcessingGraphCanvas.VertexDisplay> displayed) {
 
         if (indices == null)
-            indices = new HashMap<V, Integer>();
+            indices = new HashMap<>();
         else
             indices.clear();
         

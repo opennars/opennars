@@ -104,7 +104,7 @@ public abstract class PhysicsModel implements ContactListener {
 
   private String title = null;
   protected int m_textLine;
-  private final LinkedList<String> textList = new LinkedList<String>();
+  private final LinkedList<String> textList = new LinkedList<>();
 
   private PhysicsCamera camera;
 
@@ -332,7 +332,7 @@ public abstract class PhysicsModel implements ContactListener {
   private final Vec2 p1 = new Vec2();
   private final Vec2 p2 = new Vec2();
   private final Vec2 tangent = new Vec2();
-  private final List<String> statsList = new ArrayList<String>();
+  private final List<String> statsList = new ArrayList<>();
 
   private final Vec2 acceleration = new Vec2();
   private final CircleShape pshape = new CircleShape();

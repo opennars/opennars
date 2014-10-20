@@ -15,7 +15,7 @@ public class OneWayList<E> {
 
     public static <T> OneWayList<T> transform(List<T> list){
         if(list.isEmpty()) return null;
-        return new OneWayList<T>(list.remove(0),transform(list));
+        return new OneWayList<>(list.remove(0),transform(list));
     }
     
     /**
@@ -32,7 +32,7 @@ public class OneWayList<E> {
         OneWayList<T> p = null;
 
         for(T obj : list){
-            OneWayList<T> l = new OneWayList<T>(obj, null);
+            OneWayList<T> l = new OneWayList<>(obj, null);
 
             if(result == null){
                 result = p = l;
