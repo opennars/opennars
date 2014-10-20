@@ -72,9 +72,7 @@ public class NARio extends Run {
         
         //new TextOutput(nar, System.out).setShowInput(true);
         
-        nar.param().decisionThreshold.set(0.3);
         nar.param().noiseLevel.set(0);
-        nar.param().conceptForgetDurations.set(10);
         float fps = 20f;
         gameRate = 1.0f / fps;
 
