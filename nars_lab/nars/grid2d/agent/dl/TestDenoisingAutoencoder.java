@@ -31,7 +31,7 @@ public class TestDenoisingAutoencoder {
         // test
         for (int i = 0; i < test_N; i++) {
             double[] encoded_X = new double[n_hidden];
-            da.getEncoded(test_X[i], encoded_X, false, false);
+            da.encode(test_X[i], encoded_X, false, false);
             System.out.println(Arrays.toString(test_X[i]));
             System.out.println(Arrays.toString(encoded_X));
             da.reconstruct(test_X[i], reconstructed_X[i]);

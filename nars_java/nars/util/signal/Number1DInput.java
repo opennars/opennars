@@ -20,6 +20,7 @@ import java.text.NumberFormat;
 import nars.core.NAR;
 import nars.io.Texts;
 
+/** Product Vector */
 public class Number1DInput {
     /*
     
