@@ -479,7 +479,7 @@ public class Executive implements Observer {
             removeTask(topExecution);
             return;
         }
-        else if (term instanceof Conjunction) {
+        else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Conjunction) {
             Conjunction c = (Conjunction)term;
             if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
                 executeConjunctionSequence(topExecution, c);
@@ -487,7 +487,7 @@ public class Executive implements Observer {
             }
             
         }
-        else if (term instanceof Implication) {
+        else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Implication) {
             Implication it = (Implication)term;
             if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
                 if (it.getSubject() instanceof Conjunction) {
