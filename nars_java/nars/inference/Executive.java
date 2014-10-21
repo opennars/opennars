@@ -568,14 +568,13 @@ public class Executive implements Observer {
         }        
         else {            
             System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);
-            removeTask(task);
+            //removeTask(task); //was never executed, dont remove
         }
 
         if (s == c.term.length) {
             ended=true;
             //completed task
-           // task.t.end(true);
-            removeTask(task);
+           
             if(task.t.sentence.content instanceof Implication) {
                 expected_task=task.t;
                 expected_event=((Implication)task.t.sentence.content).getPredicate();
