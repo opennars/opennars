@@ -616,23 +616,27 @@ public class Concept extends Item<Term> {
      * @return whether a TaskLink was fired or not
      */
     public boolean fire() {
+        
+        //cycle through (at maximum, all tasklinks) until one can be fired
+        for (int numTaskLinks = taskLinks.size()-1 ; numTaskLinks>= 0; numTaskLinks--) {
 
-        while (taskLinks.size() > 0) {
         
             final TaskLink currentTaskLink = taskLinks.takeOut();
 
+            boolean fired = false;
+            
             if (currentTaskLink.budget.aboveThreshold()) {
 
                 new NAL.FireConcept(memory, this, currentTaskLink).call();        
 
-                taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
-
-                return true;           
+                fired = true;           
             }
             
-            //else {
-                //System.out.println("Discard task: " + currentTaskLink.targetTask);
-            //}
+            taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
+
+            if (fired)
+                return true;
+
             
         }
         
