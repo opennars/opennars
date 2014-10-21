@@ -26,6 +26,7 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
@@ -134,7 +135,7 @@ public class Executive implements Observer {
                (((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
                     ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
-                if(!current_tasks.contains(derivedTask)) {
+                if(!current_tasks.contains(derivedTask) && !Variables.containVarIndep(derivedTask.toString())) {
                     current_tasks.add(derivedTask);
                 }
             }
@@ -478,7 +479,7 @@ public class Executive implements Observer {
             removeTask(topExecution);
             return;
         }
-        else if (term instanceof Conjunction) {
+        else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Conjunction) {
             Conjunction c = (Conjunction)term;
             if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
                 executeConjunctionSequence(topExecution, c);
@@ -486,7 +487,7 @@ public class Executive implements Observer {
             }
             
         }
-        else if (term instanceof Implication) {
+        else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Implication) {
             Implication it = (Implication)term;
             if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
                 if (it.getSubject() instanceof Conjunction) {
@@ -567,13 +568,13 @@ public class Executive implements Observer {
         }        
         else {            
             System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);
-            removeTask(task);
+            //removeTask(task); //was never executed, dont remove
         }
 
         if (s == c.term.length) {
             ended=true;
             //completed task
-            task.t.end(true);
+           
             if(task.t.sentence.content instanceof Implication) {
                 expected_task=task.t;
                 expected_event=((Implication)task.t.sentence.content).getPredicate();
@@ -634,7 +635,7 @@ public class Executive implements Observer {
                     
                     long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
                     boolean right_in_time=Math.abs(occurence-expected_time) < ((double)memory.param.duration.get())/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
-                    if(right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
+                    if(!right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
                         matched=false;
                         break;
                     }
