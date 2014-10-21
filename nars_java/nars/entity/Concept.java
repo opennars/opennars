@@ -56,7 +56,7 @@ public class Concept extends Item<Term> {
     /**
      * Task links for indirect processing
      */
-    public final Bag<TaskLink,TermLink> taskLinks;
+    public final Bag<TaskLink,Task> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
@@ -110,7 +110,7 @@ public class Concept extends Item<Term> {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Term tm, Bag<TaskLink,TermLink> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
+    public Concept(final Term tm, Bag<TaskLink,Task> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
         super();
         
         this.term = tm;

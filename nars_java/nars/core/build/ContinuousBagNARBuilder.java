@@ -56,7 +56,7 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public Concept newConcept(final Term t, final Memory m) {
         
-        Bag<TaskLink,TermLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), curve, randomRemoval);
+        Bag<TaskLink,Task> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), curve, randomRemoval);
         Bag<TermLink,TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), curve, randomRemoval);
         
         return new Concept(t, taskLinks, termLinks, m);        

@@ -155,6 +155,7 @@ public class Stamp implements Cloneable {
         this.evidentialBase = useEvidentialBase.evidentialBase;
         this.baseLength = useEvidentialBase.baseLength;
         this.creationTime = creationTime;
+
         this.occurrenceTime = old.getOccurrenceTime();
         this.derivationChain = old.getChain();
         this.latency = this.creationTime - old.latency;
@@ -181,6 +182,7 @@ public class Stamp implements Cloneable {
         int secondLength = secondBase.length;
 
         creationTime = time;
+        
         occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
         
         //calculate latency as the time difference between now and the last created of the 2 input stamps

@@ -118,7 +118,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Memory m) {        
-        Bag<TaskLink,TermLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getTaskLinkBagSize());
+        Bag<TaskLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getTaskLinkBagSize());
         Bag<TermLink,TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getTermLinkBagSize());
         
         return new Concept(t, taskLinks, termLinks, m);        

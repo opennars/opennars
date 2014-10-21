@@ -23,6 +23,7 @@ package nars.inference;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.TLink;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -295,7 +296,7 @@ public class RuleTables {
      * @param link2 The link to the second premise
      * @return The figure of the syllogism, one of the four: 11, 12, 21, or 22
      */
-    private static final  int indexToFigure(final TermLink link1, final TermLink link2) {
+    private static final  int indexToFigure(final TLink link1, final TLink link2) {
         return (link1.getIndex(0) + 1) * 10 + (link2.getIndex(0) + 1);
     }
 

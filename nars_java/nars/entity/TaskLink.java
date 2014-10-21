@@ -30,7 +30,7 @@ import nars.language.Term;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends TermLink {
+public class TaskLink extends Item<Task> implements TLink {
 
     /**
      * The Task linked. The "target" field in TermLink is not used here.
@@ -46,11 +46,19 @@ public class TaskLink extends TermLink {
      * Remember the time when each TermLink is used with this TaskLink
      */
     public final long recordingTime[];
+    
     /**
      * The number of TermLinks remembered
      */
     private int counter;
+    
+    /** The type of link, one of the above */    
+    public final short type;
 
+    /** The index of the component in the component list of the compound, may have up to 4 levels */
+    public final short[] index;
+
+    
     /**
      * Constructor
      * <p>
@@ -61,40 +69,58 @@ public class TaskLink extends TermLink {
      * @param v The budget
      */
     public TaskLink(final Task t, final TermLink template, final BudgetValue v, int recordLength) {
-        super(v,                 
+        super(v);
+        this.type =
                 template == null ? 
                         TermLink.SELF : 
-                        template.type,
+                        template.type;
+        this.index =
                 
                 template == null ?
                         null : 
                         template.index
-        );
+        ;
         
         targetTask = t;
         recordedLinks = new TermLink[recordLength];
         recordingTime = new long[recordLength];
-        counter = 0;
-        //setKey(t.name());   // as defined in TermLink
-        
+        counter = 0;        
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj instanceof TaskLink) {
-            TaskLink t = (TaskLink)obj;
-            return t.targetTask.equals(targetTask);
-        }
-        return false;
-    }
 
     @Override
-    public int hashCode() {
+    public int hashCode() {        
         return targetTask.hashCode();                
     }
-    
 
+    @Override
+    public Task name() {
+        return targetTask;
+    }
+
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TaskLink) {
+            TaskLink t = (TaskLink)obj;
+            return t.targetTask.equals(targetTask);                    
+        }
+        return false;
+    }    
+    
+    /**
+     * Get one index by level
+     * @param i The index level
+     * @return The index value
+     */
+    public final short getIndex(final int i) {
+        if ((index != null) && (i < index.length)) {
+            return index[i];
+        } else {
+            return -1;
+        }
+    }    
+    
     
     
     /**

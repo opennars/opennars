@@ -54,7 +54,7 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
         /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
-        Bag<TaskLink,TermLink> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), randomRemoval);
+        Bag<TaskLink,Task> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), randomRemoval);
         Bag<TermLink,TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), randomRemoval);
         
         return new Concept(t, taskLinks, termLinks, m);        

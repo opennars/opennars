@@ -125,7 +125,11 @@ public abstract class Operator extends Term implements Plugin {
         if (memory.emitting(EXE.class)) {
             final Operator operator = (Operator) opT;
             
-            BudgetValue b = operation.getTask().budget;
+            Task t = operation.getTask();
+            BudgetValue b = null;
+            if (t != null) {
+                b = operation.getTask().budget;
+            }
             
             if (feedback instanceof Exception)
                 feedback = feedback.getClass().getSimpleName() + ": " + ((Throwable)feedback).getMessage();
