@@ -37,7 +37,9 @@ import nars.language.Term;
  * <p>
  * This class is mainly used in inference.RuleTable to dispatch premises to inference rules
  */
-public class TermLink extends Item<TermLink> {
+public class TermLink extends Item<TermLink> implements TLink {
+    
+    
     /** At C, point to C; TaskLink only */
     public static final short SELF = 0;
     /** At (&&, A, C), point to C */
@@ -59,9 +61,9 @@ public class TermLink extends Item<TermLink> {
     /** The linked Term */
     public final Term target;
     
-    /** The type of link, one of the above */
-    
+    /** The type of link, one of the above */    
     public final short type;
+    
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
 
@@ -96,17 +98,7 @@ public class TermLink extends Item<TermLink> {
         hash = init();
     }
 
-    /** called from TaskLink
-     * @param s The key of the TaskLink
-     * @param v The budget value of the TaskLink
-     */
-    protected TermLink(final BudgetValue v, final short type, short[] indices) {
-        super(v);
-        this.type = type;
-        this.index = indices;
-        this.target = null;
-        hash = init();
-    }
+
 
     /**
      * Constructor to make actual TermLink from a template

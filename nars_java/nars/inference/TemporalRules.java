@@ -148,6 +148,7 @@ public class TemporalRules {
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
     public static void temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
+        //TODO prevent trying question sentences, may cause NPE
         
         //try if B1 unifies with B2, if yes, create new judgement
         Statement S1=(Implication) s1.content;

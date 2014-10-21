@@ -82,7 +82,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
             /*if (includeConceptTaskLinks)*/ {
                 for (TaskLink t : c.taskLinks.values()) {
-                    Term target = t.target;
+                    Task target = t.targetTask;
                     if (!containsVertex(target)) {
                         addVertex(target);
                     }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import nars.core.Memory;
+import nars.core.NAR;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -57,6 +58,7 @@ import nars.operator.Operator;
 public class Narsese {
     
     public final Memory memory;
+
                 
     /**
      * All kinds of invalid addInput lines
@@ -76,6 +78,9 @@ public class Narsese {
         this.memory = memory;
     }
 
+    public Narsese(NAR n) {
+        this(n.memory);
+    }
     
 
     /**
