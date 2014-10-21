@@ -26,6 +26,7 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
@@ -134,7 +135,7 @@ public class Executive implements Observer {
                (((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
                     ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
-                if(!current_tasks.contains(derivedTask)) {
+                if(!current_tasks.contains(derivedTask) && !Variables.containVarIndep(derivedTask.toString())) {
                     current_tasks.add(derivedTask);
                 }
             }
