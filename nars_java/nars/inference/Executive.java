@@ -634,7 +634,7 @@ public class Executive implements Observer {
                     
                     long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
                     boolean right_in_time=Math.abs(occurence-expected_time) < ((double)memory.param.duration.get())/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
-                    if(right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
+                    if(!right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
                         matched=false;
                         break;
                     }
