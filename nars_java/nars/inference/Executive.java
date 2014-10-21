@@ -574,7 +574,8 @@ public class Executive implements Observer {
         if (s == c.term.length) {
             ended=true;
             //completed task
-            task.t.end(true);
+           // task.t.end(true);
+            removeTask(task);
             if(task.t.sentence.content instanceof Implication) {
                 expected_task=task.t;
                 expected_event=((Implication)task.t.sentence.content).getPredicate();
