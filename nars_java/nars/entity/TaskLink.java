@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import nars.core.Parameters;
 import nars.language.Term;
 
 /**
@@ -179,5 +180,9 @@ public class TaskLink extends Item<Task> implements TLink {
     
     public String toStringBrief() {
         return super.toString();
+    }
+
+    public void updateTaskPriority() {
+        targetTask.budget.lerpPriority(budget.getPriority(), Parameters.TASK_PRIORITY_MOMENTUM);
     }
 }

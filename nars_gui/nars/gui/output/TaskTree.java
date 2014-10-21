@@ -44,8 +44,8 @@ public class TaskTree extends NPanel implements Observer, Runnable {
     Map<Task, DefaultMutableTreeNode> nodes = new HashMap();
     private final JTree tree;
     private final NAR nar;
-    final WeakHashMap<Task, Component> components = new WeakHashMap<>();
-    float priorityThreshold = 0.05f;
+    final WeakHashMap<Task, TaskLabel> components = new WeakHashMap<>();
+    float priorityThreshold = 0.01f;
     final Set<TreeNode> needRefresh = Collections.synchronizedSet(new HashSet());
     final ConcurrentLinkedDeque<Task> toAdd = new ConcurrentLinkedDeque<>();
     final ConcurrentLinkedDeque<Task> toRemove = new ConcurrentLinkedDeque<>();
@@ -86,7 +86,7 @@ public class TaskTree extends NPanel implements Observer, Runnable {
             return existing;
         }
 
-        String key = t.name().toString();
+        //String key = t.name().toString();
         DefaultMutableTreeNode d = new DefaultMutableTreeNode(t);
         nodes.put(t, d);
         return d;
@@ -161,11 +161,12 @@ public class TaskTree extends NPanel implements Observer, Runnable {
             }
         }
 
-        for (Map.Entry<Task, Component> t : components.entrySet())
-            updateComponent(t.getKey(), (JLabel) t.getValue());
+        for (TaskLabel t : components.values())
+            t.updateTask();
 
         for (TreeNode t : needRefresh)
             model.reload(t);
+        
         
         needRefresh.clear();        
         toAdd.clear();
@@ -175,23 +176,46 @@ public class TaskTree extends NPanel implements Observer, Runnable {
         lastUpdateTime = System.currentTimeMillis();
     }
     
-    protected void updateComponent(Task t, JLabel c) {
-        Concept con = nar.memory.concept(t.getContent());
-        if (con == null) {
-            System.err.println("TaskTree: " + t + " missing concept.  either memory was reset or concept should have been created but wasnt.");
-            toRemove.add(t);
-            return;
+    public class TaskLabel extends JLabel {
+        private final Task task;
+
+        public TaskLabel(Task t) {
+            this.task = t;
+
+            setOpaque(true);
+            setFont(NARSwing.monofont);
+            
+            updateTask();
         }
-        float conPri = con.getPriority();
-        float taskPri = t.getPriority();
-        TruthValue desire = t.getDesire();
-        if (desire!=null) {
-            float confidence = t.getDesire().getConfidence();
-            c.setForeground(new Color(0,0,conPri,confidence));
-        }        
-        c.setBackground(new Color(1f-taskPri/4f,1f,1f-taskPri/4f));
-        c.setText(t.toStringExternal());
-        c.repaint();
+
+        protected void updateTask() {
+            final Task t = task;
+            
+            Concept con = nar.memory.concept(t.getContent());
+            float conPri = 0;
+            if (con == null) {
+                /*System.err.println("TaskTree: " + t + " missing concept.  either memory was reset or concept should have been created but wasnt.");*/
+                //toRemove.add(t);            
+            }
+            else {
+                conPri = con.getPriority();
+            }
+            float taskPri = t.getPriority();
+            TruthValue desire = t.getDesire();
+            if (desire!=null) {
+                float confidence = t.getDesire().getConfidence();
+                setForeground(new Color(0,0,conPri,confidence));
+            }        
+            setBackground(new Color(1f-taskPri/4f,1f,1f-taskPri/4f));
+
+            setText(t.toStringExternal());
+            //repaint();
+        }
+    }
+    
+    protected void updateComponent(Task t, JLabel c) {
+        if (c instanceof TaskLabel)
+            ((TaskLabel)c).updateTask();
     }
     
     protected class CustomDefaultRenderer
@@ -206,24 +230,26 @@ public class TaskTree extends NPanel implements Observer, Runnable {
                 int row,
                 boolean hasFocus) {
             // Allow the original renderer to set up the label
-            Component c = super.getTreeCellRendererComponent(
+            /*Component c = super.getTreeCellRendererComponent(
                     tree, value, selected,
                     expanded, leaf, row,
-                    hasFocus);
+                    hasFocus);*/
+            
          
             
             
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
             Object v = node.getUserObject();
             if (v instanceof Task) {                
+                TaskLabel c = new TaskLabel((Task)v);
                 components.put((Task)v, c);
-                
-                JLabel jj = (JLabel)c;
-                jj.setOpaque(true);
-                jj.setFont(NARSwing.monofont);                
-                updateComponent((Task)v, jj);
+                return c;
             }
-            return c;
+            
+            return  super.getTreeCellRendererComponent(
+                    tree, value, selected,
+                    expanded, leaf, row,
+                    hasFocus);
         }
 
     }

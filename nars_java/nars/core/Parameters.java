@@ -175,5 +175,8 @@ public class Parameters {
      * Optimal value to be determined.
      */
     public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 64;
+    
+    /** how quickly a task's priority is adjusted by a fired tasklink */
+    public static float TASK_PRIORITY_MOMENTUM = 0.5f;
 }
 
