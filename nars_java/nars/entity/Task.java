@@ -315,7 +315,7 @@ public class Task extends AbstractTask<Sentence> {
 
     /** ends, indicating whether successful completion */
     public void end(boolean success) {
-        setPriority(0);
+            setPriority(0);
     }
     
     public void expect(boolean eventHappened) {
