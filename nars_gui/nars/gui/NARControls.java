@@ -53,6 +53,7 @@ import nars.gui.output.MultiOutputPanel;
 import nars.gui.output.PluginPanel;
 import nars.gui.output.SentenceTablePanel;
 import nars.gui.output.SwingLogPanel;
+import nars.gui.output.TaskTree;
 import nars.gui.output.chart.BubbleChart;
 import nars.gui.output.chart.ChartsPanel;
 import nars.gui.output.face.NARFacePanel;
@@ -244,6 +245,17 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             m.add(sg);
             
             
+            JMenuItem tt = new JMenuItem("+ Task Tree");
+            tt.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    TaskTree p = new TaskTree(nar);
+                    NWindow w = new NWindow("Task Tree", p);
+                    w.setSize(200, 500);
+                    w.setVisible(true);                    
+                }
+            });
+            m.add(tt);
             
             JMenuItem st = new JMenuItem("+ Sentence Table");
             st.addActionListener(new ActionListener() {

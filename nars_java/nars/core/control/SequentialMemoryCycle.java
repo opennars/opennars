@@ -58,7 +58,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         float forgetCycles = memory.param.conceptForgetDurations.getCycles();
 
         Concept currentConcept = concepts.takeOut();
-        //Concept currentConcept = concepts.processNext(forgetCycles, memory);
+        
         if (currentConcept != null) {            
             currentConcept.fire();
             concepts.putBack(currentConcept, forgetCycles, memory);

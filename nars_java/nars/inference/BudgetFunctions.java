@@ -25,7 +25,6 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -153,17 +152,17 @@ public final class BudgetFunctions extends UtilityFunctions {
     /**
      * Activate a concept by an incoming TaskLink
      *
-     * @param concept The concept
+     * @param i The concept
      * @param budget The budget for the new item
      */
-    public static void activate(final Concept concept, final BudgetValue budget) {
-        final float oldPri = concept.getPriority();
+    public static void activate(final Item i, final BudgetValue budget) {
+        final float oldPri = i.getPriority();
         final float priority = or(oldPri, budget.getPriority());
-        final float durability = aveAri(concept.getDurability(), budget.getDurability());
-        final float quality = concept.getQuality();
-        concept.setPriority(priority);
-        concept.setDurability(durability);
-        concept.setQuality(quality);
+        final float durability = aveAri(i.getDurability(), budget.getDurability());
+        final float quality = i.getQuality();
+        i.setPriority(priority);
+        i.setDurability(durability);
+        i.setQuality(quality);
     }
 
     /* ---------------- Bag functions, on all Items ------------------- */

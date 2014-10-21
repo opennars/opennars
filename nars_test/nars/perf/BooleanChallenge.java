@@ -11,7 +11,9 @@ import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
+import nars.gui.NARSwing;
 import nars.io.Output.OUT;
+import nars.io.TextOutput;
 import static nars.io.Texts.n2;
 import nars.io.narsese.Narsese;
 import nars.language.Inheritance;
@@ -28,7 +30,7 @@ public class BooleanChallenge {
     
     double inputProb;
 
-    float questionRatio = 0.2f;
+    float questionRatio = 0.1f;
     
     float delayFactor = 0.1f; //how important quick answers are
     
@@ -45,6 +47,7 @@ public class BooleanChallenge {
     private final Narsese parser;
     private double score;
     private double qanswered;
+    private double scoreRate;
     
     public BooleanChallenge(NAR n) {
         
@@ -125,7 +128,6 @@ public class BooleanChallenge {
         n.on(CycleEnd.class, new Observer() {
 
             @Override public void event(Class event, Object[] arguments) {
-                
                 double p = Math.random();
                 if (p < inputProb) {
                     p = Math.random();                    
@@ -135,9 +137,7 @@ public class BooleanChallenge {
             }
             
         });
-        
-        nextLevel();
-        
+                
     }
     
     void inputAxioms() {
@@ -182,7 +182,7 @@ public class BooleanChallenge {
         }
 
         updateScore();
-        System.out.println(questionTime + "," + delay + ": " + q.sentence + " | " + a.sentence.truth + "  +/-(" + s + ")     " + score + " of " + qanswered + "/" + questionScores.size() );
+        System.out.println(questionTime + "," + delay + ": " + q.sentence + " | " + a.sentence.truth + "  +/-(" + s + ")     " + score + " of " + qanswered + "/" + questionScores.size() + " <" + answered.size() + ">" );
     }
     
     
@@ -195,7 +195,8 @@ public class BooleanChallenge {
                 qanswered++;
             }
         }
-        score = s / nar.getTime();
+        score = s;
+        scoreRate = s/ nar.getTime();
         
     }
     
@@ -203,10 +204,6 @@ public class BooleanChallenge {
         return (int)(Math.random() * (1 << bits)); 
     }
 
-    protected void nextLevel() {
-        bits++;        
-        inputAxioms();
-    }
     
     protected void inputBoolean(int bits, boolean question) {
         int a = rand(bits);
@@ -288,36 +285,42 @@ public class BooleanChallenge {
     }
 
 
-    public void run(int bit1Iterations, int bit2Iterations, int bit2Thinking) {
-        inputProb = 0.1;
+    public void run(int level, int bit1Iterations, int bit2Thinking) {
+        bits = level;
+    
+        inputProb = 0.05;
+        inputAxioms();
+        
+        /*
+        inputProb = 0.05;
+        
         for (int i = 0; i < bit1Iterations; i++)
             nar.step(1);        
+        
         inputProb = 0.0;
-        for (int i = 0; i < bit1Iterations; i++)
-            nar.step(1);        
-        
-        nextLevel();
-        
-        
-        inputProb = 0.1;
-        for (int i = 0; i < bit2Iterations; i++)
-            nar.step(1);
-        inputProb = 0.0;
-        for (int i = 0; i < bit2Iterations; i++)
-            nar.step(1);
-                        
+
         for (int i = 0; i < bit2Thinking; i++)
             nar.step(1);        
+                */
     }
 
             
     public static void main(String[] args) {
         NAR n = new DefaultNARBuilder().build();
-        //new TextOutput(n, System.out, 0.9f);
         //NAR n = new ContinuousBagNARBuilder().build();
-        //new NARSwing(n);
+
+        //new TextOutput(n, System.out, 0.9f);
         
-        new BooleanChallenge(n).run(50000,100000,1000000);
+        new NARSwing(n);
+        
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() { 
+                new BooleanChallenge(n).run(1, 150000,150000);
+            }
+            
+        }).start();
         
     }
 

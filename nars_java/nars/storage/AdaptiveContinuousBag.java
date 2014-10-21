@@ -21,7 +21,7 @@ then it removes the item at this index
  */
 public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<I, K> {
 
-    boolean stabilize = true;
+    boolean stabilize = false;
     float minForgetAdjustment = 0.5f;
     float maxForgetAdjustment = 2.0f;
     
