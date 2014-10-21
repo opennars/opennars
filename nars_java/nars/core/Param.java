@@ -23,6 +23,7 @@ public class Param implements Serializable {
     public final AtomicDuration duration = new AtomicDuration();
 
     protected Timing timing;
+    
 
     
     /** can return result multiplied by duration */
@@ -90,9 +91,11 @@ public class Param implements Serializable {
     /** Maximum number of beliefs kept in a Concept */
     public final AtomicInteger conceptBeliefsMax = new AtomicInteger();
     
-    /** Maximum number of goals kept in a Concept */
+    /** Maximum number of questions kept in a Concept */
     public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
 
+    /** Maximum number of goals kept in a Concept */
+    public final AtomicInteger conceptGoalsMax = new AtomicInteger();
     
     public void setTiming(Timing time) {
         this.timing = time;

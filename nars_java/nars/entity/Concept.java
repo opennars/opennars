@@ -285,7 +285,7 @@ public class Concept extends Item<Term> {
             // still worth pursuing?
             if (task.aboveThreshold()) {
 
-                addToTable(task, goal, desires, memory.param.conceptBeliefsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class, revised);
+                addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class, revised);
 
                 if (!Executive.isExecutableTerm(task.sentence.content)) {
                     memory.executive.decisionPlanning(nal, task, this);
@@ -451,8 +451,8 @@ public class Concept extends Item<Term> {
      */
     public void insertTaskLink(final TaskLink taskLink) {
         final BudgetValue taskBudget = taskLink.budget;
-        taskLinks.putIn(taskLink);
         memory.conceptActivate(this, taskBudget);
+        taskLinks.putIn(taskLink);
     }
 
     /**
