@@ -475,12 +475,12 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
 
     public void multiplyRelevancy(double x) {
-        if (x == 1.0) return;
+        /*if (x == 1.0) return; //nnot used currently
         for (Cause c : edgeSet()) {
-            /*if (c.relevancy!=null)
-                System.out.println(c.relevancy.size() + " [" + c.parent.content + "]" + c.parent.content );*/
-            c.multiply(x);        
-        }
+            ////if (c.relevancy!=null)
+             ////   System.out.println(c.relevancy.size() + " [" + c.parent.content + "]" + c.parent.content );
+            //c.multiply(x);        
+        }*/
     }
     
     
