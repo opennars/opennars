@@ -224,7 +224,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
         public UniqueInterval(Implication parent, Interval i, Term previous) {
             super(i.magnitude, true);    
-            this.id = parent.name() + "/" + previous.name() + "/" + i.name();
+            this.id = parent.name() + "/" + (previous!=null ? previous.name() : "") + "/" + i.name();
             this.parent = parent;
         }
 
