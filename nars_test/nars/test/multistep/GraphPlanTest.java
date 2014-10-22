@@ -57,7 +57,7 @@ public class GraphPlanTest {
             @Override
             public void event(Class channel, Object... args) {
                 //System.out.println(o);
-                if (args.length > 0) {
+                if (args.length > 2) {
                     Object o = args[1];
                     if (o.toString().contains(expected))
                         success.set(true);
@@ -68,7 +68,7 @@ public class GraphPlanTest {
         
         n.addInput(input);
 
-        //n.finish(45);
+        n.finish(45);
         
         //assertTrue(success.get());
         

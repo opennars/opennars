@@ -14,7 +14,9 @@ import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.gui.NPanel;
 import nars.gui.output.chart.TimeSeries;
+import nars.gui.output.timeline.Timeline2DCanvas.BarChart;
 import nars.gui.output.timeline.Timeline2DCanvas.Chart;
+import nars.gui.output.timeline.Timeline2DCanvas.LineChart;
 import nars.gui.output.timeline.Timeline2DCanvas.StackedPercentageChart;
 import nars.util.NARTrace;
 
@@ -128,6 +130,36 @@ public class TimelinePanel extends NPanel implements Observer {
                 return new Timeline2DCanvas.LineChart(trace, "emotion.busy").height(1);
             }            
         });
+        controls.add(new ChartButton("Task: Executed") {
+            @Override public Chart newChart() {
+                return new BarChart(trace, "task.executed").height(2);
+            }            
+        });
+        controls.add(new ChartButton("Plan Graph Components") {
+            @Override public Chart newChart() {
+                return new StackedPercentageChart(trace, "plan.graph.in.other.count", "plan.graph.in.operation.count", "plan.graph.in.interval.count").height(3);
+            }            
+        });
+        controls.add(new ChartButton("Plan Graph Interval Magnitude (mean)") {
+            @Override public Chart newChart() {
+                return new LineChart(trace, "plan.graph.in.delay_magnitude.mean").height(1);
+            }            
+        });
+        controls.add(new ChartButton("Plan Graph Vertices & Edges") {
+            @Override public Chart newChart() {
+                return new LineChart(trace, "plan.graph.edge.count", "plan.graph.vertex.count").height(2);
+            }            
+        });
+        controls.add(new ChartButton("Executable & Planned Tasks") {
+            @Override public Chart newChart() {
+                return new StackedPercentageChart(trace, "plan.task.executable", "plan.task.planned").height(2);
+            }            
+        });
+            
+            
+                           
+            
+        
         
     }
     
