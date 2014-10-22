@@ -255,7 +255,12 @@ public class BudgetValue implements Cloneable {
      * @see https://en.wikipedia.org/wiki/Linear_interpolation
      */
     public void lerpPriority(final float targetValue, final float momentum) {
-        setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
+        if (momentum == 1.0) 
+            return;
+        else if (momentum == 0) 
+            setPriority(targetValue);
+        else
+            setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
     }
 
     public long getForgetPeriod(long currentTime) {
