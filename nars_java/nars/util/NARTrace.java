@@ -104,6 +104,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         }
     }
 
+    
     public NARTrace(NAR n) {
         super(n, true);
         this.nar = n;

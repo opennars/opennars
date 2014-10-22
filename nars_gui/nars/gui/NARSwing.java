@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
+import nars.gui.output.timeline.TimelinePanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -128,6 +129,10 @@ public class NARSwing  {
             //new Log4JOutput(nar, false);            
         }
         
+        
+        
+        NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar));
+        outputWindow.show(400, 400);
         
 //        Window outputWindow = new Window("Activity", new MultiOutputPanel(swing.narControls));
 //        outputWindow.setLocation(swing.mainWindow.getLocation().x + swing.mainWindow.getWidth(), swing.mainWindow.getLocation().y);        outputWindow.setSize(800, 400);
