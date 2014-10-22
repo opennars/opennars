@@ -184,21 +184,16 @@ public class Executive implements Observer {
         protected Task inlineConjunction(Task t, final Conjunction c) {
             ArrayDeque<Term> inlined = new ArrayDeque();
             boolean modified = false;
-            
-            Operation precedingOperation = null;
-            
+                        
             if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
                 Term prev = null;
                 for (Term e : c.term) {
-                    
-                    if (e instanceof Operation)
-                        precedingOperation = (Operation)e;
                     
                     if (!isPlanTerm(e)) {
                         if (graph.isPlannable(e)) {
                             
                                                         
-                            TreeSet<ParticlePlan> plans = graph.particlePlan(e, inlineSearchDepth, inlineParticles, precedingOperation);
+                            TreeSet<ParticlePlan> plans = graph.particlePlan(e, inlineSearchDepth, inlineParticles);
                             if (plans.size() > 0) {
                                 //use the first
                                 ParticlePlan pp = plans.first();
@@ -220,12 +215,9 @@ public class Executive implements Observer {
 //                                    }
 //                                }
                                 
-                                //System.out.println("inline: " + pp.sequence + " -> " + seq);
+                                //System.out.println("inline: " + seq + " -> " + e + " in " + c);
                                 
-                                for (int i = 0; i < seq.size(); i++) {
-                                    if ((i == 0) && (seq.get(0).equals(precedingOperation))) continue;
-                                    inlined.add(seq.get(i));
-                                }
+                                inlined.addAll(seq);
                                 
                                 //System.err.println("Inline " + e + " in " + t.getContent() + " = " + pp.sequence);  
                                 modified = true;
