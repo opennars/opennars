@@ -156,10 +156,12 @@ public class Executive implements Observer {
         public int sequence;
         public long delayUntil = -1;
         private float motivationFactor = 1;
+        private TruthValue desire;
         
         public TaskExecution(final Concept concept, Task t) {
             this.c = concept;
             
+            this.desire = t.getDesire();
             
             //Check if task is 
             if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
@@ -176,6 +178,7 @@ public class Executive implements Observer {
                     t = inlineConjunction(t, (Conjunction)term);
                 }
             }
+            
             this.t = t;
 
         }
@@ -217,9 +220,13 @@ public class Executive implements Observer {
                                 
                                 //System.out.println("inline: " + seq + " -> " + e + " in " + c);
                                 
+                                desire = TruthFunctions.union(desire, pp.truth);
+                                
+                                //System.out.println(t.sentence.truth + " <- " + pp.truth + "    -> " + desire);
+                                        
                                 inlined.addAll(seq);
                                 
-                                //System.err.println("Inline " + e + " in " + t.getContent() + " = " + pp.sequence);  
+                                
                                 modified = true;
                             }
                             else {
@@ -253,7 +260,7 @@ public class Executive implements Observer {
             
             if (modified) {
                 Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
-                t = t.clone(t.sentence.clone(nc) );
+                t = t.clone(t.sentence.clone(nc) );                
             }
             return t;
         }
@@ -266,7 +273,7 @@ public class Executive implements Observer {
         }
         
         public final float getDesire() { 
-            return t.getDesire().getExpectation() * motivationFactor;
+            return desire.getExpectation() * motivationFactor;
         }
         public final float getPriority() { return t.getPriority();         }
         public final float getDurability() { return t.getDurability(); }
