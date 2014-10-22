@@ -707,12 +707,8 @@ public class GraphExecutive {
         
         Task newTask = plan.planTask(c, task, target, punctuation);
         
-        //if (punctuation == '.')   //feedback is due to temporal induction currently.     
-        //    nal.derivedTask(newTask, false, true, null, null);  //and if this is a implication then wrong
-        if (punctuation == '!') {
-            //System.out.println("  exe plan: " + newTask);
-            memory.executive.addTask(c, newTask);
-        }
+        nal.derivedTask(newTask, false, true, null, null);  //and if this is a implication then wrong
+        memory.executive.addTask(c, newTask);
         
         return newTask;
         
