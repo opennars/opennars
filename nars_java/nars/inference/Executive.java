@@ -406,7 +406,7 @@ public class Executive implements Observer {
         
             boolean plannable = graph.isPlannable(t.getContent());
             if (plannable) {                                    
-                graph.plan(nal, concept, t, t.getContent(), particles, searchDepth, Symbols.JUDGMENT_MARK, maxPlannedTasks);
+                graph.plan(nal, concept, t, t.getContent(), particles, searchDepth, '!', maxPlannedTasks);
             }                
         }
         
