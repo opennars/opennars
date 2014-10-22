@@ -209,14 +209,14 @@ public class RobotArm extends PhysicsModel {
             getWorld().raycast(ccallback, point1, point2);
 
             if (ccallback.m_hit) {
-              getDebugDraw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
-              getDebugDraw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
+              draw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
+              draw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
               pooledHead.set(ccallback.m_normal);
               pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
-              getDebugDraw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
+              draw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
               hit[i]= true;
             } else {
-              getDebugDraw().drawSegment(point1, point2, laserColor);
+              draw().drawSegment(point1, point2, laserColor);
             }
             a+= aStep;
         }

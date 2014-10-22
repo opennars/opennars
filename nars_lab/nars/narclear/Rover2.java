@@ -1,6 +1,7 @@
 package nars.narclear;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,14 +12,13 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.core.build.ContinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
+import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -34,14 +34,48 @@ import org.jbox2d.dynamics.BodyType;
  *
  * @author me
  */
-public class Rover extends PhysicsModel {
-    public static int decrease_of_importance_step=30;
-    public static int cnt=0;
-    public static int do_sth_importance=0;
+public class Rover2 extends PhysicsModel {
+    public int decrease_of_importance_step=30;
+    public int cnt=0;
+    public int do_sth_importance=0;
+    
+    float curiosity = 0.01f;
+    
+    /* how often to input mission, in cycles */
+    int missionPeriod = 200;
+
+    boolean wraparound = false;
+    
     public static RoverModel rover;
     private final NAR nar;
 
-    public Rover(NAR nar) {
+    
+
+    public static enum Material implements DrawPhy2D.DrawProperty {
+        Food, Wall, Block;
+        
+        static final Color foodStroke = new Color(0.25f, 1f, 0.25f);
+        static final Color foodFill = new Color(0.15f, 0.9f, 0.15f);
+
+        static final Color wallStroke = new Color(0.25f, 0.25f, 0.25f);
+        static final Color wallFill = new Color(0.5f, 0.5f, 0.5f);
+        
+        @Override        
+        public void before(Body b, DrawPhy2D d) {
+            switch (this) {
+                case Food:
+                    d.setStrokeColor(foodStroke);
+                    d.setFillColor(foodFill);
+                    break;
+                case Wall:
+                    d.setStrokeColor(wallStroke);
+                    d.setFillColor(wallFill);
+                    break;
+            }
+        }
+    };
+    
+    public Rover2(NAR nar) {
         this.nar = nar;
     }
 
@@ -53,7 +87,7 @@ public class Rover extends PhysicsModel {
         Vec2 point1 = new Vec2();
         Vec2 point2 = new Vec2();
         Vec2 d = new Vec2();
-        Color3f laserColor = new Color3f(0.5f, 0.5f, 0.5f);
+        
         List<VisionRay> vision = new ArrayList();
 
         //public class ChangedNumericInput //discretizer
@@ -136,17 +170,44 @@ public class Rover extends PhysicsModel {
             int retinaResolution = 5; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
+            int distanceResolution = 5;
             for (int i = -pixels/2; i <= pixels/2; i++) {
+                final int ii = i;
                 vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
-                            retinaArc, retinaResolution, L, 3));
+                            retinaArc, retinaResolution, L, distanceResolution) {
+                                
+                               float touchThresholdDistance = 0.15f;
+                                
+                               @Override
+                               public void onTouch(Body touched, float di) {
+                                   if (di <= touchThresholdDistance) {
+                                    if (Math.abs(ii) <= 1) { //mouth
+                                        if (touched.getUserData() == Material.Food) {
+                                             eat(touched); 
+                                        }
+                                    }
+                                   }
+                                        
+                               }
+                            }
+                );
             }
             
-            pixels=3;
-            Vec2 backRetina = new Vec2(0, -0.5f);
+            
+            pixels=5;
+            aStep = 1.2f/pixels;
+            retinaResolution = 3;
+            L = 5.5f;
+            retinaArc = 0.9f;
+            
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4),
+                float angle = -(MathUtils.PI/2f + aStep*i*4);
+                float d1 = 0.5f;
+                Vec2 backRetina = new Vec2((float)Math.cos(angle)*d1, (float)Math.sin(angle)*d1);
+                
+                vision.add(new VisionRay("back" + i, torso, backRetina, angle,
                            retinaArc, retinaResolution,
-                           5.5f, 3));
+                           L, distanceResolution));
             }
             
             //Vec2 backRetina = new Vec2(0, -0.5f);
@@ -167,6 +228,16 @@ public class Rover extends PhysicsModel {
             */
 
         }
+        
+        public void eat(Body food) {
+            float x = (float) Math.random() * sz - sz / 2f;
+            float y = (float) Math.random() * sz - sz / 2f;
+            //world.AddABlock(Phys, sz, sz);
+            food.setTransform(new Vec2(x*2.0f,y*2.0f), food.getAngle());            
+            //Phys.getWorld().destroyBody(hit);
+            nar.addInput("<goal --> eat>. :|:");                                       
+        }
+
 
         public class VisionRay {
             final Vec2 point; //where the retina receives vision at
@@ -179,6 +250,12 @@ public class Rover extends PhysicsModel {
             private final int distanceSteps;
             private final int resolution;
             private final float arc;
+            
+            
+            final Color3f laserUnhitColor = new Color3f(0.25f, 0.25f, 0.25f);
+            final Color3f laserHitColor = new Color3f(laserUnhitColor.x, laserUnhitColor.y, laserUnhitColor.z);
+            final Color3f sparkColor = new Color3f(0.4f, 0.9f, 0.4f);
+            final Color3f normalColor = new Color3f(0.9f, 0.9f, 0.4f);
 
             public VisionRay(String id, Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
                 this.id = id;
@@ -191,14 +268,17 @@ public class Rover extends PhysicsModel {
                 this.distanceSteps = steps;
             }
             
-            int n=0;
+            
             public void step() {
-                n++;
+                
                 point1 = body.getWorldPoint(point);
 
                 Body hit = null;
                 
-                float minDist = 1000;
+                
+                float minDist = distance * 2; //far enough away
+                float totalDist = 0;
+                
                 
                 float dArc = arc / resolution;
                 for (int r = 0; r < resolution; r++) {
@@ -212,33 +292,37 @@ public class Rover extends PhysicsModel {
 
                     if (ccallback.m_hit) {
                         float d = ccallback.m_point.sub(point1).length() / distance;
-                        /*Vec2 v1=point1;
-                         Vec2 v2=hit.getTransform().p;
-                         double dx=v1.x-v2.x;
-                         double dy=v1.y-v2.y;
-                         float d = (float) Math.sqrt(dx*dx+dy*dy)/distance;*/
-
-                        draw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
-                        draw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
+                        
+                        laserHitColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
+                                                
+                        draw().drawPoint(ccallback.m_point, 5.0f, sparkColor);
+                        draw().drawSegment(point1, ccallback.m_point, laserHitColor);
                         pooledHead.set(ccallback.m_normal);
                         pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
-                        draw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
-                        hit = ccallback.body;
-
-                        if (d < minDist)
+                        draw().drawSegment(ccallback.m_point, pooledHead, normalColor);
+                        
+                        totalDist += d;
+                        if (d < minDist) {
+                            hit = ccallback.body;
                             minDist = d;
+                        }
                     } else {
-                        draw().drawSegment(point1, point2, laserColor);
+                        draw().drawSegment(point1, point2, laserUnhitColor);
+                        totalDist += distance;
                     }
                 }
+                
+                
 
                 if (hit!=null) {  
                     
+                    float meanDist = totalDist / resolution;
+                    float percentDiff = Math.abs(meanDist - minDist) / (minDist);
+                    float priority = 0.5f + 0.5f * (1.0f / percentDiff);
+                    if (priority > 0.99f) priority = 0.99f;
+                    
+                            
                     float di = minDist; 
-                    if(id.startsWith("back")) {
-                        sight.set("<goal --> reached>. :|: %0.0;0.90%");
-                        return;
-                    }
                     
                     String dist = "unknown";                    
                     if (distanceSteps == 2) {
@@ -248,43 +332,51 @@ public class Rover extends PhysicsModel {
                         dist = Texts.n1(di);
                     }
                     
-                    if(n%500==0) {
-                        nar.addInput("<goal --> reached>!"); //also remember on goal
-                    }
-                    if(di <= 0.2f) {
-                        float x = (float) Math.random() * sz - sz / 2f;
-                        float y = (float) Math.random() * sz - sz / 2f;
-                        //world.AddABlock(Phys, sz, sz);
-                        hit.setTransform(new Vec2(x*2.0f,y*2.0f), hit.getAngle());
-                        //Phys.getWorld().destroyBody(hit);
-                        sight.set("<goal --> reached>. :|:");
-                        
-                    }
+                    onTouch(hit, di);
+                    
+                    String material = hit.getUserData()!=null ? hit.getUserData().toString() : "sth";
+                    
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
+                    String ss = "$" + Texts.n2(priority) + "$ " + "<(*," + id + "," + dist + ") --> see_" + material + ">. :|: %1.00;" + Texts.n2(priority) + "%";
+                    sight.set(ss);
+                    
                 }
                 else {
                     sight.set("<(*," + id + ",empty) --> see>. :|:");
                 }
             }
+            
+            public void onTouch(Body hit, float di) {
+            }
         }
+        
 
         boolean feel_motion=true; //todo add option in gui
 
         public void step() {
+            if(cnt%missionPeriod==0) {
+                nar.addInput("<goal --> eat>!"); //also remember on goal
+                nar.addInput("(--,see_Wall)!"); //also remember on goal
+            }
+                    
             for (VisionRay v : vision)
                 v.step();
             
-            if(Rover.cnt>=do_sth_importance) {
-                Rover.cnt=0;
-                Rover.do_sth_importance+=decrease_of_importance_step; //increase
+            /*if(cnt>=do_sth_importance) {
+                cnt=0;
+                do_sth_importance+=decrease_of_importance_step; //increase
+                nar.addInput("(^motor,random)!");
+            }*/
+            
+            if (Math.random() < curiosity) {
                 nar.addInput("(^motor,random)!");
             }
             
             if(feel_motion) {
                 feelMotion();
             }
-            Rover.cnt++;
+            
+            cnt++;
         }
 
 
@@ -346,23 +438,28 @@ public class Rover extends PhysicsModel {
         }
 
     }
+    
 
     @Override
     public void step(float timeStep, TestbedSettings settings) {
         super.step(timeStep, settings);
 
         rover.step();
-        if(rover.torso.getTransform().p.x>sz) {
-            rover.torso.setTransform(new Vec2(-sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
-        }
-        if(rover.torso.getTransform().p.y>sz) {
-            rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,-sz),rover.torso.getAngle());
-        }
-        if(rover.torso.getTransform().p.x<-sz) {
-            rover.torso.setTransform(new Vec2(sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
-        }
-        if(rover.torso.getTransform().p.y<-sz) {
-            rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,sz),rover.torso.getAngle());
+        
+        //wraparound
+        if (wraparound) {
+            if(rover.torso.getTransform().p.x>sz) {
+                rover.torso.setTransform(new Vec2(-sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
+            }
+            if(rover.torso.getTransform().p.y>sz) {
+                rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,-sz),rover.torso.getAngle());
+            }
+            if(rover.torso.getTransform().p.x<-sz) {
+                rover.torso.setTransform(new Vec2(sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
+            }
+            if(rover.torso.getTransform().p.y<-sz) {
+                rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,sz),rover.torso.getAngle());
+            }
         }
     }
 
@@ -405,46 +502,76 @@ public class Rover extends PhysicsModel {
 
     }
 
-    public static PhysicsModel Phys;
+    
+    
     public class RoverWorld {
+        private final PhysicsModel p;
 
         public RoverWorld(PhysicsModel p, float w, float h) {
-            Phys=p;
+            this.p = p;
+            
             for (int i = 0; i < 20; i++) {
-                AddABlock(p, w, h);
+                addFood(w, h);
             }
+            
+            float wt = 1f;
+            addWall(0, h, w, wt, 0);
+            addWall(-w, 0, wt, h, 0);
+            addWall(w, 0, wt, h, 0);
+            addWall(0, -h, w, wt, 0);            
         }
 
-        public void AddABlock(PhysicsModel p, float w, float h) {
+        public void addFood(float w, float h) {
             float x = (float) Math.random() * w - w / 2f;
             float y = (float) Math.random() * h - h / 2f;
-            float bw = 1.0f;
-            float bh = 1.6f;
+            
+            float minSize = 0.25f;
+            float maxSize = 1.5f;
+            
+            float bw = (float)(minSize + Math.random() * (maxSize - minSize));
+            float bh = (float)(minSize + Math.random() * (maxSize - minSize));
             float a = 0;
-            addBlock(p, x*2.0f, y*2.0f, bw, bh, a);
+            float mass = 0.25f;
+            Body b = addBlock(x*2.0f, y*2.0f, bw, bh, a, mass);
+            b.applyAngularImpulse((float)Math.random());
+            b.setUserData(Material.Food);
+        }
+
+        
+        public Body addWall(float x, float y, float w, float h, float a) {
+            Body b = addBlock(x, y, w, h, a, 0);
+            b.setUserData(Material.Wall);
+            return b;
         }
         
-        public void addBlock(PhysicsModel p, float x, float y, float w, float h, float a) {
-            float mass = 0.25f;
+        public Body addBlock(float x, float y, float w, float h, float a, float mass) {
+            
             PolygonShape shape = new PolygonShape();
             shape.setAsBox(w, h);
 
             BodyDef bd = new BodyDef();
-            bd.setLinearDamping(0.95f);
-            bd.setAngularDamping(0.8f);
+            if (mass!=0) {
+                bd.setLinearDamping(0.95f);
+                bd.setAngularDamping(0.8f);
+                bd.type = BodyType.DYNAMIC;
+            }
+            else {
+                bd.type = BodyType.STATIC;
+            }
+            
 
-            bd.type = BodyType.DYNAMIC;
             bd.position.set(x, y);
-            Body body = p.getWorld().createBody(bd);
+            Body body = p.getWorld().createBody(bd);            
             body.createFixture(shape, mass);
             body.setAngularDamping(10);
             body.setLinearDamping(15);
+            return body;
         }
     }
 
-    public static RoverWorld world;
-    //public static RoverWorld world;
+    public RoverWorld world;
     public static int sz=48;
+    
     @Override
     public void initTest(boolean deserialized) {
         getWorld().setGravity(new Vec2());
@@ -467,15 +594,24 @@ public class Rover extends PhysicsModel {
     public static float linearSpeed = 5000f;
                 
     public static boolean allow_imitate=true;
+
+    static final ArrayList<String> randomActions=new ArrayList<>();
+    static {
+        randomActions.add("(^motor,turn,left). :|:");
+        randomActions.add("(^motor,turn,right). :|:");
+        randomActions.add("(^motor,backward). :|:");
+        randomActions.add("(^motor,forward). :|:");
+    }
     
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
+
             @Override
             protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-                Term t1 = args[0];
-                float priority = operation.getTask().budget.getPriority();
-
                 
+                Term t1 = args[0];
+
+                float priority = operation.getTask().budget.getPriority();
 
                 if (args.length > 1) {
                     Term t2 = args[1];
@@ -499,19 +635,15 @@ public class Rover extends PhysicsModel {
                             rover.stop();
                             break;
                         case "random": //tend forward
-                            nar.addInput("(^motor,forward). :|:\n100\n");
+                            //nar.addInput("(^motor,forward). :|:\n100\n");
+                            nar.addInput("(^motor,forward). :|:\n");
                             rover.thrust(0, linearSpeed);
                             //nar.step(100);
                             
  
-                            if(true) { //allow_subcons
-                                ArrayList<String> candids=new ArrayList<>();
-                                candids.add("(^motor,turn,left). :|:");
-                                candids.add("(^motor,turn,right). :|:");
-                                candids.add("(^motor,backward). :|:");
-                                candids.add("(^motor,forward). :|:");
-                                int candid=(int)(Math.random()*candids.size()-0.001);
-                                nar.addInput(candids.get(candid));
+                            //if(true) { //allow_subcons
+                                int candid=(int)(Math.random()*randomActions.size()-0.001);
+                                nar.addInput(randomActions.get(candid));
                                 if(candid>=3)
                                     rover.thrust(0, linearSpeed);
                                 if(candid==2)
@@ -520,22 +652,17 @@ public class Rover extends PhysicsModel {
                                     rover.rotate(-rotationSpeed);
                                 if(candid==0)
                                     rover.rotate(rotationSpeed);
-                            } else {
-                                ArrayList<String> candids=new ArrayList<>();
-                                candids.add("(^motor,turn,left)! :|:");
-                                candids.add("(^motor,turn,right)! :|:");
-                                candids.add("(^motor,backward)! :|:");
-                                candids.add("(^motor,forward)! :|:");
-                                int candid=(int)(Math.random()*candids.size()-0.001);
-                                nar.addInput(candids.get(candid));
-                            }
+//                            } else {
+//                                int candid=(int)(Math.random()*randomActions.size()-0.001);
+//                                nar.addInput(randomActions.get(candid));
+//                            }
                             
                             //{"(^motor,turn,left)! :|:", "(^motor,turn,right)! :|:", "(^motor,forward)! :|:", "(^motor,backward)! :|:"};
                             
                             break;
                     }
                 }
-                Rover.cnt=0;
+                
                 return null;
             }
         });
@@ -585,18 +712,18 @@ public class Rover extends PhysicsModel {
         
         
 
-       // RoverWorld.world= new RoverWorld(rv, 48, 48);
-        new NARPhysics<Rover>(nar, 1.0f / framesPerSecond, new Rover(nar)) {
+        // RoverWorld.world= new RoverWorld(rv, 48, 48);
+        new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, new Rover2(nar)) {
 
             @Override
             public void keyPressed(KeyEvent e) {
                  
-                Rover.RoverModel rover=Rover.rover;
-                float rotationSpeed = Rover.rotationSpeed;
-                float linearSpeed = Rover.linearSpeed;
+                Rover2.RoverModel rover=Rover2.rover;
+                float rotationSpeed = Rover2.rotationSpeed;
+                float linearSpeed = Rover2.linearSpeed;
 
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if(!Rover.allow_imitate) {
+                    if(!Rover2.allow_imitate) {
                         nar.addInput("(^motor,forward). :|:");
                     } else {
                         nar.addInput("(^motor,forward)! :|:");
@@ -604,7 +731,7 @@ public class Rover extends PhysicsModel {
                     rover.thrust(0, linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if(!Rover.allow_imitate) {
+                    if(!Rover2.allow_imitate) {
                         nar.addInput("(^motor,backward). :|:");
                     } else {
                         nar.addInput("(^motor,backward)! :|:");
@@ -612,7 +739,7 @@ public class Rover extends PhysicsModel {
                     rover.thrust(0, -linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    if(!Rover.allow_imitate) {
+                    if(!Rover2.allow_imitate) {
                         nar.addInput("(^motor,turn,left). :|:");
                     } else {
                         nar.addInput("(^motor,turn,left)! :|:");
@@ -620,7 +747,7 @@ public class Rover extends PhysicsModel {
                     rover.rotate(rotationSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    if(!Rover.allow_imitate) {
+                    if(!Rover2.allow_imitate) {
                         nar.addInput("(^motor,turn,right). :|:");
                     } else {
                         nar.addInput("(^motor,turn,right)! :|:");

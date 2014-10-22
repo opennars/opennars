@@ -221,7 +221,7 @@ public class Executive implements Observer {
                                 //System.out.println("inline: " + seq + " -> " + e + " in " + c);
                                 
                                 //TODO adjust the truth value according to the ratio of term length, so that a small inlined sequence affects less than a larger one
-                                desire = TruthFunctions.union(desire, pp.truth);
+                                desire = TruthFunctions.deduction(desire, pp.truth);
                                 
                                 //System.out.println(t.sentence.truth + " <- " + pp.truth + "    -> " + desire);
                                         
