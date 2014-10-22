@@ -239,30 +239,6 @@ public class Stamp implements Cloneable {
 
     }
 
-    /**
-     * Try to merge two Stamps, return null if have overlap
-     * <p>
-     * By default, the event time of the first stamp is used in the result
-     *
-     * @param first The first Stamp
-     * @param second The second Stamp
-     * @param time The new creation time
-     * @return The merged Stamp, or null
-     */
-    public static Stamp make(final Stamp first, final Stamp second, final long time) {
-
-        //temporarily removed
-        /*
-         if (equalBases(first.getBase(), second.getBase())) {
-         return null;  // do not merge identical bases
-         }
-         */
-//        if (first.baseLength() > second.baseLength()) {
-            return new Stamp(first, second, time); // keep the order for projection
-//        } else {
-//            return new Stamp(second, first, time);
-//        }
-    }
 
     public Stamp(final Memory memory, final Tense tense) {
         this(memory.time(), tense, memory.newStampSerial(), memory.param.duration.get());

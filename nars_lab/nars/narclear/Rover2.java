@@ -170,7 +170,7 @@ public class Rover2 extends PhysicsModel {
             int retinaResolution = 5; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
-            int distanceResolution = 5;
+            int distanceResolution = 7;
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 final int ii = i;
                 vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
@@ -276,7 +276,7 @@ public class Rover2 extends PhysicsModel {
                 Body hit = null;
                 
                 
-                float minDist = distance * 2; //far enough away
+                float minDist = distance * 1.1f; //far enough away
                 float totalDist = 0;
                 
                 
@@ -308,7 +308,7 @@ public class Rover2 extends PhysicsModel {
                         }
                     } else {
                         draw().drawSegment(point1, point2, laserUnhitColor);
-                        totalDist += distance;
+                        totalDist += 1;
                     }
                 }
                 
@@ -317,10 +317,10 @@ public class Rover2 extends PhysicsModel {
                 if (hit!=null) {  
                     
                     float meanDist = totalDist / resolution;
-                    float percentDiff = Math.abs(meanDist - minDist) / (minDist);
-                    float priority = 0.5f + 0.5f * (1.0f / percentDiff);
-                    if (priority > 0.99f) priority = 0.99f;
-                    
+                    float percentDiff = Math.abs(meanDist - minDist);
+                    float conf = 0.5f + 0.5f * (1.0f - percentDiff);
+                    if (conf > 0.99f) conf = 0.99f;
+                    System.out.println(minDist + " " + meanDist + " " + percentDiff + " " + conf);
                             
                     float di = minDist; 
                     
@@ -336,8 +336,11 @@ public class Rover2 extends PhysicsModel {
                     
                     String material = hit.getUserData()!=null ? hit.getUserData().toString() : "sth";
                     
+                    //float freq = 0.5f + 0.5f * di;
+                    float freq = 1f;
+                    
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    String ss = "$" + Texts.n2(priority) + "$ " + "<(*," + id + "," + dist + ") --> see_" + material + ">. :|: %1.00;" + Texts.n2(priority) + "%";
+                    String ss = "$" + Texts.n2(conf) + "$ " + "<(*," + id + "," + dist + "," + material +") --> see>. :|: %" + Texts.n2(freq) + ";" + Texts.n2(conf) + "%";
                     sight.set(ss);
                     
                 }
@@ -356,7 +359,6 @@ public class Rover2 extends PhysicsModel {
         public void step() {
             if(cnt%missionPeriod==0) {
                 nar.addInput("<goal --> eat>!"); //also remember on goal
-                nar.addInput("(--,see_Wall)!"); //also remember on goal
             }
                     
             for (VisionRay v : vision)
@@ -591,16 +593,16 @@ public class Rover2 extends PhysicsModel {
     }
 
     public static float rotationSpeed = 100f;
-    public static float linearSpeed = 5000f;
+    public static float linearSpeed = 2000f;
                 
     public static boolean allow_imitate=true;
 
     static final ArrayList<String> randomActions=new ArrayList<>();
     static {
-        randomActions.add("(^motor,turn,left). :|:");
-        randomActions.add("(^motor,turn,right). :|:");
-        randomActions.add("(^motor,backward). :|:");
-        randomActions.add("(^motor,forward). :|:");
+        randomActions.add("(^motor,turn,left)! :|:");
+        randomActions.add("(^motor,turn,right)! :|:");
+        randomActions.add("(^motor,backward)! :|:");
+        randomActions.add("(^motor,forward)! :|:");
     }
     
     protected void addOperators() {
@@ -636,22 +638,22 @@ public class Rover2 extends PhysicsModel {
                             break;
                         case "random": //tend forward
                             //nar.addInput("(^motor,forward). :|:\n100\n");
-                            nar.addInput("(^motor,forward). :|:\n");
-                            rover.thrust(0, linearSpeed);
+                            //nar.addInput("(^motor,forward). :|:\n");
+                            //rover.thrust(0, linearSpeed);
                             //nar.step(100);
                             
  
                             //if(true) { //allow_subcons
-                                int candid=(int)(Math.random()*randomActions.size()-0.001);
+                                int candid=(int)(Math.random()*randomActions.size());
                                 nar.addInput(randomActions.get(candid));
-                                if(candid>=3)
+                                /*if(candid>=3)
                                     rover.thrust(0, linearSpeed);
                                 if(candid==2)
                                     rover.thrust(0, -linearSpeed);
                                 if(candid==1)
                                     rover.rotate(-rotationSpeed);
                                 if(candid==0)
-                                    rover.rotate(rotationSpeed);
+                                    rover.rotate(rotationSpeed);*/
 //                            } else {
 //                                int candid=(int)(Math.random()*randomActions.size()-0.001);
 //                                nar.addInput(randomActions.get(candid));

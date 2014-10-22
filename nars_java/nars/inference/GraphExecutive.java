@@ -17,6 +17,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.Executive.isPlanTerm;
+import nars.io.Output.OUT;
 import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Implication;
@@ -43,7 +44,7 @@ public class GraphExecutive {
     double minEdgeCost = 1.0;
     double costPerDelayedCycle = 0.5;
     
-    
+    final boolean debugParticlePaths = false;
     
     public GraphExecutive(Memory memory, Executive exec) {
         super();
@@ -94,13 +95,15 @@ public class GraphExecutive {
         
         public void addPath(final List<Cause> p, final double cost) {
                 
-            //1 / avg Cause cost
-            double newScore = (p.size() / cost);
             
-            if ((this.bestPath == null) || (score < newScore)) {
+            double pathScore = 0;
+            for (Cause c : p)
+                pathScore += c.getTruth().getExpectation();
+            
+            if ((this.bestPath == null) || (score < pathScore)) {
                 this.bestPath = p.toArray(new Cause[p.size()]);
                 this.distance = cost;
-                this.score = newScore;                
+                this.score = pathScore;                
             }
             
         }
@@ -536,7 +539,7 @@ public class GraphExecutive {
             
             Cause currentEdge = path[path.length-1];
 
-            Stamp stamp = Stamp.make(goal.sentence.stamp, currentEdge.getStamp(), memory.time());
+            Stamp stamp = new Stamp(goal.sentence.stamp, currentEdge.getStamp(), memory.time());
 
             //add all terms to derivation chain
             for(Term T : sequence) {
@@ -635,17 +638,19 @@ public class GraphExecutive {
         };
         
         SortedSet<ParticlePath> roots = act.activate(false, particles, distance);
-        //System.out.println("  PATH: " + roots);
-        //System.out.println("      : " + act.getStatus());
-        
+    
 
         if (roots == null) {            
             return null;
         }
-//        System.out.println("Particle paths for " + target);
-//        for (ParticlePath pp : roots) {
-//            System.out.println("  " + pp);
-//        }
+        
+        
+        if (debugParticlePaths) {
+            System.out.println("Particle paths for " + target);
+            for (ParticlePath pp : roots) {
+                System.out.println("  " + pp);
+            }
+        }
         
         TreeSet<ParticlePlan> plans = new TreeSet();
         for (final ParticlePath pp : roots) {
