@@ -1,4 +1,4 @@
-package nars.timeline;
+package nars.gui.output.timeline;
 
 import com.google.common.collect.Lists;
 import java.awt.event.MouseWheelEvent;
@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
+import javax.swing.SwingUtilities;
 import nars.core.Events.InferenceEvent;
 import nars.entity.Item;
 import nars.gui.NARSwing;
@@ -37,6 +37,8 @@ public class Timeline2DCanvas extends PApplet {
     private float lastMousePressY = Float.NaN;
     private float lastMousePressX = Float.NaN;
 
+    final int defaultFrameRate = 25;
+    
     boolean updating = true;
 
     float minLabelScale = 10f;
@@ -79,7 +81,13 @@ public class Timeline2DCanvas extends PApplet {
             this.height = h;
             return this;
         }
+        
+        //called during NAR thread
+        public void update(Timeline2DCanvas l, float timeScale, float yScale) {
+            
+        }
 
+        //called during Swing thread
         abstract public void draw(Timeline2DCanvas l, float y, float timeScale, float yScale);
 
     }
@@ -354,6 +362,7 @@ public class Timeline2DCanvas extends PApplet {
         boolean includeTaskEvents = true;
         boolean includeOutputEvents = true;
         boolean includeOtherEvents = true;
+        private final TreeMap<Long, List<InferenceEvent>> timepoints;
         
 
         public static class EventPoint<X> {
@@ -385,19 +394,26 @@ public class Timeline2DCanvas extends PApplet {
             this.includeTaskEvents = includeTaskEvents;
             this.includeOutputEvents = includeOutputEvents;
             this.includeOtherEvents = includeOtherEvents;
+            timepoints = new TreeMap();
         }
 
+        @Override
+        public void update(Timeline2DCanvas l, float timeScale, float yScale) {
+            TreeMap<Long, List<InferenceEvent>> time = trace.time;
+
+            synchronized (timepoints) {
+                timepoints.putAll(time.subMap(l.cycleStart, l.cycleEnd));
+            }
+        }
+        
         @Override
         public void draw(Timeline2DCanvas l, float y, float timeScale, float yScale) {
             this.timeScale = timeScale;
             this.yScale = yScale * height;
             this.l = l;
             
-            TreeMap<Long, List<InferenceEvent>> time = trace.time;
-
-            final SortedMap<Long, List<InferenceEvent>> timepoints = time.subMap(l.cycleStart, l.cycleEnd);
-            if (timepoints.isEmpty())
-                    return;
+            if ((timepoints == null) || (timepoints.isEmpty()))
+                return;
             
             lastSubjectEvent.clear();
             events.clear();
@@ -406,13 +422,15 @@ public class Timeline2DCanvas extends PApplet {
             l.noStroke();
             l.textSize(l.drawnTextScale);
 
-            //something not quite right about this
-            long maxItemsPerCycle = timepoints.values().stream().map(x -> x.stream().filter(e -> include(e)).count()).max(Long::compare).get();
-                    
-            for (Map.Entry<Long, List<InferenceEvent>> e : timepoints.entrySet()) {
-                long t = e.getKey();
-                List<InferenceEvent> v = e.getValue();
-                drawEvent(t, v, y, (int)maxItemsPerCycle);
+            synchronized (timepoints) {
+                //something not quite right about this
+                long maxItemsPerCycle = timepoints.values().stream().map(x -> x.stream().filter(e -> include(e)).count()).max(Long::compare).get();
+
+                for (Map.Entry<Long, List<InferenceEvent>> e : timepoints.entrySet()) {
+                    long t = e.getKey();
+                    List<InferenceEvent> v = e.getValue();
+                    drawEvent(t, v, y, (int)maxItemsPerCycle);
+                }
             }
 
             l.strokeCap(SQUARE);
@@ -588,12 +606,19 @@ public class Timeline2DCanvas extends PApplet {
     @Override
     public void setup() {
         colorMode(HSB);
+        frameRate(defaultFrameRate);        
     }
 
     @Override
     protected void resizeRenderer(int newWidth, int newHeight) {
-        super.resizeRenderer(newWidth, newHeight);
-        updateNext();
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override public void run() {
+                Timeline2DCanvas.super.resizeRenderer(newWidth, newHeight);
+                updateNext();
+            }
+            
+        });
     }
 
     @Override
@@ -615,7 +640,10 @@ public class Timeline2DCanvas extends PApplet {
 
     }
 
-    protected void updateCamera() {
+    protected void updateMouse() {
+        
+        boolean changed = false;
+    //protected void updateCamera() {
 
         
         //scale limits
@@ -633,7 +661,7 @@ public class Timeline2DCanvas extends PApplet {
                     if ((dx != 0) || (dy != 0)) {
                         camX -= dx;
                         camY -= dy;
-                        updateNext();
+                        changed = true;
                     }
                 } else if (mouseButton == 39) {
                     //right mouse button
@@ -646,7 +674,7 @@ public class Timeline2DCanvas extends PApplet {
                     timeScale += sx;
                     yScale += sy;
 
-                    updateNext();
+                    changed = true;
                     //System.out.println(camX +  " " + camY + " " + sx + " "  + sy);
                 }
 //                else if (mouseButton == 3) {
@@ -667,6 +695,14 @@ public class Timeline2DCanvas extends PApplet {
         
         
         
+        if (changed) {            
+            updateNext();
+        }
+
+    }
+
+    protected void updateCamera() {
+            
         if (yScale < minYScale) yScale = minYScale;
         if (yScale > maxYScale) yScale = maxYScale;
         if (timeScale < minTimeScale)  timeScale = minTimeScale;
@@ -679,13 +715,19 @@ public class Timeline2DCanvas extends PApplet {
         cycleEnd = (int) (Math.ceil((camX + width / 2) / timeScale) + 1);
 
         if (cycleEnd < cycleStart) cycleEnd = cycleStart;
-        
+
         drawnTextScale = Math.min(yScale, timeScale) * textScale;
-
+        
     }
-
+    
     public void updateNext() {
-        updating = true;
+        if (!updating) {
+            for (Chart c : charts) {
+                float h = c.height * yScale;
+                c.update(this, timeScale, yScale);
+            }            
+        }
+        updating = true;        
     }
 
     @Override
@@ -694,6 +736,7 @@ public class Timeline2DCanvas extends PApplet {
         if (!isDisplayable() || !isVisible())
             return;
             
+        updateMouse();
         updateCamera();
 
         if (!updating) {

@@ -20,11 +20,11 @@ import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
-import nars.timeline.Timeline2DCanvas;
-import nars.timeline.Timeline2DCanvas.BarChart;
-import nars.timeline.Timeline2DCanvas.EventChart;
-import nars.timeline.Timeline2DCanvas.LineChart;
-import nars.timeline.Timeline2DCanvas.StackedPercentageChart;
+import nars.gui.output.timeline.Timeline2DCanvas;
+import nars.gui.output.timeline.Timeline2DCanvas.BarChart;
+import nars.gui.output.timeline.Timeline2DCanvas.EventChart;
+import nars.gui.output.timeline.Timeline2DCanvas.LineChart;
+import nars.gui.output.timeline.Timeline2DCanvas.StackedPercentageChart;
 import nars.util.NARTrace;
 
 /**
