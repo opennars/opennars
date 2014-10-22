@@ -30,6 +30,7 @@ import nars.narclear.jbox2d.ContactPoint;
 import nars.narclear.jbox2d.PhysicsCamera;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.jbox2d.TestbedState;
+import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.DebugDraw;
@@ -221,7 +222,7 @@ public abstract class PhysicsModel implements ContactListener {
   /**
    * Gets the debug draw for the testbed
    */
-  public DebugDraw getDebugDraw() {
+  public DebugDraw draw() {
     return model.getDebugDraw();
   }
 
@@ -258,7 +259,7 @@ public abstract class PhysicsModel implements ContactListener {
    * Override for a different default camera position
    */
   public Vec2 getDefaultCameraPos() {
-    return new Vec2(0, 20);
+    return new Vec2(-getDefaultCameraScale()*2, getDefaultCameraScale()*2);
   }
 
   /**
@@ -340,7 +341,9 @@ public abstract class PhysicsModel implements ContactListener {
   private final AABB paabb = new AABB();
 
   public void step(float timeStep, TestbedSettings settings) {
-    float hz = settings.getSetting(TestbedSettings.Hz).value;
+    //float hz = settings.getSetting(TestbedSettings.Hz).value;
+    
+    camera.update(timeStep);
     
     if (settings.singleStep && !settings.pause) {
       settings.pause = true;
@@ -388,14 +391,15 @@ public abstract class PhysicsModel implements ContactListener {
     m_world.step(timeStep, settings.getSetting(TestbedSettings.VelocityIterations).value,
         settings.getSetting(TestbedSettings.PositionIterations).value);
 
-    m_world.drawDebugData();
+    //m_world.drawDebugData();
+    ((DrawPhy2D)debugDraw).draw(m_world);
 
     if (timeStep > 0f) {
       ++stepCount;
     }
 
-    debugDraw.drawString(5, m_textLine, "Engine Info", color4);
-    m_textLine += TEXT_LINE_SPACE;
+    //debugDraw.drawString(5, m_textLine, "Engine Info", color4);
+    //m_textLine += TEXT_LINE_SPACE;
     debugDraw.drawString(5, m_textLine, "Framerate: " + (int) model.getCalculatedFps(),
         Color3f.WHITE);
     m_textLine += TEXT_LINE_SPACE;

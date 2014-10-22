@@ -162,7 +162,7 @@ public class PhysicsController  {
     viewportHalfWidth = halfWidth;
 
     if (currTest != null) {
-      currTest.getCamera().getTransform().setExtents(halfWidth, halfHeight);
+      currTest.getCamera().setExtents(halfWidth, halfHeight);
     }
   }
 
@@ -176,7 +176,7 @@ public class PhysicsController  {
 
   private void initTest(PhysicsModel test) {
     test.init(model);
-    test.getCamera().getTransform().setExtents(viewportHalfWidth, viewportHalfHeight);
+    test.getCamera().setExtents(viewportHalfWidth, viewportHalfHeight);
     model.getPanel().grabFocus();
   }
 

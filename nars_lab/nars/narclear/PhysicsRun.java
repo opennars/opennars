@@ -38,7 +38,7 @@ import nars.narclear.jbox2d.PhysicsController.MouseBehavior;
 import nars.narclear.jbox2d.PhysicsController.UpdateBehavior;
 import nars.narclear.jbox2d.TestbedErrorHandler;
 import nars.narclear.jbox2d.TestbedState;
-import nars.narclear.jbox2d.j2d.DebugDrawJ2D;
+import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.narclear.jbox2d.j2d.TestPanelJ2D;
 import nars.narclear.jbox2d.j2d.TestbedSidePanel;
 
@@ -74,7 +74,7 @@ public class PhysicsRun {
         PhysPanel panel = new PhysPanel(model, controller);
 
         model.setPanel(panel);
-        model.setDebugDraw(new DebugDrawJ2D(panel, true));
+        model.setDebugDraw(new DrawPhy2D(panel, true));
 
         for (PhysicsModel test : tests) {
             model.addTest(test);
@@ -85,7 +85,7 @@ public class PhysicsRun {
         window.setLayout(new BorderLayout());
         TestbedSidePanel side = new TestbedSidePanel(model, controller);
         window.add((Component) panel, "Center");
-        window.add(new JScrollPane(side), "East");
+        //window.add(new JScrollPane(side), "East");
         window.pack();
         window.setVisible(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

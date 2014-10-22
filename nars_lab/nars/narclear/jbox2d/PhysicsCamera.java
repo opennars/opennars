@@ -27,9 +27,12 @@ import com.google.common.base.Preconditions;
 import org.jbox2d.common.IViewportTransform;
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.OBBViewportTransform;
+import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
 public class PhysicsCamera {
+    private final OBBViewportTransform targetTransform;
+
 
   public static enum ZoomType {
     ZOOM_IN, ZOOM_OUT
@@ -42,11 +45,19 @@ public class PhysicsCamera {
 
   private final Mat22 upScale;
   private final Mat22 downScale;
+  float targetScale, scale;
 
   public PhysicsCamera(Vec2 initPosition, float initScale, float zoomScaleDiff) {
     Preconditions.checkArgument(zoomScaleDiff > 0, "Zoom scale %d must be > 0", zoomScaleDiff);
+    
+    this.scale = targetScale = 10f;
+    
     this.transform = new OBBViewportTransform();
+    this.targetTransform = new OBBViewportTransform();
+    
     transform.setCamera(initPosition.x, initPosition.y, initScale);
+    targetTransform.setCamera(initPosition.x, initPosition.y, initScale);
+        
     this.initPosition.set(initPosition);
     this.initScale = initScale;
     upScale = Mat22.createScaleTransform(1 + zoomScaleDiff);
@@ -64,14 +75,30 @@ public class PhysicsCamera {
    * Sets the camera center position
    */
   public void setCamera(Vec2 worldCenter) {
-    transform.setCenter(worldCenter);
+    targetTransform.setCenter(worldCenter);
+  }
+  
+  public void update(float dt) {
+      float m = 0.8f; //center momentum
+      float n = 1.0f - m;
+      
+      float ms = 0.99f; //scale momentum
+      float ns = 1.0f - ms;
+      
+      float x = transform.getCenter().x;
+      float y = transform.getCenter().y;
+      float s = scale;
+      float tx = targetTransform.getCenter().x;
+      float ty = targetTransform.getCenter().y;
+      float ts = targetScale;
+      transform.setCamera( x * m + tx * n , y * m + ty * n, s * ms + ts * ns);
   }
 
   /**
    * Sets the camera center position and scale
    */
   public void setCamera(Vec2 worldCenter, float scale) {
-    transform.setCamera(worldCenter.x, worldCenter.y, scale);
+    targetTransform.setCamera(worldCenter.x, worldCenter.y, scale);
   }
 
   private final Vec2 oldCenter = new Vec2();
@@ -81,29 +108,38 @@ public class PhysicsCamera {
    * Zooms the camera to a point on the screen. The zoom amount is given on camera initialization.
    */
   public void zoomToPoint(Vec2 screenPosition, ZoomType zoomType) {
-    Mat22 zoom;
+    //Mat22 zoom;
+    float scaleRate = 50f;
     switch (zoomType) {
       case ZOOM_IN:
-        zoom = upScale;
+        //zoom = upScale;
+        targetScale += scaleRate;
         break;
       case ZOOM_OUT:
-        zoom = downScale;
+        //zoom = downScale;
+        targetScale -= scaleRate;
         break;
       default:
         Preconditions.checkArgument(false, "Zoom type invalid");
         return;
     }
 
-    transform.getScreenToWorld(screenPosition, oldCenter);
-    transform.mulByTransform(zoom);
-    transform.getScreenToWorld(screenPosition, newCenter);
+    //System.out.println(zoom + " "+ transform.getExtents() + " bef " + targetTransform.getExtents());
 
-    Vec2 transformedMove = oldCenter.subLocal(newCenter);
-    // set, just in case bad impl by someone
-    if (!transform.isYFlip()) {
-      transformedMove.y = -transformedMove.y;
-    }
-    transform.setCenter(transform.getCenter().addLocal(transformedMove));
+//    targetTransform.getScreenToWorld(screenPosition, oldCenter);
+//    targetTransform.mulByTransform(zoom);
+//    targetTransform.getScreenToWorld(screenPosition, newCenter);
+//
+//
+//    Vec2 transformedMove = oldCenter.subLocal(newCenter);
+//    // set, just in case bad impl by someone
+//    if (!targetTransform.isYFlip()) {
+//      transformedMove.y = -transformedMove.y;
+//    }
+    //targetTransform.setCenter(targetTransform.getCenter().addLocal(transformedMove));
+
+    //targetTransform.setCamera(newCenter.x, newCenter.y, 1.5f);
+    
   }
 
   private final Vec2 worldDiff = new Vec2();
@@ -112,14 +148,18 @@ public class PhysicsCamera {
    * Moves the camera by the given distance in screen coordinates.
    */
   public void moveWorld(Vec2 screenDiff) {
-    transform.getScreenVectorToWorld(screenDiff, worldDiff);
-    if (!transform.isYFlip()) {
+    targetTransform.getScreenVectorToWorld(screenDiff, worldDiff);
+    if (!targetTransform.isYFlip()) {
       worldDiff.y = -worldDiff.y;
     }
-    transform.setCenter(transform.getCenter().addLocal(worldDiff));
+    targetTransform.setCenter(targetTransform.getCenter().addLocal(worldDiff));
   }
 
   public IViewportTransform getTransform() {
     return transform;
   }
+    void setExtents(float halfWidth, float halfHeight) {
+        targetTransform.setExtents(halfWidth, halfHeight);
+    }
+
 }
