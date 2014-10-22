@@ -61,7 +61,7 @@ public class Executive implements Observer {
     int particles = 32;
     
     /** inline search parameters */
-    float inlineSearchDepth = 16;
+    float inlineSearchDepth = searchDepth;
     int inlineParticles = 24;
     
     float maxExecutionsPerDuration = 1f;

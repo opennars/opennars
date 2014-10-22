@@ -24,5 +24,5 @@ IN: (^go-to,place2). :|: %1.00;0.90%
 IN: <place2 --> at>. :|: %1.00;0.90%
 10
 IN: <light1 --> on>! %1.00;0.90%
-LOG: Expected is: ^go-to([switch0]), ^activate([switch0]) but instead ^activate([switch0]) happens
+'Expected is: ^go-to([switch0]), ^activate([switch0]) but instead ^activate([switch0]) happens
 

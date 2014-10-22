@@ -427,4 +427,8 @@ public class Sentence implements Cloneable {
         return content.equals(s2.content);
     }
 
+    public boolean isEternal() {
+        return getOccurenceTime() == Stamp.ETERNAL;
+    }
+
 }

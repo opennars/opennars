@@ -107,20 +107,21 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             if (x == 1.0) return;
             if (relevancy == null) return;
             
-            List<Term> toRemove = null;
-            for (Map.Entry<Term, Double> e : relevancy.entrySet()) {
-                double newValue = e.getValue() * x;
-                if (newValue > 1.0) newValue = 1.0;
-                if (newValue < minStrength)  {
-                    if (toRemove == null) toRemove = new ArrayList();
-                    toRemove.add(e.getKey());
-                }
-                else
-                    e.setValue(newValue);                
-            }
-            if (toRemove!=null)
-                for (Term t : toRemove)
-                    relevancy.remove(t);            
+            
+//            List<Term> toRemove = null;
+//            for (Map.Entry<Term, Double> e : relevancy.entrySet()) {
+//                double newValue = e.getValue() * x;
+//                if (newValue > 1.0) newValue = 1.0;
+//                if (newValue < minStrength)  {
+//                    if (toRemove == null) toRemove = new ArrayList();
+//                    toRemove.add(e.getKey());
+//                }
+//                else
+//                    e.setValue(newValue);                
+//            }
+//            if (toRemove!=null)
+//                for (Term t : toRemove)
+//                    relevancy.remove(t);            
         }
         
         public double getRelevancy(Term t) {
@@ -281,16 +282,16 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
 
         
+        
         if (!(ct instanceof Implication)) {
             return false;
         }
         
         final Implication st = (Implication)ct;
         
-        if ((st.getTemporalOrder() == TemporalRules.ORDER_NONE) || (st.operator() == NativeOperator.IMPLICATION_BEFORE))
+        if ((st.getTemporalOrder() == TemporalRules.ORDER_NONE) || (st.operator() == NativeOperator.IMPLICATION_BEFORE) || (!s.isEternal()))
             return false;
-        
-
+                
         final Term subject, predicate;
         
         boolean reverse = false;

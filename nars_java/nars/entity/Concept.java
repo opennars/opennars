@@ -31,7 +31,6 @@ import nars.core.Events.ConceptQuestionAdd;
 import nars.core.Events.ConceptQuestionRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
-import static nars.entity.Stamp.make;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;
@@ -212,7 +211,18 @@ public class Concept extends Item<Term> {
                 }   // else: activated belief
                 return;
             } else if (revisible(judg, oldBelief)) {
-                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.time())) != null) {
+                if (nal.setTheNewStamp( //temporarily removed
+                /*
+                if (equalBases(first.getBase(), second.getBase())) {
+                return null;  // do not merge identical bases
+                }
+                 */
+                //        if (first.baseLength() > second.baseLength()) {
+                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
+                //        } else {
+                //            return new Stamp(second, first, time);
+                //        }
+                ) != null) {
                     Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
                     if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
                         nal.singlePremiseTask(projectedBelief, task.budget);
@@ -267,7 +277,18 @@ public class Concept extends Item<Term> {
             }
 
             if (revisible(goal, oldGoal)) {                
-                if (nal.setTheNewStamp(make(newStamp, oldStamp, memory.time())) != null) {
+                if (nal.setTheNewStamp( //temporarily removed
+                /*
+                if (equalBases(first.getBase(), second.getBase())) {
+                return null;  // do not merge identical bases
+                }
+                 */
+                //        if (first.baseLength() > second.baseLength()) {
+                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
+                //        } else {
+                //            return new Stamp(second, first, time);
+                //        }
+                ) != null) {
                     revision(goal, oldGoal, false, nal);
                     revised = true;
                 }
