@@ -131,10 +131,10 @@ public class Rover extends PhysicsModel {
             
             
             int pixels = 5;
-            float aStep = 0.9f / pixels;
+            float aStep = 1.5f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 5; //should be odd # to balance
-            float L = 25.0f;
+            float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
@@ -198,8 +198,8 @@ public class Rover extends PhysicsModel {
 
                 Body hit = null;
                 
-                float sumDist = 0;
-                int numDist = 0;
+                float minDist = 1000;
+                
                 float dArc = arc / resolution;
                 for (int r = 0; r < resolution; r++) {
                     float da = (-arc / 2f) + dArc * r;
@@ -225,8 +225,8 @@ public class Rover extends PhysicsModel {
                         getDebugDraw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
                         hit = ccallback.body;
 
-                        sumDist += d;
-                        numDist++;
+                        if (d < minDist)
+                            minDist = d;
                     } else {
                         getDebugDraw().drawSegment(point1, point2, laserColor);
                     }
@@ -234,7 +234,7 @@ public class Rover extends PhysicsModel {
 
                 if (hit!=null) {  
                     
-                    float di = sumDist / numDist; 
+                    float di = minDist; 
                     if(id.startsWith("back")) {
                         sight.set("<goal --> reached>. :|: %0.0;0.90%");
                         return;
