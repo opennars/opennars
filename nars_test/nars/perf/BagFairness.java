@@ -19,8 +19,8 @@ import nars.io.Texts;
 import nars.language.Term;
 import nars.storage.AdaptiveContinuousBag;
 import nars.storage.Bag;
-import nars.timeline.Timeline2DCanvas;
-import nars.timeline.Timeline2DCanvas.Chart;
+import nars.gui.output.timeline.Timeline2DCanvas;
+import nars.gui.output.timeline.Timeline2DCanvas.Chart;
 
 /**
  *
