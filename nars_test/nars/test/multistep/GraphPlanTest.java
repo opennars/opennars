@@ -33,6 +33,20 @@ public class GraphPlanTest {
                 "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z),+1) =/> <goal --> reached>>! %1.00"
         );
     }    
+    @Test public void testGraphPlan1Repeat() throws Exception {
+        String input = "";
+        
+        //same as above with inputs rearranged
+        input += "<(&/,<a --> b>,+1,(^pick,Y),+3,<c --> d>) =/> <goal --> reached>>.\n";
+        input += "<(&/,(^pick,X),+2) =/> <a --> b>>.\n";
+        input += "<(&/,(^pick,Z),+1) =/> <c --> d>>.\n";    
+        input += "<goal --> reached>!\n";
+        input += "100\n";
+        input += "<goal --> reached>!\n";
+        testGraphPlan(input, 
+                "<(&/,(^pick,X),+3,(^pick,Y),+3,(^pick,Z),+1) =/> <goal --> reached>>! %1.00"
+        );
+    }    
     
     @Test public void testGraphPlan2() throws Exception {
         String input = "";
@@ -46,6 +60,8 @@ public class GraphPlanTest {
     
     public void testGraphPlan(String input, String expected) throws IOException {
         NAR n = new DefaultNARBuilder().build();
+        
+        n.param().decisionThreshold.set(0.7f);
                 
         //AtomicBoolean success = new AtomicBoolean(false);
         AtomicBoolean success = new AtomicBoolean(true);
@@ -68,7 +84,7 @@ public class GraphPlanTest {
         
         n.addInput(input);
 
-        n.finish(45);
+        n.finish(145);
         
         //assertTrue(success.get());
         
@@ -84,7 +100,7 @@ public class GraphPlanTest {
     
 
     public static void main(String[] args) throws Exception {
-        new GraphPlanTest().testGraphPlan1();
+        new GraphPlanTest().testGraphPlan1Repeat();
     }
     
 }
