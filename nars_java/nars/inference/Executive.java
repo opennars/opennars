@@ -219,13 +219,13 @@ public class Executive implements Observer {
                                 modified = true;
                             }
                             else {
-                                //no plan available, this wont be able to execute
-                                setMotivationFactor(0);
+                                //no plan available, this wont be able to execute   
+                                end();
                             }
                         }
                         else {
                             //this won't be able to execute here
-                            setMotivationFactor(0);
+                            end();
                         }
                     }
                     else {
@@ -245,7 +245,7 @@ public class Executive implements Observer {
             }
             
             if (inlined.isEmpty())
-                setMotivationFactor(0);
+                end();
             
             if (modified) {
                 Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
@@ -273,7 +273,12 @@ public class Executive implements Observer {
 
         @Override
         public String toString() {
-            return "!" + Texts.n2Slow(getDesire()) + "." + sequence + "! " + t.toString();
+            return "!" + Texts.n2Slow(getDesire()) + "|" + sequence + "! " + t.toString();
+        }
+
+        public void end() {
+            setMotivationFactor(0);
+            t.end();            
         }
 
         
@@ -335,7 +340,8 @@ public class Executive implements Observer {
         if (tasksToRemove.add(t)) {            
 //            if (memory.getRecorder().isActive())
 //               memory.getRecorder().output("Executive", "Task Remove: " + t.toString());
-            t.t.end();
+
+            t.end();
         }
     }
     
@@ -402,7 +408,7 @@ public class Executive implements Observer {
         
         if (Parameters.TEMPORAL_PARTICLE_PLANNER) {
             
-            if (!isDesired(concept)) return;
+            if (!isDesired(t, concept)) return;
         
             boolean plannable = graph.isPlannable(t.getContent());
             if (plannable) {                                    
@@ -415,7 +421,7 @@ public class Executive implements Observer {
     /** Entry point for all potentially executable tasks */
     public void decisionMaking(final Task t, final Concept concept) {
                         
-        if (isDesired(concept)) {
+        if (isDesired(t, concept)) {
 
             Term content = concept.term;
 
@@ -434,8 +440,12 @@ public class Executive implements Observer {
     }
     
     /** whether a concept's desire exceeds decision threshold */
-    public boolean isDesired(final Concept c) {               
-        return (c.getDesire().getExpectation() >= memory.param.decisionThreshold.get());        
+    public boolean isDesired(final Task t, final Concept c) {             
+        float desire = c.getDesire().getExpectation();
+        float priority = t.budget.summary();
+        return (desire * priority) >= memory.param.decisionThreshold.get();
+        
+        //return (c.getDesire().getExpectation() >= memory.param.decisionThreshold.get());        
     }
     
     /** called during each memory cycle */
@@ -587,7 +597,7 @@ public class Executive implements Observer {
             ended=false;
             //still incomplete
             task.sequence = s;
-          //  task.setMotivationFactor(motivationToFinishCurrentExecution);
+            task.setMotivationFactor(motivationToFinishCurrentExecution);
         }
     }
     
