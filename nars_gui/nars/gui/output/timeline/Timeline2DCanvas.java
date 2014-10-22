@@ -640,20 +640,6 @@ public class Timeline2DCanvas extends PApplet {
 
     }
 
-    @Override
-    public void mouseMoved() {
-        updateMouse();
-    }
-
-    
-    @Override
-    public void mouseReleased() {
-        updateMouse();
-    }
-    
-    
-    
-
     protected void updateMouse() {
         
         boolean changed = false;
@@ -666,13 +652,10 @@ public class Timeline2DCanvas extends PApplet {
             
             if (Float.isFinite(lastMousePressX)) {
                 float dt = (now - lastUpdate)/1e9f;
-         
                 
-                //float dx = (mouseX - lastMousePressX);
-                //float dy = (mouseY - lastMousePressY);
-                float dx = mouseX - pmouseX;
-                float dy = mouseY - pmouseY;
-                
+                float dx = (mouseX - lastMousePressX);
+                float dy = (mouseY - lastMousePressY);
+
                 if (mouseButton == 37) {
                     //left mouse button
                     if ((dx != 0) || (dy != 0)) {
@@ -682,23 +665,17 @@ public class Timeline2DCanvas extends PApplet {
                     }
                 } else if (mouseButton == 39) {
                     //right mouse button
-                    
-                    
                     float sx = dx * scaleSpeed * dt;
                     float sy = dy * scaleSpeed * dt;         
                     
-                    camX += sx / timeScale;
-                    camY += sy / yScale;
+                    camX += sx * camX / timeScale;
+                    camY += sy * camY / yScale;
                     
                     timeScale += sx;
                     yScale += sy;
 
                     changed = true;
                     //System.out.println(camX +  " " + camY + " " + sx + " "  + sy);
-                }
-                else {
-                    lastMousePressX = Float.NaN;
-                    changed = true;
                 }
 //                else if (mouseButton == 3) {
 //                    //middle mouse button (wheel)
@@ -715,7 +692,9 @@ public class Timeline2DCanvas extends PApplet {
             lastMousePressX = Float.NaN;
         }
         
-               
+        
+        
+        
         if (changed) {            
             updateNext();
         }
@@ -754,11 +733,10 @@ public class Timeline2DCanvas extends PApplet {
     @Override
     public void draw() {
 
-        updateMouse();
-
         if (!isDisplayable() || !isVisible())
             return;
             
+        updateMouse();
         updateCamera();
 
         if (!updating) {
@@ -773,12 +751,7 @@ public class Timeline2DCanvas extends PApplet {
         float yMargin = yScale * 0.1f;
         for (Chart c : charts) {
             float h = c.height * yScale;
-            try {
-                c.draw(this, y, timeScale, yScale);
-            }
-            catch (Exception e) { 
-                System.out.println("Timeline draw: " + e);
-            }
+            c.draw(this, y, timeScale, yScale);
             y += (h + yMargin);
         }
 
