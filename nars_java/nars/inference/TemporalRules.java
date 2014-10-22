@@ -19,7 +19,9 @@ package nars.inference;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.List;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -269,9 +271,9 @@ public class TemporalRules {
         long time1 = s1.getOccurenceTime();
         long time2 = s2.getOccurenceTime();
         long timeDiff = time2 - time1;
-        Interval interval;
+        List<Interval> interval;
         if (Math.abs(timeDiff) > durationCycles) {
-            interval = Interval.intervalTime(Math.abs(timeDiff), duration);
+            interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
                 if(t11!=null) {

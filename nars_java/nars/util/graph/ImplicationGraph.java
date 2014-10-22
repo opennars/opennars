@@ -270,6 +270,13 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             memory.logic.PLAN_GRAPH_IN_OTHER.commit(1);
     }
     
+    protected static Term postcondition(Term t) {
+        if ((t instanceof Operation) || (t instanceof Interval)) {
+            return t;
+        }
+        return new PostCondition(t);
+    }
+    
     @Override
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
 
@@ -303,7 +310,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         }
                 
         final Term predicatePre = predicate;
-        final Term predicatePost = new PostCondition(predicatePre);
+        final Term predicatePost = postcondition(predicatePre);
         
         addVertex(predicatePre);
         addVertex(predicatePost);
@@ -311,14 +318,12 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         if (subject instanceof Conjunction) {
             Conjunction seq = (Conjunction)subject;
             if (seq.operator() == Symbols.NativeOperator.SEQUENCE) {
-                Term prev = predicatePre;
-                boolean addedNonInterval = false;
                 
+                Term prev = (predicatePre!=predicatePost) ? predicatePre : null;
+                if (prev!=null)
+                    addVertex(prev);
                 
-                /*List<Term>al = Arrays.asList(seq.term);
-                if (reverse)
-                     Collections.reverse(al);*/
-                
+                boolean addedNonInterval = false;                
                 
                 for (int i = 0; i < seq.term.length; i++) {
                     
@@ -332,27 +337,30 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                         else {
                             addVertex(a);
                         }
-                            
-                        if (prev!=null)  {
-                            newImplicationEdge(prev, a, c, s);
-                        }
-                        
+
                         if (!(a instanceof Interval))
                             addedNonInterval = true;
+
+                        if (prev!=null) {
+                            newImplicationEdge(prev, a, c, s);                        
+                        }                        
                         
                         prev = a;
                     }
                     else {
+                        if (!(a instanceof Interval))
+                            addedNonInterval = true;                   
+
                         //separate the term into a disconnected pre and post condition
                         Term aPre = a;
-                        Term aPost = new PostCondition(a);
+                        Term aPost = postcondition(a);
                         addVertex(aPre);
                         addVertex(aPost);
                         
-                        addVertex(prev);
-                        newImplicationEdge(prev, aPre, c, s); //leading edge from previous only         
-                        if (!(a instanceof Interval))
-                            addedNonInterval = true;                   
+                        if (prev!=null) {
+                            addVertex(prev);
+                            newImplicationEdge(prev, aPre, c, s); //leading edge from previous only         
+                        }
                         prev = aPost;
                     }
 
@@ -428,6 +436,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     }
     
     public Cause newImplicationEdge(final Term source, final Term target, Item i, final Sentence parent) {
+        if (source.equals(target))
+            return null;
+                    
         Cause c = new Cause(source, target, parent);
         addEdge(source, target, c);
         addComponents(parent, c);

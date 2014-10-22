@@ -54,15 +54,15 @@ public class Executive implements Observer {
     int numActiveTasks = 1;
 
     /** max number of tasks that a plan can generate. chooses the N best */
-    int maxPlannedTasks = 1;
+    int maxPlannedTasks = 4;
     
     /** global plan search parameters */
-    float searchDepth = 64;
+    float searchDepth = 48;
     int particles = 32;
     
     /** inline search parameters */
-    float inlineSearchDepth = 8;
-    int inlineParticles = 16;
+    float inlineSearchDepth = 16;
+    int inlineParticles = 24;
     
     float maxExecutionsPerDuration = 1f;
 
@@ -180,16 +180,25 @@ public class Executive implements Observer {
 
         }
 
+        //TODO support multiple inline replacements        
         protected Task inlineConjunction(Task t, final Conjunction c) {
             ArrayDeque<Term> inlined = new ArrayDeque();
             boolean modified = false;
+            
+            Operation precedingOperation = null;
+            
             if (c.operator() == Symbols.NativeOperator.SEQUENCE) {
                 Term prev = null;
                 for (Term e : c.term) {
+                    
+                    if (e instanceof Operation)
+                        precedingOperation = (Operation)e;
+                    
                     if (!isPlanTerm(e)) {
                         if (graph.isPlannable(e)) {
                             
-                            TreeSet<ParticlePlan> plans = graph.particlePlan(e, inlineSearchDepth, inlineParticles);
+                                                        
+                            TreeSet<ParticlePlan> plans = graph.particlePlan(e, inlineSearchDepth, inlineParticles, precedingOperation);
                             if (plans.size() > 0) {
                                 //use the first
                                 ParticlePlan pp = plans.first();
@@ -213,8 +222,11 @@ public class Executive implements Observer {
                                 
                                 //System.out.println("inline: " + pp.sequence + " -> " + seq);
                                 
+                                for (int i = 0; i < seq.size(); i++) {
+                                    if ((i == 0) && (seq.get(0).equals(precedingOperation))) continue;
+                                    inlined.add(seq.get(i));
+                                }
                                 
-                                inlined.addAll(seq);
                                 //System.err.println("Inline " + e + " in " + t.getContent() + " = " + pp.sequence);  
                                 modified = true;
                             }
@@ -278,7 +290,8 @@ public class Executive implements Observer {
 
         public void end() {
             setMotivationFactor(0);
-            t.end();            
+            if (t!=null)
+                t.end();
         }
 
         

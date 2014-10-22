@@ -23,6 +23,7 @@ package nars.language;
 import static java.lang.System.arraycopy;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
@@ -138,6 +139,16 @@ public class Conjunction extends CompoundTerm {
         }
     }
 
+    final public static Term make(final Term prefix, final List<? extends Term> suffix, final int temporalOrder) {
+        Term[] t = new Term[suffix.size()+1];
+        int i = 0;
+        t[i++] = prefix;
+        for (Term x : suffix)
+            t[i++] = x;
+        return make(t, temporalOrder);        
+    }
+    
+    
     /**
      * Try to make a new Disjunction from a set of term. Called by the public
      * make methods.

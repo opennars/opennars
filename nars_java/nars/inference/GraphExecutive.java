@@ -41,7 +41,7 @@ public class GraphExecutive {
     double conceptPriorityFactor = 0.5;
 
     double minEdgeCost = 1.0;
-    
+    double costPerDelayedCycle = 0.5;
     
     
     
@@ -143,11 +143,20 @@ public class GraphExecutive {
         private int numIterations = 0;
         private final Term goal, goalPost;
         
+       
+        /** optional required source vertex to reach */
+        private final Term source;
+        
 
         public ParticleActivation(ImplicationGraph graph, final Term goal, final Term goalPost) {
+            this(graph, goal, goalPost, null);
+        }
+                
+        public ParticleActivation(ImplicationGraph graph, final Term goal, final Term goalPost, final Term source) {
             this.graph = graph;
             this.goal = goal;
             this.goalPost = goalPost;
+            this.source = source;
         }
         
         public SortedSet<ParticlePath> activate(final boolean forward, int iterations, double distance) {
@@ -175,7 +184,7 @@ public class GraphExecutive {
 
                 
                 while (energy > 0) {
-
+ 
                     Set<Cause> graphEdges = forward ? 
                             graph.outgoingEdgesOf(currentVertex) : 
                             graph.incomingEdgesOf(currentVertex);
@@ -191,6 +200,7 @@ public class GraphExecutive {
                     for (final Cause s : graphEdges) {
                         Term etarget = forward ? s.effect : s.cause;
                         
+                       
                         if ((avoidCycles) && (etarget == goalPost)) {
                             edgeDecisionFailCyclical++;
                             continue;
@@ -200,7 +210,8 @@ public class GraphExecutive {
                             edgeDecisionFailInvalidVertex++;
                             continue;
                         }
-                                                
+                                    
+                        
                         double ew = getTraversalCost(s, etarget);
                         
                         //ignore if this edge will cost more energy than allowed
@@ -220,7 +231,6 @@ public class GraphExecutive {
                         
                     }
                     
-
                     if (nextEdgeCost.isEmpty()) {
                         //particle went as far as it can
                         break;
@@ -241,12 +251,21 @@ public class GraphExecutive {
 
                     currentVertex = forward ? nextEdge.effect : nextEdge.cause;
 
+                    if ((source!=null) && (nextEdge.cause.equals(source)))
+                        break;
+
                 }
 
                 if (currentPath.isEmpty()) {
                     pathFailEmpty++;
                     continue;
                 }
+                                
+                if ((source!=null) && (!currentPath.get(currentPath.size()-1).cause.equals(source))) {
+                    //this path is invalid because it doesnt terminate at the required source postcondition
+                    continue;
+                }
+
                 if (!operationTraversed) {
                     pathFailNoOperation++;
                     continue;                        
@@ -287,10 +306,16 @@ public class GraphExecutive {
                 return d;
             
             
-            double conceptExpectation, conceptPriority;
-            if ((nextTerm instanceof Interval) || (nextTerm instanceof Operation)) {
+            double conceptExpectation, conceptPriority, delayCost = 0;
+            if (nextTerm instanceof Interval) {
+                Interval i = (Interval)nextTerm;                
                 conceptExpectation = 1.0;
                 conceptPriority = 1.0;
+                delayCost = i.getTime(memory) * costPerDelayedCycle;
+            }
+            else if (nextTerm instanceof Operation) {
+                conceptExpectation = 1.0;
+                conceptPriority = 1.0;                
             }
             else {
                 if (conceptExpectationFactor > 0)
@@ -309,11 +334,13 @@ public class GraphExecutive {
             double c = causeRelevanceFactor * (1.0 - causeRelevancy) + 
                        conceptExpectationFactor * (1.0 - conceptExpectation) +
                        conceptPriorityFactor * (1.0 - conceptPriority);
-            
+                        
             c/= (causeRelevanceFactor + conceptExpectationFactor + conceptPriorityFactor);
             
             c+= minEdgeCost;
             
+            c+= delayCost;
+                        
             //System.out.println("  s " + s + " >> " + nextTerm + " : " + " = " + c);
 
             sentenceCosts.put(s, c);
@@ -571,14 +598,27 @@ public class GraphExecutive {
 
 
     protected void particlePredict(final Term source, final double distance, final int particles) {
-        ParticleActivation act = new ParticleActivation(implication, source, source);
+        ParticleActivation act = new ParticleActivation(implication, source, source, null);
         SortedSet<ParticlePath> paths = act.activate(true, particles, distance);
         if (!paths.isEmpty())
             System.out.println(source + " predicts: " + paths);
         
     }
     
-    public TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles) {        
+    
+    public TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles) {
+        return particlePlan(target, distance, particles, null);
+    }
+            
+    /** 
+     * 
+     * @param target  starting goal vertex to plan from
+     * @param distance
+     * @param particles
+     * @param source     required source vertex to reach, or null if none is required (accepts any)
+     * @return 
+     */
+    public TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles, final Term source) {        
                 
         PostCondition targetPost = new PostCondition(target);
         
@@ -587,7 +627,7 @@ public class GraphExecutive {
             return null;
         }
         
-        ParticleActivation act = new ParticleActivation(implication, target, targetPost) {
+        ParticleActivation act = new ParticleActivation(implication, target, targetPost, source) {
             @Override public boolean validVertex(final Term x) {
                 //additional restriction on path's vertices
                 return !targetPost.equals(x);

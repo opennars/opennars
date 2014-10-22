@@ -2,8 +2,13 @@ package nars.test.multistep;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.gui.NWindow;
+import nars.gui.output.graph.ImplicationGraphCanvas;
+import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.io.Output;
 import org.junit.Test;
 
@@ -61,18 +66,33 @@ public class GraphPlanTest {
     public void testGraphPlan(String input, String expected) throws IOException {
         NAR n = new DefaultNARBuilder().build();
         
-        n.param().decisionThreshold.set(0.7f);
+        n.param().decisionThreshold.set(0.3f);
                 
         //AtomicBoolean success = new AtomicBoolean(false);
         AtomicBoolean success = new AtomicBoolean(true);
         
         //System.out.println(input);
+
+                new NWindow("Implication Graph", 
+                            new ProcessingGraphPanel(n, 
+                                    new ImplicationGraphCanvas(
+                                            n.memory.executive.graph))).show(500, 500);
         
         new Output(n) {
 
             @Override
             public void event(Class channel, Object... args) {
-                //System.out.println(o);
+                /*if (channel == OUT.class)
+                    System.out.println("OUT: " + args[0]);*/
+                
+                /*
+                try {
+                    //System.out.println(o);
+                    System.in.read();
+                } catch (IOException ex) {
+                    Logger.getLogger(GraphPlanTest.class.getName()).log(Level.SEVERE, null, ex);
+                }*/
+                
                 if (args.length > 2) {
                     Object o = args[1];
                     if (o.toString().contains(expected))
@@ -84,15 +104,11 @@ public class GraphPlanTest {
         
         n.addInput(input);
 
-        n.finish(145);
+        n.finish(185);
         
         //assertTrue(success.get());
         
 //        new NARSwing(n);
-//                new NWindow("Implication Graph", 
-//                            new ProcessingGraphPanel(n, 
-//                                    new ImplicationGraphCanvas(
-//                                            n.memory.executive.graph))).show(500, 500);
         //n.start(100, 1);
         
         

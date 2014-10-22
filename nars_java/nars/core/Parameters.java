@@ -178,5 +178,8 @@ public class Parameters {
     
     /** how quickly a task's priority is adjusted by a fired tasklink */
     public static float TASK_PRIORITY_MOMENTUM = 0.9f;
+    
+    /** max number of interval to combine in sequence to approximate a time period (cycles) */
+    public static int TEMPORAL_INTERVAL_PRECISION = 2;
 }
 
