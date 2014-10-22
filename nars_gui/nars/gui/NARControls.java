@@ -63,6 +63,7 @@ import nars.gui.output.graph.ConceptGraphPanel;
 import nars.gui.output.graph.ImplicationGraphCanvas;
 import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphCanvas;
+import nars.gui.output.timeline.TimelinePanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.util.graph.InheritanceGraph;
@@ -199,6 +200,19 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                     new NWindow("Activity", new MultiOutputPanel(NARControls.this)).show(500, 300);                }
             });
             m.add(al);
+            
+            JMenuItem tlp = new JMenuItem("+ Timeline");
+            tlp.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    NWindow outputWindow = new NWindow("Timeline", new TimelinePanel(nar));
+                    outputWindow.show(900, 700);        
+                }
+            });
+            m.add(tlp);
+
+            
+
             
             JMenuItem mv = new JMenuItem("+ Concept Graph");
             mv.addActionListener(new ActionListener() {
