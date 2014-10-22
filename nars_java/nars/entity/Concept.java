@@ -617,32 +617,26 @@ public class Concept extends Item<Term> {
      */
     public boolean fire() {
                 
-        //cycle through (at maximum, all tasklinks) until one can be fired
-        for (int numTaskLinks = taskLinks.size()-1 ; numTaskLinks>= 0; numTaskLinks--) {
-
+        if (taskLinks.size() == 0) return false;
         
-            final TaskLink currentTaskLink = taskLinks.takeOut();
-
-            boolean fired = false;
-            
-            if (currentTaskLink.budget.aboveThreshold()) {
-
-                new NAL.FireConcept(memory, this, currentTaskLink).call();        
-
-                fired = true;           
-            }            
-            
-            taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
-            
-            currentTaskLink.updateTaskPriority();
-            
-            if (fired)
-                return true;
-
-            
-        }
         
-        return false;
+        final TaskLink currentTaskLink = taskLinks.takeOut();
+
+        boolean fired = false;
+
+        if (currentTaskLink.budget.aboveThreshold()) {
+
+            new NAL.FireConcept(memory, this, currentTaskLink).call();        
+
+            fired = true;           
+        }            
+
+        currentTaskLink.updateTaskPriority();
+
+        taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
+
+            
+        return fired;
     }
 
 
