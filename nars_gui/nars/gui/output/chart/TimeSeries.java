@@ -6,6 +6,7 @@ import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.gui.NARSwing;
+import nars.io.narsese.Narsese;
 import nars.language.Term;
 
 /**
@@ -112,7 +113,7 @@ public class TimeSeries  {
         private final NAR nar;
 
         public CycleTimeSeries(NAR n, String theName, float min, float max, int historySize) {
-            super(theName, NARSwing.getColor(theName, 0.8f, 0.8f), historySize);       
+            super(theName, NARSwing.getColor(theName, 0.9f, 1f), historySize);       
             this.nar = n;
             setRange(min, max);
             n.on(CycleEnd.class, this);            
@@ -131,17 +132,17 @@ public class TimeSeries  {
     public static class ConceptTimeSeries extends CycleTimeSeries {
         public final Mode mode;
     
-        public static enum Mode { Priority, Duration /* add others */ };
+            public static enum Mode { Priority, Duration, BeliefConfidenceMax /* add others */ };
         
         String conceptString;
         Term conceptTerm;
         Concept concept;
         
-        public ConceptTimeSeries(NAR n, String concept, int historySize, Mode mode) {
-            super(n, concept, 0, 1, historySize);
+        public ConceptTimeSeries(NAR n, String concept, int historySize, Mode mode) throws Narsese.InvalidInputException {
+            super(n, concept + ": " + mode, 0, 1, historySize);
             this.mode = mode;
             this.conceptString = concept;
-            this.conceptTerm = new Term(conceptString);
+            this.conceptTerm = new Narsese( n ).parseTerm(conceptString);
             
             this.concept = null;
         }
@@ -159,6 +160,10 @@ public class TimeSeries  {
                     return concept.getPriority();
                 case Duration:
                     return concept.getDurability();
+                case BeliefConfidenceMax:
+                    if (concept.beliefs.size() > 0)
+                        return concept.beliefs.get(0).truth.getConfidence();
+                    return 0;
             }
             return 0f;
         }

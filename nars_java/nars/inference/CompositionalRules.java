@@ -116,7 +116,7 @@ public final class CompositionalRules {
         }
 
         //TODO use Question index
-        for (final Concept concept : nal.mem().conceptProcessor) {
+        for (final Concept concept : nal.mem().concepts) {
 
             final List<Task> questions = concept.questions;
 

@@ -51,15 +51,21 @@ public class Timeline2DCanvas extends PApplet {
     //display options to extract to a parameter class ----------------------------------------
     boolean showItemLabels = true;
     float textScale = 0.1f;
-    float timeScale = 32f;
-    float yScale = 32f;
     long cycleStart = 0;
     long cycleEnd = 45;
 
-    float camX = 0f;
-    float camY = 0f;
+    public static class Camera {
+        public float camX = 0f;
+        public float camY = 0f;
+        public float timeScale = 32f;
+        public float yScale = 32f;   
+        public long lastUpdate = 0;
+    }
+    
+    public final Camera camera;
     
     long lastUpdate = System.nanoTime();
+    long lastCameraUpdate = 0;
 
     public final List<Chart> charts;
     //display options ----------------------------------------
@@ -100,7 +106,8 @@ public class Timeline2DCanvas extends PApplet {
         double max;
         boolean showVerticalLines = false;
         boolean showPoints = true;
-        float lineThickness = 2f;
+        float lineThickness = 1f;
+        float borderThickness = 0.5f;
 
         public LineChart(TimeSeries t) {
             super();
@@ -128,7 +135,7 @@ public class Timeline2DCanvas extends PApplet {
             updateRange(l);
 
             l.stroke(127);
-            l.strokeWeight(0.5f);
+            l.strokeWeight(borderThickness);
 
             //bottom line
             l.line(l.cycleStart * timeScale, y+yScale, l.cycleEnd * timeScale, y+yScale);
@@ -588,13 +595,22 @@ public class Timeline2DCanvas extends PApplet {
     }
 
     public Timeline2DCanvas(List<Chart> charts) {
+        this(new Camera(), charts);
+    }
+    
+    public Timeline2DCanvas(Camera camera, List<Chart> charts) {
         super();
+        this.camera = camera;
         this.charts = charts;
         init();
     }
     
     public Timeline2DCanvas(Chart... charts) {        
         this(Lists.newArrayList(charts));
+    }
+    
+    public Timeline2DCanvas(Camera camera, Chart... charts) {        
+        this(camera, Lists.newArrayList(charts));
     }
     
     public void view(long start, long end) {
@@ -612,9 +628,13 @@ public class Timeline2DCanvas extends PApplet {
 
     @Override
     protected void resizeRenderer(int newWidth, int newHeight) {
+        if ((newWidth == 0)  && (newHeight == 0))
+            return;
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override public void run() {
+                
                 Timeline2DCanvas.super.resizeRenderer(newWidth, newHeight);
                 updateNext();
             }
@@ -658,7 +678,6 @@ public class Timeline2DCanvas extends PApplet {
     protected void updateMouse() {
         
         boolean changed = false;
-    //protected void updateCamera() {
 
         
         //scale limits
@@ -677,8 +696,8 @@ public class Timeline2DCanvas extends PApplet {
                 if (mouseButton == 37) {
                     //left mouse button
                     if ((dx != 0) || (dy != 0)) {
-                        camX -= dx;
-                        camY -= dy;
+                        camera.camX -= dx;
+                        camera.camY -= dy;
                         changed = true;
                     }
                 } else if (mouseButton == 39) {
@@ -688,18 +707,17 @@ public class Timeline2DCanvas extends PApplet {
                     float sx = dx * scaleSpeed * dt;
                     float sy = dy * scaleSpeed * dt;         
                     
-                    camX += sx / timeScale;
-                    camY += sy / yScale;
+                    camera.camX += sx / camera.timeScale;
+                    camera.camY += sy / camera.yScale;
                     
-                    timeScale += sx;
-                    yScale += sy;
+                    camera.timeScale += sx;
+                    camera.yScale += sy;
 
                     changed = true;
                     //System.out.println(camX +  " " + camY + " " + sx + " "  + sy);
                 }
                 else {
                     lastMousePressX = Float.NaN;
-                    changed = true;
                 }
 //                else if (mouseButton == 3) {
 //                    //middle mouse button (wheel)
@@ -718,6 +736,7 @@ public class Timeline2DCanvas extends PApplet {
         
                
         if (changed) {            
+            camera.lastUpdate = System.currentTimeMillis();
             updateNext();
         }
 
@@ -725,28 +744,33 @@ public class Timeline2DCanvas extends PApplet {
 
     protected void updateCamera() {
             
-        if (yScale < minYScale) yScale = minYScale;
-        if (yScale > maxYScale) yScale = maxYScale;
-        if (timeScale < minTimeScale)  timeScale = minTimeScale;
-        if (timeScale > maxTimeScale) timeScale = maxTimeScale;
+        if (camera.yScale < minYScale) camera.yScale = minYScale;
+        if (camera.yScale > maxYScale) camera.yScale = maxYScale;
+        if (camera.timeScale < minTimeScale)  camera.timeScale = minTimeScale;
+        if (camera.timeScale > maxTimeScale) camera.timeScale = maxTimeScale;
 
-        translate(-camX + width / 2, -camY + height / 2);
+        translate(-camera.camX + width / 2, -camera.camY + height / 2);
 
-        cycleStart = (int) (Math.floor((camX - width / 2) / timeScale) - 1);
+        cycleStart = (int) (Math.floor((camera.camX - width / 2) / camera.timeScale) - 1);
         cycleStart = Math.max(0, cycleStart);
-        cycleEnd = (int) (Math.ceil((camX + width / 2) / timeScale) + 1);
+        cycleEnd = (int) (Math.ceil((camera.camX + width / 2) / camera.timeScale) + 1);
 
         if (cycleEnd < cycleStart) cycleEnd = cycleStart;
 
-        drawnTextScale = Math.min(yScale, timeScale) * textScale;
+        drawnTextScale = Math.min(camera.yScale, camera.timeScale) * textScale;
+        
+        if (camera.lastUpdate > lastCameraUpdate)
+            updating = true;
+
+        
         
     }
     
     public void updateNext() {
         if (!updating) {
             for (Chart c : charts) {
-                float h = c.height * yScale;
-                c.update(this, timeScale, yScale);
+                float h = c.height * camera.yScale;
+                c.update(this, camera.timeScale, camera.yScale);
             }            
         }
         updating = true;        
@@ -756,7 +780,7 @@ public class Timeline2DCanvas extends PApplet {
     public void draw() {
 
         updateMouse();
-
+        
         if (!isDisplayable() || !isVisible())
             return;
             
@@ -767,15 +791,16 @@ public class Timeline2DCanvas extends PApplet {
         }
 
         updating = false;
+        lastCameraUpdate = camera.lastUpdate;
 
         background(0);
 
         float y = 0;
-        float yMargin = yScale * 0.1f;
+        float yMargin = camera.yScale * 0.1f;
         for (Chart c : charts) {
-            float h = c.height * yScale;
+            float h = c.height * camera.yScale;
             try {
-                c.draw(this, y, timeScale, yScale);
+                c.draw(this, y, camera.timeScale, camera.yScale);
             }
             catch (Exception e) { 
                 System.out.println("Timeline draw: " + e);

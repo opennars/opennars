@@ -446,8 +446,8 @@ public class TextOutput extends Output {
         return sb.toString();
     }
     
-    public static CharSequence summarize(Collection<? extends Concept> concepts) {
-        StringBuilder s = new StringBuilder();
+    public static CharSequence summarize( Iterable<? extends Concept> concepts) {
+        StringBuilder s = new StringBuilder();        
         for (Concept c : concepts) {
             s.append(c.toString() + "\n");
         }
