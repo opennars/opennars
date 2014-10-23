@@ -42,7 +42,7 @@ public class GraphExecutive {
     double conceptPriorityFactor = 0.5;
 
     double minEdgeCost = 1.0;
-    double costPerDelayedCycle = 0.5;
+    double costPerDelayMagniutde = 0.5;
     
     
     public GraphExecutive(Memory memory, Executive exec) {
@@ -149,6 +149,9 @@ public class GraphExecutive {
         /** optional required source vertex to reach */
         private final Term source;
         
+        final int initialEdgeCosts = 512;
+        List<Cause> possibleEdge = new ArrayList();
+        double[] possibleEdgeCost = new double[initialEdgeCosts];
 
         public ParticleActivation(ImplicationGraph graph, final Term goal, final Term goalPost) {
             this(graph, goal, goalPost, null);
@@ -161,14 +164,25 @@ public class GraphExecutive {
             this.source = source;
         }
         
+
+        final public void addEdgeCost(final Cause ca, final double c) {
+            possibleEdge.add(ca);            
+            final int nes = possibleEdge.size();
+            if (nes == possibleEdgeCost.length) {
+                double[] n = new double[nes*2];
+                System.arraycopy(possibleEdgeCost, 0, n, 0, possibleEdgeCost.length);
+                possibleEdgeCost = n;
+            }
+            possibleEdgeCost[nes-1] = c;
+        }
+        
         public SortedSet<ParticlePath> activate(final boolean forward, int iterations, double distance) {
 
             //TODO cache pathways in the graph for faster traversal. must store source leading edge, destination(s) and their distances
             
             List<Cause> currentPath = new ArrayList();
-
-            Map<Cause, Double> nextEdgeCost = new HashMap();
             
+                                   
             sentenceCosts.clear();
             
             for (int i = 0; i < iterations; i++) {            
@@ -191,8 +205,7 @@ public class GraphExecutive {
                             graph.outgoingEdgesOf(currentVertex) : 
                             graph.incomingEdgesOf(currentVertex);
                     
-                    nextEdgeCost.clear();
-                    
+                    possibleEdge.clear();                    
                     
                     Cause currentSentence = null;
                     
@@ -222,7 +235,8 @@ public class GraphExecutive {
                         
                         currentSentence = s;
                         totalProb += 1.0 / ew;
-                        nextEdgeCost.put(currentSentence, ew);
+                                                
+                        addEdgeCost(currentSentence, ew);
 
                         edgeDecisionPass++;
 
@@ -233,23 +247,26 @@ public class GraphExecutive {
                         
                     }
                     
-                    if (nextEdgeCost.isEmpty()) {
+                    if (possibleEdge.isEmpty()) {
                         //particle went as far as it can
                         break;
                     }                
 
                     Cause nextEdge;
-                    if (nextEdgeCost.size() == 1) {
-                        nextEdge = currentSentence;
+                    int nextEdgeIndex;
+                    if (possibleEdge.size() == 1) {
+                        nextEdgeIndex = 0;
                     }
                     else {
                         choicesAvailable = true;
-                        nextEdge = chooseEdge(nextEdgeCost, totalProb);
+                        nextEdgeIndex = chooseEdge(totalProb);
                     }
 
+                    nextEdge = possibleEdge.get(nextEdgeIndex);
+                    
                     currentPath.add(nextEdge);
 
-                    energy -= nextEdgeCost.get(nextEdge);
+                    energy -= possibleEdgeCost[nextEdgeIndex];
 
                     currentVertex = forward ? nextEdge.effect : nextEdge.cause;
 
@@ -313,7 +330,7 @@ public class GraphExecutive {
                 Interval i = (Interval)nextTerm;                
                 conceptExpectation = 1.0;
                 conceptPriority = 1.0;
-                delayCost = i.getTime(memory) * costPerDelayedCycle;
+                delayCost = i.magnitude * costPerDelayMagniutde;
             }
             else if (nextTerm instanceof Operation) {
                 conceptExpectation = 1.0;
@@ -352,30 +369,28 @@ public class GraphExecutive {
         
         /** choose a sentence according to a random probability 
          * where lower cost = higher probability.  */
-        public Cause chooseEdge(final Map<Cause,Double> cost, double totalProb) {
-            Cause nextEdge = null;
- 
+        public int chooseEdge(double totalProb) {            
             //TODO disallow edge that completes cycle back to target or traversed edge?
             //  probably an option to allow cycles
 
             double r = Memory.randomNumber.nextDouble() * totalProb;
 
 
-            int j;
-            for (final Map.Entry<Cause, Double> es : cost.entrySet()) {
-                
-                nextEdge = es.getKey();
+            final int pes = possibleEdge.size();
+            int i;
+            for (i = 0; i < pes; i++) {
+                double v = possibleEdgeCost[i];
 
-                double edgeProb = 1.0 / es.getValue();
+                double edgeProb = 1.0 / v;
                 r -= edgeProb;
 
                 if (r <= 0) {
                     //selected the next Edge
-                    break;
+                    return i;
                 }
             }
             
-            return nextEdge;            
+            return i-1;
         }
         
         public String getStatus() {

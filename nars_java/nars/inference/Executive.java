@@ -57,8 +57,8 @@ public class Executive implements Observer {
     int maxPlannedTasks = 1;
     
     /** global plan search parameters */
-    float searchDepth = 64;
-    int particles = 32;
+    float searchDepth = 128;
+    int particles = 64;
     
     /** inline search parameters */
     float inlineSearchDepth = searchDepth;

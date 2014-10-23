@@ -320,7 +320,6 @@ public class Rover2 extends PhysicsModel {
                     float percentDiff = Math.abs(meanDist - minDist);
                     float conf = 0.5f + 0.5f * (1.0f - percentDiff);
                     if (conf > 0.99f) conf = 0.99f;
-                    System.out.println(minDist + " " + meanDist + " " + percentDiff + " " + conf);
                             
                     float di = minDist; 
                     
