@@ -25,9 +25,13 @@ public class SwingLogPanel extends LogPanel {
 
     static int defaultFontSize = 19;
     public HashMap<Integer, LogLine> lines = new HashMap();
-            
+    
     public SwingLogPanel(NARControls narControls) {
-        super(narControls);
+        this(narControls, LogPanel.outputEvents);
+    }
+    
+    public SwingLogPanel(NARControls narControls, Class... events) {
+        super(narControls, events);
 
         ioText = new SwingLogText(narControls.nar) {
 
