@@ -2,6 +2,7 @@ package nars.core.build;
 
 import nars.core.ConceptProcessor;
 import nars.core.Memory;
+import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
 import nars.core.NARBuilder;
@@ -41,6 +42,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     /** Size of TaskBuffer */
     private int taskBufferSize = 10;
     private Memory.Timing timing = Timing.Iterative;
+    private Memory.Forgetting forgetMode = Forgetting.Iterative;
     private int taskBufferLevels;
     
     
@@ -87,6 +89,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         p.termLinkMaxReasoned.set(3);
         p.termLinkMaxMatched.set(10);
         p.termLinkRecordLength.set(10);
+        
+        p.setForgetMode(forgetMode);
         
         return p;
     }
@@ -244,12 +248,15 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     
     public DefaultNARBuilder realTime() {
         timing = Timing.Real;
+        forgetMode = Forgetting.Periodic;
         return this;
     }
     public DefaultNARBuilder simulationTime() {
-        timing = Timing.Simulation;
+        timing = Timing.Simulation;        
+        forgetMode = Forgetting.Periodic;
         return this;
     }
+    
 
     /* ---------- initial values of run-time adjustable parameters ---------- */
 //    /** Concept decay rate in ConceptBag, in [1, 99]. */
@@ -260,5 +267,9 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
 //    private static final int TERM_LINK_CYCLES_TO_FORGET = 50;        
 //    /** Task decay rate in TaskBuffer, in [1, 99]. */
 //    private static final int NEW_TASK_FORGETTING_CYCLE = 10;
+
+    public void setForgetMode(Forgetting forgetMode) {
+        this.forgetMode = forgetMode;
+    }
 
 }

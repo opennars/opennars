@@ -188,7 +188,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     /** forgetting calculation for real-time timing */
-    public static void forget(final BudgetValue budget, final float forgetTime, float minPriority, final long currentTime) {
+    public static void forgetPeriodic(final BudgetValue budget, final float forgetTime, float minPriority, final long currentTime) {
         long forgetDelta = budget.getForgetPeriod(currentTime);
         
         float forgetProportion = forgetDelta / forgetTime;

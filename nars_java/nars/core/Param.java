@@ -2,6 +2,7 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
+import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.language.Interval.AtomicDuration;
 import nars.util.meter.util.AtomicDouble;
@@ -23,6 +24,7 @@ public class Param implements Serializable {
     public final AtomicDuration duration = new AtomicDuration();
 
     protected Timing timing;
+    protected Forgetting forgetting;
     
 
     
@@ -104,6 +106,15 @@ public class Param implements Serializable {
     public Timing getTiming() {
         return timing;
     }
+
+    public Forgetting getForgetMode() {
+        return forgetting;
+    }
+
+    public void setForgetMode(Forgetting forgetMode) {
+        this.forgetting = forgetMode;
+    }
+    
     
     
     

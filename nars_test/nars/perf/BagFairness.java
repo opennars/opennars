@@ -74,9 +74,9 @@ public class BagFairness {
             }
 
             
-            int concepts = ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.size();
+            int concepts = ((SequentialMemoryCycle)n.memory.Memory.this.concepts).concepts.size();
             double[] d = new double[bins];
-            ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.getPriorityDistribution(d);
+            ((SequentialMemoryCycle)n.memory.Memory.this.concepts).concepts.getPriorityDistribution(d);
             for (int b = 0; b < bins; b++) {
                 
                 bin[b].push(n.time(), (float)d[b] * concepts);

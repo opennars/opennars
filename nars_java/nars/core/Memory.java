@@ -139,6 +139,9 @@ public class Memory implements Serializable {
 
 
 
+    public static enum Forgetting {
+        Iterative, Periodic
+    }
     
     public enum Timing {
         /** internal, subjective time (inference steps) */
@@ -168,7 +171,7 @@ public class Memory implements Serializable {
         randomNumber.setSeed(randomSeed);    
     }
     
-    public final ConceptProcessor conceptProcessor;
+    public final ConceptProcessor concepts;
     
     public final EventEmitter event;
     
@@ -267,7 +270,7 @@ public class Memory implements Serializable {
         }               
         
         this.param = param;
-        this.conceptProcessor = cycleControl;
+        this.concepts = cycleControl;
         
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
@@ -408,7 +411,7 @@ public class Memory implements Serializable {
     public void reset() {
         event.emit(ResetStart.class);
         
-        conceptProcessor.clear();
+        concepts.clear();
         novelTasks.clear();
         newTasks.clear();     
         
@@ -480,7 +483,7 @@ public class Memory implements Serializable {
      * @return a Concept or null
      */
     public Concept concept(final Term t) {
-        return conceptProcessor.concept(t);
+        return concepts.concept(t);
     }
   
 
@@ -510,7 +513,7 @@ public class Memory implements Serializable {
         Concept concept = concept(term);
         if (concept == null) {
             // The only part of NARS that instantiates new Concepts
-            Concept newConcept = conceptProcessor.addConcept(term, this);
+            Concept newConcept = concepts.addConcept(term, this);
             if (newConcept == null) {
                 return null;
             } else {
@@ -633,17 +636,20 @@ public class Memory implements Serializable {
      * @param b the new BudgetValue
      */
     public void conceptActivate(final Concept c, final BudgetValue b) {
-        conceptProcessor.activate(c, b);
+        concepts.activate(c, b);
     }
 
     
+    
     public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
-        if (getTiming() == Memory.Timing.Iterative) {
-            BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+        switch (param.forgetting) {
+            case Iterative:
+                BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+                break;
+            case Periodic:
+                BudgetFunctions.forgetPeriodic(x.budget, forgetCycles, relativeThreshold, time());
+                break;
         }
-        else {                
-            BudgetFunctions.forget(x.budget, forgetCycles, relativeThreshold, time());
-        }            
     }    
 
     
@@ -850,7 +856,7 @@ public class Memory implements Serializable {
         
         //--------m-a-i-n-----l-o-o-p--------
             
-        conceptProcessor.cycle(this);                
+        concepts.cycle(this);                
             
         //--------m-a-i-n-----l-o-o-p--------
 
@@ -1035,7 +1041,7 @@ public class Memory implements Serializable {
      *  not guaranteed to return in order.  for descending priority iteration, use
         conceptProcessor's Iterable<Concept> .iterator() */
     public Collection<? extends Concept> getConcepts() {
-        return conceptProcessor.getConcepts();
+        return concepts.getConcepts();
     }
 
 
@@ -1090,7 +1096,7 @@ public class Memory implements Serializable {
     
     /** gets a next concept for processing */
     public Concept sampleNextConcept() {
-        return conceptProcessor.sampleNextConcept();
+        return concepts.sampleNextConcept();
     }
     
     public Timing getTiming() {
