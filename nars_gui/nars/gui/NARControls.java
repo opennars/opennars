@@ -64,6 +64,9 @@ import nars.gui.output.graph.ImplicationGraphCanvas;
 import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphCanvas;
 import nars.gui.output.timeline.TimelinePanel;
+import nars.inference.Executive;
+import nars.inference.Executive.TaskExecution;
+import nars.inference.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.util.graph.InheritanceGraph;
@@ -184,15 +187,28 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             
             m.addSeparator();
             
-            JMenuItem ml = new JMenuItem("+ Log");
+            JMenuItem ml = new JMenuItem("+ Output Log");
             ml.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Log", new SwingLogPanel(NARControls.this)).show(500, 300);
+                    new NWindow("Output", new SwingLogPanel(NARControls.this)).show(500, 300);
                 }
             });
             m.add(ml);
 
+            JMenuItem pml = new JMenuItem("+ Planning Log");
+            pml.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {                    
+                    new NWindow("Planning", new SwingLogPanel(NARControls.this, 
+                            Executive.class, TaskExecution.class, 
+                            GraphExecutive.ParticlePath.class, 
+                            GraphExecutive.ParticlePlan.class))
+                    .show(500, 300);
+                }
+            });
+            m.add(pml);
+            
             JMenuItem al = new JMenuItem("+ Activity");
             al.addActionListener(new ActionListener() {
                 @Override

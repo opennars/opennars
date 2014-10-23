@@ -9,6 +9,7 @@ import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.gui.NARSwing;
 import nars.io.Output.OUT;
 
 
@@ -174,8 +175,8 @@ public class SwingLogText extends SwingText  {
                 case 4: n = "  " + n; break;
                 case 5: n = " " + n; break;                    
             }
-            
-            print(LogPanel.getChannelColor(c), n);
+            Color chanColor = NARSwing.getColor(c.getClass().hashCode(), 0.8f, 0.8f);
+            print(chanColor, n);
         }
         
         else {
@@ -202,7 +203,7 @@ public class SwingLogText extends SwingText  {
         }        
         
         float tc = 0.75f + 0.25f * priority;
-        Color textColor = new Color(tc, tc, tc);
+        Color textColor = new Color(tc,tc,tc);
         print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n');
 
         return doc.getLength();

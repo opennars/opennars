@@ -54,7 +54,7 @@ public class Executive implements Observer {
     int numActiveTasks = 1;
 
     /** max number of tasks that a plan can generate. chooses the N best */
-    int maxPlannedTasks = 4;
+    int maxPlannedTasks = 1;
     
     /** global plan search parameters */
     float searchDepth = 48;
@@ -479,16 +479,14 @@ public class Executive implements Observer {
         if (tasks.isEmpty())
             return;
         
-        /*if (NAR.DEBUG)*/ {
-            //TODO make a print function
+        if (memory.emitting(TaskExecution.class)) {
             
-            if (tasks.size() > 1)  {
-                System.out.println("Tasks @ " + memory.time());
+            if (tasks.size() > 1)  {                                
                 for (TaskExecution tcc : tasks)
-                    System.out.println("  " + tcc.toString());
+                    memory.emit(Executive.class, memory.time(), tcc);                    
             }
             else {
-                System.out.println("Task @ " + memory.time() + ": " + tasks.get(0));
+                memory.emit(Executive.class, memory.time(), tasks.get(0));
             }
             
         }

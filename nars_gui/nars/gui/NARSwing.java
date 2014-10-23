@@ -240,9 +240,11 @@ public class NARSwing  {
         //return ((float)(h%256)) / (256.0f);
     }
 
-    public final static Color getColor(final String s, final float saturation, final float brightness) {            
-        float hue = hashFloat(s.hashCode());
-        return Color.getHSBColor(hue, saturation, brightness);
+    public final static Color getColor(final String s, final float saturation, final float brightness) {             return getColor(s.hashCode(), saturation, brightness);
+    }
+    public final static Color getColor(int hashCode, float saturation, float brightness) {
+        float hue = hashFloat(hashCode);
+        return Color.getHSBColor(hue, saturation, brightness);        
     }
     public final static Color getColor(final Color c, float alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(255.0 * alpha));
