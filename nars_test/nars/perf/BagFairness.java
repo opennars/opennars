@@ -62,7 +62,7 @@ public class BagFairness {
         
         n.addInput(input);
         
-        while (n.getTime() < iterations) {
+        while (n.time() < iterations) {
 
             if (nextConcept!=null) {
                 float p = nextConcept.getPriority();
@@ -79,8 +79,8 @@ public class BagFairness {
             ((SequentialMemoryCycle)n.memory.conceptProcessor).concepts.getPriorityDistribution(d);
             for (int b = 0; b < bins; b++) {
                 
-                bin[b].push(n.getTime(), (float)d[b] * concepts);
-                fired[b].push(n.getTime(), fireCount[b]);
+                bin[b].push(n.time(), (float)d[b] * concepts);
+                fired[b].push(n.time(), fireCount[b]);
             }
             
             

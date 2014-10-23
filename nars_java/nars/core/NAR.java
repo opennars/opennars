@@ -167,7 +167,7 @@ public class NAR implements Runnable, TaskSource {
      by memory later according to the length of the input queue. */
     public TextInput addInput(final String text) {
         
-        return addInput(text, text.contains("\n") ? -1 : getTime());
+        return addInput(text, text.contains("\n") ? -1 : time());
     }
     
     /** add text input at a specific time, which can be set to current time (regardless of when it will reach the memory), backdated, or forward dated */
@@ -408,7 +408,7 @@ public class NAR implements Runnable, TaskSource {
         //if (running || stepsQueued > 0 || !finishedInputs) {
             System.out.println("// doTick: "
                     //+ "walkingSteps " + stepsQueued
-                    + ", clock " + getTime());
+                    + ", clock " + time());
 
             System.out.flush();
         //}
@@ -548,7 +548,7 @@ public class NAR implements Runnable, TaskSource {
      *
      * @return The current time
      */
-    public long getTime() {
+    public long time() {
         return memory.time();
     }
     

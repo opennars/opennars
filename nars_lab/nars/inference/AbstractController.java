@@ -34,7 +34,7 @@ public abstract class AbstractController implements EventEmitter.Observer {
     @Override
     public void event(final Class event, final Object... arguments) {
         //TODO use relative time (not modulo) for non-sequence time modes
-        long cycle = nar.getTime();
+        long cycle = nar.time();
         nar.memory.logic.update(nar.memory);
         getSensors();
         if (cycle % period == (period - 1)) {

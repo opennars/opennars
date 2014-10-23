@@ -1,7 +1,12 @@
 package nars.gui.output.chart;
 
 import java.awt.Color;
+import nars.core.EventEmitter.Observer;
+import nars.core.Events.CycleEnd;
+import nars.core.NAR;
+import nars.entity.Concept;
 import nars.gui.NARSwing;
+import nars.language.Term;
 
 /**
  * Used by Chart, a chart data set is a container to store chart data.
@@ -103,6 +108,64 @@ public class TimeSeries  {
     public void updateMinMax(long cycleStart, long cycleEnd) {
     }
         
+    abstract public static class CycleTimeSeries extends TimeSeries implements Observer {
+        private final NAR nar;
+
+        public CycleTimeSeries(NAR n, String theName, float min, float max, int historySize) {
+            super(theName, NARSwing.getColor(theName, 0.8f, 0.8f), historySize);       
+            this.nar = n;
+            setRange(min, max);
+            n.on(CycleEnd.class, this);            
+        }
+
+        @Override
+        public void event(Class event, Object[] arguments) {
+            long time = nar.time();
+            push(nar.time(), next(time, nar));
+        }
+        
+        public abstract float next(long time, NAR nar);    
+        
+    }
+    
+    public static class ConceptTimeSeries extends CycleTimeSeries {
+        public final Mode mode;
+    
+        public static enum Mode { Priority, Duration /* add others */ };
+        
+        String conceptString;
+        Term conceptTerm;
+        Concept concept;
+        
+        public ConceptTimeSeries(NAR n, String concept, int historySize, Mode mode) {
+            super(n, concept, 0, 1, historySize);
+            this.mode = mode;
+            this.conceptString = concept;
+            this.conceptTerm = new Term(conceptString);
+            
+            this.concept = null;
+        }
+
+        @Override
+        public float next(final long time, final NAR nar) {
+            if (concept == null) {
+                concept = nar.memory.concept(conceptTerm);
+                if (concept == null) {
+                    return 0;
+                }
+            }
+            switch (mode) {
+                case Priority:
+                    return concept.getPriority();
+                case Duration:
+                    return concept.getDurability();
+            }
+            return 0f;
+        }
+        
+        
+    }
+    
     public static class FirstOrderDifferenceTimeSeries extends TimeSeries {
         public final TimeSeries data;
 

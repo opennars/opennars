@@ -235,7 +235,7 @@ public class Timeline2DCanvas extends PApplet {
     public static class StackedPercentageChart extends LineChart {
 
         float barWidth = 0.9f;
-        float barHeight = 0.95f;
+        float barHeight = 0.9f;
 
         public StackedPercentageChart(TimeSeries... series) {
             super(series);
@@ -275,6 +275,7 @@ public class Timeline2DCanvas extends PApplet {
 
                 float sy = y;
 
+                float gap = (yScale*(1.0f - barHeight)/sensors.size());
                 for (TimeSeries chart : sensors) {
                     int ccolor = chart.getColor().getRGB();
                     float lx = 0, ly = 0;
@@ -292,9 +293,9 @@ public class Timeline2DCanvas extends PApplet {
                     float px = x;
                     float h = p * yScale;
 
-                    float gap = (h*(1.0f - barHeight)/2f);
+                    
                     l.fill(ccolor, 255f * (0.5f + 0.5f * p));
-                    l.rect(px, sy+gap, timeScale * barWidth, h - gap);
+                    l.rect(px, sy+gap/2, timeScale * barWidth, h - gap/2);
 
                     sy += h;
                 }

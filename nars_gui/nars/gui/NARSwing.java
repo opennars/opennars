@@ -236,8 +236,8 @@ public class NARSwing  {
 //    }
 
     public final static float hashFloat(final int h) {
-        return ((float)h) / (((float)Integer.MAX_VALUE) - ((float)Integer.MIN_VALUE));
-        //return ((float)(h%256)) / (256.0f);
+        //return ((float)h) / (((float)Integer.MAX_VALUE) - ((float)Integer.MIN_VALUE));
+        return ((float)(h%256)) / (256.0f);
     }
 
     public final static Color getColor(final String s, final float saturation, final float brightness) {             return getColor(s.hashCode(), saturation, brightness);
