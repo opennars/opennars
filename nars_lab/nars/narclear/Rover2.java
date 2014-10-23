@@ -601,7 +601,7 @@ public class Rover2 extends PhysicsModel {
     static {
         randomActions.add("(^motor,turn,left)! :|:");
         randomActions.add("(^motor,turn,right)! :|:");
-        randomActions.add("(^motor,backward)! :|:");
+        //randomActions.add("(^motor,backward)! :|:");
         randomActions.add("(^motor,forward)! :|:");
     }
     
