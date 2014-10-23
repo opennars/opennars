@@ -645,16 +645,20 @@ public class Concept extends Item<Term> {
 
         boolean fired = false;
 
-        if (currentTaskLink.budget.aboveThreshold()) {
+        if (currentTaskLink.getPriority() > 0) {
+            
+            if (currentTaskLink.budget.aboveThreshold()) {
 
-            new NAL.FireConcept(memory, this, currentTaskLink).call();        
+                new NAL.FireConcept(memory, this, currentTaskLink).call();        
 
-            fired = true;           
-        }            
+                fired = true;           
+            }            
 
-        currentTaskLink.updateTaskPriority();
+            currentTaskLink.updateTaskPriority();
 
-        taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
+            taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
+            
+        }
 
             
         return fired;

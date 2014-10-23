@@ -16,25 +16,19 @@
  */
 package nars.timeline.example;
 
-import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JPanel;
+import nars.gui.output.timeline.MultiTimeline;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.ConceptTimeSeries;
 import nars.gui.output.chart.TimeSeries.ConceptTimeSeries.Mode;
 import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
-import nars.gui.output.timeline.Timeline2DCanvas;
-import nars.gui.output.timeline.Timeline2DCanvas.BarChart;
-import nars.gui.output.timeline.Timeline2DCanvas.Camera;
-import nars.gui.output.timeline.Timeline2DCanvas.Chart;
-import nars.gui.output.timeline.Timeline2DCanvas.LineChart;
-import nars.gui.output.timeline.Timeline2DCanvas.StackedPercentageChart;
-import nars.io.TextOutput;
+import nars.gui.output.timeline.BarChart;
+import nars.gui.output.timeline.Chart;
+import nars.gui.output.timeline.LineChart;
+import nars.gui.output.timeline.SpectrumChart;
+import nars.gui.output.timeline.StackedPercentageChart;
 import nars.util.NARTrace;
 
 /**
@@ -42,29 +36,6 @@ import nars.util.NARTrace;
  */
 public class ConceptDynamics extends TimelineExample {
     
-    abstract public static class MultiTimeline extends JPanel {
-
-        List<Timeline2DCanvas> timeline = new ArrayList();
-        
-        public MultiTimeline(int n) {
-            super(new GridLayout());
-            
-            
-            Camera sharedCam = new Camera(); 
-            for (int i = 0; i < n; i++) {
-                Timeline2DCanvas t = new Timeline2DCanvas(sharedCam, getCharts(i));
-                timeline.add(t);
-                add(t);
-            }
-            
-            doLayout();
-            
-        }
-        
-        abstract public Chart[] getCharts(int experiment);
-    
-        
-    }
     
     public static void main(String[] args) throws Exception {
         int cycles = 500;
@@ -128,6 +99,8 @@ public class ConceptDynamics extends TimelineExample {
                     };
                     
                     Chart[] charts = new Chart[] {
+                        //new SpectrumChart(t, "concept.priority.hist.0", 8).height(4),
+                        //new SpectrumChart(t, "concept.priority.hist.1", 8).height(4),
                         new LineChart(ct1).height(5),
                         new LineChart(ct2).height(5),
                         new LineChart(ct3).height(5),
@@ -137,6 +110,7 @@ public class ConceptDynamics extends TimelineExample {
 
                         new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
                         new LineChart(t, "concept.priority.mean").height(1),
+                        
 
                         //new EventChart(t, false, true, false).height(3),
 

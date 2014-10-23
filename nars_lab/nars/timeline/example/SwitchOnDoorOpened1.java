@@ -25,10 +25,10 @@ import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
 import nars.io.TextInput;
 import nars.gui.output.timeline.Timeline2DCanvas;
-import nars.gui.output.timeline.Timeline2DCanvas.BarChart;
-import nars.gui.output.timeline.Timeline2DCanvas.EventChart;
-import nars.gui.output.timeline.Timeline2DCanvas.LineChart;
-import nars.gui.output.timeline.Timeline2DCanvas.StackedPercentageChart;
+import nars.gui.output.timeline.BarChart;
+import nars.gui.output.timeline.EventChart;
+import nars.gui.output.timeline.LineChart;
+import nars.gui.output.timeline.StackedPercentageChart;
 import nars.util.NARTrace;
 
 /**
