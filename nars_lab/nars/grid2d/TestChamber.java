@@ -147,7 +147,7 @@ public class TestChamber {
             
             @Override
             public void event(Class event, Object... arguments) {           
-                if (nar.getTime() % gridUpdatePeriod == 0) {
+                if (nar.time() % gridUpdatePeriod == 0) {
                     space.update(into);
                     
                     long now = System.nanoTime();

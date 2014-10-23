@@ -63,7 +63,7 @@ public class PlanDecisionExperiment {
                     }
                 }
                 if (c == EXE.class) {
-                    System.out.println("EXE: " + n.getTime() + ": " + o);
+                    System.out.println("EXE: " + n.time() + ": " + o);
                 }
             }
         };

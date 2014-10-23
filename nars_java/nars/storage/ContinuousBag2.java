@@ -71,6 +71,18 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
         }
         
     }
+    
+    /** Approximates priority -> probability fairness with an exponential curve */
+    public static class PriorityProbabilityApproximateCurve implements BagCurve {
+
+        @Override public final double y(final double x) {
+            return 1 - Math.exp(-5 * x);
+        }
+        
+    }
+    
+    
+    
     public static class QuadraticBagCurve implements BagCurve {
 
         @Override public final double y(final double x) {

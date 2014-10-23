@@ -92,7 +92,7 @@ public class NARRun {
                while (true) {
             if (logging)
                 log("NARSBatch.run():"
-                        + " step " + nar.getTime()
+                        + " step " + nar.time()
                         + " " + nar.inputChannels.size());
             
 
@@ -101,11 +101,11 @@ public class NARRun {
             
             if (logging)
                 log("NARSBatch.run(): after tick"
-                        + " step " + nar.getTime()
+                        + " step " + nar.time()
                         + " " + nar.inputChannels.size());
             
             if (maxTime > 0) {
-                if ((nar.inputChannels.isEmpty()) || nar.getTime() == maxTime) {
+                if ((nar.inputChannels.isEmpty()) || nar.time() == maxTime) {
                     break;
                 }
             }

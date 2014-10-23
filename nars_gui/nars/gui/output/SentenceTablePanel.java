@@ -198,7 +198,7 @@ public class SentenceTablePanel extends TablePanel {
 
             //TODO use table sort instead of formatting numbers with leading '0's
             data.addRow(new Object[]{
-                String.format("%08d", nar.getTime()),
+                String.format("%08d", nar.time()),
                 s,
                 s.punctuation,
                 freq == -1 ? "" : freq,

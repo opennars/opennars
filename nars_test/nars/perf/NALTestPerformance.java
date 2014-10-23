@@ -135,15 +135,15 @@ public class NALTestPerformance {
                     }
                 }                
 
-            } while (nar.getTime() < maxCycles);
+            } while (nar.time() < maxCycles);
                         
             exampleNum++;
 
             if (error) {
-                failAt = (int) nar.getTime();
+                failAt = (int) nar.time();
             }
             if (successes == expects.size()) {
-                successAt = (int) nar.getTime();
+                successAt = (int) nar.time();
             }
             if (!expects.isEmpty()) {
                 success = successes / expects.size();

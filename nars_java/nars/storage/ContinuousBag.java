@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Item;
+import nars.storage.ContinuousBag2.BagCurve;
+import nars.storage.ContinuousBag2.PriorityProbabilityApproximateCurve;
 import nars.util.SortedItemList;
 
 
@@ -37,6 +39,8 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     
     /** whether items are removed by random sampling, or a continuous scanning */
     private final boolean randomRemoval;
+    
+    private final ContinuousBag2.BagCurve curve;
     
     /** Rate of sampling index when in non-random "scanning" removal mode.  
      *  The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
@@ -95,15 +99,15 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     }
 
     
-
-//    public ContinuousBag(int capacity, double forgetRate, boolean randomRemoval) {
-//        this(capacity, new AtomicDurations(forgetRate), randomRemoval);
-//    }
-    
     public ContinuousBag(int capacity, boolean randomRemoval) {
+        this(capacity, new PriorityProbabilityApproximateCurve(), randomRemoval );
+    }
+    
+    public ContinuousBag(int capacity, BagCurve curve, boolean randomRemoval) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
+        this.curve = curve;
         
         if (randomRemoval)
             x = Memory.randomNumber.nextFloat();

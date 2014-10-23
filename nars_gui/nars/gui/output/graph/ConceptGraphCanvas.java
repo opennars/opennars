@@ -80,8 +80,8 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
 
     @Override
     protected boolean hasUpdate() {
-        if (nar.getTime() != lasttime) {
-            lasttime = nar.getTime();
+        if (nar.time() != lasttime) {
+            lasttime = nar.time();
             return true;
         }
         return false;

@@ -73,7 +73,7 @@ public class VectorMapTest {
 
             @Override public void event(Class event, Object[] arguments) {
                 
-                long t = n.getTime();
+                long t = n.time();
                 if (t % 100 != 0)  return;
                 
                 

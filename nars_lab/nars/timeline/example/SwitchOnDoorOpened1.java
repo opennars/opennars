@@ -58,10 +58,10 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         nar.addInput(i);
         
         nar.finish(1);        
-        System.out.println(nar.getTime());
+        System.out.println(nar.time());
 
         nar.finish(cycles);        
-        System.out.println(nar.getTime());
+        System.out.println(nar.time());
         
         new NWindow("_", new Timeline2DCanvas(
                 

@@ -27,7 +27,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import nars.core.NAR;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
@@ -443,5 +445,14 @@ public class TextOutput extends Output {
         }
         return sb.toString();
     }
+    
+    public static CharSequence summarize(Collection<? extends Concept> concepts) {
+        StringBuilder s = new StringBuilder();
+        for (Concept c : concepts) {
+            s.append(c.toString() + "\n");
+        }
+        return s;
+    }
+
     
 }

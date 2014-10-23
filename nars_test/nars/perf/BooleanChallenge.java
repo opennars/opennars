@@ -154,7 +154,7 @@ public class BooleanChallenge {
         Term questionTerm = q.getContent();
         long questionTime = q.getCreationTime();
         long answerTime = a.getCreationTime();
-        long time = nar.getTime();
+        long time = nar.time();
         
         
         if (questionTime > answerTime) {
@@ -196,7 +196,7 @@ public class BooleanChallenge {
             }
         }
         score = s;
-        scoreRate = s/ nar.getTime();
+        scoreRate = s/ nar.time();
         
     }
     
