@@ -28,9 +28,12 @@ import nars.gui.NARControls;
 import nars.gui.NPanel;
 import nars.gui.NSlider;
 import nars.gui.WrapLayout;
-import nars.io.Output;
+import nars.inference.AbstractObserver;
+import nars.io.Output.ECHO;
 import nars.io.Output.ERR;
 import nars.io.Output.EXE;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
 import nars.io.TextOutput;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
@@ -41,7 +44,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
     protected final NAR nar;
 
-    private Output out;
+    private AbstractObserver out;
     
     public static final int maxIOTextSize = (int) 3E5;
     public static final int clearMargin = (int) 3E4;
@@ -60,14 +63,21 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     private final InferenceLogger logger;
     private String logFilePath;
 
+    public static final Class[] outputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class };
+    
+    
     public LogPanel(NARControls c) {
+        this(c, outputEvents);
+    }
+    
+    public LogPanel(NARControls c, Class... events) {
         super();
         setLayout(new BorderLayout());
 
         this.nar = c.nar;
         this.logger = c.logger;
 
-        out = new Output(nar, false) {
+        out = new AbstractObserver(nar, false, events) {
             @Override public void event(final Class event, final Object[] arguments) {
                 LogPanel.this.output(event, arguments.length > 1 ? arguments : arguments[0]);
             }

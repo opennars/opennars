@@ -44,7 +44,6 @@ public class GraphExecutive {
     double minEdgeCost = 1.0;
     double costPerDelayedCycle = 0.5;
     
-    final boolean debugParticlePaths = false;
     
     public GraphExecutive(Memory memory, Executive exec) {
         super();
@@ -532,7 +531,7 @@ public class GraphExecutive {
 
         @Override
         public String toString() {
-            return sequence + "(" + score() + ";" + distance + ")";
+            return "[" + score() + "|" + distance + "] " + sequence;
         }
         
         public Task planTask(Concept c, Task goal, Term goalTerm, char punctuation) {
@@ -645,13 +644,12 @@ public class GraphExecutive {
         }
         
         
-        if (debugParticlePaths) {
-            System.out.println("Particle paths for " + target);
+/*        if (memory.emitting(ParticlePath.class)) {            
             for (ParticlePath pp : roots) {
-                System.out.println("  " + pp);
+                memory.emit(ParticlePath.class, target, pp);
             }
-        }
-        
+        }*/
+                
         TreeSet<ParticlePlan> plans = new TreeSet();
         for (final ParticlePath pp : roots) {
 
@@ -729,6 +727,8 @@ public class GraphExecutive {
             ParticlePlan rp = new ParticlePlan(path, seq, pp.score(), pp.distance);            
             //System.out.println(" +path: " + pp);
             plans.add(rp);
+            
+
         }
         
         return plans;
@@ -736,13 +736,13 @@ public class GraphExecutive {
     
  
     
-    protected void rememberPlanSuccess(ParticlePlan plan, Term goal, Task t) {
+    @Deprecated protected void rememberPlanSuccess(ParticlePlan plan, Term goal, Task t) {
         for (Cause c : plan.path) {
             c.rememberRelevant(goal, Executive.relevancyOfSuccessfulPlan);
         }
     }
     
-    protected void forgetPlanSuccess(ParticlePlan plan, Term goal, Task t) {
+    @Deprecated protected void forgetPlanSuccess(ParticlePlan plan, Term goal, Task t) {
         for (Cause c : plan.path) {
             c.forgetRelevant(goal, Executive.relevancyOfSuccessfulPlan);
         }
@@ -765,10 +765,14 @@ public class GraphExecutive {
         
         int n = 0;
         
+        boolean emittingPlans = memory.emitting(ParticlePlan.class);
+                
         for (ParticlePlan p : plans) {
             planTask(nal, p, c, task, target, punctuation); 
             
-            memory.emit(ParticlePlan.class, p);                
+            if (emittingPlans) {
+                memory.emit(ParticlePlan.class, target, p);
+            }        
                 
             if (n++ == maxTasks)
                 break;
