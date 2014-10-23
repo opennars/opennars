@@ -57,7 +57,7 @@ public class Executive implements Observer {
     int maxPlannedTasks = 4;
     
     /** global plan search parameters */
-    float searchDepth = 48;
+    float searchDepth = 64;
     int particles = 32;
     
     /** inline search parameters */
@@ -455,8 +455,8 @@ public class Executive implements Observer {
     /** whether a concept's desire exceeds decision threshold */
     public boolean isDesired(final Task t, final Concept c) {             
         float desire = c.getDesire().getExpectation();
-        float priority = t.budget.summary();
-        return (desire * priority) >= memory.param.decisionThreshold.get();
+        float priority = t.budget.getPriority(); //t.budget.summary();
+        return (priority) >= memory.param.decisionThreshold.get();
         
         //return (c.getDesire().getExpectation() >= memory.param.decisionThreshold.get());        
     }
