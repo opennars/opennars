@@ -28,6 +28,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
 
 /**
  * NARS Rover
@@ -41,13 +42,14 @@ public class Rover2 extends PhysicsModel {
     
     float curiosity = 0.01f;
     
-    /* how often to input mission, in cycles */
-    int missionPeriod = 200;
+    /* how often to input mission, in frames */
+    int missionPeriod = 100;
 
     boolean wraparound = false;
     
     public static RoverModel rover;
     private final NAR nar;
+    private float linearSpeed;
 
     
 
@@ -99,84 +101,93 @@ public class Rover2 extends PhysicsModel {
         //public class DistanceInput extends ChangedTextInput
         public RoverModel(PhysicsModel p) {
             float mass = 2.25f;
+            
+            Vec2[] vertices = {
+                new Vec2(0.0f, 2.0f),
+                new Vec2(+2.0f, - 2.0f),
+                new Vec2(-2.0f, - 2.0f)
+            };
+
             PolygonShape shape = new PolygonShape();
-            shape.setAsBox(0.5f, 0.5f);
+            shape.set(vertices, vertices.length);
+            //shape.m_centroid.set(bodyDef.position);
+            
+            
 
             BodyDef bd = new BodyDef();
             bd.setLinearDamping(0.9f);
-            bd.setAngularDamping(0.9f);
+            bd.setAngularDamping(0.95f);
+            
+            
 
             bd.type = BodyType.DYNAMIC;
             bd.position.set(0, 0);
+            
+            
             torso = p.getWorld().createBody(bd);
-            torso.createFixture(shape, mass);
-
+            Fixture f = torso.createFixture(shape, mass);            
+            f.setRestitution(0.01f);
+            f.setFriction(0.5f);
 //            {
 //                Body prevBody = ground;
 //
             // Define upper arm.
             /*for (float axis = -1f; axis <= 1f; axis += 2f) {
-                Body upperArm;
-                RevoluteJoint leftShoulderJoint;
-                Body lowerArm;
-                RevoluteJoint elbowJoint;
-
-                PolygonShape upperArmShape = new PolygonShape();
-                upperArmShape.setAsBox(0.3f, 0.1f);
-                PolygonShape lowerArmShape = new PolygonShape();
-                lowerArmShape.setAsBox(0.4f, 0.07f);
-
-                BodyDef bdUA = new BodyDef();
-                bdUA.type = BodyType.DYNAMIC;
-                bdUA.position.set(axis * 0.82f, 0f);
-                upperArm = getWorld().createBody(bdUA);
-                upperArm.createFixture(upperArmShape, 0.1f);
-
-                RevoluteJointDef rjd = new RevoluteJointDef();
-                rjd.initialize(torso, upperArm, new Vec2(axis * 0.55f, 0.0f));
-                rjd.motorSpeed = 0; //1.0f * MathUtils.PI;
-                //rjd.maxMotorTorque = 10000.0f;
-                rjd.enableMotor = true;
-                float min = -MathUtils.PI / 1f * 0.1f;
-                float max = MathUtils.PI / 1f * 0.2f;
-                rjd.lowerAngle = min;
-                rjd.upperAngle = max;
-                rjd.enableLimit = true;
-                rjd.collideConnected = false;
-                leftShoulderJoint = (RevoluteJoint) getWorld().createJoint(rjd);
-
-                BodyDef bdLA = new BodyDef();
-                bdLA.type = BodyType.DYNAMIC;
-                bdLA.position.set(axis * 1.5f, 0f);
-                lowerArm = getWorld().createBody(bdLA);
-                lowerArm.createFixture(lowerArmShape, 0.05f);
-
-                RevoluteJointDef rjd2 = new RevoluteJointDef();
-                rjd2.initialize(upperArm, lowerArm, new Vec2(axis * 1.2f, 0.0f));
-                rjd2.enableMotor = true;
-                rjd2.lowerAngle = -1.2f;
-                rjd2.upperAngle = 1.2f;
-                rjd2.enableLimit = true;
-                rjd.collideConnected = false;
-                elbowJoint = (RevoluteJoint) getWorld().createJoint(rjd2);
-
+            Body upperArm;
+            RevoluteJoint leftShoulderJoint;
+            Body lowerArm;
+            RevoluteJoint elbowJoint;
+            PolygonShape upperArmShape = new PolygonShape();
+            upperArmShape.setAsBox(0.3f, 0.1f);
+            PolygonShape lowerArmShape = new PolygonShape();
+            lowerArmShape.setAsBox(0.4f, 0.07f);
+            BodyDef bdUA = new BodyDef();
+            bdUA.type = BodyType.DYNAMIC;
+            bdUA.position.set(axis * 0.82f, 0f);
+            upperArm = getWorld().createBody(bdUA);
+            upperArm.createFixture(upperArmShape, 0.1f);
+            RevoluteJointDef rjd = new RevoluteJointDef();
+            rjd.initialize(torso, upperArm, new Vec2(axis * 0.55f, 0.0f));
+            rjd.motorSpeed = 0; //1.0f * MathUtils.PI;
+            //rjd.maxMotorTorque = 10000.0f;
+            rjd.enableMotor = true;
+            float min = -MathUtils.PI / 1f * 0.1f;
+            float max = MathUtils.PI / 1f * 0.2f;
+            rjd.lowerAngle = min;
+            rjd.upperAngle = max;
+            rjd.enableLimit = true;
+            rjd.collideConnected = false;
+            leftShoulderJoint = (RevoluteJoint) getWorld().createJoint(rjd);
+            BodyDef bdLA = new BodyDef();
+            bdLA.type = BodyType.DYNAMIC;
+            bdLA.position.set(axis * 1.5f, 0f);
+            lowerArm = getWorld().createBody(bdLA);
+            lowerArm.createFixture(lowerArmShape, 0.05f);
+            RevoluteJointDef rjd2 = new RevoluteJointDef();
+            rjd2.initialize(upperArm, lowerArm, new Vec2(axis * 1.2f, 0.0f));
+            rjd2.enableMotor = true;
+            rjd2.lowerAngle = -1.2f;
+            rjd2.upperAngle = 1.2f;
+            rjd2.enableLimit = true;
+            rjd.collideConnected = false;
+            elbowJoint = (RevoluteJoint) getWorld().createJoint(rjd2);
             }*/
             
             
             
-            int pixels = 5;
+            int pixels = 3;
             float aStep = 1.5f / pixels;
             float retinaArc = aStep;
-            int retinaResolution = 5; //should be odd # to balance
+            int retinaResolution = 9; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
-            int distanceResolution = 7;
+            int distanceResolution = 9;
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 final int ii = i;
                 vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
                             retinaArc, retinaResolution, L, distanceResolution) {
                                 
-                               float touchThresholdDistance = 0.15f;
+                               float touchThresholdDistance = 0.1f;
                                 
                                @Override
                                public void onTouch(Body touched, float di) {
@@ -194,7 +205,7 @@ public class Rover2 extends PhysicsModel {
             }
             
             
-            pixels=5;
+            pixels=3;
             aStep = 1.2f/pixels;
             retinaResolution = 3;
             L = 5.5f;
@@ -235,7 +246,7 @@ public class Rover2 extends PhysicsModel {
             //world.AddABlock(Phys, sz, sz);
             food.setTransform(new Vec2(x*2.0f,y*2.0f), food.getAngle());            
             //Phys.getWorld().destroyBody(hit);
-            nar.addInput("<goal --> eat>. :|:");                                       
+            nar.addInput("$0.99;0.90$ <goal --> eat>. :|:");                                       
         }
 
 
@@ -318,7 +329,7 @@ public class Rover2 extends PhysicsModel {
                     
                     float meanDist = totalDist / resolution;
                     float percentDiff = Math.abs(meanDist - minDist);
-                    float conf = 0.5f + 0.5f * (1.0f - percentDiff);
+                    float conf = 0.75f + 0.25f * (1.0f - percentDiff);
                     if (conf > 0.99f) conf = 0.99f;
                             
                     float di = minDist; 
@@ -339,7 +350,7 @@ public class Rover2 extends PhysicsModel {
                     float freq = 1f;
                     
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    String ss = "$" + Texts.n2(conf) + "$ " + "<(*," + id + "," + dist + "," + material +") --> see>. :|: %" + Texts.n2(freq) + ";" + Texts.n2(conf) + "%";
+                    String ss = "$" + Texts.n2(conf) + "$ " + "<(*," + id + "," + dist + "," + material +") --> see>. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
                     sight.set(ss);
                     
                 }
@@ -357,7 +368,9 @@ public class Rover2 extends PhysicsModel {
 
         public void step() {
             if(cnt%missionPeriod==0) {
-                nar.addInput("<goal --> eat>!"); //also remember on goal
+                nar.addInput("$0.99;0.99;0.99$ <goal --> eat>! %1.00;0.99%");
+                nar.addInput("$0.50;0.99;0.99$ Wall! %0.00;0.50%");
+                nar.addInput("$0.50;0.99;0.99$ Food! %1.00;0.75%");
             }
                     
             for (VisionRay v : vision)
@@ -384,11 +397,18 @@ public class Rover2 extends PhysicsModel {
         public void thrust(float angle, float force) {
             angle += torso.getAngle() + Math.PI / 2; //compensate for initial orientation
 
-            torso.applyForceToCenter(new Vec2((float) Math.cos(angle) * force, (float) Math.sin(angle) * force));
+            //torso.applyForceToCenter(new Vec2((float) Math.cos(angle) * force, (float) Math.sin(angle) * force));                        
+            Vec2 v = new Vec2((float) Math.cos(angle) * force, (float) Math.sin(angle) * force);
+            torso.setLinearVelocity(v);
+            
+            //torso.applyLinearImpulse(v, torso.getWorldCenter(), true);
         }
 
-        public void rotate(float torque) {
-            torso.applyTorque(torque);
+        public void rotate(float v) {
+            torso.setAngularVelocity(v);
+            
+            //torso.applyAngularImpulse(v);
+            //torso.applyTorque(torque);
         }
 
         protected void feelMotion() {
@@ -402,17 +422,17 @@ public class Rover2 extends PhysicsModel {
             }
 
             if (a < 0.1) {
-                feltAngularVelocity.set("$0.1;0.1$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
+                feltAngularVelocity.set("$0.50;0.20$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
                 String da = Texts.n1(a);// + ",radPerFrame";
                 if (xa < 0) {
-                    direction = "left";
+                    direction = "-1";
                 } else /*if (xa > 0)*/ {
-                    direction = "right";
+                    direction = "1";
                 }
-                feltAngularVelocity.set("$0.1;0.1$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+                feltAngularVelocity.set("$0.50;0.20$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
                // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
@@ -422,14 +442,14 @@ public class Rover2 extends PhysicsModel {
             }
             h /= MathUtils.TWOPI;
             String dh = "a" + (int)(h*18);   // + ",rad";
-            feltOrientation.set("$0.1;0.1$ <" + dh + " --> feltOrientation>. :|:");
+            feltOrientation.set("$0.50;0.20$ <" + dh + " --> feltOrientation>. :|:");
 
-            float speed = Math.abs(torso.getLinearVelocity().length());
+            float speed = Math.abs(torso.getLinearVelocity().length()/20f);
             if (speed > 0.9f) {
                 speed = 0.9f;
             }
             String sp = Texts.n1(speed);
-            feltSpeed.set("$0.1;0.1$ <" + sp + " --> feltSpeed>. :|:");
+            feltSpeed.set("$0.50;0.20$ <" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         }
 
@@ -440,28 +460,41 @@ public class Rover2 extends PhysicsModel {
 
     }
     
+    
+    protected void setLinearSpeed(float f) {
+        this.linearSpeed = f;
+    }
+    protected void setTargetAngle(float f) {
+        this.angleTarget = MathUtils.reduceAngle(f);
+    }
+    protected void addTargetAngle(float f) {
+        setTargetAngle(angleTarget + f);
+    }
 
     @Override
     public void step(float timeStep, TestbedSettings settings) {
+        
+        if (linearSpeed == 0) {
+            rover.thrust(0, 0);
+        }
+        else {
+            rover.thrust(0, linearSpeed * linearThrustPerCycle);
+        }
+        
+        
+        float da = MathUtils.reduceAngle(angleTarget) - MathUtils.reduceAngle(rover.torso.getAngle());
+        /*if (Math.abs(da) < 1) {
+            rover.rotate(0);
+        }
+        else*/ {
+            rover.rotate(da * angularSpeedPerCycle);
+        }
+
+    
         super.step(timeStep, settings);
 
         rover.step();
-        
-        //wraparound
-        if (wraparound) {
-            if(rover.torso.getTransform().p.x>sz) {
-                rover.torso.setTransform(new Vec2(-sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
-            }
-            if(rover.torso.getTransform().p.y>sz) {
-                rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,-sz),rover.torso.getAngle());
-            }
-            if(rover.torso.getTransform().p.x<-sz) {
-                rover.torso.setTransform(new Vec2(sz,rover.torso.getTransform().p.y),rover.torso.getAngle());
-            }
-            if(rover.torso.getTransform().p.y<-sz) {
-                rover.torso.setTransform(new Vec2(rover.torso.getTransform().p.x,sz),rover.torso.getAngle());
-            }
-        }
+
     }
 
     public class RoverPanel extends JPanel {
@@ -491,11 +524,11 @@ public class Rover2 extends PhysicsModel {
             {
                 JPanel motorPanel = new JPanel(new GridLayout(0, 2));
 
-                motorPanel.add(new InputButton("Stop", "(^motor,stop). :|:"));
-                motorPanel.add(new InputButton("Forward", "(^motor,forward). :|:"));
-                motorPanel.add(new InputButton("TurnLeft", "(^motor,turn,left). :|:"));
-                motorPanel.add(new InputButton("TurnRight", "(^motor,turn,right). :|:"));
-                motorPanel.add(new InputButton("Backward", "(^motor,backward). :|:"));
+//                motorPanel.add(new InputButton("Stop", "(^motor,stop). :|:"));
+//                motorPanel.add(new InputButton("Forward", "(^motor,forward). :|:"));
+//                motorPanel.add(new InputButton("TurnLeft", "(^motor,turn,left). :|:"));
+//                motorPanel.add(new InputButton("TurnRight", "(^motor,turn,right). :|:"));
+//                motorPanel.add(new InputButton("Backward", "(^motor,backward). :|:"));
 
                 add(motorPanel, BorderLayout.SOUTH);
             }
@@ -527,7 +560,7 @@ public class Rover2 extends PhysicsModel {
             float y = (float) Math.random() * h - h / 2f;
             
             float minSize = 0.25f;
-            float maxSize = 1.5f;
+            float maxSize = 0.75f;
             
             float bw = (float)(minSize + Math.random() * (maxSize - minSize));
             float bh = (float)(minSize + Math.random() * (maxSize - minSize));
@@ -563,9 +596,8 @@ public class Rover2 extends PhysicsModel {
 
             bd.position.set(x, y);
             Body body = p.getWorld().createBody(bd);            
-            body.createFixture(shape, mass);
-            body.setAngularDamping(10);
-            body.setLinearDamping(15);
+            Fixture fd = body.createFixture(shape, mass);
+            fd.setRestitution(1f);
             return body;
         }
     }
@@ -581,27 +613,33 @@ public class Rover2 extends PhysicsModel {
         world = new RoverWorld(this, sz, sz);
         
         rover = new RoverModel(this);
-        rover.torso.setAngularDamping(20);
-        rover.torso.setLinearDamping(10);
 
         //new NWindow("Rover Control", new RoverPanel(rover)).show(300, 200);
 
         addAxioms();
         addOperators();
 
+        nar.addInput("(^motor,random)!");
     }
 
-    public static float rotationSpeed = 100f;
-    public static float linearSpeed = 2000f;
+    public static float angleTarget = 0;
+    public float linearThrustPerCycle = 10f;
+    public float angularSpeedPerCycle = 5f;
+    
                 
-    public static boolean allow_imitate=true;
+    public static boolean allow_imitate=false;
 
     static final ArrayList<String> randomActions=new ArrayList<>();
     static {
-        randomActions.add("(^motor,turn,left)! :|:");
-        randomActions.add("(^motor,turn,right)! :|:");
-        //randomActions.add("(^motor,backward)! :|:");
-        randomActions.add("(^motor,forward)! :|:");
+        randomActions.add("(^motor,turn,-1)!");
+        randomActions.add("(^motor,turn,1)!");
+                
+        //randomActions.add("(^motor,turn,0)!");
+        randomActions.add("(^motor,linear,1)!");
+        randomActions.add("(^motor,linear,0)!");
+        randomActions.add("(^motor,linear,-1)!");
+        randomActions.add("(^motor,stop)!");
+        //randomActions.add("(^motor,random)!");
     }
     
     protected void addOperators() {
@@ -617,49 +655,23 @@ public class Rover2 extends PhysicsModel {
                 if (args.length > 1) {
                     Term t2 = args[1];
                     switch (t1.name().toString() + "," + t2.name().toString()) {
-                        case "turn,left":
-                            rover.rotate(rotationSpeed);
-                            break;
-                        case "turn,right":
-                            rover.rotate(-rotationSpeed);
-                            break;
+                        case "turn,-1": addTargetAngle(-10); break;
+                        case "turn,1": addTargetAngle(10); break;
+                        case "turn,0":  addTargetAngle(0); break;
+                        case "linear,1":  setLinearSpeed(1); break;
+                        case "linear,-1":  setLinearSpeed(-1); break;
+                        case "linear,0":  setLinearSpeed(0); break;
                     }
                 } else {
                     switch (t1.name().toString()) {
-                        case "forward":
-                            rover.thrust(0, linearSpeed);
-                            break;
-                        case "backward":
-                            rover.thrust(0, -linearSpeed);
-                            break;
-                        case "stop":
+                        case "stop":                            
+                            setTargetAngle(rover.torso.getAngle());
+                            setLinearSpeed(0);
                             rover.stop();
                             break;
-                        case "random": //tend forward
-                            //nar.addInput("(^motor,forward). :|:\n100\n");
-                            //nar.addInput("(^motor,forward). :|:\n");
-                            //rover.thrust(0, linearSpeed);
-                            //nar.step(100);
-                            
- 
-                            //if(true) { //allow_subcons
-                                int candid=(int)(Math.random()*randomActions.size());
-                                nar.addInput(randomActions.get(candid));
-                                /*if(candid>=3)
-                                    rover.thrust(0, linearSpeed);
-                                if(candid==2)
-                                    rover.thrust(0, -linearSpeed);
-                                if(candid==1)
-                                    rover.rotate(-rotationSpeed);
-                                if(candid==0)
-                                    rover.rotate(rotationSpeed);*/
-//                            } else {
-//                                int candid=(int)(Math.random()*randomActions.size()-0.001);
-//                                nar.addInput(randomActions.get(candid));
-//                            }
-                            
-                            //{"(^motor,turn,left)! :|:", "(^motor,turn,right)! :|:", "(^motor,forward)! :|:", "(^motor,backward)! :|:"};
-                            
+                        case "random":
+                            int candid=(int)(Math.random()*randomActions.size());
+                            nar.addInput(randomActions.get(candid));
                             break;
                     }
                 }
@@ -689,7 +701,7 @@ public class Rover2 extends PhysicsModel {
         nar.addInput("<0.8 <-> 0.9>. %1.00;0.50%");
         //nar.addInput("<feltOrientation <-> feltAngularMotion>?");
         //nar.addInput("<feltSpeed <-> feltAngularMotion>?");
-        nar.addInput("<{left,right,forward,backward} --> direction>.");
+        //nar.addInput("<{left,right} --> direction>.");
 
     }
 
@@ -708,8 +720,9 @@ public class Rover2 extends PhysicsModel {
                 build();
         
         float framesPerSecond = 50f;
-        int cyclesPerFrame = 500; //was 200        
+        int cyclesPerFrame = 200; //was 200        
         nar.param().noiseLevel.set(0);
+        nar.param().duration.set(50/1000/2);
         
         
 
@@ -718,42 +731,34 @@ public class Rover2 extends PhysicsModel {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                 
-                Rover2.RoverModel rover=Rover2.rover;
-                float rotationSpeed = Rover2.rotationSpeed;
-                float linearSpeed = Rover2.linearSpeed;
 
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,forward). :|:");
+                        nar.addInput("(^motor,linear,1). :|:");
                     } else {
-                        nar.addInput("(^motor,forward)! :|:");
+                        nar.addInput("(^motor,linear,1)!");
                     }
-                    rover.thrust(0, linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,backward). :|:");
+                        nar.addInput("(^motor,linear,-1). :|:");
                     } else {
-                        nar.addInput("(^motor,backward)! :|:");
+                        nar.addInput("(^motor,linear,-1)!");
                     }
-                    rover.thrust(0, -linearSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,turn,left). :|:");
+                        nar.addInput("(^motor,turn,-1). :|:");
                     } else {
-                        nar.addInput("(^motor,turn,left)! :|:");
+                        nar.addInput("(^motor,turn,-1)!");
                     }
-                    rover.rotate(rotationSpeed);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,turn,right). :|:");
+                        nar.addInput("(^motor,turn,1). :|:");
                     } else {
-                        nar.addInput("(^motor,turn,right)! :|:");
+                        nar.addInput("(^motor,turn,1)!");
                     }
-                    rover.rotate(-rotationSpeed);
                 }
 
             }
