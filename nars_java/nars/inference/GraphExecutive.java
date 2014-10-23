@@ -402,8 +402,8 @@ public class GraphExecutive {
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getCauseRelevancy(final Cause c, final Term goal) {
-        //return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
-        return c.getTruth().getExpectation();
+        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation() + c.getRelevancy(goal) ));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
+        //return c.getTruth().getExpectation();
     }
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
