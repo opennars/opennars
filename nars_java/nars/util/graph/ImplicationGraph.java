@@ -93,13 +93,13 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
          * @param strength  = reward (if positive), punishment (if negative)
          */
         public void rememberRelevant(Term t, double strength) {
-            //if (relevancy == null) relevancy = new WeakHashMap();            
-            //relevancy.put( t, Math.min(0.99, relevancy.getOrDefault(t, new Double(0)) + strength) );
+            if (relevancy == null) relevancy = new WeakHashMap();            
+            relevancy.put( t, Math.min(0.99, relevancy.getOrDefault(t, new Double(0)) + strength) );
         }
         
         public void forgetRelevant(Term t, double strength) {
-            //if (relevancy == null) relevancy = new WeakHashMap();            
-            //relevancy.put( t, Math.max(0.0, relevancy.getOrDefault(t, new Double(0)) - strength) );
+            if (relevancy == null) relevancy = new WeakHashMap();            
+            relevancy.put( t, Math.max(0.0, relevancy.getOrDefault(t, new Double(0)) - strength) );
         }
         
         /** "forgets" when scale < 1.0 */
