@@ -73,10 +73,10 @@ public class GraphPlanTest {
         
         //System.out.println(input);
 
-                new NWindow("Implication Graph", 
+                /*new NWindow("Implication Graph", 
                             new ProcessingGraphPanel(n, 
                                     new ImplicationGraphCanvas(
-                                            n.memory.executive.graph))).show(500, 500);
+                                            n.memory.executive.graph))).show(500, 500);*/
         
         new Output(n) {
 

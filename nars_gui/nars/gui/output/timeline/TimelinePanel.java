@@ -14,10 +14,10 @@ import nars.core.Events.CycleEnd;
 import nars.core.NAR;
 import nars.gui.NPanel;
 import nars.gui.output.chart.TimeSeries;
-import nars.gui.output.timeline.Timeline2DCanvas.BarChart;
-import nars.gui.output.timeline.Timeline2DCanvas.Chart;
-import nars.gui.output.timeline.Timeline2DCanvas.LineChart;
-import nars.gui.output.timeline.Timeline2DCanvas.StackedPercentageChart;
+import nars.gui.output.timeline.BarChart;
+import nars.gui.output.timeline.Chart;
+import nars.gui.output.timeline.LineChart;
+import nars.gui.output.timeline.StackedPercentageChart;
 import nars.util.NARTrace;
 
 /**
@@ -28,7 +28,7 @@ import nars.util.NARTrace;
 
 public class TimelinePanel extends NPanel implements Observer {
     
-    private List<Timeline2DCanvas.Chart> charts;
+    private List<Chart> charts;
     private final Timeline2DCanvas timeline;
     private final JPanel controls;
     private final NAR nar;
@@ -97,17 +97,17 @@ public class TimelinePanel extends NPanel implements Observer {
     protected void addChartControls() {
         controls.add(new ChartButton("All Events") {
             @Override public Chart newChart() {
-                return new Timeline2DCanvas.EventChart(trace, false, true, false).height(3);
+                return new EventChart(trace, false, true, false).height(3);
             }            
         });
         controls.add(new ChartButton("Concept Priority (mean)") {
             @Override public Chart newChart() {
-                return new Timeline2DCanvas.LineChart(trace, "concept.priority.mean").height(1);
+                return new LineChart(trace, "concept.priority.mean").height(1);
             }            
         });
         controls.add(new ChartButton("Delta Concepts") {
             @Override public Chart newChart() {
-                return new Timeline2DCanvas.BarChart(new TimeSeries.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.get("concept.count")));
+                return new BarChart(new TimeSeries.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.get("concept.count")));
             }            
         });
         controls.add(new ChartButton("Concept Priority Histogram (4 level)") {
@@ -117,17 +117,17 @@ public class TimelinePanel extends NPanel implements Observer {
         });
         controls.add(new ChartButton("Task: Novel Add, Immediate Processed") {
             @Override public Chart newChart() {
-                return new Timeline2DCanvas.LineChart(trace, "task.novel.add", "task.immediate_processed").height(3);
+                return new LineChart(trace, "task.novel.add", "task.immediate_processed").height(3);
             }            
         });
         controls.add(new ChartButton("Task: Processed Goal, Question, Judgment") {
             @Override public Chart newChart() {
-                return new Timeline2DCanvas.LineChart(trace, "task.goal.process", "task.question.process", "task.judgment.process").height(3);
+                return new LineChart(trace, "task.goal.process", "task.question.process", "task.judgment.process").height(3);
             }            
         });
         controls.add(new ChartButton("Emotion: Busy") {
             @Override public Chart newChart() {
-                return new Timeline2DCanvas.LineChart(trace, "emotion.busy").height(1);
+                return new LineChart(trace, "emotion.busy").height(1);
             }            
         });
         controls.add(new ChartButton("Task: Executed") {

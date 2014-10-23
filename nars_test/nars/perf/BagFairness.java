@@ -13,6 +13,7 @@ import nars.core.control.SequentialMemoryCycle;
 import nars.entity.Concept;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
+import nars.gui.output.timeline.LineChart;
 import nars.io.Input;
 import nars.io.TextOutput;
 import nars.io.Texts;
@@ -20,7 +21,8 @@ import nars.language.Term;
 import nars.storage.AdaptiveContinuousBag;
 import nars.storage.Bag;
 import nars.gui.output.timeline.Timeline2DCanvas;
-import nars.gui.output.timeline.Timeline2DCanvas.Chart;
+import nars.gui.output.timeline.Chart;
+import nars.gui.output.timeline.StackedPercentageChart;
 
 /**
  *
@@ -74,9 +76,9 @@ public class BagFairness {
             }
 
             
-            int concepts = ((SequentialMemoryCycle)n.memory.Memory.this.concepts).concepts.size();
+            int concepts = ((SequentialMemoryCycle)n.memory.concepts).concepts.size();
             double[] d = new double[bins];
-            ((SequentialMemoryCycle)n.memory.Memory.this.concepts).concepts.getPriorityDistribution(d);
+            ((SequentialMemoryCycle)n.memory.concepts).concepts.getPriorityDistribution(d);
             for (int b = 0; b < bins; b++) {
                 
                 bin[b].push(n.time(), (float)d[b] * concepts);
@@ -94,10 +96,10 @@ public class BagFairness {
         /*for (b = 0; b < bins; b++) {
             charts[b] = new Timeline2DCanvas.LineChart(bin[b]);                 
         } 8*/       
-        charts.add(new Timeline2DCanvas.StackedPercentageChart(bin).height(8f));
-        charts.add(new Timeline2DCanvas.LineChart(bin).height(8f));
+        charts.add(new StackedPercentageChart(bin).height(8f));
+        charts.add(new LineChart(bin).height(8f));
         
-        charts.add(new Timeline2DCanvas.StackedPercentageChart(fired).height(8f));
+        charts.add(new StackedPercentageChart(fired).height(8f));
         
         new NWindow("_", new Timeline2DCanvas(charts)).show(800, 800, true);
 
