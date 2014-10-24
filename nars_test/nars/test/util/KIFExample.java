@@ -31,7 +31,7 @@ public class KIFExample {
     
  
     public static void main(String[] args) throws Exception {
-        Parameters.DEFAULT_JUDGMENT_PRIORITY = 0.5f;
+        
         
         NAR n = new ContinuousBagNARBuilder(true)
                 .setConceptBagSize(16192)

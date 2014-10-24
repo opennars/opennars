@@ -35,7 +35,7 @@ public class LogicSense extends AbstractSense implements Serializable {
     public final EventValueSensor TASK_DERIVED;
     public final EventValueSensor TASK_EXECUTED;
     
-    public final EventValueSensor CONCEPT_NEW;
+    public final EventValueSensor CONCEPT_ADD;
     
     public final EventValueSensor JUDGMENT_PROCESS;
     public final EventValueSensor GOAL_PROCESS;
@@ -78,8 +78,8 @@ public class LogicSense extends AbstractSense implements Serializable {
         add(TASKLINK_FIRE = new EventValueSensor("tasklink.fire"));
         TASKLINK_FIRE.setSampleWindow(32);
         
-        add(CONCEPT_NEW = new EventValueSensor("concept.new"));
-        CONCEPT_NEW.setSampleWindow(32);
+        add(CONCEPT_ADD = new EventValueSensor("concept.new"));
+        CONCEPT_ADD.setSampleWindow(32);
         
         add(REASON = new EventValueSensor("reason.tasktermlinks"));
         REASON.setSampleWindow(32);
@@ -204,8 +204,8 @@ public class LogicSense extends AbstractSense implements Serializable {
             put("task.question.process", QUESTION_PROCESS.getHits());            
         }
         {
-            put("concept.new", CONCEPT_NEW.getHits());
-            put("concept.new.complexity.mean", CONCEPT_NEW.get().mean());
+            put("concept.new", CONCEPT_ADD.getHits());
+            put("concept.new.complexity.mean", CONCEPT_ADD.get().mean());
         }
         
         putHits(SHORT_TERM_MEMORY_UPDATE);

@@ -54,7 +54,7 @@ public abstract class MemoryObserver extends AbstractObserver {
         } else if (event == Output.OUT.class) {
             output(event, arguments[0].toString());
         } else if (event == Events.ResetEnd.class) {
-            output(event);
+            output(event);        
         } else if (event == CycleStart.class) {
             onCycleStart(memory.time());
         } else if (event == CycleEnd.class) {

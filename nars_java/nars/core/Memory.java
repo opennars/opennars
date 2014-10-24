@@ -512,19 +512,11 @@ public class Memory implements Serializable {
         
         Concept concept = concept(term);
         if (concept == null) {
-            // The only part of NARS that instantiates new Concepts
-            Concept newConcept = concepts.addConcept(term, this);
-            if (newConcept == null) {
-                return null;
-            } else {
-                logic.CONCEPT_NEW.commit(term.getComplexity());
-                        
-                emit(ConceptAdd.class, newConcept);
-                
-                return newConcept;
-            }
+            // The only part of Memory that instantiates new Concepts
+            return concepts.addConcept(term, this);
         }
-        return concept;
+        else
+            return concept;
     }
 
     /**
@@ -927,7 +919,15 @@ public class Memory implements Serializable {
                         logic.TASK_ADD_NOVEL.commit();
                         
                         // new concept formation                        
-                        novelTasks.putIn(task);
+                        Task removed = novelTasks.putIn(task);
+                        if (removed!=null) {
+                            if (removed==task) {
+                                removeTask(task, "Ignored");
+                            }
+                            else {
+                                removeTask(removed, "Replaced");
+                            }
+                        }
                         
                     } else {                        
                         removeTask(task, "Neglected");

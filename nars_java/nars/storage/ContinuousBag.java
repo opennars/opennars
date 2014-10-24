@@ -180,44 +180,12 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
         return nameTable.get(key);
     }
 
-    /**
-     * Add a new Item into the Bag
-     *
-     * @param newItem The new Item
-     * @return Whether the new Item is added into the Bag
-     */
-    @Override public boolean putIn(final E newItem) {
+    @Override protected E namePut(final K name, final E item) {
+        return nameTable.put(name, item);
+    }
 
-        final K newKey = newItem.name();        
-        final E existingItemWithSameKey = nameTable.remove(newKey);
-
-        if (existingItemWithSameKey != null) {
-            // merge duplications
-            outOfBase(existingItemWithSameKey);
-            newItem.merge(existingItemWithSameKey);
-        }
-
-        // put the (new or merged) item into itemTable        
-        final E overflowItem = intoBase(newItem);
-
-        if (overflowItem == newItem) {
-            //did not add
-            return false;
-        }
-        
-        nameTable.put(newKey, newItem);
-        
-        
-
-        if (overflowItem != null) {             
-            // remove overflow
-            final K overflowKey = overflowItem.name();
-            if (!overflowKey.equals(newKey)) {
-                nameTable.remove(overflowKey);
-            }
-        }
-        
-        return true;
+    @Override protected E nameRemove(final K name) {
+        return nameTable.remove(name);
     }
 
 
@@ -319,7 +287,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      * @param newItem The Item to put in
      * @return The overflow Item
      */
-    private E intoBase(E newItem) {
+    @Override protected E intoBase(E newItem) {
         E oldItem = null;
         
         if (size() >= capacity) {      // the bag is full            

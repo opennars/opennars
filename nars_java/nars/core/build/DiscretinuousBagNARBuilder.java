@@ -28,8 +28,6 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
         this.randomRemoval = randomRemoval;
     }
 
-    //final static BagCurve curve = new ContinuousBag2.DefaultBagCurve();
-    final static ContinuousBag2.BagCurve curve = new ContinuousBag2.CubicBagCurve();
     
     @Override
     public Bag<Task,Sentence> newNovelTaskBag(Param p) {

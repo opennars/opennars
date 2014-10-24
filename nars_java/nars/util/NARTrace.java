@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import nars.core.Events;
 import nars.core.Events.ConceptAdd;
 import nars.core.Events.InferenceEvent;
 import nars.core.Memory;
@@ -78,19 +79,22 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     }
 
-    public static enum TaskEventType {
-
-        Added, Removed
+    public static interface HasLabel {
+        public String toLabel();
     }
-
-    public static class TaskEvent extends InferenceEvent {
+    
+    public static enum AddOrRemove {
+        Add, Remove
+    }
+    
+    public static class TaskEvent extends InferenceEvent implements HasLabel {
 
         public final Task task;
-        public final TaskEventType type;
+        public final AddOrRemove type;
         public final String reason;
         public float priority;
 
-        public TaskEvent(Task t, long when, TaskEventType type, String reason) {
+        public TaskEvent(Task t, long when, AddOrRemove type, String reason) {
             super(when);
             this.task = t;
             this.type = type;
@@ -101,6 +105,10 @@ public class NARTrace extends MemoryObserver implements Serializable {
         @Override
         public String toString() {
             return "Task " + type + " (" + reason + "): " + task.toStringExternal();
+        }
+        @Override
+        public String toLabel() {
+            return "Task " + type + " (" + reason + "):\n" + task.name();
         }
     }
 
@@ -143,9 +151,19 @@ public class NARTrace extends MemoryObserver implements Serializable {
         concept.clear();
     }
     
+    @Override
+    public void event(final Class event, final Object[] arguments) {
+        if (event == Events.TaskAdd.class) {
+            onTaskAdd((Task)arguments[0], (String)arguments[1]);
+        }
+        else if (event == Events.TaskRemove.class) {
+            onTaskRemove((Task)arguments[0], (String)arguments[1]);
+        }
+        else
+            super.event(event, arguments);
 
-
-
+    }
+    
     @Override
     public void onConceptAdd(Concept concept) {
         if (this.concept.containsKey(concept)) 
@@ -191,13 +209,13 @@ public class NARTrace extends MemoryObserver implements Serializable {
 
     @Override
     public void onTaskAdd(Task task, String reason) {
-        TaskEvent ta = new TaskEvent(task, t, TaskEventType.Added, reason);
+        TaskEvent ta = new TaskEvent(task, t, AddOrRemove.Add, reason);
         addEvent(ta);
     }
 
     @Override
     public void onTaskRemove(Task task, String reason) {
-        TaskEvent tr = new TaskEvent(task, t, TaskEventType.Removed, reason);
+        TaskEvent tr = new TaskEvent(task, t, AddOrRemove.Remove, reason);
         addEvent(tr);
     }
 

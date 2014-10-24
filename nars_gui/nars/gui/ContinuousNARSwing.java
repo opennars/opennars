@@ -27,10 +27,10 @@ public class ContinuousNARSwing {
             Param p = nar.param();
             //int c = (int)Math.sqrt(numConcepts);
             int c = numConcepts;
-            p.conceptForgetDurations.set(10+c/2);             
-            p.taskCycleForgetDurations.set(20);
-            p.beliefForgetDurations.set(50);
-            p.newTaskForgetDurations.set(10);
+            p.conceptForgetDurations.set(2);             
+            p.taskForgetDurations.set(4);
+            p.beliefForgetDurations.set(10);
+            p.newTaskForgetDurations.set(2);
         }
         
     }

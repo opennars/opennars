@@ -29,6 +29,10 @@ import nars.core.Events.ConceptGoalAdd;
 import nars.core.Events.ConceptGoalRemove;
 import nars.core.Events.ConceptQuestionAdd;
 import nars.core.Events.ConceptQuestionRemove;
+import nars.core.Events.TaskLinkAdd;
+import nars.core.Events.TaskLinkRemove;
+import nars.core.Events.TermLinkAdd;
+import nars.core.Events.TermLinkRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
@@ -470,10 +474,21 @@ public class Concept extends Item<Term> {
      *
      * @param taskLink The termLink to be inserted
      */
-    public void insertTaskLink(final TaskLink taskLink) {
+    public boolean insertTaskLink(final TaskLink taskLink) {
         final BudgetValue taskBudget = taskLink.budget;
         memory.conceptActivate(this, taskBudget);
-        taskLinks.putIn(taskLink);
+        TaskLink removed = taskLinks.putIn(taskLink);
+        if (removed!=null) {
+            if (removed == taskLink) {
+                memory.emit(TaskLinkRemove.class, taskLink, this);
+                return false;
+            }
+            else {
+                memory.emit(TaskLinkRemove.class, removed, this);
+            }
+        }
+        memory.emit(TaskLinkAdd.class, taskLink, this);
+        return true;
     }
 
     /**
@@ -494,10 +509,10 @@ public class Concept extends Item<Term> {
                         if (concept != null) {
 
                             // this termLink to that
-                            TermLink termLink1 = insertTermLink(new TermLink(t, template, subBudget));
+                            insertTermLink(new TermLink(t, template, subBudget));
 
                             // that termLink to this
-                            TermLink termLink2 = concept.insertTermLink(new TermLink(term, template, subBudget));
+                            concept.insertTermLink(new TermLink(term, template, subBudget));
 
                             if (t instanceof CompoundTerm) {
                                 concept.buildTermLinks(subBudget);
@@ -516,9 +531,19 @@ public class Concept extends Item<Term> {
      *
      * @param termLink The termLink to be inserted
      */
-    public TermLink insertTermLink(final TermLink termLink) {
-        termLinks.putIn(termLink);
-        return termLink;
+    public boolean insertTermLink(final TermLink termLink) {
+        TermLink removed = termLinks.putIn(termLink);
+        if (removed!=null) {
+            if (removed == termLink) {
+                memory.emit(TermLinkRemove.class, termLink, this);
+                return false;
+            }
+            else {
+                memory.emit(TermLinkRemove.class, removed, this);
+            }
+        }
+        memory.emit(TermLinkAdd.class, termLink, this);
+        return true;        
     }
 
     /**
@@ -656,7 +681,7 @@ public class Concept extends Item<Term> {
 
             currentTaskLink.updateTaskPriority();
 
-            taskLinks.putBack(currentTaskLink, memory.param.taskCycleForgetDurations.getCycles(), memory);
+            taskLinks.putBack(currentTaskLink, memory.param.taskForgetDurations.getCycles(), memory);
             
         }
 

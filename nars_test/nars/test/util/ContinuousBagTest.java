@@ -2,6 +2,7 @@ package nars.test.util;
 
 import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
+import nars.entity.Item;
 import nars.perf.BagPerf.NullItem;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
@@ -118,8 +119,8 @@ public class ContinuousBagTest {
         f.putIn(four);
         f.putIn(five);
         f.putIn(new NullItem(.6f));
-        boolean a = f.putIn(new NullItem(.7f));
-        assert(a);
+        Item a = f.putIn(new NullItem(.7f));
+        assert(a==null);
         
         f.putIn(new NullItem(.6f)); //limit
 

@@ -47,7 +47,7 @@ public class Param implements Serializable {
     public final AtomicDurations beliefForgetDurations = new AtomicDurations();
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
-    public final AtomicDurations taskCycleForgetDurations = new AtomicDurations();
+    public final AtomicDurations taskForgetDurations = new AtomicDurations();
     
     public final AtomicDurations newTaskForgetDurations = new AtomicDurations();
 

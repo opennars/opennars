@@ -36,13 +36,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     abstract public float getMass();
 
-    /**
-     * Add a new Item into the Bag
-     *
-     * @param newItem The new Item
-     * @return Whether the new Item is added into the Bag
-     */
-    abstract public boolean putIn(final E newItem);
+    
 
     
 
@@ -59,6 +53,54 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     abstract public E pickOut(final K key);    
 
+    abstract protected E intoBase(final E newItem);
+    abstract protected void outOfBase(final E oldItem);
+    
+    
+    /** for updating the nametable; works like Map put and remove */
+    abstract protected E namePut(K name, E item);
+    abstract protected E nameRemove(K name);
+    
+    /**
+     * Add a new Item into the Bag
+     *
+     * @param newItem The new Item
+     * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
+     */
+    public E putIn(final E newItem) {
+
+        final K newKey = newItem.name();        
+        final E existingItemWithSameKey = nameRemove(newKey);
+
+        if (existingItemWithSameKey != null) {
+            // merge duplications
+            outOfBase(existingItemWithSameKey);
+            newItem.merge(existingItemWithSameKey);
+        }
+
+        // put the (new or merged) item into itemTable        
+        final E overflowItem = intoBase(newItem);
+
+        if (overflowItem == newItem) {
+            //did not add
+            return newItem;
+        }
+        
+        namePut(newKey, newItem);
+        
+
+        if (overflowItem != null) {             
+            // remove overflow
+            final K overflowKey = overflowItem.name();
+            if (!overflowKey.equals(newKey)) {
+                nameRemove(overflowKey);
+            }
+            return overflowItem;
+        }
+        
+        return null;
+    }
+    
     
     /**
      * The number of items in the bag
@@ -96,9 +138,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * The only place where the forgetting rate is applied
      *
      * @param oldItem The Item to put back
-     * @return Whether the new Item is added into the Bag
+     * @return the item which was removed, or null if none removed
      */    
-    public boolean putBack(final E oldItem, final float forgetCycles, final Memory m) {
+    public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
         float relativeThreshold = Parameters.BAG_THRESHOLD;
         m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
@@ -113,9 +155,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         final E x = takeOut();
         if (x!=null) {
             
-            boolean r = putBack(x, forgetCycles, m);
-            if (!r) {
-                throw new RuntimeException("Bag.processNext");
+            E r = putBack(x, forgetCycles, m);
+            if (r!=null) {
+                throw new RuntimeException("Bag.processNext should always be able to re-insert item: " + r);
             }
             return x;
         }

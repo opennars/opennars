@@ -19,15 +19,15 @@ package nars.timeline.example;
 import nars.gui.output.timeline.MultiTimeline;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.ConceptTimeSeries;
 import nars.gui.output.chart.TimeSeries.ConceptTimeSeries.Mode;
 import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
 import nars.gui.output.timeline.BarChart;
 import nars.gui.output.timeline.Chart;
+import nars.gui.output.timeline.EventChart;
 import nars.gui.output.timeline.LineChart;
-import nars.gui.output.timeline.SpectrumChart;
 import nars.gui.output.timeline.StackedPercentageChart;
 import nars.util.NARTrace;
 
@@ -38,7 +38,7 @@ public class ConceptDynamics extends TimelineExample {
     
     
     public static void main(String[] args) throws Exception {
-        int cycles = 500;
+        int cycles = 1000;
         
 
         new NWindow("_", new MultiTimeline(2) {
@@ -46,18 +46,20 @@ public class ConceptDynamics extends TimelineExample {
             @Override
             public Chart[] getCharts(int experiment) {
                 
-                
+                Memory.resetStatic();
                 NAR nar = null;
                 switch (experiment) {
-                    case 0:
-                        nar = new DefaultNARBuilder().build();
+                    case 0:                        
+                        DiscretinuousBagNARBuilder d = new DiscretinuousBagNARBuilder();
+                        d.setForgetMode(Memory.Forgetting.Periodic);                        
+                        nar = d.build();
+                        nar.param().conceptForgetDurations.set(5f);
                         break;
                     case 1:
-                        DefaultNARBuilder d = new DefaultNARBuilder();
-                        d.setForgetMode(Memory.Forgetting.Periodic);
-                        nar = d.build();
-                        //nar = new ContinuousBagNARBuilder().build();
-                        
+                        DiscretinuousBagNARBuilder e = new DiscretinuousBagNARBuilder();
+                        e.setForgetMode(Memory.Forgetting.Periodic);                        
+                        nar = e.build();
+                        nar.param().conceptForgetDurations.set(5f);                        
                         break;
                     /*case 2:
                         nar = new ContinuousBagNARBuilder().build();
@@ -70,6 +72,8 @@ public class ConceptDynamics extends TimelineExample {
 
                 NARTrace t = new NARTrace(nar);
                 nar.addInput(
+                        (experiment == 0 ? 
+                                "$0.80;0.50$ " : "$0.90;0.60$ ") +
                         "<(&&,<(*,$Z,$Y) --> parent>,<(*,$X,$Z) --> brother>) ==> <(*,$X,$Y) --> uncle>>.");
                 nar.addInput("<(*,adam,tom) --> parent>.");
                 nar.addInput("<(*,eva,tom) --> parent>.");
@@ -90,7 +94,8 @@ public class ConceptDynamics extends TimelineExample {
                     ConceptTimeSeries[] ct2 = new ConceptTimeSeries[] {        
                         new ConceptTimeSeries(nar, "brother", cycles, Mode.Priority),
                         new ConceptTimeSeries(nar, "uncle", cycles, Mode.Priority),
-                        new ConceptTimeSeries(nar, "parent", cycles, Mode.Priority),
+                        new ConceptTimeSeries(nar, "parent", cycles, Mode.Priority),                        
+                        new ConceptTimeSeries(nar, "<(*,tim,tom) --> uncle>", cycles, Mode.Priority),
                     };
 
                     ConceptTimeSeries[] ct3 = new ConceptTimeSeries[] {            
@@ -101,25 +106,25 @@ public class ConceptDynamics extends TimelineExample {
                     Chart[] charts = new Chart[] {
                         //new SpectrumChart(t, "concept.priority.hist.0", 8).height(4),
                         //new SpectrumChart(t, "concept.priority.hist.1", 8).height(4),
-                        new LineChart(ct1).height(5),
-                        new LineChart(ct2).height(5),
+                        new StackedPercentageChart(ct1).height(5),
+                        new StackedPercentageChart(ct2).height(5),
                         new LineChart(ct3).height(5),
 
                         //new EventChart(t, true, false, false).height(3),
                         new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
 
-                        new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
-                        new LineChart(t, "concept.priority.mean").height(1),
+                        /*new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
+                        new LineChart(t, "concept.priority.mean").height(1),*/
                         
 
-                        //new EventChart(t, false, true, false).height(3),
+                        new EventChart(t, true, false, false).height(3),
 
                         new LineChart(t, "task.solution.best.priority.mean").height(3),
                         new BarChart(t, "task.solution.best").height(3),
 
-                        new LineChart(t, "task.novel.add", "task.immediate_processed").height(1),
-                        new LineChart(t, "task.goal.process", "task.question.process", "task.judgment.process").height(1),
-                        new LineChart(t, "emotion.busy").height(1)
+                        //new LineChart(t, "task.novel.add", "task.immediate_processed").height(1),
+                        //new LineChart(t, "task.goal.process", "task.question.process", "task.judgment.process").height(1),
+                        //new LineChart(t, "emotion.busy").height(1)
                         //new EventChart(t, false, false, true).height(3)
 
                     };

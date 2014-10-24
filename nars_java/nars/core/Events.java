@@ -54,6 +54,13 @@ public class Events {
     public static class ConceptQuestionAdd { }
     public static class ConceptQuestionRemove { }
 
+    public static class TermLinkAdd { }
+    public static class TermLinkRemove { }
+    public static class TaskLinkAdd { }
+    public static class TaskLinkRemove { }
+    
+    
+    
     public static class ConceptFire { }
     public static class TaskImmediateProcess { }
     public static class TermLinkSelect { }

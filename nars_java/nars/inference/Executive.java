@@ -456,9 +456,10 @@ public class Executive implements Observer {
     public boolean isDesired(final Task t, final Concept c) {             
         float desire = c.getDesire().getExpectation();
         float priority = t.budget.getPriority(); //t.budget.summary();
-        return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
+        //return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
         
-        //return (c.getDesire().getExpectation() >= memory.param.decisionThreshold.get());        
+        double dt = memory.param.decisionThreshold.get();
+        return ((desire >= dt) && (priority >= dt));
     }
     
     /** called during each memory cycle */
