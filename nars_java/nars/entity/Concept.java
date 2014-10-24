@@ -43,6 +43,7 @@ import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import nars.inference.NAL;
 import static nars.inference.TemporalRules.solutionQuality;
+import nars.inference.TruthFunctions;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -777,6 +778,31 @@ public class Concept extends Item<Term> {
                 s.discountConfidence();
             }
         }
+    }
+
+    /** get a random belief, weighted by their sentences confidences */
+    public Sentence getBeliefRandomByConfidence() {
+        if (beliefs.isEmpty()) return null;
+        
+        float totalConfidence = getBeliefConfidenceSum();
+        float r = Memory.randomNumber.nextFloat() * totalConfidence;
+                
+        Sentence s = null;
+        for (int i = 0; i < beliefs.size(); i++) {
+            s = beliefs.get(i);            
+            r -= s.truth.getConfidence();
+            if (r < 0)
+                return s;
+        }
+        
+        return s;
+    }
+    
+    public float getBeliefConfidenceSum() {
+        float t = 0;
+        for (final Sentence s : beliefs)
+            t += s.truth.getConfidence();
+        return t;
     }
     
 }

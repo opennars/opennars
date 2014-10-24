@@ -549,10 +549,11 @@ public abstract class CompoundTerm extends Term {
             return;
         }
         
+        
         int n = list.length;
         for (int i = 0; i < n; i++) {
             // between i and n-1
-            int r = i + (int) (randomNumber.nextDouble() * (n-i));
+            int r = i + (randomNumber.nextInt() % (n-i));
             Term tmp = list[i];    // swap
             list[i] = list[r];
             list[r] = tmp;

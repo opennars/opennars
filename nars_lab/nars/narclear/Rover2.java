@@ -42,7 +42,7 @@ public class Rover2 extends PhysicsModel {
     public int cnt=0;
     public int do_sth_importance=0;
     
-    float curiosity = 0.01f;
+    float curiosity;
     
     /* how often to input mission, in frames */
     int missionPeriod = 100;
@@ -53,8 +53,67 @@ public class Rover2 extends PhysicsModel {
     private final NAR nar;
     private float linearSpeed;
     private float angleSpeed;
-
     
+    static int mission = 0;
+    
+    
+
+    private static final double TWO_PI = 2 * Math.PI;
+
+    public static double normalizeAngle(final double theta) {
+        double normalized = theta % TWO_PI;
+        normalized = (normalized + TWO_PI) % TWO_PI;
+        if (normalized > Math.PI)
+            normalized -= TWO_PI;
+        return normalized;
+    }
+
+    final int angleResolution = 18;
+    public String angleTerm(final float a) {
+        float h = (float)normalizeAngle(a);
+        h /= MathUtils.PI;
+        int i = (int)(h*angleResolution/2f);
+        String t = "a" + i;
+        
+        if (i == 0)
+            t = "forward";
+        else if (i == angleResolution/4)
+            t = "left";
+        else if (i == -angleResolution/4)
+            t = "right";
+        else if ((i == (angleResolution/2-1)) || (i == -(angleResolution/2-1)))
+            t = "reverse";
+                
+        return t;
+    }
+
+    /** maps a value (which must be in range 0..1.0) to a term name */
+    public static String f(double p) {
+        if (p < 0) {
+            throw new RuntimeException("Invalid value for: " + p);
+            //p = 0;
+        }
+        if (p > 1f) p = 1f;
+        int i = (int)(p * 10f);
+        switch (i) {
+            case 9:
+            case 8:
+            case 7:
+                return "xxxx";
+            case 6:
+            case 5:
+                return "xxx";
+            case 4:
+            case 3:
+                return "xx";
+            case 2:
+            case 1:
+                return "x";
+            default:
+                return "0";                
+        }
+    }
+
 
     public static enum Material implements DrawPhy2D.DrawProperty {
         Food, Wall, Block;
@@ -120,7 +179,7 @@ public class Rover2 extends PhysicsModel {
 
             BodyDef bd = new BodyDef();
             bd.setLinearDamping(0.9f);
-            bd.setAngularDamping(0.95f);
+            bd.setAngularDamping(0.9f);
             
             
 
@@ -188,7 +247,7 @@ public class Rover2 extends PhysicsModel {
             int distanceResolution = 9;
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 final int ii = i;
-                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
+                vision.add(new VisionRay(torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
                             retinaArc, retinaResolution, L, distanceResolution) {
                                 
                                float touchThresholdDistance = 0.1f;
@@ -220,7 +279,7 @@ public class Rover2 extends PhysicsModel {
                 float d1 = 0.5f;
                 Vec2 backRetina = new Vec2((float)Math.cos(angle)*d1, (float)Math.sin(angle)*d1);
                 
-                vision.add(new VisionRay("back" + i, torso, backRetina, angle,
+                vision.add(new VisionRay(torso, backRetina, angle,
                            retinaArc, retinaResolution,
                            L, distanceResolution));
             }
@@ -250,7 +309,7 @@ public class Rover2 extends PhysicsModel {
             //world.AddABlock(Phys, sz, sz);
             food.setTransform(new Vec2(x*2.0f,y*2.0f), food.getAngle());            
             //Phys.getWorld().destroyBody(hit);
-            nar.addInput("$0.99;0.90$ <goal --> eat>. :|:");                                       
+            nar.addInput("$0.99;0.90$ <goal --> Food>. :|:");            
         }
 
 
@@ -259,7 +318,6 @@ public class Rover2 extends PhysicsModel {
             final float angle;
             private final float distance;
             final ChangedTextInput sight = new ChangedTextInput(nar);
-            final String id;
             RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
             private final Body body;
             private final int distanceSteps;
@@ -271,12 +329,13 @@ public class Rover2 extends PhysicsModel {
             final Color3f laserHitColor = new Color3f(laserUnhitColor.x, laserUnhitColor.y, laserUnhitColor.z);
             final Color3f sparkColor = new Color3f(0.4f, 0.9f, 0.4f);
             final Color3f normalColor = new Color3f(0.9f, 0.9f, 0.4f);
+            private final String angleTerm;
 
-            public VisionRay(String id, Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
-                this.id = id;
+            public VisionRay(Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
                 this.body = body;
                 this.point = point;
                 this.angle = angle;
+                this.angleTerm = angleTerm(angle);
                 this.arc = arc;
                 this.resolution = resolution;
                 this.distance = length;
@@ -338,13 +397,7 @@ public class Rover2 extends PhysicsModel {
                             
                     float di = minDist; 
                     
-                    String dist = "unknown";                    
-                    if (distanceSteps == 2) {
-                        dist = "hit";
-                    }
-                    else if (distanceSteps < 10) {
-                        dist = Texts.n1(di);
-                    }
+                    String dist = f(di);
                     
                     onTouch(hit, di);
                     
@@ -354,12 +407,12 @@ public class Rover2 extends PhysicsModel {
                     float freq = 1f;
                     
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    String ss = "$" + Texts.n1(conf) + "$ " + "<(*," + id + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+                    String ss = "$" + Texts.n1(conf) + "$ " + "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
                     sight.set(ss);
                     
                 }
                 else {
-                    sight.set("<" + id + " --> Empty>. :|:");
+                    sight.set("<" + angleTerm + " --> Empty>. :|:");
                 }
             }
             
@@ -372,12 +425,7 @@ public class Rover2 extends PhysicsModel {
 
         public void step() {
             if(cnt%missionPeriod==0) {
-                nar.addInput("$0.99;0.99;0.99$ <goal --> eat>! %1.00;0.99%");
-                nar.addInput("$0.50;0.99;0.99$ Wall! %0.00;0.50%");
-                nar.addInput("$0.50;0.99;0.99$ Food! %1.00;0.75%");
-                nar.addInput("$0.50;0.99;0.99$ Food! %1.00;0.75%");
-                nar.addInput("<0.0 --> feltAvgSpeed16>! %0.00;0.90%");
-                
+                inputMission();
             }
                     
             for (VisionRay v : vision)
@@ -389,13 +437,14 @@ public class Rover2 extends PhysicsModel {
                 nar.addInput("(^motor,random)!");
             }*/
             
-            if (Math.random() < curiosity) {
-                nar.addInput("(^motor,random)!");
-            }
-            
             if(feel_motion) {
                 feelMotion();
             }
+
+            if (Math.random() < curiosity) {
+                randomAction();
+            }
+            
             
             cnt++;
         }
@@ -412,9 +461,9 @@ public class Rover2 extends PhysicsModel {
         }
 
         public void rotate(float v) {
-            torso.setAngularVelocity(v);
+            //torso.setAngularVelocity(v);
             
-            //torso.applyAngularImpulse(v);
+            torso.applyAngularImpulse(v);
             //torso.applyTorque(torque);
         }
 
@@ -429,34 +478,26 @@ public class Rover2 extends PhysicsModel {
             }
 
             if (a < 0.1) {
-                feltAngularVelocity.set("$0.50$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
+                feltAngularVelocity.set("$0.50$ <" + f(0) + " --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
-                String da = Texts.n1(a);// + ",radPerFrame";
                 if (xa < 0) {
-                    direction = "-1";
+                    direction = angleTerm(-MathUtils.PI);
                 } else /*if (xa > 0)*/ {
-                    direction = "1";
+                    direction = angleTerm(+MathUtils.PI);
                 }
-                feltAngularVelocity.set("$0.50$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+                feltAngularVelocity.set("$0.50$ <(*," + f(a) + "," + direction + ") --> feltAngularMotion>. :|:");
                // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
-            float h = torso.getAngle() % (MathUtils.TWOPI);
-            if (h < 0) {
-                h += MathUtils.TWOPI;
-            }
-            h /= MathUtils.TWOPI;
-            String dh = "a" + (int)(h*18);   // + ",rad";
-            feltOrientation.set("$0.50$ <" + dh + " --> feltOrientation>. :|:");
+            feltOrientation.set("$0.50$ <" + angleTerm(torso.getAngle()) + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length()/20f);
             if (speed > 0.9f) {
                 speed = 0.9f;
-            }
-            String sp = Texts.n1(speed);
-            feltSpeed.set("$0.50$ <" + sp + " --> feltSpeed>. :|:");
+            }            
+            feltSpeed.set("$0.50$ <" + f(speed) + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
             
             int positionWindow1 = 16;
@@ -472,7 +513,7 @@ public class Rover2 extends PhysicsModel {
                 dist/=positionWindow1;
                 dist*=scale;
                 if (dist > 1.0f) dist = 1.0f;
-                feltSpeedAvg.set("$0.50$ <" + Texts.n1(dist) + " --> feltAvgSpeed" + positionWindow1 + ">. :|:");
+                feltSpeedAvg.set("$0.50$ <" + f(dist) + " --> feltSpeedAvg" + positionWindow1 + ">. :|:");
             }
 
             positions.addLast(currentPosition.clone());
@@ -488,21 +529,61 @@ public class Rover2 extends PhysicsModel {
     
     
     protected void thrustRelative(float f) {
-        
-        
         if (f == 0) {            
             rover.torso.setLinearVelocity(new Vec2());
         }
         else {
             rover.thrust(0, f * linearThrustPerCycle);
-        }
-                
+        }                
     }
     
     protected void rotateRelative(float f) {
         rover.rotate(f * angularSpeedPerCycle);
     }
 
+
+    protected void addAxioms() {
+        //nar.addInput("<feltOrientation <-> feltAngularMotion>?");
+        //nar.addInput("<feltSpeed <-> feltAngularMotion>?");
+        nar.addInput("<{left,right,forward,reverse} <-> direction>.");
+        nar.addInput("<{Wall,Empty,Food} <-> material>.");
+        nar.addInput("<{0,x,xx,xxx,xxxx} <-> magnitude>.");
+        
+        nar.addInput("<0 <-> x>. %1.00;0.50%");
+        nar.addInput("<x <-> xx>. %1.00;0.50%");
+        nar.addInput("<xx <-> xxx>. %1.00;0.50%");
+        nar.addInput("<xxx <-> xxxx>. %1.00;0.50%");
+        
+        nar.addInput("<{feltAngularMotion,feltOrientation,feltSpeed,feltSpeedAvg16} <-> magnitude>.");
+        
+
+    }
+    
+    protected void inputMission() {
+        
+        addAxioms();
+        
+        if (mission == 0) {
+            //seek food  
+            curiosity = 0.05f;
+            nar.addInput("<goal --> Food>! %1.00;0.99%");
+            nar.addInput("<goal --> stop>! %0.00;0.99%");
+            nar.addInput("Wall! %0.00;0.50%");            
+            nar.addInput("<" + f(0) + " --> feltAvgSpeed16>! %0.00;0.50%");
+        }
+        else if (mission == 1) {
+            //rest
+            curiosity = 0;
+            nar.addInput("<goal --> stop>! %1.00;0.99%");
+            nar.addInput("<goal --> Food>! %0.00;0.99%");
+            nar.addInput("<" + f(0) + " --> feltAngularMotion>! %1.00;0.99%");            
+            nar.addInput("<" + f(0) + " --> feltSpeed>! %1.00;0.99%");            
+            nar.addInput("<" + f(0) + " --> feltAvgSpeed16>! %1.00;0.99%");            
+        }
+        //..
+    }
+    
+    
     @Override
     public void step(float timeStep, TestbedSettings settings) {
 
@@ -637,26 +718,31 @@ public class Rover2 extends PhysicsModel {
         addAxioms();
         addOperators();
 
-        nar.addInput("(^motor,random)!");
+        randomAction();
     }
 
     public float linearThrustPerCycle = 15f;
-    public float angularSpeedPerCycle = 0.08f;
+    public float angularSpeedPerCycle = 0.24f;
     
                 
     public static boolean allow_imitate=true;
 
     static final ArrayList<String> randomActions=new ArrayList<>();
     static {
-        randomActions.add("(^motor,turn,-1)!");
-        randomActions.add("(^motor,turn,1)!");
-                
-        //randomActions.add("(^motor,turn,0)!");
-        randomActions.add("(^motor,linear,2)!");
-        randomActions.add("(^motor,linear,1)!");
-        randomActions.add("(^motor,linear,-1)!");
+        randomActions.add("(^motor,left)!");
+        randomActions.add("(^motor,left,left)!");
+        randomActions.add("(^motor,right)!");
+        randomActions.add("(^motor,right,right)!");
+        randomActions.add("(^motor,forward,forward)!");
+        randomActions.add("(^motor,forward)!");
+        randomActions.add("(^motor,reverse)!");
         randomActions.add("(^motor,stop)!");
-        randomActions.add("(^motor,random)!");
+        //randomActions.add("(^motor,random)!");
+    }
+
+    protected void randomAction() {
+        int candid=(int)(Math.random()*randomActions.size());
+        nar.addInput(randomActions.get(candid));        
     }
     
     protected void addOperators() {
@@ -669,53 +755,39 @@ public class Rover2 extends PhysicsModel {
 
                 float priority = operation.getTask().budget.getPriority();
 
-                if (args.length > 1) {
+                String command = "";
+                if (args.length == 1) {
+                    command = t1.name().toString();
+                }
+                if (args.length == 2) {
+                    Term t2 = args[1];                    
+                    command = t1.name().toString() + "," + t2.name().toString();
+                }
+                else if (args.length == 3) {
                     Term t2 = args[1];
-                    switch (t1.name().toString() + "," + t2.name().toString()) {
-                        case "turn,-1": rotateRelative(-10); break;
-                        case "turn,1": rotateRelative(10); break;
-                        case "linear,2":  thrustRelative(3); break;
-                        case "linear,1":  thrustRelative(1); break;
-                        case "linear,-1":  thrustRelative(-1); break;
-                    }
-                } else {
-                    switch (t1.name().toString()) {
-                        case "stop":                            
-                            rover.stop();
-                            break;
-                        case "random":
-                            int candid=(int)(Math.random()*randomActions.size());
-                            nar.addInput(randomActions.get(candid));
-                            break;
-                    }
+                    Term t3 = args[2];
+                    command = t1.name().toString() + "," + t2.name().toString() + "," + t3.name().toString();
+                }
+                
+                switch (command) {
+                    case "right": rotateRelative(-10); break;
+                    case "right,right": rotateRelative(-20); break;
+                    case "left": rotateRelative(10); break;
+                    case "left,left": rotateRelative(20); break;
+                    case "forward,forward":  thrustRelative(3); break;
+                    case "forward":  thrustRelative(1); break;
+                    case "reverse":  thrustRelative(-1); break;                    
+                    case "stop":                            
+                        rover.stop();
+                        break;
+                    case "random":
+                        randomAction();
+                        break;
                 }
                 
                 return null;
             }
         });
-
-    }
-
-    protected void addAxioms() {
-        //nar.addInput("<{positiveNumber,negativeNumber} --> number>. %1.00;0.99%");
-        //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
-        //nar.addInput("<{-0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9} --> negativeNumber>. %1.00;0.99%");
-        //nar.addInput("<0.0 <-> -0.0>. %1.00;0.99%");
-        //nar.addInput("<{0.0,0.1} --> zeroishNumber>. %1.00;0.99%");
-        //nar.addInput("<{0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9} --> positiveNumber>. %1.00;0.99%");
-        nar.addInput("<0 <-> 0.0>. %1.00;0.99%");
-        nar.addInput("<0.0 <-> 0.1>. %1.00;0.50%");
-        nar.addInput("<0.1 <-> 0.2>. %1.00;0.50%");
-        nar.addInput("<0.2 <-> 0.3>. %1.00;0.50%");
-        nar.addInput("<0.3 <-> 0.4>. %1.00;0.50%");
-        nar.addInput("<0.4 <-> 0.5>. %1.00;0.50%");
-        nar.addInput("<0.5 <-> 0.6>. %1.00;0.50%");
-        nar.addInput("<0.6 <-> 0.7>. %1.00;0.50%");
-        nar.addInput("<0.7 <-> 0.8>. %1.00;0.50%");
-        nar.addInput("<0.8 <-> 0.9>. %1.00;0.50%");
-        //nar.addInput("<feltOrientation <-> feltAngularMotion>?");
-        //nar.addInput("<feltSpeed <-> feltAngularMotion>?");
-        //nar.addInput("<{left,right} --> direction>.");
 
     }
 
@@ -730,18 +802,18 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new ContinuousBagNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(1024).simulationTime().
+                setConceptBagSize(2048).simulationTime().
                 build();
         
         
-        float framesPerSecond = 50f;
-        int cyclesPerFrame = 300; //was 200        
+        float framesPerSecond = 10f;
+        int cyclesPerFrame = 600; //was 200        
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
-        nar.param().conceptForgetDurations.set(10f);
-        nar.param().taskForgetDurations.set(20f);
-        nar.param().beliefForgetDurations.set(50f);
-        nar.param().newTaskForgetDurations.set(10f);
+        nar.param().conceptForgetDurations.set(5f);
+        nar.param().taskForgetDurations.set(10f);
+        nar.param().beliefForgetDurations.set(25f);
+        nar.param().newTaskForgetDurations.set(5f);
         
         
 
@@ -750,35 +822,40 @@ public class Rover2 extends PhysicsModel {
 
             @Override
             public void keyPressed(KeyEvent e) {
+                
+                if (e.getKeyChar() == 'm') {
+                    mission = (mission+1)%2;
+                    System.out.println("Mission: " + mission);
+                }
 
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,linear,1). :|:");
-                    } else {
-                        nar.addInput("(^motor,linear,1)!");
-                    }
-                }
-                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,linear,-1). :|:");
-                    } else {
-                        nar.addInput("(^motor,linear,-1)!");
-                    }
-                }
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,turn,-1). :|:");
-                    } else {
-                        nar.addInput("(^motor,turn,-1)!");
-                    }
-                }
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    if(!Rover2.allow_imitate) {
-                        nar.addInput("(^motor,turn,1). :|:");
-                    } else {
-                        nar.addInput("(^motor,turn,1)!");
-                    }
-                }
+//                if (e.getKeyCode() == KeyEvent.VK_UP) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,linear,1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,linear,1)!");
+//                    }
+//                }
+//                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,linear,-1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,linear,-1)!");
+//                    }
+//                }
+//                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,turn,-1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,turn,-1)!");
+//                    }
+//                }
+//                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+//                    if(!Rover2.allow_imitate) {
+//                        nar.addInput("(^motor,turn,1). :|:");
+//                    } else {
+//                        nar.addInput("(^motor,turn,1)!");
+//                    }
+//                }
 
             }
 
