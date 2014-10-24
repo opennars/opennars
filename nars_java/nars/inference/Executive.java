@@ -135,7 +135,7 @@ public class Executive implements Observer {
                (((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
                     ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
-                if(!current_tasks.contains(derivedTask) && !Variables.containVarIndep(derivedTask.toString())) {
+                if(!current_tasks.contains(derivedTask) && !Variables.containVarIndep(derivedTask.getContent().name())) {
                     current_tasks.add(derivedTask);
                 }
             }

@@ -957,7 +957,7 @@ public final class CompositionalRules {
 
         Term first = taskSentence.content;
 
-        if (!(first instanceof CompoundTerm)) {
+        if (!first.containVar()) {
             return false;
         }
 
@@ -966,9 +966,6 @@ public final class CompositionalRules {
             return false;
         }
 
-        if (!first.containVar()) {
-            return false;
-        }
 
         boolean unifiedAnything = false;
         int remainingUnifications = 1; //memory.param.variableUnificationLayer2_MaxUnificationsPerCycle.get();
@@ -998,14 +995,10 @@ public final class CompositionalRules {
             }
 
             Term secterm = secondConcept.term;
-            if (secondConcept.beliefs.isEmpty()) {
+            
+            Sentence second_belief = secondConcept.getBeliefRandomByConfidence();
+            if (second_belief == null)
                 continue;
-            }
-            
-            nal.emit(Events.ConceptUnification.class, first, secondConcept);
-
-            Sentence second_belief = secondConcept.beliefs.get(Memory.randomNumber.nextInt(secondConcept.beliefs.size()));
-            
             
             TruthValue truthSecond = second_belief.truth;
 
@@ -1141,6 +1134,7 @@ public final class CompositionalRules {
                     if (nal.derivedTask(newTask, false, false, taskSentence, second_belief)) {
                         
                         nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.commit();
+                        nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
                         unifiedAnything = true;
                         
                     }

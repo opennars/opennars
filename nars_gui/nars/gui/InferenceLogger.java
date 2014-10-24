@@ -98,7 +98,7 @@ public class InferenceLogger extends MemoryObserver {
 
     @Override
     public void onCycleStart(long clock) {
-        output(Timing.class, String.valueOf(clock));
+        output(Timing.class, clock);
     }
 
     @Override

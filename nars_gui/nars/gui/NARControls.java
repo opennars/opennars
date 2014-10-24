@@ -40,6 +40,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import nars.core.EventEmitter.Observer;
+import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
 import nars.core.Memory.Timing;
@@ -208,6 +209,19 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 }
             });
             m.add(pml);
+            
+            JMenuItem gml = new JMenuItem("+ Garbage Log");
+            gml.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {                    
+                    new NWindow("Garbage", new SwingLogPanel(NARControls.this, 
+                            Events.ConceptRemove.class
+                            //, Events.TaskRemove.class, Events.TermLinkRemove.class, Events.TaskLinkRemove.class)
+                    ))
+                    .show(500, 300);
+                }
+            });
+            m.add(gml);
             
             JMenuItem al = new JMenuItem("+ Activity");
             al.addActionListener(new ActionListener() {
