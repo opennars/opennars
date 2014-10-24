@@ -459,7 +459,7 @@ public class Executive implements Observer {
         //return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
         
         double dt = memory.param.decisionThreshold.get();
-        return ((desire >= dt) && (priority >= dt));
+        return ((desire >= dt) || (priority >= dt));
     }
     
     /** called during each memory cycle */
