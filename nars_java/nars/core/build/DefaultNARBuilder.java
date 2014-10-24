@@ -76,7 +76,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         
         p.duration.set(5);
         p.conceptForgetDurations.set(2.0);
-        p.taskCycleForgetDurations.set(4.0);
+        p.taskForgetDurations.set(4.0);
         p.beliefForgetDurations.set(10.0);
         p.newTaskForgetDurations.set(2.0);
                 

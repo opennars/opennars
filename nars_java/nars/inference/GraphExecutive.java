@@ -34,15 +34,15 @@ public class GraphExecutive {
     public final ImplicationGraph implication;
     
 
-    final int maxConsecutiveIntervalTerms = 3;
+    final int maxConsecutiveIntervalTerms = 2;
         
     /** controls the relative weigting of edges and vertices for particle traversals */
     double conceptExpectationFactor = 1.0;
     double causeRelevanceFactor = 1.0;
-    double conceptPriorityFactor = 0.5;
+    double conceptPriorityFactor = 0.25;
 
     double minEdgeCost = 1.0;
-    double costPerDelayMagniutde = 0.5;
+    double costPerDelayMagniutde = 0.25;
     
     
     public GraphExecutive(Memory memory, Executive exec) {
@@ -201,6 +201,9 @@ public class GraphExecutive {
                 
                 while (energy > 0) {
  
+                    if (!graph.containsVertex(currentVertex))
+                        break;
+                    
                     Set<Cause> graphEdges = forward ? 
                             graph.outgoingEdgesOf(currentVertex) : 
                             graph.incomingEdgesOf(currentVertex);

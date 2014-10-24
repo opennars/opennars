@@ -3,8 +3,9 @@ package nars.core.control;
 import java.util.Collection;
 import java.util.Iterator;
 import nars.core.ConceptProcessor;
+import nars.core.Events;
+import nars.core.Events.ConceptRemove;
 import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -84,9 +85,22 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     public Concept addConcept(final Term term, final Memory memory) {
         Concept concept = conceptBuilder.newConcept(term, memory);
         
-        boolean added = concepts.putIn(concept);
-        if (!added)
+        Concept removed = concepts.putIn(concept);
+        if (removed == null) {            
+            //added without replacing anything
+        }
+        else if (removed == concept) {
+            //not able to insert
+            memory.emit(ConceptRemove.class, concept);
             return null;
+        }
+        else if (removed!=null) {
+            //replaced something
+            memory.emit(ConceptRemove.class, removed);            
+        }
+        
+        memory.logic.CONCEPT_ADD.commit(term.getComplexity());
+        memory.emit(Events.ConceptAdd.class, concept);
         
         return concept;
     }

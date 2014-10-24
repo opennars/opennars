@@ -14,6 +14,7 @@ import nars.entity.Item;
 import nars.gui.NARSwing;
 import nars.io.Output;
 import nars.util.NARTrace;
+import nars.util.NARTrace.HasLabel;
 import processing.core.PConstants;
 
 /**
@@ -97,9 +98,9 @@ public class EventChart extends Chart {
             }
         }
         l.strokeCap(PConstants.SQUARE);
-        l.strokeWeight(2f);
-        for (EventPoint<Object> to : events.values()) {
-            for (EventPoint<Object> from : to.incoming) {
+        l.strokeWeight(4f);
+        for (final EventPoint<Object> to : events.values()) {
+            for (final EventPoint<Object> from : to.incoming) {
                 l.stroke(256f * NARSwing.hashFloat(to.subject.hashCode()), 100f, 200f, 68f);
                 l.line(timeScale * from.x, from.y, timeScale * to.x, to.y);
             }
@@ -136,11 +137,11 @@ public class EventChart extends Chart {
                 {
                     l.fill(256f * NARSwing.hashFloat(c.hashCode()), 200f, 200f);
                     switch (te.type) {
-                        case Added:
-                            //forward
+                        case Add:
+                            //forward                            
                             triangleHorizontal(i, te.task, p * itemScale, x, y, 1.0f);
                             break;
-                        case Removed:
+                        case Remove:
                             //backwards
                             triangleHorizontal(i, te.task, p * itemScale, x, y, -1.0f);
                             break;
@@ -201,7 +202,13 @@ public class EventChart extends Chart {
         if ((l.showItemLabels) && (r * l.drawnTextScale > l.minLabelScale)) {
             // && (r * timeScale > l.minLabelScale * l.drawnTextScale)) {
             l.fill(255f);
-            l.text(event.toString(), timeScale * x - r / 2, y);
+            String s;
+            if (event instanceof HasLabel)
+                s = ((HasLabel)event).toLabel();
+            else
+                s = event.toString();
+                
+            l.text(s, timeScale * x - r / 2f, y-r/2f, x+ r/2*6f, y+r/2f);
         }
         setEventPoint(event, subject, x, y, 0);
     }

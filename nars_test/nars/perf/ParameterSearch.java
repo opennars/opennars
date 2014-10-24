@@ -180,7 +180,7 @@ public class ParameterSearch {
         for (int i = 2; i < 40; i+=2) {
             NAR a = new DefaultNARBuilder().build();
             
-            a.param().taskCycleForgetDurations.set(i);
+            a.param().taskForgetDurations.set(i);
             score("taskCyclesToForget_" + String.format("%03d", i), a);
         }
         report();

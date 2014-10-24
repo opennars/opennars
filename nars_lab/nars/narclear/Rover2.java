@@ -6,7 +6,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -50,6 +52,7 @@ public class Rover2 extends PhysicsModel {
     public static RoverModel rover;
     private final NAR nar;
     private float linearSpeed;
+    private float angleSpeed;
 
     
 
@@ -89,6 +92,7 @@ public class Rover2 extends PhysicsModel {
         Vec2 point1 = new Vec2();
         Vec2 point2 = new Vec2();
         Vec2 d = new Vec2();
+        Deque<Vec2> positions = new ArrayDeque();
         
         List<VisionRay> vision = new ArrayList();
 
@@ -96,7 +100,7 @@ public class Rover2 extends PhysicsModel {
         ChangedTextInput feltAngularVelocity = new ChangedTextInput(nar);
         ChangedTextInput feltOrientation = new ChangedTextInput(nar);
         ChangedTextInput feltSpeed = new ChangedTextInput(nar);
-        
+        ChangedTextInput feltSpeedAvg = new ChangedTextInput(nar);
 
         //public class DistanceInput extends ChangedTextInput
         public RoverModel(PhysicsModel p) {
@@ -178,7 +182,7 @@ public class Rover2 extends PhysicsModel {
             int pixels = 3;
             float aStep = 1.5f / pixels;
             float retinaArc = aStep;
-            int retinaResolution = 9; //should be odd # to balance
+            int retinaResolution = 14; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             int distanceResolution = 9;
@@ -350,12 +354,12 @@ public class Rover2 extends PhysicsModel {
                     float freq = 1f;
                     
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    String ss = "$" + Texts.n2(conf) + "$ " + "<(*," + id + "," + dist + "," + material +") --> see>. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+                    String ss = "$" + Texts.n1(conf) + "$ " + "<(*," + id + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
                     sight.set(ss);
                     
                 }
                 else {
-                    sight.set("<(*," + id + ",empty) --> see>. :|:");
+                    sight.set("<" + id + " --> Empty>. :|:");
                 }
             }
             
@@ -371,6 +375,9 @@ public class Rover2 extends PhysicsModel {
                 nar.addInput("$0.99;0.99;0.99$ <goal --> eat>! %1.00;0.99%");
                 nar.addInput("$0.50;0.99;0.99$ Wall! %0.00;0.50%");
                 nar.addInput("$0.50;0.99;0.99$ Food! %1.00;0.75%");
+                nar.addInput("$0.50;0.99;0.99$ Food! %1.00;0.75%");
+                nar.addInput("<0.0 --> feltAvgSpeed16>! %0.00;0.90%");
+                
             }
                     
             for (VisionRay v : vision)
@@ -415,14 +422,14 @@ public class Rover2 extends PhysicsModel {
             //radians per frame to a discretized value
             float xa = torso.getAngularVelocity();
             float angleScale = 1.50f;
-            float a = (float) (Math.log(Math.abs(xa * angleScale) + 1f));
+            float a = (float) (Math.log(Math.abs(xa * angleScale) + 1f))/2f;
             float maxAngleVelocityFelt = 0.8f;
             if (a > maxAngleVelocityFelt) {
                 a = maxAngleVelocityFelt;
             }
 
             if (a < 0.1) {
-                feltAngularVelocity.set("$0.50;0.20$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
+                feltAngularVelocity.set("$0.50$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
@@ -432,7 +439,7 @@ public class Rover2 extends PhysicsModel {
                 } else /*if (xa > 0)*/ {
                     direction = "1";
                 }
-                feltAngularVelocity.set("$0.50;0.20$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
+                feltAngularVelocity.set("$0.50$ <(*," + da + "," + direction + ") --> feltAngularMotion>. :|:");
                // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
@@ -442,15 +449,34 @@ public class Rover2 extends PhysicsModel {
             }
             h /= MathUtils.TWOPI;
             String dh = "a" + (int)(h*18);   // + ",rad";
-            feltOrientation.set("$0.50;0.20$ <" + dh + " --> feltOrientation>. :|:");
+            feltOrientation.set("$0.50$ <" + dh + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length()/20f);
             if (speed > 0.9f) {
                 speed = 0.9f;
             }
             String sp = Texts.n1(speed);
-            feltSpeed.set("$0.50;0.20$ <" + sp + " --> feltSpeed>. :|:");
+            feltSpeed.set("$0.50$ <" + sp + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
+            
+            int positionWindow1 = 16;
+            
+            Vec2 currentPosition = torso.getWorldCenter();
+            if (positions.size() >= positionWindow1) {
+                
+                
+                Vec2 prevPosition = positions.removeFirst();
+                float dist = prevPosition.sub(currentPosition).length();
+                
+                float scale = 1.5f;
+                dist/=positionWindow1;
+                dist*=scale;
+                if (dist > 1.0f) dist = 1.0f;
+                feltSpeedAvg.set("$0.50$ <" + Texts.n1(dist) + " --> feltAvgSpeed" + positionWindow1 + ">. :|:");
+            }
+
+            positions.addLast(currentPosition.clone());
+            
         }
 
         public void stop() {
@@ -461,34 +487,24 @@ public class Rover2 extends PhysicsModel {
     }
     
     
-    protected void setLinearSpeed(float f) {
-        this.linearSpeed = f;
+    protected void thrustRelative(float f) {
+        
+        
+        if (f == 0) {            
+            rover.torso.setLinearVelocity(new Vec2());
+        }
+        else {
+            rover.thrust(0, f * linearThrustPerCycle);
+        }
+                
     }
-    protected void setTargetAngle(float f) {
-        this.angleTarget = MathUtils.reduceAngle(f);
-    }
-    protected void addTargetAngle(float f) {
-        setTargetAngle(angleTarget + f);
+    
+    protected void rotateRelative(float f) {
+        rover.rotate(f * angularSpeedPerCycle);
     }
 
     @Override
     public void step(float timeStep, TestbedSettings settings) {
-        
-        if (linearSpeed == 0) {
-            rover.thrust(0, 0);
-        }
-        else {
-            rover.thrust(0, linearSpeed * linearThrustPerCycle);
-        }
-        
-        
-        float da = MathUtils.reduceAngle(angleTarget) - MathUtils.reduceAngle(rover.torso.getAngle());
-        /*if (Math.abs(da) < 1) {
-            rover.rotate(0);
-        }
-        else*/ {
-            rover.rotate(da * angularSpeedPerCycle);
-        }
 
     
         super.step(timeStep, settings);
@@ -544,8 +560,10 @@ public class Rover2 extends PhysicsModel {
         public RoverWorld(PhysicsModel p, float w, float h) {
             this.p = p;
             
-            for (int i = 0; i < 20; i++) {
-                addFood(w, h);
+            float foodSpawnR = w/2f;
+            int numFood = 100;
+            for (int i = 0; i < numFood; i++) {
+                addFood(foodSpawnR, foodSpawnR);
             }
             
             float wt = 1f;
@@ -622,12 +640,11 @@ public class Rover2 extends PhysicsModel {
         nar.addInput("(^motor,random)!");
     }
 
-    public static float angleTarget = 0;
-    public float linearThrustPerCycle = 10f;
-    public float angularSpeedPerCycle = 5f;
+    public float linearThrustPerCycle = 15f;
+    public float angularSpeedPerCycle = 0.08f;
     
                 
-    public static boolean allow_imitate=false;
+    public static boolean allow_imitate=true;
 
     static final ArrayList<String> randomActions=new ArrayList<>();
     static {
@@ -635,11 +652,11 @@ public class Rover2 extends PhysicsModel {
         randomActions.add("(^motor,turn,1)!");
                 
         //randomActions.add("(^motor,turn,0)!");
+        randomActions.add("(^motor,linear,2)!");
         randomActions.add("(^motor,linear,1)!");
-        randomActions.add("(^motor,linear,0)!");
         randomActions.add("(^motor,linear,-1)!");
         randomActions.add("(^motor,stop)!");
-        //randomActions.add("(^motor,random)!");
+        randomActions.add("(^motor,random)!");
     }
     
     protected void addOperators() {
@@ -655,18 +672,15 @@ public class Rover2 extends PhysicsModel {
                 if (args.length > 1) {
                     Term t2 = args[1];
                     switch (t1.name().toString() + "," + t2.name().toString()) {
-                        case "turn,-1": addTargetAngle(-10); break;
-                        case "turn,1": addTargetAngle(10); break;
-                        case "turn,0":  addTargetAngle(0); break;
-                        case "linear,1":  setLinearSpeed(1); break;
-                        case "linear,-1":  setLinearSpeed(-1); break;
-                        case "linear,0":  setLinearSpeed(0); break;
+                        case "turn,-1": rotateRelative(-10); break;
+                        case "turn,1": rotateRelative(10); break;
+                        case "linear,2":  thrustRelative(3); break;
+                        case "linear,1":  thrustRelative(1); break;
+                        case "linear,-1":  thrustRelative(-1); break;
                     }
                 } else {
                     switch (t1.name().toString()) {
                         case "stop":                            
-                            setTargetAngle(rover.torso.getAngle());
-                            setLinearSpeed(0);
                             rover.stop();
                             break;
                         case "random":
@@ -719,10 +733,15 @@ public class Rover2 extends PhysicsModel {
                 setConceptBagSize(1024).simulationTime().
                 build();
         
+        
         float framesPerSecond = 50f;
-        int cyclesPerFrame = 200; //was 200        
+        int cyclesPerFrame = 300; //was 200        
         nar.param().noiseLevel.set(0);
-        nar.param().duration.set(50/1000/2);
+        nar.param().duration.set(cyclesPerFrame);
+        nar.param().conceptForgetDurations.set(10f);
+        nar.param().taskForgetDurations.set(20f);
+        nar.param().beliefForgetDurations.set(50f);
+        nar.param().newTaskForgetDurations.set(10f);
         
         
 

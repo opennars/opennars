@@ -172,39 +172,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
 
-    @Override synchronized public boolean putIn(final E newItem) {
-
-        final K newKey = newItem.name();        
-        final E existingItemWithSameKey = nameTable.remove(newKey);
-
-        if (existingItemWithSameKey != null) {
-            // merge duplications
-            outOfBase(existingItemWithSameKey);
-            newItem.merge(existingItemWithSameKey);
-        }
-
-        // put the (new or merged) item into itemTable        
-        final E overflowItem = intoBase(newItem);
-
-        if (overflowItem == newItem) {
-            //did not add
-            return false;
-        }
-        
-        nameTable.put(newKey, newItem);
-        
-        
-
-        if (overflowItem != null) {             
-            // remove overflow
-            final K overflowKey = overflowItem.name();
-            if (!overflowKey.equals(newKey)) {
-                nameTable.remove(overflowKey);
-            }
-        }
-        
-        return true;
-    }
 
     /**
      * Check whether a level is empty
@@ -289,6 +256,15 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return (levelEmpty(level)) ? 0 : itemTable[level].size();
     }
 
+    @Override protected E namePut(final K name, final E item) {
+        return nameTable.put(name, item);
+    }
+
+    @Override protected E nameRemove(final K name) {
+        return nameTable.remove(name);
+    }
+
+    
     /**
      * Pick an item by key, then remove it from the bag
      *
@@ -316,6 +292,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return (level < 0) ? 0 : level;     // cannot be -1
     }
 
+    
     /**
      * Insert an item into the itemTable, and return the overflow
      *
@@ -323,7 +300,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      * @return null if nothing overflowed, non-null if an overflow Item, which
      * may be the attempted input item (in which case it was not inserted)
      */
-    private E intoBase(final E newItem) {
+    @Override protected E intoBase(final E newItem) {
         E oldItem = null;
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
@@ -375,7 +352,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      *
      * @param oldItem The Item to be removed
      */
-    protected void outOfBase(final E oldItem) {
+    @Override protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
 
         boolean found = false;
