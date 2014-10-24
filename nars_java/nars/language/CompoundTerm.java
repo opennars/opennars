@@ -565,10 +565,10 @@ public abstract class CompoundTerm extends Term {
             if (ar.length < 2)  {
                 return;
             }
-          Random rnd = new Random();
+
           for (int i = ar.length - 1; i > 0; i--)
           {
-            int index = rnd.nextInt(i + 1);
+            int index = randomNumber.nextInt(i + 1);
             // Simple swap
             Term a = ar[index];
             ar[index] = ar[i];
