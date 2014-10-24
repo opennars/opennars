@@ -544,7 +544,7 @@ public abstract class CompoundTerm extends Term {
     
 
     
-    static void shuffle(final Term[] list, final Random randomNumber) {
+    /*static void shuffle(final Term[] list, final Random randomNumber) {
         if (list.length < 2)  {
             return;
         }
@@ -558,7 +558,23 @@ public abstract class CompoundTerm extends Term {
             list[i] = list[r];
             list[r] = tmp;
         }
-    }
+    }*/
+    
+        static void shuffle(final Term[] ar,final Random randomNumber)
+        {
+            if (ar.length < 2)  {
+                return;
+            }
+          Random rnd = new Random();
+          for (int i = ar.length - 1; i > 0; i--)
+          {
+            int index = rnd.nextInt(i + 1);
+            // Simple swap
+            Term a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
+          }
+        }
     
     
 
