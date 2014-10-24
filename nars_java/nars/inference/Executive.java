@@ -643,6 +643,10 @@ public class Executive implements Observer {
                     continue;
                 }
                 
+                if(i-off>=lastEvents.size()) {
+                    break;
+                }
+                
                 //handling of other events, seeing if they match and are right in time
                 if(!args[i].equals(lastEvents.get(i-off).sentence.content)) { //it didnt match, instead sth different unexpected happened
                     matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
@@ -678,7 +682,7 @@ public class Executive implements Observer {
               //else if both are not concurrent, time was always added so also correct
             
             //ok it matched, is the consequence also right?
-            if(matched) { 
+            if(matched && lastEvents.size()>args.length-off) { 
                 long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
                 boolean right_in_time=Math.abs(occurence-expected_time)<((double)memory.param.duration.get())/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                 
