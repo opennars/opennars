@@ -332,7 +332,7 @@ public class Executive implements Observer {
             
         if (valid) {
             if(!occured && this.expected_task!=null && ended) {
-                expected_task.expect(false); //ok this one didnt get his expectation
+                //expected_task.expect(false); //ok this one didnt get his expectation
             }
             occured=false; //only bad to not happened not interrupted ones
             ended=false;
@@ -456,10 +456,9 @@ public class Executive implements Observer {
     public boolean isDesired(final Task t, final Concept c) {             
         float desire = c.getDesire().getExpectation();
         float priority = t.budget.getPriority(); //t.budget.summary();
-        //return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
+        return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
         
-        double dt = memory.param.decisionThreshold.get();
-        return ((desire >= dt) && (priority >= dt));
+        //return (c.getDesire().getExpectation() >= memory.param.decisionThreshold.get());        
     }
     
     /** called during each memory cycle */
@@ -719,10 +718,10 @@ public class Executive implements Observer {
         if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
             if(Parameters.TEMPORAL_PARTICLE_PLANNER && this.expected_event!=null && this.expected_task!=null) {
                 if(newEvent.sentence.content.equals(this.expected_event)) {
-                    this.expected_task.expect(true);
+                    //this.expected_task.expect(true);
                     occured=true;
                 } //else {
-                  //  this.expected_task.expect(false);
+                  ////  this.expected_task.expect(false);
                // }
                     
                // this.expected_event=null;
