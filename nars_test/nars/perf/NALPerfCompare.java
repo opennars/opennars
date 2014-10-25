@@ -3,7 +3,7 @@ package nars.perf;
 import java.util.Collection;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.test.core.NALTest;
@@ -37,7 +37,7 @@ public class NALPerfCompare {
         perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.print("CONTINUOUS:\t");
-        perfNAL(new ContinuousBagNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
+        perfNAL(new CurveBagNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);
         
         System.out.print("DISCRETE:");
         perfNAL(new DefaultNARBuilder().build(), examplePath,extraCycles,repeats,warmups,true);

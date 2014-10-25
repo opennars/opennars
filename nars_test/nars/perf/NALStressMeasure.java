@@ -2,7 +2,7 @@ package nars.perf;
 
 import java.util.Collection;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import nars.test.core.NALTest;
 import static nars.test.core.NALTest.newNAR;
@@ -90,7 +90,7 @@ public class NALStressMeasure  {
     
     public static void main(String[] args) {
         
-        NAR nc = new ContinuousBagNARBuilder().build();
+        NAR nc = new CurveBagNARBuilder().build();
         test(nc);
 
         NAR nd = new DefaultNARBuilder().build();

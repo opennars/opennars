@@ -1,4 +1,4 @@
-package nars.test.core;
+package nars.test.multistep;
 
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;

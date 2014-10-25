@@ -19,7 +19,7 @@ package nars.test.util;
 
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
 import nars.gui.NARSwing;
 import nars.util.kif.KIFInput;
 
@@ -33,7 +33,7 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
         
         
-        NAR n = new ContinuousBagNARBuilder(true)
+        NAR n = new CurveBagNARBuilder(true)
                 .setConceptBagSize(16192)
                 .build();
                 

@@ -1,4 +1,4 @@
-package nars.test.util;
+package nars.test.core.bag;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -17,15 +17,18 @@
 
 package nars.perf;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import nars.core.Param.AtomicDurations;
+import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
-import nars.storage.ContinuousBag;
-import nars.storage.ContinuousBag2;
+import nars.storage.CurveBag;
+import nars.util.sort.ArraySortedItemList;
+import nars.util.sort.FractalSortedItemList;
 
 /**
  *
@@ -96,7 +99,7 @@ public class BagPerf {
         private final String key;
     
         public NullItem() {
-            this((float)Math.random());
+            this((float)Math.random() * (1.0f - Parameters.TRUTH_EPSILON));
         }
 
         public NullItem(float priority) {
@@ -142,7 +145,7 @@ public class BagPerf {
     }
     
     //final boolean first, final int levels, final int levelCapacity, 
-    public static double compare(String label, BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
+    public static double getTime(String label, BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
         
         Performance p = new Performance(label, repeats, warmups) {
 
@@ -179,84 +182,53 @@ public class BagPerf {
         
     }
     
+    public static double[] compare(final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups, final Bag... B) {
+        
+        double[] t = new double[B.length];
+        int i = 0;
+        for (Bag X : B) {
+            X.clear();
+            
+            t[i++] = getTime(X.toString(), new BagBuilder() {
+                @Override public Bag newBag() {  return X; }
+            }, iterations, randomAccesses, insertRatio, repeats, warmups);
+            
+        }
+        return t;
+        
+    }
+    
     public static void main(String[] args) {
-        //new BagPerf();
         
-        
-        
-        
-        int capacityPerLevel = 10;
+        int itemsPerLevel = 10;
         int repeats = 3;
         int warmups = 1;
-        double totalDiff = 0;
-        double totalTimeA = 0, totalTimeB = 0;
-        final int iterations = 1;
+
+        final int iterations = 1000;
+        
         for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.2f) {
             for (int levels = 1; levels <= 500; levels += 10) {
-
-                final int bagCapacity = levels*capacityPerLevel;
-                int randomAccesses = 64 * bagCapacity;
-                final int _levels = levels;
                 
-                double a = 0, b = 0;
+                final int items = levels*itemsPerLevel;
+                int randomAccesses = 64 * items;
+                        
+                Bag[] bags = new Bag[] { 
+                    new CurveBag(items, new CurveBag.FairPriorityProbabilityCurve(), true, new ArraySortedItemList<>()),
+                    new CurveBag(items, new CurveBag.FairPriorityProbabilityCurve(), true, new FractalSortedItemList<>()),
+                    new LevelBag(levels, items)                        
+                };
                 
-                a = compare("A", new BagBuilder() {
-                    @Override public Bag newBag() {
-                        
-                        /*return new DefaultBag<Item>(_levels, bagCapacity, forgetRate) {
-                          @Override
-                          protected Deque<Item> newLevel() {
-                              //return new LinkedList<>();
-                              return new ArrayDeque<>(1+bagCapacity/_levels);
-                              //return new FastTable<>();
-                              //return new GapList<>(1+capacity/levels);
-                              //return new CircularArrayList<>(Item.class, 1+bagCapacity); //yes this allocates many
-                              
-                              
-                          }                        
-                        };*/
-                        
-                        return new ContinuousBag2(bagCapacity, new ContinuousBag2.PriorityProbabilityApproximateCurve(), true);
-                    }                    
-                }, iterations, randomAccesses, insertRatio, repeats, warmups);
+                double[] t = BagPerf.compare(                    
+                    iterations, randomAccesses, insertRatio, repeats, warmups,
+                    bags
+                );
+                System.out.print(Arrays.toString(new Object[] { iterations, randomAccesses, insertRatio, repeats, warmups, }));
+                System.out.print("  ");
+                System.out.println(Arrays.toString(t));
                 
-                b = compare("B", new BagBuilder() {
-                    @Override public Bag newBag() {
-                        
-                        /*
-                        return new DefaultBag<Item>(_levels, bagCapacity, forgetRate) {
-                          @Override
-                          protected Deque<Item> newLevel() {
-                              //return new LinkedList<>();
-                              //return new ArrayDeque<>(1+num/_levels);
-                              //return new FastTable<>();
-                              //return new GapList<>(1+capacity/levels);
-                              return new CircularArrayList<>(Item.class, 1+bagCapacity); //yes this allocates many
-                          }                        
-                        };
-                        */     
-                        
-                        return new ContinuousBag(bagCapacity, true);
-
-                    
-                    }                    
-                }, iterations, randomAccesses, insertRatio, repeats, warmups);
-
-                
-                //positive = b faster than a, negative = a faster than b
-                System.out.print(insertRatio+", "+levels+", "+ bagCapacity+", ");                
-                System.out.println( (a-b)/((a+b)/2.0) );
-                totalDiff += (a-b);
-                totalTimeA += a;
-                totalTimeB += b;
             }
         }
-        
-        if (totalDiff > 0) System.out.print("B faster: ");
-        else System.out.print("A faster: ");        
-        System.out.println("total difference (ms): " + totalDiff);
-        System.out.println("  A time=" + totalTimeA);
-        System.out.println("  B time=" + totalTimeB);
+
         
     }
     

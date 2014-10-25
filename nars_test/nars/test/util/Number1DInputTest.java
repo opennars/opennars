@@ -18,7 +18,7 @@
 package nars.test.util;
 
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import nars.io.TextOutput;
 import nars.util.signal.Number1DInput;
@@ -51,7 +51,7 @@ public class Number1DInputTest {
         
         double[] x = randomArray(N, 1.0, 0);
         
-        NAR n = new ContinuousBagNARBuilder(true).
+        NAR n = new CurveBagNARBuilder(true).
                 setConceptBagSize(32367).
                 build();
                 
