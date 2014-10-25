@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Item;
-import nars.util.sort.ArraySortedItemList;
+import nars.util.sort.FractalSortedItemList;
 import nars.util.sort.SortedItemList;
 
 
@@ -56,7 +56,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     }
     
     public CurveBag(int capacity, BagCurve curve, boolean randomRemoval) {
-        this(capacity, curve, randomRemoval, null /*new ArraySortedItemList<E>() */
+        this(capacity, curve, randomRemoval, new FractalSortedItemList<E>() 
                 
                                 /*if (capacity < 128)*/
                     //items = new ArraySortedItemList<>(capacity);
@@ -73,9 +73,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         this.randomRemoval = randomRemoval;        
         this.curve = curve;
         
-        if (items == null) {
-            //auto-select based on capacity
-        }
         
         items.clear();
         items.setCapacity(capacity);
@@ -86,10 +83,19 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         else
             x = 1.0f; //start a highest priority
         
-        nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
+        nameTable = new HashMap<>(capacity);
                 
         this.mass = 0;
     }
+
+    @Override
+    public E putIn(E newItem) {
+        E r = super.putIn(newItem);
+        if (capacity == 500)
+            System.out.println(newItem + " " + items.size() + " " + nameTable.size() + " " + r);
+        return r;
+    }
+    
     
 
     @Override
@@ -105,7 +111,11 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The number of items
      */
     @Override
-    public int size() {        
+    public int size() {     
+        int is = items.size();
+        int in = nameTable.size();
+        if (is!=in)
+            throw new RuntimeException(this + " inconsistent index: items=" + is + " names=" + in);
         return items.size();
     }
 
@@ -155,7 +165,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     }
 
     @Override protected E nameRemove(final K name) {
-        return nameTable.remove(name);
+        E r = nameTable.remove(name);
+        if (r!=null)
+            outOfBase(r);        
+        return r;
     }
 
 
@@ -236,11 +249,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     @Override
     public E pickOut(final K key) {
-        final E picked = nameTable.get(key);
-        if (picked != null) {
-            outOfBase(picked);
-            nameTable.remove(key);
-        }
+        final E picked = nameRemove(key);
         return picked;
     }
 
@@ -262,6 +271,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override protected E intoBase(E newItem) {
+        if (capacity == 500)
+            System.out.println(" +A " + newItem + " " + items.size() + " " + nameTable.size() + " ");
+
         float newPriority = newItem.getPriority();        
         
         E oldItem = null;
@@ -269,8 +281,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         /*if (items.contains(newItem))
             return null;*/
         
-        if (capacity == 500)
-            System.out.println(newItem + " " + nameTable.size() + " " + size() + " " + capacity + " " + getMinPriority() + ".." + getMaxPriority());
         
         if (size() >= capacity) {      // the bag is full            
             if (newPriority < getMinPriority())
@@ -279,9 +289,15 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             oldItem = takeOutIndex(0);            
         }
         
+
+        
         items.add(newItem);
         
         mass += (newItem.budget.getPriority());                  // increase total mass
+
+        if (capacity == 500)
+            System.out.println(" +B " + newItem + " " + items.size() + " " + nameTable.size() + " " + oldItem);
+
         return oldItem;
     }
 

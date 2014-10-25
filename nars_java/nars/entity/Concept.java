@@ -120,8 +120,8 @@ public class Concept extends Item<Term> {
         this.term = tm;
         this.memory = memory;
 
-        this.questions = new ArrayList();
-        this.beliefs = new ArrayList();
+        this.questions = new ArrayList<>();
+        this.beliefs = new ArrayList<>();
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 
