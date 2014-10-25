@@ -223,7 +223,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         public final Implication parent;        
         private final String id;
     
-        public UniqueInterval(Implication parent, Interval i, Term previous) {
+        public UniqueInterval(Implication parent, Term previous, Interval i) {
             super(i.magnitude, true);    
             this.id = parent.name() + "/" + (previous!=null ? previous.name() : "") + "/" + i.name();
             this.parent = parent;
@@ -323,9 +323,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 Term prev = (predicatePre!=predicatePost) ? predicatePre : null;
                 if (prev!=null)
                     addVertex(prev);
-                
-                boolean addedNonInterval = false;                
-                
+                                
                 for (int i = 0; i < seq.term.length; i++) {
                     
                     Term a = seq.term[i];                    
@@ -339,18 +337,13 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                             addVertex(a);
                         }
 
-                        if (!(a instanceof Interval))
-                            addedNonInterval = true;
-
                         if (prev!=null) {
                             newImplicationEdge(prev, a, c, s);                        
                         }                        
                         
                         prev = a;
                     }
-                    else {
-                        if (!(a instanceof Interval))
-                            addedNonInterval = true;                   
+                    else {         
 
                         //separate the term into a disconnected pre and post condition
                         Term aPre = a;
@@ -414,7 +407,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             r = new UniqueOperation(st, (Operation)t, prev);
         }
         else if (t instanceof Interval) {
-            r = new UniqueInterval(st, (Interval)t, prev);
+            r = new UniqueInterval(st, prev, (Interval)t);
         }
         else
             throw new RuntimeException("Not executable vertex: " + t);

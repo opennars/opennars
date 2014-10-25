@@ -67,7 +67,7 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:        
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return (x*x*x);
+            return 1.0 - (x*x*x);
         }
         
     }
@@ -90,43 +90,11 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:        
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return (x*x);
+            return 1 - (x*x);
         }
         
     }
     
-    /** estimates probability curve of DefaultBag */
-    public static class DefaultBagCurve implements BagCurve {
-
-        final static double a = 4.61484E-8;
-        final static double b = 4.34690E-6;
-        final static double c = 0.00025931;
-        
-        @Override final public double y(double x) {
-            //probability curve
-            //return a*x*x*x - b*x*x + c*x;
-            
-            double y = 0;
-            
-            y += c*x; //^1
-            x*=x; 
-            y += b*x; //^2
-            x*=x; 
-            y += a*x; //^3
-            
-            //multiply by x for each term to convert mapping to a probability:
-            y*=x;
-            
-            return y;
-        }
-        
-    }
-    
-    
-    
-//    public ContinuousBag2(int capacity, int forgetRate, BagCurve curve, boolean randomRemoval) {
-//        this(capacity, new AtomicInteger(forgetRate), curve, randomRemoval);
-//    }
     
     public ContinuousBag2(int capacity, BagCurve curve, boolean randomRemoval) {
         super();
@@ -248,9 +216,9 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
     
     /** distributor function */
     public int nextRemovalIndex() {      
-        final int s = size();
+        //TODO use common AbstractContinuousBag because this should be identical with ContinuousBag's method
+        final float s = size();
         if (randomRemoval) {
-            //uniform random distribution on 0..1.0
             x = Memory.randomNumber.nextFloat();            
         }
         else {
@@ -261,16 +229,18 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
                 x += 1.0f;
         }
         
-        double y = curve.y(x);
+        float y = (float) curve.y(x);
+        if (y < 0) y = 0;
+        if (y > 1.0f) y = 1f;
         
-        int result = (int)fastRound((1.0-y) * (s-1));            
+        int result = (int)Math.round(y * (s-1));            
         if (result == s) {
-            throw new RuntimeException("Invalid removal index: " + x + " -> " + y);
+            throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
         }        
         
         return result;
     }
-    
+        
 
     
     public static long fastRound(final double d) {
@@ -301,25 +271,39 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
 
 
 
+
+    public float getMinPriority() {
+        if (items.isEmpty()) return 0;
+        return items.first().getPriority();
+    }
+    public float getMaxPriority() {
+        if (items.isEmpty()) return 0;
+        return items.last().getPriority();
+    }
+    
     /**
      * Insert an item into the itemTable, and return the overflow
      *
      * @param newItem The Item to put in
      * @return The overflow Item
      */
-    @Override protected E intoBase(final E newItem) {
-        E oldItem = null;
+    @Override protected E intoBase(E newItem) {
+        float newPriority = newItem.getPriority();
         
+        if (newPriority < getMinPriority())
+            return newItem;
+        
+        E oldItem = null;        
+                
         if (size() >= capacity) {      // the bag is full            
-            oldItem = takeOutIndex(0);
+            oldItem = takeOutIndex(0);            
         }
         
         items.add(newItem);
         
         mass += (newItem.budget.getPriority());                  // increase total mass
-        return oldItem;		// TODO return null is a bad smell
+        return oldItem;
     }
-
 
     
     
@@ -335,7 +319,7 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
                 
         nameTable.remove(e.name());
         
-        addToMass(-(e.budget.getPriority()));
+        mass -= e.budget.getPriority();
         
         return e;
     }
@@ -345,6 +329,7 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
      *
      * @param oldItem The Item to be removed
      */
+    @Override
     protected void outOfBase(final E oldItem) {
         /*
         //A test for debugging to see if olditem and currentitem are ever different instances.
@@ -356,17 +341,10 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
         }*/
         
         if (items.remove(oldItem)) {            
-            addToMass(-(oldItem.getPriority()));
+            mass -= oldItem.getPriority();
         }
     }
 
-    protected void addToMass(float delta) {
-        mass += delta;
-        if (mass < MASS_EPSILON)  mass = 0;
-        if (mass > -MASS_EPSILON) mass = 0;
-        if (mass < 0)
-            throw new RuntimeException("Mass < 0: mass=" + mass +", items=" + size());        
-    }
 
 
     @Override

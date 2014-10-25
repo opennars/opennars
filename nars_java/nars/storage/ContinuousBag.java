@@ -101,6 +101,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     
     public ContinuousBag(int capacity, boolean randomRemoval) {
         this(capacity, new PriorityProbabilityApproximateCurve(), randomRemoval );
+        //this(capacity, new ContinuousBag2.CubicBagCurve(), randomRemoval );
     }
     
     public ContinuousBag(int capacity, BagCurve curve, boolean randomRemoval) {
@@ -215,7 +216,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     
     /** distributor function */
     public int nextRemovalIndex() {      
-        final int s = size();
+        final float s = size();
         if (randomRemoval) {
             x = Memory.randomNumber.nextFloat();            
         }
@@ -228,10 +229,12 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
         }
         
         float y = getFocus(x);
+        if (y < 0) y = 0;
+        if (y > 1.0f) y = 1f;
         
-        int result = (int)fastRound((1.0-y) * (s-1));            
+        int result = (int)Math.round(y * (s-1));            
         if (result == s) {
-            throw new RuntimeException("Invalid removal index: " + x + " -> " + y);
+            throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
         }        
         
         return result;
@@ -242,12 +245,12 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      * @param x
      * @return 
      */
-    public float getFocus(float x) {
+    public float getFocus(final float x) {
         //1.0 - ((1.0-x)^2)
         // a function which has domain and range between 0..1.0 but
         //   will result in values above 0.5 more often than not.  see the curve:        
         //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-        
-        return (x*x*x);
+        return (float)curve.y(x);
     }
     
 
@@ -281,6 +284,15 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
 
 
 
+    public float getMinPriority() {
+        if (items.isEmpty()) return 0;
+        return items.getFirst().getPriority();
+    }
+    public float getMaxPriority() {
+        if (items.isEmpty()) return 0;
+        return items.getLast().getPriority();
+    }
+    
     /**
      * Insert an item into the itemTable, and return the overflow
      *
@@ -288,16 +300,22 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The overflow Item
      */
     @Override protected E intoBase(E newItem) {
-        E oldItem = null;
+        float newPriority = newItem.getPriority();
         
+        
+        E oldItem = null;        
+                
         if (size() >= capacity) {      // the bag is full            
-            oldItem = takeOutIndex(0);
+            if (newPriority < getMinPriority())
+                return newItem;
+            
+            oldItem = takeOutIndex(0);            
         }
         
         items.add(newItem);
         
         mass += (newItem.budget.getPriority());                  // increase total mass
-        return oldItem;		// TODO return null is a bad smell
+        return oldItem;
     }
 
 
@@ -312,7 +330,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     private E takeOutIndex(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
         final E selected = items.remove(index);        
-        addToMass(-(selected.budget.getPriority()));                
+        mass -= selected.budget.getPriority();
         
         nameTable.remove(selected.name());        
         
@@ -323,7 +341,8 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      * Remove an item from itemTable, then adjust mass
      *
      * @param oldItem The Item to be removed
-     */
+     */ 
+    @Override
     protected void outOfBase(final E oldItem) {
         /*
         //A test for debugging to see if olditem and currentitem are ever different instances.
@@ -335,17 +354,10 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
         }*/
         
         if (items.remove(oldItem)) {            
-            addToMass(-(oldItem.getPriority()));
+            mass -= oldItem.getPriority();
         }
     }
 
-    protected void addToMass(float delta) {
-        mass += delta;
-        if (mass < MASS_EPSILON)  mass = 0;
-        if (mass > -MASS_EPSILON) mass = 0;
-        if (mass < 0)
-            throw new RuntimeException("Mass < 0: mass=" + mass +", items=" + size());        
-    }
 
 
     @Override

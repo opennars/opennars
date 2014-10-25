@@ -1,5 +1,6 @@
 package nars.test.util;
 
+import java.util.Arrays;
 import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Item;
@@ -32,6 +33,9 @@ public class ContinuousBagTest {
         
         testFastBagCapacityLimit();
 
+
+        testRemovalDistribution(13, false);
+        testRemovalDistribution(13, true);
         
         testRemovalDistribution(4, false);
         testRemovalDistribution(4, true);
@@ -42,8 +46,6 @@ public class ContinuousBagTest {
         testRemovalDistribution(16, false);
         testRemovalDistribution(16, true);
 
-        testRemovalDistribution(13, false);
-        testRemovalDistribution(13, true);
         
     }
     
@@ -75,7 +77,7 @@ public class ContinuousBagTest {
     }
 
     public void testFastBag2(boolean random) {
-        ContinuousBag2<NullItem,CharSequence> f = new ContinuousBag2(4, new ContinuousBag2.DefaultBagCurve(), random);
+        ContinuousBag2<NullItem,CharSequence> f = new ContinuousBag2(4, new ContinuousBag2.PriorityProbabilityApproximateCurve(), random);
         
         f.putIn(new NullItem(.25f));
         assert(f.size() == 1);
@@ -139,8 +141,8 @@ public class ContinuousBagTest {
     public void testFastBagCapacityLimit() {
         testFastBagCapacityLimit(new ContinuousBag(4, true));
         testFastBagCapacityLimit(new ContinuousBag(4, false));
-        testFastBagCapacityLimit(new ContinuousBag2(4, new ContinuousBag2.DefaultBagCurve(), true));
-        testFastBagCapacityLimit(new ContinuousBag2(4, new ContinuousBag2.DefaultBagCurve(),false));
+        testFastBagCapacityLimit(new ContinuousBag2(4, new ContinuousBag2.PriorityProbabilityApproximateCurve(), true));
+        testFastBagCapacityLimit(new ContinuousBag2(4, new ContinuousBag2.PriorityProbabilityApproximateCurve(),false));
     }
     
     
@@ -157,17 +159,18 @@ public class ContinuousBagTest {
             f.putIn(new NullItem());
         }
         
+        assertEquals(f.size(), f.getCapacity());
+        
         for (int i= 0; i < samples; i++) {
             count[f.nextRemovalIndex()]++;
         }
-        //System.out.println(Arrays.toString(count));
                 
         //removal rates are approximately monotonically increasing function
-        assert(count[0] <= count[N-1]);
+        assert(count[0] <= count[N-2]);
         //assert(count[0] <= count[1]);
         //assert(count[0] < count[N-1]);        
         //assert(count[N-2] < count[N-1]);        
-        assert(count[N/2] <= count[N-1]);
+        assert(count[N/2] <= count[N-2]);
         
         //System.out.println(random + " " + Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);

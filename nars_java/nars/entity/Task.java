@@ -169,11 +169,11 @@ public class Task extends AbstractTask<Sentence> {
      * @param that The other Task
      */
     @Override
-    public void merge(final Item that) {
+    public Item merge(final Item that) {
         if (getCreationTime() >= ((Task) that).getCreationTime()) {
-            super.merge(that);
+            return super.merge(that);
         } else {
-            that.merge(this);
+            return that.merge(this);
         }
     }
 

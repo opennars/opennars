@@ -85,22 +85,33 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     public Concept addConcept(final Term term, final Memory memory) {
         Concept concept = conceptBuilder.newConcept(term, memory);
         
+        boolean merged = false;
         Concept removed = concepts.putIn(concept);
         if (removed == null) {            
             //added without replacing anything
         }
         else if (removed == concept) {
             //not able to insert
-            memory.emit(ConceptRemove.class, concept);
+            System.out.println("can not insert: " + concept);     
+            memory.emit(ConceptRemove.class, removed);
             return null;
         }
         else if (removed!=null) {
             //replaced something
-            memory.emit(ConceptRemove.class, removed);            
+            if (removed.name().equals(concept.name())) {
+                System.out.println("merge: " + removed);
+                merged = true;
+            }
+            else {
+                System.out.println("replace: " + removed + " -> " + concept);
+                memory.emit(ConceptRemove.class, removed);            
+            }
         }
         
-        memory.logic.CONCEPT_ADD.commit(term.getComplexity());
-        memory.emit(Events.ConceptAdd.class, concept);
+        if (!merged) {
+            memory.logic.CONCEPT_ADD.commit(term.getComplexity());
+            memory.emit(Events.ConceptAdd.class, concept);
+        }
         
         return concept;
     }

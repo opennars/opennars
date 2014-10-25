@@ -217,7 +217,7 @@ public class BagPerf {
                           }                        
                         };*/
                         
-                        return new ContinuousBag2(bagCapacity, new ContinuousBag2.DefaultBagCurve(), true);
+                        return new ContinuousBag2(bagCapacity, new ContinuousBag2.PriorityProbabilityApproximateCurve(), true);
                     }                    
                 }, iterations, randomAccesses, insertRatio, repeats, warmups);
                 

@@ -43,7 +43,6 @@ import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import nars.inference.NAL;
 import static nars.inference.TemporalRules.solutionQuality;
-import nars.inference.TruthFunctions;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -150,6 +149,15 @@ public class Concept extends Item<Term> {
 //    }
 //    
 
+    @Override public boolean equals(Object obj) { 
+        if (!(obj instanceof Concept)) return false;
+        return ((Concept)obj).name().equals(name());
+    }
+
+    @Override public int hashCode() { return name().hashCode();     }
+
+    
+    
     
     
     @Override
