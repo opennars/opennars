@@ -731,13 +731,15 @@ public class Rover2 extends PhysicsModel {
 
     static final ArrayList<String> randomActions=new ArrayList<>();
     static {
-        randomActions.add("(^motor,left)!");
+       // randomActions.add("(^motor,left)!");
         randomActions.add("(^motor,left,left)!");
-        randomActions.add("(^motor,right)!");
+       // randomActions.add("(^motor,right)!");
         randomActions.add("(^motor,right,right)!");
-        randomActions.add("(^motor,forward,forward)!");
+        //randomActions.add("(^motor,forward,forward)!"); //too much actions are not good, 
+        randomActions.add("(^motor,forward)!"); //however i would agree if <(^motor,forward,forward) --> (^motor,forward)>.
+        //randomActions.add("(^motor,forward,forward)!");
         randomActions.add("(^motor,forward)!");
-        randomActions.add("(^motor,reverse)!");
+        //randomActions.add("(^motor,reverse)!");
         randomActions.add("(^motor,stop)!");
         //randomActions.add("(^motor,random)!");
     }
