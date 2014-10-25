@@ -23,18 +23,18 @@ public class ResourceSense extends AbstractSense {
         super();
         
         add(IO_CYCLE = new NanoTimeDurationTracker("io.cycle"));
-        add(MEMORY_CYCLE = new NanoTimeDurationTracker("memory.cycle"));
         
         add(CYCLE = new NanoTimeDurationTracker("cycle"));   
         
-
+        add(MEMORY_CYCLE = new NanoTimeDurationTracker("memory.cycle"));
+        MEMORY_CYCLE.setSampleResolution(128);
         
         add(CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used"));
-        CYCLE_RAM_USED.setSampleResolution(16);
+        CYCLE_RAM_USED.setSampleResolution(128);
         CYCLE_RAM_USED.setSampleWindow(128);
                 
         add(CYCLE_CPU_TIME = new ThreadCPUTimeTracker("memory.cycle.cpu_time"));
-        CYCLE_CPU_TIME.setSampleResolution(16);
+        CYCLE_CPU_TIME.setSampleResolution(128);
         CYCLE_CPU_TIME.setSampleWindow(128);        
     }
 

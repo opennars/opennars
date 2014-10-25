@@ -139,10 +139,11 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             currentConcept = concepts.get(term); //may not be needed, 'concept' may be what should be set
         }
 
-        
-        //System.out.println("added: " + currentConcept + ((!budget.equals(currentConcept.budget)) ? " inputBudget=" + budget :"") );
-        memory.logic.CONCEPT_ADD.commit(term.getComplexity());
-        memory.emit(Events.ConceptAdd.class, currentConcept);
+        if (currentConcept!=null) {
+            //System.out.println("added: " + currentConcept + ((!budget.equals(currentConcept.budget)) ? " inputBudget=" + budget :"") );
+            memory.logic.CONCEPT_ADD.commit(term.getComplexity());
+            memory.emit(Events.ConceptAdd.class, currentConcept);
+        }
         
         return currentConcept;
     }
