@@ -19,6 +19,7 @@ package nars.perf;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import nars.core.Memory;
 import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
@@ -99,7 +100,7 @@ public class BagPerf {
         private final String key;
     
         public NullItem() {
-            this((float)Math.random() * (1.0f - Parameters.TRUTH_EPSILON));
+            this(Memory.randomNumber.nextFloat() * (1.0f - Parameters.TRUTH_EPSILON));
         }
 
         public NullItem(float priority) {
@@ -118,7 +119,7 @@ public class BagPerf {
     
     public static void randomBagIO(Bag<NullItem,CharSequence> b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
-            if (Math.random() > insertProportion) {
+            if (Memory.randomNumber.nextFloat() > insertProportion) {
                 //remove
                 b.takeOut();
             }

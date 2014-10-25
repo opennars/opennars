@@ -5,28 +5,38 @@ import javolution.util.FastCollection;
 import javolution.util.FastSortedTable;
 import javolution.util.function.Equality;
 import nars.entity.Item;
+import nars.entity.Item.ItemPriorityComparator;
 
 
 public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedItemList<E> {
 
+    public static class ItemEquality<E extends Item> extends ItemPriorityComparator<E> implements Equality<E> {
+        
+        @Override public int compare(final E a, final E b) { 
+            if (areEqual(a, b)) return 0;
+            return super.compare(a, b);
+        }
+        
+        @Override public int hashCodeOf(E t) {
+            return t.hashCode();
+        }
+
+        @Override public boolean areEqual(E t, E t1) {
+            return (t == t1);
+        }
+        
+    }
+    
+    
+    
     int capacity;
-    private final FastCollection<E> sort;
 
     public FractalSortedItemList() {
         this(1);
     }
     
     public FractalSortedItemList(int capacity) {
-        super();
-        this.sort = this.sorted(new Comparator<Item>() {
-
-            @Override public int compare(Item b, Item a) {
-                float ap = a.getPriority();
-                float bp = b.getPriority();
-                return Float.compare(ap, bp);
-            }
-                
-        });
+        super(new ItemEquality<E>());
         this.capacity = capacity;
     }
 
@@ -38,11 +48,11 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
     
     @Override
     public E getLast() {        
-        return sort.max();
+        return max();
     }
     @Override
     public E getFirst() {
-        return sort.min();
+        return min();
     }
 
     
