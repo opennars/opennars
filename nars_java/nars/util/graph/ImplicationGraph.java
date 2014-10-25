@@ -203,18 +203,14 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             this.parent = parent;
         }
 
- 
+        @Override public CharSequence name() {  return id;        }
         
-        @Override public int hashCode() {  return id.hashCode();        }
-
-        @Override public boolean equals(Object that) {
-            if (that == this) return true;
-            
+        @Override public boolean equals(final Object that) {
+            if (that == this) return true;           
             if (that instanceof UniqueOperation)
-                return (((UniqueOperation)that).id.equals(id));
-            
+                return (((UniqueOperation)that).id.equals(id));            
             return false;
-        }
+        }        
         
     }
     
@@ -228,15 +224,13 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             this.id = parent.name() + "/" + (previous!=null ? previous.name() : "") + "/" + i.name();
             this.parent = parent;
         }
-
-        @Override public int hashCode() {  return id.hashCode();        }
-
-        @Override public boolean equals(Object that) {
-            if (that == this) return true;
-            
+        
+        @Override public CharSequence name() {  return id;        }
+    
+        @Override public boolean equals(final Object that) {
+            if (that == this) return true;           
             if (that instanceof UniqueInterval)
-                return (((UniqueInterval)that).id.equals(id));
-            
+                return (((UniqueInterval)that).id.equals(id));            
             return false;
         }        
         

@@ -10,7 +10,7 @@ import nars.util.SortedItemList;
  * Note: The "head" of java.util.PriorityQueue is the item with the least value
  * according to the comparator
  */
-public class PriorityBuffer<B> extends SortedItemList<B> implements Buffer<B> {
+public class PriorityBuffer<B> extends SortedItemList<B>  {
     
     public static class ItemPriorityComparator<I extends Item> implements Comparator<I> {
         @Override public int compare(I a, I b) {
@@ -23,6 +23,5 @@ public class PriorityBuffer<B> extends SortedItemList<B> implements Buffer<B> {
         super(comparator, capacity);
     }
 
-    
     
 }
