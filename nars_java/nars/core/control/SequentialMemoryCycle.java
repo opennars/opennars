@@ -84,37 +84,34 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     @Override
     public Concept addConcept(BudgetValue budget, final Term term, final Memory memory) {
         Concept concept = conceptBuilder.newConcept(budget, term, memory);
-        
-        boolean merged = false;
-        Concept removed = concepts.putIn(concept);
-        if (removed == null) {            
-            //added without replacing anything
-        }
-        else if (removed == concept) {
+                
+        Concept removed = concepts.putIn(concept);        
+        Concept currentConcept = null;
+        if (removed == concept) {
             //not able to insert
             System.out.println("can not insert: " + concept);     
             memory.emit(ConceptRemove.class, removed);
             return null;
-        }
+        }        
+        else if (removed == null) {            
+            //added without replacing anything
+            
+            //but we need to get the actual stored concept in case it was merged
+            currentConcept = concepts.get(term);
+        }        
         else if (removed!=null) {
             //replaced something
-            if (removed.name().equals(concept.name())) {
-                System.out.println("merge: " + removed);
-                merged = true;
-            }
-            else {
-                System.out.println("replace: " + removed + " -> " + concept);
-                memory.emit(ConceptRemove.class, removed);            
-            }
+            System.out.println("replace: " + removed + " -> " + concept);
+            memory.emit(ConceptRemove.class, removed);
+            currentConcept = removed;
         }
+
         
-        if (!merged) {
-            System.out.println("added: " + concept);
-            memory.logic.CONCEPT_ADD.commit(term.getComplexity());
-            memory.emit(Events.ConceptAdd.class, concept);
-        }
+        //System.out.println("added: " + currentConcept + ((!budget.equals(currentConcept.budget)) ? " inputBudget=" + budget :"") );
+        memory.logic.CONCEPT_ADD.commit(term.getComplexity());
+        memory.emit(Events.ConceptAdd.class, currentConcept);
         
-        return concept;
+        return currentConcept;
     }
     
 

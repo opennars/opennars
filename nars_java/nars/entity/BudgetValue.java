@@ -21,6 +21,7 @@
 package nars.entity;
 
 import nars.core.Parameters;
+import static nars.core.Parameters.TRUTH_EPSILON;
 import nars.inference.BudgetFunctions;
 import static nars.inference.UtilityFunctions.and;
 import static nars.inference.UtilityFunctions.aveGeo;
@@ -205,6 +206,22 @@ public class BudgetValue implements Cloneable {
         return aveGeo(priority, durability, quality);
     }
 
+    @Override
+    public boolean equals(final Object that) { 
+        if (that instanceof BudgetValue) {
+            final BudgetValue t = ((BudgetValue) that);
+            float dPrio = Math.abs(getPriority() - t.getPriority());
+            if (dPrio >= TRUTH_EPSILON) return false;
+            float dDura = Math.abs(getDurability() - t.getDurability());
+            if (dDura >= TRUTH_EPSILON) return false;
+            float dQual = Math.abs(getQuality() - t.getQuality());
+            if (dQual >= TRUTH_EPSILON) return false;
+            return true;
+        }
+        return false;
+    }
+
+    
     /**
      * Whether the budget should get any processing at all
      * <p>

@@ -170,8 +170,10 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         if (that instanceof TruthValue) {
             final TruthValue t = ((TruthValue) that);
             float dFreq = Math.abs(getFrequency() - t.getFrequency());
+            if (dFreq >= TRUTH_EPSILON) return false;
             float dConf = Math.abs(getConfidence() - t.getConfidence());
-            return (dFreq < TRUTH_EPSILON) && (dConf < TRUTH_EPSILON);
+            if (dConf >= TRUTH_EPSILON) return false;
+            return true;
         }
         return false;
     }

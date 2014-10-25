@@ -285,9 +285,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     @Override
     public E pickOut(final K key) {
         final E picked = nameTable.remove(key);
-        //if (picked != null) {
+        if (picked != null) {
             outOfBase(picked);
-        //}
+        }
         return picked;
     }
 
