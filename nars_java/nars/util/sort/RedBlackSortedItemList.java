@@ -5,6 +5,7 @@
 package nars.util.sort;
 
 import nars.entity.Item;
+import nars.entity.Item.ItemPriorityComparator;
 
 /**
  *
@@ -14,7 +15,7 @@ public class RedBlackSortedItemList<E extends Item> extends IndexedTreeSet<E> im
     private int capacity;
 
     public RedBlackSortedItemList() {
-        super();
+        super(new ItemPriorityComparator());
         setCapacity(1);
     }
 

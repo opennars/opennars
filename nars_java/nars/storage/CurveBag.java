@@ -201,7 +201,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         if (y < 0) y = 0;
         if (y > 1.0f) y = 1f;
         
-        int result = (int)Math.round(y * (s-1));            
+        int result = (int)Math.floor(y * s);            
         if (result == s) {
             throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
         }        

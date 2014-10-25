@@ -1,6 +1,7 @@
 package nars.test.core.bag;
 
 import java.util.Arrays;
+import nars.core.Memory;
 import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Item;
@@ -30,27 +31,38 @@ public class CurveBagTest {
 
     @Test 
     public void testBags() {
-        testCurveBag(new FractalSortedItemList<>());
-        testCurveBag(new ArraySortedItemList<>());
-        testCurveBag(new RedBlackSortedItemList<>());
+
+        
+        int[] d1 = testCurveBag(new FractalSortedItemList<>());
+        int[] d2 = testCurveBag(new RedBlackSortedItemList<>());        
+        int[] d3 = testCurveBag(new ArraySortedItemList<>());
+
+        //use the final distribution to compare that each implementation generates exact same results
+        assertTrue(Arrays.equals(d1, d2));
+        assertTrue(Arrays.equals(d2, d3));
+        
+        for (int capacity : new int[] { 4, 7, 13, 16, 100 } ) {
+            testRemovalDistribution(capacity, false);
+            testRemovalDistribution(capacity, true);
+        }
+
     }
     
-    public void testCurveBag(SortedItemList<NullItem> items) {
+    public int[] testCurveBag(SortedItemList<NullItem> items) {
+        Memory.resetStatic();
+        
         testCurveBag(true, items);
         testCurveBag(false, items);
         testCapacityLimit(new CurveBag(4, curve, true, items));
         testCapacityLimit(new CurveBag(4, curve, false, items));
         
-        for (int capacity : new int[] { 4, 7, 13, 16 } ) {
-            testRemovalDistribution(capacity, false, items);
-            testRemovalDistribution(capacity, true, items);        
-        }
-        
-        for (int capacity : new int[] { 10, 100, 256, 1000 } ) {
-            testRemovalPriorityDistribution(capacity, true, items);
+        int d[] = null;
+        for (int capacity : new int[] { 10, 51, 100, 256 } ) {
+            d = testRemovalPriorityDistribution(capacity, true, items);
         }
         testAveragePriority(4, items);
         testAveragePriority(8, items);        
+        return d;
     }
     
     public void testCurveBag(boolean random, SortedItemList<NullItem> items) {
@@ -108,11 +120,12 @@ public class CurveBagTest {
     
     
     
-    public void testRemovalDistribution(int capacity, boolean random, SortedItemList<NullItem> items) {
-        int samples = 256 * capacity;
+    public void testRemovalDistribution(int capacity, boolean random) {
+        int samples = 128 * capacity;
         
         int count[] = new int[capacity];
         
+        SortedItemList<NullItem> items = new ArraySortedItemList<>();
         CurveBag<NullItem,CharSequence> f = new CurveBag(capacity, curve, random, items);
         
         //fill
@@ -126,26 +139,23 @@ public class CurveBagTest {
             count[f.nextRemovalIndex()]++;
         }
         
+        //System.out.println(capacity +"," + random + " = " + Arrays.toString(count));
                 
-        //removal rates are approximately monotonically increasing function
-        assert(count[0] <= count[capacity-2]);
-        //assert(count[0] <= count[1]);
-        //assert(count[0] < count[N-1]);        
-        //assert(count[N-2] < count[N-1]);        
-        assert(count[capacity/2] <= count[capacity-2]);
+        assert(semiMonotonicallyIncreasing(count));
         
         //System.out.println(random + " " + Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
         
     }
 
-    public void testRemovalPriorityDistribution(int capacity, boolean random, SortedItemList<NullItem> items) {
-        int loops = 4;
+    public int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedItemList<NullItem> items) {
+        int loops = 8;
         
-        int levels = 10;
+        int levels = 9;
         int count[] = new int[levels];
         
-        float removeFraction = 0.5f;
+        float adjustFraction = 0.2f;
+        float removeFraction = 0.8f;
         
         CurveBag<NullItem,CharSequence> f = new CurveBag(capacity, curve, random, items);
         
@@ -155,21 +165,50 @@ public class CurveBagTest {
                 f.putIn(new NullItem());
             }
 
+            int preadjustCount = f.size();
+            assertEquals(items.size(), f.size());
+            
+            //remove some, adjust their priority, and re-insert
+            for (int i= 0; i < capacity * adjustFraction; i++) {
+                NullItem t = f.takeOut();
+                if (i % 2 == 0)
+                    t.budget.decPriority(0.2f);
+                else
+                    t.budget.incPriority(0.2f);
+                f.putIn(t);
+            }
+            
+            int postadjustCount = f.size();
+            assertEquals(items.size(), f.size());
+            
+            assertEquals(preadjustCount, postadjustCount);
+
+            float min = f.getMinPriority();
+            float max = f.getMaxPriority();
+            assertTrue(max > min);
+                        
+            //remove last than was inserted so the bag never gets empty
             for (int i= 0; i < capacity * removeFraction; i++) {
                 NullItem t = f.takeOut();
                 float p = t.getPriority();
-                int level = (int)Math.floor(p * levels);
+                
+                assertTrue(p >= min);
+                assertTrue(p <= max);
+                
+                int level = (int)Math.floor(p * levels);                
                 count[level]++;
             }
             
-            if (f.size() > 16) {
-                float min = f.getMinPriority();
-                float max = f.getMaxPriority();
-                assertTrue(max > min);
-            }
+            //nametable and itemtable consistent size
+            assertEquals(items.size(), f.size());
+            
+            //System.out.print("  "); items.reportPriority();            
+            
         }
         
-        System.out.println(items.getClass().getSimpleName() + "," + random + "," + capacity + ": " + Arrays.toString(count));
+        //System.out.println(items.getClass().getSimpleName() + "," + random + "," + capacity + ": " + Arrays.toString(count));
+        
+        return count;
         
                 
         //removal rates are approximately monotonically increasing function
@@ -252,6 +291,15 @@ public class CurveBagTest {
 //        assert(f.items.size() == f.nameTable.size());                
 //        
 //    }
+
+    /** removal rates are approximately monotonically increasing function; tests first, mid and last for this  ordering */
+    public static boolean semiMonotonicallyIncreasing(int[] count) {
+        
+        int cl = count.length;
+        return 
+                (count[0] <= count[cl-1]) &&
+                (count[cl/2] <= count[cl-1]);
+    }
     
 
 }

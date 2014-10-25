@@ -20,6 +20,8 @@
  */
 package nars.entity;
 
+import java.util.Comparator;
+
 /**
  * An item is an object that can be put into a Bag,
  * to participate in the resource competition of the system.
@@ -28,27 +30,25 @@ package nars.entity;
  */
 public abstract class Item<K> implements Comparable {
 
-
-
-    abstract public static class StringKeyItem extends Item<CharSequence> {
-        
-        public StringKeyItem(final BudgetValue budget) { super(budget);         }
-
-                
-        @Override
-        public int hashCode() {
-            return name().hashCode();
-        }
+    public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 
         @Override
-        public boolean equals(final Object obj) {
-            if (obj == this) return true;
-            if (obj instanceof Item) {
-                return ((Item)obj).name().equals(name());
+        public int compare(final E a, final E b) {
+            float ap = a.getPriority();
+            float bp = b.getPriority();
+            if (ap == bp) {
+                ap = a.getDurability();
+                bp = b.getDurability();
+                if (ap == bp) {
+                    ap = a.getQuality();
+                    bp = b.getQuality();
+                    if (ap == bp)
+                        return Integer.compare(a.hashCode(), b.hashCode());
+                }
             }
-            return false;
-        }
-    
+            return Float.compare(ap, bp);
+        }        
+        
     }
     
     /** The budget of the Item, consisting of 3 numbers */
@@ -207,4 +207,25 @@ public abstract class Item<K> implements Comparable {
         return hashCode() - o.hashCode();
     }
     
+    abstract public static class StringKeyItem extends Item<CharSequence> {
+        
+        public StringKeyItem(final BudgetValue budget) { super(budget);         }
+
+                
+        @Override
+        public int hashCode() {
+            return name().hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj == this) return true;
+            if (obj instanceof Item) {
+                return ((Item)obj).name().equals(name());
+            }
+            return false;
+        }
+    
+    }
+
 }
