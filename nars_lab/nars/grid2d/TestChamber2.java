@@ -2,7 +2,7 @@ package nars.grid2d;
 
 import java.util.List;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
@@ -291,7 +291,7 @@ public class TestChamber2 extends TestChamber {
     }
 
     public static void main(String[] arg) {
-        NAR nar = new ContinuousBagNARBuilder(true).build();
+        NAR nar = new CurveBagNARBuilder(true).build();
         nar.param().cycleInputTasks.set(16);
         nar.param().cycleConceptsFired.set(16);
         

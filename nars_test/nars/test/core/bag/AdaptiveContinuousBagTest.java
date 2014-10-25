@@ -1,4 +1,4 @@
-package nars.test.util;
+package nars.test.core.bag;
 
 import nars.storage.Bag;
 import static org.junit.Assert.assertEquals;
