@@ -40,7 +40,8 @@ public class Parameters {
     
     public static double TEMPORAL_INDUCTION_MIN_PRIORITY=0.0;
     
-    public static boolean TEMPORAL_PARTICLE_PLANNER=true;
+    public static boolean TEMPORAL_PARTICLE_PLANNER=false;
+    //will be activated after normal NAL8 is working again
     
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
