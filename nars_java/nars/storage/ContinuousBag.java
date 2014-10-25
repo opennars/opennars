@@ -58,7 +58,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
         public ContinuousBagSortedList(int capacity) {
             super(new Comparator<E>() {
 
-                @Override public int compare(E o1, E o2) {
+                @Override public int compare(final E o1, final E o2) {
                     //fast comparison because name table will already prevent duplicates?
                     if (o1 == o2) return 0;
                     return -1;

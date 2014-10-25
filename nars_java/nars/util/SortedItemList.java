@@ -1,14 +1,19 @@
 package nars.util;
 
+import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.Comparator;
-import javolution.util.FastTable;
+import java.util.Iterator;
+import java.util.List;
 
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
-abstract public class SortedItemList<E> extends FastTable<E> {
+//abstract public class SortedItemList<E> extends FastTable<E> {
+abstract public class SortedItemList<E> extends ArrayList<E> {    
 
-    private Comparator<E> comparator = null;
+    private final Comparator<E> comparator;
     int capacity = Integer.MAX_VALUE;
+    private List<E> reverse;
 
     public SortedItemList(Comparator<E> c) {
         this(c, Integer.MAX_VALUE);
@@ -67,11 +72,20 @@ abstract public class SortedItemList<E> extends FastTable<E> {
                     return false;
                 }
 
-                reject(removeFirst()); //maybe should be last
+                reject(remove(0)); //maybe should be last
             }
             super.add(positionOf(o), o);
             return true;
         }
+    }
+    
+    public E getFirst() { 
+        if (isEmpty()) return null;
+        return get(0);
+    }
+    public E getLast() { 
+        if (isEmpty()) return null;
+        return get(size()-1);
     }
 
     public int capacity() {
@@ -82,6 +96,13 @@ abstract public class SortedItemList<E> extends FastTable<E> {
         return capacity() - size();
     }
 
+    public Iterator<E> descendingIterator() {
+        if (reverse == null) {
+            reverse = Lists.reverse(this);
+        }
+        return reverse.iterator();
+    }
+    
     /**
      * can be handled in subclasses
      */

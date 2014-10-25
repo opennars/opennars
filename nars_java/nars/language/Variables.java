@@ -103,6 +103,7 @@ public class Variables {
      * @return Whether the name contains a variable
      */
     public static boolean containVar(final CharSequence n) {
+        if (n == null) return false;
         final int l = n.length();
         for (int i = 0; i < l; i++) {
             switch (n.charAt(i)) {                

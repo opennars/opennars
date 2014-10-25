@@ -84,11 +84,7 @@ public class Term implements AbstractTerm {
     public boolean equals(final Object that) {
         if (that == this) return true;
         if (!(that instanceof Term)) return false;
-        Term t = (Term)that;
-        if (t.hashCode()!=hashCode()) {
-            return false;
-        }        
-        return name.equals(t.name());
+        return name.equals(((Term)that).name());
     }
 
     /**
@@ -97,7 +93,7 @@ public class Term implements AbstractTerm {
      * @return An integer hash code
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return name.hashCode();
     }
 
