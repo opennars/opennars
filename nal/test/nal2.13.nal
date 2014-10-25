@@ -5,6 +5,7 @@
 
 1
 
-''expect.outEmpty
+''outputMustContain('<{Tweety} --> bird>. %1.00;0.90%')
+'//expect.outEmpty
 
 

@@ -102,7 +102,8 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         else if (removed!=null) {
             //replaced something
             System.out.println("replace: " + removed + " -> " + concept);
-            memory.emit(ConceptRemove.class, removed);
+            if (!removed.name().equals(term))
+                memory.emit(ConceptRemove.class, removed);
             currentConcept = removed;
         }
 
