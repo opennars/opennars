@@ -33,7 +33,8 @@ public class CurveBagTest {
     public void testBags() {
 
         
-        int[] d1 = testCurveBag(new FractalSortedItemList<>());
+        FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
+        int[] d1 = testCurveBag(f1);
         int[] d2 = testCurveBag(new RedBlackSortedItemList<>());        
         int[] d3 = testCurveBag(new ArraySortedItemList<>());
 
@@ -56,12 +57,15 @@ public class CurveBagTest {
         testCapacityLimit(new CurveBag(4, curve, true, items));
         testCapacityLimit(new CurveBag(4, curve, false, items));
         
+        
+        testAveragePriority(4, items);
+        testAveragePriority(8, items);        
+        
         int d[] = null;
         for (int capacity : new int[] { 10, 51, 100, 256 } ) {
             d = testRemovalPriorityDistribution(capacity, true, items);
         }
-        testAveragePriority(4, items);
-        testAveragePriority(8, items);        
+        
         return d;
     }
     
@@ -155,14 +159,16 @@ public class CurveBagTest {
         int count[] = new int[levels];
         
         float adjustFraction = 0.2f;
-        float removeFraction = 0.8f;
+        float removeFraction = 0.3f;
         
         CurveBag<NullItem,CharSequence> f = new CurveBag(capacity, curve, random, items);
         
         for (int l = 0; l < loops; l++) {
             //fill with random items
             for (int i= 0; i < capacity; i++) {
-                f.putIn(new NullItem());
+                NullItem ni = new NullItem();
+                ni.key = "" + (int)(Memory.randomNumber.nextFloat() * capacity * 1.2f);
+                f.putIn(ni);
             }
 
             int preadjustCount = f.size();
@@ -201,10 +207,10 @@ public class CurveBagTest {
             
             //nametable and itemtable consistent size
             assertEquals(items.size(), f.size());
-            
             //System.out.print("  "); items.reportPriority();            
             
         }
+
         
         //System.out.println(items.getClass().getSimpleName() + "," + random + "," + capacity + ": " + Arrays.toString(count));
         

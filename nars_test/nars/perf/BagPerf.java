@@ -103,7 +103,7 @@ public class BagPerf {
     
     /** Empty Item implementation useful for testing */
     public static class NullItem extends Item.StringKeyItem {
-        private final String key;
+        public String key;
     
         public NullItem() {
             this(Memory.randomNumber.nextFloat() * (1.0f - Parameters.TRUTH_EPSILON));

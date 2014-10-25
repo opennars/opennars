@@ -109,6 +109,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             concept = null;
         
                 
+        
         //TODO avoid creating new concept if it's just going to merge a budget with an existing one
         if (concept == null)
             concept = conceptBuilder.newConcept(budget, term, memory);
