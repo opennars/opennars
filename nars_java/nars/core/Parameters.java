@@ -35,10 +35,7 @@ public class Parameters {
     //              in the lifetime of the system, though different systems may take different
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
-    
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f; //how much =/> should be gained
-    public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
-    
+
     public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.1; //was 0.1, 0=deactivated //1/2 half time of duration in each direction makes 1 duration
     
     public static boolean TEMPORAL_PARTICLE_PLANNER=true;
