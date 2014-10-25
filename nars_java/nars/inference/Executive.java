@@ -615,6 +615,9 @@ public class Executive implements Observer {
     
     //check all predictive statements, match them with last events
     public void temporalPredictionsAdapt() {
+        if(Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV==0.0f) {
+            return; //
+        }
         for(Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
             boolean concurrent_conjunction=false;
             Term[] args=new Term[1];
