@@ -4,6 +4,7 @@ import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.core.Param;
 import nars.core.control.BalancedSequentialMemoryCycle;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.entity.Sentence;
@@ -14,7 +15,6 @@ import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
 import nars.storage.ContinuousBag;
-import nars.storage.ContinuousBag2;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
 public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
@@ -47,7 +47,7 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     }
     
     @Override
-    public Concept newConcept(final Term t, final Memory m) {
+    public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
         
         /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
@@ -55,7 +55,7 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
         Bag<TaskLink,Task> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), randomRemoval);
         Bag<TermLink,TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), randomRemoval);
         
-        return new Concept(t, taskLinks, termLinks, m);        
+        return new Concept(b, t, taskLinks, termLinks, m);        
     }
     
 }

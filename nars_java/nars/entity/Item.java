@@ -32,7 +32,6 @@ public abstract class Item<K> implements Comparable {
 
     abstract public static class StringKeyItem extends Item<CharSequence> {
         
-        public StringKeyItem() {  super();        }
         public StringKeyItem(final BudgetValue budget) { super(budget);         }
 
                 
@@ -55,12 +54,6 @@ public abstract class Item<K> implements Comparable {
     /** The budget of the Item, consisting of 3 numbers */
     public final BudgetValue budget;
 
-    /**
-     * The default constructor
-     */
-    protected Item() {
-        this(new BudgetValue());
-    }
 
     /**
      * Constructor with initial budget

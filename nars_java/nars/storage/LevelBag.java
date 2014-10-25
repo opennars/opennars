@@ -126,7 +126,18 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     public int size() {
         return nameTable.size();
     }
+        
+    /** this should always equal size(), but it's here for testing purposes */
+    protected int sizeItems() {
+        int t = 0;
+        for (Deque<E> l : itemTable) {
+            if (l!=null)
+                t += l.size();
+        }
+        return t;
+    }
 
+    
     @Override
     public Set<K> keySet() {
         return nameTable.keySet();
@@ -305,7 +316,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
             int outLevel = 0;
-            //while (itemTable[outLevel].isEmpty()) {
             while (levelEmpty(outLevel)) {
                 outLevel++;
             }
@@ -318,8 +328,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         ensureLevelExists(inLevel);
         itemTable[inLevel].add(newItem);        // FIFO
         mass += (inLevel + 1);                  // increase total mass
-        //refresh();                              // refresh the window
-        return oldItem;		// TODO return null is a bad smell
+        if (oldItem == newItem)
+            return null;
+        return oldItem;
     }
 
     protected final void ensureLevelExists(final int level) {
@@ -369,7 +380,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if (!found) {
             //search other levels for this item because it's not where we thought it was according to getLevel()
             if (!outOfBaseComplete(oldItem)) {
-                throw new RuntimeException("Can not remove missing element " + oldItem + " from " + this.getClass().getSimpleName());
+                String m = "Possible LevelBag inconsistency: Can not remove missing element: size inconsistency" + size() + "==?" + sizeItems()  + oldItem + " from " + this.getClass().getSimpleName();
+                System.err.println(m);
+                //throw new RuntimeException(m);
             }
         }
         //refresh();

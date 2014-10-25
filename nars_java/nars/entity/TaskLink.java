@@ -102,6 +102,7 @@ public class TaskLink extends Item<Task> implements TLink {
     
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) return true;
         if (obj instanceof TaskLink) {
             TaskLink t = (TaskLink)obj;
             return t.targetTask.equals(targetTask);                    
@@ -114,6 +115,7 @@ public class TaskLink extends Item<Task> implements TLink {
      * @param i The index level
      * @return The index value
      */
+    @Override
     public final short getIndex(final int i) {
         if ((index != null) && (i < index.length)) {
             return index[i];

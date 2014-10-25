@@ -80,7 +80,7 @@ public class TermLink extends Item<TermLink> implements TLink {
      * @param indices Component indices in compound, may be 1 to 4
      */
     public TermLink(final Term target, final short type, final short... indices) {
-        super();
+        super(null);
         this.target = target;
         this.type = type;
         assert (type % 2 == 0); // template types all point to compound, though the target is component

@@ -6,5 +6,5 @@ import nars.language.Term;
 
 
 public interface ConceptBuilder {
-    public Concept newConcept(Term t, Memory m);
+    public Concept newConcept(BudgetValue b, Term t, Memory m);    
 }
