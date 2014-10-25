@@ -12,9 +12,10 @@ import java.util.Deque;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.ContinuousBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -23,6 +24,7 @@ import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
+import nars.util.ItemCounter;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -309,7 +311,7 @@ public class Rover2 extends PhysicsModel {
             //world.AddABlock(Phys, sz, sz);
             food.setTransform(new Vec2(x*2.0f,y*2.0f), food.getAngle());            
             //Phys.getWorld().destroyBody(hit);
-            nar.addInput("$0.99;0.90$ <goal --> Food>. :|:");            
+            nar.addInput("<goal --> Food>. :|:");            
         }
 
 
@@ -407,7 +409,7 @@ public class Rover2 extends PhysicsModel {
                     float freq = 1f;
                     
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    String ss = "$" + Texts.n1(conf) + "$ " + "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+                    String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
                     sight.set(ss);
                     
                 }
@@ -478,7 +480,7 @@ public class Rover2 extends PhysicsModel {
             }
 
             if (a < 0.1) {
-                feltAngularVelocity.set("$0.50$ <" + f(0) + " --> feltAngularMotion>. :|: %1.00;0.90%");
+                feltAngularVelocity.set("<" + f(0) + " --> feltAngularMotion>. :|: %1.00;0.90%");
                 //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
             } else {
                 String direction;
@@ -487,17 +489,17 @@ public class Rover2 extends PhysicsModel {
                 } else /*if (xa > 0)*/ {
                     direction = angleTerm(+MathUtils.PI);
                 }
-                feltAngularVelocity.set("$0.50$ <(*," + f(a) + "," + direction + ") --> feltAngularMotion>. :|:");
+                feltAngularVelocity.set("<(*," + f(a) + "," + direction + ") --> feltAngularMotion>. :|:");
                // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
             }
 
-            feltOrientation.set("$0.50$ <" + angleTerm(torso.getAngle()) + " --> feltOrientation>. :|:");
+            feltOrientation.set("<" + angleTerm(torso.getAngle()) + " --> feltOrientation>. :|:");
 
             float speed = Math.abs(torso.getLinearVelocity().length()/20f);
             if (speed > 0.9f) {
                 speed = 0.9f;
             }            
-            feltSpeed.set("$0.50$ <" + f(speed) + " --> feltSpeed>. :|:");
+            feltSpeed.set("<" + f(speed) + " --> feltSpeed>. :|:");
             //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
             
             int positionWindow1 = 16;
@@ -513,7 +515,7 @@ public class Rover2 extends PhysicsModel {
                 dist/=positionWindow1;
                 dist*=scale;
                 if (dist > 1.0f) dist = 1.0f;
-                feltSpeedAvg.set("$0.50$ <" + f(dist) + " --> feltSpeedAvg" + positionWindow1 + ">. :|:");
+                feltSpeedAvg.set("<" + f(dist) + " --> feltSpeedAvg" + positionWindow1 + ">. :|:");
             }
 
             positions.addLast(currentPosition.clone());
@@ -798,16 +800,16 @@ public class Rover2 extends PhysicsModel {
 
 
     public static void main(String[] args) {
-        //NAR nar = new DefaultNARBuilder().build();
+        NAR nar = new DefaultNARBuilder().
         //NAR nar = new DiscretinuousBagNARBuilder().
-        NAR nar = new ContinuousBagNARBuilder().
+        //NAR nar = new ContinuousBagNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(2048).simulationTime().
+                setConceptBagSize(1000).simulationTime().
                 build();
         
         
-        float framesPerSecond = 10f;
-        int cyclesPerFrame = 600; //was 200        
+        float framesPerSecond = 20f;
+        int cyclesPerFrame = 300; //was 200        
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
         nar.param().conceptForgetDurations.set(5f);
@@ -816,6 +818,7 @@ public class Rover2 extends PhysicsModel {
         nar.param().newTaskForgetDurations.set(5f);
         
         
+        ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptRemove.class);
 
         // RoverWorld.world= new RoverWorld(rv, 48, 48);
         new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, new Rover2(nar)) {
@@ -826,6 +829,10 @@ public class Rover2 extends PhysicsModel {
                 if (e.getKeyChar() == 'm') {
                     mission = (mission+1)%2;
                     System.out.println("Mission: " + mission);
+                }
+                
+                else if (e.getKeyChar() == 'g') {
+                    removedConcepts.report(System.out);
                 }
 
 //                if (e.getKeyCode() == KeyEvent.VK_UP) {

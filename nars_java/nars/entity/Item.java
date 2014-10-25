@@ -172,9 +172,11 @@ public abstract class Item<K> implements Comparable {
     /**
      * Merge with another Item with identical key
      * @param that The Item to be merged
+     * @return the resulting Item: this or that
      */
-    public void merge(final Item that) {
-        budget.merge(budget);
+    public Item merge(final Item that) {
+        budget.merge(that.budget);
+        return this;
     }
 
     /**

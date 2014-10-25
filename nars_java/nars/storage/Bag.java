@@ -67,7 +67,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param newItem The new Item
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
-    public E putIn(final E newItem) {
+    public E putIn(E newItem) {
 
         final K newKey = newItem.name();        
         final E existingItemWithSameKey = nameRemove(newKey);
@@ -75,14 +75,14 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         if (existingItemWithSameKey != null) {
             // merge duplications
             outOfBase(existingItemWithSameKey);
-            newItem.merge(existingItemWithSameKey);
+            newItem = (E)existingItemWithSameKey.merge(newItem);
         }
 
         // put the (new or merged) item into itemTable        
         final E overflowItem = intoBase(newItem);
 
         if (overflowItem == newItem) {
-            //did not add
+            //did not add, too low priority
             return newItem;
         }
         
