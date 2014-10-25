@@ -13,7 +13,6 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.AdaptiveContinuousBag;
 import nars.storage.ContinuousBag;
 import nars.storage.ContinuousBag2.BagCurve;
 import nars.storage.ContinuousBag2.PriorityProbabilityApproximateCurve;
@@ -45,8 +44,8 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
 
     @Override
     public Bag<Concept,Term> newConceptBag(Param p) {
-        //return new ContinuousBag2<>(getConceptBagSize(), curve, randomRemoval);
-        return new AdaptiveContinuousBag<>(getConceptBagSize());
+        return new ContinuousBag<>(getConceptBagSize(), curve, randomRemoval);
+        //return new AdaptiveContinuousBag<>(getConceptBagSize());
     }
 
     @Override

@@ -11,8 +11,8 @@ import nars.entity.Item;
 import nars.util.sort.IndexedTreeSet;
 
 
-
-public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Comparator<E> {
+//WARNING NOT WORKING CURRENTLY
+@Deprecated public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Comparator<E> {
      
     final float MASS_EPSILON = 1e-5f;
     
@@ -290,12 +290,12 @@ public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Com
     @Override protected E intoBase(E newItem) {
         float newPriority = newItem.getPriority();
         
-        if (newPriority < getMinPriority())
-            return newItem;
-        
         E oldItem = null;        
                 
         if (size() >= capacity) {      // the bag is full            
+            if (newPriority < getMinPriority())
+                return newItem;
+            
             oldItem = takeOutIndex(0);            
         }
         

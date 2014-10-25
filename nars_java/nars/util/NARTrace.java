@@ -166,9 +166,6 @@ public class NARTrace extends MemoryObserver implements Serializable {
     
     @Override
     public void onConceptAdd(Concept concept) {
-        if (this.concept.containsKey(concept)) 
-            throw new RuntimeException(this + " adding duplicate concept: " + concept);
-
         ConceptAdd cc = new ConceptAdd(concept, t);
         addEvent(cc);
 
