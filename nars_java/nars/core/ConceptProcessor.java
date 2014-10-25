@@ -28,7 +28,7 @@ public interface ConceptProcessor extends Iterable<Concept> {
      * Creates and adds new concept to the memory
      * @return the new concept, or null if the memory is full
      */
-    public Concept addConcept(Term term, Memory memory);
+    public Concept addConcept(BudgetValue budget, Term term, Memory memory);
 
     /** Activates a concept, adjusting its budget.  
      *  May be invoked by the concept processor or at certain points in the reasoning process.

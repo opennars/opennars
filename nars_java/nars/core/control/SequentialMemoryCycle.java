@@ -82,8 +82,8 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     }
 
     @Override
-    public Concept addConcept(final Term term, final Memory memory) {
-        Concept concept = conceptBuilder.newConcept(term, memory);
+    public Concept addConcept(BudgetValue budget, final Term term, final Memory memory) {
+        Concept concept = conceptBuilder.newConcept(budget, term, memory);
         
         boolean merged = false;
         Concept removed = concepts.putIn(concept);
@@ -109,6 +109,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         }
         
         if (!merged) {
+            System.out.println("added: " + concept);
             memory.logic.CONCEPT_ADD.commit(term.getComplexity());
             memory.emit(Events.ConceptAdd.class, concept);
         }

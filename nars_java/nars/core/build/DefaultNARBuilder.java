@@ -9,6 +9,7 @@ import nars.core.NARBuilder;
 import nars.core.Param;
 import nars.core.Parameters;
 import nars.core.control.SequentialMemoryCycle;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.entity.Sentence;
@@ -122,11 +123,11 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     }
 
     @Override
-    public Concept newConcept(Term t, Memory m) {        
+    public Concept newConcept(BudgetValue b, Term t, Memory m) {        
         Bag<TaskLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getTaskLinkBagSize());
         Bag<TermLink,TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getTermLinkBagSize());
         
-        return new Concept(t, taskLinks, termLinks, m);        
+        return new Concept(b, t, taskLinks, termLinks, m);        
     }
 
     

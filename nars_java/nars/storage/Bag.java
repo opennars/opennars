@@ -53,7 +53,15 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     abstract public E pickOut(final K key);    
 
+    /**
+     * Insert an item into the itemTable, and return the overflow
+     *
+     * @param newItem The Item to put in
+     * @return The overflow Item, or null if nothing displaced
+     */    
     abstract protected E intoBase(final E newItem);
+    
+    
     abstract protected void outOfBase(final E oldItem);
     
     
@@ -82,7 +90,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         final E overflowItem = intoBase(newItem);
 
         if (overflowItem == newItem) {
-            //did not add, too low priority
+            //did not add, too low priority            
             return newItem;
         }
         
@@ -94,8 +102,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
             final K overflowKey = overflowItem.name();
             if (!overflowKey.equals(newKey)) {
                 nameRemove(overflowKey);
+                return overflowItem;
             }
-            return overflowItem;
         }
         
         return null;

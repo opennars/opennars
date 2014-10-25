@@ -344,10 +344,12 @@ abstract public class NAL implements Callable<NAL> {
      */
     public static class ImmediateProcess extends NAL  {
         private final Task task;
+        private final int numSiblingTasks;
         
-        public ImmediateProcess(Memory mem, Task currentTask) {
+        public ImmediateProcess(Memory mem, Task currentTask, int numSiblingTasks) {
             super(mem);
             this.task = currentTask;
+            this.numSiblingTasks = numSiblingTasks;
         }
 
         @Override
@@ -358,8 +360,8 @@ abstract public class NAL implements Callable<NAL> {
             emit(TaskImmediateProcess.class, task);
 
             setCurrentTerm(currentTask.getContent());
-            currentConcept = mem.conceptualize(getCurrentTerm());
-
+            currentConcept = mem.conceptualize(BudgetFunctions.budgetNewTaskConcept(task, numSiblingTasks), getCurrentTerm());
+            
             if (getCurrentConcept() != null) {
 
                 mem.conceptActivate(getCurrentConcept(), currentTask.budget);

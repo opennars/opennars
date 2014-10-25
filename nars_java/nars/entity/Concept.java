@@ -35,6 +35,7 @@ import nars.core.Events.TermLinkAdd;
 import nars.core.Events.TermLinkRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
+import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;
@@ -113,8 +114,8 @@ public class Concept extends Item<Term> {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Term tm, Bag<TaskLink,Task> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
-        super();
+    public Concept(final BudgetValue b, final Term tm, Bag<TaskLink,Task> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
+        super(b);        
         
         this.term = tm;
         this.memory = memory;
@@ -399,7 +400,7 @@ public class Concept extends Item<Term> {
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                         Term componentTerm = termLink.target;
 
-                        Concept componentConcept = memory.conceptualize(componentTerm);
+                        Concept componentConcept = memory.conceptualize(BudgetFunctions.budgetTermLinkConcept(this, task.budget, termLink), componentTerm);
 
                         if (componentConcept != null) {
 
@@ -514,7 +515,7 @@ public class Concept extends Item<Term> {
                 for (final TermLink template : termLinkTemplates) {
                     if (template.type != TermLink.TRANSFORM) {
                         Term t = template.target;
-                        final Concept concept = memory.conceptualize(t);
+                        final Concept concept = memory.conceptualize(BudgetFunctions.budgetTermLinkConcept(this, taskBudget, template), t);
                         if (concept != null) {
 
                             // this termLink to that

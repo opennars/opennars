@@ -219,7 +219,7 @@ public class Memory implements Serializable {
     // ----------------------------------------
     
     
-    public final Term self;
+    //public final Term self;
 
     
     
@@ -344,7 +344,7 @@ public class Memory implements Serializable {
         
         
         // create self
-        this.self = conceptualize(new Term(Symbols.SELF)).term;
+        //this.self = conceptualize(new BudgetValue(0.5f, 0.5f, 0.5f), new Term(Symbols.SELF)).term;
 
         for (Operator o : initialOperators)
             addOperator(o);
@@ -505,18 +505,12 @@ public class Memory implements Serializable {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null ( TODO bad smell )
      */
-    public Concept conceptualize(final Term term) {
+    public Concept conceptualize(final BudgetValue budget, final Term term) {
         if (!term.isConstant()) {
-            return null;
+            return concept(term);
         }
         
-        Concept concept = concept(term);
-        if (concept == null) {
-            // The only part of Memory that instantiates new Concepts
-            return concepts.addConcept(term, this);
-        }
-        else
-            return concept;
+        return concepts.addConcept(budget, term, this);
     }
 
     /**
@@ -886,8 +880,8 @@ public class Memory implements Serializable {
         
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory
-        int counter = Math.min(maxTasks, newTasks.size());
-        while (counter-- > 0) {
+        int numTasks = Math.min(maxTasks, newTasks.size());
+        for (int i = 0; i < numTasks; i++) {
             if(newTasks.isEmpty()) { //TODO it can already be 0 inbetween, multithreading?
                 break;
             }
@@ -897,17 +891,15 @@ public class Memory implements Serializable {
             emotion.adjustBusy(task.getPriority(), task.getDurability());            
 
             
-            if (  task.isInput()  || 
-                  concept(task.getContent())!=null || 
+            if (  task.isInput()  ||                   
                   (   task.sentence!=null && 
                       task.getContent()!=null && 
                       Executive.isExecutableTerm(task.getContent()) &&
-                      task.sentence.isGoal() && 
-                      conceptualize(task.getContent()) != null)
+                      task.sentence.isGoal())
                ) {
-                
+                                      
                 // new addInput or existing concept
-                pending.add(new ImmediateProcess(this, task));                
+                pending.add(new ImmediateProcess(this, task, numTasks - 1));                
                                 
                 
             } else {
@@ -984,7 +976,7 @@ public class Memory implements Serializable {
     public boolean processNovelTask() {
         final Task task = novelTasks.takeOut();       // select a task from novelTasks
         if (task != null) {            
-            new ImmediateProcess(this, task).call();
+            new ImmediateProcess(this, task, 0).call();
             return true;
         }
         return false;

@@ -56,14 +56,7 @@ public class BudgetValue implements Cloneable {
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
     long lastForgetTime = -1;
     
-    /** 
-     * Default constructor
-     */
-    public BudgetValue() {
-        priority = 0.01f;
-        durability = 0.01f;
-        quality = 0.01f;
-    }
+
 
     /** 
      * Constructor with initialization

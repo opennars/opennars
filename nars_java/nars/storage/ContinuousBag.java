@@ -297,7 +297,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      * Insert an item into the itemTable, and return the overflow
      *
      * @param newItem The Item to put in
-     * @return The overflow Item
+     * @return The overflow Item, or null if nothing displaced
      */
     @Override protected E intoBase(E newItem) {
         float newPriority = newItem.getPriority();

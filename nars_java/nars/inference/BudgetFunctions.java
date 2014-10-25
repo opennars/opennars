@@ -25,6 +25,7 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -333,5 +334,13 @@ public final class BudgetFunctions extends UtilityFunctions {
     @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
         throw new RuntimeException("Moved to TemporalRules.java");
     }    
+
+    public static BudgetValue budgetTermLinkConcept(Concept c, BudgetValue taskBudget, TermLink termLink) {
+        return taskBudget.clone();
+    }
+
+    public static BudgetValue budgetNewTaskConcept(Task task, int numTasksInBatch) {
+        return task.budget.clone();
+    }
 
 }

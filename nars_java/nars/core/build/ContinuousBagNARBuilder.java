@@ -4,6 +4,7 @@ import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.core.Param;
 import nars.core.control.SequentialMemoryCycle;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.entity.Sentence;
@@ -55,12 +56,12 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     }
     
     @Override
-    public Concept newConcept(final Term t, final Memory m) {
+    public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
         
         Bag<TaskLink,Task> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), curve, randomRemoval);
         Bag<TermLink,TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), curve, randomRemoval);
         
-        return new Concept(t, taskLinks, termLinks, m);        
+        return new Concept(b, t, taskLinks, termLinks, m);        
     }
     
 }
