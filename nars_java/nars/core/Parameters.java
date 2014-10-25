@@ -36,7 +36,7 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.1; //1/2 half time of duration in each direction makes 1 duration
+    public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.0; //was 0.1, 0=deactivated //1/2 half time of duration in each direction makes 1 duration
     
     public static double TEMPORAL_INDUCTION_MIN_PRIORITY=0.0;
     
@@ -46,10 +46,10 @@ public class Parameters {
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.2f;
+    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
     
     //how much more priority should =/> =|> gain?
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.2f;
+    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f;
     
     
     //internal experience has less durability?
