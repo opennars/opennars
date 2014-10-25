@@ -14,5 +14,6 @@ public interface SortedItemList<T> extends Collection<T> {
     public T getFirst();
     public T getLast();
     public Iterator<T> descendingIterator();
+    public void setCapacity(int capacity);
     
 }

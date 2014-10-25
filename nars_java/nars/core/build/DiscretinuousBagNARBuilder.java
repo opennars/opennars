@@ -14,7 +14,7 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
-import nars.storage.ContinuousBag;
+import nars.storage.CurveBag;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
 public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
@@ -32,7 +32,7 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public Bag<Task,Sentence> newNovelTaskBag(Param p) {
         //return new ContinuousBag2<>(getTaskBufferSize(), p.taskCyclesToForget, curve, randomRemoval);
-        return new ContinuousBag<>(getNovelTaskBagSize(), randomRemoval);
+        return new CurveBag<>(getNovelTaskBagSize(), randomRemoval);
     }
 
     @Override
@@ -52,8 +52,8 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
         /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
-        Bag<TaskLink,Task> taskLinks = new ContinuousBag<>(getTaskLinkBagSize(), randomRemoval);
-        Bag<TermLink,TermLink> termLinks = new ContinuousBag<>(getTermLinkBagSize(), randomRemoval);
+        Bag<TaskLink,Task> taskLinks = new CurveBag<>(getTaskLinkBagSize(), randomRemoval);
+        Bag<TermLink,TermLink> termLinks = new CurveBag<>(getTermLinkBagSize(), randomRemoval);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }

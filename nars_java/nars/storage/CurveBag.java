@@ -1,18 +1,18 @@
 package nars.storage;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Item;
-import nars.util.sort.IndexedTreeSet;
+import nars.util.sort.ArraySortedItemList;
+import nars.util.sort.SortedItemList;
 
 
-//WARNING NOT WORKING CURRENTLY
-@Deprecated public class ContinuousBag2<E extends Item<K>,K> extends Bag<E,K> implements Comparator<E> {
+
+public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      
     final float MASS_EPSILON = 1e-5f;
     
@@ -24,7 +24,7 @@ import nars.util.sort.IndexedTreeSet;
     /**
      * array of lists of items, for items on different level
      */
-    public final IndexedTreeSet<E> items;
+    public final SortedItemList<E> items;
     
     /**
      * defined in different bags
@@ -36,7 +36,9 @@ import nars.util.sort.IndexedTreeSet;
     private float mass;
     
     /** whether items are removed by random sampling, or a continuous scanning */
-    final protected boolean randomRemoval;
+    private final boolean randomRemoval;
+    
+    private final BagCurve curve;
     
     /** Rate of sampling index when in non-random "scanning" removal mode.  
      *  The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
@@ -44,74 +46,50 @@ import nars.util.sort.IndexedTreeSet;
      *  When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
      * 
      *  Valid values are: -1.0 <= x <= 1.0, x!=0      */
-    final protected float scanningRate = -1.0f;
+    final float scanningRate = -1.0f;
     
     /** current removal index x, between 0..1.0.  set automatically */
-    protected double x;
-    private final BagCurve curve;
-    
-
-    
-    public static class CubicBagCurve implements BagCurve {
-
-        @Override public final double y(final double x) {
-            //1.0 - ((1.0-x)^2)
-            // a function which has domain and range between 0..1.0 but
-            //   will result in values above 0.5 more often than not.  see the curve:        
-            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return 1.0 - (x*x*x);
-        }
+    private float x;
         
+    public CurveBag(int capacity, boolean randomRemoval) {
+        this(capacity, new FairPriorityProbabilityCurve(), randomRemoval);               
     }
     
-    /** Approximates priority -> probability fairness with an exponential curve */
-    public static class PriorityProbabilityApproximateCurve implements BagCurve {
-
-        @Override public final double y(final double x) {
-            return 1 - Math.exp(-5 * x);
-        }
-        
+    public CurveBag(int capacity, BagCurve curve, boolean randomRemoval) {
+        this(capacity, curve, randomRemoval, null /*new ArraySortedItemList<E>() */
+                
+                                /*if (capacity < 128)*/
+                    //items = new ArraySortedItemList<>(capacity);
+                /*else  {
+                    //items = new FractalSortedItemList<>(capacity);
+                    //items = new RedBlackSortedItemList<>(capacity);
+                }*/
+        );
     }
     
-    
-    
-    public static class QuadraticBagCurve implements BagCurve {
-
-        @Override public final double y(final double x) {
-            //1.0 - ((1.0-x)^2)
-            // a function which has domain and range between 0..1.0 but
-            //   will result in values above 0.5 more often than not.  see the curve:        
-            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return 1 - (x*x);
-        }
-        
-    }
-    
-    
-    public ContinuousBag2(int capacity, BagCurve curve, boolean randomRemoval) {
+    public CurveBag(int capacity, BagCurve curve, boolean randomRemoval, SortedItemList<E> items) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
         this.curve = curve;
         
+        if (items == null) {
+            //auto-select based on capacity
+        }
+        
+        items.clear();
+        items.setCapacity(capacity);
+        this.items = items;
+                
         if (randomRemoval)
             x = Memory.randomNumber.nextFloat();
         else
             x = 1.0f; //start a highest priority
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
-        
-        items = new IndexedTreeSet<>(this);
-                            
+                
         this.mass = 0;
     }
-
-    @Override public final int compare(final E ex, final E ey) {
-        float y = ey.budget.getPriority();
-        float x = ex.budget.getPriority();
-        
-        return (x < y) ? -1 : ((x == y) ? (ex.compareTo(ey)) : 1);                   
-    }            
     
 
     @Override
@@ -127,7 +105,7 @@ import nars.util.sort.IndexedTreeSet;
      * @return The number of items
      */
     @Override
-    public int size() {
+    public int size() {        
         return items.size();
     }
 
@@ -195,20 +173,18 @@ import nars.util.sort.IndexedTreeSet;
         
         return selected;
     }
-    
 
     @Override
     public E peekNext() {
         if (size()==0) return null; // empty bag                
                 
-        final E selected = items.exact( nextRemovalIndex() );
+        final E selected = items.get( nextRemovalIndex() );
         return selected;
     }
     
     
     /** distributor function */
     public int nextRemovalIndex() {      
-        //TODO use common AbstractContinuousBag because this should be identical with ContinuousBag's method
         final float s = size();
         if (randomRemoval) {
             x = Memory.randomNumber.nextFloat();            
@@ -221,7 +197,7 @@ import nars.util.sort.IndexedTreeSet;
                 x += 1.0f;
         }
         
-        float y = (float) curve.y(x);
+        float y = getFocus(x);
         if (y < 0) y = 0;
         if (y > 1.0f) y = 1f;
         
@@ -232,17 +208,24 @@ import nars.util.sort.IndexedTreeSet;
         
         return result;
     }
-        
-
     
-    public static long fastRound(final double d) {
-        if (d > 0) {
-            return (long) (d + 0.5d);
-        } else {
-            return (long) (d - 0.5d);
-        }
+    /**
+     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
+     * @param x
+     * @return 
+     */
+    public float getFocus(final float x) {
+        return (float)curve.y(x);
     }
     
+//    public static long fastRound(final double d) {
+//        if (d > 0) {
+//            return (long) (d + 0.5d);
+//        } else {
+//            return (long) (d - 0.5d);
+//        }
+//    }
+//    
 
     
     /**
@@ -263,27 +246,32 @@ import nars.util.sort.IndexedTreeSet;
 
 
 
-
     public float getMinPriority() {
         if (items.isEmpty()) return 0;
-        return items.first().getPriority();
+        return items.getFirst().getPriority();
     }
     public float getMaxPriority() {
         if (items.isEmpty()) return 0;
-        return items.last().getPriority();
+        return items.getLast().getPriority();
     }
     
     /**
      * Insert an item into the itemTable, and return the overflow
      *
      * @param newItem The Item to put in
-     * @return The overflow Item
+     * @return The overflow Item, or null if nothing displaced
      */
     @Override protected E intoBase(E newItem) {
-        float newPriority = newItem.getPriority();
+        float newPriority = newItem.getPriority();        
         
-        E oldItem = null;        
-                
+        E oldItem = null;
+        
+        /*if (items.contains(newItem))
+            return null;*/
+        
+        if (capacity == 500)
+            System.out.println(newItem + " " + nameTable.size() + " " + size() + " " + capacity + " " + getMinPriority() + ".." + getMaxPriority());
+        
         if (size() >= capacity) {      // the bag is full            
             if (newPriority < getMinPriority())
                 return newItem;
@@ -297,6 +285,7 @@ import nars.util.sort.IndexedTreeSet;
         return oldItem;
     }
 
+
     
     
     /**
@@ -305,22 +294,21 @@ import nars.util.sort.IndexedTreeSet;
      * @param level The current level
      * @return The first Item
      */
-    private E takeOutIndex(final int index) {        
-        E e = items.exact(index);
-        boolean removed = items.remove(e);
-                
-        nameTable.remove(e.name());
+    private E takeOutIndex(final int index) {
+        //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
+        final E selected = items.remove(index);
+        mass -= selected.budget.getPriority();
         
-        mass -= e.budget.getPriority();
+        nameTable.remove(selected.name());        
         
-        return e;
+        return selected;
     }
 
     /**
      * Remove an item from itemTable, then adjust mass
      *
      * @param oldItem The Item to be removed
-     */
+     */ 
     @Override
     protected void outOfBase(final E oldItem) {
         /*
@@ -373,5 +361,53 @@ import nars.util.sort.IndexedTreeSet;
         return items.descendingIterator();
     }
 
+    /**
+     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
+     * @param x input mappig value
+     * @return
+     */
+    public static interface BagCurve {
+
+        public double y(double x);
+    }
+
+
+    
+    public static class CubicBagCurve implements nars.storage.CurveBag.BagCurve {
+
+        @Override public final double y(final double x) {
+            //1.0 - ((1.0-x)^2)
+            // a function which has domain and range between 0..1.0 but
+            //   will result in values above 0.5 more often than not.  see the curve:        
+            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
+            return 1.0 - (x*x*x);
+        }
+        
+    }
+    
+    /** Approximates priority -> probability fairness with an exponential curve */
+    public static class FairPriorityProbabilityCurve implements nars.storage.CurveBag.BagCurve {
+
+        @Override public final double y(final double x) {
+            return 1 - Math.exp(-5 * x);
+        }
+        
+    }
+    
+    
+    
+    public static class QuadraticBagCurve implements nars.storage.CurveBag.BagCurve {
+
+        @Override public final double y(final double x) {
+            //1.0 - ((1.0-x)^2)
+            // a function which has domain and range between 0..1.0 but
+            //   will result in values above 0.5 more often than not.  see the curve:        
+            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
+            return 1 - (x*x);
+        }
+        
+    }
+    
+    
     
 }
