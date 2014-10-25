@@ -170,6 +170,6 @@ public class Parameters {
     public static float TASK_PRIORITY_MOMENTUM = 0.5f;
     
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
-    public static int TEMPORAL_INTERVAL_PRECISION = 2;
+    public static int TEMPORAL_INTERVAL_PRECISION = 1;
 }
 
