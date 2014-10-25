@@ -34,7 +34,6 @@ import nars.io.Texts;
  */
 public class BudgetValue implements Cloneable {
 
-    public float epsilon=0.001f;
     /** The character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
     /** The character that separates the factors in a budget value */
@@ -155,7 +154,7 @@ public class BudgetValue implements Cloneable {
      */
     public void setDurability(float d) {
         if(d>=1.0f) {
-            d=1.0f-epsilon;
+            d=1.0f-TRUTH_EPSILON;
         }
         durability = d;
     }
@@ -167,7 +166,7 @@ public class BudgetValue implements Cloneable {
     public void incDurability(final float v) {
         float durability2 = or(durability, v);
         if(durability2>=1.0f) {
-            durability=1.0f-epsilon; //put into allowed range
+            durability=1.0f-TRUTH_EPSILON; //put into allowed range
         }
         durability=durability2;
     }
