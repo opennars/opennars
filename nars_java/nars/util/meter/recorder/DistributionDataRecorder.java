@@ -35,7 +35,7 @@ public class DistributionDataRecorder implements DataRecorder {
     private static final Set<String> SUPPORTED_FIELD_NAMES
             = Collections.unmodifiableSet(Misc.getStaticFieldValues(Field.class, String.class));
 
-    protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
+    //protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
     protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
     protected final AtomicDouble sumOfSquares = new AtomicDouble(0); // For standard deviation and quadratic mean
 
@@ -50,19 +50,20 @@ public class DistributionDataRecorder implements DataRecorder {
             final long now) {
 
         final double currentValue = tracker.getValue();
-        double tmp;
+        
 
         // Sum of squares (for standard deviation and quadratic mean calculation)
         sumOfSquares.addAndGet(currentValue * currentValue);
 
-        // Product (for geometric mean calculation)
+/*        // Product (for geometric mean calculation)
+        double tmp = product.get();
         for (;;) {
             tmp = product.get();
             double newProduct = tmp * currentValue;
             if (product.compareAndSet(tmp, newProduct)) {
                 break;
             }
-        }
+        }*/
 
         // Sum of inverses (for harmonic mean calculation)
         sumOfInverses.addAndGet(1D / currentValue);
@@ -70,54 +71,43 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void restore(final DataSet dataSet) {
-        product.set(dataSet.getField(Field.PRODUCT, Double.class));
+        //product.set(dataSet.getField(Field.PRODUCT, Double.class));
         sumOfSquares.set(dataSet.getField(Field.SUM_OF_SQUARES, Double.class));
         sumOfInverses.set(dataSet.getField(Field.SUM_OF_INVERSES, Double.class));
     }
 
     @Override
-    public Object getField(final StatsSession session,
-            String name) {
-        // Intern the name to allow fast reference equality checks
-        name = name.intern();
-
-        if (name == Field.PRODUCT) {
-            return product.get();
+    public Object getField(final StatsSession session, final String name) {
+        switch (name) {
+            case Field.SUM_OF_SQUARES:
+                return sumOfSquares.get();
+            case Field.SUM_OF_INVERSES:
+                return sumOfInverses.get();
+            case Field.ARITHMETIC_MEAN:
+                return getArithmeticMean(session);
+            case Field.HARMONIC_MEAN:
+                return getHarmonicMean(session);
+            case Field.QUADRATIC_MEAN:
+                return getQuadraticMean(session);
+            case Field.STANDARD_DEVIATION:
+                return getStandardDeviation(session);
+            /*if (name == Field.PRODUCT) {
+                return product.get();
+            }*/
+            /* Field.GEOMETRIC_MEAN ... */
         }
-        if (name == Field.SUM_OF_SQUARES) {
-            return sumOfSquares.get();
-        }
-        if (name == Field.SUM_OF_INVERSES) {
-            return sumOfInverses.get();
-        }
-        if (name == Field.ARITHMETIC_MEAN) {
-            return getArithmeticMean(session);
-        }
-        if (name == Field.GEOMETRIC_MEAN) {
-            return getGeometricMean(session);
-        }
-        if (name == Field.HARMONIC_MEAN) {
-            return getHarmonicMean(session);
-        }
-        if (name == Field.QUADRATIC_MEAN) {
-            return getQuadraticMean(session);
-        }
-        if (name == Field.STANDARD_DEVIATION) {
-            return getStandardDeviation(session);
-        }
-
         return null;
     }
 
     @Override
     public void collectData(final StatsSession session, final DataSet dataSet) {
-        dataSet.put(Field.PRODUCT, product.get());
+        //dataSet.put(Field.PRODUCT, product.get());
         dataSet.put(Field.SUM_OF_SQUARES, sumOfSquares.get());
         dataSet.put(Field.SUM_OF_INVERSES, sumOfInverses.get());
         dataSet.put(Field.ARITHMETIC_MEAN,
                 getArithmeticMean(session));
-        dataSet.put(Field.GEOMETRIC_MEAN,
-                getGeometricMean(session));
+        /*dataSet.put(Field.GEOMETRIC_MEAN,
+                getGeometricMean(session));*/
         dataSet.put(Field.HARMONIC_MEAN,
                 getHarmonicMean(session));
         dataSet.put(Field.QUADRATIC_MEAN,
@@ -128,7 +118,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void clear() {
-        product.set(1);
+        //product.set(1);
         sumOfInverses.set(0);
         sumOfSquares.set(0);
     }
@@ -142,14 +132,14 @@ public class DistributionDataRecorder implements DataRecorder {
         return session.getSum() / n;
     }
 
-    protected double getGeometricMean(final StatsSession session) {
+    /*protected double getGeometricMean(final StatsSession session) {
         final long n = session.getCommits();
         if (n <= 0) {
             return 0.0;
         }
 
         return Math.pow(product.get(), 1.0 / n);
-    }
+    }*/
 
     protected double getHarmonicMean(final StatsSession session) {
         final long n = session.getCommits();

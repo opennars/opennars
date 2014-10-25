@@ -1,50 +1,73 @@
 package nars.util.sort;
 
-import com.google.common.collect.Lists;
-import java.util.Iterator;
-import java.util.List;
-import javolution.util.FastTable;
+import java.util.Comparator;
+import javolution.util.FastCollection;
+import javolution.util.FastSortedTable;
+import javolution.util.function.Equality;
 import nars.entity.Item;
 
-//public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
-//public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
-//abstract public class SortedItemList<E> extends FastTable<E> {
-public class FractalSortedItemList<E extends Item> extends FastTable<E> implements SortedItemList<E> {
+
+public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedItemList<E> {
 
     int capacity;
+    private final FastCollection<E> sort;
 
     public FractalSortedItemList(int capacity) {
         super();
+        this.sort = this.sorted(new Comparator<Item>() {
+
+            @Override public int compare(Item b, Item a) {
+                float ap = a.getPriority();
+                float bp = b.getPriority();
+                return Float.compare(ap, bp);
+            }
+                
+        });
         this.capacity = capacity;
     }
 
-        public final int positionOf(final E o) {
-            final float y = o.budget.getPriority();
-            final int s = size();
-            if (s > 0)  {
+    @Override
+    public E getLast() {        
+        return sort.max();
+    }
+    @Override
+    public E getFirst() {
+        return sort.min();
+    }
 
-                //binary search
-                int low = 0;
-                int high = s-1;
-
-                while (low <= high) {
-                    int mid = (low + high) >>> 1;
-
-                    E midVal = get(mid);
-
-                    final float x = midVal.budget.getPriority();
-                    
-                    if (x < y) low = mid + 1;
-                    else if (x == y) return mid;
-                    else if (x > y) high = mid - 1;                    
-                    
-                }
-                return low;
-            }
-            else {
-                return 0;
-            }
-        }
+    
+    
+//    @Override
+//    public final int positionOf(final E o) {
+//        final float y = o.budget.getPriority();
+//        final int s = size();
+//        if (s > 0) {
+//
+//            //binary search
+//            int low = 0;
+//            int high = s - 1;
+//
+//            while (low <= high) {
+//                int mid = (low + high) >>> 1;
+//
+//                E midVal = get(mid);
+//
+//                final float x = midVal.budget.getPriority();
+//
+//                if (x < y) {
+//                    low = mid + 1;               
+//                } else if (x > y) {
+//                    high = mid - 1;
+//                } else if (x == y) {
+//                    return mid;
+//                }
+//
+//            }
+//            return low;
+//        } else {
+//            return 0;
+//        }
+//    }
 
 //    public int positionOf(final E o) {
 //        final E y = o;
@@ -76,35 +99,35 @@ public class FractalSortedItemList<E extends Item> extends FastTable<E> implemen
 //            return 0;
 //        }
 //    }
+//    @Override
+//    public final boolean add(final E o) {
+//        int s = size();
+//        if (s == 0) {
+//            return super.add(o);
+//        } else {
+//            
+//            boolean added = addIfAbsent(o);
+//            
+//            if (added  &&  ((s+1) >= capacity)) {
+//                //remove lowest
+//                reject(removeFirst());
+//                return true;
+//            }
+//                        
+//            return added;
+//            
+//        }
+//    }
 
-    @Override
-    public boolean add(final E o) {
-        if (isEmpty()) {
-            return super.add(o);
-        } else {
-            if (size() == capacity) {
-
-                if (positionOf(o) == 0) {
-                    //priority too low to join this list
-                    return false;
-                }
-
-                reject(removeFirst());
-            }
-            super.add(positionOf(o), o);
-            return true;
-        }
-    }
-
-    public int capacity() {
+    
+    public final int capacity() {
         return capacity;
     }
 
-    public int available() {
+    public final int available() {
         return capacity() - size();
     }
 
-    
     /**
      * can be handled in subclasses
      */

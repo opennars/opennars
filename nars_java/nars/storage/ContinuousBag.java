@@ -58,7 +58,6 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     
     public ContinuousBag(int capacity, boolean randomRemoval) {
         this(capacity, new PriorityProbabilityApproximateCurve(), randomRemoval );
-        //this(capacity, new ContinuousBag2.CubicBagCurve(), randomRemoval );
     }
     
     public ContinuousBag(int capacity, BagCurve curve, boolean randomRemoval) {
@@ -74,10 +73,13 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
-        if (capacity < 32)
+        /*if (capacity < 128)*/ {
             items = new ArraySortedItemList<>(capacity);
-        else 
-            items = new FractalSortedItemList<>(capacity);
+        }
+        /*else  {
+            //items = new FractalSortedItemList<>(capacity);
+            //items = new RedBlackSortedItemList<>(capacity);
+        }*/
         
         this.mass = 0;
     }
@@ -96,7 +98,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The number of items
      */
     @Override
-    public int size() {
+    public int size() {        
         return items.size();
     }
 
@@ -260,11 +262,16 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override protected E intoBase(E newItem) {
-        float newPriority = newItem.getPriority();
+        float newPriority = newItem.getPriority();        
         
+        E oldItem = null;
         
-        E oldItem = null;        
-                
+        /*if (items.contains(newItem))
+            return null;*/
+        
+        if (capacity == 500)
+            System.out.println(newItem + " " + nameTable.size() + " " + size() + " " + capacity + " " + getMinPriority() + ".." + getMaxPriority());
+        
         if (size() >= capacity) {      // the bag is full            
             if (newPriority < getMinPriority())
                 return newItem;
@@ -289,7 +296,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     private E takeOutIndex(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
-        final E selected = items.remove(index);        
+        final E selected = items.remove(index);
         mass -= selected.budget.getPriority();
         
         nameTable.remove(selected.name());        

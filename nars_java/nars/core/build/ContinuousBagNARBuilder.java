@@ -49,6 +49,14 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     }
 
     @Override
+    protected Bag<Concept, Term> newSubconceptBag(Param p) {
+        if (getSubconceptBagSize() == 0) return null;
+        return new ContinuousBag<>(getSubconceptBagSize(), curve, randomRemoval);
+    }
+    
+    
+
+    @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
         //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
         return new SequentialMemoryCycle(newConceptBag(p), newSubconceptBag(p), c);

@@ -1,14 +1,16 @@
 package nars.util.sort;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  *
  * @author me
  */
-public interface SortedItemList<T> extends List<T> {
+public interface SortedItemList<T> extends Collection<T> {
  
+    public T get(int i);
+    public T remove(int i);
     public T getFirst();
     public T getLast();
     public Iterator<T> descendingIterator();
