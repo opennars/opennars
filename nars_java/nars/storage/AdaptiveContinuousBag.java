@@ -15,11 +15,13 @@ this is an array of values representing the priority at indexes
 so each point is 100 indexes away from another, when the bag is full
 it can interpolate these to find an approximate index of the sorted bag where the expected priority value (output from the first step) should be found
 then it removes the item at this index
+* 
+* NOT WORKING YET
  *
  * @param <I>
  * @param <K>
  */
-public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<I, K> {
+@Deprecated public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<I, K> {
 
     boolean stabilize = false;
     float minForgetAdjustment = 0.5f;
