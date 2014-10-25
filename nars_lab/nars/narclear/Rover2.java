@@ -644,7 +644,7 @@ public class Rover2 extends PhysicsModel {
             this.p = p;
             
             float foodSpawnR = w/1.5f;
-            int numFood = 20;
+            int numFood = 30;
             for (int i = 0; i < numFood; i++) {
                 addFood(foodSpawnR, foodSpawnR);
             }
