@@ -51,7 +51,7 @@ public class ContinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
         //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
-        return new SequentialMemoryCycle(newConceptBag(p), c);
+        return new SequentialMemoryCycle(newConceptBag(p), newSubconceptBag(p), c);
     }
     
     @Override

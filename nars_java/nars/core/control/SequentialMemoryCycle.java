@@ -25,12 +25,15 @@ public class SequentialMemoryCycle implements ConceptProcessor {
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Concept,Term> concepts;
+    public final Bag<Concept,Term> subcon;
+    
     private final ConceptBuilder conceptBuilder;
     Memory memory;
-    
-
-    public SequentialMemoryCycle(Bag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
+       
+            
+    public SequentialMemoryCycle(Bag<Concept,Term> concepts, Bag<Concept,Term> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
+        this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
     }
     
@@ -81,16 +84,44 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         return concepts.get(term);
     }
 
+    protected void removeConcept(Concept c) {
+        
+        if (subcon!=null) {
+            subcon.putIn(c);
+            //System.out.println("con=" + concepts.size() + " subcon=" + subcon.size());
+        }
+        
+        memory.emit(ConceptRemove.class, c);
+    }
+    
     @Override
     public Concept addConcept(BudgetValue budget, final Term term, final Memory memory) {
-        Concept concept = conceptBuilder.newConcept(budget, term, memory);
+        Concept concept;
+        
+        if (subcon!=null) {
+            concept = subcon.pickOut(term);
+            if (concept!=null) {
+                concept.budget.merge(budget);
+                //System.out.println("retrieved: " + concept.toStringLong());
+            }
+        }
+        else
+            concept = null;
+        
                 
+        //TODO avoid creating new concept if it's just going to merge a budget with an existing one
+        if (concept == null)
+            concept = conceptBuilder.newConcept(budget, term, memory);
+        
+        
         Concept removed = concepts.putIn(concept);        
+        
+        
         Concept currentConcept = null;
         if (removed == concept) {
             //not able to insert
-            System.out.println("can not insert: " + concept);     
-            memory.emit(ConceptRemove.class, removed);
+            //System.out.println("can not insert: " + concept);     
+            removeConcept(removed);
             return null;
         }        
         else if (removed == null) {            
@@ -102,8 +133,9 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         else if (removed!=null) {
             //replaced something
             //System.out.println("replace: " + removed + " -> " + concept);
-            if (!removed.name().equals(term))
-                memory.emit(ConceptRemove.class, removed);
+            if (!removed.name().equals(term)) {
+                removeConcept(removed);
+            }
             currentConcept = concepts.get(term); //may not be needed, 'concept' may be what should be set
         }
 

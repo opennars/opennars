@@ -43,7 +43,7 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
         //return new SequentialMemoryCycle(newConceptBag(p), c);
-        return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
+        return new BalancedSequentialMemoryCycle(newConceptBag(p), newSubconceptBag(p), c);
     }
     
     @Override
