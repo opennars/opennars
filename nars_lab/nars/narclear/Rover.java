@@ -508,6 +508,7 @@ public class Rover extends PhysicsModel {
                                 candids.add("(^motor,turn,right). :|:");
                                 candids.add("(^motor,backward). :|:");
                                 candids.add("(^motor,forward). :|:");
+                                candids.add("(^motor,forward). :|:");
                                 int candid=(int)(Math.random()*candids.size()-0.001);
                                 nar.addInput(candids.get(candid));
                                 if(candid>=3)
