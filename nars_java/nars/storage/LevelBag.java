@@ -418,22 +418,24 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 //                bagObserver.refresh(toString());
 //            }
 //    }
+
+    
     /**
      * Collect Bag content into a String for display
      */
-    @Override
-    public String toString() {
-        final StringBuilder buf = new StringBuilder(" ");
-        for (int i = levels - 1; i >= 0; i--) {
-            if (itemTable[i] != null && !itemTable[i].isEmpty()) {
-                buf.append("\n --- Level ").append((i + 1)).append(":\n");
-                for (final E e : itemTable[i]) {
-                    buf.append(e.toStringExternal()).append('\n');
-                }
-            }
-        }
-        return buf.toString();
-    }
+//    @Override
+//    public String toString() {
+//        final StringBuilder buf = new StringBuilder(" ");
+//        for (int i = levels - 1; i >= 0; i--) {
+//            if (itemTable[i] != null && !itemTable[i].isEmpty()) {
+//                buf.append("\n --- Level ").append((i + 1)).append(":\n");
+//                for (final E e : itemTable[i]) {
+//                    buf.append(e.toStringExternal()).append('\n');
+//                }
+//            }
+//        }
+//        return buf.toString();
+//    }
 
     /**
      * TODO refactor : paste from preceding method

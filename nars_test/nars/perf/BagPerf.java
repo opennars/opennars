@@ -17,8 +17,13 @@
 
 package nars.perf;
 
-import java.util.Arrays;
+import com.google.common.collect.Lists;
+import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 import nars.core.Memory;
 import nars.core.Param.AtomicDurations;
 import nars.core.Parameters;
@@ -30,6 +35,7 @@ import nars.storage.LevelBag;
 import nars.storage.CurveBag;
 import nars.util.sort.ArraySortedItemList;
 import nars.util.sort.FractalSortedItemList;
+import nars.util.sort.RedBlackSortedItemList;
 
 /**
  *
@@ -148,12 +154,15 @@ public class BagPerf {
     //final boolean first, final int levels, final int levelCapacity, 
     public static double getTime(String label, BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
         
+        Memory.resetStatic();
+        
         Performance p = new Performance(label, repeats, warmups) {
 
             @Override public void init() { }
 
             @Override
-            public void run(boolean warmup) {
+            public void run(boolean warmup) {                                
+                
                 Bag bag = b.newBag();
                 
                 randomBagIO(bag, randomAccesses, insertRatio);
@@ -183,49 +192,90 @@ public class BagPerf {
         
     }
     
-    public static double[] compare(final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups, final Bag... B) {
+    public static Map<Bag,Double> compare(final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups, final Bag... B) {
         
-        double[] t = new double[B.length];
-        int i = 0;
+        Map<Bag,Double> t = new LinkedHashMap();
+        
         for (Bag X : B) {
             X.clear();
             
-            t[i++] = getTime(X.toString(), new BagBuilder() {
+            t.put(X, getTime(X.toString(), new BagBuilder() {
                 @Override public Bag newBag() {  return X; }
-            }, iterations, randomAccesses, insertRatio, repeats, warmups);
+            }, iterations, randomAccesses, insertRatio, repeats, warmups));
             
         }
         return t;
         
     }
     
+    public static void printCSVLine(PrintStream out, String... s) {
+        printCSVLine(out, Lists.newArrayList(s));        
+    }
+    
+    public static void printCSVLine(PrintStream out, List<String> o) {
+        StringJoiner line = new StringJoiner(", ", "", "");
+        for (String x : o)
+            line.add(x);        
+        out.println(line.toString());
+    }
+    
+    
     public static void main(String[] args) {
         
         int itemsPerLevel = 10;
-        int repeats = 3;
+        int repeats = 2;
         int warmups = 1;
 
-        final int iterations = 1000;
+        int iterationsPerItem = 4;
+        int accessesPerItem = 4;
+        
+        CurveBag.FairPriorityProbabilityCurve curve = new CurveBag.FairPriorityProbabilityCurve();
+        
+        boolean printedHeader = false;
         
         for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.2f) {
-            for (int levels = 1; levels <= 500; levels += 10) {
+            for (int levels = 1; levels <= 220; levels += 40) {
                 
                 final int items = levels*itemsPerLevel;
-                int randomAccesses = 64 * items;
+                final int iterations = iterationsPerItem * items;
+                int randomAccesses = accessesPerItem * items;
                         
                 Bag[] bags = new Bag[] { 
-                    new CurveBag(items, new CurveBag.FairPriorityProbabilityCurve(), true, new ArraySortedItemList<>()),
-                    new CurveBag(items, new CurveBag.FairPriorityProbabilityCurve(), true, new FractalSortedItemList<>()),
+                    new CurveBag(items, curve, true, new ArraySortedItemList<>()),
+                    new CurveBag(items, curve, true, new FractalSortedItemList<>()),
+                    new CurveBag(items, curve, true, new RedBlackSortedItemList<>()),
                     new LevelBag(levels, items)                        
                 };
                 
-                double[] t = BagPerf.compare(                    
+                Map<Bag, Double> t = BagPerf.compare(                    
                     iterations, randomAccesses, insertRatio, repeats, warmups,
                     bags
                 );
-                System.out.print(Arrays.toString(new Object[] { iterations, randomAccesses, insertRatio, repeats, warmups, }));
+                
+                /*System.out.print(Arrays.toString(new Object[] { "(x" + repeats + ")", "items", items, "inserts:removals", insertRatio, "accesses", randomAccesses, "nexts", iterations }));                
                 System.out.print("  ");
-                System.out.println(Arrays.toString(t));
+                for (Map.Entry<Bag, Double> e : t.entrySet()) {
+                    System.out.print(e.getKey() + "," + e.getValue() + ",  ");
+                }*/
+                
+                if (!printedHeader) {
+                    
+                    List<String> ls = Lists.newArrayList("items", "io_ratio", "accesses", "nexts");
+                    for (Map.Entry<Bag, Double> e : t.entrySet())
+                        ls.add(e.getKey().toString());
+                                        
+                    printCSVLine(System.out, ls  );
+                    printedHeader = true;
+                }
+
+                {
+                    List<String> ls = Lists.newArrayList(items+"", insertRatio+"", randomAccesses+"", iterations+"");
+                    for (Map.Entry<Bag, Double> e : t.entrySet())
+                        ls.add(e.getValue().toString());
+                                        
+                    printCSVLine(System.out, ls  );
+                }
+                
                 
             }
         }
