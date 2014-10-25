@@ -14,7 +14,7 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.ContinuousBag;
-import nars.storage.ContinuousBag2.BagCurve;
+import nars.storage.BagCurve;
 import nars.storage.ContinuousBag2.PriorityProbabilityApproximateCurve;
 
 

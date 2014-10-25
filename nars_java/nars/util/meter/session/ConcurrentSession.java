@@ -210,7 +210,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     }
 
     @Override
-    protected void setFirst(final Double first) {
+    protected void setFirst(final double first) {
         this.first.set(first);
     }
 

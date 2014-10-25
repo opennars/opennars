@@ -78,7 +78,7 @@ public abstract class AbstractStatsSession implements StatsSession {
 
     protected abstract void setCommits(long commits);
 
-    protected abstract void setFirst(Double first);
+    protected abstract void setFirst(double first);
 
     protected abstract void setLast(double last);
 
@@ -265,7 +265,7 @@ public abstract class AbstractStatsSession implements StatsSession {
         setFirstHitStamp(DataSet.Field.Default.FIRST_HIT_STAMP);
         setLastHitStamp(DataSet.Field.Default.LAST_HIT_STAMP);
         setCommits(DataSet.Field.Default.COMMITS);
-        setFirst(null); // The proper default is taken care of in getFirst()
+        setFirst(Double.NEGATIVE_INFINITY); // The proper default is taken care of in getFirst()
         setLast(DataSet.Field.Default.LAST);
         setMin(Double.POSITIVE_INFINITY);
         setMax(Double.NEGATIVE_INFINITY);

@@ -20,7 +20,6 @@ import nars.entity.TruthValue;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.io.buffer.PriorityBuffer;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
@@ -43,7 +42,7 @@ public class Executive implements Observer {
     ///** memory for faster execution of &/ statements (experiment) */
     //public final Deque<TaskConceptContent> next = new ArrayDeque<>();
 
-    PriorityBuffer<TaskExecution> tasks;
+    public final TreeSet<TaskExecution> tasks;
     private Set<TaskExecution> tasksToRemove = new HashSet();
     public int shortTermMemorySize=10; //how many events its able to track for the temporal feedback system
     //100 should be enough for all practical examples for now, we may make it adaptive later,
@@ -69,6 +68,8 @@ public class Executive implements Observer {
     /** how much to multiply all cause relevancies per cycle */
     double causeRelevancyFactor = 0.999;
     
+    HashSet<Task> current_tasks=new HashSet<>();
+
     /** how much to add value to each cause involved in a successful plan */ 
     //TODO move this to a parameter class visible to both Executive and GraphExecutive
     public static double relevancyOfSuccessfulPlan = 0.10;
@@ -92,9 +93,10 @@ public class Executive implements Observer {
                 
         this.graph = new GraphExecutive(mem,this);
 
-        this.tasks = new PriorityBuffer<TaskExecution>(new Comparator<TaskExecution>() {
+        this.tasks = new TreeSet<TaskExecution>(new Comparator<TaskExecution>() {
             @Override
-            public final int compare(final TaskExecution a, final TaskExecution b) {
+            public final int compare(final TaskExecution b, final TaskExecution a) {
+                if (a == b) return 0;
                 float ap = a.getDesire();
                 float bp = b.getDesire();
                 if (bp != ap) {
@@ -112,10 +114,19 @@ public class Executive implements Observer {
                 }
 
             }
-        }, numActiveTasks) {
+        }) {
 
-            @Override protected void reject(final TaskExecution t) {
-                removeTask(t);
+            @Override
+            public boolean add(TaskExecution e) {
+                boolean b = super.add(e);                
+                if (!b) return false;
+                if (size() > numActiveTasks) {
+                    TaskExecution l = last();
+                    remove(l);
+                    if (l != e)
+                        removeTask(l);
+                }
+                return true;
             }
             
         };
@@ -123,9 +134,16 @@ public class Executive implements Observer {
         memory.event.set(this, true, TaskDerive.class, ConceptBeliefRemove.class);
 
     }
+
+    public void setNumActiveTasks(int numActiveTasks) {
+        this.numActiveTasks = numActiveTasks;
+    }
+
+    public int getNumActiveTasks() {
+        return numActiveTasks;
+    }
     
     
-    HashSet<Task> current_tasks=new HashSet<>();
     
     @Override
     public void event(Class event, Object[] args) {
@@ -148,7 +166,7 @@ public class Executive implements Observer {
         }
     }   
     
-    public class TaskExecution {
+    public static class TaskExecution {
         /** may be null for input tasks */
         public final Concept c;
         
@@ -157,10 +175,18 @@ public class Executive implements Observer {
         public long delayUntil = -1;
         private float motivationFactor = 1;
         private TruthValue desire;
+        public final Executive executive;
         
-        public TaskExecution(final Concept concept, Task t) {
-            this.c = concept;
-            
+        public TaskExecution(final Executive executive, TruthValue desire) { 
+            this.executive = executive;
+            this.desire = desire;
+            this.t = null;
+            this.c = null;
+        }
+        
+        public TaskExecution(final Executive executive, final Concept concept, Task t) {
+            this.c = concept;            
+            this.executive = executive;
             this.desire = t.getDesire();
             
             //Check if task is 
@@ -193,10 +219,10 @@ public class Executive implements Observer {
                 for (Term e : c.term) {
                     
                     if (!isPlanTerm(e)) {
-                        if (graph.isPlannable(e)) {
+                        if (executive.graph.isPlannable(e)) {
                             
                                                         
-                            TreeSet<ParticlePlan> plans = graph.particlePlan(e, inlineSearchDepth, inlineParticles);
+                            TreeSet<ParticlePlan> plans = executive.graph.particlePlan(e, executive.inlineSearchDepth, executive.inlineParticles);
                             if (plans.size() > 0) {
                                 //use the first
                                 ParticlePlan pp = plans.first();
@@ -281,7 +307,10 @@ public class Executive implements Observer {
         //public final float getMotivation() { return getDesire() * getPriority() * motivationFactor;         }
         public final void setMotivationFactor(final float f) { this.motivationFactor = f;  }
 
-        @Override public int hashCode() {            return t.hashCode();         }
+        @Override public int hashCode() {            
+            if (t == null) return desire.hashCode();
+            return t.hashCode();         
+        }
 
         @Override
         public String toString() {
@@ -337,7 +366,7 @@ public class Executive implements Observer {
             occured=false; //only bad to not happened not interrupted ones
             ended=false;
             
-            final TaskExecution te = new TaskExecution(c, t);
+            final TaskExecution te = new TaskExecution(this, c, t);
             if (tasks.add(te)) {
                 //added successfully
                 memory.emit(TaskExecution.class, te);
@@ -487,13 +516,13 @@ public class Executive implements Observer {
                     memory.emit(Executive.class, memory.time(), tcc);                    
             }
             else {
-                memory.emit(Executive.class, memory.time(), tasks.get(0));
+                memory.emit(Executive.class, memory.time(), tasks.first());
             }
             
         }
         
         
-        TaskExecution topExecution = tasks.getFirst();        
+        TaskExecution topExecution = tasks.first();        
         Task top = topExecution.t;
         Term term = top.getContent();
         if (term instanceof Operation) {            
