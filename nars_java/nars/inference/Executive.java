@@ -618,7 +618,10 @@ public class Executive implements Observer {
         if(Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV==0.0f) {
             return; //
         }
-        for(Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
+        
+        final long duration = memory.param.duration.get();
+        
+        for(final Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
             boolean concurrent_conjunction=false;
             Term[] args=new Term[1];
             Implication imp=(Implication) c.getContent();
@@ -656,14 +659,14 @@ public class Executive implements Observer {
                     break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
                 } else { //however I decided that sequence matters also for now, because then the more accurate hypothesis wins.
                     
-                    if(lastEvents.get(i-off).sentence.truth.getExpectation()<=0.5) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
+                    if(lastEvents.get(i-off).sentence.truth.getExpectation()<=0.5f) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
                         //it didn't happen
                         matched=false;
                         break;
                     }
                     
                     long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
-                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)memory.param.duration.get())/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
+                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                     if(!right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
                         matched=false;
                         break;
@@ -671,29 +674,35 @@ public class Executive implements Observer {
                 }
 
                 if(!concurrent_conjunction) {
-                    expected_time+=memory.param.duration.get();
+                    expected_time+=duration;
                 }
             }
             
             if(concurrent_conjunction && !concurrent_implication) { //implication is not concurrent
-                expected_time+=memory.param.duration.get(); //so here we have to add duration
+                expected_time+=duration; //so here we have to add duration
             }
             else
             if(!concurrent_conjunction && concurrent_implication) {
-                expected_time-=memory.param.duration.get();
+                expected_time-=duration;
             } //else if both are concurrent, time has never been added so correct
               //else if both are not concurrent, time was always added so also correct
             
             //ok it matched, is the consequence also right?
             if(matched && lastEvents.size()>args.length-off) { 
                 long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
-                boolean right_in_time=Math.abs(occurence-expected_time)<((double)memory.param.duration.get())/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
+                boolean right_in_time=Math.abs(occurence-expected_time)<((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                 
+                float evidenceFreq;
                 if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.content)) { //it matched and same consequence, so positive evidence
-                    c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                    evidenceFreq = 1f;
                 } else { //it matched and other consequence, so negative evidence
-                    c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                    evidenceFreq = 0f;
                 } //todo use derived task with revision instead
+                
+                TruthFunctions.revision(
+                        c.sentence.truth, 
+                        new TruthValue(evidenceFreq, Parameters.DEFAULT_JUDGMENT_CONFIDENCE), 
+                        c.sentence.truth);
             }
         }
     }

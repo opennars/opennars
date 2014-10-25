@@ -50,6 +50,10 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     private boolean analytic = false;
 
+    public TruthValue() {
+        this(0,0);
+    }
+    
     /**
      * Constructor with two ShortFloats
      *

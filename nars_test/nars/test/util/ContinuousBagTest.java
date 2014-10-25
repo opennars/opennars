@@ -186,7 +186,7 @@ public class ContinuousBagTest {
     public void testAveragePriority(int capacity) {
         
         
-        final float priorityEpsilon = 0.1f;
+        final float priorityEpsilon = 0.01f;
         
         ContinuousBag<NullItem,CharSequence> c = new ContinuousBag(capacity, false);
         LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
@@ -197,9 +197,9 @@ public class ContinuousBagTest {
         c.putIn(new NullItem(.25f));
         d.putIn(new NullItem(.25f));
         
-        //check that continuousbag and discretebag calculate the same average priority value
-        assertTrue(c.getMass() != d.getMass()); //method of tracking mass does not need to be the same
-        assertEquals(c.getAveragePriority(), d.getAveragePriority(), priorityEpsilon);
+        //check that continuousbag and discretebag calculate the same average priority value        
+        assertEquals(0.25f, c.getAveragePriority(), priorityEpsilon);
+        assertEquals(0.25f, d.getAveragePriority(), priorityEpsilon);
         
         c.clear();
         d.clear();
@@ -207,13 +207,13 @@ public class ContinuousBagTest {
         assert(c.getAveragePriority() == 0.01f);
         assert(d.getAveragePriority() == 0.01f);
         
-        c.putIn(new NullItem(.25f));
-        d.putIn(new NullItem(.25f));
-        c.putIn(new NullItem(.87f));
-        d.putIn(new NullItem(.87f));
+        c.putIn(new NullItem(.30f));
+        d.putIn(new NullItem(.30f));
+        c.putIn(new NullItem(.50f));
+        d.putIn(new NullItem(.50f));
         
-        assertEquals(c.getAveragePriority(), d.getAveragePriority(), priorityEpsilon);
-                //System.out.println(c.getAveragePriority() + " "+ d.getAveragePriority());
+        assertEquals(0.4, c.getAveragePriority(), priorityEpsilon);
+        assertEquals(0.4, d.getAveragePriority(), priorityEpsilon);
 
     }
 }
