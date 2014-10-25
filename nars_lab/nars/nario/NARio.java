@@ -79,7 +79,7 @@ public class NARio extends Run {
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.startFPS(fps, 500, 1f);
+        nar.startFPS(fps, 200, 1f);
     }
 
     String[] sight = new String[9];

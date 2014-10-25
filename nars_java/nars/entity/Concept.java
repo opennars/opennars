@@ -572,13 +572,19 @@ public class Concept extends Item<Term> {
      */
     @Override
     public String toStringLong() {
-        String res = toStringExternal() + " " + term.name()
-                + toStringIfNotNull(termLinks, "termLinks")
-                + toStringIfNotNull(taskLinks, "taskLinks");
-        res += toStringIfNotNull(null, "questions");
-        for (Task t : questions) {
+        String res = 
+                toStringExternal() + " " + term.name()
+                + toStringIfNotNull(termLinks.size(), "termLinks")
+                + toStringIfNotNull(taskLinks.size(), "taskLinks")
+                + toStringIfNotNull(beliefs.size(), "beliefs")
+                + toStringIfNotNull(desires.size(), "desires")
+                + toStringIfNotNull(questions.size(), "questions")
+                + toStringIfNotNull(quests.size(), "quests");
+        
+                //+ toStringIfNotNull(null, "questions");
+        /*for (Task t : questions) {
             res += t.toString();
-        }
+        }*/
         // TODO other details?
         return res;
     }
@@ -813,5 +819,12 @@ public class Concept extends Item<Term> {
             t += s.truth.getConfidence();
         return t;
     }
-    
+    public float getBeliefFrequencyMean() {
+        if (beliefs.isEmpty()) return 0.5f;
+        
+        float t = 0;
+        for (final Sentence s : beliefs)
+            t += s.truth.getFrequency();
+        return t / beliefs.size();        
+    }
 }

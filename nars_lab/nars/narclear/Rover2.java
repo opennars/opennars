@@ -394,7 +394,7 @@ public class Rover2 extends PhysicsModel {
                     
                     float meanDist = totalDist / resolution;
                     float percentDiff = Math.abs(meanDist - minDist);
-                    float conf = 0.75f + 0.25f * (1.0f - percentDiff);
+                    float conf = 0.85f + 0.15f * (1.0f - percentDiff);
                     if (conf > 0.99f) conf = 0.99f;
                             
                     float di = minDist; 
@@ -804,7 +804,9 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new ContinuousBagNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(1000).simulationTime().
+                setConceptBagSize(500).
+                setSubconceptBagSize(2000).
+                simulationTime().
                 build();
         
         

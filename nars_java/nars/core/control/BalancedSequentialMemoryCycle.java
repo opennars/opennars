@@ -11,8 +11,8 @@ import nars.storage.Bag;
  */
 public class BalancedSequentialMemoryCycle extends SequentialMemoryCycle {
 
-    public BalancedSequentialMemoryCycle(Bag<Concept,Term> concepts, ConceptBuilder conceptBuilder) {
-        super(concepts, conceptBuilder);
+    public BalancedSequentialMemoryCycle(Bag<Concept,Term> concepts, Bag<Concept,Term> subcon, ConceptBuilder conceptBuilder) {
+        super(concepts, subcon, conceptBuilder);
     }
 
     @Override

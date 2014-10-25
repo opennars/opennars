@@ -39,6 +39,9 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     
     /** determines maximum number of concepts */
     private int conceptBagSize;    
+    
+    /** max # subconscious "subconcept" concepts */
+    private int subconceptBagSize;
 
     /** Size of TaskBuffer */
     private int taskBufferSize = 10;
@@ -51,6 +54,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         super();
         
         setConceptBagSize(1000);        
+        setSubconceptBagSize(0);
         setConceptBagLevels(100);
         
         setTaskLinkBagSize(20);
@@ -114,7 +118,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     
     @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
-        return new SequentialMemoryCycle(newConceptBag(p), c);
+        return new SequentialMemoryCycle(newConceptBag(p), newSubconceptBag(p), c);
     }
 
     @Override
@@ -134,10 +138,25 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     protected Bag<Concept,Term> newConceptBag(Param p) {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
+    
+    protected Bag<Concept,Term> newSubconceptBag(Param p) {        
+        if (getSubconceptBagSize() == 0) return null;
+        
+        //by default, use same bag type
+        return new LevelBag(getConceptBagLevels(), getSubconceptBagSize());
+    }
 
     @Override
     public Bag<Task,Sentence> newNovelTaskBag(Param p) {
         return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
+    }
+
+    public DefaultNARBuilder setSubconceptBagSize(int subconceptBagSize) {
+        this.subconceptBagSize = subconceptBagSize;
+        return this;
+    }
+    public int getSubconceptBagSize() {
+        return subconceptBagSize;
     }
  
     
