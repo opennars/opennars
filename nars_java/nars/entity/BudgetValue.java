@@ -129,7 +129,11 @@ public class BudgetValue implements Cloneable {
 
     /** AND's (multiplies) priority with another value */
     public void andPriority(final float v) {
-        priority = and(priority, v);
+        float priority2 = and(priority, v);
+        if(priority2>1.0f) {
+            priority2=1.0f;
+        }
+        priority=priority2;
     }
 
     /**

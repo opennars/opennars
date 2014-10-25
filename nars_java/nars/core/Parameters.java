@@ -36,15 +36,15 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.0; //was 0.1, 0=deactivated //1/2 half time of duration in each direction makes 1 duration
+    public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.1; //was 0.1, 0=deactivated //1/2 half time of duration in each direction makes 1 duration
     
-    public static boolean TEMPORAL_PARTICLE_PLANNER=false;
+    public static boolean TEMPORAL_PARTICLE_PLANNER=true;
     //will be activated after normal NAL8 is working again
     
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
+    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.2f;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
