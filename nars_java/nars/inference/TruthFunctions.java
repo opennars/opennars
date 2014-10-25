@@ -75,18 +75,20 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     static final TruthValue revision(final TruthValue v1, final TruthValue v2) {
+        return revision(v1, v2, new TruthValue());
+    }
+    
+    static final TruthValue revision(final TruthValue v1, final TruthValue v2, final TruthValue result) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
-        final float c1 = v1.getConfidence();
-        final float c2 = v2.getConfidence();
-        final float w1 = c2w(c1);
-        final float w2 = c2w(c2);
+        final float w1 = c2w( v1.getConfidence() );
+        final float w2 = c2w( v2.getConfidence() );
         final float w = w1 + w2;
-        final float f = (w1 * f1 + w2 * f2) / w;
-        final float c = w2c(w);
-        return new TruthValue(f, c);
+        result.setFrequency( (w1 * f1 + w2 * f2) / w );
+        result.setConfidence( w2c(w) );
+        return result;
     }
-
+    
     /* ----- double argument functions, called in SyllogisticRules ----- */
     /**
      * {<S ==> M>, <M ==> P>} |- <S ==> P>

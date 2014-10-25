@@ -69,7 +69,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /**
      * current sum of occupied level
      */
-    private int mass;
+    private float mass;
     /**
      * index to get next level, kept in individual objects
      */
@@ -153,7 +153,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if (size() == 0) {
             return 0.01f;
         }
-        float f = (float) mass / (size() * levels);
+        float f = (float) mass / (size());
         if (f > 1) {
             return 1.0f;
         }
@@ -327,7 +327,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
         ensureLevelExists(inLevel);
         itemTable[inLevel].add(newItem);        // FIFO
-        mass += (inLevel + 1);                  // increase total mass
+        addMass(newItem);
         if (oldItem == newItem)
             return null;
         return oldItem;
@@ -353,11 +353,18 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      */
     private E takeOutFirst(final int level) {
         final E selected = itemTable[level].removeFirst();
-        mass -= (level + 1);
+        removeMass(selected);
         //refresh();
         return selected;
     }
 
+    protected void removeMass(E item) {
+        mass -= item.getPriority();
+    }
+    protected void addMass(E item) {
+        mass += item.getPriority();
+    }
+    
     /**
      * Remove an item from itemTable, then adjust mass
      *
@@ -366,24 +373,22 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     @Override protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
 
-        boolean found = false;
+        
         if (itemTable[level] != null) {
-            if (itemTable[level].remove(oldItem)) {
-                found = true;
-                mass -= (level + 1);
+            if (itemTable[level].remove(oldItem)) {                
+                removeMass(oldItem);
+                return;
             }
         }
 
         
         //If it wasn't found, it probably was removed already.  So this check is probably not necessary
         
-        if (!found) {
             //search other levels for this item because it's not where we thought it was according to getLevel()
-            if (!outOfBaseComplete(oldItem)) {
-                String m = "Possible LevelBag inconsistency: Can not remove missing element: size inconsistency" + size() + "==?" + sizeItems()  + oldItem + " from " + this.getClass().getSimpleName();
-                System.err.println(m);
-                //throw new RuntimeException(m);
-            }
+        if (!outOfBaseComplete(oldItem)) {
+            String m = "Possible LevelBag inconsistency: Can not remove missing element: size inconsistency" + size() + "==?" + sizeItems()  + oldItem + " from " + this.getClass().getSimpleName();
+            System.err.println(m);
+            //throw new RuntimeException(m);
         }
         //refresh();
     }
@@ -396,7 +401,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         for (int level = 0; level < levels; level++) {
             if (itemTable[level] != null) {
                 if (itemTable[level].remove(oldItem)) {
-                    mass -= (level + 1);
+                    removeMass(oldItem);
                     return true;
                 }
             }

@@ -65,7 +65,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     protected final AtomicLong commits = new AtomicLong(DataSet.Field.Default.COMMITS);
 
     // The proper default is taken care of in getFirst()
-    protected final AtomicReference<Double> first = new AtomicReference<>(null);
+    protected final AtomicDouble first = new AtomicDouble(Double.NEGATIVE_INFINITY);
 
     protected volatile double last = DataSet.Field.Default.LAST;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
@@ -150,7 +150,7 @@ public class ConcurrentSession extends AbstractStatsSession {
 
         // First
         //if (first.get() == null) {
-            first.compareAndSet(null, currentValue);
+        first.compareAndSet(Double.NEGATIVE_INFINITY, last);            
         //}
 
         // Last
