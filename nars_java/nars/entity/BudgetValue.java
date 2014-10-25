@@ -103,6 +103,9 @@ public class BudgetValue implements Cloneable {
      */
     public void setPriority(final float v) {
         priority = v;
+        if(v>1.0) {
+            throw new RuntimeException("priority value above 1");
+        }
     }
 
     /**
@@ -140,6 +143,9 @@ public class BudgetValue implements Cloneable {
      */
     public void setDurability(final float d) {
         durability = d;
+        if(d>=1.0) {
+            throw new RuntimeException("durability value above or equal 1");
+        }
     }
 
     /**
