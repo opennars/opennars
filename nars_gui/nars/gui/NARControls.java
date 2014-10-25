@@ -144,6 +144,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         experienceWriter = new TextOutput(nar);
         
         logger = new InferenceLogger(nar);
+        logger.setActive(false);
         
         JMenuBar menuBar = new JMenuBar();
 

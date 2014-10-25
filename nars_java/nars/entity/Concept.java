@@ -225,30 +225,35 @@ public class Concept extends Item<Term> {
                 }   // else: activated belief
                 return;
             } else if (revisible(judg, oldBelief)) {
-                if (nal.setTheNewStamp( //temporarily removed
-                /*
-                if (equalBases(first.getBase(), second.getBase())) {
-                return null;  // do not merge identical bases
+                
+                nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+                
+//                if (nal.setTheNewStamp( //temporarily removed
+//                /*
+//                if (equalBases(first.getBase(), second.getBase())) {
+//                return null;  // do not merge identical bases
+//                }
+//                 */
+//                //        if (first.baseLength() > second.baseLength()) {
+//                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
+//                //        } else {
+//                //            return new Stamp(second, first, time);
+//                //        }
+//                ) != null) {
+                    
+                Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
+                if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
+                    nal.singlePremiseTask(projectedBelief, task.budget);
                 }
-                 */
-                //        if (first.baseLength() > second.baseLength()) {
-                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
-                //        } else {
-                //            return new Stamp(second, first, time);
-                //        }
-                ) != null) {
-                    Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
-                    if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
-                        nal.singlePremiseTask(projectedBelief, task.budget);
-                    }
-                    nal.setCurrentBelief(projectedBelief);
-                    revision(judg, projectedBelief, false, nal);
-                }
+                nal.setCurrentBelief(projectedBelief);
+                revision(judg, projectedBelief, false, nal);
+//
             }
         }
         if (task.aboveThreshold()) {
-            for (final Task ques : questions) {
-                trySolution(judg, ques, nal);
+            int nnq = questions.size();       
+            for (int i = 0; i < nnq; i++) {                
+                trySolution(judg, questions.get(i), nal);
             }
 
             addToTable(task, judg, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
