@@ -34,6 +34,7 @@ import nars.io.Texts;
  */
 public class BudgetValue implements Cloneable {
 
+    public float epsilon=0.001f;
     /** The character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
     /** The character that separates the factors in a budget value */
@@ -69,6 +70,13 @@ public class BudgetValue implements Cloneable {
         priority = p;
         durability = d;
         quality = q;
+        
+        if(d>=1.0) {
+            throw new RuntimeException("durability value above or equal 1");
+        }
+        if(p>1.0) {
+            throw new RuntimeException("priority value above 1");
+        }
     }
 
     /**
@@ -101,11 +109,11 @@ public class BudgetValue implements Cloneable {
      * Change priority value
      * @param v The new priority
      */
-    public void setPriority(final float v) {
-        priority = v;
-        if(v>1.0) {
-            throw new RuntimeException("priority value above 1");
+    public void setPriority(float v) {
+        if(v>1.0f) {
+            v=1.0f;
         }
+        priority = v;
     }
 
     /**
@@ -113,7 +121,11 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incPriority(final float v) {
-        priority = or(priority, v);
+        float priority2 = or(priority, v);
+        if(priority2>1.0f) {
+            priority2=1.0f;
+        }
+        priority=priority2;
     }
 
     /** AND's (multiplies) priority with another value */
@@ -141,11 +153,11 @@ public class BudgetValue implements Cloneable {
      * Change durability value
      * @param v The new durability
      */
-    public void setDurability(final float d) {
-        durability = d;
-        if(d>=1.0) {
-            throw new RuntimeException("durability value above or equal 1");
+    public void setDurability(float d) {
+        if(d>=1.0f) {
+            d=1.0f-epsilon;
         }
+        durability = d;
     }
 
     /**
@@ -153,7 +165,11 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incDurability(final float v) {
-        durability = or(durability, v);
+        float durability2 = or(durability, v);
+        if(durability2>=1.0f) {
+            durability=1.0f-epsilon; //put into allowed range
+        }
+        durability=durability2;
     }
 
     /**
