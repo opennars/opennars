@@ -47,7 +47,7 @@ public class Parameters {
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.2f;
+    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
