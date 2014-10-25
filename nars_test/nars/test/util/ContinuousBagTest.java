@@ -1,6 +1,5 @@
 package nars.test.util;
 
-import java.util.Arrays;
 import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
 import nars.entity.Item;

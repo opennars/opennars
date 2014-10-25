@@ -1,4 +1,4 @@
-package nars.util;
+package nars.util.sort;
 
 import java.util.ArrayList;
 

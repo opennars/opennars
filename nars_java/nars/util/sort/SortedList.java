@@ -1,4 +1,4 @@
-package nars.util;
+package nars.util.sort;
 
 //package net.sourceforge.nite.util;
 import java.util.ArrayList;

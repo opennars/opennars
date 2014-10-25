@@ -1,16 +1,16 @@
 package nars.storage;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Item;
-import nars.storage.ContinuousBag2.BagCurve;
 import nars.storage.ContinuousBag2.PriorityProbabilityApproximateCurve;
-import nars.util.SortedItemList;
+import nars.util.sort.ArraySortedItemList;
+import nars.util.sort.FractalSortedItemList;
+import nars.util.sort.SortedItemList;
 
 
 
@@ -40,7 +40,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     /** whether items are removed by random sampling, or a continuous scanning */
     private final boolean randomRemoval;
     
-    private final ContinuousBag2.BagCurve curve;
+    private final BagCurve curve;
     
     /** Rate of sampling index when in non-random "scanning" removal mode.  
      *  The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
@@ -53,50 +53,7 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
     /** current removal index x, between 0..1.0.  set automatically */
     private float x;
     
-    public static class ContinuousBagSortedList<E extends Item> extends SortedItemList<E> {
-            
-        public ContinuousBagSortedList(int capacity) {
-            super(new Comparator<E>() {
-
-                @Override public int compare(final E o1, final E o2) {
-                    //fast comparison because name table will already prevent duplicates?
-                    if (o1 == o2) return 0;
-                    return -1;
-                }
-                
-            },capacity);
-        }
-
-        @Override
-        public final int positionOf(final E o) {
-            final float y = o.budget.getPriority();
-            final int s = size();
-            if (s > 0)  {
-
-                //binary search
-                int low = 0;
-                int high = s-1;
-
-                while (low <= high) {
-                    int mid = (low + high) >>> 1;
-
-                    E midVal = get(mid);
-
-                    final float x = midVal.budget.getPriority();
-                    
-                    if (x < y) low = mid + 1;
-                    else if (x == y) return mid;
-                    else if (x > y) high = mid - 1;                    
-                    
-                }
-                return low;
-            }
-            else {
-                return 0;
-            }
-        }
-            
-    }
+    
 
     
     public ContinuousBag(int capacity, boolean randomRemoval) {
@@ -117,7 +74,10 @@ public class ContinuousBag<E extends Item<K>, K> extends Bag<E,K> {
         
         nameTable = new HashMap<>(capacity);        //nameTable = new FastMap<>();
         
-        items = new ContinuousBagSortedList<>(capacity);
+        if (capacity < 32)
+            items = new ArraySortedItemList<>(capacity);
+        else 
+            items = new FractalSortedItemList<>(capacity);
         
         this.mass = 0;
     }

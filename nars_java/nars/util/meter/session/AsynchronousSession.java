@@ -234,7 +234,7 @@ public class AsynchronousSession extends AbstractStatsSession {
     }
 
     @Override
-    protected void setFirst(final Double first) {
+    protected void setFirst(final double first) {
         this.first = first;
     }
 
