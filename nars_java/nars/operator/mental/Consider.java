@@ -19,6 +19,7 @@ package nars.operator.mental;
 
 import java.util.ArrayList;
 import nars.core.Memory;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.language.Term;
@@ -30,6 +31,10 @@ import nars.operator.Operator;
  */
 public class Consider extends Operator {
 
+    public static BudgetValue budgetMentalConcept(final Operation o) {
+        return o.getTask().budget.clone();
+    }
+    
     public Consider() {
         super("^consider");
     }
@@ -44,7 +49,7 @@ public class Consider extends Operator {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[0];
-        Concept concept = memory.conceptualize(term);
+        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.fire();
         return null;
     }
