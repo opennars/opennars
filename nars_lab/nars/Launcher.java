@@ -305,7 +305,7 @@ public class Launcher extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseEntered
 
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
-        nars.narclear.Rover.main(new String[]{});
+        nars.narclear.Rover2.main(new String[]{});
         this.dispose();
     }//GEN-LAST:event_jLabel7MouseClicked
 
