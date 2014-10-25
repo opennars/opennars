@@ -38,8 +38,6 @@ public class Parameters {
     
     public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.0; //was 0.1, 0=deactivated //1/2 half time of duration in each direction makes 1 duration
     
-    public static double TEMPORAL_INDUCTION_MIN_PRIORITY=0.0;
-    
     public static boolean TEMPORAL_PARTICLE_PLANNER=false;
     //will be activated after normal NAL8 is working again
     
@@ -48,21 +46,12 @@ public class Parameters {
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
     public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
     
-    //how much more priority should =/> =|> gain?
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f;
-    
-    
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
     //internal experience has less priority?
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.5f;
     //internal experience has less quality?
-    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;
-    
-    
-
-    
-    
+    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;  
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. 

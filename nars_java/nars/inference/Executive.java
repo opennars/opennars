@@ -717,13 +717,13 @@ public class Executive implements Observer {
             Sentence currentBelief = stmLast.sentence;
             nal.setCurrentBelief(currentBelief);
             
-            if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
                 TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
-            }
+            //}
         }
 
         //for this heuristic, only use input events & task effects of operations
-        if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
             if(Parameters.TEMPORAL_PARTICLE_PLANNER && this.expected_event!=null && this.expected_task!=null) {
                 if(newEvent.sentence.content.equals(this.expected_event)) {
                     //this.expected_task.expect(true);
@@ -742,7 +742,7 @@ public class Executive implements Observer {
                 lastEvents.remove(0);
             }
             
-        }
+        //}
 
         return true;
     }
