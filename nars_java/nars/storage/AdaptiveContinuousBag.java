@@ -1,8 +1,5 @@
 package nars.storage;
 
-import java.util.Arrays;
-import nars.core.Memory;
-import nars.core.Parameters;
 import nars.entity.Item;
 
 
@@ -16,12 +13,12 @@ so each point is 100 indexes away from another, when the bag is full
 it can interpolate these to find an approximate index of the sorted bag where the expected priority value (output from the first step) should be found
 then it removes the item at this index
 * 
-* NOT WORKING YET
+* NOT TESTED YET
  *
  * @param <I>
  * @param <K>
  */
-@Deprecated public class AdaptiveContinuousBag<I extends Item<K>, K> extends ContinuousBag2<I, K> {
+public class AdaptiveContinuousBag<I extends Item<K>, K> extends CurveBag<I, K> {
 
     boolean stabilize = false;
     float minForgetAdjustment = 0.5f;
@@ -64,7 +61,7 @@ then it removes the item at this index
         }
         else {
             for (int i = 0; i < resolution; i++) {
-                setIndex(i, items.exact(posToIndex(i)).getPriority());
+                setIndex(i, items.get(posToIndex(i)).getPriority());
             }
             minPriority = index[0];
             maxPriority = index[resolution - 1];
@@ -130,7 +127,7 @@ then it removes the item at this index
         return 1 - Math.exp(-5 * x);
     }
 
-    int c(double x) {
+    @Override public float getFocus(final float x) {
         double y = p(x);
         //scale to within current priority range
         y = y * (maxPriority - minPriority) + minPriority;
@@ -138,7 +135,7 @@ then it removes the item at this index
         return i;
     }
 
-    public int closestIndex(double p) {
+    public int closestIndex(final double p) {
         //TODO interpolate between two indexes
         int r;
         int s = size();
@@ -185,23 +182,23 @@ then it removes the item at this index
         return i;
     }
 
-    @Override
-    public int nextRemovalIndex() {
-        update();
-        final int s = size();
-        if (randomRemoval) {
-            //uniform random distribution on 0..1.0
-            x = Memory.randomNumber.nextFloat();
-        } else {
-            x += scanningRate * 1.0f / (1 + s);
-            if (x >= 1.0f) {
-                x -= 1.0f;
-            }
-            if (x <= 0.0f) {
-                x += 1.0f;
-            }
-        }
-        return c(x);
-    }
+//    @Override
+//    public int nextRemovalIndex() {
+//        update();
+//        final int s = size();
+//        if (randomRemoval) {
+//            //uniform random distribution on 0..1.0
+//            x = Memory.randomNumber.nextFloat();
+//        } else {
+//            x += scanningRate * 1.0f / (1 + s);
+//            if (x >= 1.0f) {
+//                x -= 1.0f;
+//            }
+//            if (x <= 0.0f) {
+//                x += 1.0f;
+//            }
+//        }
+//        return c(x);
+//    }
 
 }

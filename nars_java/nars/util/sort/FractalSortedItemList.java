@@ -12,6 +12,10 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
     int capacity;
     private final FastCollection<E> sort;
 
+    public FractalSortedItemList() {
+        this(1);
+    }
+    
     public FractalSortedItemList(int capacity) {
         super();
         this.sort = this.sorted(new Comparator<Item>() {
@@ -26,6 +30,12 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
         this.capacity = capacity;
     }
 
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    
     @Override
     public E getLast() {        
         return sort.max();

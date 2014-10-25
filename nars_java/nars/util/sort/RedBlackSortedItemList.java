@@ -11,8 +11,11 @@ import nars.entity.Item;
  * @author me
  */
 public class RedBlackSortedItemList<E extends Item> extends IndexedTreeSet<E> implements SortedItemList<E> {
+    private int capacity;
 
     public RedBlackSortedItemList() {
+        super();
+        setCapacity(1);
     }
 
     
@@ -24,6 +27,11 @@ public class RedBlackSortedItemList<E extends Item> extends IndexedTreeSet<E> im
     @Override
     public E getLast() {
         return last();
+    }
+
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
 

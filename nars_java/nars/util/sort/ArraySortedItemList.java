@@ -24,6 +24,10 @@ public class ArraySortedItemList<E extends Item> extends ArrayList<E> implements
 //        this.capacity = capacity;
 //    }
 
+    public ArraySortedItemList() {
+        this(1);
+    }
+    
     public ArraySortedItemList(int capacity) {
             super();
             this.capacity = capacity;
@@ -39,6 +43,15 @@ public class ArraySortedItemList<E extends Item> extends ArrayList<E> implements
             },capacity);*/
         }
 
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    
         public final int positionOf(final E o) {
             final float y = o.budget.getPriority();
             final int s = size();
