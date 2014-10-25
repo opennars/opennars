@@ -301,6 +301,11 @@ public class TemporalRules {
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
+        //only boost for this one
+        if(budget2!=null) {
+            budget2.setPriority(Math.min(0.99f, budget2.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
+            budget2.setDurability(Math.min(0.99f,budget2.getDurability()+Parameters.TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT));
+        }
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
