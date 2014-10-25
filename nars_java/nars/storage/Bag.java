@@ -196,6 +196,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return x;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + size() + "/" + getCapacity() +")";
+    }
+    
 
     
 }

@@ -341,10 +341,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     }
 
 
-    @Override
-    public String toString() {
-        return size() + " size, " + getMass() + " mass, items: " + items.toString();
+    @Override public String toString() {
+        return super.toString() + "{" + items.getClass().getSimpleName() + "}";
     }
+            
 
     @Override
     public Set<K> keySet() {
@@ -408,6 +408,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         
     }
     
-    
+
+        
     
 }
