@@ -187,6 +187,10 @@ public class TemporalRules {
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
+                if(budget!=null) {
+                    budget.setPriority(Math.min(0.99f, budget.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
+                    budget.setDurability(Math.min(0.99f,budget.getDurability()+Parameters.TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT));
+                }
                 nal.doublePremiseTask(whole, truth, budget, true);
             }
         }
