@@ -44,7 +44,7 @@ public class Doubt extends Operator {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[0];
-        Concept concept = memory.conceptualize(term);
+        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(true);
         return null;
     }
