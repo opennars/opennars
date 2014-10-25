@@ -86,8 +86,9 @@ public class LocalRules {
      * @return If revision is possible between the two sentences
      */
     public static boolean revisible(final Sentence s1, final Sentence s2) {
-        return (s1.equalsContent(s2) && s1.getRevisible()
-                && matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
+        return (s1.getRevisible() && 
+                s1.equalsContent(s2) && 
+                matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()));
     }
 
     /**

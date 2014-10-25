@@ -85,11 +85,12 @@ public class InferenceLogger extends MemoryObserver {
 
     @Override
     public void output(Class channel, Object... args) {
+        if (outputs.isEmpty())
+            return;
+        
+        String s = args.length == 1 ? args[0].toString() : Arrays.toString(args);
         for (final LogOutput o : outputs) {            
-            if (args.length == 1)
-                o.traceAppend(channel, args[0].toString());
-            else
-                o.traceAppend(channel, Arrays.toString(args));
+            o.traceAppend(channel, s);
         }
     }
 
@@ -108,17 +109,17 @@ public class InferenceLogger extends MemoryObserver {
 
     @Override
     public void onTaskAdd(Task task, String reason) {
-        output(TaskAdd.class, reason + ": " + task);
+        output(TaskAdd.class, reason, task);
     }
 
     @Override
     public void onTaskRemove(Task task, String reason) {        
-        output(TaskRemove.class, reason + ": " + task);
+        output(TaskRemove.class, reason, task);
     }
     
     @Override
-    public void onConceptAdd(Concept concept) {
-        output(ConceptAdd.class, concept.toString());
+    public void onConceptAdd(Concept concept) {        
+        output(ConceptAdd.class, concept);
     }    
     
     
