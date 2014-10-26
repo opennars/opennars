@@ -706,6 +706,8 @@ public class Concept extends Item<Term> {
             taskLinks.putBack(currentTaskLink, memory.param.taskForgetDurations.getCycles(), memory);
             
         }
+        else {
+        }
 
             
         return fired;
