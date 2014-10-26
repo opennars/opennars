@@ -47,12 +47,6 @@ public class CurveBagNARBuilder extends DefaultNARBuilder {
         //return new AdaptiveContinuousBag<>(getConceptBagSize());
     }
 
-    @Override
-    protected Bag<Concept, Term> newSubconceptBag(Param p) {
-        if (getSubconceptBagSize() == 0) return null;
-        return new CurveBag<>(getSubconceptBagSize(), curve, randomRemoval);
-    }
-    
     
 
     @Override

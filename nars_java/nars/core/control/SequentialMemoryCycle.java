@@ -10,8 +10,10 @@ import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
+import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 import nars.storage.Bag;
+import nars.storage.CacheBag;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -25,13 +27,13 @@ public class SequentialMemoryCycle implements ConceptProcessor {
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Concept,Term> concepts;
-    public final Bag<Concept,Term> subcon;
+    public final CacheBag<Term, Concept> subcon;
     
     private final ConceptBuilder conceptBuilder;
     Memory memory;
        
             
-    public SequentialMemoryCycle(Bag<Concept,Term> concepts, Bag<Concept,Term> subcon, ConceptBuilder conceptBuilder) {
+    public SequentialMemoryCycle(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
@@ -86,74 +88,79 @@ public class SequentialMemoryCycle implements ConceptProcessor {
 
     protected void removeConcept(Concept c) {
         
-        if (subcon!=null) {
-            subcon.putIn(c);
-            //System.out.println("con=" + concepts.size() + " subcon=" + subcon.size());
+        if (subcon!=null) {            
+            subcon.add(c);
+            //System.out.println("forget: " + c + "   con=" + concepts.size() + " subcon=" + subcon.size());
         }
         
         memory.emit(ConceptRemove.class, c);
     }
     
     @Override
-    public Concept addConcept(BudgetValue budget, final Term term, final Memory memory) {
-        Concept concept;
+    public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
         
-        if (subcon!=null) {
+        
+        Concept concept = concepts.take(term);
+        
+        //try subconscious
+        if ((concept == null) && (subcon!=null)) {
             concept = subcon.take(term);
-            if (concept!=null) {
-                concept.budget.merge(budget);
-                //System.out.println("retrieved: " + concept.toStringLong());
+            if (concept!=null) {                
+                //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
+                concept.budget.getForgetPeriod(memory.time());
+
+                //System.out.println("retrieved: " + concept + "  subcon=" + subcon.size());
             }
+        }               
+        
+        
+        if ((concept == null) && (createIfMissing)) {                            
+            //create new concept, with the applied budget
+            
+            concept = conceptBuilder.newConcept(budget.clone(), term, memory);
+
+            memory.logic.CONCEPT_ADD.commit(term.getComplexity());
+            memory.emit(Events.ConceptAdd.class, concept);                
+        }
+        else if (concept!=null) {            
+            
+            //apply budget to existing concept
+            
+            BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);            
         }
         else
-            concept = null;
-        
-                
-        
-        //TODO avoid creating new concept if it's just going to merge a budget with an existing one
-        if (concept == null)
-            concept = conceptBuilder.newConcept(budget, term, memory);
-        
-        
-        Concept removed = concepts.putIn(concept);        
-        
-        
-        Concept currentConcept = null;
-        if (removed == concept) {
-            //not able to insert
-            //System.out.println("can not insert: " + concept);     
-            removeConcept(removed);
             return null;
-        }        
-        else if (removed == null) {            
+
+        
+        Concept displaced = concepts.putIn(concept);        
+                
+        if (displaced == null) {
             //added without replacing anything
             
             //but we need to get the actual stored concept in case it was merged
-            currentConcept = concepts.get(term);
+            return concept;
         }        
-        else if (removed!=null) {
-            //replaced something
-            //System.out.println("replace: " + removed + " -> " + concept);
-            if (!removed.name().equals(term)) {
-                removeConcept(removed);
-                currentConcept = concepts.get(term); //may not be needed, 'concept' may be what should be set
-            }
+        else if (displaced == concept) {
+            //not able to insert
+            //System.out.println("can not insert: " + concept);   
+            
+            removeConcept(displaced);
+            return null;
+        }        
+        else {
+            //replaced something else
+            //System.out.println("replace: " + removed + " -> " + concept);            
+
+            removeConcept(displaced);
+            return concept;
         }
 
-        if (currentConcept!=null) {
-            //System.out.println("added: " + currentConcept + ((!budget.equals(currentConcept.budget)) ? " inputBudget=" + budget :"") );
-            memory.logic.CONCEPT_ADD.commit(term.getComplexity());
-            memory.emit(Events.ConceptAdd.class, currentConcept);
-        }
-        
-        return currentConcept;
     }
     
-
-    @Override
-    public void activate(final Concept c, final BudgetValue b) {
+    
+    @Override public void activate(final Concept c, final BudgetValue b, Activating mode) {
         concepts.take(c.name());
-        BudgetFunctions.activate(c, b);
+        BudgetFunctions.activate(c.budget, b, mode);
         concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
     }
     

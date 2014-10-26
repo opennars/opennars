@@ -19,6 +19,7 @@ import nars.entity.TermLink;
 import nars.language.Term;
 import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.Bag;
+import nars.storage.CacheBag;
 import nars.storage.LevelBag;
 
 /**
@@ -139,11 +140,9 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
     
-    protected Bag<Concept,Term> newSubconceptBag(Param p) {        
+    protected CacheBag<Term,Concept> newSubconceptBag(Param p) {        
         if (getSubconceptBagSize() == 0) return null;
-        
-        //by default, use same bag type
-        return new LevelBag(getConceptBagLevels(), getSubconceptBagSize());
+        return new CacheBag(getSubconceptBagSize());
     }
 
     @Override

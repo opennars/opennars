@@ -3,6 +3,7 @@ package nars.core;
 import java.util.Collection;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 
 
@@ -11,6 +12,8 @@ import nars.language.Term;
  *  responsible for efficiently storing all NAR Concept's and which of those will activate
  *  at the beginning of each cycle.*/
 public interface ConceptProcessor extends Iterable<Concept> {
+
+
 
     /** An iteration of the main loop, called during each memory cycle. */
     public void cycle(Memory m);
@@ -28,12 +31,12 @@ public interface ConceptProcessor extends Iterable<Concept> {
      * Creates and adds new concept to the memory
      * @return the new concept, or null if the memory is full
      */
-    public Concept addConcept(BudgetValue budget, Term term, Memory memory);
+    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing);
 
     /** Activates a concept, adjusting its budget.  
      *  May be invoked by the concept processor or at certain points in the reasoning process.
      */
-    public void activate(Concept c, BudgetValue b);
+    public void activate(Concept c, BudgetValue b, Activating mode);
 
     public void forget(Concept c);
     

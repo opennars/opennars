@@ -36,6 +36,7 @@ import nars.core.Events.TermLinkRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
 import nars.inference.BudgetFunctions;
+import nars.inference.BudgetFunctions.Activating;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;
@@ -406,7 +407,7 @@ public class Concept extends Item<Term> {
 //                        if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                         Term componentTerm = termLink.target;
 
-                        Concept componentConcept = memory.conceptualize(BudgetFunctions.budgetTermLinkConcept(this, task.budget, termLink), componentTerm);
+                        Concept componentConcept = memory.conceptualize(subBudget, componentTerm);
 
                         if (componentConcept != null) {
 
@@ -490,10 +491,10 @@ public class Concept extends Item<Term> {
      *
      * @param taskLink The termLink to be inserted
      */
-    public boolean insertTaskLink(final TaskLink taskLink) {
-        final BudgetValue taskBudget = taskLink.budget;
-        memory.conceptActivate(this, taskBudget);
+    public boolean insertTaskLink(final TaskLink taskLink) {        
+        
         TaskLink removed = taskLinks.putIn(taskLink);
+        
         if (removed!=null) {
             if (removed == taskLink) {
                 memory.emit(TaskLinkRemove.class, taskLink, this);
@@ -521,7 +522,7 @@ public class Concept extends Item<Term> {
                 for (final TermLink template : termLinkTemplates) {
                     if (template.type != TermLink.TRANSFORM) {
                         Term t = template.target;
-                        final Concept concept = memory.conceptualize(BudgetFunctions.budgetTermLinkConcept(this, taskBudget, template), t);
+                        final Concept concept = memory.conceptualize(taskBudget, t);
                         if (concept != null) {
 
                             // this termLink to that
@@ -603,7 +604,7 @@ public class Concept extends Item<Term> {
         final String itemString = item.toString();
 
         return new StringBuilder(2 + title.length() + itemString.length() + 1).
-                append("\n ").append(title).append(':').append(itemString).toString();
+                append(" ").append(title).append(':').append(itemString).toString();
     }
 
     /**
@@ -692,22 +693,16 @@ public class Concept extends Item<Term> {
 
         boolean fired = false;
 
-        if (currentTaskLink.getPriority() > 0) {
-            
-            if (currentTaskLink.budget.aboveThreshold()) {
+        if (currentTaskLink.budget.aboveThreshold()) {
 
-                new NAL.FireConcept(memory, this, currentTaskLink).call();        
+            new NAL.FireConcept(memory, this, currentTaskLink).call();        
 
-                fired = true;           
-            }            
+            fired = true;           
+        }            
 
-            currentTaskLink.updateTaskPriority();
+        //currentTaskLink.updateTaskPriority();
 
-            taskLinks.putBack(currentTaskLink, memory.param.taskForgetDurations.getCycles(), memory);
-            
-        }
-        else {
-        }
+        taskLinks.putBack(currentTaskLink, memory.param.taskForgetDurations.getCycles(), memory);
 
             
         return fired;
