@@ -124,12 +124,12 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      */
     @Override
     public int size() {
-        int is = sizeItems();
-        int in = nameTable.size();
-        if (is!=in) {
-            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());                
-            new Exception().printStackTrace();;
-        }
+//        int is = sizeItems();
+//        int in = nameTable.size();
+//        if (is!=in) {
+//            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());                
+//            new Exception().printStackTrace();;
+//        }
         
         return nameTable.size();
     }

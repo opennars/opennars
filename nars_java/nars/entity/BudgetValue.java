@@ -222,7 +222,20 @@ public class BudgetValue implements Cloneable {
     public void merge(final BudgetValue that) {
         BudgetFunctions.merge(this, that);
     }
+    
+    /**
+     * returns true if this budget is greater in all quantities than another budget,
+     * used to prevent a merge that would have no consequence
+     * @param other
+     * @return 
+     */
+    public boolean greaterThan(final BudgetValue other) {
+        return (getPriority() - other.getPriority() > Parameters.BUDGET_THRESHOLD) &&
+                (getDurability()- other.getDurability()> Parameters.BUDGET_THRESHOLD) &&
+                (getQuality() - other.getQuality() > Parameters.BUDGET_THRESHOLD);
+    }
 
+    
     /**
      * To summarize a BudgetValue into a single number in [0, 1]
      * @return The summary value
@@ -309,5 +322,6 @@ public class BudgetValue implements Cloneable {
         
         return period;
     }
+
 
 }
