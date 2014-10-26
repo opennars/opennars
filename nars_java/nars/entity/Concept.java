@@ -700,8 +700,6 @@ public class Concept extends Item<Term> {
             fired = true;           
         }            
 
-            //currentTaskLink.updateTaskPriority();
-
         taskLinks.putBack(currentTaskLink, memory.param.taskForgetDurations.getCycles(), memory);
 
             

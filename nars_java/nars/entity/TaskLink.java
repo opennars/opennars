@@ -184,7 +184,5 @@ public class TaskLink extends Item<Task> implements TLink {
         return super.toString();
     }
 
-    @Deprecated public void updateTaskPriority() {
-        targetTask.budget.lerpPriority(budget.getPriority(), Parameters.TASK_PRIORITY_MOMENTUM);
-    }
+
 }
