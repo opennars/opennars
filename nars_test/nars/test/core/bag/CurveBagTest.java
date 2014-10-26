@@ -22,8 +22,6 @@ import org.junit.Test;
  *
  * @author me
  */
-
-
 public class CurveBagTest {
     
     Param p = new DefaultNARBuilder().build().param();

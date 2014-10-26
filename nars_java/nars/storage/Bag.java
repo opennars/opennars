@@ -86,7 +86,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     
     /** for updating the nametable; works like Map put and remove */
-    abstract protected E putItem(K name, E item);
     abstract protected E removeKey(K name);
     
     /**
@@ -99,22 +98,25 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         size();
 
         final K newKey = newItem.name();        
-        final E existingItemWithSameKey = take(newKey);
-
+        final E existingItemWithSameKey = get(newKey);
+        
         size();
         
         if (existingItemWithSameKey != null) {
+            
+            take(newKey);
+            
+            size();
+            
             newItem = (E)existingItemWithSameKey.merge(newItem);
         }
-
-        size();
         
         // put the (new or merged) item into itemTable        
         final E overflowItem = addItem(newItem);
                 
         
-        if (overflowItem!=null) {
-                        
+        if (overflowItem!=null) {                                    
+
             size();
             
             return overflowItem;
@@ -141,6 +143,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     /** may return null if the item is not in the nameTable */
     public E take(K key) {        
+        
         E removed = removeKey(key);
         if (removed!=null) {
             removeItem(removed);        

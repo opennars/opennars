@@ -271,9 +271,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return (levelEmpty(level)) ? 0 : itemTable[level].size();
     }
 
-    @Override protected E putItem(final K name, final E item) {
-        return nameTable.put(name, item);
-    }
+
 
     @Override protected E removeKey(final K name) {
         return nameTable.remove(name);
