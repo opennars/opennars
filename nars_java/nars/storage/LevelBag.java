@@ -160,6 +160,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return f;
     }
 
+    
     /**
      * Check if an item is in the bag
      *
@@ -233,7 +234,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     }
 
     @Override
-    public synchronized E peekNext() {
+    public E peekNext() {
         if (size() == 0) {
             return null; // empty bag                
         }
@@ -245,7 +246,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     }
     
     @Override
-    public synchronized E takeOut() {
+    public E takeNext() {
+        verify();        
         if (size() == 0) {
             return null; // empty bag                
         }
@@ -254,10 +256,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
 
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
+        removeKey(selected.name());
 
         currentCounter--;
 
-        nameTable.remove(selected.name());
         //refresh();
 
         return selected;
@@ -267,29 +269,15 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return (levelEmpty(level)) ? 0 : itemTable[level].size();
     }
 
-    @Override protected E namePut(final K name, final E item) {
+    @Override protected E putItem(final K name, final E item) {
         return nameTable.put(name, item);
     }
 
-    @Override protected E nameRemove(final K name) {
+    @Override protected E removeKey(final K name) {
         return nameTable.remove(name);
     }
 
-    
-    /**
-     * Pick an item by key, then remove it from the bag
-     *
-     * @param key The given key
-     * @return The Item with the key
-     */
-    @Override
-    public E pickOut(final K key) {
-        final E picked = nameTable.remove(key);
-        if (picked != null) {
-            outOfBase(picked);
-        }
-        return picked;
-    }
+
 
     /**
      * Decide the put-in level according to priority
@@ -311,7 +299,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      * @return null if nothing overflowed, non-null if an overflow Item, which
      * may be the attempted input item (in which case it was not inserted)
      */
-    @Override protected E intoBase(final E newItem) {
+    @Override protected E addItem(final E newItem) {
         E oldItem = null;
         int inLevel = getLevel(newItem);
         if (size() >= capacity) {      // the bag will be full after the next 
@@ -323,6 +311,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
                 return newItem;
             } else {                            // remove an old item in the lowest non-empty level
                 oldItem = takeOutFirst(outLevel);
+                removeKey(oldItem.name());
             }
         }
         ensureLevelExists(inLevel);
@@ -370,7 +359,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      *
      * @param oldItem The Item to be removed
      */
-    @Override protected void outOfBase(final E oldItem) {
+    @Override protected void removeItem(final E oldItem) {
         final int level = getLevel(oldItem);
 
         
@@ -609,4 +598,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 //        
 //    }
 
+    protected void verify() {
+        int is = sizeItems();
+        int in = nameTable.size();
+        if (is!=in)
+            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());                
+    }
 }

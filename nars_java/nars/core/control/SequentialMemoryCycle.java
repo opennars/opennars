@@ -61,7 +61,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     public void processConcept() {
         float forgetCycles = memory.param.conceptForgetDurations.getCycles();
 
-        Concept currentConcept = concepts.takeOut();
+        Concept currentConcept = concepts.takeNext();
         
         if (currentConcept != null) {            
             currentConcept.fire();
@@ -99,7 +99,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         Concept concept;
         
         if (subcon!=null) {
-            concept = subcon.pickOut(term);
+            concept = subcon.take(term);
             if (concept!=null) {
                 concept.budget.merge(budget);
                 //System.out.println("retrieved: " + concept.toStringLong());
@@ -152,14 +152,14 @@ public class SequentialMemoryCycle implements ConceptProcessor {
 
     @Override
     public void activate(final Concept c, final BudgetValue b) {
-        concepts.pickOut(c.name());
+        concepts.take(c.name());
         BudgetFunctions.activate(c, b);
         concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
     }
     
     @Override
     public void forget(Concept c) {
-        concepts.pickOut(c.name());        
+        concepts.take(c.name());        
         concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);    
     }
 
