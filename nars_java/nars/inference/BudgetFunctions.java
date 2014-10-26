@@ -149,21 +149,31 @@ public final class BudgetFunctions extends UtilityFunctions {
         return new BudgetValue(priority, b.getDurability(), b.getQuality());
     }
 
+    public enum Activating {
+        Max, TaskLink
+    }
+    
+    
     /* ----------------------- Concept ----------------------- */
     /**
      * Activate a concept by an incoming TaskLink
      *
-     * @param i The concept
-     * @param budget The budget for the new item
+     * @param receiver The budget receiving the activation
+     * @param amount The budget for the new item
      */
-    public static void activate(final Item i, final BudgetValue budget) {
-        final float oldPri = i.getPriority();
-        final float priority = or(oldPri, budget.getPriority());
-        final float durability = aveAri(i.getDurability(), budget.getDurability());
-        final float quality = i.getQuality();
-        i.setPriority(priority);
-        i.setDurability(durability);
-        i.setQuality(quality);
+    public static void activate(final BudgetValue receiver, final BudgetValue amount, Activating mode) {        
+        switch (mode) {
+            case Max:
+                BudgetFunctions.merge(receiver, amount);
+                break;
+            case TaskLink:                
+                final float oldPri = receiver.getPriority();
+                receiver.setPriority( or(oldPri, amount.getPriority()) );
+                receiver.setDurability( aveAri(receiver.getDurability(), amount.getDurability()) );
+                receiver.setQuality( receiver.getQuality() );
+                break;
+        }
+        
     }
 
     /* ---------------- Bag functions, on all Items ------------------- */
@@ -337,10 +347,6 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     public static BudgetValue budgetTermLinkConcept(Concept c, BudgetValue taskBudget, TermLink termLink) {
         return taskBudget.clone();
-    }
-
-    public static BudgetValue budgetNewTaskConcept(Task task, int numTasksInBatch) {
-        return task.budget.clone();
     }
 
 }

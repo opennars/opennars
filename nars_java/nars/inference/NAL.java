@@ -16,6 +16,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import nars.inference.BudgetFunctions.Activating;
 import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
 import nars.io.Symbols;
@@ -360,11 +361,10 @@ abstract public class NAL implements Callable<NAL> {
             emit(TaskImmediateProcess.class, task);
 
             setCurrentTerm(currentTask.getContent());
-            currentConcept = mem.conceptualize(BudgetFunctions.budgetNewTaskConcept(task, numSiblingTasks), getCurrentTerm());
+            
+            setCurrentConcept( mem.conceptualize(currentTask.budget, getCurrentTerm()) );
             
             if (getCurrentConcept() != null) {
-
-                mem.conceptActivate(getCurrentConcept(), currentTask.budget);
 
                 boolean processed = getCurrentConcept().directProcess(this, currentTask);
 

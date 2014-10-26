@@ -32,9 +32,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nars.core.Events.ConceptAdd;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
@@ -50,6 +47,7 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
+import nars.inference.BudgetFunctions.Activating;
 import nars.inference.Executive;
 import nars.inference.NAL;
 import nars.inference.NAL.ImmediateProcess;
@@ -81,8 +79,6 @@ import static nars.io.Symbols.NativeOperator.PRODUCT;
 import static nars.io.Symbols.NativeOperator.SEQUENCE;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
-import nars.io.narsese.Narsese;
-import nars.io.narsese.NarseseParser;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
@@ -501,16 +497,22 @@ public class Memory implements Serializable {
 
     /**
      * Get the Concept associated to a Term, or create it.
+     * 
+     *   Existing concept: apply tasklink activation (remove from bag, adjust budget, reinsert)
+     *   New concept: set initial activation, insert
+     *   Subconcept: extract from cache, apply activation, insert
+     * 
+     * If failed to insert as a result of null bag, returns null
      *
+     * A displaced Concept resulting from insert is forgotten (but may be stored in optional  subconcept memory
+     * 
      * @param term indicating the concept
-     * @return an existing Concept, or a new one, or null ( TODO bad smell )
+     * @return an existing Concept, or a new one, or null 
      */
     public Concept conceptualize(final BudgetValue budget, final Term term) {
-        if (!term.isConstant()) {
-            return concept(term);
-        }
+        boolean createIfMissing = term.isConstant();
         
-        return concepts.addConcept(budget, term, this);
+        return concepts.conceptualize(budget, term, createIfMissing);
     }
 
     /**
@@ -608,24 +610,6 @@ public class Memory implements Serializable {
         }
         throw new RuntimeException("Unknown Term operator: " + op + " (" + op.name() + ")");
     }
-    
-
-    
-    
-    /* ---------- adjustment functions ---------- */
-    /**
-     * Adjust the activation level of a Concept
-     * <p>
-     * called in Concept.insertTaskLink only
-     *
-     * @param c the concept to be adjusted
-     * @param b the new BudgetValue
-     */
-    public void conceptActivate(final Concept c, final BudgetValue b) {
-        concepts.activate(c, b);
-    }
-
-    
     
     public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
         switch (param.forgetting) {

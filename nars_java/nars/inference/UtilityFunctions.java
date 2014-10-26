@@ -63,7 +63,6 @@ public class UtilityFunctions {
         return 1 - product;
     }
     
-    //may be more efficient than the for-loop version above, for 2 params
     public final static float or(final float a, final float b) {
         return 1f-((1f-a)*(1f-b));
     }
