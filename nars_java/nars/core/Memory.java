@@ -975,7 +975,7 @@ public class Memory implements Serializable {
      * @return whether a task was processed
      */
     public boolean processNovelTask() {
-        final Task task = novelTasks.takeOut();       // select a task from novelTasks
+        final Task task = novelTasks.takeNext();       // select a task from novelTasks
         if (task != null) {            
             new ImmediateProcess(this, task, 0).call();
             return true;

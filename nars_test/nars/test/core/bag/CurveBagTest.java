@@ -85,12 +85,12 @@ public class CurveBagTest {
         assert(f.items.get(0).getPriority() < f.items.get(1).getPriority());
 
         assert(f.size() == 3);
-        f.takeOut();
+        f.takeNext();
         
         assert(f.size() == 2);
-        f.takeOut();
+        f.takeNext();
         assert(f.size() == 1);
-        f.takeOut();
+        f.takeNext();
         assert(f.size() == 0);
         
         assert(f.getMass() == 0);
@@ -176,7 +176,7 @@ public class CurveBagTest {
             
             //remove some, adjust their priority, and re-insert
             for (int i= 0; i < capacity * adjustFraction; i++) {
-                NullItem t = f.takeOut();
+                NullItem t = f.takeNext();
                 if (i % 2 == 0)
                     t.budget.decPriority(0.2f);
                 else
@@ -195,7 +195,7 @@ public class CurveBagTest {
                         
             //remove last than was inserted so the bag never gets empty
             for (int i= 0; i < capacity * removeFraction; i++) {
-                NullItem t = f.takeOut();
+                NullItem t = f.takeNext();
                 float p = t.getPriority();
                 
                 assertTrue(p >= min);

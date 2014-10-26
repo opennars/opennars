@@ -41,17 +41,14 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
 
     /**
-     * Choose an Item according to priority distribution and take it out of the
-     * Bag
-     *
+     * Choose an Item according to distribution policy and take it out of the Bag
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public E takeOut();    
+    abstract public E takeNext();    
 
     /** gets the next value without removing changing it or removing it from any index */
     abstract public E peekNext();
     
-    abstract public E pickOut(final K key);    
 
     /**
      * Insert an item into the itemTable, and return the overflow
@@ -59,15 +56,15 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param newItem The Item to put in
      * @return The overflow Item, or null if nothing displaced
      */    
-    abstract protected E intoBase(final E newItem);
+    abstract protected E addItem(final E newItem);
     
     
-    abstract protected void outOfBase(final E oldItem);
+    abstract protected void removeItem(final E oldItem);
     
     
     /** for updating the nametable; works like Map put and remove */
-    abstract protected E namePut(K name, E item);
-    abstract protected E nameRemove(K name);
+    abstract protected E putItem(K name, E item);
+    abstract protected E removeKey(K name);
     
     /**
      * Add a new Item into the Bag
@@ -78,37 +75,41 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public E putIn(E newItem) {
 
         final K newKey = newItem.name();        
-        final E existingItemWithSameKey = nameRemove(newKey);
+        final E existingItemWithSameKey = take(newKey);
 
         if (existingItemWithSameKey != null) {
-            // merge duplications
-            outOfBase(existingItemWithSameKey);
             newItem = (E)existingItemWithSameKey.merge(newItem);
         }
 
         // put the (new or merged) item into itemTable        
-        final E overflowItem = intoBase(newItem);
+        final E overflowItem = addItem(newItem);
 
         if (overflowItem == newItem) {
             //did not add, too low priority            
             return newItem;
         }
-        
-        namePut(newKey, newItem);
-        
+        else {
 
-        if (overflowItem != null) {             
-            // remove overflow
-            final K overflowKey = overflowItem.name();
-            if (!overflowKey.equals(newKey)) {
-                nameRemove(overflowKey);
+            putItem(newKey, newItem);
+
+            if (overflowItem != null) {             
+                // remove overflow
                 return overflowItem;
             }
+            else {
+                return null;
+            }
         }
-        
-        return null;
     }
-    
+
+    /** may return null if the item is not in the nameTable */
+    public E take(K key) {        
+        E removed = removeKey(key);
+        if (removed!=null) {
+            removeItem(removed);            
+        }
+        return removed;        
+    }
     
     /**
      * The number of items in the bag
@@ -159,8 +160,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      *  @forgetCycles forgetting time in cycles
      *  @return the variable that was updated, or null if none was taken out
      */
-    synchronized public E processNext(final float forgetCycles, final Memory m) {
-        final E x = takeOut();
+    public E processNext(final float forgetCycles, final Memory m) {
+        
+        final E x = takeNext();
         if (x!=null) {
             
             E r = putBack(x, forgetCycles, m);
@@ -201,6 +203,23 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return getClass().getSimpleName() + "(" + size() + "/" + getCapacity() +")";
     }
     
+    public float getMinPriority() {
+        float min = 1.0f;
+        for (Item e : this) {
+            float p = e.getPriority();
+            if (p < min) min = p;
+        }
+        return min;            
+    }
+    
+    public float getMaxPriority() {
+        float max = 0.0f;
+        for (Item e : this) {
+            float p = e.getPriority();
+            if (p > max) max = p;
+        }
+        return max;
+    }
 
     
 }

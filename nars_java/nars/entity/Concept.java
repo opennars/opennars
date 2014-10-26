@@ -688,7 +688,7 @@ public class Concept extends Item<Term> {
         if (taskLinks.size() == 0) return false;
         
         
-        final TaskLink currentTaskLink = taskLinks.takeOut();
+        final TaskLink currentTaskLink = taskLinks.takeNext();
 
         boolean fired = false;
 
@@ -765,7 +765,7 @@ public class Concept extends Item<Term> {
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; i < toMatch; i++) {
             
-            final TermLink termLink = termLinks.takeOut();
+            final TermLink termLink = termLinks.takeNext();
             
             if (taskLink.novel(termLink, time)) {
                 return termLink;
