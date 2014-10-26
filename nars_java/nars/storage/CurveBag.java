@@ -2,9 +2,11 @@ package nars.storage;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import nars.core.Memory;
 import nars.entity.Item;
 import nars.util.sort.FractalSortedItemList;
@@ -108,10 +110,12 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         
         int is = items.size();
         int in = nameTable.size();
-        if (is!=in)
-            throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+        if (is!=in) {
+            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+            new Exception().printStackTrace();;
+        }
         
-        return items.size();
+        return nameTable.size();
     }
 
     /**
@@ -155,11 +159,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         return nameTable.get(key);
     }
 
-    @Override protected E putItem(final K name, final E item) {
-        return nameTable.put(name, item);
-    }
-
-
 
     /**
      * Choose an Item according to priority distribution and take it out of the
@@ -171,9 +170,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     public E takeNext() {
         if (size()==0) return null; // empty bag                
         
-        final E selected = removeItem( nextRemovalIndex() );
-        return selected;
+        return removeItem( nextRemovalIndex() );    
     }
+    
 
     @Override
     public E peekNext() {
@@ -255,13 +254,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     @Override protected E addItem(E newItem) {
 
+
         float newPriority = newItem.getPriority();        
         
         E oldItem = null;
-        
-        /*if (items.contains(newItem))
-            return null;*/
-        
         
         if (size() >= capacity) {      // the bag is full            
             if (newPriority < getMinPriority())
@@ -269,12 +265,14 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             
             oldItem = removeItem(0);            
         }
-                
+                        
         items.add(newItem);
         nameTable.put(newItem.name(), newItem);
         
         mass += (newItem.budget.getPriority());                  // increase total mass
 
+        size();
+        
         return oldItem;
     }
 
@@ -289,10 +287,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     protected E removeItem(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
-        final E selected = items.remove(index);
+        final E selected = items.remove((int)index);
         if (selected!=null) {            
-            mass -= selected.budget.getPriority();
             nameTable.remove(selected.name());
+            mass -= selected.budget.getPriority();
         }
        
         return selected;
@@ -319,9 +317,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             mass -= oldItem.getPriority();
             return true;
         }
-        else
-            throw new RuntimeException(this + " missing removeItem: " + oldItem);
-        //return false;
+        /*else
+            throw new RuntimeException(this + " missing removeItem: " + oldItem);*/
+        return false;
     }
 
 
