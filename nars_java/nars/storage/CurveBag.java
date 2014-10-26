@@ -172,9 +172,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         if (size()==0) return null; // empty bag                
         
         final E selected = removeItem( nextRemovalIndex() );
-        if (removeKey(selected.name())!=selected)
-            System.err.println("inconsistent item removal with name table removal: " + selected.name() + " -> " + selected);
-        
         return selected;
     }
 
@@ -257,8 +254,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override protected E addItem(E newItem) {
-        if (capacity == 500)
-            System.out.println(" +A " + newItem + " " + items.size() + " " + nameTable.size() + " ");
 
         float newPriority = newItem.getPriority();        
         
@@ -273,17 +268,12 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
                 return newItem;
             
             oldItem = removeItem(0);            
-            removeKey(oldItem.name());
         }
-        
-
-        
+                
         items.add(newItem);
+        nameTable.put(newItem.name(), newItem);
         
         mass += (newItem.budget.getPriority());                  // increase total mass
-
-        if (capacity == 500)
-            System.out.println(" +B " + newItem + " " + items.size() + " " + nameTable.size() + " " + oldItem);
 
         return oldItem;
     }
@@ -300,7 +290,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     protected E removeItem(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
         final E selected = items.remove(index);
-        mass -= selected.budget.getPriority();
+        if (selected!=null) {            
+            mass -= selected.budget.getPriority();
+            nameTable.remove(selected.name());
+        }
        
         return selected;
     }
@@ -311,7 +304,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @param oldItem The Item to be removed
      */ 
     @Override
-    protected void removeItem(final E oldItem) {
+    protected boolean removeItem(final E oldItem) {
         /*
         //A test for debugging to see if olditem and currentitem are ever different instances.
         final E currentItem = items.get(items.indexOf(oldItem));
@@ -321,11 +314,14 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             throw new RuntimeException();
         }*/
         
-        if (items.remove(oldItem)) {            
+        if (items.remove(oldItem)) {  
+            nameTable.remove(oldItem.name());
             mass -= oldItem.getPriority();
+            return true;
         }
         else
             throw new RuntimeException(this + " missing removeItem: " + oldItem);
+        //return false;
     }
 
 

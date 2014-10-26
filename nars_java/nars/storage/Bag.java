@@ -14,14 +14,37 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     abstract public void clear();
 
+
     /**
-     * Check if an item is in the bag
+     * Check if an item is in the bag.  both its key and its value must match the parameter
      *
      * @param it An item
      * @return Whether the Item is in the Bag
      */
-    abstract public boolean contains(final E it);
-
+    public boolean contains(final E it) {
+        E exist = get(it.name());
+        if (exist.equals(it))
+            return true;
+        return false;
+    }
+    
+    public E remove(K key, E value) {
+        E removed = null;
+        if (key!=null) {
+            removed = removeKey(key);
+        }
+        
+        if (value!=null) {
+            boolean b = removeItem(value);
+            if ((removed!=null) && (!b)) {
+                throw new RuntimeException("removed key but not value, inconsisency");         
+            }            
+            if ((removed == null) && b)
+                removed = value;
+        }
+        return removed;
+    }
+    
     /**
      * Get an Item by key
      *
@@ -59,7 +82,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     abstract protected E addItem(final E newItem);
     
     
-    abstract protected void removeItem(final E oldItem);
+    abstract protected boolean removeItem(final E oldItem);
     
     
     /** for updating the nametable; works like Map put and remove */
@@ -73,41 +96,58 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
     public E putIn(E newItem) {
+        size();
 
         final K newKey = newItem.name();        
         final E existingItemWithSameKey = take(newKey);
 
+        size();
+        
         if (existingItemWithSameKey != null) {
             newItem = (E)existingItemWithSameKey.merge(newItem);
         }
 
+        size();
+        
         // put the (new or merged) item into itemTable        
         final E overflowItem = addItem(newItem);
+                
+        
+        if (overflowItem!=null) {
+                        
+            size();
+            
+            return overflowItem;
 
-        if (overflowItem == newItem) {
-            //did not add, too low priority            
-            return newItem;
-        }
+
+//            if (overflowItem.name().equals( newItem )) {
+//                //did not add, too low priority            
+//                if (contains(newItem))
+//                    return overflowItem;
+//                else /*if (contains(overflowItem))*/
+//                    return newItem;
+//            }
+//            else {
+//                // remove overflow
+//                return overflowItem;
+//            }
+            
+        }            
         else {
-
-            putItem(newKey, newItem);
-
-            if (overflowItem != null) {             
-                // remove overflow
-                return overflowItem;
-            }
-            else {
-                return null;
-            }
+            return null;
         }
+        
     }
 
     /** may return null if the item is not in the nameTable */
     public E take(K key) {        
         E removed = removeKey(key);
         if (removed!=null) {
-            removeItem(removed);            
+            removeItem(removed);        
         }
+
+        size();
+        
         return removed;        
     }
     
@@ -200,7 +240,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + size() + "/" + getCapacity() +")";
+        return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
     }
     
     public float getMinPriority() {
