@@ -132,7 +132,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             return null;
 
         
-        Concept displaced = concepts.putIn(concept);        
+        Concept displaced = concepts.putBack(concept, memory.param.conceptForgetDurations.getCycles(), memory);
                 
         if (displaced == null) {
             //added without replacing anything
