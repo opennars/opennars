@@ -62,7 +62,7 @@ public class Anticipate extends Operator {
             if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
                 int addi=imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD ? memory.param.duration.get() : 0;
                 memory.executive.anticipateTime=memory.time()+addi;
-                memory.executive.anticipateTerm=imp.getPredicate();
+                memory.executive.anticipateTerm=imp;
             }
         }
         

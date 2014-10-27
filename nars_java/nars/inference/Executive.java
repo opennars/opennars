@@ -617,7 +617,7 @@ public class Executive {
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         //new one happened and duration is already over, so add as negative task
-        if(Parameters.INTERNAL_EXPERIENCE && anticipateTerm!=null && newEvent.sentence.getOccurenceTime()-anticipateTime>nal.mem.param.duration.get()) {
+        if(Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm!=null && newEvent.sentence.getOccurenceTime()-anticipateTime>nal.mem.param.duration.get()) {
             Term s=newEvent.sentence.content;
             TruthValue truth=new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
             Negation N=(Negation) Negation.make(s);
@@ -628,7 +628,7 @@ public class Executive {
             nal.derivedTask(task, false, true, null, null);
             anticipateTerm=null;
         }
-        if(Parameters.INTERNAL_EXPERIENCE && anticipateTerm!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content==((Implication)anticipateTerm).getPredicate()) {
+        if(Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content==((Implication)anticipateTerm).getPredicate()) {
             anticipateTerm=null; //it happened like expected
         }
         
