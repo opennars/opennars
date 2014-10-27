@@ -1,33 +1,45 @@
 package nars.util.sort;
 
 import com.google.common.collect.Lists;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javolution.util.FastSortedTable;
 import nars.entity.Item;
 
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
 //abstract public class SortedItemList<E> extends FastTable<E> {
-public class ArraySortedItemList<E extends Item>  implements SortedItemList<E> {
+public class ArraySortedItemList<E extends Item> extends ArrayList<E> implements SortedItemList<E> {
 
     int capacity = Integer.MAX_VALUE;
     private List<E> reverse;
 
-    public final List<E> list;
-    
+//    public ArraySortedItemList(Comparator<E> c) {
+//        this(c, Integer.MAX_VALUE);
+//    }
+//
+//    public ArraySortedItemList(Comparator<E> c, int capacity) {
+//        super();
+//        //this.comparator = c;
+//        this.capacity = capacity;
+//    }
     public ArraySortedItemList() {
-        this(1, 
-            //new ArrayList()
-            new FastSortedTable(null)
-        );
+        this(1);
     }
 
-    public ArraySortedItemList(int capacity, List<E> list) {
+    public ArraySortedItemList(int capacity) {
         super();
-        setCapacity(1);
-        this.list = list;
+        this.capacity = capacity;
+        /*
+         this(new Comparator<E>() {
+
+         @Override public int compare(final E o1, final E o2) {
+         //fast comparison because name table will already prevent duplicates?
+         if (o1 == o2) return 0;
+         return -1;
+         }
+                
+         },capacity);*/
     }
 
     @Override
@@ -71,16 +83,10 @@ public class ArraySortedItemList<E extends Item>  implements SortedItemList<E> {
     }
 
     @Override
-    public E get(int i) {
-        return list.get(i);
-    }
-
-    
-    @Override
     public boolean add(final E o) {
-                
+        
         if (isEmpty()) {
-            return list.add(o);
+            return super.add(o);
         } else {
             if (size() == capacity) {
 
@@ -91,7 +97,7 @@ public class ArraySortedItemList<E extends Item>  implements SortedItemList<E> {
 
                 reject(remove(0));
             }
-            list.add(positionOf(o), o);
+            super.add(positionOf(o), o);
             return true;
         }
     }
@@ -123,7 +129,7 @@ public class ArraySortedItemList<E extends Item>  implements SortedItemList<E> {
     @Override
     public Iterator<E> descendingIterator() {
         if (reverse == null) {
-            reverse = Lists.reverse(list);
+            reverse = Lists.reverse(this);
         }
         return reverse.iterator();
     }
@@ -134,100 +140,6 @@ public class ArraySortedItemList<E extends Item>  implements SortedItemList<E> {
     protected void reject(E removeFirst) {
     }
 
-    
-    @Override public E remove(int i) {
-        return list.remove(i);
-    }
-
-    @Override
-    public int size() {
-        return list.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    @Override
-    public boolean contains(Object o) {
-        return list.contains(o);
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return list.iterator();
-    }
-
-    @Override
-    public Object[] toArray() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    @Override
-    public void clear() {
-        list.clear();
-    }
-
-    @Override
-    public boolean remove(Object _o) {
-                
-        if (size() == 0) return false;
-        if (size() == 1) {
-            list.remove(0);
-            return true;
-        }
-        E o = (E)_o;
-        int p = positionOf( o );
-        int s = size();
-        if (p < s) {
-            for (int i = p; i < s; i++) {
-                E r = list.get( i );                
-                if (r.name().equals(o.name())) {
-                    list.remove(i);
-                    return true;
-                }
-            }
-        }
-        if (p > 0) {
-            for (int i = p-1; i >=0; i--) {
-                E r = list.get( i );                
-                if (r.name().equals(o.name())) {
-                    list.remove(i);
-                    return true;
-                }
-            }
-        }
-        
-        throw new RuntimeException(this + "(" + capacity + ") missing: " + o);
-    }
-
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends E> c) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
 }
 /*
  public class PrioritySortedItemList<E extends Item> extends SortedList<E> {
