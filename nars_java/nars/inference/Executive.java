@@ -102,17 +102,19 @@ public class Executive implements Observer {
                 if (bp != ap) {
                     return Float.compare(ap, bp);
                 } else {
-                    float ad = a.getPriority();
-                    float bd = b.getPriority();
-                    if (ad!=bd)
-                        return Float.compare(ad, bd);
-                    else {
-                        float add = a.getDurability();
-                        float bdd = b.getDurability();
-                        return Float.compare(add, bdd);                        
+                    if(a.c!=null) {
+                        float ad = a.c.getPriority();
+                        float bd = b.c.getPriority();
+                        if (ad!=bd)
+                            return Float.compare(ad, bd);
+                        else {
+                            float add = a.c.getDurability();
+                            float bdd = b.c.getDurability();
+                            return Float.compare(add, bdd);                        
+                        }
                     }
                 }
-
+                return 0;
             }
         }) {
 
@@ -176,18 +178,21 @@ public class Executive implements Observer {
         private float motivationFactor = 1;
         private TruthValue desire;
         public final Executive executive;
+        Memory memory;
         
-        public TaskExecution(final Executive executive, TruthValue desire) { 
+        public TaskExecution(Memory mem,final Executive executive, TruthValue desire) { 
             this.executive = executive;
             this.desire = desire;
             this.t = null;
             this.c = null;
+            this.memory=mem;
         }
         
-        public TaskExecution(final Executive executive, final Concept concept, Task t) {
+        public TaskExecution(Memory mem,final Executive executive, final Concept concept, Task t) {
             this.c = concept;            
             this.executive = executive;
             this.desire = t.getDesire();
+            this.memory=mem;
             
             //Check if task is 
             if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
@@ -302,7 +307,13 @@ public class Executive implements Observer {
         public final float getDesire() { 
             return desire.getExpectation() * motivationFactor;
         }
-        public final float getPriority() { return t.getPriority();         }
+        public final float getPriority() { 
+            Concept cc=memory.concept(t.sentence.content);
+            if(cc!=null) {
+                return cc.getPriority();
+            }
+            
+            return 1;         }
         public final float getDurability() { return t.getDurability(); }
         //public final float getMotivation() { return getDesire() * getPriority() * motivationFactor;         }
         public final void setMotivationFactor(final float f) { this.motivationFactor = f;  }
@@ -366,7 +377,7 @@ public class Executive implements Observer {
             occured=false; //only bad to not happened not interrupted ones
             ended=false;
             
-            final TaskExecution te = new TaskExecution(this, c, t);
+            final TaskExecution te = new TaskExecution(memory,this, c, t);
             if (tasks.add(te)) {
                 //added successfully
                 memory.emit(TaskExecution.class, te);
