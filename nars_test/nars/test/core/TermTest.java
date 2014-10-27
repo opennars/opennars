@@ -19,8 +19,11 @@ package nars.test.core;
 import java.util.TreeSet;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.io.TextOutput;
 import nars.io.Texts;
+import nars.io.narsese.Narsese;
 import nars.language.CompoundTerm;
 import nars.language.Inheritance;
 import nars.language.Term;
@@ -202,5 +205,37 @@ public class TermTest {
         }
     }
 
+    @Test
+    public void testEquality() throws Exception {
+        NAR n = new DefaultNARBuilder().build();
+            
+        String A = "(&|,<(*,SELF,#1) --> at>,<(*,{t002},#2) --> on>)";
+        String B = "(&|,<(*,SELF,#2) --> at>,<(*,{t002},#3) --> on>)";
+        
+        Narsese s = new Narsese(n.memory);
+        Term a = s.parseTerm(A);
+        
+        Term a2 = s.parseTerm("(&|,<(*,SELF,#1) --> at>,<(*,{t002},#2) --> on>)");
+        assertTrue(a!=a2);
+        assertEquals(a, a2);
+        
+        System.out.println(a + " " + a2);
+        
+        new TextOutput(n, System.out);
+        n.addInput(A + ".");
+        n.addInput(B + ".");
+        n.finish(6);
+        
+        
+        
+        Concept CA = n.memory.conceptualize(new BudgetValue(0.5f, 0.5f, 0.5f), s.parseTerm(A));
+        Concept CB = n.memory.conceptualize(new BudgetValue(0.5f, 0.5f, 0.5f), s.parseTerm(B));
+        
+        System.out.println(CA + " " + CB);
+        assertEquals(CA, CB);
 
+        
+        
+        
+    }
 }
