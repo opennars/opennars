@@ -458,10 +458,10 @@ public class Executive {
     public boolean isDesired(final Task t, final Concept c) {             
         float desire = c.getDesire().getExpectation();
         float priority = t.budget.getPriority(); //t.budget.summary();
-        //return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
+        return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
         
-        double dt = memory.param.decisionThreshold.get();
-        return ((desire >= dt) || (priority >= dt));
+       // double dt = memory.param.decisionThreshold.get();
+       // return ((desire >= dt) || (priority >= dt));
     }
     
     /** called during each memory cycle */
@@ -473,8 +473,6 @@ public class Executive {
             return;
                         
         lastExecution = now;
-        
-        graph.implication.multiplyRelevancy(causeRelevancyFactor);
         
         updateTasks();
         updateSensors();
