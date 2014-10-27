@@ -371,12 +371,6 @@ public class Executive implements Observer {
         }
             
         if (valid) {
-            if(!occured && this.expected_task!=null && ended) {
-                //expected_task.expect(false); //ok this one didnt get his expectation
-            }
-            occured=false; //only bad to not happened not interrupted ones
-            ended=false;
-            
             final TaskExecution te = new TaskExecution(memory,this, c, t);
             if (tasks.add(te)) {
                 //added successfully
@@ -605,7 +599,7 @@ public class Executive implements Observer {
 
     public Task expected_task=null;
     public Term expected_event=null;
-    boolean ended=false;
+
     private void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
         int s = task.sequence;
         Term currentTerm = c.term[s];
@@ -634,7 +628,6 @@ public class Executive implements Observer {
         }
 
         if (s == c.term.length) {
-            ended=true;
             //completed task
            
             if(task.t.sentence.content instanceof Implication) {
@@ -646,7 +639,6 @@ public class Executive implements Observer {
             task.sequence=0;
         }
         else {            
-            ended=false;
             //still incomplete
             task.sequence = s;
             task.setMotivationFactor(motivationToFinishCurrentExecution);
@@ -748,7 +740,6 @@ public class Executive implements Observer {
     }
     
     public Task stmLast=null;
-    boolean occured=false;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime()==Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent,nal.mem))
@@ -773,17 +764,6 @@ public class Executive implements Observer {
 
         //for this heuristic, only use input events & task effects of operations
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-            if(Parameters.TEMPORAL_PARTICLE_PLANNER && this.expected_event!=null && this.expected_task!=null) {
-                if(newEvent.sentence.content.equals(this.expected_event)) {
-                    //this.expected_task.expect(true);
-                    occured=true;
-                } //else {
-                  ////  this.expected_task.expect(false);
-               // }
-                    
-               // this.expected_event=null;
-               // this.expected_task=null; //done i think//todo, refine, it could come in a specific time, also +4 on end of a (&/ plan has to be used
-            }
             stmLast=newEvent;
             lastEvents.add(newEvent);
             temporalPredictionsAdapt();
