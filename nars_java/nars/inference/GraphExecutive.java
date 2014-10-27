@@ -420,7 +420,7 @@ public class GraphExecutive {
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getCauseRelevancy(final Cause c, final Term goal) {
-        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation() + c.getRelevancy(goal) ));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
+        return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
         //return c.getTruth().getExpectation();
     }
     
@@ -595,15 +595,6 @@ public class GraphExecutive {
                     super.end(success);
                 }
 
-                @Override public void expect(boolean eventHappened) {
-                    if (eventHappened) {
-                        rememberPlanSuccess(ParticlePlan.this, goalTerm, this);
-                    }
-                    if (!eventHappened) {
-                        forgetPlanSuccess(ParticlePlan.this, goalTerm, this);
-                    }
-                }
-
             };
             return solution;
         }
@@ -751,20 +742,6 @@ public class GraphExecutive {
         
         return plans;
     } 
-    
- 
-    
-    @Deprecated protected void rememberPlanSuccess(ParticlePlan plan, Term goal, Task t) {
-        for (Cause c : plan.path) {
-            c.rememberRelevant(goal, Executive.relevancyOfSuccessfulPlan);
-        }
-    }
-    
-    @Deprecated protected void forgetPlanSuccess(ParticlePlan plan, Term goal, Task t) {
-        for (Cause c : plan.path) {
-            c.forgetRelevant(goal, Executive.relevancyOfSuccessfulPlan);
-        }
-    }
     
     protected Task planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
