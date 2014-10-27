@@ -192,13 +192,7 @@ public abstract class CompoundTerm extends Term {
         return (short)c;
     }
  
- 
-    @Override
-    public boolean equals(final Object that) {       
-        if (this == that) return true;        
-        if (!(that instanceof CompoundTerm)) return false;                
-        return name().equals(((CompoundTerm)that).name());
-    }
+
 
 
         

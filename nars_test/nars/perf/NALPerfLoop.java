@@ -2,7 +2,8 @@ package nars.perf;
 
 import java.util.Collection;
 import nars.core.NAR;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.test.core.NALTest;
 
@@ -16,10 +17,11 @@ public class NALPerfLoop {
         int repeats = 3;
         int warmups = 1;
         int extraCycles = 2048;
-        int maxConcepts = 4096;
-                
+        int maxConcepts = 1000;
+          
+        NAR n = new CurveBagNARBuilder().build();
         //NAR n = new DefaultNARBuilder().setConceptBagSize(maxConcepts).build();
-        NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
+        //NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
         
         Collection c = NALTest.params();
         while (true) {

@@ -5,39 +5,42 @@ import javolution.util.function.Equality;
 import nars.entity.Item;
 import nars.entity.Item.ItemPriorityComparator;
 
-
 public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedItemList<E> {
 
     public static class ItemEquality<E extends Item> extends ItemPriorityComparator<E> implements Equality<E> {
-        
-        @Override public int compare(final E a, final E b) { 
-            //if (areEqual(a, b)) return -1;
-            int i = super.compare(a, b);
-            if (i == 0) i = -1;
-            return i;
-        }
-        
-        @Override public int hashCodeOf(E t) {
-            return t.hashCode();
+
+        @Override
+        public int compare(final E a, final E b) {
+            float ap = a.getPriority();
+            float bp = b.getPriority();
+
+            if (areEqual(a, b)) {
+                return 0;
+            }
+            return super.compare(a, b);
         }
 
-        @Override public boolean areEqual(E t, E t1) {
-            return t.equals(t1);
+        @Override
+        public int hashCodeOf(E t) {
+            return t.name().hashCode();
         }
-        
+
+        @Override
+        public boolean areEqual(E t, E t1) {
+            return t.name().equals(t1.name());
+        }
+
     }
-    
-    
-    
+
     int capacity;
 
     public FractalSortedItemList() {
         this(1);
     }
-    
+
     public FractalSortedItemList(int capacity) {
-        super(new ItemEquality<E>());
-        this.capacity = capacity;        
+        super((Equality)null);
+        this.capacity = capacity;
     }
 
     @Override
@@ -46,45 +49,91 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
     }
 
     @Override
-    public boolean add(E element) {
-        if (capacity == 500)
-            System.out.println(" + " + element + " " + contains(element));
-        boolean b = addIfAbsent(element);
-        if (capacity == 500)
-            System.out.println(b + " " + size());
-        return b;
+    public boolean add(final E o) {
+        if (isEmpty()) {
+            return super.add(o);
+        } else {
+            if (size() == capacity) {
+
+                if (positionOf(o) == 0) {
+                    //priority too low to join this list
+                    return false;
+                }
+
+                reject(removeFirst()); //maybe should be last
+            }
+            super.add(positionOf(o), o);
+            return true;
+        }
+    }
+
+    
+    @Override
+    public boolean remove(Object obj) {        
+        int i = positionOf( ((E)obj) );
+        if ((i >= size()) || (i == -1))
+            return false;
+        E r = remove(i);
+        if (r!=null) {
+            if (r.name().equals( ((E)obj).name()) )
+                return true;
+            else {
+                System.out.println( ((E)obj).name() + " =?= " + r.name() );
+                throw new RuntimeException("inconsistent bag");
+            }
+        }
+        return false;
     }
 
     @Override
-    public boolean remove(Object obj) {
-        if (capacity == 500)
-            System.out.println(" - " + obj + contains(obj));
-        return super.remove(obj);
+    public E remove(int index) {        
+        return super.remove(index);
     }
-
-    @Override
-    public E remove(int index) {
-        if (capacity == 500)
-            System.out.println(" - " + index + " = " + get(index));
-        return super.remove(index); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    
-
-    
-    
+   
     
     @Override
-    public E getLast() {        
-        return max();
+    public final int positionOf(final E o) {
+        final float y = o.budget.getPriority();
+        final int s = size();
+        if (s > 0)  {
+
+            //binary search
+            int low = 0;
+            int high = s-1;
+
+            while (low <= high) {
+                int mid = (low + high) >>> 1;
+
+                E midVal = get(mid);
+
+                final float x = midVal.budget.getPriority();
+
+                if (x < y) low = mid + 1;
+                else if (x == y) return mid;
+                else if (x > y) high = mid - 1;                    
+
+            }
+            return low;
+        }
+        else {
+            return -1;
+        }
     }
+        
+    @Override
+    public E getLast() {
+        int s = size();
+        if (s == 0) return null;
+        return get(size()-1);
+    }
+
     @Override
     public E getFirst() {
-        return min();
+        int s = size();
+        if (s == 0) return null;
+        return get(0);
     }
 
-    
-    
 //    @Override
 //    public final int positionOf(final E o) {
 //        final float y = o.budget.getPriority();
@@ -116,7 +165,6 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
 //            return 0;
 //        }
 //    }
-
 //    public int positionOf(final E o) {
 //        final E y = o;
 //        final int s = size();
@@ -166,8 +214,6 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
 //            
 //        }
 //    }
-
-    
     public final int capacity() {
         return capacity;
     }
