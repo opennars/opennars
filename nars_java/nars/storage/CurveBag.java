@@ -59,7 +59,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         this(capacity, curve, randomRemoval, 
                 //new RedBlackSortedItemList<E>() 
                 new ArraySortedItemList<E>() 
-                
                 //new FractalSortedItemList<E>() 
                 
                                 /*if (capacity < 128)*/
@@ -91,11 +90,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
             @Override
             public E put(K key, E value) {
-                E removed = remove(key);
-                
-                super.put(key, value);
-                
                 items.add(value);
+                E removed = super.put(key, value);
+                if (removed!=null)
+                    items.remove(removed);
                 return removed;            
             }
 
@@ -112,7 +110,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             @Override
             public boolean remove(Object key, Object value) {
                 throw new RuntimeException("Not implemented");
+                //items.remove(((E)key).name());
+                //return super.remove(key, value);
             }
+
             
         };
                 
@@ -140,13 +141,13 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         int is = items.size();
         int in = nameTable.size();
         if (is!=in) {
-            throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+            //throw new RuntimeException();
+            new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in).printStackTrace();
+            System.exit(1);
         }
         
-        return is;
+        return nameTable.size();
     }
-    
-                
 
     /**
      * Get the average priority of Items
@@ -283,6 +284,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     @Override protected E addItem(E newItem) {
 
+        size();
+
         float newPriority = newItem.getPriority();        
         
         E oldItem = null;
@@ -294,9 +297,15 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             oldItem = removeItem(0);            
         }
                         
+        size();
+        
         nameTable.put(newItem.name(), newItem);
+
+        size();
         
         mass += (newItem.budget.getPriority());                  // increase total mass
+
+        size();
         
         return oldItem;
     }
@@ -313,11 +322,14 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     protected E removeItem(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
         
+        size();
+        
         final E selected = items.get((int)index);
         if (selected!=null) {            
             nameTable.remove(selected.name());
             mass -= selected.budget.getPriority();
         }
+        size();
        
         return selected;
     }
@@ -329,25 +341,41 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */ 
     @Deprecated @Override
     protected boolean removeItem(final E oldItem) {
-        //handled in nameTable override
+//        if (items.remove(oldItem)) {  
+//            mass -= oldItem.getPriority();
+//            nameTable.remove(oldItem.name());
+//            
+//            size();
+//            
+//            return true;
+//        }
+//        /*else
+//            throw new RuntimeException(this + " missing removeItem: " + oldItem);*/
+//        return false;
         return false;
     }
+
+
+
 
     @Override
     public float getMass() {
         if (mass < Float.MIN_VALUE)
             mass = 0;
         return mass+size();
-    }    
+    }
+    
 
     @Override
     public int getCapacity() {
         return capacity;
     }
 
+
     @Override public String toString() {
         return super.toString() + "{" + items.getClass().getSimpleName() + "}";
     }
+            
 
     @Override
     public Set<K> keySet() {
@@ -412,5 +440,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     }
     
 
+        
     
 }

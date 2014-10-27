@@ -130,7 +130,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public E take(final K key) {        
 
         size();
-                
         
         E removed = removeKey(key);                
         if (removed!=null) {
