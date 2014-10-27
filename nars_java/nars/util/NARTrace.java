@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import nars.core.Events;
-import nars.core.Events.ConceptAdd;
+import nars.core.Events.ConceptNew;
 import nars.core.Events.InferenceEvent;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -166,7 +166,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
     
     @Override
     public void onConceptAdd(Concept concept) {
-        ConceptAdd cc = new ConceptAdd(concept, t);
+        ConceptNew cc = new ConceptNew(concept, t);
         addEvent(cc);
 
         List<InferenceEvent> lc = new ArrayList(1);
