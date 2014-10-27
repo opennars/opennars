@@ -6,6 +6,7 @@ import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Item;
+import nars.language.Term;
 
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
@@ -200,6 +201,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         }
         return max;
     }
+
+    abstract public void renameKey(K from, K to);
 
     
 }

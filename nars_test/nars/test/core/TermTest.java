@@ -211,29 +211,36 @@ public class TermTest {
             
         String A = "(&|,<(*,SELF,#1) --> at>,<(*,{t002},#2) --> on>)";
         String B = "(&|,<(*,SELF,#2) --> at>,<(*,{t002},#3) --> on>)";
+        String F = "(&|,<SELF --> (/,at,_,#1)>,<{t002} --> (/,on,_,#2)>)";
         
         Narsese s = new Narsese(n.memory);
-        Term a = s.parseTerm(A);
-        
-        Term a2 = s.parseTerm("(&|,<(*,SELF,#1) --> at>,<(*,{t002},#2) --> on>)");
+        Term a = s.parseTerm(A);        
+        Term a2 = s.parseTerm(A);
         assertTrue(a!=a2);
         assertEquals(a, a2);
+        
+        assertEquals(null, n.memory.conceptualize(new BudgetValue(0.1f,0.1f,0.1f), a2));
+        assertEquals(null, n.memory.conceptualize(new BudgetValue(0.1f,0.1f,0.1f), s.parseTerm(F)));
         
         System.out.println(a + " " + a2);
         
         new TextOutput(n, System.out);
         n.addInput(A + ".");
-        n.addInput(B + ".");
-        n.finish(6);
+        //n.addInput(B + ".");
+        n.finish(100);
         
+        System.out.println(n.memory.concepts.getConcepts());
         
+        assertTrue(n.memory.conceptualize(new BudgetValue(0.1f,0.1f,0.1f), a2) == null);
+        assertTrue(n.memory.concepts.concept(s.parseTerm(F))==null);
         
+        /*
         Concept CA = n.memory.conceptualize(new BudgetValue(0.5f, 0.5f, 0.5f), s.parseTerm(A));
         Concept CB = n.memory.conceptualize(new BudgetValue(0.5f, 0.5f, 0.5f), s.parseTerm(B));
         
         System.out.println(CA + " " + CB);
         assertEquals(CA, CB);
-
+        */
         
         
         

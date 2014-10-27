@@ -34,7 +34,7 @@ public class NALTest  {
     int minCycles = 50; //TODO reduce this to one or zero
 
     static {
-        Memory.randomSeed = 1;
+        Memory.randomNumber.setSeed(1);
     }
 
     boolean showOutput = false;

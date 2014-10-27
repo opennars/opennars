@@ -149,7 +149,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         int in = nameTable.size();
         if (is!=in) {
             System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);            
-            printAll();
+            //();
             System.exit(1);
         }
         
@@ -413,6 +413,14 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         
     }
     
-
+    @Override
+    public void renameKey(K from, K to) {
+        E existingValue = get(from);
+        if (existingValue!=null) {
+            nameTable.remove(from);
+            nameTable.put(to, existingValue);
+            System.err.println(this + " updated: " + from + " to " + to);
+        }
+    }
     
 }

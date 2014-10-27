@@ -22,7 +22,7 @@ import java.text.DecimalFormat;
 
 public abstract class Performance {
     public final int repeats;
-    private final String name;
+    final String name;
     private long totalTime;
     private long totalMemory;
     protected final DecimalFormat df = new DecimalFormat("#.###");
@@ -63,7 +63,7 @@ public abstract class Performance {
     }    
  
     public Performance print() {
-        System.out.print(name + ": " + df.format(getCycleTimeMS()) + "ms/run, ");
+        System.out.print(": " + df.format(getCycleTimeMS()) + "ms/run, ");
         System.out.print(df.format(totalMemory/repeats/1024.0) + " kb/run");
         return this;
     }
