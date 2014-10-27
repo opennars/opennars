@@ -33,9 +33,9 @@ import nars.entity.Item;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
 import nars.storage.CurveBag;
-import nars.util.sort.ArraySortedItemList;
+import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.FractalSortedItemList;
-import nars.util.sort.RedBlackSortedItemList;
+import nars.util.sort.RedBlackSortedIndex;
 
 /**
  *
@@ -241,9 +241,9 @@ public class BagPerf {
                 int randomAccesses = accessesPerItem * items;
                         
                 Bag[] bags = new Bag[] { 
-                    new CurveBag(items, curve, true, new ArraySortedItemList<>()),
+                    new CurveBag(items, curve, true, new ArraySortedIndex<>()),
                     new CurveBag(items, curve, true, new FractalSortedItemList<>()),
-                    new CurveBag(items, curve, true, new RedBlackSortedItemList<>()),
+                    new CurveBag(items, curve, true, new RedBlackSortedIndex<>()),
                     new LevelBag(levels, items)                        
                 };
                 

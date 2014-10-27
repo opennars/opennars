@@ -10,21 +10,21 @@ import nars.entity.Item;
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
 //abstract public class SortedItemList<E> extends FastTable<E> {
-public class ArraySortedItemList<E extends Item>  implements SortedItemList<E> {
+public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 
     int capacity = Integer.MAX_VALUE;
     private List<E> reverse;
 
     public final List<E> list;
     
-    public ArraySortedItemList() {
+    public ArraySortedIndex() {
         this(1, 
             //new ArrayList()
             new FastSortedTable(null)
         );
     }
 
-    public ArraySortedItemList(int capacity, List<E> list) {
+    public ArraySortedIndex(int capacity, List<E> list) {
         super();
         setCapacity(1);
         this.list = list;

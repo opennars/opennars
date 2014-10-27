@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
 import nars.entity.Item;
-import nars.util.sort.ArraySortedItemList;
-import nars.util.sort.SortedItemList;
+import nars.util.sort.ArraySortedIndex;
+import nars.util.sort.SortedIndex;
 
 
 
@@ -24,7 +24,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     /**
      * array of lists of items, for items on different level
      */
-    public final SortedItemList<E> items;
+    public final SortedIndex<E> items;
     
     /**
      * defined in different bags
@@ -48,8 +48,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      *  Valid values are: -1.0 <= x <= 1.0, x!=0      */
     final float scanningRate = -1.0f;
     
-    /** current removal index x, between 0..1.0.  set automatically */
+    /** current removal index x, between 0..1.0.  set automatically */    
     private float x;
+    
+
         
     public CurveBag(int capacity, boolean randomRemoval) {
         this(capacity, new FairPriorityProbabilityCurve(), randomRemoval);               
@@ -57,8 +59,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     
     public CurveBag(int capacity, BagCurve curve, boolean randomRemoval) {
         this(capacity, curve, randomRemoval, 
-                //new RedBlackSortedItemList<E>() 
-                new ArraySortedItemList<E>() 
+                //new TreeSortedIndex<E>()
+                new ArraySortedIndex()
                 
                 //new FractalSortedItemList<E>() 
                 
@@ -71,7 +73,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         );
     }
     
-    public CurveBag(int capacity, BagCurve curve, boolean randomRemoval, SortedItemList<E> items) {
+    public CurveBag(int capacity, BagCurve curve, boolean randomRemoval, SortedIndex<E> items) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
@@ -313,12 +315,13 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     protected E removeItem(final int index) {
         //final E selected = (index == 0) ? items.removeFirst() : items.remove(index);
         
+        
         final E selected = items.get((int)index);
         if (selected!=null) {            
             nameTable.remove(selected.name());
             mass -= selected.budget.getPriority();
         }
-       
+        
         return selected;
     }
 

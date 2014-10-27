@@ -10,10 +10,10 @@ import nars.storage.Bag;
 import nars.storage.LevelBag;
 import nars.storage.CurveBag;
 import nars.storage.CurveBag.BagCurve;
-import nars.util.sort.ArraySortedItemList;
+import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.FractalSortedItemList;
-import nars.util.sort.RedBlackSortedItemList;
-import nars.util.sort.SortedItemList;
+import nars.util.sort.RedBlackSortedIndex;
+import nars.util.sort.SortedIndex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -33,8 +33,8 @@ public class CurveBagTest {
         
         FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
         int[] d1 = testCurveBag(f1);
-        int[] d2 = testCurveBag(new RedBlackSortedItemList<>());        
-        int[] d3 = testCurveBag(new ArraySortedItemList<>());
+        int[] d2 = testCurveBag(new RedBlackSortedIndex<>());        
+        int[] d3 = testCurveBag(new ArraySortedIndex<>());
 
         //use the final distribution to compare that each implementation generates exact same results
         assertTrue(Arrays.equals(d1, d2));
@@ -47,7 +47,7 @@ public class CurveBagTest {
 
     }
     
-    public int[] testCurveBag(SortedItemList<NullItem> items) {
+    public int[] testCurveBag(SortedIndex<NullItem> items) {
         Memory.resetStatic();
         
         testCurveBag(true, items);
@@ -67,7 +67,7 @@ public class CurveBagTest {
         return d;
     }
     
-    public void testCurveBag(boolean random, SortedItemList<NullItem> items) {
+    public void testCurveBag(boolean random, SortedIndex<NullItem> items) {
         CurveBag<NullItem,CharSequence> f = new CurveBag(4, curve, random, items);
         
         f.putIn(new NullItem(.25f));
@@ -127,7 +127,7 @@ public class CurveBagTest {
         
         int count[] = new int[capacity];
         
-        SortedItemList<NullItem> items = new ArraySortedItemList<>();
+        SortedIndex<NullItem> items = new ArraySortedIndex<>();
         CurveBag<NullItem,CharSequence> f = new CurveBag(capacity, curve, random, items);
         
         //fill
@@ -150,7 +150,7 @@ public class CurveBagTest {
         
     }
 
-    public int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedItemList<NullItem> items) {
+    public int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedIndex<NullItem> items) {
         int loops = 8;
         
         int levels = 9;
@@ -224,7 +224,7 @@ public class CurveBagTest {
         
     }
     
-    public void testAveragePriority(int capacity, SortedItemList<NullItem> items) {
+    public void testAveragePriority(int capacity, SortedIndex<NullItem> items) {
         
         
         final float priorityEpsilon = 0.01f;

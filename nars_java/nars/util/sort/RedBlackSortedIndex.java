@@ -8,13 +8,13 @@ import nars.entity.Item;
 import nars.entity.Item.ItemPriorityComparator;
 
 /**
- *
+ * EXPERIMENTAL not ready yet
  * @author me
  */
-public class RedBlackSortedItemList<E extends Item> extends IndexedTreeSet<E> implements SortedItemList<E> {
+public class RedBlackSortedIndex<E extends Item> extends IndexedTreeSet<E> implements SortedIndex<E> {
     private int capacity;
 
-    public RedBlackSortedItemList() {
+    public RedBlackSortedIndex() {
         super(new ItemPriorityComparator());
         setCapacity(1);
     }
