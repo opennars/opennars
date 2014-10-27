@@ -62,7 +62,7 @@ public class Abbreviation implements Plugin {
             Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT_MARK, 
-                    new TruthValue(1, 0.9999f),  // a naming convension
+                    new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory));
             
             float quality = BudgetFunctions.truthToQuality(sentence.truth);

@@ -21,12 +21,17 @@
 package nars.inference;
 
 import nars.core.Memory;
+import nars.core.Parameters;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.TLink;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import nars.entity.TruthValue;
+import nars.io.Symbols;
 import static nars.io.Symbols.VAR_DEPENDENT;
 import static nars.io.Symbols.VAR_INDEPENDENT;
 import static nars.io.Symbols.VAR_QUERY;
@@ -36,7 +41,9 @@ import nars.language.Disjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
 import nars.language.Inheritance;
+import nars.language.Interval;
 import nars.language.Negation;
+import nars.language.Product;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Similarity;
@@ -44,6 +51,8 @@ import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variables;
+import nars.operator.Operation;
+import nars.operator.Operator;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -86,7 +95,45 @@ public class RuleTables {
         
         nal.setCurrentBelief( belief );  // may be null
         
-        if (belief != null) {    
+        if (belief != null) {   
+            
+            if(Parameters.INTERNAL_EXPERIENCE && beliefTerm instanceof Implication) {
+                Implication imp=(Implication) beliefTerm;
+                if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                    //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
+                    boolean valid=true;
+                    if(beliefTerm instanceof Conjunction) {
+                        Conjunction conj=(Conjunction) beliefTerm;
+                        for(int i=1;i<conj.term.length;i++) {
+                            if(!(conj.term[i] instanceof Interval)) {
+                                valid=false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if(valid) {
+                        Operator op=memory.getOperator("^anticipate");
+                        Product args=(Product) Product.make(new Term[]{beliefTerm});
+                        Term new_term=Operation.make(args, /* --> */ op);
+                        
+                        Sentence sentence = new Sentence(
+                            new_term, Symbols.GOAL_MARK, 
+                            new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                            new Stamp(memory));
+            
+                        float quality = BudgetFunctions.truthToQuality(sentence.truth);
+                        BudgetValue budget = new BudgetValue(
+                            Parameters.DEFAULT_GOAL_PRIORITY*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL, 
+                            Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL, 
+                            quality);
+                        
+                        Task newTask = new Task(sentence, budget);       
+                        nal.derivedTask(newTask, false, false, null, null);
+                    }
+                }
+            }
+            
             if(beliefTerm instanceof Implication && 
                 (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&
                 taskTerm instanceof Implication && 

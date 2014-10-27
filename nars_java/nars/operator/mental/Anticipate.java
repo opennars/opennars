@@ -30,7 +30,10 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
+import nars.inference.TemporalRules;
 import nars.io.Symbols;
+import nars.language.Conjunction;
+import nars.language.Implication;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -54,12 +57,15 @@ public class Anticipate extends Operator {
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term content = args[0];
         
-        TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, new Stamp(memory));
-        float quality = BudgetFunctions.truthToQuality(truth);
-        BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, quality);
+        if(content instanceof Implication) {
+            Implication imp=(Implication) content;
+            if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                int addi=imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD ? memory.param.duration.get() : 0;
+                memory.executive.anticipateTime=memory.time()+addi;
+                memory.executive.anticipateTerm=imp.getPredicate();
+            }
+        }
         
-        return Lists.newArrayList( new Task(sentence, budget) );        
-
+        return null;
     }
 }
