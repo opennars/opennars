@@ -102,15 +102,22 @@ public class RuleTables {
                 if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
                     //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
                     boolean valid=true;
-                    if(beliefTerm instanceof Conjunction) {
-                        Conjunction conj=(Conjunction) beliefTerm;
+                    if(imp.getSubject() instanceof Conjunction) {
+                        Conjunction conj=(Conjunction) imp.getSubject();
+                        if(!conj.term[0].equals(taskTerm)) {
+                            valid=false; //the expected needed term is not included
+                        }
                         for(int i=1;i<conj.term.length;i++) {
                             if(!(conj.term[i] instanceof Interval)) {
                                 valid=false;
                                 break;
                             }
                         }
-                    }
+                    } else {
+                        if(!imp.getSubject().equals(taskTerm)) {
+                            valid=false;
+                        }
+                    }    
                     
                     if(valid) {
                         Operator op=memory.getOperator("^anticipate");
