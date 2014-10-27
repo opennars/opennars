@@ -149,14 +149,14 @@ public class Executive {
         private float motivationFactor = 1;
         private TruthValue desire;
         public final Executive executive;
-        Memory memory;
+        final Memory memory;
         
-        public TaskExecution(Memory mem,final Executive executive, TruthValue desire) { 
+        public TaskExecution(final Executive executive, TruthValue desire) { 
+            this.memory = executive.memory;
             this.executive = executive;
             this.desire = desire;
             this.t = null;
             this.c = null;
-            this.memory=mem;
         }
         
         public TaskExecution(Memory mem,final Executive executive, final Concept concept, Task t) {

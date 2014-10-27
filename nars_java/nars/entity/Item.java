@@ -28,12 +28,14 @@ import java.util.Comparator;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item<K> implements Comparable {
+public abstract class Item<K> {
 
-    public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
+    @Deprecated public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 
         @Override
         public int compare(final E a, final E b) {
+            if (a.name().equals(b.name())) return 0;
+            
             float ap = a.getPriority();
             float bp = b.getPriority();
             if (ap == bp) {
@@ -43,7 +45,7 @@ public abstract class Item<K> implements Comparable {
                     ap = a.getQuality();
                     bp = b.getQuality();
                     if (ap == bp)
-                        return Integer.compare(a.hashCode(), b.hashCode());
+                        return a.name().hashCode() - (b.name().hashCode());
                 }
             }
             return Float.compare(ap, bp);
@@ -200,11 +202,25 @@ public abstract class Item<K> implements Comparable {
     	return toString();
     }
 
-    //default:
+    /*//default:
     @Override
     public int compareTo(final Object o) {
         //return System.identityHashCode(this) - System.identityHashCode(o);
         return hashCode() - o.hashCode();
+    }*/
+    
+   @Override
+    public int hashCode() {
+        return name().hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) return true;
+        if (obj instanceof Item) {
+            return ((Item)obj).name().equals(name());
+        }
+        return false;
     }
     
     abstract public static class StringKeyItem extends Item<CharSequence> {
