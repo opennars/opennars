@@ -64,7 +64,7 @@ public abstract class Item<K> {
      */
     protected Item(final BudgetValue budget) {
         if (budget!=null)
-            this.budget = new BudgetValue(budget);  // clone, not assignment
+            this.budget = budget.clone(); // clone, not assignment
         else
             this.budget = null;
     }

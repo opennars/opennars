@@ -86,7 +86,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         return concepts.get(term);
     }
 
-    protected void removeConcept(Concept c) {
+    protected void conceptRemoved(Concept c) {
         
         if (subcon!=null) {            
             subcon.add(c);
@@ -120,7 +120,7 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         if ((concept == null) && (createIfMissing)) {                            
             //create new concept, with the applied budget
             
-            concept = conceptBuilder.newConcept(budget.clone(), term, memory);
+            concept = conceptBuilder.newConcept(budget, term, memory);
 
             memory.logic.CONCEPT_NEW.commit(term.getComplexity());
             memory.emit(Events.ConceptNew.class, concept);                
@@ -149,14 +149,14 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             //not able to insert
             //System.out.println("can not insert: " + concept);   
             
-            removeConcept(displaced);
+            conceptRemoved(displaced);
             return null;
         }        
         else {
             //replaced something else
             //System.out.println("replace: " + removed + " -> " + concept);            
 
-            removeConcept(displaced);
+            conceptRemoved(displaced);
             return concept;
         }
 
@@ -169,11 +169,11 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
     }
     
-    @Override
-    public void forget(Concept c) {
-        concepts.take(c.name());        
-        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);    
-    }
+//    @Override
+//    public void forget(Concept c) {
+//        concepts.take(c.name());        
+//        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);    
+//    }
 
     @Override
     public Concept sampleNextConcept() {
