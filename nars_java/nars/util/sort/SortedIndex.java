@@ -8,7 +8,7 @@ import nars.entity.Item;
  *
  * @author me
  */
-public interface SortedItemList<T> extends Collection<T> {
+public interface SortedIndex<T> extends Collection<T> {
  
     public T get(int i);
     public T remove(int i);

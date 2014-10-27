@@ -180,16 +180,18 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         return this;
     }
 
-    public void setNovelTaskBagSize(int taskBufferSize) {
+    public DefaultNARBuilder setNovelTaskBagSize(int taskBufferSize) {
         this.taskBufferSize = taskBufferSize;
+        return this;
     }
 
     public int getNovelTaskBagSize() {
         return taskBufferSize;
     }
     
-    public void setNovelTaskBagLevels(int l) {
+    public DefaultNARBuilder setNovelTaskBagLevels(int l) {
         this.taskBufferLevels = l;
+        return this;
     }
 
     public int getNovelTaskBagLevels() {

@@ -272,6 +272,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     @Override public E take(final K name) {
         
         E oldItem = nameTable.remove(name);
+        if (oldItem == null)
+            return null;
         
         final int level = getLevel(oldItem);
 

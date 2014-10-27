@@ -5,7 +5,11 @@ import javolution.util.function.Equality;
 import nars.entity.Item;
 import nars.entity.Item.ItemPriorityComparator;
 
-public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedItemList<E> {
+/**
+ * EXPERIMENTAL - NOT READY YET
+ * @param <E> 
+ */
+public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedIndex<E> {
 
     public static class ItemEquality<E extends Item> extends ItemPriorityComparator<E> implements Equality<E> {
 

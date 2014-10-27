@@ -30,25 +30,16 @@ import java.util.Comparator;
  */
 public abstract class Item<K> {
 
-    @Deprecated public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
+    public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 
-        @Override
-        public int compare(final E a, final E b) {
-            if (a.name().equals(b.name())) return 0;
-            
+        @Override public int compare(final E a, final E b) {
             float ap = a.getPriority();
             float bp = b.getPriority();
-            if (ap == bp) {
-                ap = a.getDurability();
-                bp = b.getDurability();
-                if (ap == bp) {
-                    ap = a.getQuality();
-                    bp = b.getQuality();
-                    if (ap == bp)
-                        return a.name().hashCode() - (b.name().hashCode());
-                }
-            }
-            return Float.compare(ap, bp);
+
+            if ((a == b) || (a.name().equals(b.name())) || (ap==bp))
+                return a.hashCode() - b.hashCode();
+            else if (ap < bp) return 1;
+            else return -1;
         }        
         
     }

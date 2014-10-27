@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -240,10 +240,10 @@ public class Rover2 extends PhysicsModel {
             
             
             
-            int pixels = 3;
+            int pixels = 5;
             float aStep = 1.8f / pixels;
             float retinaArc = aStep;
-            int retinaResolution = 14; //should be odd # to balance
+            int retinaResolution = 11; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             int distanceResolution = 9;
@@ -802,12 +802,15 @@ public class Rover2 extends PhysicsModel {
 
 
     public static void main(String[] args) {
-        //NAR nar = new DefaultNARBuilder().
+        NAR nar = new DefaultNARBuilder().
         //NAR nar = new DiscretinuousBagNARBuilder().
-        NAR nar = new CurveBagNARBuilder().
+        //NAR nar = new CurveBagNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(500).
-                setSubconceptBagSize(2000).
+                setConceptBagSize(1000).
+                setSubconceptBagSize(5000).
+                setTaskLinkBagLevels(10).
+                setTermLinkBagLevels(10).
+                setNovelTaskBagLevels(10).
                 simulationTime().
                 build();
         
@@ -820,6 +823,7 @@ public class Rover2 extends PhysicsModel {
         nar.param().taskForgetDurations.set(10f);
         nar.param().beliefForgetDurations.set(25f);
         nar.param().newTaskForgetDurations.set(5f);
+        
         
         
         ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);

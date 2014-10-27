@@ -10,10 +10,13 @@ import nars.entity.Item;
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
-    //protected BagObserver<E> bagObserver = null;
-    
-    abstract public void clear();
+    public static final int bin(final float x, final int bins) {
+        int i = (int)Math.floor((x + 0.5f/bins) * bins);
+        return i;
+    }
 
+
+    public abstract void clear();   
 
     /**
      * Check if an item is in the bag.  both its key and its value must match the parameter
@@ -27,8 +30,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
             return true;
         return false;
     }
-    
-
     
     /**
      * Get an Item by key
@@ -44,29 +45,25 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     abstract public float getMass();
 
-    
-
-    
-
     /**
      * Choose an Item according to distribution policy and take it out of the Bag
      * @return The selected Item, or null if this bag is empty
      */
-    abstract public E takeNext();    
-
-    /** gets the next value without removing changing it or removing it from any index */
-    abstract public E peekNext();
+    abstract public E takeNext();
     
 
+    /** gets the next value without removing changing it or removing it from any index */    
+    abstract public E peekNext();
+    
+    
     /**
      * Insert an item into the itemTable, and return the overflow
      *
      * @param newItem The Item to put in
      * @return The overflow Item, or null if nothing displaced
-     */    
+     */
     abstract protected E addItem(final E newItem);
-    
-    
+
     /**
      * Add a new Item into the Bag
      *
@@ -75,7 +72,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      */
     public E putIn(E newItem) {
         
-
+        
         final K newKey = newItem.name();        
         final E existingItemWithSameKey = take(newKey);
         
@@ -86,7 +83,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         
         // put the (new or merged) item into itemTable        
         final E overflowItem = addItem(newItem);
-                
+        
         
         if (overflowItem!=null) {
             return overflowItem;
@@ -98,6 +95,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     }
 
     abstract public E take(final K key);
+
     
     
     /**
@@ -105,8 +103,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      *
      * @return The number of items
      */
-    abstract public int size();
-
+    public abstract int size();
     
     
     public void printAll() {
@@ -116,19 +113,19 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         }
     }
     
-
     abstract public Collection<E> values();
 
-    abstract public float getAveragePriority();
-        
+    public abstract float getAveragePriority();
+
+
     /** iterates all items in descending priority */
     @Override public abstract Iterator<E> iterator();
-
-
-    /** allows adjusting forgetting rate in subclasses */
+    
+    /** allows adjusting forgetting rate in subclasses */    
     public float getForgetCycles(final float baseForgetCycles, final E item) {
         return baseForgetCycles;
     }
+    
     
     /**
      * Put an item back into the itemTable
@@ -143,7 +140,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
     }
-
+    
     
     /** x = takeOut(), then putBack(x)
      *  @forgetCycles forgetting time in cycles
@@ -163,12 +160,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         else {
             return null;
         }
-    }
-    
-
-    public static final int bin(final float x, final int bins) {
-        int i = (int)Math.floor((x + 0.5f/bins) * bins);
-        return i;
     }
     
     public double[] getPriorityDistribution(double[] x) {
