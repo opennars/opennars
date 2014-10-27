@@ -343,11 +343,11 @@ public class Grid2DSpace extends PApplet {
         //PImage b = particles.particleImage;
         //this.blend(b, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), PImage.ADD);
         
-        particles.tick();
+       /* particles.tick(); //crashes
         for (Particle p : particles.p) {
             fill(p.rgba);
             rect(p.xPos, p.yPos, 0.1f,0.1f);
-        }
+        }*/
     }
     
     public void drawGround() {
