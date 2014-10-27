@@ -267,7 +267,7 @@ public class Rover extends PhysicsModel {
             }
         }
 
-        boolean feel_motion=true; //todo add option in gui
+        boolean feel_motion=false; //todo add option in gui
 
         public void step() {
             for (VisionRay v : vision)
@@ -506,7 +506,7 @@ public class Rover extends PhysicsModel {
                                 ArrayList<String> candids=new ArrayList<>();
                                 candids.add("(^motor,turn,left). :|:");
                                 candids.add("(^motor,turn,right). :|:");
-                                candids.add("(^motor,backward). :|:");
+                                //candids.add("(^motor,backward). :|:");
                                 candids.add("(^motor,forward). :|:");
                                 candids.add("(^motor,forward). :|:");
                                 int candid=(int)(Math.random()*candids.size()-0.001);
