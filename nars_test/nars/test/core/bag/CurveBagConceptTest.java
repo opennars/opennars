@@ -61,7 +61,7 @@ public class CurveBagConceptTest {
         assertEquals(0.1f, b.getMinPriority(),0.001f);
         assertEquals(0.2f, b.getMaxPriority(),0.001f);
         
-        assertTrue(b.get(new Term("b"))!=null);
+        
         b.putIn(new NullConcept("b", 0.4f));
         assertEquals(2, b.size());
         assertEquals(0.2f, b.getMinPriority(),0.001f);

@@ -28,7 +28,7 @@ public class VectorMapTest {
         UniformVector v = new UniformVector(n, "d", d);                
         v.update();
         
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out);
         
         n.finish(16);
         

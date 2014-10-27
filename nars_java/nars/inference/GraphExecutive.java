@@ -34,7 +34,7 @@ public class GraphExecutive {
     public final ImplicationGraph implication;
     
 
-    final int maxConsecutiveIntervalTerms = 2;
+    final int maxConsecutiveIntervalTerms = 1;
         
     /** controls the relative weigting of edges and vertices for particle traversals */
     double conceptExpectationFactor = 1.0;
