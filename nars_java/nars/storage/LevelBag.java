@@ -233,9 +233,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
     @Override
     public E peekNext() {
-        if (size() == 0) {
-            return null; // empty bag                
-        }
+        if (size() == 0) return null; // empty bag                
+        
+        
         if (levelEmpty(currentLevel) || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }

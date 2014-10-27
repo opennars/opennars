@@ -38,7 +38,7 @@ public interface ConceptProcessor extends Iterable<Concept> {
      */
     public void activate(Concept c, BudgetValue b, Activating mode);
 
-    public void forget(Concept c);
+    //public void forget(Concept c);
     
     /**
      * Provides a "next" concept for sampling during inference. 
