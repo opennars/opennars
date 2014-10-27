@@ -244,8 +244,8 @@ public class BudgetValue implements Cloneable {
         return aveGeo(priority, durability, quality);
     }
 
-    @Override
-    public boolean equals(final Object that) { 
+    
+    public boolean equalsByPrecision(final Object that) { 
         if (that instanceof BudgetValue) {
             final BudgetValue t = ((BudgetValue) that);
             float dPrio = Math.abs(getPriority() - t.getPriority());

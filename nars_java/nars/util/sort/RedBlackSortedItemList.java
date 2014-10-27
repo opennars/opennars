@@ -19,6 +19,10 @@ public class RedBlackSortedItemList<E extends Item> extends IndexedTreeSet<E> im
         setCapacity(1);
     }
 
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
     
     @Override
     public E getFirst() {
@@ -30,10 +34,6 @@ public class RedBlackSortedItemList<E extends Item> extends IndexedTreeSet<E> im
         return last();
     }
 
-    @Override
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
 
 
     @Override
@@ -41,13 +41,42 @@ public class RedBlackSortedItemList<E extends Item> extends IndexedTreeSet<E> im
         return exact(index);
     }
 
+    @Override
+    public boolean add(E e) {
+        if (capacity == 500)
+            System.out.println("+ " + e + " " + size());
+        boolean b = super.add(e); //To change body of generated methods, choose Tools | Templates.
+        if (capacity == 500)
+            System.out.println("  --> "+  size());
+        return b;
+    }
 
     @Override
-    public E remove(int index) {
+    public boolean remove(Object o) {
+        if (capacity == 500)
+            System.out.println("- " + o + " "+  size() + " : " + contains(o));
+        
+        boolean b = super.remove(o); //To change body of generated methods, choose Tools | Templates.
+        
+        if (capacity == 500)
+            System.out.println(b + "  --> "+  size());
+        
+        return b;
+    }
+
+    
+    
+
+    @Override
+    public E remove(int index) {        
         E e = get(index);
+        if (capacity == 500)
+            System.out.println("- " + index + " "+  size() + " : " + e);
         if (e!=null) {
             remove(e);
         }
+        if (capacity == 500)
+            System.out.println("  --> "+  size());
         return e;
     }
 
