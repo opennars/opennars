@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -61,7 +62,7 @@ public class Rover extends PhysicsModel {
         
 
         //public class DistanceInput extends ChangedTextInput
-        public RoverModel(PhysicsModel p) {
+        public RoverModel(RoverWorld world,PhysicsModel p) {
             float mass = 2.25f;
             PolygonShape shape = new PolygonShape();
             shape.setAsBox(0.5f, 0.5f);
@@ -135,14 +136,14 @@ public class Rover extends PhysicsModel {
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
+                vision.add(new VisionRay(world,"front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
                             retinaArc, retinaResolution, L, 3));
             }
             
             pixels=3;
             Vec2 backRetina = new Vec2(0, -0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay("back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4),
+                vision.add(new VisionRay(world,"back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4),
                            retinaArc, retinaResolution,
                            5.5f, 3));
             }
@@ -177,8 +178,10 @@ public class Rover extends PhysicsModel {
             private final int distanceSteps;
             private final int resolution;
             private final float arc;
+            RoverWorld world;
 
-            public VisionRay(String id, Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
+            public VisionRay(RoverWorld world,String id, Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
+                this.world=world;
                 this.id = id;
                 this.body = body;
                 this.point = point;
@@ -229,12 +232,18 @@ public class Rover extends PhysicsModel {
                         draw().drawSegment(point1, point2, laserColor);
                     }
                 }
+                
+                boolean good=world.goods.contains(hit);
 
                 if (hit!=null) {  
                     
                     float di = minDist; 
                     if(id.startsWith("back")) {
-                        sight.set("<goal --> reached>. :|: %0.0;0.90%");
+                        if(good) {
+                            sight.set("<goal --> reached>. :|: %0.0;0.90%");
+                        } else {
+                            sight.set("<goal --> reached>. :|: %1.0;0.90%");
+                        }
                         return;
                     }
                     
@@ -255,11 +264,17 @@ public class Rover extends PhysicsModel {
                         //world.AddABlock(Phys, sz, sz);
                         hit.setTransform(new Vec2(x*2.0f,y*2.0f), hit.getAngle());
                         //Phys.getWorld().destroyBody(hit);
-                        sight.set("<goal --> reached>. :|:");
+                        if(good) {
+                            sight.set("<goal --> reached>. :|:"); 
+                        } else {
+                            sight.set("<goal --> reached>. :|: %0.0;0.90%"); 
+                        }
                         
                     }
+                    String Sgood= good ? "good" : "bad";
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
-                    sight.set("<(*," + id + "," + dist + ") --> see>. :|:");
+                    //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
+                    sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                 }
                 else {
                     sight.set("<(*," + id + ",empty) --> see>. :|:");
@@ -408,24 +423,35 @@ public class Rover extends PhysicsModel {
 
         public RoverWorld(PhysicsModel p, float w, float h) {
             Phys=p;
-            for (int i = 0; i < 20; i++) {
-                AddABlock(p, w, h);
+            for (int i = 0; i < 10; i++) {
+                AddABlock(p, w, h,false);
+            }
+            for (int i = 0; i < 10; i++) {
+                AddABlock(p, w, h,true);
             }
         }
 
-        public void AddABlock(PhysicsModel p, float w, float h) {
+        public void AddABlock(PhysicsModel p, float w, float h, boolean bad) {
             float x = (float) Math.random() * w - w / 2f;
             float y = (float) Math.random() * h - h / 2f;
             float bw = 1.0f;
             float bh = 1.6f;
             float a = 0;
-            addBlock(p, x*2.0f, y*2.0f, bw, bh, a);
+            addBlock(p, x*2.0f, y*2.0f, bw, bh, a,bad);
         }
         
-        public void addBlock(PhysicsModel p, float x, float y, float w, float h, float a) {
+        
+        public HashSet<Body> goods=new HashSet<Body>();
+        public HashSet<Body> bads=new HashSet<Body>();
+        public void addBlock(PhysicsModel p, float x, float y, float w, float h, float a,boolean bad) {
             float mass = 0.25f;
             PolygonShape shape = new PolygonShape();
-            shape.setAsBox(w, h);
+            if(bad) {
+                shape.set(new Vec2[]{new Vec2(0,0),new Vec2(0,w*3),new Vec2(h*2.5f,w*2.5f)}, 3);
+            }
+            else {
+                shape.setAsBox(w, h);
+            }
 
             BodyDef bd = new BodyDef();
             bd.setLinearDamping(0.95f);
@@ -437,6 +463,12 @@ public class Rover extends PhysicsModel {
             body.createFixture(shape, mass);
             body.setAngularDamping(10);
             body.setLinearDamping(15);
+            if(!bad) {
+                goods.add(body);
+            }
+            else {
+                bads.add(body);
+            }
         }
     }
 
@@ -450,7 +482,7 @@ public class Rover extends PhysicsModel {
 
         world = new RoverWorld(this, sz, sz);
         
-        rover = new RoverModel(this);
+        rover = new RoverModel(world,this);
         rover.torso.setAngularDamping(20);
         rover.torso.setLinearDamping(10);
 
