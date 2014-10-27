@@ -398,6 +398,7 @@ public class Concept extends Item<Term> {
 
         if (term instanceof CompoundTerm) {
             if (!termLinkTemplates.isEmpty()) {
+                
                 final BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
                 if (subBudget.aboveThreshold()) {
 
@@ -517,21 +518,27 @@ public class Concept extends Item<Term> {
      */
     public void buildTermLinks(final BudgetValue taskBudget) {
         if (termLinkTemplates.size() > 0) {
+            
             BudgetValue subBudget = distributeAmongLinks(taskBudget, termLinkTemplates.size());
+            
             if (subBudget.aboveThreshold()) {
+            
                 for (final TermLink template : termLinkTemplates) {
+                
                     if (template.type != TermLink.TRANSFORM) {
-                        Term t = template.target;
-                        final Concept concept = memory.conceptualize(taskBudget, t);
+                        
+                        Term target = template.target;
+                        
+                        final Concept concept = memory.conceptualize(taskBudget, target);
                         if (concept != null) {
 
                             // this termLink to that
-                            insertTermLink(new TermLink(t, template, subBudget));
+                            insertTermLink(new TermLink(target, template, subBudget));
 
                             // that termLink to this
                             concept.insertTermLink(new TermLink(term, template, subBudget));
 
-                            if (t instanceof CompoundTerm) {
+                            if (target instanceof CompoundTerm) {
                                 concept.buildTermLinks(subBudget);
                             }
                         }
@@ -763,6 +770,7 @@ public class Concept extends Item<Term> {
             final TermLink termLink = termLinks.takeNext();
             
             if (taskLink.novel(termLink, time)) {
+                //return, will be re-inserted in caller method when finished processing it
                 return termLink;
             }
             

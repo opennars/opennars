@@ -132,7 +132,7 @@ public class TermLink extends Item<TermLink> implements TLink {
 
     
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) return true;
         if (obj instanceof TermLink) {
             TermLink t = (TermLink)obj;

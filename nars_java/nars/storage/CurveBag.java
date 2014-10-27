@@ -140,7 +140,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         int is = items.size();
         int in = nameTable.size();
         if (is!=in) {
-            throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
         }
         
         return is;
@@ -258,7 +258,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
     
 
-    @Override public E removeKey(final K name) {
+    @Override public E take(final K name) {
         return nameTable.remove(name);
     }
 
@@ -322,16 +322,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         return selected;
     }
 
-    /**
-     * Remove an item from itemTable, then adjust mass
-     *
-     * @param oldItem The Item to be removed
-     */ 
-    @Deprecated @Override
-    protected boolean removeItem(final E oldItem) {
-        //handled in nameTable override
-        return false;
-    }
+
 
     @Override
     public float getMass() {

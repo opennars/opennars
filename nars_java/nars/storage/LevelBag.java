@@ -269,8 +269,32 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 
 
 
-    @Override protected E removeKey(final K name) {
-        return nameTable.remove(name);
+    @Override public E take(final K name) {
+        
+        E oldItem = nameTable.remove(name);
+        
+        final int level = getLevel(oldItem);
+
+        
+        if (itemTable[level] != null) {
+            if (itemTable[level].remove(oldItem)) {                
+                nameTable.remove(oldItem.name());
+                removeMass(oldItem);
+                return oldItem;
+            }
+        }
+
+        
+        //If it wasn't found, it probably was removed already.  So this check is probably not necessary
+        
+            //search other levels for this item because it's not where we thought it was according to getLevel()
+        if (!outOfBaseComplete(oldItem)) {
+            String m = "Possible LevelBag inconsistency: Can not remove missing element: size inconsistency" + size() + "==?" + sizeItems()  + oldItem + " from " + this.getClass().getSimpleName();
+            System.err.println(m);
+            //throw new RuntimeException(m);
+        }
+        //refresh();
+        return oldItem;
     }
 
 
@@ -351,35 +375,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         mass += item.getPriority();
     }
     
-    /**
-     * Remove an item from itemTable, then adjust mass
-     *
-     * @param oldItem The Item to be removed
-     */
-    @Override protected boolean removeItem(final E oldItem) {
-        final int level = getLevel(oldItem);
 
-        
-        if (itemTable[level] != null) {
-            if (itemTable[level].remove(oldItem)) {                
-                nameTable.remove(oldItem.name());
-                removeMass(oldItem);
-                return true;
-            }
-        }
-
-        
-        //If it wasn't found, it probably was removed already.  So this check is probably not necessary
-        
-            //search other levels for this item because it's not where we thought it was according to getLevel()
-        if (!outOfBaseComplete(oldItem)) {
-            String m = "Possible LevelBag inconsistency: Can not remove missing element: size inconsistency" + size() + "==?" + sizeItems()  + oldItem + " from " + this.getClass().getSimpleName();
-            System.err.println(m);
-            //throw new RuntimeException(m);
-        }
-        //refresh();
-        return false;
-    }
 
     /**
      * try to avoid calling this, it is expensive. a bug in an outOfBase()

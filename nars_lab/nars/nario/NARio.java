@@ -3,7 +3,6 @@ package nars.nario;
 import java.awt.event.KeyEvent;
 import static java.lang.Math.log;
 import static java.lang.Math.signum;
-import static java.lang.Math.signum;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -11,9 +10,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
-import nars.core.build.DefaultNARBuilder;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
@@ -56,9 +53,9 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new DefaultNARBuilder().realtime().build();
         
-        NAR nar = new DefaultNARBuilder().setConceptBagSize(1024).simulationTime().build();
+        //NAR nar = new DefaultNARBuilder().setConceptBagSize(1024).simulationTime().build();
         
-        //NAR nar = new ContinuousBagNARBuilder().build();
+        NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
          nar.param().conceptCyclesToForget.set(7);
@@ -75,13 +72,14 @@ public class NARio extends Run {
         //new TextOutput(nar, System.out).setShowInput(true);
         
         nar.param().noiseLevel.set(0);
-        float fps = 20f;
+        int memCyclesPerFrame = 200;
+        float fps = 40f;
         gameRate = 1.0f / fps;
 
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
-        nar.startFPS(fps, 200, 1f);
+        nar.startFPS(fps, memCyclesPerFrame, 1f);
     }
 
     String[] sight = new String[9];

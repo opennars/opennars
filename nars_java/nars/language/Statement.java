@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
@@ -214,8 +215,10 @@ public abstract class Statement extends CompoundTerm {
             .append(STATEMENT_CLOSER.ch);
             
         //EITHER WORKS, see which is faster.  but using the StringBuilder as-is should save memory:
-        return Texts.sequence(sb);
+        return Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, sb);
         //return sb.toString();
+        
+        
         
     }
     

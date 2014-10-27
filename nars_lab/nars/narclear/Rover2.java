@@ -241,15 +241,15 @@ public class Rover2 extends PhysicsModel {
             
             
             int pixels = 3;
-            float aStep = 1.5f / pixels;
+            float aStep = 1.8f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 14; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             int distanceResolution = 9;
-            for (int i = -pixels/2; i <= pixels/2; i++) {
+            for (int i = -1; i <= 1; i++) {
                 final int ii = i;
-                vision.add(new VisionRay(torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
+                vision.add(new VisionRay(torso, frontRetina, MathUtils.PI/2f + aStep*i,
                             retinaArc, retinaResolution, L, distanceResolution) {
                                 
                                float touchThresholdDistance = 0.1f;

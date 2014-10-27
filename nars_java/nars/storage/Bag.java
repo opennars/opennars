@@ -67,12 +67,6 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     abstract protected E addItem(final E newItem);
     
     
-    abstract protected boolean removeItem(final E oldItem);
-    
-    
-    /** for updating the nametable; works like Map put and remove */
-    abstract protected E removeKey(K name);
-    
     /**
      * Add a new Item into the Bag
      *
@@ -80,18 +74,12 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
     public E putIn(E newItem) {
-        size();
+        
 
         final K newKey = newItem.name();        
-        final E existingItemWithSameKey = get(newKey);
-        
-        size();
+        final E existingItemWithSameKey = take(newKey);
         
         if (existingItemWithSameKey != null) {
-            
-            take(newKey);
-            
-            size();
             
             newItem = (E)existingItemWithSameKey.merge(newItem);
         }
@@ -100,25 +88,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         final E overflowItem = addItem(newItem);
                 
         
-        if (overflowItem!=null) {                                    
-
-            size();
-            
+        if (overflowItem!=null) {
             return overflowItem;
-
-
-//            if (overflowItem.name().equals( newItem )) {
-//                //did not add, too low priority            
-//                if (contains(newItem))
-//                    return overflowItem;
-//                else /*if (contains(overflowItem))*/
-//                    return newItem;
-//            }
-//            else {
-//                // remove overflow
-//                return overflowItem;
-//            }
-            
         }            
         else {
             return null;
@@ -126,20 +97,8 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         
     }
 
-    /** may return null if the item is not in the nameTable */
-    public E take(final K key) {        
-
-        size();
-        
-        E removed = removeKey(key);                
-        if (removed!=null) {
-            removeItem(removed);        
-        }
-
-        size();
-        
-        return removed;        
-    }
+    abstract public E take(final K key);
+    
     
     /**
      * The number of items in the bag
