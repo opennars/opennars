@@ -332,7 +332,7 @@ public class TestChamber {
                                 nar.step(1);*/
                         } else {
                             //nar.step(10);
-                            nar.memory.setEnabled(false); 
+                            //nar.memory.setEnabled(false); 
                             
                             executed_going=true;
                             active=false;
