@@ -31,14 +31,14 @@ public class CurveBagTest {
     public void testBags() {
 
         
-        FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
-        int[] d1 = testCurveBag(f1);
-        int[] d2 = testCurveBag(new RedBlackSortedIndex<>());        
-        int[] d3 = testCurveBag(new ArraySortedIndex<>());
+        //FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
+        //int[] d1 = testCurveBag(f1);
+        //int[] d2 = testCurveBag(new RedBlackSortedIndex<>());        
+        int[] d1 = testCurveBag(new ArraySortedIndex<>());
 
         //use the final distribution to compare that each implementation generates exact same results
-        assertTrue(Arrays.equals(d1, d2));
-        assertTrue(Arrays.equals(d2, d3));
+        //assertTrue(Arrays.equals(d1, d2));
+        //assertTrue(Arrays.equals(d2, d3));
         
         for (int capacity : new int[] { 4, 7, 13, 16, 100 } ) {
             testRemovalDistribution(capacity, false);
@@ -80,9 +80,9 @@ public class CurveBagTest {
         //System.out.println(f);
         
         //sorted
+        assert(f.size() == 3);
         assert(f.items.get(0).getPriority() < f.items.get(1).getPriority());
 
-        assert(f.size() == 3);
         f.takeNext();
         
         assert(f.size() == 2);
@@ -105,17 +105,16 @@ public class CurveBagTest {
         Item a = f.putIn(new NullItem(.7f));
         assert(a==null);
         
-        f.putIn(new NullItem(.6f)); //limit
-
         assertEquals(4, f.size());
 
         assertEquals(f.size(), f.keySet().size());
-        
+                
         assertTrue(f.contains(five));    //5 should be in lowest position
-        assertTrue(!f.contains(four)); //4 should get removed
-        
         
         f.putIn(new NullItem(.8f)); //limit
+        
+        assertTrue(!f.contains(four)); //4 should get removed
+        
         assertEquals(4, f.size());
     }
     

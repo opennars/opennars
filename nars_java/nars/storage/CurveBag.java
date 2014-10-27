@@ -93,11 +93,14 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
             @Override
             public E put(K key, E value) {
-                E removed = remove(key);
                 
-                super.put(key, value);
+                E removed = super.put(key, value);                
+                if (removed!=null) {
+                    items.remove(removed);
+                }
                 
                 items.add(value);
+                               
                 return removed;            
             }
 
@@ -108,6 +111,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
                 if (e!=null) {
                     items.remove(e);
                 }
+                
+                CurveBag.this.size();
+                
                 return e;
             }
 
@@ -142,7 +148,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         int is = items.size();
         int in = nameTable.size();
         if (is!=in) {
-            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);            
+            printAll();
+            System.exit(1);
         }
         
         return is;

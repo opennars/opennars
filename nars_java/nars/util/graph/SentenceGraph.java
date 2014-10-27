@@ -134,9 +134,29 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     }
     
     public void reset() {
-        this.removeAllEdges( new ArrayList(edgeSet()) );
-        this.removeAllVertices( new ArrayList(vertexSet()) );
+        try {
+            this.removeAllEdges( new ArrayList(edgeSet()) );
+        }
+        catch (Exception e) {
+            System.err.println(e);
+        }
         
+        try {
+            this.removeAllVertices( new ArrayList(vertexSet()) );
+        }
+        catch (Exception e) {
+            System.err.println(e);
+        }
+        
+        if (!edgeSet().isEmpty()) {
+            System.err.println(this + " edges not empty after reset()");
+            System.exit(1);
+        }
+        if (!vertexSet().isEmpty()) {
+            System.err.println(this + " vertices not empty after reset()");
+            System.exit(1);
+        }
+            
         needInitialConcepts = true;
     }
     
