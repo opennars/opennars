@@ -614,11 +614,12 @@ public class Executive {
     }
     
     public Task stmLast=null;
-    public Task anticipateTask=null;
+    public Term anticipateTerm=null;
+    public long anticipateTime=0;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         //new one happened and duration is already over, so add as negative task
-        if(anticipateTask!=null && newEvent.sentence.getOccurenceTime()-anticipateTask.sentence.getOccurenceTime()>nal.mem.param.duration.get()) {
+        if(Parameters.INTERNAL_EXPERIENCE && anticipateTerm!=null && newEvent.sentence.getOccurenceTime()-anticipateTime>nal.mem.param.duration.get()) {
             Term s=newEvent.sentence.content;
             TruthValue truth=new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
             Negation N=(Negation) Negation.make(s);
@@ -627,10 +628,10 @@ public class Executive {
             BudgetValue budget=new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
             Task task=new Task(S,budget);
             nal.derivedTask(task, false, true, null, null);
-            anticipateTask=null;
+            anticipateTerm=null;
         }
-        if(anticipateTask!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content==((Implication)anticipateTask.sentence.content).getPredicate()) {
-            anticipateTask=null; //it happened like expected
+        if(Parameters.INTERNAL_EXPERIENCE && anticipateTerm!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content==((Implication)anticipateTerm).getPredicate()) {
+            anticipateTerm=null; //it happened like expected
         }
         
         if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime()==Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent,nal.mem))
