@@ -33,7 +33,7 @@ import nars.operator.Operator;
  * Operation execution and planning support.  
  * Strengthens and accelerates goal-reaching activity
  */
-public class Executive implements Observer {
+public class Executive {
     
     public final GraphExecutive graph;
     
@@ -44,10 +44,6 @@ public class Executive implements Observer {
 
     public final TreeSet<TaskExecution> tasks;
     private Set<TaskExecution> tasksToRemove = new HashSet();
-    public int shortTermMemorySize=10; //how many events its able to track for the temporal feedback system
-    //100 should be enough for all practical examples for now, we may make it adaptive later,
-    //which means adjusting according to the longest (&/,a1...an) =/> .. statement
-    public ArrayList<Task> lastEvents=new ArrayList<>();
     
     /** number of tasks that are active in the sorted priority buffer for execution */
     int numActiveTasks = 1;
@@ -102,17 +98,19 @@ public class Executive implements Observer {
                 if (bp != ap) {
                     return Float.compare(ap, bp);
                 } else {
-                    float ad = a.getPriority();
-                    float bd = b.getPriority();
-                    if (ad!=bd)
-                        return Float.compare(ad, bd);
-                    else {
-                        float add = a.getDurability();
-                        float bdd = b.getDurability();
-                        return Float.compare(add, bdd);                        
+                    if(a.c!=null) {
+                        float ad = a.c.getPriority();
+                        float bd = b.c.getPriority();
+                        if (ad!=bd)
+                            return Float.compare(ad, bd);
+                        else {
+                            float add = a.c.getDurability();
+                            float bdd = b.c.getDurability();
+                            return Float.compare(add, bdd);                        
+                        }
                     }
                 }
-
+                return 0;
             }
         }) {
 
@@ -130,8 +128,6 @@ public class Executive implements Observer {
             }
             
         };
-        
-        memory.event.set(this, true, TaskDerive.class, ConceptBeliefRemove.class);
 
     }
 
@@ -143,29 +139,6 @@ public class Executive implements Observer {
         return numActiveTasks;
     }
     
-    
-    
-    @Override
-    public void event(Class event, Object[] args) {
-        if (event == TaskDerive.class) {
-            Task derivedTask=(Task) args[0];
-            if(derivedTask.sentence.content instanceof Implication &&
-               (((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
-                    ((Implication) derivedTask.sentence.content).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
-
-                if(!current_tasks.contains(derivedTask) && !Variables.containVarIndep(derivedTask.getContent().name())) {
-                    current_tasks.add(derivedTask);
-                }
-            }
-        }
-        else if (event == ConceptBeliefRemove.class) {
-            Task removedTask=(Task) args[2]; //task is 3nd
-            if(current_tasks.contains(removedTask)) {
-                current_tasks.remove(removedTask);
-            }            
-        }
-    }   
-    
     public static class TaskExecution {
         /** may be null for input tasks */
         public final Concept c;
@@ -176,18 +149,21 @@ public class Executive implements Observer {
         private float motivationFactor = 1;
         private TruthValue desire;
         public final Executive executive;
+        Memory memory;
         
-        public TaskExecution(final Executive executive, TruthValue desire) { 
+        public TaskExecution(Memory mem,final Executive executive, TruthValue desire) { 
             this.executive = executive;
             this.desire = desire;
             this.t = null;
             this.c = null;
+            this.memory=mem;
         }
         
-        public TaskExecution(final Executive executive, final Concept concept, Task t) {
+        public TaskExecution(Memory mem,final Executive executive, final Concept concept, Task t) {
             this.c = concept;            
             this.executive = executive;
             this.desire = t.getDesire();
+            this.memory=mem;
             
             //Check if task is 
             if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
@@ -302,7 +278,13 @@ public class Executive implements Observer {
         public final float getDesire() { 
             return desire.getExpectation() * motivationFactor;
         }
-        public final float getPriority() { return t.getPriority();         }
+        public final float getPriority() { 
+            Concept cc=memory.concept(t.sentence.content);
+            if(cc!=null) {
+                return cc.getPriority();
+            }
+            
+            return 1;         }
         public final float getDurability() { return t.getDurability(); }
         //public final float getMotivation() { return getDesire() * getPriority() * motivationFactor;         }
         public final void setMotivationFactor(final float f) { this.motivationFactor = f;  }
@@ -360,13 +342,7 @@ public class Executive implements Observer {
         }
             
         if (valid) {
-            if(!occured && this.expected_task!=null && ended) {
-                //expected_task.expect(false); //ok this one didnt get his expectation
-            }
-            occured=false; //only bad to not happened not interrupted ones
-            ended=false;
-            
-            final TaskExecution te = new TaskExecution(this, c, t);
+            final TaskExecution te = new TaskExecution(memory,this, c, t);
             if (tasks.add(te)) {
                 //added successfully
                 memory.emit(TaskExecution.class, te);
@@ -594,7 +570,7 @@ public class Executive implements Observer {
 
     public Task expected_task=null;
     public Term expected_event=null;
-    boolean ended=false;
+
     private void executeConjunctionSequence(final TaskExecution task, final Conjunction c) {
         int s = task.sequence;
         Term currentTerm = c.term[s];
@@ -623,7 +599,6 @@ public class Executive implements Observer {
         }
 
         if (s == c.term.length) {
-            ended=true;
             //completed task
            
             if(task.t.sentence.content instanceof Implication) {
@@ -635,109 +610,13 @@ public class Executive implements Observer {
             task.sequence=0;
         }
         else {            
-            ended=false;
             //still incomplete
             task.sequence = s;
             task.setMotivationFactor(motivationToFinishCurrentExecution);
         }
     }
     
-    //check all predictive statements, match them with last events
-    public void temporalPredictionsAdapt() {
-        if(Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV==0.0f) {
-            return; //
-        }
-        
-        final long duration = memory.param.duration.get();
-        
-        for(final Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
-            boolean concurrent_conjunction=false;
-            Term[] args=new Term[1];
-            Implication imp=(Implication) c.getContent();
-            boolean concurrent_implication=imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT;
-            args[0]=imp.getSubject();
-            if(imp.getSubject() instanceof Conjunction) {
-                Conjunction conj=(Conjunction) imp.getSubject();
-                if(conj.temporalOrder==TemporalRules.ORDER_FORWARD || conj.temporalOrder==TemporalRules.ORDER_CONCURRENT) {
-                    concurrent_conjunction=conj.temporalOrder==TemporalRules.ORDER_CONCURRENT;
-                    args=conj.term; //in case of &/ this are the terms
-                }
-            }
-            int i=0;
-            boolean matched=true;
-            int off=0;
-            long expected_time=lastEvents.get(0).sentence.getOccurenceTime();
-            
-            for(i=0;i<args.length;i++) {
-                //handling of intervals:
-                if(args[i] instanceof Interval) {
-                    if(!concurrent_conjunction) {
-                        expected_time+=((Interval)args[i]).getTime(memory);
-                    }
-                    off++;
-                    continue;
-                }
-                
-                if(i-off>=lastEvents.size()) {
-                    break;
-                }
-                
-                //handling of other events, seeing if they match and are right in time
-                if(!args[i].equals(lastEvents.get(i-off).sentence.content)) { //it didnt match, instead sth different unexpected happened
-                    matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
-                    break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
-                } else { //however I decided that sequence matters also for now, because then the more accurate hypothesis wins.
-                    
-                    if(lastEvents.get(i-off).sentence.truth.getExpectation()<=0.5f) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
-                        //it didn't happen
-                        matched=false;
-                        break;
-                    }
-                    
-                    long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
-                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
-                    if(!right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
-                        matched=false;
-                        break;
-                    }
-                }
-
-                if(!concurrent_conjunction) {
-                    expected_time+=duration;
-                }
-            }
-            
-            if(concurrent_conjunction && !concurrent_implication) { //implication is not concurrent
-                expected_time+=duration; //so here we have to add duration
-            }
-            else
-            if(!concurrent_conjunction && concurrent_implication) {
-                expected_time-=duration;
-            } //else if both are concurrent, time has never been added so correct
-              //else if both are not concurrent, time was always added so also correct
-            
-            //ok it matched, is the consequence also right?
-            if(matched && lastEvents.size()>args.length-off) { 
-                long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
-                boolean right_in_time=Math.abs(occurence-expected_time)<((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
-                
-                float evidenceFreq;
-                if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.content)) { //it matched and same consequence, so positive evidence
-                    evidenceFreq = 1f;
-                } else { //it matched and other consequence, so negative evidence
-                    evidenceFreq = 0f;
-                } //todo use derived task with revision instead
-                
-                TruthFunctions.revision(
-                        c.sentence.truth, 
-                        new TruthValue(evidenceFreq, Parameters.DEFAULT_JUDGMENT_CONFIDENCE), 
-                        c.sentence.truth);
-            }
-        }
-    }
-    
     public Task stmLast=null;
-    boolean occured=false;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
         if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime()==Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent,nal.mem))
@@ -762,24 +641,7 @@ public class Executive implements Observer {
 
         //for this heuristic, only use input events & task effects of operations
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-            if(Parameters.TEMPORAL_PARTICLE_PLANNER && this.expected_event!=null && this.expected_task!=null) {
-                if(newEvent.sentence.content.equals(this.expected_event)) {
-                    //this.expected_task.expect(true);
-                    occured=true;
-                } //else {
-                  ////  this.expected_task.expect(false);
-               // }
-                    
-               // this.expected_event=null;
-               // this.expected_task=null; //done i think//todo, refine, it could come in a specific time, also +4 on end of a (&/ plan has to be used
-            }
             stmLast=newEvent;
-            lastEvents.add(newEvent);
-            temporalPredictionsAdapt();
-            while(lastEvents.size()>shortTermMemorySize) {
-                lastEvents.remove(0);
-            }
-            
         //}
 
         return true;

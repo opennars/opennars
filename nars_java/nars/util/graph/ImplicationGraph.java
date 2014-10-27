@@ -37,9 +37,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         /** strength below which an item will be removed */
         public final double minStrength = 0.01;
         
-        //TODO use a primitive collection
-        private Map<Term,Double> relevancy = null;
-        
         private double activity = 0;
         
         private final int hash;
@@ -85,53 +82,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         public Implication getImplication() {
             return (Implication)parent.content;
-        }
-        
-        /**
-         * 
-         * @param t = term
-         * @param strength  = reward (if positive), punishment (if negative)
-         */
-        public void rememberRelevant(Term t, double strength) {
-            if (relevancy == null) relevancy = new WeakHashMap();            
-            relevancy.put( t, Math.min(0.99, relevancy.getOrDefault(t, new Double(0)) + strength) );
-        }
-        
-        public void forgetRelevant(Term t, double strength) {
-            if (relevancy == null) relevancy = new WeakHashMap();            
-            relevancy.put( t, Math.max(0.0, relevancy.getOrDefault(t, new Double(0)) - strength) );
-        }
-        
-        /** "forgets" when scale < 1.0 */
-        public void multiply(final double x) {
-            if (x == 1.0) return;
-            if (relevancy == null) return;
-            
-            
-//            List<Term> toRemove = null;
-//            for (Map.Entry<Term, Double> e : relevancy.entrySet()) {
-//                double newValue = e.getValue() * x;
-//                if (newValue > 1.0) newValue = 1.0;
-//                if (newValue < minStrength)  {
-//                    if (toRemove == null) toRemove = new ArrayList();
-//                    toRemove.add(e.getKey());
-//                }
-//                else
-//                    e.setValue(newValue);                
-//            }
-//            if (toRemove!=null)
-//                for (Term t : toRemove)
-//                    relevancy.remove(t);            
-        }
-        
-        public double getRelevancy(Term t) {
-            if (relevancy == null) return 0;
-            Double r = relevancy.get(t);
-            if (r == null) return 0;
-            if(this.parent!=null) {
-                
-            }
-            return r;            
         }
 
         @Override
