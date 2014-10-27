@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JPanel;
 import nars.core.NAR;
+import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
