@@ -107,9 +107,9 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     
     
     public void printAll() {
-        for (K k : keySet()) {
-            E v = get(k);
-            System.out.println("  " + k + " " + v + " (" + v.getClass().getSimpleName() + ")" );
+        Iterator<E> d = iterator();
+        while (d.hasNext()) {
+            System.out.println("  " + d.next() + "\n" );
         }
     }
     

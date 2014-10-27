@@ -278,6 +278,9 @@ public class Texts {
     }    
     
     public static boolean containsChar(final CharSequence n, final char c) {
+        if (n instanceof String)
+            return ((String)n).indexOf(c)!=-1;
+        
         final int l = n.length();
         for (int i = 0; i < l; i++)            
             if (n.charAt(i) == c)
@@ -338,6 +341,10 @@ public class Texts {
     public static final String n1(final float x) { return oneDecimal.format(x);     }
 
     public static int compareTo(final CharSequence s, final CharSequence t) {
+        if ((s instanceof String) && (t instanceof String)) {
+            return ((String)s).compareTo((String)t);
+        }
+        
         int i = 0;
 
         final int sl = s.length();

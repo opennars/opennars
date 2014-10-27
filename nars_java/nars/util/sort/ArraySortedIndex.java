@@ -41,6 +41,11 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 
     public final int positionOf(final E o) {
         final float y = o.budget.getPriority();
+        if ((y < 0) || (y > 1.0f)) {
+            System.err.println("Invalid priority value: " + o);
+            System.exit(1);
+        }
+        
         final int s = size();
         if (s > 0) {
 
@@ -58,39 +63,46 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
                 if (x < y) {
                     low = mid + 1;
                 } else if (x == y) {
-                    return mid;
+                    return validPosition(mid);
                 } else if (x > y) {
                     high = mid - 1;
                 }
 
             }
-            return low;
+            return validPosition(low);
         } else {
             return 0;
         }
     }
 
+    public int validPosition(int i) {
+        if (i > size()) i = size();
+        if (i < 0) i = 0;
+        return i;
+    }
+    
     @Override
     public E get(int i) {
         return list.get(i);
     }
 
-    
+   
     @Override
     public boolean add(final E o) {
                 
         if (isEmpty()) {
             return list.add(o);
         } else {
-            if (size() == capacity) {
-
-                if (positionOf(o) == 0) {
-                    //priority too low to join this list
-                    return false;
-                }
-
-                reject(remove(0));
-            }
+//            if (size() >= capacity) {
+//
+//                if (positionOf(o) == 0) {
+//                    //priority too low to join this list
+//                    return false;
+//                }
+//
+//                reject(remove(0));
+//            }
+            
             list.add(positionOf(o), o);
             return true;
         }
@@ -178,12 +190,18 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
     public boolean remove(final Object _o) {
                 
         if (size() == 0) return false;
+
+        E o = (E)_o;
+        final Object on = o.name();
+        
         if (size() == 1) {
-            list.remove(0);
-            return true;
+            if (get(0).name().equals(on)) {
+                list.remove(0);
+                return true;
+            }
+            return false;
         }
         
-        E o = (E)_o;
         
         //estimated position according to current priority
         int p = positionOf( o ); 
@@ -196,9 +214,11 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
             
             if (i < s) {
                 E r = list.get( i );
-                if ((o == r) || (r.name().equals(o.name()))) {
-                    list.remove(i);
-                    return true;
+                if ((o == r) || (r.name().equals(on))) {
+                    if (list.remove(i)!=null)
+                        return true;
+                    else
+                        continue;
                 }
                 i++;                
             }
@@ -207,9 +227,11 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 
             if (j >= 0) {
                 E r = list.get( j );
-                if ((o == r) || (r.name().equals(o.name()))) {
-                    list.remove(j);
-                    return true;
+                if ((o == r) || (r.name().equals(on))) {
+                    if (list.remove(j)!=null)
+                        return true;
+                    else 
+                        continue;
                 }
                 j--;
             }
@@ -218,7 +240,7 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
             
         } while ( (!finishedUp) || (!finishedDown) );
                 
-        throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o);
+        throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
     }
 
 

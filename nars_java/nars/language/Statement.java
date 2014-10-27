@@ -20,12 +20,10 @@
  */
 package nars.language;
 
-import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
-import nars.io.Texts;
 
 /**
  * A statement is a compound term, consisting of a subject, a predicate, and a
@@ -215,8 +213,8 @@ public abstract class Statement extends CompoundTerm {
             .append(STATEMENT_CLOSER.ch);
             
         //EITHER WORKS, see which is faster.  but using the StringBuilder as-is should save memory:
-        return Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, sb);
-        //return sb.toString();
+        //return Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, sb);
+        return sb.toString();
         
         
         

@@ -132,8 +132,9 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);            
         }
         else {
-            //unable to create for some reason
-            throw new RuntimeException("Unable to conceptualize " + term);
+            //unable to create, ex: has variables
+            return null;
+            //throw new RuntimeException("Unable to conceptualize " + term);
         }
 
         
