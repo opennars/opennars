@@ -245,8 +245,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     
     @Override
     public E takeNext() {
-
-        size();
         
         if (size() == 0) {
             return null; // empty bag                
@@ -259,8 +257,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
         
         currentCounter--;
-
-        size();
 
         //refresh();
 
