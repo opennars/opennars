@@ -3,6 +3,7 @@ package nars.nario;
 import java.awt.event.KeyEvent;
 import static java.lang.Math.log;
 import static java.lang.Math.signum;
+import static java.lang.Math.signum;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -11,6 +12,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.DefaultNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
@@ -53,9 +55,9 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new DefaultNARBuilder().realtime().build();
         
-        //NAR nar = new DefaultNARBuilder().setConceptBagSize(1024).simulationTime().build();
+        NAR nar = new DefaultNARBuilder().simulationTime().build();
         
-        NAR nar = new CurveBagNARBuilder().simulationTime().build();
+       // NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);
          nar.param().beliefCyclesToForget.set(30);
          nar.param().conceptCyclesToForget.set(7);
@@ -72,16 +74,18 @@ public class NARio extends Run {
         //new TextOutput(nar, System.out).setShowInput(true);
         
         nar.param().noiseLevel.set(0);
-        int memCyclesPerFrame = 200;
-        float fps = 40f;
+        int memCyclesPerFrame = 500;
+        float fps = 20f;
         gameRate = 1.0f / fps;
 
         NARio nario = new NARio(nar);
 
         new NARSwing(nar);
         nar.startFPS(fps, memCyclesPerFrame, 1f);
+        
     }
 
+    ChangedTextInput chg;
     String[] sight = new String[9];
 
     protected void axioms() {
@@ -91,12 +95,12 @@ public class NARio extends Run {
 
                         //NAR.DEBUG = true;
                         
-
+                        chg = new ChangedTextInput(nar);
                         moveInput = new ChangedTextInput(nar);
                         velInput = new ChangedTextInput(nar);
                         
                     //nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");                
-                        nar.addInput("<?y --> space>? :/:");
+                       /* nar.addInput("<?y --> space>? :/:");
                         nar.addInput("<{(*,0,0),(*,0,1),(*,1,0),(*,-1,0),(*,0,-1)} <-> direction>. %1.00;0.99%");
                         
                         nar.addInput("{solid,empty,gotCoin} <-> spatial>.  %1.00;0.99%");
@@ -112,7 +116,8 @@ public class NARio extends Run {
                         nar.addInput("<(*,0,-2) <-> down>.  %1.00;0.50%");
                         nar.addInput("<{on,off} <-> activation>. %1.00;0.99%");
                         nar.addInput("<{-5,-4,-3,-2,-1,0,1,2,3,4,5} <-> integers>. %1.00;0.99%");
-                        nar.addInput("<{0,(*,0,0)} <-> zeroish>.  %1.00;0.99%");                        
+                        nar.addInput("<{0,(*,0,0)} <-> zeroish>.  %1.00;0.99%");      
+                        */
                         //nar.addInput("<solid <-> empty>. %0.00;0.99%");
                         //nar.addInput("<up <-> down>. %0.00;0.99%");
                         //nar.addInput("<left <-> right>. %0.00;0.99%");
@@ -125,7 +130,7 @@ public class NARio extends Run {
         if (keyInput[k] == null)
             keyInput[k] = new ChangedTextInput(nar);
         
-        if (keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")!")) {            
+        if (keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:")) {            
             //input the opposite keypress as a back-dated input from between last frame and this
 //            long dd = nar.param().duration.get();
 //            long lastFrame = nar.getTime() - dd + dd/2;
@@ -214,6 +219,31 @@ public class NARio extends Run {
             private float lastMX;
             private float lastMY;
 
+            boolean representation_simple=true;
+            public String direction(int i,int j) {
+                if(!representation_simple)
+                    return "("+String.valueOf(i)+","+String.valueOf(j)+")";
+                else {
+                    if(Math.abs(i) > Math.abs(j)) {
+                        if(i<0) {
+                            return "left";
+                        } 
+                        else
+                        if(i>0) {
+                            return "right";
+                        }
+                    } else {
+                        if(j<0) {
+                            return "down";
+                        } else 
+                        if(i<0) {
+                            return "up";
+                        }
+                    }
+                    return "zero";
+                }
+            }
+            
             @Override
             public void event(Class event, Object... arguments) {
 
@@ -265,17 +295,18 @@ public class NARio extends Run {
                         if (movement) {
 
                             if (!((mx==0) && (my==0))) {
-                                if (moveInput.set(/*"$" + movementPriority + "$"*/"<(*," + mx + "," + my + ") --> moved>. :|:")) {
+                                if (moveInput.set(/*"$" + movementPriority + "$"*/"<"+direction(mx,my)+" --> moved>. :|:")) {
                                     //if significantly changed block position, record it for next difference
                                     lastMX = x;
                                     lastMY = y;
                                 }
                             }
-                            velInput.set(/*"$" + movementPriority + "$"*/"<(*," + slog(dx) + "," + slog(dy) + ") --> velocity>. :|:");
+                            //this one is wrong like when getting stuck indicates:
+                          //  velInput.set(/*"$" + movementPriority + "$"*/"<(*," + slog(dx) + "," + slog(dy) + ") --> velocity>. :|:");
                             
                         }
                         else {
-                            if (moveInput.set("<(*,0,0) --> moved>. :|:")) { //stopped
+                            if (moveInput.set("(--,<"+direction(1,0)+" --> moved>). :|:")) { //stopped
                                 lastMX = x;
                                 lastMY = y;
                             }
@@ -306,22 +337,12 @@ public class NARio extends Run {
 //                                            (blocked ? "solid" : "empty") +
 //                                            "," + data + ",(*," + i + "," + j + 
 //                                            ")) --> space>. :|:";
-                                String direction = "(*," + i + "," + j + ")";
-                                /*if ((i == 0) && (j == -1)) {
-                                    direction = "up";
-                                } else if ((i == 0) && (j == 1)) {
-                                    direction = "down";
-                                } else if ((i == -1) && (j == 0)) {
-                                    direction = "left";
-                                } else if ((i == 1) && (j == 0)) {
-                                    direction = "right";
-                                } else */{
-                                    direction = "(*," + i + "," + j + ")";
-                                }
-                                
+                                String direction = direction(i,j);
+           
                                 char datachar = (char)('r' + data);
                                 String s = "<" + direction + " --> " + (blocked ? "solid" : "empty") + ">. :|:";
                                 s += "\n";
+                                
                                 s +=  "<" + direction + " --> d" + datachar + ">. :|:";
 
                                 if ((sight[k] != null) && (sight[k].equals(s))) {
@@ -330,14 +351,14 @@ public class NARio extends Run {
 
                                 sight[k] = s;
 
-                                nar.addInput(/*"$" + sightPriority + "$" +*/
+                                chg.set(/*"$" + sightPriority + "$" +*/
                                         s);
                             }
                         }
                     }
 
                     if (gotCoin > 0) {
-                        nar.addInput("<(*,0,0) --> gotCoin>. :|:");
+                        chg.set("<"+direction(0,0)+" --> gotCoin>. :|:");
                     }
 
                         
@@ -427,8 +448,8 @@ public class NARio extends Run {
                             int dx = Math.round((x - s.x) / 16);
                             int dy = Math.round((y - s.y) / 16);
 
-                            nar.addInput(/*"$" + sightPriority + "$" +*/
-                                    " <(*," + dx + "," + dy + ") --> " + type + ">. :|:");
+                            chg.set(/*"$" + sightPriority + "$" +*/
+                                    " <"+direction(dx,dy)+" --> " + type + ">. :|:");
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
                         }
@@ -441,7 +462,10 @@ public class NARio extends Run {
                     lastY = y;
                     gotCoin = 0;
                 }
-                
+                if(www%10==0) {
+                    nar.addInput("<"+direction(1,0)+" --> moved>!");
+                }
+                www++;
                 cycle++;
             }
             
@@ -450,6 +474,8 @@ public class NARio extends Run {
 
     }
 
+    public int www=0;
+    
     @Override
     protected void update() {
 
