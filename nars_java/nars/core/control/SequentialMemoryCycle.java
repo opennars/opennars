@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import nars.core.ConceptProcessor;
 import nars.core.Events;
-import nars.core.Events.ConceptRemove;
+import nars.core.Events.ConceptForget;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -93,21 +93,24 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             //System.out.println("forget: " + c + "   con=" + concepts.size() + " subcon=" + subcon.size());
         }
         
-        memory.emit(ConceptRemove.class, c);
+        memory.emit(ConceptForget.class, c);
     }
     
     @Override
     public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
         
-        
+        //see if concept is active
         Concept concept = concepts.take(term);
         
-        //try subconscious
+        //try remembering from subconscious
         if ((concept == null) && (subcon!=null)) {
             concept = subcon.take(term);
             if (concept!=null) {                
+                
                 //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
                 concept.budget.getForgetPeriod(memory.time());
+                
+                memory.emit(Events.ConceptRemember.class, concept);                
 
                 //System.out.println("retrieved: " + concept + "  subcon=" + subcon.size());
             }
@@ -119,17 +122,19 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             
             concept = conceptBuilder.newConcept(budget.clone(), term, memory);
 
-            memory.logic.CONCEPT_ADD.commit(term.getComplexity());
-            memory.emit(Events.ConceptAdd.class, concept);                
+            memory.logic.CONCEPT_NEW.commit(term.getComplexity());
+            memory.emit(Events.ConceptNew.class, concept);                
         }
         else if (concept!=null) {            
             
             //apply budget to existing concept
-            
+            //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
             BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);            
         }
-        else
-            return null;
+        else {
+            //unable to create for some reason
+            throw new RuntimeException("Unable to conceptualize " + term);
+        }
 
         
         Concept displaced = concepts.putBack(concept, memory.param.conceptForgetDurations.getCycles(), memory);

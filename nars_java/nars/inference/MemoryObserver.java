@@ -21,8 +21,8 @@ public abstract class MemoryObserver extends AbstractObserver {
         super(m.event, active,
                 Events.CycleStart.class,
                 Events.CycleEnd.class,
-                Events.ConceptAdd.class,
-                Events.ConceptRemove.class,
+                Events.ConceptNew.class,
+                Events.ConceptForget.class,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
                 Events.ConceptDirectProcessedTask.class,
@@ -49,7 +49,7 @@ public abstract class MemoryObserver extends AbstractObserver {
 
     @Override
     public void event(final Class event, final Object[] arguments) {
-        if (event == Events.ConceptAdd.class) {
+        if (event == Events.ConceptNew.class) {
             onConceptAdd((Concept) arguments[0]);
         } else if (event == Output.OUT.class) {
             output(event, arguments[0].toString());

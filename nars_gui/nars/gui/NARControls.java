@@ -216,7 +216,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
                     new NWindow("Garbage", new SwingLogPanel(NARControls.this, 
-                            Events.ConceptRemove.class
+                            Events.ConceptForget.class
                             //, Events.TaskRemove.class, Events.TermLinkRemove.class, Events.TaskLinkRemove.class)
                     ))
                     .show(500, 300);

@@ -24,7 +24,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import nars.core.Events.ConceptAdd;
+import nars.core.Events.ConceptNew;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
 import nars.core.Memory.Timing;
@@ -119,7 +119,7 @@ public class InferenceLogger extends MemoryObserver {
     
     @Override
     public void onConceptAdd(Concept concept) {        
-        output(ConceptAdd.class, concept);
+        output(ConceptNew.class, concept);
     }    
     
     

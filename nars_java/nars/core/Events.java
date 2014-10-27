@@ -36,8 +36,9 @@ public class Events {
     public static class ResetEnd {
     }
     
-    public static class ConceptAdd extends ParametricInferenceEvent<Concept> {
-        public ConceptAdd(Concept c, long when) {
+    
+    public static class ConceptNew extends ParametricInferenceEvent<Concept> {
+        public ConceptNew(Concept c, long when) {
             super(c, when);
         }
         
@@ -46,7 +47,10 @@ public class Events {
         }        
     }
     
-    public static class ConceptRemove { }
+    //when remembered a previously forgotten concept
+    public static class ConceptRemember {    }
+    
+    public static class ConceptForget { }
     public static class ConceptBeliefAdd { }
     public static class ConceptBeliefRemove { }
     public static class ConceptGoalAdd { }
@@ -129,5 +133,7 @@ public class Events {
         
         
     }
+
+    
     
 }

@@ -28,22 +28,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return false;
     }
     
-    public E remove(K key, E value) {
-        E removed = null;
-        if (key!=null) {
-            removed = removeKey(key);
-        }
-        
-        if (value!=null) {
-            boolean b = removeItem(value);
-            if ((removed!=null) && (!b)) {
-                throw new RuntimeException("removed key but not value, inconsisency");         
-            }            
-            if ((removed == null) && b)
-                removed = value;
-        }
-        return removed;
-    }
+
     
     /**
      * Get an Item by key
@@ -142,9 +127,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     }
 
     /** may return null if the item is not in the nameTable */
-    public E take(K key) {        
+    public E take(final K key) {        
+
+        size();
         
-        E removed = removeKey(key);
+        E removed = removeKey(key);                
         if (removed!=null) {
             removeItem(removed);        
         }
