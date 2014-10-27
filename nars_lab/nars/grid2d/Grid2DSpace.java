@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JPanel;
 import nars.core.NAR;
+import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
 import nars.grid2d.particle.Particle;
@@ -303,7 +304,7 @@ public class Grid2DSpace extends PApplet {
         Cell to = cells.at(tx, ty);
                 
         //System.out.println(to + " " + to.material);
-        if ((to.material == Material.StoneWall) || to.is_solid || to.material==Material.Water)
+        if ((to.material == Material.StoneWall) || to.is_solid || to.material==Material.Water || to.logic==Logic.BRIDGE)
             return "Too solid";
         
         final float maxTraversableHeight = 8;
@@ -342,11 +343,11 @@ public class Grid2DSpace extends PApplet {
         //PImage b = particles.particleImage;
         //this.blend(b, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), PImage.ADD);
         
-        particles.tick();
+       /* particles.tick(); //crashes
         for (Particle p : particles.p) {
             fill(p.rgba);
             rect(p.xPos, p.yPos, 0.1f,0.1f);
-        }
+        }*/
     }
     
     public void drawGround() {

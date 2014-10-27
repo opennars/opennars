@@ -15,7 +15,7 @@ public class FullInternalExperience implements Plugin {
     @Override public boolean setEnabled(NAR n, boolean enabled) {
         MinimalInternalExperience exp=new MinimalInternalExperience();
         exp.setEnabled(n, enabled);
-        Parameters.INTERNAL_EXPERIENCE_FULL=true;
+        Parameters.INTERNAL_EXPERIENCE_FULL=enabled;
         return true;
     }
     

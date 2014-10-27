@@ -2,6 +2,7 @@ package nars.operator;
 
 import nars.operator.math.Add;
 import nars.operator.math.Count;
+import nars.operator.mental.Anticipate;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Doubt;
 import nars.operator.mental.Evaluate;
@@ -45,6 +46,8 @@ public class DefaultOperators {
             // truth-value operations
             new Doubt(),        // decrease the confidence of a belief
             new Hesitate(),      // decrease the confidence of a goal
+            
+             new Anticipate(),      // expect an event
 
             // feeling operations
             new FeelHappy(),

@@ -420,6 +420,11 @@ public class GraphExecutive {
     
     /** returns (no relevancy) 0..1.0 (high relevancy) */
     public double getCauseRelevancy(final Cause c, final Term goal) {
+        //how desired is the implication?
+        Concept w=memory.concept(c.getImplication().getPredicate());
+        if(w!=null && w.getDesire()!=null) {
+            return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()*w.getDesire().getExpectation()));
+        }
         return Math.max(0.0, Math.min(1.0, c.getTruth().getExpectation()));//+c.getRelevancy(goal)));//getCauseRelevancy(c) * c.getRelevancy(goal);    
         //return c.getTruth().getExpectation();
     }

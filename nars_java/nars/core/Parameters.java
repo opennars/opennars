@@ -38,12 +38,12 @@ public class Parameters {
     
     public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.2f; //how much =/> should be gained
     public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
-    
-    public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.1; //was 0.1, 0=deactivated //1/2 half time of duration in each direction makes 1 duration
-    
+
     public static boolean TEMPORAL_PARTICLE_PLANNER=true;
-    //will be activated after normal NAL8 is working again
     
+    //can only be activated in plugin menu no,
+    public static boolean INTERNAL_EXPERIENCE=false;
+    //so dont change these two to true
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.

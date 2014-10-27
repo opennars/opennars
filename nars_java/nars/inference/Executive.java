@@ -12,6 +12,7 @@ import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Events.TaskDerive;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -23,6 +24,7 @@ import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
+import nars.language.Negation;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variables;
@@ -78,11 +80,6 @@ public class Executive {
      * already begun executing.
      */
     float motivationToFinishCurrentExecution = 1.5f;
-    
-
-    
-
-
     
     public Executive(Memory mem) {
         this.memory = mem;    
@@ -461,10 +458,10 @@ public class Executive {
     public boolean isDesired(final Task t, final Concept c) {             
         float desire = c.getDesire().getExpectation();
         float priority = t.budget.getPriority(); //t.budget.summary();
-        //return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
+        return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
         
-        double dt = memory.param.decisionThreshold.get();
-        return ((desire >= dt) || (priority >= dt));
+       // double dt = memory.param.decisionThreshold.get();
+       // return ((desire >= dt) || (priority >= dt));
     }
     
     /** called during each memory cycle */
@@ -476,8 +473,6 @@ public class Executive {
             return;
                         
         lastExecution = now;
-        
-        graph.implication.multiplyRelevancy(causeRelevancyFactor);
         
         updateTasks();
         updateSensors();
@@ -617,8 +612,26 @@ public class Executive {
     }
     
     public Task stmLast=null;
+    public Term anticipateTerm=null;
+    public long anticipateTime=0;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
+        //new one happened and duration is already over, so add as negative task
+        if(Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm!=null && newEvent.sentence.getOccurenceTime()-anticipateTime>nal.mem.param.duration.get()) {
+            Term s=newEvent.sentence.content;
+            TruthValue truth=new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            Negation N=(Negation) Negation.make(s);
+            Stamp stamp=new Stamp(nal.mem);
+            Sentence S=new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
+            BudgetValue budget=new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
+            Task task=new Task(S,budget);
+            nal.derivedTask(task, false, true, null, null);
+            anticipateTerm=null;
+        }
+        if(Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content==((Implication)anticipateTerm).getPredicate()) {
+            anticipateTerm=null; //it happened like expected
+        }
+        
         if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime()==Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent,nal.mem))
             return false;
 
