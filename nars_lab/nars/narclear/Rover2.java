@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.CurveBagNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -802,9 +802,9 @@ public class Rover2 extends PhysicsModel {
 
 
     public static void main(String[] args) {
-        NAR nar = new DefaultNARBuilder().
+        //NAR nar = new DefaultNARBuilder().
         //NAR nar = new DiscretinuousBagNARBuilder().
-        //NAR nar = new CurveBagNARBuilder().
+        NAR nar = new CurveBagNARBuilder().
                 setConceptBagLevels(100).
                 setConceptBagSize(500).
                 setSubconceptBagSize(2000).
@@ -822,7 +822,7 @@ public class Rover2 extends PhysicsModel {
         nar.param().newTaskForgetDurations.set(5f);
         
         
-        ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptRemove.class);
+        ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
 
         // RoverWorld.world= new RoverWorld(rv, 48, 48);
         new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, new Rover2(nar)) {

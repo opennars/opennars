@@ -1,7 +1,5 @@
 package nars.util.sort;
 
-import java.util.Comparator;
-import javolution.util.FastCollection;
 import javolution.util.FastSortedTable;
 import javolution.util.function.Equality;
 import nars.entity.Item;
@@ -13,8 +11,10 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
     public static class ItemEquality<E extends Item> extends ItemPriorityComparator<E> implements Equality<E> {
         
         @Override public int compare(final E a, final E b) { 
-            if (areEqual(a, b)) return 0;
-            return super.compare(a, b);
+            //if (areEqual(a, b)) return -1;
+            int i = super.compare(a, b);
+            if (i == 0) i = -1;
+            return i;
         }
         
         @Override public int hashCodeOf(E t) {
@@ -22,7 +22,7 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
         }
 
         @Override public boolean areEqual(E t, E t1) {
-            return (t == t1);
+            return t.equals(t1);
         }
         
     }
@@ -37,7 +37,7 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
     
     public FractalSortedItemList(int capacity) {
         super(new ItemEquality<E>());
-        this.capacity = capacity;
+        this.capacity = capacity;        
     }
 
     @Override
@@ -45,6 +45,34 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
         this.capacity = capacity;
     }
 
+    @Override
+    public boolean add(E element) {
+        if (capacity == 500)
+            System.out.println(" + " + element + " " + contains(element));
+        boolean b = addIfAbsent(element);
+        if (capacity == 500)
+            System.out.println(b + " " + size());
+        return b;
+    }
+
+    @Override
+    public boolean remove(Object obj) {
+        if (capacity == 500)
+            System.out.println(" - " + obj + contains(obj));
+        return super.remove(obj);
+    }
+
+    @Override
+    public E remove(int index) {
+        if (capacity == 500)
+            System.out.println(" - " + index + " = " + get(index));
+        return super.remove(index); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+
+    
+    
     
     @Override
     public E getLast() {        

@@ -23,26 +23,26 @@ public class ArraySortedItemList<E extends Item> extends ArrayList<E> implements
 //        //this.comparator = c;
 //        this.capacity = capacity;
 //    }
-
     public ArraySortedItemList() {
         this(1);
     }
-    
+
     public ArraySortedItemList(int capacity) {
-            super();
-            this.capacity = capacity;
-            /*
-            this(new Comparator<E>() {
+        super();
+        this.capacity = capacity;
+        /*
+         this(new Comparator<E>() {
 
-                @Override public int compare(final E o1, final E o2) {
-                    //fast comparison because name table will already prevent duplicates?
-                    if (o1 == o2) return 0;
-                    return -1;
-                }
+         @Override public int compare(final E o1, final E o2) {
+         //fast comparison because name table will already prevent duplicates?
+         if (o1 == o2) return 0;
+         return -1;
+         }
                 
-            },capacity);*/
-        }
+         },capacity);*/
+    }
 
+    @Override
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
@@ -51,68 +51,40 @@ public class ArraySortedItemList<E extends Item> extends ArrayList<E> implements
         return capacity;
     }
 
-    
-        public final int positionOf(final E o) {
-            final float y = o.budget.getPriority();
-            final int s = size();
-            if (s > 0)  {
+    public final int positionOf(final E o) {
+        final float y = o.budget.getPriority();
+        final int s = size();
+        if (s > 0) {
 
-                //binary search
-                int low = 0;
-                int high = s-1;
+            //binary search
+            int low = 0;
+            int high = s - 1;
 
-                while (low <= high) {
-                    int mid = (low + high) >>> 1;
+            while (low <= high) {
+                int mid = (low + high) >>> 1;
 
-                    E midVal = get(mid);
+                E midVal = get(mid);
 
-                    final float x = midVal.budget.getPriority();
-                    
-                    if (x < y) low = mid + 1;
-                    else if (x == y) return mid;
-                    else if (x > y) high = mid - 1;                    
-                    
+                final float x = midVal.budget.getPriority();
+
+                if (x < y) {
+                    low = mid + 1;
+                } else if (x == y) {
+                    return mid;
+                } else if (x > y) {
+                    high = mid - 1;
                 }
-                return low;
-            }
-            else {
-                return 0;
-            }
-        }
 
-//    public int positionOf(final E o) {
-//        final E y = o;
-//        final int s = size();
-//        if (s > 0) {
-//
-//            //binary search
-//            int low = 0;
-//            int high = s - 1;
-//
-//            while (low <= high) {
-//                int mid = (low + high) >>> 1;
-//
-//                E midVal = get(mid);
-//
-//                int cmp = comparator.compare(midVal, y);
-//
-//                if (cmp < 0) {
-//                    low = mid + 1;
-//                } else if (cmp > 0) {
-//                    high = mid - 1;
-//                } else {
-//                    // key found, insert after it
-//                    return mid;
-//                }
-//            }
-//            return low;
-//        } else {
-//            return 0;
-//        }
-//    }
+            }
+            return low;
+        } else {
+            return 0;
+        }
+    }
 
     @Override
     public boolean add(final E o) {
+        
         if (isEmpty()) {
             return super.add(o);
         } else {
@@ -129,14 +101,21 @@ public class ArraySortedItemList<E extends Item> extends ArrayList<E> implements
             return true;
         }
     }
-    
-    public E getFirst() { 
-        if (isEmpty()) return null;
+
+    @Override
+    public E getFirst() {
+        if (isEmpty()) {
+            return null;
+        }
         return get(0);
     }
-    public E getLast() { 
-        if (isEmpty()) return null;
-        return get(size()-1);
+
+    @Override
+    public E getLast() {
+        if (isEmpty()) {
+            return null;
+        }
+        return get(size() - 1);
     }
 
     public int capacity() {
@@ -147,13 +126,14 @@ public class ArraySortedItemList<E extends Item> extends ArrayList<E> implements
         return capacity() - size();
     }
 
+    @Override
     public Iterator<E> descendingIterator() {
         if (reverse == null) {
             reverse = Lists.reverse(this);
         }
         return reverse.iterator();
     }
-    
+
     /**
      * can be handled in subclasses
      */
