@@ -12,6 +12,7 @@ import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Events.TaskDerive;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -23,6 +24,7 @@ import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
+import nars.language.Negation;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variables;
@@ -78,11 +80,6 @@ public class Executive {
      * already begun executing.
      */
     float motivationToFinishCurrentExecution = 1.5f;
-    
-
-    
-
-
     
     public Executive(Memory mem) {
         this.memory = mem;    
@@ -617,8 +614,25 @@ public class Executive {
     }
     
     public Task stmLast=null;
+    public Task anticipateTask=null;
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
+        //new one happened and duration is already over, so add as negative task
+        if(anticipateTask!=null && newEvent.sentence.getOccurenceTime()-anticipateTask.sentence.getOccurenceTime()>nal.mem.param.duration.get()) {
+            Term s=newEvent.sentence.content;
+            TruthValue truth=new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+            Negation N=(Negation) Negation.make(s);
+            Stamp stamp=new Stamp(nal.mem);
+            Sentence S=new Sentence(N, Symbols.JUDGMENT_MARK, truth, stamp);
+            BudgetValue budget=new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
+            Task task=new Task(S,budget);
+            nal.derivedTask(task, false, true, null, null);
+            anticipateTask=null;
+        }
+        if(anticipateTask!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content==((Implication)anticipateTask.sentence.content).getPredicate()) {
+            anticipateTask=null; //it happened like expected
+        }
+        
         if (newEvent == null || newEvent.sentence.stamp.getOccurrenceTime()==Stamp.ETERNAL || !isInputOrTriggeredOperation(newEvent,nal.mem))
             return false;
 

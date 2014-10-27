@@ -29,6 +29,8 @@ public class MinimalInternalExperience implements Plugin {
         Parameters.INTERNAL_EXPERIENCE_FULL=false;
         Memory memory = n.memory;
         
+        Parameters.INTERNAL_EXPERIENCE=enabled;
+        
         if(obs==null) {
             obs=new Observer() {
                 @Override public void event(Class event, Object[] a) {
