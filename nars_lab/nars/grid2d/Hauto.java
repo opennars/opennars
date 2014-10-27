@@ -44,6 +44,22 @@ public class Hauto {
         if((r.machine==Machine.Light || r.machine==Machine.Turret) && r.charge==1)
         {
             if(r.light!=1.0f) {
+                boolean nope=false;
+                if(r.machine==Machine.Turret) {
+                    for(GridObject gr : TestChamber.space.objects) {
+                        if(gr instanceof LocalGridObject) {
+                            LocalGridObject o=(LocalGridObject) gr;
+                            if(o.x==i && o.y==j) {
+                                nope=true;
+                            }
+                        }
+                    }
+                    if(!nope) {
+                        TestChamber.space.add(new Pizza((int)i, (int)j, "pizza"+entityID.toString()));
+                        nar.addInput("<pizza"+entityID.toString()+" --> pizza>."); 
+                        entityID++;
+                    }
+                }
                 nar.addInput("<"+r.name+" --> on>. :|:");
             }
             w.light=1.0f;
