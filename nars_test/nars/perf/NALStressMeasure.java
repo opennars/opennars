@@ -26,7 +26,7 @@ public class NALStressMeasure  {
             
             @Override
             public void init() {
-                
+                System.out.print(name + ": ");
                 totalCycles = 0;
             }
 
@@ -53,6 +53,7 @@ public class NALStressMeasure  {
                 return this;
                 
             }
+            
             @Override
             public Performance printCSV(boolean finalComma) {
                 super.printCSV(true);
