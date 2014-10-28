@@ -201,11 +201,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         }
 
         
-        //fast override to avoid unnecessary calculations
-        @Override protected boolean setName(CharSequence name) {
-            this.name = name;
-            return true;
-        }
+ 
 
         //fast override to avoid unnecessary calculations
         @Override protected short calcComplexity() {
@@ -375,9 +371,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         public LightweightImplication(Term subject, Term predicate, int order) {
             super(subject, predicate, order);
         }
-    
-        @Override
-        protected boolean calcContainedVariables() { return false; }            
+
+        
         @Override
         protected short calcComplexity() { return -1; }
     }

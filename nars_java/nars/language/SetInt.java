@@ -60,21 +60,22 @@ public class SetInt extends SetTensional {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term... t) {
+        if (t.length == 0) return null;
         return new SetInt(t);
     }
 
 
     /**
      * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param set a set of Term as compoments
+     * @param t a set of Term as compoments
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(Collection<Term> set) {
-        if (set.isEmpty())
+    public static Term make(Collection<Term> t) {
+        if (t.isEmpty())
             return null;
         
-        Term[] argument = set.toArray(new Term[set.size()]);        
+        Term[] argument = t.toArray(new Term[t.size()]);        
         Arrays.sort(argument);
         return new SetInt(argument);
     }

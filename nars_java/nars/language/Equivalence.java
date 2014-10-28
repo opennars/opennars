@@ -39,7 +39,7 @@ public class Equivalence extends Statement {
         super();
         
         temporalOrder = order;
-        setTerms(components);
+        init(components);
     }
 
     /**

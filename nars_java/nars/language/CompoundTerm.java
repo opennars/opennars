@@ -73,34 +73,8 @@ public abstract class CompoundTerm extends Term {
      * @return A clone of the compound term
      */
     @Override public abstract CompoundTerm clone();
-    
 
     
-    
-    /* ----- object builders, called from subclasses ----- */
-    /**
-     * Constructor called from subclasses constructors to clone the fields
-     *
-     * @param name Name
-     * @param components Component list
-     * @param isConstant Whether the term refers to a concept
-     * @param complexity Complexity of the compound term
-     */
-    @Deprecated protected CompoundTerm(final CharSequence name, final Term[] components, final boolean isConstant, final short complexity) {
-        this(components);
-    }
-
-    
-    
-    /**
-     * Constructor called from subclasses constructors to initialize the fields
-     *
-     * @param name Name of the compound
-     * @param components Component list
-     */
-    @Deprecated protected CompoundTerm(final CharSequence name, final Term[] components) {
-        this(components);
-    }
 
     /** should call refresh(components) after pre-initialization */
     protected CompoundTerm() {
@@ -109,11 +83,11 @@ public abstract class CompoundTerm extends Term {
     
     public CompoundTerm(Term[] components) {
         super();
-        setTerms(components);
+        init(components);
     }
     
     /** call this after changing Term[] contents */
-    public void setTerms(Term[] components) {
+    protected void init(Term[] components) {
         this.hasVar = false;
         
         int numVariableSubTerms = 0;
@@ -136,14 +110,14 @@ public abstract class CompoundTerm extends Term {
             this.term = components;
         }
         
-        setName(makeName());
+        this.name = null; //invalidate name so it will be (re-)created lazily
         
         this.complexity = calcComplexity();
     }
     
     public final CompoundTerm clone(final Term[] replaced) {
         CompoundTerm c = clone();
-        c.setTerms(replaced);
+        c.init(replaced);
         return c;
     }
 
@@ -157,16 +131,16 @@ public abstract class CompoundTerm extends Term {
         //return Collections.unmodifiableList( term );
         return components;
     }
-    
+
+    /**
+     * default value, override in subclasses.
+     * may not be enforced yet.
+     */
     public int getMinimumRequiredComponents() {
         return 2;
     }
 
-            
 
-    protected boolean calcContainedVariables() {
-        return Variables.containVar(name());
-    }
     
     /**
      * The complexity of the term is the sum of those of the term plus 1
@@ -182,46 +156,6 @@ public abstract class CompoundTerm extends Term {
 
 
 
-        
-//
-//    /**
-//     * Orders among terms: variable < atomic < compound
-//     *
-//     * @param that The Term to be compared with the current Term
-//\     * @return The order of the two terms
-//     */
-//    @Override
-//    public int compareTo(final AbstractTerm that) {
-//        if (this == that) return 0;
-//        
-//        if (that instanceof CompoundTerm) {
-//            final CompoundTerm t = (CompoundTerm) that;
-//            if (size() == t.size()) {
-//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
-//                if (opDiff != 0) {
-//                    return opDiff;
-//                }
-//                
-//                int tDiff = this.getTemporalOrder() - t.getTemporalOrder(); //should be faster faster than Enum.compareTo                
-//                if (tDiff != 0) {
-//                    return tDiff;
-//                }
-//
-//                for (int i = 0; i < term.length; i++) {
-//                    final int diff = term[i].compareTo(t.term[i]);
-//                    if (diff != 0) {
-//                        return diff;
-//                    }
-//                }
-//
-//                return 0;
-//            } else {
-//                return size() - t.size();
-//            }
-//        } else {
-//            return 1;
-//        }
-//    }
 
     @Override
     public int containedTemporalRelations() {
@@ -246,81 +180,6 @@ public abstract class CompoundTerm extends Term {
     }
     
     
-
-    /*
-    @Override
-    public boolean equals(final Object that) {
-        return (that instanceof Term) && (compareTo((Term) that) == 0);
-    }
-    */
-
-    
-//    @Override
-//    public boolean equals(final Object that) {
-//        if (!(that instanceof CompoundTerm))
-//            return false;
-//        
-//        final CompoundTerm t = (CompoundTerm)that;
-//        return name().equals(t.name());
-//        
-//        /*if (hashCode() != t.hashCode())
-//            return false;
-//        
-//        if (operator() != t.operator())
-//            return false;
-//        
-//        if (size() != t.size())
-//            return false;
-//        
-//        for (int i = 0; i < term.size(); i++) {
-//            final Term c = term.get(i);
-//            if (!c.equals(t.componentAt(i)))
-//                return false;
-//        }
-//        
-//        return true;*/
-//        
-//    }
-//
-//
-//        
-//
-//    /**
-//     * Orders among terms: variable < atomic < compound
-//     *
-//     * @param that The Term to be compared with the current Term
-//\     * @return The order of the two terms
-//     */
-//    @Override
-//    public int compareTo(final Term that) {
-//        /*if (!(that instanceof CompoundTerm)) {
-//            return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
-//        }
-//        */        
-//        return -name.compareTo(that.name());
-//            /*
-//            if (size() == t.size()) {
-//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
-//                if (opDiff != 0) {
-//                    return opDiff;
-//                }
-//
-//                for (int i = 0; i < term.length; i++) {
-//                    final int diff = term[i].compareTo(t.term[i]);
-//                    if (diff != 0) {
-//                        return diff;
-//                    }
-//                }
-//
-//                return 0;
-//            } else {
-//                return size() - t.size();
-//            }
-//        } else {
-//            return 1;
-//            */
-//    }
-
 
 
     /**
@@ -347,6 +206,13 @@ public abstract class CompoundTerm extends Term {
         return makeCompoundName(operator(), term);
     }
 
+    @Override
+    public CharSequence name() {
+        if (this.name == null)
+            this.name = makeName();
+        return this.name;
+    }
+    
     /**
      * default method to make the oldName of a compound term from given fields
      *
@@ -659,28 +525,28 @@ public abstract class CompoundTerm extends Term {
     }
 
     
-    /** caches a static copy of commonly uesd index variables of each variable type */
-    public static final int maxCachedVariableIndex = 32;
-    public static final Variable[][] varCache = (Variable[][]) Array.newInstance(Variable.class, 3, maxCachedVariableIndex);
-    
-    public static Variable getIndexVariable(final char type, final int i) {
-        int typeI;
-        switch (type) {
-            case '#': typeI = 0; break;
-            case '$': typeI = 1; break;
-            case '?': typeI = 2; break;
-            default: throw new RuntimeException("Invalid variable type: " + type + ", index " + i);
-        }
-        
-        if (i < maxCachedVariableIndex) {
-            Variable existing = varCache[typeI][i];
-            if (existing == null)
-                existing = varCache[typeI][i] = new Variable(type + String.valueOf(i));
-            return existing;
-        }
-        else
-            return new Variable(type + String.valueOf(i));
-    }
+//    /** caches a static copy of commonly uesd index variables of each variable type */
+//    public static final int maxCachedVariableIndex = 32;
+//    public static final Variable[][] varCache = (Variable[][]) Array.newInstance(Variable.class, 3, maxCachedVariableIndex);
+//    
+//    public static Variable getIndexVariable(final char type, final int i) {
+//        int typeI;
+//        switch (type) {
+//            case '#': typeI = 0; break;
+//            case '$': typeI = 1; break;
+//            case '?': typeI = 2; break;
+//            default: throw new RuntimeException("Invalid variable type: " + type + ", index " + i);
+//        }
+//        
+//        if (i < maxCachedVariableIndex) {
+//            Variable existing = varCache[typeI][i];
+//            if (existing == null)
+//                existing = varCache[typeI][i] = new Variable(type + String.valueOf(i));
+//            return existing;
+//        }
+//        else
+//            return new Variable(type + String.valueOf(i));
+//    }
 
 
 
@@ -821,6 +687,122 @@ public abstract class CompoundTerm extends Term {
         addTermsTo(set);
         return set;        
     }*/
+
+        
+//
+//    /**
+//     * Orders among terms: variable < atomic < compound
+//     *
+//     * @param that The Term to be compared with the current Term
+//\     * @return The order of the two terms
+//     */
+//    @Override
+//    public int compareTo(final AbstractTerm that) {
+//        if (this == that) return 0;
+//        
+//        if (that instanceof CompoundTerm) {
+//            final CompoundTerm t = (CompoundTerm) that;
+//            if (size() == t.size()) {
+//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
+//                if (opDiff != 0) {
+//                    return opDiff;
+//                }
+//                
+//                int tDiff = this.getTemporalOrder() - t.getTemporalOrder(); //should be faster faster than Enum.compareTo                
+//                if (tDiff != 0) {
+//                    return tDiff;
+//                }
+//
+//                for (int i = 0; i < term.length; i++) {
+//                    final int diff = term[i].compareTo(t.term[i]);
+//                    if (diff != 0) {
+//                        return diff;
+//                    }
+//                }
+//
+//                return 0;
+//            } else {
+//                return size() - t.size();
+//            }
+//        } else {
+//            return 1;
+//        }
+//    }
+
+    
+    /*
+    @Override
+    public boolean equals(final Object that) {
+        return (that instanceof Term) && (compareTo((Term) that) == 0);
+    }
+    */
+
+    
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (!(that instanceof CompoundTerm))
+//            return false;
+//        
+//        final CompoundTerm t = (CompoundTerm)that;
+//        return name().equals(t.name());
+//        
+//        /*if (hashCode() != t.hashCode())
+//            return false;
+//        
+//        if (operator() != t.operator())
+//            return false;
+//        
+//        if (size() != t.size())
+//            return false;
+//        
+//        for (int i = 0; i < term.size(); i++) {
+//            final Term c = term.get(i);
+//            if (!c.equals(t.componentAt(i)))
+//                return false;
+//        }
+//        
+//        return true;*/
+//        
+//    }
+//
+//
+//        
+//
+//    /**
+//     * Orders among terms: variable < atomic < compound
+//     *
+//     * @param that The Term to be compared with the current Term
+//\     * @return The order of the two terms
+//     */
+//    @Override
+//    public int compareTo(final Term that) {
+//        /*if (!(that instanceof CompoundTerm)) {
+//            return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
+//        }
+//        */        
+//        return -name.compareTo(that.name());
+//            /*
+//            if (size() == t.size()) {
+//                int opDiff = this.operator().ordinal() - t.operator().ordinal(); //should be faster faster than Enum.compareTo                
+//                if (opDiff != 0) {
+//                    return opDiff;
+//                }
+//
+//                for (int i = 0; i < term.length; i++) {
+//                    final int diff = term[i].compareTo(t.term[i]);
+//                    if (diff != 0) {
+//                        return diff;
+//                    }
+//                }
+//
+//                return 0;
+//            } else {
+//                return size() - t.size();
+//            }
+//        } else {
+//            return 1;
+//            */
+//    }
 
 
 }

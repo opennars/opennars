@@ -45,7 +45,7 @@ public class Conjunction extends CompoundTerm {
         super();
         
         temporalOrder = order;
-        setTerms(arg);
+        init(arg);
     }
 
     @Override
