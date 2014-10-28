@@ -111,12 +111,17 @@ public abstract class CompoundTerm extends Term {
         this(components);
     }
 
+    /** should call refresh(components) after pre-initialization */
+    protected CompoundTerm() {
+        super();
+    }
+    
     public CompoundTerm(Term[] components) {
-        refresh(components);        
+        setTerms(components);
     }
     
     /** call this after changing Term[] contents */
-    public void refresh(Term[] components) {
+    public void setTerms(Term[] components) {
         this.hasVar = false;
         
         int numVariableSubTerms = 0;
@@ -146,7 +151,7 @@ public abstract class CompoundTerm extends Term {
     
     public final CompoundTerm clone(final Term[] replaced) {
         CompoundTerm c = clone();
-        c.refresh(replaced);
+        c.setTerms(replaced);
         return c;
     }
 

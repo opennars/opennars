@@ -16,14 +16,11 @@ abstract public class Image extends CompoundTerm {
     public final short relationIndex;
     private boolean hasPlaceHolder;
 
-    protected Image(CharSequence name, Term[] components, short relationIndex) {
-        super(name, components);
+    protected Image(Term[] components, short relationIndex) {
+        super();
+        
         this.relationIndex = relationIndex;
-    }
-    
-    protected Image(CharSequence n, Term[] cs, boolean con, short complexity, short index) {
-        super(n, cs, con, complexity);
-        this.relationIndex = index;
+        setTerms(components);
     }
     
 

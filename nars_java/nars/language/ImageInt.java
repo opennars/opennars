@@ -39,21 +39,10 @@ public class ImageInt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageInt(final CharSequence n, final Term[] arg, final short index) {
-        super(n, arg, index);
+    public ImageInt(final Term[] arg, final short index) {
+        super(arg, index);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param arg Component list
-     * @param open Open variable list
-     * @param complexity Syntactic complexity of the compound
-     * @param index The index of relation in the component list
-     */
-    private ImageInt(final CharSequence n, final Term[] arg, final boolean con, final short complexity, final short index) {
-        super(n, arg, con, complexity, index);
-    }
     
     /**
      * Clone an object
@@ -61,7 +50,7 @@ public class ImageInt extends Image {
      */
     @Override
     public ImageInt clone() {
-        return new ImageInt(name(), cloneTerms(), isConstant(), complexity, relationIndex);
+        return new ImageInt(term, relationIndex);
     }
 
     
@@ -141,8 +130,7 @@ public class ImageInt extends Image {
      * @return the Term generated from the arguments
      */
     public static ImageInt make(final Term[] argument, final short index) {        
-        return new ImageInt(makeImageName(NativeOperator.IMAGE_INT, argument, index),
-                argument, index);
+        return new ImageInt(argument, index);
     }
     
 

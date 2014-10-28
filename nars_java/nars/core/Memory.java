@@ -47,7 +47,6 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.inference.BudgetFunctions.Activating;
 import nars.inference.Executive;
 import nars.inference.NAL;
 import nars.inference.NAL.ImmediateProcess;
@@ -538,7 +537,7 @@ public class Memory implements Serializable {
      */
     public Term term(final CompoundTerm compound, final Term[] components) {
         if (compound instanceof ImageExt) {
-            return ImageExt.make(components, ((Image) compound).relationIndex);
+            return new ImageExt(components, ((Image) compound).relationIndex);
         } else if (compound instanceof ImageInt) {
             return ImageInt.make(components, ((Image) compound).relationIndex);
         } else {

@@ -241,6 +241,8 @@ public class NALTest  {
       
         
         
+        System.err.flush();
+        System.out.flush();
         
         boolean success = expects.size() > 0 && (!error);
         for (Expect e: expects) {
@@ -257,7 +259,6 @@ public class NALTest  {
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
         assertTrue(path, success);
         
-        System.out.flush();
         
     }
 
