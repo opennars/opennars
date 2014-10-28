@@ -6,7 +6,7 @@
 1
 
 'Bright is similar to smart. 
-''outputMustContain('<bright <-> smart>. %1.00;0.90%');
+''outputMustContain('<bright <-> smart>. %1.00;0.90%')
 
 'Bright thing is a type of smart thing. 
-''outputMustContain('<[bright] --> [smart]>. %1.00;0.90%');
+''outputMustContain('<[bright] --> [smart]>. %1.00;0.90%')

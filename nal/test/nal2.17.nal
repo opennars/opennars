@@ -6,4 +6,4 @@
 1
 
 'Bright thing is similar to smart thing. 
-''outputMustContain('<[bright] <-> [smart]>. %1.00;0.90%');
+''outputMustContain('<[bright] <-> [smart]>. %1.00;0.90%')
