@@ -184,17 +184,22 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
      */
     @Override
     public int size() {
-        int is = sizeItems();
+        
         int in = nameTable.size();
-        if (is!=in) {
-            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());                
-            new Exception().printStackTrace();            
-            //printAll();
-            System.exit(1);
-            
+        
+        if (Parameters.DEBUG_BAG) {
+        
+            int is = sizeItems();
+            if (is!=in) {
+                System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());                
+                new Exception().printStackTrace();            
+                //printAll();
+                System.exit(1);
+
+            }
         }
         
-        return nameTable.size();
+        return in;
     }
         
     /** this should always equal size(), but it's here for testing purposes */
@@ -321,18 +326,10 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             //printAll();
             System.exit(1);
         }
-
-        int nspre = nameTable.size();
         
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
         
-        if (nameTable.size() != nspre - 1) {
-            System.err.println("could not remove nametable entry for: " + selected);
-            size();            
-        }
-        
-        currentCounter--;
-        
+        currentCounter--;        
 
         return selected;
     }
@@ -376,10 +373,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
             //search other levels for this item because it's not where we thought it was according to getLevel()
         String m = "Possible LevelBag inconsistency: Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName();
-
         System.err.println(m);
-        size();
-        //refresh();
+        
         return oldItem;
     }
 

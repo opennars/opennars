@@ -33,9 +33,9 @@ import nars.entity.Item;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
 import nars.storage.CurveBag;
+import nars.storage.GearBag;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.FractalSortedItemList;
-import nars.util.sort.RedBlackSortedIndex;
 
 /**
  *
@@ -114,8 +114,6 @@ public class BagPerf {
             this.key = "" + (itemID++);
         }
 
-
-        
         @Override
         public CharSequence name() {
             return key;
@@ -143,7 +141,7 @@ public class BagPerf {
             count++;
         }
         if (count != b.size()) {
-            System.err.println("Error itrating " + b);
+            System.err.println("Error itrating " + b.getClass() + " " + b.size() + " != " + count);
         }
     }
     
@@ -223,27 +221,27 @@ public class BagPerf {
     public static void main(String[] args) {
         
         int itemsPerLevel = 10;
-        int repeats = 2;
+        int repeats = 10;
         int warmups = 1;
 
-        int iterationsPerItem = 4;
-        int accessesPerItem = 4;
+        int iterationsPerItem = 0;
+        int accessesPerItem = 8;
         
         CurveBag.FairPriorityProbabilityCurve curve = new CurveBag.FairPriorityProbabilityCurve();
         
         boolean printedHeader = false;
         
-        for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.2f) {
-            for (int levels = 1; levels <= 220; levels += 40) {
+        for (float insertRatio = 0.1f; insertRatio <= 1.0f; insertRatio += 0.1f) {
+            for (int levels = 1; levels <= 10; levels += 1) {
                 
                 final int items = levels*itemsPerLevel;
                 final int iterations = iterationsPerItem * items;
                 int randomAccesses = accessesPerItem * items;
                         
                 Bag[] bags = new Bag[] { 
+                    new GearBag(levels, items),
                     new CurveBag(items, curve, true, new ArraySortedIndex<>()),
-                    new CurveBag(items, curve, true, new FractalSortedItemList<>()),
-                    new CurveBag(items, curve, true, new RedBlackSortedIndex<>()),
+                    new CurveBag(items, curve, true, new FractalSortedItemList<>()),                
                     new LevelBag(levels, items)                        
                 };
                 

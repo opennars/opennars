@@ -24,7 +24,7 @@ import org.junit.Test;
 public class CurveBagTest {
     
     Param p = new DefaultNARBuilder().build().param();
-    final BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
+    final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test 
     public void testBags() {
@@ -35,6 +35,7 @@ public class CurveBagTest {
         //int[] d3 = testCurveBag(new RedBlackSortedIndex<>());        
         int[] d1 = testCurveBag(new ArraySortedIndex<>());
 
+        
         //use the final distribution to compare that each implementation generates exact same results
         assertTrue(Arrays.equals(d1, d2));
         //assertTrue(Arrays.equals(d2, d3));
@@ -148,40 +149,45 @@ public class CurveBagTest {
         
     }
 
-    public int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedIndex<NullItem> items) {
-        int loops = 8;
+    public static int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedIndex<NullItem> items) {
+        CurveBag<NullItem,CharSequence> f = new CurveBag(capacity, curve, random, items);
+        return testRemovalPriorityDistribution(8, capacity, 0.2f, 0.2f, f);
+    }
+    
+    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<NullItem,CharSequence> f) {
         
         int levels = 9;
         int count[] = new int[levels];
         
-        float adjustFraction = 0.2f;
-        float removeFraction = 0.3f;
+        float adjustFraction = fractionToAdjust;
+        float removeFraction = fractionToRemove;
         
-        CurveBag<NullItem,CharSequence> f = new CurveBag(capacity, curve, random, items);
+        
         
         for (int l = 0; l < loops; l++) {
             //fill with random items
-            for (int i= 0; i < capacity; i++) {
+            for (int i= 0; i < insertsPerLoop; i++) {
                 NullItem ni = new NullItem();
-                ni.key = "" + (int)(Memory.randomNumber.nextFloat() * capacity * 1.2f);
+                ni.key = "" + (int)(Memory.randomNumber.nextFloat() * insertsPerLoop * 1.2f);
                 f.putIn(ni);
             }
+            
 
             int preadjustCount = f.size();
-            assertEquals(items.size(), f.size());
+            //assertEquals(items.size(), f.size());
             
             //remove some, adjust their priority, and re-insert
-            for (int i= 0; i < capacity * adjustFraction; i++) {
+            for (int i= 0; i < insertsPerLoop * adjustFraction; i++) {
                 NullItem t = f.takeNext();
                 if (i % 2 == 0)
-                    t.budget.decPriority(0.2f);
+                    t.budget.setPriority(t.budget.getPriority()*0.99f);
                 else
-                    t.budget.incPriority(0.2f);
+                    t.budget.setPriority(t.budget.getPriority()*1.01f);
                 f.putIn(t);
             }
             
             int postadjustCount = f.size();
-            assertEquals(items.size(), f.size());
+            //assertEquals(items.size(), f.size());
             
             assertEquals(preadjustCount, postadjustCount);
 
@@ -189,20 +195,40 @@ public class CurveBagTest {
             float max = f.getMaxPriority();
             assertTrue(max > min);
                         
+            
+            int nRemoved = 0;
             //remove last than was inserted so the bag never gets empty
-            for (int i= 0; i < capacity * removeFraction; i++) {
+            for (int i= 0; i < insertsPerLoop * removeFraction; i++) {
+                int sizeBefore = f.size();
+                
                 NullItem t = f.takeNext();
+                
+                int sizeAfter = f.size();
+                
+                if (t == null) {
+                    assertTrue(sizeAfter == 0);
+                    assertEquals(sizeAfter, sizeBefore);
+                    continue;
+                }
+                else {
+                    assertEquals(sizeAfter, sizeBefore-1);
+                }
+                
                 float p = t.getPriority();
                 
                 assertTrue(p >= min);
                 assertTrue(p <= max);
                 
-                int level = (int)Math.floor(p * levels);                
+                int level = (int)Math.floor(p * levels);      
+                if (level >= count.length) level=count.length-1;
                 count[level]++;
+                nRemoved++;
             }
             
+            assertEquals(postadjustCount-nRemoved, f.size());
+            
             //nametable and itemtable consistent size
-            assertEquals(items.size(), f.size());
+            //assertEquals(items.size(), f.size());
             //System.out.print("  "); items.reportPriority();            
             
         }

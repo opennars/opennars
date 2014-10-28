@@ -48,6 +48,7 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
         this.capacity = capacity;
     }
 
+    
     @Override
     public void setCapacity(int capacity) {
         this.capacity = capacity;
