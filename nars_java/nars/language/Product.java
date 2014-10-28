@@ -33,20 +33,11 @@ public class Product extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Product(final CharSequence name, final Term[] arg) {
-        super(name, arg);
+    public Product(final Term[] arg) {
+        super(arg);
     }
     
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param complexity Syntactic complexity of the compound
-     */
-    private Product(final CharSequence n, Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
-        super(n, cs, con, hasVar, complexity);
-    }
+
     
     @Override
     public int getMinimumRequiredComponents() {
@@ -59,19 +50,10 @@ public class Product extends CompoundTerm {
      */
     @Override
     public Product clone() {
-        return new Product(name(), cloneTerms(), isConstant(), containVar(), complexity);
+        return new Product(term);
     }
 
 
-     /**
-     * Try to make a new compound. Called by StringParser.
-     * @return the Term generated from the arguments
-     * @param argument The list of term
-     * @param memory Reference to the memory
-     */
-    @Deprecated public static Term make(Term[] argument) {        
-        return new Product(makeCompoundName(NativeOperator.PRODUCT, argument), argument);
-    }
         
     /**
      * Try to make a Product from an ImageExt/ImageInt and a component. Called by the inference rules.
@@ -84,7 +66,7 @@ public class Product extends CompoundTerm {
     public static Term make(final CompoundTerm image, final Term component, final int index) {
         Term[] argument = image.cloneTerms();
         argument[index] = component;
-        return make(argument);
+        return new Product(argument);
     }
     
     /**

@@ -117,8 +117,7 @@ public class PrologQueryOperator extends Operator {
             resultInnerProductTerms[2+i*2+1] = resultTerms[i];
         }
         
-        Inheritance operatorInheritance = Operation.make(
-            Product.make(resultInnerProductTerms),
+        Inheritance operatorInheritance = Operation.make(new Product(resultInnerProductTerms),
             this
         );
         
@@ -387,8 +386,7 @@ public class PrologQueryOperator extends Operator {
                 
                 // is wraped up in a inheritance because there can also exist operators
                 // and it is better understandable by nars or other operators
-                return Inheritance.make(
-                    Product.make(innerProductTerms),
+                return Inheritance.make(new Product(innerProductTerms),
                     new Term("prolog_list")
                 );
             }
@@ -414,8 +412,7 @@ public class PrologQueryOperator extends Operator {
                 
                 // is wraped up in a inheritance because there can also exist operators
                 // and it is better understandable by nars or other operators
-                return Inheritance.make(
-                    Product.make(innerProductTerms),
+                return Inheritance.make(new Product(innerProductTerms),
                     new Term("prolog_operation")
                     
                 );

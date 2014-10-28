@@ -34,20 +34,10 @@ public class IntersectionInt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private IntersectionInt(final CharSequence name, final Term[] arg) {
-        super(name, arg);
+    private IntersectionInt(final Term[] arg) {
+        super( arg );
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private IntersectionInt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
-        super(n, cs, con, i);
-    }
 
     /**
      * Clone an object
@@ -55,7 +45,7 @@ public class IntersectionInt extends CompoundTerm {
      */
     @Override
     public IntersectionInt clone() {
-        return new IntersectionInt(name(), cloneTerms(), isConstant(), complexity);
+        return new IntersectionInt(term);
     }
 
     /**
@@ -121,8 +111,7 @@ public class IntersectionInt extends CompoundTerm {
             return set.first();
         }                         // special case: single component
         Term[] argument = set.toArray(new Term[set.size()]);
-        return new IntersectionInt(
-                makeCompoundName(NativeOperator.INTERSECTION_INT, argument), argument);
+        return new IntersectionInt( argument);
     }
 
     /**

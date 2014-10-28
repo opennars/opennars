@@ -11,20 +11,9 @@ abstract public class SetTensional extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected SetTensional(final CharSequence name, final Term[] arg) {
-        super(name, arg);
+    protected SetTensional(final Term[] arg) {
+        super(arg);
     }
-
-    /**
-     * constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    protected SetTensional(final CharSequence n, final Term[] cs, final boolean con, final short i) {
-        super(n, cs, con, i);
-    }    
     
     /**
      * make the oldName of an ExtensionSet or IntensionSet
@@ -57,8 +46,8 @@ abstract public class SetTensional extends CompoundTerm {
         
         return name.toString();
     }
-    
 
+    
     @Override
     public int getMinimumRequiredComponents() {
         return 1;

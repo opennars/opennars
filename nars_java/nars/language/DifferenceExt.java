@@ -33,20 +33,10 @@ public class DifferenceExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private DifferenceExt(final CharSequence name, Term[] arg) {
-        super(name, arg);
+    private DifferenceExt(Term[] arg) {
+        super(arg);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private DifferenceExt(CharSequence n, Term[] cs, boolean con, short i) {
-        super(n, cs, con, i);
-    }
 
     /**
      * Clone an object
@@ -54,7 +44,7 @@ public class DifferenceExt extends CompoundTerm {
      */
     @Override
     public DifferenceExt clone() {
-        return new DifferenceExt(name(), cloneTerms(), isConstant(), complexity);
+        return new DifferenceExt(term);
     }
 
     /**
@@ -71,13 +61,13 @@ public class DifferenceExt extends CompoundTerm {
             return null;
         }
         if ((argList[0] instanceof SetExt) && (argList[1] instanceof SetExt)) {
+            //TODO maybe a faster way to do this operation:
             TreeSet<Term> set = new TreeSet<>(((CompoundTerm) argList[0]).getTermList());
             set.removeAll(((CompoundTerm) argList[1]).getTermList());           // set difference
             return SetExt.make(set);
         }                
         
-        return new DifferenceExt(
-                makeCompoundName(NativeOperator.DIFFERENCE_EXT, argList), argList);
+        return new DifferenceExt(argList);
     }
 
     /**
@@ -87,10 +77,10 @@ public class DifferenceExt extends CompoundTerm {
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(Term t1, Term t2) {
-        if (t1.equals(t2)) {
+    public static Term make(final Term t1, final Term t2) {
+        if (t1.equals(t2))
             return null;
-        }
+
         return make(new Term[]{t1,t2});
     }
 

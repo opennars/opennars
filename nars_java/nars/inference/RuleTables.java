@@ -121,7 +121,7 @@ public class RuleTables {
                     
                     if(valid) {
                         Operator op=memory.getOperator("^anticipate");
-                        Product args=(Product) Product.make(new Term[]{beliefTerm});
+                        Product args=(Product) new Product(new Term[]{beliefTerm});
                         Term new_term=Operation.make(args, /* --> */ op);
                         
                         Sentence sentence = new Sentence(

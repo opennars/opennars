@@ -27,36 +27,19 @@ import nars.io.Symbols.NativeOperator;
  */
 public class Negation extends CompoundTerm {
 
-    /**
-     * Constructor with partial values, called by make
-     *
-     * @param n The name of the term
-     * @param arg The component list of the term
-     */
-    private Negation(final CharSequence name, final Term[] arg) {
-        super(name, arg);
-    }
-    
-    
+
+    /** avoid using this externally, because double-negatives can be unwrapped to the 
+     * original term using Negation.make */
     protected Negation(final Term t) {
-        this(makeCompoundName(NativeOperator.NEGATION, t), t );
+        super(new Term[] { t });
     }
 
-    protected Negation(final CharSequence name, final Term t) {
-        this(name, new Term[] { t }, t.isConstant(), t.containVar(), t.getComplexity() );
+    @Override
+    protected CharSequence makeName() {
+        return makeCompoundName(NativeOperator.NEGATION, term[0]);
     }
-
-    /**
-     * Constructor with full values, called by clone
-     *
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private Negation(final CharSequence n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
-        super(n, cs, con, hasVar, i);
-    }
+    
+    
 
     @Override
     public int getMinimumRequiredComponents() {
@@ -70,7 +53,7 @@ public class Negation extends CompoundTerm {
      */
     @Override
     public Negation clone() {
-        return new Negation(name(), cloneTerms(), isConstant(), containVar(), complexity);
+        return new Negation(term[0]);
     }
     
 

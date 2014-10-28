@@ -69,7 +69,7 @@ public class Operation extends Inheritance {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
                                 
-        return new Operation( termArray(Product.make(arg), oper)  );        
+        return new Operation( termArray(new Product(arg), oper)  );        
     }
 
     public Operator getOperator() {

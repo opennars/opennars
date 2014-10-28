@@ -132,7 +132,7 @@ public class Term implements AbstractTerm {
      */
     protected boolean setName(final CharSequence newName) {
         if (this.name!=null) {
-            if (this.name().equals(newName)) {
+            if (this.name.equals(newName)) {
                 //name is the same
                 return false;
             }

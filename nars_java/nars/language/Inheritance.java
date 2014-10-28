@@ -38,7 +38,7 @@ public class Inheritance extends Statement {
         super(arg);       
     }
     
-    public Inheritance(final Term subj, final Term pred) {
+    protected Inheritance(final Term subj, final Term pred) {
         super(subj, pred);
     }
 

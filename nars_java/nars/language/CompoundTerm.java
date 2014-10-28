@@ -90,15 +90,6 @@ public abstract class CompoundTerm extends Term {
         this(components);
     }
 
-    /**
-     * High-performance constructor that avoids recalculating some Term metadata when created.
-     * Similar to other constructors, except it does not invoke super(name) to avoid recomputing hashcode 
-     * and containsVar.  Instead, all necessary values are provided directly from the callee.
-     * This should perform better than the other constructor that invokes super constructor; this does not.
-     */
-    @Deprecated protected CompoundTerm(final CharSequence name, final Term[] components, final boolean isConstant, final boolean containsVar, final short complexity) {
-        this(components);
-    }
     
     
     /**
@@ -348,7 +339,7 @@ public abstract class CompoundTerm extends Term {
     /* ----- utilities for oldName ----- */
     /**
      * default method to make the oldName of the current term from existing
-     * fields
+     * fields.  needs overridden in certain subclasses
      *
      * @return the oldName of the term
      */

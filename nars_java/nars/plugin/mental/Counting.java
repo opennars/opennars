@@ -56,8 +56,7 @@ public class Counting implements Plugin {
                                 };
 
                                 //TODO CARDINATLITY can be a static final instance shared by all
-                                Term new_term=Inheritance.make(
-                                    Product.make(product_args), /* --> */ new Term("CARDINALITY"));
+                                Term new_term=Inheritance.make(new Product(product_args), /* --> */ new Term("CARDINALITY"));
 
                                 TruthValue truth = task.sentence.truth.clone();
                                 Stamp stampi = task.sentence.stamp.clone();
