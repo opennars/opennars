@@ -1,5 +1,6 @@
 package nars.operator;
 
+import nars.operator.io.Say;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
 import nars.operator.mental.Anticipate;
@@ -59,7 +60,10 @@ public class DefaultOperators {
 
             new Javascript(),      // javascript evaluation
             
-            new NumericCertainty()
+            new NumericCertainty(),
+            
+            //io operations
+            new Say(),
                 
          /* 
 +         *          I/O operations under consideration

@@ -17,7 +17,7 @@ import nars.grid2d.operator.Activate;
 import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
-import nars.grid2d.operator.Say;
+import nars.operator.io.Say;
 import nars.gui.NARSwing;
 import processing.core.PVector;
 
@@ -279,8 +279,6 @@ public class TestChamber2 extends TestChamber {
         nar.memory.addOperator(waa);
         Deactivate waaa = new Deactivate(this, "^deactivate");
         nar.memory.addOperator(waaa);
-        Say waaaa = new Say(this, "^say");
-        nar.memory.addOperator(waaaa);
         space.add(a);
         
         
