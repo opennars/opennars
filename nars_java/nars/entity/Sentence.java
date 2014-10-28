@@ -86,7 +86,7 @@ public class Sentence implements Cloneable {
      * base
      */
     public Sentence(final Term content, final char punctuation, final TruthValue truth, final Stamp stamp) {
-        this.content = content.cloneWithVariablesRenamed();
+        this.content = content;
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;

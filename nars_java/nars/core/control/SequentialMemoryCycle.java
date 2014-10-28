@@ -122,7 +122,8 @@ public class SequentialMemoryCycle implements ConceptProcessor {
             
             concept = conceptBuilder.newConcept(budget, term, memory);
 
-            memory.logic.CONCEPT_NEW.commit(term.getComplexity());
+            if (memory.logic!=null)
+                memory.logic.CONCEPT_NEW.commit(term.getComplexity());
             memory.emit(Events.ConceptNew.class, concept);                
         }
         else if (concept!=null) {            
