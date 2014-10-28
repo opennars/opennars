@@ -5,5 +5,5 @@
 
 1
 
-''expect.outEmpty
-
+'''expect.outEmpty
+''outputMustContain('<{Tweety} --> [yellow]>.')
