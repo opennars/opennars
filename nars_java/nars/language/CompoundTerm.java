@@ -90,25 +90,22 @@ public abstract class CompoundTerm extends Term {
     
     /** call this after changing Term[] contents */
     protected void init(Term[] components, boolean normalize) {
-        
-        this.hasVar = false;
-        
-        int numVariableSubTerms = 0;
-        for (Term t : components) {
-            if (t.containVar()) {                 
-                hasVar = true; 
-                numVariableSubTerms++;
-                break; 
-            }
-        }
+                
+        int numVariableSubTerms = CompoundTerm.getVariableSubterms(components);
         
         
         //use > 1 to maintain ordinary variable names if it won't interfere
         if (normalize && (numVariableSubTerms > 0)) {
 
             //System.out.println(">>>in: " + Arrays.toString(components));
-            HashMap h;
-            this.term = normalizeVariableNames("", components, h = new HashMap<>());            
+            this.term = normalizeVariableNames("", components, new HashMap<>());            
+            if (this.term!=components) {
+                //if was normalized, recalculate variable existence
+                
+                this.hasVar = getVariableSubterms(components) > 0;
+                
+            }
+            
             //System.out.println(h);
             //System.out.println(">>>out: " + Arrays.toString(term) + "\n");
             
@@ -120,6 +117,16 @@ public abstract class CompoundTerm extends Term {
         this.name = null; //invalidate name so it will be (re-)created lazily
         
         this.complexity = calcComplexity();
+    }
+
+    public static int getVariableSubterms(Term[] components) {
+        int n = 0;
+        for (Term t : components) {
+            if (t.containVar()) {                
+                n++;
+            }
+        }
+        return n;
     }
     
     /** override in subclasses to avoid unnecessary reinit */
