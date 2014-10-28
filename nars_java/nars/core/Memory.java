@@ -510,7 +510,7 @@ public class Memory implements Serializable {
      * @return an existing Concept, or a new one, or null 
      */
     public Concept conceptualize(final BudgetValue budget, final Term term) {
-        boolean createIfMissing = true; //term.isConstant();
+        boolean createIfMissing = true;
         
         return concepts.conceptualize(budget, term, createIfMissing);
     }

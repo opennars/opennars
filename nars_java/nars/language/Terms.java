@@ -298,7 +298,7 @@ public class Terms {
             final Term t1 = t.term[i];
             
             
-            if (t1.isConstant()) {
+            if (!t1.containVar()) {
                 componentLinks.add(new TermLink(type, t1, i));
             }
             if (((t instanceof Equivalence) || ((t instanceof Implication) && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
@@ -308,7 +308,7 @@ public class Terms {
                 final int ct1Size = ct1.size(); //cache because this loop is critical
                 for (int j = 0; j < ct1Size; j++) {
                     final Term t2 = ct1.term[j];
-                    if (t2.isConstant()) {
+                    if (!t2.containVar()) {
                         if ((t1 instanceof Product) || (t1 instanceof ImageExt) || (t1 instanceof ImageInt)) {
                             if (type == TermLink.COMPOUND_CONDITION) {
                                 componentLinks.add(new TermLink(TermLink.TRANSFORM, t2, 0, i, j));
@@ -326,7 +326,7 @@ public class Terms {
                         for (int k = 0; k < ct2Size; k++) {
                             final Term t3 = ct2.term[k];
                             
-                            if (t3.isConstant()) {
+                            if (!t3.containVar()) {
                                 if (type == TermLink.COMPOUND_CONDITION) {
                                     componentLinks.add(new TermLink(TermLink.TRANSFORM, t3, 0, i, j, k));
                                 } else {

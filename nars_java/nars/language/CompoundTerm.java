@@ -118,13 +118,19 @@ public abstract class CompoundTerm extends Term {
     /** call this after changing Term[] contents */
     public void refresh(Term[] components) {
         this.hasVar = false;
+        
+        int numVariableSubTerms = 0;
         for (Term t : components) {
             if (t.containVar()) {                 
-                hasVar = true; break; 
+                hasVar = true; 
+                numVariableSubTerms++;
+                break; 
             }
         }
         
-        if (hasVar) {            
+        //use > 1 to maintain ordinary variable names if it won't interfere
+        if (numVariableSubTerms > 0) {
+            
             //System.out.print("in: " + Arrays.toString(components));
             this.term = normalizeVariableNames("", components, new HashMap<>());
             //System.out.println("   out: " + Arrays.toString(term));
