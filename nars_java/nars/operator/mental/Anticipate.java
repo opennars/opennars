@@ -55,16 +55,10 @@ public class Anticipate extends Operator {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        Term content = args[0];
         
-        if(content instanceof Implication) {
-            Implication imp=(Implication) content;
-            if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                int addi=imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD ? memory.param.duration.get() : 0;
-                memory.executive.anticipateTime=memory.time()+addi;
-                memory.executive.anticipateTerm=imp;
-            }
-        }
+        Term content = args[0];
+        memory.executive.anticipateTime=memory.time() + memory.param.duration.get();
+        memory.executive.anticipateTerm=content;
         
         return null;
     }

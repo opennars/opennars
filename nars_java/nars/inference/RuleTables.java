@@ -99,7 +99,7 @@ public class RuleTables {
             
             if(Parameters.INTERNAL_EXPERIENCE_FULL && beliefTerm instanceof Implication) {
                 Implication imp=(Implication) beliefTerm;
-                if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
                     boolean valid=true;
                     if(imp.getSubject() instanceof Conjunction) {
@@ -121,7 +121,7 @@ public class RuleTables {
                     
                     if(valid) {
                         Operator op=memory.getOperator("^anticipate");
-                        Product args=(Product) new Product(new Term[]{beliefTerm});
+                        Product args=(Product) new Product(new Term[]{imp.getPredicate()});
                         Term new_term=Operation.make(args, /* --> */ op);
                         
                         Sentence sentence = new Sentence(
