@@ -628,7 +628,7 @@ public class Executive {
             nal.derivedTask(task, false, true, null, null);
             anticipateTerm=null;
         }
-        if(Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content==((Implication)anticipateTerm).getPredicate()) {
+        if(Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm!=null && newEvent.sentence.truth.getExpectation()>0.5 && newEvent.sentence.content.equals(anticipateTerm)) {
             anticipateTerm=null; //it happened like expected
         }
         
