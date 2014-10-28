@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized;
 public class NALTestSome extends NALTest {
 
    public static boolean include(String filename) {
-       return filename.startsWith("nal1.multistep");
+       return filename.startsWith("nal4.recursion.small");
    }
 
    

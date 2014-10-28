@@ -4,7 +4,7 @@
 
 <(*,(*,(*,0))) --> num>?  {0 : 3} 
 
-600
+1200
 
 ''outputMustContain('<(*,0) --> num>.')
 ''outputMustContain('<(*,(*,0)) --> num>.')
