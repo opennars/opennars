@@ -149,7 +149,7 @@ public class Parameters {
      * set to zero to disable this feature.
      * The problem with indiscriminate use of intern() is that interned strings can not be garbage collected (i.e. permgen) - possible a memory leak if terms disappear.
      */
-    public static int INTERNED_TERM_NAME_MAXLEN = 0;
+    //public static int INTERNED_TERM_NAME_MAXLEN = 0;
           
     /**
      * Determines when TermLink and TaskLink should use Rope implementation for its Key,

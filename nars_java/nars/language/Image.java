@@ -20,7 +20,7 @@ abstract public class Image extends CompoundTerm {
         super();
         
         this.relationIndex = relationIndex;
-        setTerms(components);
+        init(components);
     }
     
 

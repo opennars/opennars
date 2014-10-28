@@ -43,12 +43,9 @@ public class Variable extends Term {
     }
 
     @Override
-    protected boolean setName(CharSequence newName) {
-        if (super.setName(newName)) {
-            type = newName.charAt(0);
-            return true;
-        }
-        return false;
+    protected void setName(CharSequence newName) {
+        super.setName(newName);
+        type = newName.charAt(0);
     }
 
     

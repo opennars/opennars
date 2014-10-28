@@ -130,25 +130,26 @@ public class Term implements AbstractTerm {
     /** only method that should modify Term.name. also caches hashcode 
      * @return whether the name was changed
      */
-    protected boolean setName(final CharSequence newName) {
-        if (this.name!=null) {
-            if (this.name.equals(newName)) {
-                //name is the same
-                return false;
-            }
-        }
-        
-        if (newName == null)
-            return this.name != null;
-        
-        if ((newName.getClass() == String.class) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
-            
-            this.name = ((String)newName).intern();
-        }
-        else {
-            this.name = newName;
-        }
-        return true;
+    protected void setName(final CharSequence newName) {
+        this.name = newName;
+//        if (this.name!=null) {
+//            if (this.name.equals(newName)) {
+//                //name is the same
+//                return false;
+//            }
+//        }
+//        
+//        if (newName == null)
+//            return this.name != null;
+//        
+//        if ((newName.getClass() == String.class) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
+//            
+//            this.name = ((String)newName).intern();
+//        }
+//        else {
+//            this.name = newName;
+//        }
+//        return true;
     }
     
     /**

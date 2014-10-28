@@ -37,7 +37,7 @@ public class Implication extends Statement {
         super();
         
         temporalOrder = order;
-        setTerms(arg);
+        init(arg);
     }
     
     public Implication(Term subject, Term predicate, int order) {
