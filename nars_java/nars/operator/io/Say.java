@@ -23,7 +23,6 @@ package nars.operator.io;
 import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
-import nars.grid2d.TestChamber;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
