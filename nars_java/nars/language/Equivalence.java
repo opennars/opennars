@@ -35,22 +35,11 @@ public class Equivalence extends Statement {
      *
      * @param components The component list of the term
      */
-    private Equivalence(CharSequence name, Term[] components, int order) {
-        super(name, components);
+    private Equivalence(Term[] components, int order) {
+        super();
+        
         temporalOrder = order;
-    }
-
-    /**
-     * Constructor with full values, called by clone
-     *
-     * @param n The name of the term
-     * @param components Component list
-     * @param constant Whether the statement contains open variable
-     * @param complexity Syntactic complexity of the compound
-     */
-    private Equivalence(CharSequence n, Term[] components, boolean constant, short complexity, int order) {
-        super(n, components, constant, complexity);
-        temporalOrder = order;
+        setTerms(components);
     }
 
     /**
@@ -60,7 +49,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public Equivalence clone() {
-        return new Equivalence(name(), cloneTerms(), isConstant(), complexity, temporalOrder);
+        return new Equivalence(term, temporalOrder);
     }
 
 
@@ -106,8 +95,7 @@ public class Equivalence extends Statement {
                 copula = NativeOperator.EQUIVALENCE;
         }
         
-        return new Equivalence(
-                makeStatementName(subject, copula, predicate),
+        return new Equivalence(                
                 termArray(subject, predicate), temporalOrder);
     }
 

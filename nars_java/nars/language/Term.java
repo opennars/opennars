@@ -69,7 +69,7 @@ public class Term implements AbstractTerm {
     public Term clone() {
         //avoids setName and its intern(); the string will already be intern:
         Term t = new Term();
-        t.name = name;
+        t.name = name();
         return t;
     }
 
@@ -84,7 +84,7 @@ public class Term implements AbstractTerm {
     public boolean equals(final Object that) {
         if (that == this) return true;
         if (!(that instanceof Term)) return false;
-        return name.equals(((Term)that).name());
+        return name().equals(((Term)that).name());
     }
 
     /**
@@ -93,8 +93,8 @@ public class Term implements AbstractTerm {
      * @return An integer hash code
      */
     @Override
-    public final int hashCode() {
-        return name.hashCode();
+    public int hashCode() {
+        return name().hashCode();
     }
 
     /**
@@ -132,11 +132,14 @@ public class Term implements AbstractTerm {
      */
     protected boolean setName(final CharSequence newName) {
         if (this.name!=null) {
-            if (this.name.equals(newName)) {
+            if (this.name().equals(newName)) {
                 //name is the same
                 return false;
             }
         }
+        
+        if (newName == null)
+            return this.name != null;
         
         if ((newName.getClass() == String.class) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
             
@@ -196,7 +199,7 @@ public class Term implements AbstractTerm {
      */
     @Override
     public final String toString() {
-        return name.toString();
+        return name().toString();
     }
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */

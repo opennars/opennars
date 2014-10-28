@@ -33,26 +33,17 @@ public class Implication extends Statement {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    public Implication(CharSequence name, Term[] arg, int order) {
-        super(name, arg);
+    public Implication(Term[] arg, int order) {
+        super();
+        
         temporalOrder = order;
+        setTerms(arg);
     }
     
     public Implication(Term subject, Term predicate, int order) {
-        this(makeName(subject, order, predicate), new Term[] { subject, predicate }, order);
+        this(new Term[] { subject, predicate }, order);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param con Whether it is a constant term
-     * @param i Syntactic complexity of the compound
-     */
-    private Implication(CharSequence n, Term[] cs, boolean con, boolean hasVar, short i, int order) {
-        super(n, cs, con, hasVar, i);
-        temporalOrder = order;
-    }
 
     
     
@@ -62,7 +53,7 @@ public class Implication extends Statement {
      */
     @Override
     public Implication clone() {
-        return new Implication(name(), cloneTerms(), isConstant(), containVar(), getComplexity(), getTemporalOrder());
+        return new Implication(term, getTemporalOrder());
     }
 
     /**
@@ -104,7 +95,7 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        final CharSequence name = makeName(subject, temporalOrder, predicate);         
+        //final CharSequence name = makeName(subject, temporalOrder, predicate);         
         if (predicate instanceof Implication) {
             final Term oldCondition = ((Statement) predicate).getSubject();
             if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
@@ -113,7 +104,7 @@ public class Implication extends Statement {
             final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder);
             return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder);
         } else {
-            return new Implication(name, new Term[] { subject, predicate }, temporalOrder);
+            return new Implication(new Term[] { subject, predicate }, temporalOrder);
         }
     }
 
