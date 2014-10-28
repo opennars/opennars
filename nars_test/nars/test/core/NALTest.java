@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
@@ -126,7 +127,7 @@ public class NALTest  {
     
     @Parameterized.Parameters
     public static Collection params() {
-        List l = new LinkedList();
+        Map<String,Object> l = new TreeMap();
         
         File folder = new File("nal/test");
         
@@ -135,11 +136,12 @@ public class NALTest  {
                 continue;
             if(!("extra".equals(file.getName()))) {
                 addTest(file.getName());
-                l.add(new Object[] { file.getAbsolutePath() } );
+                l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
             }
         }
         
-        return l;
+        
+        return l.values();
     }
     
     
@@ -184,12 +186,16 @@ public class NALTest  {
                 levelSuccess[level]++;
             }
         }
+        int totalSucceeded = 0, total = 0;
         for (int i = 0; i < 9; i++) {
             float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
             String prefix = (i > 0) ? ("NAL" + i) : "Other";
             
             System.out.println(prefix + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
+            totalSucceeded += levelSuccess[i];
+            total += levelTotals[i];
         }
+        System.out.println(totalSucceeded + " / " + total);
     }
 
     public NALTest(String scriptPath) {        
@@ -250,6 +256,8 @@ public class NALTest  {
         
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
         assertTrue(path, success);
+        
+        System.out.flush();
         
     }
 
@@ -386,5 +394,6 @@ public class NALTest  {
         this.showOutput = output;
     }
 
+    
     
 }

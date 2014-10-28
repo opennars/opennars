@@ -602,7 +602,7 @@ public class RuleTables {
             
             Term[] u = new Term[] { statement, content };
             
-            if (component.isConstant()) {
+            if (!component.containVar()) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u)) {
                 mainSentence = mainSentence.clone(u[0]);
