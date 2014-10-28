@@ -117,6 +117,7 @@ public abstract class CompoundTerm extends Term {
     }
     
     public CompoundTerm(Term[] components) {
+        super();
         setTerms(components);
     }
     
@@ -824,11 +825,11 @@ public abstract class CompoundTerm extends Term {
             c.add(t);
     }
 
-    public final TreeSet<Term> getTermTreeSet() {
+    /*public final TreeSet<Term> getTermTreeSet() {
         TreeSet<Term> set = new TreeSet<>();
         addTermsTo(set);
         return set;        
-    }
+    }*/
 
 
 }

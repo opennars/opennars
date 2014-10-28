@@ -99,7 +99,7 @@ public class ImageExt extends Image {
                 }
             }
         }
-        Term[] argument = product.term.clone(); //TODO is this clone needed?
+        Term[] argument = product.cloneTerms(); //TODO is this clone needed?
         argument[index] = relation;
         return new ImageExt(argument, index);
     }

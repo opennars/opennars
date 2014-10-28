@@ -40,20 +40,8 @@ public class Operation extends Inheritance {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    public Operation(CharSequence name, Term[] arg) {
-        super(name, arg);
-    }
-
-    /**
-     * Constructor with full values, called by clone
-     *
-     * @param n The name of the term
-     * @param cs Component list
-     * @param con Whether the term is a constant
-     * @param complexity Syntactic complexity of the compound
-     */
-    protected Operation(final CharSequence n, final Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
-        super(n, cs, con, hasVar, complexity);
+    public Operation(Term[] arg) {
+        super(arg);
     }
 
     /**
@@ -63,12 +51,8 @@ public class Operation extends Inheritance {
      */
     @Override
     public Operation clone() {        
-        return new Operation(name(), cloneTerms(), isConstant(), containVar(), getComplexity());
+        return new Operation(term);
     }
-
-    
-    
-    
  
    
     /**
@@ -84,11 +68,8 @@ public class Operation extends Inheritance {
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
-        
-                        
-        return new Operation(makeName(oper.name(), arg), 
-                termArray(Product.make(arg), oper)
-        );        
+                                
+        return new Operation( termArray(Product.make(arg), oper)  );        
     }
 
     public Operator getOperator() {

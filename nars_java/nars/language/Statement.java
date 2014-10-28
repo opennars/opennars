@@ -36,29 +36,19 @@ public abstract class Statement extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Statement(final CharSequence name, final Term[] arg) {
-        super(name, arg);
+    protected Statement(final Term[] arg) {
+        super(arg);
     }
     
-    /**
-     * Constructor with full values, called by clone
-     *
-     * @param n The nameStr of the term
-     * @param cs Component list
-     * @param con Constant indicator
-     * @param i Syntactic complexity of the compound
-     */
-    @Deprecated protected Statement(final CharSequence n, final Term[] cs, final boolean con, final short i) {
-        super(n, cs, con, i);
+    protected Statement(final Term subj, final Term pred) {
+        this(new Term[] { subj, pred} );
     }
     
-    /**
-     * High-performance constructor that avoids recalculating some Term metadata when created
-     */
-    protected Statement(final CharSequence n, final Term[] cs, final boolean con, final boolean hasVar, final short i) {
-        super(n, cs, con, hasVar, i);
+    protected Statement() {
+        super();
     }
     
+   
     /**
      * Make a Statement from given components, called by the rules
      * @return The Statement built

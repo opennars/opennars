@@ -34,27 +34,21 @@ public class Inheritance extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected Inheritance(final CharSequence name, final Term[] arg) {
-        super(name, arg);       
+    protected Inheritance(final Term[] arg) {
+        super(arg);       
+    }
+    
+    public Inheritance(final Term subj, final Term pred) {
+        super(subj, pred);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param arg Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    protected Inheritance(final CharSequence n, final Term[] arg, final boolean con, final boolean hasVar, final short i) {
-        super(n, arg, con, hasVar, i);
-    }
 
     /**
      * Clone an object
      * @return A new object, to be casted into a SetExt
      */
     @Override public Inheritance clone() {
-        return new Inheritance(name(), cloneTerms(), isConstant(), containVar(), getComplexity());
+        return new Inheritance(term);
     }
 
     /**
@@ -74,14 +68,12 @@ public class Inheritance extends Statement {
         boolean subjectProduct = subject instanceof Product;
         boolean predicateOperator = predicate instanceof Operator;
         
-        CharSequence name;
+        
         if (subjectProduct && predicateOperator) {
             //name = Operation.makeName(predicate.name(), ((CompoundTerm) subject).term);
             return Operation.make((Operator)predicate, ((CompoundTerm)subject).term, true);
-        } else {
-            name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
-            Term[] arguments = termArray( subject, predicate );
-            return new Inheritance(name, arguments);
+        } else {            
+            return new Inheritance(subject, predicate);
         }
          
     }

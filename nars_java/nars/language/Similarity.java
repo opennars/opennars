@@ -32,20 +32,14 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Similarity(final CharSequence name, final Term[] arg) {
-        super(name, arg);
+    public Similarity(final Term[] arg) {
+        super(arg);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private Similarity(final CharSequence n, Term[] cs, boolean constant, boolean containsVar, short i) {
-        super(n, cs, constant, containsVar, i);
+    public Similarity(final Term subj, final Term pred) {
+        super(subj, pred);
     }
+    
 
     /**
      * Clone an object
@@ -53,7 +47,7 @@ public class Similarity extends Statement {
      */
     @Override
     public Similarity clone() {
-        return new Similarity(name(), cloneTerms(), isConstant(), containVar(), getComplexity());
+        return new Similarity(term);
     }
 
 
@@ -72,9 +66,7 @@ public class Similarity extends Statement {
             return make(predicate, subject);
         }        
         
-        return new Similarity(
-                makeStatementName(subject, NativeOperator.SIMILARITY, predicate), 
-                termArray(subject, predicate));
+        return new Similarity(subject, predicate);
     }
 
     /**

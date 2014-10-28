@@ -145,7 +145,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         private final String id;
         
         public UniqueOperation(Implication parent, Operation o, Term previous) {
-            super(o.name(), o.term);
+            super(o.term);
             if (previous != null)
                 this.id = parent.name() +"/"+ previous.name() + "/" + o.name();
             else
@@ -153,7 +153,15 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             this.parent = parent;
         }
 
-        @Override public CharSequence name() {  return id;        }
+        @Override
+        public CharSequence name() {
+            return id;
+        }
+        
+        @Override
+        protected CharSequence makeName() {
+            return id;
+        }
         
         @Override public boolean equals(final Object that) {
             if (that == this) return true;           
