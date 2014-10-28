@@ -143,9 +143,7 @@ public class Conjunction extends CompoundTerm {
     }
     
     
-    /**
-     * Try to make a new Disjunction from a set of term. Called by the public
-     * make methods.
+    /**    
      *
      * @param set a set of Term as term
      * @param memory Reference to the memory

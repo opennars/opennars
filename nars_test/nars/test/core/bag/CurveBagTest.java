@@ -12,7 +12,6 @@ import nars.storage.CurveBag;
 import nars.storage.CurveBag.BagCurve;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.FractalSortedItemList;
-import nars.util.sort.RedBlackSortedIndex;
 import nars.util.sort.SortedIndex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,13 +30,13 @@ public class CurveBagTest {
     public void testBags() {
 
         
-        //FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
-        //int[] d1 = testCurveBag(f1);
-        //int[] d2 = testCurveBag(new RedBlackSortedIndex<>());        
+        FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
+        int[] d2 = testCurveBag(f1);
+        //int[] d3 = testCurveBag(new RedBlackSortedIndex<>());        
         int[] d1 = testCurveBag(new ArraySortedIndex<>());
 
         //use the final distribution to compare that each implementation generates exact same results
-        //assertTrue(Arrays.equals(d1, d2));
+        assertTrue(Arrays.equals(d1, d2));
         //assertTrue(Arrays.equals(d2, d3));
         
         for (int capacity : new int[] { 4, 7, 13, 16, 100 } ) {

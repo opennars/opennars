@@ -11,17 +11,17 @@ import nars.entity.Item.ItemPriorityComparator;
  */
 public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedIndex<E> {
 
-    public static class ItemEquality<E extends Item> extends ItemPriorityComparator<E> implements Equality<E> {
+    public static class ItemEquality<E extends Item> implements Equality<E> {
 
         @Override
         public int compare(final E a, final E b) {
+            if (areEqual(a, b)) return 0;
+            
             float ap = a.getPriority();
             float bp = b.getPriority();
-
-            if (areEqual(a, b)) {
-                return 0;
-            }
-            return super.compare(a, b);
+            if (ap < bp) return -1;
+            else if (bp < ap) return 1;
+            return -1;
         }
 
         @Override
@@ -31,6 +31,7 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
 
         @Override
         public boolean areEqual(E t, E t1) {
+            if (t == t1) return true;
             return t.name().equals(t1.name());
         }
 
@@ -43,7 +44,7 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
     }
 
     public FractalSortedItemList(int capacity) {
-        super((Equality)null);
+        super(new ItemEquality());
         this.capacity = capacity;
     }
 
@@ -52,48 +53,45 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
         this.capacity = capacity;
     }
 
-    @Override
-    public boolean add(final E o) {
-        if (isEmpty()) {
-            return super.add(o);
-        } else {
-            if (size() == capacity) {
-
-                if (positionOf(o) == 0) {
-                    //priority too low to join this list
-                    return false;
-                }
-
-                reject(removeFirst()); //maybe should be last
-            }
-            super.add(positionOf(o), o);
-            return true;
-        }
-    }
+//    @Override
+//    public boolean add(final E o) {
+//        if (isEmpty()) {
+//            return super.add(o);
+//        } else {
+//            if (size() == capacity) {
+//
+//                if (positionOf(o) == 0) {
+//                    //priority too low to join this list
+//                    return false;
+//                }
+//
+//                reject(removeFirst()); //maybe should be last
+//            }
+//            super.add(positionOf(o), o);
+//            return true;
+//        }
+//    }
 
     
-    @Override
-    public boolean remove(Object obj) {        
-        int i = positionOf( ((E)obj) );
-        if ((i >= size()) || (i == -1))
-            return false;
-        E r = remove(i);
-        if (r!=null) {
-            if (r.name().equals( ((E)obj).name()) )
-                return true;
-            else {
-                System.out.println( ((E)obj).name() + " =?= " + r.name() );
-                throw new RuntimeException("inconsistent bag");
-            }
-        }
-        return false;
-    }
+    
+//    @Override
+//    public boolean remove(Object obj) {        
+//        int i = positionOf( ((E)obj) );
+//        if ((i >= size()) || (i == -1))
+//            return false;
+//        E r = remove(i);
+//        if (r!=null) {
+//            if (r.name().equals( ((E)obj).name()) )
+//                return true;
+//            else {
+//                System.out.println( ((E)obj).name() + " =?= " + r.name() );
+//                throw new RuntimeException("inconsistent bag");
+//            }
+//        }
+//        return false;
+//    }
 
-    @Override
-    public E remove(int index) {        
-        return super.remove(index);
-    }
-   
+    /*
     
     @Override
     public final int positionOf(final E o) {
@@ -123,7 +121,8 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
             return -1;
         }
     }
-        
+      */
+    /*
     @Override
     public E getLast() {
         int s = size();
@@ -137,7 +136,8 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
         if (s == 0) return null;
         return get(0);
     }
-
+*/
+    
 //    @Override
 //    public final int positionOf(final E o) {
 //        final float y = o.budget.getPriority();

@@ -174,5 +174,9 @@ public class Parameters {
     
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
+    
+    /** use this for advanced Bag error checking */
+    public static boolean DEBUG_BAG = false;
+    
 }
 

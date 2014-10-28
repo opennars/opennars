@@ -635,17 +635,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return empty;
     }
 
-    
-    @Override
-    public void renameKey(K from, K to) {
-        E existingValue = get(from);
-        if (existingValue!=null) {
-            nameTable.remove(from);
-            nameTable.put(to, existingValue);
-            
-            System.err.println(this + " updated: " + from + " to " + to);
-        }
-    }
 
 
 //    private void stat() {
