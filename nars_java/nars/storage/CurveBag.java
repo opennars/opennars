@@ -8,6 +8,7 @@ import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Item;
+import nars.util.sort.ArraySortedIndex;
 import nars.util.sort.FractalSortedItemList;
 import nars.util.sort.SortedIndex;
 
@@ -53,7 +54,12 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     private float x;
     
     
-
+    public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
+        if (capacity < 50)            
+            return new ArraySortedIndex<E>();
+        else
+            return new FractalSortedItemList<E>();        
+    }
         
     public CurveBag(int capacity, boolean randomRemoval) {
         this(capacity, new FairPriorityProbabilityCurve(), randomRemoval);               
@@ -61,10 +67,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     
     public CurveBag(int capacity, BagCurve curve, boolean randomRemoval) {
         this(capacity, curve, randomRemoval, 
-                //new TreeSortedIndex<E>()
-                //new ArraySortedIndex()
-                
-                new FractalSortedItemList<E>() 
+                getIndex(capacity)                
                 
                                 /*if (capacity < 128)*/
                     //items = new ArraySortedItemList<>(capacity);

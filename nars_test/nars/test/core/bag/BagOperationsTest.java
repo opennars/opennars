@@ -4,14 +4,16 @@
  */
 package nars.test.core.bag;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.CurveBag;
+import nars.storage.GearBag;
 import nars.storage.LevelBag;
-import nars.util.sort.FractalSortedItemList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -20,7 +22,7 @@ import org.junit.Test;
  *
  * @author me
  */
-public class CurveBagConceptTest {
+public class BagOperationsTest {
 
     public static class NullConcept extends Concept {
 
@@ -39,8 +41,9 @@ public class CurveBagConceptTest {
     
     @Test
     public void testConcept() {
-        testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true, new FractalSortedItemList()));
-        testBagSequence(new LevelBag(2, 2));
+        //testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true, new FractalSortedItemList()));
+        //testBagSequence(new LevelBag(2, 2));
+        testBagSequence(new GearBag(2,2));
     }
     
     public void testBagSequence(Bag b) {
@@ -61,13 +64,19 @@ public class CurveBagConceptTest {
         assertEquals(0.1f, b.getMinPriority(),0.001f);
         assertEquals(0.2f, b.getMaxPriority(),0.001f);
         
+        //if (b instanceof GearBag()) return;
+        
         
         b.putIn(new NullConcept("b", 0.4f));
+        
+        
         assertEquals(2, b.size());
         assertEquals(0.2f, b.getMinPriority(),0.001f);
         assertEquals(0.4f, b.getMaxPriority(),0.001f);
         
+        
         Item tb = b.take(new Term("b"));
+        assertTrue(tb!=null);
         assertEquals(1, b.size());
         assertEquals(0.4f, tb.getPriority(), 0.001f);
         

@@ -119,7 +119,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public abstract float getAveragePriority();
 
 
-    /** iterates all items in descending priority */
+    /** iterates all items in (approximately) descending priority */
     @Override public abstract Iterator<E> iterator();
     
     /** allows adjusting forgetting rate in subclasses */    
@@ -184,6 +184,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
     }
     
+    /** slow, probably want to override in subclasses */
     public float getMinPriority() {
         float min = 1.0f;
         for (Item e : this) {
@@ -193,6 +194,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return min;            
     }
     
+    /** slow, probably want to override in subclasses */
     public float getMaxPriority() {
         float max = 0.0f;
         for (Item e : this) {
