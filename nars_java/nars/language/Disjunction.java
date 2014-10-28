@@ -35,22 +35,8 @@ public class Disjunction extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Disjunction(final CharSequence name, final Term[] arg) {
-        super(name, arg);
-    }
-
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private Disjunction(CharSequence n, Term[] arg, boolean con, short i) {
-        super(n, arg, con, i);
-        /*if (arg.size()<2) {
-            throw new RuntimeException("Conjunction requires >=2 term");
-        } */       
+    private Disjunction(final Term[] arg) {
+        super(arg);
     }
 
     
@@ -65,7 +51,7 @@ public class Disjunction extends CompoundTerm {
      */
     @Override
     public Disjunction clone() {
-        return new Disjunction(name(), cloneTerms(), isConstant(), complexity);
+        return new Disjunction(term);
     }
 
     /**
@@ -121,9 +107,8 @@ public class Disjunction extends CompoundTerm {
             // special case: single component
             return set.first();
         }                         
-        Term[] argument = set.toArray(new Term[set.size()]);        
-        return new Disjunction(
-                makeCompoundName(Symbols.NativeOperator.DISJUNCTION, argument), argument);
+        Term[] argument = set.toArray(new Term[set.size()]);
+        return new Disjunction(argument);
     }
 
     /**

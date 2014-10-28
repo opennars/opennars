@@ -256,7 +256,7 @@ public class TemporalRules {
                             }
 
                             t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                            Product S=(Product) Product.make(ars);
+                            Product S=(Product) new Product(ars);
                             Operation op=(Operation) Operation.make(S, ss2.getPredicate());
                             t22 = op;
                         }

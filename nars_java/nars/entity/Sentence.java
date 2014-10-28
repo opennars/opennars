@@ -418,8 +418,8 @@ public class Sentence implements Cloneable {
             String word = truth.toWord();
             arg[1]=new Term(word);
         }
-        Term argTerm = Product.make(arg);
-        Term operation = Inheritance.make(argTerm, opTerm);
+        
+        Term operation = Inheritance.make(new Product(arg), opTerm);
         return operation;
     }
 

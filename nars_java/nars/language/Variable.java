@@ -61,7 +61,7 @@ public class Variable extends Term {
     public Variable clone() {
         Variable v = new Variable();
         v.name = name(); //apply name directly, no need to invoke setName()
-        v.type = type;
+        v.type = getType();
         return v;
     }
 
@@ -106,29 +106,6 @@ public class Variable extends Term {
     
 
 
-
-
-    /**
-     * Rename the variables to prepare for unification of two terms
-     * 
-     * @param map The substitution so far
-     * @param term The term to be processed 
-     * @param suffix The suffix that distinguish the variables in one premise
-     * from those from the other
-     */
-//    private static void renameVar(final HashMap<Term, Term> map, final Term term, final String suffix) {
-//        if (term instanceof Variable) {
-//            final Term t = map.get(term);
-//            if (t == null) {    // new mapped yet
-//                map.put(term, new Variable(term.getName() + suffix));  // rename             
-//            }
-//        } else if (term instanceof CompoundTerm) {
-//            for (final Term t : ((CompoundTerm) term).term) {   // assuming matching order, to be refined in the future
-//                renameVar(map, t, suffix);
-//            }
-//        }
-//    }
-
     /**
      * variable terms are listed first alphabetically
      *
@@ -144,21 +121,11 @@ public class Variable extends Term {
     boolean isDependentVariable() { return getType() == '#';    }
     boolean isIndependentVariable() { return getType() == '$';    }
 
-    boolean isCommon() {
-        String s = toString();
-        return s.charAt(s.length() - 1) == '$';
+    boolean isCommon() {     
+        CharSequence n = name();
+        int l = n.length();        
+        return n.charAt(l - 1) == '$';
     }
 
-//    @Override
-//    protected boolean setName(CharSequence newName) {
-//        if (this.name!=null) {
-//            //if (!this.name.equals(newName)) {
-//                throw new RuntimeException("Variable renamed");
-//            //}
-//        }
-//
-//        return super.setName(newName); 
-//    }
-    
     
 }

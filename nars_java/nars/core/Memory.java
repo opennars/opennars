@@ -577,7 +577,7 @@ public class Memory implements Serializable {
             case INHERITANCE:
                 return Inheritance.make(a[0], a[1]);
             case PRODUCT:
-                return Product.make(a);
+                return new Product(a);
             case IMAGE_EXT:
                 return ImageExt.make(a);
             case IMAGE_INT:

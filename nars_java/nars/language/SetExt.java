@@ -20,8 +20,8 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
@@ -36,19 +36,8 @@ public class SetExt extends SetTensional {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetExt(final CharSequence name, final Term[] arg) {
-        super(name, arg);
-    }
-
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private SetExt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
-        super(n, cs, con, i);
+    private SetExt(final Term[] arg) {
+        super(arg);
     }
 
     
@@ -58,31 +47,9 @@ public class SetExt extends SetTensional {
      */
     @Override
     public SetExt clone() {
-        return new SetExt(name(), cloneTerms(), isConstant(), getComplexity());
+        return new SetExt(term);
     }
 
-    /**
-     * Try to make a new set from one component. Called by the inference rules.
-     * @param t The compoment
-     * @param memory Reference to the memeory
-     * @return A compound generated or a term it reduced to
-     */
-    public static Term make(final Term t) {
-        final TreeSet<Term> set = new TreeSet<>();
-        set.add(t);
-        return make(set);
-    }
-
-    /**
-     * Try to make a new SetExt. Called by StringParser.
-     * @return the Term generated from the arguments
-     * @param argList The list of term
-     * @param memory Reference to the memeory
-     */
-    public static Term make(final Collection<Term> argList) {
-        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set);
-    }
 
     /**
      * Try to make a new compound from a set of term. Called by the public make methods.
@@ -90,16 +57,17 @@ public class SetExt extends SetTensional {
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(final TreeSet<Term> set) {
-        if (set.isEmpty()) {
+    public static Term make(final Collection<Term> set) {
+        if (set.isEmpty())
             return null;
-        }
+        
         Term[] argument = set.toArray(new Term[set.size()]);
+        Arrays.sort(argument);
         return make(argument);
     }
 
-    private static Term make(final Term[] termSet) {        
-        return new SetExt(makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch), termSet);
+    public static Term make(final Term... termSet) {        
+        return new SetExt(termSet);
     }
     
     /**

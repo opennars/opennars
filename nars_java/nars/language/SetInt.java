@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
@@ -36,20 +37,12 @@ public class SetInt extends SetTensional {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetInt(final CharSequence name, final Term[] arg) {
-        super(name, arg);
+    private SetInt(final Term[] arg) {
+        super(arg);
     }
+ 
 
-    /**
-     * constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param i Syntactic complexity of the compound
-     */
-    private SetInt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
-        super(n, cs, con, i);
-    }
+
 
     /**
      * Clone a SetInt
@@ -57,7 +50,7 @@ public class SetInt extends SetTensional {
      */
     @Override
     public SetInt clone() {
-        return new SetInt(name(), cloneTerms(), isConstant(), getComplexity());
+        return new SetInt(term);
     }
 
     /**
@@ -66,22 +59,10 @@ public class SetInt extends SetTensional {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Term t) {
-        TreeSet<Term> set = new TreeSet<>();
-        set.add(t);
-        return make(set);
+    public static Term make(final Term... t) {
+        return new SetInt(t);
     }
 
-    /**
-     * Try to make a new SetExt. Called by StringParser.
-     * @return the Term generated from the arguments
-     * @param argList The list of term
-     * @param memory Reference to the memeory
-     */
-    public static Term make(final Collection<Term> argList) {
-        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set);
-    }
 
     /**
      * Try to make a new compound from a set of term. Called by the public make methods.
@@ -89,12 +70,13 @@ public class SetInt extends SetTensional {
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(TreeSet<Term> set) {
+    public static Term make(Collection<Term> set) {
         if (set.isEmpty())
             return null;
         
         Term[] argument = set.toArray(new Term[set.size()]);        
-        return new SetInt(makeSetName(SET_INT_OPENER.ch, argument, SET_INT_CLOSER.ch), argument);
+        Arrays.sort(argument);
+        return new SetInt(argument);
     }
 
     /**
@@ -115,5 +97,6 @@ public class SetInt extends SetTensional {
     public CharSequence makeName() {
         return makeSetName(SET_INT_OPENER.ch, term, SET_INT_CLOSER.ch);
     }
+    
 }
 

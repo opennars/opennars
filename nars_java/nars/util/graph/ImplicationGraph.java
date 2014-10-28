@@ -196,7 +196,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
     public static class PostCondition extends Negation {
         public PostCondition(final Term t) {
-            super("~" + t.name(), t);
+            super(t);
+            setName("~" + t.name());
         }
 
         
