@@ -45,8 +45,9 @@ public abstract class CompoundTerm extends Term {
     
     /**
      * list of (direct) term
+     * TODO make final again
      */
-    public final Term[] term;
+    public Term[] term;
     
     /**
      * syntactic complexity of the compound, the sum of those of its term
@@ -54,8 +55,6 @@ public abstract class CompoundTerm extends Term {
      */
     public short complexity;
     
-    /** Whether the term names a concept */
-    private boolean isConstant;
     
     /** Whether contains a variable */
     private boolean hasVar;
@@ -88,11 +87,7 @@ public abstract class CompoundTerm extends Term {
      * @param complexity Complexity of the compound term
      */
     @Deprecated protected CompoundTerm(final CharSequence name, final Term[] components, final boolean isConstant, final short complexity) {
-        this.name = name;
-        this.term = components; //ensureValidComponents(term);
-        this.hasVar = Variables.containVar(name());
-        this.isConstant = isConstant;
-        this.complexity = complexity;
+        this(components);
     }
 
     /**
@@ -101,12 +96,8 @@ public abstract class CompoundTerm extends Term {
      * and containsVar.  Instead, all necessary values are provided directly from the callee.
      * This should perform better than the other constructor that invokes super constructor; this does not.
      */
-    protected CompoundTerm(final CharSequence name, final Term[] components, final boolean isConstant, final boolean containsVar, final short complexity) {
-        this.name = name;
-        this.term = components; //ensureValidComponents(term);
-        this.hasVar = containsVar;
-        this.isConstant = isConstant;
-        this.complexity = complexity;
+    @Deprecated protected CompoundTerm(final CharSequence name, final Term[] components, final boolean isConstant, final boolean containsVar, final short complexity) {
+        this(components);
     }
     
     
@@ -116,42 +107,43 @@ public abstract class CompoundTerm extends Term {
      * @param name Name of the compound
      * @param components Component list
      */
-    protected CompoundTerm(final CharSequence name, final Term[] components) {
-        this.term = components; //ensureValidComponents(term);
-        this.complexity = calcComplexity();
-        setName(name);
-        this.isConstant = !hasVar;
+    @Deprecated protected CompoundTerm(final CharSequence name, final Term[] components) {
+        this(components);
     }
 
+    public CompoundTerm(Term[] components) {
+        refresh(components);        
+    }
+    
     /** call this after changing Term[] contents */
-    public void refresh() {
-        this.complexity = calcComplexity();
+    public void refresh(Term[] components) {
+        this.hasVar = false;
+        for (Term t : components) {
+            if (t.containVar()) {                 
+                hasVar = true; break; 
+            }
+        }
+        
+        if (hasVar) {            
+            //System.out.print("in: " + Arrays.toString(components));
+            this.term = normalizeVariableNames("", components, new HashMap<>());
+            //System.out.println("   out: " + Arrays.toString(term));
+        }
+        else {
+            this.term = components;
+        }
+        
         setName(makeName());
-        this.isConstant = !hasVar;
+        
+        this.complexity = calcComplexity();
     }
     
     public final CompoundTerm clone(final Term[] replaced) {
         CompoundTerm c = clone();
-        System.arraycopy(replaced, 0, c.term, 0, replaced.length);
-        c.refresh();
+        c.refresh(replaced);
         return c;
     }
 
-
-// --Commented out by Inspection START (8/15/14 2:37 AM):
-//    /**
-//     * Constructor called from subclasses constructors to initialize the fields.
-//     * Calculates name, hasVar, & complexity.
-//     *
-//     * @param components Component list
-//     */
-//    @Deprecated protected CompoundTerm(final Term[] components) {
-//        this.term = components; //ensureValidComponents(term);
-//        this.complexity = calcComplexity();
-//        setName(makeName());
-//        this.isConstant = !hasVar;
-//    }
-// --Commented out by Inspection STOP (8/15/14 2:37 AM)
 
 
     private Term[] ensureValidComponents(final Term[] components) {
@@ -167,14 +159,6 @@ public abstract class CompoundTerm extends Term {
         return 2;
     }
 
-    @Override
-    protected boolean setName(CharSequence name) {
-        if (super.setName(name)) {
-            this.hasVar = calcContainedVariables();
-            return true;
-        }
-        return false;
-    }
             
 
     protected boolean calcContainedVariables() {
@@ -410,7 +394,7 @@ public abstract class CompoundTerm extends Term {
      */
     @Override
     public boolean isConstant() {
-        return isConstant;
+        return true;
     }
 
     /**
@@ -696,67 +680,62 @@ public abstract class CompoundTerm extends Term {
     }
 
 
-    /**
-     * Rename the variables in the compound, called from Sentence constructors
-     * This method may modify the instance. do not use from outside to maintain 
-     * a degree of immutability.
-     */
-    @Override
-    protected void normalizeVariableNames() {
-        if (containVar()) {
-            //int existingComponents = term.length;
-            boolean b = normalizeVariableNames(new HashMap<>());
-            if (b) {
-                setName(makeName());                
-            }
-        }
-        isConstant = true;        
-    }
 
     
     /**
      * Recursively rename the variables in the compound
      *
      * @param map The substitution established so far
+     * @return an array of terms, normalized; may return the original Term[] array if nothing changed,
+     * otherwise a clone of the array will be returned
      */
-    private boolean normalizeVariableNames(final HashMap<Variable, Variable> map) {
-        if (containVar()) {
-            boolean renamed = false;
-            for (int i = 0; i < term.length; i++) {
-                final Term term = this.term[i];
-                
-                if (term instanceof Variable) {
-                    
-                    Variable termV = (Variable)term;
-                    Variable var;
-                    
-                    if (term.name().length() == 1) { // anonymous variable from input
-                        var = getIndexVariable(termV.getType(), map.size()+1);
-                    } else {
-                        var = map.get(termV);
-                        if (var == null) {
-                            var = getIndexVariable(termV.getType(), map.size() + 1);
-                        }
+    public static Term[] normalizeVariableNames(String prefix, final Term[] s, final HashMap<Variable, Variable> map) {
+        
+        boolean renamed = false;
+        Term[] t = s.clone();
+        char c = 'a';
+        for (int i = 0; i < t.length; i++) {
+            final Term term = t[i];
+
+            if (term instanceof Variable) {
+
+                Variable termV = (Variable)term;
+                Variable var;
+
+                if (term.name().length() == 1) { // anonymous variable from input
+                    //var = getIndexVariable(termV.getType(), map.size()+1);
+                    var = new Variable(termV.getType() + prefix + (map.size() + 1));
+                } else {
+                    var = map.get(termV);
+                    if (var == null) {
+                        //var = getIndexVariable(termV.getType(), map.size() + 1);
+                        var = new Variable(termV.getType() + prefix + (map.size() + 1));
                     }
-                    if (!termV.equals(var)) {
-                        this.term[i] = var;
+                }
+                if (!termV.equals(var)) {
+                    t[i] = var;
+                    renamed = true;
+                }
+
+                map.put(termV, var);
+
+            } else if (term instanceof CompoundTerm) {
+                CompoundTerm ct = (CompoundTerm)term;
+                if (ct.containVar()) {
+                    Term[] d = normalizeVariableNames(prefix + Character.toString(c),  ct.term, map);
+                    if (d!=ct.term) {                        
+                        t[i] = ct.clone( d );
                         renamed = true;
                     }
-                    
-                    map.put(termV, var);
-                    
-                } else if (term instanceof CompoundTerm) {
-                    CompoundTerm ct = (CompoundTerm)term;
-                    boolean r = ct.normalizeVariableNames(map);
-                    if (r) {
-                        ct.setName(ct.makeName());
-                        renamed = true;
-                    }
-                }                
-            }
-            return renamed;
+                }
+            }        
+            c++;
         }
-        return false;
+            
+        if (renamed)
+            return t;
+        else 
+            return s;
     }
 
     /** NOT TESTED YET */

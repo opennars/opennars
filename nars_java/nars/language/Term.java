@@ -117,8 +117,6 @@ public class Term implements AbstractTerm {
         return TemporalRules.ORDER_NONE;
     }   
 
-    /** this method may modify the instance. do not use from outside to maintain immutability. */
-    protected void normalizeVariableNames() { }
          
     /**
      * The syntactic complexity, for constant atomic Term, is 1.
@@ -206,11 +204,6 @@ public class Term implements AbstractTerm {
         return new Term(Texts.escape('"' + t + '"').toString());
     }
 
-    public Term cloneWithVariablesRenamed() {
-        Term c = clone();
-        c.normalizeVariableNames();
-        return c;
-    }
 
     
 }
