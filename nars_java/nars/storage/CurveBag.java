@@ -6,8 +6,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.Item;
-import nars.util.sort.ArraySortedIndex;
+import nars.util.sort.FractalSortedItemList;
 import nars.util.sort.SortedIndex;
 
 
@@ -51,6 +52,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     /** current removal index x, between 0..1.0.  set automatically */    
     private float x;
     
+    
 
         
     public CurveBag(int capacity, boolean randomRemoval) {
@@ -60,9 +62,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     public CurveBag(int capacity, BagCurve curve, boolean randomRemoval) {
         this(capacity, curve, randomRemoval, 
                 //new TreeSortedIndex<E>()
-                new ArraySortedIndex()
+                //new ArraySortedIndex()
                 
-                //new FractalSortedItemList<E>() 
+                new FractalSortedItemList<E>() 
                 
                                 /*if (capacity < 128)*/
                     //items = new ArraySortedItemList<>(capacity);
@@ -71,6 +73,41 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
                     //items = new RedBlackSortedItemList<>(capacity);
                 }*/
         );
+    }
+    
+    public class CurveMap extends HashMap<K,E> {
+
+        public CurveMap(int initialCapacity) {
+            super(initialCapacity);
+        }
+     
+        @Override public E put(final K key, final E value) {
+
+            E removed = super.put(key, value);                
+            if (removed!=null) {
+                items.remove(removed);
+                mass -= removed.budget.getPriority();                
+            }
+
+            items.add(value);
+
+            return removed;            
+        }
+
+
+        @Override public E remove(final Object key) {                
+            E e = super.remove(key);
+            if (e!=null) {
+                items.remove(e);
+            }                                
+
+            return e;
+        }
+
+        @Override public boolean remove(Object key, Object value) {
+            throw new RuntimeException("Not implemented");
+        }
+        
     }
     
     public CurveBag(int capacity, BagCurve curve, boolean randomRemoval, SortedIndex<E> items) {
@@ -89,40 +126,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         else
             x = 1.0f; //start a highest priority
         
-        nameTable = new HashMap<K,E>(capacity) {
-
-            @Override
-            public E put(K key, E value) {
-                
-                E removed = super.put(key, value);                
-                if (removed!=null) {
-                    items.remove(removed);
-                }
-                
-                items.add(value);
-                               
-                return removed;            
-            }
-
-            
-            @Override
-            public E remove(Object key) {                
-                E e = super.remove(key);
-                if (e!=null) {
-                    items.remove(e);
-                }
-                
-                CurveBag.this.size();
-                
-                return e;
-            }
-
-            @Override
-            public boolean remove(Object key, Object value) {
-                throw new RuntimeException("Not implemented");
-            }
-            
-        };
+        nameTable = new CurveMap(capacity);
                 
         this.mass = 0;
     }
@@ -145,15 +149,20 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     @Override
     public int size() {
         
-        int is = items.size();
         int in = nameTable.size();
-        if (is!=in) {
-            System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);            
-            //();
-            System.exit(1);
+        
+        
+        if (Parameters.DEBUG_BAG) {
+            int is = items.size();
+            
+            if (is!=in) {
+                System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);            
+                //();
+                System.exit(1);
+            }
         }
         
-        return is;
+        return in;
     }
     
                 
@@ -164,12 +173,12 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The average priority of Items in the bag
      */
     @Override
-    public float getAveragePriority() {
+    public float getAveragePriority() {        
         final int s = size();
         if (s == 0) {
             return 0.01f;
         }
-        float f = mass / size();
+        float f = mass / s;
         if (f > 1f)
             return 1.0f;
         if (f < 0.01f)
@@ -304,8 +313,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             oldItem = removeItem(0);            
         }
                         
-        nameTable.put(newItem.name(), newItem);
-        
+        nameTable.put(newItem.name(), newItem);        
         mass += (newItem.budget.getPriority());                  // increase total mass
         
         return oldItem;
@@ -412,15 +420,6 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         }
         
     }
-    
-    @Override
-    public void renameKey(K from, K to) {
-        E existingValue = get(from);
-        if (existingValue!=null) {
-            nameTable.remove(from);
-            nameTable.put(to, existingValue);
-            System.err.println(this + " updated: " + from + " to " + to);
-        }
-    }
+ 
     
 }

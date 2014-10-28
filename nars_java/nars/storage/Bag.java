@@ -202,7 +202,5 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
         return max;
     }
 
-    abstract public void renameKey(K from, K to);
-
     
 }
