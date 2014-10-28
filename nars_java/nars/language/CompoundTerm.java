@@ -598,7 +598,7 @@ public abstract class CompoundTerm extends Term {
                 if (ct.containVar()) {
                     Term[] d = normalizeVariableNames(prefix + Character.toString(c),  ct.term, map);
                     if (d!=ct.term) {                        
-                        t[i] = ct.clone(d, false);
+                        t[i] = ct.clone(d, true);
                         renamed = true;
                     }
                 }
@@ -664,7 +664,7 @@ public abstract class CompoundTerm extends Term {
             Arrays.sort(tt);
         }
         
-        return this.clone(tt, false); //maybe true?
+        return this.clone(tt, true); //maybe true?
     }
 
     /* ----- link CompoundTerm and its term ----- */

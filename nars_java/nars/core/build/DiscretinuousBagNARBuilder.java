@@ -1,20 +1,17 @@
 package nars.core.build;
 
-import nars.core.ConceptProcessor;
 import nars.core.Memory;
 import nars.core.Param;
-import nars.core.control.BalancedSequentialMemoryCycle;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.entity.ConceptBuilder;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.LevelBag;
 import nars.storage.CurveBag;
+import nars.storage.LevelBag;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
 public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
@@ -38,6 +35,9 @@ public class DiscretinuousBagNARBuilder extends DefaultNARBuilder {
     @Override
     public Bag<Concept,Term> newConceptBag(Param p) {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
+        
+        //NOT READY yet
+        //return new GearBag(getConceptBagLevels(), getConceptBagSize());
     }
 
 

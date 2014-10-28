@@ -21,9 +21,9 @@ public class GearBagTest {
         int[] r;
         //r = CurveBagTest.testRemovalPriorityDistribution(4, 5000, 0.2f, 0.2f, g);
         r = CurveBagTest.testRemovalPriorityDistribution(2, 500, 0.8f, 0.6f, g);
-        System.out.println(Arrays.toString(r));
+        /*System.out.println(Arrays.toString(r));
         System.out.println(g.size());
-        System.out.println(Iterators.toString(g.iterator()));
+        System.out.println(Iterators.toString(g.iterator()));*/
         
         
         

@@ -239,7 +239,9 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
         if (size() == 0) return null;
             
         do {
-            if (pending.isEmpty()) {
+            //fill pending buffer
+            if (pending.isEmpty()) {                                
+                
                 int j = 0;
                 while ((pending.size() < pendingBufferMaxSize) && (sizeLevels > 0)) {
                     Level<E> l = level[currentLevel];
@@ -266,17 +268,18 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
                 }
                 
             }
-
-            if (!pending.isEmpty()) {            
-                E e = pending.removeFirst();
-                if (!toRemove.remove(e)) {
-                    onRemoved(e);
-                    return e;
-                }
-                else {
-                    //discarding because it was in removal queue
-                    onRemoved(e);
-                }
+            else {
+                do {
+                    E e = pending.removeFirst();
+                    if (!toRemove.remove(e)) {
+                        onRemoved(e);
+                        return e;
+                    }
+                    else {
+                        //discarding because it was in removal queue
+                        
+                    }
+                } while (!pending.isEmpty());
             }
         }
         while (sizeLevels() > 0);
@@ -287,7 +290,9 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
     protected E push(E e) {
         E removed = null;
 
-        toRemove.remove(e);
+        if (toRemove.remove(e)) {
+            //no longer should be removed because it's added again
+        }
         
         int s = size();
         if (s > capacity) throw new RuntimeException("Bag exceeded capacity");
@@ -330,9 +335,10 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
     @Override public E take(final K name) {
         
         E oldItem = index.remove(name);
-        if (oldItem == null) {
+        if (oldItem == null) {            
             return null;
         }
+        
         
         toRemove.add(oldItem);
         
@@ -427,9 +433,11 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
         for (int i = 0; i < levels; i++)
             ii[i+1] = level[i].iterator();
         
-        
-        //return Iterators.concat(ii);
-        return Iterators.filter(Iterators.concat(ii), existingElementFilter);
+                
+        if (toRemove.isEmpty())
+            return Iterators.concat(ii);
+        else
+            return Iterators.filter(Iterators.concat(ii), existingElementFilter);
     }
 
 
@@ -463,6 +471,7 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
     /** called when an item is actuall removed from the bag */
     protected void onRemoved(E r) {
         removeMass(r);
+        index.remove(r.name());
     }
 
 
