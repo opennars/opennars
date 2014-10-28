@@ -38,21 +38,10 @@ public class ImageExt extends Image {
      * @param arg The component list of the term
      * @param index The index of relation in the component list
      */
-    private ImageExt(final CharSequence n, final Term[] arg, final short index) {
-        super(n, arg, index);
+    public ImageExt(final Term[] arg, final short index) {
+        super(arg, index);
     }
 
-    /**
-     * Constructor with full values, called by clone
-     * @param n The name of the term
-     * @param cs Component list
-     * @param open Open variable list
-     * @param complexity Syntactic complexity of the compound
-     * @param index The index of relation in the component list
-     */
-    protected ImageExt(final CharSequence n, final Term[] arg, final boolean con, final short complexity, final short index) {
-        super(n, arg, con, complexity, index);
-    }
 
     /**
      * Clone an object
@@ -60,7 +49,7 @@ public class ImageExt extends Image {
      */
     @Override
     public ImageExt clone() {
-        return new ImageExt(name(), cloneTerms(), isConstant(), complexity, relationIndex);
+        return new ImageExt(term, relationIndex);
     }
 
     
@@ -88,7 +77,7 @@ public class ImageExt extends Image {
             }
             n++;
         }
-        return make(argument, (short) index);
+        return new ImageExt(argument, (short) index);
     }
 
     /**
@@ -110,9 +99,9 @@ public class ImageExt extends Image {
                 }
             }
         }
-        Term[] argument = product.cloneTerms(); //TODO is this clone needed?
+        Term[] argument = product.term.clone(); //TODO is this clone needed?
         argument[index] = relation;
-        return make(argument, index);
+        return new ImageExt(argument, index);
     }
 
     /**
@@ -128,19 +117,9 @@ public class ImageExt extends Image {
         Term relation = argList[oldIndex];
         argList[oldIndex] = component;
         argList[index] = relation;
-        return make(argList, index);
+        return new ImageExt(argList, index);
     }
 
-    /**
-     * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param argument The argument list
-     * @param index The index of the place-holder in the new Image
-     * @return the Term generated from the arguments
-     */
-    public static ImageExt make(final Term[] argument, final short index) {
-        return new ImageExt(makeImageName(NativeOperator.IMAGE_EXT, argument, index), 
-                argument, index);
-    }
 
 
     /**
