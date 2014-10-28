@@ -18,12 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.grid2d.operator;
+package nars.operator.io;
  
 import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
-import nars.grid2d.TestChamber;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -34,30 +33,19 @@ import nars.operator.Operator;
  */
 public class Say extends Operator {
 
-    TestChamber chamb;
-    public Say(TestChamber chamb, String name) {
-        super(name);
-        this.chamb=chamb;
+    public Say() {
+        super("^say");
     }
 
     @Override
     protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
-         
-        TestChamber.executed=true;
+
         System.out.println("Executed: " + this);
         for (Term t : args) {
             System.out.println(" --- " + t);
         }
-        
-        
-       // if(nars.grid2d.Grid2DSpace.world_used) {
-            //ok lets start pathfinding tool
-            //nars.grid2d.Grid2DSpace.pathFindAndGoto(arg);
-       // }
-        
-       
         
         return null;
     }
