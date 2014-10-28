@@ -67,7 +67,7 @@ public class NALTest  {
             if (s.indexOf(expectOutContains)==0) {
 
                 //without ') suffix:
-                String e = s.substring(expectOutContains.length(), s.length()-3);                                
+                String e = s.substring(expectOutContains.length(), s.length()-2);                                
 
                 expects.add(new ExpectContains(n, e, saveSimilar));
             }
@@ -79,7 +79,7 @@ public class NALTest  {
             if (s.indexOf(expectOutContains2)==0) {
 
                 //without ') suffix:
-                String e = s.substring(expectOutContains2.length(), s.length()-3); 
+                String e = s.substring(expectOutContains2.length(), s.length()-2); 
                 e = e.replace("\\\\","\\");
                 
                 expects.add(new ExpectContains(n, e, saveSimilar));
@@ -380,7 +380,7 @@ public class NALTest  {
                 if (saveSimilar) {
                     int dist = Texts.levenshteinDistance(o, containing);            
                     //if (dist < similarityThreshold + Math.abs(o.length() - containing.length()))
-                    almost.put("similar(" + dist + "): " + TextOutput.getOutputString(channel, signal, false, true, nar), dist);
+                    almost.put("similar(" + dist + "): " + TextOutput.getOutputString(channel, signal, false, false, nar), dist);
                 }            
             }
             if (channel == ERR.class) {
