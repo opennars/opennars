@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 import nars.core.Memory;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
@@ -86,8 +84,13 @@ public abstract class CompoundTerm extends Term {
         init(components);
     }
     
+    protected void init(Term[] term) {
+        init(term, true);
+    }
+    
     /** call this after changing Term[] contents */
-    protected void init(Term[] components) {
+    protected void init(Term[] components, boolean normalize) {
+        
         this.hasVar = false;
         
         int numVariableSubTerms = 0;
@@ -99,25 +102,30 @@ public abstract class CompoundTerm extends Term {
             }
         }
         
+        
         //use > 1 to maintain ordinary variable names if it won't interfere
-        if (numVariableSubTerms > 0) {
+        if (normalize && (numVariableSubTerms > 0)) {
+
+            //System.out.println(">>>in: " + Arrays.toString(components));
+            HashMap h;
+            this.term = normalizeVariableNames("", components, h = new HashMap<>());            
+            //System.out.println(h);
+            //System.out.println(">>>out: " + Arrays.toString(term) + "\n");
             
-            //System.out.print("in: " + Arrays.toString(components));
-            this.term = normalizeVariableNames("", components, new HashMap<>());
-            //System.out.println("   out: " + Arrays.toString(term));
         }
-        else {
-            this.term = components;
-        }
+        else
+            this.term = components;            
+
         
         this.name = null; //invalidate name so it will be (re-)created lazily
         
         this.complexity = calcComplexity();
     }
     
-    public final CompoundTerm clone(final Term[] replaced) {
+    /** override in subclasses to avoid unnecessary reinit */
+    public final CompoundTerm clone(final Term[] replaced, boolean normalize) {
         CompoundTerm c = clone();
-        c.init(replaced);
+        c.init(replaced, normalize);
         return c;
     }
 
@@ -565,22 +573,19 @@ public abstract class CompoundTerm extends Term {
         char c = 'a';
         for (int i = 0; i < t.length; i++) {
             final Term term = t[i];
+            
 
             if (term instanceof Variable) {
 
-                Variable termV = (Variable)term;
+                Variable termV = (Variable)term;                
                 Variable var;
 
-                if (term.name().length() == 1) { // anonymous variable from input
-                    //var = getIndexVariable(termV.getType(), map.size()+1);
-                    var = new Variable(termV.getType() + prefix + (map.size() + 1));
-                } else {
-                    var = map.get(termV);
-                    if (var == null) {
-                        //var = getIndexVariable(termV.getType(), map.size() + 1);
-                        var = new Variable(termV.getType() + prefix + (map.size() + 1));
-                    }
+                var = map.get(termV);
+                if (var == null) {
+                    //var = getIndexVariable(termV.getType(), map.size() + 1);
+                    var = new Variable(termV.getType() + /*prefix + */String.valueOf(map.size() + 1));
                 }
+                
                 if (!termV.equals(var)) {
                     t[i] = var;
                     renamed = true;
@@ -593,7 +598,7 @@ public abstract class CompoundTerm extends Term {
                 if (ct.containVar()) {
                     Term[] d = normalizeVariableNames(prefix + Character.toString(c),  ct.term, map);
                     if (d!=ct.term) {                        
-                        t[i] = ct.clone( d );
+                        t[i] = ct.clone(d, false);
                         renamed = true;
                     }
                 }
@@ -601,8 +606,9 @@ public abstract class CompoundTerm extends Term {
             c++;
         }
             
-        if (renamed)
+        if (renamed) {            
             return t;
+        }
         else 
             return s;
     }
@@ -658,7 +664,7 @@ public abstract class CompoundTerm extends Term {
             Arrays.sort(tt);
         }
         
-        return this.clone(tt);
+        return this.clone(tt, false); //maybe true?
     }
 
     /* ----- link CompoundTerm and its term ----- */
@@ -803,6 +809,7 @@ public abstract class CompoundTerm extends Term {
 //            return 1;
 //            */
 //    }
+
 
 
 }
