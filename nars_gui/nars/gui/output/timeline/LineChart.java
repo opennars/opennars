@@ -1,6 +1,5 @@
 package nars.gui.output.timeline;
 
-import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

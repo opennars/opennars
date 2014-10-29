@@ -20,7 +20,6 @@
  */
 package nars.entity;
 
-import nars.core.Parameters;
 import nars.language.Term;
 
 /**

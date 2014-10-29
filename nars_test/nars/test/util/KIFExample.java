@@ -18,7 +18,6 @@
 package nars.test.util;
 
 import nars.core.NAR;
-import nars.core.Parameters;
 import nars.core.build.CurveBagNARBuilder;
 import nars.gui.NARSwing;
 import nars.util.kif.KIFInput;

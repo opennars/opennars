@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import javolution.util.FastSet;
-import javolution.util.function.Equalities;
 import javolution.util.function.Equality;
 import nars.core.Parameters;
 import nars.entity.Item;

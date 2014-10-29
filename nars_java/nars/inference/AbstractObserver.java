@@ -2,7 +2,6 @@ package nars.inference;
 
 import nars.core.EventEmitter;
 import nars.core.NAR;
-import static nars.tictactoe.play.nar;
 
 /**
  *

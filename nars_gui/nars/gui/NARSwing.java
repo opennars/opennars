@@ -32,7 +32,6 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
-import nars.gui.output.timeline.TimelinePanel;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 

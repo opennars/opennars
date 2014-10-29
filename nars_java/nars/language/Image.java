@@ -1,5 +1,6 @@
 package nars.language;
 
+import java.util.Objects;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
@@ -22,6 +23,19 @@ abstract public class Image extends CompoundTerm {
         this.relationIndex = relationIndex;
         init(components);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), relationIndex);
+    }
+
+    @Override
+    public boolean equals2(final CompoundTerm other) {
+        return relationIndex == ((Image)other).relationIndex;           }
+    
+    
+    
+    
     
 
     //TODO replace with a special Term type

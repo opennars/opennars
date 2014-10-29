@@ -4,8 +4,6 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleStart;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
-import nars.gui.NARSwing;
-import nars.io.TextOutput;
 import nars.util.signal.DenoisingAutoencoder;
 import nars.util.signal.UniformVector;
 import nars.util.signal.VectorMap;

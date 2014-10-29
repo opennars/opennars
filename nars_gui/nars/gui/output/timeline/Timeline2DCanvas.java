@@ -2,27 +2,9 @@ package nars.gui.output.timeline;
 
 import com.google.common.collect.Lists;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import static java.util.stream.Collectors.toList;
-import java.util.stream.Stream;
 import javax.swing.SwingUtilities;
-import nars.core.Events.InferenceEvent;
-import nars.entity.Item;
-import nars.gui.NARSwing;
-import nars.gui.output.chart.TimeSeries;
-import nars.io.Output.IN;
-import nars.io.Output.OUT;
-import nars.io.Texts;
-import nars.util.NARTrace;
-import nars.util.NARTrace.OutputEvent;
-import nars.util.NARTrace.TaskEvent;
 import processing.core.PApplet;
-import static processing.core.PConstants.SQUARE;
 import processing.event.KeyEvent;
 
 /**

@@ -19,7 +19,6 @@ import nars.core.NAR;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;
-import nars.grid2d.particle.Particle;
 import nars.grid2d.particle.ParticleSystem;
 import nars.gui.NWindow;
 import processing.core.PApplet;

@@ -190,11 +190,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if (Parameters.DEBUG) {
         
             int is = sizeItems();
-            if (is!=in) {
-                System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());                
-                new Exception().printStackTrace();            
-                //printAll();
-                System.exit(1);
+            if (is!=in) {                
+                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
 
             }
         }

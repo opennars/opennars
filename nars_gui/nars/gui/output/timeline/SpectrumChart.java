@@ -3,7 +3,6 @@ package nars.gui.output.timeline;
 import boofcv.alg.transform.fft.GeneralPurposeFFT_F32_1D;
 import com.google.common.primitives.Floats;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import nars.gui.output.chart.TimeSeries;
 import nars.util.NARTrace;

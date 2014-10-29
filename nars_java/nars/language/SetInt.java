@@ -20,13 +20,11 @@
  */
 package nars.language;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
-import static nars.language.SetExt.make;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.

@@ -1,7 +1,6 @@
 package nars.util.graph;
 
 import java.util.Objects;
-import static jdk.nashorn.internal.runtime.Debug.id;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;

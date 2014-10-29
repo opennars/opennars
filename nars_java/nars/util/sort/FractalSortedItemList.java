@@ -3,7 +3,6 @@ package nars.util.sort;
 import javolution.util.FastSortedTable;
 import javolution.util.function.Equality;
 import nars.entity.Item;
-import nars.entity.Item.ItemPriorityComparator;
 
 /**
  * EXPERIMENTAL - NOT READY YET - has a bug / leak

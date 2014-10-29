@@ -513,7 +513,7 @@ public class NAR implements Runnable, TaskSource {
             System.err.println(e);
             e.printStackTrace();
             if (Parameters.DEBUG) {
-                System.exit(1);
+                throw e;
             }
         }
         

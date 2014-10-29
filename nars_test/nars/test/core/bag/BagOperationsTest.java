@@ -4,8 +4,6 @@
  */
 package nars.test.core.bag;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;

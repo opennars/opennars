@@ -11,7 +11,6 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Item;
 import nars.util.sort.ArraySortedIndex;
-import nars.util.sort.FractalSortedItemList;
 import nars.util.sort.SortedIndex;
 
 
@@ -170,7 +169,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
                         e.remove(f);
                     System.out.println("difference: " + e);
                 }
-                System.exit(1);
+                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
             }
         }
         

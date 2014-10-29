@@ -20,20 +20,9 @@
  */
 package nars.operator.mental;
 
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import nars.core.Memory;
-import nars.core.Parameters;
-import nars.entity.BudgetValue;
-import nars.entity.Sentence;
-import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions;
-import nars.inference.TemporalRules;
-import nars.io.Symbols;
-import nars.language.Conjunction;
-import nars.language.Implication;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;

@@ -16,7 +16,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
-import nars.inference.BudgetFunctions.Activating;
 import static nars.inference.RuleTables.reason;
 import static nars.inference.RuleTables.transformTask;
 import nars.io.Symbols;
