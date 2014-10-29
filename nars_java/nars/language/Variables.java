@@ -164,7 +164,7 @@ public class Variables {
             return t; //no change needed
         
         CompoundTerm r = t.applySubstitute(subs);
-        if (r == t) r = t.clone();        
+        //if (r == t) r = t.clone();      //cloning t does not seem necessary   
         return r;
     }
     
