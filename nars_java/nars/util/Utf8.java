@@ -10,7 +10,7 @@ import java.util.Arrays;
  * @author https://github.com/squito/jutf8
  * http://svn.apache.org/viewvc/avro/trunk/lang/java/avro/src/main/java/org/apache/avro/util/Utf8.java?revision=1552418&view=co
  */
-public class Utf8 implements CharSequence {
+public class Utf8 implements CharSequence, Comparable<Utf8> {
 
     final byte[] bytes;
     final int start;
@@ -45,6 +45,17 @@ public class Utf8 implements CharSequence {
 
     public static final byte[] toUtf8(final String str) {
         return str.getBytes(utf8Charset);
+    }
+
+    @Override
+    public int compareTo(Utf8 that) {
+        int lDiff = that.bytes.length - bytes.length;
+        if (lDiff != 0) return lDiff;
+        for (int n = 0; n < bytes.length; n++) {
+            int bDiff = that.bytes[n] - bytes[n];
+            if (bDiff!=0) return bDiff;
+        }
+        return 0;
     }
 
     @Override
@@ -280,7 +291,7 @@ class Utf8_apache implements Comparable<Utf8>, CharSequence {
     }
 
     @Override
-    public int compareTo(Utf8 that) {
+    public int compareTo(Utf8 that) {        
         throw new RuntimeException("_");
     //return BinaryData.compareBytes(this.bytes, 0, this.length,
         //                             that.bytes, 0, that.length);

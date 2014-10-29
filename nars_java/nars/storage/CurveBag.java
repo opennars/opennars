@@ -1,8 +1,10 @@
 package nars.storage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import nars.core.Memory;
@@ -55,10 +57,10 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     
     
     public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
-        if (capacity < 50)            
+        //if (capacity < 50)            
             return new ArraySortedIndex<E>();
-        else
-            return new FractalSortedItemList<E>();        
+        /*else
+            return new FractalSortedItemList<E>();        */
     }
         
     public CurveBag(int capacity, boolean randomRemoval) {
@@ -160,7 +162,14 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             
             if (is!=in) {
                 System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);            
-                //();
+                System.out.println(nameTable);
+                System.out.println(items);
+                if (is > in) {
+                    List<E> e = new ArrayList(items);                    
+                    for (E f : nameTable.values())
+                        e.remove(f);
+                    System.out.println("difference: " + e);
+                }
                 System.exit(1);
             }
         }

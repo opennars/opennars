@@ -23,5 +23,10 @@ public class Utf8Test {
         
         Utf8 v = new Utf8("string");
         assertEquals(6, v.length());
+        
+        assertEquals(0, new Utf8("abc").compareTo(new Utf8("abc")));
+        assertEquals(1, new Utf8("abc").compareTo(new Utf8("abd")));
+        assertEquals(-1, new Utf8("abc").compareTo(new Utf8("abb")));
+        assertEquals(-1, new Utf8("abc").compareTo(new Utf8("ab")));
     }
 }

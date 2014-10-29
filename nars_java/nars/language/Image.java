@@ -24,7 +24,9 @@ abstract public class Image extends CompoundTerm {
     }
     
 
-    public static boolean isPlaceHolder(Term t) {
+    //TODO replace with a special Term type
+    public static boolean isPlaceHolder(final Term t) {
+        if (t.getClass() != Term.class) return false;
         CharSequence n = t.name();
         if (n.length() != 1) return false;
         return n.charAt(0) == Symbols.IMAGE_PLACE_HOLDER;

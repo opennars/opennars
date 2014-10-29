@@ -34,7 +34,6 @@ import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
 import nars.language.Variable;
-import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
@@ -87,8 +86,8 @@ public class Sentence implements Cloneable {
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(final Term content, final char punctuation, final TruthValue truth, final Stamp stamp) {
-        this.content = content;
+    public Sentence(final Term _content, final char punctuation, final TruthValue truth, final Stamp stamp) {
+        this.content = _content.clone();
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
@@ -97,11 +96,13 @@ public class Sentence implements Cloneable {
         if (content.hasVar() && (content instanceof CompoundTerm)) {
             final CompoundTerm c = (CompoundTerm)content;
             c.recurseTerms(new Term.TermVisitor() {
-                @Override public void visit(final Term t) {
+                @Override public void visit(final Term t, final CompoundTerm parent, final int index) {
                     if (t instanceof Variable) {                        
                         Variable v = ((Variable)t);
-                        if (v.getScope()==null)
-                            v.setScope(c);
+                        v.setScope(c);
+                        /*if (v.getScope()==null) {
+                            parent.term[index] = v.clone().setScope(c);
+                        }*/
                     }
                 }            
             });
