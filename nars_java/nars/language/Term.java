@@ -20,7 +20,6 @@
  */
 package nars.language;
 
-import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Texts;
 
@@ -33,6 +32,10 @@ import nars.io.Texts;
  */
 public class Term implements AbstractTerm {
 
+    public interface TermVisitor {
+        public void visit(Term t);
+    }
+    
     protected CharSequence name = null;
     
     /**
@@ -117,6 +120,15 @@ public class Term implements AbstractTerm {
         return TemporalRules.ORDER_NONE;
     }   
 
+    public void recurseTerms(final TermVisitor v) {
+        v.visit(this);        
+        if (this instanceof CompoundTerm) {
+            for (Term t : ((CompoundTerm)this).term) {
+                v.visit(t);
+            }
+        }
+    }
+    
          
     /**
      * The syntactic complexity, for constant atomic Term, is 1.
@@ -170,7 +182,7 @@ public class Term implements AbstractTerm {
      * @return Whether the name contains a variable
      */
     @Override
-    public boolean containVar() {
+    public boolean hasVar() {
         return false;
     }
     

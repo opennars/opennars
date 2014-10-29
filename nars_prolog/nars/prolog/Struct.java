@@ -931,7 +931,7 @@ public class Struct extends Term {
     /**/
 
     @Override
-    public boolean containVar() {
+    public boolean hasVar() {
         return !this.isGround();
     }
 

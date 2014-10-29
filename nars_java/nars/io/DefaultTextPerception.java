@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.AbstractTask;
@@ -187,10 +189,15 @@ public class DefaultTextPerception  {
                 
                 if (enableEnglisch) {
                     /*if (!possiblyNarsese(line))*/ {                    
-                        List<AbstractTask> l = englisch.parse(line, narsese, true);
-                        if ((l == null) || (l.isEmpty())) 
+                        List<AbstractTask> l;
+                        try {
+                            l = englisch.parse(line, narsese, true);
+                            if ((l == null) || (l.isEmpty())) 
+                                return null;
+                            return l;
+                        } catch (InvalidInputException ex) {
                             return null;
-                        return l;
+                        }
                     }
                 }
                 return null;            
