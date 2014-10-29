@@ -557,7 +557,7 @@ public class Var extends Term {
     /**/
 
     @Override
-    public boolean containVar() {
+    public boolean hasVar() {
         return true;
     }
 

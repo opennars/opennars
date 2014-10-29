@@ -100,7 +100,7 @@ public final class CompositionalRules {
         }
 
         final Term term1 = sentence.content;
-        final boolean term1ContainVar = term1.containVar();
+        final boolean term1ContainVar = term1.hasVar();
         final boolean term1Conjunction = term1 instanceof Conjunction;
 
         if ((term1Conjunction) && (term1ContainVar)) {
@@ -108,7 +108,7 @@ public final class CompositionalRules {
         }
 
         final Term term2 = belief.content;
-        final boolean term2ContainVar = term2.containVar();
+        final boolean term2ContainVar = term2.hasVar();
         final boolean term2Conjunction = term2 instanceof Conjunction;
 
         if ((term2Conjunction) && (term2ContainVar)) {
@@ -133,7 +133,7 @@ public final class CompositionalRules {
                 }
 
                 final Conjunction ctpcontent = (Conjunction) pcontent;
-                if (ctpcontent.containVar()) {
+                if (ctpcontent.hasVar()) {
                     continue;
                 }
 
@@ -468,12 +468,6 @@ public final class CompositionalRules {
         nal.doublePremiseTask(content, truth, budget, false);
     }
 
-    static final Variable varInd1 = new Variable("$varInd1");
-    static final Variable varInd2 = new Variable("$varInd2");
-    static final Variable varDep = new Variable("#varDep");
-    static final Variable varDep2 = new Variable("#varDep2");
-    static final Variable depIndVar1 = new Variable("#depIndVar1");
-    static final Variable depIndVar2 = new Variable("#depIndVar2");
 
     /* --------------- rules used for variable introduction --------------- */
     // forward inference only?
@@ -493,6 +487,9 @@ public final class CompositionalRules {
             return;
         }
 
+        Variable varInd1 = new Variable("$varInd1");
+        Variable varInd2 = new Variable("$varInd2");
+        
         Term term11, term12, term21, term22, commonTerm;
         HashMap<Term, Term> subs = new HashMap<>();
         if (index == 0) {
@@ -566,6 +563,7 @@ public final class CompositionalRules {
         budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.doublePremiseTask(content, truth, budget, false);
 
+        Variable varDep = new Variable("#varDep");
         if (index == 0) {
             state1 = Inheritance.make(varDep, term12);
             state2 = Inheritance.make(varDep, term22);
@@ -613,6 +611,8 @@ public final class CompositionalRules {
         }
         Sentence belief = nal.getCurrentBelief();
 
+        Variable varDep2 = new Variable("#varDep2");
+        
         HashMap<Term, Term> substitute = new HashMap<>();
         substitute.put(commonTerm1, varDep2);
         CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound);
@@ -623,6 +623,9 @@ public final class CompositionalRules {
 
         substitute.clear();
 
+        Variable varInd1 = new Variable("$varInd1");
+        Variable varInd2 = new Variable("$varInd2");
+        
         substitute.put(commonTerm1, varInd1);
         if (commonTerm2 != null) {
             substitute.put(commonTerm2, varInd2);
@@ -910,12 +913,17 @@ public final class CompositionalRules {
         }
         CompoundTerm T = (CompoundTerm) T1;
         CompoundTerm T2 = (CompoundTerm) content;
+        
+        
         if ((component instanceof Inheritance && content instanceof Inheritance)
                 || (component instanceof Similarity && content instanceof Similarity)) {
             //CompoundTerm result = T;
             if (component.equals(content)) {
                 return; //wouldnt make sense to create a conjunction here, would contain a statement twice
             }
+            Variable depIndVar1 = new Variable("#depIndVar1");
+            Variable depIndVar2 = new Variable("#depIndVar2");
+
             if (((Statement) component).getPredicate().equals(((Statement) content).getPredicate()) && !(((Statement) component).getPredicate() instanceof Variable)) {
 
                 CompoundTerm zw = (CompoundTerm) T.term[index];
@@ -957,7 +965,7 @@ public final class CompositionalRules {
 
         Term first = taskSentence.content;
 
-        if (!first.containVar()) {
+        if (!first.hasVar()) {
             return false;
         }
 

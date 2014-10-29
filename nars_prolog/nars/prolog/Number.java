@@ -114,7 +114,7 @@ public abstract class Number extends Term  {
     }
 
     @Override
-    public boolean containVar() {
+    public boolean hasVar() {
         return false;
     }
     

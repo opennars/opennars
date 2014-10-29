@@ -223,7 +223,7 @@ public class TemporalRules {
 
             
             
-            Variable var1 = varInd0;
+            Variable var1 = varInd0.clone();
             Variable var2 = var1;
 
             if (ss1.getSubject().equals(ss2.getSubject())) {

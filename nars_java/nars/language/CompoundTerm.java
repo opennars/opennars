@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Memory;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
@@ -55,7 +56,7 @@ public abstract class CompoundTerm extends Term {
     
     
     /** Whether contains a variable */
-    private boolean hasVar;
+    private boolean hasVariables;
     
     transient int containedTemporalRelations = -1;
     
@@ -84,60 +85,33 @@ public abstract class CompoundTerm extends Term {
         init(components);
     }
     
-    protected void init(Term[] term) {
-        init(term, true);
-    }
-    
     /** call this after changing Term[] contents */
-    protected void init(Term[] components, boolean normalize) {
-                
-        int numVariableSubTerms = CompoundTerm.getVariableSubterms(components);
-        
-        
-        //use > 1 to maintain ordinary variable names if it won't interfere
-        if (normalize && (numVariableSubTerms > 0)) {
+    protected void init(Term[] components) {
 
-            //System.out.println(">>>in: " + Arrays.toString(components));
-            this.term = normalizeVariableNames("", components, new HashMap<>());            
-            if (this.term!=components) {
-                //if was normalized, recalculate variable existence
-                
-                this.hasVar = getVariableSubterms(components) > 0;
-                
-            }
-            
-            //System.out.println(h);
-            //System.out.println(">>>out: " + Arrays.toString(term) + "\n");
-            
+        this.term = components;            
+
+        this.complexity = 1;
+        for (final Term t : term) {
+            this.complexity += t.getComplexity();        
+            if (t.hasVar())
+                this.hasVariables = true;
         }
-        else
-            this.term = components;            
-
         
-        this.name = null; //invalidate name so it will be (re-)created lazily
-        
-        this.complexity = calcComplexity();
+        this.name = null; //invalidate name so it will be (re-)created lazily        
     }
 
-    public static int getVariableSubterms(Term[] components) {
-        int n = 0;
-        for (Term t : components) {
-            if (t.containVar()) {                
-                n++;
-            }
-        }
-        return n;
-    }
+    
     
     /** override in subclasses to avoid unnecessary reinit */
-    public final CompoundTerm clone(final Term[] replaced, boolean normalize) {
+    public final CompoundTerm clone(final Term[] replaced) {
         CompoundTerm c = clone();
-        c.init(replaced, normalize);
+        c.init(replaced);
         return c;
     }
 
 
-
+    
+    //TODO not used yet
     private Term[] ensureValidComponents(final Term[] components) {
         if (components.length < getMinimumRequiredComponents()) {
             throw new RuntimeException(getClass().getSimpleName() + " requires >=" + getMinimumRequiredComponents() + " components, invalid argument:" + Arrays.toString(components));
@@ -155,21 +129,8 @@ public abstract class CompoundTerm extends Term {
         return 2;
     }
 
-
-    
-    /**
-     * The complexity of the term is the sum of those of the term plus 1
-     */
-    protected short calcComplexity() {
-        int c = 1;
-        for (final Term t : term) {
-            c += t.getComplexity();        
-        }
-        return (short)c;
-    }
+   
  
-
-
 
 
     @Override
@@ -266,20 +227,6 @@ public abstract class CompoundTerm extends Term {
         return complexity;
     }
 
-    /**
-     * isConstant means if the term contains free variable, which implies it can name a Concept
-     * True if:
-     *   has zero variables, or
-     *   uses several instances of the same variable
-     * False if it uses one instance of a variable ("free" like a "free radical" in chemistry).
-     * Therefore it may be considered Constant, yet actually contain variables.
-     * 
-     * @return if the term is a constant
-     */
-    @Override
-    public boolean isConstant() {
-        return true;
-    }
 
     /**
      * Check if the order of the term matters
@@ -535,8 +482,8 @@ public abstract class CompoundTerm extends Term {
      * @return Whether the name contains a variable
      */
     @Override
-    public boolean containVar() {
-        return hasVar;
+    public boolean hasVar() {
+        return hasVariables;
     }
 
     
@@ -566,59 +513,59 @@ public abstract class CompoundTerm extends Term {
 
 
     
-    /**
-     * Recursively rename the variables in the compound
-     *
-     * @param map The substitution established so far
-     * @return an array of terms, normalized; may return the original Term[] array if nothing changed,
-     * otherwise a clone of the array will be returned
-     */
-    public static Term[] normalizeVariableNames(String prefix, final Term[] s, final HashMap<Variable, Variable> map) {
-        
-        boolean renamed = false;
-        Term[] t = s.clone();
-        char c = 'a';
-        for (int i = 0; i < t.length; i++) {
-            final Term term = t[i];
-            
-
-            if (term instanceof Variable) {
-
-                Variable termV = (Variable)term;                
-                Variable var;
-
-                var = map.get(termV);
-                if (var == null) {
-                    //var = getIndexVariable(termV.getType(), map.size() + 1);
-                    var = new Variable(termV.getType() + /*prefix + */String.valueOf(map.size() + 1));
-                }
-                
-                if (!termV.equals(var)) {
-                    t[i] = var;
-                    renamed = true;
-                }
-
-                map.put(termV, var);
-
-            } else if (term instanceof CompoundTerm) {
-                CompoundTerm ct = (CompoundTerm)term;
-                if (ct.containVar()) {
-                    Term[] d = normalizeVariableNames(prefix + Character.toString(c),  ct.term, map);
-                    if (d!=ct.term) {                        
-                        t[i] = ct.clone(d, true);
-                        renamed = true;
-                    }
-                }
-            }        
-            c++;
-        }
-            
-        if (renamed) {            
-            return t;
-        }
-        else 
-            return s;
-    }
+//    /**
+//     * Recursively rename the variables in the compound
+//     *
+//     * @param map The substitution established so far
+//     * @return an array of terms, normalized; may return the original Term[] array if nothing changed,
+//     * otherwise a clone of the array will be returned
+//     */
+//    public static Term[] normalizeVariableNames(String prefix, final Term[] s, final HashMap<Variable, Variable> map) {
+//        
+//        boolean renamed = false;
+//        Term[] t = s.clone();
+//        char c = 'a';
+//        for (int i = 0; i < t.length; i++) {
+//            final Term term = t[i];
+//            
+//
+//            if (term instanceof Variable) {
+//
+//                Variable termV = (Variable)term;                
+//                Variable var;
+//
+//                var = map.get(termV);
+//                if (var == null) {
+//                    //var = getIndexVariable(termV.getType(), map.size() + 1);
+//                    var = new Variable(termV.getType() + /*prefix + */String.valueOf(map.size() + 1));
+//                }
+//                
+//                if (!termV.equals(var)) {
+//                    t[i] = var;
+//                    renamed = true;
+//                }
+//
+//                map.put(termV, var);
+//
+//            } else if (term instanceof CompoundTerm) {
+//                CompoundTerm ct = (CompoundTerm)term;
+//                if (ct.containVar()) {
+//                    Term[] d = normalizeVariableNames(prefix + Character.toString(c),  ct.term, map);
+//                    if (d!=ct.term) {                        
+//                        t[i] = ct.clone(d, true);
+//                        renamed = true;
+//                    }
+//                }
+//            }        
+//            c++;
+//        }
+//            
+//        if (renamed) {            
+//            return t;
+//        }
+//        else 
+//            return s;
+//    }
 
     /** NOT TESTED YET */
     public boolean containsAnyTermsOf(final Collection<Term> c) {
@@ -671,7 +618,7 @@ public abstract class CompoundTerm extends Term {
             Arrays.sort(tt);
         }
         
-        return this.clone(tt, true); //maybe true?
+        return this.clone(tt); //maybe true?
     }
 
     /* ----- link CompoundTerm and its term ----- */

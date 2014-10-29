@@ -3,8 +3,6 @@ package nars.io.narsese;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -39,6 +37,7 @@ import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getRelation;
 import static nars.io.Symbols.isRelation;
 import nars.io.Texts;
+import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
@@ -167,7 +166,7 @@ public class Narsese {
         String str = buffer.toString().trim();
         int last = str.length() - 1;
         char punc = str.charAt(last);
-
+        
         Stamp stamp = new Stamp(-1 /* if -1, will be set right before the Task is input */, 
                 tense, memory.newStampSerial(), memory.param.duration.get());
 

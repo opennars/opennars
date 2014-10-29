@@ -23,6 +23,7 @@ import java.util.Map;
 import nars.entity.AbstractTask;
 import static nars.io.Texts.levenshteinDistance;
 import nars.io.narsese.Narsese;
+import nars.io.narsese.Narsese.InvalidInputException;
 
 /**
  * "Englisch" (nearly-English) Input Perception To keep NLP overhead as small as
@@ -158,7 +159,7 @@ public class Englisch {
     }
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<AbstractTask> parse(String s, Narsese narsese, boolean modifyVocabulary) {
+    public List<AbstractTask> parse(String s, Narsese narsese, boolean modifyVocabulary) throws InvalidInputException {
 
         List<String> statements = new ArrayList();
 
@@ -170,12 +171,9 @@ public class Englisch {
         
         List<AbstractTask> results = new ArrayList();
         for (String i : statements) {
-            try {
-                AbstractTask t = narsese.parseNarsese(new StringBuilder(i));
-                if (t!=null)
-                    results.add(t);
-            }
-            catch (Narsese.InvalidInputException e) { }            
+            AbstractTask t = narsese.parseNarsese(new StringBuilder(i));
+            if (t!=null)
+                results.add(t);
         }
         //System.out.println("english: " + statements + "\n  " + results);
         return results;

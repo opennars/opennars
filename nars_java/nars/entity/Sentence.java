@@ -27,11 +27,13 @@ import nars.core.Parameters;
 import nars.inference.TruthFunctions;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Inheritance;
 import nars.language.Product;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -91,7 +93,20 @@ public class Sentence implements Cloneable {
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = !((content instanceof Conjunction) && Variables.containVarDep(content.name()));
-        
+            
+        if (content.hasVar() && (content instanceof CompoundTerm)) {
+            final CompoundTerm c = (CompoundTerm)content;
+            c.recurseTerms(new Term.TermVisitor() {
+                @Override public void visit(final Term t) {
+                    if (t instanceof Variable) {                        
+                        Variable v = ((Variable)t);
+                        if (v.getScope()==null)
+                            v.setScope(c);
+                    }
+                }            
+            });
+        }
+
     
         if (isUniqueByOcurrenceTime())
             this.hash = Objects.hash( content, punctuation, truth, stamp.getOccurrenceTime());

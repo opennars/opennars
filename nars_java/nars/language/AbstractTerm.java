@@ -10,7 +10,7 @@ public interface AbstractTerm extends Cloneable, Comparable<AbstractTerm> {
      *
      * @return Whether the name contains a variable
      */
-    boolean containVar();
+    boolean hasVar();
 
     /**
      * Check whether the current Term can name a Concept.

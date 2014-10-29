@@ -566,7 +566,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
-        if (component.containVar()) {
+        if (component.hasVar()) {
             return;
         }
         

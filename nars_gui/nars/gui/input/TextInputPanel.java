@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
@@ -55,6 +57,7 @@ import static nars.gui.output.SwingLogPanel.setConsoleFont;
 import nars.gui.output.SwingText;
 import nars.io.Output.OUT;
 import nars.io.TextInput;
+import nars.io.narsese.Narsese;
 import nars.io.narsese.NarseseParser;
 import nars.io.nlp.Englisch;
 import org.parboiled.errors.InvalidInputError;
@@ -341,9 +344,13 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                     return;
                 }
 
-                this.nextTasks = englisch.parse(input, nar.perception.getText().narsese, false);
-                if (nextTasks.isEmpty())
-                    nextTasks = null;
+                try {
+                    this.nextTasks = englisch.parse(input, nar.perception.getText().narsese, false);
+                    if (nextTasks.isEmpty())
+                        nextTasks = null;
+                } catch (Narsese.InvalidInputException ex) {
+                    
+                }
             }
         }
 

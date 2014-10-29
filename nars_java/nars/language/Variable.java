@@ -20,26 +20,35 @@
  */
 package nars.language;
 
+import java.util.Objects;
+
 /**
  * A variable term, which does not correspond to a concept
  */
 public class Variable extends Term {
+    
 
+    
     /** caches the type character for faster lookup than charAt(0) */
     private transient char type = 0;
     
-    public Variable() {
-        super();
-    }
+    private Term scope;
 
+    private transient int hash;
+    
+
+    public Variable(final CharSequence name) {
+        this(name, null);        
+    }
     
     /**
      * Constructor, from a given variable name
      *
-     * @param s A String read from input
+     * @param name A String read from input
      */
-    public Variable(final String s) {
-        super(s);
+    protected Variable(final CharSequence name, final Term scope) {
+        super(name);
+        setScope(scope);
     }
 
     @Override
@@ -48,6 +57,10 @@ public class Variable extends Term {
         type = newName.charAt(0);
     }
 
+    public void setScope(final Term scope) {
+        this.scope = scope != null ? scope : this;
+        this.hash = Objects.hash(name, scope);
+    }
     
     /**
      * Clone a Variable
@@ -56,10 +69,7 @@ public class Variable extends Term {
      */
     @Override
     public Variable clone() {
-        Variable v = new Variable();
-        v.name = name(); //apply name directly, no need to invoke setName()
-        v.type = getType();
-        return v;
+        return new Variable(name(), scope);
     }
 
     /**
@@ -96,10 +106,27 @@ public class Variable extends Term {
 
 
     @Override
-    public boolean containVar() {
+    public boolean hasVar() {
         return true;
     }
 
+    @Override public boolean equals(final Object that) {
+        if (that == this) return true;
+        if (!(that instanceof Variable)) return false;
+        Variable v = (Variable)that;
+        if ((v.scope == v) && (scope == this))
+            //both are unscoped, so compare by name only
+            return (v.name().equals(name()));        
+        else
+            return (v.scope.equals(scope)) && (v.name().equals(name()));
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    
     
 
 
@@ -122,6 +149,10 @@ public class Variable extends Term {
         CharSequence n = name();
         int l = n.length();        
         return n.charAt(l - 1) == '$';
+    }
+
+    public Term getScope() {
+        return scope;
     }
 
     

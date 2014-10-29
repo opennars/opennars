@@ -200,14 +200,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             setName("~" + t.name());
         }
 
-        
- 
-
-        //fast override to avoid unnecessary calculations
-        @Override protected short calcComplexity() {
-            return term[0].getComplexity();
+        @Override  protected void init(Term[] components) {
+            this.term = components;
         }
-        
         
     }
     
@@ -373,8 +368,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         }
 
         
-        @Override
-        protected short calcComplexity() { return -1; }
+       @Override  protected void init(Term[] components) {
+            this.term = components;            
+        }    
     }
     
     public Cause newImplicationEdge(final Term source, final Term target, Item i, final Sentence parent) {

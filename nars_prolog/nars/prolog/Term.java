@@ -149,7 +149,7 @@ public abstract class Term implements nars.language.AbstractTerm, Serializable {
     }
 
     @Override
-    public boolean containVar() {
+    public boolean hasVar() {
         return !isGround();
     }
 
