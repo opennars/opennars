@@ -146,7 +146,7 @@ public class LocalRules {
             }
         }
         Term content = belief.content;
-        if (Variables.containVarIndep(content.name())) {
+        if (content.hasVarIndep()) {
             Term u[] = new Term[] { content, problem.content };
             Variables.unify(Symbols.VAR_INDEPENDENT, u);
             content = u[0];                
@@ -308,11 +308,11 @@ public class LocalRules {
         final Term subjB = beliefContent.getSubject();
         final Term predB = beliefContent.getPredicate();
         Term otherTerm;
-        if (Variables.containVarQuery(subjT.name())) {
+        if (subjT.hasVarQuery()) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, otherTerm, predT, order);
         }
-        if (Variables.containVarQuery(predT.name())) {
+        if (predT.hasVarQuery()) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, subjT, otherTerm, order);
         }

@@ -250,7 +250,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             predicate = st.getPredicate();            
         }  
         
-        if(Variables.containVarIndep(s.content.toString())) {
+        if (s.content.hasVarIndep()) {
             return false;
         }
                 

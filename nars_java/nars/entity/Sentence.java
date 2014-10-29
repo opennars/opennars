@@ -92,7 +92,7 @@ public class Sentence implements Cloneable {
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
-        this.revisible = !((content instanceof Conjunction) && Variables.containVarDep(content.name()));
+        this.revisible = !((content instanceof Conjunction) && content.hasVarDep());
             
         if (content.hasVar() && (content instanceof CompoundTerm)) {
             final CompoundTerm c = (CompoundTerm)content;
@@ -277,7 +277,7 @@ public class Sentence implements Cloneable {
     }    
     
     public boolean containQueryVar() {
-        return Variables.containVarQuery(content.name());
+        return content.hasVarQuery();
     }
 
     public boolean getRevisible() {

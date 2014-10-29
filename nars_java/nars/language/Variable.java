@@ -105,10 +105,19 @@ public class Variable extends Term {
     }
 
 
-    @Override
-    public boolean hasVar() {
+    @Override public boolean hasVar() {
         return true;
     }
+    @Override public boolean hasVarIndep() {
+        return isIndependentVariable();
+    }
+    @Override public boolean hasVarDep() {
+        return isDependentVariable();
+    }
+    @Override public boolean hasVarQuery() {
+        return isQueryVariable();
+    }
+    
 
     @Override public boolean equals(final Object that) {
         if (that == this) return true;
