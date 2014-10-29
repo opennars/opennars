@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import nars.io.Symbols.NativeOperator;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -50,6 +51,13 @@ public class Inheritance extends Statement {
     @Override public Inheritance clone() {
         return new Inheritance(term);
     }
+
+    @Override public CompoundTerm clone(Term[] t) {
+        if (t.length!=2)
+            throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
+        return new Inheritance(t[0], t[1]);
+    }
+
 
     /**
      * Try to make a new compound from two term. Called by the inference rules.

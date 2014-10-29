@@ -22,6 +22,7 @@ package nars.language;
 
 import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.DifferenceInt.ensureValidDifferenceArguments;
 
 /**
  * A compound term whose extension is the difference of the extensions of its term
@@ -35,6 +36,8 @@ public class DifferenceExt extends CompoundTerm {
      */
     private DifferenceExt(Term[] arg) {
         super(arg);
+        
+        ensureValidDifferenceArguments(arg);        
     }
 
 

@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.DefaultNARBuilder;
 import nars.gui.InferenceLogger;
 import nars.io.Output;
@@ -36,6 +37,7 @@ public class NALTest  {
 
     static {
         Memory.randomNumber.setSeed(1);
+        Parameters.DEBUG = true;
     }
 
     boolean showOutput = false;

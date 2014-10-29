@@ -20,9 +20,13 @@
  */
 package nars.language;
 
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
+import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.SetTensional.verifySortedAndUnique;
 
 /**
  * A compound term whose intension is the intersection of the extensions of its term
@@ -36,6 +40,10 @@ public class IntersectionInt extends CompoundTerm {
      */
     private IntersectionInt(final Term[] arg) {
         super( arg );
+        
+        if (Parameters.DEBUG) {
+            verifySortedAndUnique(arg, false);
+        }        
     }
 
 
@@ -48,6 +56,16 @@ public class IntersectionInt extends CompoundTerm {
         return new IntersectionInt(term);
     }
 
+  @Override
+    public CompoundTerm clone(Term[] replaced) {
+        if (replaced.length == 1)
+            return (CompoundTerm) replaced[0];
+        else if (replaced.length > 1)
+            return (CompoundTerm) make(replaced);
+        else
+            throw new RuntimeException("Invalid # of terms for Intersection: " + Arrays.toString(replaced));
+    }
+        
     /**
      * Try to make a new compound from two term. Called by the inference rules.
      * @param term1 The first compoment
@@ -86,34 +104,31 @@ public class IntersectionInt extends CompoundTerm {
             set.add(term1);
             set.add(term2);
         }
-        return make(set);
+        return make(set.toArray(new Term[set.size()]));
     }
 
+
+
     /**
-     * Try to make a new IntersectionExt. Called by StringParser.
+     * Try to make a new IntersectionExt.  Called when the input may contain duplicates
      * @return the Term generated from the arguments
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(final Collection<Term> argList) {
-        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set);
+    public static Term makeUnduplicated(Term... t) {
+        if (t.length == 1) return t[0]; // special case: single component        
+        Set<Term> s = new HashSet();
+        for (Term x : t) s.add(x);
+        return make(s.toArray(new Term[s.size()]));
     }
-
-    /**
-     * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param set a set of Term as compoments
-     * @param memory Reference to the memory
-     * @return the Term generated from the arguments
-     */
-    public static Term make(final TreeSet<Term> set) {
-        if (set.size() == 1) {
-            return set.first();
-        }                         // special case: single component
-        Term[] argument = set.toArray(new Term[set.size()]);
-        return new IntersectionInt( argument);
+    
+    public static Term make(Term... t) {
+        if (t.length == 1) return t[0]; // special case: single component        
+        t = t.clone();
+        Arrays.sort(t);
+        return new IntersectionInt(t);
     }
-
+    
     /**
      * Get the operator of the term.
      * @return the operator of the term

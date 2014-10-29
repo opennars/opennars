@@ -107,7 +107,7 @@ public abstract class CompoundTerm extends Term {
     
     
     /** override in subclasses to avoid unnecessary reinit */
-    public final CompoundTerm clone(final Term[] replaced) {
+    public CompoundTerm clone(final Term[] replaced) {
         CompoundTerm c = clone();
         c.init(replaced);
         return c;
@@ -652,14 +652,12 @@ public abstract class CompoundTerm extends Term {
                     modified = true;
                 }
             } else if (t1 instanceof CompoundTerm) {
-                /*if (InferenceTracer.guardStack(50, "applySubstitute", this, t1, subs)) {
-                    System.err.println(i + " "  + this + " " + t1 + " " + subs);
-                    //new Exception().printStackTrace();;
-                    //System.exit(1);
-                }*/
-                tt[i] = ((CompoundTerm) t1).applySubstitute(subs);
-                if (!tt[i].equals(term[i]))
-                    modified = true;
+                CompoundTerm ss = ((CompoundTerm) t1).applySubstitute(subs);
+                if (ss!=null) {
+                    tt[i] = ss;
+                    if (!tt[i].equals(term[i]))
+                        modified = true;
+                }
             }            
         }
         if (!modified)

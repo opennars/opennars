@@ -187,7 +187,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         
         int in = nameTable.size();
         
-        if (Parameters.DEBUG_BAG) {
+        if (Parameters.DEBUG) {
         
             int is = sizeItems();
             if (is!=in) {

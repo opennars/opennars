@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_INT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
+import static nars.language.SetExt.make;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.
@@ -75,9 +76,8 @@ public class SetInt extends SetTensional {
         if (t.isEmpty())
             return null;
         
-        Term[] argument = t.toArray(new Term[t.size()]);        
-        Arrays.sort(argument);
-        return new SetInt(argument);
+        final TreeSet<Term> set = new TreeSet<>(t);
+        return make(set.toArray(new Term[set.size()]));
     }
 
     /**

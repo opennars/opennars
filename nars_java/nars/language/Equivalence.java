@@ -20,8 +20,10 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.Implication.make;
 
 /**
  * A Statement about an Equivalence relation.
@@ -50,6 +52,12 @@ public class Equivalence extends Statement {
     @Override
     public Equivalence clone() {
         return new Equivalence(term, temporalOrder);
+    }
+    
+    @Override public CompoundTerm clone(final Term[] t) {        
+        if (t.length!=2)
+            throw new RuntimeException("Equivalence requires 2 components: " + Arrays.toString(t));
+        return make(t[0], t[1], temporalOrder);
     }
 
 

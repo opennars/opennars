@@ -21,6 +21,7 @@
 package nars.language;
 
 import java.util.TreeSet;
+import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
 
 /**
@@ -35,8 +36,19 @@ public class DifferenceInt extends CompoundTerm {
      */
     private DifferenceInt(final Term[] arg) {
         super(arg);
+        
+        ensureValidDifferenceArguments(arg);
     }
 
+    public static void ensureValidDifferenceArguments(Term[] arg) {
+        if (arg.length!=2)
+            throw new RuntimeException("Requires 2 components");
+        
+        if (Parameters.DEBUG) {
+            if (arg[0].equals(arg[1]))
+                throw new RuntimeException("Equal arguments invalid");
+        }                
+    }
 
     /**
      * Clone an object

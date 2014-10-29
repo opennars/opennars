@@ -20,8 +20,10 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.Conjunction.make;
 
 /**
  * A Statement about an Inheritance copula.
@@ -35,7 +37,7 @@ public class Implication extends Statement {
      */
     public Implication(Term[] arg, int order) {
         super();
-        
+                
         temporalOrder = order;
         init(arg);
     }
@@ -55,6 +57,13 @@ public class Implication extends Statement {
     public Implication clone() {
         return new Implication(term, getTemporalOrder());
     }
+    
+    @Override public CompoundTerm clone(final Term[] t) {        
+        if (t.length!=2)
+            throw new RuntimeException("Implication requires 2 components: " + Arrays.toString(t));
+        return make(t[0], t[1], temporalOrder);
+    }
+    
 
     /**
      * Try to make a new compound from two term. Called by the inference rules.

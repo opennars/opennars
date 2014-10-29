@@ -20,6 +20,8 @@
  */
 package nars.language;
 
+import java.util.Arrays;
+import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
@@ -46,6 +48,22 @@ public abstract class Statement extends CompoundTerm {
     
     protected Statement() {
         super();
+    }
+
+    @Override
+    protected void init(Term[] t) {
+        if (t[0]==null)
+            throw new RuntimeException("Null subject: " + this);
+        if (t[1]==null)
+            throw new RuntimeException("Null predicate: " + this);        
+        if (Parameters.DEBUG) {                
+            if (isCommutative()) {
+                if (t[0].compareTo(t[1])==1) {
+                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
+                }
+            }
+        }
+        super.init(t);
     }
     
    

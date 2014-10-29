@@ -53,7 +53,10 @@ public class ImageInt extends Image {
         return new ImageInt(term, relationIndex);
     }
 
-    
+    @Override
+    public CompoundTerm clone(Term[] replaced) {
+        return new ImageInt(replaced, relationIndex);
+    }    
     
     /**
      * Try to make a new ImageExt. Called by StringParser.

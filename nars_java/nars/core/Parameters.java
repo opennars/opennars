@@ -176,7 +176,7 @@ public class Parameters {
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
     
     /** use this for advanced Bag error checking */
-    public static boolean DEBUG_BAG = false;
+    public static boolean DEBUG = true;
     
 }
 

@@ -22,8 +22,9 @@ package nars.language;
 
 import java.util.Collection;
 import java.util.TreeSet;
-import nars.io.Symbols;
+import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.SetTensional.verifySortedAndUnique;
 
 /** 
  * A disjunction of Statements.
@@ -37,6 +38,10 @@ public class Disjunction extends CompoundTerm {
      */
     private Disjunction(final Term[] arg) {
         super(arg);
+        
+        if (Parameters.DEBUG) {
+            verifySortedAndUnique(arg, false);
+        }        
     }
 
     
@@ -54,6 +59,12 @@ public class Disjunction extends CompoundTerm {
         return new Disjunction(term);
     }
 
+    @Override
+    public CompoundTerm clone(Term[] x) {
+        return (CompoundTerm) make(Term.toSortedSet(x));
+    }
+    
+    
     /**
      * Try to make a new Disjunction from two term. Called by the inference rules.
      * @param term1 The first component
