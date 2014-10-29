@@ -156,9 +156,7 @@ public class Conjunction extends CompoundTerm {
 
     @Override
     protected CharSequence makeName() {
-        return makeCompoundName( (temporalOrder == TemporalRules.ORDER_NONE) ? 
-                NativeOperator.CONJUNCTION : NativeOperator.PARALLEL,
-                term);
+        return makeCompoundName( operator(),  term);
     }
 
     

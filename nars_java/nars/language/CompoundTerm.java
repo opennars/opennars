@@ -597,7 +597,7 @@ public abstract class CompoundTerm extends Term {
                 }
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1)) {
-                    tt[i] = t2.clone();
+                    tt[i] = t2; //t2.clone();
                     modified = true;
                 }
             } else if (t1 instanceof CompoundTerm) {

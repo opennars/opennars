@@ -197,7 +197,6 @@ public class TemporalRules {
     }
     
     
-    static final Variable varInd0 = new Variable("$0");
     
     public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
         if ((s1.truth==null) || (s2.truth==null))
@@ -223,7 +222,7 @@ public class TemporalRules {
 
             
             
-            Variable var1 = varInd0.clone();
+            Variable var1 = new Variable("$0");
             Variable var2 = var1;
 
             if (ss1.getSubject().equals(ss2.getSubject())) {

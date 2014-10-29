@@ -31,7 +31,7 @@ public class NumericCertainty extends Operator {
         float resultCertainty = (clampedValue-min)/(max-min);
         
         
-        Term resultTerm = args[3].clone();
+        Term resultTerm = args[3];
         
         // NOTE< no memory output ? >
         
