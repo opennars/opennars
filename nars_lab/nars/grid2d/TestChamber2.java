@@ -17,7 +17,6 @@ import nars.grid2d.operator.Activate;
 import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
-import nars.operator.io.Say;
 import nars.gui.NARSwing;
 import processing.core.PVector;
 

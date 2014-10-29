@@ -23,13 +23,12 @@ package nars.language;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Memory;
 import nars.entity.TermLink;
 import nars.inference.TemporalRules;
@@ -60,6 +59,7 @@ public abstract class CompoundTerm extends Term {
     transient private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
     
     transient int containedTemporalRelations = -1;
+    private int hash;
     
 
     /**
@@ -102,6 +102,7 @@ public abstract class CompoundTerm extends Term {
         }
         
         this.name = null; //invalidate name so it will be (re-)created lazily        
+        this.hash = calcHash();
     }
 
     
@@ -691,13 +692,52 @@ public abstract class CompoundTerm extends Term {
             c.add(t);
     }
 
-    /*public final TreeSet<Term> getTermTreeSet() {
-        TreeSet<Term> set = new TreeSet<>();
-        addTermsTo(set);
-        return set;        
-    }*/
 
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    
+    @Override
+    public boolean equals(final Object that) {
+        if (that==this) return true;
         
+        if (!(that instanceof CompoundTerm)) return false;
+        
+        final CompoundTerm t = (CompoundTerm)that;        
+        
+        if (operator() != t.operator())
+            return false;
+        
+        if (size() != t.size())
+            return false;
+        
+        if (getTemporalOrder()!=t.getTemporalOrder())
+            return false;
+        
+        if (!equals2(t))
+            return false;
+        
+        for (int i = 0; i < term.length; i++) {            
+            if (!term[i].equals(t.term[i]))
+                return false;
+        }
+        
+        return true;
+        
+    }
+    
+    /** additional equality checks, in subclasses*/
+    public boolean equals2(final CompoundTerm other) {
+        return true;
+    }
+
+    /** may be overridden in subclass to include other details */
+    protected int calcHash() {
+        return Objects.hash(operator(), Arrays.hashCode(term), getTemporalOrder());
+    }
+    
 //
 //    /**
 //     * Orders among terms: variable < atomic < compound
@@ -739,6 +779,7 @@ public abstract class CompoundTerm extends Term {
 //    }
 
     
+    
     /*
     @Override
     public boolean equals(final Object that) {
@@ -747,32 +788,6 @@ public abstract class CompoundTerm extends Term {
     */
 
     
-//    @Override
-//    public boolean equals(final Object that) {
-//        if (!(that instanceof CompoundTerm))
-//            return false;
-//        
-//        final CompoundTerm t = (CompoundTerm)that;
-//        return name().equals(t.name());
-//        
-//        /*if (hashCode() != t.hashCode())
-//            return false;
-//        
-//        if (operator() != t.operator())
-//            return false;
-//        
-//        if (size() != t.size())
-//            return false;
-//        
-//        for (int i = 0; i < term.size(); i++) {
-//            final Term c = term.get(i);
-//            if (!c.equals(t.componentAt(i)))
-//                return false;
-//        }
-//        
-//        return true;*/
-//        
-//    }
 //
 //
 //        
@@ -812,6 +827,7 @@ public abstract class CompoundTerm extends Term {
 //            return 1;
 //            */
 //    }
+
 
 
 

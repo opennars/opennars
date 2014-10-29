@@ -2,13 +2,8 @@ package nars.test.multistep;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nars.core.NAR;
 import nars.core.build.DefaultNARBuilder;
-import nars.gui.NWindow;
-import nars.gui.output.graph.ImplicationGraphCanvas;
-import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.io.Output;
 import org.junit.Test;
 

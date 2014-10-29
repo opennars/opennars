@@ -15,7 +15,6 @@
 package nars.util.meter.session;
 
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;

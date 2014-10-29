@@ -17,7 +17,6 @@ import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.Executive.isPlanTerm;
-import nars.io.Output.OUT;
 import nars.io.Texts;
 import nars.language.Conjunction;
 import nars.language.Implication;

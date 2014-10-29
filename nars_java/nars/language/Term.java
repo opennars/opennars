@@ -89,7 +89,7 @@ public class Term implements AbstractTerm {
     @Override
     public boolean equals(final Object that) {
         if (that == this) return true;
-        if (!(that instanceof Term)) return false;
+        if (!(that.getClass().equals(getClass()))) return false;
         return name().equals(((Term)that).name());
     }
 
@@ -246,7 +246,7 @@ public class Term implements AbstractTerm {
     }
     static Term[] toSortedSetArray(final Term[] arg) {
         TreeSet<Term> s = toSortedSet(arg);
-        //toArray doesnt seem to work
+        //toArray didnt seem to work, but it might. in the meantime:
         Term[] n = new Term[s.size()];
         int j = 0;
         for (Term x : s) {

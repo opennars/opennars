@@ -31,7 +31,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import nars.core.NAR;
 import nars.narclear.jbox2d.PhysicsController;
 import nars.narclear.jbox2d.PhysicsController.MouseBehavior;

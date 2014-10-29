@@ -1,6 +1,5 @@
 package nars.test.core.bag;
 
-import java.util.Arrays;
 import nars.core.Memory;
 import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
@@ -11,7 +10,6 @@ import nars.storage.LevelBag;
 import nars.storage.CurveBag;
 import nars.storage.CurveBag.BagCurve;
 import nars.util.sort.ArraySortedIndex;
-import nars.util.sort.FractalSortedItemList;
 import nars.util.sort.SortedIndex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,14 +28,14 @@ public class CurveBagTest {
     public void testBags() {
 
         
-        FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
-        int[] d2 = testCurveBag(f1);
+        //FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
+        //int[] d2 = testCurveBag(f1);
         //int[] d3 = testCurveBag(new RedBlackSortedIndex<>());        
         int[] d1 = testCurveBag(new ArraySortedIndex<>());
 
         
         //use the final distribution to compare that each implementation generates exact same results
-        assertTrue(Arrays.equals(d1, d2));
+        //assertTrue(Arrays.equals(d1, d2));
         //assertTrue(Arrays.equals(d2, d3));
         
         for (int capacity : new int[] { 4, 7, 13, 16, 100 } ) {

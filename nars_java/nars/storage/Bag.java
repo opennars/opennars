@@ -6,7 +6,6 @@ import java.util.Set;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Item;
-import nars.language.Term;
 
 
 public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {

@@ -4,8 +4,6 @@
  */
 package nars.test.core.bag;
 
-import com.google.common.collect.Iterators;
-import java.util.Arrays;
 import nars.storage.GearBag;
 import org.junit.Test;
 

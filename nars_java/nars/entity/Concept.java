@@ -35,8 +35,6 @@ import nars.core.Events.TermLinkAdd;
 import nars.core.Events.TermLinkRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
-import nars.inference.BudgetFunctions;
-import nars.inference.BudgetFunctions.Activating;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;

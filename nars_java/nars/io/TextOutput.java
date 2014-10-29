@@ -27,7 +27,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.Collection;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;

@@ -37,7 +37,6 @@ import static nars.io.Symbols.getOperator;
 import static nars.io.Symbols.getRelation;
 import static nars.io.Symbols.isRelation;
 import nars.io.Texts;
-import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.SetExt;
 import nars.language.SetInt;
