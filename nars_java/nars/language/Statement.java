@@ -261,9 +261,9 @@ public abstract class Statement extends CompoundTerm {
     }
 
    
-    public static boolean invalidPair(final CharSequence s1, final CharSequence s2) {
-        boolean s1Indep = Variables.containVarIndep(s1);
-        boolean s2Indep = Variables.containVarIndep(s2);
+    public static boolean invalidPair(final Term s1, final Term s2) {
+        boolean s1Indep = s1.hasVarIndep();
+        boolean s2Indep = s2.hasVarIndep();
         if (s1Indep && !s2Indep) {
             return true;
         } else if (!s1Indep && s2Indep) {

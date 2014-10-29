@@ -1,0 +1,27 @@
+/*
+ * Here comes the text of your license
+ * Each line should be prefixed with  * 
+ */
+package nars.test.util;
+
+import nars.util.Utf8;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+/**
+ *
+ * @author me
+ */
+public class Utf8Test {
+    @Test
+    public void testUTF8() {
+        Utf8 u = new Utf8("x");
+        assertEquals(1, u.length());
+        assertEquals("x", u.toString());
+        assertEquals('x', u.charAt(0));
+        assertEquals(151, u.hashCode());
+        
+        Utf8 v = new Utf8("string");
+        assertEquals(6, v.length());
+    }
+}

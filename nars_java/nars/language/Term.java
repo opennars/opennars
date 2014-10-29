@@ -32,6 +32,7 @@ import nars.io.Texts;
  */
 public class Term implements AbstractTerm {
 
+
     public interface TermVisitor {
         public void visit(Term t);
     }
@@ -176,15 +177,7 @@ public class Term implements AbstractTerm {
         return Texts.compareTo(name(), that.name());
     }
 
-    /**
-     * Whether this compound term contains any variable term
-     *
-     * @return Whether the name contains a variable
-     */
-    @Override
-    public boolean hasVar() {
-        return false;
-    }
+    
     
     public int containedTemporalRelations() {
         return 0;
@@ -221,5 +214,25 @@ public class Term implements AbstractTerm {
     }
 
 
+    /**
+     * Whether this compound term contains any variable term
+     *
+     * @return Whether the name contains a variable
+     */
+    @Override public boolean hasVar() {
+        return false;
+    }
+    
+    public boolean hasVarIndep() {
+        return false;
+    }
+
+    public boolean hasVarDep() {
+        return false;
+    }
+
+    public boolean hasVarQuery() {
+        return false;
+    }
     
 }

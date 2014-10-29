@@ -121,7 +121,7 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final NAL nal) {
-        if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1.name(), term2.name())) {
+        if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
             return;
         }
         int order1 = sentence1.content.getTemporalOrder();

@@ -51,12 +51,13 @@ public abstract class CompoundTerm extends Term {
     /**
      * syntactic complexity of the compound, the sum of those of its term
  plus 1
+        TODO make final again
      */
-    public short complexity;
+    transient public short complexity;
     
     
     /** Whether contains a variable */
-    private boolean hasVariables;
+    transient private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
     
     transient int containedTemporalRelations = -1;
     
@@ -80,21 +81,24 @@ public abstract class CompoundTerm extends Term {
         super();
     }
     
-    public CompoundTerm(Term[] components) {
+    public CompoundTerm(final Term[] components) {
         super();
         init(components);
     }
     
     /** call this after changing Term[] contents */
-    protected void init(Term[] components) {
+    protected void init(final Term[] components) {
 
         this.term = components;            
 
         this.complexity = 1;
+        this.hasVariables = this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = false;
         for (final Term t : term) {
             this.complexity += t.getComplexity();        
-            if (t.hasVar())
-                this.hasVariables = true;
+            hasVariables |= t.hasVar();
+            hasVarDeps |= t.hasVarDep();
+            hasVarIndeps |= t.hasVarIndep();
+            hasVarQueries |= t.hasVarQuery();
         }
         
         this.name = null; //invalidate name so it will be (re-)created lazily        
@@ -188,6 +192,35 @@ public abstract class CompoundTerm extends Term {
             this.name = makeName();
         return this.name;
     }
+    
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (!(that instanceof CompoundTerm))
+//            return false;
+//        
+//        final CompoundTerm t = (CompoundTerm)that;
+//        return name().equals(t.name());
+//        
+//        /*if (hashCode() != t.hashCode())
+//            return false;
+//        
+//        if (operator() != t.operator())
+//            return false;
+//        
+//        if (size() != t.size())
+//            return false;
+//        
+//        for (int i = 0; i < term.size(); i++) {
+//            final Term c = term.get(i);
+//            if (!c.equals(t.componentAt(i)))
+//                return false;
+//        }
+//        
+//        return true;*/
+//        
+//    }
+    
+    
     
     /**
      * default method to make the oldName of a compound term from given fields
@@ -483,9 +516,27 @@ public abstract class CompoundTerm extends Term {
      */
     @Override
     public boolean hasVar() {
-        return hasVariables;
+        return hasVariables;    
     }
 
+    @Override
+    public boolean hasVarDep() {
+        return hasVarDeps;
+    }
+
+    @Override
+    public boolean hasVarIndep() {
+        return hasVarIndeps;
+    }
+
+    @Override
+    public boolean hasVarQuery() {
+        return hasVarQueries;
+    }
+    
+    
+
+    
     
 //    /** caches a static copy of commonly uesd index variables of each variable type */
 //    public static final int maxCachedVariableIndex = 32;

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import nars.core.Memory;
 import nars.io.Symbols;
-import nars.io.Texts;
 
 /**
  * Static utility class for static methods related to Variables
@@ -168,54 +167,54 @@ public class Variables {
         return r;
     }
     
-    /**
-     * Check whether a string represent a name of a term that contains a query
-     * variable
-     *
-     * @param n The string name to be checked
-     * @return Whether the name contains a query variable
-     */
-    public static boolean containVarQuery(final CharSequence n) {
-        return Texts.containsChar(n, Symbols.VAR_QUERY);
-    }
+//    /**
+//     * Check whether a string represent a name of a term that contains a query
+//     * variable
+//     *
+//     * @param n The string name to be checked
+//     * @return Whether the name contains a query variable
+//     */
+//    public static boolean containVarQuery(final CharSequence n) {
+//        return Texts.containsChar(n, Symbols.VAR_QUERY);
+//    }
 
-    /**
-     * Check whether a string represent a name of a term that contains a
-     * dependent variable
-     *
-     * @param n The string name to be checked
-     * @return Whether the name contains a dependent variable
-     */
-    public static boolean containVarDep(final CharSequence n) {
-        return Texts.containsChar(n, Symbols.VAR_DEPENDENT);
-    }
+//    /**
+//     * Check whether a string represent a name of a term that contains a
+//     * dependent variable
+//     *
+//     * @param n The string name to be checked
+//     * @return Whether the name contains a dependent variable
+//     */
+//    public static boolean containVarDep(final CharSequence n) {
+//        return Texts.containsChar(n, Symbols.VAR_DEPENDENT);
+//    }
 
     public static Variable makeCommonVariable(final Term v1, final Term v2) {
         //TODO use more efficient string construction
         return new Variable(v1.toString() + v2.toString() + '$');
     }
 
-    public static boolean containVarDepOrIndep(final CharSequence n) {
-        final int l = n.length();
-        for (int i = 0; i < l; i++) {
-            char c = n.charAt(i);
-            if ((c == Symbols.VAR_INDEPENDENT) || (c == Symbols.VAR_DEPENDENT)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public static boolean containVarDepOrIndep(final CharSequence n) {
+//        final int l = n.length();
+//        for (int i = 0; i < l; i++) {
+//            char c = n.charAt(i);
+//            if ((c == Symbols.VAR_INDEPENDENT) || (c == Symbols.VAR_DEPENDENT)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-    /**
-     * Check whether a string represent a name of a term that contains an
-     * independent variable
-     *
-     * @param n The string name to be checked
-     * @return Whether the name contains an independent variable
-     */
-    public static boolean containVarIndep(final CharSequence n) {
-        return Texts.containsChar(n, Symbols.VAR_INDEPENDENT);
-    }    
+//    /**
+//     * Check whether a string represent a name of a term that contains an
+//     * independent variable
+//     *
+//     * @param n The string name to be checked
+//     * @return Whether the name contains an independent variable
+//     */
+//    public static boolean containVarIndep(final CharSequence n) {
+//        return Texts.containsChar(n, Symbols.VAR_INDEPENDENT);
+//    }    
     
     /**
      * Check whether a string represent a name of a term that contains an
@@ -228,10 +227,8 @@ public class Variables {
         if(!(T instanceof Inheritance) && !(T instanceof Similarity)) {
             return false;
         }
-        if(Variables.containVarIndep(T.name())) {
-            return true;
-        }
-        return false;
+
+        return T.hasVarIndep();
     }
 
     /**

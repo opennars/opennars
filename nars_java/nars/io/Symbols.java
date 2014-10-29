@@ -44,11 +44,34 @@ public class Symbols {
     public static final String TENSE_PRESENT = ":|:";
     public static final String TENSE_FUTURE = ":/:";
     
-    /* variable type */
+    
+    
+    
+    /* variable type  ------------------ */
+   
     public static final char VAR_INDEPENDENT = '$';
+    public static final String VAR_INDEPENDENT_DEFAULT = VAR_INDEPENDENT + "it";
+    
+    //#sth talks about a thinkg without naming it
     public static final char VAR_DEPENDENT = '#';
+    public static final String VAR_DEPENDENT_DEFAULT = VAR_DEPENDENT + "sth";
+    
+    //?any asks for a concrete thing
     public static final char VAR_QUERY = '?';
+    public static final String VAR_QUERY_DEFAULT = VAR_QUERY + "any";
 
+    /*
+        $it $eth $1 $sth,   #sth #1    ?what      
+        $it #sth ?what
+    */
+    
+    
+    
+    
+    
+    
+    
+    
     /* numerical value delimitors, must be different from the Term delimitors */
     public static final char BUDGET_VALUE_MARK = '$';
     public static final char TRUTH_VALUE_MARK = '%';
