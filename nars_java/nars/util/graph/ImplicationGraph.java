@@ -1,10 +1,7 @@
 package nars.util.graph;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.WeakHashMap;
+import static jdk.nashorn.internal.runtime.Debug.id;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.Item;
@@ -21,7 +18,6 @@ import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Term;
-import nars.language.Variables;
 import nars.operator.Operation;
 import nars.util.graph.ImplicationGraph.Cause;
 
@@ -142,53 +138,64 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     public static class UniqueOperation extends Operation {
         
         public final Implication parent;        
-        private final String id;
+        private final Term previous;
+        private final int hash;
+        
         
         public UniqueOperation(Implication parent, Operation o, Term previous) {
             super(o.term);
-            if (previous != null)
-                this.id = parent.name() +"/"+ previous.name() + "/" + o.name();
-            else
-                this.id = parent.name() +"/"+ o.name();
+            this.previous = previous;            
             this.parent = parent;
+            this.hash = Objects.hash(previous, parent, o.term);
         }
 
-        @Override
-        public CharSequence name() {
-            return id;
-        }
-        
-        @Override
-        protected CharSequence makeName() {
-            return id;
-        }
         
         @Override public boolean equals(final Object that) {
-            if (that == this) return true;           
-            if (that instanceof UniqueOperation)
-                return (((UniqueOperation)that).id.equals(id));            
+            if (that == this) return true;
+            if (that instanceof UniqueOperation) {
+                UniqueOperation u = (UniqueOperation)that;
+                if (!u.parent.equals(parent)) return false;
+                if (!Objects.equals(u.previous, previous)) return false;
+                return super.equals(that);
+            }
             return false;
         }        
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+        
         
     }
     
     public static class UniqueInterval extends Interval {
         
-        public final Implication parent;        
-        private final String id;
+        public final Implication parent;                
+        private final Term previous;
+        private final int hash;
     
         public UniqueInterval(Implication parent, Term previous, Interval i) {
-            super(i.magnitude, true);    
-            this.id = parent.name() + "/" + (previous!=null ? previous.name() : "") + "/" + i.name();
+            super(i.magnitude, true);                
+            this.previous = previous;
             this.parent = parent;
+            this.hash = Objects.hash(i, previous, parent);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
         }
         
-        @Override public CharSequence name() {  return id;        }
-    
         @Override public boolean equals(final Object that) {
             if (that == this) return true;           
-            if (that instanceof UniqueInterval)
-                return (((UniqueInterval)that).id.equals(id));            
+            if (that instanceof UniqueInterval) {
+                UniqueInterval u = (UniqueInterval)that;
+                if (magnitude!=u.magnitude) return false;
+                if (parent!=u.parent) return false;
+                if (!Objects.equals(u.previous, previous)) return false; //handles null value
+                return true;
+            }
             return false;
         }        
         
@@ -196,9 +203,20 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
     public static class PostCondition extends Negation {
         public PostCondition(final Term t) {
-            super(t);
-            setName("~" + t.name());
+            super(t);                
         }
+
+        @Override
+        protected CharSequence makeName() {
+            return "~" + this.term[0].name();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (!(that instanceof PostCondition)) return false;
+            return super.equals(that);
+        }
+
 
         @Override  protected void init(Term[] components) {
             this.term = components;

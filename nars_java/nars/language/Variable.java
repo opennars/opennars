@@ -57,9 +57,10 @@ public class Variable extends Term {
         type = newName.charAt(0);
     }
 
-    public void setScope(final Term scope) {
+    public Variable setScope(final Term scope) {
         this.scope = scope != null ? scope : this;
         this.hash = Objects.hash(name, scope);
+        return this;
     }
     
     /**

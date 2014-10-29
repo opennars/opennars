@@ -6,7 +6,7 @@ import nars.entity.Item;
 import nars.entity.Item.ItemPriorityComparator;
 
 /**
- * EXPERIMENTAL - NOT READY YET
+ * EXPERIMENTAL - NOT READY YET - has a bug / leak
  * @param <E> 
  */
 public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedIndex<E> {

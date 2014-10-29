@@ -372,7 +372,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         //If it wasn't found, it probably was removed already.  So this check is probably not necessary
         
             //search other levels for this item because it's not where we thought it was according to getLevel()
-        String m = "Possible LevelBag inconsistency: Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName();
+        String m = "Possible LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName();
         System.err.println(m);
         
         return oldItem;

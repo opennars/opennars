@@ -34,7 +34,7 @@ public class Term implements AbstractTerm {
 
 
     public interface TermVisitor {
-        public void visit(Term t);
+        public void visit(Term t, CompoundTerm parent, int index);
     }
     
     protected CharSequence name = null;
@@ -122,10 +122,12 @@ public class Term implements AbstractTerm {
     }   
 
     public void recurseTerms(final TermVisitor v) {
-        v.visit(this);        
+        v.visit(this, null, 0);        
         if (this instanceof CompoundTerm) {
-            for (Term t : ((CompoundTerm)this).term) {
-                v.visit(t);
+            int i = 0;
+            CompoundTerm ct = ((CompoundTerm)this);
+            for (Term t : ct.term) {
+                v.visit(t, ct, i++);
             }
         }
     }
