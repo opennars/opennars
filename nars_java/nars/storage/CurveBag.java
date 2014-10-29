@@ -157,7 +157,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         int in = nameTable.size();
         
         
-        if (Parameters.DEBUG_BAG) {
+        if (Parameters.DEBUG) {
             int is = items.size();
             
             if (is!=in) {

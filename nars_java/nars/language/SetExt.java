@@ -22,6 +22,7 @@ package nars.language;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.TreeSet;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
@@ -61,11 +62,10 @@ public class SetExt extends SetTensional {
         if (t.isEmpty())
             return null;
         
-        Term[] argument = t.toArray(new Term[t.size()]);
-        Arrays.sort(argument);
-        return make(argument);
+        final TreeSet<Term> set = new TreeSet<>(t);
+        return make(set.toArray(new Term[set.size()]));
     }
-
+    
     public static Term make(final Term... t) {        
         if (t.length == 0) return null;
         

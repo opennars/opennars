@@ -32,15 +32,10 @@ public class NALStressMeasure  {
 
             @Override
             public void run(boolean warmup) {
-                try {
-                    n.reset();
-                    n.addInput(example);
-                    n.step(1);
-                    n.finish(extraCycles);
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                }
+                n.reset();
+                n.addInput(example);
+                n.step(1);
+                n.finish(extraCycles);
                 
                 totalCycles += n.memory.getCycleTime();
             }

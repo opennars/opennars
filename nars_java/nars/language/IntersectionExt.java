@@ -20,9 +20,12 @@
  */
 package nars.language;
 
-import java.util.Collection;
-import java.util.TreeSet;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.SetTensional.verifySortedAndUnique;
 
 /**
  * A compound term whose extension is the intersection of the extensions of its term
@@ -36,6 +39,11 @@ public class IntersectionExt extends CompoundTerm {
      */
     private IntersectionExt(Term[] arg) {
         super(arg);
+        
+        if (Parameters.DEBUG) {
+            verifySortedAndUnique(arg, false);
+        }
+        
     }
 
 
@@ -47,7 +55,17 @@ public class IntersectionExt extends CompoundTerm {
     public IntersectionExt clone() {
         return new IntersectionExt(term);
     }
-
+    
+    @Override
+    public CompoundTerm clone(Term[] replaced) {
+        if (replaced.length == 1)
+            return (CompoundTerm) replaced[0];
+        else if (replaced.length > 1)
+            return (CompoundTerm) make(replaced);
+        else
+            throw new RuntimeException("Invalid # of terms for Intersection: " + Arrays.toString(replaced));
+    }
+    
     /**
      * Try to make a new compound from two term. Called by the inference rules.
      * @param term1 The first compoment
@@ -56,19 +74,19 @@ public class IntersectionExt extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(Term term1, Term term2) {
-        TreeSet<Term> set;
+        Set<Term> set;
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
-            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
+            set = new HashSet<>(((CompoundTerm) term1).getTermList());
             set.addAll(((CompoundTerm) term2).getTermList());        // set union
             return SetInt.make(set);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
-            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
+            set = new HashSet<>(((CompoundTerm) term1).getTermList());
             set.retainAll(((CompoundTerm) term2).getTermList());     // set intersection
             return SetExt.make(set);
         }
         if (term1 instanceof IntersectionExt) {
-            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
+            set = new HashSet<>(((CompoundTerm) term1).getTermList());
             if (term2 instanceof IntersectionExt) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
                 set.addAll(((CompoundTerm) term2).getTermList());
@@ -79,42 +97,37 @@ public class IntersectionExt extends CompoundTerm {
             }               
         } else if (term2 instanceof IntersectionExt) {
             // (&,R,(&,P,Q)) = (&,P,Q,R)
-            set = new TreeSet<>(((CompoundTerm) term2).getTermList());
-            set.add(term1);    
+            set = new HashSet<>(((CompoundTerm) term2).getTermList());
+            set.add(term1);
         } else {
-            set = new TreeSet<>();
+            set = new HashSet<>();
             set.add(term1);
             set.add(term2);
         }
-        return make(set);
+        return make(set.toArray(new Term[set.size()]));
     }
 
     /**
-     * Try to make a new IntersectionExt. Called by StringParser.
+     * Try to make a new IntersectionExt.  Called when the input may contain duplicates
      * @return the Term generated from the arguments
      * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(Collection<Term> argList) {
-        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
-        return make(set);
+    public static Term makeUnduplicated(Term... t) {
+        if (t.length == 1) return t[0]; // special case: single component        
+        Set<Term> s = new HashSet();
+        for (Term x : t) s.add(x);
+        return make(s.toArray(new Term[s.size()]));
+    }
+    
+    public static Term make(Term... t) {
+        if (t.length == 1) return t[0]; // special case: single component        
+        
+        Term[] s = Term.toSortedSetArray(t);        
+        return new IntersectionExt(s);
     }
 
-    /**
-     * Try to make a new compound from a set of term. Called by the public make methods.
-     * @param set a set of Term as compoments
-     * @param memory Reference to the memory
-     * @return the Term generated from the arguments
-     */
-    public static Term make(TreeSet<Term> set) {
-        if (set.size() == 1) {
-            // special case: single component
-            return set.first();
-        }                         
-        
-        Term[] argument = set.toArray(new Term[set.size()]);        
-        return new IntersectionExt(argument);
-    }
+
 
     /**
      * Get the operator of the term.

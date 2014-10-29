@@ -7,9 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import nars.core.EventEmitter.Observer;
-import nars.core.Events.ConceptBeliefRemove;
-import nars.core.Events.TaskDerive;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
@@ -21,13 +18,13 @@ import nars.entity.TruthValue;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
-import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
 
@@ -259,8 +256,11 @@ public class Executive {
                 end();
             
             if (modified) {
-                Conjunction nc = c.cloneReplacingTerms(inlined.toArray(new Term[inlined.size()]));
-                t = t.clone(t.sentence.clone(nc) );                
+                CompoundTerm nc = c.clone(inlined.toArray(new Term[inlined.size()]));
+                if (nc == null)
+                    end();
+                else
+                    t = t.clone(t.sentence.clone(nc) );                
             }
             return t;
         }

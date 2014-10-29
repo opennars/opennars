@@ -24,8 +24,8 @@ import static java.lang.System.arraycopy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 
@@ -41,7 +41,7 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    public Conjunction(final Term[] arg, final int order) {
+    protected Conjunction(final Term[] arg, final int order) {
         super();
         
         temporalOrder = order;
@@ -54,6 +54,9 @@ public class Conjunction extends CompoundTerm {
     }
 
 
+    @Override public CompoundTerm clone(Term[] t) {        
+        return (CompoundTerm)make(t, temporalOrder);
+    }
 
     /**
      * Clone an object
@@ -65,9 +68,6 @@ public class Conjunction extends CompoundTerm {
         return new Conjunction(term, temporalOrder);
     }
     
-    public Conjunction cloneReplacingTerms(final Term[] replacementTerms) {
-        return new Conjunction(replacementTerms, temporalOrder);
-    }
     
     /**
      * Get the operator of the term.
@@ -113,7 +113,7 @@ public class Conjunction extends CompoundTerm {
      * @param temporalOrder The temporal order among term
      * @param argList the list of arguments
      * @param memory Reference to the memory
-     * @return the Term generated from the arguments
+     * @return the Term generated from the arguments, or null if not possible
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
         if (argList.length == 0) {
@@ -126,10 +126,8 @@ public class Conjunction extends CompoundTerm {
             return new Conjunction(argList, temporalOrder);
         } else {
             // sort/merge arguments
-            //final TreeSet<Term> set = new TreeSet<>(Arrays.asList(argList));             
-            Term[] set = argList.clone(); //determine if necessary
-            Arrays.sort(set);
-            return new Conjunction(set, temporalOrder);            
+            final TreeSet<Term> set = new TreeSet<>(Arrays.asList(argList));            
+            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder);            
         }
     }
 

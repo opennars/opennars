@@ -150,7 +150,11 @@ public class Variables {
         final boolean hasSubs = findSubstitute(type, t1, t2, map);
         if (hasSubs) {                        
             compound[0] = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
+            if (compound[0] == null) return false;
+            
             compound[1] = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
+            if (compound[1] == null) return false;
+            
             return true;
         }
         return false;
@@ -163,7 +167,11 @@ public class Variables {
             return t; //no change needed
         
         CompoundTerm r = t.applySubstitute(subs);
-        //if (r == t) r = t.clone();      //cloning t does not seem necessary   
+        
+        if (r == null) return null;
+        
+        if (r.equals(t)) return t;
+        
         return r;
     }
     

@@ -51,7 +51,10 @@ public class ImageExt extends Image {
     public ImageExt clone() {
         return new ImageExt(term, relationIndex);
     }
-
+    @Override
+    public CompoundTerm clone(Term[] replaced) {
+        return new ImageExt(replaced, relationIndex);
+    }
     
 
     

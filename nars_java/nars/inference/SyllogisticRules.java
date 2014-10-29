@@ -387,6 +387,7 @@ public final class SyllogisticRules {
         } else {
             commonComponent = premise2;
         }
+        
         Term subj = premise1.getSubject();
 
         if (!(subj instanceof Conjunction)) {

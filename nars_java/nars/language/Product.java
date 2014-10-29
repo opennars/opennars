@@ -53,6 +53,12 @@ public class Product extends CompoundTerm {
         return new Product(term);
     }
 
+    @Override
+    public CompoundTerm clone(Term[] replaced) {
+        return new Product(replaced);
+    }
+
+    
 
         
     /**

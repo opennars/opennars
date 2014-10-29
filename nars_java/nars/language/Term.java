@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.util.TreeSet;
 import nars.inference.TemporalRules;
 import nars.io.Texts;
 
@@ -31,6 +32,7 @@ import nars.io.Texts;
  * exists. Multiple objects may represent the same Term.
  */
 public class Term implements AbstractTerm {
+
 
 
     public interface TermVisitor {
@@ -174,8 +176,8 @@ public class Term implements AbstractTerm {
     @Override
     public int compareTo(final AbstractTerm that) {
         //previously: Orders among terms: variable < atomic < compound
-        if ((that instanceof Variable) && (getClass()!=Variable.class))
-            return -1;
+        if ((that instanceof Variable) && (!(this instanceof Variable)))
+            return 1;
         return Texts.compareTo(name(), that.name());
     }
 
@@ -235,6 +237,22 @@ public class Term implements AbstractTerm {
 
     public boolean hasVarQuery() {
         return false;
+    }
+
+    static TreeSet<Term> toSortedSet(final Term[] arg) {
+        TreeSet<Term> t = new TreeSet();
+        for (Term x : arg) t.add(x);
+        return t;        
+    }
+    static Term[] toSortedSetArray(final Term[] arg) {
+        TreeSet<Term> s = toSortedSet(arg);
+        //toArray doesnt seem to work
+        Term[] n = new Term[s.size()];
+        int j = 0;
+        for (Term x : s) {
+            n[j++] = x;
+        }
+        return n;
     }
     
 }

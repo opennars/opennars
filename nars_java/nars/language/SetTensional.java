@@ -1,5 +1,8 @@
 package nars.language;
 
+import java.util.Arrays;
+import java.util.TreeSet;
+import nars.core.Parameters;
 import nars.io.Symbols;
 
 /**
@@ -13,6 +16,29 @@ abstract public class SetTensional extends CompoundTerm {
      */
     protected SetTensional(final Term[] arg) {
         super(arg);
+        
+        if (Parameters.DEBUG) {
+            verifySortedAndUnique(arg, true);
+        }
+    }
+    
+    public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {        
+        if (arg.length == 0) {
+            throw new RuntimeException("Needs >0 components");
+        }
+        if (!allowSingleton && (arg.length == 1)) {
+            throw new RuntimeException("Needs >1 components: " + Arrays.toString(arg));
+        }
+        TreeSet<Term> s = Term.toSortedSet(arg);
+        if (arg.length!=s.size()) {
+            throw new RuntimeException("Contains duplicates: " + Arrays.toString(arg));
+        }
+        int j = 0;
+        for (Term t : s) {
+            if (!t.equals(arg[j++]))
+                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + s);
+        }        
+        return s.toArray(new Term[s.size()]);
     }
     
     /**

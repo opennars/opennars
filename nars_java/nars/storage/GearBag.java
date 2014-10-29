@@ -186,7 +186,7 @@ public class GearBag<E extends Item<K>,K> extends Bag<E,K> {
     @Override
     public int size() {
                
-        if (Parameters.DEBUG_BAG) {
+        if (Parameters.DEBUG) {
         
         }
         
