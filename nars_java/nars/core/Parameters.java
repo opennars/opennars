@@ -176,9 +176,15 @@ public class Parameters {
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
     
-    /** use this for advanced Bag error checking, at the expense of lower performance */
+    /** use this for advanced Bag error checking, at the expense of lower performance.
+        it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
+    
+    /** equivalency based on Term contents; experimental mode - not ready yet, leave FALSE */
     public static boolean TERM_ELEMENT_EQUIVALENCY = false;
+    
+    //temporary parameter for setting #threads to use, globally
+    public static int THREADS = 1;
     
 }
 

@@ -23,9 +23,9 @@
  ******************************************************************************/
 package nars.narclear.jbox2d;
 
-import com.google.common.collect.Lists;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
+import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Logger;
 import nars.narclear.PhysicsModel;
 import org.jbox2d.common.IViewportTransform;
@@ -68,7 +68,7 @@ public class PhysicsController  {
   private final UpdateBehavior updateBehavior;
   private final MouseBehavior mouseBehavior;
 
-  private final LinkedList<QueueItem> inputQueue;
+  private final Deque<QueueItem> inputQueue;
   private final TestbedErrorHandler errorHandler;
 
   private float viewportHalfHeight;
@@ -77,7 +77,7 @@ public class PhysicsController  {
   public PhysicsController(TestbedState argModel, UpdateBehavior behavior,
       MouseBehavior mouseBehavior, TestbedErrorHandler errorHandler) {
     model = argModel;
-    inputQueue = Lists.newLinkedList();
+    inputQueue = new ConcurrentLinkedDeque();
     setFrameRate(DEFAULT_FPS);
     //animator = new Thread(this, "Testbed");
     updateBehavior = behavior;
@@ -110,21 +110,15 @@ public class PhysicsController  {
   }
 
   public void queueLaunchBomb() {
-    synchronized (inputQueue) {
       inputQueue.add(new QueueItem());
-    }
   }
 
   public void queuePause() {
-    synchronized (inputQueue) {
       inputQueue.add(new QueueItem(QueueItemType.Pause));
-    }
   }
 
   public void queueMouseUp(Vec2 screenPos, int button) {
-    synchronized (inputQueue) {
       inputQueue.add(new QueueItem(QueueItemType.MouseUp, screenPos, button));
-    }
   }
 
   public void queueMouseDown(Vec2 screenPos, int button) {
@@ -134,27 +128,19 @@ public class PhysicsController  {
   }
 
   public void queueMouseMove(Vec2 screenPos) {
-    synchronized (inputQueue) {
       inputQueue.add(new QueueItem(QueueItemType.MouseMove, screenPos, 0));
-    }
   }
 
   public void queueMouseDrag(Vec2 screenPos, int button) {
-    synchronized (inputQueue) {
       inputQueue.add(new QueueItem(QueueItemType.MouseDrag, screenPos, button));
-    }
   }
 
   public void queueKeyPressed(char c, int code) {
-    synchronized (inputQueue) {
       inputQueue.add(new QueueItem(QueueItemType.KeyPressed, c, code));
-    }
   }
 
   public void queueKeyReleased(char c, int code) {
-    synchronized (inputQueue) {
       inputQueue.add(new QueueItem(QueueItemType.KeyReleased, c, code));
-    }
   }
 
   public void updateExtents(float halfWidth, float halfHeight) {

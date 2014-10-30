@@ -24,14 +24,14 @@ import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import javolution.context.ConcurrentContext;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
@@ -52,7 +52,6 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
 import nars.core.control.ImmediateProcess;
-import nars.core.control.NAL;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -127,7 +126,6 @@ public class Memory implements Serializable {
     public final Executive executive;
     
     private boolean enabled = true;
-    private ExecutorService threads = null;
     private int threadsCurrent = 0;
     
     private long timeRealStart;
@@ -196,7 +194,7 @@ public class Memory implements Serializable {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    public final ArrayDeque<Task> newTasks;
+    public final Deque<Task> newTasks;
     
     
     
@@ -260,14 +258,15 @@ public class Memory implements Serializable {
         
         this.loop = controller;
         controller.init(this);
-        
-        this.threads = null;
-        
+                
         this.concepts = concepts;
         this.concepts.init(this);
         
         this.novelTasks = novelTasks;                
-        this.newTasks = new ArrayDeque<>();
+        
+        this.newTasks = controller.threads.get() > 1 ? 
+                new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
+        
         this.operators = new HashMap<>();
         
 
@@ -757,10 +756,9 @@ public class Memory implements Serializable {
     
     
     protected void setThreads(int numThreads) {
-        if (this.threadsCurrent!=numThreads) {
-            if (numThreads == 0) threads = null;
-            else threads = Executors.newFixedThreadPool(numThreads);
-            this.threadsCurrent = numThreads;
+        this.threadsCurrent = numThreads;
+        
+        if (this.threadsCurrent!=numThreads) {            
             emit(OUT.class, "Threads=" + numThreads);
         }
     }
@@ -825,7 +823,7 @@ public class Memory implements Serializable {
     protected int processNewTasks(int maxTasks) {
         if (maxTasks == 0) return 0;
         
-        List<Callable<NAL>> pending = new ArrayList(maxTasks);
+        List<Runnable> pending = new ArrayList(maxTasks);
         
         int processed = 0;
         // don't include new tasks produced in the current cycleMemory
@@ -887,33 +885,36 @@ public class Memory implements Serializable {
         ex.printStackTrace();
     }
     
-    public <T> void execute(final List<Callable<T>> tasks) {
+    public <T> void execute(final List<Runnable> tasks) {
         if ((tasks == null) || (tasks.isEmpty())) return;
         
         else if (tasks.size() == 1) {
             try {
-                tasks.get(0).call();
+                tasks.get(0).run();
             } catch (Exception ex) { 
                 error(ex);
             }
         }
-        else if (threads == null) {
+        else if (threadsCurrent == 1) {
             //single threaded
-            for (final Callable<T> t : tasks) {
+            for (final Runnable t : tasks) {
                 try {
-                    t.call();
+                    t.run();
                 } catch (Exception ex) { 
                     error(ex);
                 }
             }
         }
         else {   
-            //execute in parallel, multithreaded            
-            System.out.println("parallel=" + tasks.size() + " " + tasks);
-            try {            
-                threads.invokeAll(tasks);
-            } catch (Exception ex) { 
-                error(ex);
+            //execute in parallel, multithreaded                        
+            final ConcurrentContext ctx = ConcurrentContext.enter(); 
+            try { 
+                for (final Runnable r : tasks)
+                    ctx.execute(r);
+            } finally {
+                // Waits for all concurrent executions to complete.
+                // Re-exports any exception raised during concurrent executions. 
+                 ctx.exit();                              
             }
         }
     }
@@ -922,7 +923,7 @@ public class Memory implements Serializable {
     protected void processConcepts(int c) {
         if (c == 0) return;
         
-        List<Callable<NAL>> pending = new ArrayList(c);
+        List<Runnable> pending = new ArrayList(c);
         
         for (int i = 0; i < c; i++) {
             FireConcept f = concepts.next();
@@ -942,7 +943,7 @@ public class Memory implements Serializable {
         
         int executed = 0;
         
-        List<Callable<NAL>> pending = new ArrayList(num);
+        List<Runnable> pending = new ArrayList(num);
 
         for (int i = 0; i < Math.min(num, novelTasks.size()); i++) {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks

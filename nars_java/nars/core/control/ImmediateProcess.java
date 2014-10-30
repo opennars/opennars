@@ -25,7 +25,7 @@ public class ImmediateProcess extends NAL {
     }
 
     @Override
-    public NAL call() {
+    public void run() {
         setCurrentTask(task);
         mem.logic.TASK_IMMEDIATE_PROCESS.commit();
         emit(Events.TaskImmediateProcess.class, task);
@@ -41,7 +41,7 @@ public class ImmediateProcess extends NAL {
         if (stmUpdated) {
             mem.logic.SHORT_TERM_MEMORY_UPDATE.commit();
         }
-        return this;
+        
     }
     
 }

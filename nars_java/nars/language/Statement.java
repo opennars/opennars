@@ -47,9 +47,7 @@ public abstract class Statement extends CompoundTerm {
         this(new Term[] { subj, pred} );
     }
     
-    protected Statement() {
-        super();
-    }
+    
 
     @Override
     protected void init(Term[] t) {

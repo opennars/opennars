@@ -2,12 +2,12 @@
 package nars.core;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
@@ -22,15 +22,13 @@ public class EventEmitter {
 
     private final Map<Class<?>, List<Observer>> events;
             
-    public EventEmitter() {
-        this(false);
-    }
+    
 
     /** EventEmitter that allows unknown events; must use concurrent collection
      *  for multithreading since new event classes may be added at any time.
      */
-    public EventEmitter(boolean threadsafe) {
-        if (threadsafe)
+    public EventEmitter() {
+        if (Parameters.THREADS > 1)
             events = new ConcurrentHashMap<>();
         else
             events = new IdentityHashMap<>();
@@ -46,7 +44,8 @@ public class EventEmitter {
     }
 
     protected List<Observer> newObserverList() {
-        return Collections.synchronizedList(new ArrayList());
+        return Parameters.THREADS == 1 ? 
+                new ArrayList() : new CopyOnWriteArrayList();
     }
     
     public final boolean isActive(final Class event) {

@@ -50,6 +50,11 @@ public class DifferenceExt extends CompoundTerm {
         return new DifferenceExt(term);
     }
 
+    @Override public CompoundTerm clone(Term[] replaced) {
+        return (CompoundTerm) make(replaced);
+    }
+
+    
     /**
      * Try to make a new DifferenceExt. Called by StringParser.
      * @return the Term generated from the arguments

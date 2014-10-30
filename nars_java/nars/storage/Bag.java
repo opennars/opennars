@@ -70,14 +70,13 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param newItem The new Item
      * @return the item which was removed, which may be the input item if it could not be inserted; or null if nothing needed removed
      */
-    public synchronized E putIn(E newItem) {
+    public E putIn(E newItem) {
+                
+        final K newKey = newItem.name();
         
-        
-        final K newKey = newItem.name();        
         final E existingItemWithSameKey = take(newKey);
         
-        if (existingItemWithSameKey != null) {
-            
+        if (existingItemWithSameKey != null) {            
             newItem = (E)existingItemWithSameKey.merge(newItem);
         }
         
@@ -140,7 +139,7 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      * @param oldItem The Item to put back
      * @return the item which was removed, or null if none removed
      */    
-    public synchronized E putBack(final E oldItem, final float forgetCycles, final Memory m) {
+    public E putBack(final E oldItem, final float forgetCycles, final Memory m) {
         float relativeThreshold = Parameters.BAG_THRESHOLD;
         m.forget(oldItem, getForgetCycles(forgetCycles, oldItem), relativeThreshold);
         return putIn(oldItem);
@@ -151,11 +150,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
      *  @forgetCycles forgetting time in cycles
      *  @return the variable that was updated, or null if none was taken out
      */
-    public synchronized E processNext(final float forgetCycles, final Memory m) {
-        
+    public E processNext(final float forgetCycles, final Memory m) {
+                
         final E x = takeNext();
-        if (x!=null) {
-            
+        
+        if (x!=null) {            
             E r = putBack(x, forgetCycles, m);
             if (r!=null) {
                 throw new RuntimeException("Bag.processNext should always be able to re-insert item: " + r);

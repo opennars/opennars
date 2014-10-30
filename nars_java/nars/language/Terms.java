@@ -1,10 +1,12 @@
 package nars.language;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import nars.core.Memory;
 import nars.entity.TermLink;
 
@@ -412,5 +414,31 @@ public class Terms {
         return true;
     }
 
+    public static void verifyNonNull(Collection t) {
+        for (Object o : t) {
+            if (o == null) {
+                throw new RuntimeException("Element null in: " + t);
+            }
+        }
+    }
+    
+    public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {        
+        if (arg.length == 0) {
+            throw new RuntimeException("Needs >0 components");
+        }
+        if (!allowSingleton && (arg.length == 1)) {
+            throw new RuntimeException("Needs >1 components: " + Arrays.toString(arg));
+        }
+        TreeSet<Term> s = Term.toSortedSet(arg);
+        if (arg.length!=s.size()) {
+            throw new RuntimeException("Contains duplicates: " + Arrays.toString(arg));
+        }
+        int j = 0;
+        for (Term t : s) {
+            if (!t.equals(arg[j++]))
+                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + s);
+        }        
+        return s.toArray(new Term[s.size()]);
+    }
     
 }

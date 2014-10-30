@@ -156,7 +156,7 @@ public class SwingLogText extends SwingText  {
 //        
 //    }
     
-    protected synchronized int print(Class c, Object o)  {        
+    protected int print(Class c, Object o)  {        
 
         float priority = 1f;
 

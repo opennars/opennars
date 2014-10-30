@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
-import static nars.language.SetTensional.verifySortedAndUnique;
 
 /**
  * A compound term whose extension is the intersection of the extensions of its term
@@ -41,7 +40,7 @@ public class IntersectionExt extends CompoundTerm {
         super(arg);
         
         if (Parameters.DEBUG) {
-            verifySortedAndUnique(arg, false);
+            Terms.verifySortedAndUnique(arg, false);
         }
         
     }

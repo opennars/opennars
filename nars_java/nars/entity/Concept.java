@@ -269,10 +269,13 @@ public class Concept extends Item<Term> {
         }
     }
 
-    protected synchronized void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    protected void addToTable(final Task task, final Sentence newSentence, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         int preSize = table.size();
 
-        Sentence removed = addToTable(newSentence, table, max);
+        Sentence removed;
+        synchronized (table) {
+            removed = addToTable(newSentence, table, max);
+        }
 
         if (removed != null) {
             memory.event.emit(eventRemove, this, removed, task, extraEventArguments);
@@ -441,11 +444,12 @@ public class Concept extends Item<Term> {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    private static synchronized Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    private static Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
         final float rank1 = rankBelief(newSentence);    // for the new isBelief
-        float rank2;
-        int i = 0;
-        for (final Sentence judgment2 : table) {
+        float rank2;        
+        int i;
+        for (i = 0; i < table.size(); i++) {
+            Sentence judgment2 = table.get(i);
             rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
@@ -453,8 +457,7 @@ public class Concept extends Item<Term> {
                 }
                 table.add(i, newSentence);
                 break;
-            }
-            i++;
+            }            
         }
         if (table.size() >= capacity) {
             if (table.size() > capacity) {
@@ -749,6 +752,8 @@ public class Concept extends Item<Term> {
         for (int i = 0; i < toMatch; i++) {
             
             final TermLink termLink = termLinks.takeNext();
+            if (termLink==null)
+                break;
             
             if (taskLink.novel(termLink, time)) {
                 //return, will be re-inserted in caller method when finished processing it

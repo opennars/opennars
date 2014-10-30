@@ -58,6 +58,10 @@ public class DifferenceInt extends CompoundTerm {
     public DifferenceInt clone() {
         return new DifferenceInt(term);
     }
+    
+    @Override public CompoundTerm clone(Term[] replaced) {
+        return (CompoundTerm) make(replaced);
+    }
 
     /**
      * Try to make a new DifferenceExt. Called by StringParser.

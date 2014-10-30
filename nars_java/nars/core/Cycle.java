@@ -12,9 +12,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Cycle {
     private Memory memory;
-    public final AtomicInteger threads = new AtomicInteger(2);
+    public final AtomicInteger threads = new AtomicInteger();
+    private final int numThreads;
 
     public Cycle() {
+        this(Parameters.THREADS);
+    }
+    
+    public Cycle(int threads) {
+        this.numThreads = threads;
+        this.threads.set(threads);
         
     }
 
@@ -23,7 +30,7 @@ public class Cycle {
     }
     
     public int inputTasksPriority() {
-        return 2;
+        return numThreads * 1;
     }
 
     public int newTasksPriority() {
@@ -32,7 +39,7 @@ public class Cycle {
 
     public int novelTasksPriority() {
         if (memory.getNewTaskCount() == 0) {
-            return 2;
+            return numThreads * 1;
         } else {
             return 0;
         }
@@ -40,7 +47,7 @@ public class Cycle {
 
     public int conceptsPriority() {
         if (memory.getNewTaskCount() == 0) {
-            return 2;
+            return numThreads * 1;
         } else {
             return 0;
         }

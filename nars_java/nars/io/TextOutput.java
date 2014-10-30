@@ -119,7 +119,7 @@ public class TextOutput extends Output {
      * @param lines The text to be displayed
      */
     @Override
-    public synchronized void event(final Class channel, final Object... oo) {
+    public void event(final Class channel, final Object... oo) {
         if (!showErrors && (channel == ERR.class))
             return;
         
