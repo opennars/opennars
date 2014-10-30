@@ -21,8 +21,8 @@
 package nars.language;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
 import static nars.language.SetTensional.verifySortedAndUnique;
@@ -76,17 +76,17 @@ public class IntersectionExt extends CompoundTerm {
     public static Term make(Term term1, Term term2) {
         Set<Term> set;
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
-            set = new HashSet<>(((CompoundTerm) term1).getTermList());
+            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             set.addAll(((CompoundTerm) term2).getTermList());        // set union
             return SetInt.make(set);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
-            set = new HashSet<>(((CompoundTerm) term1).getTermList());
+            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             set.retainAll(((CompoundTerm) term2).getTermList());     // set intersection
             return SetExt.make(set);
         }
         if (term1 instanceof IntersectionExt) {
-            set = new HashSet<>(((CompoundTerm) term1).getTermList());
+            set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             if (term2 instanceof IntersectionExt) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
                 set.addAll(((CompoundTerm) term2).getTermList());
@@ -97,34 +97,19 @@ public class IntersectionExt extends CompoundTerm {
             }               
         } else if (term2 instanceof IntersectionExt) {
             // (&,R,(&,P,Q)) = (&,P,Q,R)
-            set = new HashSet<>(((CompoundTerm) term2).getTermList());
+            set = new TreeSet<>(((CompoundTerm) term2).getTermList());
             set.add(term1);
         } else {
-            set = new HashSet<>();
+            set = new TreeSet<>();
             set.add(term1);
             set.add(term2);
         }
         return make(set.toArray(new Term[set.size()]));
     }
 
-    /**
-     * Try to make a new IntersectionExt.  Called when the input may contain duplicates
-     * @return the Term generated from the arguments
-     * @param argList The list of term
-     * @param memory Reference to the memory
-     */
-    public static Term makeUnduplicated(Term... t) {
-        if (t.length == 1) return t[0]; // special case: single component        
-        Set<Term> s = new HashSet();
-        for (Term x : t) s.add(x);
-        return make(s.toArray(new Term[s.size()]));
-    }
-    
     public static Term make(Term... t) {
-        if (t.length == 1) return t[0]; // special case: single component        
-        
-        Term[] s = Term.toSortedSetArray(t);        
-        return new IntersectionExt(s);
+        if (t.length == 1) return t[0]; // special case: single component                
+        return new IntersectionExt(Term.toSortedSetArray(t));
     }
 
 

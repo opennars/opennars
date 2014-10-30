@@ -47,7 +47,8 @@ public class Variable extends Term {
      * @param name A String read from input
      */
     protected Variable(final CharSequence name, final Term scope) {
-        super(name);
+        super();
+        setName(name);
         setScope(scope);
     }
 
@@ -79,8 +80,6 @@ public class Variable extends Term {
      * @return The variable type
      */
     public char getType() {
-        if (type == 0)
-            type = name().charAt(0);
         return type;
     }
     
@@ -124,11 +123,33 @@ public class Variable extends Term {
         if (that == this) return true;
         if (!(that instanceof Variable)) return false;
         Variable v = (Variable)that;
+        
+        //TODO factor these comparisons into 2 nested if's
+        
         if ((v.scope == v) && (scope == this))
             //both are unscoped, so compare by name only
-            return (v.name().equals(name()));        
-        else
-            return (v.scope.equals(scope)) && (v.name().equals(name()));
+            return name().equals(v.name());
+        else if ((v.scope!=v) && (scope==this))
+            return false;
+        else if ((v.scope==v) && (scope!=this))
+            return false;
+        else {
+            if (!name().equals(v.name()))
+                return false;
+            
+            if (scope == v.scope) return true;
+
+            if (scope.hashCode()!=v.scope.hashCode())
+                return false;
+            
+            //WARNING infinnite loop can happen if the two scopes start equaling echother
+            //we need a special equals comparison which ignores variable scope when recursively
+            //called from this
+            //until then, we'll use the name for comparison because it wont 
+            //invoke infinite recursion
+            
+            return scope.name().equals(v.scope.name());
+        }
     }
 
     @Override
@@ -146,10 +167,10 @@ public class Variable extends Term {
      * @param that The Term to be compared with the current Term
      * @return The same as compareTo as defined on Strings
      */
-    @Override
+    /*@Override
     public final int compareTo(final AbstractTerm that) {
         return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
-    }
+    }*/
 
     boolean isQueryVariable() { return getType() == '?';    }
     boolean isDependentVariable() { return getType() == '#';    }

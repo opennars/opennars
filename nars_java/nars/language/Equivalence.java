@@ -87,6 +87,7 @@ public class Equivalence extends Statement {
             subject = predicate;
             predicate = interm;
         }
+        
         NativeOperator copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_BACKWARD:

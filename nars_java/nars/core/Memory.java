@@ -567,9 +567,9 @@ public class Memory implements Serializable {
             case SET_INT_OPENER:
                 return SetInt.make(CompoundTerm.termList(a));
             case INTERSECTION_EXT:
-                return IntersectionExt.makeUnduplicated(a);
+                return IntersectionExt.make(a);
             case INTERSECTION_INT:
-                return IntersectionInt.makeUnduplicated(a);
+                return IntersectionInt.make(a);
             case DIFFERENCE_EXT:
                 return DifferenceExt.make(a);
             case DIFFERENCE_INT:
