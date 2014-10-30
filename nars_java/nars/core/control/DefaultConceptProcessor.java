@@ -19,7 +19,7 @@ import nars.storage.CacheBag;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class SequentialMemoryCycle implements ConceptProcessor {
+public class DefaultConceptProcessor implements ConceptProcessor {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */
@@ -30,10 +30,10 @@ public class SequentialMemoryCycle implements ConceptProcessor {
     public final CacheBag<Term, Concept> subcon;
     
     private final ConceptBuilder conceptBuilder;
-    Memory memory;
+    private Memory memory;
        
             
-    public SequentialMemoryCycle(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
+    public DefaultConceptProcessor(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        

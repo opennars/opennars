@@ -127,14 +127,13 @@ public class Memory implements Serializable {
     public final Executive executive;
     
     private boolean enabled = true;
-    private final ExecutorService exe;
+    private ExecutorService threads = null;
+    private int threadsCurrent = 0;
     
     private long timeRealStart;
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
-
-
 
 
 
@@ -243,7 +242,7 @@ public class Memory implements Serializable {
     
     
     public final Param param;
-    
+    private Cycle loop;
     
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
@@ -255,19 +254,16 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, ConceptProcessor cycleControl, Bag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
+    public Memory(Param param, Cycle controller, ConceptProcessor concepts, Bag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
 
-        int threads = 1;
-        if (threads == 1) {
-            exe = null;
-        }
-        else {
-            exe = Executors.newFixedThreadPool(threads);
-        }               
-        
         this.param = param;
         
-        this.concepts = cycleControl;
+        this.loop = controller;
+        controller.init(this);
+        
+        this.threads = null;
+        
+        this.concepts = concepts;
         this.concepts.init(this);
         
         this.novelTasks = novelTasks;                
@@ -321,7 +317,6 @@ public class Memory implements Serializable {
                 setConceptNum(count);
                 setConceptBeliefsSum(totalBeliefs);
                 setConceptQuestionsSum(totalQuestions);
-                //setConceptPrioritySum(totalPriority);
                 setConceptPriorityMean(mean);
                 setConceptPriorityVariance(variance);
                 setConceptPriorityHistogram(histogram);
@@ -761,38 +756,22 @@ public class Memory implements Serializable {
     }
     
     
-    public class Loop {
-   
-        public int inputTasksPriority() {
-            return 1;
+    protected void setThreads(int numThreads) {
+        if (this.threadsCurrent!=numThreads) {
+            if (numThreads == 0) threads = null;
+            else threads = Executors.newFixedThreadPool(numThreads);
+            this.threadsCurrent = numThreads;
+            emit(OUT.class, "Threads=" + numThreads);
         }
-        
-        public int newTasksPriority() {            
-            return newTasks.size();
-        }
-
-        private int novelTasksPriority() {
-            if (getNewTaskCount() == 0)
-                return 1;
-            else
-                return 0;
-        }
-        
-        private int conceptsPriority() {
-            if (getNewTaskCount() == 0) 
-                return 1;
-            else
-                return 0;
-        }
-        
     }
     
-    private Loop loop = new Loop();
     
     public void cycle(final TaskSource inputs) {
 
         if (!isEnabled())
             return;
+        
+        setThreads(loop.threads.get());
         
         resource.CYCLE.start();
         resource.CYCLE_CPU_TIME.start();
@@ -804,6 +783,7 @@ public class Memory implements Serializable {
         event.emit(Events.CycleStart.class);                
 
             
+        /** adds input tasks to newTasks */
         for (int i = 0; (i < loop.inputTasksPriority()) && (isProcessingInput()); i++) {
             AbstractTask t = inputs.nextTask();                    
             if (t!=null) 
@@ -917,7 +897,7 @@ public class Memory implements Serializable {
                 error(ex);
             }
         }
-        else if (exe == null) {
+        else if (threads == null) {
             //single threaded
             for (final Callable<T> t : tasks) {
                 try {
@@ -929,8 +909,9 @@ public class Memory implements Serializable {
         }
         else {   
             //execute in parallel, multithreaded            
+            System.out.println("parallel=" + tasks.size() + " " + tasks);
             try {            
-                exe.invokeAll(tasks);
+                threads.invokeAll(tasks);
             } catch (Exception ex) { 
                 error(ex);
             }

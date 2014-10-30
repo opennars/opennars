@@ -5,7 +5,7 @@
 package nars.test.core;
 
 import nars.core.Parameters;
-import nars.entity.BudgetAccount;
+import nars.util.budget.BudgetAccount;
 import nars.entity.BudgetValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
