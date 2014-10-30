@@ -1,9 +1,12 @@
 package nars.language;
 
+import java.nio.CharBuffer;
 import java.util.Arrays;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
+import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)
@@ -49,28 +52,23 @@ abstract public class SetTensional extends CompoundTerm {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    protected static String makeSetName(final char opener, final Term[] arg, final char closer) {
-        final int sizeEstimate = 12 * arg.length + 2;
+    protected static CharSequence makeSetName(final char opener, final Term[] arg, final char closer) {
+        int size = 1 + 1 - 1; //opener + closer - 1 [no preceding separator for first element]
         
-        StringBuilder name = new StringBuilder(sizeEstimate)
-            .append(opener);
-
-        if (arg.length == 0) { 
-            //is empty arg valid?            
-            //throw new RuntimeException("Empty arg list for makeSetName");            
-        }
-        else {
+        for (final Term t : arg) 
+            size += 1 + t.name().length();
         
-            name.append(arg[0].name());
-
-            for (int i = 1; i < arg.length; i++) {
-                name.append(Symbols.ARGUMENT_SEPARATOR).append(arg[i].name());
-            }
-        }
         
-        name.append(closer);
+        final CharBuffer n = CharBuffer.allocate(size);
         
-        return name.toString();
+        n.append(opener);                    
+        for (int i = 0; i < arg.length; i++) {
+            if (i!=0) n.append(Symbols.ARGUMENT_SEPARATOR);
+            n.append(arg[i].name());
+        }        
+        n.append(closer);
+               
+        return n.compact();
     }
 
     

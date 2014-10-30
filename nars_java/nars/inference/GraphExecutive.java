@@ -531,7 +531,7 @@ public class GraphExecutive {
             truth = new TruthValue(1.0f, score());
             budget = new BudgetValue(1.0f, Parameters.DEFAULT_GOAL_DURABILITY, 
                     BudgetFunctions.truthToQuality(truth));
-            budget.andPriority(score());
+            budget.andPriority(score() / path.length);
         }
 
         public float getMinConfidence() {

@@ -94,18 +94,35 @@ public class BudgetAccount {
         return (float) balance.get();
     }
 
+    /** spend funds to make a budgetvalue's priority reach a specific higher target priority, or as close as possible */
     public float invest(BudgetValue a, float requestedTarget) {
-        
+        if (requestedTarget < a.getPriority()) return 0;
         if (requestedTarget > 1f) requestedTarget = 1f;
         
         float diff = requestedTarget - a.getPriority();
                 
-        if (diff < 0) return 0;
+        if (diff < 0) return 0;        
         
         diff = (float) Math.min(diff, balance.get());
         balance.addAndGet(-diff);
         a.setPriority(a.getPriority() + diff);
         
         return diff;
+    }
+    
+    /** sell priority to gain funds, by specifying a lower budgetvalue's target priority */
+    public float absorb(BudgetValue a, float requestedTarget) { 
+        if (requestedTarget > a.getPriority()) return 0;
+        if (requestedTarget < 0f) requestedTarget = 0f;
+        
+        float diff = a.getPriority() - requestedTarget;
+                
+        if (diff < 0) return 0;
+                
+        balance.addAndGet(diff);
+        a.setPriority(requestedTarget);
+        
+        return diff;
+        
     }
 }
