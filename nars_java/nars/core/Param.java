@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.language.Interval.AtomicDuration;
-import nars.util.meter.util.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * NAR Parameters which can be changed during runtime.

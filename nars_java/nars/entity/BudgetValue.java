@@ -83,9 +83,7 @@ public class BudgetValue implements Cloneable {
      * @param v Budget value to be cloned
      */
     public BudgetValue(final BudgetValue v) {
-        priority = v.getPriority();
-        durability = v.getDurability();
-        quality = v.getQuality();
+        this(v.getPriority(), v.getDurability(), v.getQuality());
     }
 
     /**
@@ -108,9 +106,10 @@ public class BudgetValue implements Cloneable {
      * Change priority value
      * @param v The new priority
      */
-    public void setPriority(float v) {
+    public final void setPriority(float v) {
         if(v>1.0f) {
-            v=1.0f;
+            throw new RuntimeException("Priority > 1.0: " + v);
+            //v=1.0f;
         }
         priority = v;
     }
@@ -119,21 +118,13 @@ public class BudgetValue implements Cloneable {
      * Increase priority value by a percentage of the remaining range
      * @param v The increasing percent
      */
-    public void incPriority(final float v) {
-        float priority2 = or(priority, v);
-        if(priority2>1.0f) {
-            priority2=1.0f;
-        }
-        priority=priority2;
+    public void incPriority(final float v) {        
+        setPriority( or(priority, v) );
     }
 
     /** AND's (multiplies) priority with another value */
     public void andPriority(final float v) {
-        float priority2 = and(priority, v);
-        if(priority2>1.0f) {
-            priority2=1.0f;
-        }
-        priority=priority2;
+        setPriority( and(priority, v) );
     }
 
     /**
@@ -141,7 +132,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decPriority(final float v) {
-        priority = and(priority, v);
+        setPriority( and(priority, v) );
     }
 
     /**
@@ -302,14 +293,14 @@ public class BudgetValue implements Cloneable {
      * linear interpolate the priority value to another value
      * @see https://en.wikipedia.org/wiki/Linear_interpolation
      */
-    public void lerpPriority(final float targetValue, final float momentum) {
+    /*public void lerpPriority(final float targetValue, final float momentum) {
         if (momentum == 1.0) 
             return;
         else if (momentum == 0) 
             setPriority(targetValue);
         else
             setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
-    }
+    }*/
 
     public long getForgetPeriod(long currentTime) {
         long period;

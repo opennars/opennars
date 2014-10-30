@@ -14,6 +14,7 @@
  */
 package nars.util.meter.session;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 import nars.util.meter.Sensor;
@@ -23,7 +24,7 @@ import nars.util.meter.event.EventType;
 import nars.util.meter.key.StatsKey;
 import nars.util.meter.recorder.DataRecorder;
 import nars.util.meter.recorder.DataRecorders;
-import nars.util.meter.util.AtomicDouble;
+
 
 /**
  * <p>

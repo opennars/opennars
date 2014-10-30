@@ -21,7 +21,7 @@ import nars.language.Similarity;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import nars.util.meter.util.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.

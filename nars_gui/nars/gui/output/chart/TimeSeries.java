@@ -12,111 +12,130 @@ import nars.language.Term;
 /**
  * Used by Chart, a chart data set is a container to store chart data.
  */
-public class TimeSeries  {
+public class TimeSeries {
 
-        final float[] values;
-	protected Color colour;
+    final float[] values;
+    protected Color colour;
 	//protected float strokeWeight = 1;
-	//protected int[] colors = new int[0];
+    //protected int[] colors = new int[0];
 
-        boolean resetRangeEachCycle = true;
-	public final String label;
-        private final int historySize;
-        float min, max;
-        long lastT = -1;
+    boolean resetRangeEachCycle = true;
+    public final String label;
+    private final int historySize;
+    float min, max;
+    long lastT = -1;
     private float specificMin;
     private float specificMax;
     private boolean specificRange;
 
-	public TimeSeries(String theName, Color color, int historySize) {
-		label = theName;
-		colour = color;
-                this.historySize = historySize;
-                values = new float[historySize];
-	}
+    public TimeSeries(String theName, Color color, int historySize) {
+        label = theName;
+        colour = color;
+        this.historySize = historySize;
+        values = new float[historySize];
+    }
 
-        public TimeSeries setRange(float min, float max) {
-            this.specificRange = true;
-            this.specificMin = min;
-            this.specificMax = max;
-            return this;
-        }
-        
-	public Color getColor() {
-		return colour;
-	}        
-        
+    public TimeSeries setRange(float min, float max) {
+        this.specificRange = true;
+        this.specificMin = min;
+        this.specificMax = max;
+        return this;
+    }
 
-	public float[] getValues() {
-            return values;            
-	}
+    public Color getColor() {
+        return colour;
+    }
 
-        protected void updateRange() {
-            
-            int i = 0;
-            for (final float f : values) {
-                if (i++ == 0) {
-                    min = max = f;
-                    continue;
-                }
-                
-                if (f < min) {
-                    min = ( f );
-                }                
-                if (f > max) {
-                    max = ( f );
-                }                                   
-            }
+    public float[] getValues() {
+        return values;
+    }
 
-        }
-        
-        public void push(final long t, final float f) {
-            //System.arraycopy(values, 0, values, 1, historySize-1);
-            if (resetRangeEachCycle)
+    protected void updateRange() {
+
+        int i = 0;
+        for (final float f : values) {
+            if (i++ == 0) {
                 min = max = f;
-                        
-            //update min/max while shifting up                                   
-            for (int i = historySize-1; i >= 1; i--) {
-                final float g = values[i] = values[i-1];                
-                if (i > 1) {
-                    if (g < min) min = g;
-                    if (g > max) max = g;
+                continue;
+            }
+
+            if (f < min) {
+                min = (f);
+            }
+            if (f > max) {
+                max = (f);
+            }
+        }
+
+    }
+
+    public void push(final long t, final float f) {
+        //System.arraycopy(values, 0, values, 1, historySize-1);
+        if (resetRangeEachCycle) {
+            min = max = f;
+        }
+
+        //update min/max while shifting up                                   
+        for (int i = historySize - 1; i >= 1; i--) {
+            final float g = values[i] = values[i - 1];
+            if (i > 1) {
+                if (g < min) {
+                    min = g;
+                }
+                if (g > max) {
+                    max = g;
                 }
             }
-            
-            values[0] = f;
-            lastT = t;
         }
 
-        public float getMin() {
-            if (specificRange) return specificMin;
-            return min;
-        }
+        values[0] = f;
+        lastT = t;
+    }
 
-        public float getMax() {
-            if (specificRange) return specificMax;
-            return max;
+    public float getMin() {
+        if (specificRange) {
+            return specificMin;
         }
+        return min;
+    }
+
+    public float getMax() {
+        if (specificRange) {
+            return specificMax;
+        }
+        return max;
+    }
 
     public float getValue(long t) {
-        if (t < lastT - historySize) return Float.NaN;
-        if (t > lastT) return Float.NaN;
-        int i = (int)(lastT - t);
-        if (i >= values.length) return 0;
+        if (t < lastT - historySize) {
+            return Float.NaN;
+        }
+        if (t > lastT) {
+            return Float.NaN;
+        }
+        int i = (int) (lastT - t);
+        if (i >= values.length) {
+            return 0;
+        }
         return values[i];
     }
 
     public void updateMinMax(long cycleStart, long cycleEnd) {
     }
-        
+
     abstract public static class CycleTimeSeries extends TimeSeries implements Observer {
+
         private final NAR nar;
 
-        public CycleTimeSeries(NAR n, String theName, float min, float max, int historySize) {
-            super(theName, NARSwing.getColor(theName, 0.9f, 1f), historySize);       
+        public CycleTimeSeries(NAR n, String theName, int historySize) {
+            super(theName, NARSwing.getColor(theName, 0.9f, 1f), historySize);
             this.nar = n;
+            n.on(CycleEnd.class, this);
+        }
+
+        public CycleTimeSeries(NAR n, String theName, float min, float max, int historySize) {
+            this(n, theName, historySize);
             setRange(min, max);
-            n.on(CycleEnd.class, this);            
         }
 
         @Override
@@ -124,26 +143,75 @@ public class TimeSeries  {
             long time = nar.time();
             push(nar.time(), next(time, nar));
         }
-        
-        public abstract float next(long time, NAR nar);    
-        
+
+        public abstract float next(long time, NAR nar);
+
     }
-    
-    public static class ConceptTimeSeries extends CycleTimeSeries {
+
+    public static class ConceptBagTimeSeries extends CycleTimeSeries {
+
         public final Mode mode;
-    
-            public static enum Mode { Priority, Duration, BeliefConfidenceMax /* add others */ };
-        
-        String conceptString;
-        Term conceptTerm;
-        Concept concept;
-        
+        private final Iterable<Concept> concepts;
+
+        public static enum Mode {
+
+            ConceptPriorityTotal, TaskLinkPriorityMean, TermLinkPriorityMean /* add others */ };
+
+        public ConceptBagTimeSeries(NAR n, Iterable<Concept> concepts, int historySize, Mode mode) {
+            super(n, "Concepts: " + mode, historySize);
+            this.mode = mode;
+            this.concepts = concepts;
+
+        }
+
+        @Override
+        public float next(long time, NAR nar) {
+            float r = 0;
+            int numConcepts = 0;
+            for (Concept c : concepts) {
+                switch (mode) {
+                    case ConceptPriorityTotal:
+                        r += c.getPriority();
+                        break;
+                    case TermLinkPriorityMean:
+                        r += c.termLinks.getTotalPriority();
+                        break;
+                    case TaskLinkPriorityMean:
+                        r += c.taskLinks.getTotalPriority();
+                        break;
+                }
+                numConcepts++;
+            }
+            
+            switch (mode) {
+                case TermLinkPriorityMean:
+                case TaskLinkPriorityMean:
+                    if (numConcepts > 0) r /= numConcepts;
+                    break;
+            }
+            
+            return r;
+        }
+
+    }
+
+    public static class ConceptTimeSeries extends CycleTimeSeries {
+
+        public final Mode mode;
+        private final String conceptString;
+        private final Term conceptTerm;
+        private Concept concept;
+
+        public static enum Mode {
+
+            Priority, Duration, BeliefConfidenceMax /* add others */ };
+
         public ConceptTimeSeries(NAR n, String concept, int historySize, Mode mode) throws Narsese.InvalidInputException {
             super(n, concept + ": " + mode, 0, 1, historySize);
             this.mode = mode;
             this.conceptString = concept;
-            this.conceptTerm = new Narsese( n ).parseTerm(conceptString);
-            
+            this.conceptTerm = new Narsese(n).parseTerm(conceptString);
+
             this.concept = null;
         }
 
@@ -161,49 +229,57 @@ public class TimeSeries  {
                 case Duration:
                     return concept.getDurability();
                 case BeliefConfidenceMax:
-                    if (concept.beliefs.size() > 0)
+                    if (concept.beliefs.size() > 0) {
                         return concept.beliefs.get(0).truth.getConfidence();
+                    }
                     return 0;
             }
             return 0f;
         }
-        
-        
+
     }
-    
+
     public static class FirstOrderDifferenceTimeSeries extends TimeSeries {
+
         public final TimeSeries data;
 
         public FirstOrderDifferenceTimeSeries(String name, TimeSeries s) {
-            super(name, NARSwing.getColor(name, 0.8f,0.8f), 1);
+            super(name, NARSwing.getColor(name, 0.8f, 0.8f), 1);
             this.data = s;
         }
 
         @Override
         public float getValue(final long t) {
-            float prev = data.getValue(t-1);
-            if (Float.isNaN(prev)) return 0;
-            
+            float prev = data.getValue(t - 1);
+            if (Float.isNaN(prev)) {
+                return 0;
+            }
+
             float cur = data.getValue(t);
-            if (Float.isNaN(cur)) return 0;
-            
+            if (Float.isNaN(cur)) {
+                return 0;
+            }
+
             return cur - prev;
         }
 
-        
         @Override
         public void updateMinMax(long cycleStart, long cycleEnd) {
             min = max = getValue(cycleStart);
             for (long i = cycleStart + 1; i < cycleEnd; i++) {
                 float v = getValue(i);
-                if (v < min) min = v;
-                if (v > max) max = v;
+                if (v < min) {
+                    min = v;
+                }
+                if (v > max) {
+                    max = v;
+                }
             }
-                
+
         }
-        
+
     }
-    
+
 }
 //
 ///**

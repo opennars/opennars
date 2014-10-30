@@ -19,7 +19,7 @@ import java.util.Set;
 import nars.util.meter.Sensor;
 import nars.util.meter.data.DataSet;
 import nars.util.meter.session.StatsSession;
-import nars.util.meter.util.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.util.meter.util.Misc;
 import nars.util.meter.util.ThreadSafe;
 

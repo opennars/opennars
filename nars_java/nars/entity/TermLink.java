@@ -141,10 +141,11 @@ public class TermLink extends Item<TermLink> implements TLink {
             if (type != t.type) return false;
             if (!Arrays.equals(t.index, index)) return false;
             
+            final Term tt = t.target;
             if (target == null) {
-                if (t.target!=null) return false;
+                if (tt!=null) return false;
             }
-            else if (t.target == null) {
+            else if (tt == null) {
                 if (target!=null) return false;
             }
             else if (!target.equals(t.target)) return false;

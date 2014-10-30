@@ -14,7 +14,7 @@ public class LineChart extends Chart {
     double max;
     boolean showVerticalLines = false;
     boolean showPoints = true;
-    float lineThickness = 1f;
+    float lineThickness = 1.5f;
     float borderThickness = 0.5f;
 
   

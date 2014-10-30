@@ -163,6 +163,11 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return getFrequency() < 0.5;
     }
 
+    public static boolean isEqual(final float a, final float b, float epsilon) {
+        float d = Math.abs(a - b);
+        return (d < epsilon);
+    }
+    
     /**
      * Compare two truth values
      *
@@ -173,10 +178,10 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     public boolean equals(final Object that) { 
         if (that instanceof TruthValue) {
             final TruthValue t = ((TruthValue) that);
-            float dFreq = Math.abs(getFrequency() - t.getFrequency());
-            if (dFreq >= TRUTH_EPSILON) return false;
-            float dConf = Math.abs(getConfidence() - t.getConfidence());
-            if (dConf >= TRUTH_EPSILON) return false;
+            if (!isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON))
+                return false;
+            if (!isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON))
+                return false;
             return true;
         }
         return false;
