@@ -35,7 +35,6 @@ import nars.storage.LevelBag;
 import nars.storage.CurveBag;
 import nars.storage.GearBag;
 import nars.util.sort.ArraySortedIndex;
-import nars.util.sort.FractalSortedItemList;
 
 /**
  *
@@ -240,8 +239,8 @@ public class BagPerf {
                         
                 Bag[] bags = new Bag[] { 
                     new GearBag(levels, items),
-                    new CurveBag(items, curve, true, new ArraySortedIndex<>()),
-                    new CurveBag(items, curve, true, new FractalSortedItemList<>()),                
+                    new CurveBag(items, curve, true, new ArraySortedIndex<>(items)),
+                    //new CurveBag(items, curve, true, new FractalSortedItemList<>()),                
                     new LevelBag(levels, items)                        
                 };
                 

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.entity.AbstractTask;
+import nars.core.control.AbstractTask;
 import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;

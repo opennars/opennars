@@ -1,6 +1,6 @@
 package nars.operator.io;
 
-import nars.entity.AbstractTask;
+import nars.core.control.AbstractTask;
 
 /**
  *

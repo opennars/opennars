@@ -28,6 +28,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.core.control.NAL;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;

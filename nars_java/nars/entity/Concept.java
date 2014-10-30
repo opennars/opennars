@@ -20,8 +20,11 @@
  */
 package nars.entity;
 
+import nars.core.control.NAL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import nars.core.Events;
 import nars.core.Events.BeliefSelect;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
@@ -35,18 +38,24 @@ import nars.core.Events.TermLinkAdd;
 import nars.core.Events.TermLinkRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
+import nars.core.Parameters;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
-import nars.inference.NAL;
+import nars.core.control.FireConcept;
+import static nars.inference.RuleTables.reason;
+import static nars.inference.RuleTables.transformTask;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Negation;
 import nars.language.Term;
+import nars.language.Variable;
+import nars.operator.Operation;
 import nars.storage.Bag;
 
 public class Concept extends Item<Term> {
@@ -684,32 +693,6 @@ public class Concept extends Item<Term> {
         return topValue;
     }
 
-    /* ---------- main loop ---------- */
-    /**
-     * Fire next tasklink
-     * @return whether a TaskLink was fired or not
-     */
-    public boolean fire() {
-                
-        if (taskLinks.size() == 0) return false;
-        
-        
-        final TaskLink currentTaskLink = taskLinks.takeNext();
-
-        boolean fired = false;
-
-        if (currentTaskLink.budget.aboveThreshold()) {
-
-            new NAL.FireConcept(memory, this, currentTaskLink).call();        
-
-            fired = true;           
-        }            
-
-        taskLinks.putBack(currentTaskLink, memory.param.taskForgetDurations.getCycles(), memory);
-
-            
-        return fired;
-    }
 
 
     @Override
@@ -834,4 +817,6 @@ public class Concept extends Item<Term> {
             t += s.truth.getFrequency();
         return t / beliefs.size();        
     }
+
+
 }

@@ -1,11 +1,11 @@
 package nars.core;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.language.Interval.AtomicDuration;
 import com.google.common.util.concurrent.AtomicDouble;
+import java.io.Serializable;
 
 /**
  * NAR Parameters which can be changed during runtime.
@@ -55,12 +55,7 @@ public class Param implements Serializable {
     /** Minimum expectation for a desire value. 
      *  the range of "now" is [-DURATION, DURATION]; */
     public final AtomicDouble decisionThreshold = new AtomicDouble();
-    
-    /** How many inputs to process each cycle */
-    public final AtomicInteger cycleInputTasks = new AtomicInteger();
 
-    /** How many memory working cycles to process each cycle */
-    public final AtomicInteger cycleMemory = new AtomicInteger();
 
     /** How many concepts to fire each cycle */
     public final AtomicInteger cycleConceptsFired = new AtomicInteger();

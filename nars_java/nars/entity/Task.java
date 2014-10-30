@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import nars.core.control.AbstractTask;
 import com.google.common.base.Strings;
 import nars.language.Term;
 import nars.operator.Operation;

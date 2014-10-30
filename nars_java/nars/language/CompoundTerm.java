@@ -38,6 +38,7 @@ import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
+import nars.io.Texts;
 import static nars.language.CompoundTerm.makeCompoundName;
 
 
@@ -248,8 +249,10 @@ public abstract class CompoundTerm extends Term {
         final CharBuffer n = CharBuffer.allocate(size)
             .append(COMPOUND_TERM_OPENER.ch).append(opString);
             
-        for (final Term t : arg)
-            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());        
+        for (final Term t : arg) {
+            
+            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
+        }
         
         n.append(COMPOUND_TERM_CLOSER.ch);
                         

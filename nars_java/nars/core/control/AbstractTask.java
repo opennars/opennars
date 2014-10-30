@@ -1,4 +1,7 @@
-package nars.entity;
+package nars.core.control;
+
+import nars.entity.BudgetValue;
+import nars.entity.Item;
 
 /**
  * Base class for all perception commands and Task's

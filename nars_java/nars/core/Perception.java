@@ -3,7 +3,7 @@ package nars.core;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
 import java.util.Iterator;
-import nars.entity.AbstractTask;
+import nars.core.control.AbstractTask;
 import nars.entity.Sentence;
 import nars.io.DefaultTextPerception;
 import nars.io.Output.ERR;

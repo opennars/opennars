@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import nars.util.rope.Rope;
@@ -381,7 +382,7 @@ public class Texts {
             return c;
         }
         else if (s instanceof String) {
-            c.put(getCharArray((String)s));            
+            c.put(getCharArray((String)s), 0, s.length());            
             return c;
         }
         else {

@@ -747,7 +747,7 @@ public class GraphExecutive {
         return plans;
     } 
     
-    protected Task planTask(NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
+    protected Task planTask(nars.core.control.NAL nal, ParticlePlan plan, Concept c, Task task, Term target, char punctuation) {
         
         Task newTask = plan.planTask(c, task, target, punctuation);
         
@@ -758,7 +758,7 @@ public class GraphExecutive {
         
     }
 
-   protected int plan(final NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
+   protected int plan(final nars.core.control.NAL nal, Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
 
         TreeSet<ParticlePlan> plans = particlePlan(target, searchDistance, particles);
         

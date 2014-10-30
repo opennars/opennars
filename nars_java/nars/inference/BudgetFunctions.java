@@ -75,7 +75,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion of revision
      * @return The budget for the new task
      */
-    static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final NAL nal) {
+    static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final nars.core.control.NAL nal) {
         final float difT = truth.getExpDifAbs(tTruth);
         final Task task = nal.getCurrentTask();
         task.decPriority(1 - difT);
@@ -252,7 +252,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion
      * @return The budget value of the conclusion
      */
-    public static BudgetValue forward(final TruthValue truth, final NAL nal) {
+    public static BudgetValue forward(final TruthValue truth, final nars.core.control.NAL nal) {
         return budgetInference(truthToQuality(truth), 1, nal);
     }
 
@@ -263,7 +263,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget value of the conclusion
      */
-    public static BudgetValue backward(final TruthValue truth, final NAL nal) {
+    public static BudgetValue backward(final TruthValue truth, final nars.core.control.NAL nal) {
         return budgetInference(truthToQuality(truth), 1, nal);
     }
 
@@ -274,7 +274,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget value of the conclusion
      */
-    public static BudgetValue backwardWeak(final TruthValue truth, final NAL nal) {
+    public static BudgetValue backwardWeak(final TruthValue truth, final nars.core.control.NAL nal) {
         return budgetInference(w2c(1) * truthToQuality(truth), 1, nal);
     }
 
@@ -287,7 +287,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static BudgetValue compoundForward(final TruthValue truth, final Term content, final NAL nal) {
+    public static BudgetValue compoundForward(final TruthValue truth, final Term content, final nars.core.control.NAL nal) {
         final int complexity = (content == null) ? 1 : content.getComplexity();
         return budgetInference(truthToQuality(truth), complexity, nal);
     }
@@ -299,7 +299,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param memory Reference to the memory
      * @return The budget of the conclusion
      */
-    public static BudgetValue compoundBackward(final Term content, final NAL nal) {
+    public static BudgetValue compoundBackward(final Term content, final nars.core.control.NAL nal) {
         return budgetInference(1, content.getComplexity(), nal);
     }
 
@@ -310,7 +310,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return The budget of the conclusion
      */
-    public static BudgetValue compoundBackwardWeak(final Term content, final NAL nal) {
+    public static BudgetValue compoundBackwardWeak(final Term content, final nars.core.control.NAL nal) {
         return budgetInference(w2c(1), content.getComplexity(), nal);
     }
 
@@ -322,7 +322,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    private static BudgetValue budgetInference(final float qual, final int complexity, final NAL nal) {
+    private static BudgetValue budgetInference(final float qual, final int complexity, final nars.core.control.NAL nal) {
         Item t = nal.getCurrentTaskLink();
         if (t == null) {
             t = nal.getCurrentTask();

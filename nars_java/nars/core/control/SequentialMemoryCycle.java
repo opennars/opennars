@@ -38,37 +38,28 @@ public class SequentialMemoryCycle implements ConceptProcessor {
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
     }
-    
-    
+
     @Override
-    public void cycle(final Memory m) {
+    public void init(Memory m) {
         this.memory = m;
-        
-        m.processNewTasks();
-        
-        if (m.getNewTaskCount() == 0) {       // necessary?
-            m.processNovelTask();
-        }
-
-        if (m.getNewTaskCount() == 0) {       // necessary?
-            processConcept();
-        }
-
     }
     
-    
-    /**
-     * Select and fire the next concept.
-     */
-    public void processConcept() {
-        float forgetCycles = memory.param.conceptForgetDurations.getCycles();
+    @Override
+    public FireConcept next() {       
 
         Concept currentConcept = concepts.takeNext();
+        if (currentConcept==null)
+            return null;
+            
+        return new FireConcept(memory, currentConcept, 1) {
+            
+            @Override public void onFinished() {
+                float forgetCycles = memory.param.conceptForgetDurations.getCycles();
+
+                concepts.putBack(currentConcept, forgetCycles, memory);
+            }
+        };
         
-        if (currentConcept != null) {            
-            currentConcept.fire();
-            concepts.putBack(currentConcept, forgetCycles, memory);
-        }
     }
 
     @Override

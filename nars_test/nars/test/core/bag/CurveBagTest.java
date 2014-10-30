@@ -31,7 +31,7 @@ public class CurveBagTest {
         //FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
         //int[] d2 = testCurveBag(f1);
         //int[] d3 = testCurveBag(new RedBlackSortedIndex<>());        
-        int[] d1 = testCurveBag(new ArraySortedIndex<>());
+        int[] d1 = testCurveBag(new ArraySortedIndex<>(40));
 
         
         //use the final distribution to compare that each implementation generates exact same results
@@ -124,7 +124,7 @@ public class CurveBagTest {
         
         int count[] = new int[capacity];
         
-        SortedIndex<NullItem> items = new ArraySortedIndex<>();
+        SortedIndex<NullItem> items = new ArraySortedIndex<>(capacity);
         CurveBag<NullItem,CharSequence> f = new CurveBag(capacity, curve, random, items);
         
         //fill
