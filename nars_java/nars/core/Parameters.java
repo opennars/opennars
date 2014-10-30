@@ -177,6 +177,7 @@ public class Parameters {
     
     /** use this for advanced Bag error checking, at the expense of lower performance */
     public static boolean DEBUG = false;
+    public static boolean TERM_ELEMENT_EQUIVALENCY = true;
     
 }
 

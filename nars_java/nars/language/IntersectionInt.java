@@ -110,7 +110,9 @@ public class IntersectionInt extends CompoundTerm {
     
     public static Term make(Term... t) {
         if (t.length == 1) return t[0]; // special case: single component        
-        return new IntersectionInt(Term.toSortedSetArray(t));
+        Term[] a = Term.toSortedSetArray(t);
+        if (a.length < 2) return null;        
+        return new IntersectionInt(a);
     }
     
     /**
