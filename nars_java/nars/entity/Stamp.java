@@ -203,30 +203,16 @@ public class Stamp implements Cloneable {
         }
         
 
-        final List<Term> chain1, chain2;
-        if (Parameters.THREADS == 1) {
-            chain1 = first.getChain();
-            chain2 = second.getChain();
-        }
-        else {
-            //use a copy of it in case it is being changing while we attempt to read from it below
-            List<Term> chain1Original = first.getChain();
-            synchronized (chain1Original) {
-                chain1 = new ArrayList(chain1Original);
-            }
-            List<Term> chain2Original = second.getChain();
-            synchronized (chain2Original) {
-                chain2 = new ArrayList(chain2Original);
-            }
-        }
         
+        
+        final List<Term> chain1 = first.getChain();
         i1 = chain1.size() - 1;
+
+        final List<Term> chain2 = second.getChain();        
         i2 = chain2.size() - 1;
 
         //set here is for fast contains() checking
-        LinkedHashSet<Term> added = new LinkedHashSet<>(baseLength); 
-        
-        
+        LinkedHashSet<Term> added = new LinkedHashSet<>(baseLength);                 
         
         //take as long till the chain is full or all elements were taken out of chain1 and chain2:
         j = 0;
@@ -316,11 +302,14 @@ public class Stamp implements Cloneable {
 
     /**
      * Get the derivationChain, called from derivedTask in Memory
-     *
+     * Provides a snapshot copy if in multi-threaded mode.
      * @return The evidentialBase of numbers
      */
     public List<Term> getChain() {
-        return derivationChain;
+        if (Parameters.THREADS == 1)
+            return derivationChain;
+        else
+            return new ArrayList(derivationChain);
     }
 
     /**

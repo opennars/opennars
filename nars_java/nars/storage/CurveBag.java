@@ -237,9 +237,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     @Override
     public E takeNext() {
-        if (size()==0) return null; // empty bag                
-        
         synchronized (items) {
+            if (size()==0) return null; // empty bag          
             return removeItem( nextRemovalIndex() );    
         }        
     }
@@ -247,9 +246,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
     @Override
     public E peekNext() {
-        if (size()==0) return null; // empty bag                
-           
         synchronized (items) {
+            if (size()==0) return null; // empty bag                
             return items.get( nextRemovalIndex() );
         }
     }

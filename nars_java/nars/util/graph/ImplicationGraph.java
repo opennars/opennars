@@ -393,8 +393,14 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return null;
                     
         Cause c = new Cause(source, target, parent);
-        addEdge(source, target, c);
-        addComponents(parent, c);
+        try {
+            addEdge(source, target, c);
+            addComponents(parent, c);
+        }
+        catch (IllegalArgumentException wc) {
+            //"no such vertex in graph"
+            return null;
+        }
         return c;
     }
     

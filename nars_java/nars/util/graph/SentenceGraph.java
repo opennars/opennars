@@ -78,8 +78,10 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
         if (event == Events.ConceptForget.class) {
             //remove all associated beliefs
             Concept c = (Concept)a[0];
-            for (Sentence b : c.beliefs) {
-                remove(b);
+            synchronized (c.beliefs) {
+                for (Sentence b : c.beliefs) {
+                    remove(b);
+                }
             }
         }
         else if (event == Events.ConceptBeliefAdd.class) {

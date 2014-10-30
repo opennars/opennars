@@ -37,6 +37,9 @@ abstract public class FireConcept extends NAL {
                 return;
             
             currentTaskLink = currentConcept.taskLinks.takeNext();        
+            
+            if (currentTaskLink == null)
+                return;
 
             if (currentTaskLink.budget.aboveThreshold()) {
                 try {

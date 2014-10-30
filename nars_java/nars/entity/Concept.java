@@ -484,11 +484,14 @@ public class Concept extends Item<Term> {
         float currentBest = 0;
         float beliefQuality;
         Sentence candidate = null;
-        for (final Sentence judg : list) {
-            beliefQuality = solutionQuality(query, judg, memory);
-            if (beliefQuality > currentBest) {
-                currentBest = beliefQuality;
-                candidate = judg;
+        synchronized (list) {            
+            for (int i = 0; i < list.size(); i++) {
+                Sentence judg = list.get(i);
+                beliefQuality = solutionQuality(query, judg, memory);
+                if (beliefQuality > currentBest) {
+                    currentBest = beliefQuality;
+                    candidate = judg;
+                }
             }
         }
         return candidate;
