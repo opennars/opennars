@@ -49,6 +49,9 @@ public class SetExt extends SetTensional {
     public SetExt clone() {
         return new SetExt(term);
     }
+    @Override public CompoundTerm clone(Term[] replaced) {
+        return (CompoundTerm) make(replaced);
+    }
 
 
     /**

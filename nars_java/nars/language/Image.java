@@ -18,7 +18,7 @@ abstract public class Image extends CompoundTerm {
     public final short relationIndex;
 
     protected Image(Term[] components, short relationIndex) {
-        super();
+        super(components);
         
         this.relationIndex = relationIndex;
                 

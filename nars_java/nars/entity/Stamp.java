@@ -24,6 +24,8 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
@@ -32,6 +34,7 @@ import static nars.language.Tense.Future;
 import static nars.language.Tense.Past;
 import static nars.language.Tense.Present;
 import nars.language.Term;
+import nars.language.Terms;
 
 
 public class Stamp implements Cloneable {
@@ -74,7 +77,7 @@ public class Stamp implements Cloneable {
      * deriving the conclusion c possible
      * Uses LinkedHashSet for optimal contains/indexOf performance.
      */
-    public final ArrayList<Term> derivationChain;
+    public final List<Term> derivationChain;
 
 
     
@@ -99,7 +102,10 @@ public class Stamp implements Cloneable {
         this.tense = tense;
         this.latency = 0;
         this.creationTime = -1;
-        derivationChain = new ArrayList<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);        
+        derivationChain = 
+                Parameters.THREADS == 1 ?
+                    new ArrayList(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) : 
+                    new CopyOnWriteArrayList();
     }
     
     /**
@@ -197,8 +203,22 @@ public class Stamp implements Cloneable {
         }
         
 
-        final ArrayList<Term> chain1 = first.getChain();
-        final ArrayList<Term> chain2 = second.getChain();
+        final List<Term> chain1, chain2;
+        if (Parameters.THREADS == 1) {
+            chain1 = first.getChain();
+            chain2 = second.getChain();
+        }
+        else {
+            //use a copy of it in case it is being changing while we attempt to read from it below
+            List<Term> chain1Original = first.getChain();
+            synchronized (chain1Original) {
+                chain1 = new ArrayList(chain1Original);
+            }
+            List<Term> chain2Original = second.getChain();
+            synchronized (chain2Original) {
+                chain2 = new ArrayList(chain2Original);
+            }
+        }
         
         i1 = chain1.size() - 1;
         i2 = chain2.size() - 1;
@@ -230,10 +250,15 @@ public class Stamp implements Cloneable {
             }
             j++;
         } 
+
+        if (Parameters.DEBUG) {
+            Terms.verifyNonNull(added);
+        }
         
         //create derivationChain as reverse of 'added'
         //the most important elements are at the beginning so let's change that:       
-        derivationChain = new ArrayList(added);
+        derivationChain = 
+                Parameters.THREADS == 1 ? new ArrayList(added) : new CopyOnWriteArrayList(added);
         Lists.reverse(derivationChain);
 
 
@@ -294,7 +319,7 @@ public class Stamp implements Cloneable {
      *
      * @return The evidentialBase of numbers
      */
-    public ArrayList<Term> getChain() {
+    public List<Term> getChain() {
         return derivationChain;
     }
 
@@ -303,15 +328,21 @@ public class Stamp implements Cloneable {
      *
      * @return The evidentialBase of numbers
      */
-    public void chainAdd(final Term T) {
+    public void chainAdd(final Term t) {
+        if (t == null)
+            throw new RuntimeException("Chain must contain non-null items");
+        
         if (derivationChain.size()+1 > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
             derivationChain.remove(0);
         }
 
-        derivationChain.add(T);
+        derivationChain.add(t);
         name = null;
     }
     public void chainRemove(final Term t) {
+        if (t == null)
+            throw new RuntimeException("Chain must contain non-null items");
+        
         derivationChain.remove(t);
         name = null;
     }

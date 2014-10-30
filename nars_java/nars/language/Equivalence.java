@@ -37,7 +37,7 @@ public class Equivalence extends Statement {
      * @param components The component list of the term
      */
     private Equivalence(Term[] components, int order) {
-        super();
+        super(components);
         
         temporalOrder = order;
         init(components);

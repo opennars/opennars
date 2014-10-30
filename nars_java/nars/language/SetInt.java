@@ -52,6 +52,12 @@ public class SetInt extends SetTensional {
         return new SetInt(term);
     }
 
+    @Override public CompoundTerm clone(Term[] replaced) {
+        return (CompoundTerm) make(replaced);
+    }
+
+    
+    
     /**
      * Try to make a new set from one component. Called by the inference rules.
      * @param t The compoment

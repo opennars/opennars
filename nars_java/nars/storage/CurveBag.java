@@ -165,7 +165,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         int in = nameTable.size();
         
         
-        if (Parameters.DEBUG) {
+        if ((Parameters.DEBUG) && (Parameters.THREADS == 1)) {
             int is = items.size();
             
             if (is!=in) {
@@ -236,18 +236,22 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public synchronized E takeNext() {
+    public E takeNext() {
         if (size()==0) return null; // empty bag                
         
-        return removeItem( nextRemovalIndex() );    
+        synchronized (items) {
+            return removeItem( nextRemovalIndex() );    
+        }        
     }
     
 
     @Override
-    public synchronized E peekNext() {
+    public E peekNext() {
         if (size()==0) return null; // empty bag                
-                
-        return items.get( nextRemovalIndex() );
+           
+        synchronized (items) {
+            return items.get( nextRemovalIndex() );
+        }
     }
     
     
@@ -297,7 +301,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
 
     
 
-    @Override public E take(final K name) {
+    @Override public E take(final K name) {        
         return nameTable.remove(name);
     }
 

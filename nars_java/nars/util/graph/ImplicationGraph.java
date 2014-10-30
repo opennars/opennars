@@ -218,7 +218,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
 
         @Override  protected void init(Term[] components) {
-            this.term = components;
         }
         
     }
@@ -386,7 +385,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
         
        @Override  protected void init(Term[] components) {
-            this.term = components;            
         }    
     }
     

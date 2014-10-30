@@ -35,7 +35,7 @@ public class Implication extends Statement {
      * @param arg The component list of the term
      */
     public Implication(Term[] arg, int order) {
-        super();
+        super(arg);
                 
         temporalOrder = order;
         init(arg);

@@ -564,7 +564,7 @@ public class GraphExecutive {
 
             //add all terms to derivation chain
             for(Term T : sequence) {
-                stamp.derivationChain.add(T); //todo: if too long kick out the first n terms
+                stamp.chainAdd(T); //todo: if too long kick out the first n terms
             }
             //todo: evidental base hm
 

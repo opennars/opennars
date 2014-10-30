@@ -57,7 +57,7 @@ public class Consider extends Operator {
 
             @Override public void onFinished() {             }
 
-        }.call();
+        }.run();
         
         return null;
     }

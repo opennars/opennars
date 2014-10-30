@@ -38,7 +38,6 @@ import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
 import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
-import nars.io.Texts;
 import static nars.language.CompoundTerm.makeCompoundName;
 
 
@@ -48,7 +47,7 @@ public abstract class CompoundTerm extends Term {
      * list of (direct) term
      * TODO make final again
      */
-    public Term[] term;
+    public final Term[] term;
     
     /**
      * syntactic complexity of the compound, the sum of those of its term
@@ -78,21 +77,17 @@ public abstract class CompoundTerm extends Term {
     @Override public abstract CompoundTerm clone();
 
     
-
-    /** should call refresh(components) after pre-initialization */
-    protected CompoundTerm() {
-        super();
-    }
-    
     public CompoundTerm(final Term[] components) {
         super();
-        init(components);
+
+        this.term = components;            
+        
+        init(term);
     }
     
     /** call this after changing Term[] contents */
-    protected void init(final Term[] components) {
+    protected void init(Term[] term) {
 
-        this.term = components;            
 
         this.complexity = 1;
         this.hasVariables = this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = false;
@@ -109,15 +104,14 @@ public abstract class CompoundTerm extends Term {
     }
 
     
+    abstract public CompoundTerm clone(final Term[] replaced);
     
     /** override in subclasses to avoid unnecessary reinit */
-    public CompoundTerm clone(final Term[] replaced) {
+    public CompoundTerm _clone(final Term[] replaced) {
         if (Terms.equals(term, replaced)) {
             return this;
         }
-        CompoundTerm c = clone();
-        c.init(replaced);
-        return c;
+        return clone(replaced);
     }
 
 
@@ -383,13 +377,13 @@ public abstract class CompoundTerm extends Term {
         return l;
     }
   
-    /** forced deep clone of terms */
-    @Deprecated public ArrayList<Term> cloneTermsListDeep() {
-        ArrayList<Term> l = new ArrayList(term.length);
-        for (final Term t : term)
-            l.add(t.clone());
-        return l;        
-    }
+//    /** forced deep clone of terms */
+//    @Deprecated public ArrayList<Term> cloneTermsListDeep() {
+//        ArrayList<Term> l = new ArrayList(term.length);
+//        for (final Term t : term)
+//            l.add(t.clone());
+//        return l;        
+//    }
 
     
 

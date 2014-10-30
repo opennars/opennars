@@ -49,7 +49,11 @@ public class Similarity extends Statement {
     public Similarity clone() {
         return new Similarity(term);
     }
-
+    @Override public CompoundTerm clone(Term[] replaced) {
+        if (replaced.length!=2)
+            return null;
+        return (CompoundTerm) make(replaced[0], replaced[1]);
+    }
 
     /**
      * Try to make a new compound from two term. Called by the inference rules.

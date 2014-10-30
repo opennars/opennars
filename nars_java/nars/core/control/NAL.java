@@ -4,8 +4,7 @@
  */
 package nars.core.control;
 
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
+import java.util.List;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -17,7 +16,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
-import nars.inference.RuleTables;
 import nars.io.Symbols;
 import nars.language.Negation;
 import nars.language.Term;
@@ -27,7 +25,7 @@ import nars.operator.Operation;
 /**
  * NAL Reasoner Process.  Includes all reasoning process state.
  */
-public abstract class NAL implements Callable<NAL> {
+public abstract class NAL implements Runnable {
     public final Memory mem;
     protected Term currentTerm;
     protected Concept currentConcept;
@@ -76,7 +74,7 @@ public abstract class NAL implements Callable<NAL> {
         if (stamp.latency > 0) {
             mem.logic.DERIVATION_LATENCY.commit(stamp.latency);
         }
-        final ArrayList<Term> chain = stamp.getChain();
+        final List<Term> chain = stamp.getChain();
         final Term currentTaskContent = getCurrentTask().getContent();
         if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
             final Term currentBeliefContent = getCurrentBelief().content;

@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
-import static nars.language.SetTensional.verifySortedAndUnique;
 
 /** 
  * A disjunction of Statements.
@@ -40,7 +39,7 @@ public class Disjunction extends CompoundTerm {
         super(arg);
         
         if (Parameters.DEBUG) {
-            verifySortedAndUnique(arg, false);
+            Terms.verifySortedAndUnique(arg, false);
         }        
     }
 

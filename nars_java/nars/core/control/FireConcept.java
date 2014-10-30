@@ -24,13 +24,9 @@ abstract public class FireConcept extends NAL {
     abstract public void onFinished();
     
     @Override
-    public NAL call() {
-        
-        fire();
-        
-        onFinished();
-        
-        return this;
+    public void run() {        
+        fire();        
+        onFinished();                
     }
     
     protected void fire() {
@@ -42,8 +38,14 @@ abstract public class FireConcept extends NAL {
             
             currentTaskLink = currentConcept.taskLinks.takeNext();        
 
-            if (currentTaskLink.budget.aboveThreshold())
-                fireTaskLink();
+            if (currentTaskLink.budget.aboveThreshold()) {
+                try {
+                    fireTaskLink();
+                }
+                catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
 
             currentConcept.taskLinks.putBack(currentTaskLink, 
                     mem.param.taskForgetDurations.getCycles(), mem);        

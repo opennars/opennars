@@ -42,7 +42,7 @@ public class Conjunction extends CompoundTerm {
      * @param arg The component list of the term
      */
     protected Conjunction(final Term[] arg, final int order) {
-        super();
+        super(arg);
         
         temporalOrder = order;
         init(arg);

@@ -21,13 +21,16 @@ public class ItemCounter<E> extends AbstractObserver {
     @Override
     public void event(Class event, Object[] arguments) {
         if (arguments.length > 0) {
-            synchronized (items) {
                 E item = (E)arguments[0];
-                int alreadyExisted = items.add(item, 1);
+
+                int alreadyExisted;
+                synchronized (items) {
+                    alreadyExisted = items.add(item, 1);
+                }
+                
                 if (alreadyExisted == 0) {
                     onFirstAdd(item);
                 }
-            }
             
         }
     }
