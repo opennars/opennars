@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.nio.CharBuffer;
 import java.util.Arrays;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
@@ -208,7 +209,7 @@ public abstract class Statement extends CompoundTerm {
      * @param relation The relation operator
      * @return The nameStr of the term
      */
-    final protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+    final protected static CharSequence makeStatementNameSB(final Term subject, final NativeOperator relation, final Term predicate) {
         final CharSequence subjectName = subject.name();
         final CharSequence predicateName = predicate.name();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
@@ -220,14 +221,25 @@ public abstract class Statement extends CompoundTerm {
             .append(predicateName)
             .append(STATEMENT_CLOSER.ch);
             
-        //EITHER WORKS, see which is faster.  but using the StringBuilder as-is should save memory:
-        //return Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, sb);
         return sb.toString();
-        
-        
-        
     }
     
+    final protected static CharSequence makeStatementName(final Term subject, final NativeOperator relation, final Term predicate) {
+        final CharSequence subjectName = subject.name();
+        final CharSequence predicateName = predicate.name();
+        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
+        
+        CharBuffer cb = CharBuffer.allocate(length);
+        
+        cb.append(STATEMENT_OPENER.ch)
+            .append(subjectName)
+            .append(' ').append(relation.toString()).append(' ')
+            .append(predicateName)
+            .append(STATEMENT_CLOSER.ch);
+        cb.compact();        
+            
+        return cb;
+    }    
     /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>

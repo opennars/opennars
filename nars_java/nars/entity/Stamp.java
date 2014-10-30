@@ -453,7 +453,7 @@ public class Stamp implements Cloneable {
         if (timeDiff > duration) {
             return Symbols.TENSE_FUTURE;
         } else if (timeDiff < -duration) {
-            return  Symbols.TENSE_PAST;
+            return Symbols.TENSE_PAST;
         } else {
             return Symbols.TENSE_PRESENT;
         }

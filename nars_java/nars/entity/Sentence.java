@@ -369,7 +369,7 @@ public class Sentence implements Cloneable {
         final long t = nar.memory.time();
 
         final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t, nar.memory.param.duration.get()) : "";
-        final String truthString = (truth != null) ? truth.toStringExternal() : null;
+        final CharSequence truthString = (truth != null) ? truth.toStringExternal() : null;
  
         CharSequence stampString = showStamp ? stamp.name() : null;
         
@@ -389,8 +389,9 @@ public class Sentence implements Cloneable {
         if (tenseString.length() > 0)
             buffer.append(' ').append(tenseString);
         
-        if (truth != null)
+        if (truth != null) {            
             buffer.append(' ').append(truthString);
+        }
         
         if (showStamp)
             buffer.append(' ').append(stampString);

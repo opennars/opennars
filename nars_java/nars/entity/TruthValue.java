@@ -239,10 +239,10 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
 
     /** output representation */
-    public String toStringExternal() {
+    public CharSequence toStringExternal() {
         //return name().toString();
         StringBuilder sb =  new StringBuilder();
-        return appendString(sb, true).toString();
+        return appendString(sb, true);
     }
     /**
      * The String representation of a TruthValue, as used internally by the system

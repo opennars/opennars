@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -235,22 +236,24 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final NativeOperator op, final Term... arg) {
-        final int sizeEstimate = 12 * arg.length;
+    protected static CharSequence makeCompoundName(final NativeOperator op, final Term... arg) {
+        int size = 1 + 1;
         
-        final StringBuilder n = new StringBuilder(sizeEstimate)
-            .append(COMPOUND_TERM_OPENER.ch).append(op.toString());
+        String opString = op.toString();
+        size += opString.length();
+        for (final Term t : arg) 
+            size += 1 + t.name().length();
+        
+        
+        final CharBuffer n = CharBuffer.allocate(size)
+            .append(COMPOUND_TERM_OPENER.ch).append(opString);
             
-        for (final Term t : arg) {
-            if (t == null) {
-                throw new RuntimeException("Term is null: " + Arrays.toString(arg));
-            }
-            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
-        }
+        for (final Term t : arg)
+            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());        
         
         n.append(COMPOUND_TERM_CLOSER.ch);
                 
-        return n.toString();
+        return n.compact();
     }
     
 

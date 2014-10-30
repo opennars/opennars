@@ -56,6 +56,11 @@ public class BudgetAccountTest {
         assertEquals(0.8f, b.getPriority(), epsilon);
         
         assertEquals(1.5f, a.getPriority() + b.getPriority() + x.getBalance(), epsilon);
+        
+        x.absorb(a, 0f);
+        assertEquals(0f, a.getPriority(), epsilon);
+        assertEquals(0.7f, x.getBalance(), epsilon);
+        
         /*x.invest(a, 0.6f, b, 0.6f, true);
         assertEquals(0.6f, a.getPriority(), epsilon);
         assertEquals(0.6f, b.getPriority(), epsilon);
