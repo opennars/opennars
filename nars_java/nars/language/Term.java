@@ -193,9 +193,9 @@ public class Term implements AbstractTerm {
         else {
             //previously: Orders among terms: variable < atomic < compound
             if ((that instanceof Variable) && (getClass()!=Variable.class))
-                return -1;
-            else if ((this instanceof Variable) && (getClass()==Variable.class))
                 return 1;
+            else if ((this instanceof Variable) && (that.getClass()!=Variable.class))
+                return -1;
             return Texts.compareTo(name(), that.name());            
         }
     }

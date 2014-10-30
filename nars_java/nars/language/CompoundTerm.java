@@ -60,7 +60,7 @@ public abstract class CompoundTerm extends Term {
     transient private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
     
     transient int containedTemporalRelations = -1;
-    private int hash;
+    int hash;
     
 
     /**
