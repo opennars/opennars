@@ -47,5 +47,6 @@ public interface ConceptProcessor extends Iterable<Concept> {
     public Concept sampleNextConcept();
 
     public void init(Memory m);
+
     
 }

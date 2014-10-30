@@ -8,7 +8,7 @@ import nars.core.NAR;
 import nars.core.NARBuilder;
 import nars.core.Param;
 import nars.core.Parameters;
-import nars.core.control.SequentialMemoryCycle;
+import nars.core.control.DefaultConceptProcessor;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -115,7 +115,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     
     @Override
     public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
-        return new SequentialMemoryCycle(newConceptBag(p), newSubconceptBag(p), c);
+        return new DefaultConceptProcessor(newConceptBag(p), newSubconceptBag(p), c);
     }
 
     @Override
