@@ -179,14 +179,22 @@ public class Term implements AbstractTerm {
     public int compareTo(final AbstractTerm that) {
         if (that==this) return 0;
         
-        //previously: Orders among terms: variable < atomic < compound
-        if (!getClass().equals(that.getClass())) {
-            //differnt class, use class as ordering
-            return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
+        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
+            if (!getClass().equals(that.getClass())) {
+                //differnt class, use class as ordering
+                return getClass().getSimpleName().compareTo(that.getClass().getSimpleName());
+            }
+            else {
+                //same class, compare by name()
+                return Texts.compareTo(name(), that.name());
+            }
+
         }
         else {
-            //same class, compare by name()
-            return Texts.compareTo(name(), that.name());
+            //previously: Orders among terms: variable < atomic < compound
+            if ((that instanceof Variable) && (getClass()!=Variable.class))
+                return -1;
+            return Texts.compareTo(name(), that.name());            
         }
     }
 
@@ -261,15 +269,7 @@ public class Term implements AbstractTerm {
         for (Term x : s) {
             n[j++] = x;
         }
-        
-        if (Parameters.DEBUG) {
-            if ((n.length == 1) && (arg.length == 2)) { 
-                if (!arg[0].name().equals(arg[1].name())) {
-                    throw new RuntimeException("Actually inequal: " + Arrays.toString(arg));
-                }
-            }
-        }        
-            
+                    
         return n;
     }
     

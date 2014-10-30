@@ -15,7 +15,6 @@ import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 abstract public class Image extends CompoundTerm {
     /** The index of relation in the component list */
     public final short relationIndex;
-    private boolean hasPlaceHolder;
 
     protected Image(Term[] components, short relationIndex) {
         super();
@@ -94,19 +93,9 @@ abstract public class Image extends CompoundTerm {
      */
     @Override
     public CharSequence makeName() {
-        CharSequence c = makeImageName(operator(), term, relationIndex);
-        this.hasPlaceHolder = false;
-        for (Term t : term) 
-            if (isPlaceHolder(t)) {
-                hasPlaceHolder = true;
-                break;
-            }                
-        return c;
+        return makeImageName(operator(), term, relationIndex);
     }
 
-    public boolean containsPlaceHolder() {
-        return hasPlaceHolder;
-    }
 
     
 
