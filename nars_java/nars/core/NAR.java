@@ -15,7 +15,7 @@ import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
-import nars.entity.AbstractTask;
+import nars.core.control.AbstractTask;
 import nars.entity.Task;
 import nars.gui.NARControls;
 import nars.io.InPort;
@@ -378,7 +378,7 @@ public class NAR implements Runnable, TaskSource {
             memory.stepLater(cycles);
         
         //finish all remaining cycles
-        while (memory.getCyclesQueued() > 0) {
+        while (!memory.isProcessingInput()) {
             step(1);
         }
         running = false;

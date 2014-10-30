@@ -1,6 +1,7 @@
 package nars.core;
 
 import java.util.Collection;
+import nars.core.control.FireConcept;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.inference.BudgetFunctions.Activating;
@@ -16,7 +17,7 @@ public interface ConceptProcessor extends Iterable<Concept> {
 
 
     /** An iteration of the main loop, called during each memory cycle. */
-    public void cycle(Memory m);
+    public FireConcept next();
 
     /** All known concepts */
     public Collection<? extends Concept> getConcepts();
@@ -44,5 +45,7 @@ public interface ConceptProcessor extends Iterable<Concept> {
      * Provides a "next" concept for sampling during inference. 
      */
     public Concept sampleNextConcept();
+
+    public void init(Memory m);
     
 }

@@ -19,6 +19,7 @@ package nars.operator.mental;
 
 import java.util.ArrayList;
 import nars.core.Memory;
+import nars.core.control.FireConcept;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
@@ -49,8 +50,15 @@ public class Consider extends Operator {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
         Term term = args[0];
+        
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-        concept.fire();
+        
+        new FireConcept(memory, concept, 1) {
+
+            @Override public void onFinished() {             }
+
+        }.call();
+        
         return null;
     }
 

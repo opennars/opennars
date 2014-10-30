@@ -1,6 +1,7 @@
 package nars.util.sort;
 
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -17,13 +18,12 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 
     public final List<E> list;
     
-    public ArraySortedIndex() {
-        this(1, 
-            //new ArrayList()
-            new FastSortedTable(null)
-        );
-    }
 
+    public ArraySortedIndex(int capacity) {
+        this(capacity, 
+                capacity < 50 ? new ArrayList() : new FastSortedTable());
+    }
+    
     public ArraySortedIndex(int capacity, List<E> list) {
         super();
         setCapacity(1);

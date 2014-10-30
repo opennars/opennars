@@ -35,10 +35,13 @@ import java.util.concurrent.Executors;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
+import static nars.core.Memory.Forgetting.Periodic;
+import static nars.core.Memory.Timing.Iterative;
 import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
-import nars.entity.AbstractTask;
+import nars.core.control.AbstractTask;
+import nars.core.control.FireConcept;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -48,8 +51,8 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
-import nars.inference.NAL;
-import nars.inference.NAL.ImmediateProcess;
+import nars.core.control.ImmediateProcess;
+import nars.core.control.NAL;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -130,6 +133,7 @@ public class Memory implements Serializable {
     private long timeRealNow;
     private long timePreviousCycle;
     private long timeSimulation;
+
 
 
 
@@ -225,13 +229,10 @@ public class Memory implements Serializable {
     public final ResourceSense resource;
     
     
-    
-    private boolean working;    
-    
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
-    private int cyclesQueued;
+    private int inputPausedUntil;
 
     
     /**
@@ -265,7 +266,9 @@ public class Memory implements Serializable {
         }               
         
         this.param = param;
+        
         this.concepts = cycleControl;
+        this.concepts.init(this);
         
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
@@ -415,9 +418,7 @@ public class Memory implements Serializable {
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
         
-        cyclesQueued = 0;
-        
-        working = true;
+        inputPausedUntil = 0;
         
         emotion.set(0.5f, 0.5f);
         
@@ -650,9 +651,13 @@ public class Memory implements Serializable {
      *
      * @param t The addInput task
      */
-    public void inputTask(final AbstractTask t) {                                                 
-        if (t instanceof Task) {                                       
+    public void inputTask(final AbstractTask t) {
+        
+        if (t instanceof Task) {
             Task task = (Task)t;
+            Stamp s = task.sentence.stamp;                        
+            if (s.getCreationTime()==-1)
+                s.setCreationTime(time(), param.duration.get());
 
             emit(IN.class, task);
 
@@ -756,87 +761,74 @@ public class Memory implements Serializable {
     }
     
     
+    public class Loop {
+   
+        public int inputTasksPriority() {
+            return 1;
+        }
+        
+        public int newTasksPriority() {            
+            return newTasks.size();
+        }
+
+        private int novelTasksPriority() {
+            if (getNewTaskCount() == 0)
+                return 1;
+            else
+                return 0;
+        }
+        
+        private int conceptsPriority() {
+            if (getNewTaskCount() == 0) 
+                return 1;
+            else
+                return 0;
+        }
+        
+    }
     
-    public void cycle(final TaskSource taskSource) {
+    private Loop loop = new Loop();
+    
+    public void cycle(final TaskSource inputs) {
+
+        if (!isEnabled())
+            return;
         
         resource.CYCLE.start();
         resource.CYCLE_CPU_TIME.start();
         resource.CYCLE_RAM_USED.start();
 
-        if (enabled) {
-
-            int inputCycles = param.cycleInputTasks.get();
-            int memCycles = param.cycleMemory.get();
-
-
-            //IO cycle
-            resource.IO_CYCLE.start();
-
-            if (logic.IO_INPUTS_BUFFERED.isActive())
-                logic.IO_INPUTS_BUFFERED.commit(taskSource.getInputItemsBuffered());
-
-            if (getCyclesQueued()==0) {                
-                final int duration = param.duration.get();
-                for (int i = 0; i < inputCycles; i++) {
-                    AbstractTask t = taskSource.nextTask();
-                    if (t instanceof Task) {
-                        Stamp s = ((Task)t).sentence.stamp;                        
-                        if (s.getCreationTime()==-1)
-                            s.setCreationTime(time(), duration);
-                    }
-                    if (t!=null)
-                        inputTask(t);
-                }
-            }
-            resource.IO_CYCLE.stop();
-
-
-
-            //Memory working 
-            resource.MEMORY_CYCLE.start();
-            if (working) {            
-                for (int i = 0; i < memCycles; i++) {
-                    cycleWork();                
-                }            
-            }
-            resource.MEMORY_CYCLE.stop();
-            
-            executive.cycle();
-
-        }
-
+        if (logic.IO_INPUTS_BUFFERED.isActive())
+            logic.IO_INPUTS_BUFFERED.commit(inputs.getInputItemsBuffered());
         
+        event.emit(Events.CycleStart.class);                
+
+            
+        for (int i = 0; (i < loop.inputTasksPriority()) && (isProcessingInput()); i++) {
+            AbstractTask t = inputs.nextTask();                    
+            if (t!=null) 
+                inputTask(t);            
+        }
+      
+
+        processNewTasks(loop.newTasksPriority());
+                
+        processNovelTasks(loop.novelTasksPriority());
+        
+        processConcepts(loop.conceptsPriority());
+
+                   
+        executive.cycle();
+
+        event.emit(Events.CycleEnd.class);
+        updateTime();
+
         resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
         resource.CYCLE.stop();
     }
     
     
-    /* ---------- system working cycleMemory ---------- */
-    /**
-     * An atomic working cycle of the system: process new Tasks, then fire a
-     * concept
-     * <p>
-     * Called from Reasoner.tick only
-     *
-     * @param clock The current time to be displayed
-     */
-    public void cycleWork() {        
-        event.emit(Events.CycleStart.class);
-        
-        //--------m-a-i-n-----l-o-o-p--------
-            
-        concepts.cycle(this);                
-            
-        //--------m-a-i-n-----l-o-o-p--------
-
-        if (cyclesQueued > 0)
-            cyclesQueued--;         
-        
-        updateTime();        
-                
-        event.emit(Events.CycleEnd.class);        
-    }
 
     /**
      * automatically called each cycle */    
@@ -847,18 +839,11 @@ public class Memory implements Serializable {
     }
     
     
-    /**
-     * Process the newTasks accumulated in the previous cycleMemory, accept
- addInput ones and those that corresponding to existing concepts, plus one
- from the buffer. 
-        @return number of tasks processed
-     */
-    public int processNewTasks() {        
-        return processNewTasks(newTasks.size());
-    }
+
     
     /** Processes a specific number of new tasks */
-    public int processNewTasks(int maxTasks) {
+    protected int processNewTasks(int maxTasks) {
+        if (maxTasks == 0) return 0;
         
         List<Callable<NAL>> pending = new ArrayList(maxTasks);
         
@@ -866,9 +851,9 @@ public class Memory implements Serializable {
         // don't include new tasks produced in the current cycleMemory
         int numTasks = Math.min(maxTasks, newTasks.size());
         for (int i = 0; i < numTasks; i++) {
-            if(newTasks.isEmpty()) { //TODO it can already be 0 inbetween, multithreading?
-                break;
-            }
+            if(newTasks.isEmpty())  //TODO it can already be 0 inbetween, multithreading?
+                break;            
+            
             final Task task = newTasks.removeFirst();
             processed++;
             
@@ -923,7 +908,8 @@ public class Memory implements Serializable {
     }
     
     public <T> void execute(final List<Callable<T>> tasks) {
-        if (tasks.isEmpty()) return;
+        if ((tasks == null) || (tasks.isEmpty())) return;
+        
         else if (tasks.size() == 1) {
             try {
                 tasks.get(0).call();
@@ -952,18 +938,42 @@ public class Memory implements Serializable {
     }
 
 
-    
+    protected void processConcepts(int c) {
+        if (c == 0) return;
+        
+        List<Callable<NAL>> pending = new ArrayList(c);
+        
+        for (int i = 0; i < c; i++) {
+            FireConcept f = concepts.next();
+            if (f!=null)
+                pending.add(f);
+        }
+        
+        execute(pending);        
+    }
+
     /**
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public boolean processNovelTask() {
-        final Task task = novelTasks.takeNext();       // select a task from novelTasks
-        if (task != null) {            
-            new ImmediateProcess(this, task, 0).call();
-            return true;
+    protected int processNovelTasks(int num) {
+        if (num == 0) return 0;
+        
+        int executed = 0;
+        
+        List<Callable<NAL>> pending = new ArrayList(num);
+
+        for (int i = 0; i < Math.min(num, novelTasks.size()); i++) {
+            final Task task = novelTasks.takeNext();       // select a task from novelTasks
+            if (task != null) {            
+                pending.add(new ImmediateProcess(this, task, 0));
+                executed++;
+            }
         }
-        return false;
+        
+        execute(pending);
+        
+        return executed;
     }
 
 
@@ -1026,21 +1036,10 @@ public class Memory implements Serializable {
     }
 
 
-    public int getCyclesQueued() {
-        return cyclesQueued;
+    public boolean isProcessingInput() {
+        return time() >= inputPausedUntil;
     }
 
-
-
-
-    public boolean isWorking() {
-        return working;
-    }
-        
-    /** Can be used to pause/resume inference, without killing the running thread. */
-    public void setWorking(boolean b) {
-        this.working = b;
-    }
     
     /**
      * Queue additional cycle()'s to the inference process.
@@ -1048,7 +1047,7 @@ public class Memory implements Serializable {
      * @param cycles The number of inference steps
      */
     public void stepLater(final int cycles) {
-        cyclesQueued += cycles;
+        inputPausedUntil += time() + cycles;
     }    
 
     /** convenience method for forming a new Task from a term */

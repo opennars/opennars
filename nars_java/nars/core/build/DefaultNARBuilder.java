@@ -74,10 +74,6 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         p.setTiming(timing);
         p.noiseLevel.set(100);
         
-        //Cycle control
-        p.cycleMemory.set(1);
-        p.cycleInputTasks.set(1);
-
         p.decisionThreshold.set(0.30);
         
         p.duration.set(5);

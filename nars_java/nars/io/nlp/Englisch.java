@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nars.entity.AbstractTask;
+import nars.core.control.AbstractTask;
 import static nars.io.Texts.levenshteinDistance;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;

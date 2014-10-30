@@ -149,7 +149,7 @@ public class TemporalRules {
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static void temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
+    public static void temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         //TODO prevent trying question sentences, may cause NPE
         
         //try if B1 unifies with B2, if yes, create new judgement
@@ -198,7 +198,7 @@ public class TemporalRules {
     
     
     
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
         if ((s1.truth==null) || (s2.truth==null))
             return;
         
@@ -376,7 +376,7 @@ public class TemporalRules {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final NAL nal) {
+    public static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final nars.core.control.NAL nal) {
         BudgetValue budget = null;
         boolean feedbackToLinks = false;
         if (task == null) {

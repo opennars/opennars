@@ -13,8 +13,6 @@ public class ResourceSense extends AbstractSense {
     
     public final MemoryUseTracker CYCLE_RAM_USED;
     public final ThreadCPUTimeTracker CYCLE_CPU_TIME; //the cpu time of each cycle
-    public final NanoTimeDurationTracker IO_CYCLE;    //duration of the I/O component of each cycle
-    public final NanoTimeDurationTracker MEMORY_CYCLE; //duration of the working component of cycle
     public final NanoTimeDurationTracker CYCLE; //the duration of the cycle
     
     
@@ -22,12 +20,9 @@ public class ResourceSense extends AbstractSense {
     public ResourceSense() {
         super();
         
-        add(IO_CYCLE = new NanoTimeDurationTracker("io.cycle"));
         
         add(CYCLE = new NanoTimeDurationTracker("cycle"));   
         
-        add(MEMORY_CYCLE = new NanoTimeDurationTracker("memory.cycle"));
-        MEMORY_CYCLE.setSampleResolution(128);
         
         add(CYCLE_RAM_USED = new MemoryUseTracker("memory.cycle.ram_used"));
         CYCLE_RAM_USED.setSampleResolution(128);
@@ -47,12 +42,6 @@ public class ResourceSense extends AbstractSense {
         {
             put("cycle.frequency.hz", cycleTimeMS == 0 ? 0 : (1000.0 / cycleTimeMS) );
             put("cycle.frequency_potential.mean.hz", (cycleTimeMeanMS == 0) ? 0 : (1000.0 / cycleTimeMeanMS) );
-        }
-        {
-            //DataSet d = IO_CYCLE.get();
-            double mv = MEMORY_CYCLE.getValue();            
-            double r = (mv > 0) ? IO_CYCLE.getValue() / mv : 0;
-            put("io.to_memory.ratio", r );
         }
         {
             //DataSet d = MEMORY_CYCLE_RAM_USED.get();

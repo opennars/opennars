@@ -24,6 +24,8 @@ import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
+import nars.entity.Concept;
+import nars.core.control.NAL;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;

@@ -57,7 +57,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
     
     public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
         //if (capacity < 50)            
-            return new ArraySortedIndex<E>();
+            return new ArraySortedIndex<E>(capacity);
         /*else
             return new FractalSortedItemList<E>();        */
     }
