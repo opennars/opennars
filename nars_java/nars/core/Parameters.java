@@ -176,8 +176,8 @@ public class Parameters {
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
     
     /** use this for advanced Bag error checking, at the expense of lower performance */
-    public static boolean DEBUG = false;
-    public static boolean TERM_ELEMENT_EQUIVALENCY = true;
+    public static boolean DEBUG = true;
+    public static boolean TERM_ELEMENT_EQUIVALENCY = false;
     
 }
 
