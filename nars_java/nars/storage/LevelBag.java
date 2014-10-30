@@ -399,7 +399,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if (Parameters.DEBUG) {
             int ns = nameTable.size();
             int is = sizeItems();
-            if ((ns == is) && (Parameters.THREADS!=1))
+            if ((ns == is) || (Parameters.THREADS!=1))
                 return null;
             throw new RuntimeException("LevelBag inconsistency: " + nameTable.size() + "|" + sizeItems() + " Can not remove missing element: size inconsistency" + oldItem + " from " + this.getClass().getSimpleName());
         }
