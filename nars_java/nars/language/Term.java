@@ -91,7 +91,7 @@ public class Term implements AbstractTerm {
     @Override
     public boolean equals(final Object that) {
         if (that == this) return true;
-        if (!(that.getClass().equals(getClass()))) return false;
+        if (!(that.getClass() == getClass())) return false;
         return name().equals(((Term)that).name());
     }
 

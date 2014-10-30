@@ -117,6 +117,11 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
 
     public abstract float getAveragePriority();
 
+    public float getTotalPriority() {
+        int size = size();
+        if (size == 0) return 0;
+        return getAveragePriority() * size();
+    }
 
     /** iterates all items in (approximately) descending priority */
     @Override public abstract Iterator<E> iterator();

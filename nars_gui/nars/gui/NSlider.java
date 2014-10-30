@@ -25,7 +25,7 @@ import java.awt.event.MouseMotionListener;
 import java.text.NumberFormat;
 import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
-import nars.util.meter.util.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 
 
