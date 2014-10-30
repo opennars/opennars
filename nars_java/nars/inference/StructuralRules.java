@@ -663,6 +663,8 @@ public final class StructuralRules {
                 Negation.make(subj), 
                 TemporalRules.reverseOrder(statement.getTemporalOrder()));                
         
+        if (content == null) return;
+        
         TruthValue truth = sentence.truth;
         BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {

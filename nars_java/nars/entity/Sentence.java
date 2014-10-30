@@ -375,23 +375,21 @@ public class Sentence implements Cloneable {
         
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
                 
-        if (truth != null) {
-            stringLength += truthString.length();
-        }
-        if (showStamp) {
-            stringLength += stampString.length();
-        }
+        if (truth != null)
+            stringLength += truthString.length()+1;
         
-        final StringBuilder buffer = new StringBuilder(stringLength)
-                .append(contentName)
-                .append(punctuation);
+        if (showStamp)
+            stringLength += stampString.length()+1;
+        
+        
+        final StringBuilder buffer = new StringBuilder(stringLength).
+                    append(contentName).append(punctuation);
         
         if (tenseString.length() > 0)
             buffer.append(' ').append(tenseString);
         
-        if (truth != null) {            
+        if (truth != null)
             buffer.append(' ').append(truthString);
-        }
         
         if (showStamp)
             buffer.append(' ').append(stampString);

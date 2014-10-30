@@ -231,14 +231,19 @@ public abstract class Statement extends CompoundTerm {
         
         CharBuffer cb = CharBuffer.allocate(length);
         
-        cb.append(STATEMENT_OPENER.ch)
-            .append(subjectName)
-            .append(' ').append(relation.toString()).append(' ')
-            .append(predicateName)
-            .append(STATEMENT_CLOSER.ch);
-        cb.compact();        
-            
-        return cb;
+        cb.append(STATEMENT_OPENER.ch);
+        
+        //Texts.append(cb, subjectName);
+        cb.append(subjectName);
+                
+        cb.append(' ').append(relation.toString()).append(' ');
+        
+        //Texts.append(cb, predicateName);
+        cb.append(predicateName);
+                
+        cb.append(STATEMENT_CLOSER.ch);
+                        
+        return cb.compact();
     }    
     /**
      * Check the validity of a potential Statement. [To be refined]
