@@ -1,6 +1,7 @@
 package nars.io;
 
 import java.lang.reflect.Field;
+import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.HashMap;
@@ -67,6 +68,7 @@ public class Texts {
             //o.setAccessible(true);         
         } catch (Exception ex) {
             ex.printStackTrace();
+            System.exit(1);
         }
         val = sv;        
         sbval = sbv;
@@ -344,6 +346,9 @@ public class Texts {
         if ((s instanceof String) && (t instanceof String)) {
             return ((String)s).compareTo((String)t);
         }
+        else if ((s instanceof CharBuffer) && (t instanceof CharBuffer)) {
+            return ((CharBuffer)s).compareTo((CharBuffer)t);
+        }
         
         int i = 0;
 
@@ -367,6 +372,31 @@ public class Texts {
 
     public static CharSequence n2(final double p) {
         return n2((float)p);
+    }
+
+    /** fast append to CharBuffer */
+    public final static CharBuffer append(final CharBuffer c, final CharSequence s) {
+        if (s instanceof CharBuffer) {            
+            c.put((CharBuffer)s);            
+            return c;
+        }
+        else if (s instanceof String) {
+            c.put(getCharArray((String)s));            
+            return c;
+        }
+        else {
+            return c.append(s);
+        }
+    }
+    
+    public final static CharBuffer append(final CharBuffer c, final CharBuffer s) {
+        return c.put(s);        
+    }
+    public final static CharBuffer append(final CharBuffer c, final String s) {
+        return c.put(getCharArray(s));        
+    }
+    public final static CharBuffer append(final CharBuffer b, final char c) {
+        return b.put(c);        
     }
 
 }

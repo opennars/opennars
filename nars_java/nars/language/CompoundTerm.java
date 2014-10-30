@@ -252,7 +252,7 @@ public abstract class CompoundTerm extends Term {
             n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());        
         
         n.append(COMPOUND_TERM_CLOSER.ch);
-                
+                        
         return n.compact();
     }
     
