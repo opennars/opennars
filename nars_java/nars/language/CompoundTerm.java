@@ -109,6 +109,9 @@ public abstract class CompoundTerm extends Term {
     
     /** override in subclasses to avoid unnecessary reinit */
     public CompoundTerm clone(final Term[] replaced) {
+        if (Terms.equals(term, replaced)) {
+            return this;
+        }
         CompoundTerm c = clone();
         c.init(replaced);
         return c;
@@ -189,8 +192,11 @@ public abstract class CompoundTerm extends Term {
 
     @Override
     public CharSequence name() {
-        if (this.name == null)
+        if (this.name == null) {            
             this.name = makeName();
+            System.err.println("named: " + name);
+            new Exception().printStackTrace();
+        }
         return this.name;
     }
     
@@ -698,25 +704,54 @@ public abstract class CompoundTerm extends Term {
         return hash;
     }
 
+    @Override
+    public int compareTo(final AbstractTerm that) {
+        if (that==this) return 0;
+        
+        if (that instanceof CompoundTerm) {
+            CompoundTerm t = (CompoundTerm)that;
+            
+            int h = Integer.compare(hashCode(), t.hashCode());
+            if (h != 0) return h;
+            
+            int o = operator().compareTo(t.operator());
+            if (o != 0) return o;
+            
+            //same operator
+            int c = Integer.compare(getComplexity(), t.getComplexity());
+            if (c!=0) return c;
+            
+            //should almost never reach here, the hashcode above will handle > 99% of comparisons
+            if (!equals(that)) {
+                return Integer.compare(System.identityHashCode(this), System.identityHashCode(that));
+            }
+            return 0;
+        }
+        else
+            return super.compareTo(that);
+    }
     
     @Override
     public boolean equals(final Object that) {
         if (that==this) return true;
         
         if (!(that instanceof CompoundTerm)) return false;
-        
+                
         final CompoundTerm t = (CompoundTerm)that;        
         
         if (operator() != t.operator())
             return false;
         
-        if (size() != t.size())
+        if (getComplexity()!= t.getComplexity())
             return false;
         
         if (getTemporalOrder()!=t.getTemporalOrder())
             return false;
         
         if (!equals2(t))
+            return false;
+        
+        if (term.length!=t.term.length)
             return false;
         
         for (int i = 0; i < term.length; i++) {            

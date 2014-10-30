@@ -31,8 +31,19 @@ abstract public class Image extends CompoundTerm {
 
     @Override
     public boolean equals2(final CompoundTerm other) {
-        return relationIndex == ((Image)other).relationIndex;           }
+        return relationIndex == ((Image)other).relationIndex;           
+    }
     
+    @Override
+    public int compareTo(final AbstractTerm that) {
+        if (that instanceof Image) {
+            int r = relationIndex - ((Image)that).relationIndex;
+            if (r!=0)
+                return r;            
+        }
+        return super.compareTo(that);
+    }
+
     
     
     
@@ -124,18 +135,7 @@ abstract public class Image extends CompoundTerm {
         }
         return (relationIndex == 0) ? term[1] : term[0];
     }    
-    
-    @Override
-    public int compareTo(AbstractTerm that) {
-        if (that.getClass() == getClass()) {
-            int c = super.compareTo(that);
-            if (c==0)
-                return Integer.compare(relationIndex, ((Image)that).relationIndex);
-            return c;
-        }
-        else
-            return super.compareTo(that);    
-    }
+
    
     
 }
