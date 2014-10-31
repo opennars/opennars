@@ -146,6 +146,7 @@ public class RuleTables {
                 (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&
                 taskTerm instanceof Implication && 
                 (taskTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || taskTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
+                if(taskSentence.stamp.getOccurrenceTime()==Stamp.ETERNAL && belief.stamp.getOccurrenceTime()==Stamp.ETERNAL)
                 TemporalRules.temporalInductionChain(taskSentence, belief, nal);
             }
             LocalRules.match(task, belief, nal);

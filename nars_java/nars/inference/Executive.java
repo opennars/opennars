@@ -376,6 +376,10 @@ public class Executive {
             final TaskExecution te = new TaskExecution(memory, this, c, t);
             if (tasks.add(te)) {
                 //added successfully
+                if(t.sentence.content instanceof Operation) {
+                    c.setPriority(0); //it was a operation, dont let operations itself gain priority
+                    c.setDurability(0);
+                }
                 memory.emit(TaskExecution.class, te);
                 return true;
             }
@@ -479,7 +483,7 @@ public class Executive {
             if (content instanceof Operation) {
                 addTask(concept, t);
             } else if (isSequenceConjunction(content)) {
-                addTask(concept, t);
+                //addTask(concept, t);
             }
         } else {
             //t.end();
