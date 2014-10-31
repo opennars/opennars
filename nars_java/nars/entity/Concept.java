@@ -288,35 +288,23 @@ public class Concept extends Item<Term> {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final NAL nal, final Task task) {        
+    protected void processGoal(final NAL nal, final Task task) {        
         
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
-        boolean revised = false;
-
+        boolean revised=false;
+        
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
 
             if (newStamp.equals(oldStamp)) {
-                return false;
-            }
-
-            if (revisible(goal, oldGoal)) {                
-                if (nal.setTheNewStamp( //temporarily removed
-                /*
-                if (equalBases(first.getBase(), second.getBase())) {
-                return null;  // do not merge identical bases
-                }
-                 */
-                //        if (first.baseLength() > second.baseLength()) {
-                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
-                //        } else {
-                //            return new Stamp(second, first, time);
-                //        }
-                ) != null) {
-                    revision(goal, oldGoal, false, nal);
-                    revised = true;
+                return; //duplicate
+            } else if (revisible(goal, oldGoal)) {
+                nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+                boolean success=revision(goal,oldGoal,false,nal);
+                if(!success) {
+                    return; //its a evidental duplicate..
                 }
             }
         }
@@ -326,25 +314,21 @@ public class Concept extends Item<Term> {
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
 
             if (belief != null) {
-                trySolution(belief, task, nal);
+                trySolution(belief, task, nal); //ok, lets use this solution
             }
 
-            // still worth pursuing?
+            // still worth pursuing? or was the solution good?
             if (task.aboveThreshold()) {
 
-                addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class, revised);
+                addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
 
                 if (!Executive.isExecutableTerm(task.sentence.content)) {
                     memory.executive.decisionPlanning(nal, task, this);
-                } else {
-                    //hm or conjunction in time and temporal order forward                    
+                } else {              
                     memory.executive.decisionMaking(task, this);
                 }
-                return true;
             }
-
         }
-        return false;
     }
 
     /**

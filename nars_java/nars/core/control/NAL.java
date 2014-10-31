@@ -110,7 +110,7 @@ public abstract class NAL implements Runnable {
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
-                    if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation == Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
+                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
                         mem.removeTask(task, "Overlapping Revision Evidence");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;
