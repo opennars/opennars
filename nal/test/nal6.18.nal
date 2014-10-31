@@ -9,14 +9,14 @@
 3
 
 'I guess what can be said about gull usually can also be said about swan.
-''outputMustContain('<<gull --> $1> ==> <swan --> $1>>. %0.80;0.45%')
+''outputMustContain('<<gull --> $varInd1> ==> <swan --> $varInd1>>. %0.80;0.45%')
 
 'I guess what can be said about swan can also be said about gull.
-''outputMustContain('<<swan --> $1> ==> <gull --> $1>>. %1.00;0.39%')
+''outputMustContain('<<swan --> $varInd1> ==> <gull --> $varInd1>>. %1.00;0.39%')
 
 'I guess gull and swan share most properties.
-''outputMustContain('<<gull --> $1> <=> <swan --> $1>>. %0.80;0.45%')
+''outputMustContain('<<gull --> $varInd1> <=> <swan --> $varInd1>>. %0.80;0.45%')
 
 'Gull and swan have some common property.
-''outputMustContain('(&&,<gull --> #1>,<swan --> #1>). %0.80;0.81%')
+''outputMustContain('(&&,<gull --> #varDep>,<swan --> #varDep>). %0.80;0.81%')
 
