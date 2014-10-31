@@ -9,9 +9,8 @@ import java.util.logging.Logger;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
-import nars.gui.NARSwing;
 import nars.io.Output.OUT;
 import static nars.io.Texts.n2;
 import nars.io.narsese.Narsese;
@@ -29,7 +28,7 @@ public class BooleanChallenge {
     
     double inputProb;
 
-    float questionRatio = 0.1f;
+    float questionRatio = 0.7f;
     
     float delayFactor = 0.1f; //how important quick answers are
     
@@ -39,6 +38,11 @@ public class BooleanChallenge {
     
     int judgments = 0, questions = 0;
     
+
+            public static int not(int i) {
+                if (i == 0) return 1;
+                else return 0;
+            }
     
     Set<Term> answered = new HashSet();
     Map<Term,Double> questionScores = new HashMap();
@@ -115,6 +119,12 @@ public class BooleanChallenge {
                             }
                             
                             addScore(question, answer, correct, conf);
+                            
+                            if (!correct) {
+                                //give correct answer
+                                String c = getTerm(n[0], n[1], pred.toString(), not(n[2])) + ('.');  
+                                nar.addInput(c);
+                            }
                         }
                     }
                     
@@ -287,11 +297,11 @@ public class BooleanChallenge {
     public void run(int level, int bit1Iterations, int bit2Thinking) {
         bits = level;
     
-        inputProb = 0.05;
+        
         inputAxioms();
         
-        /*
-        inputProb = 0.05;
+        
+        inputProb = 0.01;
         
         for (int i = 0; i < bit1Iterations; i++)
             nar.step(1);        
@@ -300,26 +310,28 @@ public class BooleanChallenge {
 
         for (int i = 0; i < bit2Thinking; i++)
             nar.step(1);        
-                */
+                
     }
 
             
     public static void main(String[] args) {
-        NAR n = new DefaultNARBuilder().build();
-        //NAR n = new ContinuousBagNARBuilder().build();
+        //NAR n = new DefaultNARBuilder().build();
+        NAR n = new DiscretinuousBagNARBuilder().build();
+
+        //NAR n = new CurveBagNARBuilder().build();
 
         //new TextOutput(n, System.out, 0.9f);
         
-        new NARSwing(n);
+        //new NARSwing(n);
         
-        new Thread(new Runnable() {
+        /*new Thread(new Runnable() {
 
             @Override
-            public void run() { 
-                new BooleanChallenge(n).run(1, 150000,150000);
-            }
+            public void run() { */
+                new BooleanChallenge(n).run(1, 1500000,1500000);
+/*            }
             
-        }).start();
+        }).start();*/
         
     }
 
