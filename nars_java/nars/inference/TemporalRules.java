@@ -19,6 +19,7 @@ package nars.inference;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -29,6 +30,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.io.Symbols;
+import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
@@ -160,6 +162,7 @@ public class TemporalRules {
         Term B2=S2.getSubject();
         Term C=S2.getPredicate();
         ArrayList<Term> args=null;
+        
         if(B2 instanceof Conjunction) {
             Conjunction CB2=((Conjunction)B2);
             if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {                
@@ -178,8 +181,16 @@ public class TemporalRules {
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term = args.toArray(new Term[args.size()]);
         Term realB2 = term[1];
-        if(Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2)) {
+        HashMap<Term, Term> res1 = new HashMap<>();
+        HashMap<Term, Term> res2 = new HashMap<>();
+
+        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1,res2)) {
             //ok it unifies, so lets create a &/ term
+            for(int i=0;i<term.length;i++) {
+                if(term[i] instanceof CompoundTerm) {
+                    term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
+                }
+            }
             int order1=s1.getTemporalOrder();
             int order2=s2.getTemporalOrder();
             Conjunction S=(Conjunction) Conjunction.make(term,order1);
