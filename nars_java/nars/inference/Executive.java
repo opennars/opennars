@@ -533,9 +533,9 @@ public class Executive {
         TaskExecution topExecution = tasks.first();
         Task top = topExecution.t;
         Term term = top.getContent();
+        removeTask(topExecution);
         if (term instanceof Operation) {
             execute((Operation) term, top); //directly execute            
-            removeTask(topExecution);
             return;
         } else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Conjunction) {
             Conjunction c = (Conjunction) term;
@@ -555,7 +555,6 @@ public class Executive {
                     }
                 } else if (it.getSubject() instanceof Operation) {
                     execute((Operation) it.getSubject(), top); //directly execute
-                    removeTask(topExecution);
                     return;
                 }
             }
