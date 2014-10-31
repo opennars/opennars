@@ -23,8 +23,6 @@ package nars.entity;
 import nars.core.control.NAL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import nars.core.Events;
 import nars.core.Events.BeliefSelect;
 import nars.core.Events.ConceptBeliefAdd;
 import nars.core.Events.ConceptBeliefRemove;
@@ -38,25 +36,19 @@ import nars.core.Events.TermLinkAdd;
 import nars.core.Events.TermLinkRemove;
 import nars.core.Memory;
 import nars.core.NARRun;
-import nars.core.Parameters;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
-import nars.core.control.FireConcept;
-import static nars.inference.RuleTables.reason;
-import static nars.inference.RuleTables.transformTask;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
-import nars.language.Negation;
 import nars.language.Term;
-import nars.language.Variable;
-import nars.operator.Operation;
 import nars.storage.Bag;
+import nars.storage.Bag.MemoryAware;
 
 public class Concept extends Item<Term> {
 
@@ -136,6 +128,9 @@ public class Concept extends Item<Term> {
         this.taskLinks = taskLinks;
         this.termLinks = termLinks;
 
+        if (taskLinks instanceof MemoryAware)  ((MemoryAware)taskLinks).setMemory(memory);
+        if (termLinks instanceof MemoryAware)  ((MemoryAware)termLinks).setMemory(memory);
+                
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         } else {

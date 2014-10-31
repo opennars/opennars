@@ -996,7 +996,6 @@ public final class CompositionalRules {
 
         for (int k = 0; k < maxUnificationAttempts; k++) {
             Concept secondConcept = nal.mem().sampleNextConcept();
-
             if (secondConcept == null) {
                 //no more concepts, stop
                 break;

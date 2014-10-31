@@ -39,13 +39,13 @@ public class DefaultAttention implements Attention {
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
         
-        if (concepts instanceof AttentionAware)
-            ((AttentionAware)concepts).setAttention(this);
     }
 
     @Override
     public void init(Memory m) {
         this.memory = m;
+        if (concepts instanceof AttentionAware)
+            ((AttentionAware)concepts).setAttention(this);
         if (concepts instanceof MemoryAware)
             ((MemoryAware)concepts).setMemory(m);
     }

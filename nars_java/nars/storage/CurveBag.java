@@ -89,15 +89,13 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             
             E removed;
             
-            synchronized (items) {
-                removed = super.put(key, value);                
-                if (removed!=null) {
-                    items.remove(removed);
-                    mass -= removed.budget.getPriority();                
-                }
-
-                items.add(value);
+            removed = super.put(key, value);                
+            if (removed!=null) {
+                items.remove(removed);
+                mass -= removed.budget.getPriority();                
             }
+
+            items.add(value);
 
             return removed;            
         }
@@ -107,11 +105,9 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
             
             E e;
             
-            synchronized (items) {
-                e = super.remove(key);
-                if (e!=null) {
-                    items.remove(e);
-                }
+            e = super.remove(key);
+            if (e!=null) {
+                items.remove(e);
             }
 
             return e;
@@ -237,19 +233,16 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
      */
     @Override
     public E takeNext() {
-        synchronized (items) {
-            if (size()==0) return null; // empty bag          
-            return removeItem( nextRemovalIndex() );    
-        }        
+        
+        if (size()==0) return null; // empty bag          
+        return removeItem( nextRemovalIndex() );    
     }
     
 
     @Override
     public E peekNext() {
-        synchronized (items) {
-            if (size()==0) return null; // empty bag                
-            return items.get( nextRemovalIndex() );
-        }
+        if (size()==0) return null; // empty bag                
+        return items.get( nextRemovalIndex() );
     }
     
     
@@ -328,18 +321,16 @@ public class CurveBag<E extends Item<K>, K> extends Bag<E,K> {
         
         E oldItem = null;
         
-        synchronized (items) {
+        if (size() >= capacity) {      // the bag is full            
+            if (newPriority < getMinPriority())
+                return newItem;
 
-            if (size() >= capacity) {      // the bag is full            
-                if (newPriority < getMinPriority())
-                    return newItem;
-
-                oldItem = removeItem(0);            
-            }
-
-            nameTable.put(newItem.name(), newItem);        
-            mass += (newItem.budget.getPriority());                  // increase total mass
+            oldItem = removeItem(0);            
         }
+
+        nameTable.put(newItem.name(), newItem);        
+        mass += (newItem.budget.getPriority());                  // increase total mass
+        
         
         
         return oldItem;

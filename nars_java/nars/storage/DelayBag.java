@@ -10,28 +10,30 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Attention;
 import nars.core.Attention.AttentionAware;
+import nars.core.EventEmitter.Observer;
+import nars.core.Events.CycleEnd;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Item;
-import nars.io.Texts;
 import nars.storage.Bag.MemoryAware;
 
 /**
  * Bag which uses time-since-last-activation and priority to decide which items are eligible for firing.
  */
-public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAware, AttentionAware {
+public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAware, AttentionAware, Observer {
 
     private final int capacity;
     private Map<K,E> items;
     private Deque<E> pending;
     private List<K> toRemove;
     private float activityThreshold = 0.8f;
-    private float latencyMin = 300; /* in cycles */
+    private float latencyMin = 200; /* in cycles */
     private float forgetThreshold = 0.01f;
     
-    private int targetActivations = 10;
+    private int targetActivations = 64;
 
     
     private int skippedPerSample = 0;
@@ -90,12 +92,11 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     }
 
     //TODO use some other locking mechanism, synchronized may be restrictive
-    protected synchronized void reload() {
-        if (!pending.isEmpty()) return; //prevent other threads from re-attepting reload
+    protected void reload() {
         
         this.now = memory.time();
         int j = 0;
-        for (Map.Entry<K, E> s : items.entrySet()) {
+        for (final Map.Entry<K, E> s : items.entrySet()) {
             E e = s.getValue();
             if (ready(e)) {
                 //ACTIVATE
@@ -106,14 +107,21 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
                 else
                     pending.addLast(e);                
             }
-            else if (forget(e))
-                toRemove.add(e.name());
+            else  {
+                
+                //remove concepts
+                if (size()-toRemove.size() > capacity) {
+                    if (e.getPriority() < forgetThreshold) {
+                        toRemove.add(e.name());                        
+                    } 
+                }                
+            }
                 
         }
         
         for (final K k : toRemove) {
             E r = items.remove(k);
-            if (r instanceof Concept) 
+            if ((attention!=null)&&(r instanceof Concept))
                 attention.conceptRemoved((Concept)r);            
         }
         
@@ -154,12 +162,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         */
     }
     
-    protected boolean forget(E c) {
-        if (size() > capacity) {
-            return (c.getPriority() < forgetThreshold);
-        }
-        return false;
-    }
+
     
     protected boolean ready(final E c) {
         
@@ -184,17 +187,42 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         return false;
     }
     
+    private AtomicBoolean busyReloading = new AtomicBoolean(false);
+    
+    protected boolean ensureLoaded() {
+        if (pending.size() == 0) {
+            
+            //allow only one thread to reload, while the others try again later
+            if (busyReloading.compareAndSet(false, true)) {
+                
+                reload();
+                
+                busyReloading.set(false);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    
     @Override
     public E takeNext() {
         if (items.size() == 0) return null;
+
+        if (!ensureLoaded())
+            return null;
                 
-        if (pending.isEmpty())
-            reload();        
-        
         for (int i = 0; i < skippedPerSample; i++) {
             pending.pollFirst();
         }
-        return pending.pollFirst();
+        E n = pending.pollFirst();
+        if (n!=null)
+            return take(n.name());
+        else
+            return null;
     }
 
     @Override
@@ -202,14 +230,15 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         if (size() == 0) return null;
         
         if (pending.isEmpty())
-            reload();
+            return null;
         
         return pending.peekFirst();
     }
 
     @Override
-    protected E addItem(E x) {
-        return items.put(x.name(), x);
+    protected E addItem(E x) {                    
+        E previous = items.put(x.name(), x);
+        return null;
     }
 
     @Override
@@ -245,11 +274,20 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     @Override
     public void setMemory(Memory m) {
         this.memory = m;
+        this.memory.event.on(CycleEnd.class, this);
     }
 
     @Override
     public void setAttention(Attention a) {
         this.attention = a;
+    }
+
+    @Override
+    public void event(Class event, Object[] arguments) {
+        if (event == CycleEnd.class) {            
+            //ensure loaded for the next cycle
+            //ensureLoaded();
+        }
     }
     
     

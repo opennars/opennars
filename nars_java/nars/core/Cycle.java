@@ -25,12 +25,19 @@ public class Cycle {
         
     }
 
+    int t(int threads) {
+        if (threads == 1) return 1;
+        else {
+            return threads;
+        }
+    }
+    
     public void init(Memory m) {
         this.memory = m;
     }
     
     public int inputTasksPriority() {
-        return numThreads * 1;
+        return t(numThreads);
     }
 
     public int newTasksPriority() {
@@ -39,7 +46,7 @@ public class Cycle {
 
     public int novelTasksPriority() {
         if (memory.getNewTaskCount() == 0) {
-            return numThreads * 1;
+            return t(numThreads);
         } else {
             return 0;
         }
@@ -47,7 +54,7 @@ public class Cycle {
 
     public int conceptsPriority() {
         if (memory.getNewTaskCount() == 0) {
-            return numThreads * 1;
+            return t(numThreads);
         } else {
             return 0;
         }

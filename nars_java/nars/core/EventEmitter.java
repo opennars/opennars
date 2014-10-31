@@ -1,16 +1,16 @@
 
 package nars.core;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Adapted from http://www.recursiverobot.com/post/86215392884/witness-a-simple-android-and-java-event-emitter
+ * TODO separate this into a single-thread and multithread implementation
  */
 public class EventEmitter {
 
@@ -23,15 +23,16 @@ public class EventEmitter {
     private final Map<Class<?>, List<Observer>> events;
             
     
-
+    private Deque<Object[]> pendingOps = new ArrayDeque();
+    
     /** EventEmitter that allows unknown events; must use concurrent collection
      *  for multithreading since new event classes may be added at any time.
      */
     public EventEmitter() {
-        if (Parameters.THREADS > 1)
+        /*if (Parameters.THREADS > 1)
             events = new ConcurrentHashMap<>();
-        else
-            events = new IdentityHashMap<>();
+        else*/
+            events = new HashMap<>();
     }
 
     /** EventEmitter with a fixed set of known events; the 'events' map
@@ -44,8 +45,9 @@ public class EventEmitter {
     }
 
     protected List<Observer> newObserverList() {
-        return Parameters.THREADS == 1 ? 
-                new ArrayList() : new CopyOnWriteArrayList();
+        return new ArrayList();
+        /*return Parameters.THREADS == 1 ? 
+                new ArrayList() : Collections.synchronizedList(new ArrayList());*/
     }
     
     public final boolean isActive(final Class event) {
@@ -55,7 +57,37 @@ public class EventEmitter {
         return false;
     }
     
+    //apply pending on/off changes when synchronizing, ex: in-between memory cycles
+    public void synch() {
+        synchronized (pendingOps) {
+            if (!pendingOps.isEmpty()) {
+                for (Object[] o : pendingOps) {
+                    Class c = (Class)o[1];
+                    Observer d = (Observer)o[2];
+                    if ((Boolean)o[0]) {                        
+                        _on(c,d);
+                    }
+                    else {                        
+                        _off(c,d);
+                    }
+                }
+            }
+            pendingOps.clear();
+        }
+    }
+    
     public <C> void on(final Class<? extends C> event, final Observer<? extends C> o) {
+        if (Parameters.THREADS == 1) {
+            _on(event, o);
+        }
+        else {
+            synchronized(pendingOps) {
+                pendingOps.add(new Object[] { true, event, o });        
+            }
+        }
+    }
+            
+    private <C> void _on(final Class<? extends C> event, final Observer<? extends C> o) {
         if (events.containsKey(event))
             events.get(event).add(o);
         else {
@@ -71,18 +103,28 @@ public class EventEmitter {
      * @param o
      * @return  whether it was removed
      */
-    public boolean off(final Class<?> event, final Observer o) {
+    public <C> void off(final Class<? extends C> event, final Observer<? extends C> o) {
+        if (Parameters.THREADS == 1) {
+            _off(event, o);
+        }
+        else {
+            synchronized(pendingOps) {
+                pendingOps.add(new Object[] { false, event, o });        
+            }
+        }
+    }
+    
+    private void _off(final Class<?> event, final Observer o) {
         if (null == event || null == o)
             throw new RuntimeException("Invalid parameter");
  
         if (!events.containsKey(event))
             throw new RuntimeException("Unknown event: " + event);
         
-        boolean removed = events.get(event).remove(o);
+        events.get(event).remove(o);
         /*if (!removed) {
             throw new RuntimeException("Observer " + o + " was not registered for events");
-        }*/
-        return removed;
+        }*/        
     }
 
     /** for enabling many events at the same time */

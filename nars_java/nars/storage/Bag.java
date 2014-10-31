@@ -157,17 +157,14 @@ public abstract class Bag<E extends Item<K>,K> implements Iterable<E> {
     public E processNext(final float forgetCycles, final Memory m) {
                 
         final E x = takeNext();
-        
-        if (x!=null) {            
-            E r = putBack(x, forgetCycles, m);
-            if (r!=null) {
-                throw new RuntimeException("Bag.processNext should always be able to re-insert item: " + r);
-            }
-            return x;
-        }
-        else {
+        if (x == null)
             return null;
+        
+        E r = putBack(x, forgetCycles, m);
+        if (r!=null) {
+            throw new RuntimeException("Bag.processNext should always be able to re-insert item: " + r);
         }
+        return x;
     }
     
     public double[] getPriorityDistribution(double[] x) {

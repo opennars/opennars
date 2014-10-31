@@ -256,12 +256,15 @@ public class Memory implements Serializable {
 
         this.param = param;
         
-        this.loop = controller;
-        controller.init(this);
-                
+        this.event = newEventEmitter();
+        
         this.concepts = concepts;
         this.concepts.init(this);
         
+        this.loop = controller;
+        controller.init(this);
+                
+
         this.novelTasks = novelTasks;                
         
         this.newTasks = controller.threads.get() > 1 ? 
@@ -325,7 +328,7 @@ public class Memory implements Serializable {
 
         };
         
-        this.event = newEventEmitter();
+        
         
         this.executive = new Executive(this);
                 
@@ -799,7 +802,10 @@ public class Memory implements Serializable {
         executive.cycle();
 
         event.emit(Events.CycleEnd.class);
+        
         updateTime();
+        
+        event.synch();
 
         resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
@@ -908,9 +914,12 @@ public class Memory implements Serializable {
         else {   
             //execute in parallel, multithreaded                        
             final ConcurrentContext ctx = ConcurrentContext.enter(); 
+            
+            ctx.setConcurrency(threadsCurrent);
             try { 
-                for (final Runnable r : tasks)
+                for (final Runnable r : tasks) {                    
                     ctx.execute(r);
+                }
             } finally {
                 // Waits for all concurrent executions to complete.
                 // Re-exports any exception raised during concurrent executions. 

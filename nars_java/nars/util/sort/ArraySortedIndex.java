@@ -3,9 +3,11 @@ package nars.util.sort;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javolution.util.FastSortedTable;
+import nars.core.Parameters;
 import nars.entity.Item;
 
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
@@ -18,10 +20,15 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 
     public final List<E> list;
     
+    public static <E> List<E> bestList(int capacity) {
+        return capacity < 50 ? new ArrayList() : new FastSortedTable();
+    }
 
     public ArraySortedIndex(int capacity) {
         this(capacity, 
-                capacity < 50 ? new ArrayList() : new FastSortedTable());
+                Parameters.THREADS == 1 ? bestList(capacity) :
+                        Collections.synchronizedList(bestList(capacity))
+        );
     }
     
     public ArraySortedIndex(int capacity, List<E> list) {
