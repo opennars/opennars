@@ -415,12 +415,16 @@ public class Terms {
     }
 
     public static void verifyNonNull(Collection t) {
-        for (Object o : t) {
-            if (o == null) {
+        for (Object o : t)
+            if (o == null)
                 throw new RuntimeException("Element null in: " + t);
-            }
-        }
     }
+
+    static void verifyNonNull(Term... t) {
+        for (Object o : t)
+            if (o == null)
+                throw new RuntimeException("Element null in: " + Arrays.toString(t));
+    }    
     
     public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {        
         if (arg.length == 0) {
@@ -440,5 +444,6 @@ public class Terms {
         }        
         return s.toArray(new Term[s.size()]);
     }
+
     
 }

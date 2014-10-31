@@ -50,18 +50,15 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     protected final StatsKey key;
-    protected EventManager eventManager;
+    
 
     protected final DataRecorder[] dataRecorders;
 
-    public AbstractStatsSession(final StatsKey key,
-            final EventManager eventManager,
-            final DataRecorder... dataRecorders) {
+    public AbstractStatsSession(final StatsKey key, final DataRecorder... dataRecorders) {
         //assertNotNull(key, "key");
         //assertNotNull(eventManager, "eventManager");
 
         this.key = key;
-        this.eventManager = eventManager;
 
         if (dataRecorders == null) {
             this.dataRecorders = EMPTY_DATA_RECORDER_ARRAY;
@@ -88,10 +85,7 @@ public abstract class AbstractStatsSession implements StatsSession {
 
     protected abstract void setSum(double sum);
 
-    @Override
-    public void setEventManager(EventManager e) {
-        eventManager = e;
-    }
+    
 
     @Override
     public StatsKey getKey() {

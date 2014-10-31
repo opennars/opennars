@@ -88,7 +88,7 @@ public class AsynchronousSession extends AbstractStatsSession {
             final EventManager eventManager,
             final Queue<TrackerEntry> updateQueue,
             final DataRecorder... dataRecorders) {
-        super(key, eventManager, dataRecorders);
+        super(key, dataRecorders);
 
         //assertNotNull(updateQueue, "updateQueue");
         this.updateQueue = updateQueue;
@@ -130,7 +130,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
 
         //logger.trace("Track: {}", this);
-        eventManager.fireEvent(EventType.TRACKER_TRACKING, key, tracker);
     }
 
     @Override
@@ -219,7 +218,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
 
         //logger.trace("Commit: {}", this);
-        eventManager.fireEvent(EventType.TRACKER_COMMITTED, key, tracker);
     }
 
     @Override
@@ -286,10 +284,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         this.sum = sum;
     }
 
-    @Override
-    public void setEventManager(EventManager e) {
-        eventManager = e;
-    }
 
     @Override
     public void restore(final DataSet dataSet) {
@@ -305,7 +299,6 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
 
         //logger.trace("Restore: {}", this);
-        eventManager.fireEvent(EventType.SESSION_RESTORED, key, this);
     }
 
     @Override
@@ -333,7 +326,6 @@ public class AsynchronousSession extends AbstractStatsSession {
     private void fireCleared() {
         //logger.trace("Clear: {}", this);
 
-        eventManager.fireEvent(EventType.SESSION_CLEARED, key, this);
     }
 
     @Override

@@ -180,7 +180,7 @@ public class CurveBagTest {
                 if (i % 2 == 0)
                     t.budget.setPriority(t.budget.getPriority()*0.99f);
                 else
-                    t.budget.setPriority(t.budget.getPriority()*1.01f);
+                    t.budget.setPriority(Math.min(1.0f,t.budget.getPriority()*1.01f));
                 f.putIn(t);
             }
             

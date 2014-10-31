@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+import nars.core.Parameters;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
 
@@ -125,7 +126,11 @@ public class Conjunction extends CompoundTerm {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             return new Conjunction(argList, temporalOrder);
         } else {
+            
             // sort/merge arguments
+            
+            if (Parameters.DEBUG) {  Terms.verifyNonNull(argList);}
+            
             final TreeSet<Term> set = new TreeSet<>(Arrays.asList(argList));            
             return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder);            
         }

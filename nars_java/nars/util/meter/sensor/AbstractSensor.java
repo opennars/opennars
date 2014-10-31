@@ -61,9 +61,6 @@ public abstract class AbstractSensor implements Sensor {
         this(new ConcurrentSession(new DefaultStatsKey("", id, new FastPutsArrayMap<>()), null, new DistributionDataRecorder(), new RangeDataRecorder(new RangeList(ranges))));
     }
 
-    public void setEventManager(EventManager e) {
-        getSession().setEventManager(e);
-    }
     
     @Override
     public double getValue() {

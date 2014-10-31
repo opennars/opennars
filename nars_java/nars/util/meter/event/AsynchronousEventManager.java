@@ -34,7 +34,7 @@ public class AsynchronousEventManager extends SynchronousEventManager {
     public void fireEvent(final EventType eventType,
             final StatsKey key,
             final Object target) {
-        taskService.submit(getClass(), new EventCallable(eventType, key, target));
+        //taskService.submit(getClass(), new EventCallable(eventType, key, target));
     }
 
     /* INNER CLASSES */

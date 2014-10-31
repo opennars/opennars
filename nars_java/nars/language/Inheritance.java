@@ -49,13 +49,13 @@ public class Inheritance extends Statement {
      * @return A new object, to be casted into a SetExt
      */
     @Override public Inheritance clone() {
-        return new Inheritance(term);
+        return make(getSubject(), getPredicate());
     }
 
     @Override public CompoundTerm clone(Term[] t) {
         if (t.length!=2)
             throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
-        return new Inheritance(t[0], t[1]);
+        return make(t[0], t[1]);
     }
 
 

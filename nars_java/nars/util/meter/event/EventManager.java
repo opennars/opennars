@@ -27,7 +27,7 @@ import nars.util.meter.util.ServiceLifeCycle;
  *
  * @author The Stajistics Project
  */
-public interface EventManager extends Serializable, ServiceLifeCycle {
+@Deprecated public interface EventManager extends Serializable, ServiceLifeCycle {
 
     Collection<EventHandler> getGlobalEventHandlers();
 
@@ -35,23 +35,23 @@ public interface EventManager extends Serializable, ServiceLifeCycle {
 
     Map<StatsKey, Collection<EventHandler>> getEventHandlers(StatsKeyMatcher keyMatcher);
 
-    void addGlobalEventHandler(EventHandler eventHandler);
+    @Deprecated void addGlobalEventHandler(EventHandler eventHandler);
 
-    void addEventHandler(StatsKey key,
+    @Deprecated void addEventHandler(StatsKey key,
             EventHandler eventHandler);
 
-    void removeGlobalEventHandler(EventHandler eventHandler);
+    @Deprecated void removeGlobalEventHandler(EventHandler eventHandler);
 
-    void removeEventHandler(StatsKey key,
+    @Deprecated void removeEventHandler(StatsKey key,
             EventHandler eventHandler);
 
-    void clearAllEventHandlers();
+    @Deprecated void clearAllEventHandlers();
 
-    void clearGlobalEventHandlers();
+    @Deprecated void clearGlobalEventHandlers();
 
-    void clearEventHandlers();
+    @Deprecated void clearEventHandlers();
 
-    void fireEvent(EventType eventType,
+    @Deprecated void fireEvent(EventType eventType,
             StatsKey key,
             Object target);
 
