@@ -189,12 +189,16 @@ public class TemporalRules {
             for(int i=0;i<term.length;i++) {
                 if(term[i] instanceof CompoundTerm) {
                     term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
+                    if(term[i]==null) { //it resulted in invalid term for example <a --> a>, so wrong
+                        return;
+                    }
                 }
             }
             int order1=s1.getTemporalOrder();
             int order2=s2.getTemporalOrder();
             Conjunction S=(Conjunction) Conjunction.make(term,order1);
             Implication whole=Implication.make(S, C,order2);
+            
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
