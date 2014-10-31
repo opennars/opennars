@@ -492,7 +492,7 @@ public class Executive {
     public boolean isDesired(final Task t, final Concept c) {
         float desire = c.getDesire().getExpectation();
         float priority = t.budget.getPriority(); //t.budget.summary();
-        return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
+        return desire > memory.param.decisionThreshold.get(); //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
 
        // double dt = memory.param.decisionThreshold.get();
         // return ((desire >= dt) || (priority >= dt));
