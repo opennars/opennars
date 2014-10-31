@@ -492,7 +492,7 @@ public class Executive {
     public boolean isDesired(final Task t, final Concept c) {
         float desire = c.getDesire().getExpectation();
         float priority = t.budget.getPriority(); //t.budget.summary();
-        return true; //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
+        return desire > memory.param.decisionThreshold.get(); //always plan //(desire * priority) >= memory.param.decisionThreshold.get();
 
        // double dt = memory.param.decisionThreshold.get();
         // return ((desire >= dt) || (priority >= dt));
@@ -533,9 +533,9 @@ public class Executive {
         TaskExecution topExecution = tasks.first();
         Task top = topExecution.t;
         Term term = top.getContent();
+        removeTask(topExecution);
         if (term instanceof Operation) {
             execute((Operation) term, top); //directly execute            
-            removeTask(topExecution);
             return;
         } else if (Parameters.TEMPORAL_PARTICLE_PLANNER && term instanceof Conjunction) {
             Conjunction c = (Conjunction) term;
@@ -555,7 +555,6 @@ public class Executive {
                     }
                 } else if (it.getSubject() instanceof Operation) {
                     execute((Operation) it.getSubject(), top); //directly execute
-                    removeTask(topExecution);
                     return;
                 }
             }
