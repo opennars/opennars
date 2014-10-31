@@ -292,23 +292,22 @@ public class Concept extends Item<Term> {
         
         final Sentence goal = task.sentence;
         final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
-        boolean revised=false;
         
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
-
+            
             if (newStamp.equals(oldStamp)) {
-                return; //duplicate
+                //return; //duplicate
             } else if (revisible(goal, oldGoal)) {
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 boolean success=revision(goal,oldGoal,false,nal);
                 if(!success) {
-                    return; //its a evidental duplicate..
-                }
-            }
-        }
-
+                    //return; //hm if revision could hamper goals from re-selecting candidates,
+                } //no execution would work twice. they have to be repeatable, its revision itself
+            } //which looks if revisable and only derives a new task if no overlap in evidental base - patrick
+        } 
+        
         if (task.aboveThreshold()) {
 
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
@@ -321,7 +320,7 @@ public class Concept extends Item<Term> {
             if (task.aboveThreshold()) {
 
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
-
+                
                 if (!Executive.isExecutableTerm(task.sentence.content)) {
                     memory.executive.decisionPlanning(nal, task, this);
                 } else {              
