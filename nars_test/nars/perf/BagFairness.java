@@ -9,7 +9,7 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Param;
 import nars.core.build.DefaultNARBuilder;
-import nars.core.control.DefaultConceptProcessor;
+import nars.core.control.DefaultAttention;
 import nars.entity.Concept;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries;
@@ -76,9 +76,9 @@ public class BagFairness {
             }
 
             
-            int concepts = ((DefaultConceptProcessor)n.memory.concepts).concepts.size();
+            int concepts = ((DefaultAttention)n.memory.concepts).concepts.size();
             double[] d = new double[bins];
-            ((DefaultConceptProcessor)n.memory.concepts).concepts.getPriorityDistribution(d);
+            ((DefaultAttention)n.memory.concepts).concepts.getPriorityDistribution(d);
             for (int b = 0; b < bins; b++) {
                 
                 bin[b].push(n.time(), (float)d[b] * concepts);

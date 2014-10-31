@@ -16,7 +16,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DiscretinuousBagNARBuilder;
+import nars.core.build.NeuromorphicNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -807,9 +807,10 @@ public class Rover2 extends PhysicsModel {
         
         //NAR nar = new DefaultNARBuilder().
         //NAR nar = new CurveBagNARBuilder().
-        NAR nar = new DiscretinuousBagNARBuilder().
+        //NAR nar = new DiscretinuousBagNARBuilder().
+        NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(1000).
+                setConceptBagSize(100).
                 setSubconceptBagSize(5000).
                 setTaskLinkBagLevels(10).
                 setTermLinkBagLevels(10).
@@ -819,7 +820,7 @@ public class Rover2 extends PhysicsModel {
         
         
         float framesPerSecond = 35f;
-        int cyclesPerFrame = 500; //was 200        
+        int cyclesPerFrame = 20; //was 200        
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
         nar.param().conceptForgetDurations.set(5f);

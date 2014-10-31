@@ -167,7 +167,7 @@ public class Memory implements Serializable {
         randomNumber.setSeed(randomSeed);    
     }
     
-    public final ConceptProcessor concepts;
+    public final Attention concepts;
     
     public final EventEmitter event;
     
@@ -252,7 +252,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, Cycle controller, ConceptProcessor concepts, Bag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
+    public Memory(Param param, Cycle controller, Attention concepts, Bag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
 
         this.param = param;
         

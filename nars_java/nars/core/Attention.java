@@ -8,12 +8,15 @@ import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 
 
-/** A ConceptProcessor implements a model for storing Concepts and
+/** Attention implements a model for storing Concepts and
  *  activating them during a memory cycle.  In essence it forms the very core of the memory,
  *  responsible for efficiently storing all NAR Concept's and which of those will activate
  *  at the beginning of each cycle.*/
-public interface ConceptProcessor extends Iterable<Concept> {
+public interface Attention extends Iterable<Concept> {
 
+    public interface AttentionAware {
+        public void setAttention(Attention a);
+    }
 
 
     /** An iteration of the main loop, called during each memory cycle. */
@@ -48,5 +51,7 @@ public interface ConceptProcessor extends Iterable<Concept> {
 
     public void init(Memory m);
 
+    /** used by the bag to explicitly forget an item asynchronously */
+    public void conceptRemoved(Concept c);
     
 }
