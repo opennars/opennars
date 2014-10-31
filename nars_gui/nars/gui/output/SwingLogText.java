@@ -125,7 +125,7 @@ public class SwingLogText extends SwingText  {
         @Override public void run() {
             
             while (pendingDisplay.size() > 0) {
-                LogLine l = pendingDisplay.removeLast();
+                LogLine l = pendingDisplay.removeFirst();
                 print(l.c, l.o);
             
             }
@@ -204,8 +204,21 @@ public class SwingLogText extends SwingText  {
         
         float tc = 0.75f + 0.25f * priority;
         Color textColor = new Color(tc,tc,tc);
-        print(textColor, ' ' + LogPanel.getText(o, showStamp, nar) + '\n');
+        
+        CharSequence text = LogPanel.getText(c, o, showStamp, nar);
+        StringBuilder sb = new StringBuilder(text.length()+2);
+        sb.append(' ');
+        if (text.length() > maxLineWidth)
+            sb.append(text.subSequence(0,maxLineWidth));
+        else
+            sb.append(text);
 
+        if (sb.charAt(sb.length()-1)!='\n')
+            sb.append('\n');
+                
+                
+        print(textColor, sb.toString());
+        
         return doc.getLength();
         
     }

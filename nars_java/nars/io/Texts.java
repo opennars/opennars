@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import nars.util.rope.Rope;
@@ -199,7 +198,7 @@ public class Texts {
     /**
      * @author http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
      */
-    public static int levenshteinDistance(final String a, final String b) {
+    public static int levenshteinDistance(final CharSequence a, final CharSequence b) {
         int len0 = a.length() + 1;
         int len1 = b.length() + 1;
         int[] cost = new int[len0];
@@ -215,7 +214,12 @@ public class Texts {
                 int cost_replace = cost[i - 1] + match;
                 int cost_insert = cost[i] + 1;
                 int cost_delete = newcost[i - 1] + 1;
-                newcost[i] = Math.min(Math.min(cost_insert, cost_delete), cost_replace);
+                
+                int c = cost_insert;
+                if (cost_delete < c) c = cost_delete;
+                if (cost_replace < c) c = cost_replace;
+                
+                newcost[i] = c;
             }
             int[] swap = cost;
             cost = newcost;

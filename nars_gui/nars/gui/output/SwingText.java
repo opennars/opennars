@@ -44,22 +44,20 @@ public class SwingText extends JTextPane {
 
     }
 
-    public void print(final Color color, final String text) {
+    public void print(final Color color, final CharSequence text) {
         //System.out.println("print:: " + text);
         print(color, null, text);
     }
 
-    public void print(final Color color, final Color bgColor, String text) {
-        if (text.length() > maxLineWidth) {
-            text = text.substring(0,maxLineWidth) + "\n";
-        }
+    public void print(final Color color, final Color bgColor, CharSequence text) {
+        
 
         MutableAttributeSet aset = getInputAttributes();
         StyleConstants.setForeground(aset, color);
         StyleConstants.setBackground(aset, bgColor != null ? bgColor : Color.BLACK);
         //StyleConstants.setBold(aset, bold);
-        try {
-            doc.insertString(doc.getLength(), text, aset);
+        try {            
+            doc.insertString(doc.getLength(), text.toString(), aset);
         } catch (BadLocationException ex) {
             Logger.getLogger(SwingText.class.getName()).log(Level.SEVERE, null, ex);
         }

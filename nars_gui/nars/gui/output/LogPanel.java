@@ -38,8 +38,8 @@ import nars.io.TextOutput;
 
 abstract public class LogPanel extends NPanel implements LogOutput {
 
-    static String getText(Object o, boolean showStamp, NAR nar) {
-        return TextOutput.getOutputString(o, showStamp, nar);
+    static CharSequence getText(Class c, Object o, boolean showStamp, NAR nar) {
+        return TextOutput.getOutputString(c, o, showStamp, nar);
     }
 
     protected final NAR nar;

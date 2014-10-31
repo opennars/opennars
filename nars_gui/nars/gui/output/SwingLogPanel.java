@@ -69,9 +69,9 @@ public class SwingLogPanel extends LogPanel {
     void print(Class c, Object o) {
         ioText.output(c, o);//, showStamp, nar);
 
-        String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
+        CharSequence s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
-            logFile.println(s);
+            logFile.append(s).append('\n');
         }
         
         

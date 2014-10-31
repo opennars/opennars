@@ -20,9 +20,10 @@
  */
 package nars.inference;
 
+import java.util.Arrays;
+import nars.core.Events.Solution;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.core.control.NAL;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -132,6 +133,7 @@ public class LocalRules {
         
         if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             //System.out.println("Unsolved: Temporal order not matching");
+            memory.emit(Solution.class, task, belief, false, "Non-matching temporal Order");
             return;
         }
         
@@ -144,39 +146,48 @@ public class LocalRules {
                     memory.emotion.adjustHappy(oldQ, task.getPriority());
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
+                memory.emit(Solution.class, task, belief, false, "Lower quality");               
                 return;
             }
         }
+        
         Term content = belief.content;
         if (content.hasVarIndep()) {
             Term u[] = new Term[] { content, problem.content };
-            Variables.unify(Symbols.VAR_INDEPENDENT, u);
-            content = u[0];                
+            
+            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u);            
+            content = u[0];
+            
             belief = belief.clone(content);
+            
+            if ((!unified) || (content == null)) {
+                throw new RuntimeException("Unification invalid: " + Arrays.toString(u));
+            }
+            
             Stamp st = new Stamp(belief.stamp, memory.time());
             st.chainAdd(belief.content);
         }
 
         task.setBestSolution(belief);
+        
         memory.logic.SOLUTION_BEST.commit(task.getPriority());
 
         if (problem.isGoal()) {
             memory.emotion.adjustHappy(newQ, task.getPriority());
         }
-
-        if (task.isInput()) {
-            memory.output(task);
-        }
         
         BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, nal);
-        if ((budget != null) && budget.aboveThreshold()) {
-            //System.out.println("Solved: Solution activated");
+        if ((budget != null) && budget.aboveThreshold()) {                       
             
+            memory.emit(Solution.class, task, belief, true);
+            
+            //System.out.println("Solved: Solution activated");            
             memory.activatedTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
         }
-        /*else {
-            System.out.println("Solved: Solution not activated");
-        }*/
+        else {
+            memory.emit(Solution.class, task, belief, false, "Insufficient budget");
+        }
+        
     }
 
 

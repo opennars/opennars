@@ -633,7 +633,9 @@ public class Memory implements Serializable {
         newTasks.add(t);
                 
         logic.TASK_ADD_NEW.commit(t.getPriority());
+        
         emit(Events.TaskAdd.class, t, reason);
+        
         output(t);
     }
     
@@ -850,10 +852,9 @@ public class Memory implements Serializable {
                       Executive.isExecutableTerm(task.getContent()) &&
                       task.sentence.isGoal())
                ) {
-                                      
+                                       
                 // new addInput or existing concept
                 pending.add(new ImmediateProcess(this, task, numTasks - 1));                
-                                
                 
             } else {
                 final Sentence s = task.sentence;
