@@ -1,6 +1,7 @@
 package nars.gui.output.chart;
 
 import java.awt.Color;
+import java.util.TreeMap;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleEnd;
 import nars.core.NAR;
@@ -14,7 +15,7 @@ import nars.language.Term;
  */
 public class TimeSeries {
 
-    final float[] values;
+    final TreeMap<Long,Float> values;
     protected Color colour;
 	//protected float strokeWeight = 1;
     //protected int[] colors = new int[0];
@@ -22,23 +23,21 @@ public class TimeSeries {
     boolean resetRangeEachCycle = true;
     public final String label;
     private final int historySize;
-    float min, max;
-    long lastT = -1;
-    private float specificMin;
-    private float specificMax;
+    private float[] specificMinMax;
+    
     private boolean specificRange;
+    float defaultValue = Float.NaN;
 
     public TimeSeries(String theName, Color color, int historySize) {
         label = theName;
         colour = color;
         this.historySize = historySize;
-        values = new float[historySize];
+        values = new TreeMap();
     }
 
     public TimeSeries setRange(float min, float max) {
         this.specificRange = true;
-        this.specificMin = min;
-        this.specificMax = max;
+        this.specificMinMax = new float[] { min, max };
         return this;
     }
 
@@ -46,81 +45,61 @@ public class TimeSeries {
         return colour;
     }
 
-    public float[] getValues() {
-        return values;
-    }
-
-    protected void updateRange() {
-
-        int i = 0;
-        for (final float f : values) {
-            if (i++ == 0) {
-                min = max = f;
-                continue;
-            }
-
-            if (f < min) {
-                min = (f);
-            }
-            if (f > max) {
-                max = (f);
-            }
-        }
-
-    }
+    public long getStart() { return values.firstKey(); }
+    public long getEnd() { return values.lastKey(); }
+ 
 
     public void push(final long t, final float f) {
-        //System.arraycopy(values, 0, values, 1, historySize-1);
-        if (resetRangeEachCycle) {
-            min = max = f;
+        
+        
+        while (values.size() > historySize) {
+            values.remove(values.firstKey());            
         }
+        
+        values.put(t, f);
+        
 
-        //update min/max while shifting up                                   
-        for (int i = historySize - 1; i >= 1; i--) {
-            final float g = values[i] = values[i - 1];
-            if (i > 1) {
-                if (g < min) {
-                    min = g;
-                }
-                if (g > max) {
-                    max = g;
-                }
-            }
-        }
-
-        values[0] = f;
-        lastT = t;
     }
 
-    public float getMin() {
-        if (specificRange) {
-            return specificMin;
-        }
-        return min;
+    public float getSpecificMin() {        
+        return specificMinMax[0];
     }
 
-    public float getMax() {
-        if (specificRange) {
-            return specificMax;
-        }
-        return max;
+    public float getSpecificMax() {        
+        return specificMinMax[1];
     }
 
     public float getValue(long t) {
-        if (t < lastT - historySize) {
-            return Float.NaN;
+        Float f = values.get(t);
+        if (f == null) {
+            return defaultValue;
         }
-        if (t > lastT) {
-            return Float.NaN;
-        }
-        int i = (int) (lastT - t);
-        if (i >= values.length) {
-            return 0;
-        }
-        return values[i];
+        return f;
     }
 
-    public void updateMinMax(long cycleStart, long cycleEnd) {
+    public float[] getMinMax(long start, long end) {
+        if (specificRange)
+            return specificMinMax;
+        
+        float min=0, max=0;
+        for (long i = start; i < end; i++) {
+            
+            Float v = values.get(i);
+            if (v == null)
+                continue;
+            
+            if (i == start)
+                min = max = v;
+            else {
+                if (v < min) min = v;
+                if (v > max) max = v;
+            }
+        }
+        return new float[] { min, max };
+    }
+
+    public float[] getMinMax() {
+        return getMinMax(getStart(), getEnd());
     }
 
     abstract public static class CycleTimeSeries extends TimeSeries implements Observer {
@@ -261,21 +240,6 @@ public class TimeSeries {
             }
 
             return cur - prev;
-        }
-
-        @Override
-        public void updateMinMax(long cycleStart, long cycleEnd) {
-            min = max = getValue(cycleStart);
-            for (long i = cycleStart + 1; i < cycleEnd; i++) {
-                float v = getValue(i);
-                if (v < min) {
-                    min = v;
-                }
-                if (v > max) {
-                    max = v;
-                }
-            }
-
         }
 
     }
