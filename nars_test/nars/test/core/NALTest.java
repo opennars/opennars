@@ -280,7 +280,7 @@ public class NALTest  {
     public static abstract class Expect extends Output {
 
         public boolean realized = false;
-        public List<String> exact = new ArrayList();
+        public List<CharSequence> exact = new ArrayList();
         public final NAR nar;
         
 
@@ -380,8 +380,8 @@ public class NALTest  {
         @Override
         public boolean condition(Class channel, Object signal) {
             if (channel == OUT.class) {
-                String o = TextOutput.getOutputString(channel, signal, false, false, nar);
-                if (o.contains(containing)) return true;
+                CharSequence o = TextOutput.getOutputString(channel, signal, false, false, nar);
+                if (o.toString().contains(containing)) return true;
 
                 if (saveSimilar) {
                     int dist = Texts.levenshteinDistance(o, containing);            

@@ -27,6 +27,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import nars.core.Events.Solution;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -194,17 +195,26 @@ public class TextOutput extends Output {
                 buffer.append(signal.toString());
             }                            
         }        
-        else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class))  {
+        else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Solution.class))  {
             if (signal instanceof Task) {
                 Task t = (Task)signal;                
                 if (t.getPriority() < minPriority)
                     return null;
                 
-                Sentence s = t.getBestSolution();
-                if (s == null)
-                    s = t.sentence;
-
-                buffer.append(s.toString(nar, showStamp));
+                if (channel == Solution.class) {
+                    Sentence question = t.sentence;
+                    Sentence answer = t.getBestSolution();
+                    if (answer!=null) {
+                        buffer.append(question.toString(nar, false)).append(' ').
+                                append(answer.toString(nar, false));
+                    }
+                    else {
+                        buffer.append(t.sentence.toString(nar, showStamp));                    
+                    }
+                }
+                else {                    
+                    buffer.append(t.sentence.toString(nar, showStamp));                    
+                }
                 
                 /*
                 Task root = t.getRootTask();
@@ -228,22 +238,24 @@ public class TextOutput extends Output {
         
     }
     
-    public static String getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
-        String s = getOutputString(signal, showStamp, nar);
+    public static CharSequence getOutputString(Class channel, Object signal, boolean showChannel, boolean showStamp, NAR nar) {
+        CharSequence s = getOutputString(channel, signal, showStamp, nar);
         if (showChannel) {            
-            return channel.getSimpleName() + ": " + s;
+            String channelName = channel.getSimpleName();
+            StringBuilder r = new StringBuilder(s.length() + 2 + channelName.length());
+            return r.append(channel.getSimpleName()).append(": ").append(s);
         }
         else {
             return s;
         }
     }
 
-    public static String getOutputString(Object signal, final boolean showStamp, final NAR nar) {
-        return getOutputString(signal, showStamp, nar, new StringBuilder());
+    public static CharSequence getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar) {
+        return getOutputString(channel, signal, showStamp, nar, new StringBuilder());
     }
     
     /** generates a human-readable string from an output channel and signal */
-    public static String getOutputString(Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+    public static CharSequence getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
         buffer.setLength(0);
         
         if (signal instanceof Exception) {
@@ -258,9 +270,10 @@ public class TextOutput extends Output {
         }
         else if (signal instanceof Task) {
             Task t = (Task)signal;
-            Sentence s = t.getBestSolution();
-            if (s == null)
-                s = t.sentence;
+            
+            /*Sentence s = t.getBestSolution();
+            if (s == null)*/
+                Sentence s = t.sentence;
 
             buffer.append(s.toString(nar, showStamp));
         }            
@@ -275,7 +288,7 @@ public class TextOutput extends Output {
             buffer.append(signal.toString());
         }
         
-        return Texts.unescape(buffer).toString();
+        return Texts.unescape(buffer);
         
     }
     

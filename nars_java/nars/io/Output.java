@@ -27,7 +27,7 @@ public abstract class Output extends AbstractObserver {
     public static interface EXE  { }
 
     public Output(EventEmitter source, boolean active) {
-        super(source, active, IN.class, EXE.class, OUT.class, ERR.class, ECHO.class);
+        super(source, active, IN.class, EXE.class, OUT.class, ERR.class, ECHO.class );
     }
     
     public Output(Memory m, boolean active) {

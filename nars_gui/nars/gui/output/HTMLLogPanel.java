@@ -66,7 +66,7 @@ public class HTMLLogPanel extends LogPanel {
     @Override
     void print(Class c, Object o) {
         
-        String s = TextOutput.getOutputString(c, o, true, showStamp, nar);
+        CharSequence s = TextOutput.getOutputString(c, o, true, showStamp, nar);
         if (logFile != null) {
             logFile.println(s);
         }
