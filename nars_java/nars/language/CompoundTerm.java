@@ -631,7 +631,7 @@ public abstract class CompoundTerm extends Term {
     
     /**
      * Recursively apply a substitute to the current CompoundTerm
-     *
+     * May return null if the term can not be created
      * @param subs
      */
     public CompoundTerm applySubstitute(final Map<Term, Term> subs) {   

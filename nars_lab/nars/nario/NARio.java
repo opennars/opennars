@@ -10,7 +10,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
@@ -53,7 +53,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new DefaultNARBuilder().realtime().build();
         
-        NAR nar = new DefaultNARBuilder().simulationTime().build();
+        NAR nar = new DiscretinuousBagNARBuilder().simulationTime().build();
         
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);
@@ -72,8 +72,8 @@ public class NARio extends Run {
         //new TextOutput(nar, System.out).setShowInput(true);
         
         nar.param().noiseLevel.set(0);
-        int memCyclesPerFrame = 500;
-        float fps = 20f;
+        int memCyclesPerFrame = 200;
+        float fps = 40f;
         gameRate = 1.0f / fps;
 
         NARio nario = new NARio(nar);

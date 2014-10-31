@@ -823,10 +823,12 @@ public final class CompositionalRules {
                                 continue;
                             }
                             s2 = ((CompoundTerm) s2).applySubstitute(res3);
-                            if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
-                                TruthValue truth = abduction(sentence.truth, belief.truth);
-                                BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.doublePremiseTask(s2, truth, budget, false);
+                            if (s2!=null) {
+                                if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
+                                    TruthValue truth = abduction(sentence.truth, belief.truth);
+                                    BudgetValue budget = BudgetFunctions.compoundForward(truth, s2, nal);
+                                    nal.doublePremiseTask(s2, truth, budget, false);
+                                }
                             }
                         }
                     }
