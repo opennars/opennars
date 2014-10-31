@@ -24,7 +24,7 @@ abstract public class FireConcept extends NAL {
     abstract public void onFinished();
     
     @Override
-    public void run() {        
+    public void run() {     
         fire();        
         onFinished();                
     }
@@ -36,8 +36,7 @@ abstract public class FireConcept extends NAL {
             if (currentConcept.taskLinks.size() == 0) 
                 return;
             
-            currentTaskLink = currentConcept.taskLinks.takeNext();        
-            
+            currentTaskLink = currentConcept.taskLinks.takeNext();                    
             if (currentTaskLink == null)
                 return;
 

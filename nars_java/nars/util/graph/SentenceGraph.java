@@ -1,9 +1,9 @@
 package nars.util.graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import nars.core.EventEmitter;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
@@ -27,7 +27,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     private boolean needInitialConcepts;
     private boolean started;
     
-    public final Map<Sentence, List<E>> components = new WeakHashMap();
+    public final Map<Sentence, List<E>> components = new HashMap();
     
     public final EventEmitter event = new EventEmitter( GraphChange.class );
     

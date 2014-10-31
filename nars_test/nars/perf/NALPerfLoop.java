@@ -3,7 +3,7 @@ package nars.perf;
 import java.util.Collection;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.NeuromorphicNARBuilder;
 import static nars.perf.NALStressMeasure.perfNAL;
 import nars.test.core.NALTest;
 
@@ -19,9 +19,10 @@ public class NALPerfLoop {
         int maxConcepts = 2000;
         int extraCycles = 2048;
         int randomExtraCycles = 512;
-        
+        Parameters.THREADS = 1;
           
-        NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
+        NAR n = new NeuromorphicNARBuilder().setConceptBagSize(maxConcepts).build();
+        //NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
         //NAR n = new DefaultNARBuilder().setConceptBagSize(maxConcepts).build();
         //NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
         
@@ -29,7 +30,8 @@ public class NALPerfLoop {
         while (true) {
             for (Object o : c) {
                 String examplePath = (String)((Object[])o)[0];
-                Parameters.DEBUG = true;
+                Parameters.DEBUG = false;
+                
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,true);
             }
         }        
