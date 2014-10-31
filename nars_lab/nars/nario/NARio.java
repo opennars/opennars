@@ -217,10 +217,10 @@ public class NARio extends Run {
             private float lastMX;
             private float lastMY;
 
-            boolean representation_simple=true;
+            boolean representation_simple=false;
             public String direction(int i,int j) {
                 if(!representation_simple)
-                    return "("+String.valueOf(i)+","+String.valueOf(j)+")";
+                    return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
                 else {
                     if(Math.abs(i) > Math.abs(j)) {
                         if(i<0) {
