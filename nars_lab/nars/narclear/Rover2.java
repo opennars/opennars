@@ -804,14 +804,14 @@ public class Rover2 extends PhysicsModel {
 
     public static void main(String[] args) {
         Parameters.DEBUG = false;
-        Parameters.THREADS = 4;
+        Parameters.THREADS = 1;
         
         //NAR nar = new DefaultNARBuilder().
         //NAR nar = new CurveBagNARBuilder().
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(1000).
+                setConceptBagSize(200).
                 setSubconceptBagSize(5000).
                 setTaskLinkBagLevels(10).
                 setTermLinkBagLevels(10).
@@ -821,7 +821,7 @@ public class Rover2 extends PhysicsModel {
         
         
         float framesPerSecond = 35f;
-        int cyclesPerFrame = 500; //was 200        
+        int cyclesPerFrame = 600; //was 200        
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
         nar.param().conceptForgetDurations.set(5f);

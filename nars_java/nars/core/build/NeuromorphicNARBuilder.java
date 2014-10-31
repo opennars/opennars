@@ -9,7 +9,6 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
-import nars.storage.CurveBag;
 import nars.storage.DelayBag;
 
 /**
@@ -19,8 +18,7 @@ import nars.storage.DelayBag;
 public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
 
     public NeuromorphicNARBuilder() {
-        super();
-        realTime();        
+        super();        
     }
 
     

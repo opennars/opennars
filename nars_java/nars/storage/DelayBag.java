@@ -4,6 +4,7 @@ package nars.storage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,10 @@ import nars.core.Attention.AttentionAware;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Item;
+import nars.io.Texts;
 import nars.storage.Bag.MemoryAware;
 
 /**
@@ -33,8 +36,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     private float latencyMin = 200; /* in cycles */
     private float forgetThreshold = 0.01f;
     
-    private int targetActivations = 64;
-
+    private int targetActivations;
+    private int maxActivations;
     
     private int skippedPerSample = 0;
     
@@ -46,20 +49,14 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
 
     public DelayBag(int capacity) {
         this.capacity = capacity;
-        this.items = new ConcurrentHashMap<K, E>(capacity) {
-
-            @Override
-            public E remove(Object key) {
-                E x = super.remove(key);
-                if ((x instanceof Concept) && (x != null)) {
-                    attention.conceptRemoved((Concept)x);
-                }
-                return x;
-            }
-          
-            
-        };
+        this.items = 
+                Parameters.THREADS > 1 ? 
+                    new ConcurrentHashMap(capacity) :
+                    new HashMap(capacity);
+        
         this.pending = new ConcurrentLinkedDeque<E>();
+        this.targetActivations = (int)(0.1f * capacity);
+        this.maxActivations = (int)(0.2f * capacity);
         this.toRemove = new ArrayList();
         this.mass = 0;
     }
@@ -91,38 +88,41 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         return mass;
     }
 
+    protected E removeItem(final K k) {        
+        E x = items.remove(k);
+        if ((attention!=null) && (x instanceof Concept) && (x != null)) {
+            attention.conceptRemoved((Concept)x);
+        }
+        return x;
+    }
+    
     //TODO use some other locking mechanism, synchronized may be restrictive
     protected void reload() {
         
         this.now = memory.time();
         int j = 0;
         for (final Map.Entry<K, E> s : items.entrySet()) {
-            E e = s.getValue();
-            if (ready(e)) {
-                //ACTIVATE
+            E e = s.getValue();                       
                 
+            //remove concepts
+            if (size()-toRemove.size() > capacity) {
+                if (e.getPriority() <= forgetThreshold) {
+                    toRemove.add(e.name());                        
+                } 
+            }                            
+            else if (ready(e)) {
+                //ACTIVATE
+
                 //shuffle
                 if (j++ % 2 == 0)
                     pending.addFirst(e);
                 else
                     pending.addLast(e);                
             }
-            else  {
-                
-                //remove concepts
-                if (size()-toRemove.size() > capacity) {
-                    if (e.getPriority() < forgetThreshold) {
-                        toRemove.add(e.name());                        
-                    } 
-                }                
-            }
-                
         }
         
         for (final K k : toRemove) {
-            E r = items.remove(k);
-            if ((attention!=null)&&(r instanceof Concept))
-                attention.conceptRemoved((Concept)r);            
+            removeItem(k);
         }
         
         toRemove.clear();
@@ -141,7 +141,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
             activityThreshold *= 1.1f;
             if (activityThreshold > 0.99) activityThreshold = 0.99f;
             
-            skippedPerSample = (int)Math.ceil(activated / targetActivations) - 1;
+            skippedPerSample = (int)Math.ceil(activated / maxActivations) - 1;
             if (skippedPerSample < 0) skippedPerSample = 0;
         }
         
@@ -156,10 +156,10 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
             if (forgetThreshold < 0.0f) forgetThreshold = 0.0f;
         }
         
-        /*
+        
         if (activated > 0)
             System.out.println(Texts.n2(activityThreshold) + "(" + skippedPerSample + ") " + pending.size() + " / " + size());
-        */
+        
     }
     
 
