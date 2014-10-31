@@ -188,7 +188,7 @@ public class TicTacToe extends JPanel {
 //        });
 
         new NARSwing(nar);    
-        nar.start(50, 50);
+        nar.start(50, 150);
         
     }
 
