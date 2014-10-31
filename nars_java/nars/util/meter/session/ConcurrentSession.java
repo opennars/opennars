@@ -76,7 +76,6 @@ public class ConcurrentSession extends AbstractStatsSession {
             final EventManager eventManager,
             final DataRecorder... dataRecorders) {
         super(key,
-                eventManager,
                 DataRecorders.lockingIfNeeded(dataRecorders));
     }
 
@@ -94,10 +93,7 @@ public class ConcurrentSession extends AbstractStatsSession {
         }
         lastHitStamp = now;
 
-        //logger.info("Track: {}" + " " +  this);
-        if (eventManager != null) {
-            eventManager.fireEvent(EventType.TRACKER_TRACKING, key, tracker);
-        }
+        
     }
 
     @Override
@@ -193,9 +189,7 @@ public class ConcurrentSession extends AbstractStatsSession {
         }
 
         //logger.info("Commit: {}" + " " + this);
-        if (eventManager != null) {
-            eventManager.fireEvent(EventType.TRACKER_COMMITTED, key, tracker);
-        }
+        
     }
 
     @Override
@@ -270,9 +264,7 @@ public class ConcurrentSession extends AbstractStatsSession {
         restoreState(dataSet);
 
         //logger.trace("Restore: {}", this);
-        if (eventManager != null) {
-            eventManager.fireEvent(EventType.SESSION_RESTORED, key, this);
-        }
+        
     }
 
     @Override
@@ -280,9 +272,7 @@ public class ConcurrentSession extends AbstractStatsSession {
         clearState();
 
         //logger.trace("Clear: {}", this);
-        if (eventManager != null) {
-            eventManager.fireEvent(EventType.SESSION_CLEARED, key, this);
-        }
+        
     }
 
     @Override

@@ -24,6 +24,8 @@ import nars.io.TextOutput;
 import nars.io.Texts;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.junit.experimental.ParallelComputer;
+import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
@@ -33,7 +35,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest  {
         
-    int minCycles = 50; //TODO reduce this to one or zero
+    int minCycles = 60; //TODO reduce this to one or zero
 
     static {
         Memory.randomNumber.setSeed(1);
@@ -160,8 +162,10 @@ public class NALTest  {
             } catch (IOException ex) { }
         }
         
-        Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
+        //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         
+        Result result = JUnitCore.runClasses(new ParallelComputer(true, true), NALTest.class);     
+      
         System.out.println("\n\n");
         
         for (Failure f : result.getFailures()) {

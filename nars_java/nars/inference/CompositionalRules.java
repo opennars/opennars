@@ -572,6 +572,10 @@ public final class CompositionalRules {
             state1 = Inheritance.make(term11, varDep);
             state2 = Inheritance.make(term21, varDep);
         }
+        
+        if ((state1==null) || (state2 == null))
+            return;
+        
         content = Conjunction.make(state1, state2);
         truth = intersection(truthT, truthB);
         budget = BudgetFunctions.compoundForward(truth, content, nal);

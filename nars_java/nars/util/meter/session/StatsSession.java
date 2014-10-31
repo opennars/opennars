@@ -227,7 +227,6 @@ public interface StatsSession extends Serializable {
      */
     void clear();
 
-    void setEventManager(EventManager e);
 
 
 }

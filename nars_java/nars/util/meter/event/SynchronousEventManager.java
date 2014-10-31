@@ -206,6 +206,7 @@ public class SynchronousEventManager implements EventManager {
             final EventType eventType,
             final StatsKey key,
             final Object target) {
+        /*
         for (final EventHandler handler : handlers) {
             try {
                 handler.handleStatsEvent(eventType, key, target);
@@ -213,5 +214,6 @@ public class SynchronousEventManager implements EventManager {
                 logger.severe("Uncaught Exception: " + e);
             }
         }
+        */
     }
 }
