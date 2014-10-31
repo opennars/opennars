@@ -52,8 +52,9 @@ public class SpectrumChart extends LineChart {
     protected void update() {
         TimeSeries chart = sensors.get(0);
         
-        final float[] c = chart.getValues();
-        int numWindows = (int)Math.ceil(c.length / windowSize);
+        
+        float length = chart.getEnd() - chart.getStart();;
+        int numWindows = (int)Math.ceil(length / windowSize);
         
         //TODO dont remove existing windows
         windows.clear();
