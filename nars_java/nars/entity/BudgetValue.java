@@ -302,7 +302,8 @@ public class BudgetValue implements Cloneable {
             setPriority( (getPriority() * momentum) + ((1f - momentum) * targetValue) );
     }*/
 
-    public long getForgetPeriod(long currentTime) {
+    /** returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime */
+    public long setLastForgetTime(final long currentTime) {
         long period;
         if (this.lastForgetTime == -1)            
             period = 0;
@@ -314,5 +315,10 @@ public class BudgetValue implements Cloneable {
         return period;
     }
 
+    public long getLastForgetTime() {
+        return lastForgetTime;
+    }
+
+    
 
 }

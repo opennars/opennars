@@ -1,9 +1,9 @@
 package nars.core.build;
 
-import nars.core.ConceptProcessor;
+import nars.core.Attention;
 import nars.core.Memory;
 import nars.core.Param;
-import nars.core.control.DefaultConceptProcessor;
+import nars.core.control.DefaultAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -50,9 +50,9 @@ public class CurveBagNARBuilder extends DefaultNARBuilder {
     
 
     @Override
-    public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
+    public Attention newAttention(Param p, ConceptBuilder c) {
         //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
-        return new DefaultConceptProcessor(newConceptBag(p), newSubconceptBag(p), c);
+        return new DefaultAttention(newConceptBag(p), newSubconceptBag(p), c);
     }
     
     @Override

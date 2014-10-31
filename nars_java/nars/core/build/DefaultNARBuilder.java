@@ -1,6 +1,6 @@
 package nars.core.build;
 
-import nars.core.ConceptProcessor;
+import nars.core.Attention;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
@@ -8,7 +8,7 @@ import nars.core.NAR;
 import nars.core.NARBuilder;
 import nars.core.Param;
 import nars.core.Parameters;
-import nars.core.control.DefaultConceptProcessor;
+import nars.core.control.DefaultAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -114,8 +114,8 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     
     
     @Override
-    public ConceptProcessor newConceptProcessor(Param p, ConceptBuilder c) {
-        return new DefaultConceptProcessor(newConceptBag(p), newSubconceptBag(p), c);
+    public Attention newAttention(Param p, ConceptBuilder c) {
+        return new DefaultAttention(newConceptBag(p), newSubconceptBag(p), c);
     }
 
     @Override

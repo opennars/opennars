@@ -200,7 +200,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     /** forgetting calculation for real-time timing */
     public static void forgetPeriodic(final BudgetValue budget, final float forgetTime, float minPriority, final long currentTime) {
-        long forgetDelta = budget.getForgetPeriod(currentTime);        
+        long forgetDelta = budget.setLastForgetTime(currentTime);        
         
         minPriority *= budget.getQuality();
         

@@ -2,7 +2,7 @@ package nars.core.control;
 
 import java.util.Collection;
 import java.util.Iterator;
-import nars.core.ConceptProcessor;
+import nars.core.Attention;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
@@ -13,13 +13,14 @@ import nars.inference.BudgetFunctions;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 import nars.storage.Bag;
+import nars.storage.Bag.MemoryAware;
 import nars.storage.CacheBag;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultConceptProcessor implements ConceptProcessor {
+public class DefaultAttention implements Attention {
 
 
     /* ---------- Long-term storage for multiple cycles ---------- */
@@ -33,15 +34,20 @@ public class DefaultConceptProcessor implements ConceptProcessor {
     private Memory memory;
        
             
-    public DefaultConceptProcessor(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
+    public DefaultAttention(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
+        
+        if (concepts instanceof AttentionAware)
+            ((AttentionAware)concepts).setAttention(this);
     }
 
     @Override
     public void init(Memory m) {
         this.memory = m;
+        if (concepts instanceof MemoryAware)
+            ((MemoryAware)concepts).setMemory(m);
     }
     
     @Override
@@ -77,7 +83,8 @@ public class DefaultConceptProcessor implements ConceptProcessor {
         return concepts.get(term);
     }
 
-    protected void conceptRemoved(Concept c) {
+    @Override
+    public void conceptRemoved(Concept c) {
         
         if (subcon!=null) {            
             subcon.add(c);
@@ -99,7 +106,7 @@ public class DefaultConceptProcessor implements ConceptProcessor {
             if (concept!=null) {                
                 
                 //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
-                concept.budget.getForgetPeriod(memory.time());
+                concept.budget.setLastForgetTime(memory.time());
                 
                 memory.emit(Events.ConceptRemember.class, concept);                
 
