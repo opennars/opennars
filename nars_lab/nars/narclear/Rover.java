@@ -529,7 +529,7 @@ public class Rover extends PhysicsModel {
                             rover.stop();
                             break;
                         case "random": //tend forward
-                            nar.addInput("(^motor,forward). :|:\n100\n");
+                            nar.addInput("(^motor,random). :|:\n");
                             rover.thrust(0, linearSpeed);
                             //nar.step(100);
                             
