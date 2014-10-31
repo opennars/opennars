@@ -104,8 +104,8 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory Reference to the memory
      */
-    public static void revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        if (newBelief.content==null) return;
+    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+        if (newBelief.content==null) return false;
         
         TruthValue newTruth = newBelief.truth;
         TruthValue oldTruth = oldBelief.truth;
@@ -115,8 +115,11 @@ public class LocalRules {
         if (budget.aboveThreshold()) {
             if (nal.doublePremiseTaskRevised(newBelief.content, truth, budget)) {
                 nal.mem().logic.BELIEF_REVISION.commit();
+                return true;
             }
         }
+        
+       return false;
     }
 
 
