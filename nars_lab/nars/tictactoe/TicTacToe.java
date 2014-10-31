@@ -37,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
@@ -328,8 +329,11 @@ public class TicTacToe extends JPanel {
             rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <goal --> reached>>.\n");
         }
         
-        rules+=("<(&/,(--,<#1 --> empty>),(^add0,#1)) =/> <input --> failed>>.\n");
-        rules+=("<(&/,(--,<#1 --> field>),(^add0,#1)) =/> <input --> failed>>.\n");
+        //for NAL9 (anticipate)
+        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
+            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> <input --> failed>>.\n");
+            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> <input --> failed>>.\n");
+        }
         
         rules+=("<goal --> reached>! %1.0;0.99%\n");
 
