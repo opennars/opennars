@@ -22,24 +22,28 @@ package nars.tictactoe;
  */
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.SOUTH;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.NARSwing;
 import nars.gui.NWindow;
 import nars.io.Output.OUT;
-import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -52,8 +56,9 @@ public class TicTacToe extends JPanel {
 
     final boolean HUMAN = false;
     final boolean COMPUTER = true;
+    final boolean STARTING_PLAYER = HUMAN;
     
-    boolean playing = HUMAN;
+    boolean playing = STARTING_PLAYER;
     
     /**
      * Creates new form play
@@ -65,27 +70,43 @@ public class TicTacToe extends JPanel {
         0, 0, 0,
         0, 0, 0
     };
+    
+    private final JLabel status;
 
-    
-    
-    public int index(GridButtonPanel.ConceptButton cp) {
-        return cp.bx + 3 * cp.by;
-    }
-    
     Set<Term> fieldTerms = new HashSet();
+    
+    
     
     public TicTacToe() {
         super(new BorderLayout());
 
-        
-                
-        nar = new DefaultNARBuilder().realTime().build();
-        nar.memory.addOperator(new AddO("^addO"));
-        nar.param().duration.set(1000);
+        nar = new DiscretinuousBagNARBuilder().realTime().build();
+        nar.memory.addOperator(new AddO("^addO"));        
+        nar.param().duration.set(500);
         nar.param().noiseLevel.set(0);
-                
-        addStartKnowledge();
-        nar.addInput("<game --> reset>. :|:");
+        
+        JPanel menu = new JPanel(new FlowLayout());
+
+        JButton resetButton = new JButton("RESET");
+        resetButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                reset();
+            }            
+        });        
+        menu.add(resetButton);
+
+        status = new JLabel("");
+        menu.add(status);
+        
+        JButton teachButton = new JButton("TEACH");
+        teachButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                teach();
+            }            
+        });
+        menu.add(teachButton);
+        
+        add(menu, SOUTH);
         
         
         add(new GridButtonPanel(nar, 3, 3) {
@@ -108,11 +129,11 @@ public class TicTacToe extends JPanel {
                     return;
                 }
                 
-                nar.addInput("<" + i + " --> set>. :|:");
+                nar.addInput("<(*," + i + ",human) --> move>. :|:");
                 c.setText("X");
                 field[i] = 1;
-                updateField();
                 playing = !playing;
+                updateField();
             }
 
             @Override
@@ -146,6 +167,9 @@ public class TicTacToe extends JPanel {
                 return Color.getHSBColor(0.2f + priority * 0.2f, 0.75f, 0.5f + priority * 0.5f);
             }
             
+            Color blue = new Color(0.5f, 0.5f, 1f);
+            Color red = new Color(1f, 0.5f, 0.5f);
+            
             @Override
             public void repaintButton(GridButtonPanel.ConceptButton b) {
                 b.setBackground(getBackgroundColor(b.concept.getPriority()));
@@ -153,47 +177,26 @@ public class TicTacToe extends JPanel {
                 
                 String s = "";
                 switch (field[index(b)]) {                    
-                    case 1: s = "O"; break;
-                    case 2: s = "X"; break;
+                    case 1: s = "O"; b.setForeground(blue); break;
+                    case 2: s = "X"; b.setForeground(red); break;
                 }
+                
                 b.setText(s);
             }
             
-            
-
-            
-            
-        }, CENTER);
-
-//        jButton1.setBackground(new java.awt.Color(0, 0, 0));
-//        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-//        jButton1.setText("Reset");
-//        jButton1.addActionListener(new java.awt.event.ActionListener() {
-//            public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                jButton1ActionPerformed(evt);
-//            }
-//        });
-//
-//        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-//        jLabel1.setText("playing...");
-//        jLabel1.setToolTipText("");
-//
-//        jButton12.setBackground(new java.awt.Color(0, 0, 0));
-//        jButton12.setForeground(new java.awt.Color(255, 255, 255));
-//        jButton12.setText("remind game");
-//        jButton12.addActionListener(new java.awt.event.ActionListener() {
-//            public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                jButton12ActionPerformed(evt);
-//            }
-//        });
-
+        }, CENTER);       
+        
         new NARSwing(nar);    
         nar.start(50, 150);
         
+        reset();
+        
     }
 
+    public int index(GridButtonPanel.ConceptButton cp) {
+        return cp.bx + 3 * cp.by;
+    }
     
-
 
     public class AddO extends Operator {
 
@@ -223,9 +226,11 @@ public class TicTacToe extends JPanel {
                 }
                 if (success) {
                     nar.addInput("<input --> succeeded>. :|: %" + (success ? "1.00" : "0.00") + "%" );
+                    nar.addInput("<(*," + i + ",nars) --> move>. :|:");
+                    playing = !playing;
+
                     updateField();
 
-                    playing = !playing;
                 }
             }
             else {
@@ -255,6 +260,11 @@ public class TicTacToe extends JPanel {
     };
     
     public void updateField() {
+        if (playing == COMPUTER)
+            status.setText("Thinking");
+        else
+            status.setText("Play");
+                    
         Boolean winner = null;
 
         for (int p = 1; p <= 2; p++) { // 1=human, 2=nars            
@@ -267,75 +277,97 @@ public class TicTacToe extends JPanel {
         }
 
         if (winner == null) {
-            
+            String s = "";
+            for (int i = 0; i < 9; i++) {
+                String f = "empty";
+                switch (field[i]) {
+                    case 1: f = "O"; break;
+                    case 2: f= "X";  break;
+                }
+                s += "<" + i + " --> " + f + ">. :|:\n";
+            }
+            nar.addInput(s);                       
         }
         else if (winner == HUMAN) {
-            nar.emit(OUT.class, "Player won");
+            status.setText("Human wins");
+            nar.emit(OUT.class, "Human wins");
             nar.addInput("<goal --> reached>. :|: %0.0;0.99%");
         }
         else if (winner == COMPUTER) {
-            nar.emit(OUT.class, "NARS won");
+            status.setText("NARS wins");
+            nar.emit(OUT.class, "NARS wins");
             nar.addInput("<goal --> reached>. :|: %1.0;0.99%");
         }
-        
     }
 
 
 
     public void reset() {
+        playing = STARTING_PLAYER;
         Arrays.fill(field, 0);
         nar.addInput("<game --> reset>. :|:");
-        addStartKnowledge();
+        teach();
+        updateField();
     }
 
 
 
-    public void addStartKnowledge() {
-        nar.addInput("<goal --> reached>! %1.0;0.99%");
+    public void teach() {
+        
+        String rules = "";
+        rules+=("<goal --> reached>! %1.0;0.99%\n");
 
-        //nar.addInput("<(^addO,$1) =/> <input --> succeeded>>."); //usually input succeeds
-        //nar.addInput("<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>."); //usually input succeeds but not when it was set by player cause overwrite is not valid
-        //nar.addInput("<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>."); //also overwriting on own is not valid
+        //+"<(^addO,$1) =/> <input --> succeeded>>.\n"); //usually input succeeds
+        //+"<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //usually input succeeds but not when it was set by player cause overwrite is not valid
+        //+"<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //also overwriting on own is not valid
                 
         for (int[] h : howToWin) {                
             int a = h[0];
             int b = h[1];
             int c = h[2];
-            nar.addInput("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <goal --> reached>>.");
+            rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <goal --> reached>>.\n");
         }
         
+        rules+=("<(&/,(--,<#1 --> empty>),(^add0,#1)) =/> <input --> failed>>.\n");
+        rules+=("<(&/,(--,<#1 --> field>),(^add0,#1)) =/> <input --> failed>>.\n");
         
-        nar.addInput("<goal --> reached>! %1.0;0.99%");
+        rules+=("<goal --> reached>! %1.0;0.99%\n");
 
-        nar.addInput("(&/,<#1 --> field>,(^addO,#1))!"); //doing something is also a goal :D
+        rules+=("(&/,<#1 --> field>,(^addO,#1))!\n"); //doing something is also a goal :D
+        
 
-        nar.addInput("(^addO,0)! %1.0;0.7%");
-        nar.addInput("(^addO,1)! %1.0;0.7%");
-        nar.addInput("(^addO,2)! %1.0;0.7%");
-        nar.addInput("(^addO,3)! %1.0;0.7%");
-        nar.addInput("(^addO,4)! %1.0;0.7%");
-        nar.addInput("(^addO,5)! %1.0;0.7%");
-        nar.addInput("(^addO,6)! %1.0;0.7%");
-        nar.addInput("(^addO,7)! %1.0;0.7%");
-        nar.addInput("(^addO,8)! %1.0;0.7%");
+        
+        rules+=("(^addO,0)! %1.0;0.7%\n");
+        rules+=("(^addO,1)! %1.0;0.7%\n");
+        rules+=("(^addO,2)! %1.0;0.7%\n");
+        rules+=("(^addO,3)! %1.0;0.7%\n");
+        rules+=("(^addO,4)! %1.0;0.7%\n");
+        rules+=("(^addO,5)! %1.0;0.7%\n");
+        rules+=("(^addO,6)! %1.0;0.7%\n");
+        rules+=("(^addO,7)! %1.0;0.7%\n");
+        rules+=("(^addO,8)! %1.0;0.7%\n");
          
          
-        nar.addInput("<0 --> field>.");
-        nar.addInput("<1 --> field>.");
-        nar.addInput("<2 --> field>.");
-        nar.addInput("<3 --> field>.");
-        nar.addInput("<4 --> field>.");
-        nar.addInput("<5 --> field>.");
-        nar.addInput("<6 --> field>.");
-        nar.addInput("<7 --> field>.");
-        nar.addInput("<8 --> field>.");
+        rules+=("<0 --> field>.\n");
+        rules+=("<1 --> field>.\n");
+        rules+=("<2 --> field>.\n");
+        rules+=("<3 --> field>.\n");
+        rules+=("<4 --> field>.\n");
+        rules+=("<5 --> field>.\n");
+        rules+=("<6 --> field>.\n");
+        rules+=("<7 --> field>.\n");
+        rules+=("<8 --> field>.\n");
          
-        nar.addInput("<input --> succeeded>!");
-        nar.addInput("(--,<input --> failed>)!");
+        rules+=("<input --> succeeded>!\n");
+        rules+=("(--,<input --> failed>)!");
+        
+        nar.addInput(rules);
+        
+        updateField();
 
     }
     
-    private static final Font buttonFont = NARSwing.monofont.deriveFont(24f);
+    private static final Font buttonFont = NARSwing.monofont.deriveFont(Font.BOLD).deriveFont(34f);
 
     /**
      * @param args the command line arguments
