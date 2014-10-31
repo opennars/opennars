@@ -81,9 +81,13 @@ public class TicTacToe extends JPanel {
     public TicTacToe() {
         super(new BorderLayout());
 
-        nar = new DiscretinuousBagNARBuilder().realTime().build();
+        nar = new DiscretinuousBagNARBuilder().
+                setConceptBagSize(2000).
+                setSubconceptBagSize(10000).
+                realTime().build();
+        
         nar.memory.addOperator(new AddO("^addO"));        
-        nar.param().duration.set(500);
+        nar.param().duration.set(100);
         nar.param().noiseLevel.set(0);
         
         JPanel menu = new JPanel(new FlowLayout());
@@ -188,7 +192,7 @@ public class TicTacToe extends JPanel {
         }, CENTER);       
         
         new NARSwing(nar);    
-        nar.start(50, 150);
+        nar.start(10, 2000);
         
         reset();
         
@@ -207,6 +211,7 @@ public class TicTacToe extends JPanel {
 
         @Override
         protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            
             int i = -1;
             try {
                 i = Integer.parseInt( args[0].toString() );
@@ -219,24 +224,33 @@ public class TicTacToe extends JPanel {
                 return null;
             
             if (playing == COMPUTER) {
-                nar.emit(TicTacToe.class, "NARS plays: " + i);
+                
                 boolean success = false;
+                
                 if (field[i]==0) {
                     field[i] = 2;                
                     success = true;
                 }
+                
                 if (success) {
+                    nar.emit(TicTacToe.class, "NARS plays: " + i);
                     nar.addInput("<input --> succeeded>. :|: %" + (success ? "1.00" : "0.00") + "%" );
                     nar.addInput("<(*," + i + ",nars) --> move>. :|:");
                     playing = !playing;
+                    
+                    System.out.println( operation.getTask().getExplanation() );
 
                     updateField();
 
                 }
+                else {
+                    nar.emit(TicTacToe.class, "NARS selects invalid cell: " + i);
+                    nar.addInput("(--,<input --> succeeded>). :|:");
+                }
             }
             else {
                 nar.emit(TicTacToe.class, "NARS not playing, but wants: " + i);    
-                nar.addInput("<input --> failed>. :|:");
+                nar.addInput("(--,<input --> succeeded>). :|:");
             }
             
             
@@ -282,8 +296,8 @@ public class TicTacToe extends JPanel {
             for (int i = 0; i < 9; i++) {
                 String f = "empty";
                 switch (field[i]) {
-                    case 1: f = "O"; break;
-                    case 2: f= "X";  break;
+                    case 1: f = "human"; break;
+                    case 2: f = "nars";  break;
                 }
                 s += "<" + i + " --> " + f + ">. :|:\n";
             }
@@ -292,12 +306,14 @@ public class TicTacToe extends JPanel {
         else if (winner == HUMAN) {
             status.setText("Human wins");
             nar.emit(OUT.class, "Human wins");
-            nar.addInput("<goal --> reached>. :|: %0.0;0.99%");
+            nar.addInput("<human --> win>. :|: %1.0;0.99%");
+            nar.addInput("<nars --> win>. :|: %0.0;0.99%");
         }
         else if (winner == COMPUTER) {
             status.setText("NARS wins");
             nar.emit(OUT.class, "NARS wins");
-            nar.addInput("<goal --> reached>. :|: %1.0;0.99%");
+            nar.addInput("<human --> win>. :|: %0.0;0.99%");
+            nar.addInput("<nars --> win>. :|: %1.0;0.99%");
         }
     }
 
@@ -316,7 +332,7 @@ public class TicTacToe extends JPanel {
     public void teach() {
         
         String rules = "";
-        rules+=("<goal --> reached>! %1.0;0.99%\n");
+        rules+=("<nars --> win>! %1.0;0.99%\n");
 
         //+"<(^addO,$1) =/> <input --> succeeded>>.\n"); //usually input succeeds
         //+"<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //usually input succeeds but not when it was set by player cause overwrite is not valid
@@ -326,16 +342,18 @@ public class TicTacToe extends JPanel {
             int a = h[0];
             int b = h[1];
             int c = h[2];
-            rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <goal --> reached>>.\n");
+            rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
+            rules+=("<(&|,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) =/> <$1 --> win>>.\n");
         }
         
         //for NAL9 (anticipate)
         if(Parameters.INTERNAL_EXPERIENCE_FULL) {
-            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> <input --> failed>>.\n");
-            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> <input --> failed>>.\n");
+            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>>.\n");
+            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
         }
         
-        rules+=("<goal --> reached>! %1.0;0.99%\n");
+        rules+=("<nars --> win>! %1.0;0.99%\n");
+        rules+=("<human --> win>! %0.0;0.99%\n");
 
         rules+=("(&/,<#1 --> field>,(^addO,#1))!\n"); //doing something is also a goal :D
         
@@ -351,7 +369,9 @@ public class TicTacToe extends JPanel {
         rules+=("(^addO,7)! %1.0;0.7%\n");
         rules+=("(^addO,8)! %1.0;0.7%\n");
          
-         
+        
+        rules+=("<{nars,human,empty} <-> field>.\n");        
+        rules+=("(||,<human --> win>,<nars --> win>).\n");
         rules+=("<0 --> field>.\n");
         rules+=("<1 --> field>.\n");
         rules+=("<2 --> field>.\n");
@@ -363,7 +383,6 @@ public class TicTacToe extends JPanel {
         rules+=("<8 --> field>.\n");
          
         rules+=("<input --> succeeded>!\n");
-        rules+=("(--,<input --> failed>)!");
         
         nar.addInput(rules);
         

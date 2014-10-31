@@ -6,7 +6,7 @@ import nars.util.NARTrace;
 
 public class BarChart extends LineChart {
 
-    float barWidth = 0.5f;
+    float barWidth = 0.9f;
 
     public BarChart(TimeSeries t) {
         super(t);
@@ -25,9 +25,11 @@ public class BarChart extends LineChart {
         for (long t = l.cycleStart; t < l.cycleEnd; t++) {
             float x = t * timeScale;
             float v = chart.getValue(t);
+            
             if (Float.isNaN(v)) {
                 continue;
             }
+            
             float p = (max == min) ? 0 : (float) ((v - min) / (max - min));
             float px = x;
             float h = p * yScale1;

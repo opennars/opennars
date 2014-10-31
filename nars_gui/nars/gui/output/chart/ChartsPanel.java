@@ -221,9 +221,14 @@ public class ChartsPanel extends NCanvas {
             
         
             g.setPaint(ch.getColor());            
-            
-            float min = ch.min;
-            float max = ch.max;            
+        
+            if (ch.values.size() == 0)
+                continue;
+            long end = ch.getEnd();
+            long start = end - historySize;
+            float[] mm = ch.getMinMax(start, end);
+            float min = mm[0];
+            float max = mm[1];
                     
             float range = max - min;
             
@@ -233,7 +238,9 @@ public class ChartsPanel extends NCanvas {
                 
                 int n = 0;
                 firstValue = 0;
-                for (float d : ch.values) {
+                
+                for (long pp = start; pp < end; pp++) {
+                    float d = ch.getValue(pp);
                     if (n == 0)
                         firstValue = d;
 
@@ -251,7 +258,7 @@ public class ChartsPanel extends NCanvas {
                 g.fillPolygon(p);                
             }
             else {                
-                firstValue = ch.values[0];
+                firstValue = ch.getValue(0);
             }
             
             g.setPaint(Color.WHITE);

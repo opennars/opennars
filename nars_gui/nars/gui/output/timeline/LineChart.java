@@ -49,14 +49,9 @@ public class LineChart extends Chart {
         min = Double.NaN;
         max = 0;
         for (TimeSeries chart : sensors) {
-            chart.updateMinMax(l.cycleStart, l.cycleEnd);
-            if (Double.isNaN(min)) {
-                min = (chart.getMin());
-                max = (chart.getMax());
-            } else {
-                min = Math.min(min, chart.getMin());
-                max = Math.max(max, chart.getMax());
-            }
+            float[] mm = chart.getMinMax(l.cycleStart, l.cycleEnd);
+            min = mm[0];
+            max = mm[1];
         }
     }
 
@@ -88,27 +83,37 @@ public class LineChart extends Chart {
             float lx = 0;
             float ly = 0;
             l.fill(255f);
+            boolean firstPoint = false;
             for (long t = l.cycleStart; t < l.cycleEnd; t++) {
                 float x = t * timeScale1;
                 float v = chart.getValue(t);
                 if (Float.isNaN(v)) {
                     continue;
                 }
+                
                 float p = (max == min) ? 0 : (float) ((v - min) / (max - min));
                 float px = x;
                 float h = p * yScale1;
                 float py = y + yScale1 - h;
-                l.strokeWeight(lineThickness);
-                if (showVerticalLines) {
-                    l.stroke(ccolor, 127f);
-                    l.line(px, py, px, py + h);
+                                
+                if (firstPoint) {
+                    l.strokeWeight(lineThickness);
+                    if (showVerticalLines) {
+                        l.stroke(ccolor, 127f);
+                        l.line(px, py, px, py + h);
+                    }
+                    l.stroke(ccolor);
+
+                    if (t != l.cycleStart) {
+                        l.line(lx, ly, px, py);
+                    }
                 }
-                l.stroke(ccolor);
-                if (t != l.cycleStart) {
-                    l.line(lx, ly, px, py);
-                }
+                
                 lx = px;
                 ly = py;
+                
+                firstPoint = true;
+                
                 if (showPoints) {
                     l.noStroke();
                     l.fill(ccolor);
