@@ -17,6 +17,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
 import nars.io.Symbols;
+import nars.language.CompoundTerm;
 import nars.language.Negation;
 import nars.language.Term;
 import nars.language.Variable;
@@ -176,20 +177,24 @@ public abstract class NAL implements Runnable {
         if (newContent != null) {
             {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-                final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                boolean added = derivedTask(newTask, false, false, null, null);
-                if (added && temporalAdd) {
-                    mem.temporalRuleOutputToGraph(newSentence, newTask);
+                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                if (newTask!=null) {
+                    boolean added = derivedTask(newTask, false, false, null, null);
+                    if (added && temporalAdd) {
+                        mem.temporalRuleOutputToGraph(newSentence, newTask);
+                    }
                 }
             }
             if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL != 0.0) {
                 TruthValue truthEt = newTruth.clone();
                 truthEt.setConfidence(newTruth.getConfidence() * Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
-                final Sentence newSentence = (new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, getTheNewStamp())).clone(true);
-                final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                boolean added = derivedTask(newTask, false, false, null, null);
-                if (added && temporalAdd) {
-                    mem.temporalRuleOutputToGraph(newSentence, newTask);
+                final Sentence newSentence = (new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, getTheNewStamp().cloneEternal()));
+                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                if (newTask!=null) {
+                    boolean added = derivedTask(newTask, false, false, null, null);
+                    if (added && temporalAdd) {
+                        mem.temporalRuleOutputToGraph(newSentence, newTask);
+                    }
                 }
             }
         }
@@ -220,8 +225,8 @@ public abstract class NAL implements Runnable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void singlePremiseTask(Term newContent, TruthValue newTruth, BudgetValue newBudget) {
-        singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
+    public boolean singlePremiseTask(CompoundTerm newContent, TruthValue newTruth, BudgetValue newBudget) {
+        return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
     /**
@@ -233,20 +238,21 @@ public abstract class NAL implements Runnable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void singlePremiseTask(final Term newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
-        if (!newBudget.aboveThreshold()) {
-            return;
-        }
+    public boolean singlePremiseTask(final CompoundTerm newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
+        
+        if (!newBudget.aboveThreshold())
+            return false;
+        
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
             if (parentTask.getContent() == null) {
-                return;
+                return false;
             }
             if (newContent == null) {
-                return;
+                return false;
             }
             if (newContent.equals(parentTask.getContent())) {
-                return;
+                return false;
             }
         }
         Sentence taskSentence = getCurrentTask().sentence;
@@ -257,16 +263,19 @@ public abstract class NAL implements Runnable {
             setTheNewStamp(new Stamp(getCurrentBelief().stamp, getTime()));
         }
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        derivedTask(newTask, false, true, null, null);
+        Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
+        if (newTask!=null) {
+            return derivedTask(newTask, false, true, null, null);
+        }
+        return false;
     }
 
-    public void singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
+    public boolean singlePremiseTask(Sentence newSentence, BudgetValue newBudget) {
         if (!newBudget.aboveThreshold()) {
-            return;
+            return false;
         }
         Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        derivedTask(newTask, false, true, null, null);
+        return derivedTask(newTask, false, true, null, null);
     }
 
     //    protected void reset(Memory currentMemory) {
@@ -301,7 +310,7 @@ public abstract class NAL implements Runnable {
     /**
      * @param currentTask the currentTask to set
      */
-    public void setCurrentTask(Task currentTask) {
+    public void setCurrentTask(Task currentTask) {        
         this.currentTask = currentTask;
     }
 

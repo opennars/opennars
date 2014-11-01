@@ -47,12 +47,12 @@ import nars.operator.Operator;
  * <p>
  * It is used as the premises and conclusions of all inference rules.
  */
-public class Sentence implements Cloneable {
+public class Sentence<T extends Term> implements Cloneable {
 
     /**
      * The content of a Sentence is a Term
      */
-    public final Term content;
+    public final T content;
     
     /**
      * The punctuation also indicates the type of the Sentence: 
@@ -90,7 +90,7 @@ public class Sentence implements Cloneable {
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(final Term _content, final char punctuation, final TruthValue truth, final Stamp stamp) {
+    public Sentence(final T _content, final char punctuation, final TruthValue truth, final Stamp stamp) {
         
         this.punctuation = punctuation;
         this.truth = truth;
@@ -98,7 +98,7 @@ public class Sentence implements Cloneable {
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
             
         if (_content.hasVar() && (_content instanceof CompoundTerm)) {
-            this.content =((CompoundTerm)_content).cloneDeepVariables();
+            this.content = (T)((CompoundTerm)_content).cloneDeepVariables();
             if (this.content == null) {
                 ((CompoundTerm)_content).cloneDeepVariables();
                 throw new RuntimeException("clone deep should never return null: " + _content);

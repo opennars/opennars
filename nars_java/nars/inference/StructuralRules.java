@@ -24,7 +24,6 @@ import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
 import nars.core.control.NAL;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -100,7 +99,7 @@ public final class StructuralRules {
         if ((sub == null) || (pred == null))
             return;
         
-        Term content;
+        Statement content;
         int order = statement.getTemporalOrder();
         if (switchOrder(compound, index)) {
             content = Statement.make(statement, pred, sub, TemporalRules.reverseOrder(order));
@@ -129,17 +128,20 @@ public final class StructuralRules {
         if (subj.getClass() != pred.getClass()) {
             return;
         }
+        
+        if (!(subj instanceof Product) && !(subj instanceof SetExt) && !(subj instanceof SetInt)) {
+            return; // no abduction on other compounds for now, but may change in the future
+        }
+        
         CompoundTerm sub = (CompoundTerm) subj;
         CompoundTerm pre = (CompoundTerm) pred;
         if (sub.size() != pre.size() || sub.size() <= index) {
             return;
         }
-        if (!(sub instanceof Product) && !(sub instanceof SetExt) && !(sub instanceof SetInt)) {
-            return; // no abduction on other compounds for now, but may change in the future
-        }
+        
         Term t1 = sub.term[index];
         Term t2 = pre.term[index];
-        Term content;
+        Statement content;
         int order = statement.getTemporalOrder();
         if (switchOrder(sub, (short) index)) {
             content = Statement.make(statement, t2, t1, TemporalRules.reverseOrder(order));
@@ -291,7 +293,7 @@ public final class StructuralRules {
         Task task = nal.getCurrentTask();
         Term oldContent = task.getContent();
         if (oldContent instanceof Statement) {
-            Term content = Statement.make((Statement) oldContent, subject, predicate, order);
+            Statement content = Statement.make((Statement) oldContent, subject, predicate, order);
             if (content != null) {
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
                 nal.singlePremiseTask(content, truth, budget);
@@ -319,7 +321,7 @@ public final class StructuralRules {
         }
         Term sub = statement.getSubject();
         Term pre = statement.getPredicate();
-        Term content;
+        Statement content;
         if (statement instanceof Inheritance) {
             content = Similarity.make(sub, pre);
         } else {
@@ -406,11 +408,12 @@ public final class StructuralRules {
         } else {
             return;
         }
+        
         Inheritance newInh = Inheritance.make(subject, predicate);
         if (newInh == null)
             return;
         
-        Term content = null;
+        CompoundTerm content = null;
         if (indices.length == 2) {
             content = newInh;
         } else if ((oldContent instanceof Statement) && (indices[0] == 1)) {
@@ -427,7 +430,10 @@ public final class StructuralRules {
                 componentList = oldContent.cloneTerms();
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
-                    content = memory.term(oldContent, componentList);
+                    Term newContent = memory.term(oldContent, componentList);
+                    if (!(newContent instanceof CompoundTerm))
+                        return;
+                    content = (CompoundTerm)newContent;
                 } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
                     content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
@@ -445,6 +451,7 @@ public final class StructuralRules {
         } else {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
+        
         nal.singlePremiseTask(content, truth, budget);
     }
 
@@ -567,15 +574,18 @@ public final class StructuralRules {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-    static void structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static boolean structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
         if (component.hasVar()) {
-            return;
+            return false;
         }
         
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
-            return;
+            return false;
         }        
-        Term content = (compoundTask ? component : compound);
+        
+        final Term content = compoundTask ? component : compound;
+        
+        
         Task task = nal.getCurrentTask();
 
         Sentence sentence = task.sentence;
@@ -597,7 +607,10 @@ public final class StructuralRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        nal.singlePremiseTask(content, truth, budget);
+        if (content instanceof CompoundTerm)
+            return nal.singlePremiseTask((CompoundTerm)content, truth, budget);
+        else
+            return false;
     }
 
     /* --------------- Negation related rules --------------- */
@@ -607,7 +620,7 @@ public final class StructuralRules {
      * @param content The premise
      * @param nal Reference to the memory
      */
-    public static void transformNegation(Term content, NAL nal) {
+    public static void transformNegation(CompoundTerm content, NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
@@ -653,19 +666,19 @@ public final class StructuralRules {
      * @param statement The premise
      * @param memory Reference to the memory
      */
-    protected static void contraposition(final Statement statement, final Sentence sentence, final NAL nal) {
+    protected static boolean contraposition(final Statement statement, final Sentence sentence, final NAL nal) {
         Memory memory = nal.mem();
         memory.logic.CONTRAPOSITION.commit(statement.complexity);
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
         
-        Term content = Statement.make(statement, 
+        Statement content = Statement.make(statement, 
                 Negation.make(pred), 
                 Negation.make(subj), 
                 TemporalRules.reverseOrder(statement.getTemporalOrder()));                
         
-        if (content == null) return;
+        if (content == null) return false;
         
         TruthValue truth = sentence.truth;
         BudgetValue budget;
@@ -675,13 +688,13 @@ public final class StructuralRules {
             } else {
                 budget = BudgetFunctions.compoundBackward(content, nal);
             }
-            nal.singlePremiseTask(content, Symbols.QUESTION_MARK, truth, budget);
+            return nal.singlePremiseTask(content, Symbols.QUESTION_MARK, truth, budget);
         } else {
             if (content instanceof Implication) {
                 truth = TruthFunctions.contraposition(truth);
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
-            nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);
+            return nal.singlePremiseTask(content, Symbols.JUDGMENT_MARK, truth, budget);
         }
     }
 }

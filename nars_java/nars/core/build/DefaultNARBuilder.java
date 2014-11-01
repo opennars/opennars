@@ -152,7 +152,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     }
 
     @Override
-    public Bag<Task,Sentence> newNovelTaskBag(Param p) {
+    public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag(Param p) {
         return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
     }
 
