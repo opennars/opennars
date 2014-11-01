@@ -4,12 +4,18 @@
  */
 package nars.core.control;
 
+import java.util.ArrayList;
 import nars.core.Events;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TermLink;
 import nars.inference.RuleTables;
+import nars.language.Inheritance;
+import nars.language.Product;
+import nars.language.Term;
+import nars.operator.Operator;
 
 abstract public class FireConcept extends NAL {
     private final int numTaskLinks;
@@ -30,6 +36,8 @@ abstract public class FireConcept extends NAL {
     }
     
     protected void fire() {
+
+        
         
         for (int i = 0; i < numTaskLinks; i++) {
             
