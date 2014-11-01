@@ -20,7 +20,6 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Item;
-import nars.io.Texts;
 import nars.storage.Bag.MemoryAware;
 
 /**
@@ -33,13 +32,17 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     private Deque<E> pending;
     private List<K> toRemove;
     private float activityThreshold = 0.8f;
-    private float latencyMin = 200; /* in cycles */
+    private float latencyMin = 20; /* in cycles */
     private float forgetThreshold = 0.01f;
     
     private int targetActivations;
     private int maxActivations;
     
     private int skippedPerSample = 0;
+    
+    
+    private double numPriorityThru = 0;
+    private double totalPriorityThru = 0;
     
     
     float mass;
@@ -66,6 +69,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         items.clear();
         pending.clear();
         mass = 0;
+        numPriorityThru = 0;
+        totalPriorityThru = 0;
     }
 
     @Override
@@ -157,8 +162,10 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         }
         
         
+        /*
         if (activated > 0)
             System.out.println(Texts.n2(activityThreshold) + "(" + skippedPerSample + ") " + pending.size() + " / " + size());
+        */
         
     }
     
@@ -243,7 +250,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
 
     @Override
     public E take(K key) {
-        return items.remove(key);
+        return items.get(key);
     }
 
     @Override
@@ -258,12 +265,16 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
 
     @Override
     public float getAveragePriority() {
-        int s = size();
+        //TODO calculate this passively on item release
+        
+        /*int s = size();
         if (s == 0) return 0;
         float t = 0;
         for (E e : values())
             t += e.getPriority();
-        return t / s;        
+        return t / s;        */
+        
+        return 0.5f;
     }
 
     @Override

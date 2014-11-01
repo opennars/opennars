@@ -29,8 +29,6 @@ public interface Attention extends Iterable<Concept> {
      */
     public int getInputPriority();
 
-    /** An iteration of the main loop, called during each memory cycle. */
-    public FireConcept next();
 
     /** Invoked during a memory reset to empty all concepts */
     public void reset();

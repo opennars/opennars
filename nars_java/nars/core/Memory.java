@@ -811,7 +811,7 @@ public class Memory implements Serializable {
 
     
     /** Processes a specific number of new tasks */
-    public int processNewTasks(int maxTasks, Collection<Runnable> taskQueue) {
+    public int processNewTasks(int maxTasks, Collection<Runnable> queue) {
         if (maxTasks == 0) return 0;
         
         int processed = 0;
@@ -835,7 +835,7 @@ public class Memory implements Serializable {
                ) {
                                        
                 // new addInput or existing concept
-                taskQueue.add(new ImmediateProcess(this, task, numTasks - 1));                
+                queue.add(new ImmediateProcess(this, task, numTasks - 1));                
                 
             } else {
                 final Sentence s = task.sentence;
@@ -913,23 +913,13 @@ public class Memory implements Serializable {
         }
     }
 
-
-    public void processConcepts(int c, Collection<Runnable> taskQueue) {
-        if (c == 0) return;                
-        
-        for (int i = 0; i < c; i++) {
-            FireConcept f = concepts.next();
-            if (f!=null)
-                taskQueue.add(f);
-        }
-        
-    }
+    
 
     /**
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    public int processNovelTasks(int num, Collection<Runnable> taskQueue) {
+    public int processNovelTasks(int num, Collection<Runnable> queue) {
         if (num == 0) return 0;
         
         int executed = 0;                
@@ -937,7 +927,7 @@ public class Memory implements Serializable {
         for (int i = 0; i < Math.min(num, novelTasks.size()); i++) {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
             if (task != null) {            
-                taskQueue.add(new ImmediateProcess(this, task, 0));
+                queue.add(new ImmediateProcess(this, task, 0));
                 executed++;
             }
         }

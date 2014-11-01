@@ -56,7 +56,7 @@ public class NALTest  {
 
     protected static Map<String, String> exCache = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
-    private final String scriptPath;
+    final String scriptPath;
     
     /** reads an example file line-by-line, before being processed, to extract expectations */
     public static List<Expect> getExpectations(NAR n, String example, boolean saveSimilar)  {
@@ -123,7 +123,7 @@ public class NALTest  {
         return "";
     }
     
-    public static NAR newNAR() {
+    public NAR newNAR() {
         return new DefaultNARBuilder().build();
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
@@ -154,7 +154,8 @@ public class NALTest  {
         tests.put(name, true);
     }
 
-    public static void main(String[] args) {
+    public static void runTests(Class c) {
+        
         if (waitForEnterKeyOnStart) {
             System.out.println("When ready, press enter");
             try {
@@ -164,7 +165,7 @@ public class NALTest  {
         
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         
-        Result result = JUnitCore.runClasses(new ParallelComputer(true, true), NALTest.class);     
+        Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
       
         System.out.println("\n\n");
         
@@ -202,6 +203,12 @@ public class NALTest  {
             total += levelTotals[i];
         }
         System.out.println(totalSucceeded + " / " + total);
+        
+    }
+    
+    public static void main(String[] args) {
+        
+        runTests(NALTest.class);
     }
 
     public NALTest(String scriptPath) {        

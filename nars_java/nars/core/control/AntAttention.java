@@ -4,16 +4,19 @@
  */
 package nars.core.control;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import nars.core.Attention;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
 import nars.inference.BudgetFunctions;
 import nars.language.Term;
 import nars.storage.Bag;
+import nars.storage.Bag.MemoryAware;
 import nars.storage.DelayBag;
 
 /**
@@ -27,69 +30,102 @@ public class AntAttention implements Attention {
     
     private final ConceptBuilder conceptBuilder;
     private Memory memory;
-       
-            
-    public AntAttention(ConceptBuilder conceptBuilder) {
-        this.concepts = new DelayBag<>(1000);        
+    final List<Runnable> run = new ArrayList();
+    
+    int inputPriority = 2;
+    int newTaskPriority = 2;
+    int novelTaskPriority = 2;
+    int conceptPriority = 2;
+               
+    public AntAttention(int maxConcepts, ConceptBuilder conceptBuilder) {
+        this.concepts = new DelayBag<>(maxConcepts);        
         this.conceptBuilder = conceptBuilder;        
         //this.subcon = subcon;        
     }    
 
     @Override
     public void cycle() {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        run.clear();
+        
+        memory.processNewTasks(newTaskPriority, run);
+                
+        memory.processNovelTasks(novelTaskPriority, run);
+        
+        for (int i = 0; i < conceptPriority; i++) {
+            Concept c = concepts.takeNext();
+            if (c == null)
+                break;
+            run.add(new FireConcept(memory, c, 1) {
+                @Override public void onFinished() {
+                }
+            });
+        }
+
+        memory.run(run, Parameters.THREADS);
+        
+        /*if (!run.isEmpty())
+            System.out.println("run: "+ run.size() + " " + run + " " + concepts.size());*/
+        
+        
     }
     
-    
-    @Override
-    public FireConcept next() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
 
     @Override
     public void reset() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        concepts.clear();
     }
 
     @Override
     public Concept concept(Term term) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return concepts.get(term);
     }
 
     @Override
     public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Concept c = concept(term);
+        if (c!=null) {
+            //existing
+            BudgetFunctions.activate(c.budget, budget, BudgetFunctions.Activating.Max);
+        }
+        else {
+            if (createIfMissing)
+                c = conceptBuilder.newConcept(budget, term, memory);
+            concepts.putIn(c);
+        }
+        return c;
     }
 
     @Override
     public void activate(Concept c, BudgetValue b, BudgetFunctions.Activating mode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        conceptualize(b, c.term, false);
     }
 
     @Override
     public Concept sampleNextConcept() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return concepts.takeNext();
     }
 
     @Override
     public void init(Memory m) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.memory = m;
+        ((MemoryAware)concepts).setMemory(m);
     }
 
     @Override
     public void conceptRemoved(Concept c) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    
     }
 
     @Override
     public Iterator<Concept> iterator() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return concepts.iterator();
     }
 
     @Override
     public int getInputPriority() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return inputPriority;
     }
     
 }
