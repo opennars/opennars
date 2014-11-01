@@ -131,7 +131,10 @@ public class Conjunction extends CompoundTerm {
             
             if (Parameters.DEBUG) {  Terms.verifyNonNull(argList);}
             
-            final TreeSet<Term> set = new TreeSet<>(Arrays.asList(argList));            
+            final TreeSet<Term> set = new TreeSet<>(Arrays.asList(argList));
+            
+            if (set.size() == 1) return set.first();
+            
             return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder);            
         }
     }
