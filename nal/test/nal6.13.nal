@@ -9,4 +9,4 @@
 20
 
 'Lock-1 can be opened by every key.
-''outputMustContain('<<$x --> key> ==> <{lock1} --> (/,open,$x,_)>>. %1.00;0.81%')
+''outputMustContain('<<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.81%')

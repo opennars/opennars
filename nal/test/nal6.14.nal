@@ -9,4 +9,4 @@
 9
 
 'Some key can open Lock-1.
-''outputMustContain('(&&,<#y --> key>,<{lock1} --> (/,open,#y,_)>). %1.00;0.81%')
+''outputMustContain('(&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.81%')
