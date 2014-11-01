@@ -102,12 +102,13 @@ public abstract class CompoundTerm extends Term {
     }
 
     
-    public void invalidateName() {
+    public void invalidateName() {        
         this.name = null; //invalidate name so it will be (re-)created lazily        
-        for (Term t : term)
-            if (t instanceof CompoundTerm)
-                ((CompoundTerm)t).invalidateName();
-                    
+        for (Term t : term) {
+            if (t.hasVar())
+                if (t instanceof CompoundTerm)
+                    ((CompoundTerm)t).invalidateName();
+        }                    
     }
 
     

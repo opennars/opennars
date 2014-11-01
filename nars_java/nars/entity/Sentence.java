@@ -126,6 +126,8 @@ public class Sentence<T extends Term> implements Cloneable {
                     }
                 }            
             });
+            boolean renamed = false;
+            
             for (Variable v : vars) {
                 //check if scope already applied (ie. if there was a duplicate variable since
                 //it used a list not a set
@@ -149,12 +151,14 @@ public class Sentence<T extends Term> implements Cloneable {
                             append(String.valueOf( rename.size() + 1)).compact();*/
 
                     rename.put(vname, n);
+                    renamed = true;
                 }    
 
                 v.setScope(c, n);                
             }
-                                   
-            ((CompoundTerm)content).invalidateName();
+            
+            if (renamed)
+                ((CompoundTerm)content).invalidateName();
             
         }
         else {
