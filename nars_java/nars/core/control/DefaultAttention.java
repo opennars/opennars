@@ -38,7 +38,7 @@ public class DefaultAttention implements Attention {
     private Memory memory;
     
     private Cycle loop = new Cycle();
-    List<Runnable> run = new ArrayList();
+    final List<Runnable> run = new ArrayList();
        
     public class Cycle {
         public final AtomicInteger threads = new AtomicInteger();
@@ -111,8 +111,7 @@ public class DefaultAttention implements Attention {
     }
     
     
-    @Override
-    public FireConcept next() {       
+    protected FireConcept next() {       
 
         Concept currentConcept = concepts.takeNext();
         if (currentConcept==null)
@@ -150,7 +149,7 @@ public class DefaultAttention implements Attention {
         memory.run(run); 
         
         run.clear();        
-        memory.processConcepts(loop.conceptsPriority(), run);
+        processConcepts(loop.conceptsPriority(), run);
         memory.run(run);
         
         run.clear();
@@ -165,7 +164,7 @@ public class DefaultAttention implements Attention {
         
         memory.processNovelTasks(loop.novelTasksPriority(), run);
         
-        memory.processConcepts(loop.conceptsPriority(), run);
+        processConcepts(loop.conceptsPriority(), run);
                 
         memory.run(run, Parameters.THREADS);
         
@@ -173,6 +172,20 @@ public class DefaultAttention implements Attention {
 
     }    
     
+    public void processConcepts(int c, Collection<Runnable> run) {
+        if (c == 0) return;                
+        
+        for (int i = 0; i < c; i++) {
+            FireConcept f = next();
+            
+            if (f!=null)
+                run.add(f);                            
+            else
+                break;
+        }
+        
+    }
+
     
     public Collection<Concept> getConcepts() {
          return concepts.values();

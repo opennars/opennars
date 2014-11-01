@@ -12,6 +12,7 @@ import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
 import nars.storage.Bag;
+import nars.storage.CurveBag;
 import nars.storage.DelayBag;
 
 /**
@@ -26,7 +27,7 @@ public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
 
     @Override
     public Attention newAttention(Param p, ConceptBuilder c) {
-        return new AntAttention(c);
+        return new AntAttention(1000, c);
     }
 
     
@@ -38,8 +39,8 @@ public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {
         
-        Bag<TaskLink,Task> taskLinks = new DelayBag<>(getTaskLinkBagSize());
-        Bag<TermLink,TermLink> termLinks = new DelayBag<>(getTermLinkBagSize());
+        Bag<TaskLink,Task> taskLinks = new CurveBag<>(getTaskLinkBagSize(), true);
+        Bag<TermLink,TermLink> termLinks = new CurveBag<>(getTermLinkBagSize(), true);
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }

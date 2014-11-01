@@ -16,7 +16,7 @@ import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.NeuromorphicNARBuilder;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -807,9 +807,9 @@ public class Rover2 extends PhysicsModel {
         Parameters.THREADS = 1;
         
         //NAR nar = new DefaultNARBuilder().
-        NAR nar = new CurveBagNARBuilder().
+        //NAR nar = new CurveBagNARBuilder().
         //NAR nar = new DiscretinuousBagNARBuilder().
-        //NAR nar = new NeuromorphicNARBuilder().
+        NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
                 setConceptBagSize(200).
                 setSubconceptBagSize(5000).

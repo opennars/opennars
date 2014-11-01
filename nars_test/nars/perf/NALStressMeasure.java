@@ -5,7 +5,6 @@ import nars.core.NAR;
 import nars.core.build.CurveBagNARBuilder;
 import nars.core.build.DefaultNARBuilder;
 import nars.test.core.NALTest;
-import static nars.test.core.NALTest.newNAR;
 
 
 /** tests performance of NAL, but can also uncover bugs when NAL runs with a heavy and long load
@@ -14,7 +13,7 @@ import static nars.test.core.NALTest.newNAR;
 public class NALStressMeasure  {
     
     public static void perfNAL(final String path, final int extraCycles, int repeats, int warmups) {
-        perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
+        //perfNAL(newNAR(), path, extraCycles, repeats, warmups, true);
     }
     
     public static double perfNAL(final NAR n, final String path, final int extraCycles, int repeats, int warmups, boolean gc) {
