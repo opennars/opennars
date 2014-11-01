@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import nars.core.Memory;
@@ -99,12 +98,25 @@ public abstract class CompoundTerm extends Term {
             hasVarQueries |= t.hasVarQuery();
         }
         
+        invalidateName();        
+    }
+
+    
+    public void invalidateName() {
         this.name = null; //invalidate name so it will be (re-)created lazily        
-        this.hash = calcHash();
+        for (Term t : term)
+            if (t instanceof CompoundTerm)
+                ((CompoundTerm)t).invalidateName();
+                    
     }
 
     
     abstract public CompoundTerm clone(final Term[] replaced);
+    
+    @Override
+    public CompoundTerm cloneDeep() {
+        return clone(cloneTermsDeep());
+    }
     
     /** override in subclasses to avoid unnecessary reinit */
     public CompoundTerm _clone(final Term[] replaced) {
@@ -376,14 +388,22 @@ public abstract class CompoundTerm extends Term {
         addTermsTo(l);
         return l;
     }
-  
-//    /** forced deep clone of terms */
-//    @Deprecated public ArrayList<Term> cloneTermsListDeep() {
-//        ArrayList<Term> l = new ArrayList(term.length);
-//        for (final Term t : term)
-//            l.add(t.clone());
-//        return l;        
-//    }
+
+    /** forced deep clone of terms */
+    public Term[] cloneTermsDeep() {
+        Term[] l = new Term[term.length];
+        for (int i = 0; i < l.length; i++) 
+            l[i] = term[i].cloneDeep();
+        return l;        
+    }    
+    
+    /** forced deep clone of terms */
+    public ArrayList<Term> cloneTermsListDeep() {
+        ArrayList<Term> l = new ArrayList(term.length);
+        for (final Term t : term)
+            l.add(t.clone());
+        return l;        
+    }
 
     
 
@@ -780,10 +800,11 @@ public abstract class CompoundTerm extends Term {
         return true;
     }
 
-    /** may be overridden in subclass to include other details */
-    protected int calcHash() {
-        return Objects.hash(operator(), Arrays.hashCode(term), getTemporalOrder());
-    }
+//    /** may be overridden in subclass to include other details */
+//    protected int calcHash() {
+//        //return Objects.hash(operator(), Arrays.hashCode(term), getTemporalOrder());
+//        return name().hashCode();
+//    }
     
 //
 //    /**

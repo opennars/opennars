@@ -183,6 +183,7 @@ public class LocalRules {
         if ((budget != null) && budget.aboveThreshold()) {                       
             
             memory.emit(Solution.class, task, belief, true);
+            //memory.output(task);
             
             //System.out.println("Solved: Solution activated");            
             memory.activatedTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());

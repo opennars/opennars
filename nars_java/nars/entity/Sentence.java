@@ -20,6 +20,10 @@
  */
 package nars.entity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import nars.core.Memory;
 import nars.core.NAR;
@@ -87,27 +91,76 @@ public class Sentence implements Cloneable {
      * base
      */
     public Sentence(final Term _content, final char punctuation, final TruthValue truth, final Stamp stamp) {
-        this.content = _content;
+        
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
-        this.revisible = !((content instanceof Conjunction) && content.hasVarDep());
+        this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
             
-        if (content.hasVar() && (content instanceof CompoundTerm)) {
+        if (_content.hasVar() && (_content instanceof CompoundTerm)) {
+            this.content = _content.cloneDeep();
+            if (this.content == null) {
+                throw new RuntimeException("clone deep should never return null: " + _content);
+            }
             final CompoundTerm c = (CompoundTerm)content;
+            
+            List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
+            Map<String,String> rename = new HashMap();
+            
+            
             c.recurseTerms(new Term.TermVisitor() {
-                @Override public void visit(final Term t, final CompoundTerm parent, final int index) {
+                
+                @Override public void visit(final Term t) {
                     if (t instanceof Variable) {                        
                         Variable v = ((Variable)t);
-                        v.setScope(c);
-                        /*if (v.getScope()==null) {
-                            parent.term[index] = v.clone().setScope(c);
-                        }*/
+                        
+                        if (!v.getScope().equals(v)) {
+                            //reserve the name of the already scoped variable
+                            //rename.put(v.name().toString(), v.name().toString());        
+                            
+                            //rescope cloned copy
+                            v.setScope(c, v.name());
+                        }
+                                     
+                        vars.add(v);
                     }
                 }            
             });
-        }
+            for (Variable v : vars) {
+                //check if scope already applied (ie. if there was a duplicate variable since
+                //it used a list not a set
+                //if ((!v.getScope().equals(v))) continue;
+                
+                String n;
+                String vname = v.name().toString();
+                
+                n = rename.get(v.name().toString());
+                /*if ((n!=null) && (n.equals(v.name()))) {
+                    //rename this one to avoid overwriting a previously scoped variable
+                    vname = v.name() + "_";
+                    n = null;
+                }*/
+                if (n==null) {                            
+                    //type + id
 
+                    n = String.valueOf(v.getType()) + (1+rename.size());
+                    
+                    /*n = CharBuffer.allocate(4).append(v.getType()).
+                            append(String.valueOf( rename.size() + 1)).compact();*/
+
+                    rename.put(vname, n);
+                }    
+
+                v.setScope(c, n);                
+            }
+                                   
+            ((CompoundTerm)content).invalidateName();
+            
+        }
+        else {
+            this.content = _content;
+        }
+        
     
         if (isUniqueByOcurrenceTime())
             this.hash = Objects.hash( content, punctuation, truth, stamp.getOccurrenceTime());
