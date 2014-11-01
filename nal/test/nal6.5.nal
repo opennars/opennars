@@ -10,8 +10,8 @@
 12
 
 'If something can fly and eats worms, then I guess it has wings.
-''outputMustContain('<(&&,<$x --> flyer>,<(*,$x,worms) --> food>) ==> <$x --> [with-wings]>>. %1.00;0.45%')
+''outputMustContain('<(&&,<$1 --> flyer>,<(*,$1,worms) --> food>) ==> <$1 --> [with-wings]>>. %1.00;0.45%')
 
 'I guess if something has wings, then it can fly and eats worms.
-''outputMustContain('<<$x --> [with-wings]> ==> (&&,<$x --> flyer>,<(*,$x,worms) --> food>)>. %1.00;0.45%')
+''outputMustContain('<<$1 --> [with-wings]> ==> (&&,<$1 --> flyer>,<(*,$1,worms) --> food>)>. %1.00;0.45%')
 
