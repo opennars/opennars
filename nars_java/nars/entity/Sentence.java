@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -123,7 +124,7 @@ public class Sentence<T extends Term> implements Cloneable {
                     if (t instanceof Variable) {                        
                         Variable v = ((Variable)t);
                         
-                        if (!v.getScope().equals(v)) {
+                        if (v.getScope() != v) {
                             //rescope cloned copy
                             v.setScope(c, v.name());                            
                         }
@@ -132,31 +133,16 @@ public class Sentence<T extends Term> implements Cloneable {
                     }
                 }            
             });
+            
             boolean renamed = false;
             
-            for (Variable v : vars) {
-                //check if scope already applied (ie. if there was a duplicate variable since
-                //it used a list not a set
-                //if ((!v.getScope().equals(v))) continue;
-                
-                CharSequence n;
+            for (final Variable v : vars) {
                 CharSequence vname = v.name();
+                CharSequence n = rename.get(vname);
                 
-                n = rename.get(v.name());
-                /*if ((n!=null) && (n.equals(v.name()))) {
-                    //rename this one to avoid overwriting a previously scoped variable
-                    vname = v.name() + "_";
-                    n = null;
-                }*/
                 if (n==null) {                            
                     //type + id
-
-                    n = String.valueOf(v.getType()) + (1+rename.size());
-                    
-                    /*n = CharBuffer.allocate(4).append(v.getType()).
-                            append(String.valueOf( rename.size() + 1)).compact();*/
-
-                    rename.put(vname, n);
+                    rename.put(vname, n = Variable.getName(v.getType(), rename.size()+1));
                     renamed = true;
                 }    
 

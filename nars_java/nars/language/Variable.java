@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.nio.CharBuffer;
 import java.util.Objects;
 import nars.core.Parameters;
 
@@ -27,6 +28,8 @@ import nars.core.Parameters;
  * A variable term, which does not correspond to a concept
  */
 public class Variable extends Term {
+
+    
     
 
     
@@ -200,5 +203,46 @@ public class Variable extends Term {
         return scope;
     }
 
+
+    
+    private static final int MAX_CACHED_VARNAME_INDEXES = 64;
+    private static final CharSequence[] vn1 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
+    private static final CharSequence[] vn2 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
+    private static final CharSequence[] vn3 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
+    
+    
+    public static CharSequence getName(char type, int index) {
+        if (index > MAX_CACHED_VARNAME_INDEXES)
+            return newName(type, index);
+        
+        
+        CharSequence[] cache;
+        switch (type) {
+            case '$': cache = vn1; break;
+            case '#': cache = vn2; break;
+            case '?': cache = vn3; break;
+            default:
+                throw new RuntimeException("Invalid variable type");
+        }
+        
+        CharSequence c = cache[index];
+        if (c == null) {
+            c = newName(type, index);
+            cache[index] = c;
+        }
+            
+        return c;
+    }
+    
+    protected static CharSequence newName(char type, int index) {
+        
+        int digits = (index >= 256 ? 3 : (index >= 16) ? 2 : 1);
+        CharBuffer cb  = CharBuffer.allocate(1 + digits).append(type);
+        do {
+            cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
+        } while (index != 0);
+        return cb.compact();
+
+    }
     
 }
