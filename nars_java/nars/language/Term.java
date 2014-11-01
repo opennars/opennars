@@ -131,10 +131,18 @@ public class Term implements AbstractTerm {
 
     public void recurseTerms(final TermVisitor v) {
         v.visit(this);
+        if (this instanceof CompoundTerm) {            
+            for (Term t : ((CompoundTerm)this).term) {
+                t.recurseTerms(v);
+            }
+        }
+    }
+    
+    public void recurseVariableTerms(final TermVisitor v) {
+        if (!hasVar()) return;
+        v.visit(this);
         if (this instanceof CompoundTerm) {
-            int i = 0;
-            CompoundTerm ct = ((CompoundTerm)this);
-            for (Term t : ct.term) {
+            for (Term t : ((CompoundTerm)this).term) {
                 t.recurseTerms(v);
             }
         }

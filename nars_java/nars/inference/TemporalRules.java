@@ -155,8 +155,8 @@ public class TemporalRules {
         //TODO prevent trying question sentences, may cause NPE
         
         //try if B1 unifies with B2, if yes, create new judgement
-        Statement S1=(Implication) s1.content;
-        Statement S2=(Implication) s2.content;
+        Implication S1=(Implication) s1.content;
+        Implication S2=(Implication) s2.content;
         Term A=S1.getSubject();
         Term B1=S1.getPredicate();
         Term B2=S2.getSubject();

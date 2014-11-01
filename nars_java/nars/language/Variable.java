@@ -52,16 +52,13 @@ public class Variable extends Term {
         setScope(scope, name);
     }
 
-    @Override
-    protected void setName(CharSequence newName) {
-        
-    }
+    @Override protected void setName(CharSequence newName) { }
 
     public Variable setScope(final Term scope, final CharSequence n) {
         this.name = n;
         this.type = n.charAt(0);
         this.scope = scope != null ? scope : this;
-        this.hash = Objects.hash(name, scope);
+        this.hash = 0; //calculate lazily
         return this;
     }
     
@@ -157,14 +154,20 @@ public class Variable extends Term {
             
         }
         else {
-            if (!v.getScope().name().equals(getScope().name()))
+            if (!super.equals(that))
                 return false;
-            return super.equals(that);
+            return (v.getScope().name().equals(getScope().name()));
         }
     }
 
     @Override
     public int hashCode() {
+        if (hash == 0) {
+            if (scope!=this)
+                this.hash = 31 * name.hashCode() + scope.hashCode();            
+            else
+                this.hash = name.hashCode();
+        }
         return hash;
     }
 

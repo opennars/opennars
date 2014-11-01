@@ -289,7 +289,7 @@ public class NAR implements Runnable, TaskSource {
 
     public void startFPS(final float targetFPS, int memoryCyclesPerCycle, float durationsPerFrame) {        
         long cycleTime = (long)(1000f / targetFPS);
-        param().duration.set((int)Math.round(cycleTime / durationsPerFrame));
+        param().duration.set(Math.round(cycleTime / durationsPerFrame));
         start(cycleTime, memoryCyclesPerCycle);        
     }
     

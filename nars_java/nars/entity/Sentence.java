@@ -93,6 +93,10 @@ public class Sentence<T extends Term> implements Cloneable {
     public Sentence(final T _content, final char punctuation, final TruthValue truth, final Stamp stamp) {
         
         this.punctuation = punctuation;
+        
+        if ((punctuation == '.') && (truth == null))
+            throw new RuntimeException("Judgment requires non-null truth value");
+        
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
@@ -100,29 +104,24 @@ public class Sentence<T extends Term> implements Cloneable {
         if (_content.hasVar() && (_content instanceof CompoundTerm)) {
             this.content = (T)((CompoundTerm)_content).cloneDeepVariables();
             if (this.content == null) {
-                ((CompoundTerm)_content).cloneDeepVariables();
                 throw new RuntimeException("clone deep should never return null: " + _content);
             }
             final CompoundTerm c = (CompoundTerm)content;
             
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
-            Map<String,String> rename = new HashMap();
+            Map<CharSequence,CharSequence> rename = new HashMap();
             
             
-            c.recurseTerms(new Term.TermVisitor() {
-                
+            c.recurseVariableTerms(new Term.TermVisitor() {                
                 @Override public void visit(final Term t) {
                     if (t instanceof Variable) {                        
                         Variable v = ((Variable)t);
                         
                         if (!v.getScope().equals(v)) {
-                            //reserve the name of the already scoped variable
-                            //rename.put(v.name().toString(), v.name().toString());        
-                            
                             //rescope cloned copy
-                            v.setScope(c, v.name());
+                            v.setScope(c, v.name());                            
                         }
-                                     
+                        
                         vars.add(v);
                     }
                 }            
@@ -132,10 +131,10 @@ public class Sentence<T extends Term> implements Cloneable {
                 //it used a list not a set
                 //if ((!v.getScope().equals(v))) continue;
                 
-                String n;
-                String vname = v.name().toString();
+                CharSequence n;
+                CharSequence vname = v.name();
                 
-                n = rename.get(v.name().toString());
+                n = rename.get(v.name());
                 /*if ((n!=null) && (n.equals(v.name()))) {
                     //rename this one to avoid overwriting a previously scoped variable
                     vname = v.name() + "_";
