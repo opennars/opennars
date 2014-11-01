@@ -98,7 +98,7 @@ public class RuleTables {
         
         if (belief != null) {   
             
-            if(Parameters.INTERNAL_EXPERIENCE_FULL && beliefTerm instanceof Implication) {
+            if(Parameters.INTERNAL_EXPERIENCE_FULL && beliefTerm instanceof Implication && Memory.randomNumber.nextDouble()<=Parameters.INTERNAL_EXPERIENCE_PROBABILITY) {
                 Implication imp=(Implication) beliefTerm;
                 if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
