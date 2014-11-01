@@ -446,7 +446,7 @@ public final class StructuralRules {
         Sentence sentence = nal.getCurrentTask().sentence;
         TruthValue truth = sentence.truth;
         BudgetValue budget;
-        if (sentence.isQuestion()) {
+        if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else {
             budget = BudgetFunctions.compoundForward(truth, content, nal);

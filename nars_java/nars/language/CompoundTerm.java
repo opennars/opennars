@@ -61,6 +61,7 @@ public abstract class CompoundTerm extends Term {
     
     transient int containedTemporalRelations = -1;
     int hash;
+    private boolean normalized;
     
 
     /**
@@ -99,6 +100,9 @@ public abstract class CompoundTerm extends Term {
         }
         
         invalidateName();        
+        
+        if (!hasVar())
+            setNormalized(true);
     }
 
     
@@ -914,6 +918,15 @@ public abstract class CompoundTerm extends Term {
 //            return 1;
 //            */
 //    }
+
+    public void setNormalized(boolean b) {        
+        this.normalized = b;
+    }
+
+    public boolean isNormalized() {
+        return normalized;
+    }
+    
 
     
 
