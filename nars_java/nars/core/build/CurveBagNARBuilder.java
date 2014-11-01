@@ -37,8 +37,8 @@ public class CurveBagNARBuilder extends DefaultNARBuilder {
     
 
     @Override
-    public Bag<Task,Sentence> newNovelTaskBag(Param p) {
-        return new CurveBag<Task,Sentence>(getNovelTaskBagSize(), curve, randomRemoval);
+    public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag(Param p) {
+        return new CurveBag<Task<Term>,Sentence<Term>>(getNovelTaskBagSize(), curve, randomRemoval);
     }
 
     @Override

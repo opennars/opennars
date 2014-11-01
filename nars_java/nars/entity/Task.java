@@ -22,18 +22,21 @@ package nars.entity;
 
 import nars.core.control.AbstractTask;
 import com.google.common.base.Strings;
+import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.operator.Operation;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue
  */
-public class Task extends AbstractTask<Sentence> {
+public class Task<T extends Term> extends AbstractTask<Sentence<T>> {
+
+    //TODO restrict T extends CompoundTerm
 
     /**
      * The sentence of the Task
      */
-    public final Sentence sentence;
+    public final Sentence<T> sentence;
     /**
      * Task from which the Task is derived, or null if input
      */
@@ -57,11 +60,11 @@ public class Task extends AbstractTask<Sentence> {
      * @param s The sentence
      * @param b The budget
      */
-    public Task(final Sentence s, final BudgetValue b) {
+    public Task(final Sentence<T> s, final BudgetValue b) {
         this(s, b, null, null);
     }
  
-    public Task(final Sentence s, final BudgetValue b, final Task parentTask) {
+    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask) {
         this(s, b, parentTask, null);        
     }
 
@@ -74,8 +77,11 @@ public class Task extends AbstractTask<Sentence> {
      * @param parentTask The task from which this new task is derived
      * @param parentBelief The belief from which this new task is derived
      */
-    public Task(final Sentence s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
+    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
         super(b);
+        if (!(s.content instanceof CompoundTerm)) {
+            throw new RuntimeException("Invalid task term: " + s);
+        }
         this.sentence = s;
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
@@ -90,7 +96,7 @@ public class Task extends AbstractTask<Sentence> {
      * @param parentBelief The belief from which this new task is derived
      * @param solution The belief to be used in future inference
      */
-    public Task(final Sentence s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
+    public Task(final Sentence<T> s, final BudgetValue b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(s, b, parentTask, parentBelief);
         this.bestSolution = solution;
     }
@@ -122,7 +128,21 @@ public class Task extends AbstractTask<Sentence> {
         return sentence.hashCode();
     }
     
+    public static boolean isValidTerm(Term t) {
+        return t instanceof CompoundTerm;
+    }
     
+    public static Task make(Sentence s, BudgetValue b, Task parent) {
+        return make(s, b, parent, null);
+    }
+    
+    public static Task make(Sentence s, BudgetValue b, Task parent, Sentence belief) {
+        Term t = s.content;
+        if (isValidTerm(t)) {
+            return new Task(s, b, parent, belief);
+        }
+        return null;
+    }
     
 
 
@@ -131,7 +151,7 @@ public class Task extends AbstractTask<Sentence> {
      *
      * @return The content of the sentence
      */
-    public Term getContent() {
+    public T getContent() {
         return sentence.content;
     }
 

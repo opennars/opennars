@@ -160,7 +160,7 @@ public class TermTest {
        
        String statement2 = "<a --> c>.";
        n.addInput(statement2);
-       n.step(1);
+       n.step(4);
        
        Term a2 = n.term("a");
        assertTrue(a2!=null);
@@ -168,7 +168,7 @@ public class TermTest {
        Concept ca = n.memory.concept(a2);
        assertTrue(ca!=null);
        
-       assertEquals(false, n.memory.concepts.iterator().hasNext());
+       assertEquals(true, n.memory.concepts.iterator().hasNext());
 
     }    
     

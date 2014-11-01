@@ -70,7 +70,7 @@ public class DefaultAttention implements Attention {
         }
 
         public int novelTasksPriority() {
-            if (memory.getNewTaskCount() == 0) {
+            if (memory.getNewTasks().isEmpty()) {
                 return t(numThreads);
             } else {
                 return 0;
@@ -78,7 +78,7 @@ public class DefaultAttention implements Attention {
         }
 
         public int conceptsPriority() {
-            if (memory.getNewTaskCount() == 0) {
+            if (memory.getNewTasks().isEmpty()) {
                 return t(numThreads);
             } else {
                 return 0;

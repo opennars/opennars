@@ -425,6 +425,9 @@ public class Stamp implements Cloneable {
         s.setOccurrenceTime(newOcurrenceTime);
         return s;
     }
+    public Stamp cloneEternal() {
+        return cloneWithNewOccurrenceTime(ETERNAL);
+    }
 
     /**
      * Get the occurrenceTime of the truth-value

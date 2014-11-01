@@ -3,6 +3,7 @@ package nars.core;
 import nars.entity.ConceptBuilder;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.language.Term;
 import nars.operator.DefaultOperators;
 import nars.operator.ExampleOperators;
 import nars.operator.Operator;
@@ -17,7 +18,7 @@ abstract public class NARBuilder extends Parameters  {
      
     /** initial runtime parameters */
     abstract public Param newParam();
-    abstract public Bag<Task,Sentence> newNovelTaskBag(Param p);
+    abstract public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag(Param p);
     abstract public Attention newAttention(Param p, ConceptBuilder c);
     abstract public ConceptBuilder getConceptBuilder();
     

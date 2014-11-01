@@ -63,12 +63,12 @@ public class LocalRules {
      * @param belief The belief
      * @param memory Reference to the memory
      */
-    public static void match(final Task task, final Sentence belief, final NAL nal) {
+    public static boolean match(final Task task, final Sentence belief, final NAL nal) {
         Sentence sentence = task.sentence;
         
         if (sentence.isJudgment()) {
             if (revisible(sentence, belief)) {
-                revision(sentence, belief, true, nal);
+                return revision(sentence, belief, true, nal);
             }
         } else {
             if (matchingOrder(sentence, belief)) {
@@ -78,7 +78,7 @@ public class LocalRules {
                 }
             }
         }
-        
+        return false;
     }
 
     /**
@@ -130,14 +130,14 @@ public class LocalRules {
      * @param task The task to be processed
      * @param memory Reference to the memory
      */
-    public static void trySolution(Sentence belief, final Task task, final NAL nal) {
+    public static boolean trySolution(Sentence belief, final Task task, final NAL nal) {
         Sentence problem = task.sentence;
         Memory memory = nal.mem();
         
         if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             //System.out.println("Unsolved: Temporal order not matching");
             memory.emit(Solution.class, task, belief, false, "Non-matching temporal Order");
-            return;
+            return false;
         }
         
         Sentence oldBest = task.getBestSolution();
@@ -150,7 +150,7 @@ public class LocalRules {
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
                 memory.emit(Solution.class, task, belief, false, "Lower quality");               
-                return;
+                return false;
             }
         }
         
@@ -186,12 +186,13 @@ public class LocalRules {
             //memory.output(task);
             
             //System.out.println("Solved: Solution activated");            
-            memory.activatedTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
+            memory.addNewTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
+            return true;
         }
         else {
             memory.emit(Solution.class, task, belief, false, "Insufficient budget");
         }
-        
+        return false;
     }
 
 
