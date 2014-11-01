@@ -98,8 +98,9 @@ public class Sentence implements Cloneable {
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
             
         if (_content.hasVar() && (_content instanceof CompoundTerm)) {
-            this.content = _content.cloneDeep();
+            this.content =((CompoundTerm)_content).cloneDeepVariables();
             if (this.content == null) {
+                ((CompoundTerm)_content).cloneDeepVariables();
                 throw new RuntimeException("clone deep should never return null: " + _content);
             }
             final CompoundTerm c = (CompoundTerm)content;
