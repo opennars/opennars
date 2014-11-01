@@ -381,7 +381,7 @@ public class Concept extends Item<Term> {
      * @param task The task to be linked
      * @param content The content of the task
      */
-    protected void linkToTask(final Task task) {
+    public void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
 
         insertTaskLink(new TaskLink(task, null, taskBudget,

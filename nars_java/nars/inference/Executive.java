@@ -9,12 +9,13 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.core.control.NAL;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
@@ -681,6 +682,13 @@ public class Executive {
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
             TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
+            
+            //test: linling newEvent with a tasklink to currentBelief
+            Concept c=nal.mem.concept(currentBelief.content);
+            if(c!=null) {
+                c.linkToTask(newEvent); //unusual tasklink but is a experiment
+            }
+            
             //}
         }
 

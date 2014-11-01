@@ -36,7 +36,7 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.2f; //how much =/> should be gained
+    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f; //how much =/> should be gained
     public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
 
     public static boolean TEMPORAL_PARTICLE_PLANNER=false; //no planner anymore by default, it seems it has advanced
@@ -47,7 +47,7 @@ public class Parameters {
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.5f;
+    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
