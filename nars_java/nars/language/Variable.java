@@ -48,18 +48,18 @@ public class Variable extends Term {
      * @param name A String read from input
      */
     protected Variable(final CharSequence name, final Term scope) {
-        super();
-        setName(name);
-        setScope(scope);
+        super();        
+        setScope(scope, name);
     }
 
     @Override
     protected void setName(CharSequence newName) {
-        super.setName(newName);
-        type = newName.charAt(0);
+        
     }
 
-    public Variable setScope(final Term scope) {
+    public Variable setScope(final Term scope, final CharSequence n) {
+        this.name = n;
+        this.type = n.charAt(0);
         this.scope = scope != null ? scope : this;
         this.hash = Objects.hash(name, scope);
         return this;
@@ -122,10 +122,11 @@ public class Variable extends Term {
 
     @Override public boolean equals(final Object that) {
         if (that == this) return true;
+        if (!(that instanceof Variable)) return false;
+        Variable v = (Variable)that;
+        
         if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
             
-            if (!(that instanceof Variable)) return false;
-            Variable v = (Variable)that;
 
             //TODO factor these comparisons into 2 nested if's
 
@@ -155,8 +156,11 @@ public class Variable extends Term {
             }
             
         }
-        else
+        else {
+            if (!v.getScope().name().equals(getScope().name()))
+                return false;
             return super.equals(that);
+        }
     }
 
     @Override
