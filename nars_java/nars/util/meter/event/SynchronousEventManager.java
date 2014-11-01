@@ -34,7 +34,7 @@ import nars.util.meter.util.ServiceLifeCycle.Support;
  *
  * @author The Stajistics Project
  */
-public class SynchronousEventManager implements EventManager {
+@Deprecated class SynchronousEventManager implements EventManager {
 
     private static final Logger logger = Logger.getLogger(SynchronousEventManager.class.toString());
 

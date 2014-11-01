@@ -64,7 +64,7 @@ public class Sentence<T extends Term> implements Cloneable {
     /**
      * The truth value of Judgment, or desire value of Goal     
      */
-    public TruthValue truth;
+    public final TruthValue truth;
     
     /**
      * Partial record of the derivation path
@@ -94,18 +94,24 @@ public class Sentence<T extends Term> implements Cloneable {
         
         this.punctuation = punctuation;
         
-        if ((punctuation == '.') && (truth == null))
-            throw new RuntimeException("Judgment requires non-null truth value");
+        if ( (!isQuestion() && !isQuest()) && (truth == null) ) {            
+            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
+        }
         
         this.truth = truth;
         this.stamp = stamp;
         this.revisible = !((_content instanceof Conjunction) && _content.hasVarDep());
             
-        if (_content.hasVar() && (_content instanceof CompoundTerm)) {
+        
+        //TODO move this to Concept method, like cloneNormalized()
+        if (_content.hasVar() && (_content instanceof CompoundTerm) && (!((CompoundTerm)_content).isNormalized() ) ) {
+            
             this.content = (T)((CompoundTerm)_content).cloneDeepVariables();
+            
             if (this.content == null) {
                 throw new RuntimeException("clone deep should never return null: " + _content);
             }
+            
             final CompoundTerm c = (CompoundTerm)content;
             
             List<Variable> vars = new ArrayList(); //may contain duplicates, list for efficiency
@@ -156,6 +162,8 @@ public class Sentence<T extends Term> implements Cloneable {
 
                 v.setScope(c, n);                
             }
+            
+            c.setNormalized(true);
             
             if (renamed)
                 ((CompoundTerm)content).invalidateName();
