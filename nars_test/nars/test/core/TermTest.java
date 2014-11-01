@@ -168,7 +168,7 @@ public class TermTest {
        Concept ca = n.memory.concept(a2);
        assertTrue(ca!=null);
        
-       assertTrue(n.memory.getConcepts().size() == 5);
+       assertEquals(false, n.memory.concepts.iterator().hasNext());
 
     }    
     

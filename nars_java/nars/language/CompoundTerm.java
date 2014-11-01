@@ -702,7 +702,7 @@ public abstract class CompoundTerm extends Term {
         
         if (this.isCommutative()) {         
             Arrays.sort(tt);
-        }
+        }        
         
         return this.clone(tt);
     }

@@ -14,25 +14,34 @@ import nars.language.Term;
  *  at the beginning of each cycle.*/
 public interface Attention extends Iterable<Concept> {
 
+
     public interface AttentionAware {
         public void setAttention(Attention a);
     }
 
 
+    /** called during main memory cycle */
+    public void cycle();
+
+    /** how many input tasks to process per cycle.  this allows Attention to regulate
+     *  input relative to other kinds of mental activity
+     * @return 
+     */
+    public int getInputPriority();
+
     /** An iteration of the main loop, called during each memory cycle. */
     public FireConcept next();
 
-    /** All known concepts */
-    public Collection<? extends Concept> getConcepts();
-
     /** Invoked during a memory reset to empty all concepts */
-    public void clear();
+    public void reset();
 
-    /** Maps Term to associated Concept */
+    /** Maps Term to associated Concept. May also be called 'recognize'
+     * as it can be used to determine if a symbolic pattern (term) is known */
     public Concept concept(Term term);
 
     /**
-     * Creates and adds new concept to the memory
+     * Creates and adds new concept to the memory.  May also be called 'cognize' because
+     * it is like a request to process a symbolic pattern (term).
      * @return the new concept, or null if the memory is full
      */
     public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing);

@@ -34,7 +34,7 @@ public class NARFacePanel extends HumanoidFacePanel  {
         
         //max out at 0.5
         conceptPriority = Math.min(conceptPriority, 0.4f);
-        if (nar.memory.getConcepts().isEmpty())
+        //if (nar.memory.getConcepts().isEmpty())
             conceptPriority = 0; //if no concepts, start at zero, regardless of what mean might be valued
         
         face.setPupil(12f * (conceptPriority+0.35f)+2f,                 

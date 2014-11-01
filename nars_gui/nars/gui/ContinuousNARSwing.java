@@ -10,7 +10,7 @@ import nars.inference.AbstractController;
 public class ContinuousNARSwing {
 
     public static class PriorityMultiplier extends AbstractController {
-        private int numConcepts;
+        //private int numConcepts;
 
         public PriorityMultiplier(NAR n) {
             super(n, 1);
@@ -19,14 +19,14 @@ public class ContinuousNARSwing {
         
         @Override
         public void getSensors() {
-            numConcepts = nar.memory.getConcepts().size();
+            //numConcepts = nar.memory.getConcepts().size();
         }
 
         @Override
         public void setParameters() {
             Param p = nar.param();
             //int c = (int)Math.sqrt(numConcepts);
-            int c = numConcepts;
+            
             p.conceptForgetDurations.set(2);             
             p.taskForgetDurations.set(4);
             p.beliefForgetDurations.set(10);
