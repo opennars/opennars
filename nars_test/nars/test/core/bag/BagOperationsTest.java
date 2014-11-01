@@ -41,10 +41,10 @@ public class BagOperationsTest {
     public void testConcept() {
         //testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true, new FractalSortedItemList()));
         //testBagSequence(new LevelBag(2, 2));
-        testBagSequence(new GearBag(2,2));
+        testBagSequence(new GearBag(2,2));        
     }
     
-    public void testBagSequence(Bag b) {
+    public static void testBagSequence(Bag b) {
         
         //different id, different priority
         b.putIn(new NullConcept("a", 0.1f));

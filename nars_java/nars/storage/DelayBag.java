@@ -80,7 +80,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     private Deque<E> pending;
     private List<K> toRemove;
     private float activityThreshold = 0.8f;
-    private float latencyMin = 20; /* in cycles */
+    private float latencyMin = 0; /* in cycles */
     private float forgetThreshold = 0.01f;
     
     private int targetActivations;
@@ -110,6 +110,15 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         this.toRemove = new ArrayList();
         this.mass = 0;
     }
+    
+    @Override
+    public void setMemory(Memory m) {
+        this.memory = m;
+        this.memory.event.on(CycleEnd.class, this);
+        
+        //This assumes the bag is used for concepts:
+        this.latencyMin = m.param.conceptForgetDurations.getCycles();
+    }
 
     @Override
     public synchronized void clear() {
@@ -118,6 +127,10 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         mass = 0;
         numPriorityThru = 0;
         totalPriorityThru = 0;
+    }
+
+    public void setLatencyMin(float latencyMin) {
+        this.latencyMin = latencyMin;
     }
 
     @Override
@@ -297,7 +310,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
 
     @Override
     public E take(K key) {
-        return items.get(key);
+        return items.remove(key);
     }
 
     @Override
@@ -329,11 +342,6 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         return items.values().iterator();
     }
 
-    @Override
-    public void setMemory(Memory m) {
-        this.memory = m;
-        this.memory.event.on(CycleEnd.class, this);
-    }
 
     @Override
     public void setAttention(Attention a) {
