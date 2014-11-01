@@ -104,7 +104,7 @@ public class Abbreviation implements Plugin {
         if(obs==null) {
             obs=new Observer() {            
                 @Override public void event(Class event, Object[] a) {
-                    if (event != TaskDerive.class)
+                    if (event != TaskDerive.class || Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY)
                         return;                    
 
                     Task task = (Task)a[0];

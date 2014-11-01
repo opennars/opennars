@@ -17,6 +17,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
+import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.Bag;
@@ -111,6 +112,10 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         if(Parameters.INTERNAL_EXPERIENCE_FULL) {
             FullInternalExperience nal9=new FullInternalExperience();
             n.addPlugin(nal9);
+        }
+        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
+            Abbreviation nal9abr=new Abbreviation();
+            n.addPlugin(nal9abr);
         }
         
         return n;
