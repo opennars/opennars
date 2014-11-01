@@ -186,5 +186,13 @@ public class Parameters {
     //temporary parameter for setting #threads to use, globally
     public static int THREADS = 1;
     
+    /**
+     * only allowing derivation of tasks where a demand(goal) exists
+     * this is one of the aspects which make metacat fast
+     * that there is a global optimization criteria which controls the entire ting
+     * WARNING: this mode does not apply to AGI
+     */
+    public static boolean DERIVE_ONLY_DEMANDED_TASKS = false;
+    
 }
 

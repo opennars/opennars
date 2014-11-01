@@ -1,11 +1,15 @@
 package nars.core.control;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Attention;
 import nars.core.Events;
 import nars.core.Events.ConceptForget;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
@@ -32,7 +36,58 @@ public class DefaultAttention implements Attention {
     
     private final ConceptBuilder conceptBuilder;
     private Memory memory;
+    
+    private Cycle loop = new Cycle();
+    List<Runnable> run = new ArrayList();
        
+    public class Cycle {
+        public final AtomicInteger threads = new AtomicInteger();
+        private final int numThreads;
+
+        public Cycle() {
+            this(Parameters.THREADS);
+        }
+
+        public Cycle(int threads) {
+            this.numThreads = threads;
+            this.threads.set(threads);
+
+        }
+
+        int t(int threads) {
+            if (threads == 1) return 1;
+            else {
+                return threads;
+            }
+        }
+
+        public int inputTasksPriority() {
+            return t(numThreads);
+        }
+
+        public int newTasksPriority() {
+            return memory.newTasks.size();
+        }
+
+        public int novelTasksPriority() {
+            if (memory.getNewTaskCount() == 0) {
+                return t(numThreads);
+            } else {
+                return 0;
+            }
+        }
+
+        public int conceptsPriority() {
+            if (memory.getNewTaskCount() == 0) {
+                return t(numThreads);
+            } else {
+                return 0;
+            }
+        }
+
+
+    }
+    
             
     public DefaultAttention(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
@@ -49,6 +104,12 @@ public class DefaultAttention implements Attention {
         if (concepts instanceof MemoryAware)
             ((MemoryAware)concepts).setMemory(m);
     }
+
+    @Override
+    public int getInputPriority() {
+        return loop.inputTasksPriority();
+    }
+    
     
     @Override
     public FireConcept next() {       
@@ -69,12 +130,56 @@ public class DefaultAttention implements Attention {
     }
 
     @Override
+    public void cycle() {
+        if (Parameters.THREADS == 1)
+            cycleSequential();
+        else
+            cycleParallel();
+    }
+
+    
+    
+    public void cycleSequential() {
+
+        run.clear();
+        memory.processNewTasks(loop.newTasksPriority(), run);
+        memory.run(run);
+        
+        run.clear();
+        memory.processNovelTasks(loop.novelTasksPriority(), run);
+        memory.run(run); 
+        
+        run.clear();        
+        memory.processConcepts(loop.conceptsPriority(), run);
+        memory.run(run);
+        
+        run.clear();
+
+    }
+
+    public void cycleParallel() {
+
+        run.clear();
+        
+        memory.processNewTasks(loop.newTasksPriority(), run);
+        
+        memory.processNovelTasks(loop.novelTasksPriority(), run);
+        
+        memory.processConcepts(loop.conceptsPriority(), run);
+                
+        memory.run(run, Parameters.THREADS);
+        
+        run.clear();
+
+    }    
+    
+    
     public Collection<Concept> getConcepts() {
          return concepts.values();
     }
 
     @Override
-    public void clear() {
+    public void reset() {
         concepts.clear();
     }
 

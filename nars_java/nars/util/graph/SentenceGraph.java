@@ -165,7 +165,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
     private void getInitialConcepts() {
         needInitialConcepts = false;
 
-        for (final Concept c : memory.getConcepts()) {
+        for (final Concept c : memory.concepts) {
             for (final Sentence s : c.beliefs) {                
                 add(s, c);
             }

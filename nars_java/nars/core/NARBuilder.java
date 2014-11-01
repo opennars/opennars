@@ -24,7 +24,7 @@ abstract public class NARBuilder extends Parameters  {
     public NAR build() {
         Param p = newParam();
         Operator[] operators = DefaultOperators.get();
-        Memory m = new Memory(p, new Cycle(), newAttention(p, getConceptBuilder()), newNovelTaskBag(p), operators);
+        Memory m = new Memory(p, newAttention(p, getConceptBuilder()), newNovelTaskBag(p), operators);
         
         for (Operator o : ExampleOperators.get()) {
             m.addOperator(o);

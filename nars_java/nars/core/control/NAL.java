@@ -64,6 +64,22 @@ public abstract class NAL implements Runnable {
                 return false;
             }
         }
+        
+        if (Parameters.DERIVE_ONLY_DEMANDED_TASKS) {
+            if ((task.sentence.punctuation==Symbols.JUDGMENT_MARK) && !(task.sentence.content instanceof Operation)) {             
+                boolean noConcept = mem.concept(task.sentence.content) == null;
+                
+                if (noConcept) { 
+                    //there is no question and goal of this, return
+                    mem.removeTask(task, "No demand exists");
+                    return false;
+                }
+            }
+        }
+    
+        
+        
+        
         final Stamp stamp = task.sentence.stamp;
         if (occurence != null && occurence.getOccurenceTime() != Stamp.ETERNAL) {
             stamp.setOccurrenceTime(occurence.getOccurenceTime());

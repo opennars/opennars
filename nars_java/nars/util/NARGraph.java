@@ -231,9 +231,8 @@ public class NARGraph extends DirectedMultigraph {
         graphize.onTime(this, n.time());
 
         //TODO support AbstractBag
-        Collection<? extends Concept> cc = n.memory.getConcepts();
 
-        for (Concept c : cc) {
+        for (Concept c : n.memory.concepts) {
 
             //TODO use more efficient iterator so that the entire list does not need to be traversed when excluding ranges
             float p = c.getPriority();

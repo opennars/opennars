@@ -12,6 +12,7 @@ import nars.core.NAR;
 import nars.core.build.DiscretinuousBagNARBuilder;
 import nars.entity.Task;
 import nars.io.Output.OUT;
+import nars.io.TextOutput;
 import static nars.io.Texts.n2;
 import nars.io.narsese.Narsese;
 import nars.language.Inheritance;
@@ -28,7 +29,7 @@ public class BooleanChallenge {
     
     double inputProb;
 
-    float questionRatio = 0.7f;
+    float questionRatio = 0.5f;
     
     float delayFactor = 0.1f; //how important quick answers are
     
@@ -298,10 +299,11 @@ public class BooleanChallenge {
         bits = level;
     
         
+        System.out.println("start");
         inputAxioms();
         
         
-        inputProb = 0.01;
+        inputProb = 0.10;
         
         for (int i = 0; i < bit1Iterations; i++)
             nar.step(1);        

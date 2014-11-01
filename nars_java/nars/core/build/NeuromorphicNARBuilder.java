@@ -1,9 +1,12 @@
 package nars.core.build;
 
+import nars.core.Attention;
 import nars.core.Memory;
 import nars.core.Param;
+import nars.core.control.AntAttention;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
+import nars.entity.ConceptBuilder;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -21,8 +24,12 @@ public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
         super();        
     }
 
-    
+    @Override
+    public Attention newAttention(Param p, ConceptBuilder c) {
+        return new AntAttention(c);
+    }
 
+    
     @Override
     public Bag<Concept, Term> newConceptBag(Param p) {
         return new DelayBag(getConceptBagSize());

@@ -86,7 +86,7 @@ public class BubbleChart extends NPanel implements Observer {
         float conceptOpacity = 0.65f;
         float statementOpacity = 0.9f;
                 
-        for (final Concept c : nar.memory.getConcepts()) {
+        for (final Concept c : nar.memory.concepts) {
             float priority = c.getPriority();
             if (priority < minPriority)
                 continue;

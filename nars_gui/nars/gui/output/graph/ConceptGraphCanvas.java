@@ -94,7 +94,8 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
         //final Task currentTask = nar.memory.getCurrentTask();
         if (mode == 0) {
             sortedConcepts.clear();
-            sortedConcepts.addAll(nar.memory.getConcepts());
+            for (Concept c : nar.memory.concepts)
+                sortedConcepts.add(c);
         }
         return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), 
                 new DefaultGraphizer(showBeliefs, showBeliefs, false, false, 0, showTermlinks, showTasklinks) { 

@@ -126,7 +126,6 @@ public class Memory implements Serializable {
     public final Executive executive;
     
     private boolean enabled = true;
-    private int threadsCurrent = 0;
     
     private long timeRealStart;
     private long timeRealNow;
@@ -240,7 +239,7 @@ public class Memory implements Serializable {
     
     
     public final Param param;
-    private Cycle loop;
+    
     
     //index of Conjunction questions
     transient private Set<Task> questionsConjunction = new HashSet();
@@ -252,7 +251,7 @@ public class Memory implements Serializable {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(Param param, Cycle controller, Attention concepts, Bag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
+    public Memory(Param param, Attention concepts, Bag<Task,Sentence> novelTasks, Operator[] initialOperators) {                
 
         this.param = param;
         
@@ -261,13 +260,9 @@ public class Memory implements Serializable {
         this.concepts = concepts;
         this.concepts.init(this);
         
-        this.loop = controller;
-        controller.init(this);
-                
-
         this.novelTasks = novelTasks;                
         
-        this.newTasks = controller.threads.get() > 1 ? 
+        this.newTasks = (Parameters.THREADS > 1) ?  
                 new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
         
         this.operators = new HashMap<>();
@@ -286,7 +281,7 @@ public class Memory implements Serializable {
                 int histogramBins = 4;
                 double[] histogram = new double[histogramBins];
 
-                for (final Concept c : getConcepts()) {
+                for (final Concept c : concepts) {
                     double p = c.getPriority();
                     totalQuestions += c.questions.size();        
                     totalBeliefs += c.beliefs.size();        
@@ -406,7 +401,7 @@ public class Memory implements Serializable {
     public void reset() {
         event.emit(ResetStart.class);
         
-        concepts.clear();
+        concepts.reset();
         novelTasks.clear();
         newTasks.clear();     
         
@@ -664,6 +659,7 @@ public class Memory implements Serializable {
                 temporalRuleOutputToGraph(task.sentence,task);
                 
                 addNewTask(task, "Perceived");
+                
             } else {
                 removeTask(task, "Neglected");
             }
@@ -760,21 +756,11 @@ public class Memory implements Serializable {
     }
     
     
-    protected void setThreads(int numThreads) {
-        this.threadsCurrent = numThreads;
-        
-        if (this.threadsCurrent!=numThreads) {            
-            emit(OUT.class, "Threads=" + numThreads);
-        }
-    }
-    
     
     public void cycle(final TaskSource inputs) {
 
         if (!isEnabled())
             return;
-        
-        setThreads(loop.threads.get());
         
         resource.CYCLE.start();
         resource.CYCLE_CPU_TIME.start();
@@ -786,28 +772,25 @@ public class Memory implements Serializable {
         event.emit(Events.CycleStart.class);                
 
             
+        int inputTaskPriority = concepts.getInputPriority();
+        
         /** adds input tasks to newTasks */
-        for (int i = 0; (i < loop.inputTasksPriority()) && (isProcessingInput()); i++) {
+        for (int i = 0; (i < inputTaskPriority) && (isProcessingInput()); i++) {
             AbstractTask t = inputs.nextTask();                    
             if (t!=null) 
                 inputTask(t);            
         }
       
 
-        processNewTasks(loop.newTasksPriority());
-                
-        processNovelTasks(loop.novelTasksPriority());
-        
-        processConcepts(loop.conceptsPriority());
-
-                   
+        concepts.cycle();
+                           
         executive.cycle();
 
         event.emit(Events.CycleEnd.class);
+        event.synch();
         
         updateTime();
         
-        event.synch();
 
         resource.CYCLE_RAM_USED.stop();
         resource.CYCLE_CPU_TIME.stop();
@@ -828,17 +811,14 @@ public class Memory implements Serializable {
 
     
     /** Processes a specific number of new tasks */
-    protected int processNewTasks(int maxTasks) {
+    public int processNewTasks(int maxTasks, Collection<Runnable> taskQueue) {
         if (maxTasks == 0) return 0;
         
-        List<Runnable> pending = new ArrayList(maxTasks);
-        
         int processed = 0;
-        // don't include new tasks produced in the current cycleMemory
+                
         int numTasks = Math.min(maxTasks, newTasks.size());
-        for (int i = 0; i < numTasks; i++) {
-            if(newTasks.isEmpty())  //TODO it can already be 0 inbetween, multithreading?
-                break;            
+        
+        for (int i = 0; (!newTasks.isEmpty()) && (i < numTasks); i++) {
             
             final Task task = newTasks.removeFirst();
             processed++;
@@ -849,12 +829,13 @@ public class Memory implements Serializable {
             if (  task.isInput()  ||                   
                   (   task.sentence!=null && 
                       task.getContent()!=null && 
-                      Executive.isExecutableTerm(task.getContent()) &&
-                      task.sentence.isGoal())
+                      task.sentence.isGoal() &&
+                      Executive.isExecutableTerm(task.getContent()) 
+                      )
                ) {
                                        
                 // new addInput or existing concept
-                pending.add(new ImmediateProcess(this, task, numTasks - 1));                
+                taskQueue.add(new ImmediateProcess(this, task, numTasks - 1));                
                 
             } else {
                 final Sentence s = task.sentence;
@@ -865,13 +846,13 @@ public class Memory implements Serializable {
                         logic.TASK_ADD_NOVEL.commit();
                         
                         // new concept formation                        
-                        Task removed = novelTasks.putIn(task);
-                        if (removed!=null) {
-                            if (removed==task) {
+                        Task displacedNovelTask = novelTasks.putIn(task);
+                        if (displacedNovelTask!=null) {
+                            if (displacedNovelTask==task) {
                                 removeTask(task, "Ignored");
                             }
                             else {
-                                removeTask(removed, "Replaced");
+                                removeTask(displacedNovelTask, "Displaced novel task");
                             }
                         }
                         
@@ -881,8 +862,6 @@ public class Memory implements Serializable {
                 }
             }
         }        
-        
-        execute(pending);
                          
         return processed;
     }
@@ -892,7 +871,12 @@ public class Memory implements Serializable {
         ex.printStackTrace();
     }
     
-    public <T> void execute(final List<Runnable> tasks) {
+    public <T> void run(final List<Runnable> tasks) {
+        run(tasks, 1);
+    }
+    
+    public <T> void run(final List<Runnable> tasks, int concurrency) {        
+        
         if ((tasks == null) || (tasks.isEmpty())) return;
         
         else if (tasks.size() == 1) {
@@ -902,7 +886,7 @@ public class Memory implements Serializable {
                 error(ex);
             }
         }
-        else if (threadsCurrent == 1) {
+        else if (concurrency == 1) {
             //single threaded
             for (final Runnable t : tasks) {
                 try {
@@ -916,7 +900,7 @@ public class Memory implements Serializable {
             //execute in parallel, multithreaded                        
             final ConcurrentContext ctx = ConcurrentContext.enter(); 
             
-            ctx.setConcurrency(threadsCurrent);
+            ctx.setConcurrency(concurrency);
             try { 
                 for (final Runnable r : tasks) {                    
                     ctx.execute(r);
@@ -924,46 +908,40 @@ public class Memory implements Serializable {
             } finally {
                 // Waits for all concurrent executions to complete.
                 // Re-exports any exception raised during concurrent executions. 
-                 ctx.exit();                              
+                ctx.exit();                              
             }
         }
     }
 
 
-    protected void processConcepts(int c) {
-        if (c == 0) return;
-        
-        List<Runnable> pending = new ArrayList(c);
+    public void processConcepts(int c, Collection<Runnable> taskQueue) {
+        if (c == 0) return;                
         
         for (int i = 0; i < c; i++) {
             FireConcept f = concepts.next();
             if (f!=null)
-                pending.add(f);
+                taskQueue.add(f);
         }
         
-        execute(pending);        
     }
 
     /**
      * Select a novel task to process.
      * @return whether a task was processed
      */
-    protected int processNovelTasks(int num) {
+    public int processNovelTasks(int num, Collection<Runnable> taskQueue) {
         if (num == 0) return 0;
         
-        int executed = 0;
-        
-        List<Runnable> pending = new ArrayList(num);
+        int executed = 0;                
 
         for (int i = 0; i < Math.min(num, novelTasks.size()); i++) {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
             if (task != null) {            
-                pending.add(new ImmediateProcess(this, task, 0));
+                taskQueue.add(new ImmediateProcess(this, task, 0));
                 executed++;
             }
         }
         
-        execute(pending);
         
         return executed;
     }
@@ -988,14 +966,14 @@ public class Memory implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(1024);
-        sb.append(getConcepts().toString())
-                .append(toStringLongIfNotNull(novelTasks, "novelTasks"))
-                .append(toStringIfNotNull(newTasks, "newTasks"));
+        //final StringBuilder sb = new StringBuilder(1024);
+        //sb.append(toStringLongIfNotNull(novelTasks, "novelTasks"))
+          //      .append(toStringIfNotNull(newTasks, "newTasks"));
                 //.append(toStringLongIfNotNull(getCurrentTask(), "currentTask"))
                 //.append(toStringLongIfNotNull(getCurrentBeliefLink(), "currentBeliefLink"))
                 //.append(toStringIfNotNull(getCurrentBelief(), "currentBelief"));
-        return sb.toString();
+        //return sb.toString();
+        return super.toString();
     }
 
     private String toStringLongIfNotNull(Bag<?,?> item, String title) {
@@ -1013,14 +991,6 @@ public class Memory implements Serializable {
                 + item.toString();
     }
 
-
-
-    /** returns a collection of all concepts in the conceptProcessor; 
-     *  not guaranteed to return in order.  for descending priority iteration, use
-        conceptProcessor's Iterable<Concept> .iterator() */
-    public Collection<? extends Concept> getConcepts() {
-        return concepts.getConcepts();
-    }
 
 
     public long newStampSerial() {
