@@ -638,7 +638,12 @@ public class RuleTables {
             return;
         }
         Sentence mainSentence = originalMainSentence;   // for substitution
+        
+        if (!(mainSentence.content instanceof Statement))
+            return;
+        
         Statement statement = (Statement) mainSentence.content;
+        
         Term component = statement.term[index];
         Term content = subSentence.content;
         if (((component instanceof Inheritance) || (component instanceof Negation)) && (nal.getCurrentBelief() != null)) {
