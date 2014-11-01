@@ -9,15 +9,15 @@
 3
 
 'I guess a bird is usually a swimmer.
-''outputMustContain('<<$varInd1 --> bird> ==> <$varInd1 --> swimmer>>. %0.80;0.45%')
+''outputMustContain('<<$1 --> bird> ==> <$1 --> swimmer>>. %0.80;0.45%')
 
 'I guess a swimmer is a bird.
-''outputMustContain('<<$varInd1 --> swimmer> ==> <$varInd1 --> bird>>. %1.00;0.39%')
+''outputMustContain('<<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.39%')
 
 'I guess a bird is usually a swimmer, and the other way around.
-''outputMustContain('<<$varInd1 --> bird> <=> <$varInd1 --> swimmer>>. %0.80;0.45%')
+''outputMustContain('<<$1 --> bird> <=> <$1 --> swimmer>>. %0.80;0.45%')
 
 'Some bird can swim.
-''outputMustContain('(&&,<#varDep --> bird>,<#varDep --> swimmer>). %0.80;0.81%')
+''outputMustContain('(&&,<#1 --> bird>,<#1 --> swimmer>). %0.80;0.81%')
 
 

@@ -9,5 +9,5 @@
 1
 
 'If something is a bird, then usually, it is a flyer. 
-''outputMustContain('<<$x --> bird> ==> <$x --> flyer>>. %0.79;0.92%')
+''outputMustContain('<<$1 --> bird> ==> <$1 --> flyer>>. %0.79;0.92%')
 

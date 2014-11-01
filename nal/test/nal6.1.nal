@@ -9,7 +9,7 @@
 3
 
 'If something is a robin, then it is a animal. 
-''outputMustContain('<<$x --> robin> ==> <$x --> animal>>. %1.00;0.81%')
+''outputMustContain('<<$1 --> robin> ==> <$1 --> animal>>. %1.00;0.81%')
 
  'I guess that if something is a animal, then it is a robin. 
-''outputMustContain('<<$x --> animal> ==> <$x --> robin>>. %1.00;0.45%')
+''outputMustContain('<<$1 --> animal> ==> <$1 --> robin>>. %1.00;0.45%')
