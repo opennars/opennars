@@ -12,6 +12,7 @@ import nars.io.Output.IN;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.Narsese.InvalidInputException;
 import nars.io.nlp.Englisch;
+import nars.io.nlp.NaturalLanguagePerception;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reboot;
@@ -29,6 +30,7 @@ public class DefaultTextPerception  {
     
     public final Narsese narsese;    
     public final Englisch englisch;
+    private boolean enableNaturalLanguage = false;
     private boolean enableEnglisch = true;
     private boolean enableNarsese = true;
     
@@ -200,7 +202,25 @@ public class DefaultTextPerception  {
                 }
                 return null;            
             }
-        });             
+        });
+        
+        
+        // natural language
+        parsers.add(new TextReaction() {
+            @Override
+            public Object react(String line) {
+                
+                if (enableNaturalLanguage) {
+                    /*if (!possiblyNarsese(line))*/ {                    
+                        List<AbstractTask> l = NaturalLanguagePerception.parseLine(line, narsese, "word");
+                        if ((l == null) || (l.isEmpty())) 
+                            return null;
+                        return l;
+                    }
+                }
+                return null;            
+            }
+        });
         
                    
     }
