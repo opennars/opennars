@@ -1,4 +1,4 @@
-<(&&, <#r --> [red]>,<#b --> [blue]>) ==> <(*,#r,#b) --> pattern1>>.
+<(&&, <$r --> [red]>,<$b --> [blue]>) ==> <(*,$r,$b) --> pattern1>>.
 // in general a red object precedes a blue object.
 <{r1} --> [red]>.
 <{b1} --> [blue]>.

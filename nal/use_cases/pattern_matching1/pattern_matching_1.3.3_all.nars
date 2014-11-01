@@ -1,5 +1,5 @@
 ********** case 1
-<(&&, <#r --> [red]>,<#b --> [blue]>) ==> <(*,#r,#b) --> pattern1>>.
+<(&&, <$r --> [red]>,<$b --> [blue]>) ==> <(*,$r,$b) --> pattern1>>.
 // in general a red object precedes a blue object.
 <{r1} --> [red]>.
 <{b1} --> [blue]>.
@@ -14,11 +14,11 @@ OUT: <(*,{r1},{b1}) --> pattern1>. %1.00;0.73%
 // The third statement is the derived result from Case #1
 <(*,{r1},{b1}) --> pattern1>.
 // NARS is then asked if the remaining initial statement from Case 1 is true
-<(&&, <#r --> [red]>,<#b --> [blue]>) ==> <(*,#r,#b) --> pattern1>>?
+<(&&, <$r --> [red]>,<$b --> [blue]>) ==> <(*,$r,$b) --> pattern1>>?
 100
 
 *********** case 3
-<(&&, <#r --> [red]>,<#b --> [blue]>) ==> <(*,#r,#b) --> pattern1>>.
+<(&&, <$r --> [red]>,<$b --> [blue]>) ==> <(*,$r,$b) --> pattern1>>.
 	<(*,{r1},{b1}) --> pattern1>.
 	<{r1} --> ?x>?
 100
