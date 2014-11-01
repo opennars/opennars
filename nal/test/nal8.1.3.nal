@@ -2,4 +2,4 @@
   IN: <(*,SELF,{t002}) --> reachable>! 
   IN: <(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>)=|><(*,SELF,$1) --> reachable>>.
 10
-''outputMustContain('(&|,<(*,SELF,#2) --> at>,<(*,{t002},#2) --> on>)! %1.00;0.81%')
+''outputMustContain('(&|,<(*,SELF,#1) --> at>,<(*,{t002},#1) --> on>)! %1.00;0.81%')

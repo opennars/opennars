@@ -104,7 +104,7 @@ public class Equivalence extends Statement {
         }
         
         return new Equivalence(                
-                termArray(subject, predicate), temporalOrder);
+                Term.toSortedSetArray(subject, predicate), temporalOrder);
     }
 
     /**
