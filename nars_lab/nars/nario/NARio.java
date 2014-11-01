@@ -70,9 +70,10 @@ public class NARio extends Run {
        // nar.param().beliefForgetDurations.set(99.0f);
         
         //new TextOutput(nar, System.out).setShowInput(true);
-        
-        nar.param().noiseLevel.set(0);
         int memCyclesPerFrame = 200;
+        nar.param().duration.set(memCyclesPerFrame*2); //2 frames seems good
+        nar.param().noiseLevel.set(0);
+        
         float fps = 40f;
         gameRate = 1.0f / fps;
 
@@ -461,7 +462,9 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
                 if(www%10==0) {
-                    nar.addInput("<"+direction(1,0)+" --> moved>!");
+                    nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
+                    nar.addInput("<"+direction(0,1)+" --> moved>!");
+                    nar.addInput("<"+direction(1,1)+" --> moved>!");
                 }
                 www++;
                 cycle++;
