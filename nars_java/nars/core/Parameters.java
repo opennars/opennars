@@ -44,17 +44,20 @@ public class Parameters {
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
     //so dont change these two to true
-    public static boolean INTERNAL_EXPERIENCE_FULL=false;
+    public static boolean INTERNAL_EXPERIENCE_FULL=true;
+    
+    //internal experience has less durability?
+    public static float INTERNAL_EXPERIENCE_PROBABILITY=0.01f;
     
     //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
     public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
     
     //internal experience has less durability?
-    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
+    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=1.0f;
     //internal experience has less priority?
-    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.5f;
+    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=1.0f;
     //internal experience has less quality?
-    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;  
+    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=1.0f;  
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. 

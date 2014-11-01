@@ -17,6 +17,7 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.language.Term;
+import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.Bag;
 import nars.storage.CacheBag;
@@ -106,6 +107,10 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
             TemporalParticlePlanner planner=new TemporalParticlePlanner();
             n.addPlugin(planner);
+        }
+        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
+            FullInternalExperience nal9=new FullInternalExperience();
+            n.addPlugin(nal9);
         }
         
         return n;
