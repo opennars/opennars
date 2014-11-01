@@ -111,6 +111,7 @@ public class AntAttention implements Attention {
     public void init(Memory m) {
         this.memory = m;
         ((MemoryAware)concepts).setMemory(m);
+        ((AttentionAware)concepts).setAttention(this);
     }
 
     @Override

@@ -964,9 +964,9 @@ public final class CompositionalRules {
 
     static boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
 
-        Sentence taskSentence = task.sentence;
+        final Sentence taskSentence = task.sentence;
 
-        if (taskSentence == null || taskSentence.isQuestion()) {
+        if (taskSentence == null || taskSentence.isQuestion() || taskSentence.isQuest()) {
             return false;
         }
 
@@ -1103,6 +1103,9 @@ public final class CompositionalRules {
                 }
             }
 
+            if (taskSentence.truth == null)
+                throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
+            
             Stamp ss = new Stamp(taskSentence.stamp, second_belief.stamp, nal.getTime());
 
             dedSecondLayerVariableUnificationTerms(nal, taskSentence, task,
