@@ -29,6 +29,26 @@ import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.operator.math.Add;
+import nars.operator.math.Count;
+import nars.operator.mental.Anticipate;
+import nars.operator.mental.Believe;
+import nars.operator.mental.Consider;
+import nars.operator.mental.Doubt;
+import nars.operator.mental.Evaluate;
+import nars.operator.mental.Feel;
+import nars.operator.mental.FeelBusy;
+import nars.operator.mental.FeelHappy;
+import nars.operator.mental.Hesitate;
+import nars.operator.mental.Name;
+import nars.operator.mental.Register;
+import nars.operator.mental.Remind;
+import nars.operator.mental.SimulateClone;
+import nars.operator.mental.Want;
+import nars.operator.mental.Wonder;
+import nars.operator.software.Javascript;
+import nars.operator.software.NumericCertainty;
+import nars.plugin.mental.Abbreviation.Abbreviate;
 
 /**
  * Operation execution and planning support. Strengthens and accelerates
@@ -700,9 +720,25 @@ public class Executive {
         return true;
     }
 
+    public boolean contains_mental(Task t) {
+        if(!(t.sentence.content instanceof Operation)) {
+            return false;
+        }
+        Operation o=(Operation) t.sentence.content;
+        Operator op=(Operator) o.getPredicate();
+        if(op instanceof Anticipate || op instanceof Believe || op instanceof Consider || op instanceof Doubt ||
+                op instanceof Evaluate || op instanceof Feel || op instanceof FeelBusy || op instanceof FeelHappy ||
+                op instanceof Hesitate || op instanceof Name || op instanceof Register || op instanceof Remind ||
+                op instanceof Want || op instanceof Wonder || op instanceof Add ||
+                op instanceof Count || op instanceof Javascript || op instanceof NumericCertainty || op instanceof Abbreviate) {
+            return true;
+        }
+        return false;
+    }
+    
     //is input or by the system triggered operation
     public boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
-        if (!((newEvent.isInput() || Parameters.INTERNAL_EXPERIENCE_FULL) || (newEvent.getCause() != null))) {
+        if (!((newEvent.isInput() || (Parameters.INTERNAL_EXPERIENCE_FULL && contains_mental(newEvent))) || (newEvent.getCause() != null))) {
             return false;
         }
         /*Term newcontent=newEvent.sentence.content;
