@@ -4,7 +4,7 @@
  */
 package nars.core.control;
 
-import java.util.List;
+import java.util.Collection;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -91,7 +91,7 @@ public abstract class NAL implements Runnable {
         if (stamp.latency > 0) {
             mem.logic.DERIVATION_LATENCY.commit(stamp.latency);
         }
-        final List<Term> chain = stamp.getChain();
+        
         final Term currentTaskContent = getCurrentTask().getContent();
         if (getCurrentBelief() != null && getCurrentBelief().isJudgment()) {
             final Term currentBeliefContent = getCurrentBelief().content;
@@ -110,17 +110,28 @@ public abstract class NAL implements Runnable {
         }
         //its a inference rule, so we have to do the derivation chain check to hamper cycles
         if (!revised) {
-            for (int i = 0; i < chain.size(); i++) {
-                Term chain1 = chain.get(i);
-                Term tc = task.getContent();
-                if (task.sentence.isJudgment() && tc.equals(chain1)) {
-                    Term ptc = task.getParentTask().getContent();
-                    if (task.getParentTask() == null || (!(ptc.equals(Negation.make(tc))) && !(tc.equals(Negation.make(ptc))))) {
-                        mem.removeTask(task, "Cyclic Reasoning");
-                        return false;
+            Term tc = task.getContent();
+            
+            if (task.sentence.isJudgment()) { 
+                
+                Term ptc = task.getParentTask() != null ? task.getParentTask().getContent() : null;
+                
+                if (
+                    (task.getParentTask() == null) || 
+                    (!(ptc.equals(Negation.make(tc))) && !(tc.equals(Negation.make(ptc))))
+                   ) {
+                
+                    final Collection<Term> chain = stamp.getChain();
+
+                    for (final Term chain1 : chain) {                
+                        if (tc.equals(chain1)) {
+                            mem.removeTask(task, "Cyclic Reasoning");
+                            return false;
+                        }
                     }
                 }
             }
+            
         } else {
             //its revision, of course its cyclic, apply evidental base policy
             final int stampLength = stamp.baseLength;

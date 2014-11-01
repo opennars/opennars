@@ -571,7 +571,7 @@ public class Rover2 extends PhysicsModel {
             curiosity = 0.05f;
             nar.addInput("<goal --> Food>! %1.00;0.99%");
             nar.addInput("<goal --> stop>! %0.00;0.99%");
-            nar.addInput("Wall! %0.00;0.50%");            
+            //nar.addInput("Wall! %0.00;0.50%");            
             nar.addInput("<" + f(0) + " --> feltAvgSpeed16>! %0.00;0.50%");
         }
         else if (mission == 1) {
@@ -811,7 +811,7 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
-                setConceptBagSize(200).
+                setConceptBagSize(1000).
                 setSubconceptBagSize(5000).
                 setTaskLinkBagLevels(10).
                 setTermLinkBagLevels(10).
