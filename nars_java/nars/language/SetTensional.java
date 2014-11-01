@@ -1,12 +1,8 @@
 package nars.language;
 
 import java.nio.CharBuffer;
-import java.util.Arrays;
-import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_CLOSER;
-import static nars.io.Symbols.NativeOperator.COMPOUND_TERM_OPENER;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)

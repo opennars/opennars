@@ -21,7 +21,6 @@
 package nars.language;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.TreeSet;
 import nars.core.Parameters;
 import nars.io.Symbols.NativeOperator;
@@ -57,12 +56,7 @@ public class IntersectionExt extends CompoundTerm {
     
     @Override
     public CompoundTerm clone(Term[] replaced) {
-        if (replaced.length == 1)
-            return (CompoundTerm) replaced[0];
-        else if (replaced.length > 1)
-            return (CompoundTerm) make(replaced);
-        else
-            throw new RuntimeException("Invalid # of terms for Intersection: " + Arrays.toString(replaced));
+        return (CompoundTerm) make(replaced);
     }
     
     /**
@@ -73,7 +67,7 @@ public class IntersectionExt extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(Term term1, Term term2) {
-        Set<Term> set;
+        TreeSet<Term> set;
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             set = new TreeSet<>(((CompoundTerm) term1).getTermList());
             set.addAll(((CompoundTerm) term2).getTermList());        // set union
@@ -103,16 +97,25 @@ public class IntersectionExt extends CompoundTerm {
             set.add(term1);
             set.add(term2);
         }
-        return make(set.toArray(new Term[set.size()]));
+        return make(set);
     }
 
-    public static Term make(Term... t) {
-        if (t.length == 1) return t[0]; // special case: single component        
-        Term[] a = Term.toSortedSetArray(t);
-        if (a.length < 2) return null;        
+    public static Term make(TreeSet<Term> t) {
+        if (t.size() == 0) return null;        
+        if (t.size() == 1) return t.first(); // special case: single component        
+                
+        Term[] a = t.toArray(new Term[t.size()]);
         return new IntersectionExt(a);
     }
 
+    public static Term make(Term[] replaced) {
+        if (replaced.length == 1)
+            return replaced[0];
+        else if (replaced.length > 1)
+            return make(Term.toSortedSet(replaced));
+        else
+            throw new RuntimeException("Invalid # of terms for Intersection: " + Arrays.toString(replaced));        
+    }
 
 
     /**
