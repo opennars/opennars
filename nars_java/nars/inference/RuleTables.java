@@ -65,8 +65,9 @@ public class RuleTables {
     
     public static void InternalOperations(Memory memory,Sentence belief, NAL nal, Term beliefTerm, Term taskTerm) {
     
-        if(Parameters.INTERNAL_EXPERIENCE_FULL && Memory.randomNumber.nextDouble()<Parameters.INTERNAL_EXPERIENCE_PROBABILITY) {
-            String[] ops=new String[]{"^remind","^doubt","^consider","^evaluate","hestitate"}; //the operators which dont have a innate belief
+        if(Parameters.INTERNAL_EXPERIENCE_FULL && Memory.randomNumber.nextDouble()<Parameters.INTERNAL_EXPERIENCE_PROBABILITY &&
+                Memory.randomNumber.nextDouble()<0.25) { //make 4 times less probable to do one of those than by innate beliefs for now
+            String[] ops=new String[]{"^remind","^doubt","^consider","^evaluate","hestitate","^wonder","^belief","^want"}; //the operators which dont have a innate belief
             //also get a chance to reveal its effects to the system this way
             Operator op=memory.getOperator(ops[Memory.randomNumber.nextInt(ops.length)]);
             Product prod=new Product(new Term[]{belief.content});
