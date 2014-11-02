@@ -74,7 +74,7 @@ public class NARio extends Run {
         nar.param().duration.set(memCyclesPerFrame*2); //2 frames seems good
         nar.param().noiseLevel.set(0);
         
-        float fps = 40f;
+        float fps = 20f;
         gameRate = 1.0f / fps;
 
         NARio nario = new NARio(nar);
@@ -126,14 +126,15 @@ public class NARio extends Run {
     ChangedTextInput[] keyInput = new ChangedTextInput[6];
     
     protected void setKey(int k, boolean pressed) {
-        if (keyInput[k] == null)
+        if (keyInput[k] == null && pressed)
             keyInput[k] = new ChangedTextInput(nar);
-        
-        if (keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:")) {            
-            //input the opposite keypress as a back-dated input from between last frame and this
-//            long dd = nar.param().duration.get();
-//            long lastFrame = nar.getTime() - dd + dd/2;
-//            nar.addInput("(^keyboard" + k + "," + (!pressed ? "on" : "off") + "). :|:", lastFrame);
+        if(pressed) {
+            //if (keyInput[k].set("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:")) {            
+                //input the opposite keypress as a back-dated input from between last frame and this
+    //            long dd = nar.param().duration.get();
+    //            long lastFrame = nar.getTime() - dd + dd/2;
+                nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
+           // }
         }
     }
     
@@ -243,6 +244,7 @@ public class NARio extends Run {
                 }
             }
             
+            int tt=0;
             @Override
             public void event(Class event, Object... arguments) {
 
@@ -258,6 +260,51 @@ public class NARio extends Run {
         //                System.out.println();
                 }
                 
+                tt++;
+                if(tt%19==0) {
+                    int[] ev2=new int[]{Mario.KEY_DOWN,Mario.KEY_JUMP,Mario.KEY_JUMP,Mario.KEY_LEFT,Mario.KEY_RIGHT,Mario.KEY_SPEED,Mario.KEY_UP};
+                    for(int i : ev2) {
+                        scene.toggleKey(i, false);
+                    }
+                }
+                if(tt%30==0) {
+                    
+                    
+                    
+                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
+                    int[] ev=new int[]{KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_UP,KeyEvent.VK_S};
+                    int keyCode=ev[Memory.randomNumber.nextInt(ev.length)];
+                    if (keyCode == KeyEvent.VK_LEFT)
+                    {
+                        setKey(0, isPressed);
+                        scene.toggleKey(Mario.KEY_LEFT, isPressed);
+                    }
+                    if (keyCode == KeyEvent.VK_RIGHT)
+                    {
+                        setKey(1, isPressed);
+                        scene.toggleKey(Mario.KEY_RIGHT, isPressed);
+                    }
+                    if (keyCode == KeyEvent.VK_DOWN)
+                    {
+                        setKey(2, isPressed);
+                        scene.toggleKey(Mario.KEY_DOWN, isPressed);
+                    }
+                    if (keyCode == KeyEvent.VK_UP)
+                    {
+                        setKey(3, isPressed);
+                        scene.toggleKey(Mario.KEY_JUMP, isPressed);
+                    }
+                    if (keyCode == KeyEvent.VK_S)
+                    {
+                        setKey(4, isPressed);
+                        scene.toggleKey(Mario.KEY_UP, isPressed);
+                    }
+                    if (keyCode == KeyEvent.VK_A) //wat
+                    {
+                        setKey(5, isPressed);
+                        scene.toggleKey(Mario.KEY_DOWN, isPressed);
+                    }
+                }
                     
                /* if (cycle % cyclesPerMario == 0)*/ {
                     cycle(gameRate);
@@ -305,7 +352,7 @@ public class NARio extends Run {
                             
                         }
                         else {
-                            if (moveInput.set("(--,<"+direction(1,0)+" --> moved>). :|:")) { //stopped
+                            if (moveInput.set("<"+direction(0,0)+" --> moved>. :|:")) { //stopped
                                 lastMX = x;
                                 lastMY = y;
                             }
@@ -461,10 +508,10 @@ public class NARio extends Run {
                     lastY = y;
                     gotCoin = 0;
                 }
-                if(www%10==0) {
+                if(www%20==0) {
                     nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(0,1)+" --> moved>!");
-                    nar.addInput("<"+direction(1,1)+" --> moved>!");
+                    nar.addInput("<"+direction(2,0)+" --> moved>!"); //move right
+                    //nar.addInput("<"+direction(1,1)+" --> moved>!");
                 }
                 www++;
                 cycle++;
