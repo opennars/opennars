@@ -486,7 +486,7 @@ public class Concept extends Item<Term> {
      *
      * @param taskLink The termLink to be inserted
      */
-    public boolean insertTaskLink(final TaskLink taskLink) {        
+    protected boolean insertTaskLink(final TaskLink taskLink) {        
         
         TaskLink removed = taskLinks.putIn(taskLink);
         

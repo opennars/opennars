@@ -181,11 +181,11 @@ public abstract class NAL implements Runnable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public boolean doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         if (!newBudget.aboveThreshold()) {
-            return false;
+            return null;
         }
-        boolean derived = false;
+        Task derived = null;
         if (newContent != null) {
             {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
@@ -195,20 +195,9 @@ public abstract class NAL implements Runnable {
                     if (added && temporalAdd) {
                         mem.temporalRuleOutputToGraph(newSentence, newTask);
                     }
-                    derived |= added;
-                }
-            }
-            if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL != 0.0) {
-                TruthValue truthEt = newTruth.clone();
-                truthEt.setConfidence(newTruth.getConfidence() * Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
-                final Sentence newSentence = (new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, getTheNewStamp().cloneEternal()));
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added && temporalAdd) {
-                        mem.temporalRuleOutputToGraph(newSentence, newTask);
+                    if(added) {
+                        derived=newTask;
                     }
-                    derived |= added;
                 }
             }
         }

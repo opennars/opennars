@@ -637,7 +637,7 @@ public final class CompositionalRules {
             TruthValue truth = intersection(taskSentence.truth, belief.truth);
             BudgetValue budget = BudgetFunctions.forward(truth, nal);
 
-            b1 = nal.doublePremiseTask(content, truth, budget, false);
+            b1 = (nal.doublePremiseTask(content, truth, budget, false))!=null;
         }
 
         substitute.clear();
@@ -671,7 +671,7 @@ public final class CompositionalRules {
 
             BudgetValue budget = BudgetFunctions.forward(truth, nal);
 
-            b2 = nal.doublePremiseTask(content, truth, budget, false);
+            b2 = nal.doublePremiseTask(content, truth, budget, false)!=null;
         }
         
         return b1 || b2;
