@@ -166,7 +166,7 @@ public class Struct extends Term {
     /**
      * Builds a compound, with a linked list of arguments
      */
-    Struct(String f, LinkedList<Term> al) {
+    public Struct(String f, LinkedList<Term> al) {
         name = f;
         arity = al.size();
         if (arity > 0) {
@@ -222,6 +222,12 @@ public class Struct extends Term {
     public String getName() {
         return name;
     }
+
+    public Term[] getArg() {
+        return arg;
+    }
+    
+    
     
     /**
      * Gets the i-th element of this structure

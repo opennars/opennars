@@ -453,11 +453,11 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @return the result of the demonstration
 	 * @see SolveInfo
 	 **/
-	public SolveInfo solve(Term g) {
+	public SolveInfo solve(Term g, double maxTimeSeconds) {
 		//System.out.println("ENGINE SOLVE #0: "+g);
-		if (g == null) return null;
+		if (g == null) return null; 
 		
-		SolveInfo sinfo = engineManager.solve(g);
+		SolveInfo sinfo = engineManager.solve(g, maxTimeSeconds);
 		
 		QueryEvent ev = new QueryEvent(this,sinfo);
 		notifyNewQueryResultAvailable(ev);
@@ -465,6 +465,9 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 		return sinfo;
 
 	}
+        public SolveInfo solve(Term g) {
+            return solve(g, 0);
+        }
 
 	/**
 	 * Solves a query
@@ -490,15 +493,18 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @throws NoMoreSolutionException if no more solutions are present
 	 * @see SolveInfo
 	 **/
-	public SolveInfo solveNext() throws NoMoreSolutionException {
+	public SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException {
 		if (hasOpenAlternatives()) {
-			SolveInfo sinfo = engineManager.solveNext();
+			SolveInfo sinfo = engineManager.solveNext(maxTimeSec);
 			QueryEvent ev = new QueryEvent(this,sinfo);
 			notifyNewQueryResultAvailable(ev);
 			return sinfo;
 		} else
 			throw new NoMoreSolutionException();
 	}
+        public SolveInfo solveNext() throws NoMoreSolutionException {
+            return solveNext(0);
+        }
 
 	/**
 	 * Halts current solve computation

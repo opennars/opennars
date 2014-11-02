@@ -5,6 +5,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Symbols;
+import nars.language.Tense;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -36,7 +37,7 @@ public class NumericCertainty extends Operator {
         // NOTE< no memory output ? >
         
         ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(resultTerm, Symbols.JUDGMENT_MARK, 1.0f, resultCertainty, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
+        results.add(memory.newTask(resultTerm, Symbols.JUDGMENT_MARK, 1.0f, resultCertainty, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, Tense.Present));
         
         return results;
     }

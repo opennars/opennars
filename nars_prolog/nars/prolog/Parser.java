@@ -54,7 +54,7 @@ import nars.prolog.interfaces.IParser;
  * op(type,n) ::= atom | { symbol }+
  */
 @SuppressWarnings("serial")
-public class Parser implements /*Castagna 06/2011*/IParser,/**/ Serializable
+public class Parser implements /*Castagna 06/2011*/IParser,/**/ Serializable, Iterable<Term>
 {
 	private static class IdentifiedTerm {
 		private int priority;

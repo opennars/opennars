@@ -52,4 +52,7 @@ public class InvalidTheoryException extends PrologException {
 		this.pos = pos;
 	}
 	/**/
+
+        
+        
 }

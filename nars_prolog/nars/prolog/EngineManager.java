@@ -219,11 +219,15 @@ public class EngineManager implements java.io.Serializable {
 		
 	}
 	
-	public synchronized SolveInfo solve(Term query) {
+        public synchronized SolveInfo solve(Term query) {
+            return solve(query, 0);
+        }
+        
+	public synchronized SolveInfo solve(Term query, double maxTimeSeconds) {
 		this.clearSinfoSetOf();
 		er1.setGoal(query);
 		
-		SolveInfo s = er1.solve();
+		SolveInfo s = er1.solve(maxTimeSeconds);
 		//System.out.println("ENGINE MAN solve(Term) risultato: "+s);
 		return s;
 		
@@ -258,7 +262,11 @@ public class EngineManager implements java.io.Serializable {
 	}
 	
 	public synchronized SolveInfo solveNext() throws NoMoreSolutionException {
-		return er1.solveNext();
+            return solveNext(0);
+        }
+        
+        public synchronized SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException {
+		return er1.solveNext(maxTimeSec);
 	}
 	
 	void spy(String action, Engine env) {

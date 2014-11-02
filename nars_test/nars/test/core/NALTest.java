@@ -213,6 +213,7 @@ public class NALTest  {
 
     public NALTest(String scriptPath) {        
         this.scriptPath = scriptPath;
+        
     }
 
 //    public Sentence parseOutput(String o) {
@@ -220,6 +221,10 @@ public class NALTest  {
 //        return TextPerception.parseOutput(o);
 //    }
     
+    
+    public void run() {               
+        testNAL(scriptPath);
+    }
     
     protected void testNAL(final String path) {               
         Memory.resetStatic();
