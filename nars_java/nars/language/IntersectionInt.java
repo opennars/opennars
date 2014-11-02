@@ -54,8 +54,8 @@ public class IntersectionInt extends CompoundTerm {
     }
 
   @Override
-    public CompoundTerm clone(Term[] replaced) {
-        return (CompoundTerm) make(replaced);
+    public Term clone(Term[] replaced) {
+        return make(replaced);
     }
         
     /**

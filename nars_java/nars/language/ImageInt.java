@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import nars.io.Symbols.NativeOperator;
 
 /**
@@ -54,9 +55,13 @@ public class ImageInt extends Image {
     }
 
     @Override
-    public CompoundTerm clone(Term[] replaced) {
+    public Term clone(Term[] replaced) {
+        if (replaced.length != term.length)
+            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
+        
         return new ImageInt(replaced, relationIndex);
-    }    
+    }
+        
     
     /**
      * Try to make a new ImageExt. Called by StringParser.
@@ -66,7 +71,7 @@ public class ImageInt extends Image {
      */
     public static Term make(final Term[] argList) {
         if (argList.length < 2) {
-            return null;
+            return argList[0];
         }
         Term relation = argList[0];
         Term[] argument = new Term[argList.length-1];
