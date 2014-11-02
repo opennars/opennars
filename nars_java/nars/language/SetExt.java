@@ -49,8 +49,9 @@ public class SetExt extends SetTensional {
     public SetExt clone() {
         return new SetExt(term);
     }
-    @Override public CompoundTerm clone(Term[] replaced) {
-        return (CompoundTerm) make(Term.toSortedSet(replaced));
+    
+    @Override public SetExt clone(Term[] replaced) {
+        return make(Term.toSortedSet(replaced));
     }
 
 
@@ -60,7 +61,7 @@ public class SetExt extends SetTensional {
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
      */
-    public static Term make(Collection<Term> t) {
+    public static SetExt make(Collection<Term> t) {
         int s = t.size();
         if (s == 0) return null;         
         else if (s == 1) return make(t.iterator().next()); //avoid creating treeset for single item
@@ -71,7 +72,7 @@ public class SetExt extends SetTensional {
         return new SetExt(new Term[] { t });
     }    
     
-    public static Term make(final TreeSet<Term> t) {        
+    public static SetExt make(final TreeSet<Term> t) {        
         if (t.isEmpty()) return null;
         Term[] x = t.toArray(new Term[t.size()]);
         return new SetExt(x);

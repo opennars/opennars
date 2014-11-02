@@ -58,9 +58,10 @@ public class Implication extends Statement {
         return new Implication(term, getTemporalOrder());
     }
     
-    @Override public CompoundTerm clone(final Term[] t) {        
+    @Override public Implication clone(final Term[] t) {        
         if (t.length!=2)
             throw new RuntimeException("Implication requires 2 components: " + Arrays.toString(t));
+        
         return make(t[0], t[1], temporalOrder);
     }
     
@@ -98,6 +99,7 @@ public class Implication extends Statement {
         if ((subject == null) || (predicate == null)) {
             return null;
         }
+        
         if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence)) {
             return null;
         }

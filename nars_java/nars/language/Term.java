@@ -270,12 +270,12 @@ public class Term implements AbstractTerm {
         return false;
     }
 
-    static TreeSet<Term> toSortedSet(final Term... arg) {
+    public static TreeSet<Term> toSortedSet(final Term... arg) {
         TreeSet<Term> t = new TreeSet();
         for (Term x : arg) t.add(x);
         return t;        
     }
-    static Term[] toSortedSetArray(final Term... arg) {
+    public static Term[] toSortedSetArray(final Term... arg) {
         TreeSet<Term> s = toSortedSet(arg);
         //toArray didnt seem to work, but it might. in the meantime:
         Term[] n = new Term[s.size()];

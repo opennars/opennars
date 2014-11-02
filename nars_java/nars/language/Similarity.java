@@ -51,12 +51,21 @@ public class Similarity extends Statement {
     public Similarity clone() {
         return new Similarity(term);
     }
-    @Override public CompoundTerm clone(Term[] replaced) {
+    
+    @Override public Similarity clone(Term[] replaced) {
         if (replaced.length!=2)
             return null;
-        return (CompoundTerm) make(replaced[0], replaced[1]);
+        return make(replaced[0], replaced[1]);
     }
 
+    /** alternate version of make that allows equivalent subject and predicate
+     * to be reduced to the common term.      */
+    public static Term makeTerm(final Term subject, final Term predicate) {
+        if (subject.equals(predicate))
+            return subject;                
+        return make(subject, predicate);        
+    }    
+    
     /**
      * Try to make a new compound from two term. Called by the inference rules.
      * @param subject The first component
@@ -65,6 +74,7 @@ public class Similarity extends Statement {
      * @return A compound generated or null
      */
     public static Similarity make(final Term subject, final Term predicate) {
+
         if (invalidStatement(subject, predicate)) {
             return null;
         }
