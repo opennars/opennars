@@ -20,6 +20,7 @@
  */
 package nars.entity;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -108,20 +109,40 @@ public class Stamp implements Cloneable {
     
     /** creates a Derivation Chain by collating / zipping 2 Stamps Derivation Chains */
     public static class ZipperDerivationBuilder implements DerivationBuilder {
-        private final Stamp first;
-        private final Stamp second;
+        private final WeakReference<Stamp> first;
+        private final WeakReference<Stamp> second;
 
         public ZipperDerivationBuilder(Stamp first, Stamp second) {
-            this.first = first;
-            this.second = second;
+            this.first = new WeakReference(first);
+            this.second = new WeakReference(second);
         }
             
         @Override public LinkedHashSet<Term> build()  {
-            final Collection<Term> chain1 = first.getChain();
+            Stamp ff = first.get();
+            Stamp ss = second.get();
+            
+            //check if the parent stamps still exist, because they may have been garbage collected
+            if ((ff == null) && (ss == null)) {                
+                return new LinkedHashSet();
+            }
+            else {
+                //TODO decide if it can use the parent chains directly?
+                if (ff == null) {
+                    //ss!=null
+                    return new LinkedHashSet(ss.getChain());
+                }
+                else if (ss == null) {
+                    //ff!=null                    
+                    return new LinkedHashSet(ff.getChain());
+                }
+            }
+                    
+            final Collection<Term> chain1 = ff.getChain();
+            final Collection<Term> chain2 = ss.getChain();
+            
             final Iterator<Term> iter1 = chain1.iterator();
             int i1 = chain1.size() - 1;
-
-            final Collection<Term> chain2 = second.getChain();        
+            
             final Iterator<Term> iter2 = chain2.iterator();
             int i2 = chain2.size() - 1;
 
@@ -170,14 +191,19 @@ public class Stamp implements Cloneable {
     
     /** lazily inherit the derivation from a parent, causing it to cache the derivation also (in case other children get it */
     public static class InheritDerivationBuilder implements DerivationBuilder {
-        private final Stamp parent;
+        private final WeakReference<Stamp> parent;
 
         public InheritDerivationBuilder(Stamp parent) {
-            this.parent = parent;            
+            this.parent = new WeakReference(parent);            
         }
         
         @Override public LinkedHashSet<Term> build() {
-            Collection<Term> p = parent.getChain();
+            if (parent.get() == null) {
+                //parent doesnt exist anymore (garbage collected)
+                return new LinkedHashSet();
+            }
+            
+            Collection<Term> p = parent.get().getChain();
             if (p instanceof LinkedHashSet)
                 return (LinkedHashSet)p;
             else
@@ -287,6 +313,7 @@ public class Stamp implements Cloneable {
         this(memory.time(), tense, memory.newStampSerial(), memory.param.duration.get());
     }
 
+    /** creates a stamp with default Present tense */
     public Stamp(final Memory memory) {
         this(memory, Tense.Present);
     }

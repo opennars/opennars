@@ -9,6 +9,7 @@ import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Inheritance;
 import nars.language.Product;
+import nars.language.Tense;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
@@ -131,7 +132,7 @@ public class PrologQueryOperator extends Operator {
         memory.emit(Task.class, resultInheritance);
         
         ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
+        results.add(memory.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY,(Tense)null));
                
         return results;
     }

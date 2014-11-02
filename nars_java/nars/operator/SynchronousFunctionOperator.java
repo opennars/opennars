@@ -76,8 +76,8 @@ public abstract class SynchronousFunctionOperator extends Operator {
                 m.newTask(resultInheritance, Symbols.JUDGMENT_MARK, 
                         1f, 0.99f, 
                         Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask())
-        );    
+                        Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
+        ));    
     }
 
 }

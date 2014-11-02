@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import nars.core.NAR;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -40,9 +41,13 @@ public class NALTestSome extends NALTest {
    }    
 
    public NALTestSome(String scriptPath) {
+       this(scriptPath, true);
+   }
+   
+   public NALTestSome(String scriptPath, boolean showOutput) {
         super(scriptPath);
         showSuccess = true;
-        showOutput = true;
+        this.showOutput = showOutput;
         showTrace = false;
         System.out.println("Running: "  + scriptPath);
         //setOutput(true);

@@ -22,7 +22,6 @@ package nars.core;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import nars.core.sense.EmotionSense;
 import nars.core.sense.LogicSense;
 import nars.core.sense.ResourceSense;
 import nars.core.control.AbstractTask;
-import nars.core.control.FireConcept;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -999,20 +997,24 @@ public class Memory implements Serializable {
         inputPausedUntil += time() + cycles;
     }    
 
-    /** convenience method for forming a new Task from a term */
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability) {
-        return newTask(content, sentenceType, freq, conf, priority, durability, null);
+    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, final Task parentTask) {
+        return newTask(content, sentenceType, freq, conf, priority, durability, parentTask, Tense.Present);
     }
     
     /** convenience method for forming a new Task from a term */
-    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask) {
+    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Tense tense) {
+        return newTask(content, sentenceType, freq, conf, priority, durability, null, tense);
+    }
+    
+    /** convenience method for forming a new Task from a term */
+    public Task newTask(Term content, char sentenceType, float freq, float conf, float priority, float durability, Task parentTask, Tense tense) {
         
         TruthValue truth = new TruthValue(freq, conf);
         Sentence sentence = new Sentence(
                 content, 
                 sentenceType, 
                 truth, 
-                new Stamp(this));
+                new Stamp(this, tense));
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth));
         Task task = new Task(sentence, budget, parentTask);
         return task;

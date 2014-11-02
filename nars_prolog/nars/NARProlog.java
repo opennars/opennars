@@ -3,6 +3,7 @@ package nars;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nars.core.Events;
 import nars.core.NAR;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;
@@ -20,6 +21,8 @@ import nars.prolog.lib.BasicLibrary;
  * Wraps a Prolog instance loaded with nal.pl with some utility methods
  */
 public class NARProlog extends Prolog implements OutputListener, WarningListener, TheoryListener, QueryListener {
+    
+    
     
     public final NAR nar;
     

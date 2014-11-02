@@ -165,6 +165,9 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     }
     
     public SolveInfo solve() {
+        return solve(0);
+    }
+    public SolveInfo solve(double maxTimeSeconds) {
         try {
             query.resolveTerm();
             
@@ -174,7 +177,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
             
             freeze();
             env = new Engine(this, query);
-            StateEnd result = env.run();
+            StateEnd result = env.run(maxTimeSeconds);
             defreeze();
             
             sinfo = new SolveInfo(
@@ -231,10 +234,14 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     }
     
     public SolveInfo solveNext() throws NoMoreSolutionException {
+        return solveNext(0);
+    }
+    
+    public SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException {
         if (hasOpenAlternatives()) {
             refreeze();
             env.nextState = BACKTRACK;
-            StateEnd result = env.run();
+            StateEnd result = env.run(maxTimeSec);
             defreeze();
             sinfo = new SolveInfo(
                     env.query,
