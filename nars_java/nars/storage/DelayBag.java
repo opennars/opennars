@@ -1,10 +1,10 @@
 
 package nars.storage;
 
+import com.google.common.collect.Iterators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +20,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Item;
+import nars.inference.BudgetFunctions;
 import nars.storage.Bag.MemoryAware;
 
 /**
@@ -98,14 +99,15 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     private Memory memory;
     private long now;
     private Attention attention;
+    private final Iterator<Map.Entry<K, E>> itemIterator;
 
     public DelayBag(int capacity) {
         this.capacity = capacity;
         this.items = 
-                Parameters.THREADS > 1 ? 
-                    new ConcurrentHashMap(capacity) :
-                    new HashMap(capacity);
-        
+                //Parameters.THREADS > 1 ? 
+                    new ConcurrentHashMap(capacity);// :
+                  //  new HashMap(capacity);
+        this.itemIterator = Iterators.cycle(items.entrySet());
         this.pending = new ConcurrentLinkedDeque<E>();
         this.targetActivations = (int)(0.1f * capacity);
         this.maxActivations = (int)(0.2f * capacity);
@@ -168,11 +170,26 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         
         this.now = memory.time();
         int j = 0;
-        for (final Map.Entry<K, E> s : items.entrySet()) {
-            E e = s.getValue();                       
+        int iterations = 0;
+        int maxIterations = size();
+        float forgetCycles = memory.param.beliefForgetDurations.getCycles();
+        int originalSize = size();
+        
+        numPriorityThru = 0;
+        totalPriorityThru = 0;
                 
+        while (itemIterator.hasNext() && (pending.size() < targetActivations) && (iterations < maxIterations)) {
+            Map.Entry<K, E> ee = itemIterator.next();            
+            E e = ee.getValue();
+                           
+            BudgetFunctions.forgetPeriodic(e.budget, forgetCycles, Parameters.BAG_THRESHOLD, now);
+            
+            
+            totalPriorityThru += e.getPriority();
+            numPriorityThru++;
+            
             //remove concepts
-            if (size()-toRemove.size() > capacity) {
+            if (originalSize-toRemove.size() > capacity) {
                 if (e.getPriority() <= forgetThreshold) {
                     toRemove.add(e.name());                        
                 } 
@@ -186,6 +203,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
                 else
                     pending.addLast(e);                
             }
+            
+            iterations++;
         }
         
         for (final K k : toRemove) {
@@ -196,6 +215,10 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
     
         //ADJUST FIRING THRESHOLD
         int activated = pending.size();        
+        
+        //TODO use rate that items iterated were selected
+        float percentActivated = activated / iterations;
+        
         if (activated < targetActivations) {
             //too few activated, reduce threshold
             activityThreshold *= 0.99f;
@@ -220,7 +243,7 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
         }
         else if (s < capacity) {
             forgetThreshold *= 0.99f;
-            if (forgetThreshold < 0.0f) forgetThreshold = 0.0f;
+            if (forgetThreshold < 0.01f) forgetThreshold = 0.01f;
         }
         
         
@@ -327,16 +350,10 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
 
     @Override
     public float getAveragePriority() {
-        //TODO calculate this passively on item release
-        
-        /*int s = size();
-        if (s == 0) return 0;
-        float t = 0;
-        for (E e : values())
-            t += e.getPriority();
-        return t / s;        */
-        
-        return 0.5f;
+        //quick way to calculate this passively while iterating
+        if (numPriorityThru!=0)
+            return (float)(totalPriorityThru / numPriorityThru);
+        return 0;
     }
 
     @Override
@@ -357,7 +374,14 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAwa
             //ensureLoaded();
         }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" + size() + "|" + pending.size() + "|" + this.forgetThreshold + ".." + this.activityThreshold + "]";
+    }
     
+    
+
     
     
 }

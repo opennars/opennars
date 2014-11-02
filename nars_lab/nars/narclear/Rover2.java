@@ -96,7 +96,7 @@ public class Rover2 extends PhysicsModel {
             throw new RuntimeException("Invalid value for: " + p);
             //p = 0;
         }
-        if (p > 1f) p = 1f;
+        if (p > 0.99f) p = 0.99f;
         int i = (int)(p * 10f);
         switch (i) {
             case 9:
@@ -271,10 +271,10 @@ public class Rover2 extends PhysicsModel {
             }
             
             
-            pixels=3;
+            pixels=6;
             aStep = 1.2f/pixels;
-            retinaResolution = 3;
-            L = 5.5f;
+            retinaResolution = 11;
+            L = 35.5f;
             retinaArc = 0.9f;
             
             for (int i = -pixels/2; i <= pixels/2; i++) {
@@ -282,9 +282,14 @@ public class Rover2 extends PhysicsModel {
                 float d1 = 0.5f;
                 Vec2 backRetina = new Vec2((float)Math.cos(angle)*d1, (float)Math.sin(angle)*d1);
                 
-                vision.add(new VisionRay(torso, backRetina, angle,
+                VisionRay v;
+                vision.add(v = new VisionRay(torso, backRetina, angle,
                            retinaArc, retinaResolution,
                            L, distanceResolution));
+                
+                v.sparkColor = new Color3f(0.4f, 0.4f, 0.9f);
+                v.normalColor = new Color3f(0.4f, 0.4f, 0.4f);
+                
             }
             
             //Vec2 backRetina = new Vec2(0, -0.5f);
@@ -330,8 +335,8 @@ public class Rover2 extends PhysicsModel {
             
             final Color3f laserUnhitColor = new Color3f(0.25f, 0.25f, 0.25f);
             final Color3f laserHitColor = new Color3f(laserUnhitColor.x, laserUnhitColor.y, laserUnhitColor.z);
-            final Color3f sparkColor = new Color3f(0.4f, 0.9f, 0.4f);
-            final Color3f normalColor = new Color3f(0.9f, 0.9f, 0.4f);
+            Color3f sparkColor = new Color3f(0.4f, 0.9f, 0.4f);
+            Color3f normalColor = new Color3f(0.9f, 0.9f, 0.4f);
             private final String angleTerm;
 
             public VisionRay(Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
@@ -821,7 +826,7 @@ public class Rover2 extends PhysicsModel {
         
         
         float framesPerSecond = 35f;
-        int cyclesPerFrame = 600; //was 200        
+        int cyclesPerFrame = 50; //was 200        
         nar.param().noiseLevel.set(0);
         nar.param().duration.set(cyclesPerFrame);
         nar.param().conceptForgetDurations.set(5f);
@@ -845,6 +850,7 @@ public class Rover2 extends PhysicsModel {
                 }
                 
                 else if (e.getKeyChar() == 'g') {
+                    System.out.println(nar.memory.concepts);
                     //removedConcepts.report(System.out);
                 }
 
