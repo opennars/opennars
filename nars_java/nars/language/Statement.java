@@ -36,17 +36,13 @@ public abstract class Statement extends CompoundTerm {
     
     /**
      * Constructor with partial values, called by make
-     *
+     * Subclass constructors should call init after any initialization
+     * 
      * @param arg The component list of the term
      */
     protected Statement(final Term[] arg) {
         super(arg);
     }
-    
-    protected Statement(final Term subj, final Term pred) {
-        this(new Term[] { subj, pred} );
-    }
-    
     
 
     @Override

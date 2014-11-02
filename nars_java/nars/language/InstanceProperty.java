@@ -36,7 +36,7 @@ public abstract class InstanceProperty /*extends Statement*/ {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Statement make(Term subject, Term predicate) {
+    final public static Statement make(final Term subject, final Term predicate) {
         return Inheritance.make(SetExt.make(subject), SetInt.make(predicate));
     }
 }

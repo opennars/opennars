@@ -77,12 +77,13 @@ public abstract class CompoundTerm extends Term {
     @Override public abstract CompoundTerm clone();
 
     
+    /** subclasses should be sure to call init() in their constructors; it is not done here
+     to allow subclass constructors to set data before calling init() */
     public CompoundTerm(final Term[] components) {
         super();
 
         this.term = components;            
-        
-        init(term);
+                
     }
     
     /** call this after changing Term[] contents */
@@ -123,13 +124,17 @@ public abstract class CompoundTerm extends Term {
         Term c = clone(cloneTermsDeep());
         if (c.getClass()!=getClass())
             throw new RuntimeException("cloneDeep resulted in different class: " + c + " from " + this);
+        if (isNormalized())
+            ((CompoundTerm)c).setNormalized(true);
+        
         return (CompoundTerm)c;
     }
     
     public CompoundTerm cloneDeepVariables() {        
         Term c = clone(cloneVariableTermsDeep());
         if (c.getClass()!=getClass())
-            throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);
+            throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
+        
         return (CompoundTerm)c;
     }
     

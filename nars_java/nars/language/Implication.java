@@ -38,6 +38,7 @@ public class Implication extends Statement {
         super(arg);
                 
         temporalOrder = order;
+        
         init(arg);
     }
     

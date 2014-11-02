@@ -35,6 +35,8 @@ public class Product extends CompoundTerm {
      */
     public Product(final Term[] arg) {
         super(arg);
+        
+        init(arg);
     }
     
 

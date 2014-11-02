@@ -42,11 +42,15 @@ public class Conjunction extends CompoundTerm {
      *
      * @param arg The component list of the term
      */
-    protected Conjunction(final Term[] arg, final int order) {
+    protected Conjunction(final Term[] arg, final int order, boolean normalized) {
         super(arg);
         
         temporalOrder = order;
+        
         init(arg);
+        
+        if (normalized)
+            setNormalized(true);
     }
 
     @Override
@@ -55,8 +59,8 @@ public class Conjunction extends CompoundTerm {
     }
 
 
-    @Override public CompoundTerm clone(Term[] t) {        
-        return (CompoundTerm)make(t, temporalOrder);
+    @Override public Term clone(Term[] t) {        
+        return make(t, temporalOrder);
     }
 
     /**
@@ -66,7 +70,7 @@ public class Conjunction extends CompoundTerm {
      */
     @Override
     public Conjunction clone() {
-        return new Conjunction(term, temporalOrder);
+        return new Conjunction(term, temporalOrder, isNormalized());
     }
     
     
@@ -117,26 +121,28 @@ public class Conjunction extends CompoundTerm {
      * @return the Term generated from the arguments, or null if not possible
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
+        if (Parameters.DEBUG) {  Terms.verifyNonNull(argList);}
+        
         if (argList.length == 0) {
             return null;
         }                         // special case: single component
         if (argList.length == 1) {
             return argList[0];
         }                         // special case: single component
+        
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            return new Conjunction(argList, temporalOrder);
+            
+            return new Conjunction(argList, temporalOrder, false);
+            
         } else {
             
             // sort/merge arguments
-            
-            if (Parameters.DEBUG) {  Terms.verifyNonNull(argList);}
-            
             final TreeSet<Term> set = new TreeSet<>();
             for (Term t : argList) set.add(t);
             
             if (set.size() == 1) return set.first();
             
-            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder);            
+            return new Conjunction(set.toArray(new Term[set.size()] ), temporalOrder, false);
         }
     }
 

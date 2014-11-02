@@ -38,9 +38,9 @@ public class Disjunction extends CompoundTerm {
     private Disjunction(final Term[] arg) {
         super(arg);
         
-        if (Parameters.DEBUG) {
-            Terms.verifySortedAndUnique(arg, false);
-        }        
+        if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, false);         }        
+        
+        init(arg);
     }
 
     

@@ -36,11 +36,13 @@ public class Inheritance extends Statement {
      * @param arg The component list of the term
      */
     protected Inheritance(final Term[] arg) {
-        super(arg);       
+        super(arg);  
+        
+        init(arg);
     }
     
     protected Inheritance(final Term subj, final Term pred) {
-        super(subj, pred);
+        this(new Term[] { subj, pred} );
     }
 
 

@@ -40,6 +40,7 @@ public class Equivalence extends Statement {
         super(components);
         
         temporalOrder = order;
+        
         init(components);
     }
 
