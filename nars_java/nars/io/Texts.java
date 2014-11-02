@@ -379,29 +379,30 @@ public class Texts {
         return n2((float)p);
     }
 
-    /** fast append to CharBuffer */
-    public final static CharBuffer append(final CharBuffer c, final CharSequence s) {
-        if (s instanceof CharBuffer) {            
-            c.put((CharBuffer)s);            
-            return c;
-        }
-        else if (s instanceof String) {
-            c.put(getCharArray((String)s), 0, s.length());            
-            return c;
-        }
-        else {
-            return c.append(s);
-        }
-    }
+//    /** fast append to CharBuffer */
+//    public final static CharBuffer append(final CharBuffer c, final CharSequence s) {
+//        if (s instanceof CharBuffer) {            
+//            
+//            c.append((CharBuffer)s);
+//            return c;
+//        }
+//        else if (s instanceof String) {
+//            //c.put(getCharArray((String)s), 0, s.length());            
+//            return c.append(s);
+//        }
+//        else {
+//            return c.append(s);
+//        }
+//    }
     
-    public final static CharBuffer append(final CharBuffer c, final CharBuffer s) {
-        return c.put(s);        
-    }
-    public final static CharBuffer append(final CharBuffer c, final String s) {
-        return c.put(getCharArray(s));        
-    }
-    public final static CharBuffer append(final CharBuffer b, final char c) {
-        return b.put(c);        
-    }
+//    public final static CharBuffer append(final CharBuffer c, final CharBuffer s) {
+//        return c.put(s);        
+//    }
+//    public final static CharBuffer append(final CharBuffer c, final String s) {
+//        return c.put(getCharArray(s));        
+//    }
+//    public final static CharBuffer append(final CharBuffer b, final char c) {
+//        return b.put(c);        
+//    }
 
 }

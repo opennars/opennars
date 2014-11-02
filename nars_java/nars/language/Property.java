@@ -36,7 +36,7 @@ public abstract class Property /*would extend "Statement" if it were its own typ
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    final public static Statement make(final Term subject, final Term predicate) {
+    final public static Inheritance make(final Term subject, final Term predicate) {
         return Inheritance.make(subject, SetInt.make(predicate));
     }
 }

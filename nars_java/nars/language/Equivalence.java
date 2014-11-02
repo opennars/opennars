@@ -23,6 +23,7 @@ package nars.language;
 import java.util.Arrays;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.Inheritance.make;
 
 /**
  * A Statement about an Equivalence relation.
@@ -54,11 +55,20 @@ public class Equivalence extends Statement {
         return new Equivalence(term, temporalOrder);
     }
     
-    @Override public CompoundTerm clone(final Term[] t) {        
+    @Override public Equivalence clone(final Term[] t) {        
         if (t.length!=2)
             throw new RuntimeException("Equivalence requires 2 components: " + Arrays.toString(t));
+        
         return make(t[0], t[1], temporalOrder);
     }
+    
+    /** alternate version of Inheritance.make that allows equivalent subject and predicate
+     * to be reduced to the common term.      */
+    public static Term makeTerm(final Term subject, final Term predicate, int temporalOrder) {
+        if (subject.equals(predicate))
+            return subject;                
+        return make(subject, predicate, temporalOrder);        
+    }    
 
 
     /**

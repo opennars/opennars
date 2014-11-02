@@ -20,6 +20,7 @@
  */
 package nars.language;
 
+import java.util.Arrays;
 import nars.io.Symbols.NativeOperator;
 
 /**
@@ -52,7 +53,10 @@ public class ImageExt extends Image {
         return new ImageExt(term, relationIndex);
     }
     @Override
-    public CompoundTerm clone(Term[] replaced) {
+    public Term clone(Term[] replaced) {
+        if (replaced.length != term.length)
+            throw new RuntimeException("Replaced terms not the same amount as existing terms (" + term.length + "): " + Arrays.toString(replaced));
+        
         return new ImageExt(replaced, relationIndex);
     }
     
@@ -66,7 +70,7 @@ public class ImageExt extends Image {
      */
     public static Term make(Term[] argList) {
         if (argList.length < 2) {
-            return null;
+            return argList[0];
         }
         Term relation = argList[0];
         Term[] argument = new Term[argList.length-1];

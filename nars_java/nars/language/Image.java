@@ -123,7 +123,7 @@ abstract public class Image extends CompoundTerm {
     
     @Override
     public int getMinimumRequiredComponents() {
-        return 1;
+        return 2;
     }
 
     /**
