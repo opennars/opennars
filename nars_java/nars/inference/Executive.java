@@ -666,6 +666,9 @@ public class Executive {
 
     public boolean inductionOnSucceedingEvents(final Task newEvent, NAL nal) {
 
+        if(newEvent.budget==null) {
+            return false;
+        }
         //new one happened and duration is already over, so add as negative task
         if (Parameters.INTERNAL_EXPERIENCE_FULL && anticipateTerm != null && newEvent.sentence.getOccurenceTime() - anticipateTime > nal.mem.param.duration.get()) {
             Term s = newEvent.sentence.content;
@@ -702,7 +705,7 @@ public class Executive {
             for(Task t : TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal)) {
                 //link every element to the new event, else it would just be linked to currentBelief
                 Concept c=nal.mem.concept(newEvent.sentence.content);
-                if(t!=null) {
+                if(t!=null && t.budget!=null) {
                     c.insertTaskLink(new TaskLink(t, null, t.budget, memory.param.termLinkRecordLength.get()));
                     //unusual tasklink but there is temporal relatedness we have to take into account
                 } //this way it gets budget remembered how this task can be achieved
