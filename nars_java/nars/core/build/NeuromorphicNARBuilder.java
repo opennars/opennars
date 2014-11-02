@@ -33,7 +33,8 @@ public class NeuromorphicNARBuilder extends CurveBagNARBuilder {
     
     @Override
     public Bag<Concept, Term> newConceptBag(Param p) {
-        return new DelayBag(getConceptBagSize());
+        //return new DelayBag(getConceptBagSize());
+        return null;
     }
 
     @Override

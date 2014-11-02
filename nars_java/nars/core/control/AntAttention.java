@@ -58,6 +58,8 @@ public class AntAttention implements Attention {
                 break;
             run.add(new FireConcept(memory, c, 1) {
                 @Override public void onFinished() {
+                    //putIn, not putBack; DelayBag has its own forget function
+                    concepts.putIn(currentConcept);
                 }
             });
         }
@@ -128,5 +130,11 @@ public class AntAttention implements Attention {
     public int getInputPriority() {
         return inputPriority;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" + concepts.toString() + "]";
+    }
+    
     
 }

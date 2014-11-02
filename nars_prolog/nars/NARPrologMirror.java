@@ -14,6 +14,8 @@ import nars.entity.TruthValue;
 import nars.io.Output;
 import nars.io.TextInput;
 import nars.io.TextOutput;
+import nars.language.CompoundTerm;
+import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.Negation;
 import nars.language.Similarity;
@@ -25,6 +27,7 @@ import nars.prolog.InvalidTheoryException;
 import nars.prolog.NoMoreSolutionException;
 import nars.prolog.SolveInfo;
 import nars.prolog.Struct;
+import nars.prolog.Theory;
 import nars.prolog.Var;
 
 /**
@@ -36,7 +39,7 @@ public class NARPrologMirror extends Output {
     
     private float trueThreshold = 0.75f;
     private float falseThreshold = 0.25f;
-    private float confidenceThreshold = 0.75f;
+    private float confidenceThreshold = 0.7f;
     private final Set<Term> recent = new HashSet();
     private final Map<Struct,Sentence> beliefs = new HashMap();
     
@@ -56,14 +59,23 @@ public class NARPrologMirror extends Output {
                 Task task = (Task)o;
                 Sentence s = task.sentence;
                 
-                if (recent.contains(s.content)) {
-                    recent.remove(s.content);
+
+                if (!(s.content instanceof CompoundTerm))
+                    return;
+                
+                CompoundTerm ct = (CompoundTerm)s.content;
+                
+                if (ct.hasVar())
+                    return;
+                
+                if (recent.remove(s.content)) {
                     return;
                 }
                 recent.add(s.content);
                 
+                
                 //only interpret input judgments, or any kind of question
-                if ((s.isJudgment() && (channel == IN.class))) {                    
+                if (s.isJudgment() && channel == IN.class) {
                     TruthValue tv = s.truth;
                     if (tv.getConfidence() > confidenceThreshold) {
                         if ((tv.getFrequency() > trueThreshold) || (tv.getFrequency() < falseThreshold)) {
@@ -75,6 +87,7 @@ public class NARPrologMirror extends Output {
                                         th = negation(th);
                                     }
                                     
+                                    System.err.println("ASSUME: " + th + " <== " + s);
                                     beliefs.put(th, s);
                                 }
                             } catch (Exception ex) {
@@ -93,9 +106,15 @@ public class NARPrologMirror extends Output {
                         if (qh!=null) {
                             
                             System.out.println("\n\nQUESTION--------------------------------");
-                            System.out.println("Question: " + s.toString() + " ==> " + qh.toString() + " ?");
+                            System.out.println("Question: " + s.toString() + " ==> " + qh.toString() + " ?");                            
+                            prolog.clearTheory();
+                            
+                            Theory theory;
+                            prolog.setTheory(theory = getTheory(beliefs));
+                            System.out.println("Theory: " + theory);
                             
                             SolveInfo si = prolog.solve(qh);
+                            
                             do {
                                 if (si == null) break;
                                 
@@ -208,14 +227,20 @@ public class NARPrologMirror extends Output {
                 }
             }
             else if (arity == 2) {                
-                switch (predicate) {
-                    case "inheritance":
-                        return Inheritance.make(nterm(s.getArg(0)), nterm(s.getArg(1)));
-                    case "similarity":
-                        return Similarity.make(nterm(s.getArg(0)), nterm(s.getArg(1)));
-                    //TODO more types
-                    default:
-                        System.err.println("nterm() does not yet support: " + predicate);
+                Term a = nterm(s.getArg(0));
+                Term b = nterm(s.getArg(1));
+                if ((a!=null) && (b!=null)) {
+                    switch (predicate) {
+                        case "inheritance":
+                            return Inheritance.make(a, b);
+                        case "similarity":
+                            return Similarity.make(a, b);
+                        case "implication":
+                            return Implication.make(a, b);
+                        //TODO more types
+                        default:
+                            System.err.println("nterm() does not yet support: " + predicate);
+                    }
                 }
             }
         }
@@ -291,13 +316,17 @@ public class NARPrologMirror extends Output {
         prolog.solve("similarity(a,D).");
         */
         
-        //nar.addInput(new TextInput(new File("nal/Examples/Example-MultiStep-edited.txt")));
+        nar.addInput(new TextInput(new File("nal/Examples/Example-MultiStep-edited.txt")));
         //nar.addInput(new TextInput(new File("nal/Examples/Example-NAL1-edited.txt")));
-        nar.addInput(new TextInput(new File("nal/test/nal1.multistep.nal")));
-        nar.finish(3);
+        //nar.addInput(new TextInput(new File("nal/test/nal1.multistep.nal")));
+        nar.finish(10);
         
         
     }    
+
+    public static Theory getTheory(Map<Struct, Sentence> beliefs) throws InvalidTheoryException  {
+        return new Theory(new Struct(beliefs.keySet().toArray(new Struct[beliefs.size()])));
+    }
 
     
     
