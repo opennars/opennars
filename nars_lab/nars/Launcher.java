@@ -279,7 +279,7 @@ public class Launcher extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        nars.tictactoe.play.main(new String[]{});
+        nars.tictactoe.TicTacToe.main(new String[]{});
         this.dispose();
     }//GEN-LAST:event_jLabel2MouseClicked
 
