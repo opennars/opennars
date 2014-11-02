@@ -4,6 +4,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -31,7 +32,7 @@ public class Counting implements Plugin {
                 @Override
                 public void event(Class event, Object[] a) {
 
-                    if (event!=Events.TaskDerive.class)
+                    if ((event!=Events.TaskDerive.class && event!=Events.TaskAdd.class))
                         return;
 
                     Task task = (Task)a[0];
