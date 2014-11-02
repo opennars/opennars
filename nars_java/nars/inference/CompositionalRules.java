@@ -594,12 +594,13 @@ public final class CompositionalRules {
      * or Conjunction
      * @param nal Reference to the memory
      */
-    static void introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, NAL nal) {
+    static boolean introVarInner(Statement premise1, Statement premise2, CompoundTerm oldCompound, NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
-            return;
+            return false;
         }
+        
         Term subject1 = premise1.getSubject();
         Term subject2 = premise2.getSubject();
         Term predicate1 = premise1.getPredicate();
@@ -612,41 +613,68 @@ public final class CompositionalRules {
             commonTerm1 = predicate1;
             commonTerm2 = secondCommonTerm(subject1, subject2, 0);
         } else {
-            return;
+            return false;
         }
-        Sentence belief = nal.getCurrentBelief();
-
-        Variable varDep2 = new Variable("#varDep2");
         
+        Sentence belief = nal.getCurrentBelief();
         HashMap<Term, Term> substitute = new HashMap<>();
-        substitute.put(commonTerm1, varDep2);
-        CompoundTerm content = (CompoundTerm) Conjunction.make(premise1, oldCompound);
-        content = content.applySubstitute(substitute);
-        TruthValue truth = intersection(taskSentence.truth, belief.truth);
-        BudgetValue budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget, false);
+        
+        boolean b1 = false, b2 = false;
+        
+        {
+            Variable varDep2 = new Variable("#varDep2");
+
+
+            Term content = Conjunction.make(premise1, oldCompound);
+
+            if (!(content instanceof CompoundTerm))
+                return false;           
+
+            substitute.put(commonTerm1, varDep2);
+
+            content = ((CompoundTerm)content).applySubstitute(substitute);
+
+            TruthValue truth = intersection(taskSentence.truth, belief.truth);
+            BudgetValue budget = BudgetFunctions.forward(truth, nal);
+
+            b1 = nal.doublePremiseTask(content, truth, budget, false);
+        }
 
         substitute.clear();
 
-        Variable varInd1 = new Variable("$varInd1");
-        Variable varInd2 = new Variable("$varInd2");
+        {
+            Variable varInd1 = new Variable("$varInd1");
+            Variable varInd2 = new Variable("$varInd2");
+
+            substitute.put(commonTerm1, varInd1);
+
+            if (commonTerm2 != null) {
+                substitute.put(commonTerm2, varInd2);
+            }
+
+
+            Term content = Implication.make(premise1, oldCompound);
+
+            if ((content == null) || (!(content instanceof CompoundTerm))) {
+                return false;
+            }
+
+            content = ((CompoundTerm)content).applySubstituteToCompound(substitute);
+
+            TruthValue truth;
+            
+            if (premise1.equals(taskSentence.content)) {
+                truth = induction(belief.truth, taskSentence.truth);
+            } else {
+                truth = induction(taskSentence.truth, belief.truth);
+            }
+
+            BudgetValue budget = BudgetFunctions.forward(truth, nal);
+
+            b2 = nal.doublePremiseTask(content, truth, budget, false);
+        }
         
-        substitute.put(commonTerm1, varInd1);
-        if (commonTerm2 != null) {
-            substitute.put(commonTerm2, varInd2);
-        }
-        content = Implication.make(premise1, oldCompound);
-        if (content == null) {
-            return;
-        }
-        content = content.applySubstitute(substitute);
-        if (premise1.equals(taskSentence.content)) {
-            truth = induction(belief.truth, taskSentence.truth);
-        } else {
-            truth = induction(taskSentence.truth, belief.truth);
-        }
-        budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget, false);
+        return b1 || b2;
     }
 
     /**
@@ -1044,7 +1072,7 @@ public final class CompositionalRules {
 
                 if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
                     CompoundTerm taskterm_subs = ((CompoundTerm) first);
-                    taskterm_subs = taskterm_subs.applySubstitute(Values);
+                    taskterm_subs = taskterm_subs.applySubstituteToCompound(Values);
                     taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                         terms_dependent.add(taskterm_subs);
@@ -1056,7 +1084,7 @@ public final class CompositionalRules {
 
                 if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values2, smap)) {
                     CompoundTerm taskterm_subs = (CompoundTerm) first;
-                    taskterm_subs = taskterm_subs.applySubstitute(Values2);
+                    taskterm_subs = taskterm_subs.applySubstituteToCompound(Values2);
                     taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
 
@@ -1080,7 +1108,7 @@ public final class CompositionalRules {
                         if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values3, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
                             CompoundTerm taskterm_subs = (CompoundTerm) first;
-                            taskterm_subs = taskterm_subs.applySubstitute(Values3);
+                            taskterm_subs = taskterm_subs.applySubstituteToCompound(Values3);
                             taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_dependent.add(taskterm_subs);
@@ -1093,7 +1121,7 @@ public final class CompositionalRules {
                         if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values4, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
                             CompoundTerm taskterm_subs = (CompoundTerm) first;
-                            taskterm_subs = taskterm_subs.applySubstitute(Values4);
+                            taskterm_subs = taskterm_subs.applySubstituteToCompound(Values4);
                             taskterm_subs = reduceUntilLayer2(taskterm_subs, secterm, nal.mem());
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_independent.add(taskterm_subs);
