@@ -162,11 +162,13 @@ public class Variables {
 
     /** appliesSubstitute and renameVariables, resulting in a cloned object, 
      *  will not change this instance  */
-    private static CompoundTerm applySubstituteAndRenameVariables(CompoundTerm t, Map<Term, Term> subs) {
-        if ((subs == null) || (subs.isEmpty()))
-            return t; //no change needed
+    private static Term applySubstituteAndRenameVariables(final CompoundTerm t, final Map<Term, Term> subs) {
+        if ((subs == null) || (subs.isEmpty())) {
+            //no change needed
+            return t;
+        }
         
-        CompoundTerm r = t.applySubstitute(subs);
+        Term r = t.applySubstitute(subs);
         
         if (r == null) return null;
         

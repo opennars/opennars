@@ -181,10 +181,11 @@ public abstract class NAL implements Runnable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+    public boolean doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         if (!newBudget.aboveThreshold()) {
-            return;
+            return false;
         }
+        boolean derived = false;
         if (newContent != null) {
             {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
@@ -194,6 +195,7 @@ public abstract class NAL implements Runnable {
                     if (added && temporalAdd) {
                         mem.temporalRuleOutputToGraph(newSentence, newTask);
                     }
+                    derived |= added;
                 }
             }
             if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL != 0.0) {
@@ -206,9 +208,11 @@ public abstract class NAL implements Runnable {
                     if (added && temporalAdd) {
                         mem.temporalRuleOutputToGraph(newSentence, newTask);
                     }
+                    derived |= added;
                 }
             }
         }
+        return derived;
     }
 
     /**
