@@ -11,6 +11,8 @@ import org.jgrapht.graph.DirectedMultigraph;
 public class ConceptGraphCanvas2 extends AnimatedProcessingGraphCanvas<Object,Object> {
     private final NAR nar;
     
+    boolean taskLinks = true;
+            
     public ConceptGraphCanvas2(NAR n) {
         super();
         this.nar = n;
@@ -18,9 +20,14 @@ public class ConceptGraphCanvas2 extends AnimatedProcessingGraphCanvas<Object,Ob
 
     @Override
     protected DirectedMultigraph<Object, Object> getGraph() {
-        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(false, true, false, false, 0, true, true));
+        return new NARGraph().add(nar, new NARGraph.ExcludeBelowPriority(minPriority), new DefaultGraphizer(false, true, false, false, 0, true, taskLinks));
     }
 
+    public void setTaskLinks(boolean taskLinks) {
+        this.taskLinks = taskLinks;
+    }
+
+    
     
     
     
