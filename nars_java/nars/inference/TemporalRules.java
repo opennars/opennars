@@ -213,9 +213,11 @@ public class TemporalRules {
     
     
     
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
+        
+        List<Task> success=new ArrayList<Task>();
         if ((s1.truth==null) || (s2.truth==null))
-            return;
+            return success;
         
         Term t1 = s1.content;
         Term t2 = s2.content;
@@ -280,7 +282,7 @@ public class TemporalRules {
         }
         
         if (Statement.invalidStatement(t1, t2)) {
-            return;
+            return success;
         }
         
         final Interval.AtomicDuration duration = nal.mem().param.duration;
@@ -326,31 +328,50 @@ public class TemporalRules {
         }
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         Statement statement1 = Implication.make(t1, t2, order);
-        Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
+        //Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
-            Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
+            //Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11)) {
-                nal.doublePremiseTask(statement11, truth1, budget1,false);
+                Task t=nal.doublePremiseTask(statement11, truth1, budget1,false);
+                if(t!=null) {
+                    success.add(t);
+                }
             }
-            if(!tooMuchTemporalStatements(statement22)) {
-                nal.doublePremiseTask(statement22, truth2, budget2,false);
-            }
+            //if(!tooMuchTemporalStatements(statement22)) {
+            //    Task t=nal.doublePremiseTask(statement22, truth2, budget2,false);
+            //if(t!=null) {
+            //        success.add(t);
+            //    }
+            //}
             if(!tooMuchTemporalStatements(statement33)) {
-                nal.doublePremiseTask(statement33, truth3, budget3,false);
+                Task t=nal.doublePremiseTask(statement33, truth3, budget3,false);
+                if(t!=null) {
+                    success.add(t);
+                }
             }
         }
         if(!tooMuchTemporalStatements(statement1)) {
-            nal.doublePremiseTask(statement1, truth1, budget1,false);
+            Task t=nal.doublePremiseTask(statement1, truth1, budget1,false);
+            if(t!=null) {
+                    success.add(t);
+                }
         }
-        if(!tooMuchTemporalStatements(statement2)) {
-            nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
-        }
+        //if(!tooMuchTemporalStatements(statement2)) {
+        //    Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
+        //if(t!=null) {
+        //            success.add(t);
+         //       }
+        //}
         if(!tooMuchTemporalStatements(statement3)) {
-            nal.doublePremiseTask(statement3, truth3, budget3,false);
+            Task t=nal.doublePremiseTask(statement3, truth3, budget3,false);
+            if(t!=null) {
+                    success.add(t);
+                }
         }
+        return success;
     }
     
     /**

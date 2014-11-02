@@ -43,6 +43,7 @@ public class TestChamber {
         NAR nar = builder.build();
         
         //set NAR runtime parmeters: 
+        nar.param().duration.set(10);
         nar.param().noiseLevel.set(0); 
         new NARSwing(nar);
 
@@ -264,7 +265,7 @@ public class TestChamber {
                                                 }
                                             }
                                         }
-                                        nar.addInput("<"+goal+" --> hold>. :|:");
+                                        //nar.addInput("<"+goal+" --> hold>. :|:");
                                     }
                                     else
                                     if("deactivate".equals(opname)) {
@@ -276,7 +277,7 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.OFFSWITCH;
                                                         cells.readCells[i][j].charge=0.0f;
                                                         cells.writeCells[i][j].charge=0.0f;
-                                                        nar.addInput("<"+goal+" --> off>. :|:");
+                                                        //nar.addInput("<"+goal+" --> off>. :|:");
                                                     }
                                                 }
                                             }
@@ -293,7 +294,7 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.SWITCH;
                                                         cells.readCells[i][j].charge=1.0f;
                                                         cells.writeCells[i][j].charge=1.0f;
-                                                        nar.addInput("<"+goal+" --> on>. :|:");
+                                                        //nar.addInput("<"+goal+" --> on>. :|:");
                                                     }
                                                 }
                                             }

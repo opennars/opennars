@@ -15,6 +15,7 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
@@ -698,14 +699,18 @@ public class Executive {
             nal.setCurrentBelief(currentBelief);
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);
-            
-            //test: linling newEvent with a tasklink to currentBelief
-            Concept c=nal.mem.concept(currentBelief.content);
-            if(c!=null) {
-                c.linkToTask(newEvent); //unusual tasklink but is a experiment
+            for(Task t : TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal)) {
+                //link every element to the new event, else it would just be linked to currentBelief
+                Concept c=nal.mem.concept(newEvent.sentence.content);
+                if(t!=null) {
+                    c.linkToTask(t);
+                    //unusual tasklink but there is temporal relatedness we have to take into account
+                } //this way it gets budget remembered how this task can be achieved
             }
-            
+            Concept c=nal.mem.concept(currentBelief.content);
+            if(c!=null) { //also link previous to next event
+                c.linkToTask(newEvent); 
+            }
             //}
         }
 
