@@ -549,11 +549,13 @@ public class Memory implements Serializable {
      * @return A term or null
      */
     public Term term(final NativeOperator op, final Term[] a) {
+        
         switch (op) {
+            
             case SET_EXT_OPENER:
-                return SetExt.make(CompoundTerm.termList(a));
+                return SetExt.make(CompoundTerm.toSortedSet(a));
             case SET_INT_OPENER:
-                return SetInt.make(CompoundTerm.termList(a));
+                return SetInt.make(CompoundTerm.toSortedSet(a));
             case INTERSECTION_EXT:
                 return IntersectionExt.make(a);
             case INTERSECTION_INT:

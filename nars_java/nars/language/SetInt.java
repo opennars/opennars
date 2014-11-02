@@ -52,8 +52,8 @@ public class SetInt extends SetTensional {
         return new SetInt(term);
     }
 
-    @Override public CompoundTerm clone(Term[] replaced) {
-        return (CompoundTerm) make(Term.toSortedSet(replaced));
+    @Override public SetInt clone(Term[] replaced) {
+        return make(Term.toSortedSet(replaced));
     }
 
     
@@ -64,7 +64,7 @@ public class SetInt extends SetTensional {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final TreeSet<Term> t) {        
+    public static SetInt make(final TreeSet<Term> t) {        
         if (t.isEmpty()) return null;
         Term[] x = t.toArray(new Term[t.size()]);
         return new SetInt(x);

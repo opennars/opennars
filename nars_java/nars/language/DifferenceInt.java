@@ -61,8 +61,8 @@ public class DifferenceInt extends CompoundTerm {
         return new DifferenceInt(term);
     }
     
-    @Override public CompoundTerm clone(Term[] replaced) {
-        return (CompoundTerm) make(replaced);
+    @Override public Term clone(Term[] replaced) {
+        return make(replaced);
     }
 
     /**
