@@ -76,9 +76,11 @@ import nars.storage.Bag.MemoryAware;
 public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements MemoryAware, AttentionAware, Observer {
 
     private final int capacity;
+    
     private Map<K,E> items;
     private Deque<E> pending;
     private List<K> toRemove;
+    
     private float activityThreshold = 0.8f;
     private float latencyMin = 0; /* in cycles */
     private float forgetThreshold = 0.01f;
