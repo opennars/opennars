@@ -60,7 +60,7 @@ public class Terms {
     }
 
     public static CompoundTerm reduceUntilLayer2(CompoundTerm itself, Term replacement, Memory memory) {
-        if (!(itself != null))
+        if (itself == null)
             return null;
         
         Term reduced = reduceComponentOneLayer(itself, replacement, memory);

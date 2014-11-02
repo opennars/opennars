@@ -26,7 +26,7 @@ public class ApplySubstituteTest {
         
         Map<Term,Term> h = new HashMap();
         h.put(n.term("b"), xy);
-        CompoundTerm c = ab.applySubstitute(h);
+        CompoundTerm c = ab.applySubstituteToCompound(h);
         
         assertTrue(c.getComplexity() > originalComplexity);
         
@@ -44,7 +44,7 @@ public class ApplySubstituteTest {
             
         Map<Term,Term> h = new HashMap();
         h.put(n.term("$1"), n.term("0"));        
-        CompoundTerm c = ((CompoundTerm)n.term("<(*,$1) --> num>")).applySubstitute(h);
+        CompoundTerm c = ((CompoundTerm)n.term("<(*,$1) --> num>")).applySubstituteToCompound(h);
         
         assertTrue(c!=null);
     }
