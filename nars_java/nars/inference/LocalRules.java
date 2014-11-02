@@ -21,7 +21,8 @@
 package nars.inference;
 
 import java.util.Arrays;
-import nars.core.Events.Solution;
+import nars.core.Events.Solved;
+import nars.core.Events.Unsolved;
 import nars.core.Memory;
 import nars.entity.BudgetValue;
 import nars.core.control.NAL;
@@ -136,7 +137,7 @@ public class LocalRules {
         
         if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             //System.out.println("Unsolved: Temporal order not matching");
-            memory.emit(Solution.class, task, belief, false, "Non-matching temporal Order");
+            memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return false;
         }
         
@@ -149,7 +150,7 @@ public class LocalRules {
                     memory.emotion.adjustHappy(oldQ, task.getPriority());
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
-                memory.emit(Solution.class, task, belief, false, "Lower quality");               
+                memory.emit(Unsolved.class, task, belief, "Lower quality");               
                 return false;
             }
         }
@@ -182,15 +183,16 @@ public class LocalRules {
         BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, nal);
         if ((budget != null) && budget.aboveThreshold()) {                       
             
-            memory.emit(Solution.class, task, belief, true);
-            //memory.output(task);
+            //Solution Activated
             
-            //System.out.println("Solved: Solution activated");            
+            memory.output(task);
+            memory.emit(Solved.class, task, belief, true);            
+                        
             memory.addNewTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
             return true;
         }
         else {
-            memory.emit(Solution.class, task, belief, false, "Insufficient budget");
+            memory.emit(Unsolved.class, task, belief, "Insufficient budget");
         }
         return false;
     }

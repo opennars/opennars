@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
+import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Sentence;
 import nars.entity.Task;
@@ -63,7 +64,9 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     private final InferenceLogger logger;
     private String logFilePath;
 
-    public static final Class[] outputEvents = new Class[] { IN.class, EXE.class, OUT.class, ERR.class, ECHO.class };
+    public static final Class[] outputEvents = new Class[] { 
+        IN.class, EXE.class, OUT.class, ERR.class, ECHO.class, Events.Solved.class
+    };
     
     
     public LogPanel(NARControls c) {
