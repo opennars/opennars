@@ -702,12 +702,12 @@ public class Executive {
             nal.setCurrentBelief(currentBelief);
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-            for(Task t : TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal)) {
-                //link every element to the new event, else it would just be linked to currentBelief
-                Concept c=nal.mem.concept(newEvent.sentence.content);
-                if(t!=null && t.budget!=null) {
-                    c.linkToTask(t); //link newEvent to the finding so that the =/> gets active when newEvent is relevant
-                } //this way its like if the results of temporalInduction are prefferred/boosted
+            TemporalRules.temporalInduction(newEvent.sentence, currentBelief, nal);// {
+                //c.linkToTask(t);
+            //}
+            Concept c=memory.concept(stmLast.sentence.content); 
+            if(c!=null) { //those two would be never related else altough the previous event should activate concepts
+                c.linkToTask(newEvent); //of the next
             }
         }
 
