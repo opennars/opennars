@@ -28,7 +28,7 @@ public class Hauto {
         if(c.material!=Material.Door) {
             return -2;
         }
-        return Integer.parseInt(c.name.replaceAll("door", ""));
+        return Integer.parseInt(c.name.replaceAll("door", "").replaceAll("\\}", "").replaceAll("\\{", ""));
     }
     
     //put to beginning because we will need this one most often
@@ -167,6 +167,10 @@ public class Hauto {
         if((int)x == 0 || (int) y==0 || (int)x == w-1 || (int) y==h-1)
             return;
         
+        if(!doorname.equals("") && !doorname.contains("{")) {
+            doorname="{"+doorname+"}";
+        }
+        
         if(oper.equals("perceive")) {
              readCells[(int) x][(int) y].name = "place"+entityID.toString();
             writeCells[(int) x][(int) y].name = "place"+entityID.toString();
@@ -275,6 +279,7 @@ public class Hauto {
                 doorname=name;
             }
             
+            name="{"+name+"}";
             //if it has name already, dont allow overwrite
 
             if(readCells[(int) x][(int) y].name.equals("")) {
