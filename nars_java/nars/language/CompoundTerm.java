@@ -115,25 +115,31 @@ public abstract class CompoundTerm extends Term {
         }                    
     }
 
-    
-    abstract public CompoundTerm clone(final Term[] replaced);
+    /** Must be Term return type because the type of Term may change with different arguments */
+    abstract public Term clone(final Term[] replaced);
     
     @Override
     public CompoundTerm cloneDeep() {
-        return clone(cloneTermsDeep());
+        Term c = clone(cloneTermsDeep());
+        if (c.getClass()!=getClass())
+            throw new RuntimeException("cloneDeep resulted in different class: " + c + " from " + this);
+        return (CompoundTerm)c;
     }
     
     public CompoundTerm cloneDeepVariables() {        
-        return clone(cloneVariableTermsDeep());
+        Term c = clone(cloneVariableTermsDeep());
+        if (c.getClass()!=getClass())
+            throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);
+        return (CompoundTerm)c;
     }
     
     /** override in subclasses to avoid unnecessary reinit */
-    public CompoundTerm _clone(final Term[] replaced) {
+    /*public CompoundTerm _clone(final Term[] replaced) {
         if (Terms.equals(term, replaced)) {
             return this;
         }
         return clone(replaced);
-    }
+    }*/
 
 
     
@@ -678,13 +684,11 @@ public abstract class CompoundTerm extends Term {
      * May return null if the term can not be created
      * @param subs
      */
-    public CompoundTerm applySubstitute(final Map<Term, Term> subs) {   
+    public Term applySubstitute(final Map<Term, Term> subs) {   
         if ((subs == null) || (subs.isEmpty())) {            
             return this;
         }
-        
-        //if (!containsAnyTermsOf(subs.keySet()))
-            //return this;
+                
         Term[] tt = new Term[term.length];
         boolean modified = false;
         
@@ -702,13 +706,13 @@ public abstract class CompoundTerm extends Term {
                     modified = true;
                 }
             } else if (t1 instanceof CompoundTerm) {
-                CompoundTerm ss = ((CompoundTerm) t1).applySubstitute(subs);
+                Term ss = ((CompoundTerm) t1).applySubstitute(subs);
                 if (ss!=null) {
                     tt[i] = ss;
                     if (!tt[i].equals(term[i]))
                         modified = true;
                 }
-            }            
+            }
         }
         if (!modified)
             return this;
@@ -720,6 +724,16 @@ public abstract class CompoundTerm extends Term {
         return this.clone(tt);
     }
 
+    /** returns result of applySubstitute, if and only if it's a CompoundTerm. 
+     * otherwise it is null */
+    public CompoundTerm applySubstituteToCompound(Map<Term, Term> substitute) {
+        Term t = applySubstitute(substitute);
+        if (t instanceof CompoundTerm)
+            return ((CompoundTerm)t);
+        return null;
+    }
+
+    
     /* ----- link CompoundTerm and its term ----- */
     /**
      * Build TermLink templates to constant term and subcomponents
@@ -927,11 +941,8 @@ public abstract class CompoundTerm extends Term {
     public boolean isNormalized() {
         return normalized;
     }
-    
 
     
-
-
 
 
 }
