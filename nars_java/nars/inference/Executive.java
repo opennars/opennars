@@ -706,15 +706,9 @@ public class Executive {
                 //link every element to the new event, else it would just be linked to currentBelief
                 Concept c=nal.mem.concept(newEvent.sentence.content);
                 if(t!=null && t.budget!=null) {
-                    c.insertTaskLink(new TaskLink(t, null, t.budget, memory.param.termLinkRecordLength.get()));
-                    //unusual tasklink but there is temporal relatedness we have to take into account
+                    c.linkToTask(t); //link newEvent to the finding so that the =/> gets active when newEvent is relevant
                 } //this way it gets budget remembered how this task can be achieved
             }
-            Concept c=nal.mem.concept(currentBelief.content);
-            if(c!=null) { //also link previous to next event
-                c.insertTaskLink(new TaskLink(newEvent, null, newEvent.budget, memory.param.termLinkRecordLength.get()));
-            }
-            //}
         }
 
         //for this heuristic, only use input events & task effects of operations
