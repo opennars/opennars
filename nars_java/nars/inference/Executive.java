@@ -707,7 +707,7 @@ public class Executive {
                 Concept c=nal.mem.concept(newEvent.sentence.content);
                 if(t!=null && t.budget!=null) {
                     c.linkToTask(t); //link newEvent to the finding so that the =/> gets active when newEvent is relevant
-                } //this way it gets budget remembered how this task can be achieved
+                } //this way its like if the results of temporalInduction are prefferred/boosted
             }
         }
 
