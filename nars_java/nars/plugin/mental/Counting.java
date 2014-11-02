@@ -32,7 +32,7 @@ public class Counting implements Plugin {
                 @Override
                 public void event(Class event, Object[] a) {
 
-                    if ((event!=Events.TaskDerive.class && event!=Events.TaskAdd.class) || Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY)
+                    if ((event!=Events.TaskDerive.class && event!=Events.TaskAdd.class))
                         return;
 
                     Task task = (Task)a[0];
