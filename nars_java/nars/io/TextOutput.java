@@ -27,7 +27,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
-import nars.core.Events.Solution;
+import nars.core.Events.Solved;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -195,26 +195,18 @@ public class TextOutput extends Output {
                 buffer.append(signal.toString());
             }                            
         }        
-        else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Solution.class))  {
+        else if ((channel == OUT.class) || (channel == IN.class) || (channel == ECHO.class) || (channel == EXE.class) || (channel == Solved.class))  {
+
+
+
+            
             if (signal instanceof Task) {
                 Task t = (Task)signal;                
                 if (t.getPriority() < minPriority)
                     return null;
                 
-                if (channel == Solution.class) {
-                    Sentence question = t.sentence;
-                    Sentence answer = t.getBestSolution();
-                    if (answer!=null) {
-                        buffer.append(question.toString(nar, false)).append(' ').
-                                append(answer.toString(nar, false));
-                    }
-                    else {
-                        buffer.append(t.sentence.toString(nar, showStamp));                    
-                    }
-                }
-                else {                    
-                    buffer.append(t.sentence.toString(nar, showStamp));                    
-                }
+                buffer.append(t.sentence.toString(nar, showStamp));                    
+                
                 
                 /*
                 Task root = t.getRootTask();
@@ -271,9 +263,7 @@ public class TextOutput extends Output {
         else if (signal instanceof Task) {
             Task t = (Task)signal;
             
-            /*Sentence s = t.getBestSolution();
-            if (s == null)*/
-                Sentence s = t.sentence;
+            Sentence s = t.sentence;
 
             buffer.append(s.toString(nar, showStamp));
         }            
@@ -282,7 +272,18 @@ public class TextOutput extends Output {
             buffer.append(s.toString(nar, showStamp));                        
         }                    
         else if (signal instanceof Object[]) {
-            buffer.append( Arrays.toString((Object[])signal) );
+            if (channel == Solved.class) {
+                Object[] o = (Object[])signal;
+                Task task = (Task)o[0];
+                Sentence belief = (Sentence)o[1];
+                
+                Sentence question = task.sentence;
+                Sentence answer = belief;
+                
+                buffer.append(answer.toString(nar, false));
+            }
+            else            
+                buffer.append( Arrays.toString((Object[])signal) );
         }
         else {
             buffer.append(signal.toString());

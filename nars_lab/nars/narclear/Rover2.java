@@ -807,7 +807,7 @@ public class Rover2 extends PhysicsModel {
         Parameters.THREADS = 1;
         
         //NAR nar = new DefaultNARBuilder().
-        //NAR nar = new CurveBagNARBuilder().
+        ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new NeuromorphicNARBuilder().
                 setConceptBagLevels(100).
@@ -831,7 +831,7 @@ public class Rover2 extends PhysicsModel {
         
         
         
-        ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
+        //ItemCounter removedConcepts = new ItemCounter(nar, Events.ConceptForget.class);
 
         // RoverWorld.world= new RoverWorld(rv, 48, 48);
         new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, new Rover2(nar)) {
@@ -845,7 +845,7 @@ public class Rover2 extends PhysicsModel {
                 }
                 
                 else if (e.getKeyChar() == 'g') {
-                    removedConcepts.report(System.out);
+                    //removedConcepts.report(System.out);
                 }
 
 //                if (e.getKeyCode() == KeyEvent.VK_UP) {

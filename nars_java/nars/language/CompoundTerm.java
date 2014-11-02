@@ -123,7 +123,7 @@ public abstract class CompoundTerm extends Term {
         return clone(cloneTermsDeep());
     }
     
-    public CompoundTerm cloneDeepVariables() {
+    public CompoundTerm cloneDeepVariables() {        
         return clone(cloneVariableTermsDeep());
     }
     
@@ -410,8 +410,9 @@ public abstract class CompoundTerm extends Term {
         for (int i = 0; i < l.length; i++)  {     
             Term t = term[i];
             if (t.hasVar()) {
-                if (term[i] instanceof CompoundTerm)
+                if (term[i] instanceof CompoundTerm) {
                     t = ((CompoundTerm)t).cloneDeepVariables();
+                }
                 else /* it's a variable */
                     t = t.clone();
             }
