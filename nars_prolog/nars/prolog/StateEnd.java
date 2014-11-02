@@ -448,6 +448,7 @@ public class StateEnd extends State {
 	    	//Object[] a=(e.goalVars).toArray();
 	    	//System.out.println("Lista variabili goal bagof nomi e.goalVars "+e.goalVars.toString());
 	    	//int r=0;
+	    	if (varList != null)
 	    	for (java.util.Iterator<? extends Term> it = varList.listIterator(); it.hasNext();) {
 	    		//System.out.println("Entro "+r);
 	    		//r++;
