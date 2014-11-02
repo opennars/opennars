@@ -38,6 +38,8 @@ public class DifferenceExt extends CompoundTerm {
         super(arg);
         
         ensureValidDifferenceArguments(arg);        
+        
+        init(arg);
     }
 
 

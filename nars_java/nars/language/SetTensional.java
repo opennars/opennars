@@ -16,9 +16,9 @@ abstract public class SetTensional extends CompoundTerm {
     protected SetTensional(final Term[] arg) {
         super(arg);
         
-        if (Parameters.DEBUG) {
-            Terms.verifySortedAndUnique(arg, true);
-        }
+        if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, true); }
+        
+        init(arg);
     }
     
     

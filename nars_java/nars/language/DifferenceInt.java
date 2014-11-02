@@ -38,6 +38,8 @@ public class DifferenceInt extends CompoundTerm {
         super(arg);
         
         ensureValidDifferenceArguments(arg);
+        
+        init(arg);
     }
 
     public static void ensureValidDifferenceArguments(Term[] arg) {

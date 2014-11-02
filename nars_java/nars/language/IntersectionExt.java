@@ -38,9 +38,9 @@ public class IntersectionExt extends CompoundTerm {
     private IntersectionExt(Term[] arg) {
         super(arg);
         
-        if (Parameters.DEBUG) {
-            Terms.verifySortedAndUnique(arg, false);
-        }
+        if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, false); }
+        
+        init(arg);
         
     }
 

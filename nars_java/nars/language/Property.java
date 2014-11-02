@@ -25,7 +25,7 @@ package nars.language;
  * A Statement about a Property relation, which is used only in Narsese for I/O, 
  * and translated into Inheritance for internal use.
  */
-public abstract class Property /*extends Statement*/ {
+public abstract class Property /*would extend "Statement" if it were its own type */ {
     
     /**
      * Try to make a new compound from two components. Called by the inference rules.
@@ -36,7 +36,7 @@ public abstract class Property /*extends Statement*/ {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Statement make(Term subject, Term predicate) {
+    final public static Statement make(final Term subject, final Term predicate) {
         return Inheritance.make(subject, SetInt.make(predicate));
     }
 }

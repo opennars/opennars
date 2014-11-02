@@ -27,7 +27,7 @@ public class ApplySubstituteTest {
         Map<Term,Term> h = new HashMap();
         h.put(n.term("b"), xy);
         CompoundTerm c = ab.applySubstituteToCompound(h);
-        
+                
         assertTrue(c.getComplexity() > originalComplexity);
         
         assertTrue(ab.name().toString().equals(abS)); //ab unmodified

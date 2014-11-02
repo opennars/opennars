@@ -15,12 +15,10 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
-import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.GraphExecutive.ParticlePlan;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Implication;
 import nars.language.Interval;
@@ -43,7 +41,6 @@ import nars.operator.mental.Hesitate;
 import nars.operator.mental.Name;
 import nars.operator.mental.Register;
 import nars.operator.mental.Remind;
-import nars.operator.mental.SimulateClone;
 import nars.operator.mental.Want;
 import nars.operator.mental.Wonder;
 import nars.operator.software.Javascript;
@@ -270,7 +267,7 @@ public class Executive {
             }
 
             if (modified) {
-                CompoundTerm nc = c.clone(inlined.toArray(new Term[inlined.size()]));
+                Term nc = c.clone(inlined.toArray(new Term[inlined.size()]));
                 if (nc == null) {
                     end();
                 } else {

@@ -34,10 +34,12 @@ public class Similarity extends Statement {
      */
     public Similarity(final Term[] arg) {
         super(arg);
+        
+        init(arg);
     }
 
     public Similarity(final Term subj, final Term pred) {
-        super(subj, pred);
+        this(new Term[] { subj, pred} );
     }
     
 
