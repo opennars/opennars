@@ -117,6 +117,11 @@ public class EditorPanel extends JPanel {
                                     if(c.length<14) {
                                         continue;
                                     }
+                                    
+                                    if(!c[11].equals("") && !c[11].contains("{")) {
+                                        c[11]="{"+c[11]+"}";
+                                    }
+                                    
                                     int i=Integer.valueOf(c[0]);
                                     int j=Integer.valueOf(c[1]);
                                     s.cells.readCells[i][j].charge=Float.valueOf(c[2]);
@@ -188,13 +193,13 @@ public class EditorPanel extends JPanel {
                                         s.nar.addInput("<"+c[11]+" --> door>.");
                                         s.nar.addInput("<"+c[11]+" --> closed>. :|:");
                                     }
-                                    
+
                                     s.cells.readCells[i][j].name=c[11];
                                     s.cells.writeCells[i][j].name=c[11];
                                     
                                     try {
                                         if(!c[11].equals("")) {
-                                            String value=c[11].replaceAll("[A-Za-z]","");
+                                            String value=c[11].replaceAll("[A-Za-z]","").replaceAll("\\}", "").replaceAll("\\{", "");
                                             int res=Integer.parseInt(value);
                                             if(res>Hauto.entityID) {
                                                 Hauto.entityID=res+1;
@@ -217,6 +222,11 @@ public class EditorPanel extends JPanel {
                                     if(val.length==0) {
                                         continue;
                                     }
+                                    
+                                    if(!val[1].equals("") && !val[1].contains("{")) {
+                                        val[1]="{"+val[1]+"}";
+                                    }
+                                    
                                     String name=val[1];
                                     
                                     try {
