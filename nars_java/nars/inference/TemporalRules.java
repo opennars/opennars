@@ -328,11 +328,11 @@ public class TemporalRules {
         }
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         Statement statement1 = Implication.make(t1, t2, order);
-        //Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
+        Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
-            //Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
+            Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11)) {
                 Task t=nal.doublePremiseTask(statement11, truth1, budget1,false);
@@ -340,12 +340,12 @@ public class TemporalRules {
                     success.add(t);
                 }
             }
-            //if(!tooMuchTemporalStatements(statement22)) {
-            //    Task t=nal.doublePremiseTask(statement22, truth2, budget2,false);
-            //if(t!=null) {
-            //        success.add(t);
-            //    }
-            //}
+            if(!tooMuchTemporalStatements(statement22)) {
+               Task t=nal.doublePremiseTask(statement22, truth2, budget2,false);
+                if(t!=null) {
+                    success.add(t);
+                }
+            }
             if(!tooMuchTemporalStatements(statement33)) {
                 Task t=nal.doublePremiseTask(statement33, truth3, budget3,false);
                 if(t!=null) {
@@ -359,12 +359,12 @@ public class TemporalRules {
                     success.add(t);
                 }
         }
-        //if(!tooMuchTemporalStatements(statement2)) {
-        //    Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
-        //if(t!=null) {
-        //            success.add(t);
-         //       }
-        //}
+        if(!tooMuchTemporalStatements(statement2)) {
+            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
+                 if(t!=null) {
+                    success.add(t);
+                }
+            }
         if(!tooMuchTemporalStatements(statement3)) {
             Task t=nal.doublePremiseTask(statement3, truth3, budget3,false);
             if(t!=null) {
