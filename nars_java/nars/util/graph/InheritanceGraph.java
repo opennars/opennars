@@ -37,10 +37,14 @@ public class InheritanceGraph extends SentenceGraph {
     public boolean allow(final CompoundTerm st) {
         Symbols.NativeOperator o = st.operator();
         
+        
+        
         if ((o == Symbols.NativeOperator.INHERITANCE) && includeInheritance)
             return true;
-        if ((o == Symbols.NativeOperator.SIMILARITY) && includeSimilarity)
+        if ((o == Symbols.NativeOperator.SIMILARITY) && includeSimilarity) {
+            
             return true;
+        }
 
         return false;
     }
