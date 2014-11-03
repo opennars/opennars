@@ -29,16 +29,7 @@ public class NARPrologMirrorTest {
                 NAR nar = new DefaultNARBuilder().build();
 
                 if (prolog) {
-                    NARProlog prolog = null;
-                    try {
-                        prolog = new NARProlog(nar);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        System.exit(1);                    
-                    }
-
-                    new NARPrologMirror(nar, prolog, true).temporal(true, false);
-                    new NARPrologMirror(nar, prolog, true).temporal(false, true);
+                    new NARPrologMirror(nar, 0.5f, true).temporal(true, true);
                 }
                 
                 return nar;

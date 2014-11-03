@@ -19,6 +19,7 @@ package nars.prolog;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import nars.prolog.event.ExceptionEvent;
 import nars.prolog.event.ExceptionListener;
@@ -286,9 +287,13 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @see Theory
 	 */
         @Override
-	public SolveInfo addTheory(final PrologTermIterator th) throws InvalidTheoryException {	//no syn
+	public SolveInfo addTheory(final PrologTermIterator th) throws InvalidTheoryException {	//no syn 
+            return addTheory(th.iterator(this));
+        }
+        
+	public SolveInfo addTheory(final Iterator<? extends Term> i) throws InvalidTheoryException {	//no syn
 		Theory oldTh = getTheory();
-		theoryManager.consult(th, true, null);
+		theoryManager.consult(i, true, null);
 		SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
 		Theory newTh = getTheory();
 		TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);    

@@ -35,6 +35,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import nars.NARPrologMirror;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
@@ -82,13 +83,19 @@ public class TicTacToe extends JPanel {
         super(new BorderLayout());
 
         nar = new DiscretinuousBagNARBuilder().
-                setConceptBagSize(2000).
+                setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
-                realTime().build();
+                simulationTime().build();
+        
+        new NARPrologMirror(nar, 0.75f, true).temporal(true, false);
+        new NARPrologMirror(nar, 0.75f, true).temporal(false, true);
         
         nar.memory.addOperator(new AddO("^addO"));        
-        nar.param().duration.set(100);
+        nar.param().duration.set(1000);
         nar.param().noiseLevel.set(0);
+        
+        new NARSwing(nar);    
+        nar.start(30, 2000);
         
         JPanel menu = new JPanel(new FlowLayout());
 
@@ -191,8 +198,8 @@ public class TicTacToe extends JPanel {
             
         }, CENTER);       
         
-        new NARSwing(nar);    
-        nar.start(10, 2000);
+        
+        
         
         reset();
         
