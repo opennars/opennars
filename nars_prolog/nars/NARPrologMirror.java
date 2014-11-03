@@ -1,13 +1,14 @@
 package nars;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import nars.core.Events;
+import nars.core.Events.ConceptBeliefAdd;
+import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
+import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
@@ -16,6 +17,7 @@ import nars.inference.AbstractObserver;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
+import nars.io.Texts;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
 import nars.language.Implication;
@@ -45,19 +47,25 @@ public class NARPrologMirror extends AbstractObserver {
     private float trueThreshold = 0.75f;
     private float falseThreshold = 0.25f;
     private float confidenceThreshold = 0.75f;
-    private final Set<Term> recent = new HashSet();
-    private final Map<Struct,Sentence> beliefs = new HashMap();
+    private final Map<Term,nars.prolog.Term> beliefs = new HashMap();
     
     /** whether to insert directly into memory, bypassing input ports */
     private boolean inputDirect = true;
     
     private boolean eternalJudgments = true;
     private boolean presentJudgments = false;
+
+    /** in seconds */
+    float maxSolveTime = 5.0f / 1e3f; //5ms
+    float baseSolveTime = 1.0f / 1e3f; //1ms
     
-    public static final Class[] events = { Events.ConceptBeliefAdd.class, Events.ConceptQuestionAdd.class, OUT.class, IN.class };
     
-    public NARPrologMirror(NAR nar, NARProlog prolog) {
-        super(nar, true, events);
+    public static final Class[] telepathicEvents = { Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class, Events.ConceptQuestionAdd.class, IN.class, OUT.class };
+    
+    public static final Class[] inputOutputEvents = { IN.class, OUT.class };
+    
+    public NARPrologMirror(NAR nar, NARProlog prolog, boolean telepathic) {
+        super(nar, true, telepathic ? telepathicEvents : inputOutputEvents );
         this.nar = nar;
         this.prolog = prolog;    
         
@@ -88,118 +96,159 @@ public class NARPrologMirror extends AbstractObserver {
     @Override
     public void event(final Class channel, final Object... arg) {        
         
-        
-        if ((channel == IN.class) || (channel == OUT.class)) {
+        if (channel == ConceptBeliefAdd.class) {
+            Concept c = (Concept)arg[0];
+            Sentence s = (Sentence)arg[1];
+            Task task = (Task)arg[2];
+            add(s, task);            
+        }
+        else if (channel == ConceptBeliefRemove.class) {
+            Concept c = (Concept)arg[0];
+            Sentence s = (Sentence)arg[1];
+            Task task = (Task)arg[2];
+            remove(s, task);
+        }        
+        else if (channel == Events.ConceptQuestionAdd.class) {
+            Concept c = (Concept)arg[0];            
+            Task task = (Task)arg[1];
+            add(task.sentence, task);
+        }        
+        else if ((channel == IN.class) || (channel == OUT.class)) {
             Object o = arg[0];
             if (o instanceof Task) {
                 Task task = (Task)o;
                 Sentence s = task.sentence;
                 
-
-                if (!(s.content instanceof CompoundTerm))
-                    return;
-                
-                CompoundTerm ct = (CompoundTerm)s.content;
-                
-                if (!validTemporal(s))
-                    return;
-                
-                if (recent.remove(s.content)) {
-                    return;
-                }
-                recent.add(s.content);
-                
-                
-                
-                //only interpret input judgments, or any kind of question
-                if (s.isJudgment()) {
-                    TruthValue tv = s.truth;
-                    if (tv.getConfidence() > confidenceThreshold) {
-                        if ((tv.getFrequency() > trueThreshold) || (tv.getFrequency() < falseThreshold)) {
-                            try {
-                                Struct th = newJudgmentTheory(s);
-                                if (th!=null) {
-                                    
-                                    if (tv.getFrequency() < falseThreshold) {
-                                        th = negation(th);
-                                    }
-                                    
-                                    if (beliefs.putIfAbsent(th, s)==null)
-                                        System.err.println("Prolog assume: " + th + " | " + s);
-                                    
-                                }                                
-                            } catch (Exception ex) {
-                                nar.emit(ERR.class, ex.toString());
-                            }
-                        }
-                        
-                        //TODO handle "negative" frequency somewhere below 0.5
-                    }
-                }
-                else if (s.isQuestion()) {
-                    
-                    
-                    try {
-                        Struct qh = newQuestion(s);
-                        if (qh!=null) {
-                            System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ?");                            
-                            prolog.clearTheory();
-                                                        
-                            Theory theory, axioms;
-                            prolog.setTheory(theory = getTheory(beliefs));
-                            prolog.addTheory(axioms = getAxioms());
-                            
-                            System.out.println("  Theory: " + theory);
-                            //System.out.println("  Axioms: " + axioms);
-                            
-                            
-                            double maxSolveTimeSeconds = 5.0 / 1e3; //5ms
-                            
-                            SolveInfo si = prolog.solve(qh, maxSolveTimeSeconds);
-                            
-                            do {
-                                if (si == null) break;
-                                
-                                if (!si.isSuccess())
-                                    break;
-                                
-                                
-                                nars.prolog.Term solution = si.getSolution();
-                                if (solution == null)
-                                    break;
-                                
-                                try {
-                                    Term n = nterm(solution);
-                                    if (n!=null)
-                                        answer(task, n);
-                                }
-                                catch (Exception e) {
-                                    //problem generating a result
-                                    e.printStackTrace();
-                                }
-                                
-                                
-                                if (prolog.hasOpenAlternatives()) {
-                                    maxSolveTimeSeconds /= 2d;
-                                    si = prolog.solveNext(maxSolveTimeSeconds);
-                                }
-                            }                            
-                            while (prolog.hasOpenAlternatives());
-                            
-                        }
-                    } catch (InvalidTermException nse) {
-                        nar.emit(NARPrologMirror.class, s + " : not supported yet");       
-                        nse.printStackTrace();;
-                    } catch (NoMoreSolutionException nse) {
-                        //normal
-                    } catch (Exception ex) {                        
-                        nar.emit(ERR.class, ex.toString());
-                        ex.printStackTrace();
-                    }
-                }
-
+                add(s, task);
             }
         }
+    }
+    
+    protected void remove(Sentence s, Task task) {
+        //TODO
+    }
+    
+    protected void add(Sentence s, Task task) {
+        
+        if (!(s.content instanceof CompoundTerm))
+            return;        
+
+        if (!validTemporal(s))
+            return;
+
+        //only interpret input judgments, or any kind of question
+        if (s.isJudgment()) {
+
+            processBelief(s, task, true);
+        }
+        else if (s.isQuestion()) {
+
+            float priority = task.getPriority();
+            float solveTime = ((maxSolveTime-baseSolveTime) * priority) + baseSolveTime;
+
+            if (beliefs.containsKey(s.content)) {
+                //already determined it to be true
+                answer(task, s.content, null);
+                return;
+            }
+            
+            try {
+                Struct qh = newQuestion(s);
+                
+                if (qh!=null) {
+                    System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");    
+                    
+
+                    Theory theory;
+                    prolog.setTheory(theory = getTheory(beliefs));
+                    prolog.addTheory(getAxioms());
+
+                    System.out.println("  Theory: " + theory);
+                    //System.out.println("  Axioms: " + axioms);
+                    
+
+                    SolveInfo si = prolog.solve(qh, solveTime);
+
+                    do {
+                        if (si == null) break;
+
+                        if (!si.isSuccess())
+                            break;
+
+
+                        nars.prolog.Term solution = si.getSolution();
+                        if (solution == null)
+                            break;
+
+                        try {
+                            Term n = nterm(solution);
+                            if (n!=null)
+                                answer(task, n, solution);
+                        }
+                        catch (Exception e) {
+                            //problem generating a result
+                            e.printStackTrace();
+                        }
+
+
+                        if (prolog.hasOpenAlternatives()) {
+                            maxSolveTime /= 2d;
+                            si = prolog.solveNext(maxSolveTime);
+                        }
+                    }                            
+                    while (prolog.hasOpenAlternatives());
+
+                }
+            } catch (InvalidTermException nse) {
+                nar.emit(NARPrologMirror.class, s + " : not supported yet");       
+                nse.printStackTrace();;
+            } catch (NoMoreSolutionException nse) {
+                //normal
+            } catch (Exception ex) {                        
+                nar.emit(ERR.class, ex.toString());
+                ex.printStackTrace();
+            }
+        }
+        
+    }
+
+    protected void processBelief(Sentence s, Task task, boolean addOrRemove) {
+            
+        TruthValue tv = s.truth;
+        if (tv.getConfidence() > confidenceThreshold) {
+            if ((tv.getFrequency() > trueThreshold) || (tv.getFrequency() < falseThreshold)) {
+
+                boolean exists = beliefs.containsKey(s.content);
+                if ((addOrRemove) && (exists))
+                    return;
+                else if ((!addOrRemove) && (!exists))
+                    return;
+                
+                try {
+                    Struct th = newJudgmentTheory(s);
+                    if (th!=null) {
+
+                        if (tv.getFrequency() < falseThreshold) {
+                            th = negation(th);
+                        }
+
+                        if (addOrRemove) {
+                            if (beliefs.putIfAbsent(s.content, th)==null)
+                                System.err.println("Prolog assume: " + th + " | " + s);
+                        }
+                        else {
+                            if (beliefs.remove(s.content)!=null)
+                                System.err.println("Prolog forget: " + th + " | " + s);
+                        }
+
+                    }                                
+                } catch (Exception ex) {
+                    nar.emit(ERR.class, ex.toString());
+                }
+            }
+
+        }
+        
     }
     
     /** creates a theory from a judgment Statement */
@@ -342,16 +391,22 @@ public class NARPrologMirror extends AbstractObserver {
     }
     
     /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */
-    public void answer(Task question, Term t) {
+    public void answer(Task question, Term t, nars.prolog.Term pt) {
         System.err.println("Prolog answer: " + t);
         
+
+        
         if (inputDirect) {
-            nar.memory.inputTask(getBeliefTask(t, question));
+            Task a = getBeliefTask(t, question);
+            nar.memory.inputTask(a);
+            
         }
         else {
             //TODO avoid using String input
             nar.addInput(t.toString() + ".");
         }
+        if (pt!=null)
+            beliefs.put(t, pt);
     }
 
     /*
@@ -402,8 +457,8 @@ public class NARPrologMirror extends AbstractObserver {
         return axioms;
     }
     
-    public Theory getTheory(Map<Struct, Sentence> beliefMap) throws InvalidTheoryException  {
-        return new Theory(new Struct(beliefMap.keySet().toArray(new Struct[beliefMap.size()])));
+    public Theory getTheory(Map<Term, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
+        return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
     }
 
     
